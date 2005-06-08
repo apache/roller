@@ -1,0 +1,121 @@
+
+<!-- *********************************************************
+    Filter mappings - order IS important here.  Since there is
+    no way to declare order in xdoclet, we must do it by hand.
+    ******************************************************* -->
+
+<!-- Map everything to the CloseSessionFilter -->
+<filter-mapping>
+    <filter-name>CloseSessionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+<!-- Use RequestFilter on all requests except for Newsfeed requests -->
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>/page/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>/comments/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>/preview/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>/flavor/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>/foaf/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>/xmlrpc/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>RefererFilter</filter-name>
+    <url-pattern>/page/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>RefererFilter</filter-name>
+    <url-pattern>/comments/*</url-pattern>
+</filter-mapping>
+
+<!-- RememberMe Filter -->
+<filter-mapping>
+    <filter-name>loginFilter</filter-name>
+    <url-pattern>/login.jsp</url-pattern>
+    <!-- These are needed by Tomcat 5 since it does a forward to login.jsp -->
+    <!--dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher-->
+</filter-mapping>
+<filter-mapping>
+    <filter-name>loginFilter</filter-name>
+    <url-pattern>/logout-redirect.jsp</url-pattern>
+</filter-mapping>
+
+<!--
+Currently we only support If-Modified-Since using weblog last pub
+time, so the only place we should us it is on the RSS feed.
+-->
+<filter-mapping>
+    <filter-name>IfModifiedFilter</filter-name>
+    <url-pattern>/rss/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>BreadCrumbFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>PageGzipFilter</filter-name>
+    <url-pattern>/page/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>RssGzipFilter</filter-name>
+    <url-pattern>/rss/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>RssGzipFilter</filter-name>
+    <url-pattern>/flavor/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>RssGzipFilter</filter-name>
+    <url-pattern>/foaf/*</url-pattern>
+</filter-mapping>
+
+<!-- Cache filters should be last in line -->
+<filter-mapping>
+    <filter-name>RssCacheFilter</filter-name>
+    <url-pattern>/rss/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>RssCacheFilter</filter-name>
+    <url-pattern>/flavor/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>RssCacheFilter</filter-name>
+    <url-pattern>/foaf/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>PageCacheFilter</filter-name>
+    <url-pattern>/page/*</url-pattern>
+</filter-mapping>

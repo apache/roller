@@ -1,0 +1,27 @@
+
+    <filter>
+        <filter-name>RssGzipFilter</filter-name>
+        <filter-class>org.roller.presentation.filters.CompressionFilter</filter-class>
+    </filter>
+
+   <filter>
+      <filter-name>RssCacheFilter</filter-name>
+      <filter-class>org.roller.presentation.pagecache.PageCache</filter-class>
+      <init-param>
+         <param-name>size</param-name>
+         <param-value>50</param-value>
+         <description><![CDATA[Number of pages to keep in cache]]></description>
+      </init-param>
+      <init-param>
+         <param-name>timeoutInterval</param-name>
+         <param-value>1800</param-value>
+         <description><![CDATA[Page Cache timeout interval in seconds (-1 to disable timeout)]]></description>
+      </init-param>
+      <init-param>
+         <param-name>timeoutRatio</param-name>
+         <param-value>1.0</param-value>
+         <description><![CDATA[Ratio of pages to be timed out on interval (1.0 means 100%)]]></description>
+      </init-param>
+   </filter>
+
+    <!-- begin xdoclet generated Filter declarations -->

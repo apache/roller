@@ -1,0 +1,53 @@
+
+<taglib>
+	<taglib-uri>oscache</taglib-uri>
+	<taglib-location>/WEB-INF/tlds/oscache.tld</taglib-location>
+</taglib>
+
+<!--
+<taglib>
+	<taglib-uri>display</taglib-uri>
+	<taglib-location>/WEB-INF/tlds/display.tld</taglib-location>
+</taglib>
+
+<taglib>
+	<taglib-uri>roller</taglib-uri>
+	<taglib-location>/WEB-INF/tlds/roller.tld</taglib-location>
+</taglib>
+
+<taglib>
+	<taglib-uri>struts-bean</taglib-uri>
+	<taglib-location>/WEB-INF/tlds/struts-bean.tld</taglib-location>
+</taglib>
+
+<taglib>
+	<taglib-uri>struts-html</taglib-uri>
+	<taglib-location>/WEB-INF/tlds/struts-html.tld</taglib-location>
+</taglib>
+
+<taglib>
+	<taglib-uri>struts-logic</taglib-uri>
+	<taglib-location>/WEB-INF/tlds/struts-logic.tld</taglib-location>
+</taglib>
+
+<taglib>
+	<taglib-uri>struts-nested</taglib-uri>
+	<taglib-location>/WEB-INF/tlds/struts-nested.tld</taglib-location>
+</taglib>
+
+<taglib>
+	<taglib-uri>struts-template</taglib-uri>
+	<taglib-location>/WEB-INF/tlds/struts-template.tld</taglib-location>
+</taglib>
+
+<taglib>
+	<taglib-uri>core-stl</taglib-uri>
+	<taglib-location>/WEB-INF/tlds/c.tld</taglib-location>
+</taglib>
+
+<taglib>
+  <taglib-uri>string</taglib-uri>
+  <taglib-location>/WEB-INF/tlds/taglibs-string.tld</taglib-location>
+</taglib>
+-->
+

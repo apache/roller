@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding='utf-8'?>
+$pageHelper.setContentType("application/atom+xml;charset=utf-8")
+<feed version="0.2" xmlns="http://purl.org/atom/ns#">
+    <title>$utilities.textToHTML($website.name,true)</title>
+    <tagline>$utilities.textToHTML($website.description,true)</tagline>
+    <link>$websiteURL</link>
+    <modified>$utilities.formatIso8601Date($updateTime)</modified>
+    <generator name="RollerWeblogger 0.9.9">http://www.rollerweblogger.org</generator>
+
+    #set( $entries = $pageModel.getRecentWeblogEntriesArray($entryCount, 'nil') )
+    #foreach( $entry in $entries )
+    <entry xmlns="http://example.com/newformat#" >
+        <title>$utilities.textToHTML($entry.title,true)</title>
+        <summary>#showEntryDescription($entry)</summary>
+
+        <author>
+          <name>$fullName</name>
+          <url>$websiteURL</url>
+          <email>$emailAddress</email>
+        </author>
+
+        <issued>$utilities.formatIso8601Date($entry.pubTime)</issued>
+        <created>$utilities.formatIso8601Date($entry.pubTime)</created>
+        <modified>$utilities.formatIso8601Date($entry.updateTime)</modified>
+
+        <link>$absBaseURL$entry.permaLink</link>
+        <id>urn:rollerweblogger.org:entry:$entry.id</id>
+
+        <content type="application/xhtml+xml" xml:lang="en-us">
+          #showEntryText($entry)
+        </content>
+        <!--
+        #if( $entry.website.allowComments )
+           #if( ! $website.allowComments )
+           ## if the $entry.website is different than the $website then we are
+           ## producing an aggregated feed and we need to form the full URL.
+           <comment>$absBaseURL/page/$entry.website.user.userName?anchor=$entry.anchor</comment>
+           #else
+           <comment>$absBaseURL?anchor=$entry.anchor</comment>
+           #end
+        #end
+        -->
+    </entry>
+    #end
+</feed>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export-user-data id="192168001002103214251964900030"><email-address>plat</email-address><website default-page-id="192168001002103214251965900035" user-id="192168001002103214251964900030" weblog-day-page-id="192168001002103214251965900034" id="192168001002103214251964900032"><description></description><editor-page>editor-text.jsp</editor-page><folder website-id="192168001002103214251964900032" id="192168001002103214251971900043"><description></description><name>root</name></folder><folder parent-id="192168001002103214251971900043" website-id="192168001002103214251964900032" id="192168001002103214251971900044"><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251971900045"><description></description><image></image><name>Scripting News</name><priority>1</priority><url>http://www.scripting.com</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251972900046"><description></description><image></image><name>Evhead</name><priority>1</priority><url>http://www.evhead.com/</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251973900047"><description></description><image></image><name>Udell</name><priority>1</priority><url>http://radio.weblogs.com/0100887/</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251974900048"><description></description><image></image><name>Hack the Planet</name><priority>1</priority><url>http://wmf.editthispage.com/</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251974900049"><description></description><feed-url></feed-url><image></image><name>Adam Curry1</name><priority>1</priority><url>http://live.curry.com/</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251977900050"><description></description><image></image><name>inessential.com</name><priority>1</priority><url>http://inessential.com/</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251977900051"><description></description><image></image><name>* blogdex</name><priority>1</priority><url>http://blogdex.media.mit.edu/</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251977900052"><description></description><image></image><name>Mighty Girl</name><priority>1</priority><url>http://www.mightygirl.net/</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251978900053"><description></description><image></image><name>Doc Searls</name><priority>1</priority><url>http://doc.weblogs.com/</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251971900044" id="192168001002103214251979900054"><description></description><image></image><name>Sam Ruby</name><priority>1</priority><url>http://radio.weblogs.com/0101679/</url><weight>0</weight></bookmark><description>Weblogs and sites related to weblogging</description><name>Blogrolling</name></folder><folder parent-id="192168001002103214251971900043" website-id="192168001002103214251964900032" id="192168001002103214251979900055"><bookmark folder-id="192168001002103214251979900055" id="192168001002103214251979900056"><description></description><image></image><name>Wired News</name><priority>1</priority><url>http://www.wired.com/news/</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251979900055" id="192168001002103214251979900057"><description></description><image></image><name>Wash. Post</name><priority>1</priority><url>http://www.washingtonpost.com</url><weight>0</weight></bookmark><bookmark folder-id="192168001002103214251979900055" id="192168001002103214251980900058"><description></description><image></image><name>N.Y. Times</name><priority>1</priority><url>http://www.newyorktimes.com</url><weight>0</weight></bookmark><description>News sites popular in the weblogging world</description><name>News</name></folder><name>My Weblog</name><newsfeed website-id="192168001002103214251964900032" id="192168001002103214251968900040"><description></description><link>http://www.wired.com/news_drop/netcenter/netcenter.rdf</link><name>Wired News</name></newsfeed><newsfeed website-id="192168001002103214251964900032" id="192168001002103214251970900041"><description></description><link>http://www.deftone.com/blogzilla/index.xml</link><name>Blogzilla</name></newsfeed><newsfeed website-id="192168001002103214251964900032" id="192168001002103214251971900042"><description></description><link>http://www.newsisfree.com/HPE/xml/feeds/52/2152.xml</link><name>Business 2.0</name></newsfeed><page website-id="192168001002103214251964900032" id="192168001002103214251964900033"><description></description><name>_DayTemplate</name><template>&lt;table&gt;
+&lt;tr&gt;
+   &lt;td&gt;
+   $macros.showDayPermalink()
+   $macros.showEntryDate()
+   &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+#foreach( $entry in $entries )
+&lt;p&gt;
+   &lt;b&gt;$entry.title&lt;/b&gt; $entry.text 
+   &lt;font size=&quot;2&quot;&gt;($entry.updateTime/$entry.pubTime)&lt;/font&gt;
+   $macros.showCommentsLink( $entry )
+&lt;/p&gt;
+#end
+</template><update-time>2002-03-22T22:36:44.000-05:00</update-time></page><page website-id="192168001002103214251964900032" id="192168001002103214251965900034"><description></description><link>DayXTemplate</link><name>_DayXTemplate</name><template>&lt;div class=&quot;entry&quot;&gt;
+   $macros.showDayPermalink()
+   $macros.showEntryDate()
+&lt;/div&gt;
+
+#foreach( $entry in $entries )
+&lt;p&gt;
+   &lt;b&gt;$entry.title&lt;/b&gt; $entry.text 
+   &lt;span class=&quot;dateStamp&quot;&gt;($entry.pubTime)&lt;/span&gt;
+   $macros.showEntryPermalink( $entry )
+   $macros.showCommentsLink( $entry )
+&lt;/p&gt;
+#end
+</template><update-time>2002-09-15T22:16:43.000-04:00</update-time></page><page website-id="192168001002103214251964900032" id="192168001002103214251965900035"><description></description><link>Weblog</link><name>Weblog</name><template>&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot;    &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;    &lt;head&gt;    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;/&gt;    &lt;title&gt;$macros.showWebsiteTitle()&lt;/title&gt;        $macros.showThemeScript(&quot;x2&quot;, &quot;global.js&quot;)        $macros.showThemeStyleImport(&quot;x2&quot;, &quot;general.css&quot;)    &lt;/head&gt;&lt;body&gt;&lt;div id=&quot;content&quot;&gt;    &lt;h1&gt;$macros.showWebsiteTitle()&lt;/h1&gt;    $macros.showWeblogCategoryChooser()    &lt;div id=&quot;entries&quot;&gt;        $macros.showWeblogEntries()    &lt;/div&gt;&lt;/div&gt;&lt;div id=&quot;menu&quot;&gt;    $macros.showRSSBadge()    &lt;div id=&quot;calendar&quot;&gt;        $macros.showWeblogCalendar()    &lt;/div&gt;    &lt;div class=&quot;item&quot;&gt;        $macros.showBookmarks(&quot;Blogrolling&quot;,true)    &lt;/div&gt;    &lt;div class=&quot;item&quot;&gt;        $macros.showBookmarks(&quot;News&quot;,true)    &lt;/div&gt;    &lt;div class=&quot;item&quot;&gt;        $macros.showAllNewsfeeds(true,1)    &lt;/div&gt;    &lt;div class=&quot;item&quot;&gt;        $macros.showEditorNavBar(true)    &lt;/div&gt;    &lt;div class=&quot;item&quot;&gt;        $macros.showNavBar(false)    &lt;/div&gt;    &lt;div class=&quot;item&quot;&gt;        &lt;a href=&quot;http://validator.w3.org/check/referer&quot;&gt;            &lt;img class=&quot;w3&quot; src=&quot;http://jigsaw.w3.org/css-validator/images/vcss&quot;                alt=&quot;Valid CSS!&quot;/&gt;&lt;/a&gt;            &lt;a href=&quot;http://validator.w3.org/check/referer&quot;&gt;&lt;img                src=&quot;http://www.w3.org/Icons/valid-xhtml10&quot;                alt=&quot;Valid XHTML 1.0!&quot; class=&quot;w3&quot;/&gt;&lt;/a&gt;    &lt;/div&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</template><update-time>2002-09-01T10:32:05.000-04:00</update-time></page><page website-id="192168001002103214251964900032" id="192168001002103214251967900036"><description></description><name>_css</name><template>body  {
+    margin:  0;
+    padding:  0;
+    color:  black;
+    background-color: #99ccff;
+    font:  1.0em/1.5 Verdana, Arial, Helvetica, sans-serif;
+}
+h1 {
+    color : #0000FAA;
+    letter-spacing : 0.2em;
+}
+h2 {
+    color : #0000AA;
+    letter-spacing : 0.2em;
+}
+h3 {
+    color : #0000AA;
+    letter-spacing : 0.2em;
+}
+p {
+    color : #000055;
+}
+.rbookmark {
+    font-size: small;
+}
+
+.hCalendarMonthYearRow {
+    font-size: medium;
+    font-weight: bold;
+    color: #0000AA;
+}
+.hCalendarDayNameRow {
+    font-size: x-small;
+    font-weight: bold;
+}
+.hCalendarDay {
+    font-size: x-small;
+}
+.hCalendarDayCurrent {
+    font-size: x-small;
+    font-weight: bold;
+    border-style: dashed;
+    border-width: thin;
+    border-color: #0000AA;
+    color: #0000AA;
+}
+.hCalendarNextPrev {
+    font-size: x-small;
+    font-weight: bold;    
+}
+</template><update-time>2002-03-23T08:37:54.000-05:00</update-time></page><weblog-category website-id="192168001002103214251964900032" id="192168001002103214251967900037"><description></description><image></image><name>Technology</name></weblog-category><weblog-category website-id="192168001002103214251964900032" id="192168001002103214251968900038"><description></description><image></image><name>Entertainment</name></weblog-category>
+</website><full-name>plat</full-name><password>plat</password><user-name>plat</user-name></export-user-data>
