@@ -1,0 +1,14 @@
+
+<ul class="rMenu">
+#foreach( $menu in $menuModel.getMenus() )
+    #foreach( $item in $menu.getMenuItems() )
+        #if( $item.isSelected( $req ) )<strong>#end
+    <li class="rMenuItem"><a
+        href="$item.getUrl( $ctx )"
+        title="$text.get( $menu.getName() ):$text.get( $item.getName() )"
+        >$text.get( $menu.getName() ):$text.get( $item.getName() )</a></li>
+        #if( $item.isSelected( $req ) )</strong>#end
+    #end
+#end
+</ul>
+

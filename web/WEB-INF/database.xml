@@ -1,0 +1,9 @@
+<!DOCTYPE database
+    PUBLIC "-//EXOLAB/Castor JDO Configuration DTD Version 1.0//EN"
+    "http://castor.exolab.org/jdo-conf.dtd">
+
+<database name="rollerdb" engine="@CASTOR_DATABASE_ENGINE@">
+    <jndi name="java:comp/env/jdbc/rollerdb" />
+    <mapping href="./mapping.xml" />
+</database>
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  #showContentLanguage($locale.language)
+    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
+  <link rel="stylesheet" type="text/css" href="#showThemePath("werner")/theme.css" />
+  <style type="text/css">
+    #includePage("_css")
+  </style>
+  <title>#showWebsiteTitle()</title>
+</head>
+
+<body>
+<div id="MainColumn">
+   <div align="center">
+       <h2>#showWebsiteTitle()</h2>
+       #showWeblogCategoryChooser()
+   </div>
+   #showNextPreviousLinks()
+   #showWeblogEntries("_day" 10)<br/>
+</div>
+
+<div id="SideBar">
+ <div class="namebox">
+   <br/>
+   A blog by
+   <br/>
+   $userName
+   <br/>
+   $obfuscatedEmail
+   <br/><br/>
+ </div>
+ <div class="menubox">
+ <h2 class="box">calendar</h2>
+ <center>#showWeblogCalendar()</center>
+ </div>
+
+ <div class="menubox"><h2 class="box">search</h2>
+  #showSearchForm()
+ </div>
+
+ <div class="menubox"><h2 class="box">navigation</h2>
+  #showBasicNavBar(true)
+  <br/>
+  #showEditorNavBar(true)
+ </div>
+
+ <div class="menubox"><h2 class="box">links</h2>
+  <br/>
+  #showBookmarks("Blogroll" true false )
+  <br/>
+  #showBookmarks("News" true false )
+  <br/>
+ </div>
+
+ <div class="menubox"><h2 class="box">rss feeds</h2>
+   #showRSSBadge()<br/>
+   #showRSSLinks()<br/>
+ </div>
+
+ <div class="menubox"><h2 class="box">referers</h2>
+   #showReferers(20 25)
+ </div>
+
+ <div class="menubox"><h2 class="box">design by</h2>
+   <a href="http://www.shiftat.com/blog/page/werner/">Werner Ramaeker</a>
+ </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+#set( $comments = $entry.comments )
+$dateFormatter.applyPattern("MMMMM dd, yyyy 'at' hh:mm aa z")
+<comments xmlns="http://www.joehewitt.com/content/blog.dtd"
+    entryid="$entry.Id">
+#foreach( $comment in $comments )
+  <comment id="$comment.id">
+  <author>$comment.name</author>
+  <email>$comment.email</email>
+  <url>$comment.url</url>
+  <timestamp>$dateFormatter.format($comment.postTime)</timestamp>
+  <body>$utilities.escapeHTML( $comment.content )</body>
+  </comment>
+#end
+</comments>
