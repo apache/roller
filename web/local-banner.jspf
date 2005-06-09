@@ -1,6 +1,0 @@
-        <h1>
-           <%= RollerContext.getRollerContext(request).getRollerConfig().getSiteName() %>
-        </h1>
-        <p class="websiteDescription">
-           <%= RollerContext.getRollerContext(request).getRollerConfig().getSiteDescription() %>
-        </p>

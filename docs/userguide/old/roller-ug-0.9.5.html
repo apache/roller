@@ -1,883 +1,0 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
-<head>
-                                    
-  <meta name="Generator" content="Workbench 6.0">
-                                    
-  <meta http-equiv="CONTENT-TYPE"
- content="text/html; charset=windows-1252">
-  <title>Roller User Guide</title>
-                                                                  
-  <meta name="AUTHOR" content="David Johnson">
-                                    
-  <meta name="CREATED" content="20020227;22544700">
-                                    
-  <meta name="CHANGEDBY" content="David Johnson">
-                                    
-  <meta name="CHANGED" content="20020403;23400900">
-                                    
-  <style>
-@page { margin-left: 1.25in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
-
-P
-{
-    margin-bottom : 0.08in;
-}
-
-P.western
-{
-    font-family : "Thorndale", serif;
-}
-
-H1
-{
-    margin-bottom : 0.08in;
-}
-
-H1.western
-{
-    font-family : "Albany", sans-serif;
-    font-size : 16pt;
-}
-
-H1.cjk
-{
-    font-family : "HG Mincho Light J";
-    font-size : 16pt;
-    font-weight : bold;
-}
-
-H1.ctl
-{
-    font-family : "Arial Unicode MS";
-    font-size : 16pt;
-    font-weight : bold;
-}
-
-  </style>
-</head>
-<body lang="en-US">
-               
-<h1 class="western">The Roller Weblogger</h1>
-               
-<p style="margin-top: 0.17in; page-break-after: avoid;"><font
- face="Albany, sans-serif"><font size="4">Version 0.9.5 User's Guide</font></font></p>
-               
-<p class="western"><i><font size="2">Copyright <font
- face="Times New Roman, serif">©</font>     2002 David M Johnson</font></i></p>
-               
-<p class="western"><font size="2"><i>Updated: August 28, 2002<br>
-</i></font></p>
-<p class="western"><font face="Albany, sans-serif" color="#ff0000"><font
- size="4">( new or previously undocumented features are shown in red )<br>
-<br>
-</font></font></p>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;"><a href="#introduction"><b>Introduction</b></a></p>
-           </li>
-           <li style="margin-bottom: 0in;">                              
-                    
-    <div><a href="#getting_started"><b>Getting started</b></a></div>
-                                                          
-    <ul>
-               <li style="margin-bottom: 0in;">Sign up for a new account</li>
-               <li style="margin-bottom: 0in;">Your initial website</li>
-                                                          
-    </ul>
-           </li>
-           <li style="margin-bottom: 0in;">                              
-                    
-    <div><a href="#editing_your_weblog"><b>Editing your weblog</b></a></div>
-                                                          
-    <ul>
-               <li style="margin-bottom: 0in;">Adding a new           entry</li>
-               <li style="margin-bottom: 0in;">Editing an old           entry</li>
-           <li style="margin-bottom: 0in;">Posting using a Blogger API client<br>
-           </li>
-                                                          
-    </ul>
-           </li>
-           <li style="margin-bottom: 0in;">                              
-                    
-    <div><a href="#editing_bookmarks"><b>Editing your bookmark collection</b></a></div>
-                                                          
-    <ul>
-               <li style="margin-bottom: 0in;">Adding new           bookmark
-  folders</li>
-               <li style="margin-bottom: 0in;">Adding bookmarks          to
- folders</li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">Importing Bookmarks
-in OPML format</font><br>
-      </li>
-                                                          
-    </ul>
-           </li>
-           <li style="margin-bottom: 0in;">                              
-                    
-    <div><a href="#editing_newsfeeds"><b>Editing your newsfeed collection</b></a></div>
-                                                          
-    <ul>
-               <li style="margin-bottom: 0in;">Adding and           deleting
-  newsfeeds</li>
-                                                          
-    </ul>
-           </li>
-           <li style="margin-bottom: 0in;">                              
-                    
-    <div><a href="#customizing_your_pages"><b>Customizing your pages</b></a></div>
-                                                          
-    <ul>
-               <li style="margin-bottom: 0in;">Creating and           editing
-  pages</li>
-               <li style="margin-bottom: 0in;">Your initial           pages:
-  Weblog,  _DayTemplate and _css</li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">Uploading files
-to Roller</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">Exporting your
-website data</font></li>
-                                                                
-    </ul>
-           </li>
-           <li style="margin-bottom: 0in;">                              
-                    
-    <div><a href="#macros_for_page"><b>Macros for use on Pages</b></a></div>
-                                                          
-    <ul>
-               <li style="margin-bottom: 0in;">$macros.showWeblogCategoryChooser(
-             boolean )</li>
-               <li style="margin-bottom: 0in;">$macros.showWeblogEntries()</li>
-               <li style="margin-bottom: 0in;">$macros.showWeblogCalendar()</li>
-               <li style="margin-bottom: 0in;">$macros.includePage(      
-   string ) </li>
-               <li style="margin-bottom: 0in;">$macros.showBookmarks(    
-     string, boolean )</li>
-      <li style="margin-bottom: 0in;">$macros.showEditorNavBar( boolean )</li>
-      <li style="margin-bottom: 0in;">$macros.showNavBar( boolean )<br>
-      </li>
-               <li style="margin-bottom: 0in;">$macros.showNewsfeeds( string
-)</li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showAllNewsfeeds()<br>
-        </font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showResourcePath()</font><br>
-      </li>
-               <li style="margin-bottom: 0in;">$macros.showRSSBadge()</li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showThemePath(
-string )</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showThemeImage(
-string, string )</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showThemeImagePath(
-string, string )</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showThemeScript(
-string, string )</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showThemeScriptPath(
-string, string )</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showThemeStyle(
-string, string, boolean )</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showThemeStyleImport(
-string, string )</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showThemeStylePath(
-string, string )</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showVersion()</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showWebsiteTitle()</font></li>
-      <li style="margin-bottom: 0in;"><font color="#ff0000">$macros.showWebsiteDescription()</font></li>
-         
-    </ul>
-                     
-    <ul>
-                                                          
-    </ul>
-           </li>
-           <li style="margin-bottom: 0in;">                              
-                    
-    <div><a href="#macros_for_day"><b>Macros for use on your DayTemplate
-page</b></a></div>
-                                                          
-    <ul>
-               <li style="margin-bottom: 0in;">$macros.showPermalink()</li>
-               <li style="margin-bottom: 0in;">$macros.showEntryDate()</li>
-               <li style="margin-bottom: 0in;">$entries</li>
-               <li style="margin-bottom: 0in;">$entry.title</li>
-               <li style="margin-bottom: 0in;">$entry.text</li>
-               <li style="margin-bottom: 0in;">$entry.updateTime</li>
-               <li style="margin-bottom: 0in;">$entry.pubTime</li>
-                                                          
-    </ul>
-           </li>
-               
-</ul>
-               
-<p style="margin-top: 0.17in; page-break-after: avoid;"><font
- face="Albany, sans-serif"><font size="4"><a name="introduction"></a></font></font><font
- face="Albany, sans-serif"><font size="4">Introduction</font></font></p>
-               
-<p style="margin-bottom: 0in;">Roller is a Weblogger.      Roller makes it
-   easy for you to maintain a weblog, even if you are have     little or no
-  knowledge of HTML.  All you have to do is go to a web site     that is
-running   the Roller software, sign up for an account and bam you     have
-a weblog.    You can start posting right away.  You will need to know a 
-   little about   HTML if you want to kick it up a notch by customizing the
-    layout of your  Weblog and adding new pages to your Weblog website. More
-on     that later.</p>
-               
-<p style="margin-bottom: 0in;">Please note that Roller     is currently beta
-quality code – not necessarily ready for prime time –     there are probably
-a number    of design flaws and an even larger number of     bugs.  As always
-with software   of all sorts, and especially pre-release     software such
-as this, use at  your own risk.</p>
-               
-<p style="margin-top: 0.17in; page-break-after: avoid;"><font
- face="Albany, sans-serif"><font size="4"><a name="getting_started"></a>Getting
-Started</font></font></p>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;"><b>Signing up for a new account</b></p>
-           </li>
-               
-</ul>
-               
-<p class="western">To sign-up for a Roller account, go the the main Roller
-       page and click on the link that reads “register as a new user.”  
-Enter your login name, your real name, your desired password, your e-mail
-     address, and pick one of the predefined Weblog themes provided by Roller.
- There is a basic theme, which is a very good starting point for those who
-wish to build their own themes.  And, there are three themes adapted from
-themes on <a href="http://www.blogskins.com">blogskins.com</a>: these are
-shown below.  <font color="#ff0000">There is also a new XHTML/CSS based theme
-called x2 that was contributed by Matt Raible.</font><br>
- </p>
- 
-<table cellpadding="10" cellspacing="2" border="0" width="100%">
-   <tbody>
-     <tr>
-       <td valign="top">                            
-      <div align="center"><a href="grey2.gif">grey2<br>
-       <br>
-       </a></div>
-                            
-      <div align="center"><a href="grey2.gif"><img src="grep2_.jpg"
- alt="" width="300" height="300">       </a><br>
-       </div>
-       </td>
-       <td valign="top">                            
-      <div align="center"><a href="pacifica.gif">pacifica<br>
-       </a></div>
-       <a href="pacifica.gif"><br>
-       </a>                            
-      <div align="center"><a href="pacifica.gif"><img
- src="pacifica_.jpg" alt="" width="300" height="300">       </a><br>
-       </div>
-       </td>
-     </tr>
-     <tr>
-       <td valign="top">                            
-      <div align="center"><a href="currency.gif">currency<br>
-       </a></div>
-       <a href="currency.gif"><br>
-       </a>                            
-      <div align="center"><a href="currency.gif"><img
- src="currency_.jpg" alt="" width="300" height="300">       </a><br>
-       </div>
-       </td>
-       <td valign="top" align="center"><a
- href="file:///C:/allfiles/src_cvs/roller_main/roller/docs/userguide/weblog.gif">basic<br>
-       <br>
-       </a><a href="weblog.gif"><img src="weblog_.jpg" alt=""
- width="300" height="276">      </a>      <br>
-       <br>
-       </td>
-     </tr>
-            
-  </tbody> 
-</table>
-               
-<p class="western">After your account is created you will be returned to the
-    main Roller page.  You will see that your name has been added to the
-list     of Roller users displayed on the main page. If you click on your
-name in     this list, you will be taken <span style="">to your     Weblog
-page.  </span></p>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;"><b>Your initial website</b></p>
-           </li>
-               
-</ul>
-               
-<p class="western">Your initial website will include just one webpage that
-   is     visible to your readers and that is named “Weblog.” This page  
- will include a navigation bar, a weblog category chooser, a weblog     calendar,
-  some links and a weblog area where your posts will appear.  The     screenshot
-  below shows what your page will look like if you chose the     Roller basic
-  theme:  </p>
-               
-<p class="western" align="center"><i><font size="2">Figure 1: your initial
-   Weblog page, assuming you chose the basic theme</font></i></p>
-               
-<p class="western" align="center">  <a href="weblog.gif"><img
- src="weblog_.jpg" alt="" width="300" height="276">      </a><br
- clear="left">
-           </p>
-               
-<ul>
-           <li>                                                    
-    <p class="western"><b>Logging in</b> </p>
-           </li>
-               
-</ul>
-               
-<p class="western">From your Weblog page or from the main Roller page, click
-       the Login link.  Enter your username and password, click submit, and
-   you     will be taken to your Weblob page again.  But this time, you will
-   see some     new Links on the page: Weblog:Edit, Weblog:Categories, Weblog:Flush-Cache,
-Bookmarks, Newsfeeds, and Website. These links lead you to pages for  editing
-     your Weblog, categories, bookmarks (AKA links), newsfeeds, and  the
-actual      pages that make up your website.  First, lets talk about how
-to edit your     Weblog.</p>
-               
-<p style="margin-top: 0.17in; page-break-after: avoid;"><font
- face="Albany, sans-serif"><font size="4"><a name="editing_your_weblog"></a></font></font><font
- face="Albany, sans-serif"><font size="4">Editing your Weblog</font></font></p>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;"><b>Adding a new entry</b></p>
-           </li>
-               
-</ul>
-               
-<p style="margin-bottom: 0in;"><span style="">Editing     your Weblog means
-   adding new Weblog entries to be enjoyed by your readers     and editing
- older  Weblog entries to correct mistakes, clarify points, or to     censor
- those  </span>drunken ramblings you entered last night.</p>
-               
-<p style="margin-bottom: 0in;">To add a new Weblog     entry you simply go
-   to the Edit-Weblog page, enter an optional title, enter     the Weblog
-entry,   choose a Weblog category. and hit the Submit button.  As     soon
-as you  do that, your Weblog entry is posted to your Weblog for the     world
-to see.  <br>
- </p>
- 
-<p style="margin-bottom: 0in;">Generally, you will not need to use the Flush
-Cache link on the Weblog:Edit page, unless you are using SQL to muck about
-in the Roller database and you want to force the cache to reset itself.  Normally,
-as you edit weblog entries, bookmarks, and other things Roller should automatically
-reset it's cache as needed.<br>
-   </p>
-                  
-<p style="margin-bottom: 0in;" align="center"><font size="2"><i>Figure   
-2: the Edit-Weblog page<br>
-      <br>
-      </i></font></p>
-           
-<div align="center">   </div>
-           
-<div align="center"><a href="edit-weblog.gif"><img
- src="edit-weblog_.jpg" alt="" width="300" height="421">      </a> <br
- clear="left">
-      </div>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;"><b>Editing an old entry</b></p>
-           </li>
-               
-</ul>
-               
-<p style="margin-bottom: 0in;">You can edit or remove     an old Weblog entry
-   by clicking on the Edit or Remove links in the Recent     Weblog Entries
-  part of the page.  If the Weblog entry that you want to edit     is not
-so  recent and is not shown in the Recent Weblog Entries list, then     you
-can  use the Weblog Entry Archive calendar to find that old entry.<br>
-     </p>
-         
-<ul>
-       <li style="margin-bottom: 0in;"><b>Posting using a Blogger API client</b><br>
-          </li>
-         
-</ul>
-                
-<p style="margin-bottom: 0in;">You can use any Blogger API client to post
-  and edit Roller weblog entries.  Before you can do this, you must go to
-the Roller Website:Settings menu and check the box that reads <i>Enable Blogger
- API for your weblog</i>.  You should also pick a category for posts made
-through the Blogger API.  <font color="#ff0000">Be aware that one shortcoming
-of Blogger API based blogging clients titles. The Blogger API does not support
-weblog entry titles.</font>   </p>
-     
-<p style="margin-bottom: 0in;">Once you have enabled Blogger API support
-for your weblog, you can use any Blogger API client to post and edit your
-Roller weblog. For example, you could use the <a
- href="http://wbloggar.com">w:bloggar</a>client.  Below is a screenshot of
-the w:bloggar client.  As you can see, you need to configure w:bloggar by
-entering your host name, port number, and the path /roller/xmlrpc into the
-w:bloggar Account Connection dialog-box.  You also need to enter your Roller
-username and password in to the w:bloggar login dialog.<br>
-   </p>
-     
-<p style="margin-bottom: 0in;" align="center"><a href="bloggar.jpg"><img
- alt="" src="bloggar_.jpg" width="300" height="289" border="0">   </a><br>
-</p>
-<p style="margin-bottom: 0in;" align="left"><br>
-<br>
-     </p>
-               
-<p style="margin-top: 0.17in; page-break-after: avoid;"><font
- face="Albany, sans-serif"><font size="4"><a name="editing_bookmarks"></a></font></font><font
- face="Albany, sans-serif"><font size="4">Editing your bookmark collection</font></font></p>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;"><b>Adding new bookmark         folders</b></p>
-           </li>
-               
-</ul>
-                  
-<p style="margin-bottom: 0in;">You probably already     have a web bookmark
-   collection stored in your web browser, so why do you     need to enter
-bookmarks   into Roller.  Well, most Weblog authors like to     include links
-to their   favorite websites and to their favorite Weblogs     right on their
-Weblog   page.  Roller's bookmark feature makes it easy for     you to do
-this too.</p>
-               
-<p style="margin-bottom: 0in;">Bookmarks are organized     in to named folders.
-    You can define any number of folders and each of     these folders can
- hold  any number of bookmarks.  There is only one level of     folders, so
- you cannot have a folder that contains other folders.  </p>
-               
-<p style="margin-bottom: 0in;">Your initial website     contains two bookmark
-   folders: one named “Blogrolling” that     contains Weblogging related links
-   and one named “News” that     contains links to well known news sources.
-   If you look at Figure 1 again,     you can see that these two folder are
-  displayed on the left side of the     Weblog page.  You can use Roller's
- bookmark management features to rename     these folders if you wish, or
-you can delete them add add folders of your     own choosing.</p>
-               
-<p style="margin-bottom: 0in;" align="center"><font size="2"><i>Figure   
-3: the Edit-Bookmark Folders page<br>
-      <br>
-      </i></font></p>
-           
-<div align="center">   </div>
-           
-<div align="center"><a href="edit-bookmark.gif"><img
- src="edit-bookmark_.jpg" alt="" width="300" height="355">      </a><br
- clear="left">
-      </div>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;">Adding bookmarks to         folders</p>
-           </li>
-               
-</ul>
-                  
-<p style="margin-bottom: 0in;">Once you have defined     one or more bookmark
-   folders, you can start adding bookmarks to those     folders.  From the
- Edit-Bookmark  Folders page, click the Edit link for the     Folder you wish
- to edit.  You  will be taken to the Edit-Bookmark Folder     page for that
- folder.  From  there you can edit the name of the folder and     you can
-add and remove bookmarks in that folder.</p>
-                  
-<p style="margin-bottom: 0in;" align="center"><font size="2"><i>Figure   
-4: the Edit-Bookmark Folder page</i></font></p>
-           
-<div align="center">     </div>
-           
-<p style="margin-bottom: 0in;" align="center"><a href="edit-folder.gif"><img
- src="edit-folder_.jpg" alt="" width="300" height="355">      </a><br>
-           </p>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;"><b>Editing a bookmark</b></p>
-           </li>
-               
-</ul>
-                  
-<p style="margin-bottom: 0in;">After you use the     Edit-Bookmark Folder
-   to add a bookmark, you can edit the Bookmark itself.      To edit a bookmark,
-   click on the Edit link in the Edit-Bookmark Folder     page.  That will
- take  you to the Edit-Bookmark page and from there you can     change the
- name,  description and display priority of the bookmark you have     chosen
- to edit.   You can also move the bookmark to another folder by     changing
- the Bookmark  Folder combo-box.</p>
-                  
-<p style="margin-bottom: 0in;" align="center"><font size="2"><i>Figure   
-5: the Edit-Bookmark page<br>
-      <br>
-      </i></font></p>
-           
-<div align="center">   </div>
-           
-<div align="center"><a href="edit-bookmark.gif"><img
- src="edit-bookmark_.jpg" alt="" width="300" height="355">      </a><br
- clear="left">
-      </div>
-           
-<p style="margin-bottom: 0in;">     <br>
-</p>
-<ul>
-  <li style="margin-bottom: 0in;"><b><font color="#ff0000">Importing Bookmarks
-in OPML format</font></b></li>
-</ul>
-<font color="#ff0000">Roller makes it easy to import bookmarks and build
-your blogroll by importing bookmarks in OPML format.  XBEL might be a better
-bookmarks format, but OPML is more popular in the world of weblogs.  To import
-bookmarks via OPML, follow these steps:</font><br>
-<ol>
-  <li><font color="#ff0000">download bookmarks in OPML format from a site
-such as Scripting.COM and save them as a file on your hard disk.</font></li>
-  <li><font color="#ff0000">Login to Roller and choose the Bookmarks:Import
-menu option.</font></li>
-  <li><font color="#ff0000">Use the file-upload capability to upload the
-OPML file into Roller.  The bookmarks will be imported into a folder called
-"unfiled".  You can use Roller to organize the bookmarks as you wish.</font>
- </li>
-</ol>
-           
-<p style="margin-bottom: 0in;"><br>
-           </p>
-               
-<p style="margin-top: 0.17in; page-break-after: avoid;"><font
- face="Albany, sans-serif"><font size="4"><a name="editing_newsfeeds"></a></font></font><font
- face="Albany, sans-serif"><font size="4">Editing your newsfeed collection</font></font></p>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;"><b>Adding and deleting         newsfeeds</b></p>
-           </li>
-               
-</ul>
-                  
-<p style="margin-bottom: 0in;">A newsfeed is a list of     news stories and
-   a short desciption of each story that is automically     retrieved from
- some  remote website.  Newsfeeds are delivered in a format     known as Really
-  Simple Syndication or Rich Site Summary or just RSS.  </p>
-                  
-<p style="margin-bottom: 0in;">Roller allows you to     include newsfeeds
-   on your Weblog page or on a separate page that you create     as part of
-  your Weblog's website.  Your initial website will include three     newsfeeds,
-   but none of these newsfeeds are displayed on your Weblog page.      You
- can  use one of the macros that we will discuss later to display your  
-  newsfeeds.</p>
-                  
-<p style="margin-bottom: 0in;">Before you include a     newsfeed on your website,
-you should probaby make sure that doing so is OK     with the provider of
-the newsfeed.  Some providers might frown upon this     and by frown I mean
-that they might sick a pack of rabid lawyers on your     ass.  Anyhow, use
-your own judgement here – I am not a lawyer and I     am not responsible for
-any of your current or future legal troubles.</p>
-                  
-<p style="margin-bottom: 0in;">To add a newsfeed you     need a URL to the
-   providers RSS feed.  This URL usually ends with the     letters “.xml”.
-  Enter the name that you would like to use for     the newsfeed, enter the
-  URL and hit enter to add the newsfeed.</p>
-               
-<p style="margin-top: 0.17in; page-break-after: avoid;"><font
- face="Albany, sans-serif"><font size="4"><a
- name="customizing_your_pages"></a></font></font><font
- face="Albany, sans-serif"><font size="4">Customizing your pages</font></font></p>
-               
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;"><b>Page templates and         macros</b></p>
-           </li>
-               
-</ul>
-                  
-<p style="margin-bottom: 0in;">Your Weblog page is     defined by a page template.
- A template is a file with some special “macros”     that indicate where
-Roller is supposed to put your Weblog, Weblog Calendar,     and other dynamically
-created content.  A templage can be an HTML file, an     HTML fragment, a
-CSS page, or just about anything else you can enter into     Roller as text.</p>
-                  
-<p style="margin-bottom: 0in;">You initial Roller     website has three page
-   template, only one of which is visible to users.      The pages are named
-   Weblog, _DayTemplate and _css.</p>
-                  
-<ul>
-           <li>                                                    
-    <p style="margin-bottom: 0in;">The <b>Weblog</b>         page is the visible
-page, it is the HTML template that defines your         Weblog.  It is a
-mix of HTML and Roller macros that render the dynamic         parts of the
-page like the Weblog Calendar and the actual Weblog         entries.</p>
-           </li>
-           <li>                                                    
-    <p style="margin-bottom: 0in;">The <b>_DayTemplate</b>         page is
-   the HTML template that defines the entries for each day are         formatted
-   in your Weblog page.  This is essentially an HTML fragment         with
- some  Roller macros for rendering the day's Weblog entries, title,      
- date,  and other items.</p>
-           </li>
-           <li>                                                    
-    <p style="margin-bottom: 0in;">The <b>_css</b>         page is a CSS style-sheet
-information that is included (using a macro)         on your Weblog page.</p>
-           </li>
-               
-</ul>
-                  
-<p style="margin-bottom: 0in;">You can define as many     pages as you would
-   like.  You must specify which page is to be your Default     Page, that
- is,  the page that your readers first see when they visit your     website.
-  You  must also specify which page is your Weblog day template.</p>
-                  
-<p style="margin-bottom: 0in;">Note that any page     whose name begins with
-   the underbar “_” character will not be     visible to your readers.  That
-   is why the _DayTemplate and _css pages start     with underbars, they are
-   used internally and are not meant for public     consumption.  </p>
-                  
-<p style="margin-bottom: 0in;" align="center"><font size="2"><i>Figure   
-6: the Edit-Website page</i></font></p>
-           
-<div align="center">     </div>
-           
-<p style="margin-bottom: 0in;" align="center"><a href="edit-website.gif"><img
- src="edit-website_.jpg" alt="" width="300" height="355">      </a><br>
-      </p>
-           
-<p style="margin-bottom: 0in;">     If you click on one of     the Current
-   Pages in the Edit-Website page, you will be directed to the     Edit-Page
-   page so that you can edit that page.  You can put anything on a     page,
-   but typically you will put HTML with some Roller macros mixed in.     Next
-  you will read about the various Roller macros that are available for  
-  your use.</p>
-                  
-<p style="margin-bottom: 0in;">The screenshot below     shows the Weblog page
-being edited in the Edit-Page page.</p>
-                  
-<p style="margin-bottom: 0in;" align="center"><font size="2"><i>Figure   
-7:  the Edit-Page page</i></font></p>
-           
-<div align="center">      </div>
-           
-<p style="margin-bottom: 0in;" align="center"><a href="edit-page.gif"><img
- src="edit-page_.jpg" alt="" width="300" height="346">      </a><br>
-      </p>
-           
-<p style="margin-bottom: 0in;">     </p>
-<font color="#ff0000"><br>
-</font><br>
-<ul>
-  <li><font color="#ff0000"><b>Uploading images to Roller</b></font></li>
-</ul>
-<font color="#ff0000">Roller now includes a file-upload feature that allows
-you to upload images and other file for use in your weblog templates.  Here
-are the steps to upload and image to Roller and to use it in a weblog template:</font>
-<ol>
-  <li><font color="#ff0000">Use the Weblog:File menu option to upload your
-image file</font></li>
-  <li><font color="#ff0000">Use the Weblog:Pages menu to edit one of your
-templates.  Place the HTML IMG tag where you want the image to appear and
-use $macros.showResourcePath() directive to build the URL for the image.
- For example, if your image was called leo.gif you might insert an IMG tag
-like this: <b>&lt;</b></font><b><font color="#ff0000">img src="$macros.showResourcePath()/leo.gif"
-alt="one happy baby" /&gt;</font></b></li>
-</ol>
-<ul>
-  <li><b><font color="#ff0000">Exporting your website data</font></b></li>
-</ul>
-<font color="#ff0000">Your Roller administrator should be using some sort
-of database utility to back up the Roller database on a regular basis. If
-you are worried that backups are not being done and you want to store a copy
-of your Roller data on your personal computer, you can use Roller's new export
-capability to export your weblog data in Roller's XML format.  Currently,
-there is no import facility for Roller XML so in the case of data-loss you
-will need your administrator's help to recreate your user.</font><br>
-               <br>
-<p style="margin-bottom: 0in;"><font face="Albany, sans-serif"><font
- size="4"><a name="macros_for_page"></a></font></font><font
- face="Albany, sans-serif"><font size="4">Macros intended for use on    
-any page template</font></font></p>
-               
-<p style="margin-bottom: 0in;">Macros tell Roller     where to place the dynamic
-parts of your web pages.  Macros are actually     Velocity expressions. For
-more information on Velocity, visit the Velocity     web site and read  
- the Velocity     User's Guide. Note <span
- style="background: transparent none repeat scroll 50% 0%;">that I     use
-  the term macro loosely, but it does have a specific meaning in     Velocity.
-    What I call a macro is really a Velocity expression.</span></p>
-               
-<blockquote>                           
-  <p style="margin-bottom: 0in;"><b>$macros.EditorNavBar(     booean ) </b>
-   - show your website's editor navigation bar: a list of links     to each
-  of the Edit pages that you can use to edit your website.  The macro    takes
-  one boolean (true or false) argument.  If you enter true, then the    
-navbar   will be drawn vertically.  If you enter false, then the navbar will
-    be  drawn horizontally.</p>
-     
-  <p style="margin-bottom: 0in;"><b>$macros.showNavBar(     boolean ) </b>
-   - show your website's navigation bar: a list of links to each     of the
-  visible pages in your weblog.  The macro takes one boolean (true or    false)
- argument.  If you enter true, then the navbar will be drawn     vertically.
-   If you enter false, then the navbar will be drawn horizontally.<br>
-  </p>
-     
-  <p style="margin-bottom: 0in;"><font color="#ff0000"><b>$macros.showNewsfeed(
-string )</b> - displays the newsfeed specified by name.</font></p>
-     
-  <p style="margin-bottom: 0in;"><font color="#ff0000"><b>$macros.showAllNewsfeeds()</b>
-- displays all newsfeeds that you have defined.  Warning: if you have defined
-a lot of newsfeeds this can be very slow.  </font></p>
-                                                          
-  <p style="margin-bottom: 0in;"><b>$macros.showWeblogCategoryChooser(   
-boolean )</b> - show the Weblog Category chooser: a list of links to the 
-      different categories of posts in your Weblog.  The boolean argument
-     determines if the chooser should be drawn horizontally or vertcally.</p>
-                                
-  <p style="margin-bottom: 0in;"><b>$macros.showWeblogEntries()</b>     -
-   show the most recent entries in your Weblog.</p>
-                                
-  <p style="margin-bottom: 0in;"><b>$macros.showWeblogCalendar() </b><span
- style="">-     show your Weblog Calendar: a calendar with links to your previous
-Weblog     entries.</span></p>
-                                
-  <p style="margin-bottom: 0in;"><b>$macros.includePage(     string )</b>
-    - includes the content of another page template, specified by     name.</p>
-                                
-  <p style="margin-bottom: 0in;"><font color="#ff0000"><b>$macros.showResourcePath()</b>
-- show path to your resources directory so that you can create URLs to images
-and other files that you uploaded to Roller.<br>
-  </font><br>
-  <b>$macros.showRSSBadge()</b>     - shows    an XML icon that links to
-an RSS representation of your most recent     Weblog  entries. <br>
-  <br>
-  </p>
-  <font color="#ff0000"><b>$macros.showThemePath( string )</b> - shows base
-URL for reaching theme resources in the theme specified.<br>
-  <br>
-  </font>    <font color="#ff0000"><b>$macros.showThemeImage( string, string
-)</b> - shows image tag for specified theme and image.<br>
-  <b>arg1 </b>- theme name<br>
-  <b>arg2</b> - image name<br>
-  <br>
-  </font>    <font color="#ff0000"><b>$macros.showThemeImagePath( string,
-string )</b> - shows path to image specified by theme and name. <b><br>
-arg1 </b>- theme name<br>
-  <b>arg2 </b>- image name</font>  <br>
-  <br>
-  <font color="#ff0000"><b>$macros.showThemeScript( string, string ) </b>-
-shows Javascript tag for specified theme and script name.<br>
-  </font>  <font color="#ff0000"><b>arg1 </b>- theme name<br>
-  <b>arg2 </b>- script name<br>
-  <br>
-  </font>  <font color="#ff0000"><b>$macros.showThemeScriptPath( string,
-string )</b> - shows URL path to Javascript script in specified theme.</font><font
- color="#ff0000"><b><br>
-arg1 </b>- theme name<br>
-  <b>arg2 </b>- script name<br>
-  <br>
-  </font>    <font color="#ff0000"><b>$macros.showThemeStyle( string, string,
-boolean )</b> - includes CSS script in page<br>
-  </font>  <font color="#ff0000"><b>arg1 </b>- </font><font
- color="#ff0000">stylesheet </font><font color="#ff0000">name<br>
-  <b>arg2 </b>- script name<br>
-  <b>arg3</b> - true to import the CSS file instead of including it in the
-page<br>
- <br>
-  </font>  <font color="#ff0000"><b>$macros.showThemeStyleImport( string,
-string )</b> - imports CSS in page.<br>
-  </font>  <font color="#ff0000"><b>arg1 </b>- stylesheet name<br>
-  <b>arg2 </b>- script name<br>
-  <br>
-  </font>  <font color="#ff0000"><b>$macros.showThemeStylePath( string, string
-)</b> - shows URL path to stylesheet in specified theme.<br>
-  <br>
-  </font>    <font color="#ff0000"><b>$macros.showVersion()</b> - shows  Roller
-version number<br>
-  <br>
-  </font>    <font color="#ff0000"><b>$macros.showWebsiteTitle()</b> - shows
-website title specified on Weblog:Settings page<br>
-  <br>
-  </font>    <font color="#ff0000"><b>$macros.showWebsiteDescription()</b>
-- shows website description specified on Weblog:Settings page.</font><br>
-  <br>
-      </blockquote>
-                                 
-<p style="margin-top: 0.17in; page-break-after: avoid;"><font
- face="Albany, sans-serif"><font size="4"><a name="macros_for_day"></a></font></font><font
- face="Albany, sans-serif"><font size="4">Macros intended for use on your
-   day template page</font></font></p>
-               
-<p class="western">Your Day Template page determines how each day of Weblog
-       entries is formatted on the page by the <span style="">$macros.showWeblogEntries()
-       </span>macro. See the </p>
-           
-<blockquote>                           
-  <p style="margin-bottom: 0in;"><font color="#ff0000"><b>$macros.showDayPermalink()
-    </b>- shows    an icon that provides a permanent link to this day in
-your     Weblog.<br>
-  </font></p>
-  <p style="margin-bottom: 0in;">                           </p>
-  <p style="margin-bottom: 0in;"><font color="#ff0000"><b>$macros.showEntryPermalink(
-$entry )     </b>- shows    a hashmark (#) that provides a permanent link
-to this entry in your     Weblog. <br>
-  </font></p>
-                                
-  <p style="margin-bottom: 0in;"><b>$macros.showEntryDate()     </b>- shows
-   the day's date.</p>
-                                
-  <p style="margin-bottom: 0in;"><b>$entries</b> - this     Velocity expression
-   is a collection of Weblog entry objects for this day.     Each entry has
-  the following properties:</p>
-                                
-  <p style="margin-bottom: 0in;"><b>$entry.title</b> -     title of the Weblog
-   entry</p>
-                                
-  <p style="margin-bottom: 0in;"><b>$entry.text</b> -     the text of the
-   Weblog entry</p>
-                                
-  <p style="margin-bottom: 0in;"><b>$entry.updateTime</b>     - the time of
-last update for the Weblog entry</p>
-                                
-  <p style="margin-bottom: 0in;"><b>$entry.pubDate</b> -     the original
-   publish time for the Weblog entry</p>
-      </blockquote>
-                                       
-<p style="margin-top: 0.17in; page-break-after: avoid;"><font
- face="Albany, sans-serif"><font size="4">Examples</font></font></p>
-               
-<p style="margin-bottom: 0in;">Here is the weblog page     template for the
-  basic theme, shown in figure 1 (macros are shown in blue):</p>
-           
-<blockquote>                           
-  <pre>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;<br>&lt;html&gt;&lt;head&gt;  <br>&lt;title&gt;<font
- color="#3333ff">$macros.showWebsiteTitle()</font>&lt;/title&gt;     <br>&lt;style type="text/css"&gt;<font
- color="#3333ff">$macros.includePage("_css")</font>  <br>&lt;/style&gt;<br>&lt;/head&gt;<br>&lt;body background="/roller/images/bg-greylines.gif"&gt; <br>&lt;table cellpadding="5" cellspacing="15" border="0" align="center" width="95%"&gt;   <br>   &lt;tr&gt;    <br>   &lt;td width="20%" valign="top" bgcolor="#ffffff"&gt;      <br>      <font
- color="#3333ff">$macros.showNavBar(true)</font>&lt;br&gt; <font
- color="#3333ff">      <br>      $macros.showEditorNavBar(true)</font>&lt;br&gt;<br>      <font
- color="#3333ff">$macros.showBookmarks("Blogrolling",true)</font>&lt;br&gt;       <br>      <font
- color="#3333ff">$macros.showBookmarks("News",true) </font>   <br>   &lt;/td&gt;    <br>   &lt;td width="60%" valign="top" bgcolor="#ffffff"&gt;                <br>      &lt;h2&gt;<font
- color="#3333ff">$macros.showWebsiteTitle()</font>&lt;/h2&gt;                       <br>      <font
- color="#3333ff">$macros.showWeblogCategoryChooser()</font>&lt;br&gt;       <br>      <font
- color="#3333ff">$macros.showWeblogEntries()</font>    <br>   &lt;/td&gt;    <br>   &lt;td valign="top" bgcolor="#ffffff" width="20%"&gt;         <br>      <font
- color="#3333ff">$macros.showWeblogCalendar()</font>&lt;br&gt;       <br>      <font
- color="#3333ff">$macros.showRSSBadge()</font>    <br>   &lt;/td&gt; <br>   &lt;/tr&gt;<br>&lt;/table&gt;                  <br>&lt;/body&gt;&lt;/html&gt;<br></pre>
-      </blockquote>
-               
-<p style="margin-bottom: 0in;">Here is the Day     Template for the Weblog
-   shown in figure 1:</p>
-           
-<blockquote>                           
-  <pre>&lt;table width="95%"&gt;<br>&lt;tr&gt;<br>   &lt;td&gt;<br>   <font
- color="#3333ff">$macros.showPermalink()<br>   $macros.showEntryDate()</font><br>   &lt;/td&gt;<br>&lt;/tr&gt;<br>&lt;/table&gt;<br><font
- color="#3333ff">#foreach( $entry in </font><font color="#3333ff">$entries )</font><br>&lt;p&gt;<br>   &lt;b&gt;<font
- color="#3333ff">$entry.title</font>&lt;/b&gt; <font color="#3333ff">$entry.text</font> <br>   &lt;font size="2"&gt;(<font
- color="#3333ff">$entry.updateTime</font>/<font color="#3333ff">$entry.pubTime</font>)&lt;/font&gt;<br>&lt;/p&gt;<br><font
- color="#3333ff">#end</font><br><br></pre>
-      </blockquote>
-           
-<pre><br></pre>
-           <br>
-     <br>
-    <br>
-   <br>
-  <br>
- <br>
-<br>
-<br>
-<br>
-</body>
-</html>
