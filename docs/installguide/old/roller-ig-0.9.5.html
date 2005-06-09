@@ -1,0 +1,493 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+         	                                                
+  <meta http-equiv="CONTENT-TYPE"
+ content="text/html; charset=windows-1252">
+  <title>Roller Installation Guide</title>
+                                                         	 	            
+                                   
+  <meta name="GENERATOR" content="OpenOffice.org 641  (Win32)">
+         	                                                
+  <meta name="AUTHOR" content="David Johnson">
+         	                                                
+  <meta name="CREATED" content="20020227;22544700">
+         	                                                
+  <meta name="CHANGEDBY" content="David Johnson">
+         	                                                
+  <meta name="CHANGED" content="20020402;22274900">
+         	                                                
+  <style>
+	<!--
+		@page { margin-left: 1.25in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
+		P { margin-bottom: 0.08in }
+		P.western { font-family: "Thorndale", serif }
+		H1 { margin-bottom: 0.08in }
+		H1.western { font-family: "Albany", sans-serif; font-size: 16pt }
+		H1.cjk { font-family: "HG Mincho Light J"; font-size: 16pt; font-weight: bold }
+		H1.ctl { font-family: "Arial Unicode MS"; font-size: 16pt; font-weight: bold }
+	-->
+	</style>
+</head>
+<body lang="en-US">
+                 
+<h1 class="western">The Roller Weblogger</h1>
+                 
+<p style="margin-top: 0.17in; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4">Version 0.9.5 Installation Guide</font></font></p>
+                 
+<p class="western"><i><font size="2">Copyright <font
+ face="Times New Roman, serif">©</font> 2002 David M Johnson</font></i><br>
+   Updated: August 31, 2002<br>
+   </p>
+                 
+<p class="western"><font size="2"><i><sdfield type="DATETIME"
+ sdval="37348.000005787" sdnum="1033;1033;MMMM D, YYYY"></sdfield></i></font></p>
+                  
+<h1 class="western">Introduction</h1>
+                 
+<p style="margin-bottom: 0in;">This document describes how to install the
+    Roller weblogger on the Tomcat Servlet Engine and assumes the following
+  configuration.</p>
+                  
+<ul>
+         	<li>                                                          
+                  
+    <p style="margin-bottom: 0in;">Java 1.4 	SDK</p>
+         	</li>
+          <li>                                                          
+                  
+    <p style="margin-bottom: 0in;">Tomcat 4.0.4 	Servlet Container</p>
+         	</li>
+          <li>                                                          
+                  
+    <p style="margin-bottom: 0in;">A MySQL 3.2.3, Postgres, or HSQL database </p>
+         	</li>
+          <li>                                                          
+                  
+    <p style="margin-bottom: 0in;">Windows XP or 	Redhat 7.2 Linux</p>
+         </li>
+               
+</ul>
+                  
+<p style="margin-bottom: 0in;">If you have more recent versions of the above
+    software, don't worry – Roller will probably work fine.  If you have
+older     versions of the above software, you may have problems.  Roller
+will not   work  on Tomcat 3.X, but older versions of Java and MySQL may
+work fine for  Roller.   </p>
+                  
+<p style="margin-bottom: 0in;">You should be able to make Roller work on
+any Servlet API 2.3 compatible Servlet Container (e.g. Resin, Orion, WebSphere,
+  WebLogic, ...) and any JDBC-accessible database (e.g. Oracle, Informix,
+  ...), but this document does not tell you how to do that.<br>
+   <br>
+   </p>
+                  
+<h1 class="western">Overview</h1>
+                 
+<blockquote>                                                
+  <p style="margin-bottom: 0in;"><b>1. Prerequisites.  </b><span
+ style="">Before you get to Roller, make sure your Java SDK, Tomcat Servlet
+  Container, and MySQL database are correcly installed on your system.</span></p>
+                                                       
+  <ol>
+         	                                                 
+  </ol>
+                                                       
+  <p style="margin-bottom: 0in;"><b>2. Unpack the downloaded ZIP or TAR file.
+      </b><span style=""> In this step, you unpack the ZIP or TAR file that
+  downloaded  into your Servlet Container's web application deployment directory.</span></p>
+                                                       
+  <p style="margin-bottom: 0in;"><b>3. Create Roller tables in your database.</b><span
+ style=""> In this step you use an SQL script to create within your database
+    the tables required to run Roller.</span></p>
+                                                       
+  <p style="margin-bottom: 0in;"><b>4. Configure Roller's Servlet Context.
+   </b><span style="">Edit the Tomcat configuration file to add a Servlet
+Context to do Servlet Authentication against the Roller database, and configure
+a connection pooling datasouce for access via JNDI.<br>
+     </span></p>
+                                                 
+  <p style="margin-bottom: 0in;"><span style=""></span><b>5. Make JDBC driver
+available to Tomcat. </b> To support Servlet Authentication that you configured
+in step 4, you must place your JDBC driver jar(s) in Tomcat's common/lib
+directory.</p>
+                 
+  <p style="margin-bottom: 0in;"><b>6. Configure Roller before start-up.</b>
+ Review the Roller configuration settings in Roller's web.xml before you
+start Roller.</p>
+              
+  <p style="margin-bottom: 0in;"><b>7. Start your Servlet  Container 	and
+your database.  </b><span style="">Start your 	Servlet Container,  open your
+web browser, browse to the Roller start 	page and start using Roller.<br>
+     <br>
+     </span></p>
+        </blockquote>
+                             
+<h1 class="western">Six steps to installing Roller</h1>
+                 
+<p style="margin-top: 0.17in; page-break-after: avoid;"> <b><font
+ face="Albany, sans-serif"><font size="4">STEP 1: Prerequisites</font></font></b></p>
+                 
+<p class="western" style="">You need to JDK 1.4, Tomcat 4.0.4, either a MySQL,
+Postgres or HSQL database; and either Windows NT/2000/XP or UNIX</p>
+               
+<p class="western" style="">Make sure all these prerequisites are installed,
+    configured and ready to go before you begin the install</p>
+               
+<p class="western" style="">As part of the Tomcat 4.0 install, you should
+    have set an environment variable called CATALINA_HOME</p>
+               
+<blockquote>                                                
+  <p class="western" style=""><font color="#0000ff">UNIX (csh) example</font></p>
+                                                       
+  <p class="western" style=""><font color="#0000ff">	<b><font size="2"><font
+ face="Courier New, monospace">setenv CATALINA_HOME /opt/jakarta-tomcat-4.0.4</font></font></b></font></p>
+                                                       
+  <p class="western" style=""><font color="#0000ff">Windows NT/2000/XP example</font></p>
+                                                       
+  <p class="western"><font color="#0000ff"><span style="">	</span><b><font
+ size="2"><font face="Courier New, monospace">set CATALINA_HOME d:\jakarta-tomcat-4.0.4
+      </font></font></b></font> </p>
+        </blockquote>
+                       
+<p style="margin-top: 0.17in; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+<b>   STEP 2: Unpack the downloaded ZIP   or TAR file</b></font></font></p>
+                 
+<p style="margin-bottom: 0in;">In this step, you unpack the ZIP or TAR file
+    that downloaded into your Servlet Container's web application deployment
+   directory.  Tomcat's deployment directory is located in the <b><font
+ face="Courier, monospace">webapps</font></b> directory of the Tomcat install
+    directory.   </p>
+                  
+<blockquote>                                                
+  <p style="margin-bottom: 0in;"><font color="#0000ff">UNIX example</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff"><font
+ face="Courier, monospace">	<b><font size="2"><font
+ face="Courier New, monospace">% cp roller.tgz $CATALINA_HOME/webapps</font></font></b></font></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        % cd $CATALINA_HOME/webapps</b></font></font></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        % tar xzvf roller.tgz</b></font></font></font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">Windows example</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	<b>Use WinZIP to
+extract roller.zip into %CATALINA_HOME%\webapps</b></font></p>
+        </blockquote>
+                         
+<p style="margin-top: 0.17in; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+<b>   STEP 3: Create Roller tables in   your database</b></font></font></p>
+                 
+<p style="margin-bottom: 0in;">Now you need to create a new database,  create
+a user with appropriate privileges, and use an SQL script to create  the database
+tables required to run Roller.   <br>
+</p>
+<p style="margin-bottom: 0in;">To do this, login to your database and run
+one of the Roller database creation scripts located in Roller's WEB-INF directory:<br>
+</p>
+<blockquote>           
+  <p style="margin-bottom: 0in;"><b>createdb-mysql.sql</b> - creates tables
+for MySQL<br>
+  <b>createdb-hsql.sql</b> - creates tables for HSQL-DB<br>
+  <b>createdb-postgres.sql</b> - creates tables for Postgres<br>
+  </p>
+</blockquote>
+<p style="margin-bottom: 0in;">The examples below show you  how you might
+do this using MySQL, assuming your Roller user will have username <i>roller
+ </i>and password <i>tiger.  </i>For more information on MySQL, refer to
+the<a href="http://www.mysql.org/documentation/mysql/bychapter/"> MySQL Reference
+Manual</a>. <br>
+</p>
+<blockquote>                    
+  <p style="margin-bottom: 0in;"><font color="#0000ff">UNIX example</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	<b><font
+ size="2"><font face="Courier New, monospace">% cd $CATALINA_HOME/webapps/roller/WEB-INF</font></font></b></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        % mysql -u roller -p</b></font></font></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        password: *****</b></font></font></font><font color="#0000ff"><font
+ face="Courier New, monospace"><font size="2"><b><br>
+        mysql&gt; create database roller;<br>
+  mysql&gt; grant all on roller.* to roller indentified by 'tiger';<br>
+  mysql&gt; use roller;</b></font></font></font><font color="#0000ff"><font
+ face="Courier New, monospace"><font size="2"><b><br>
+        mysql&gt; source createdb-mysql.sql</b></font></font></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        mysql&gt; quit</b></font></font></font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">Windows example</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	From an MS-DOS or
+    Command Prompt window:</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	<b><font
+ size="2"><font face="Courier New, monospace">C&gt; cd %CATALINA_HOME%\webapps\roller\WEB-INF</font></font></b></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        C&gt; mysql -u roller -p</b></font></font></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        password: *****</b></font></font></font><font color="#0000ff"><font
+ face="Courier New, monospace"><font size="2"><b><br>
+        mysql&gt; create database roller;</b></font></font></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+    </b></font></font></font><font color="#0000ff"><font
+ face="Courier New, monospace"><font size="2"><b>mysql&gt; grant all on roller.*
+ to roller indentified by 'tiger';<br>
+   </b></font></font></font><font color="#0000ff"><font
+ face="Courier New, monospace"><font size="2"><b>      mysql&gt; use roller;</b></font></font></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        mysql&gt; source createdb-mysql.sql</b></font></font></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        mysql&gt; quit</b></font></font></font></p>
+        </blockquote>
+                                     
+<p style="margin-bottom: 0in;"><b>NOTES: </b><br>
+</p>
+<blockquote><i>If you are upgrading from Roller 0.9.4 you can upgrade your
+database using one of the 094-to-095-micrgration.sql scripts.  This is a
+risky operation so you might want to backup your database before you run
+the migration script.  The migration script will save the old Roller tables
+with names that start with "temp_" and you should not drop these backup tables
+until you are satisfied that your data base made it through the migration.</i><br>
+</blockquote>
+                                              
+<p style="margin-top: 0.17in; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><b>   STEP 4: Configure Roller's
+Servlet Context</b> <span style=""> </span></font></font>  </p>
+                 
+<p style="margin-bottom: 0in;"><span style="">Edit the Tomcat Servlet engine's
+ <b>conf/server.xml</b> configuration file to add a the Roller Servlet Context.
+  This is where you configure the Servlet Authentication to use the Roller
+ database tables and where you configure the Roller datasource.  </span> 
+Look for the section of the server.xml file where Contexts are defined and
+assuming that you are using MySQL you should add the following:<br>
+    </p>
+       
+<p style="margin-bottom: 0in;"><small><font
+ face="Courier New, Courier, monospace"><b><font color="#3333ff">       
+&lt;Context path="/roller" docBase="roller" debug="0"&gt;<br>
+   </font></b></font></small></p>
+     
+<blockquote>                                                
+  <p class="western"><font color="#0000ff"><font
+ face="Courier New, monospace"><font size="2"><b>        &lt;!-- Config Servlet
+ Authentication to use Roller's USER and ROLE tables --&gt;<br>
+           &lt;Realm className="org.apache.catalina.realm.JDBCRealm"    
+  <br>
+                    debug="0" driverName="<font color="#ff0000">org.gjt.mm.mysql.Driver</font>"<br>
+                    connectionURL=<br>
+                    "<font color="#ff0000">jdbc:mysql://localhost/roller?autoReconnect=true&amp;amp;user=</font><font
+ color="#ff0000">roller&amp;amp;password=</font><font color="#ff0000">tiger</font>"<br>
+                    userTable="rolleruser" userNameCol="username" userCredCol="password"<br>
+                    userRoleTable="role" roleNameCol="role" /&gt;</b></font></font></font></p>
+        </blockquote>
+     
+<p style="margin-bottom: 0in;"><small><font
+ face="Courier New, Courier, monospace"><b><font color="#3333ff">       
+    &lt;!-- Config datasource to be bound to java:comp/env/jdbc/rollerdb</font></b></font></small>
+ --&gt;<br>
+  <small><font face="Courier New, Courier, monospace"><b><font
+ color="#3333ff">            &lt;Resource name="jdbc/rollerdb" auth="Container"<br>
+                    type="javax.sql.DataSource"/&gt;</font></b></font></small></p>
+       
+<p style="margin-bottom: 0in;"><small><font
+ face="Courier New, Courier, monospace"><b><font color="#3333ff">       
+    &lt;ResourceParams name="jdbc/rollerdb"&gt;<br>
+                    &lt;parameter&gt;<br>
+                        &lt;name&gt;factory&lt;/name&gt;<br>
+                        &lt;value&gt;org.apache.commons.dbcp.BasicDataSourceFactory&lt;/value&gt;<br>
+                    &lt;/parameter&gt;<br>
+                    &lt;parameter&gt;&lt;name&gt;maxActive&lt;/name&gt;&lt;value&gt;20&lt;/value&gt;&lt;/parameter&gt;<br>
+                    &lt;parameter&gt;&lt;name&gt;maxIdle&lt;/name&gt;&lt;value&gt;30000&lt;/value&gt;&lt;/parameter&gt;<br>
+                    &lt;parameter&gt;&lt;name&gt;maxWait&lt;/name&gt;&lt;value&gt;100&lt;/value&gt;&lt;/parameter&gt;<br>
+                    &lt;parameter&gt;&lt;name&gt;username&lt;/name&gt;&lt;value&gt;<font
+ color="#ff0000">roller</font>&lt;/value&gt;&lt;/parameter&gt;<br>
+                    &lt;parameter&gt;&lt;name&gt;password&lt;/name&gt;&lt;value&gt;<font
+ color="#ff0000">tiger</font>&lt;/value&gt;&lt;/parameter&gt;<br>
+                    &lt;parameter&gt;<br>
+                        &lt;name&gt;driverClassName&lt;/name&gt;&lt;value&gt;<font
+ color="#ff0000">org.gjt.mm.mysql.Driver</font>&lt;/value&gt;<br>
+                    &lt;/parameter&gt;<br>
+                    &lt;parameter&gt;<br>
+                        &lt;name&gt;url&lt;/name&gt;&lt;value&gt;<font
+ color="#ff0000">jdbc:mysql://localhost/roller?autoReconnect=true</font>&lt;/value&gt;<br>
+                    &lt;/parameter&gt;<br>
+                &lt;/ResourceParams&gt;</font></b></font></small></p>
+       
+<p style="margin-bottom: 0in;"><small><font
+ face="Courier New, Courier, monospace"><b><font color="#3333ff">       
+&lt;/Context&gt;</font></b></font></small><br>
+    </p>
+       
+<p style="margin-bottom: 0in;">NOTES:<br>
+</p>
+  
+<blockquote>           
+  <p style="margin-bottom: 0in;"><i>If you are not using MySQL, then you
+will have to substitute the appropriate JDBC connection parameters (driver
+class name and connection URL) for your database. <br>
+  </i>  </p>
+           
+  <p style="margin-bottom: 0in;"><i>For more information on Tomcat's server.xml
+configuration file, refer to the <a
+ href="http://jakarta.apache.org/tomcat/tomcat-4.0-doc/config/index.html">Tomcat
+Configuration Reference</a>.</i></p>
+</blockquote>
+        
+<p style="margin-bottom: 0in;"></p>
+                                       
+<p style="margin-top: 0.17in; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+</font></font><font face="Albany, sans-serif"><font size="4"><b>   STEP 5:
+Make JDBC driver available to Tomcat</b></font></font></p>
+<p style="margin-top: 0.17in; page-break-after: avoid;">To support Servlet
+Authentication that you configured in step 4, you must place your JDBC driver
+jar(s) in Tomcat's common/lib directory.  The MySQL driver jar is include
+in the Roller distribution so for MySQL you might do this as follows:<br>
+</p>
+<blockquote>                                                
+  <p style="margin-bottom: 0in;"><font color="#0000ff">UNIX example</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	<b><font
+ size="2"><font face="Courier New, monospace">% cd $CATALINA_HOME/webapps/roller/WEB-INF/lib</font></font></b></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        % cp mm.mysql-2.0.12.bin.jar $CATALINA_HOME/common/lib</b></font></font></font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff"><font
+ face="Courier, monospace"><b>		</b></font></font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">Windows example</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	From an MS-DOS or
+    Command Prompt window:</font></p>
+                                                       
+  <p style="margin-bottom: 0in;">	</p>
+                 
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	<b><font
+ size="2"><font face="Courier New, monospace">&gt; cd %CATALINA_HOME%\webapps\roller\WEB-INF\lib</font></font></b></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        &gt; copy mm.mysql-2.0.12.bin.jar %CATALINA_HOME%\common\lib</b></font></font></font></p>
+                 
+  <p style="margin-bottom: 0in;"></p>
+        </blockquote>
+<h3><font face="Albany, sans-serif"><font size="4"><br>
+   STEP 6: Configure Roller before start-up</font></font></h3>
+<p style="margin-top: 0.17in; page-break-after: avoid;">The Roller web.xml
+file includes the following configuration parameters.  If in doubt, don't
+change these values - the defaults are pretty reasonable.<br>
+</p>
+<blockquote>              
+  <p style="margin-top: 0.17in; page-break-after: avoid;"><b>org.roller.rss.usePor</b><b>t</b>
+- true if the item URLs created in by the RSS feature should include the Servlet
+engine's port number.  The default is <b>false</b>, but you might want to
+turn this on if you are running Tomcat behind an Apache web server.<br>
+  <br>
+  <b>org.roller.new.user.allow</b> - allow new users to be added to Roller.
+ Defaults to <b>true</b>.<br>
+  <br>
+  <b>org.roller.upload.enabled</b> - true to enable file upload. Defaults
+to true.<br>
+  </p>
+              
+  <p style="margin-top: 0.17in; page-break-after: avoid;"><b>org.roller.upload.maxFileMB</b>
+- maximum size in megabytes of file that users are allowed to upload. Defaults
+to <b>1</b>.<br>
+  </p>
+              
+  <p style="margin-top: 0.17in; page-break-after: avoid;"><b>org.roller.upload.maxDirMB</b>
+- maximum size in megabytes of each user's upload directory. Defaults to 
+ <b>4</b>.<br>
+  </p>
+              
+  <p style="margin-top: 0.17in; page-break-after: avoid;"><b>org.roller.upload.allow</b>
+- comma separated list of file extensions allowed in upload directory.  Defaults
+to <b>jpg,jpeg,gif,png</b>.  Forbid and Allow are mutually exclusive so set
+only one of the two.<br>
+  </p>
+              
+  <p style="margin-top: 0.17in; page-break-after: avoid;"><b>org.roller.upload.forbid</b>
+- comma separated list of file extensions forbidden in the upload directory.
+ Defaults to nothing.<br>
+  </p>
+              
+  <p style="margin-top: 0.17in; page-break-after: avoid;"><b>org.roller.upload.dir</b>
+- directory where files are to be uploaded, may end with a slash.   Defaults
+to empty string which indicates that files will be uploaded to the /resources
+directory in the Roller Servlet Context.<br>
+  </p>
+              
+  <p style="margin-top: 0.17in; page-break-after: avoid;"><b>org.roller.upload.path</b>
+- URL path to upload directory, should not end with a slash.  Defaults to
+/resources which works well when the upload directory default.</p>
+</blockquote>
+<p style="margin-top: 0.17in; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+<b>   STEP 7: Start Tomcat and start using Roller</b></font></font></p>
+                 
+<p style="margin-bottom: 0in;">Start your Servlet Container, open your web
+    browser, browse to the Roller start page and start using Roller.</p>
+                  
+<blockquote>                                                
+  <p style="margin-bottom: 0in;"><font color="#0000ff">UNIX example, starting
+    Tomcat</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	<b><font
+ size="2"><font face="Courier New, monospace">% cd $CATALINA_HOME/bin</font></font></b></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        % ./startup.sh</b></font></font></font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff"><font
+ face="Courier, monospace"><b>		</b></font></font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">Windows example, starting
+    Tomcat</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	From an MS-DOS or
+    Command Prompt window:</font></p>
+                                                       
+  <p style="margin-bottom: 0in;"><font color="#0000ff">	<b><font
+ size="2"><font face="Courier New, monospace">C&gt; cd %CATALINA_HOME%\bin</font></font></b></font><font
+ color="#0000ff"><font face="Courier New, monospace"><font size="2"><b><br>
+        C&gt; startup</b></font></font></font></p>
+        </blockquote>
+                           
+<p style="margin-top: 0.17in; page-break-after: avoid;"><font
+ face="Albany, sans-serif"><font size="4"><br>
+   References</font></font></p>
+                  
+<ul>
+          <li><b>Velocity - <a href="http://jakarta.apache.org/velocity">http://jakarta.apache.org/velocity</a></b></li>
+          <li><b>Castor – <a href="http://castor.exolab.org/">http://castor.exolab.org</a></b></li>
+          <li><b>Mysql – <a href="http://mysql.com/">http://mysql.com</a></b></li>
+          <li><b>JDK 1.4 – <a href="http://javasoft.com/">http://javasoft.com</a></b></li>
+          <li><b>Tomcat 4.0 – <a href="http://jakarta.apache.org/tomcat">http://jakarta.apache.org/tomcat</a></b></li>
+          <li><b>Redhat Linux 7.2 – <a href="http://redhat.com/">http://redhat.com</a></b></li>
+          <li><b>Windows XP – <a href="http://microsoft.com/">http://microsoft.com</a></b></li>
+               
+</ul>
+                       
+<p style="margin-bottom: 0in;"><br>
+         </p>
+                 
+<p style="margin-bottom: 0in;"><br>
+         </p>
+            <br>
+     <br>
+    <br>
+   <br>
+  <br>
+ <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+</html>

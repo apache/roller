@@ -1,0 +1,3 @@
+<property name="rollerjars.dir" value="../../build/roller/WEB-INF/lib" />
+<property name="planetjars.dir" value="./web/WEB-INF/lib" />
+<property name="planet.version" value="1.1-dev" />

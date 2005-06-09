@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" href="twocol.css" type="text/css" />
+	<title>Blog Together</title>
+</head>
+<body>
+<div id="container">
+
+<!-- head ================================================================ -->
+<div id="head">
+#set($group = $planet.getGroup($groupHandle))
+<h1>$group.title</h1>
+$group.description
+</div>
+
+<!-- left ================================================================ -->
+<div id="left">
+   <p>An aggregated weblog that includes these weblogs:</p>
+   #foreach ($sub in $group.subscriptions)
+      <a href="$sub.siteUrl">$sub.title</a><a href="$sub.feedUrl">(feed)</a><br />
+   #end
+   <p />
+   <a href="$planet.configuration.siteUrl/${groupHandle}.rss"><img class="button"
+      src="rss20.png" alt="[RSS 2.0 Feed]" height="15" width="80"></a>
+   <br />
+   <br />
+   <a href="$planet.configuration.siteUrl/${groupHandle}.opml"><img class="button"
+      src="opml.png" alt="[OPML Subscriptions]" height="15" width="80"></a>
+</div>
+
+<!-- right =============================================================== -->
+<div id="right">
+&nbsp;
+</div>
+
+<!-- center ============================================================== -->
+<div id="center">
+HI
+#set($entries = $planet.getAggregation($group, $group.maxPageEntries))
+#foreach($entry in $entries)
+<div class="entry"> 
+   <h3>
+       <a href="$entry.subscription.siteUrl" title="$entry.subscription.title">
+       #if ($entry.author) $entry.author
+       #else $utilities.truncateNicely($entry.subscription.title, 15, 20, "...")
+       #end
+       </a> - <a href="$entry.permalink">$entry.title</a>
+       <br /><span  style="font-size:small">[$entry.getCategoriesAsString("|")]</span>
+   </h3>
+   <div class="date">
+      <a href="$entry.permalink">$entry.published</a> 
+   </div>
+$entry.content
+</div>
+#end
+</div>
+
+<!-- footer -->
+<div id="foot">&nbsp;</div>
+
+</div>
+
+</body>
+</html>

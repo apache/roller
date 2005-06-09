@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!--
+  This file defines what properties are made available to get/set
+  during the running of the Roller application.  These properties
+  are stored in the database and the code *must* be able to make
+  use of changed values during runtime.
+  
+  Also included in this file is meta-data which defines what class
+  of property we are dealing with, it's default value, and information
+  on how to populate the display that allows for changing the value.
+  
+  NOTE: order does matter!!  the display is populated in a linear fashion
+	starting from the first display-group and moving down.
+-->
+
+<runtime-configs> 
+
+ <!--
+   The global-properties represents the base set of roller runtime properties.
+   In *most* cases you should be putting your properties here and they can
+   then be changed from the admin configuration page at ...
+        /admin/rollerConfig.do
+ -->
+ <config-def name="global-properties">
+
+   <!-- Site Settings Group -->
+   <display-group name="siteSettings" key="configForm.siteSettings" >
+   
+      <property-def  name="site.name"  key="configForm.siteName">
+         <type>string</type>
+	 <default-value>Roller Site</default-value>
+      </property-def>
+      <property-def  name="site.description"  key="configForm.siteDescription">
+         <type>string</type>
+	 <default-value>Roller Site</default-value>
+      </property-def>
+      <property-def  name="site.adminemail"  key="configForm.siteAdminEmail">
+         <type>string</type>
+	 <default-value></default-value>
+      </property-def>
+      <property-def  name="site.absoluteurl"  key="configForm.absoluteUrl">
+         <type>string</type>
+	 <default-value></default-value>
+      </property-def>
+      <property-def name="site.linkbacks.enabled" key="configForm.enableLinkback">
+         <type>boolean</type>
+	 <default-value>false</default-value>
+      </property-def>
+      <property-def name="pings.suspendPingProcessing" key="configForm.suspendPingProcessing">
+         <type>boolean</type>
+	 <default-value>false</default-value>
+      </property-def>
+      
+   </display-group >
+
+   <!-- User Settings Group -->
+   <display-group name="userSettings" key="configForm.userSettings" >
+   
+      <property-def  name="users.registration.enabled"  key="configForm.allowNewUsers">
+         <type>boolean</type>
+	 <default-value>true</default-value>
+      </property-def>
+      <property-def  name="users.themes.path"  key="configForm.newUserThemes">
+         <type>string</type>
+	 <default-value>/themes</default-value>
+      </property-def>
+      <property-def  name="users.editor.pages"  key="configForm.editorPages">
+         <type>text</type>
+	 <default-value>editor-ekit.jsp,editor-text.jsp,editor-dhtml.jsp,editor-text-js.jsp,editor-wiki-js.jsp,editor-rte.jsp</default-value>
+         <rows>3</rows>
+         <cols>40</cols>
+      </property-def>
+      <property-def  name="users.comments.autoformat"  key="configForm.autoformatComments">
+         <type>boolean</type>
+	 <default-value>true</default-value>
+      </property-def>
+      <property-def  name="users.comments.escapehtml"  key="configForm.escapeCommentHtml">
+         <type>boolean</type>
+	 <default-value>false</default-value>
+      </property-def>
+      <property-def  name="users.comments.emailnotify"  key="configForm.emailComments">
+         <type>boolean</type>
+	 <default-value>true</default-value>
+      </property-def>
+
+   </display-group >
+   
+   <!-- File Upload Settings Group -->
+   <display-group name="uploadSettings" key="configForm.fileUploadSettings" >
+   
+      <property-def  name="uploads.enabled"  key="configForm.enableFileUploads">
+         <type>boolean</type>
+	 <default-value>true</default-value>
+      </property-def>
+      <property-def  name="uploads.types.allowed"  key="configForm.allowedExtensions">
+         <type>string</type>
+	 <default-value>jpg,jpeg,gif,png</default-value>
+      </property-def>
+      <property-def  name="uploads.types.forbid"  key="configForm.forbiddenExtensions">
+         <type>string</type>
+	 <default-value></default-value>
+      </property-def>
+      <property-def  name="uploads.file.maxsize"  key="configForm.maxFileSize">
+         <type>string</type>
+	 <default-value>1.00</default-value>
+      </property-def>
+      <property-def  name="uploads.dir.maxsize"  key="configForm.maxDirSize">
+         <type>string</type>
+	 <default-value>4.00</default-value>
+      </property-def>
+
+   </display-group >
+   
+   <!-- Debugging Settings Group -->
+   <!--
+   <display-group name="debuggingSettings" key="configForm.debuggingSettings" >
+   
+      <property-def  name="debug.memory.enabled"  key="configForm.enableMemoryDebugging">
+         <type>boolean</type>
+      </property-def>
+
+   </display-group >
+   -->
+   
+   <!-- Spam Prevention Settings Group -->
+   <display-group name="spamSettings" key="websiteSettings.spamPrevention" >
+   
+      <property-def  name="spam.referers.ignorewords"  key="websiteSettings.ignoreUrls">
+         <type>text</type>
+	 <default-value></default-value>
+         <rows>7</rows>
+         <cols>40</cols>
+      </property-def>
+
+   </display-group >
+   
+ </config-def>
+ 
+</runtime-configs>

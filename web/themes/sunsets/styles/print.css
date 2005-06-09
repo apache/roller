@@ -1,0 +1,27 @@
+body {
+    background-color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+}
+
+div#badges, div#header, div.comments-form, a.entrycommentslink, 
+a.entrypermalink, div.trackbackUrl, div.commentTwisty, div#search {
+    display: none !important;
+}
+
+div#footer, div#footer a {
+    background: transparent;
+    color: #ffffff;
+}
+
+div#footer span.copyright {
+    background: transparent;
+    color: #666666;
+}
+
+div.entry {
+    background-color: #eeeeee;
+    border: 1px solid #c0c0c0;
+    color: #000000;
+    margin: 0px 0px 10px 0px;
+}

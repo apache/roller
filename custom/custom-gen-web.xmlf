@@ -1,0 +1,9 @@
+
+<!--  Custom classes to include in Struts and web generation 
+<fileset dir="${basedir}/custom/src" includes="**/*Data.java" />
+
+<fileset dir="${basedir}/sandbox/planetroller/src" includes="**/*Data.java" />
+<fileset dir="${basedir}/sandbox/planetroller/src" includes="**/*Action.java" />
+<fileset dir="${basedir}/sandbox/planetroller/src" includes="**/*FormEx.java" />
+<fileset dir="${basedir}/sandbox/planetroller/src" includes="**/*Servlet.java" />
+-->
