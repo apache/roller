@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding='utf-8'?>
+#set($group = $planet.getGroup($groupHandle))
+<opml version="1.1">
+<head>
+   <title>$group.description</title>
+   <dateCreated>$utilities.formatRfc822Date($date)</dateCreated>
+   <dateModified>$utilities.formatRfc822Date($date)</dateModified>
+   <ownerName>$planet.configuration.adminName</ownerName>
+   <ownerEmail>$planet.configuration.adminEmail</ownerEmail>
+</head>
+<body>
+#foreach($sub in $group.subscriptions)
+   <outline text="$utilities.textToHTML($sub.title)" 
+          xmlUrl="$utilities.textToHTML($sub.feedUrl)" 
+         htmlUrl="$utilities.textToHTML($sub.siteUrl)" />
+#end
+</body>
+</opml>

@@ -1,0 +1,55 @@
+
+<!-- Defines the Roller Editor GUI menu and roles allowed to use each menu. -->
+
+<menu-bar>
+
+    <menu name="tabbedmenu.main">
+        <menu-item name="tabbedmenu.planet" forward="planet" 
+        	   enabledProperty="planet.aggregator.enabled" />
+        <menu-item name="tabbedmenu.main" forward="main" 
+            disabledProperty="planet.aggregator.enabled" />
+    </menu>
+    
+    <menu name="tabbedmenu.weblog" roles="editor,admin">
+        <menu-item name="tabbedmenu.weblog.newEntry"   forward="weblogCreate" />
+        <menu-item name="tabbedmenu.weblog.archives"    forward="weblogQuery" />
+        <menu-item name="tabbedmenu.weblog.categories"  forward="categories" />
+        <menu-item name="tabbedmenu.weblog.referers"    forward="referers" />
+        <menu-item name="tabbedmenu.weblog.pingSetup"   forward="pingSetup"
+          disabledProperty="pings.disablePingUsage"/>
+        <menu-item name="tabbedmenu.weblog.customPingTargets" forward="customPingTargets"
+          disabledProperty="pings.disallowCustomTargets"/>
+        <!-- I haven't tested these yet...
+        <menu-item name="tabbedmenu.weblog.export"      forward="exportEntries" />
+        <menu-item name="tabbedmenu.weblog.import"      forward="importEntries" />
+        -->
+    </menu>
+
+    <menu name="tabbedmenu.bookmarks" roles="editor,admin">
+        <menu-item name="tabbedmenu.bookmarks.allFolders" forward="bookmarks" />
+        <menu-item name="tabbedmenu.bookmarks.import"     forward="importBookmarks" />
+    </menu>
+
+    <menu name="tabbedmenu.website" roles="editor,admin">
+        <menu-item name="tabbedmenu.website.settings" forward="editWebsite" />
+        <menu-item name="tabbedmenu.website.themes"   forward="editTheme" />
+        <menu-item name="tabbedmenu.website.pages"    forward="editPages" />
+        <menu-item name="tabbedmenu.website.files"    forward="uploadFiles" />
+        <menu-item name="tabbedmenu.website.user"     forward="editUser" />
+        <menu-item name="tabbedmenu.website.maintenance" forward="maintenance" />
+    </menu>
+
+    <menu name="tabbedmenu.admin" roles="admin">
+        <menu-item name="tabbedmenu.admin.config"     forward="rollerConfig" />
+        <menu-item name="tabbedmenu.admin.userAdmin"  forward="adminUser" />
+        <menu-item name="tabbedmenu.admin.createUser"  forward="createUser" />
+        <menu-item name="tabbedmenu.admin.pingTargets" forward="commonPingTargets"/>
+    </menu>
+
+    <menu name="tabbedmenu.planet" roles="admin" enabledProperty="planet.aggregator.enabled">
+        <menu-item name="tabbedmenu.admin.planetConfig"         forward="planetConfig" />
+        <menu-item name="tabbedmenu.admin.planetSubscriptions"  forward="planetSubscriptions" />
+        <menu-item name="tabbedmenu.admin.planetGroups"         forward="planetGroups" />
+    </menu>
+
+</menu-bar>

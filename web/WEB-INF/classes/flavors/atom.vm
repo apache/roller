@@ -1,0 +1,29 @@
+$pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1.0" encoding='utf-8'?>
+<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+    <title>$utilities.textToHTML($website.name,true)</title>
+    <tagline>$utilities.textToHTML($website.description,true)</tagline>
+    <link rel="alternate" type="text/html" href="$websiteURL" />
+    <modified>$utilities.formatIso8601Date($updateTime)</modified>
+    <generator url="http://www.rollerweblogger.org" version="#showVersion() ($rollerBuildTime:$rollerBuildUser)">Roller Weblogger</generator>
+    #if( $userName != "zzz_none_zzz" )
+    <author>
+      <name>$fullName</name>
+      <url>$websiteURL</url>
+    </author>
+    #end
+    #set( $entries = $pageModel.getRecentWeblogEntriesArray($entryCount, 'nil') )
+    #foreach( $entry in $entries )
+    <entry>
+        <title>$utilities.textToHTML($entry.title,true)</title>
+        <issued>$utilities.formatIso8601Date($entry.pubTime)</issued>
+        <created>$utilities.formatIso8601Date($entry.pubTime)</created>
+        <modified>$utilities.formatIso8601Date($entry.updateTime)</modified>
+        #if( $userName == "zzz_none_zzz" )
+        <author><name>$entry.website.user.fullName</name></author>
+        #end
+        <link rel="alternate" type="text/html" href="$absBaseURL$entry.permaLink"/>
+        <id>tag:$host,$utilities.formatIso8601Day($entry.pubTime):/$entry.website.user.userName?anchor=$entry.anchor</id>
+        <content type="text/html" mode="escaped">#showEntryDescription($entry)</content>
+    </entry>
+    #end
+</feed>

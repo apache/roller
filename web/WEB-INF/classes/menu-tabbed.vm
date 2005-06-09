@@ -1,0 +1,55 @@
+
+
+<table class="tmTabTable" cellspacing="0" >
+<tr>
+  #foreach( $menu in $menuModel.getMenus() )
+    #if( $menu.isPermitted( $req ) )
+	    #if( $menu.isSelected( $req ) )
+	  	<td class="tmSelectedSepLeft"></td>
+	    <td class="tmSelectedMenu">
+	    #else
+	  	<td class="tmSepLeft"></td>
+	    <td class="tmMenu">
+	    #end
+	
+	    <a href="$menu.getUrl( $ctx )">$text.get( $menu.getName() )</a> 
+	
+	    </td>
+	    #if( $menu.isSelected( $req ))
+	  	<td class="tmSelectedSepRight"></td>
+	    #else
+	  	<td class="tmSepRight"></td>
+	    #end
+    #end
+  #end
+</tr>
+</table>
+
+<table class="tmItemTable" cellspacing="0">
+<tr>
+  <td class="tmItemLeft"></td>
+  <td class="tmItemCell">
+  #set( $count = 0 )
+  #set( $currentMenu = $menuModel.getSelectedMenu( $req ) )
+  #if( $currentMenu.isPermitted( $req ) ) 
+    #foreach( $item in $currentMenu.getMenuItems() )
+      #if ($item.isPermitted($req))
+          #if ( $count > 0 )
+            &nbsp;|&nbsp; 
+          #end
+    
+          #if ( $item.isSelected( $req ) )
+          <a class="tmItemLinkSelected" href="$item.getUrl($ctx)">$text.get( $item.getName() )</a> 
+    	      #else
+          <a class="tmItemLink" href="$item.getUrl($ctx)">$text.get( $item.getName() )</a> 
+          #end
+    
+          #set( $count = $count + 1 )
+      #end
+    #end
+  #end
+  </td>
+  <td class="tmItemRight"></td>
+</tr>
+</table>
+

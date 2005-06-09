@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+<channel>
+  <!-- Special Archive version of RSS2, created by Roller -->
+  <title>$utilities.textToHTML($website.name,true)</title>
+  <description>$utilities.textToHTML($website.description,true)</description>
+  <language>$website.locale</language>
+  <copyright>Copyright #formatDate("yyyy" $now)</copyright>
+
+  #foreach( $entry in $entries )
+  <item>
+    <title>$utilities.textToHTML($entry.title,true)</title>
+    <description><![CDATA[$entry.text]]></description>
+    <category>$entry.category.path</category>
+    <pubDate>$utilities.formatRfc822Date($entry.pubTime)</pubDate>
+    <guid isPermaLink="false">$entry.id</guid>
+  </item>
+  #end
+</channel>
+</rss>

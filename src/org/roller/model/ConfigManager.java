@@ -1,0 +1,2 @@
+/*
+ * Created on Feb 4, 2004 */package org.roller.model;import org.roller.RollerException;import org.roller.pojos.RollerConfigData;import java.io.Serializable;/** * @author lance.lavandowska */public interface ConfigManager extends Serializable {    /** Release any resources used */    public void release();    public void storeRollerConfig( RollerConfigData data ) throws RollerException;        public RollerConfigData getRollerConfig() throws RollerException;        public RollerConfigData readFromFile(String filePath) throws RollerException;}

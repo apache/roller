@@ -1,0 +1,14 @@
+@import url(simple.css);
+
+div#header {
+    background: #000 url(../images/cherryEve.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 150px;
+}
+
+div.entry {
+    background: #909;
+    color: #fff;
+    border: 1px solid #000;
+}

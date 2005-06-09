@@ -1,0 +1,129 @@
+body {
+	margin:0px;
+	padding:0px;
+	font-family:verdana, arial, helvetica, sans-serif;
+	color:#333;
+	background-color:white;
+	}
+h1 {
+	margin:0px 0px 15px 0px;
+	padding:0px;
+	font-size:28px;
+	line-height:28px;
+	font-weight:900;
+	color:#ccc;
+	}
+p {
+	margin:0px 0px 16px 0px;
+	padding:0px;
+	}
+#Content>p {margin:0px;}
+#Content>p+p {text-indent:30px;}
+
+a {
+	color:#09c;
+	font-size:11px;
+	text-decoration:none;
+	font-weight:600;
+	font-family:verdana, arial, helvetica, sans-serif;
+	}
+a:link {color:#09c;}
+a:visited {color:#07a;}
+a:hover {background-color:#eee;}
+
+span.rChosenCategory { 
+	font-size:11px;
+	text-decoration:none;
+	font-weight:600;
+	font-family:verdana, arial, helvetica, sans-serif;
+}
+
+#Header {
+	margin:10px 0px 38px 0px;
+	padding:10px 0px 0px 20px;
+	/* For IE5/Win's benefit height = [correct height] + [top padding] + [top and bottom border widths] */
+	height:54px; /* 42px + 10px + 2px = 21px*/
+	border-style:solid;
+	border-color:black;
+	border-width:1px 0px 1px 0px ; /* top and bottom borders: 1px; left and right borders: 0px */
+	line-height:11px;
+	background-color:#eee;
+	voice-family: "\"}\"";
+	voice-family:inherit;
+	height:42px; /* the correct height */
+	}
+body>#Header {height:42px;}
+
+#Content {
+
+
+	font:11px/20px verdana, arial, helvetica, sans-serif;
+	margin:0px 50px 50px 200px;
+	padding:10px;
+	}
+
+#Menu {
+	font-size:11px;
+	text-decoration:none;
+	font-weight:600;
+	font-family:verdana, arial, helvetica, sans-serif;
+	position:absolute;
+	top:100px;
+	left:20px;
+	width:172px;
+	padding:10px;
+	background-color:#eee;
+	border:1px dashed #999;
+	line-height:17px;
+/* Again, the ugly brilliant hack. */
+	voice-family: "\"}\"";
+	voice-family:inherit;
+	width:150px;
+	}
+/* Again, "be nice to Opera 5". */
+body>#Menu {width:150px;}
+
+.hCalendarMonthYearRow {
+    font-size: 12px;
+    font-weight: bold;
+    color: #0000AA;
+}
+.hCalendarDayNameRow {
+    font-size: 10px;
+    font-weight: bold;
+}
+.hCalendarDay {
+    font-size: 10px;
+}
+.hCalendarDayCurrent {
+    font-size: 10px;
+    font-weight: bold;
+    border-style: dashed;
+    border-width: thin;
+    border-color: #0000AA;
+    color: #0000AA;
+}
+.hCalendarNextPrev {
+    font-size: 10px;
+    font-weight: bold;    
+}
+.contactme {
+    font-weight: normal;
+    font-size: 10px;
+}
+.rFolder {
+	border-style:dashed;
+	border-color:#999;
+	border-width:0px 0px 1px 0px ;
+}
+.entry {
+	margin: 10px 0px;
+	border-style:solid;
+	border-color:#c0c0c0;
+	border-width:1px;
+	padding:5px;
+}
+.entrytitle {
+    font-size: 14px;
+    padding: 0px 0px 10px 0px
+}        

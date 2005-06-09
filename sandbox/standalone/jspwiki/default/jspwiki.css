@@ -1,0 +1,254 @@
+/* Put all generic definitions here. */
+H1,H2,H3,H4 { font-family: Arial, Helvetica, sans-serif }
+DIV.small   { font-size: 70%; }
+H1.pagename { margin-top: 0; }
+IMG.inline  {}
+
+A.footnoteref { vertical-align: super; 
+                font-size: 70%; }
+A.footnote    { color: #0044AA; }
+P.versionnote { color: red;
+                font-size: 130%;
+                text-align: center; 
+                background: #EAEAEA;
+                padding: 12px 12px 12px 12px;
+                }
+
+/* Added in v1.5.1 */
+
+H3.leftmenuheading { margin-top: 0; }
+BODY.edit   { background-color: #D9E8FF } /* Edit.jsp BODY element */
+TD.leftmenu { }                            /* Left menu */
+TD.page     { }                            /* Page data area */
+A.wikipage  { }                            /* Normal, internal wiki reference */
+A.external  { }                            /* External reference */
+A.interwiki { }                            /* Interwiki reference */
+
+/* Added in 1.6.3 */
+TD.diffadd  { background: #99FF99; 
+              font-family: monospace; }
+TD.diffrem  { background: #FF9933; 
+              font-family: monospace; }
+TD.diff     { background: #FFFFFF; 
+              font-family: monospace; }
+
+/* Added in 1.6.9 */
+
+TABLE.wikitable { }
+TABLE.wikitable * TD { text-align: left; }
+TABLE.wikitable * TH { }
+
+/* Added in 1.6.13 */
+
+/* This is the Edit.jsp editor style */
+TEXTAREA.editor {}
+
+/* Added in 1.9.20 */
+
+/* The text how the "This is a preview" comment should be shown. */
+.previewnote { text-align: center; 
+                font-size: 150%; 
+                    color: red; }
+
+/* How the preview content should be shown */
+.previewcontent { background: #E0E0E0; }
+
+/* How the system messages should be shown (DisplayMessage.jsp) */
+.messagecontent { background: #E0E0E0; }
+
+/* How the "This page has been modified..." -comment should be shown. */
+
+.conflictnote { }
+
+/* For the weblog plugin */
+
+.weblog { margin-left: 20px; }
+
+.weblogentry { }
+
+.weblogentryheading { background: #E0E0E0;
+                      font-size: 120%;
+                      font-family: sans-serif; 
+                      margin-top: 2ex; }
+
+.weblogentrybody { font-family: sans-serif; 
+                   font-size: 85%; 
+                   margin-left: 10px; }
+
+.weblogentryfooter { font-size: 9px; 
+                     margin-left: 10px;
+                     clear: both; }
+
+P.locknote { color: red;
+             font-size: 130%;
+             text-align: center; 
+             background: #EAEAEA;
+             padding: 12px 12px 12px 12px;
+             }
+
+/* For the CalendarTag */
+TABLE.calendar  { font-size: 80%; }
+TABLE.calendar TD { text-align: center; }
+
+TABLE.calendar TD.othermonth { color: #707070; }
+
+TABLE.calendar TD.link { background: #E0E0E0; }
+
+TABLE.calendar TR.month { font-size: 120%;
+                          font-family: sans-serif; }
+TABLE.calendar TR.weekdays { font-color: #FF0000; }
+
+/* For the BreadcrumbsTag */
+.breadcrumbs { font-size: 60%; }
+
+/* For the image plugin tag. */
+.imageplugin { margin: 5px 5px 5px 5px; }
+.imageplugin img { border: 0; }
+.imageplugin caption { font-size: 80%; }
+
+/* For the search_highlight.js.  This style defines the how the words that have
+   been found look like.  If you look for "thingy", you will get these following
+   in the results.
+
+   <span class="searchword">thingy</span>
+ */
+.searchword { background-color: #FFFF00; }
+
+/* For the weblogarchive plugin. */
+
+.weblogarchive { }
+
+.weblogarchive ul { margin-top: 0px;
+                    padding: 0px; }
+
+.weblogarchive li { display: block;
+                    list-style-type: none;
+                    margin-left: 1em; }
+
+.archiveyear { font-weight: bold;
+               text-decoration: none;
+               margin-left: 0px !important; }
+.archiveyear:after { content: " AD" }
+
+/*  Here's a nice style you can use to put comment boxes on pages.  It's used
+    on some pages. */
+
+div.commentbox {
+   float:right;
+   width: 20%;
+   border-style: inset;
+   background: #f0f0f0;
+   font-size: 80%;
+   padding: 4px;
+   margin-left: 4px;
+}
+
+.commentbox ul, ol {
+   padding-left: 1em;
+   margin-left: 4px;
+}
+
+
+
+
+
+/* rollerwiki layout.css */
+
+body {
+    background: white repeat-y url(images/leftbar-blue.png);
+    margin: 0;
+    padding: 0;
+    font:small Verdana,Arial,Sans-serif;
+    color:#333;
+}
+
+div#header {
+    border-top: 1px solid white; /* for some reason, this fixes safari */
+    background: white repeat-x url(images/header-grey.png);
+    height:74px;
+    padding: 5px;
+}
+
+div#content {
+    margin: 0 0 0 136px;
+    padding: 10px;
+}
+
+div#left { 
+    position: absolute;
+    left: 0px;
+    width: 125px;
+    padding: 5px;
+}
+
+div#footer {
+    margin-top:40px;
+    border-top: 1px gray dotted;
+    width: 100%;
+    text-align: left;
+}
+
+div#separator {
+    background: transparent;
+    border-top: 1px solid #C0C0C0;
+    color: #666666;
+    font-size: 0.9em;
+    margin-top: 30px;
+    padding: 5px 0px 10px 5px;
+    text-align: left;
+}
+
+div#loginTable {
+    margin: 20px;
+    border: 1px solid #C0C0C0;
+    color: inherit;
+    padding: 10px 5px 0px 5px;
+    width: 350px;
+}
+
+/* rollerwiki roller.css */
+
+body {
+    background: white repeat-y url(images/leftbar-blue.png);
+    margin: 0;
+    padding: 0;
+    font:small Verdana,Arial,Sans-serif;
+    color:#333;
+}
+
+h1 {
+    background: transparent;
+    color: #5454d1;
+    letter-spacing: 0.2em;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+h2 {
+    background: #e0e0ff;
+    border-top: 1px solid grey;
+    padding:2px;
+    color: #5454d1;
+    letter-spacing: 0.2em;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+h3 {
+    background: #e0e0ff;
+    border-top: 1px solid grey;
+    padding:2px;
+    color: #5454d1;
+    letter-spacing: 0.2em;
+    font-size: large;
+    font-weight: bold;
+}
+
+h4 {
+    background: transparent;
+    color: #5454d1;
+    letter-spacing: 0.2em;
+    font-size: large;
+    font-weight: bold;
+}
+

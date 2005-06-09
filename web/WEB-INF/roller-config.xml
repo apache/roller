@@ -1,0 +1,47 @@
+<!-- Initial values for the rollerconfig database table -->
+<RollerConfig>
+    <rssUsePort>false</rssUsePort>
+    <rssUseCache>true</rssUseCache>
+    <rssCacheTime>14400</rssCacheTime>  <!-- 4 hours (in seconds) -->
+    <newUserAllowed>true</newUserAllowed>
+    <adminUsers>
+        <adminUsers></adminUsers>
+    </adminUsers>
+    <indexDir>${user.home}/roller-index</indexDir>
+    <newUserData>/templates</newUserData>
+    <newUserThemes>/themes</newUserThemes>
+    <editorPages>
+        <editorPages>editor-ekit.jsp</editorPages>
+        <editorPages>editor-text.jsp</editorPages>
+        <editorPages>editor-dhtml.jsp</editorPages>
+        <editorPages>editor-text-js.jsp</editorPages>
+        <editorPages>editor-wiki-js.jsp</editorPages>
+        <editorPages>editor-rte.jsp</editorPages>
+    </editorPages>
+    <enableAggregator>true</enableAggregator>
+    <uploadEnabled>true</uploadEnabled>
+    <uploadMaxDirMB>4.00</uploadMaxDirMB>
+    <uploadMaxFileMB>1.00</uploadMaxFileMB>
+    <!-- forbid and allow are mutually exclusive,
+         only set one of the two -->
+    <uploadAllow>
+        <uploadAllow>jpg</uploadAllow>
+        <uploadAllow>jpeg</uploadAllow>
+        <uploadAllow>gif</uploadAllow>
+        <uploadAllow>png</uploadAllow>
+    </uploadAllow>
+    <uploadForbid>
+    </uploadForbid>
+    <!-- the location of the directory where files
+         will be stored, may end with a slash -->
+    <uploadDir></uploadDir>
+    <!-- the path where the webserver will serve from,
+         should not end with a slash -->
+    <uploadPath>/resources</uploadPath>
+    <memDebug>false</memDebug>
+    <autoformatComments>true</autoformatComments>
+    <escapeCommentHtml>false</escapeCommentHtml>
+    <emailComments>false</emailComments>
+    <encryptPasswords>true</encryptPasswords>
+    <algorithm>SHA</algorithm>
+</RollerConfig>

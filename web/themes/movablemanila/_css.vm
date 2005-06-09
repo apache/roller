@@ -1,0 +1,227 @@
+  body {
+    margin:0px 0px 10px 0px;
+    background:#FFFFFF;    
+    }
+  A {
+    color: #0045AD; font-family: verdana, arial, sans-serif;
+    font-size:10px;
+    text-decoration: none;
+    font-weight:bold;
+    } 
+  A:link {
+    color: #0045AD;
+    text-decoration: none;
+    } 
+  A:visited {
+    color: #0066FF; text-decoration: none;
+    } 
+  A:active {
+    color: #99CC66;
+    } 
+  A:hover {
+    color: #99CC66;
+    }
+  #banner {
+    font-family:verdana, arial, sans-serif;
+    color:#FFF;
+    font-size:20px;
+    font-weight:normal;
+    border-bottom:1px dotted #000000;
+    border-top:3px solid #0045AD;
+    background:#0066FF;
+    padding:15px; 
+    text-transform:uppercase;
+    letter-spacing: .2em;     
+    }
+  .description {
+    font-family:verdana, arial, sans-serif;
+    color:#89B6FF;
+    font-size:12px;
+    font-weight:bold; 
+    text-transform:none;    
+    }      
+  #content {
+    float:left;
+    width:65%;
+    background:#fff;
+    border-right:1px dotted #999;
+    margin-right:15px;
+    padding-bottom:20px;
+    }
+  #links {
+    background:#fff;
+    padding-right:15px;        
+    }
+  .blog {
+    padding-left:15px;
+    padding-top:15px;
+    padding-right:15px;      
+    }  
+  .blogbody {
+    font-family:georgia, verdana, arial, sans-serif;
+    color:#333;
+    font-size:13px;
+    font-weight:normal;
+    background:#FFF;
+    line-height:15px;
+    padding-left:10px;  
+    padding-right:10px;
+    padding-top:10px;      
+    }  
+  .title  { 
+    font-family: verdana, arial; 
+    font-size: 15px; 
+    color: #003366; 
+    text-transform: uppercase;
+    font-weight:bold;  
+    }  
+  .footer {
+    font-family:georgia, verdana, arial, sans-serif;
+    color:#333;
+    font-size:11px;
+    font-weight:normal;
+    line-height:11px;
+    padding-left:10px;  
+    padding-right:10px;
+    padding-top:10px;
+    border-top:1px dotted #999;
+    text-align:center;     
+    }
+  #menu {
+    margin-bottom:15px;
+    background:#FFF;                
+    }  
+  .date  { 
+    font-family:verdana, arial, sans-serif;
+    color:#666;
+    font-size:9px;
+    font-weight:bold;
+    text-align:center;
+    background:#EEE;
+    line-height:14px;
+    padding:2px;
+    margin-top:10px;
+    text-transform:uppercase;
+    letter-spacing: .2em;
+    }
+  .posted  { 
+    font-family:verdana, arial, sans-serif; 
+    font-size: 11px; 
+    color: #003366;
+    margin-bottom:15px; 
+    }
+  .side {
+    font-family:verdana, arial, sans-serif;
+    color:#333;
+    font-size:11px;
+    font-weight:normal;
+    background:#FFF;
+    line-height:14px;
+    padding:2px;        
+    }
+  .sidetitle {
+    font-family:verdana, arial, sans-serif;
+    color:#666;
+    font-size:9px;
+    font-weight:bold;
+    background:#EEE;
+    line-height:14px;
+    padding:2px;
+    margin-top:10px;
+    text-align:center;
+    text-transform:uppercase;
+    letter-spacing: .2em;            
+    } 
+  .dlHeader{
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    padding:4px;
+    text-transform:uppercase;
+    letter-spacing: .2em;   
+    }
+  .dlCountReadsTitle, .dlSubjectTitle, .dlCountMessagesTitle, .dlPostedTitle, .dlMessageLinkTitle, .dlAuthorTitle
+    {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    color:#333;
+    padding:4px;
+    }
+  .dlSubject, .dlCountMessages, .dlPosted, .dlCountReads, .dlAuthor, .dlMessageLink
+    {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    padding:4px;
+    }
+  .discussHeader {
+    font-family:georgia, verdana, arial, sans-serif;
+    color:#333;
+    font-size:11px;
+    font-weight:normal;
+    line-height:11px;  
+    }    
+  .discussResponceList {
+    font-family:georgia, verdana, arial, sans-serif;
+    color:#333;
+    font-size:11px;
+    font-weight:normal;
+    line-height:11px;
+    padding-left:10px;  
+    padding-right:10px;
+    padding-top:10px;
+    margin-top:10px;
+    border-top:1px dotted #999;  
+    } 
+  .hCalendarMonthYearRow, .dCalendarMonthYearRow
+    { 
+    font-family:verdana, arial, sans-serif;
+    color:#003366;
+    font-size:10px;
+    font-weight:bold;
+    line-height:14px;
+    padding:2px;
+    }
+  .hCalendarDayNameRow, .dCalendarDayNameRow
+    {
+    color:#666;
+    font-family:verdana, arial, sans-serif;
+    font-size:10px;
+    font-weight:bold;
+    line-height:14px;
+    padding:2px;   
+    }
+  .hCalendarDayRow, .dCalendarDayRow
+    {
+    color:#666;
+    font-family:verdana, arial, sans-serif;
+    font-size:10px;
+    font-weight:normal;
+    line-height:14px;
+    padding:2px;    
+    }
+  .hCalendarDayLinked, .dCalendarDayLinked
+    {
+    color:#666;
+    background-color: #EEEEEE;
+    font-family:verdana, arial, sans-serif;
+    font-size:10px;
+    font-weight:normal;
+    line-height:14px;
+    padding:2px;   
+    }
+  .hCalendarDayCurrent, .dCalendarDayCurrent
+    {
+    color: #FFFFFF;
+    background-color: #DCDCDC;
+    font-family:verdana, arial, sans-serif;
+    font-size:10px;
+    font-weight:normal;
+    line-height:14px;
+    padding:2px;   
+    }
+  td {
+    font-family:georgia, verdana, arial, sans-serif;
+    color:#333;
+    font-size:13px;
+    font-weight:normal;
+    line-height:15px;   
+    }   

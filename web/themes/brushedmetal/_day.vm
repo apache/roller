@@ -1,0 +1,14 @@
+<div class="date">
+#showDayPermalink( $day )
+#showEntryDate( $day )
+</div>
+<div class="newsItems">
+#foreach( $entry in $entries )
+  <a name="$utilities.encode($entry.anchor)" id="$utilities.encode($entry.anchor)"></a>
+  <h2>$entry.title</h2>
+  #showEntryText($entry)
+  <span class="dateStamp">(#showTimestamp($entry.pubTime))</span>
+  #showEntryPermalink( $entry )
+  #showCommentsPageLink( $entry )
+#end
+</div>
