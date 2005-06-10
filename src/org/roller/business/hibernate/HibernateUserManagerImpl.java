@@ -3,11 +3,16 @@
  */
 package org.roller.business.hibernate;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.sf.hibernate.Criteria;
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Session;
-import net.sf.hibernate.expression.Expression;
 import net.sf.hibernate.expression.EqExpression;
+import net.sf.hibernate.expression.Expression;
 import net.sf.hibernate.expression.Order;
 
 import org.apache.commons.logging.Log;
@@ -15,14 +20,15 @@ import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.business.PersistenceStrategy;
 import org.roller.business.UserManagerImpl;
+import org.roller.model.AutoPingManager;
 import org.roller.model.BookmarkManager;
+import org.roller.model.PingQueueManager;
+import org.roller.model.PingTargetManager;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
-import org.roller.model.AutoPingManager;
-import org.roller.model.PingTargetManager;
-import org.roller.model.PingQueueManager;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.PageData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RefererData;
 import org.roller.pojos.RoleData;
 import org.roller.pojos.UserCookieData;
@@ -32,11 +38,6 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Hibernate queries.
@@ -56,6 +57,22 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     {
         super(strategy);
         mLogger.debug("Instantiating User Manager");
+    }
+    
+    /**
+     * Get websites of a user
+     */
+    public List getWebsites(UserData user, Boolean enabled) 
+    {
+        return null;
+    }
+    
+    /**
+     * Get users of a website
+     */
+    public List  getUsers(WebsiteData user)
+    {
+        return null;
     }
     
     /** 
@@ -428,5 +445,63 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         }
     }
 
+    /**
+     * Return permissions for specified user in website
+     */
+    public PermissionsData getPermissions(
+            WebsiteData website, UserData user) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("website", website));
+        criteria.add(Expression.eq("user", user));
+        try
+        {
+            List list = criteria.list();
+            return list.size()!=0 ? (PermissionsData)list.get(0) : null;
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+    
+    /** 
+     * Get pending permissions for user
+     */
+    public List getPendingPermissions(UserData user) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("user", user));
+        criteria.add(Expression.eq("pending", Boolean.TRUE));
+        try
+        {
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+    
+    /** 
+     * Get pending permissions for website
+     */
+    public List getPendingPermissions(WebsiteData website) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("website", website));
+        criteria.add(Expression.eq("pending", Boolean.TRUE));
+        try
+        {
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
 }
 

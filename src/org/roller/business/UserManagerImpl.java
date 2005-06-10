@@ -3,16 +3,24 @@
  */
 package org.roller.business;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.model.BookmarkManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.PageData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RoleData;
 import org.roller.pojos.UserCookieData;
 import org.roller.pojos.UserData;
@@ -20,13 +28,6 @@ import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.util.RandomGUID;
 import org.roller.util.Utilities;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import org.roller.model.RollerFactory;
 
 /**
  * Abstract base implementation using PersistenceStrategy.
@@ -414,5 +415,19 @@ public abstract class UserManagerImpl implements UserManager
             cookieString = cookie.getUsername() + "|" + cookie.getCookieId();
         }
         return cookieString;
+    }
+
+    /**
+     * Creates and stores a pending PermissionsData for user and website specified.
+     */
+    public PermissionsData inviteUser(WebsiteData website, 
+            UserData user, short mask) throws RollerException
+    {
+        PermissionsData perms = new PermissionsData();
+        perms.setWebsite(website);
+        perms.setUser(user);
+        perms.setPermissionMask(mask);
+        mStrategy.store(perms);
+        return perms;
     }
 }

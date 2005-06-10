@@ -134,7 +134,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
-     * Id of owner.
+     * Original creator of website
      * @ejb:persistent-field
      * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
