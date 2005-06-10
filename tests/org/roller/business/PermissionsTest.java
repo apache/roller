@@ -1,28 +1,22 @@
 package org.roller.business; 
 
-import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
- 
-import org.roller.RollerException;
+
 import org.roller.RollerPermissionsException;
+import org.roller.RollerTestBase;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
-import org.roller.pojos.CommentData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.PageData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
-import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.util.Utilities;
-import org.roller.RollerTestBase;
 
 /**
  * Test Roller Weblog Management.
@@ -221,5 +215,103 @@ public class PermissionsTest extends RollerTestBase
         getRoller().rollback();
     }
     */
+    
+    /**
+     * Tests permissions object creation and invitations, specifically:
+     * <ul>
+     * <li> user can be invited to website </li>
+     * <li> can get list of invitations (pending permissions) for user </li>
+     * <li> can accept invitation by setting pending to false</li>
+     * <li> can get list of permissions from user </li>
+     * <li> can get list of permissions from website </li>
+     * </ul>
+     */
+    public void testInvitations()
+    {
+        try 
+        {
+            UserManager umgr = getRoller().getUserManager();
+            String userName = "testuser0";
+            String permsId;
+            
+            getRoller().begin();
+            {
+                // invite user to website
+                UserData tuser = umgr.getUser(userName);       
+                WebsiteData tsite = umgr.getWebsite(userName);
+                PermissionsData perms = umgr.inviteUser(
+                        tsite, tuser, PermissionsData.LIMITED);
+                permsId = perms.getId();
+            }
+            getRoller().commit();  
+            
+            getRoller().begin();
+            {
+                UserData tuser = umgr.getUser(userName);       
+                WebsiteData tsite = umgr.getWebsite(userName);
+                
+                // can get pending permission object
+                PermissionsData perms = umgr.getPermissions(tsite, tuser);
+                assertNotNull(perms);
+                assertTrue(perms.isPending());
+
+                // can get pending permission object via user
+                List invitations = umgr.getPendingPermissions(tuser);
+                PermissionsData pending = (PermissionsData)invitations.get(0);
+                assertTrue(pending.getId().equals(permsId));
+
+                // can get pending permission object via website
+                invitations = umgr.getPendingPermissions(tsite);
+                pending = (PermissionsData)invitations.get(0);
+                assertTrue(pending.getId().equals(permsId));
+
+                // accept invitation
+                pending.setPending(false);
+                pending.save();
+            }
+            getRoller().commit();
+            
+            getRoller().begin();
+            {
+                UserData tuser = umgr.getUser(userName);       
+                WebsiteData tsite = umgr.getWebsite(userName);
+
+                // assert that invitation list is empty
+                assertTrue(umgr.getPendingPermissions(tuser).isEmpty());
+                assertTrue(umgr.getPendingPermissions(tsite).isEmpty());
+
+                // assert that user is member of website
+                assertFalse(umgr.getPermissions(tsite, tuser).isPending());
+                
+                // assert that user has website
+                List websites = umgr.getWebsites(tuser, null);
+                assertEquals( tsite.getId(), 
+                              ((WebsiteData)websites.get(0)).getId());
+                
+                // assert that website has user
+                List users = umgr.getUsers(tsite);
+                assertEquals( tuser.getId(),
+                              ((UserData)users.get(0)).getId());
+            }
+            getRoller().commit();            
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }               
+    }
+    
+    /**
+     * Test permissions removal and related cascades, specifically:
+     * <ul>
+     * <li> users can be removed from website
+     * <li> when user is deleted, permissions are deleted too </li>
+     * <li> when website is deleted, permissions are deleted too </li>
+     * </ul>
+     */
+     public void testPermissionsRemoval() 
+     {
+         
+     }
 }
 

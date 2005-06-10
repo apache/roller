@@ -55,7 +55,6 @@
 	<classpathentry kind="lib" path="tools/buildtime/xercesImpl-2.3.0.jar"/>
 	<classpathentry kind="lib" path="tools/standard-1.0.3/lib/jaxen-full.jar"/>
 	<classpathentry sourcepath="/rome" kind="lib" path="tools/lib/rome-0.6.jar"/>
-	<classpathentry kind="lib" path="personal/postgresql.jar"/>
 	<classpathentry kind="lib" path="tools/struts-1.2.4/lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="tools/buildtime/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="tools/buildtime/mockrunner-0.35/lib/nekohtml.jar"/>
@@ -66,5 +65,6 @@
 	<classpathentry kind="lib" path="tools/lib/commons-httpclient-2.0.2.jar"/>
 	<classpathentry sourcepath="/Users/dave/Desktop/lucene-1.4.1/src/java" kind="lib" path="tools/lib/lucene-1.4.3.jar"/>
 	<classpathentry kind="lib" path="tools/lib/xmlrpc-2.0.jar"/>
+	<classpathentry kind="lib" path="sandbox/standalone/lib/catalina.jar"/>
 	<classpathentry kind="output" path="classes.eclipse"/>
 </classpath>

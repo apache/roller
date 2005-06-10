@@ -1,15 +1,16 @@
 
 package org.roller.model;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
 import org.roller.RollerException;
 import org.roller.pojos.PageData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RoleData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
-
-import java.io.Serializable;
-import java.util.Map;
-import java.util.List;
 
 
 /**
@@ -19,6 +20,66 @@ import java.util.List;
  */
 public interface UserManager extends Serializable
 {
+    /** 
+     * Get user by name
+     * @param name Username of user
+     */
+    //public UserData getUserByName(String name);
+
+    /**
+     * Get all users or a website.
+     * @param website Get all users of this website (or null for all)
+     * @returns List of UserData objects.
+     */
+    public List getUsers(WebsiteData website);
+    
+    /** 
+     * Get website by name
+     * @param name Name of website
+     */
+    //public WebsiteData getWebsiteByName(String name);
+
+    /** 
+     * Get all websites of which user is a member
+     * @param user    Get all websites for this user (or null for all)
+     * @param enabled Get all with this enabled state (or null or all)
+     * @returns List of WebsiteData objects.
+     */
+    public List getWebsites(UserData user, Boolean enabled);
+
+    /** 
+     * Get pending permissions for user
+     * @param user User (not null)
+     * @returns List of PermissionsData objects.
+     */
+    public List getPendingPermissions(UserData user) throws RollerException;
+    
+    /** 
+     * Get pending permissions for website
+     * @param website Website (not null)
+     * @returns List of PermissionsData objects.
+     */
+    public List getPendingPermissions(WebsiteData user) throws RollerException;
+    
+    /**
+     * Get permissions of user in website
+     * @param website Website (not null)
+     * @param user    User (not null)
+     * @return        PermissionsData object
+     */
+    public PermissionsData getPermissions(
+            WebsiteData website, UserData user) throws RollerException;
+    
+    /**
+     * Invite user to join a website with specific permissions
+     * @param website Website to be joined (persistent instance) 
+     * @param user    User to be invited (persistent instance)
+     * @param perms   Permissions mask (see statics in PermissionsData)
+     * @return        New PermissionsData object, with pending=true
+     */
+    public PermissionsData inviteUser(
+            WebsiteData website, UserData user, short perms) throws RollerException;
+
     /** Release any resources used */
     public void release();
     
