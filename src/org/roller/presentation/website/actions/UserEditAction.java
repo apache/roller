@@ -52,7 +52,7 @@ public class UserEditAction extends UserBaseAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                UserData ud = rreq.getUser();
+                UserData ud = rreq.getAuthenticatedUser();
                 request.setAttribute("user",ud);
 
                 UserFormEx form = (UserFormEx)actionForm;
@@ -140,17 +140,20 @@ public class UserEditAction extends UserBaseAction
                         }
                     } 
                 
-                    // Set website fields
-                    WebsiteData website = mgr.getWebsite(data.getUserName());
-                    website.setEditorTheme(form.getTheme());
-                    website.setLocale(form.getLocale());
-                    website.setTimezone(form.getTimezone());
+                    // ROLLER_2.0: user needs locale and timezone 
+                    
+//                    WebsiteData website = mgr.getWebsite(data.getUserName());
+//                    website.setEditorTheme(form.getTheme());
+//                    website.setLocale(form.getLocale());
+//                    website.setTimezone(form.getTimezone());
     
                     // Persist changes
                     mgr.storeUser( data );
-                    mgr.storeWebsite( website );
+                    //mgr.storeWebsite( website );
                     rreq.getRoller().commit();
-                    PageCacheFilter.removeFromCache( request,data );
+                    
+                    // Changing user no longer requires cache flush
+                    //PageCacheFilter.removeFromCache(request, data);
     
                     msgs.add(null, new ActionMessage("userSettings.saved"));
                     saveMessages(request, msgs);

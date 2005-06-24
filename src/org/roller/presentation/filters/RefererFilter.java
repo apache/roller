@@ -55,13 +55,13 @@ public class RefererFilter implements Filter
             RollerContext rctx = RollerContext.getRollerContext(
                 mFilterConfig.getServletContext());
             
-            if ( rreq.getUser() != null )
+            if ( rreq.getWebsite() != null )
             {
-                String userName = rreq.getUser().getUserName();                
+                String handle = rreq.getWebsite().getHandle();                
                 
                 // Base page URLs, with and without www.
                 String basePageUrlWWW = 
-                    rctx.getAbsoluteContextUrl(request)+"/page/"+userName;                        
+                    rctx.getAbsoluteContextUrl(request)+"/page/"+handle;                        
                 String basePageUrl = basePageUrlWWW;          
                 if ( basePageUrlWWW.startsWith("http://www.") )
                 {
@@ -71,7 +71,7 @@ public class RefererFilter implements Filter
                                  
                 // Base comment URLs, with and without www.  
                 String baseCommentsUrlWWW = 
-                    rctx.getAbsoluteContextUrl(request)+"/comments/"+userName;   
+                    rctx.getAbsoluteContextUrl(request)+"/comments/"+handle;   
                 String baseCommentsUrl = baseCommentsUrlWWW;          
                 if ( baseCommentsUrlWWW.startsWith("http://www.") )
                 {

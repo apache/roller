@@ -1,7 +1,5 @@
 package org.roller.presentation.pagecache;
 
-import org.roller.pojos.UserData;
-
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
@@ -9,6 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
+import org.roller.pojos.WebsiteData;
 
 public interface FilterHandler
 {
@@ -33,5 +33,5 @@ public interface FilterHandler
      * Remove the entries for this User
      * from the cache.
      */
-    public void removeFromCache(HttpServletRequest req,UserData user);
+    public void removeFromCache(HttpServletRequest req, WebsiteData website);
 }

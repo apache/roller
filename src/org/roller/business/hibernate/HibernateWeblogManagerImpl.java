@@ -340,28 +340,24 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
     /**
      * Gets the Date of the latest Entry publish time.
      *
-     * @param userName User name of weblog or null for all users
-     * @param catName Category name of posts or null for all categories
-     * @return Date Of last publish time
+     * @param handle   Handle of website or null for all users
+     * @param catName  Category name of posts or null for all categories
+     * @return         Date Of last publish time
      * @throws RollerException
      */
-    public Date getWeblogLastPublishTime( String userName, String catName )
+    public Date getWeblogLastPublishTime(WebsiteData website, String catName)
         throws RollerException
     {
         WeblogCategoryData cat = null;
         Roller mRoller = RollerFactory.getRoller();
-        if (userName != null) 
+        if (catName != null && website != null)
+        {    
+           cat = getWeblogCategoryByPath(website, null, catName);
+           if (cat == null) catName = null;
+        }
+        if (catName != null && catName.trim().equals("/"))
         {
-            WebsiteData website = mRoller.getUserManager().getWebsite(userName);
-            if (catName != null && website != null)
-            {    
-               cat = getWeblogCategoryByPath(website, null, catName);
-               if (cat == null) catName = null;
-            }
-            if (catName != null && catName.trim().equals("/"))
-            {
-                catName = null;
-            }
+            catName = null;
         }
         
         Session session = ((HibernateStrategy)mStrategy).getSession();
@@ -371,9 +367,8 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
 
         try
         {
-            if ( userName != null )
+            if (website != null)
             {
-                WebsiteData website = mRoller.getUserManager().getWebsite(userName);
                 criteria.add(Expression.eq("website", website));
             }
 

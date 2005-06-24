@@ -44,7 +44,8 @@ public class FileManagerTest extends TestCase
             Roller mRoller = RollerFactory.getRoller();
             
             UserManager umgr = mRoller.getUserManager();
-            WebsiteData mWebsite = umgr.getWebsite("FileManagerTest_userName");
+            UserData user = umgr.getUser("FileManagerTest_userName");
+            WebsiteData mWebsite = (WebsiteData)umgr.getWebsites(user,null).get(0);
             
             if(mWebsite == null)
                 mWebsite = this.createTestUser();
@@ -74,22 +75,22 @@ public class FileManagerTest extends TestCase
         try 
         {
             // do some setup for our test
-            Roller mRoller = RollerFactory.getRoller();
-            
-            UserManager umgr = mRoller.getUserManager();
-            WebsiteData mWebsite = umgr.getWebsite("FileManagerTest_userName");
+            Roller roller = RollerFactory.getRoller();
+            UserManager umgr = roller.getUserManager();
+            UserData user = umgr.getUser("FileManagerTest_userName");
+            WebsiteData mWebsite = (WebsiteData)umgr.getWebsites(user,null).get(0);
             
             if(mWebsite == null)
                 mWebsite = this.createTestUser();
             
             // update roller properties to prepare for test
-            PropertiesManager pmgr = mRoller.getPropertiesManager();
+            PropertiesManager pmgr = roller.getPropertiesManager();
             Map config = pmgr.getProperties();
             ((RollerPropertyData)config.get("uploads.enabled")).setValue("true");
             ((RollerPropertyData)config.get("uploads.types.allowed")).setValue("opml");
             ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
             pmgr.store(config);
-            mRoller.commit();
+            roller.commit();
             
             /* NOTE: upload dir for unit tests is set in 
                roller/personal/testing/roller-custom.properties */
@@ -128,9 +129,10 @@ public class FileManagerTest extends TestCase
         pages.put("css","CSS page content");
         umgr.addUser(user, pages, "basic", "en_US_WIN", "America/Los_Angeles");
         mRoller.commit();
-        WebsiteData mWebsite = umgr.getWebsite(user.getUserName());
         
-        return mWebsite;
+        WebsiteData website = (WebsiteData)umgr.getWebsites(user,null).get(0);
+
+        return website;
     }
 
     public static Test suite()

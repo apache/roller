@@ -145,8 +145,8 @@ public class UserNewAction extends UserBaseAction
             rreq.getRoller().commit();
 
 			// Flush cache so user will immediately appear on index page
-            PageCacheFilter.removeFromCache( request, ud );
-            MainPageAction.flushMainPageCache();
+            //PageCacheFilter.removeFromCache( request, ud );
+            //MainPageAction.flushMainPageCache();
 
             if (form.getAdminCreated()) 
             {

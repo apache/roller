@@ -10,6 +10,7 @@ import java.util.List;
 
 import net.sf.hibernate.Criteria;
 import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.expression.EqExpression;
 import net.sf.hibernate.expression.Expression;
@@ -62,24 +63,61 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     /**
      * Get websites of a user
      */
-    public List getWebsites(UserData user, Boolean enabled) 
+    public List getWebsites(UserData user, Boolean enabled)  throws RollerException
     {
-        return null;
+        try
+        {
+            Session session = ((HibernateStrategy)mStrategy).getSession();
+            Criteria criteria = session.createCriteria(WebsiteData.class);
+            if (user != null) 
+            {
+                criteria.createAlias("permissions","permissions");
+                criteria.add(Expression.eq("permissions.user", user));
+            }
+            if (enabled != null)
+            {
+                criteria.add(Expression.eq("isEnabled", enabled));
+            }
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
     }
     
     /**
      * Get users of a website
      */
-    public List  getUsers(WebsiteData user)
+    public List getUsers(WebsiteData website, Boolean enabled) 
+        throws RollerException
     {
-        return null;
+        try
+        {
+            Session session = ((HibernateStrategy)mStrategy).getSession();
+            Criteria criteria = session.createCriteria(UserData.class);
+            if (website != null) 
+            {
+                criteria.createAlias("permissions","permissions");
+                criteria.add(Expression.eq("permissions.website", website));
+            }
+            if (enabled != null)
+            {
+                criteria.add(Expression.eq("isEnabled", enabled));
+            }
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
     }
     
     /** 
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
     public PageData getPageByLink(WebsiteData website, String pagelink)
-                    throws RollerException
+        throws RollerException
     {
         if (website == null)
             throw new RollerException("userName is null");
@@ -104,36 +142,32 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     }
     
     /** 
-     * Use Hibernate directly because Roller's Query API does too much allocation.
+     * Return website specified by handle.
      */
-    public WebsiteData getWebsite(String userName, boolean enabledOnly)
+    public WebsiteData getWebsiteByHandle(String handle, boolean enabledOnly)
                     throws RollerException
     {
-        if (userName==null )
-            throw new RollerException("userName is null");
+        if (handle==null )
+            throw new RollerException("Handle cannot be null");
 
         try
         {
             Session session = ((HibernateStrategy)mStrategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
-            criteria.createAlias("user","u");
-    
             if (enabledOnly) 
             {
                 criteria.add(
                    Expression.conjunction()
-                       .add(new EqExpression("u.userName",userName,true))
-                       .add(Expression.eq("isEnabled",Boolean.TRUE)));
+                       .add(new EqExpression("handle", handle, true))
+                       .add(Expression.eq("isEnabled", Boolean.TRUE)));
             }
             else
             {
                 criteria.add(
                     Expression.conjunction()
-                       .add(new EqExpression("u.userName",userName,true)));
-            }
-        
-            List list = criteria.list();
-            return list.size()!=0 ? (WebsiteData)list.get(0) : null;
+                        .add(new EqExpression("handle", handle, true)));
+            }        
+            return (WebsiteData)criteria.uniqueResult();
         }
         catch (HibernateException e)
         {
@@ -141,6 +175,38 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         }
     }
     
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -     
+    public UserData getUser(String userName, boolean enabledOnly) 
+        throws RollerException
+    {
+        if (userName==null )
+            throw new RollerException("userName cannot be null");
+
+        try
+        {
+            Session session = ((HibernateStrategy)mStrategy).getSession();
+            Criteria criteria = session.createCriteria(UserData.class);
+            if (enabledOnly) 
+            {
+                criteria.add(
+                   Expression.conjunction()
+                       .add(new EqExpression("userName", userName, true))
+                       .add(Expression.eq("isEnabled", Boolean.TRUE)));
+            }
+            else
+            {
+                criteria.add(
+                    Expression.conjunction()
+                        .add(new EqExpression("userName", userName, true)));
+            }        
+            return (UserData)criteria.uniqueResult();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+
     /**
      * @see org.roller.model.UserManager#removeLoginCookies(java.lang.String)
      */
@@ -292,40 +358,21 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         }
     }
 
-    public List getUsers(boolean enabledOnly) throws RollerException
+    public List getUsers(Boolean enabled) throws RollerException
     {
         Session session = ((HibernateStrategy)mStrategy).getSession();
-        if (enabledOnly)
+        Criteria criteria = session.createCriteria(UserData.class);            
+        if (enabled != null)
         {
-            Criteria criteria = session.createCriteria(WebsiteData.class);            
-            criteria.add(Expression.eq("isEnabled", Boolean.TRUE));
-            try
-            {
-                List users = new ArrayList();
-                Iterator websites = criteria.list().iterator();
-                while (websites.hasNext())
-                {
-                    WebsiteData website = (WebsiteData) websites.next();
-                    users.add(website.getUser());
-                }
-                return users;
-            }
-            catch (HibernateException e)
-            {
-                throw new RollerException(e);
-            }
+            criteria.add(Expression.eq("isEnabled", enabled));
         }
-        else
+        try
         {
-            Criteria criteria = session.createCriteria(UserData.class);            
-            try
-            {
-                return criteria.list();
-            }
-            catch (HibernateException e)
-            {
-                throw new RollerException(e);
-            }
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
         }
     }
 

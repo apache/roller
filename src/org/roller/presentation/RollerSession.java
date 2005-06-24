@@ -1,15 +1,22 @@
 package org.roller.presentation;
 
-import org.apache.commons.collections.ArrayStack;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.Serializable;
+import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import java.io.Serializable;
+
+import org.apache.commons.collections.ArrayStack;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.RollerException;
+import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
+import org.roller.pojos.UserData;
+import org.roller.pojos.WebsiteData;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -20,10 +27,11 @@ import java.io.Serializable;
 public class RollerSession
     implements HttpSessionListener, HttpSessionActivationListener, Serializable
 {
-    // Although we have no actual members, we implement Serializable to meet expectations of
-    // session attributes for some container configurations.
     static final long serialVersionUID = 5890132909166913727L;
 
+    private UserData authenticatedUser = null;
+    private WebsiteData currentWebsite = null;
+    
     private static Log mLogger =
         LogFactory.getFactory().getInstance(RollerSession.class);
 
@@ -32,16 +40,43 @@ public class RollerSession
     public static final String ERROR_MESSAGE   = "rollererror_message";
     public static final String STATUS_MESSAGE  = "rollerstatus_message";
 
-
+    /** 
+     * Get RollerSession from request (and add user if not already present).
+     */
+    public static RollerSession getRollerSession(HttpServletRequest request)
+    {
+        RollerSession rollerSession = null;
+        HttpSession session = request.getSession(false);
+        if (session != null) 
+        {
+            rollerSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
+            Principal principal = request.getUserPrincipal();
+            if (rollerSession.getAuthenticatedUser() == null && principal != null)
+            {
+                try 
+                {
+                    UserManager umgr = RollerFactory.getRoller().getUserManager();
+                    UserData user = umgr.getUser(principal.getName());
+                    rollerSession.setAuthenticatedUser(user);
+                }
+                catch (RollerException e)
+                {
+                    mLogger.error("ERROR: getting user object");
+                }
+            }
+        }
+        return rollerSession;
+    }
+    
     //------------------------------------------------------------------------
     /** Create session's Roller instance */
     public void sessionCreated(HttpSessionEvent se)
     {
         // put this in session, so that we get HttpSessionActivationListener callbacks
-        se.getSession().setAttribute( ROLLER_SESSION, this );
+        se.getSession().setAttribute(ROLLER_SESSION, this);
         
         RollerContext rctx = RollerContext.getRollerContext(
-            se.getSession().getServletContext());
+            se.getSession().getServletContext());       
         rctx.sessionCreated(se);           
     }    
 
@@ -141,6 +176,35 @@ public class RollerSession
                 mLogger.debug("EXCEPTION PURGING session attributes",e);
             }
         }
+    }
+    
+    /**
+     * Authenticated user associated with this session.
+     */
+    public UserData getAuthenticatedUser()
+    {
+        return authenticatedUser;
+    }
+    /**
+     * Authenticated user associated with this session.
+     */
+    public void setAuthenticatedUser(UserData authenticatedUser)
+    {
+        this.authenticatedUser = authenticatedUser;
+    }
+    /**
+     * Current website that user is working with.
+     */
+    public WebsiteData getCurrentWebsite()
+    {
+        return currentWebsite;
+    }
+    /**
+     * Current website that user is working with.
+     */
+    public void setCurrentWebsite(WebsiteData currentWebsite)
+    {
+        this.currentWebsite = currentWebsite;
     }
 }
 

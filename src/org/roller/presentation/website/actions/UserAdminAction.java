@@ -16,8 +16,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.roller.RollerException;
-import org.roller.business.search.operations.RebuildUserIndexOperation;
-import org.roller.business.search.operations.RemoveUserIndexOperation;
+import org.roller.business.search.operations.RebuildWebsiteIndexOperation;
+import org.roller.business.search.operations.RemoveWebsiteIndexOperation;
 import org.roller.model.IndexManager;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
@@ -75,11 +75,6 @@ public final class UserAdminAction extends UserBaseAction
                         // User must set new password twice
                         userForm.setPasswordText(null);
                         userForm.setPasswordConfirm(null);
-                        
-                        // Join in the website enabled field
-                        WebsiteData website = 
-                            mgr.getWebsite(userForm.getUserName(), false);
-                        userForm.setUserEnabled(website.getIsEnabled());
                     }
                     else
                     {
@@ -141,7 +136,6 @@ public final class UserAdminAction extends UserBaseAction
                 if (userForm.getDelete())
                 {
                     // TODO: ask are you sure before deleting user
-                    PageCacheFilter.removeFromCache( request, user );
                     user = deleteUser(mapping, request, rreq, userForm, mgr, user);
                     
                     msgs.add(ActionMessages.GLOBAL_MESSAGE,
@@ -170,10 +164,6 @@ public final class UserAdminAction extends UserBaseAction
                     // Persist changes to user
                     mgr.storeUser( user );
                     rreq.getRoller().commit(); 
-                    
-                    // Flush both main page and regular page caches
-                    refreshIndexCache(request, rreq, userForm);      
-                    PageCacheFilter.removeFromCache( request, user );
                     
                     msgs.add(ActionMessages.GLOBAL_MESSAGE,
                         new ActionMessage("userSettings.saved"));
@@ -209,12 +199,12 @@ public final class UserAdminAction extends UserBaseAction
     {
         // remove user's Entries from Lucene index
         IndexManager indexManager = rreq.getRoller().getIndexManager();
-        indexManager.removeUserIndex(ud); 
+        WebsiteData website = rreq.getCurrentWebsite();
+        indexManager.removeWebsiteIndex(website); 
         
         // delete user from database
         ud.remove();
         rreq.getRoller().commit();
-        PageCacheFilter.removeFromCache( request, ud );
         ud = null;
 
         request.getSession().setAttribute(
@@ -223,7 +213,7 @@ public final class UserAdminAction extends UserBaseAction
 
         uaf.reset(mapping, request);
         
-        List users = mgr.getUsers(false);
+        List users = mgr.getUsers(null, null); 
         request.setAttribute("users", users);
         return ud;
     }
@@ -248,11 +238,10 @@ public final class UserAdminAction extends UserBaseAction
 				
 				// if admin requests an index be re-built, do it
 				IndexManager manager = rreq.getRoller().getIndexManager();								 
-				manager.rebuildUserIndex();
+				manager.rebuildWebsiteIndex();
  				request.getSession().setAttribute(
 					RollerSession.STATUS_MESSAGE,
-						"Successfully scheduled rebuild of index for '" 
-						+ uaf.getUserName() + "'");
+						"Successfully scheduled rebuild of index for");
 			}
 		}
 		catch (Exception e)

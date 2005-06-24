@@ -6,6 +6,8 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.util.PojoUtil;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 /**
@@ -21,24 +23,27 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
 {
     static final long serialVersionUID = 206437645033737127L;
-    protected java.lang.String id;
-    protected java.lang.String name;
-    protected java.lang.String description;
-    protected java.lang.String defaultPageId;
-    protected java.lang.String weblogDayPageId;
-    protected java.lang.Boolean enableBloggerApi;
+    protected String  id;
+    protected String  handle;
+    protected String  name;
+    protected String  description;
+    protected String  defaultPageId;
+    protected String  weblogDayPageId;
+    protected Boolean enableBloggerApi;
+    protected String  editorPage;
+    protected String  ignoreWords;
+    protected Boolean allowComments;
+    protected Boolean emailComments;
+    protected String  emailFromAddress;
+    protected String  emailAddress;
+    protected String  editorTheme;
+    protected String  locale;
+    protected String  timezone;
+    protected String  mDefaultPlugins;
+    protected Boolean isEnabled;
+    protected List    permissions;
     protected WeblogCategoryData bloggerCategory;
     protected WeblogCategoryData defaultCategory;
-    protected java.lang.String editorPage;
-    protected java.lang.String ignoreWords;
-    protected java.lang.Boolean allowComments;
-    protected java.lang.Boolean emailComments;
-    protected java.lang.String emailFromAddress;
-    protected java.lang.String editorTheme;
-    protected java.lang.String locale;
-    protected java.lang.String timezone;
-    protected java.lang.String mDefaultPlugins;
-    protected java.lang.Boolean isEnabled;
 
     protected UserData mUser = null;
 
@@ -46,24 +51,26 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     {
     }
 
-    public WebsiteData(final java.lang.String id, 
-                       final java.lang.String name,
-                       final java.lang.String description,
+    public WebsiteData(final String   id, 
+                       final String   name,
+                       final String   handle,
+                       final String   description,
                        final UserData user,
-                       final java.lang.String defaultPageId,
-                       final java.lang.String weblogDayPageId,
-                       final java.lang.Boolean enableBloggerApi,
+                       final String   defaultPageId,
+                       final String   weblogDayPageId,
+                       final Boolean  enableBloggerApi,
                        final WeblogCategoryData bloggerCategory,
                        final WeblogCategoryData defaultCategory,
-                       final java.lang.String editorPage,
-                       final java.lang.String ignoreWords,
-                       final java.lang.Boolean allowComments,
-                       final java.lang.Boolean emailComments,
-                       final java.lang.String emailFromAddress,
-                       final java.lang.Boolean isEnabled)
+                       final String   editorPage,
+                       final String   ignoreWords,
+                       final Boolean  allowComments,
+                       final Boolean  emailComments,
+                       final String   emailFromAddress,
+                       final Boolean  isEnabled)
     {
         this.id = id;
         this.name = name;
+        this.handle = handle;
         this.description = description;
         this.mUser = user;
         this.defaultPageId = defaultPageId;
@@ -84,21 +91,59 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.setData(otherData);
     }
 
+    /** 
+     * @hibernate.bag lazy="true" inverse="true" cascade="delete" 
+     * @hibernate.collection-key column="website_id"
+     * @hibernate.collection-one-to-many 
+     *    class="org.roller.pojos.PermissionsData"
+     */
+    public List getPermissions() 
+    {
+        return permissions;
+    }
+    public void setPermissions(List perms)
+    {
+        permissions = perms;
+    }
+    /** 
+     * Remove permission from collection.
+     */
+    public void removePermission(PermissionsData perms)
+    {
+        permissions.remove(perms);
+    }
+    
     /**
      * Id of the Website.
      * @ejb:persistent-field
      * @hibernate.id column="id" type="string"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
-    public java.lang.String getId()
+    public String getId()
     {
         return this.id;
     }
 
     /** @ejb:persistent-field */
-    public void setId(java.lang.String id)
+    public void setId(String id)
     {
         this.id = id;
+    }
+
+    /**
+     * Short URL safe string that uniquely identifies the website.
+     * @ejb:persistent-field
+     * @hibernate.property column="name" non-null="true" unique="true"
+     */
+    public String getHandle()
+    {
+        return this.handle;
+    }
+
+    /** @ejb:persistent-field */
+    public void setHandle(String handle)
+    {
+        this.handle = handle;
     }
 
     /**
@@ -106,13 +151,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="name" non-null="true" unique="false"
      */
-    public java.lang.String getName()
+    public String getName()
     {
         return this.name;
     }
 
     /** @ejb:persistent-field */
-    public void setName(java.lang.String name)
+    public void setName(String name)
     {
         this.name = name;
     }
@@ -122,13 +167,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="description" non-null="true" unique="false"
      */
-    public java.lang.String getDescription()
+    public String getDescription()
     {
         return this.description;
     }
 
     /** @ejb:persistent-field */
-    public void setDescription(java.lang.String description)
+    public void setDescription(String description)
     {
         this.description = description;
     }
@@ -138,13 +183,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
-    public org.roller.pojos.UserData getUser()
+    public org.roller.pojos.UserData getCreator()
     {
         return mUser;
     }
 
     /** @ejb:persistent-field */
-    public void setUser( org.roller.pojos.UserData ud )
+    public void setCreator( org.roller.pojos.UserData ud )
     {
         mUser = ud;
     }
@@ -153,7 +198,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="defaultpageid" non-null="true" unique="false"
      */
-    public java.lang.String getDefaultPageId()
+    public String getDefaultPageId()
     {
         return this.defaultPageId;
     }
@@ -161,7 +206,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     /**
      * @ejb:persistent-field
      */
-    public void setDefaultPageId(java.lang.String defaultPageId)
+    public void setDefaultPageId(String defaultPageId)
     {
         this.defaultPageId = defaultPageId;
     }
@@ -171,7 +216,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="weblogdayid" non-null="true" unique="false"
      */
-    public java.lang.String getWeblogDayPageId()
+    public String getWeblogDayPageId()
     {
         return this.weblogDayPageId;
     }
@@ -180,7 +225,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @deprecated
      * @ejb:persistent-field
      */
-    public void setWeblogDayPageId(java.lang.String weblogDayPageId)
+    public void setWeblogDayPageId(String weblogDayPageId)
     {
         this.weblogDayPageId = weblogDayPageId;
     }
@@ -189,13 +234,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="enablebloggerapi" non-null="true" unique="false"
      */
-    public java.lang.Boolean getEnableBloggerApi()
+    public Boolean getEnableBloggerApi()
     {
         return this.enableBloggerApi;
     }
 
     /** @ejb:persistent-field */
-    public void setEnableBloggerApi(java.lang.Boolean enableBloggerApi)
+    public void setEnableBloggerApi(Boolean enableBloggerApi)
     {
         this.enableBloggerApi = enableBloggerApi;
     }
@@ -240,13 +285,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="editorpage" non-null="true" unique="false"
      */
-    public java.lang.String getEditorPage()
+    public String getEditorPage()
     {
         return this.editorPage;
     }
 
     /** @ejb:persistent-field */
-    public void setEditorPage(java.lang.String editorPage)
+    public void setEditorPage(String editorPage)
     {
         this.editorPage = editorPage;
     }
@@ -255,13 +300,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="ignorewords" non-null="true" unique="false"
      */
-    public java.lang.String getIgnoreWords()
+    public String getIgnoreWords()
     {
         return this.ignoreWords;
     }
 
     /** @ejb:persistent-field */
-    public void setIgnoreWords(java.lang.String ignoreWords)
+    public void setIgnoreWords(String ignoreWords)
     {
         this.ignoreWords = ignoreWords;
     }
@@ -270,13 +315,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="allowcomments" non-null="true" unique="false"
      */
-    public java.lang.Boolean getAllowComments()
+    public Boolean getAllowComments()
     {
         return this.allowComments;
     }
 
     /** @ejb:persistent-field */
-    public void setAllowComments(java.lang.Boolean allowComments)
+    public void setAllowComments(Boolean allowComments)
     {
         this.allowComments = allowComments;
     }
@@ -285,13 +330,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="emailcomments" non-null="true" unique="false"
      */
-    public java.lang.Boolean getEmailComments()
+    public Boolean getEmailComments()
     {
         return this.emailComments;
     }
 
     /** @ejb:persistent-field */
-    public void setEmailComments(java.lang.Boolean emailComments)
+    public void setEmailComments(Boolean emailComments)
     {
         this.emailComments = emailComments;
     }
@@ -300,15 +345,30 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="emailfromaddress" non-null="true" unique="false"
      */
-    public java.lang.String getEmailFromAddress()
+    public String getEmailFromAddress()
     {
         return this.emailFromAddress;
     }
 
     /** @ejb:persistent-field */
-    public void setEmailFromAddress(java.lang.String emailFromAddress)
+    public void setEmailFromAddress(String emailFromAddress)
     {
         this.emailFromAddress = emailFromAddress;
+    }
+    
+    /**
+     * @ejb:persistent-field
+     * @hibernate.property column="emailfromaddress" non-null="true" unique="false"
+     */
+    public String getEmailAddress()
+    {
+        return this.emailAddress;
+    }
+
+    /** @ejb:persistent-field */
+    public void setEmailAddress(String emailFromAddress)
+    {
+        this.emailAddress = emailAddress;
     }
     
     /**
@@ -316,13 +376,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="editortheme" non-null="true" unique="false"
      */
-    public java.lang.String getEditorTheme()
+    public String getEditorTheme()
     {
         return this.editorTheme;
     }
 
     /** @ejb:persistent-field */
-    public void setEditorTheme(java.lang.String editorTheme)
+    public void setEditorTheme(String editorTheme)
     {
         this.editorTheme = editorTheme;
     }
@@ -332,13 +392,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="locale" non-null="true" unique="false"
      */
-    public java.lang.String getLocale()
+    public String getLocale()
     {
         return this.locale;
     }
 
     /** @ejb:persistent-field */
-    public void setLocale(java.lang.String locale)
+    public void setLocale(String locale)
     {
         this.locale = locale;
     }
@@ -348,13 +408,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="timezone" non-null="true" unique="false"
      */
-    public java.lang.String getTimezone()
+    public String getTimezone()
     {
         return this.timezone;
     }
 
     /** @ejb:persistent-field */
-    public void setTimezone(java.lang.String timezone)
+    public void setTimezone(String timezone)
     {
         this.timezone = timezone;
     }
@@ -364,13 +424,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="defaultplugins" non-null="false" unique="false"
      */
-    public java.lang.String getDefaultPlugins()
+    public String getDefaultPlugins()
     {
         return mDefaultPlugins;
     }
 
     /** @ejb:persistent-field */
-    public void setDefaultPlugins(java.lang.String string)
+    public void setDefaultPlugins(String string)
     {
         mDefaultPlugins = string;
     }
@@ -379,13 +439,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="isenabled" non-null="true" unique="false"
      */
-    public java.lang.Boolean getIsEnabled()
+    public Boolean getIsEnabled()
     {
         return this.isEnabled;
     }
     
     /** @ejb:persistent-field */ 
-    public void setIsEnabled(java.lang.Boolean isEnabled)
+    public void setIsEnabled(Boolean isEnabled)
     {
         this.isEnabled = isEnabled;
     }
@@ -500,6 +560,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
         this.id = other.id;
         this.name = other.name;
+        this.handle = other.handle;
         this.description = other.description;
         this.mUser = other.mUser;
         this.defaultPageId = other.defaultPageId;
@@ -588,11 +649,38 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         {
             return true;
         }
-        if (roller.getUser().equals(getUser()))
+        if (hasUserPermissions(roller.getUser(), 
+                (short)(PermissionsData.ADMIN|PermissionsData.AUTHOR)))
         {
             return true;
         }
         return false;
     }
 
+    /**
+     * Returns true if user has all permissions specified by mask.
+     */
+    public boolean hasUserPermissions(UserData user, short mask)
+    {
+        PermissionsData userPerms = null;
+        Iterator iter = getPermissions().iterator();
+        while (iter.hasNext())
+        {
+            PermissionsData perms = (PermissionsData) iter.next();
+            if (perms.getUser().getId().equals(user.getId())) 
+            {
+                userPerms = perms;
+                break;
+            }
+        }
+        if (!userPerms.isPending())
+        {
+            if (userPerms != null && (userPerms.getPermissionMask() & mask) > 0) 
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+

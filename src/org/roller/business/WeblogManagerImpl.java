@@ -268,10 +268,10 @@ public abstract class WeblogManagerImpl implements WeblogManager
      * @return Date
      * @throws RollerException
      */
-    public Date getWeblogLastPublishTime(String userName)
+    public Date getWeblogLastPublishTime(WebsiteData website)
         throws RollerException
     {
-        return getWeblogLastPublishTime(userName, null);
+        return getWeblogLastPublishTime(website, null);
     }
 
     //--------------------------------------------------------- Implementation
@@ -503,10 +503,10 @@ public abstract class WeblogManagerImpl implements WeblogManager
      * Get absolute URL to this website.
      * @return Absolute URL to this website.
      */
-    public String getUrl(UserData user, String contextUrl)
+    public String getUrl(WebsiteData site, String contextUrl)
     {
         String url =
-            Utilities.escapeHTML(contextUrl + "/page/" + user.getUserName());
+            Utilities.escapeHTML(contextUrl + "/page/" + site.getHandle());
         return url;
     }
 

@@ -159,26 +159,24 @@ public class CommentServlet extends PageServlet
         try
         {
             // Get weblog entry object, put in page context
-            WeblogEntryData wd = rreq.getWeblogEntry();
-            if (wd == null || wd.getId() == null)
+            WeblogEntryData entry = rreq.getWeblogEntry();
+            WebsiteData website = entry.getWebsite();
+            if (entry == null || entry.getId() == null)
             {
                 throw new RollerException(
                     "Unable to find WeblogEntry for "
                     + request.getParameter(RollerRequest.WEBLOGENTRYID_KEY));
             }
-            if (   !wd.getWebsite().getAllowComments().booleanValue()
-                || !wd.getCommentsStillAllowed())
+            if (   !entry.getWebsite().getAllowComments().booleanValue()
+                || !entry.getCommentsStillAllowed())
             {
                 throw new RollerException("ERROR comments not allowed");
             }
             
-            request.setAttribute("blogEntry", wd);
+            request.setAttribute("blogEntry", entry);
 
-            // get the User to which the blog belongs
-            UserData user = wd.getWebsite().getUser();
-            
             // TODO: A hack to be replaced by Object.canEdit()
-            request.setAttribute(RollerRequest.OWNING_USER, user);
+            request.setAttribute(RollerRequest.OWNING_WEBSITE, website);
 
             // Save comment
             WeblogManager mgr = rreq.getRoller().getWeblogManager();
@@ -186,7 +184,7 @@ public class CommentServlet extends PageServlet
             CommentData cd = new CommentData();
             RequestUtils.populate(cf, request);
             cf.copyTo(cd, request.getLocale());
-            cd.setWeblogEntry(wd);
+            cd.setWeblogEntry(entry);
             cd.setRemoteHost(request.getRemoteHost());
             cd.setPostTime(new java.sql.Timestamp(System.currentTimeMillis()));
             
@@ -196,17 +194,17 @@ public class CommentServlet extends PageServlet
                 {
                     cd.save();
                     rreq.getRoller().commit();
-                    reindexEntry(rreq.getRoller(), wd);
+                    reindexEntry(rreq.getRoller(), entry);
 
                     // Refresh user's entries in page cache
-                    PageCacheFilter.removeFromCache(request, user);
+                    PageCacheFilter.removeFromCache(request, website);
 
                     // Put array of comments in context
-                    List comments = mgr.getComments(wd.getId());
+                    List comments = mgr.getComments(entry.getId());
                     request.setAttribute("blogComments", comments);
 
                     // MR: Added functionality to e-mail comments
-                    sendEmailNotification(request, rreq, wd, cd, user,comments);
+                    sendEmailNotification(request, rreq, entry, cd, website, comments);
                     
                     super.doPost(request, response);
                     return;
@@ -250,7 +248,7 @@ public class CommentServlet extends PageServlet
             request.setAttribute("blogEntry", wd);
 
             // TODO: A hack to be replaced by Object.canEdit()
-            request.setAttribute(RollerRequest.OWNING_USER, wd.getWebsite().getUser());
+            request.setAttribute(RollerRequest.OWNING_WEBSITE, wd);
 
             CommentFormEx cf = new CommentFormEx();
             RequestUtils.populate(cf, request);
@@ -330,7 +328,7 @@ public class CommentServlet extends PageServlet
         RollerRequest rreq, 
         WeblogEntryData wd,
         CommentData cd,
-        UserData user, 
+        WebsiteData website, 
         List comments) throws MalformedURLException
     {
         RollerContext rc = RollerContext.getRollerContext(request);
@@ -341,7 +339,7 @@ public class CommentServlet extends PageServlet
         try
         {
             userMgr = RollerContext.getRoller(request).getUserManager();
-            site = userMgr.getWebsite(user.getUserName());
+            site = wd.getWebsite();
         }
         catch (RollerException re)
         {
@@ -366,7 +364,7 @@ public class CommentServlet extends PageServlet
             
             String from = 
                (StringUtils.isEmpty(site.getEmailFromAddress())) 
-                  ? user.getEmailAddress() 
+                  ? website.getEmailAddress() 
                   : site.getEmailFromAddress();
             
             //------------------------------------------
@@ -442,7 +440,7 @@ public class CommentServlet extends PageServlet
             
             StringBuffer commentURL = new StringBuffer(rootURL);
             commentURL.append("/comments/");
-            commentURL.append(rreq.getUser().getUserName());
+            commentURL.append(site.getHandle());
             
             PageData page = rreq.getPage();
             if (page == null)
@@ -490,7 +488,7 @@ public class CommentServlet extends PageServlet
             
             String subject = null;
             if ((subscribers.size() > 1) || 
-                (StringUtils.equals(cd.getEmail(), user.getEmailAddress())))
+                (StringUtils.equals(cd.getEmail(), website.getEmailAddress())))
             {
                 subject= "RE: "+resources.getString("email.comment.title")+": ";
             }
@@ -512,7 +510,7 @@ public class CommentServlet extends PageServlet
                 {
                     // Send separate messages to owner and commenters
                     sendMessage(session, from,
-                        new String[]{user.getEmailAddress()}, null, null, subject, ownermsg.toString(), isHtml);
+                        new String[]{website.getEmailAddress()}, null, null, subject, ownermsg.toString(), isHtml);
                     if (commenterAddrs.length > 0)
                     {
                         // If hiding commenter addrs, they go in Bcc: otherwise in the To: of the second message
@@ -527,7 +525,7 @@ public class CommentServlet extends PageServlet
                     // Single message.  User in To: header, commenters in either cc or bcc depending on hiding option
                     String[] cc = hideCommenterAddrs ? null : commenterAddrs;
                     String[] bcc = hideCommenterAddrs ? commenterAddrs : null;
-                    sendMessage(session, from, new String[]{user.getEmailAddress()}, cc, bcc, subject,
+                    sendMessage(session, from, new String[]{website.getEmailAddress()}, cc, bcc, subject,
                         ownermsg.toString(), isHtml);
                 }
             }

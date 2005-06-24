@@ -90,21 +90,21 @@ public class UserBaseAction extends DispatchAction
         String[] themes = rollerContext.getThemeNames();
         request.setAttribute( "themes", themes );
 
-        // prepare locales & timezones
-        if (ud != null)
-        {
-            UserManager mgr = rreq.getRoller().getUserManager();
-            WebsiteData website = mgr.getWebsite(ud.getUserName());
-            form.setLocale( website.getLocale() );
-            form.setTimezone( website.getTimezone() );
-            form.setTheme( website.getEditorTheme() );
-        }
-        else
-        {
-            form.setLocale( Locale.getDefault().getDisplayName() );
-            form.setTimezone( TimeZone.getDefault().getID() );
-        }
-        loadOptionLists(request);
+//        // prepare locales & timezones
+//        if (ud != null)
+//        {
+//            UserManager mgr = rreq.getRoller().getUserManager();
+//            WebsiteData website = mgr.getWebsite(ud.getUserName());
+//            form.setLocale( website.getLocale() );
+//            form.setTimezone( website.getTimezone() );
+//            form.setTheme( website.getEditorTheme() );
+//        }
+//        else
+//        {
+//            form.setLocale( Locale.getDefault().getDisplayName() );
+//            form.setTimezone( TimeZone.getDefault().getID() );
+//        }
+//        loadOptionLists(request);
     }
 
     //-----------------------------------------------------------------------
@@ -143,6 +143,7 @@ public class UserBaseAction extends DispatchAction
      * them to LabelValueBeans to display them.
      * Glad we only have to do this once.
 	 * 
+     * ROLLER_2.0: Website form needs these locale options too
 	 */
     protected void loadLocaleCollection() 
     {
@@ -170,6 +171,7 @@ public class UserBaseAction extends DispatchAction
      * so we don't have to go through all the rigamarole (sp?)
      * that we did for Locales.
      * 
+     * ROLLER_2.0: Website form needs these locale options too
      */
     protected void loadTimeZoneCollection() 
     {
@@ -196,53 +198,53 @@ public class UserBaseAction extends DispatchAction
         UserBaseAction.timezones = myZones;
     }
     
-    //-----------------------------------------------------------------------
-    /**
-     * Check to see if the value of "userEnabled" has changed.
-     * If so, update User's Website and save, and refresh the Index page cache.
-     * 
-     * @param request
-     * @param rreq
-     * @param uaf
-     * @throws RollerException
-     */
-    protected void refreshIndexCache(HttpServletRequest request,
-            RollerRequest rreq, UserAdminForm uaf) throws RollerException
-    {
-        WebsiteData website = rreq.getRoller().getUserManager().getWebsite(
-                uaf.getUserName(), false);
-        boolean refreshIndexCache = false;
-        if (request.getParameter("userEnabled") == null)
-        {
-            // only change it if it is a change
-            if (uaf.getUserEnabled() == null
-                    || website.getIsEnabled().booleanValue())
-            {
-                uaf.setUserEnabled(Boolean.FALSE);
-                refreshIndexCache = true;
-            }
-        }
-        else
-        {
-            // only change it if it is a change
-            if (uaf.getUserEnabled() == null
-                    || website.getIsEnabled().booleanValue() == false)
-            {
-                uaf.setUserEnabled(Boolean.TRUE);
-                refreshIndexCache = true;
-            }
-        }
-
-        if (refreshIndexCache)
-        {
-            // set Website.isEnabled to match uaf.getUserEnabled()
-            website.setIsEnabled(uaf.getUserEnabled());
-            website.save();
-
-            // refresh the front page cache
-            MainPageAction.flushMainPageCache();
-        }
-    }
+//    //-----------------------------------------------------------------------
+//    /**
+//     * Check to see if the value of "userEnabled" has changed.
+//     * If so, update User's Website and save, and refresh the Index page cache.
+//     * 
+//     * @param request
+//     * @param rreq
+//     * @param uaf
+//     * @throws RollerException
+//     */
+//    protected void refreshIndexCache(HttpServletRequest request,
+//            RollerRequest rreq, UserAdminForm uaf) throws RollerException
+//    {
+//        WebsiteData website = rreq.getRoller().getUserManager().getWebsite(
+//                uaf.getUserName(), false);
+//        boolean refreshIndexCache = false;
+//        if (request.getParameter("userEnabled") == null)
+//        {
+//            // only change it if it is a change
+//            if (uaf.getUserEnabled() == null
+//                    || website.getIsEnabled().booleanValue())
+//            {
+//                uaf.setUserEnabled(Boolean.FALSE);
+//                refreshIndexCache = true;
+//            }
+//        }
+//        else
+//        {
+//            // only change it if it is a change
+//            if (uaf.getUserEnabled() == null
+//                    || website.getIsEnabled().booleanValue() == false)
+//            {
+//                uaf.setUserEnabled(Boolean.TRUE);
+//                refreshIndexCache = true;
+//            }
+//        }
+//
+//        if (refreshIndexCache)
+//        {
+//            // set Website.isEnabled to match uaf.getUserEnabled()
+//            website.setIsEnabled(uaf.getUserEnabled());
+//            website.save();
+//
+//            // refresh the front page cache
+//            MainPageAction.flushMainPageCache();
+//        }
+//    }
 }
 
 

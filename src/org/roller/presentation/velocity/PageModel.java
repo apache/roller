@@ -46,17 +46,18 @@ public class PageModel
     private UserManager          mUserMgr = null;
     private RefererManager       mRefererMgr = null;
 
-    private Map                mCategories = new HashMap();
+    private Map                  mCategories = new HashMap();
     private HashMap              mPageMap = new HashMap();
     private RollerRequest        mRollerReq = null;
-    private String               mUsername = null;
+    private String               mHandle = null;
+    private WebsiteData          mWebsite = null;
     
     private WeblogEntryData      mNextEntry = null;
     private WeblogEntryData      mPreviousEntry = null;
 
     private WeblogEntryData      mLastEntry = null;
 
-    private WeblogEntryData mFirstEntry;
+    private WeblogEntryData      mFirstEntry;
         
     //------------------------------------------------------------------------
     
@@ -71,20 +72,16 @@ public class PageModel
     public void init(RollerRequest rreq)
     {
         mRollerReq = rreq;
-        UserData user = null;
-        if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_USER) != null)
+        if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null)
         {
-            user = (UserData)
-                rreq.getRequest().getAttribute(RollerRequest.OWNING_USER);
+            mWebsite = (WebsiteData)
+                rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
         }
-        else if ( rreq.getUser() != null )
+        else if ( rreq.getWebsite() != null )
         {
-            user = rreq.getUser();
+            mWebsite = rreq.getWebsite();
         }
-        if ( user != null )
-        {
-            mUsername = user.getUserName();
-        }
+        mHandle = mWebsite.getHandle();
         
         try
         {
@@ -92,24 +89,18 @@ public class PageModel
             mRefererMgr  = rreq.getRoller().getRefererManager();
             mUserMgr     = rreq.getRoller().getUserManager();
             mWeblogMgr   = rreq.getRoller().getWeblogManager();
-            
-            /** 
-             * Preload what we can for encapsulation.  What we cannot preload we
-             * will use the Managers later to fetch.
-             */
-            if ( mUsername != null )
+           
+            // Preload what we can for encapsulation.  What we cannot preload we
+            // will use the Managers later to fetch.
+
+            // Get the pages, put into context & load map
+            List pages = mUserMgr.getPages(mWebsite);
+            Iterator pageIter = pages.iterator();
+            while (pageIter.hasNext())
             {
-                // Get the pages, put into context & load map
-                WebsiteData website = mUserMgr.getWebsite(user.getUserName());
-                List pages = mUserMgr.getPages(website);
-                Iterator pageIter = pages.iterator();
-                while (pageIter.hasNext())
-                {
-                    PageData page = (PageData) pageIter.next();
-                    mPageMap.put(page.getName(), page);
-                }
+                PageData page = (PageData) pageIter.next();
+                mPageMap.put(page.getName(), page); 
             }
-            
         }
         catch (RollerException e)
         {
@@ -136,8 +127,8 @@ public class PageModel
         Collection tops = null;
         try
         {
-         tops= mBookmarkMgr.getRootFolder(
-                    mUserMgr.getWebsite(mUsername)).getFolders();
+            tops = mBookmarkMgr.getRootFolder(
+                    mUserMgr.getWebsiteByHandle(mHandle)).getFolders();
         }
         catch (RollerException e)
         {
@@ -202,7 +193,7 @@ public class PageModel
         try
         {
             return mBookmarkMgr.getFolder(
-                mUserMgr.getWebsite(mUsername), folderPath);
+                mUserMgr.getWebsiteByHandle(mHandle), folderPath);
         }
         catch (RollerException e)
         {
@@ -669,8 +660,7 @@ public class PageModel
     {
         try
         {
-            return mBookmarkMgr.getFolderByPath(
-                mUserMgr.getWebsite(mUsername), null, path);
+            return mBookmarkMgr.getFolderByPath(mWebsite, null, path);
         }
         catch (RollerException e)
         {

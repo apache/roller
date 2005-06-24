@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +23,7 @@ import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.PageData;
 import org.roller.pojos.PermissionsData;
+import org.roller.pojos.PlanetGroupSubscriptionAssoc;
 import org.roller.pojos.RoleData;
 import org.roller.pojos.UserCookieData;
 import org.roller.pojos.UserData;
@@ -70,15 +73,6 @@ public abstract class UserManagerImpl implements UserManager
         mStrategy.remove(id,WebsiteData.class);
     }
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /** 
-     * This method is a hotspot, it is called on every page request.
-     */
-    public WebsiteData getWebsite(String userName) throws RollerException
-    {
-        return getWebsite(userName, true);
-    } 
-
     //------------------------------------------------------------------- User
 
     public UserData retrieveUser(String id) throws RollerException
@@ -103,25 +97,16 @@ public abstract class UserManagerImpl implements UserManager
         return getUser(userName, true);
     }
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -     
-    public UserData getUser(String userName, boolean enabledOnly) throws RollerException
+    public WebsiteData getWebsiteByHandle(String handle) throws RollerException
     {
-        if (userName==null )
-            throw new RollerException("userName is null");
-        
-        WebsiteData website = getWebsite(userName, enabledOnly);
-        if (website != null)
-        {
-            return website.getUser();
-        }
-        return null;
+        return getWebsiteByHandle(handle, true);
     }
 
     //-----------------------------------------------------------------------
 
     public List getUsers() throws RollerException
     {
-        return getUsers(true);
+        return getUsers(Boolean.TRUE);
     }
 
     //------------------------------------------------------------------------    
@@ -176,8 +161,11 @@ public abstract class UserManagerImpl implements UserManager
 
         WebsiteData wd = pd.getWebsite();
         if (pd.getId() == wd.getDefaultPageId()) {
-            mLogger.error("Refusing to remove default page from website of: " +  wd.getUser().getUserName());
-            throw new RollerException(new IllegalArgumentException("Page is default page of website."));
+            mLogger.error(
+                   "Refusing to remove default page from website with handle: " 
+                   +  wd.getHandle());
+            throw new RollerException(
+                   new IllegalArgumentException("Page is default page of website."));
         }
         removePage(id);        
     }
@@ -241,6 +229,7 @@ public abstract class UserManagerImpl implements UserManager
         
         WebsiteData website = new WebsiteData(null,
             ud.getFullName()+"'s Weblog", // name
+            ud.getUserName(),             // handle
             ud.getFullName()+"'s Weblog", // description
             ud,                // userId
             "dummy",           // defaultPageId
@@ -423,11 +412,36 @@ public abstract class UserManagerImpl implements UserManager
     public PermissionsData inviteUser(WebsiteData website, 
             UserData user, short mask) throws RollerException
     {
+        if (website == null) throw new RollerException("Website cannot be null");
+        if (user == null) throw new RollerException("User cannot be null");        
         PermissionsData perms = new PermissionsData();
         perms.setWebsite(website);
         perms.setUser(user);
         perms.setPermissionMask(mask);
         mStrategy.store(perms);
         return perms;
+    }
+    
+    /**
+     * Remove user permissions from a website.
+     */
+    public void retireUser(WebsiteData website, UserData user) throws RollerException
+    {
+        if (website == null) throw new RollerException("Website cannot be null");
+        if (user == null) throw new RollerException("User cannot be null");        
+        Iterator perms = website.getPermissions().iterator();
+        PermissionsData target = null;
+        while (perms.hasNext())
+        {
+            PermissionsData pd = (PermissionsData)perms.next();
+            if (pd.getUser().getId().equals(user.getId()))
+            {
+                target = pd;
+                break;
+            }
+        }
+        if (target == null) throw new RollerException("User not member of website");
+        website.removePermission(target);
+        target.remove();
     }
 }

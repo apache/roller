@@ -80,8 +80,7 @@ public final class PageFormAction extends DispatchAction
                                 data.getName()));
                 saveMessages(request, uiMessages);
                 
-                UserData user = rreq.getUser();
-                PageCacheFilter.removeFromCache( request, user );
+                PageCacheFilter.removeFromCache( request, rreq.getWebsite() );
                     
                 actionForm.reset(mapping,request);                
                 
@@ -114,12 +113,11 @@ public final class PageFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                UserData ud = rreq.getUser();
                 PageData pd = rreq.getPage();
                 PageForm pf = (PageForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
 
-                PageCacheFilter.removeFromCache( request,ud );
+                PageCacheFilter.removeFromCache( request, rreq.getWebsite() );
                 
                 addModelObjects(rreq);
             }
@@ -187,8 +185,7 @@ public final class PageFormAction extends DispatchAction
                 mgr.removePageSafely( data.getId() );
                 rreq.getRoller().commit();
 
-                UserData user = rreq.getUser();
-                PageCacheFilter.removeFromCache( request,user );
+                PageCacheFilter.removeFromCache( request, rreq.getWebsite() );
                     
                 addModelObjects(rreq);
 
@@ -232,7 +229,7 @@ public final class PageFormAction extends DispatchAction
                 PageForm pf = (PageForm)actionForm;
                 pf.copyFrom(cd, request.getLocale());
 
-                UserData ud = rreq.getUser();
+                UserData ud = rreq.getAuthenticatedUser();
                 request.setAttribute("user",ud);
             }
             else
@@ -284,8 +281,7 @@ public final class PageFormAction extends DispatchAction
                                 data.getName()));
                 saveMessages(request, uiMessages);
 
-                UserData user = rreq.getUser();
-                PageCacheFilter.removeFromCache( request,user );
+                PageCacheFilter.removeFromCache(request, rreq.getWebsite());
             }
             else
             {
@@ -359,7 +355,7 @@ public final class PageFormAction extends DispatchAction
             
         UserManager mgr = rreq.getRoller().getUserManager();
 
-        UserData user = rreq.getUser();
+        UserData user = rreq.getAuthenticatedUser();
         request.setAttribute("user",user);
 
         WebsiteData wd = rreq.getWebsite();

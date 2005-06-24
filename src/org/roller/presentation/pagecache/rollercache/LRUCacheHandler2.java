@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.config.RollerConfig;
-import org.roller.pojos.UserData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.LanguageUtil;
 import org.roller.presentation.pagecache.FilterHandler;
 import org.roller.util.LRUCache2;
@@ -220,11 +220,12 @@ public class LRUCacheHandler2 implements FilterHandler
     /**
      * Purge user's entries from cache.
      */
-    public synchronized void removeFromCache(HttpServletRequest req, UserData user)
+    public synchronized void removeFromCache(
+            HttpServletRequest req, WebsiteData website)
     {
         // TODO: can we make this a little more precise, perhaps via regex?
-        String rssString = "/rss/" + user.getUserName(); // user's pages
-        String pageString = "/page/" + user.getUserName(); // user's RSS feeds
+        String rssString = "/rss/" + website.getHandle(); // user's pages
+        String pageString = "/page/" + website.getHandle(); // user's RSS feeds
         String mainRssString = "/rss_"; // main RSS feed
         String mainPageString = "/main.do"; // main page
         String planetPageString = "/planet.do"; // planet page
@@ -245,8 +246,8 @@ public class LRUCacheHandler2 implements FilterHandler
             StringBuffer sb = new StringBuffer();
             sb.append("Purged, count=");
             sb.append(beforeSize - afterSize);
-            sb.append(", user=");
-            sb.append(user.getUserName());
+            sb.append(", website=");
+            sb.append(website.getHandle());
             mLogger.debug(sb.toString());
         }        
     }

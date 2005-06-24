@@ -182,8 +182,8 @@ public class AtomServletTest extends RollerTestBase
     public void testGetEntry() throws Exception
     {
         UserData user = (UserData)mUsersCreated.get(0);
-        WebsiteData website = 
-            getRoller().getUserManager().getWebsite(user.getUserName());
+        WebsiteData website = (WebsiteData)
+            getRoller().getUserManager().getWebsites(user, null).get(0);
         WeblogEntryData entry = (WeblogEntryData) 
             getRoller().getWeblogManager().getWeblogEntries(
                 website, null, null, null, WeblogManager.ALL, new Integer(1)).get(0);
@@ -243,10 +243,10 @@ public class AtomServletTest extends RollerTestBase
      */
     public void testPutEntry() throws Exception
     {
-        UserData user = (UserData)mUsersCreated.get(0);        
-
-        WebsiteData website = 
-            getRoller().getUserManager().getWebsite(user.getUserName());       
+        UserData user = (UserData)mUsersCreated.get(0);
+        WebsiteData website = (WebsiteData)
+            getRoller().getUserManager().getWebsites(user, null).get(0);        
+        
         WeblogEntryData entry = (WeblogEntryData) 
             getRoller().getWeblogManager().getWeblogEntries(
                 website, null, null, null, WeblogManager.ALL, new Integer(1)).get(0);
@@ -284,8 +284,9 @@ public class AtomServletTest extends RollerTestBase
     public void testDeleteEntry() throws Exception
     {
         UserData user = (UserData)mUsersCreated.get(0);
-        WebsiteData website = 
-            getRoller().getUserManager().getWebsite(user.getUserName());
+        WebsiteData website = (WebsiteData)
+            getRoller().getUserManager().getWebsites(user, null).get(0);        
+
         WeblogEntryData entry = (WeblogEntryData) 
             getRoller().getWeblogManager().getWeblogEntries(
                 website, null, null, null, WeblogManager.ALL, new Integer(1)).get(0);

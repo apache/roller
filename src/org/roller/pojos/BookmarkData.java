@@ -20,7 +20,7 @@ import java.io.Serializable;
  * @hibernate.class table="bookmark"
  * hibernate.jcs-cache usage="read-write" 
  */
-public class BookmarkData extends org.roller.pojos.PersistentObject
+public class BookmarkData extends WebsiteObject
     implements Serializable, Comparable
 {
     static final long serialVersionUID = 2315131256728236003L;
@@ -412,17 +412,9 @@ public class BookmarkData extends org.roller.pojos.PersistentObject
         bookmarkManager = bmgr;
     }
 
-    public boolean canSave() throws RollerException
+    public WebsiteData getWebsite()
     {
-        Roller roller = RollerFactory.getRoller();
-        if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-        {
-            return true;
-        }
-        if (roller.getUser().equals(getFolder().getWebsite().getUser()))
-        {
-            return true;
-        }
-        return false;
+        return this.folder.getWebsite();
     }
+
 }

@@ -109,7 +109,6 @@ public class RollerAtomHandler implements AtomHandler
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         mUsername = authenticateWSSE(request);
-        //mUsername = authenticateBASIC(request);  
  
         if (mUsername != null) 
         {
@@ -235,9 +234,9 @@ public class RollerAtomHandler implements AtomHandler
             String[] pathInfo, Date start, Date end, int offset) 
         throws Exception
     {
-        String username = pathInfo[0];
+        String handle = pathInfo[0];
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
-        WebsiteData website = mRoller.getUserManager().getWebsite(username);
+        WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         List entries = null;
         if (canView(website)) 
         {
@@ -295,7 +294,7 @@ public class RollerAtomHandler implements AtomHandler
                 member.setTitle(rollerEntry.getDisplayTitle());
                 member.setUpdated(rollerEntry.getUpdateTime());
                 member.setHref(absUrl 
-                    + "/atom/" + username + "/entry/" + rollerEntry.getId());
+                    + "/atom/" + handle + "/entry/" + rollerEntry.getId());
                 col.addMember(member);
             }
             return col;
@@ -309,9 +308,9 @@ public class RollerAtomHandler implements AtomHandler
     public AtomCollection getCollectionOfResources(
             String[] pathInfo, Date start, Date end, int offset) throws Exception
     {
-        String username = pathInfo[0];
+        String handle = pathInfo[0];
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
-        WebsiteData website = mRoller.getUserManager().getWebsite(username);
+        WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         FileManager fmgr = mRoller.getFileManager();
         File[] files = fmgr.getFiles(website);
         if (canView(website)) 
@@ -323,7 +322,7 @@ public class RollerAtomHandler implements AtomHandler
                 member.setTitle(files[i].getName());
                 member.setUpdated(new Date(files[i].lastModified()));
                 member.setHref(absUrl 
-                    + "/atom/" + username + "/resource/" + files[i].getName() );
+                    + "/atom/" + website.getHandle() + "/resource/" + files[i].getName() );
                 col.addMember(member);
             }
             return col;
@@ -337,9 +336,9 @@ public class RollerAtomHandler implements AtomHandler
     public AtomCollection getCollectionOfCategories(
             String[] pathInfo, Date start, Date end, int offset) throws Exception
     {
-        String username = pathInfo[0];
+        String handle = pathInfo[0];
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
-        WebsiteData website = mRoller.getUserManager().getWebsite(username);
+        WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         WeblogManager wmgr = mRoller.getWeblogManager();
         List items = wmgr.getWeblogCategories(website);
         if (canView(website)) 
@@ -354,7 +353,7 @@ public class RollerAtomHandler implements AtomHandler
                 member.setTitle(item.getPath());
                 member.setUpdated(now);
                 member.setHref(
-                    absUrl + "/atom/" + username + "/category/" + item.getId());
+                    absUrl + "/atom/" + website.getHandle() + "/category/" + item.getId());
                 col.addMember(member);
             }
             return col;
@@ -370,8 +369,8 @@ public class RollerAtomHandler implements AtomHandler
     public Entry postEntry(String[] pathInfo, Entry entry) throws Exception
     {
         // authenticated client posted a weblog entry
-        String username = pathInfo[0];
-        WebsiteData website = mRoller.getUserManager().getWebsite(username);
+        String handle = pathInfo[0];
+        WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         if (canEdit(website))
         {            
             // Save it and commit it
@@ -470,8 +469,8 @@ public class RollerAtomHandler implements AtomHandler
             throws Exception
     {
         // authenticated client posted a weblog entry
-        String username = pathInfo[0];
-        WebsiteData website = mRoller.getUserManager().getWebsite(username);
+        String handle = pathInfo[0];
+        WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         if (canEdit(website) && pathInfo.length > 1)
         {
             try
@@ -501,7 +500,7 @@ public class RollerAtomHandler implements AtomHandler
                     // TODO: build URL to uploaded file should be done in FileManager
                     String uploadPath = RollerContext.getUploadPath(
                         mRequest.getSession(true).getServletContext());
-                    uploadPath += "/" + website.getUser().getUserName() + "/" + name;
+                    uploadPath += "/" + website.getHandle() + "/" + name;
                     return RequestUtils.printableURL(
                         RequestUtils.absoluteURL(mRequest, uploadPath));                    
                 }
@@ -551,8 +550,8 @@ public class RollerAtomHandler implements AtomHandler
     public void deleteResource(String[] pathInfo) throws Exception
     {
         // authenticated client posted a weblog entry
-        String username = pathInfo[0];
-        WebsiteData website = mRoller.getUserManager().getWebsite(username);
+        String handle = pathInfo[0];
+        WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         if (canEdit(website) && pathInfo.length > 1)
         {
             try
@@ -653,7 +652,15 @@ public class RollerAtomHandler implements AtomHandler
      */
     private boolean canEdit(WeblogEntryData entry)
     {
-        return entry.getWebsite().getUser().getUserName().equals(mUsername);
+        try 
+        {
+            return entry.canSave();
+        }
+        catch (Exception e)
+        {
+            mLogger.error("ERROR: checking website.canSave()");
+        }
+        return false;
     }
     
     /**
@@ -661,7 +668,15 @@ public class RollerAtomHandler implements AtomHandler
      */
     private boolean canEdit(WebsiteData website)
     {
-        return website.getUser().getUserName().equals(mUsername);
+        try 
+        {
+            return website.canSave();
+        }
+        catch (Exception e)
+        {
+            mLogger.error("ERROR: checking website.canSave()");
+        }
+        return false;
     }
     
     /**

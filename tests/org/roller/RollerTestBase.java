@@ -107,7 +107,7 @@ public abstract class RollerTestBase extends TestCase
                    "testuser@example.com");
 
         // get website
-        mWebsite = umgr.getWebsite(user.getUserName());
+        mWebsite = (WebsiteData)umgr.getWebsites(user, null).get(0);
         getRoller().commit();
     }
 
@@ -152,7 +152,7 @@ public abstract class RollerTestBase extends TestCase
                 "Test User #"+i,      // fullName
                 "test"+i+"@test.com"  // emailAddress
                 );
-            WebsiteData website = umgr.getWebsite(ud.getUserName());
+            WebsiteData website = (WebsiteData)umgr.getWebsites(ud, null).get(0);
             mWebsites.add(website);
             mUsersCreated.add(ud);
 
@@ -325,11 +325,11 @@ public abstract class RollerTestBase extends TestCase
     {
         mLogger.debug("try to delete " + deleteMe);
         getRoller().begin(UserData.SYSTEM_USER);
-        mWebsite = getRoller().getUserManager().getWebsite(deleteMe);
-        if (mWebsite != null)
-        {
-            mWebsite.getUser().remove();
-        }
+        UserManager umgr = getRoller().getUserManager();
+        UserData user = umgr.getUser(deleteMe);
+        WebsiteData website = (WebsiteData)umgr.getWebsites(user, null).get(0);
+        website.remove();
+        user.remove();
         getRoller().commit();
     }
 

@@ -30,4 +30,5 @@ public final class FieldConstants
     public static final String C_NAME = "name";
     public static final String CONSTANT = "constant";
     public static final String CONSTANT_V = "v"; //must be lowercase, or match the transform rules of the analyzer
+    public static final String WEBSITE_HANDLE = "handle";
 }

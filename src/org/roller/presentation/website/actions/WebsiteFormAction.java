@@ -72,7 +72,7 @@ public final class WebsiteFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                UserData ud = rreq.getUser();
+                UserData ud = rreq.getAuthenticatedUser();
                 request.setAttribute("user",ud);
 
                 WebsiteData hd = rreq.getWebsite();
@@ -177,7 +177,7 @@ public final class WebsiteFormAction extends DispatchAction
                         RollerRequest.WEBSITEID_KEY,form.getId());
 
                     // clear the page cache for this user
-                    PageCacheFilter.removeFromCache( request, wd.getUser() );
+                    PageCacheFilter.removeFromCache(request, wd);
 
                     // set the Editor Page list
                     ServletContext ctx = request.getSession().getServletContext();

@@ -31,21 +31,17 @@ public interface UserManager extends Serializable
      * @param website Get all users of this website (or null for all)
      * @returns List of UserData objects.
      */
-    public List getUsers(WebsiteData website);
+    public List getUsers(WebsiteData website, Boolean enabled) 
+        throws RollerException;
     
-    /** 
-     * Get website by name
-     * @param name Name of website
-     */
-    //public WebsiteData getWebsiteByName(String name);
-
     /** 
      * Get all websites of which user is a member
      * @param user    Get all websites for this user (or null for all)
      * @param enabled Get all with this enabled state (or null or all)
      * @returns List of WebsiteData objects.
      */
-    public List getWebsites(UserData user, Boolean enabled);
+    public List getWebsites(UserData user, Boolean enabled)
+        throws RollerException;
 
     /** 
      * Get pending permissions for user
@@ -80,6 +76,14 @@ public interface UserManager extends Serializable
     public PermissionsData inviteUser(
             WebsiteData website, UserData user, short perms) throws RollerException;
 
+    /**
+     * Retire user from a website
+     * @param website Website to be retired from (persistent instance) 
+     * @param user    User to be retired (persistent instance)
+     */
+    public void retireUser(
+            WebsiteData website, UserData user) throws RollerException;
+
     /** Release any resources used */
     public void release();
     
@@ -88,8 +92,11 @@ public interface UserManager extends Serializable
     /** Get all enabled users */
     public List getUsers() throws RollerException;
     
-	/** Get all users, optionally include dis-enabled users */
-	public List getUsers(boolean enabledOnly) throws RollerException;
+	/** 
+     * Get all users, optionally include dis-enabled users.
+     * @param enabled True for enabled only, false for disabled only, null for all
+     */
+	public List getUsers(Boolean enabled) throws RollerException;
 
     /** Get user object by user name (only enabled users) */
     public UserData getUser( String userName ) throws RollerException;
@@ -115,13 +122,22 @@ public interface UserManager extends Serializable
 
     //------------------------------------------------------------ WebsiteData
     
-    /** Get website object by user name */
-    public WebsiteData getWebsite(String userName) throws RollerException;
-	public WebsiteData getWebsite(String userName, boolean enabledOnly) throws RollerException;
+    /** 
+     * Get website specified by handle (or null if enabled website not found).
+     * @param handle  Handle of website
+     */
+    public WebsiteData getWebsiteByHandle(String handle) 
+        throws RollerException;
+
+    /** 
+     * Get website specified by handle with option to return only enabled websites.
+     * @param handle  Handle of website
+     */
+    public WebsiteData getWebsiteByHandle(String handle, boolean enabled) 
+        throws RollerException;
 
     public WebsiteData retrieveWebsite(String id) throws RollerException;
     public void storeWebsite(WebsiteData data) throws RollerException;
-    public void removeWebsite(String id) throws RollerException;
 
     //--------------------------------------------------------------- PageData
     

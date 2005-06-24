@@ -85,27 +85,26 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask
                 {
                     String baseFeedURL = baseURL + "/rss/";
                     String baseSiteURL = baseURL + "/page/";
-                    Iterator users = roller.getUserManager().getUsers().iterator();
-                    while (users.hasNext())
+                    Iterator websites = 
+                        roller.getUserManager().getWebsites(null, null).iterator();
+                    while (websites.hasNext())
                     {
-                        UserData user = (UserData) users.next();
+                        WebsiteData website = (WebsiteData)websites.next();
                         
                         StringBuffer sitesb = new StringBuffer();
                         sitesb.append(baseSiteURL);
-                        sitesb.append(user.getUserName());
+                        sitesb.append(website.getHandle());
                         String siteUrl = sitesb.toString();
                         
                         StringBuffer feedsb = new StringBuffer();
                         feedsb.append(baseFeedURL);
-                        feedsb.append(user.getUserName());
+                        feedsb.append(website.getHandle());
                         String feedUrl = feedsb.toString();
                         
                         liveUserFeeds.add(feedUrl);
                         
                         PlanetSubscriptionData sub = 
                                 planet.getSubscription(feedUrl);
-                        WebsiteData website = 
-                                userManager.getWebsite(user.getUserName());
                         if (sub == null)
                         {
                             logger.info("ADDING feed: "+feedUrl);
@@ -113,14 +112,12 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask
                             sub.setTitle(website.getName());
                             sub.setFeedUrl(feedUrl);
                             sub.setSiteUrl(siteUrl);
-                            sub.setAuthor(user.getUserName());
                             planet.saveSubscription(sub);
                             group.addSubscription(sub);
                         }
                         else
                         {
                             sub.setTitle(website.getName());
-                            sub.setAuthor(user.getUserName());
                             planet.saveSubscription(sub);
                         }
                     }

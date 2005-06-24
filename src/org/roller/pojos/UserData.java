@@ -3,6 +3,7 @@ package org.roller.pojos;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,7 +30,7 @@ public class UserData
 {
     public static final UserData SYSTEM_USER = 
         new UserData("n/a","systemuser","n/a","systemuser","n/a",new Date());
-    
+       
     public static final UserData ANONYMOUS_USER = 
         new UserData("n/a","anonymoususer","n/a","anonymoususer","n/a",new Date());
    
@@ -41,7 +42,9 @@ public class UserData
    protected java.lang.String fullName;
    protected java.lang.String emailAddress;
    protected java.util.Date dateCreated;
+   protected Boolean isEnabled;
    private Set roles = new TreeSet();
+   private List permissions;
 
    public UserData()
    {
@@ -70,7 +73,37 @@ public class UserData
 
 	}
 
-   /** Id of the User.
+    /** 
+     * @hibernate.bag lazy="true" inverse="true" cascade="delete" 
+     * @hibernate.collection-key column="user_id"
+     * @hibernate.collection-one-to-many 
+     *    class="org.roller.pojos.PermissionsData"
+     */
+    public List getPermissions() 
+    {
+        return permissions;
+    }
+    public void setPermissions(List perms)
+    {
+        permissions = perms;
+    }
+
+    /**
+     * @ejb:persistent-field
+     * @hibernate.property column="isenabled" non-null="true" unique="false"
+     */
+    public Boolean getIsEnabled()
+    {
+        return this.isEnabled;
+    }
+    
+    /** @ejb:persistent-field */ 
+    public void setIsEnabled(Boolean isEnabled)
+    {
+        this.isEnabled = isEnabled;
+    }
+    
+    /** Id of the User.
      * Not remote since primary key may be extracted by other means.
      * 
      * @struts.validator type="required" msgkey="errors.required"
@@ -178,6 +211,7 @@ public class UserData
 	   }
    }
 
+   //------------------------------------------------------------------- citizenship
    public String toString()
    {
 		StringBuffer str = new StringBuffer("{");

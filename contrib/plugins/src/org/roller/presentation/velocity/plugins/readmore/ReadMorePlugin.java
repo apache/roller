@@ -92,7 +92,7 @@ public class ReadMorePlugin implements PagePlugin
         {            
             String link = "<div class=\"readMore\"><a href=\"" + 
                 ctxPath + "/comments/" + 
-                entry.getWebsite().getUser().getUserName() + 
+                entry.getWebsite().getHandle() + 
                 "/" + pageLink + "/" + Utilities.encode(entry.getAnchor()) +
                 "\">Read More</a></div>";
             

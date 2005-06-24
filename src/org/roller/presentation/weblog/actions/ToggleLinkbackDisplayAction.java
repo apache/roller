@@ -36,8 +36,6 @@ public class ToggleLinkbackDisplayAction extends Action
 	{
          
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
-        String userName = rreq.getUser().getUserName();
-
         try
         {
             if ( rreq.isUserAuthorizedToEdit() )
@@ -55,7 +53,7 @@ public class ToggleLinkbackDisplayAction extends Action
                     
                     rreq.getRoller().commit();
                     
-                    PageCacheFilter.removeFromCache( req, rreq.getUser() );
+                    PageCacheFilter.removeFromCache( req, rreq.getWebsite() );
                 }                
             }
         }
@@ -71,7 +69,7 @@ public class ToggleLinkbackDisplayAction extends Action
 		{
 			RollerContext rctx = RollerContext.getRollerContext(
 				rreq.getServletContext());
-			url = rctx.getContextUrl( req, userName);
+			url = rctx.getContextUrl( req, rreq.getWebsite());
 			res.sendRedirect(url);
 		}
 		catch (Exception e)
