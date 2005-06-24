@@ -292,7 +292,7 @@ public interface WeblogManager extends Serializable
         WebsiteData website, String anchor ) throws RollerException;
 
     /** Get time of last update for a weblog specified by username */
-    public Date getWeblogLastPublishTime( String userName )
+    public Date getWeblogLastPublishTime(WebsiteData website)
         throws RollerException;
 
     /**
@@ -302,7 +302,7 @@ public interface WeblogManager extends Serializable
      * @return         Date Of last publish time
      * @throws         RollerException
      */
-    public Date getWeblogLastPublishTime( String userName, String catName )
+    public Date getWeblogLastPublishTime(WebsiteData website, String catName )
         throws RollerException;
 
     /**
@@ -358,5 +358,5 @@ public interface WeblogManager extends Serializable
      * @return the url of the user's weblog
      * @throws RollerException
      */
-    public String getUrl(UserData user, String contextUrl) throws RollerException;
+    public String getUrl(WebsiteData website, String contextUrl) throws RollerException;
 }

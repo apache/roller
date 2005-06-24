@@ -279,8 +279,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             mLogger.debug("getHits: " + website.getName());
         }
 
-        //Question: why not use website.id instead to reduce joins?
-        Object[] args = { Boolean.TRUE, website.getUser().getUserName() };
+        Object[] args = { Boolean.TRUE, website.getId() };
         Type[] types = { Hibernate.BOOLEAN, Hibernate.STRING };
 
         // For a query like this, Hibernate returns a list of lists
@@ -291,7 +290,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             results = session.find(
                "select sum(h.dayHits),sum(h.totalHits) from h in class " +
                "org.roller.pojos.RefererData " +
-               "where h.website.isEnabled=? and h.website.user.userName=? ",
+               "where h.website.isEnabled=? and h.website.id=? ",
                args, types);
         }
         catch (HibernateException e)

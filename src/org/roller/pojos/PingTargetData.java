@@ -275,7 +275,8 @@ public class PingTargetData extends PersistentObject implements Serializable
         {
             return true;
         }
-        if (website != null && website.getUser().equals(user))
+        if (website != null && website.hasUserPermissions(
+                user, (short)(PermissionsData.ADMIN | PermissionsData.AUTHOR))) 
         {
             return true;
         }
@@ -311,7 +312,7 @@ public class PingTargetData extends PersistentObject implements Serializable
             "id='" + id + "'" +
             ", name='" + name + "'" +
             ", pingUrl='" + pingUrl + "'" +
-            ", website= " + (website == null ? "null" : "{id='" + website.getId() + "', user='" + website.getUser().getUserName() + "'} ") +
+            ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") +
             ", conditionCode=" + conditionCode +
             ", lastSuccess=" + lastSuccess +
             "}";

@@ -15,7 +15,7 @@ import org.apache.lucene.index.Term;
 import org.roller.business.IndexManagerImpl;
 import org.roller.business.search.FieldConstants;
 import org.roller.business.search.IndexUtil;
-import org.roller.pojos.UserData;
+import org.roller.pojos.WebsiteData;
 
 
 /**
@@ -23,28 +23,28 @@ import org.roller.pojos.UserData;
  *
  * An index operation that rebuilds a given users index (or all indexes.)
  */
-public class RemoveUserIndexOperation extends WriteToIndexOperation
+public class RemoveWebsiteIndexOperation extends WriteToIndexOperation
 {
     //~ Static fields/initializers =============================================
 
     private static Log mLogger =
-        LogFactory.getFactory().getInstance(RemoveUserIndexOperation.class);
+        LogFactory.getFactory().getInstance(RemoveWebsiteIndexOperation.class);
 
     //~ Instance fields ========================================================
 
-    private UserData user;
+    private WebsiteData website;
 
     //~ Constructors ===========================================================
 
     /**
      * Create a new operation that will recreate an index.
      *
-     * @param website The website to rebuild the index for, or null for all users.
+     * @param website The website to rebuild the index for, or null for all sites.
      */
-    public RemoveUserIndexOperation(IndexManagerImpl mgr, UserData user)
+    public RemoveWebsiteIndexOperation(IndexManagerImpl mgr, WebsiteData website)
     {
         super(mgr);
-        this.user = user;
+        this.website = website;
     }
 
     //~ Methods ================================================================
@@ -55,24 +55,22 @@ public class RemoveUserIndexOperation extends WriteToIndexOperation
     public void doRun()
     {
         Date start = new Date();
-
         IndexReader reader = beginDeleting();
-
         try
         {
             if (reader != null)
             {
-                String userName = null;
-                if (user != null)
+                String handle = null;
+                if (website != null)
                 {
-                    userName = user.getUserName();
+                    handle = website.getHandle();
                 }
-                Term tUsername =
-                    IndexUtil.getTerm(FieldConstants.USERNAME, userName);
+                Term tHandle =
+                    IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, handle);
 
-                if (tUsername != null)
+                if (tHandle != null)
                 {
-                    reader.delete(tUsername);
+                    reader.delete(tHandle);
                 }
             }
         }
@@ -88,10 +86,10 @@ public class RemoveUserIndexOperation extends WriteToIndexOperation
         Date end = new Date();
         double length = (end.getTime() - start.getTime()) / (double) 1000;
 
-        if (user != null)
+        if (website != null)
         {
-            mLogger.info("Completed deleting indices for '" +
-                            user.getUserName() + "' in '" + length + "' seconds");
+            mLogger.info("Completed deleting indices for website '" +
+                    website.getName() + "' in '" + length + "' seconds");
         }
     }
 }

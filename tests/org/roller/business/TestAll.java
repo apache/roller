@@ -15,15 +15,15 @@ public class TestAll extends TestCase
     public static Test suite()
     {
         TestSuite suite = new TestSuite();
-        suite.addTest(BookmarkManagerTest.suite());
-        suite.addTest(ConfigManagerTest.suite());
-        suite.addTest(FileManagerTest.suite());
-        suite.addTest(IndexManagerTest.suite());             
+//        suite.addTest(BookmarkManagerTest.suite());
+//        suite.addTest(ConfigManagerTest.suite());
+//        suite.addTest(FileManagerTest.suite());
+//        suite.addTest(IndexManagerTest.suite());             
         suite.addTest(PermissionsTest.suite());
-        suite.addTest(PlanetManagerTest.suite());
-        suite.addTest(RefererManagerTest.suite());
+//        suite.addTest(PlanetManagerTest.suite());
+//        suite.addTest(RefererManagerTest.suite());
         suite.addTest(UserManagerTest.suite());
-        suite.addTest(WeblogManagerTest.suite());
+//        suite.addTest(WeblogManagerTest.suite());
         return suite;
     }
     public TestAll(String testName)

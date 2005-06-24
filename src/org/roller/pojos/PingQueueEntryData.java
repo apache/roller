@@ -231,7 +231,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
             "id='" + id + "'" +
             ", entryTime=" + entryTime +
             ", pingTarget=" + pingTarget +
-            ", website= " + (website == null ? "null" : "{id='" + website.getId() + "', user='" + website.getUser().getUserName() + "'} ") +
+            ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") +
             ", attempts=" + attempts +
             "}";
     }

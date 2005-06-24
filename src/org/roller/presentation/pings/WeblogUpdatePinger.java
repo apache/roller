@@ -98,7 +98,7 @@ public class WeblogUpdatePinger
     {
         // Figure out the url of the user's website.
         String websiteUrl =
-            RollerFactory.getRoller().getWeblogManager().getUrl(website.getUser(), absoluteContextUrl);
+            RollerFactory.getRoller().getWeblogManager().getUrl(website, absoluteContextUrl);
 
         // Set up the ping parameters.
         Vector params = new Vector();

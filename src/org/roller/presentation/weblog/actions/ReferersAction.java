@@ -58,9 +58,7 @@ public class ReferersAction extends DispatchAction
         try
         {
             if ( rreq.isUserAuthorizedToEdit() )
-            {
-                UserData ud = rreq.getUser();
-                
+            {   
                 req.setAttribute("pageHits",
                     new Integer(refmgr.getDayHits(rreq.getWebsite())));
                     

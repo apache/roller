@@ -1,6 +1,7 @@
 
 package org.roller.pojos;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
@@ -21,13 +22,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
-import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.util.DateUtil;
 import org.roller.util.Utilities;
-
-import sun.security.krb5.internal.i;
 
 
 /**
@@ -40,8 +38,7 @@ import sun.security.krb5.internal.i;
  * @hibernate.class table="weblogentry"
  * hibernate.jcs-cache usage="read-write"
  */
-public class WeblogEntryData extends org.roller.pojos.PersistentObject
-    implements java.io.Serializable
+public class WeblogEntryData extends WebsiteObject implements Serializable
 {
     private static Log mLogger = LogFactory.getFactory()
                                            .getInstance(WeblogEntryData.class);
@@ -57,6 +54,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     protected Timestamp pubTime=null;
     protected Timestamp updateTime=null;
     protected Boolean publishEntry=null;
+    protected UserData mCreator=null;
     protected WebsiteData mWebsite=null;
     protected String mPlugins;
     protected Boolean allowComments = Boolean.TRUE;
@@ -185,6 +183,21 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         this.mWebsite = website;
     }
 
+    /** 
+     * @ejb:persistent-field 
+     * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
+     */
+    public UserData getCreator()
+    {
+        return this.mCreator;
+    }
+
+    /** @ejb:persistent-field */
+    public void setCreator(UserData creator)
+    {
+        this.mCreator = creator;
+    }
+    
     /** 
      * @ejb:persistent-field 
      * @hibernate.property column="title" non-null="true" unique="false"
@@ -673,7 +686,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         }
         
         WebsiteData website = this.getWebsite();
-        String plink = "/page/" + website.getUser().getUserName() + 
+        String plink = "/page/" + website.getHandle() + 
                 "?anchor=" + lAnchor;
         
         return plink;
@@ -707,7 +720,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         {
             // go with the "no encoding" version
         }        
-        String clink = "/page/" + this.getWebsite().getUser().getUserName() + "?anchor=" + lAnchor;
+        String clink = "/page/" + this.getWebsite().getHandle() + "?anchor=" + lAnchor;
         return clink;
     }
     /** to please XDoclet */
@@ -996,17 +1009,4 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         return new ArrayList();
     }
 
-    public boolean canSave() throws RollerException
-    {
-        Roller roller = RollerFactory.getRoller();
-        if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-        {
-            return true;
-        }
-        if (roller.getUser().equals(getWebsite().getUser()))
-        {
-            return true;
-        }
-        return false;
-    }
 }

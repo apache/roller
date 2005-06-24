@@ -1,10 +1,7 @@
 package org.roller.pojos;
 
+import java.io.Serializable;
 import java.util.Date;
-
-import org.roller.RollerException;
-import org.roller.model.Roller;
-import org.roller.model.RollerFactory;
 
 
 /** Page bean.
@@ -15,9 +12,7 @@ import org.roller.model.RollerFactory;
  * @hibernate.class table="webpage" 
  * hibernate.jcs-cache usage="read-write"
  */
-public class PageData
-   extends org.roller.pojos.PersistentObject
-   implements java.io.Serializable
+public class PageData extends WebsiteObject implements Serializable
 {
    static final long serialVersionUID = -613737191638263428L;
 
@@ -287,20 +282,6 @@ public class PageData
       this.template = ((PageData)otherData).template;
 
       this.updateTime = ((PageData)otherData).updateTime;
-   }
-
-   public boolean canSave() throws RollerException
-   {
-       Roller roller = RollerFactory.getRoller();
-       if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-       {
-           return true;
-       }
-       if (roller.getUser().equals(getWebsite().getUser()))
-       {
-           return true;
-       }
-       return false;
    }
 
 }

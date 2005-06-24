@@ -86,7 +86,7 @@ public final class WeblogEntryFormAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() )
+            if (rreq.isUserAuthorizedToEdit())
             {
                 WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm; 
                 form.initNew(request, response);
@@ -236,8 +236,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                 UserManager userMgr = rreq.getRoller().getUserManager();
                 WeblogManager weblogMgr = rreq.getRoller().getWeblogManager();
 
-                UserData user = rreq.getUser();
-                WebsiteData site = userMgr.getWebsite( user.getUserName() );
+                WebsiteData site = rreq.getWebsite();
                 WeblogEntryFormEx wf = (WeblogEntryFormEx)actionForm;
                 
                 // I was getting column 'x' cannot be null, so I fixed it here.
@@ -304,7 +303,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                  
                 // Flush the page cache
                 mLogger.debug("Removing from cache");
-                PageCacheFilter.removeFromCache(request, user);
+                PageCacheFilter.removeFromCache(request, rreq.getWebsite());
 				// refresh the front page cache
                 MainPageAction.flushMainPageCache();
 
@@ -465,8 +464,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                 WeblogEntryData wd = mgr.retrieveWeblogEntry(request.getParameter("id"));
                 
                 // Flush the page cache
-                UserData user = rreq.getUser();
-                PageCacheFilter.removeFromCache(request, user);
+                PageCacheFilter.removeFromCache(request, rreq.getWebsite());
 
 				// remove the index for it
                 wd.setPublishEntry(Boolean.FALSE);

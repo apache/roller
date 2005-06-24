@@ -192,7 +192,7 @@ public class WeblogEntryPageModel extends BasePageModel
 
     public UserData getUser()
     {
-        return rollerRequest.getUser();
+        return rollerRequest.getAuthenticatedUser();
     }
 
     public List getCategories() throws Exception

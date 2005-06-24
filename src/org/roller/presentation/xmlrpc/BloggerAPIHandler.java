@@ -1,6 +1,18 @@
 
 package org.roller.presentation.xmlrpc;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,17 +27,6 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -70,16 +71,17 @@ public class BloggerAPIHandler extends BaseAPIHandler
         mLogger.info("     PostId: " + postid);
         mLogger.info("     UserId: " + userid);
 
-        validate(userid,password);
-
         Roller roller = RollerRequest.getRollerRequest().getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
+        WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
+
+        validate(entry.getWebsite().getHandle(), userid, password);
+
         try
         {
-            WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
             entry.remove();
             roller.commit();
-            flushPageCache(userid);
+            flushPageCache(entry.getWebsite());
         }
         catch (Exception e)
         {
@@ -117,7 +119,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         mLogger.info("   Template: " + templateData);
         mLogger.info("       Type: " + templateType);
 
-        validate(userid,password);
+        validate(blogid, userid, password);
 
         if (! templateType.equals("main"))
         {
@@ -133,7 +135,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
             PageData page = userMgr.retrievePage(templateType);
             page.setTemplate(templateData);
             userMgr.storePage(page);
-            flushPageCache(userid);
+            flushPageCache(page.getWebsite());
 
             return true;
         }
@@ -168,7 +170,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         mLogger.info("     UserId: " + userid);
         mLogger.info("       Type: " + templateType);
 
-        validate(userid,password);
+        validate(blogid, userid,password);
 
         try
         {
@@ -211,7 +213,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         mLogger.info("     Appkey: " + appkey);
         mLogger.info("     UserId: " + userid);
 
-        validate(userid,password);
+        validateUser(userid, password);
 
         try
         {
@@ -278,32 +280,39 @@ public class BloggerAPIHandler extends BaseAPIHandler
         mLogger.info("getUsersBlogs() Called ===[ SUPPORTED ]=======");
         mLogger.info("     Appkey: " + appkey);
         mLogger.info("     UserId: " + userid);
-
-        WebsiteData website = validate(userid,password);
-
-        try
+        
+        Vector result = new Vector();
+        if (validateUser(userid, password))
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest();
-            HttpServletRequest req = rreq.getRequest();
-            String contextUrl =
-                RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
-
-            Hashtable blog = new Hashtable(3);
-            blog.put("url", contextUrl+"/page/"+userid);
-            blog.put("blogid", userid);
-            blog.put("blogName", website.getName());
-
-            Vector result = new Vector();
-            result.add(blog);
-
-            return result;
+            try
+            {
+                RollerRequest rreq = RollerRequest.getRollerRequest();
+                HttpServletRequest req = rreq.getRequest();
+                String contextUrl =
+                    RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
+                
+                UserManager umgr = rreq.getRoller().getUserManager();
+                UserData user = umgr.getUser(userid);
+                List websites = umgr.getWebsites(user, Boolean.TRUE);
+                Iterator iter = websites.iterator();
+                while (iter.hasNext())
+                {
+                    WebsiteData website = (WebsiteData)iter.next();
+                    Hashtable blog = new Hashtable(3);
+                    blog.put("url", contextUrl+"/page/"+website.getHandle());
+                    blog.put("blogid", website.getHandle());
+                    blog.put("blogName", website.getName());   
+                    result.add(blog);                    
+                }
+            }
+            catch (Exception e)
+            {
+                String msg = "ERROR in BlooggerAPIHander.getUsersBlogs";
+                mLogger.error(msg,e);
+                throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
+            }
         }
-        catch (Exception e)
-        {
-            String msg = "ERROR in BlooggerAPIHander.getUsersBlogs";
-            mLogger.error(msg,e);
-            throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
-        }
+        return result;
     }
 
     //------------------------------------------------------------------------
@@ -331,30 +340,32 @@ public class BloggerAPIHandler extends BaseAPIHandler
         mLogger.info("    Publish: " + publish);
         mLogger.info("     Content:\n " + content);
 
-        validate(userid,password);
-
-        try
+        if (validateUser(userid, password))
         {
-            Timestamp current = new Timestamp(System.currentTimeMillis());
-
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
-            WeblogManager weblogMgr = roller.getWeblogManager();
-            WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
-            entry.setText(content);
-            entry.setUpdateTime(current);
-            entry.setPublishEntry(Boolean.valueOf(publish));
-
-            entry.save();
-            roller.commit();
-            flushPageCache(userid);
-            return true;
+            try
+            {
+                Timestamp current = new Timestamp(System.currentTimeMillis());
+    
+                Roller roller = RollerRequest.getRollerRequest().getRoller();
+                WeblogManager weblogMgr = roller.getWeblogManager();
+                WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
+                entry.setText(content);
+                entry.setUpdateTime(current);
+                entry.setPublishEntry(Boolean.valueOf(publish));
+    
+                entry.save();
+                roller.commit();
+                flushPageCache(entry.getWebsite());
+                return true;
+            }
+            catch (Exception e)
+            {
+                String msg = "ERROR in BlooggerAPIHander.editPost";
+                mLogger.error(msg,e);
+                throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
+            }
         }
-        catch (Exception e)
-        {
-            String msg = "ERROR in BlooggerAPIHander.editPost";
-            mLogger.error(msg,e);
-            throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
-        }
+        return false;
     }
 
     //------------------------------------------------------------------------
@@ -382,7 +393,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         mLogger.info("    Publish: " + publish);
         mLogger.info("    Content:\n " + content);
 
-        WebsiteData website = validate(userid,password);
+        WebsiteData website = validate(blogid, userid,password);
 
         // extract the title from the content
         String title = "";
@@ -413,7 +424,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
 
             entry.save();
             roller.commit();
-            flushPageCache(userid);
+            flushPageCache(entry.getWebsite());
 /*
             String blogUrl = Utilities.escapeHTML( 
                 RollerContext.getRollerContext(req).getAbsoluteContextUrl(req)
@@ -457,7 +468,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         mLogger.info("     UserId: " + userid);
         mLogger.info("     Number: " + numposts);
 
-        WebsiteData website = validate(userid,password);
+        WebsiteData website = validate(blogid, userid,password);
 
         try
         {

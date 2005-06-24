@@ -18,7 +18,7 @@ import java.util.List;
  * 
  * @author David M Johnson
  */
-public abstract class HierarchicalPersistentObject extends PersistentObject
+public abstract class HierarchicalPersistentObject extends WebsiteObject
 {        
     protected HierarchicalPersistentObject mNewParent = null;   
     

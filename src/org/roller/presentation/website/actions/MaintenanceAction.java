@@ -21,9 +21,8 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
-import org.roller.business.search.operations.RebuildUserIndexOperation;
 import org.roller.model.IndexManager;
-import org.roller.pojos.UserData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.pagecache.PageCacheFilter;
 
@@ -74,9 +73,9 @@ public class MaintenanceAction extends DispatchAction
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
 			if ( rreq.isUserAuthorizedToEdit() )
 			{
-				UserData ud = rreq.getUser();
+				WebsiteData website = rreq.getWebsite();
 				IndexManager manager = rreq.getRoller().getIndexManager();
-				manager.rebuildUserIndex();
+				manager.rebuildWebsiteIndex(website);
 				
                 ActionMessages messages = new ActionMessages();
                 messages.add(null, new ActionMessage("maintenance.message.indexed"));
@@ -112,12 +111,11 @@ public class MaintenanceAction extends DispatchAction
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
 			if ( rreq.isUserAuthorizedToEdit() )
 			{
-				UserData user = rreq.getUser();
-	            PageCacheFilter.removeFromCache(request, user);
+	            PageCacheFilter.removeFromCache(request, rreq.getWebsite());
 
-                ActionMessages messages = new ActionMessages();
-                messages.add(null, new ActionMessage("maintenance.message.flushed"));
-                saveMessages(request, messages);
+                 ActionMessages messages = new ActionMessages();
+                 messages.add(null, new ActionMessage("maintenance.message.flushed"));
+                 saveMessages(request, messages);
             }
         }
         catch (Exception e)

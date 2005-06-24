@@ -32,6 +32,25 @@ create table userrole (
 create index userrole_userid_index on userrole( userid );
 create index userrole_username_index on userrole( username@INDEXSIZE@ );
 
+-- User permissions within a website
+create table roller_user_permissions (
+    id              varchar(48) not null primary key,
+    website_id      varchar(48) not null,
+    user_id         varchar(48) not null,
+    permission_mask integer not null, -- bitmask 001 limited, 011 author, 100 admin
+    pending         @BOOLEAN_SQL_TYPE_TRUE@ not null -- pending user acceptance of invitation to join website
+);
+
+-- Audit log records time and comment about change
+create table roller_audit_log (
+    id              varchar(48) not null primary key,
+    user_id         varchar(48) not null,  -- user that made change
+    object_id       varchar(48),           -- id of associated object, if any
+    object_class    varchar(255),          -- name of associated object class (e.g. WeblogEntryData)
+    comment         varchar(255) not null, -- description of change
+    change_time     timestamp             -- time that change was made
+);
+
 create table usercookie (
     id              varchar(48) not null primary key,
     username        varchar(255) not null,
@@ -57,6 +76,7 @@ create index webpage_id_index on webpage( websiteid );
 create table website (
     id                varchar(48) not null primary key,
     name              varchar(255) not null,
+    handle            varchar(255) not null,
     description       varchar(255) not null,
     userid            varchar(48) not null,
     defaultpageid     varchar(48) default 0 not null,
@@ -69,6 +89,7 @@ create table website (
     allowcomments     @BOOLEAN_SQL_TYPE_TRUE@ not null,
     emailcomments     @BOOLEAN_SQL_TYPE_FALSE@ not null,
     emailfromaddress  varchar(255) null,
+    emailaddress      varchar(255) not null,
     editortheme       varchar(255) null,
     locale            varchar(20) null,
     timezone          varchar(50) null,
@@ -79,6 +100,8 @@ create table website (
 create index website_id_index on website( id );
 create index website_userid_index on website( userid );
 create index website_isenabled_index on website( isenabled );
+create index website_handle_index on userrole(handle);
+alter table website add constraint website_handle_uq unique (handle@INDEXSIZE@);
 
 create table folder (
     id               varchar(48) not null primary key,
@@ -135,6 +158,7 @@ create index weblogcategoryassoc_relation_index on weblogcategoryassoc( relation
 
 create table weblogentry (
     id              varchar(48)  not null primary key,
+    userid          varchar(48) not null,
     anchor          varchar(255)  not null,
     title           varchar(255)  not null,
     text            @TEXT_SQL_TYPE@ not null,
@@ -155,6 +179,7 @@ create index weblogentry_categoryid_index on weblogentry( categoryid );
 create index weblogentry_pubtime_index on weblogentry( pubtime,publishentry,websiteid );
 create index weblogentry_pinnedtomain_index on weblogentry(pinnedtomain);
 create index weblogentry_publishentry_index on weblogentry(publishentry);
+create index weblogentry_userid_index on weblogentry(userid);
 
 create table newsfeed (
     id              varchar(48) not null primary key,
@@ -247,6 +272,7 @@ create index referer_refpermalink_index on referer( refpermalink@INDEXSIZE@ );
 create index referer_duplicate_index on referer( duplicate );
 
 -- Configuration options for Roller, should only ever be one row
+-- Deprecated in 1.2: configuration now stored in roller_properties table
 create table rollerconfig (
     id              varchar(48) not null primary key,
     sitedescription varchar(255) null,

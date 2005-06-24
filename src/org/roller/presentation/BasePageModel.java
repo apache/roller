@@ -60,11 +60,6 @@ public class BasePageModel
         return "MMM dd, yyyy";
     }
 
-    public UserData getUser()
-    {
-        return RollerRequest.getRollerRequest(request).getUser();
-    }
-    
     /**
      * @return Returns the mapping.
      */

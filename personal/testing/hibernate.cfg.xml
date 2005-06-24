@@ -49,5 +49,7 @@
         <mapping resource="org/roller/pojos/PlanetSubscriptionData.hbm.xml" />
         <mapping resource="org/roller/pojos/PlanetGroupSubscriptionAssoc.hbm.xml" />
 
+        <mapping resource="org/roller/pojos/PermissionsData.hbm.xml" />
+
     </session-factory>
 </hibernate-configuration>

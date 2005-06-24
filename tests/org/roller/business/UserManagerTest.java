@@ -81,7 +81,8 @@ public class UserManagerTest  extends RollerTestBase
                                  "DisabledUser",
                                  "disabledUser@example.com"
         );
-        umgr.getWebsite(disabledUserName,false).setIsEnabled(Boolean.FALSE);
+        ((WebsiteData)umgr.getWebsites(disabledUser, null)
+                .get(0)).setIsEnabled(Boolean.FALSE);
 
         getRoller().commit();
     }
@@ -160,6 +161,7 @@ public class UserManagerTest  extends RollerTestBase
         stored = new WebsiteData(
             null,
             "testsite",
+            "testsite",
             "Testsite",
             user,
             "dpid",
@@ -231,7 +233,7 @@ public class UserManagerTest  extends RollerTestBase
         UserData user1 = umgr.retrieveUser(user.getId());
         assertNotNull(user1);
 
-        WebsiteData website = umgr.getWebsite(user.getUserName());
+        WebsiteData website = (WebsiteData)umgr.getWebsites(user, null).get(0);
         assertNotNull(website);
 
         FolderData root = getRoller().getBookmarkManager().getRootFolder(website);
@@ -253,7 +255,7 @@ public class UserManagerTest  extends RollerTestBase
         UserData user2 = umgr.retrieveUser(user.getId());
         assertNull(user2);
 
-        WebsiteData website2 = umgr.getWebsite(user.getUserName());
+        WebsiteData website2 = (WebsiteData)umgr.getWebsites(user, null).get(0);
         assertNull(website2);
 
         assertNull(getRoller().getBookmarkManager().retrieveFolder(root.getId()));
@@ -265,14 +267,19 @@ public class UserManagerTest  extends RollerTestBase
 
     public void testGetWebsite() throws RollerException
     {
+        UserManager umgr = getRoller().getUserManager();
+        
         // can get testuser0 who is enabled
-        assertNotNull(getRoller().getUserManager().getWebsite(enabledUserName));
+        assertTrue(umgr.getWebsites(
+                umgr.getUser(enabledUserName), Boolean.TRUE).size() > 0);
 
         // can't get testuser1, who is disabled
-        assertNull(getRoller().getUserManager().getWebsite(disabledUserName));
+        assertTrue(umgr.getWebsites(
+                umgr.getUser(disabledUserName), Boolean.TRUE).size() == 0);
 
         // can get testuser1 with enabledOnly flag set to false
-        assertNotNull(getRoller().getUserManager().getWebsite(disabledUserName,false));
+        assertTrue(umgr.getWebsites(
+                umgr.getUser(disabledUserName), Boolean.FALSE).size() == 1);
     }
 
     public void testGetUser() throws RollerException
@@ -299,7 +306,7 @@ public class UserManagerTest  extends RollerTestBase
         assertTrue(userCountEnabled > 0);
 
         // At least one user is disabled
-        int userCountAll = getRoller().getUserManager().getUsers(false).size();
+        int userCountAll = getRoller().getUserManager().getUsers(null).size();
         assertTrue(userCountAll > userCountEnabled);
     }
 
@@ -346,20 +353,26 @@ public class UserManagerTest  extends RollerTestBase
     
     public void testGetPageByName() throws RollerException
     {
-        WebsiteData wd0 = getRoller().getUserManager().getWebsite(enabledUserName);
-        assertNotNull(getRoller().getUserManager().getPageByName(wd0,"Weblog"));
+        UserManager umgr = getRoller().getUserManager();
+        WebsiteData wd0 = (WebsiteData)umgr.getWebsites(
+                umgr.getUser(enabledUserName), null).get(0);
+        assertNotNull(getRoller().getUserManager().getPageByName(wd0, "Weblog"));
     }
 
     public void testGetPageByLink() throws RollerException
     {
-        WebsiteData wd0 = getRoller().getUserManager().getWebsite(enabledUserName);
+        UserManager umgr = getRoller().getUserManager();
+        WebsiteData wd0 = (WebsiteData)umgr.getWebsites(
+                umgr.getUser(enabledUserName), null).get(0);
         assertNotNull(getRoller().getUserManager().getPageByLink(wd0,"Weblog"));
     }
 
     public void testGetPages() throws RollerException
     {
         // testuser0 is enabled and has 3 pages
-        WebsiteData wd0 = getRoller().getUserManager().getWebsite(enabledUserName);
+        UserManager umgr = getRoller().getUserManager();
+        WebsiteData wd0 = (WebsiteData)umgr.getWebsites(
+                umgr.getUser(enabledUserName), null).get(0);
         assertEquals(3, getRoller().getUserManager().getPages(wd0).size());
     }
 

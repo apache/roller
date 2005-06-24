@@ -2,6 +2,7 @@
 <!-- Additional Ant tasks to include in build script -->
 
     <!-- Netbeans debug single file 
+    --> 
     <target name="debug-selected-files" if="netbeans.home" depends="build-test" 
        description="Debug a Single File">
        <fail unless="classname">Must set property 'classname'</fail>
@@ -20,9 +21,9 @@
           </classpath>
        </java>
     </target>
-    --> 
 
     <!-- Netbeans debug.single target 
+    -->
     <target name="test-selected-files" if="netbeans.home" depends="build-test" 
        description="Test/debug a Single File">
        <fail unless="classname">Must set property 'classname'</fail>
@@ -42,7 +43,6 @@
           </classpath>
        </java>
     </target>
-    -->
 
     <!-- Extend the init-hsqldb target to include custom tables
     <target name="init-hsqldb-ex" depends="init-hsqldb" >

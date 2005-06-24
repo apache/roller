@@ -2,13 +2,6 @@
  * Created on Jun 15, 2004
  */
 package org.roller.presentation.pagecache.rollercache;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.roller.pojos.UserData;
-import org.roller.presentation.LanguageUtil;
-import org.roller.presentation.pagecache.FilterHandler;
-import org.roller.util.LRUCache;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +21,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.roller.config.RollerConfig;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.LanguageUtil;
+import org.roller.presentation.pagecache.FilterHandler;
+import org.roller.util.LRUCache;
 
 /**
  * Page cache implementation that uses a simple LRUCache. Can be configured 
@@ -260,11 +260,12 @@ public class LRUCacheHandler implements FilterHandler
     /**
      * Purge user's entries from cache.
      */
-    public synchronized void removeFromCache(HttpServletRequest req, UserData user)
+    public synchronized void removeFromCache(
+            HttpServletRequest req, WebsiteData website)
     {
         // TODO: can we make this a little more precise, perhaps via regex?
-        String rssString = "/rss/" + user.getUserName(); // user's pages
-        String pageString = "/page/" + user.getUserName(); // user's RSS feeds
+        String rssString = "/rss/" + website.getHandle(); // user's pages
+        String pageString = "/page/" + website.getHandle(); // user's RSS feeds
         String mainRssString = "/rss_"; // main RSS feed
         List purgeList = new ArrayList();
         
@@ -273,7 +274,8 @@ public class LRUCacheHandler implements FilterHandler
         {
             String key = (String) keys.next();
             
-            if (key.indexOf(rssString)!=-1 || key.indexOf(pageString)!=-1 || key.indexOf(mainRssString)!=-1) 
+            if (key.indexOf(rssString)!=-1 
+                    || key.indexOf(pageString)!=-1 || key.indexOf(mainRssString)!=-1) 
             {
                 purgeList.add(key);
             }
@@ -291,8 +293,8 @@ public class LRUCacheHandler implements FilterHandler
             StringBuffer sb = new StringBuffer();
             sb.append("Purged, count=");
             sb.append(purgeList.size());
-            sb.append(", user=");
-            sb.append(user.getUserName());
+            sb.append(", website=");
+            sb.append(website.getHandle());
             mLogger.debug(sb.toString());
         }        
     }

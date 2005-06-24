@@ -23,11 +23,11 @@ import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.PageData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.pojos.PingTargetData;
 import org.roller.util.DateUtil;
 import org.roller.util.Utilities;
  
@@ -77,6 +77,7 @@ public class RollerRequest implements ParsedRequest
     
     public static final String ANCHOR_KEY             = "anchor";
     public static final String USERNAME_KEY           = "username";
+    public static final String WEBSITEHANDLE_KEY      = "blog";
     public static final String WEBSITEID_KEY          = "websiteid";
     public static final String FOLDERID_KEY           = "folderid";
     public static final String PARENTID_KEY           = "parentid";
@@ -96,7 +97,7 @@ public class RollerRequest implements ParsedRequest
     public static final String WEBLOGCOMMENTID_KEY    = "catid";
     public static final String LOGIN_COOKIE           = "sessionId";
     
-    public static final String OWNING_USER            = "OWNING_USER";
+    public static final String OWNING_WEBSITE         = "OWNING_WEBSITE";
     
     private static final String ROLLER_REQUEST        = "roller_request";
     
@@ -113,7 +114,6 @@ public class RollerRequest implements ParsedRequest
         init();
     }
     
-    //------------------------------------------------------------------------
     /** Convenience */
     public RollerRequest( ServletRequest req, ServletContext ctx ) 
         throws RollerException
@@ -123,7 +123,6 @@ public class RollerRequest implements ParsedRequest
         init();
     }
     
-    //------------------------------------------------------------------------
     public RollerRequest( PageContext pCtx) throws RollerException
     {
         mRequest = (HttpServletRequest) pCtx.getRequest();
@@ -132,7 +131,6 @@ public class RollerRequest implements ParsedRequest
         init();
     }
 
-    //------------------------------------------------------------------------
     private void init() throws RollerException
     {
         mRollerRequestTLS.set(this);
@@ -171,6 +169,17 @@ public class RollerRequest implements ParsedRequest
         parseRequestParams();
     }
     
+    public String toString()
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append("[");
+        sb.append(getRequestURL());
+        sb.append(", ");
+        sb.append(getRefererURL());
+        sb.append("]");
+        return sb.toString();
+    }
+
     //------------------------------------------------------------------------
     /** 
      * Bind persistence session to specific user.
@@ -195,7 +204,7 @@ public class RollerRequest implements ParsedRequest
             //   /username/pagelink/anchor (specific entry)
             //   /username/pagelink/datestring/anchor (specific entry)
             UserManager userMgr = getRoller().getUserManager();
-            mWebsite = userMgr.getWebsite(pathInfo[0]);
+            mWebsite = userMgr.getWebsiteByHandle(pathInfo[0]);
             if (mWebsite != null)
             {
                 if ( pathInfo.length == 1 )
@@ -299,11 +308,6 @@ public class RollerRequest implements ParsedRequest
             {
                 // then try remote user
                 userName = mRequest.getRemoteUser(); 
-            }
-            
-            if ( userName != null )
-            {
-                mWebsite = userMgr.getWebsite(userName);
             }
             
             // Look for page ID in request params
@@ -452,91 +456,14 @@ public class RollerRequest implements ParsedRequest
         return RollerContext.getRoller( mRequest );
     }
     
-    //------------------------------------------------------------------------
-    /** Is mRequest's user the admin user? */
-    public boolean isAdminUser() throws RollerException
-    {
-        UserData user = getUser();
-        if (user != null && user.hasRole("admin")) 
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    //------------------------------------------------------------------------
-    /** Is mRequest's user authorized to edit the mRequested resource */
-    public boolean isUserAuthorizedToEdit() throws RollerException
-    {
-        // Make sure authenticated user is the owner of this item
-        // Session's principal's name must match user name in mRequest
-        
-        RollerContext rctx = RollerContext.getRollerContext(mContext); 
-        Authenticator auth = rctx.getAuthenticator();
-        
-        String userName = auth.getAuthenticatedUserName(mRequest);
-            
-        // TODO: A hack to be replaced by Object.canEdit()
-        UserData owningUser = null;
-        if (mRequest.getAttribute(OWNING_USER) != null)
-        {
-            owningUser = (UserData)mRequest.getAttribute(OWNING_USER);
-        }
-        else
-        {
-            owningUser = getUser(); 
-        }
-        
-        if (    userName != null 
-             && owningUser != null
-             && userName.equalsIgnoreCase( owningUser.getUserName() )
-             && auth.isAuthenticatedUserInRole(mRequest,"editor"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    //------------------------------------------------------------------------
-    /**
-     * Get user by name.
-     */
-    public UserData getUser( String userName ) throws Exception
-    {
-        return getRoller().getUserManager().getUser(userName);
-    }
-
-    //------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
     
     public boolean isDateSpecified()
     {
         return mIsDateSpecified;
     }
-            
-    //------------------------------------------------------------------------
-    
-    public int getWeblogEntryCount()
-    {
-        // Get count of entries to return, or 20 if null
-        int count = 20;
-        if ( mRequest.getParameter("count") != null )
-        {
-            count= Utilities.stringToInt(mRequest.getParameter("count"));
-            if ( count==0 || count>50 )
-            {
-                count = 20;
-            } 
-        } 
-        return count; 
-    }         
-            
-    //------------------------------------------------------------------------
+                
+    //--------------------------------------------------- Date specified by request
     
     /**
      * Gets the date specified by the request, or null.
@@ -547,7 +474,6 @@ public class RollerRequest implements ParsedRequest
         return getDate(false);
     }
     
-    //------------------------------------------------------------------------
     /**
      * Gets the date specified by the request
      * @param orToday If no date specified, then use today's date.
@@ -584,7 +510,6 @@ public class RollerRequest implements ParsedRequest
         return todayCal.getTime(); 
     }
 
-    //------------------------------------------------------------------------
     /**
      * Gets the YYYYMMDD date string specified by the request, or null.
      * @return String
@@ -594,7 +519,6 @@ public class RollerRequest implements ParsedRequest
         return getDateString(false);
     }
 
-    //------------------------------------------------------------------------
     /**
      * Gets the date specified by the request
      * @param orToday If no date specified, then use today's date.
@@ -642,6 +566,21 @@ public class RollerRequest implements ParsedRequest
         return mPageLink;
     }
 
+    public int getWeblogEntryCount()
+    {
+        // Get count of entries to return, or 20 if null
+        int count = 20;
+        if ( mRequest.getParameter("count") != null )
+        {
+            count= Utilities.stringToInt(mRequest.getParameter("count"));
+            if ( count==0 || count>50 )
+            {
+                count = 20;
+            } 
+        } 
+        return count; 
+    }         
+            
     //------------------------------------------------------------------------
     /**
      * Gets the BookmarkData specified by the request, or null.
@@ -789,18 +728,10 @@ public class RollerRequest implements ParsedRequest
     }
     
     /**
-     * Gets the UserData specified by the request, or null.
-     * @return UserData
-     */
-    public UserData getUser()
-    {
-        if (mWebsite != null) return mWebsite.getUser();
-        return null;
-    }
-
-    /**
-     * Gets the WebsiteData specified by the request, or null.
-     * @return WeblogCategory
+     * Gets the WebsiteData specified in the path info of the request URI, this is 
+     * NOT the same thing as the "current website" (i.e. the one that the session's 
+     * authenticated user is currently editing).
+     * @return WebsiteData object specified by request URI.
      */
     public WebsiteData getWebsite()
     {
@@ -810,7 +741,7 @@ public class RollerRequest implements ParsedRequest
     {
         mWebsite = wd;
     }
-
+    
     /**
      * Gets the WeblogEntryData specified by the request, or null.
      * 
@@ -858,7 +789,6 @@ public class RollerRequest implements ParsedRequest
             catch (RollerException e)
             {
                 mLogger.error("EXCEPTION getting weblog entry",e);
-                mLogger.error("user=" + mWebsite.getUser());
                 mLogger.error("anchor=" + anchor);
                 mLogger.error("entryid=" + entryid);
             }
@@ -866,7 +796,7 @@ public class RollerRequest implements ParsedRequest
         return mWeblogEntry;
     }
 
-    //------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
 
     /** Get attribute from mRequest, and if that fails try session */
     private String getFromRequest( String key )
@@ -882,8 +812,6 @@ public class RollerRequest implements ParsedRequest
         }
         return ret;
     }
-
-    //------------------------------------------------------------------------
 
     private Date parseDate( String dateString )
     {
@@ -905,27 +833,57 @@ public class RollerRequest implements ParsedRequest
         return ret;
     }
     
-    //------------------------------------------------------------------------
-
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append("[");
-        sb.append(getRequestURL());
-        sb.append(", ");
-        sb.append(getRefererURL());
-        sb.append("]");
-        return sb.toString();
-    }
-
-    //------------------------------------------------------------------------
-
     /** 
      * @see org.roller.pojos.ParsedRequest#isLinkbackEnabled()
      */
     public boolean isEnableLinkback()
     {
         return RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
+    }
+
+    //-------------------------------------------- Authentication and authorization
+    
+    /**
+     * Get the current website from the Roller session, or null if none exists.
+     */
+    public WebsiteData getCurrentWebsite()
+    {
+        RollerSession rollerSession = RollerSession.getRollerSession(mRequest);
+        if (rollerSession != null) return rollerSession.getCurrentWebsite();
+        return null;
+    }
+
+    /**
+     * Gets the UserData specified by the request, or null if none exists.
+     * @return UserData
+     */
+    public UserData getAuthenticatedUser()
+    {
+        RollerSession rollerSession = RollerSession.getRollerSession(mRequest);
+        if (rollerSession != null) return rollerSession.getAuthenticatedUser();
+        return null;
+    }
+
+    /** 
+     * Does user have the admin role (aka global superuser)
+     */
+    public boolean isAdminUser() throws RollerException
+    {
+        UserData user = getAuthenticatedUser();
+        if (user != null && user.hasRole("admin")) return true;
+        return false;
+    }
+
+    /** 
+     * Is user authorized to edit objects in the current website. 
+     */
+    public boolean isUserAuthorizedToEdit() throws RollerException
+    {
+        RollerSession rollerSession = RollerSession.getRollerSession(mRequest);
+        UserData user = rollerSession.getAuthenticatedUser();
+        WebsiteData website = rollerSession.getCurrentWebsite();
+        return website.hasUserPermissions(user, 
+                (short)(PermissionsData.AUTHOR | PermissionsData.ADMIN));
     }
 }
 

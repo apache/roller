@@ -131,7 +131,7 @@ public final class RollerConfigAction extends DispatchAction
              RollerRequest rreq = RollerRequest.getRollerRequest(request);
 			IndexManager manager = rreq.getRoller().getIndexManager();
 										 
-			manager.rebuildUserIndex();
+			manager.rebuildWebsiteIndex();
 			request.getSession().setAttribute(
 				RollerSession.STATUS_MESSAGE,
 					"Successfully scheduled rebuild of all users' indexes");

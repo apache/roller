@@ -31,9 +31,9 @@ public class PermissionsData extends PersistentObject
     private WebsiteData website = null;
     private UserData    user = null;
     private boolean     pending = true;
-    public static short LIMITED = 0x00;
-    public static short AUTHOR = 0x01;
-    public static short ADMIN = 0x02;
+    public static short LIMITED = 0x00; // 0000 
+    public static short AUTHOR  = 0x01; // 0001
+    public static short ADMIN   = 0x03; // 0011 
     private short       permissionMask = LIMITED;
     
     /** Creates a new instance of PermissionsData */

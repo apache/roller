@@ -32,12 +32,12 @@ import org.roller.pojos.WebsiteData;
  *
  * An index operation that rebuilds a given users index (or all indexes.)
  */
-public class RebuildUserIndexOperation extends WriteToIndexOperation
+public class RebuildWebsiteIndexOperation extends WriteToIndexOperation
 {
     //~ Static fields/initializers =============================================
 
     private static Log mLogger =
-        LogFactory.getFactory().getInstance(RebuildUserIndexOperation.class);
+        LogFactory.getFactory().getInstance(RebuildWebsiteIndexOperation.class);
 
     //~ Instance fields ========================================================
 
@@ -50,7 +50,7 @@ public class RebuildUserIndexOperation extends WriteToIndexOperation
      *
      * @param website The website to rebuild the index for, or null for all users.
      */
-    public RebuildUserIndexOperation(IndexManagerImpl mgr, WebsiteData website)
+    public RebuildWebsiteIndexOperation(IndexManagerImpl mgr, WebsiteData website)
     {
         super(mgr);
         this.website = website;
@@ -71,17 +71,11 @@ public class RebuildUserIndexOperation extends WriteToIndexOperation
         {
             if (reader != null)
             {
-                String userName = null;
-                if (website != null && website.getUser() != null)
+                Term tWebsite = IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, 
+                                   website.getHandle());
+                if (tWebsite != null)
                 {
-                    userName = website.getUser().getUserName();
-                }
-                Term tUsername =
-                    IndexUtil.getTerm(FieldConstants.USERNAME, userName);
-
-                if (tUsername != null)
-                {
-                    reader.delete(tUsername);
+                    reader.delete(tWebsite);
                 }
                 else
                 {
@@ -151,8 +145,8 @@ public class RebuildUserIndexOperation extends WriteToIndexOperation
         }
         else
         {
-            mLogger.info("Completed rebuilding index for '" +
-                 website.getUser().getUserName() + "' in '" + length + "' seconds");
+            mLogger.info("Completed rebuilding index for website handle: '" +
+                 website.getHandle() + "' in '" + length + "' seconds");
         }
     }
 }

@@ -329,6 +329,7 @@ public class WeblogManagerTest extends RollerTestBase
      */
     public void testGetWeblogLastUpdateTimeForUser() throws Exception
     {
+        UserManager umgr = getRoller().getUserManager();
         WeblogManager wmgr = getRoller().getWeblogManager();
 
         /** 
@@ -354,8 +355,8 @@ public class WeblogManagerTest extends RollerTestBase
         }
         
         WebsiteData website = entry1.getWebsite();
-        UserData user = website.getUser();        
-        Date updateTime = wmgr.getWeblogLastPublishTime(user.getUserName());
+        UserData user = (UserData)umgr.getUsers(website, null).get(0);
+        Date updateTime = wmgr.getWeblogLastPublishTime(website);
                 
         assertEquals("THIS FAILS RANDOMLY, TRY AGAIN", entry1.getPubTime(),updateTime);
     }
@@ -721,8 +722,7 @@ public class WeblogManagerTest extends RollerTestBase
         WeblogManager wmgr = getRoller().getWeblogManager();
         WebsiteData website = (WebsiteData)mWebsites.get(0);
         
-        Date lastPub = wmgr.getWeblogLastPublishTime(
-                           website.getUser().getUserName());
+        Date lastPub = wmgr.getWeblogLastPublishTime(website);
         //System.out.println(lastPub);
         assertTrue(lastPub.compareTo(new Date()) <= 0);
     }
@@ -758,13 +758,15 @@ public class WeblogManagerTest extends RollerTestBase
     public void testPermissions() throws Exception
     {
         getRoller().begin(UserData.ANONYMOUS_USER);
+        UserManager umgr = getRoller().getUserManager();
         
         // evil testuser
-        UserData testuser = getRoller().getUserManager().getUser("testuser");       
+        UserData testuser = umgr.getUser("testuser");       
         assertNotNull(testuser);
         
         // gets hold of testuser0's entry
-        WebsiteData website0 = getRoller().getUserManager().getWebsite("testuser0");
+        WebsiteData website0 = (WebsiteData)umgr.getWebsites(
+                umgr.getUser("testuser0"), null).get(0);
         assertNotNull(website0);
         List entries = getRoller().getWeblogManager().getWeblogEntries(
                 website0,

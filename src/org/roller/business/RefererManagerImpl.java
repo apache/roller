@@ -182,7 +182,7 @@ public abstract class RefererManagerImpl implements RefererManager
             String refererUrl     = request.getRefererURL();
             WebsiteData website   = request.getWebsite();
             WeblogEntryData entry = request.getWeblogEntry();
-            String selfSiteFragment = "/page/" + website.getUser().getUserName();
+            String selfSiteFragment = "/page/" + website.getHandle();
 
             String dateString = null;
             if ( request.getDateString()!=null && request.isDateSpecified())

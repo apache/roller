@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.roller.pojos.UserData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.filters.IfModifiedFilter;
 import org.roller.presentation.pagecache.rollercache.LRUCacheHandler2;
 
@@ -99,14 +99,14 @@ public class PageCacheFilter implements Filter
 
     //-----------------------------------------------------------------------
     /** Remove from cache for all handlers of this class */
-    public static void removeFromCache(HttpServletRequest req, UserData user)
+    public static void removeFromCache(HttpServletRequest req, WebsiteData website)
     {
         Iterator iter = mHandlers.iterator();
         while (iter.hasNext())
         {
             FilterHandler handler = (FilterHandler)iter.next();
-            handler.removeFromCache(req, user);
+            handler.removeFromCache(req, website);
         }       
-        IfModifiedFilter.purgeDateCache(user);
+        IfModifiedFilter.purgeDateCache(website);
     }
 }

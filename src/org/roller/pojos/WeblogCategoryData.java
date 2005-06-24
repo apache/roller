@@ -471,18 +471,4 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         return RollerFactory.getRoller().getWeblogManager().getWeblogCategoryAncestorAssocs(this);
     }
 
-    public boolean canSave() throws RollerException
-    {
-        Roller roller = RollerFactory.getRoller();
-        if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-        {
-            return true;
-        }
-        if (roller.getUser().equals(getWebsite().getUser()))
-        {
-            return true;
-        }
-        return false;
-    }
-
 }

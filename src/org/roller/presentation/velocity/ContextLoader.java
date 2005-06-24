@@ -95,16 +95,12 @@ public class ContextLoader
         pageHelper.initializePlugins(mPagePlugins);
         ctx.put("pageHelper", pageHelper );
 
-        // Add legacy macros too, so that old-school pages still work
-        Macros macros= new Macros(rreq.getPageContext(), pageHelper);
-        ctx.put("macros", macros);
-
         // Load standard Roller objects and values into the context 
-        String userName = loadWebsiteValues(ctx, rreq, rollerCtx );
-        loadWeblogValues( ctx, rreq, rollerCtx, userName );            
-        loadPathValues( ctx, rreq, rollerCtx, userName );                                         
-        loadRssValues( ctx, rreq, userName );                        
-        loadUtilityObjects( ctx, rreq, rollerCtx, userName ); 
+        String handle = loadWebsiteValues(ctx, rreq, rollerCtx );
+        loadWeblogValues( ctx, rreq, rollerCtx, handle );            
+        loadPathValues( ctx, rreq, rollerCtx, handle );                                         
+        loadRssValues( ctx, rreq, handle );                        
+        loadUtilityObjects( ctx, rreq, rollerCtx, handle ); 
         loadRequestParamKeys(ctx);
         loadStatusMessage( ctx, rreq );
         
@@ -156,11 +152,12 @@ public class ContextLoader
      * @param userName
      */
     private static void loadWeblogValues(
-       Context ctx, RollerRequest rreq, RollerContext rollerCtx, String userName)
+       Context ctx, RollerRequest rreq, RollerContext rollerCtx, String handle)
        throws RollerException
     {
         // if there is an "_entry" page, only load it once
-        WebsiteData website = rreq.getRoller().getUserManager().getWebsite(userName);
+        WebsiteData website = 
+            rreq.getRoller().getUserManager().getWebsiteByHandle(handle);
         PageModel pageModel = (PageModel)ctx.get("pageModel");
         if (website != null && pageModel != null) 
         {
@@ -327,7 +324,7 @@ public class ContextLoader
     //------------------------------------------------------------------------
     
     protected static void loadRssValues(
-       Context ctx, RollerRequest rreq, String userName) throws RollerException
+       Context ctx, RollerRequest rreq, String handle) throws RollerException
     {
         HttpServletRequest request = rreq.getRequest();
         
@@ -372,7 +369,7 @@ public class ContextLoader
     //------------------------------------------------------------------------
     
     protected static void loadUtilityObjects(
-        Context ctx, RollerRequest rreq, RollerContext rollerCtx, String username)
+        Context ctx, RollerRequest rreq, RollerContext rollerCtx, String handle)
         throws RollerException
     {
 
@@ -381,7 +378,7 @@ public class ContextLoader
         // in the macro's
         Locale viewLocale = (Locale) ctx.get("viewLocale");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", viewLocale);
-        WebsiteData website = rreq.getRoller().getUserManager().getWebsite(username);
+        WebsiteData website = rreq.getWebsite();
         if (website != null)
         {
             sdf.setTimeZone(website.getTimeZoneInstance());
@@ -411,33 +408,31 @@ public class ContextLoader
         Context ctx, RollerRequest rreq, RollerContext rollerCtx )
         throws RollerException
     {
-        String userName = null;
-        UserData user = null;
+        String handle = null;
         WebsiteData website = null;
         
         Roller mRoller = RollerFactory.getRoller();
         Map props = mRoller.getPropertiesManager().getProperties();
         
-        if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_USER) != null)
+        if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null)
         {
-            user = (UserData)
-                rreq.getRequest().getAttribute(RollerRequest.OWNING_USER);
+            website = (WebsiteData)
+                rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
         }
-        else if ( rreq.getUser() != null )
+        else if ( rreq.getWebsite() != null )
         {
-            user = rreq.getUser();
+            website = rreq.getWebsite();
         }
         
-        if ( user != null )
+        if ( website != null )
         {
-            userName = user.getUserName();
-            website = rreq.getRoller().getUserManager().getWebsite(userName);
-            ctx.put("userName",      user.getUserName() );
-            ctx.put("fullName",      user.getFullName() );
-            ctx.put("emailAddress",  user.getEmailAddress() );
+            handle = website.getHandle();
+            ctx.put("userName",      handle);
+            ctx.put("fullName",      website.getName() );
+            ctx.put("emailAddress",  website.getEmailAddress() );
 
-            ctx.put("encodedEmail",  RegexUtil.encode(user.getEmailAddress()));
-            ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(user.getEmailAddress()));
+            ctx.put("encodedEmail",  RegexUtil.encode(website.getEmailAddress()));
+            ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(website.getEmailAddress()));
             
             // setup Locale for future rendering
             ctx.put("locale", website.getLocaleInstance());
@@ -451,8 +446,8 @@ public class ContextLoader
             website.setName(((RollerPropertyData)props.get("site.name")).getValue());
             website.setAllowComments(Boolean.FALSE);
             website.setDescription(((RollerPropertyData)props.get("site.description")).getValue());
-            userName = "zzz_none_zzz";
-            ctx.put("userName",userName );
+            handle = "zzz_none_zzz";
+            ctx.put("userName", handle );
             ctx.put("fullName","zzz_none_zzz");
             ctx.put("emailAddress",
                 ((RollerPropertyData)props.get("site.adminemail")).getValue());
@@ -471,7 +466,7 @@ public class ContextLoader
             LanguageUtil.getViewLocale(rreq.getRequest()));
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
 
-        return userName;
+        return handle;
     }
     
     //------------------------------------------------------------------------

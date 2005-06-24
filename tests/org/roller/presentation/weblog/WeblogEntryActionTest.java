@@ -5,6 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.roller.RollerException;
+import org.roller.model.UserManager;
+import org.roller.pojos.UserData;
 import org.roller.presentation.StrutsActionTestBase;
 import org.roller.presentation.weblog.actions.WeblogEntryFormAction;
 import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
@@ -19,7 +22,19 @@ public class WeblogEntryActionTest extends StrutsActionTestBase
 {
     public void testCreateWeblogEntry() 
     {
-        authenticateUser(mWebsite.getUser().getUserName(), "editor");
+        UserManager umgr = null;
+        UserData user = null; 
+        try
+        {
+            umgr = getRoller().getUserManager();
+            user = (UserData)umgr.getUsers(mWebsite, null).get(0);       
+        }
+        catch (RollerException e)
+        {
+            e.printStackTrace();
+            fail();
+        }
+        authenticateUser(user.getUserName(), "editor");
         
         MockHttpServletRequest mockRequest = getMockFactory().getMockRequest();
         mockRequest.setContextPath("/dummy");

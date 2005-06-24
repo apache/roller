@@ -53,13 +53,15 @@ public class PermissionsTest extends RollerTestBase
     public void testWeblogEntryPermissions() throws Exception
     {
         getRoller().begin(UserData.ANONYMOUS_USER);
+        UserManager umgr = getRoller().getUserManager();
         
         // evil testuser
-        UserData testuser = getRoller().getUserManager().getUser("testuser");       
+        UserData testuser = umgr.getUser("testuser");       
         assertNotNull(testuser);
         
         // gets hold of testuser0's entry
-        WebsiteData website0 = getRoller().getUserManager().getWebsite("testuser0");
+        UserData testuser0 = umgr.getUser("testuser0");
+        WebsiteData website0 = (WebsiteData)umgr.getWebsites(testuser0, null).get(0);
         assertNotNull(website0);
         List entries = getRoller().getWeblogManager().getWeblogEntries(
                 website0,
@@ -90,13 +92,15 @@ public class PermissionsTest extends RollerTestBase
     public void testBookmarkPermissions() throws Exception
     {
         getRoller().begin(UserData.ANONYMOUS_USER);
+        UserManager umgr = getRoller().getUserManager();
         
         // evil testuser
-        UserData testuser = getRoller().getUserManager().getUser("testuser");       
+        UserData testuser = umgr.getUser("testuser");       
         assertNotNull(testuser);
         
         // gets hold of testuser0's entry
-        WebsiteData website0 = getRoller().getUserManager().getWebsite("testuser0");
+        UserData testuser0 = umgr.getUser("testuser0");
+        WebsiteData website0 = (WebsiteData)umgr.getWebsites(testuser0, null).get(0);
         assertNotNull(website0);
         List folders = getRoller().getBookmarkManager().getAllFolders(website0);
         FolderData root = (FolderData)folders.get(0);
@@ -138,13 +142,15 @@ public class PermissionsTest extends RollerTestBase
     public void testPagePermissions() throws Exception
     {
         getRoller().begin(UserData.ANONYMOUS_USER);
+        UserManager umgr = getRoller().getUserManager();
         
         // evil testuser
-        UserData testuser = getRoller().getUserManager().getUser("testuser");       
+        UserData testuser = umgr.getUser("testuser");       
         assertNotNull(testuser);
         
         // gets hold of testuser0's entry
-        WebsiteData website0 = getRoller().getUserManager().getWebsite("testuser0");
+        UserData testuser0 = umgr.getUser("testuser0");
+        WebsiteData website0 = (WebsiteData)umgr.getWebsites(testuser0, null).get(0);
         assertNotNull(website0);
         PageData page = (PageData)getRoller().getUserManager().getPages(website0).get(0);
         assertNotNull(page);
@@ -224,6 +230,7 @@ public class PermissionsTest extends RollerTestBase
      * <li> can accept invitation by setting pending to false</li>
      * <li> can get list of permissions from user </li>
      * <li> can get list of permissions from website </li>
+     * <li> users can be removed from website</li>
      * </ul>
      */
     public void testInvitations()
@@ -234,21 +241,22 @@ public class PermissionsTest extends RollerTestBase
             String userName = "testuser0";
             String permsId;
             
+            // test invite user to website
             getRoller().begin();
             {
-                // invite user to website
                 UserData tuser = umgr.getUser(userName);       
-                WebsiteData tsite = umgr.getWebsite(userName);
+                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
                 PermissionsData perms = umgr.inviteUser(
                         tsite, tuser, PermissionsData.LIMITED);
                 permsId = perms.getId();
             }
             getRoller().commit();  
             
+            // test user accepts invitation
             getRoller().begin();
             {
                 UserData tuser = umgr.getUser(userName);       
-                WebsiteData tsite = umgr.getWebsite(userName);
+                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
                 
                 // can get pending permission object
                 PermissionsData perms = umgr.getPermissions(tsite, tuser);
@@ -271,10 +279,11 @@ public class PermissionsTest extends RollerTestBase
             }
             getRoller().commit();
             
+            // test user is member of website, website has member user
             getRoller().begin();
             {
                 UserData tuser = umgr.getUser(userName);       
-                WebsiteData tsite = umgr.getWebsite(userName);
+                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
 
                 // assert that invitation list is empty
                 assertTrue(umgr.getPendingPermissions(tuser).isEmpty());
@@ -289,29 +298,88 @@ public class PermissionsTest extends RollerTestBase
                               ((WebsiteData)websites.get(0)).getId());
                 
                 // assert that website has user
-                List users = umgr.getUsers(tsite);
+                List users = umgr.getUsers(tsite, null);
                 assertEquals( tuser.getId(),
                               ((UserData)users.get(0)).getId());
             }
-            getRoller().commit();            
+            getRoller().commit();    
+            
+            // test user can be retired from website
+            getRoller().begin();
+            {
+                UserData tuser = umgr.getUser(userName);       
+                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
+                umgr.retireUser(tsite, tuser);
+            }
+            getRoller().commit();
+            getRoller().begin();
+            {
+                UserData tuser = umgr.getUser(userName);       
+                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);                
+                List websites = umgr.getWebsites(tuser, null);
+                assertEquals(0, websites.size());
+                List users = umgr.getUsers(tsite, null);
+                assertEquals(0, users.size());
+            }
+            getRoller().commit();
         }
         catch (Exception e)
         {
             e.printStackTrace();
+            fail();
         }               
     }
     
     /**
      * Test permissions removal and related cascades, specifically:
      * <ul>
-     * <li> users can be removed from website
      * <li> when user is deleted, permissions are deleted too </li>
      * <li> when website is deleted, permissions are deleted too </li>
      * </ul>
      */
-     public void testPermissionsRemoval() 
+     public void testPermissionsRemoval() throws Exception
      {
-         
+         try 
+         {
+             UserManager umgr = getRoller().getUserManager();
+             String userName = "testuser0";
+             String permsId = null;
+             
+             // Create add user to website
+             getRoller().begin();
+             {
+                 UserData tuser = umgr.getUser(userName);       
+                 WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);                
+                 PermissionsData perms = new PermissionsData();
+                 perms.setUser(tuser);
+                 perms.setWebsite(tsite);
+                 perms.save();
+                 permsId = perms.getId();
+             }
+             getRoller().commit();    
+             
+             // delete website
+             getRoller().begin(UserData.SYSTEM_USER);
+             {
+                 UserData tuser = umgr.getUser(userName);       
+                 WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
+                 tsite.remove();                 
+             }
+             getRoller().commit(); 
+             
+             // ensure that permission was deleted too
+             getRoller().begin();
+             {
+                 assertNull(getRoller().getPersistenceStrategy().load(
+                         permsId, PermissionsData.class));                 
+             }
+             getRoller().commit();    
+         }
+         catch (Exception e)
+         {
+             e.printStackTrace();
+             fail();
+         }               
      }
 }
 

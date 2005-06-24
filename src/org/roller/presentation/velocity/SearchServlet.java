@@ -91,7 +91,7 @@ public class SearchServlet extends BasePageServlet
             return generalSearchResults(request, response, ctx);        
         }
 
-        boolean userSpecificSearch = checkForUser(request);
+        boolean websiteSpecificSearch = checkForWebsite(request);
         try
         {
             RollerRequest rreq = getRollerRequest(request, response);
@@ -102,11 +102,11 @@ public class SearchServlet extends BasePageServlet
             ctx.put("term", request.getParameter("q"));
 
             WebsiteData website = null;
-            if (userSpecificSearch)
+            if (websiteSpecificSearch)
             {    
                 website = rreq.getWebsite();
-                search.setUsername(rreq.getUser().getUserName());
-                ctx.put("username", rreq.getUser().getUserName());
+                search.setWebsiteHandle(rreq.getWebsite().getHandle());
+                ctx.put("websiteHandle", rreq.getWebsite().getHandle());
             }
             
             if (StringUtils.isNotEmpty(request.getParameter("c")))
@@ -151,7 +151,7 @@ public class SearchServlet extends BasePageServlet
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }        
 
-        if (userSpecificSearch)   
+        if (websiteSpecificSearch)   
         {    
             return super.handleRequest(request, response, ctx);
         }
@@ -198,7 +198,7 @@ public class SearchServlet extends BasePageServlet
         rreq.getRequest().setAttribute("limit", new Integer(limit));
         if (offset + limit > hits.length()) limit = hits.length()-offset;
         
-        boolean userSpecificSearch = checkForUser(rreq.getRequest());
+        boolean websiteSpecificSearch = checkForWebsite(rreq.getRequest());
         TreeMap searchResults = new TreeMap(new ReverseComparator());
         TreeSet categories = new TreeSet();
         UserManager userMgr = 
@@ -207,19 +207,18 @@ public class SearchServlet extends BasePageServlet
             RollerContext.getRoller(rreq.getRequest()).getWeblogManager();
         WeblogEntryData entry;
         Document doc = null;
-        String username = null;
+        String handle = null;
         for (int i = offset; i < offset+limit; i++)
         {
             entry = null; // reset for each iteration
             
             doc = hits.doc(i);
-            username =
-                doc.getField(FieldConstants.USERNAME).stringValue();
+            handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
             
-            if (userSpecificSearch && website != null) 
+            if (websiteSpecificSearch && website != null) 
             {
                 // "wrong user" results have been reported
-                if (username.equals(rreq.getUser().getUserName()))
+                if (handle.equals(rreq.getWebsite().getHandle()))
                 {    
                     //entry = buildSearchEntry(website, doc);
                     
@@ -230,7 +229,7 @@ public class SearchServlet extends BasePageServlet
             }
             else
             {
-                website = userMgr.getWebsite(username);
+                website = entry.getWebsite();
                 // if user is not enabled, website will be null
                 if (website != null)
                 {
@@ -396,10 +395,10 @@ public class SearchServlet extends BasePageServlet
      * @param request
      * @return
      */
-    private boolean checkForUser(HttpServletRequest request)
+    private boolean checkForWebsite(HttpServletRequest request)
     {
         if (StringUtils.isNotEmpty(
-                request.getParameter(RollerRequest.USERNAME_KEY))) 
+                request.getParameter(RollerRequest.WEBSITEHANDLE_KEY))) 
         {
             return true;
         }

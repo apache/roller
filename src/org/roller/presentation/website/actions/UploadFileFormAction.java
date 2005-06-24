@@ -53,7 +53,6 @@ public final class UploadFileFormAction extends DispatchAction
     {
         RollerRequest rreq = null;
         ActionForward fwd = mapping.findForward("uploadFiles.page");
-        UserData user = null;
         WebsiteData website = null;
         RollerMessages msgs = new RollerMessages();
         try
@@ -64,7 +63,6 @@ public final class UploadFileFormAction extends DispatchAction
                 return mapping.findForward("access-denied");
             }
             website = rreq.getWebsite();
-            user = website.getUser();
         }
         catch (Exception e)
         {

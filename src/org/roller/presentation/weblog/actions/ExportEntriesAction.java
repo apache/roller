@@ -271,7 +271,7 @@ public class ExportEntriesAction extends DispatchAction
             JspFactory.getDefaultFactory().getPageContext( 
                 this.getServlet(), request, response, "", true, 8192, true);
         Map params = new HashMap();
-        params.put( RollerRequest.USERNAME_KEY,  rreq.getUser().getUserName());
+        params.put( RollerRequest.WEBSITEHANDLE_KEY,  rreq.getWebsite().getHandle());
         params.put("rmik", "Files");
         String filesLink = RequestUtils.computeURL(
              pageContext, (String)null, (String)null, (String)null,
