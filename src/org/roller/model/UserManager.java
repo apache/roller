@@ -19,7 +19,9 @@ import java.util.List;
  */
 public interface UserManager extends Serializable
 {
-    /** Release any resources used */
+    /**
+     * Release all resources associated with Roller session.
+     */
     public void release();
     
     //--------------------------------------------------------------- UserData
@@ -44,22 +46,56 @@ public interface UserManager extends Serializable
             String locale, String timezone)
         throws RollerException;
 
+    /**
+     * Get user by ID
+     */
     public UserData retrieveUser(String id)throws RollerException;
+    /**
+     * Store user.
+     */
     public void storeUser( UserData data ) throws RollerException;
 
+    /**
+     * Get all user roles.
+     */
     public List getUserRoles(UserData user) throws RollerException;
+    /**
+     * Get role by ID
+     */
     public RoleData retrieveRole(String id) throws RollerException;
+    /**
+     * Store role.
+     */
     public void storeRole( RoleData data ) throws RollerException;
+    /**
+     * Remove role by ID.
+     */
     public void removeRole( String id ) throws RollerException;
 
     //------------------------------------------------------------ WebsiteData
     
     /** Get website object by user name */
     public WebsiteData getWebsite(String userName) throws RollerException;
+	/**
+	 * Get website by username.
+	 * @param userName Username of website's owner
+	 * @param enabledOnly Only return enabled websites.
+	 * @throws org.roller.RollerException 
+	 * @return 
+	 */
 	public WebsiteData getWebsite(String userName, boolean enabledOnly) throws RollerException;
 
+    /**
+     * Get website by ID
+     */
     public WebsiteData retrieveWebsite(String id) throws RollerException;
+    /**
+     * Store website
+     */
     public void storeWebsite(WebsiteData data) throws RollerException;
+    /**
+     * Remove website by ID.
+     */
     public void removeWebsite(String id) throws RollerException;
 
     //--------------------------------------------------------------- PageData
@@ -76,8 +112,17 @@ public interface UserManager extends Serializable
     /** Get users pages */
     public List getPages(WebsiteData w) throws RollerException;
 
+    /**
+     * Get page by ID
+     */
     public PageData retrievePage(String id) throws RollerException;
+    /**
+     * Store page
+     */
     public void storePage(PageData data) throws RollerException;
+    /**
+     * Remove page by ID
+     */
     public void removePage(String id) throws RollerException;
 
 

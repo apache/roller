@@ -22,7 +22,7 @@ $pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1
         <author><name>$entry.website.user.fullName</name></author>
         #end
         <link rel="alternate" type="text/html" href="$absBaseURL$entry.permaLink"/>
-        <id>tag:$host,$utilities.formatIso8601Day($entry.pubTime):/$entry.website.user.userName?anchor=$entry.anchor</id>
+        <id>tag:$host,$utilities.formatIso8601Day($entry.pubTime):/$entry.website.user.userName?entry=$entry.anchor</id>
         <content type="text/html" mode="escaped">#showEntryDescription($entry)</content>
     </entry>
     #end

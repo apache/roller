@@ -719,9 +719,7 @@ public class RollerContext implements ServletContextListener
                     baseUrl
                         + "/page/"
                         + ud.getUserName()
-                        + "/"
-                        + dayString
-                        + "#"
+                        + "?entry="
                         + entry.getAnchor());
         }
         catch (Exception e)

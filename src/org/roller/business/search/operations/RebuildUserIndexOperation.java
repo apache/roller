@@ -127,8 +127,6 @@ public class RebuildUserIndexOperation extends WriteToIndexOperation
                        MessageFormat.format("Indexed entry {0}: {1}",
                        new Object[] {entry.getPubTime(), entry.getAnchor()}));
                 }
-                // release the database connection
-                roller.release();
             }
         }
         catch (Exception e)

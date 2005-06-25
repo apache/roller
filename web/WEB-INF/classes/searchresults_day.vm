@@ -1,5 +1,5 @@
 #macro( showEntryPermalink $entry )
-<a href="$baseURL/page/$entry.website.user.userName/?anchor=$entry.Anchor"
+<a href="$baseURL/page/$entry.website.user.userName/?entry=$entry.Anchor"
     title="$text.get( "macro.searchresultsday.entrypermalink.title" )"
     class="entrypermalink">posted</a>
 #end

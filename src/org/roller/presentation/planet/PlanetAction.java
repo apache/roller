@@ -2,6 +2,7 @@ package org.roller.presentation.planet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import org.apache.struts.action.ActionMapping;
 import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
+import org.roller.pojos.PlanetConfigData;
 import org.roller.pojos.PlanetGroupData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
@@ -28,7 +30,9 @@ public class PlanetAction extends Action
 {
     private static Log mLogger = 
         LogFactory.getFactory().getInstance(PlanetAction.class);
-        
+    private static ResourceBundle bundle = 
+        ResourceBundle.getBundle("ApplicationResources");  
+    
 	/**
 	 * Loads model and forwards to planet.page.
          */
@@ -44,7 +48,7 @@ public class PlanetAction extends Action
         req.setAttribute("data", new PlanetPageData(req));
         
         boolean allowNewUsers = 
-                    RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
+           RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
 
         java.security.Principal prince = req.getUserPrincipal();
         if (prince != null) 
@@ -67,10 +71,25 @@ public class PlanetAction extends Action
     public static class PlanetPageData 
     {
         private HttpServletRequest mRequest = null;
+        private String mTitle = 
+                bundle.getString("planet.title.unconfigured");
+        private String mDescription = 
+                bundle.getString("planet.description.unconfigured");
         
-        public PlanetPageData(HttpServletRequest req) 
+        public String getTitle() {return mTitle;}
+        public String getDescription() {return mDescription;}
+        
+        public PlanetPageData(HttpServletRequest req) throws RollerException
         {
-            mRequest = req;
+           mRequest = req;
+           Roller roller = 
+           RollerRequest.getRollerRequest(mRequest).getRoller();  
+           PlanetConfigData cfg = roller.getPlanetManager().getConfiguration();
+           if (cfg != null)
+           {
+               mTitle = cfg.getTitle();
+               mDescription = cfg.getDescription();
+           }
         }
         
         /** 

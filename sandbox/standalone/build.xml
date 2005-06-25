@@ -83,22 +83,33 @@ Makes the following assumptions:
         todir="./build/roller-demo/conf/Catalina/localhost" />
         
    <!-- And hibernate.cfg.xml configured for HSQLDB -->
+   <mkdir dir="./build/roller-demo/common/classes" />
+   <copy file="./tomcat/roller-custom.properties" overwrite="true"
+        todir="./build/roller-demo/common/classes" />
+   
+   <!-- And hibernate.cfg.xml configured for HSQLDB -->
    <copy file="./tomcat/hibernate.cfg.xml" overwrite="true"
         todir="./build/roller-demo/webapps/roller/WEB-INF/classes" />
-   
+	   
    <!-- Roller HSQLDB starter goes into Tomcat -->
    <copy file="./build/roller-hsqldb.jar" 
         todir="./build/roller-demo/server/lib" />
    <copy file="${roller.srcdir}/tools/buildtime/hsqldb.jar" 
         todir="./build/roller-demo/common/lib" />
+	
+   <!-- Custom local-banner -->
+   <copy file="./tomcat/localbanner.jspf" 
+        todir="./build/roller-demo/webapps/roller" />
 
    <!-- Our own server.xml: adds HSQLDB startup -->         
    <copy file="./tomcat/server.xml"
         todir="./build/roller-demo/conf" />
         
    <!-- Define VM properties needed by HSQLDB and JSPWiki plugins -->
-   <copy file="./tomcat/setenv.sh"
-        todir="./build/roller-demo/bin" />
+	   <copy file="./tomcat/setenv.sh"
+	        todir="./build/roller-demo/bin" />
+	   <copy file="./tomcat/setenv.bat"
+	        todir="./build/roller-demo/bin" />
         
    <chmod perm="+x">
        <fileset dir="./build/roller-demo/bin" includes="*.sh" />
@@ -121,13 +132,6 @@ Makes the following assumptions:
         url="jdbc:hsqldb:hsql://localhost:3219"
         userid="sa" password=""
         src="./build/roller-demo/webapps/roller/WEB-INF/dbscripts/hsql/createdb.sql"
-        classpath="./build/roller-demo/common/lib/hsqldb.jar" />
-        
-    <!-- Create Roller Planet database tables -->
-    <sql driver="org.hsqldb.jdbcDriver"
-        url="jdbc:hsqldb:hsql://localhost:3219"
-        userid="sa" password=""
-        src="./build/roller-demo/webapps/roller/WEB-INF/dbscripts/hsql/createdb-planet.sql"
         classpath="./build/roller-demo/common/lib/hsqldb.jar" />
         
     <!-- Shutdown HSQLDB -->

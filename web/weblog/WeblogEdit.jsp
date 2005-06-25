@@ -248,6 +248,7 @@ function publish() {
            </html:select>
            &nbsp;&nbsp;
            <roller:Date property="dateString" dateFormat='<%= model.getShortDateFormat() %>' />
+           <c:out value="${model.weblogEntry.website.timezone}" />
   </div>
   <script type="text/javascript">
   <!--

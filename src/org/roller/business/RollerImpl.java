@@ -71,18 +71,7 @@ public abstract class RollerImpl implements Roller {
     {
         if (mIndexManager == null)
         {
-            String indexDir = RollerConfig.getProperty("search.index.dir");
-            if (indexDir.indexOf("${user.home}") != -1)
-            {
-                indexDir = StringUtils.replace(
-                        indexDir, "${user.home}",
-                        System.getProperty("user.home"));
-            }
-            if (mLogger.isDebugEnabled())
-            {
-                mLogger.debug("index dir: " + indexDir);
-            }
-            mIndexManager = new IndexManagerImpl(indexDir, this.getThreadManager());
+            mIndexManager = new IndexManagerImpl();
         }
         return mIndexManager;
     }

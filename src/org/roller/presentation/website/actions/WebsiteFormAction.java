@@ -184,7 +184,8 @@ public final class WebsiteFormAction extends DispatchAction
                     String editorPages = 
                         RollerRuntimeConfig.getProperty("users.editor.pages");
                 
-                    List epages = Arrays.asList(StringUtils.split(org.apache.commons.lang.StringUtils.deleteWhitespace(editorPages), ","));
+                    List epages = Arrays.asList(StringUtils.split(
+                       StringUtils.deleteWhitespace(editorPages), ","));
                     request.setAttribute("editorPagesList", epages);                
                 }
                 else

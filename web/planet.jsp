@@ -26,10 +26,10 @@ request.setAttribute("featuredGroup2",((PlanetAction.PlanetPageData)
 request.setAttribute("featuredGroup2_entries",((PlanetAction.PlanetPageData)
    request.getAttribute("data")).getAggregation("featuredGroup2",20));
 %>
-<td width="70%">
+<td width="70%" valign="top">
 
     <div class="bannerBox">
-    <%@ include file="local-banner.jspf" %>
+    <%@ include file="local-banner-planet.jspf" %>
     </div>
     
     <div class="entryTitleBox">

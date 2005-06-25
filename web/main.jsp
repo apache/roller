@@ -12,7 +12,7 @@ request.setAttribute("recentPosts",
 request.setAttribute("popularWebsites",
 	((MainPageAction.MainPageData)request.getAttribute("data")).getPopularWebsites(65));
 %>
-<td width="70%">
+<td width="70%" valign="top">
 
     <div class="bannerBox">
     <%@ include file="local-banner.jspf" %>

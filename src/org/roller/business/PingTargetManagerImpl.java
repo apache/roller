@@ -24,6 +24,9 @@ import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Abstract implementation of PingTargetManager.
+ */
 public abstract class PingTargetManagerImpl implements PingTargetManager
 {
     protected PersistenceStrategy persistenceStrategy;

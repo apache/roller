@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.roller.pojos.EntryAttributeData;
+import org.roller.pojos.WebsiteData;
 
 /**
  * Extends the WeblogEntryForm so that additional properties may be added.
@@ -69,7 +70,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         allowComments = Boolean.TRUE;
         updateTime = new Timestamp(new Date().getTime());
         pubTime = updateTime;
-        initPubTimeDateString(request.getLocale());        
+        initPubTimeDateStrings(rreq.getWebsite(), request.getLocale());        
     }
     
     /**
@@ -79,6 +80,8 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         throws RollerException
     {
         super.copyTo(entry, locale);
+        
+        // First parts the date string from the calendar 
         final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
         final Date newDate;
         try
@@ -89,8 +92,11 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         {
             throw new RollerException("ERROR parsing date.");
         }
+        
+        // Now handle the time from the hour, minute and second combos
         final Calendar cal = Calendar.getInstance(locale);
         cal.setTime(newDate);
+        cal.setTimeZone(entry.getWebsite().getTimeZoneInstance());
         cal.set(Calendar.HOUR_OF_DAY, getHours().intValue());
         cal.set(Calendar.MINUTE, getMinutes().intValue());
         cal.set(Calendar.SECOND, getSeconds().intValue());
@@ -136,7 +142,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         super.copyFrom(entry, locale);
         mCategoryId = entry.getCategory().getId();
         
-        initPubTimeDateString(locale);
+        initPubTimeDateStrings(entry.getWebsite(), locale);
         
         if (entry.getPlugins() != null)
         {
@@ -181,14 +187,17 @@ public class WeblogEntryFormEx extends WeblogEntryForm
      * Localize the PubTime date string.
      * @param locale
      */
-    private void initPubTimeDateString(Locale locale)
+    private void initPubTimeDateStrings(WebsiteData website, Locale locale)
     {
-        Calendar cal = Calendar.getInstance(locale);
-        cal.setTime(getPubTime());        
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(getPubTime()); 
+        cal.setTimeZone(website.getTimeZoneInstance());
         mHours = new Integer(cal.get(Calendar.HOUR_OF_DAY));
         mMinutes = new Integer(cal.get(Calendar.MINUTE));
-        mSeconds = new Integer(cal.get(Calendar.SECOND));        
-        DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+        mSeconds = new Integer(cal.get(Calendar.SECOND));
+        
+        DateFormat df = DateFormat.getDateInstance(
+           DateFormat.SHORT, locale);
         mDateString = df.format(getPubTime());
     }
 

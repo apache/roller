@@ -49,9 +49,19 @@ public abstract class PersistentObject implements Serializable
     }
     
     
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this,
-                ToStringStyle.MULTI_LINE_STYLE);
+    public String toString() 
+    {
+        try 
+        {
+            // this may throw an exception if called by a thread that
+            return ToStringBuilder.reflectionToString(
+                this, ToStringStyle.MULTI_LINE_STYLE);
+        }
+        catch (Throwable e)
+        {
+            // alternative toString() implementation used in case of exception
+            return getClass().getName() + ":" + getId();
+        }
     }
 
     public boolean equals(Object o) {

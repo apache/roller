@@ -94,6 +94,9 @@ public interface BookmarkManager extends Serializable
 	public void moveFolderContents(FolderData src, FolderData dest) 
 		throws RollerException;
 
+    /**
+     * Delete contents of specified folder.
+     */
     public void deleteFolderContents(FolderData src) throws RollerException;
     
     //---------------------------------------------------------------- Queries 
@@ -173,8 +176,14 @@ public interface BookmarkManager extends Serializable
      */
     public List getFolderAncestorAssocs(FolderData data) throws RollerException;
 
+    /**
+     * Release all resources associated with Roller session.
+     */
     public void release();
 
+    /**
+     * Determines if folder is descendent of folder.
+     */
     public boolean isDescendentOf(FolderData data, FolderData ancestor) throws RollerException;
 }
 

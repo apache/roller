@@ -120,6 +120,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         String title = (String)postcontent.get("title");
         if (title == null) title = "";
 
+        Date dateCreated = (Date)postcontent.get("dateCreated");
+        if (dateCreated == null) dateCreated = (Date)postcontent.get("pubDate");
+
         String cat = null;
         if ( postcontent.get("categories") != null )
         {
@@ -142,6 +145,10 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
             if ( !title.equals("") ) entry.setTitle(title);
             entry.setText(description);
             entry.setUpdateTime(current);
+            if (dateCreated != null) 
+            {
+                entry.setPubTime(new Timestamp(dateCreated.getTime()));
+            }
             entry.setPublishEntry(Boolean.valueOf(publish));
 
             if ( cat != null )
@@ -199,6 +206,10 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         String title = (String)postcontent.get("title");
         if (title == null) title = "";
 
+        Date dateCreated = (Date)postcontent.get("dateCreated");
+        if (dateCreated == null) dateCreated = (Date)postcontent.get("pubDate");
+        if (dateCreated == null) dateCreated = new Date();
+
         String cat = null;
         if ( postcontent.get("categories") != null )
         {
@@ -217,12 +228,13 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
             Roller roller = RollerRequest.getRollerRequest().getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
 
-            Timestamp current = new Timestamp(System.currentTimeMillis());
+            Timestamp current =
+                new Timestamp(System.currentTimeMillis());
 
             WeblogEntryData entry = new WeblogEntryData();
             entry.setTitle(title);
             entry.setText(description);
-            entry.setPubTime(current);
+            entry.setPubTime(new Timestamp(dateCreated.getTime()));
             entry.setUpdateTime(current);
             entry.setWebsite(website);
             entry.setPublishEntry(Boolean.valueOf(publish));

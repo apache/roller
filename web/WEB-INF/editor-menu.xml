@@ -4,10 +4,9 @@
 <menu-bar>
 
     <menu name="tabbedmenu.main">
+        <menu-item name="tabbedmenu.main" forward="main"  />
         <menu-item name="tabbedmenu.planet" forward="planet" 
         	   enabledProperty="planet.aggregator.enabled" />
-        <menu-item name="tabbedmenu.main" forward="main" 
-            disabledProperty="planet.aggregator.enabled" />
     </menu>
     
     <menu name="tabbedmenu.weblog" roles="editor,admin">

@@ -305,6 +305,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                 // Flush the page cache
                 mLogger.debug("Removing from cache");
                 PageCacheFilter.removeFromCache(request, user);
+                
 				// refresh the front page cache
                 MainPageAction.flushMainPageCache();
 
@@ -463,18 +464,20 @@ public final class WeblogEntryFormAction extends DispatchAction
             {
                 WeblogManager mgr = rreq.getRoller().getWeblogManager();
                 WeblogEntryData wd = mgr.retrieveWeblogEntry(request.getParameter("id"));
-                
-                // Flush the page cache
                 UserData user = rreq.getUser();
-                PageCacheFilter.removeFromCache(request, user);
-
+                
 				// remove the index for it
                 wd.setPublishEntry(Boolean.FALSE);
-		       reindexEntry(rreq.getRoller(), wd);
+		        reindexEntry(rreq.getRoller(), wd);
 
+                // remove entry itself
                 wd.remove();
                 rreq.getRoller().commit();
 
+				// flush caches
+                PageCacheFilter.removeFromCache(request, user);
+                MainPageAction.flushMainPageCache();
+                
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(null, new ActionMessage("weblogEdit.entryRemoved"));
                 saveMessages(request, uiMessages);

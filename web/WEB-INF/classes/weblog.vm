@@ -1,5 +1,5 @@
 #**
- * Macros for displaying weblog entries, comments, and related links.
+ * Weblog entries, comments, and related links.
  * @author Lance Lavandowska (conversion to Velocimacros)
  * @author David M Johnson (comment macros)
  *#
@@ -16,23 +16,6 @@
     #if( $statusMessage )
         <span class="status">$statusMessage</span>
     #end
-#end
-
-#**
- * Sets content type header for page, must be first line in template.
-**#
-#macro( setContentType $ctype )
-$pageHelper.setContentType($ctype)## comment here kills trailing whitespace
-#end
-
-#**
- * Set the META tag for ContentType.  We do this in addition to
- * setting the Response header because the header does not get
- * cached.  So in order to maintain the ContentType we must present
- * it inside the rendered page itself.
-**#
-#macro( showContentType $ctype )
-    <meta http-equiv="Content-Type" content="$ctype">
 #end
 
 #**
@@ -369,7 +352,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
    #foreach( $day in $xmap.keySet() )
        #set( $recentEntries = $xmap.get($day) )
        #foreach ($var in $recentEntries)
-           <li class="recentposts"><a href="$baseURL/page/$userName/?anchor=$utilities.encode($var.anchor)">$var.title</a></li>
+           <li class="recentposts"><a href="$baseURL/page/$userName/?entry=$utilities.encode($var.anchor)">$var.title</a></li>
        #end
    #end
    </ul>

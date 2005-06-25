@@ -1,2 +1,17 @@
 /*
- * Created on Feb 4, 2004 */package org.roller.model;import org.roller.RollerException;import org.roller.pojos.RollerConfigData;import java.io.Serializable;/** * @author lance.lavandowska */public interface ConfigManager extends Serializable {    /** Release any resources used */    public void release();    public void storeRollerConfig( RollerConfigData data ) throws RollerException;        public RollerConfigData getRollerConfig() throws RollerException;        public RollerConfigData readFromFile(String filePath) throws RollerException;}
+ * Created on Feb 4, 2004 */package org.roller.model;import org.roller.RollerException;import org.roller.pojos.RollerConfigData;import java.io.Serializable;/**
+ * Manages Roller configuration
+ * @deprecated Replaced by {@link RollerProperties}.
+ */public interface ConfigManager extends Serializable {    /**
+     * Release all resources associated with Roller session.
+     */    public void release();    /**
+     * Store
+     */
+    public void storeRollerConfig( RollerConfigData data ) throws RollerException;        /**
+     * Get single RollerConfig object in system.
+     * @deprecated 
+     */
+    public RollerConfigData getRollerConfig() throws RollerException;        /**
+     * Read RollerConfig from XML file.
+     */
+    public RollerConfigData readFromFile(String filePath) throws RollerException;}

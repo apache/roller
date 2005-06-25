@@ -90,5 +90,4 @@ public abstract class BaseRollerMenu
         }
         return true;
     }
-
 }

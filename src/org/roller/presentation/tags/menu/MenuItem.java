@@ -11,13 +11,10 @@ public interface MenuItem
 	/** Url to be displayed in menu */ 
 	public String getUrl( javax.servlet.jsp.PageContext pctx );
 
-	/** Determine if this menu item is selected based on request */
+	/** Determine if this menu item is selected */
 	public boolean isSelected( HttpServletRequest req );
     
     /** Name of true/false configuration property that enables this menu */ 
     public void setEnabledProperty( String enabledProperty );
-    
-    /** Name of true/false configuration property that disables this menu */ 
-    public void setDisabledProperty( String disabledProperty );
 }
 

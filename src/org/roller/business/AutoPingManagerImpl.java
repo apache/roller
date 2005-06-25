@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Collection;
 
+/**
+ * Abstract implementation of AutoPingManager.
+ */
 public abstract class AutoPingManagerImpl implements AutoPingManager
 {
     protected PersistenceStrategy persistenceStrategy;
