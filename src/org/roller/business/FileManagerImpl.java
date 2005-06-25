@@ -46,7 +46,7 @@ public class FileManagerImpl implements FileManager
         String uploadurl = RollerConfig.getProperty("uploads.url");
         
         if(uploaddir == null || uploaddir.trim().length() < 1)
-            uploaddir = "${user.home}/roller_data/uploads";
+            uploaddir = "${user.home}"+File.separator+"roller_data"+File.separator+"uploads";
         
         if(uploaddir.startsWith("${user.home}"))
             uploaddir = System.getProperty("user.home") + uploaddir.substring(12);
@@ -55,9 +55,9 @@ public class FileManagerImpl implements FileManager
             uploaddir += File.separator;
         
         if(uploadurl == null || uploadurl.trim().length() < 1)
-            uploadurl = "/resources";
+            uploadurl = File.separator+"resources";
         
-        this.upload_dir = uploaddir;
+        this.upload_dir = uploaddir.replace('/',File.separatorChar);
         this.upload_url = uploadurl;
     }
     

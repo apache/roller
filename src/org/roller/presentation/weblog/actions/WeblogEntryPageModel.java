@@ -211,11 +211,13 @@ public class WeblogEntryPageModel extends BasePageModel
         return this.form;
     }
 
+    /** returns a dummied-up weblog entry object */
     public WeblogEntryData getWeblogEntry() throws RollerException
     {
         if (weblogEntry == null) 
         {
             weblogEntry = new WeblogEntryData();
+            weblogEntry.setWebsite(rollerRequest.getWebsite());
             form.copyTo(weblogEntry, 
                     getRequest().getLocale(), getRequest().getParameterMap());
             weblogEntry.setWebsite(rollerRequest.getWebsite());

@@ -447,7 +447,7 @@ public class CommentServlet extends PageServlet
             PageData page = rreq.getPage();
             if (page == null)
             {
-                commentURL.append("?anchor=");
+                commentURL.append("?entry=");
             }
             else
             {

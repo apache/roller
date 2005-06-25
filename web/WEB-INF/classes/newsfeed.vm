@@ -1,5 +1,5 @@
 #**
- * Macros to display RSS Newschannels.
+ * The deprecated #showNewsfeeds() macro.
  * @author Lance Lavandowska (conversion to Velocimacros)
  * @author Dave Johnson (conversion from Digestor to Flock)
  *#

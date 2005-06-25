@@ -50,8 +50,10 @@ public class MenuImpl extends BaseRollerMenu implements Menu
 		return getSelectedMenuItem( req, true ) ;
 	}
 
-	/** Get currently selected menu item in this menu 
-	 * @throws RollerException*/
+	/** 
+     * Get currently selected menu item in this menu 
+	 * @throws RollerException
+     */
 	public MenuItem getSelectedMenuItem( HttpServletRequest req, 
 			boolean returnDefault ) throws RollerException
 	{
@@ -65,6 +67,7 @@ public class MenuImpl extends BaseRollerMenu implements Menu
 				selected = item;
 				break;
 			}
+		    // Set first permitted and enabled menu item in each menu as default
 			if ( item.isPermitted(req) && def == null)
 			{
 				def = item;
@@ -83,9 +86,32 @@ public class MenuImpl extends BaseRollerMenu implements Menu
 			return null;
 		}
 	}
+    
+	/** 
+     * Get default menu item (first one that is permitted)
+	 * @throws RollerException
+     */
+	public MenuItem getDefaultMenuItem( HttpServletRequest req ) 
+        throws RollerException
+	{
+		MenuItemImpl def = null;
+		MenuItemImpl selected = null;
+		for ( int i=0; i<mMenuItems.size(); i++ ) 
+		{
+		    // Set first permitted and enabled menu item in each menu as default
+			MenuItemImpl item = (MenuItemImpl)mMenuItems.elementAt(i);
+			if (item.isPermitted(req) && def == null)
+			{
+				def = item;
+			}
+		}
+		return def;
+	}
 
-	/** Is this menu selected? 
-	 * @throws RollerException*/ 
+	/** 
+     * Is this menu selected? 
+	 * @throws RollerException
+     */ 
 	public boolean isSelected( HttpServletRequest req ) throws RollerException
 	{
         boolean selected = false;
@@ -128,7 +154,7 @@ public class MenuImpl extends BaseRollerMenu implements Menu
 		try 
 		{
 			HttpServletRequest req = (HttpServletRequest)pctx.getRequest();
-			String surl = getSelectedMenuItem( req ).getUrl( pctx ); 
+			String surl = getDefaultMenuItem( req ).getUrl( pctx ); 
 			StringBuffer sb = new StringBuffer( surl ); 
 			if ( surl.indexOf("?") == -1 )
 			{

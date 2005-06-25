@@ -27,9 +27,6 @@ import org.roller.model.WeblogManager;
 import org.roller.util.DateUtil;
 import org.roller.util.Utilities;
 
-import sun.security.krb5.internal.i;
-
-
 /**
  * Represents a Weblog Entry.
  * 
@@ -304,9 +301,8 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      * <p>Publish time is the time that an entry is to be (or was) made available
      * for viewing by newsfeed readers and visitors to the Roller site.</p> 
      * 
-     * <p>Roller stores time using the timezone of the server itself. When
-     * times are displayed  in a user's weblog they must be translated 
-     * to the user's timezone.</p>
+     * <p>Roller stores time in universal time. When times are displayed in a 
+     * user's weblog they must be translated to the user's timezone.</p>
      *
      * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on 
      * MySQL has only a one-second resolution.</p>
@@ -674,7 +670,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         
         WebsiteData website = this.getWebsite();
         String plink = "/page/" + website.getUser().getUserName() + 
-                "?anchor=" + lAnchor;
+                "?entry=" + lAnchor;
         
         return plink;
     }

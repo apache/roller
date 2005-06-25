@@ -1,6 +1,44 @@
 
 ROLLER CHANGE LOG
 -----------------
+
+Roller 1.2 - New feature release
+
+Also, changed license to Apache License v2.0
+
+    New Feature
+    * [ROL-305] - Configurable Weblogs.com pings
+
+    Improvement
+    * [ROL-708] - Metadata driven configuration
+    * [ROL-730] - Upgraded to Ekit-editor version 1.0
+
+    Bugs fixes
+    * [ROL-684] - ekit jar in wrong place
+    * [ROL-699] - Weblog Editor shows wrong timezone
+    * [ROL-725] - RSS dates are invalid in non-English locales
+    * [ROL-729] - Deleting Pinned to Main Entry
+    * [ROL-734] - Bookmark OPML fails if folder named 'unfiled' already exists
+    * [ROL-742] - Saving Website:Settings clears hit count
+    * [ROL-743] - #showOpmlLink() macro broken
+
+------------------------------------------------------------------------------
+Roller 1.1.2 - Bug fix release
+
+No new features, just one bug fix.
+
+   * [ROL-724] - Deleted and modified entris not removed from Search Index
+
+------------------------------------------------------------------------------
+Roller 1.1.1 - Bug fix release
+
+No new features, just one bug fix.
+
+   * [ROL-716] Search is broken
+   
+------------------------------------------------------------------------------
+Roller 1.1 - New feature release
+
 This release includes basic support for Podcasting, bug fixes and minor improvements.
 A new aggregator front page (known as Planet Roller) has been added to Roller, but
 it is an unsupported feature available only via Roller's custom build mechanism.

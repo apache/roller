@@ -75,7 +75,8 @@ public class RollerRequest implements ParsedRequest
         
     private static ThreadLocal mRollerRequestTLS = new ThreadLocal();
     
-    public static final String ANCHOR_KEY             = "anchor";
+    public static final String ANCHOR_KEY             = "entry";
+    public static final String ANCHOR_KEY_OLD         = "anchor";
     public static final String USERNAME_KEY           = "username";
     public static final String WEBSITEID_KEY          = "websiteid";
     public static final String FOLDERID_KEY           = "folderid";
@@ -830,6 +831,7 @@ public class RollerRequest implements ParsedRequest
         {        
             // Look for anchor or entry ID that identifies a specific entry 
             String anchor = mRequest.getParameter(ANCHOR_KEY);
+            if (anchor == null) anchor = mRequest.getParameter(ANCHOR_KEY_OLD);
             String entryid = mRequest.getParameter(WEBLOGENTRYID_KEY);
             if (entryid == null) 
             {

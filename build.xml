@@ -386,12 +386,6 @@ ro.buildUser=${user.name}
     <copy todir="${build.stage_web}/WEB-INF/tlds">
         <fileset dir="${ro.tools}/lib" includes="*.tld"/>
     </copy>
-    <!-- Copy applet jars to root of servlet context -->
-    <copy todir="${build.stage_web}">
-        <fileset dir="${ro.tools}/lib">
-            <include name="ekitapplet.jar"/>
-        </fileset>
-    </copy>
     <!-- copy database related files -->
     <antcall target="stage-dbscripts" />
 
@@ -464,9 +458,17 @@ ro.buildUser=${user.name}
 </target>
 
 <!-- ********************************************************************* -->
-<!-- Generate Javadocs -->
+<!-- Generate Javadocs and Velocidocs -->
 <!-- ********************************************************************* -->
 	
+<target name="docs" depends="javadoc,velocidoc" >
+    <copy todir="${build.javadoc}">
+        <fileset dir="${build.velocidoc}/docs">
+            <include name="*.css"/>
+        </fileset>
+    </copy>
+</target>
+
 <target name="javadoc">
     <mkdir dir="${build.javadoc}"/>
     <javadoc
@@ -491,31 +493,36 @@ ro.buildUser=${user.name}
         <link href="http://jakarta.apache.org/struts/doc-1.0.2/api"/>
         <link href="http://hibernate.bluemars.net/hib_docs/api/"/>
     </javadoc>
-
-    <antcall target="velocidoc" />
+    <copy todir="${build.javadoc}">
+        <fileset dir="${basedir}/src">
+            <include name="**/roller*.png"/>
+        </fileset>
+    </copy>
 </target>
 	
 <target name="velocidoc">
     <mkdir dir="${build.velocidoc}/temp"/>
     <copy todir="${build.velocidoc}/temp">
         <fileset dir="./web/WEB-INF/classes/">
-            <include name="bookmarks.vm" />
+            <include name="bookmark.vm" />
             <include name="comments.vm" />
             <include name="navbar.vm" />
-            <include name="navbar-css.vm" />
             <include name="referer.vm" />
             <include name="roller.vm" />
             <include name="rssmacros.vm" />
             <include name="user.vm" />
             <include name="weblog.vm" />
             <include name="website.vm" />
+            <!--
+            -->
         </fileset>
     </copy>
     <mkdir dir="${build.velocidoc}/docs"/>
     <java fork="true" jar="${ro.tools}/buildtime/velocidoc-app.jar">
-        <arg line="-s ${build.velocidocs}/temp -d ${build.velocidoc}/docs"/>
-        <arg line="-ctl ${ro.tools}/buildtime/velocidoc-templates/control.vm"/>
-        <arg line="-src ${ro.tools}/buildtime/velocidoc-templates/"/>
+        <arg line="-s ${build.velocidoc}/temp \
+           -d ${build.velocidoc}/docs \
+           -t ${ro.tools}/buildtime/velocidoc-templates/ \
+           -c ${ro.tools}/buildtime/velocidoc-templates/control.vm "/>
     </java>
 </target>
 

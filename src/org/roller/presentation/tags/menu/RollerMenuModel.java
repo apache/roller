@@ -77,7 +77,6 @@ public class RollerMenuModel extends BaseRollerMenu implements MenuModel
 
 				if ( getMenus() != null )
 				{
-					// Set first menu item in each menu as default
 					Vector menus = getMenus();
 					for (int i=0; i<menus.size(); i++)
 					{

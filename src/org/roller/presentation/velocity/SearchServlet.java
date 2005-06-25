@@ -24,6 +24,7 @@ import org.apache.velocity.context.Context;
 import org.roller.RollerException;
 import org.roller.business.search.FieldConstants;
 import org.roller.business.search.operations.SearchOperation;
+import org.roller.config.RollerConfig;
 import org.roller.model.IndexManager;
 import org.roller.model.Roller;
 import org.roller.model.UserManager;
@@ -58,12 +59,39 @@ public class SearchServlet extends BasePageServlet
     
     /* Where to start fetching results */
     private static int OFFSET = 0;
+    
+    /* is searching enabled? */
+    private boolean searchEnabled = true;
+    
 
     //~ Methods ================================================================
 
     public Template handleRequest(HttpServletRequest request,
                         HttpServletResponse response, Context ctx) throws Exception
     {
+        String enabled = RollerConfig.getProperty("search.enabled");
+        if("false".equalsIgnoreCase(enabled))
+            this.searchEnabled = false;
+        
+        if(! this.searchEnabled) {
+            Template outty = null;
+            Exception pageException = null;
+            try {
+                ContextLoader.setupContext(
+                        ctx, RollerRequest.getRollerRequest(request), response );
+                outty = getTemplate( "searchdisabled.vm", "UTF-8" );
+            } catch (Exception e) {
+                pageException = e;
+                response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
+            }
+            
+            if (pageException != null) {
+                mLogger.error("EXCEPTION: in RollerServlet", pageException);
+                request.setAttribute("DisplayException", pageException);
+            }
+            return outty;
+        }
+        
          // set request Charcter Encoding here, because the SearchServlet
          // is not preceeded by the RequestFilter
          mLogger.debug("handleRequest()");

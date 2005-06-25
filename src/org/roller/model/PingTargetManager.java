@@ -15,10 +15,13 @@ import org.roller.RollerException;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Manages ping targets.
+ */
 public interface PingTargetManager extends Serializable
 {
     /**
-     * Release all resources used.
+     * Release all resources associated with Roller session.
      */
     public void release();
 

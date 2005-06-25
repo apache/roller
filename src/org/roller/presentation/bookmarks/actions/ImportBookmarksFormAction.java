@@ -17,6 +17,8 @@ import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -94,12 +96,17 @@ public final class ImportBookmarksFormAction extends Action
                         }
                         data = new String(baos.toByteArray());
 
+                        SimpleDateFormat formatter = 
+                                new SimpleDateFormat("yyyyMMddHHmmss");
+                        Date now = new Date();
+                        String folderName = "imported-" + formatter.format(now);
+                        
                         // Use Roller BookmarkManager to import bookmarks
                         RollerRequest rreq = 
                             RollerRequest.getRollerRequest(request);
                         BookmarkManager bm = 
                             rreq.getRoller().getBookmarkManager();    
-                        bm.importBookmarks(rreq.getWebsite(), "unfiled", data);
+                        bm.importBookmarks(rreq.getWebsite(), folderName, data);
                         
                         rreq.getRoller().commit();
                     }
