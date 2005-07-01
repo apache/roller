@@ -6,7 +6,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.roller.model.WeblogManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 
@@ -111,7 +111,7 @@ public class ViewWeblogEntriesTag
             String pid = null; 
             if ( mDayTemplate != null )
             {
-                PageData page =
+                WeblogTemplate page =
                     rreq.getRoller().getUserManager().getPageByLink(
                         website, mDayTemplate );
                 if (page != null)

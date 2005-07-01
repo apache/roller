@@ -10,7 +10,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.model.UserManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerContext;
@@ -122,7 +122,7 @@ public class ThemeEditorAction extends DispatchAction
 					(String)request.getSession(true).getAttribute(LAST_THEME)); 
                                 
 			     // load the current default page
-                PageData page = getDefaultPage( rreq );
+                WeblogTemplate page = getDefaultPage( rreq );
 					teForm.setThemeTemplate( page.getTemplate() );
 					
 					
@@ -206,7 +206,7 @@ public class ThemeEditorAction extends DispatchAction
 
 				// put the template where PreviewServlet
 				// will be able to find it
-				PageData page = getDefaultPage( rreq );			
+				WeblogTemplate page = getDefaultPage( rreq );			
 				PreviewResourceLoader.setTemplate(page.getId(), 
 					teForm.getThemeTemplate(), rreq.getUser().getUserName() );
 				
@@ -284,7 +284,7 @@ public class ThemeEditorAction extends DispatchAction
 
 				// store the template in the page
 				UserManager mgr = rreq.getRoller().getUserManager();
-				PageData page = getDefaultPage( rreq );
+				WeblogTemplate page = getDefaultPage( rreq );
 
 				page.setTemplate( template );
 				mgr.storePage( page);
@@ -410,11 +410,11 @@ public class ThemeEditorAction extends DispatchAction
 	
 	/**
 	 * Get the Default Page for the website specified by request.
-     * 
+	 * 
 	 * @param rreq
-	 * @return PageData
+	 * @return WeblogTemplate
 	 */
-	private PageData getDefaultPage(RollerRequest rreq) throws RollerException
+	private WeblogTemplate getDefaultPage(RollerRequest rreq) throws RollerException
 	{
 		try
 		{
@@ -457,7 +457,7 @@ public class ThemeEditorAction extends DispatchAction
                 String pageName = (String) iter.next();
                 String sb = (String)pages.get( pageName );
     
-                PageData page = mgr.getPageByName( rreq.getWebsite(), pageName );
+                WeblogTemplate page = mgr.getPageByName( rreq.getWebsite(), pageName );
                 if (page != null)
                 {
                     PreviewResourceLoader.setTemplate(page.getId(),sb,username);
@@ -513,7 +513,7 @@ public class ThemeEditorAction extends DispatchAction
                 String pageName = children[i].substring(
                     0,children[i].length()-3);
     
-                PageData page = mgr.getPageByName(rreq.getWebsite(), pageName);
+                WeblogTemplate page = mgr.getPageByName(rreq.getWebsite(), pageName);
                 if (page != null)
                 {
                     PreviewResourceLoader.clearTemplate( page.getId() );
@@ -564,7 +564,7 @@ public class ThemeEditorAction extends DispatchAction
                 String pageName = (String) iter.next();
                 String pageContent = (String)pages.get( pageName );
     
-                PageData page = mgr.getPageByName( rreq.getWebsite(), pageName );
+                WeblogTemplate page = mgr.getPageByName( rreq.getWebsite(), pageName );
                 if (page != null)
                 {
                     // User already has page by that name, so overwrite it.
@@ -573,7 +573,7 @@ public class ThemeEditorAction extends DispatchAction
                 else
                 {
                     // User does not have page by that name, so create new page.
-                    page = new PageData( null,
+                    page = new WeblogTemplate( null,
                         website,         // website
                         pageName,        // name
                         pageName,        // description

@@ -9,7 +9,7 @@ import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
@@ -130,7 +130,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
             Roller roller = RollerRequest.getRollerRequest().getRoller();
             UserManager userMgr = roller.getUserManager();
 
-            PageData page = userMgr.retrievePage(templateType);
+            WeblogTemplate page = userMgr.retrievePage(templateType);
             page.setTemplate(templateData);
             userMgr.storePage(page);
             flushPageCache(userid);
@@ -174,7 +174,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         {
             Roller roller = RollerRequest.getRollerRequest().getRoller();
             UserManager userMgr = roller.getUserManager();
-            PageData page = userMgr.retrievePage(templateType);
+            WeblogTemplate page = userMgr.retrievePage(templateType);
 
             if ( null == page )
             {

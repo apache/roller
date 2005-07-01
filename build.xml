@@ -74,6 +74,7 @@ Key Targets:
 
     <!-- Use EJBDoclet to generate Struts forms -->
     <ejbdoclet destdir="${build.generated}/src" excludedtags="@version,@author">
+	<fileset dir="./src" includes="org/roller/pojos/WeblogTemplate.java" />
         <fileset dir="./src" includes="org/roller/pojos/*Data.java" />
         <fileset dir="./src" includes="org/roller/business/*Data.java" /> 
         &custom-gen-web;
@@ -129,6 +130,7 @@ Key Targets:
         excludedtags="@version,@author"
         addedtags="@xdoclet-generated at ${TODAY}"
         force="true">
+	<fileset dir="./src" includes="org/roller/pojos/WeblogTemplate.java" />
         <fileset dir="./src" includes="org/roller/pojos/*Data.java" />
         <fileset dir="./src" includes="org/roller/pojos/*Assoc.java" />
         <fileset dir="./src" includes="org/roller/business/*Data.java" />

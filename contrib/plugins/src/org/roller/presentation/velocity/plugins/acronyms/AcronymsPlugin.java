@@ -12,7 +12,7 @@ import org.apache.velocity.context.Context;
 import org.roller.RollerException;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
@@ -80,7 +80,7 @@ public class AcronymsPlugin implements PagePlugin
         try
         {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            PageData acronymsPage = userMgr.getPageByName(
+            WeblogTemplate acronymsPage = userMgr.getPageByName(
                                         website, "_acronyms");
             if (acronymsPage != null) 
             {
@@ -193,13 +193,13 @@ public class AcronymsPlugin implements PagePlugin
 	}
 
 	/**
-	 * Parse the Template of the provided PageData and turns it
+	 * Parse the Template of the provided WeblogTemplate and turns it
 	 * into a <code>Properties</code> collection.
 	 * 
 	 * @param acronymPage
 	 * @return acronym properties (key = acronym, value= full text), empty if Template is empty
 	 */
-	private Properties parseAcronymPage(PageData acronymPage, Properties acronyms)
+	private Properties parseAcronymPage(WeblogTemplate acronymPage, Properties acronyms)
 	{
 		String rawAcronyms = acronymPage.getTemplate();
 		

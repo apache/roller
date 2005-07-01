@@ -8,7 +8,7 @@ import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.roller.RollerException;
 import org.roller.model.Roller;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.presentation.RollerContext;
 
 import java.io.ByteArrayInputStream;
@@ -77,7 +77,7 @@ public class RollerResourceLoader extends ResourceLoader
 
         try
         {
-            PageData page = getPage( name );
+            WeblogTemplate page = getPage( name );
             if (page == null)
             {
             	throw new ResourceNotFoundException(
@@ -118,7 +118,7 @@ public class RollerResourceLoader extends ResourceLoader
         String name = resource.getName();
         try
         {
-            PageData page = getPage( name );
+            WeblogTemplate page = getPage( name );
             
             if (mLogger.isDebugEnabled())
             {
@@ -134,7 +134,7 @@ public class RollerResourceLoader extends ResourceLoader
         return 0;
     }
 
-    public PageData getPage(String id) throws RollerException
+    public WeblogTemplate getPage(String id) throws RollerException
     {
     	if (getRoller() == null) throw new RollerException(
 			"RollerResourceLoader.getRoller() returned NULL");

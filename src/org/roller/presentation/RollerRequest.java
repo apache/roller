@@ -22,7 +22,7 @@ import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
@@ -65,7 +65,7 @@ public class RollerRequest implements ParsedRequest
     private String             mDateString = null;
     private String             mPathInfo = null; 
     private String             mPageLink = null;
-    private PageData           mPage;
+    private WeblogTemplate           mPage;
     private PageContext        mPageContext = null;
     private HttpServletRequest mRequest = null;
     private WebsiteData        mWebsite;
@@ -737,10 +737,10 @@ public class RollerRequest implements ParsedRequest
 
     //------------------------------------------------------------------------
     /**
-     * Gets the PageData specified by the request, or null.
-     * @return PageData
+     * Gets the WeblogTemplate specified by the request, or null.
+     * @return WeblogTemplate
      */
-    public PageData getPage()
+    public WeblogTemplate getPage()
     {
         if (mPage == null)
         {
@@ -763,7 +763,7 @@ public class RollerRequest implements ParsedRequest
     /**
      * Allow comment servlet to inject page that it has chosen.
      */
-    public void setPage(PageData page) 
+    public void setPage(WeblogTemplate page) 
     {
         mPage = page;
     }
