@@ -16,7 +16,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.roller.RollerException;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
@@ -239,7 +239,7 @@ public class BakeWeblogAction extends DispatchAction {
     private String getDefaultPageId(RollerRequest rreq) throws RollerException {
         UserManager userMgr = rreq.getRoller().getUserManager();
         WebsiteData wd = rreq.getWebsite();
-        PageData pd = userMgr.retrievePage(wd.getDefaultPageId());
+        WeblogTemplate pd = userMgr.retrievePage(wd.getDefaultPageId());
         return pd.getId();
     }
     

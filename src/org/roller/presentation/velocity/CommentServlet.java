@@ -32,7 +32,7 @@ import org.roller.model.Roller;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
@@ -110,7 +110,7 @@ public class CommentServlet extends PageServlet
             WebsiteData website = rreq.getWebsite();
                 
             // Request specifies popup
-            PageData page = null;
+            WeblogTemplate page = null;
             Exception pageException = null;
             try 
             {
@@ -130,7 +130,7 @@ public class CommentServlet extends PageServlet
             // User doesn't have one so return the default
             if (page == null) 
             {
-                page = new PageData("/popupcomments.vm", website, "Comments", 
+                page = new WeblogTemplate("/popupcomments.vm", website, "Comments", 
                     "Comments", "dummy_link", "dummy_template", new Date());
             }
             rreq.setPage(page);
@@ -444,7 +444,7 @@ public class CommentServlet extends PageServlet
             commentURL.append("/comments/");
             commentURL.append(rreq.getUser().getUserName());
             
-            PageData page = rreq.getPage();
+            WeblogTemplate page = rreq.getPage();
             if (page == null)
             {
                 commentURL.append("?entry=");

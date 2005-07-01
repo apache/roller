@@ -43,7 +43,7 @@
         <mapping resource="org/roller/pojos/EntryAttributeData.hbm.xml" />
         <mapping resource="org/roller/pojos/FolderAssoc.hbm.xml" />
         <mapping resource="org/roller/pojos/FolderData.hbm.xml" />
-        <mapping resource="org/roller/pojos/PageData.hbm.xml" />
+        <mapping resource="org/roller/pojos/WeblogTemplate.hbm.xml" />
         <mapping resource="org/roller/pojos/PingCategoryRestrictionData.hbm.xml" />
         <mapping resource="org/roller/pojos/AutoPingData.hbm.xml" />
         <mapping resource="org/roller/pojos/PingQueueEntryData.hbm.xml" />

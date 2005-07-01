@@ -7,15 +7,16 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 
 
-/** Page bean.
+/**
+ * Page bean.
  * @author David M Johnson
- *
- * @ejb:bean name="PageData"
+ * 
+ * @ejb:bean name="WeblogTemplate"
  * @struts.form include-all="true"
  * @hibernate.class table="webpage" 
  * hibernate.jcs-cache usage="read-write"
  */
-public class PageData
+public class WeblogTemplate
    extends org.roller.pojos.PersistentObject
    implements java.io.Serializable
 {
@@ -30,11 +31,11 @@ public class PageData
 
    protected WebsiteData mWebsite = null;
 
-   public PageData()
+   public WeblogTemplate()
    {
    }
 
-   public PageData( 
+   public WeblogTemplate( 
        java.lang.String id,
        WebsiteData website,
        java.lang.String name,
@@ -52,7 +53,7 @@ public class PageData
       this.updateTime = (Date)updateTime.clone();
    }
 
-   public PageData( PageData otherData )
+   public WeblogTemplate( WeblogTemplate otherData )
    {
       this.id = otherData.id;
       this.mWebsite = otherData.mWebsite;
@@ -185,9 +186,9 @@ public class PageData
 
    public boolean equals( Object pOther )
    {
-      if( pOther instanceof PageData )
+      if( pOther instanceof WeblogTemplate )
       {
-         PageData lTest = (PageData) pOther;
+         WeblogTemplate lTest = (WeblogTemplate) pOther;
          boolean lEquals = true;
 
          if( this.id == null )
@@ -274,19 +275,19 @@ public class PageData
    public void setData( org.roller.pojos.PersistentObject otherData )
    {
 
-      this.id = ((PageData)otherData).id;
+      this.id = ((WeblogTemplate) otherData).id;
 
-      this.mWebsite = ((PageData)otherData).mWebsite;
+      this.mWebsite = ((WeblogTemplate) otherData).mWebsite;
 
-      this.name = ((PageData)otherData).name;
+      this.name = ((WeblogTemplate) otherData).name;
 
-      this.description = ((PageData)otherData).description;
+      this.description = ((WeblogTemplate) otherData).description;
 
-      this.link = ((PageData)otherData).link;
+      this.link = ((WeblogTemplate) otherData).link;
 
-      this.template = ((PageData)otherData).template;
+      this.template = ((WeblogTemplate) otherData).template;
 
-      this.updateTime = ((PageData)otherData).updateTime;
+      this.updateTime = ((WeblogTemplate) otherData).updateTime;
    }
 
    public boolean canSave() throws RollerException

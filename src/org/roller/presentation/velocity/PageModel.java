@@ -19,7 +19,7 @@ import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkComparator;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.RefererData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
@@ -105,7 +105,7 @@ public class PageModel
                 Iterator pageIter = pages.iterator();
                 while (pageIter.hasNext())
                 {
-                    PageData page = (PageData) pageIter.next();
+                    WeblogTemplate page = (WeblogTemplate) pageIter.next();
                     mPageMap.put(page.getName(), page);
                 }
             }
@@ -214,9 +214,9 @@ public class PageModel
     //------------------------------------------------------------------------
     
     /** Encapsulates UserManager.getPageByName() */
-    public PageData getUsersPageByName(WebsiteData website, String pageName)
+    public WeblogTemplate getUsersPageByName(WebsiteData website, String pageName)
     {
-        PageData page = null;
+        WeblogTemplate page = null;
         try
         {
             if (website == null) 
@@ -241,9 +241,9 @@ public class PageModel
     //------------------------------------------------------------------------
     
     /** Encapsulates UserManager.getPageByName() */
-    public PageData getPageByName(String pageName)
+    public WeblogTemplate getPageByName(String pageName)
     {
-        return (PageData)mPageMap.get(pageName);
+        return (WeblogTemplate)mPageMap.get(pageName);
     }
     
     //------------------------------------------------------------------------
@@ -251,7 +251,7 @@ public class PageModel
     /** Encapsulates UserManager.getPageByName() */
     public String getPageIdByName(String pageName)
     {
-        PageData pd = (PageData)mPageMap.get(pageName);
+        WeblogTemplate pd = (WeblogTemplate)mPageMap.get(pageName);
         if ( pd != null ) 
         {
             return pd.getId();

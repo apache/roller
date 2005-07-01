@@ -21,11 +21,11 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.model.UserManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.forms.PageForm;
+import org.roller.presentation.forms.WeblogTemplateForm;
 import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
@@ -34,17 +34,17 @@ import org.roller.util.Utilities;
 /////////////////////////////////////////////////////////////////////////////
 /**
  * Page form action.
- * @struts.action name="pageForm" path="/editor/page"
+ * @struts.action name="weblogTemplateForm" path="/editor/page"
  *  	scope="session" parameter="method"
  * 
  * @struts.action-forward name="removePage.page" path="/website/remove-page.jsp"
  * @struts.action-forward name="editPage.page" path="/website/edit-page.jsp"
  * @struts.action-forward name="editPages.page" path="/website/edit-pages.jsp"
  */
-public final class PageFormAction extends DispatchAction
+public final class WeblogTemplateFormAction extends DispatchAction
 {
     private static Log mLogger = 
-        LogFactory.getFactory().getInstance(PageFormAction.class);
+        LogFactory.getFactory().getInstance(WeblogTemplateFormAction.class);
         
     public ActionForward add(
         ActionMapping       mapping,
@@ -59,8 +59,8 @@ public final class PageFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                PageForm form = (PageForm)actionForm;
-                PageData data = new PageData();
+                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+                WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
                 WebsiteData hd = rreq.getWebsite();
 
@@ -115,8 +115,8 @@ public final class PageFormAction extends DispatchAction
             if ( rreq.isUserAuthorizedToEdit() )
             {
                 UserData ud = rreq.getUser();
-                PageData pd = rreq.getPage();
-                PageForm pf = (PageForm)actionForm;
+                WeblogTemplate pd = rreq.getPage();
+                WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
 
                 PageCacheFilter.removeFromCache( request,ud );
@@ -179,8 +179,8 @@ public final class PageFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                PageForm form = (PageForm)actionForm;
-                PageData data = new PageData();
+                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+                WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
 
                 UserManager mgr = rreq.getRoller().getUserManager();
@@ -228,8 +228,8 @@ public final class PageFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                PageData cd = rreq.getPage();
-                PageForm pf = (PageForm)actionForm;
+                WeblogTemplate cd = rreq.getPage();
+                WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(cd, request.getLocale());
 
                 UserData ud = rreq.getUser();
@@ -262,9 +262,9 @@ public final class PageFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                PageForm form = (PageForm)actionForm;
+                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 UserManager mgr = rreq.getRoller().getUserManager();
-                PageData data = mgr.retrievePage(form.getId());
+                WeblogTemplate data = mgr.retrievePage(form.getId());
                 data.save(); // should through exception if no save permission
                 form.copyTo(data, request.getLocale());
                 data.setUpdateTime( new java.util.Date() );
@@ -276,7 +276,7 @@ public final class PageFormAction extends DispatchAction
                 rreq.getRoller().commit();
 
                 // set the (possibly) new link back into the Form bean
-                ((PageForm)actionForm).setLink( data.getLink() );
+                ((WeblogTemplateForm)actionForm).setLink( data.getLink() );
 
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(ActionMessages.GLOBAL_MESSAGE, 
@@ -319,7 +319,7 @@ public final class PageFormAction extends DispatchAction
      * characters that are web-safe), this is a much easier
      * test-and-correct.  Otherwise we would need a RegEx package.
      */
-    private void validateLink( PageData data )
+    private void validateLink( WeblogTemplate data )
     {
         // if data.getLink() is null or empty
         // use the title ( data.getName() )

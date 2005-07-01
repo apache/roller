@@ -8,7 +8,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.roller.model.RefererManager;
 import org.roller.model.UserManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.RefererData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
@@ -604,7 +604,7 @@ public class Macros
                 (HttpServletRequest)mPageContext.getRequest());                
             UserManager userMgr = rreq.getRoller().getUserManager();
             
-            PageData pd = userMgr.getPageByName( 
+            WeblogTemplate pd = userMgr.getPageByName( 
                 rreq.getWebsite(), pageName );
             Template vtemplate = null;
             if (pd != null)
@@ -932,7 +932,7 @@ public class Macros
      */
     public String showPageName()
     {
-        PageData pd = null;
+        WeblogTemplate pd = null;
         RollerRequest rreq = getRollerRequest();
         try
         {
@@ -951,7 +951,7 @@ public class Macros
      */
     public String showPageDescription()
     {
-        PageData pd = null;
+        WeblogTemplate pd = null;
         RollerRequest rreq = getRollerRequest();
         try
         {
@@ -971,7 +971,7 @@ public class Macros
      */
     public String showPageUpdateTime()
     {
-        PageData pd = null;
+        WeblogTemplate pd = null;
         RollerRequest rreq = getRollerRequest();
         try
         {

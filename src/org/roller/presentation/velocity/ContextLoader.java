@@ -28,7 +28,7 @@ import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.CommentData;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.RollerPropertyData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
@@ -165,12 +165,12 @@ public class ContextLoader
         if (website != null && pageModel != null) 
         {
             /* alternative display pages - customization */
-            PageData entryPage = pageModel.getUsersPageByName(website, "_entry");
+            WeblogTemplate entryPage = pageModel.getUsersPageByName(website, "_entry");
             if (entryPage != null)
             {
                 ctx.put("entryPage", entryPage);
             }
-            PageData descPage = pageModel.getUsersPageByName(website, "_desc");
+            WeblogTemplate descPage = pageModel.getUsersPageByName(website, "_desc");
             if (descPage != null)
             {
                 ctx.put("descPage", descPage);
