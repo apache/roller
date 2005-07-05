@@ -18,16 +18,16 @@ import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.ParsedRequest;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
+import org.roller.model.Template;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.pojos.PingTargetData;
 import org.roller.util.DateUtil;
 import org.roller.util.Utilities;
  
@@ -65,13 +65,14 @@ public class RollerRequest implements ParsedRequest
     private String             mDateString = null;
     private String             mPathInfo = null; 
     private String             mPageLink = null;
-    private WeblogTemplate           mPage;
+    private Template           mPage;
     private PageContext        mPageContext = null;
     private HttpServletRequest mRequest = null;
     private WebsiteData        mWebsite;
     private WeblogEntryData    mWeblogEntry;
     private WeblogCategoryData mWeblogCategory;
     private boolean           mIsDateSpecified = false;
+    private boolean            mIsPreview = false;
         
     private static ThreadLocal mRollerRequestTLS = new ThreadLocal();
     
@@ -153,6 +154,11 @@ public class RollerRequest implements ParsedRequest
             getRoller().setUser(currentUser);
         }
 
+        // check servlet path to see if this is a preview request
+        mLogger.debug("servlet path = "+mRequest.getServletPath());
+        if(mRequest.getServletPath().indexOf("preview") != -1)
+            this.mIsPreview = true;
+        
         // path info may be null, (e.g. on JSP error page)
         mPathInfo = mRequest.getPathInfo();
         mPathInfo = (mPathInfo!=null) ? mPathInfo : "";            
@@ -204,7 +210,7 @@ public class RollerRequest implements ParsedRequest
                     // we have the /username form of URL
                     mDate = getDate(true);
                     mDateString = DateUtil.format8chars(mDate);
-                    mPage = userMgr.retrievePage(mWebsite.getDefaultPageId());
+                    mPage = mWebsite.getDefaultPage();
                 }
                 else if ( pathInfo.length == 2 )
                 {
@@ -215,20 +221,20 @@ public class RollerRequest implements ParsedRequest
                         mDate = getDate(true);
                         mDateString = DateUtil.format8chars(mDate);
                         mPageLink = pathInfo[1];
-                        mPage = userMgr.getPageByLink(mWebsite, pathInfo[1]);
+                        mPage = mWebsite.getPageByLink(pathInfo[1]);
                     }
                     else
                     {
                         // we have the /username/datestring form of URL
                         mDateString = pathInfo[1];
-                        mPage = userMgr.retrievePage(mWebsite.getDefaultPageId());
+                        mPage = mWebsite.getDefaultPage();
                         mIsDateSpecified = true;
                     }               
                 }
                 else if ( pathInfo.length == 3 )
                 {
                     mPageLink = pathInfo[1];
-                    mPage = userMgr.getPageByLink(mWebsite, pathInfo[1]);
+                    mPage = mWebsite.getPageByLink(pathInfo[1]);
                     
                     mDate = parseDate(pathInfo[2]);
                     if ( mDate == null ) // pre-jdk1.4 --> || mDate.getYear() <= 70 )
@@ -259,7 +265,7 @@ public class RollerRequest implements ParsedRequest
                 {
                     // we have the /username/pagelink/datestring/anchor form of URL
                     mPageLink = pathInfo[1];
-                    mPage = userMgr.getPageByLink(mWebsite, pathInfo[1]);
+                    mPage = mWebsite.getPageByLink(pathInfo[1]);
                     
                     mDate = parseDate(pathInfo[2]);
                     mDateString = pathInfo[2];
@@ -312,16 +318,17 @@ public class RollerRequest implements ParsedRequest
             if ( pageId != null )
             {
                 mPage = userMgr.retrievePage(pageId);
-                
+                /*
                 // We can use page to find the user, if we don't have one yet
                 if ( mWebsite == null )
                 {
                     mWebsite = mPage.getWebsite();
-                }                    
+                }
+                 */                    
             }
             else if (mWebsite != null) 
             {
-                mPage = userMgr.retrievePage( mWebsite.getDefaultPageId() );
+                mPage = mWebsite.getDefaultPage();
             }
                                        
             // Look for day in request params 
@@ -446,12 +453,12 @@ public class RollerRequest implements ParsedRequest
         return mContext;
     }
 
-    //------------------------------------------------------------------------
-    /** Get Roller instance from */
+
     public Roller getRoller()
     {
-        return RollerContext.getRoller( mRequest );
+        return RollerFactory.getRoller();
     }
+    
     
     //------------------------------------------------------------------------
     /** Is mRequest's user the admin user? */
@@ -740,7 +747,7 @@ public class RollerRequest implements ParsedRequest
      * Gets the WeblogTemplate specified by the request, or null.
      * @return WeblogTemplate
      */
-    public WeblogTemplate getPage()
+    public Template getPage()
     {
         if (mPage == null)
         {
@@ -763,7 +770,7 @@ public class RollerRequest implements ParsedRequest
     /**
      * Allow comment servlet to inject page that it has chosen.
      */
-    public void setPage(WeblogTemplate page) 
+    public void setPage(org.roller.model.Template page) 
     {
         mPage = page;
     }

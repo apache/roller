@@ -111,9 +111,7 @@ public class ViewWeblogEntriesTag
             String pid = null; 
             if ( mDayTemplate != null )
             {
-                WeblogTemplate page =
-                    rreq.getRoller().getUserManager().getPageByLink(
-                        website, mDayTemplate );
+                org.roller.model.Template page = website.getPageByLink(mDayTemplate);
                 if (page != null)
                 {
                     pid = page.getId();
