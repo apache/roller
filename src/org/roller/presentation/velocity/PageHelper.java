@@ -168,25 +168,16 @@ public class PageHelper
     
     /**
      * Evaluates the String as a Velocimacro, returning the results.
+     *
+     * @deprecated shouldn't be used anymore because it's dangerous
      * 
      * @param str String
      * @return String
      */
     public String evaluateString(String str)
     {
-        if (mVelocityContext == null) return str;
-        
-        StringWriter sw = new StringWriter();
-        try
-        {
-            Velocity.evaluate( mVelocityContext, sw, "evalStr", str );
-            return sw.toString();
-        }
-        catch (Exception e)
-        {
-            mLogger.warn("VelocityHelper.evaluateString()", e);
-        }
-        return "";
+        // we no longer allow users to do this because it is dangerous
+        return str;
     }
    
     /** Build the URL for editing an WeblogEntry **/
