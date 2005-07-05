@@ -19,12 +19,14 @@ import org.roller.presentation.website.formbeans.UserFormEx;
 import org.roller.util.Utilities;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import org.roller.model.RollerFactory;
 
 
 
@@ -87,7 +89,8 @@ public class UserBaseAction extends DispatchAction
         // prepare themes for interface
         ServletContext ctx = rreq.getServletContext();
         RollerContext rollerContext = RollerContext.getRollerContext(ctx);
-        String[] themes = rollerContext.getThemeNames();
+        List themes = 
+                RollerFactory.getRoller().getThemeManager().getEnabledThemesList();
         request.setAttribute( "themes", themes );
 
         // prepare locales & timezones

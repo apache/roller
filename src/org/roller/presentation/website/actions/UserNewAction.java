@@ -140,7 +140,8 @@ public class UserNewAction extends UserBaseAction
             }
             
             String theme = form.getTheme();
-            HashMap pages = rollerContext.readThemeMacros(theme);
+            // this used to have theme pages before we had shared themes -- Allen G
+            HashMap pages = new HashMap();
             mgr.addUser( ud, pages, theme, form.getLocale(), form.getTimezone() );
             rreq.getRoller().commit();
 
