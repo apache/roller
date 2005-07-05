@@ -84,7 +84,7 @@ public class RollerResourceLoader extends ResourceLoader
 					"RollerResourceLoader: page \"" + 
 					name + "\" not found");
             }
-            return new ByteArrayInputStream( page.getTemplate().getBytes("UTF-8") );
+            return new ByteArrayInputStream( page.getContents().getBytes("UTF-8") );
         }
         catch (UnsupportedEncodingException uex)
         {
@@ -123,9 +123,9 @@ public class RollerResourceLoader extends ResourceLoader
             if (mLogger.isDebugEnabled())
             {
                 mLogger.debug(name + ": resource=" + resource.getLastModified() + 
-							    " vs. page=" + page.getUpdateTime().getTime());
+							    " vs. page=" + page.getLastModified().getTime());
             }
-            return page.getUpdateTime().getTime();
+            return page.getLastModified().getTime();
         }
         catch (RollerException re)
         {

@@ -131,7 +131,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
             UserManager userMgr = roller.getUserManager();
 
             WeblogTemplate page = userMgr.retrievePage(templateType);
-            page.setTemplate(templateData);
+            page.setContents(templateData);
             userMgr.storePage(page);
             flushPageCache(userid);
 
@@ -182,7 +182,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
             }
             else
             {
-                return page.getTemplate();
+                return page.getContents();
             }
         }
         catch (Exception e)
