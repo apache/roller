@@ -24,7 +24,7 @@
         </tr>
         <tr>
             <td><fmt:message key="pageForm.template" /><br />
-            <html:textarea property="template" cols="80" rows="30" style="width: 100%" />
+            <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
             </td>
         </tr>
     </table>

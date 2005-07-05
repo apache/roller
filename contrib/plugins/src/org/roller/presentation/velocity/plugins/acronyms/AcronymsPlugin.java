@@ -201,7 +201,7 @@ public class AcronymsPlugin implements PagePlugin
 	 */
 	private Properties parseAcronymPage(WeblogTemplate acronymPage, Properties acronyms)
 	{
-		String rawAcronyms = acronymPage.getTemplate();
+		String rawAcronyms = acronymPage.getContents();
 		
 		if (mLogger.isDebugEnabled()) 
 		{

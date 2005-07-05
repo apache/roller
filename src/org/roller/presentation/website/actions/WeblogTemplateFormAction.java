@@ -21,6 +21,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.model.UserManager;
+import org.roller.model.Template;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
@@ -65,9 +66,9 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 WebsiteData hd = rreq.getWebsite();
 
                 data.setWebsite( hd );
-                data.setUpdateTime( new java.util.Date() );
+                data.setLastModified( new java.util.Date() );
                 data.setDescription("");
-                data.setTemplate("");
+                data.setContents("");
                 validateLink( data );
 
                 UserManager mgr = rreq.getRoller().getUserManager();
@@ -115,7 +116,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
             if ( rreq.isUserAuthorizedToEdit() )
             {
                 UserData ud = rreq.getUser();
-                WeblogTemplate pd = rreq.getPage();
+                WeblogTemplate pd = (WeblogTemplate) rreq.getPage();
                 WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
 
@@ -228,7 +229,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                WeblogTemplate cd = rreq.getPage();
+                WeblogTemplate cd = (WeblogTemplate) rreq.getPage();
                 WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(cd, request.getLocale());
 
@@ -267,7 +268,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 WeblogTemplate data = mgr.retrievePage(form.getId());
                 data.save(); // should through exception if no save permission
                 form.copyTo(data, request.getLocale());
-                data.setUpdateTime( new java.util.Date() );
+                data.setLastModified( new java.util.Date() );
                 data.setWebsite( rreq.getWebsite() );
 
                 validateLink( data );
