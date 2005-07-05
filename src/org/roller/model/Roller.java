@@ -86,11 +86,15 @@ public interface Roller extends Serializable
     public IndexManager getIndexManager() throws RollerException;
     
     /**
-     * Get PlanetManager associated with the Roller instance.
+     * Get PlanetManager associated with this Roller instance.
      */
     public PlanetManager getPlanetManager() throws RollerException;
 
-        
+    /**
+     * Get ThemeManager associated with this Roller instance.
+     */
+    public ThemeManager getThemeManager() throws RollerException;
+    
     /** Begin transaction for a thread.
      */ 
     public void begin() throws RollerException;

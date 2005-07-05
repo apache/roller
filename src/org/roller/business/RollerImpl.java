@@ -9,12 +9,12 @@ package org.roller.business;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
-import org.roller.config.RollerConfig;
 import org.roller.model.FileManager;
 import org.roller.model.IndexManager;
 import org.roller.model.Roller;
+import org.roller.model.ThemeManager;
 import org.roller.model.ThreadManager;
-import org.roller.util.StringUtils;
+
 
 
 /**
@@ -32,6 +32,7 @@ public abstract class RollerImpl implements Roller {
     protected FileManager     mFileManager = null;
     protected IndexManager    mIndexManager = null;
     protected ThreadManager   mThreadManager = null;
+    protected ThemeManager    mThemeManager = null;
     
     
     /** Creates a new instance of RollerImpl */
@@ -74,6 +75,18 @@ public abstract class RollerImpl implements Roller {
             mIndexManager = new IndexManagerImpl();
         }
         return mIndexManager;
+    }
+    
+    /**
+     * @see org.roller.model.Roller#getThemeManager()
+     */
+    public ThemeManager getThemeManager() throws RollerException
+    {
+        if (mThemeManager == null)
+        {
+            mThemeManager = new ThemeManagerImpl();
+        }
+        return mThemeManager;
     }
     
     
