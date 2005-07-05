@@ -110,12 +110,12 @@ public class CommentServlet extends PageServlet
             WebsiteData website = rreq.getWebsite();
                 
             // Request specifies popup
-            WeblogTemplate page = null;
+            org.roller.model.Template page = null;
             Exception pageException = null;
             try 
             {
                 // Does user have a popupcomments page?
-                page = userMgr.getPageByName(website, "_popupcomments");
+                page = website.getPageByName("_popupcomments");
             }
             catch(Exception e )
             {
@@ -444,7 +444,7 @@ public class CommentServlet extends PageServlet
             commentURL.append("/comments/");
             commentURL.append(rreq.getUser().getUserName());
             
-            WeblogTemplate page = rreq.getPage();
+            org.roller.model.Template page = rreq.getPage();
             if (page == null)
             {
                 commentURL.append("?entry=");

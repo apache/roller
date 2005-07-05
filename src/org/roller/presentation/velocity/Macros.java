@@ -601,11 +601,12 @@ public class Macros
                        
             // Get included page template 
             RollerRequest rreq = RollerRequest.getRollerRequest(
-                (HttpServletRequest)mPageContext.getRequest());                
-            UserManager userMgr = rreq.getRoller().getUserManager();
+                (HttpServletRequest)mPageContext.getRequest()); 
+            WebsiteData website = rreq.getWebsite();
+            //UserManager userMgr = rreq.getRoller().getUserManager();
             
-            WeblogTemplate pd = userMgr.getPageByName( 
-                rreq.getWebsite(), pageName );
+            org.roller.model.Template pd = website.getPageByName(pageName);
+            
             Template vtemplate = null;
             if (pd != null)
             {
@@ -932,7 +933,7 @@ public class Macros
      */
     public String showPageName()
     {
-        WeblogTemplate pd = null;
+        org.roller.model.Template pd = null;
         RollerRequest rreq = getRollerRequest();
         try
         {
@@ -951,7 +952,7 @@ public class Macros
      */
     public String showPageDescription()
     {
-        WeblogTemplate pd = null;
+        org.roller.model.Template pd = null;
         RollerRequest rreq = getRollerRequest();
         try
         {
@@ -971,7 +972,7 @@ public class Macros
      */
     public String showPageUpdateTime()
     {
-        WeblogTemplate pd = null;
+        org.roller.model.Template pd = null;
         RollerRequest rreq = getRollerRequest();
         try
         {
@@ -981,8 +982,8 @@ public class Macros
         {
             return "ERROR finding page in request: " + e.toString();
         }
-        if (pd.getUpdateTime() == null) return "";
-        return pd.getUpdateTime().toString();
+        if (pd.getLastModified() == null) return "";
+        return pd.getLastModified().toString();
     }
 
     //------------------------------------------------------------------------

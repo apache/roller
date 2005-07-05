@@ -15,6 +15,7 @@ import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.BookmarkManager;
 import org.roller.model.RefererManager;
+import org.roller.model.Template;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkComparator;
@@ -26,6 +27,7 @@ import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.velocity.wrappers.TemplateWrapper;
 import org.roller.util.StringUtils;
 
 /**
@@ -46,10 +48,11 @@ public class PageModel
     private UserManager          mUserMgr = null;
     private RefererManager       mRefererMgr = null;
 
-    private Map                mCategories = new HashMap();
+    private Map                  mCategories = new HashMap();
     private HashMap              mPageMap = new HashMap();
     private RollerRequest        mRollerReq = null;
     private String               mUsername = null;
+    private WebsiteData          mWebsite = null;
     
     private WeblogEntryData      mNextEntry = null;
     private WeblogEntryData      mPreviousEntry = null;
@@ -99,14 +102,18 @@ public class PageModel
              */
             if ( mUsername != null )
             {
+                // if we have website from RollerRequest, use it
+                mWebsite = rreq.getWebsite();
+                if(mWebsite == null)
+                    mWebsite = mUserMgr.getWebsite(user.getUserName());
+                
                 // Get the pages, put into context & load map
-                WebsiteData website = mUserMgr.getWebsite(user.getUserName());
-                List pages = mUserMgr.getPages(website);
+                List pages = mWebsite.getPages();
                 Iterator pageIter = pages.iterator();
                 while (pageIter.hasNext())
                 {
-                    WeblogTemplate page = (WeblogTemplate) pageIter.next();
-                    mPageMap.put(page.getName(), page);
+                    Template page = (Template) pageIter.next();
+                    mPageMap.put(page.getName(), new TemplateWrapper(page));
                 }
             }
             
@@ -136,8 +143,7 @@ public class PageModel
         Collection tops = null;
         try
         {
-         tops= mBookmarkMgr.getRootFolder(
-                    mUserMgr.getWebsite(mUsername)).getFolders();
+         tops= mBookmarkMgr.getRootFolder(mWebsite).getFolders();
         }
         catch (RollerException e)
         {
@@ -202,7 +208,7 @@ public class PageModel
         try
         {
             return mBookmarkMgr.getFolder(
-                mUserMgr.getWebsite(mUsername), folderPath);
+                mWebsite, folderPath);
         }
         catch (RollerException e)
         {
@@ -214,9 +220,9 @@ public class PageModel
     //------------------------------------------------------------------------
     
     /** Encapsulates UserManager.getPageByName() */
-    public WeblogTemplate getUsersPageByName(WebsiteData website, String pageName)
+    public Template getUsersPageByName(WebsiteData website, String pageName)
     {
-        WeblogTemplate page = null;
+        Template page = null;
         try
         {
             if (website == null) 
@@ -225,7 +231,7 @@ public class PageModel
             if (pageName == null) 
                 throw new NullPointerException("pageName is null");
                 
-            page = mUserMgr.getPageByName(website, pageName);
+            page = website.getPageByName(pageName);
         }
         catch (NullPointerException npe)
         {
@@ -251,15 +257,20 @@ public class PageModel
     /** Encapsulates UserManager.getPageByName() */
     public String getPageIdByName(String pageName)
     {
-        WeblogTemplate pd = (WeblogTemplate)mPageMap.get(pageName);
-        if ( pd != null ) 
-        {
-            return pd.getId();
+        mLogger.debug("looking up page ["+pageName+"]");
+        
+        String template_id = null;
+        
+        try {
+            Template pd = mWebsite.getPageByName(pageName);
+            template_id = pd.getId();
+        } catch(Exception e) {
+            mLogger.error(e);
         }
-        else
-        {
-            return null;
-        }
+        
+        mLogger.debug("returning template id ["+template_id+"]");
+        
+        return template_id;
     }
     
     //------------------------------------------------------------------------

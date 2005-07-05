@@ -27,8 +27,8 @@ import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
+import org.roller.model.Template;
 import org.roller.pojos.CommentData;
-import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.RollerPropertyData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
@@ -38,6 +38,7 @@ import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.newsfeeds.NewsfeedCache;
+import org.roller.presentation.velocity.wrappers.TemplateWrapper;
 import org.roller.presentation.weblog.formbeans.CommentFormEx;
 import org.roller.util.RegexUtil;
 import org.roller.util.StringUtils;
@@ -161,44 +162,25 @@ public class ContextLoader
     {
         // if there is an "_entry" page, only load it once
         WebsiteData website = rreq.getRoller().getUserManager().getWebsite(userName);
-        PageModel pageModel = (PageModel)ctx.get("pageModel");
-        if (website != null && pageModel != null) 
+        //PageModel pageModel = (PageModel)ctx.get("pageModel");
+        if (website != null) 
         {
             /* alternative display pages - customization */
-            WeblogTemplate entryPage = pageModel.getUsersPageByName(website, "_entry");
+            Template entryPage = website.getPageByName("_entry");
             if (entryPage != null)
             {
-                ctx.put("entryPage", entryPage);
+                ctx.put("entryPage", new TemplateWrapper(entryPage));
             }
-            WeblogTemplate descPage = pageModel.getUsersPageByName(website, "_desc");
+            Template descPage = website.getPageByName("_desc");
             if (descPage != null)
             {
-                ctx.put("descPage", descPage);
+                ctx.put("descPage", new TemplateWrapper(descPage));
             }
         }
     }
 
     private static String figureResourcePath( RollerRequest rreq )
-    {
-        /*  old way -- Allen G
-        HttpServletRequest request = rreq.getRequest();
-        RollerContext rCtx = RollerContext.getRollerContext( request );
-        RollerConfigData  rollerConfig = rCtx.getRollerConfig();
-    
-        StringBuffer sb = new StringBuffer();
-        String uploadPath = rollerConfig.getUploadPath();
-        if ( uploadPath != null && uploadPath.trim().length() > 0 )
-        {
-            sb.append( uploadPath );
-        }
-        else
-        {
-            sb.append( request.getContextPath() );
-            sb.append( RollerContext.USER_RESOURCES );
-        }
-        return sb.toString();
-        */
-        
+    {   
         String uploadurl = null;
         try {
             uploadurl = RollerFactory.getRoller().getFileManager().getUploadUrl();
@@ -240,7 +222,7 @@ public class ContextLoader
         
         // Make sure comment form object is available in context
         CommentFormEx commentForm = 
-            (CommentFormEx)request.getAttribute("commentForm");
+                (CommentFormEx) request.getAttribute("commentForm");
         if ( commentForm == null )
         {
             commentForm = new CommentFormEx();
@@ -394,7 +376,7 @@ public class ContextLoader
         // the Entry Day link.
         ctx.put("plainFormat", "yyyyMMdd");
 
-        ctx.put("page",            rreq.getPage() );
+        ctx.put("page",            new TemplateWrapper(rreq.getPage()));
         ctx.put("utilities",       new Utilities() );
         ctx.put("stringUtils",     new StringUtils() );        
         ctx.put("rollerVersion",   rollerCtx.getRollerVersion() );
