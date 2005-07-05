@@ -348,6 +348,8 @@ public abstract class UserManagerImpl implements UserManager
         //
         // READ THEME FILES AND CREATE PAGES FOR USER
         //
+        /* new registrations require choosing a theme
+         * now that themes are shared we don't save page themplates -- Allen G
         Iterator iter = pages.keySet().iterator();
         while ( iter.hasNext() )
         {
@@ -374,6 +376,7 @@ public abstract class UserManagerImpl implements UserManager
                 website.setWeblogDayPageId(pd.getId());                 
             }                
         }
+        */
         
         if (adminUser) ud.grantRole("admin");
         
