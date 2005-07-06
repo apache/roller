@@ -61,10 +61,6 @@
          <type>boolean</type>
 	 <default-value>true</default-value>
       </property-def>
-      <property-def  name="users.themes.path"  key="configForm.newUserThemes">
-         <type>string</type>
-	 <default-value>/themes</default-value>
-      </property-def>
       <property-def  name="users.editor.pages"  key="configForm.editorPages">
          <type>text</type>
 	 <default-value>editor-ekit.jsp,editor-text.jsp,editor-dhtml.jsp,editor-text-js.jsp,editor-wiki-js.jsp,editor-rte.jsp</default-value>
@@ -111,6 +107,19 @@
       </property-def>
 
    </display-group >
+   
+   <display-group name="themeSettings" key="configForm.themeSettings">
+   
+      <property-def  name="users.themes.path"  key="configForm.newUserThemes">
+         <type>string</type>
+	 <default-value>/themes</default-value>
+      </property-def>
+      <property-def  name="themes.customtheme.allowed"  key="configForm.allowCustomTheme">
+         <type>boolean</type>
+	 <default-value>true</default-value>
+      </property-def>
+      
+   </display-group>
    
    <!-- Debugging Settings Group -->
    <!--
