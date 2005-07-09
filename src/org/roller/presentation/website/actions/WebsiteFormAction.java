@@ -142,8 +142,10 @@ public final class WebsiteFormAction extends DispatchAction
                     form.setEnableBloggerApi( Boolean.FALSE );
                 }
 
+                /* we don't need this check any longer -- Allen G
                 if(!form.getDefaultPageId().equals(form.getWeblogDayPageId()))
-                {                    
+                {
+                */               
                     WebsiteData wd = umgr.retrieveWebsite(form.getId());
                     wd.save(); // should throw if save not permitted
 
@@ -186,7 +188,8 @@ public final class WebsiteFormAction extends DispatchAction
                 
                     List epages = Arrays.asList(StringUtils.split(
                        StringUtils.deleteWhitespace(editorPages), ","));
-                    request.setAttribute("editorPagesList", epages);                
+                    request.setAttribute("editorPagesList", epages);
+                /*
                 }
                 else
                 {
@@ -195,6 +198,7 @@ public final class WebsiteFormAction extends DispatchAction
                         "CHANGES REJECTED: Cannot set default page template "
                         +"and day template to same template");
                 }
+                */
             }
             else
             {

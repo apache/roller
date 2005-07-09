@@ -4,6 +4,7 @@
 String customTheme = org.roller.pojos.Theme.CUSTOM;
 request.setAttribute("customTheme", customTheme);
 boolean allowCustom = org.roller.config.RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed");
+request.setAttribute("allowCustom", new Boolean(allowCustom));
 
 String username = "";
 try {
@@ -44,8 +45,7 @@ try {
                                 tabindex="4" />
                         </c:when>
                         
-                        <c:when test="${currentTheme ne customTheme}">
-                          <c:if test="${allowCustom}">
+                        <c:when test="${(currentTheme ne customTheme) and allowCustom}">
                             If you like you may customize a personal copy of this theme.<br/>
                             <fmt:message key="themeEditor.saveWarning" /><br/>
                             <input type="button" 
@@ -53,7 +53,6 @@ try {
                                 name="customizeButton" 
                                 onclick="this.form.method.value='customize';this.form.submit()"
                                 tabindex="4" />
-                          </c:if>
                         </c:when>
                   </c:choose>	
 		</p>
