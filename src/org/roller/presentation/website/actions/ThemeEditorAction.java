@@ -350,6 +350,8 @@ public class ThemeEditorAction extends DispatchAction {
     private void saveThemePages(WebsiteData website, Theme theme)
         throws RollerException {
         
+        mLogger.debug("Setting custom templates for website: "+website.getName());
+        
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             
@@ -365,11 +367,6 @@ public class ThemeEditorAction extends DispatchAction {
                 if (template != null) {
                     // User already has page by that name, so overwrite it.
                     template.setContents(theme_template.getContents());
-                    
-                    // make absolute sure that the "Weblog" template is the
-                    // default page ... it's possible for the user to change this :/
-                    if(theme_template.getName().equals("Weblog"))
-                        website.setDefaultPageId(template.getId());
                     
                 } else {
                     // User does not have page by that name, so create new page.
@@ -390,11 +387,14 @@ public class ThemeEditorAction extends DispatchAction {
             
             // if this is the first time someone is customizing a theme then
             // we need to set a default page
-            if(website.getDefaultPageId() == null) {
+            if(website.getDefaultPageId() == null ||
+                    website.getDefaultPageId().equals("dummy")) {
                 // we have to go back to the db to figure out the id
                 WeblogTemplate template = userMgr.getPageByName(website, "Weblog");
-                if(template != null)
+                if(template != null) {
+                    mLogger.debug("Setting default page to "+template.getId());
                     website.setDefaultPageId(template.getId());
+                }
             }
             
             // save our updated website
