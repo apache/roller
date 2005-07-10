@@ -1,0 +1,101 @@
+APACHE INCUBATION STATUS FILE FOR THE ROLLER PROJECT
+
+---
+DRAFT STATUS:  Please note that this document itself is a preliminary draft for the status file.
+It requires at least an initial review by the other committers and by our incubation
+Mentor.
+----
+
+This file describes our status and progress in the Apache Incubation Process as documented in
+the Incubation Policy document (http://incubator.apache.org/incubation/Incubation_Policy.html),
+specifically with respect to the Minimum Exit Requirements
+(http://incubator.apache.org/incubation/Incubation_Policy.html#Minimum+Exit+Requirements),
+and any additional requirements imposed by the Incubator PMC.
+
+
+ROLLER PROJECT COMMITTERS
+  (Listed in alphabetical order of first names)
+   TODO: add e-mails.  Should this list our apache addresses?
+ - Allen Gilliland
+ - Anil Gangolli
+ - David Johnson
+ - Henri Yandell
+ - Lance Lavandowska
+ - Matt Raible
+
+INCUBATION MENTOR
+ -
+
+MINIMUM EXIT REQUIREMENTS
+
+Listed below are the minimum exit requirements (from the Incubation Policy document).
+With each requirement are notes regarding our status towards completion of
+the requirement.
+
+LEGAL
+* All code ASL'ed
+    INCOMPLETE. We have a top-level ASL, but not all source files have had a notice added to them.
+* No non ASL or ASL compatbile dependencies in the code base
+    INCOMPLETE. We have dependencies on some LGPL code, notably Hibernate, and the JSPWiki plugin.
+* License grant complete
+    UNKNOWN.  We believe this is complete.  Mentor, please verify.
+* CLAs on file.
+    COMPLETE.  CLAs for all current committers are on file.
+* Check of project name for trademark issues
+    UNKNOWN. We believe the Roller Weblogger name to be free of trademark issues. Will Apache Legal be responsible to
+    confirm?  If not, what verification should be undertaken by project developers?
+
+MERITOCRACY
+* Demonstrate an active and diverse development community
+    BELIEVED COMPLETE.  We believe we satisfy this today with our current set of committers, and we are open to additional
+    qualified developers.
+* The project is not highly dependent on any single contributor (there's at least 3 legally independent committers and
+  there is no single company or entity that is vital to the success of the project).
+    BELIEVED COMPLETE.  We believe we satisfy this today with the current set of committers.
+* The above implies that new committers are admitted according to ASF practices
+    ONGOING.  We will admit new committers according to ASF practices.
+* ASF style voting has been adopted and is standard practice
+    ONGOING.  We have been using ASF-style voting since before our entry into incubation, and we plan to maintain this
+    practice with some additional rigor / regularity.
+* Demonstrate ability to tolerate and resolve conflict within the community.
+    ONGOING.  The community has been able to do this successfully to date.  There has been very little in the way of
+    conflict however.  We use the development mailing list for discussions and request votes as necessary.
+* Release plans are developed and excuted in public by the community.
+    ONGOING.  We use the mailing lists to announce release plans and accept comments.
+* Note: incubator projects are not permitted to issue an official Release. Test snapshots (however good the quality) and
+  Release plans are OK.
+    NOTED.  We will likely wish to release "test snapshots" with "incubating" clearly noted in the packaging.
+* Destination PMC, or ASF Board for a TLP, has voted for final acceptance
+    INCOMPLETE.  This will be our final step (or among them), after meeting other requirements.
+
+ALIGNMENT / SYNERGY
+* Use of other ASF subprojects
+    BELIEVED COMPLETE.  Roller depends on at least the following Apache components: Struts,  Velocity (Jakarta), Lucene,
+    Log4j (Logging), some elements of the Jakarta Commons libraries.  In addition, we favor Tomcat as a servlet container,
+    to the extent that we provide primary installation guide documentation and additional user support for configuring
+    Roller on Tomcat. We also depend on the Rome project components (RSS/Atom support) which we expect will be in
+    incubation during a period overlapping that of the Roller project.
+* Develop synergistic relationship with other ASF subprojects
+    UNKNOWN.  We're great at using the other ASF stuff; hopefully we'll find ways to give back.
+
+INFRASTRUCTURE
+* CVS module has been created
+    COMPLETE. SVN module has been created at https://svn.apache.org/repos/asf/incubator/roller/trunk/
+* Mailing list(s) have been created
+    COMPLETE. Roller developer list (roller-dev@incubator.apache.org) and Roller user list
+    (roller-user@incubator.apache.org).
+* Mailing lists are being archived
+    INCOMPLETE.  Mentor, please help.
+* Bugzilla has been created
+    BELIEVED INCOMPLETE.  We need both to add Roller to the appropriate Bugzilla and to migrate from
+    our current issue tracking (http://opensource.atlassian.com/projects/roller/).
+* Project website has been created
+    INCOMPLETE.
+* Project ready to comply with ASF mirroring guidlines
+    INCOMPLETE.
+* Project is integrated with GUMP if appropriate
+    INCOMPLETE.
+* Releases are PGP signed by a member of the community
+    INCOMPLETE.
+* Developers tied into ASF PGP web of trust
+    INCOMPLETE.
