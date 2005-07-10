@@ -23,8 +23,9 @@ ROLLER PROJECT COMMITTERS
  - Lance Lavandowska
  - Matt Raible
 
-INCUBATION MENTOR
- -
+INCUBATION MENTORS
+ - Sam Ruby
+ - Henri Yandell
 
 MINIMUM EXIT REQUIREMENTS
 
