@@ -141,7 +141,8 @@ public class UserNewAction extends UserBaseAction
             
             String theme = form.getTheme();
             HashMap pages = rollerContext.readThemeMacros(theme);
-            mgr.addUser( ud, pages, theme, form.getLocale(), form.getTimezone() );
+            mgr.addUser(ud);
+            mgr.createWebsite(ud, pages, theme, form.getLocale(), form.getTimezone());
             rreq.getRoller().commit();
 
 			// Flush cache so user will immediately appear on index page

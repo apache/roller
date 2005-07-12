@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,7 +21,6 @@ import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.PageData;
 import org.roller.pojos.PermissionsData;
-import org.roller.pojos.PlanetGroupSubscriptionAssoc;
 import org.roller.pojos.RoleData;
 import org.roller.pojos.UserCookieData;
 import org.roller.pojos.UserData;
@@ -197,13 +194,11 @@ public abstract class UserManagerImpl implements UserManager
      * @param ud  User object representing the new user.
      * @param themeDir Directory containing the theme for this user
      */
-    public void addUser(UserData ud, Map pages, String theme, 
-                        String locale, String timezone)
+    public void addUser(UserData ud)
         throws RollerException
     {        
         Roller mRoller = RollerFactory.getRoller();
         UserManager umgr = mRoller.getUserManager();
-        WeblogManager wmgr = mRoller.getWeblogManager();
         if (    umgr.getUser(ud.getUserName()) != null 
              || umgr.getUser(ud.getUserName().toLowerCase()) != null) 
         {
@@ -216,33 +211,42 @@ public abstract class UserManagerImpl implements UserManager
         {
             // Make first user an admin
             adminUser = true;
-        }
-        
+        }        
         mStrategy.store(ud);
+        if (adminUser) ud.grantRole("admin");
         
         RoleData rd = new RoleData(null, ud, "editor");
         mStrategy.store(rd);
-        
-        //
-        // CREATE WEBSITE AND CATEGORIES FOR USER
-        //
-        
+    }
+    
+    public WebsiteData createWebsite(
+            UserData ud, 
+            Map pages, 
+            String theme, 
+            String locale, 
+            String timezone) throws RollerException
+    {
+        Roller mRoller = RollerFactory.getRoller();
+        UserManager umgr = mRoller.getUserManager();
+        WeblogManager wmgr = mRoller.getWeblogManager();
+
         WebsiteData website = new WebsiteData(null,
             ud.getFullName()+"'s Weblog", // name
             ud.getUserName(),             // handle
             ud.getFullName()+"'s Weblog", // description
-            ud,                // userId
-            "dummy",           // defaultPageId
-            "dummy",           // weblogDayPageId
-            Boolean.TRUE,      // enableBloggerApi
-            null,                // bloggerCategory
-            null,                // defaultCategory
-            "editor-text.jsp", // editorPage
-            "",                // ignoreWords
-            Boolean.TRUE,      // allowComments  
-            Boolean.FALSE,     // emailComments
-            "",                // emailFromAddress
-            Boolean.TRUE);     // isEnabled
+            ud,                 // userId
+            "dummy",            // defaultPageId
+            "dummy",            // weblogDayPageId
+            Boolean.TRUE,       // enableBloggerApi
+            null,               // bloggerCategory
+            null,               // defaultCategory
+            "editor-text.jsp",  // editorPage
+            "",                 // ignoreWords
+            Boolean.TRUE,       // allowComments  
+            Boolean.FALSE,      // emailComments
+            "",                 // emailFromAddress
+            Boolean.TRUE,       // isEnabled
+            "dummy@example.com");  // emailAddress
         website.setEditorTheme(theme);
         website.setLocale(locale);
         website.setTimezone(timezone);
@@ -364,13 +368,18 @@ public abstract class UserManagerImpl implements UserManager
                 website.setWeblogDayPageId(pd.getId());                 
             }                
         }
-        
-        if (adminUser) ud.grantRole("admin");
-        
-        // Save website with blogger cat id, defauld page id and day id
         mStrategy.store(website); 
+        
+        
+        PermissionsData perms = new PermissionsData();
+        perms.setUser(ud);
+        perms.setWebsite(website);
+        perms.setPermissionMask(PermissionsData.ADMIN);
+        perms.save();
+
+        return website;
     }
-    
+
     /**
      * @see org.roller.model.UserManager#createLoginCookie(java.lang.String)
      */

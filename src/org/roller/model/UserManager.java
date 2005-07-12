@@ -18,6 +18,9 @@ import org.roller.pojos.WebsiteData;
  * 
  * @author David M Johnson
  */
+/**
+ * @author dave
+ */
 public interface UserManager extends Serializable
 {
     /** 
@@ -104,13 +107,32 @@ public interface UserManager extends Serializable
 	/** Get user object by user name, optionally include dis-enabled users */
 	public UserData getUser( String userName, boolean enabledOnly ) throws RollerException;
 
-    /** Add a new user with pages, bookmarks, folders...
-     * @param user New user object to be added to database
-     * @param themeDir Directory containing theme for user
+
+    /**
+     * Add new user object to Roller. User will be given the global editor role, 
+     * unless it's the first user, who will get the global admin role.
+     * @param user User object to be added, initialized with name, password, etc.
+     * @throws RollerException
      */
-    public void addUser( UserData user, Map page, String theme,
-            String locale, String timezone)
-        throws RollerException;
+    public void addUser(UserData user) throws RollerException;
+
+    /**
+     * @param ud
+     * @param pages
+     * @param theme
+     * @param locale
+     * @param timezone
+     * @param mRoller
+     * @param wmgr
+     * @return
+     * @throws RollerException
+     */
+    public WebsiteData createWebsite(
+            UserData ud, 
+            Map pages, 
+            String theme, 
+            String locale, 
+            String timezone) throws RollerException;
 
     public UserData retrieveUser(String id)throws RollerException;
     public void storeUser( UserData data ) throws RollerException;
@@ -197,11 +219,6 @@ public interface UserManager extends Serializable
      * @param username
      */
     public void removeLoginCookies(String username) throws RollerException;
-
-    /**
-     * Remove website(s) associated with user.
-     */
-    public void removeUserWebsites(UserData data) throws RollerException;
 
     /**
      * Remove contents of website.

@@ -40,28 +40,32 @@ import org.roller.util.Utilities;
  */
 public class WeblogEntryData extends WebsiteObject implements Serializable
 {
-    private static Log mLogger = LogFactory.getFactory()
-                                           .getInstance(WeblogEntryData.class);
+    private static Log mLogger = 
+        LogFactory.getFactory().getInstance(WeblogEntryData.class);
                                            
     static final long serialVersionUID = 2341505386843044125L;
     
-    protected String id=null;
-    protected org.roller.pojos.WeblogCategoryData category=null;
-    protected String title=null;
-    protected String link=null;
-    protected String text=null;
-    protected String anchor=null;
-    protected Timestamp pubTime=null;
-    protected Timestamp updateTime=null;
-    protected Boolean publishEntry=null;
-    protected UserData mCreator=null;
-    protected WebsiteData mWebsite=null;
-    protected String mPlugins;
-    protected Boolean allowComments = Boolean.TRUE;
-    protected Integer commentDays = new Integer(7);
-    protected Boolean rightToLeft = Boolean.FALSE;
-    protected Boolean pinnedToMain = Boolean.FALSE;
+    // Simple properies
+    protected String    id            = null;
+    protected String    title         = null;
+    protected String    link          = null;
+    protected String    text          = null;
+    protected String    anchor        = null;
+    protected Timestamp pubTime       = null;
+    protected Timestamp updateTime    = null;
+    protected Boolean   publishEntry  = null;
+    protected String    plugins       = null;
+    protected Boolean   allowComments = Boolean.TRUE;
+    protected Integer   commentDays   = new Integer(7);
+    protected Boolean   rightToLeft   = Boolean.FALSE;
+    protected Boolean   pinnedToMain  = Boolean.FALSE;
     
+    // Associated objects
+    protected UserData           creator  = null;
+    protected WebsiteData        website  = null;
+    protected WeblogCategoryData category = null;
+        
+    // Collection of name/value entry attributes
     private Map attMap = new HashMap();
     private Set attSet = new TreeSet();
     
@@ -73,8 +77,9 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
 
     public WeblogEntryData(
        java.lang.String id, 
-       org.roller.pojos.WeblogCategoryData category, 
+       WeblogCategoryData category, 
        WebsiteData website, 
+       UserData creator,
        java.lang.String title, 
        java.lang.String link,
        java.lang.String text, 
@@ -85,7 +90,8 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     {
         this.id = id;
         this.category = category;
-        this.mWebsite = website;
+        this.website = website;
+        this.creator = creator;
         this.title = title;
         this.link = link;
         this.text = text;
@@ -110,7 +116,8 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         WeblogEntryData other = (WeblogEntryData)otherData;
         this.id = other.id;
         this.category = other.category;
-        this.mWebsite = other.mWebsite;
+        this.website = other.website;
+        this.creator = other.creator;
         this.title = other.title;
         this.link = other.link;
         this.text = other.text;
@@ -118,7 +125,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         this.pubTime = other.pubTime;
         this.updateTime = other.updateTime;
         this.publishEntry = other.publishEntry;
-        this.mPlugins = other.mPlugins;
+        this.plugins = other.plugins;
         this.allowComments = other.allowComments;
         this.commentDays = other.commentDays;
         this.rightToLeft = other.rightToLeft;
@@ -174,13 +181,13 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
      */
     public WebsiteData getWebsite()
     {
-        return this.mWebsite;
+        return this.website;
     }
 
     /** @ejb:persistent-field */
     public void setWebsite(WebsiteData website)
     {
-        this.mWebsite = website;
+        this.website = website;
     }
 
     /** 
@@ -189,13 +196,13 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
      */
     public UserData getCreator()
     {
-        return this.mCreator;
+        return this.creator;
     }
 
     /** @ejb:persistent-field */
     public void setCreator(UserData creator)
     {
-        this.mCreator = creator;
+        this.creator = creator;
     }
     
     /** 
@@ -406,13 +413,13 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
      */
     public java.lang.String getPlugins()
     {
-        return mPlugins;
+        return plugins;
     }
 
     /** @ejb:persistent-field */
     public void setPlugins(java.lang.String string)
     {
-        mPlugins = string;
+        plugins = string;
     }
 
     
@@ -755,7 +762,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
                     "pubTime=" + pubTime + " " + 
                     "updateTime=" + updateTime + " " + 
                     "publishEntry=" + publishEntry + " " + 
-                    "plugins=" + mPlugins);
+                    "plugins=" + plugins);
         str.append('}');
 
         return (str.toString());
@@ -788,13 +795,13 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
                 lEquals = lEquals && this.category.equals(lTest.category);
             }
 
-            if (this.mWebsite == null)
+            if (this.website == null)
             {
-                lEquals = lEquals && (lTest.mWebsite == null);
+                lEquals = lEquals && (lTest.website == null);
             }
             else
             {
-                lEquals = lEquals && this.mWebsite.equals(lTest.mWebsite);
+                lEquals = lEquals && this.website.equals(lTest.website);
             }
 
             if (this.title == null)
@@ -853,14 +860,14 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
                           this.publishEntry.equals(lTest.publishEntry);
             }
 
-            if (this.mPlugins == null)
+            if (this.plugins == null)
             {
-                lEquals = lEquals && (lTest.mPlugins == null);
+                lEquals = lEquals && (lTest.plugins == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.mPlugins.equals(lTest.mPlugins);
+                          this.plugins.equals(lTest.plugins);
             }
 
 
@@ -882,7 +889,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         result = (37 * result) + 
                  ((this.category != null) ? this.category.hashCode() : 0);
         result = (37 * result) + 
-                 ((this.mWebsite != null) ? this.mWebsite.hashCode() : 0);
+                 ((this.website != null) ? this.website.hashCode() : 0);
         result = (37 * result) + 
                  ((this.title != null) ? this.title.hashCode() : 0);
         result = (37 * result) + 
@@ -896,7 +903,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         result = (37 * result) + 
                  ((this.publishEntry != null) ? this.publishEntry.hashCode() : 0);
         result = (37 * result) + 
-                 ((this.mPlugins != null) ? this.mPlugins.hashCode() : 0);
+                 ((this.plugins != null) ? this.plugins.hashCode() : 0);
 
         return result;
     }
@@ -1002,9 +1009,9 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
      */
     public List getPluginsList()
     {
-        if (mPlugins != null)
+        if (plugins != null)
         {
-            return Arrays.asList( StringUtils.split(mPlugins, ",") );
+            return Arrays.asList( StringUtils.split(plugins, ",") );
         }
         return new ArrayList();
     }

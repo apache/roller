@@ -376,28 +376,25 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         }
     }
 
-    /** 
-     * @see org.roller.model.UserManager#removeUserWebsites(org.roller.pojos.UserData)
-     */
-    public void removeUserWebsites(UserData user) throws RollerException
-    {
-        Session session = ((HibernateStrategy)mStrategy).getSession();
-        Criteria criteria = session.createCriteria(WebsiteData.class);
-        criteria.add(Expression.eq("user", user));
-        try
-        {
-            List websites = criteria.list();
-            for (Iterator iter = websites.iterator(); iter.hasNext();) 
-            {
-                WebsiteData website = (WebsiteData)iter.next();
-                website.remove();
-            }            
-        }
-        catch (HibernateException e)
-        {
-            throw new RollerException(e);
-        }
-    }
+//    public void removeUserWebsites(UserData user) throws RollerException
+//    {
+//        Session session = ((HibernateStrategy)mStrategy).getSession();
+//        Criteria criteria = session.createCriteria(WebsiteData.class);
+//        criteria.add(Expression.eq("user", user));
+//        try
+//        {
+//            List websites = criteria.list();
+//            for (Iterator iter = websites.iterator(); iter.hasNext();) 
+//            {
+//                WebsiteData website = (WebsiteData)iter.next();
+//                website.remove();
+//            }            
+//        }
+//        catch (HibernateException e)
+//        {
+//            throw new RollerException(e);
+//        }
+//    }
 
     /** 
      * @see org.roller.model.UserManager#removeWebsiteContents(org.roller.pojos.WebsiteData)

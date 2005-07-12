@@ -113,8 +113,7 @@ public class FileManagerTest extends TestCase
     
     private WebsiteData createTestUser() throws Exception {
         // do some setup for our test
-        Roller mRoller = RollerFactory.getRoller();
-        
+        Roller mRoller = RollerFactory.getRoller();       
         UserManager umgr = mRoller.getUserManager();
         mRoller.begin(UserData.SYSTEM_USER);
         UserData user = new UserData(null,
@@ -122,16 +121,15 @@ public class FileManagerTest extends TestCase
                 "FileManagerTest_password",       
                 "FileManagerTest_description",      
                 "FileManagerTest@example.com", 
-                new java.util.Date());
+                new java.util.Date(), Boolean.TRUE);
         Map pages = new HashMap();
         pages.put("Weblog","Weblog page content");
         pages.put("_day","Day page content");
         pages.put("css","CSS page content");
-        umgr.addUser(user, pages, "basic", "en_US_WIN", "America/Los_Angeles");
+        umgr.addUser(user);
+        umgr.createWebsite(user, pages, "basic", "en_US_WIN", "America/Los_Angeles");
         mRoller.commit();
-        
         WebsiteData website = (WebsiteData)umgr.getWebsites(user,null).get(0);
-
         return website;
     }
 

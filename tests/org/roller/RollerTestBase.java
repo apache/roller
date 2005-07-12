@@ -21,6 +21,7 @@ import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
@@ -38,7 +39,8 @@ public abstract class RollerTestBase extends TestCase
 
     private Roller mRoller = null;
 
-    /** Simple website created by addUser(), no frills. */
+    /** Simple user and website */
+    protected UserData mUser = null;
     protected WebsiteData mWebsite = null;
     protected String testUsername = "testuser";
 
@@ -95,42 +97,47 @@ public abstract class RollerTestBase extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        UserManager umgr = getRoller().getUserManager();
-
         getRoller().begin(UserData.SYSTEM_USER);
-
-        // create User
-        UserData user = createUser(umgr,
+        mUser = createUser(
                    testUsername,
                    "password",
                    "TestUser",
                    "testuser@example.com");
-
-        // get website
-        mWebsite = (WebsiteData)umgr.getWebsites(user, null).get(0);
+        UserManager umgr = getRoller().getUserManager();
+        mWebsite = (WebsiteData)umgr.getWebsites(mUser, null).get(0);
         getRoller().commit();
     }
 
     //-----------------------------------------------------------------------
     protected UserData createUser(
-                    UserManager umgr,
                     String username,
                     String password,
                     String fullName,
                     String email) throws RollerException
     {
+        UserManager umgr = getRoller().getUserManager();
+        WeblogManager wmgr = getRoller().getWeblogManager();
+
+        // Create and add new new user
         UserData ud = new UserData(null,
-            username,         // userName
-            password,           // password
+            username,      // userName
+            password,      // password
             fullName,      // fullName
-            email, // emailAddress
-            new java.util.Date()  // dateCreated
-            );
+            email,         // emailAddress
+            new java.util.Date(), // dateCreated
+            Boolean.TRUE);
+        umgr.addUser(ud);
+
+        // Create list of pages to be loaded into website
         Map pages = new HashMap();
         pages.put("Weblog","Weblog page content");
         pages.put("_day","Day page content");
         pages.put("css","CSS page content");
-        umgr.addUser(ud, pages, "basic", "en_US_WIN", "America/Los_Angeles");
+        
+        // Create website for user with those pages
+        umgr.createWebsite(
+           ud, pages, "basic", "en_US_WIN", "America/Los_Angeles");
+        
         return ud;
     }
 
@@ -146,7 +153,7 @@ public abstract class RollerTestBase extends TestCase
         {
             getRoller().begin(UserData.SYSTEM_USER);
 
-            UserData ud = createUser(umgr,
+            UserData ud = createUser(
                 "testuser"+i,         // userName
                 "password",           // password
                 "Test User #"+i,      // fullName
@@ -168,7 +175,7 @@ public abstract class RollerTestBase extends TestCase
             getRoller().begin(UserData.SYSTEM_USER);
             website  = umgr.retrieveWebsite(website.getId());
             WeblogCategoryData rootCat = wmgr.getRootWeblogCategory(website);
-            createCategoryPostsAndComments(0, wmgr, website, rootCat);
+            createCategoryPostsAndComments(0, wmgr, ud, website, rootCat);
             getRoller().commit();
         }
 
@@ -178,6 +185,7 @@ public abstract class RollerTestBase extends TestCase
     private void createCategoryPostsAndComments(
             int depth,
             WeblogManager wmgr,
+            UserData user,
             WebsiteData website,
             WeblogCategoryData rootCat) throws RollerException
     {
@@ -195,6 +203,7 @@ public abstract class RollerTestBase extends TestCase
                  null,      // id
                  rootCat,    // category
                  website,    // websiteId
+                 user,
                  "Future Blog", // title
                  null,
                  "Blog to the Future", // text
@@ -220,6 +229,7 @@ public abstract class RollerTestBase extends TestCase
                     null,      // id
                     rootCat,    // category
                     website,    // websiteId
+                    user,
                     rootCat.getName() + ":entry"+k, // title
                     null,
                     rootCat.getName() + ":entry"+k, // text
@@ -273,7 +283,7 @@ public abstract class RollerTestBase extends TestCase
 
             if (depth < mCatDepth)
             {
-                createCategoryPostsAndComments(depth+1, wmgr, website, cat);
+                createCategoryPostsAndComments(depth+1, wmgr, user, website, cat);
             }
         }
     }
@@ -284,11 +294,18 @@ public abstract class RollerTestBase extends TestCase
     {
         getRoller().begin(UserData.SYSTEM_USER);
         UserManager umgr = getRoller().getUserManager();
-        for (Iterator iter = mUsersCreated.iterator(); iter.hasNext();)
+        for (Iterator siteIter = mWebsites.iterator(); siteIter.hasNext();)
         {
-            UserData element = (UserData) iter.next();
-            element = umgr.retrieveUser(element.getId());
-            element.remove();
+            WebsiteData site = (WebsiteData) siteIter.next();
+            site = umgr.retrieveWebsite(site.getId());
+            if (site != null) site.remove();
+        }
+        
+        for (Iterator userIter = mUsersCreated.iterator(); userIter.hasNext();)
+        {
+            UserData user = (UserData) userIter.next();
+            user = umgr.retrieveUser(user.getId());
+            user.remove();
         }
         getRoller().commit();
     }
