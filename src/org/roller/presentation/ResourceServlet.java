@@ -102,6 +102,10 @@ public class ResourceServlet extends HttpServlet
         InputStream resource_file = new FileInputStream(resource);
         while((length = resource_file.read(buf)) > 0)
             out.write(buf, 0, length);
+        
+        // cleanup
+        out.close();
+        resource_file.close();
     }
     
     
