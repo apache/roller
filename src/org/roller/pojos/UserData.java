@@ -1,6 +1,7 @@
 
 package org.roller.pojos;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -28,11 +29,11 @@ public class UserData
    extends org.roller.pojos.PersistentObject
    implements java.io.Serializable
 {
-    public static final UserData SYSTEM_USER = 
-        new UserData("n/a","systemuser","n/a","systemuser","n/a",new Date());
+    public static final UserData SYSTEM_USER = new UserData(
+        "n/a","systemuser","n/a","systemuser","n/a",new Date(), Boolean.TRUE);
        
-    public static final UserData ANONYMOUS_USER = 
-        new UserData("n/a","anonymoususer","n/a","anonymoususer","n/a",new Date());
+    public static final UserData ANONYMOUS_USER = new UserData(
+        "n/a","anonymoususer","n/a","anonymoususer","n/a",new Date(), Boolean.TRUE);
    
    static final long serialVersionUID = -6354583200913127874L;
 
@@ -43,8 +44,9 @@ public class UserData
    protected java.lang.String emailAddress;
    protected java.util.Date dateCreated;
    protected Boolean isEnabled;
+   
    private Set roles = new TreeSet();
-   private List permissions;
+   private List permissions = new ArrayList();
 
    public UserData()
    {
@@ -52,14 +54,16 @@ public class UserData
 
 	public UserData( java.lang.String id, java.lang.String userName,
                      java.lang.String password, java.lang.String fullName,
-                     java.lang.String emailAddress, java.util.Date dateCreated)
+                     java.lang.String emailAddress, java.util.Date dateCreated,
+                     Boolean isEnabled)
 	{
-		this.id = id;
-		this.userName = userName;
-		this.password = password;
-		this.fullName = fullName;
-		this.emailAddress = emailAddress;
-		this.dateCreated = (Date)dateCreated.clone();
+         this.id = id;
+         this.userName = userName;
+         this.password = password;
+         this.fullName = fullName;
+         this.emailAddress = emailAddress;
+         this.dateCreated = (Date)dateCreated.clone();
+         this.isEnabled = isEnabled;
 	}
 
 	public UserData( UserData otherData )
@@ -336,7 +340,6 @@ public class UserData
     public void remove() throws RollerException
     {
         UserManager uMgr = RollerFactory.getRoller().getUserManager();
-        uMgr.removeUserWebsites(this);
         
         // remove user roles
         Iterator roles = uMgr.getUserRoles(this).iterator();
@@ -344,7 +347,6 @@ public class UserData
         {
             ((RoleData)roles.next()).remove();
         }
-        
         super.remove();
     }
     

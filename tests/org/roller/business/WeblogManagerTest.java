@@ -73,10 +73,12 @@ public class WeblogManagerTest extends RollerTestBase
         getRoller().begin(UserData.SYSTEM_USER);
         
         WebsiteData wd = null;
+        UserData ud = null;
         WeblogCategoryData root = null;
         WeblogManager wmgr = getRoller().getWeblogManager();
 
         wd = getRoller().getUserManager().retrieveWebsite(mWebsite.getId());
+        ud = getRoller().getUserManager().retrieveUser(mUser.getId());
         root = wmgr.getRootWeblogCategory(wd);
 
         // create empty destination folder
@@ -94,7 +96,7 @@ public class WeblogManagerTest extends RollerTestBase
         c1.save();
         
         WeblogEntryData e1 = new WeblogEntryData(
-            null, c1, wd, "title1", null, "text", "anchor", 
+            null, c1, wd, ud, "title1", null, "text", "anchor", 
             new Timestamp(0), new Timestamp(0), Boolean.FALSE);
         e1.save();
         
@@ -105,7 +107,7 @@ public class WeblogManagerTest extends RollerTestBase
         c2.save();
       
         WeblogEntryData e2 = new WeblogEntryData(
-            null, c2, wd, "title2", null, "text", "anchor", 
+            null, c2, wd, ud, "title2", null, "text", "anchor", 
             new Timestamp(0), new Timestamp(0), Boolean.FALSE);
         e2.save();
         
@@ -116,7 +118,7 @@ public class WeblogManagerTest extends RollerTestBase
         c3.save();
         
         WeblogEntryData e3 = new WeblogEntryData(
-            null, c3, wd, "title3", null, "text", "anchor", 
+            null, c3, wd, ud, "title3", null, "text", "anchor", 
             new Timestamp(0), new Timestamp(0), Boolean.FALSE);
         e3.save();
         
@@ -146,10 +148,12 @@ public class WeblogManagerTest extends RollerTestBase
         getRoller().begin(UserData.SYSTEM_USER);
         
         WebsiteData wd = null;
+        UserData ud = null;
         WeblogCategoryData root = null;
         WeblogManager wmgr = getRoller().getWeblogManager();
 
         wd = getRoller().getUserManager().retrieveWebsite(mWebsite.getId());
+        ud = getRoller().getUserManager().retrieveUser(mUser.getId());
         root = wmgr.getRootWeblogCategory(wd);
 
         // create top level folders
@@ -181,22 +185,22 @@ public class WeblogManagerTest extends RollerTestBase
         
         // Create four entries in 1st category
         WeblogEntryData e1 = new WeblogEntryData(
-                null, t1, wd, "title1", null, "text1", "anchor", 
+                null, t1, wd, ud, "title1", null, "text1", "anchor", 
                 new Timestamp(0), new Timestamp(0), Boolean.FALSE);
         e1.save();
         
         WeblogEntryData e2 = new WeblogEntryData(
-                null, t1, wd, "title2", null, "text2", "anchor", 
+                null, t1, wd, ud, "title2", null, "text2", "anchor", 
                 new Timestamp(0), new Timestamp(0), Boolean.FALSE);
         e2.save();
         
         WeblogEntryData e3 = new WeblogEntryData(
-                null, t1, wd, "title3", null, "text3", "anchor", 
+                null, t1, wd, ud, "title3", null, "text3", "anchor", 
                 new Timestamp(0), new Timestamp(0), Boolean.FALSE);
         e3.save();
         
         WeblogEntryData e4 = new WeblogEntryData(
-                null, t1, wd, "title4", null, "text4", "anchor", 
+                null, t1, wd, ud, "title4", null, "text4", "anchor", 
                 new Timestamp(0), new Timestamp(0), Boolean.FALSE);
         e4.save();
         
@@ -731,11 +735,12 @@ public class WeblogManagerTest extends RollerTestBase
         getRoller().begin(UserData.SYSTEM_USER);
         WeblogManager wmgr = getRoller().getWeblogManager();
         WebsiteData website = (WebsiteData)mWebsites.get(0); 
+        UserData user = (UserData)mUsersCreated.get(0);
         
         WeblogCategoryData cat = wmgr.getRootWeblogCategory(website);       
 
         WeblogEntryData entry = new WeblogEntryData(
-                null, cat, website, "title2", null, "text2", "attributetest", 
+                null, cat, website, user, "title2", null, "text2", "attributetest", 
                 new Timestamp(0), new Timestamp(0), Boolean.FALSE);
         entry.save();
         assertNotNull(entry.getId());

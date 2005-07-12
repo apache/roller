@@ -1,28 +1,36 @@
 package org.roller.pojos;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import org.apache.commons.lang.StringUtils;
 import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.util.PojoUtil;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 /**
- * A user's website is a weweblog, newsfeed channels and bookmarks.
+ * Website has many-to-many association with users. Website has one-to-many and 
+ * one-direction associations with weblog entries, weblog categories, folders and
+ * other objects. Use UserManager to create, fetch, update and retreive websites.
+ * 
  * @author David M Johnson
  *
  * @ejb:bean name="WebsiteData"
  * @struts.form include-all="true"
  * @hibernate.class table="website"
+ * 
  * hibernate.jcs-cache usage="read-write"
  */
 public class WebsiteData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
 {
     static final long serialVersionUID = 206437645033737127L;
+    
+    // Simple properties
     protected String  id;
     protected String  handle;
     protected String  name;
@@ -41,11 +49,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     protected String  timezone;
     protected String  mDefaultPlugins;
     protected Boolean isEnabled;
-    protected List    permissions;
+    
+    // Associated objects
+    protected UserData mUser = null; // TODO: decide if website.user is needed
+    protected List     permissions = new ArrayList();    
     protected WeblogCategoryData bloggerCategory;
     protected WeblogCategoryData defaultCategory;
 
-    protected UserData mUser = null;
 
     public WebsiteData()
     {
@@ -66,7 +76,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                        final Boolean  allowComments,
                        final Boolean  emailComments,
                        final String   emailFromAddress,
-                       final Boolean  isEnabled)
+                       final Boolean  isEnabled,
+                       final String   emailAddress)
     {
         this.id = id;
         this.name = name;
@@ -84,6 +95,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.emailComments = emailComments;
         this.emailFromAddress = emailFromAddress;
         this.isEnabled = isEnabled;
+        this.emailAddress = emailAddress;
     }
 
     public WebsiteData(WebsiteData otherData)
@@ -133,7 +145,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     /**
      * Short URL safe string that uniquely identifies the website.
      * @ejb:persistent-field
-     * @hibernate.property column="name" non-null="true" unique="true"
+     * @hibernate.property column="handle" non-null="true" unique="true"
      */
     public String getHandle()
     {
@@ -358,7 +370,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     
     /**
      * @ejb:persistent-field
-     * @hibernate.property column="emailfromaddress" non-null="true" unique="false"
+     * @hibernate.property column="emailaddress" non-null="true" unique="false"
      */
     public String getEmailAddress()
     {
@@ -366,7 +378,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /** @ejb:persistent-field */
-    public void setEmailAddress(String emailFromAddress)
+    public void setEmailAddress(String emailAddress)
     {
         this.emailAddress = emailAddress;
     }
@@ -464,6 +476,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                    "editorPage=" + editorPage + " " +
                    "ignoreWords=" + ignoreWords + " " +
                    "allowComments=" + allowComments + " " +
+                   "emailAddress=" + emailAddress + " " + 
                    "emailComments=" + emailComments + " " + 
                    "emailFromAddress=" + emailFromAddress + " " +
                    "editorTheme=" + editorTheme + " " +
@@ -508,6 +521,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
             
             lEquals = PojoUtil.equals(lEquals, this.emailComments, lTest.emailComments);
             
+            lEquals = PojoUtil.equals(lEquals, this.emailAddress, lTest.emailAddress);
+            
             lEquals = PojoUtil.equals(lEquals, this.emailFromAddress, lTest.emailFromAddress);
 
             lEquals = PojoUtil.equals(lEquals, this.editorTheme, lTest.editorTheme);
@@ -542,6 +557,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         result = PojoUtil.addHashCode(result, this.ignoreWords);
         result = PojoUtil.addHashCode(result, this.allowComments);
         result = PojoUtil.addHashCode(result, this.emailComments);
+        result = PojoUtil.addHashCode(result, this.emailAddress);
         result = PojoUtil.addHashCode(result, this.emailFromAddress);
         result = PojoUtil.addHashCode(result, this.editorTheme);
         result = PojoUtil.addHashCode(result, this.locale);
@@ -572,6 +588,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.ignoreWords = other.ignoreWords;
         this.allowComments = other.allowComments;
         this.emailComments = other.emailComments;
+        this.emailAddress = other.emailAddress;
         this.emailFromAddress = other.emailFromAddress;
         this.editorTheme = other.editorTheme;
         this.locale = other.locale;
@@ -673,7 +690,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                 break;
             }
         }
-        if (!userPerms.isPending())
+        if (userPerms != null && !userPerms.isPending())
         {
             if (userPerms != null && (userPerms.getPermissionMask() & mask) > 0) 
             {

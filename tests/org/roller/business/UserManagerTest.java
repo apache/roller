@@ -29,10 +29,13 @@ import org.roller.RollerTestBase;
  */
 public class UserManagerTest  extends RollerTestBase
 {
-    UserData enabledUser = null;
-    UserData disabledUser = null;
-    String enabledUserName = "enabledUser";
-    String disabledUserName = "disabledUser";
+    WebsiteData enabledSite = null;
+    UserData    enabledUser = null;
+    String      enabledUserName = "enabledUser";
+
+    WebsiteData disabledSite = null;
+    UserData    disabledUser = null;
+    String      disabledUserName = "disabledUser";
 
     //------------------------------------------------------------------------
     public UserManagerTest()
@@ -68,21 +71,22 @@ public class UserManagerTest  extends RollerTestBase
         getRoller().begin(UserData.SYSTEM_USER);
         UserManager umgr = getRoller().getUserManager();
 
-        enabledUser = createUser(umgr,
-                                 enabledUserName,
+        enabledUser = createUser(enabledUserName,
                                  "password",
                                  "EnabledUser",
                                  "enabledUser@example.com"
         );
 
-        disabledUser = createUser(umgr,
-                                 disabledUserName,
+        disabledUser = createUser(disabledUserName,
                                  "password",
                                  "DisabledUser",
                                  "disabledUser@example.com"
         );
-        ((WebsiteData)umgr.getWebsites(disabledUser, null)
-                .get(0)).setIsEnabled(Boolean.FALSE);
+        enabledSite = ((WebsiteData)umgr.getWebsites(enabledUser, null).get(0));
+        enabledSite.setIsEnabled(Boolean.TRUE);
+        
+        disabledSite = ((WebsiteData)umgr.getWebsites(disabledUser, null).get(0));
+        disabledSite.setIsEnabled(Boolean.FALSE);
 
         getRoller().commit();
     }
@@ -97,9 +101,15 @@ public class UserManagerTest  extends RollerTestBase
         getRoller().begin(UserData.SYSTEM_USER);
         UserManager umgr = getRoller().getUserManager();
 
+        enabledSite = umgr.retrieveWebsite(enabledSite.getId());
+        enabledSite.remove();
+        
         enabledUser = umgr.retrieveUser(enabledUser.getId());
         enabledUser.remove();
 
+        disabledSite = umgr.retrieveWebsite(disabledSite.getId());
+        disabledSite.remove();
+        
         disabledUser = umgr.retrieveUser(disabledUser.getId());
         disabledUser.remove();
 
@@ -120,7 +130,7 @@ public class UserManagerTest  extends RollerTestBase
             "password2",
             "TestUser2",
             "testuser2@example.com",
-            new java.util.Date());
+            new java.util.Date(), Boolean.TRUE);
         umgr.storeUser(stored);
         getRoller().commit();
 
@@ -155,7 +165,7 @@ public class UserManagerTest  extends RollerTestBase
             "password3",
             "TestUser3",
             "testuser3@example.com",
-            new java.util.Date());
+            new java.util.Date(), Boolean.TRUE);
         umgr.storeUser( user );
 
         stored = new WebsiteData(
@@ -174,7 +184,8 @@ public class UserManagerTest  extends RollerTestBase
             Boolean.TRUE,
             Boolean.FALSE,
             null,
-            Boolean.TRUE);
+            Boolean.TRUE, 
+            "");
         umgr.storeWebsite(stored);
 
         FolderData rootFolder = getRoller().getBookmarkManager()
@@ -220,12 +231,13 @@ public class UserManagerTest  extends RollerTestBase
             "password4",
             "TestUser4",
             "testuser4@example.com",
-            new java.util.Date());
+            new java.util.Date(), Boolean.TRUE);
         Map pages = new HashMap();
         pages.put("Weblog","Weblog page content");
         pages.put("_day","Day page content");
         pages.put("css","CSS page content");
-        umgr.addUser(user, pages, "basic", "en_US_WIN", "America/Los_Angeles");
+        umgr.addUser(user);
+        umgr.createWebsite(user, pages, "basic", "en_US_WIN", "America/Los_Angeles");
         getRoller().commit();
 
         // Verify that user has all the goodies

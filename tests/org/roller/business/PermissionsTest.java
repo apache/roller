@@ -337,7 +337,7 @@ public class PermissionsTest extends RollerTestBase
      * <li> when website is deleted, permissions are deleted too </li>
      * </ul>
      */
-     public void testPermissionsRemoval() throws Exception
+     public void testRemoveWebsiteCascade() throws Exception
      {
          try 
          {
@@ -373,7 +373,8 @@ public class PermissionsTest extends RollerTestBase
                  assertNull(getRoller().getPersistenceStrategy().load(
                          permsId, PermissionsData.class));                 
              }
-             getRoller().commit();    
+             getRoller().commit();   
+                         
          }
          catch (Exception e)
          {
@@ -381,5 +382,56 @@ public class PermissionsTest extends RollerTestBase
              fail();
          }               
      }
+     
+     /**
+      * Test permissions removal and related cascades, specifically:
+      * <ul>
+      * <li> when user is deleted, permissions are deleted too </li>
+      * <li> when website is deleted, permissions are deleted too </li>
+      * </ul>
+      */
+      public void testRemoveUserCascade() throws Exception
+      {
+          try 
+          {
+              UserManager umgr = getRoller().getUserManager();
+              String userName = "testuser0";
+              String permsId = null;
+              
+              // Create add user to website
+              getRoller().begin();
+              {
+                  UserData tuser = umgr.getUser(userName);       
+                  WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);                
+                  PermissionsData perms = new PermissionsData();
+                  perms.setUser(tuser);
+                  perms.setWebsite(tsite);
+                  perms.save();
+                  permsId = perms.getId();
+              }
+              getRoller().commit();    
+              
+              // delete user
+              getRoller().begin(UserData.SYSTEM_USER);
+              {
+                  UserData tuser = umgr.getUser(userName);       
+                  tuser.remove();              
+              }
+              getRoller().commit(); 
+              
+              // ensure that permission was deleted too
+              getRoller().begin();
+              {
+                  assertNull(getRoller().getPersistenceStrategy().load(
+                          permsId, PermissionsData.class));                 
+              }
+              getRoller().commit();   
+          }
+          catch (Exception e)
+          {
+              e.printStackTrace();
+              fail();
+          }               
+      }
 }
 
