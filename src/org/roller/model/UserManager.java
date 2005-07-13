@@ -105,7 +105,7 @@ public interface UserManager extends Serializable
     public UserData getUser( String userName ) throws RollerException;
 
 	/** Get user object by user name, optionally include dis-enabled users */
-	public UserData getUser( String userName, boolean enabledOnly ) throws RollerException;
+	public UserData getUser( String userName, Boolean enabled ) throws RollerException;
 
 
     /**
@@ -155,7 +155,7 @@ public interface UserManager extends Serializable
      * Get website specified by handle with option to return only enabled websites.
      * @param handle  Handle of website
      */
-    public WebsiteData getWebsiteByHandle(String handle, boolean enabled) 
+    public WebsiteData getWebsiteByHandle(String handle, Boolean enabled) 
         throws RollerException;
 
     public WebsiteData retrieveWebsite(String id) throws RollerException;
@@ -181,10 +181,12 @@ public interface UserManager extends Serializable
 
 
     /**
-     * Remove page safely.  This will throw an exception on attempts to remove mandatory website pages such as the
+     * Remove page safely.  This will throw an exception on attempts to remove 
+     * mandatory website pages such as the
      * website's default page.
      * @param id  id of the page to be removed
-     * @throws RollerException with root cause <code>IllegalArgumentException</code> if the page id is that of
+     * @throws RollerException with root cause <code>IllegalArgumentException</code> 
+     * if the page id is that of
      * a page that will not be removed by this method.
      */
     public void removePageSafely(String id) throws RollerException;

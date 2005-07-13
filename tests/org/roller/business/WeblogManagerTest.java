@@ -646,7 +646,7 @@ public class WeblogManagerTest extends RollerTestBase
         WeblogManager wmgr = getRoller().getWeblogManager();
         UserManager umgr = getRoller().getUserManager();
         
-        WebsiteData website = (WebsiteData)mWebsites.get(0);
+        WebsiteData website = (WebsiteData)mWebsitesCreated.get(0);
         website = umgr.retrieveWebsite(website.getId());
 
         // PUBLISHISHED ONLY
@@ -698,7 +698,7 @@ public class WeblogManagerTest extends RollerTestBase
         WeblogManager wmgr = getRoller().getWeblogManager();
         UserManager umgr = getRoller().getUserManager();
         
-        WebsiteData website = (WebsiteData)mWebsites.get(0);
+        WebsiteData website = (WebsiteData)mWebsitesCreated.get(0);
         website = umgr.retrieveWebsite(website.getId());
         List comments = wmgr.getRecentComments(website, 2);
         assertTrue(comments.size() > 1);
@@ -724,7 +724,7 @@ public class WeblogManagerTest extends RollerTestBase
     {
         getRoller().begin(UserData.SYSTEM_USER);
         WeblogManager wmgr = getRoller().getWeblogManager();
-        WebsiteData website = (WebsiteData)mWebsites.get(0);
+        WebsiteData website = (WebsiteData)mWebsitesCreated.get(0);
         
         Date lastPub = wmgr.getWeblogLastPublishTime(website);
         //System.out.println(lastPub);
@@ -734,7 +734,7 @@ public class WeblogManagerTest extends RollerTestBase
     public void testEntryAttributes() throws Exception {
         getRoller().begin(UserData.SYSTEM_USER);
         WeblogManager wmgr = getRoller().getWeblogManager();
-        WebsiteData website = (WebsiteData)mWebsites.get(0); 
+        WebsiteData website = (WebsiteData)mWebsitesCreated.get(0); 
         UserData user = (UserData)mUsersCreated.get(0);
         
         WeblogCategoryData cat = wmgr.getRootWeblogCategory(website);       

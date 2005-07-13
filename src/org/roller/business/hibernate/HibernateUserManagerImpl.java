@@ -144,7 +144,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     /** 
      * Return website specified by handle.
      */
-    public WebsiteData getWebsiteByHandle(String handle, boolean enabledOnly)
+    public WebsiteData getWebsiteByHandle(String handle, Boolean enabled)
                     throws RollerException
     {
         if (handle==null )
@@ -154,12 +154,12 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         {
             Session session = ((HibernateStrategy)mStrategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
-            if (enabledOnly) 
+            if (enabled != null) 
             {
                 criteria.add(
                    Expression.conjunction()
                        .add(new EqExpression("handle", handle, true))
-                       .add(Expression.eq("isEnabled", Boolean.TRUE)));
+                       .add(Expression.eq("isEnabled", enabled)));
             }
             else
             {
@@ -176,7 +176,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     }
     
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -     
-    public UserData getUser(String userName, boolean enabledOnly) 
+    public UserData getUser(String userName, Boolean enabled) 
         throws RollerException
     {
         if (userName==null )
@@ -186,12 +186,12 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         {
             Session session = ((HibernateStrategy)mStrategy).getSession();
             Criteria criteria = session.createCriteria(UserData.class);
-            if (enabledOnly) 
+            if (enabled != null) 
             {
                 criteria.add(
                    Expression.conjunction()
                        .add(new EqExpression("userName", userName, true))
-                       .add(Expression.eq("isEnabled", Boolean.TRUE)));
+                       .add(Expression.eq("isEnabled", enabled)));
             }
             else
             {

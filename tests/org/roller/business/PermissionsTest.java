@@ -240,12 +240,23 @@ public class PermissionsTest extends RollerTestBase
             UserManager umgr = getRoller().getUserManager();
             String userName = "testuser0";
             String permsId;
+            UserData tuser = (UserData)mUsersCreated.get(0);       
+            WebsiteData tsite = (WebsiteData)mWebsitesCreated.get(0);
             
+            // first, remove existing permissions for tuser in tsite
+            getRoller().begin();
+            {
+                tuser = umgr.retrieveUser(tuser.getId());
+                tsite = umgr.retrieveWebsite(tsite.getId());
+                umgr.retireUser(tsite, tuser);
+            }
+            getRoller().commit();  
+
             // test invite user to website
             getRoller().begin();
             {
-                UserData tuser = umgr.getUser(userName);       
-                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
+                tuser = umgr.retrieveUser(tuser.getId());
+                tsite = umgr.retrieveWebsite(tsite.getId());
                 PermissionsData perms = umgr.inviteUser(
                         tsite, tuser, PermissionsData.LIMITED);
                 permsId = perms.getId();
@@ -255,8 +266,8 @@ public class PermissionsTest extends RollerTestBase
             // test user accepts invitation
             getRoller().begin();
             {
-                UserData tuser = umgr.getUser(userName);       
-                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
+                tuser = umgr.retrieveUser(tuser.getId());
+                tsite = umgr.retrieveWebsite(tsite.getId());
                 
                 // can get pending permission object
                 PermissionsData perms = umgr.getPermissions(tsite, tuser);
@@ -282,8 +293,8 @@ public class PermissionsTest extends RollerTestBase
             // test user is member of website, website has member user
             getRoller().begin();
             {
-                UserData tuser = umgr.getUser(userName);       
-                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
+                tuser = umgr.retrieveUser(tuser.getId());
+                tsite = umgr.retrieveWebsite(tsite.getId());
 
                 // assert that invitation list is empty
                 assertTrue(umgr.getPendingPermissions(tuser).isEmpty());
@@ -307,15 +318,15 @@ public class PermissionsTest extends RollerTestBase
             // test user can be retired from website
             getRoller().begin();
             {
-                UserData tuser = umgr.getUser(userName);       
-                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
+                tuser = umgr.retrieveUser(tuser.getId());
+                tsite = umgr.retrieveWebsite(tsite.getId());
                 umgr.retireUser(tsite, tuser);
             }
             getRoller().commit();
             getRoller().begin();
             {
-                UserData tuser = umgr.getUser(userName);       
-                WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);                
+                tuser = umgr.retrieveUser(tuser.getId());
+                tsite = umgr.retrieveWebsite(tsite.getId());
                 List websites = umgr.getWebsites(tuser, null);
                 assertEquals(0, websites.size());
                 List users = umgr.getUsers(tsite, null);
@@ -344,12 +355,23 @@ public class PermissionsTest extends RollerTestBase
              UserManager umgr = getRoller().getUserManager();
              String userName = "testuser0";
              String permsId = null;
+             UserData tuser = (UserData)mUsersCreated.get(0);       
+             WebsiteData tsite = (WebsiteData)mWebsitesCreated.get(0);
              
-             // Create add user to website
+             // first, remove existing permissions for tuser in tsite
              getRoller().begin();
              {
-                 UserData tuser = umgr.getUser(userName);       
-                 WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);                
+                 tuser = umgr.retrieveUser(tuser.getId());
+                 tsite = umgr.retrieveWebsite(tsite.getId());
+                 umgr.retireUser(tsite, tuser);
+             }
+             getRoller().commit();  
+
+             // add user to website
+             getRoller().begin();
+             {
+                 tuser = umgr.retrieveUser(tuser.getId());
+                 tsite = umgr.retrieveWebsite(tsite.getId());
                  PermissionsData perms = new PermissionsData();
                  perms.setUser(tuser);
                  perms.setWebsite(tsite);
@@ -361,8 +383,7 @@ public class PermissionsTest extends RollerTestBase
              // delete website
              getRoller().begin(UserData.SYSTEM_USER);
              {
-                 UserData tuser = umgr.getUser(userName);       
-                 WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);
+                 tsite = umgr.retrieveWebsite(tsite.getId());
                  tsite.remove();                 
              }
              getRoller().commit(); 
@@ -382,56 +403,5 @@ public class PermissionsTest extends RollerTestBase
              fail();
          }               
      }
-     
-     /**
-      * Test permissions removal and related cascades, specifically:
-      * <ul>
-      * <li> when user is deleted, permissions are deleted too </li>
-      * <li> when website is deleted, permissions are deleted too </li>
-      * </ul>
-      */
-      public void testRemoveUserCascade() throws Exception
-      {
-          try 
-          {
-              UserManager umgr = getRoller().getUserManager();
-              String userName = "testuser0";
-              String permsId = null;
-              
-              // Create add user to website
-              getRoller().begin();
-              {
-                  UserData tuser = umgr.getUser(userName);       
-                  WebsiteData tsite = (WebsiteData)umgr.getWebsites(tuser, null).get(0);                
-                  PermissionsData perms = new PermissionsData();
-                  perms.setUser(tuser);
-                  perms.setWebsite(tsite);
-                  perms.save();
-                  permsId = perms.getId();
-              }
-              getRoller().commit();    
-              
-              // delete user
-              getRoller().begin(UserData.SYSTEM_USER);
-              {
-                  UserData tuser = umgr.getUser(userName);       
-                  tuser.remove();              
-              }
-              getRoller().commit(); 
-              
-              // ensure that permission was deleted too
-              getRoller().begin();
-              {
-                  assertNull(getRoller().getPersistenceStrategy().load(
-                          permsId, PermissionsData.class));                 
-              }
-              getRoller().commit();   
-          }
-          catch (Exception e)
-          {
-              e.printStackTrace();
-              fail();
-          }               
-      }
 }
 
