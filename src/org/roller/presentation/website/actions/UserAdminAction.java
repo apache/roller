@@ -67,7 +67,7 @@ public final class UserAdminAction extends UserBaseAction
                 
                 if (userForm != null && userForm.getUserName() != null)
                 {
-                    UserData user = mgr.getUser( userForm.getUserName(), false );                    
+                    UserData user = mgr.getUser(userForm.getUserName(), null);                    
                     if (user != null)
                     {
                         userForm.copyFrom(user, request.getLocale());

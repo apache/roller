@@ -39,17 +39,21 @@ public abstract class RollerTestBase extends TestCase
 
     private Roller mRoller = null;
 
-    /** Simple user and website */
+    /** Simple user created */
     protected UserData mUser = null;
-    protected WebsiteData mWebsite = null;
+    /** User name of simple user */
     protected String testUsername = "testuser";
+    /** Simple website created (no entryes, categories, bookmarks, etc.) */
+    protected WebsiteData mWebsite = null;
 
-    /** Collection of websites created, each with category tree. */
-    protected List mWebsites = new LinkedList();
+    /** Full websites created, each with entries, cats, bookmarks, etc. */
+    protected List mWebsitesCreated = new LinkedList();
+    
+    /** Users created, user X has permissions in full website X */
+    protected List mUsersCreated = new ArrayList();
 
-    /** Number of website/users to create */
-    protected int mBlogCount = 1;
-
+    /** Number of full website/users to create */
+    protected int mBlogCount = 2;
     /** Number of categories to create in each category of tree. */
     protected int mCatCount = 2;
     /** Depth of created category tree. */
@@ -59,15 +63,18 @@ public abstract class RollerTestBase extends TestCase
     /** Number of comments to creaate per weblog entry */
     protected int mCommentCount = 2;
     
-    protected int mExpectedEntryCount = mEntriesPerCatCount + 
-                                        mEntriesPerCatCount*mCatCount + 
-                                        mEntriesPerCatCount*(mCatCount*mCatDepth);
-    protected int mExpectedPublishedEntryCount = (int)(mEntriesPerCatCount*0.5) + 
-                                        (int)(mEntriesPerCatCount*0.5)*mCatCount + 
-                                        (int)(mEntriesPerCatCount*0.5)*(mCatCount*mCatDepth);
+    /** Total number of entries created */
+    protected int mExpectedEntryCount = 
+        mEntriesPerCatCount + 
+        mEntriesPerCatCount*mCatCount + 
+        mEntriesPerCatCount*(mCatCount*mCatDepth);
+    
+    /** Total number of entries created in published status */
+    protected int mExpectedPublishedEntryCount = 
+        (int)(mEntriesPerCatCount*0.5) + 
+        (int)(mEntriesPerCatCount*0.5)*mCatCount + 
+        (int)(mEntriesPerCatCount*0.5)*(mCatCount*mCatDepth);
 
-    /** Store users to make teardown easy. */
-    protected List mUsersCreated = new ArrayList();
     /** Store categories for use in asserts. */
     protected List mCategoriesCreated = new ArrayList();
     /** Store entries for use in asserts. */
@@ -159,8 +166,9 @@ public abstract class RollerTestBase extends TestCase
                 "Test User #"+i,      // fullName
                 "test"+i+"@test.com"  // emailAddress
                 );
+            ud.setIsEnabled(new Boolean(i%2 == 0)); // half of users are disabled
             WebsiteData website = (WebsiteData)umgr.getWebsites(ud, null).get(0);
-            mWebsites.add(website);
+            mWebsitesCreated.add(website);
             mUsersCreated.add(ud);
 
             getRoller().commit();
@@ -294,7 +302,7 @@ public abstract class RollerTestBase extends TestCase
     {
         getRoller().begin(UserData.SYSTEM_USER);
         UserManager umgr = getRoller().getUserManager();
-        for (Iterator siteIter = mWebsites.iterator(); siteIter.hasNext();)
+        for (Iterator siteIter = mWebsitesCreated.iterator(); siteIter.hasNext();)
         {
             WebsiteData site = (WebsiteData) siteIter.next();
             site = umgr.retrieveWebsite(site.getId());
@@ -305,7 +313,7 @@ public abstract class RollerTestBase extends TestCase
         {
             UserData user = (UserData) userIter.next();
             user = umgr.retrieveUser(user.getId());
-            user.remove();
+            if (user != null) user.remove();
         }
         getRoller().commit();
     }

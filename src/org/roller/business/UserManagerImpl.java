@@ -91,12 +91,12 @@ public abstract class UserManagerImpl implements UserManager
 
     public UserData getUser(String userName) throws RollerException
     {
-        return getUser(userName, true);
+        return getUser(userName, Boolean.TRUE);
     }
 
     public WebsiteData getWebsiteByHandle(String handle) throws RollerException
     {
-        return getWebsiteByHandle(handle, true);
+        return getWebsiteByHandle(handle, Boolean.TRUE);
     }
 
     //-----------------------------------------------------------------------
@@ -370,10 +370,11 @@ public abstract class UserManagerImpl implements UserManager
         }
         mStrategy.store(website); 
         
-        
+        // Add user as member of website
         PermissionsData perms = new PermissionsData();
         perms.setUser(ud);
         perms.setWebsite(website);
+        perms.setPending(false);
         perms.setPermissionMask(PermissionsData.ADMIN);
         perms.save();
 
