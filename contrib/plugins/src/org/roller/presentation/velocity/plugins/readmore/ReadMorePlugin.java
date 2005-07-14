@@ -55,7 +55,7 @@ public class ReadMorePlugin implements PagePlugin
      */
     private String getPageLink(UserManager mgr, WebsiteData website) throws RollerException
     {
-        return mgr.retrievePage(website.getDefaultPageId()).getLink();
+        return website.getDefaultPage().getLink();
     }
 
     /* 
@@ -82,11 +82,15 @@ public class ReadMorePlugin implements PagePlugin
             pageLink = getPageLink(
                 RollerFactory.getRoller().getUserManager(), entry.getWebsite());
         }
-        catch (RollerException e)         {
+        catch (RollerException e) 
+        {
             mLogger.warn("Unable to get pageLink", e);
         }
         
-        String result = Utilities.removeHTML(entry.getText(), true);        result = Utilities.truncateText(result, 240, 260, "...");        //String result = Utilities.truncateNicely(entry.getText(), 240, 260, "... ");        
+        String result = Utilities.removeHTML(entry.getText(), true);
+        result = Utilities.truncateText(result, 240, 260, "...");
+        //String result = Utilities.truncateNicely(entry.getText(), 240, 260, "... ");
+        
         // if the result is shorter, we need to add "Read More" link
         if (result.length() < entry.getText().length())
         {            
