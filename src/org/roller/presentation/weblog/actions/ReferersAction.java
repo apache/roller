@@ -60,12 +60,12 @@ public class ReferersAction extends DispatchAction
             if ( rreq.isUserAuthorizedToEdit() )
             {   
                 req.setAttribute("pageHits",
-                    new Integer(refmgr.getDayHits(rreq.getWebsite())));
+                    new Integer(refmgr.getDayHits(rreq.getCurrentWebsite())));
                     
                 req.setAttribute("totalHits",
-                    new Integer(refmgr.getTotalHits(rreq.getWebsite())));
+                    new Integer(refmgr.getTotalHits(rreq.getCurrentWebsite())));
                     
-                List refs = refmgr.getTodaysReferers(rreq.getWebsite());
+                List refs = refmgr.getTodaysReferers(rreq.getCurrentWebsite());
                 req.setAttribute("referers",refs);        
             }
         }
@@ -90,7 +90,7 @@ public class ReferersAction extends DispatchAction
             if ( rreq.isUserAuthorizedToEdit() )
             {
                 RefererManager refmgr = rreq.getRoller().getRefererManager();
-                WebsiteData website = rreq.getWebsite();
+                WebsiteData website = rreq.getCurrentWebsite();
                 refmgr.forceTurnover(website.getId());
                 rreq.getRoller().commit();
             }
@@ -116,7 +116,7 @@ public class ReferersAction extends DispatchAction
             if ( rreq.isUserAuthorizedToEdit() )
             {
                 RefererManager refmgr = rreq.getRoller().getRefererManager();
-                WebsiteData website = rreq.getWebsite();
+                WebsiteData website = rreq.getCurrentWebsite();
 
                 String[] deleteIds = req.getParameterValues("id");
                 if (deleteIds != null)

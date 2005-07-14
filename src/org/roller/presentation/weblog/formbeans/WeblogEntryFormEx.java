@@ -61,10 +61,10 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void initNew(HttpServletRequest request, HttpServletResponse response) 
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        if (rreq.getWebsite().getDefaultPlugins() != null)
+        if (rreq.getCurrentWebsite().getDefaultPlugins() != null)
         {
             setPluginsArray(StringUtils.split(
-                    rreq.getWebsite().getDefaultPlugins(), ",") );
+                    rreq.getCurrentWebsite().getDefaultPlugins(), ",") );
         }
         allowComments = Boolean.TRUE;
         updateTime = new Timestamp(new Date().getTime());

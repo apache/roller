@@ -34,7 +34,7 @@ public class CategoryEditAction extends Action
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = rreq.getWebsite();
+        WebsiteData wd = rreq.getCurrentWebsite();
         WeblogManager wmgr = rreq.getRoller().getWeblogManager();
         WeblogCategoryFormEx form = (WeblogCategoryFormEx)actionForm;
         

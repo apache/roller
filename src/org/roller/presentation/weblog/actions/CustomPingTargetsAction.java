@@ -58,7 +58,7 @@ public class CustomPingTargetsAction
         req.setAttribute("allowCustomTargets", allowCustomTargets);
 
         List customPingTargets = allowCustomTargets.booleanValue() ?
-            pingTargetMgr.getCustomPingTargets(rreq.getWebsite()) : Collections.EMPTY_LIST;
+            pingTargetMgr.getCustomPingTargets(rreq.getCurrentWebsite()) : Collections.EMPTY_LIST;
 
         return customPingTargets;
     }
@@ -71,7 +71,7 @@ public class CustomPingTargetsAction
     {
         PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
         return pingTargetMgr.createCustomPingTarget(
-            pingTargetForm.getName(), pingTargetForm.getPingUrl(), rreq.getWebsite());
+            pingTargetForm.getName(), pingTargetForm.getPingUrl(), rreq.getCurrentWebsite());
     }
 
 

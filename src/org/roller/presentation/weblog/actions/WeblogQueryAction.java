@@ -50,7 +50,7 @@ public final class WeblogQueryAction extends DispatchAction
            request, 
            response, 
            mapping,
-           rreq.getWebsite(),
+           rreq.getCurrentWebsite(),
            form.getCategoryId(),
            form.getStartDateString(),
            form.getEndDateString(),

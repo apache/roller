@@ -27,6 +27,7 @@ import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.bookmarks.formbeans.BookmarksForm;
 
 /**
@@ -215,7 +216,9 @@ public class BookmarksAction extends DispatchAction
         throws RollerException
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = rreq.getWebsite();
+        //WebsiteData wd = rreq.getWebsite();
+        RollerSession rollerSession = RollerSession.getRollerSession(request);
+        WebsiteData wd = rollerSession.getCurrentWebsite();
         BookmarkManager bmgr = rreq.getRoller().getBookmarkManager();
 
         TreeSet allFolders = new TreeSet(new FolderPathComparator());

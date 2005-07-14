@@ -42,14 +42,14 @@ public class BookmarksActionTest extends StrutsActionTestBase
         {
             umgr = getRoller().getUserManager();
             user = (UserData)umgr.getUsers(mWebsite, null).get(0);       
+            doFilters();
+            authenticateUser(user.getUserName(), "editor");
         }
         catch (RollerException e)
         {
             e.printStackTrace();
             fail();
         }
-        authenticateUser(user.getUserName(), "editor");
-        doFilters();
 
         // Setup form bean
         BookmarksForm form = (BookmarksForm)

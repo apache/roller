@@ -61,7 +61,7 @@ public class ImportEntriesAction extends DispatchAction
                 if (StringUtils.isNotEmpty(form.getImportFileName()))
                 {
                     // "default" values
-                    WebsiteData website = rreq.getWebsite();
+                    WebsiteData website = rreq.getCurrentWebsite();
 
                     // load selected file
                     ServletContext app = this.getServlet().getServletConfig().getServletContext();
@@ -147,7 +147,7 @@ public class ImportEntriesAction extends DispatchAction
     {
 		ServletContext app = this.getServlet().getServletConfig().getServletContext();
 		String dir = RollerContext.getUploadDir( app );
-		File d = new File(dir + rreq.getWebsite().getHandle());
+		File d = new File(dir + rreq.getCurrentWebsite().getHandle());
 		ArrayList xmlFiles = new ArrayList();
 		if (d.mkdirs() || d.exists())
 		{

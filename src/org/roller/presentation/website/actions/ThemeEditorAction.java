@@ -208,7 +208,7 @@ public class ThemeEditorAction extends DispatchAction
 				// will be able to find it
 				PageData page = getDefaultPage( rreq );			
 				PreviewResourceLoader.setTemplate(page.getId(), 
-					teForm.getThemeTemplate(), rreq.getWebsite().getHandle() );
+					teForm.getThemeTemplate(), rreq.getCurrentWebsite().getHandle() );
 				
 				// save the template in session for later editing
 				session.setAttribute(SESSION_TEMPLATE,
@@ -260,7 +260,7 @@ public class ThemeEditorAction extends DispatchAction
                  RollerContext rollerContext = 
                                 RollerContext.getRollerContext( ctx );
                  
-                 WebsiteData website = rreq.getWebsite();
+                 WebsiteData website = rreq.getCurrentWebsite();
                 	
 				// load the template either from the Form
 				// or from the disk (if its a stock Theme).
@@ -294,7 +294,7 @@ public class ThemeEditorAction extends DispatchAction
                 setThemePages(rreq, theme);
 
 				// clear the page cache
-				PageCacheFilter.removeFromCache(request, rreq.getWebsite());
+				PageCacheFilter.removeFromCache(request, rreq.getCurrentWebsite());
 				teForm.setThemeName("Custom");
 			}
 			else
@@ -336,7 +336,7 @@ public class ThemeEditorAction extends DispatchAction
 			if ( rreq.isUserAuthorizedToEdit() )
 			{
 				// clear the page cache
-				WebsiteData website = rreq.getWebsite();
+				WebsiteData website = rreq.getCurrentWebsite();
 				PageCacheFilter.removeFromCache( request, website );
                  ThemeEditorForm teForm = (ThemeEditorForm)form;
 								
@@ -418,7 +418,7 @@ public class ThemeEditorAction extends DispatchAction
 		try
 		{
 			UserManager mgr = rreq.getRoller().getUserManager();
-			WebsiteData wd = rreq.getWebsite();
+			WebsiteData wd = rreq.getCurrentWebsite();
 			String defaultPageId = wd.getDefaultPageId();
 			return mgr.retrievePage( defaultPageId );
 		}
@@ -453,7 +453,7 @@ public class ThemeEditorAction extends DispatchAction
                 UserManager umgr = rreq.getRoller().getUserManager();
                 WebsiteData website = rreq.getCurrentWebsite();
                 String handle = website.getHandle();
-                PageData page = umgr.getPageByName( rreq.getWebsite(), pageName );
+                PageData page = umgr.getPageByName( rreq.getCurrentWebsite(), pageName );
                 if (page != null)
                 {
                     PreviewResourceLoader.setTemplate(page.getId(),sb, handle);
@@ -509,7 +509,7 @@ public class ThemeEditorAction extends DispatchAction
                 String pageName = children[i].substring(
                     0,children[i].length()-3);
     
-                PageData page = mgr.getPageByName(rreq.getWebsite(), pageName);
+                PageData page = mgr.getPageByName(rreq.getCurrentWebsite(), pageName);
                 if (page != null)
                 {
                     PreviewResourceLoader.clearTemplate( page.getId() );
@@ -549,7 +549,7 @@ public class ThemeEditorAction extends DispatchAction
         try
         {
             UserManager mgr = rreq.getRoller().getUserManager();
-            WebsiteData website = rreq.getWebsite();
+            WebsiteData website = rreq.getCurrentWebsite();
         
             HashMap pages = rollerContext.readThemeMacros(theme);
             Iterator iter = pages.keySet().iterator();
@@ -558,7 +558,7 @@ public class ThemeEditorAction extends DispatchAction
                 String pageName = (String) iter.next();
                 String pageContent = (String)pages.get( pageName );
     
-                PageData page = mgr.getPageByName( rreq.getWebsite(), pageName );
+                PageData page = mgr.getPageByName( rreq.getCurrentWebsite(), pageName );
                 if (page != null)
                 {
                     // User already has page by that name, so overwrite it.

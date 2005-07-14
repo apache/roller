@@ -83,7 +83,7 @@ public class PingSetupAction extends DispatchAction
         ActionForward forward = mapping.findForward(PING_SETUP_PAGE);
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
-        WebsiteData website = rreq.getWebsite();
+        WebsiteData website = rreq.getCurrentWebsite();
         try
         {
             if (!isAuthorized(rreq))
@@ -122,7 +122,7 @@ public class PingSetupAction extends DispatchAction
         throws RollerException
     {
         AutoPingManager autoPingMgr = rreq.getRoller().getAutopingManager();
-        WebsiteData website = rreq.getWebsite();
+        WebsiteData website = rreq.getCurrentWebsite();
 
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
         Map isEnabled = new HashMap();
@@ -171,7 +171,7 @@ public class PingSetupAction extends DispatchAction
                 return mapping.findForward("access-denied");
             }
             PingTargetData pingTarget = select(rreq);
-            AutoPingData autoPing = autoPingMgr.createAutoPing(pingTarget, rreq.getWebsite());
+            AutoPingData autoPing = autoPingMgr.createAutoPing(pingTarget, rreq.getCurrentWebsite());
             autoPingMgr.storeAutoPing(autoPing);
             rreq.getRoller().commit();
 
@@ -200,7 +200,7 @@ public class PingSetupAction extends DispatchAction
                 return mapping.findForward("access-denied");
             }
             PingTargetData pingTarget = select(rreq);
-            autoPingMgr.removeAutoPing(pingTarget, rreq.getWebsite());
+            autoPingMgr.removeAutoPing(pingTarget, rreq.getCurrentWebsite());
             rreq.getRoller().commit();
 
             return view(mapping, form, req, res);
@@ -224,7 +224,7 @@ public class PingSetupAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(req);
             String absoluteUrl = RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
             PingTargetData pingTarget = select(rreq);
-            WebsiteData website = rreq.getWebsite();
+            WebsiteData website = rreq.getCurrentWebsite();
             try
             {
                 if (!isAuthorized(rreq))

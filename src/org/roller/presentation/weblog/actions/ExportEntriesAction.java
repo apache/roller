@@ -156,7 +156,7 @@ public class ExportEntriesAction extends DispatchAction
                     //System.out.println("Export: got " + entries.size() + " entries.");
                     
                     List entries = weblogMgr.getWeblogEntries(
-                                    rreq.getWebsite(), // userName
+                                    rreq.getCurrentWebsite(), // userName
                                     startDate,         // startDate
                                     endDate,           // endDate
                                     null,              // catName
@@ -169,7 +169,7 @@ public class ExportEntriesAction extends DispatchAction
                     Map entryMap = seperateByPeriod(entries, form.getFileBy());
 
                     // now export each List in the entryMap
-                    ExportRss exporter = new ExportRss(rreq.getWebsite());
+                    ExportRss exporter = new ExportRss(rreq.getCurrentWebsite());
                     String exportTo = form.getExportFormat().toLowerCase();
                     if ("atom".equals(exportTo))
                     {
@@ -271,7 +271,7 @@ public class ExportEntriesAction extends DispatchAction
             JspFactory.getDefaultFactory().getPageContext( 
                 this.getServlet(), request, response, "", true, 8192, true);
         Map params = new HashMap();
-        params.put( RollerRequest.WEBSITEHANDLE_KEY,  rreq.getWebsite().getHandle());
+        params.put( RollerRequest.WEBSITEHANDLE_KEY,  rreq.getCurrentWebsite().getHandle());
         params.put("rmik", "Files");
         String filesLink = RequestUtils.computeURL(
              pageContext, (String)null, (String)null, (String)null,

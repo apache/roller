@@ -110,7 +110,7 @@ public class WeblogEntryPageModel extends BasePageModel
     {
         return rollerRequest.getRoller().getWeblogManager()
             .getWeblogEntries(
-                rollerRequest.getWebsite(), // userName
+                rollerRequest.getCurrentWebsite(), // userName
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
@@ -128,7 +128,7 @@ public class WeblogEntryPageModel extends BasePageModel
     {
         return rollerRequest.getRoller().getWeblogManager()
             .getWeblogEntries(
-                rollerRequest.getWebsite(), 
+                rollerRequest.getCurrentWebsite(), 
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
@@ -170,7 +170,7 @@ public class WeblogEntryPageModel extends BasePageModel
     {
         // Select editor page selected by user (simple text editor,
         // DHTML editor, Ekit Java applet, etc.
-        String editorPage = rollerRequest.getWebsite().getEditorPage();
+        String editorPage = rollerRequest.getCurrentWebsite().getEditorPage();
         if (StringUtils.isEmpty( editorPage ))
         {
             editorPage = "editor-text.jsp";
@@ -198,7 +198,7 @@ public class WeblogEntryPageModel extends BasePageModel
     public List getCategories() throws Exception
     {
         return rollerRequest.getRoller().getWeblogManager()
-            .getWeblogCategories(rollerRequest.getWebsite(), false);
+            .getWeblogCategories(rollerRequest.getCurrentWebsite(), false);
     }
 
     public List getComments() throws Exception
@@ -218,7 +218,7 @@ public class WeblogEntryPageModel extends BasePageModel
             weblogEntry = new WeblogEntryData();
             form.copyTo(weblogEntry, 
                     getRequest().getLocale(), getRequest().getParameterMap());
-            weblogEntry.setWebsite(rollerRequest.getWebsite());
+            weblogEntry.setWebsite(rollerRequest.getCurrentWebsite());
         }
         return weblogEntry;
     }
