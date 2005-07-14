@@ -48,8 +48,9 @@ public class ThemeManagerImpl implements ThemeManager {
         // rather than be lazy we are going to load all themes from
         // the disk preemptively during initialization and cache them
         mLogger.debug("Initializing ThemeManagerImpl");
-        mLogger.info("Loading all themes from disk ... ");
+        
         this.themes = this.loadAllThemesFromDisk();
+        mLogger.info("Loaded "+this.themes.size()+" themes from disk.");
     }
     
     
@@ -187,6 +188,9 @@ public class ThemeManagerImpl implements ThemeManager {
             }
         };
         String[] themenames = themesdir.list(filter);
+        
+        if(themenames == null)
+            themenames = new String[0];
         
         // now go through each theme and read all it's templates
         Theme theme = null;
