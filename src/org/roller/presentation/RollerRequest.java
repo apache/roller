@@ -72,7 +72,6 @@ public class RollerRequest implements ParsedRequest
     private WeblogEntryData    mWeblogEntry;
     private WeblogCategoryData mWeblogCategory;
     private boolean           mIsDateSpecified = false;
-    private boolean            mIsPreview = false;
         
     private static ThreadLocal mRollerRequestTLS = new ThreadLocal();
     
@@ -153,11 +152,6 @@ public class RollerRequest implements ParsedRequest
             UserData currentUser = userMgr.getUser(userName);
             getRoller().setUser(currentUser);
         }
-
-        // check servlet path to see if this is a preview request
-        mLogger.debug("servlet path = "+mRequest.getServletPath());
-        if(mRequest.getServletPath().indexOf("preview") != -1)
-            this.mIsPreview = true;
         
         // path info may be null, (e.g. on JSP error page)
         mPathInfo = mRequest.getPathInfo();
