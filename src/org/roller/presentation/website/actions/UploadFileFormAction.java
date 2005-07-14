@@ -62,7 +62,7 @@ public final class UploadFileFormAction extends DispatchAction
             {
                 return mapping.findForward("access-denied");
             }
-            website = rreq.getWebsite();
+            website = rreq.getCurrentWebsite();
         }
         catch (Exception e)
         {
@@ -163,7 +163,7 @@ public final class UploadFileFormAction extends DispatchAction
         try
         {
             FileManager fmgr = rreq.getRoller().getFileManager();
-            WebsiteData website = rreq.getWebsite();
+            WebsiteData website = rreq.getCurrentWebsite();
             String[] deleteFiles = theForm.getDeleteFiles();
             for (int i=0; i<deleteFiles.length; i++)
             {

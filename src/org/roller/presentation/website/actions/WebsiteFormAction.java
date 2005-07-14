@@ -75,19 +75,19 @@ public final class WebsiteFormAction extends DispatchAction
                 UserData ud = rreq.getAuthenticatedUser();
                 request.setAttribute("user",ud);
 
-                WebsiteData hd = rreq.getWebsite();
+                WebsiteData hd = rreq.getCurrentWebsite();
                 WebsiteForm wf = (WebsiteFormEx)actionForm;
                 wf.copyFrom(hd, request.getLocale());
 
                 List cd = rreq.getRoller().getWeblogManager()
-                   .getWeblogCategories(rreq.getWebsite(), true);
+                   .getWeblogCategories(rreq.getCurrentWebsite(), true);
                 request.setAttribute("categories",cd);
 
                 List bcd = rreq.getRoller().getWeblogManager()
-                    .getWeblogCategories(rreq.getWebsite(), true);
+                    .getWeblogCategories(rreq.getCurrentWebsite(), true);
                 request.setAttribute("bloggerCategories",bcd);
 
-                List pages = rreq.getRoller().getUserManager().getPages(rreq.getWebsite());
+                List pages = rreq.getRoller().getUserManager().getPages(rreq.getCurrentWebsite());
                 request.setAttribute("pages",pages);
 
                 ServletContext ctx = request.getSession().getServletContext();

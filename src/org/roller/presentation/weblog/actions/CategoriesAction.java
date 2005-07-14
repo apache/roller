@@ -152,7 +152,7 @@ public class CategoriesAction extends DispatchAction
         throws RollerException
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = rreq.getWebsite();
+        WebsiteData wd = rreq.getCurrentWebsite();
         WeblogManager wmgr = rreq.getRoller().getWeblogManager();
         
         TreeSet allCategories = new TreeSet(new CategoryPathComparator());

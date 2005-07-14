@@ -87,7 +87,7 @@ public class FileManagerTag extends TagSupport
                     // to PRIMARY
                     java.text.Collator locCollator =
                         java.text.Collator.getInstance(
-                            rreq.getWebsite().getLocaleInstance());
+                            rreq.getCurrentWebsite().getLocaleInstance());
                     locCollator.setStrength(Collator.PRIMARY);
                     java.util.Arrays.sort(files, locCollator);
 

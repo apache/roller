@@ -112,7 +112,7 @@ public class WeblogQueryPageModel extends BasePageModel
     public List getCategories() throws Exception
     {
         List categories = rollerRequest.getRoller().getWeblogManager()
-            .getWeblogCategories(rollerRequest.getWebsite());
+            .getWeblogCategories(rollerRequest.getCurrentWebsite());
         return categories;
     }
 

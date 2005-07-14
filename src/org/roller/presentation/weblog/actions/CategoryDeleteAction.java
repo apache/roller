@@ -54,7 +54,7 @@ public class CategoryDeleteAction extends Action
             if (form.isDelete() == null)
             {
                 // Present CategoryDeleteOK? page to user
-                WebsiteData website = rreq.getWebsite();
+                WebsiteData website = rreq.getCurrentWebsite();
                 WeblogCategoryData theCat = wmgr.retrieveWeblogCategory(catid);
                 Iterator allCats = 
                     wmgr.getWeblogCategories(website).iterator();

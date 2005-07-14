@@ -62,7 +62,7 @@ public final class PageFormAction extends DispatchAction
                 PageForm form = (PageForm)actionForm;
                 PageData data = new PageData();
                 form.copyTo(data, request.getLocale());
-                WebsiteData hd = rreq.getWebsite();
+                WebsiteData hd = rreq.getCurrentWebsite();
 
                 data.setWebsite( hd );
                 data.setUpdateTime( new java.util.Date() );
@@ -80,7 +80,7 @@ public final class PageFormAction extends DispatchAction
                                 data.getName()));
                 saveMessages(request, uiMessages);
                 
-                PageCacheFilter.removeFromCache( request, rreq.getWebsite() );
+                PageCacheFilter.removeFromCache( request, rreq.getCurrentWebsite() );
                     
                 actionForm.reset(mapping,request);                
                 
@@ -117,7 +117,7 @@ public final class PageFormAction extends DispatchAction
                 PageForm pf = (PageForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
 
-                PageCacheFilter.removeFromCache( request, rreq.getWebsite() );
+                PageCacheFilter.removeFromCache( request, rreq.getCurrentWebsite() );
                 
                 addModelObjects(rreq);
             }
@@ -185,7 +185,7 @@ public final class PageFormAction extends DispatchAction
                 mgr.removePageSafely( data.getId() );
                 rreq.getRoller().commit();
 
-                PageCacheFilter.removeFromCache( request, rreq.getWebsite() );
+                PageCacheFilter.removeFromCache( request, rreq.getCurrentWebsite() );
                     
                 addModelObjects(rreq);
 
@@ -265,7 +265,7 @@ public final class PageFormAction extends DispatchAction
                 data.save(); // should through exception if no save permission
                 form.copyTo(data, request.getLocale());
                 data.setUpdateTime( new java.util.Date() );
-                data.setWebsite( rreq.getWebsite() );
+                data.setWebsite( rreq.getCurrentWebsite() );
 
                 validateLink( data );
 
@@ -281,7 +281,7 @@ public final class PageFormAction extends DispatchAction
                                 data.getName()));
                 saveMessages(request, uiMessages);
 
-                PageCacheFilter.removeFromCache(request, rreq.getWebsite());
+                PageCacheFilter.removeFromCache(request, rreq.getCurrentWebsite());
             }
             else
             {
@@ -358,7 +358,7 @@ public final class PageFormAction extends DispatchAction
         UserData user = rreq.getAuthenticatedUser();
         request.setAttribute("user",user);
 
-        WebsiteData wd = rreq.getWebsite();
+        WebsiteData wd = rreq.getCurrentWebsite();
         request.setAttribute("website", wd);
 
         List pages = mgr.getPages(wd);

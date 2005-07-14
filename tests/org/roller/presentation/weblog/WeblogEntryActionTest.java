@@ -22,25 +22,24 @@ public class WeblogEntryActionTest extends StrutsActionTestBase
 {
     public void testCreateWeblogEntry() 
     {
+        MockHttpServletRequest mockRequest = getMockFactory().getMockRequest();
+        mockRequest.setContextPath("/dummy");        
+        doFilters();
+        
         UserManager umgr = null;
         UserData user = null; 
         try
         {
             umgr = getRoller().getUserManager();
             user = (UserData)umgr.getUsers(mWebsite, null).get(0);       
+            authenticateUser(user.getUserName(), "editor");
         }
         catch (RollerException e)
         {
             e.printStackTrace();
             fail();
         }
-        authenticateUser(user.getUserName(), "editor");
         
-        MockHttpServletRequest mockRequest = getMockFactory().getMockRequest();
-        mockRequest.setContextPath("/dummy");
-        
-        doFilters();
-
         // Setup mapping and request parameters
         MockActionMapping mapping = strutsModule.getMockActionMapping();
         mapping.setupForwards(new String[] {

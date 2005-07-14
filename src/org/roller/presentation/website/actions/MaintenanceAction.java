@@ -73,7 +73,7 @@ public class MaintenanceAction extends DispatchAction
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
 			if ( rreq.isUserAuthorizedToEdit() )
 			{
-				WebsiteData website = rreq.getWebsite();
+				WebsiteData website = rreq.getCurrentWebsite();
 				IndexManager manager = rreq.getRoller().getIndexManager();
 				manager.rebuildWebsiteIndex(website);
 				
@@ -111,7 +111,7 @@ public class MaintenanceAction extends DispatchAction
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
 			if ( rreq.isUserAuthorizedToEdit() )
 			{
-	            PageCacheFilter.removeFromCache(request, rreq.getWebsite());
+	            PageCacheFilter.removeFromCache(request, rreq.getCurrentWebsite());
 
                  ActionMessages messages = new ActionMessages();
                  messages.add(null, new ActionMessage("maintenance.message.flushed"));

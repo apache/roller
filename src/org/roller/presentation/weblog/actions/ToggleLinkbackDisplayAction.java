@@ -53,7 +53,7 @@ public class ToggleLinkbackDisplayAction extends Action
                     
                     rreq.getRoller().commit();
                     
-                    PageCacheFilter.removeFromCache( req, rreq.getWebsite() );
+                    PageCacheFilter.removeFromCache( req, rreq.getCurrentWebsite() );
                 }                
             }
         }
@@ -69,7 +69,7 @@ public class ToggleLinkbackDisplayAction extends Action
 		{
 			RollerContext rctx = RollerContext.getRollerContext(
 				rreq.getServletContext());
-			url = rctx.getContextUrl( req, rreq.getWebsite());
+			url = rctx.getContextUrl( req, rreq.getCurrentWebsite());
 			res.sendRedirect(url);
 		}
 		catch (Exception e)
