@@ -10,7 +10,6 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.exception.ResourceNotFoundException;
 import org.roller.ThemeNotFoundException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -18,6 +17,7 @@ import org.roller.model.ThemeManager;
 import org.roller.model.UserManager;
 import org.roller.pojos.Theme;
 import org.roller.pojos.UserData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 
@@ -65,8 +65,8 @@ public class PreviewServlet extends BasePageServlet {
             // if we don't have a valid preview theme then
             // leave it up to our parent
             return super.handleRequest(request, response, ctx);
+            
         }
-        
         
         Template outty = null;
         Exception pageException = null;
@@ -99,15 +99,19 @@ public class PreviewServlet extends BasePageServlet {
             
             org.roller.model.Template page = null;
             
-            // If request specified the page, then go with that
             page = tmpWebsite.getDefaultPage();
+            
+            // Still no page ID ... probably someone with no templates
+            // trying to preview a "custom" theme
+            if ( page == null ) {
+                // lets just call it a 404 and return
+                response.sendError(404);
+                return null;
+            }
+            
+            // update our roller request object
             rreq.setPage(page);
             rreq.setWebsite(tmpWebsite);
-            
-            // Still no page ID, then we have a problem
-            if ( page == null ) {
-                throw new ResourceNotFoundException("Page not found");
-            }
 
             // this sets up the page we want to render
             outty = prepareForPageExecution(ctx, rreq, response, page);
