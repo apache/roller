@@ -20,6 +20,8 @@ create table rolleruser (
     fullname        varchar(255) not null,
     emailaddress    varchar(255) not null,
     datecreated     timestamp not null,
+    locale          varchar(20) null,  
+    timezone        varchar(50) null,    
     isenabled       @BOOLEAN_SQL_TYPE_TRUE@ not null
 );
 alter table rolleruser add constraint rolleruser_username_uq unique ( username@INDEXSIZE@ );
@@ -49,7 +51,7 @@ create table roller_audit_log (
     object_id       varchar(48),           -- id of associated object, if any
     object_class    varchar(255),          -- name of associated object class (e.g. WeblogEntryData)
     comment         varchar(255) not null, -- description of change
-    change_time     timestamp             -- time that change was made
+    change_time     timestamp              -- time that change was made
 );
 
 create table usercookie (
@@ -92,8 +94,8 @@ create table website (
     emailfromaddress  varchar(255) null,
     emailaddress      varchar(255) not null,
     editortheme       varchar(255) null,
-    locale            varchar(20) null,
-    timezone          varchar(50) null,
+    locale            varchar(20) null, 
+    timezone          varchar(50) null,  
     defaultplugins    varchar(255) null,
     pinnedtomain      @BOOLEAN_SQL_TYPE_FALSE@ not null,
     isenabled         @BOOLEAN_SQL_TYPE_TRUE@ not null
@@ -173,7 +175,8 @@ create table weblogentry (
     allowcomments   @BOOLEAN_SQL_TYPE_FALSE@ not null, 
     commentdays     integer default 7 not null,
     rightToLeft     @BOOLEAN_SQL_TYPE_FALSE@ not null,
-    pinnedtomain     @BOOLEAN_SQL_TYPE_FALSE@ not null
+    pinnedtomain    @BOOLEAN_SQL_TYPE_FALSE@ not null,
+    locale          varchar(20) null
 );
 create index weblogentry_websiteid_index on weblogentry( websiteid );
 create index weblogentry_categoryid_index on weblogentry( categoryid );

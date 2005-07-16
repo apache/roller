@@ -31,6 +31,7 @@ import org.roller.pojos.EntryAttributeData;
 public class WeblogEntryFormEx extends WeblogEntryForm
 {
     private String mCategoryId = null;
+    private String mCreatorId = null;
     private Date mDate = new Date();    
     private String mDateString = null;        
     private Integer mHours = new Integer(0);
@@ -108,6 +109,11 @@ public class WeblogEntryFormEx extends WeblogEntryForm
             entry.setCategoryId(getCategoryId());
         }       
         
+        if (getCreatorId() != null) 
+        {
+            entry.setCreatorId(getCreatorId());
+        }       
+        
         Iterator params = paramMap.keySet().iterator();
         while (params.hasNext())
         {
@@ -135,6 +141,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     {
         super.copyFrom(entry, locale);
         mCategoryId = entry.getCategory().getId();
+        mCreatorId = entry.getCreator().getId();
         
         initPubTimeDateString(locale);
         
@@ -378,6 +385,15 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void setTrackbackUrl(String trackbackUrl)
     {
         this.trackbackUrl = trackbackUrl;
+    }
+
+    public String getCreatorId()
+    {
+        return mCreatorId;
+    }
+    public void setCreatorId(String creatorId)
+    {
+        mCreatorId = creatorId;
     }
 }
 

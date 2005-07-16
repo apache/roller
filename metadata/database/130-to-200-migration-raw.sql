@@ -18,13 +18,16 @@ create table roller_audit_log (
 );
 
 -- Add new handle field to uniquely identify websites in URLs
-alter table website add column (handle varchar(255) not null);
+alter table website add column handle varchar(255) @ALTER_TABLE_NOT_NULL@;
 create index website_handle_index on userrole(handle);
 alter table website add constraint website_handle_uq unique (handle@INDEXSIZE@);
 
 -- Add userid to weblogentry so we can track original creator of entry
-alter table weblogentry add column (userid varchar(48) not null);
+alter table weblogentry add column userid varchar(48) @ALTER_TABLE_NOT_NULL@;
 create index weblogentry_userid_index on weblogentry(userid);
 
-alter table rolleruser isenabled @BOOLEAN_SQL_TYPE_TRUE@ not null;
+alter table rolleruser add column isenabled @BOOLEAN_SQL_TYPE_TRUE@ @ALTER_TABLE_NOT_NULL@;
+alter table rolleruser add column locale varchar(50) @ALTER_TABLE_NOT_NULL@;
+alter table rolleruser add column timezone varchar(50) @ALTER_TABLE_NOT_NULL@;
 create index user_isenabled_index on rolleruser( isenabled );
+

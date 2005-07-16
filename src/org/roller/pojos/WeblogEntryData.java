@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.util.DateUtil;
 import org.roller.util.Utilities;
@@ -1014,6 +1015,16 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
             return Arrays.asList( StringUtils.split(plugins, ",") );
         }
         return new ArrayList();
+    }
+
+    /**
+     * Set creator by user id (for use in form's copyTo method)
+     * @param creatorId
+     */
+    public void setCreatorId(String creatorId) throws RollerException
+    {
+        UserManager umgr = RollerFactory.getRoller().getUserManager();
+        setCreator(umgr.retrieveUser(creatorId)); 
     }
 
 }

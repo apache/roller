@@ -131,6 +131,8 @@ public abstract class RollerTestBase extends TestCase
             password,      // password
             fullName,      // fullName
             email,         // emailAddress
+            "en_US_WIN", 
+            "America/Los_Angeles",
             new java.util.Date(), // dateCreated
             Boolean.TRUE);
         umgr.addUser(ud);

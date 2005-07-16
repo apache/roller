@@ -882,8 +882,12 @@ public class RollerRequest implements ParsedRequest
         RollerSession rollerSession = RollerSession.getRollerSession(mRequest);
         UserData user = rollerSession.getAuthenticatedUser();
         WebsiteData website = rollerSession.getCurrentWebsite();
-        return website.hasUserPermissions(user, 
+        if (website != null) 
+        {
+            return website.hasUserPermissions(user, 
                 (short)(PermissionsData.AUTHOR | PermissionsData.ADMIN));
+        }
+        return false;
     }
 }
 

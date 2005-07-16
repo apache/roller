@@ -30,10 +30,12 @@ public class UserData
    implements java.io.Serializable
 {
     public static final UserData SYSTEM_USER = new UserData(
-        "n/a","systemuser","n/a","systemuser","n/a",new Date(), Boolean.TRUE);
+        "n/a","systemuser","n/a","systemuser","n/a", 
+        "en_US_WIN", "America/Los_Angeles", new Date(), Boolean.TRUE);
        
     public static final UserData ANONYMOUS_USER = new UserData(
-        "n/a","anonymoususer","n/a","anonymoususer","n/a",new Date(), Boolean.TRUE);
+        "n/a","anonymoususer","n/a","anonymoususer","n/a", 
+        "en_US_WIN", "America/Los_Angeles", new Date(), Boolean.TRUE);
    
    static final long serialVersionUID = -6354583200913127874L;
 
@@ -43,6 +45,8 @@ public class UserData
    protected java.lang.String fullName;
    protected java.lang.String emailAddress;
    protected java.util.Date dateCreated;
+   protected String  locale;
+   protected String  timezone;
    protected Boolean isEnabled;
    
    private Set roles = new TreeSet();
@@ -54,7 +58,9 @@ public class UserData
 
 	public UserData( java.lang.String id, java.lang.String userName,
                      java.lang.String password, java.lang.String fullName,
-                     java.lang.String emailAddress, java.util.Date dateCreated,
+                     java.lang.String emailAddress, 
+                     String locale, String timezone,
+                     java.util.Date dateCreated,
                      Boolean isEnabled)
 	{
          this.id = id;
@@ -63,6 +69,8 @@ public class UserData
          this.fullName = fullName;
          this.emailAddress = emailAddress;
          this.dateCreated = (Date)dateCreated.clone();
+         this.locale = locale;
+         this.timezone = timezone;
          this.isEnabled = isEnabled;
 	}
 
@@ -215,6 +223,38 @@ public class UserData
 	   }
    }
 
+   /**
+    * Locale of the user.
+    * @ejb:persistent-field
+    * @hibernate.property column="locale" non-null="true" unique="false"
+    */
+   public String getLocale()
+   {
+       return this.locale;
+   }
+
+   /** @ejb:persistent-field */
+   public void setLocale(String locale)
+   {
+       this.locale = locale;
+   }
+
+   /**
+    * Timezone of the user.
+    * @ejb:persistent-field
+    * @hibernate.property column="timezone" non-null="true" unique="false"
+    */
+   public String getTimezone()
+   {
+       return this.timezone;
+   }
+
+   /** @ejb:persistent-field */
+   public void setTimezone(String timezone)
+   {
+       this.timezone = timezone;
+   }
+
    //------------------------------------------------------------------- citizenship
    public String toString()
    {
@@ -330,6 +370,8 @@ public class UserData
       this.password = ((UserData)otherData).password;
       this.fullName = ((UserData)otherData).fullName;
       this.emailAddress = ((UserData)otherData).emailAddress;
+      this.locale = ((UserData)otherData).locale;
+      this.timezone = ((UserData)otherData).timezone;
       this.dateCreated = ((UserData)otherData).dateCreated;
    }
 

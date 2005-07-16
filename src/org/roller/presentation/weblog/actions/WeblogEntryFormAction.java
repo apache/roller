@@ -90,6 +90,7 @@ public final class WeblogEntryFormAction extends DispatchAction
             {
                 WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm; 
                 form.initNew(request, response);
+                form.setCreatorId(rreq.getAuthenticatedUser().getId());
                 
                 request.setAttribute("model",
                         new WeblogEntryPageModel(request, response, mapping,
@@ -263,6 +264,9 @@ public final class WeblogEntryFormAction extends DispatchAction
                 if (wf.getId() == null || wf.getId().trim().length()==0) 
                 {
                     entry = new WeblogEntryData();  
+                    UserData ud = userMgr.retrieveUser(
+                            rreq.getAuthenticatedUser().getId());
+                    entry.setCreator(ud);
                     entry.setWebsite( site );
                 }
                 else 
