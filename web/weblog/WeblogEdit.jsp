@@ -59,6 +59,7 @@ function publish() {
 
     <html:hidden property="day"/>
     <html:hidden property="id"/>
+    <html:hidden property="creatorId"/>
     <html:hidden property="anchor"/>
     <html:hidden property="updateTime"/>
     <html:hidden property="publishEntry"/>

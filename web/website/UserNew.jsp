@@ -84,6 +84,7 @@ else
     </div>
     
 </html:form>
+
 <%
 } // end allowNewUsers check
 %>

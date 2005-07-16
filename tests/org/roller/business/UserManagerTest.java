@@ -130,6 +130,7 @@ public class UserManagerTest  extends RollerTestBase
             "password2",
             "TestUser2",
             "testuser2@example.com",
+            "en_US_WIN", "America/Los_Angeles",
             new java.util.Date(), Boolean.TRUE);
         umgr.storeUser(stored);
         getRoller().commit();
@@ -165,6 +166,7 @@ public class UserManagerTest  extends RollerTestBase
             "password3",
             "TestUser3",
             "testuser3@example.com",
+            "en_US_WIN", "America/Los_Angeles",
             new java.util.Date(), Boolean.TRUE);
         umgr.storeUser( user );
 
@@ -232,6 +234,7 @@ public class UserManagerTest  extends RollerTestBase
             "password4",
             "TestUser4",
             "testuser4@example.com",
+            "en_US_WIN", "America/Los_Angeles",
             new java.util.Date(), Boolean.TRUE);
         Map pages = new HashMap();
         pages.put("Weblog","Weblog page content");

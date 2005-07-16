@@ -13,6 +13,7 @@ import org.apache.commons.collections.ArrayStack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
+import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
@@ -196,7 +197,16 @@ public class RollerSession
      * Current website that user is working with.
      */
     public WebsiteData getCurrentWebsite()
-    {
+    {       
+        // ROLLER_2.0: allow user to pick website
+        if (currentWebsite == null) try 
+        {
+            Roller roller = RollerFactory.getRoller();
+            UserManager umgr = roller.getUserManager();
+            currentWebsite = (WebsiteData)
+                umgr.getWebsites(authenticatedUser, null).get(0);
+        }
+        catch (RollerException ignored) {}
         return currentWebsite;
     }
     /**

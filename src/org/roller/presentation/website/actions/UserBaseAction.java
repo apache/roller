@@ -90,21 +90,21 @@ public class UserBaseAction extends DispatchAction
         String[] themes = rollerContext.getThemeNames();
         request.setAttribute( "themes", themes );
 
-//        // prepare locales & timezones
-//        if (ud != null)
-//        {
-//            UserManager mgr = rreq.getRoller().getUserManager();
-//            WebsiteData website = mgr.getWebsite(ud.getUserName());
-//            form.setLocale( website.getLocale() );
-//            form.setTimezone( website.getTimezone() );
-//            form.setTheme( website.getEditorTheme() );
-//        }
-//        else
-//        {
-//            form.setLocale( Locale.getDefault().getDisplayName() );
-//            form.setTimezone( TimeZone.getDefault().getID() );
-//        }
-//        loadOptionLists(request);
+        // prepare locales & timezones
+        if (ud != null)
+        {
+            UserManager mgr = rreq.getRoller().getUserManager();
+            WebsiteData website = (WebsiteData)mgr.getWebsites(ud, null).get(0);
+            //form.setLocale( website.getLocale() );
+            //form.setTimezone( website.getTimezone() );
+            form.setTheme( website.getEditorTheme() );
+        }
+        else
+        {
+            form.setLocale( Locale.getDefault().getDisplayName() );
+            form.setTimezone( TimeZone.getDefault().getID() );
+        }
+        loadOptionLists(request);
     }
 
     //-----------------------------------------------------------------------

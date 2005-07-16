@@ -130,6 +130,7 @@ public class UserNewAction extends UserBaseAction
             form.copyTo(ud, request.getLocale()); // doesn't copy password
             ud.setId(null);
             ud.setDateCreated(new java.util.Date());
+            ud.setIsEnabled(Boolean.TRUE);
 
             // If user set both password and passwordConfirm then reset password
             if (    !StringUtils.isEmpty(form.getPasswordText()) 

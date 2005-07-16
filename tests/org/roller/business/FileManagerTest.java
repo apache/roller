@@ -121,6 +121,7 @@ public class FileManagerTest extends TestCase
                 "FileManagerTest_password",       
                 "FileManagerTest_description",      
                 "FileManagerTest@example.com", 
+                "en_US_WIN", "America/Los_Angeles",
                 new java.util.Date(), Boolean.TRUE);
         Map pages = new HashMap();
         pages.put("Weblog","Weblog page content");

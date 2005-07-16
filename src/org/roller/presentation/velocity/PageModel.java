@@ -21,7 +21,6 @@ import org.roller.pojos.BookmarkComparator;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.PageData;
 import org.roller.pojos.RefererData;
-import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
@@ -76,12 +75,13 @@ public class PageModel
         {
             mWebsite = (WebsiteData)
                 rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
+            mHandle = mWebsite.getHandle();
         }
         else if ( rreq.getWebsite() != null )
         {
             mWebsite = rreq.getWebsite();
+            mHandle = mWebsite.getHandle();
         }
-        mHandle = mWebsite.getHandle();
         
         try
         {
@@ -94,12 +94,15 @@ public class PageModel
             // will use the Managers later to fetch.
 
             // Get the pages, put into context & load map
-            List pages = mUserMgr.getPages(mWebsite);
-            Iterator pageIter = pages.iterator();
-            while (pageIter.hasNext())
+            if (mWebsite != null)
             {
-                PageData page = (PageData) pageIter.next();
-                mPageMap.put(page.getName(), page); 
+                List pages = mUserMgr.getPages(mWebsite);
+                Iterator pageIter = pages.iterator();
+                while (pageIter.hasNext())
+                {
+                    PageData page = (PageData) pageIter.next();
+                    mPageMap.put(page.getName(), page); 
+                }
             }
         }
         catch (RollerException e)
