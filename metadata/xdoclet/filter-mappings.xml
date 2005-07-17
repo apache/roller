@@ -5,18 +5,32 @@
     ******************************************************* -->
 
 <!--
+     NOTE: Wherever "dispatcher" elements are specified in the filter mappings, they are
+     required for Servlet API 2.4 containers, such as Tomcat 5+ and Resin 3+, but should be
+     commented out for Servlet API 2.3 containers, like Tomcat 4.x and Resin 2.x.
+-->
+
+<!--
 <filter-mapping>
     <filter-name>UrlRewriteFilter</filter-name>
     <url-pattern>/*</url-pattern>
 </filter-mapping>
 -->
 
-<!-- Map everything to the PersistenceSessionFilter -->
+<!-- Ensures character encoding set to UTF-8 and JSTL and Struts locales are in sync.
+     Note: Any filters preceding this one MUST not cause request parsing. -->
+<filter-mapping>
+    <filter-name>CharEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+
+<!-- Map everything to the PersistenceSessionFilter.
+     NOTE: Any filters preceding this one MUST NOT use persistence sessions.-->
 <filter-mapping>
     <filter-name>PersistenceSessionFilter</filter-name>
     <url-pattern>/*</url-pattern>
-    <!-- You must uncomment these two dispatcher lines on Tomcat 5+ and any Servlet API 2.4+ container
-         in order to avoid database connection leaks on the FORWARD dispatch paths. -->
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
@@ -64,8 +78,6 @@
 <filter-mapping>
     <filter-name>loginFilter</filter-name>
     <url-pattern>/login.jsp</url-pattern>
-    <!-- You must uncomment these two dispatcher lines on Tomcat 5+ and any Servlet API 2.4+ container
-         in order for RememberMe to work in these environments, because we can reach login.jsp via FORWARD. -->
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
