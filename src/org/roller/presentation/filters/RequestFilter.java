@@ -49,40 +49,15 @@ public class RequestFilter implements Filter
     }
 
     /**
-     * As the first and last filter in the chain, it is necessary that
-     * RequestFilter releases its Roller resources before it returns.
+     * Request filter.
      */
     public void doFilter(
         ServletRequest req, ServletResponse res, FilterChain chain)
         throws IOException, ServletException
     {
-        try
-        {
-            // insure that incoming data is parsed as UTF-8
-            req.setCharacterEncoding("UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new ServletException("Can't set incoming encoding to UTF-8");
-        }
-
-        // keep JSTL and Struts Locale's in sync
+        // NOTE: Setting character encoding and JSTL/Struts locale sync has been moved to
+        // CharEncodingFilter, which is mapped for all URIs in the context.
         HttpSession session = ((HttpServletRequest)req).getSession();
-        if (null != session)
-        {
-            Locale locale = (Locale)session.getAttribute(Globals.LOCALE_KEY);
-            if (locale == null)
-            {
-                locale = req.getLocale();
-            }
-            if (req.getParameter("locale") != null)
-            {
-                locale = new Locale(req.getParameter("locale"));
-            }
-            session.setAttribute(Globals.LOCALE_KEY, locale);
-            Config.set(session, Config.FMT_LOCALE, locale);
-        }
-
         HttpServletRequest request = (HttpServletRequest)req;
         HttpServletResponse response = (HttpServletResponse)res;
         Roller roller = RollerContext.getRoller( request );
