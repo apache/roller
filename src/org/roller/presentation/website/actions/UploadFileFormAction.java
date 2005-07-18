@@ -22,9 +22,10 @@ import org.apache.struts.upload.FormFile;
 import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.FileManager;
-import org.roller.pojos.UserData;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.UploadFileForm;
 import org.roller.util.RollerMessages;
 
@@ -58,11 +59,12 @@ public final class UploadFileFormAction extends DispatchAction
         try
         {
             rreq = RollerRequest.getRollerRequest(request);
-            if ( !rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( !rollerSession.isUserAuthorizedToEdit() )
             {
                 return mapping.findForward("access-denied");
             }
-            website = rreq.getCurrentWebsite();
+            website = RollerSession.getRollerSession(request).getCurrentWebsite();
         }
         catch (Exception e)
         {
@@ -117,7 +119,7 @@ public final class UploadFileFormAction extends DispatchAction
                     fileSize = files[i].getFileSize();
                     
                     //retrieve the file data
-                    FileManager fmgr = rreq.getRoller().getFileManager();
+                    FileManager fmgr = RollerFactory.getRoller().getFileManager();
                     if (fmgr.canSave(website, fileName, fileSize, msgs))
                     {
                         InputStream stream = files[i].getInputStream();
@@ -162,8 +164,8 @@ public final class UploadFileFormAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         try
         {
-            FileManager fmgr = rreq.getRoller().getFileManager();
-            WebsiteData website = rreq.getCurrentWebsite();
+            FileManager fmgr = RollerFactory.getRoller().getFileManager();
+            WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
             String[] deleteFiles = theForm.getDeleteFiles();
             for (int i=0; i<deleteFiles.length; i++)
             {
@@ -202,7 +204,8 @@ public final class UploadFileFormAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( !rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( !rollerSession.isUserAuthorizedToEdit() )
             {
                 return mapping.findForward("access-denied");
             }

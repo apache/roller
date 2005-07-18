@@ -900,31 +900,19 @@ Use -Dverbose=1 to get verbose output.
 </target>
 
 <target name="compile-jsps" depends="stage-web">
-   <path id="jasper.path">
-     <path location="${build.stage_web}/WEB-INF/classes" />
-     <fileset dir="${build.stage_web}/WEB-INF/lib">
-       <include name="**/*.jar"/>
-     </fileset>
-     <fileset dir="${ro.tools}/tomcat-4.1.24">
-       <include name="*.jar"/>
-     </fileset>
-     <fileset dir="${ro.tools}/lib">
-       <include name="servlet-*.jar"/>
-       <include name="ant-*.jar"/>
-     </fileset>
-   </path>
-     <mkdir dir="${ro.build}/jspc"/>
-  <jspc srcdir="${build.stage_web}" destdir="${ro.build}/jspc"
-        package="test" verbose="9">
-      <include name="**/*.jsp" />
-        <classpath refid="jasper.path"/>
-  </jspc>
-     <mkdir dir="${ro.build}/jspc.classes"/>
-    <javac source="1.4" debug="true" srcdir="${ro.build}/jspc"
-        destdir="${ro.build}/jspc.classes" fork="true">
-        <classpath refid="jasper.path"/>
-  </javac>
-
+   <mkdir dir="${ro.build}/jspc"/>	
+    <taskdef classname="org.apache.jasper.JspC" name="jasper2" > 
+    	   <classpath refid="jasper.path"/> 
+    </taskdef> 
+    <jasper2 validateXml="false" 
+        uriroot="${build.stage_web}" 
+        webXmlFragment="${build.stage_web}/WEB-INF/generated_web.xml" 
+        outputDir="${ro.build}/jspc" /> 		
+    <mkdir dir="${ro.build}/jspc.classes"/>
+    <javac source="1.4" debug="true" srcdir="${ro.build}/jspc" excludes="**/header_jsp.*"
+       destdir="${ro.build}/jspc.classes" fork="true">
+       <classpath refid="jsp.compile.path"/>
+    </javac>
 </target>
 	    
 <!-- ********************************************************************* -->

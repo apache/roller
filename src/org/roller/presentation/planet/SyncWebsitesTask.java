@@ -18,7 +18,6 @@ import org.roller.model.UserManager;
 import org.roller.pojos.PlanetConfigData;
 import org.roller.pojos.PlanetGroupData;
 import org.roller.pojos.PlanetSubscriptionData;
-import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.util.Technorati;
 

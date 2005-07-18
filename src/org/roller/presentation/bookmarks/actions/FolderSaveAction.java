@@ -15,6 +15,7 @@ import org.apache.struts.action.ActionMapping;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.model.BookmarkManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
@@ -40,7 +41,7 @@ public class FolderSaveAction extends Action
         FolderFormEx form = (FolderFormEx)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WebsiteData wd = rreq.getWebsite();
-        BookmarkManager bmgr = rreq.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         FolderData fd = null;
         if (null != form.getId() && !form.getId().trim().equals("")) 
@@ -73,7 +74,7 @@ public class FolderSaveAction extends Action
         {
             // Store object and commit
             fd.save();
-            rreq.getRoller().commit();
+            RollerFactory.getRoller().commit();
         }
         catch (RollerPermissionsException e)
         {
@@ -84,7 +85,7 @@ public class FolderSaveAction extends Action
         }
         catch (RollerException re)
         {
-            rreq.getRoller().rollback();
+            RollerFactory.getRoller().rollback();
             ActionErrors errors = new ActionErrors();
             String msg = (null != re.getRootCause())
                 ? re.getRootCause().toString()

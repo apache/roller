@@ -165,6 +165,34 @@ in the "base.path" definition.
     <path location="${ro.tools}/lib/mm.mysql-2.0.14-bin.jar"/>
 </path>
 
+<path id="jasper.path">
+    <pathelement location="${java.home}/../lib/tools.jar"/> 
+    <fileset dir="${catalina.home}/bin"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/server/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/common/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+</path>
+<path id="jsp.compile.path">
+    <pathelement location="${java.home}/../lib/tools.jar"/> 
+    <fileset dir="${build.stage_web}/WEB-INF/lib"> 
+        <include name="*.jar"/> 
+    </fileset>     
+    <fileset dir="${catalina.home}/bin"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/server/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/common/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+</path>
+   
 <path id="findbugs.path">
     <path refid="presentation.path"/>
     <path refid="business.path"/>

@@ -20,11 +20,13 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.PageData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.forms.PageForm;
 import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.util.StringUtils;
@@ -56,13 +58,13 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPages.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
                 PageForm form = (PageForm)actionForm;
                 PageData data = new PageData();
                 form.copyTo(data, request.getLocale());
-                WebsiteData hd = rreq.getCurrentWebsite();
+                WebsiteData hd = RollerSession.getRollerSession(request).getCurrentWebsite();
 
                 data.setWebsite( hd );
                 data.setUpdateTime( new java.util.Date() );
@@ -70,9 +72,9 @@ public final class PageFormAction extends DispatchAction
                 data.setTemplate("");
                 validateLink( data );
 
-                UserManager mgr = rreq.getRoller().getUserManager();
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
                 mgr.storePage( data );
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
 
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(ActionMessages.GLOBAL_MESSAGE, 
@@ -80,11 +82,11 @@ public final class PageFormAction extends DispatchAction
                                 data.getName()));
                 saveMessages(request, uiMessages);
                 
-                PageCacheFilter.removeFromCache( request, rreq.getCurrentWebsite() );
+                PageCacheFilter.removeFromCache( request, RollerSession.getRollerSession(request).getCurrentWebsite() );
                     
                 actionForm.reset(mapping,request);                
                 
-                addModelObjects(rreq);
+                addModelObjects(request);
             }
             else
             {
@@ -111,15 +113,16 @@ public final class PageFormAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
                 PageData pd = rreq.getPage();
                 PageForm pf = (PageForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
 
-                PageCacheFilter.removeFromCache( request, rreq.getCurrentWebsite() );
+                PageCacheFilter.removeFromCache( request, RollerSession.getRollerSession(request).getCurrentWebsite() );
                 
-                addModelObjects(rreq);
+                addModelObjects(request);
             }
             else
             {
@@ -145,10 +148,10 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPages.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
-                addModelObjects(rreq);
+                addModelObjects(request);
             }
             else
             {
@@ -174,20 +177,20 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPages");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
                 PageForm form = (PageForm)actionForm;
                 PageData data = new PageData();
                 form.copyTo(data, request.getLocale());
 
-                UserManager mgr = rreq.getRoller().getUserManager();
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
                 mgr.removePageSafely( data.getId() );
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
 
-                PageCacheFilter.removeFromCache( request, rreq.getCurrentWebsite() );
+                PageCacheFilter.removeFromCache( request, RollerSession.getRollerSession(request).getCurrentWebsite() );
                     
-                addModelObjects(rreq);
+                addModelObjects(request);
 
                 actionForm.reset(mapping,request);
             }
@@ -222,14 +225,15 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("removePage.page");
         try
         {
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
                 PageData cd = rreq.getPage();
                 PageForm pf = (PageForm)actionForm;
                 pf.copyFrom(cd, request.getLocale());
 
-                UserData ud = rreq.getAuthenticatedUser();
+                UserData ud = RollerSession.getRollerSession(request).getAuthenticatedUser();
                 request.setAttribute("user",ud);
             }
             else
@@ -256,21 +260,21 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPage.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
                 PageForm form = (PageForm)actionForm;
-                UserManager mgr = rreq.getRoller().getUserManager();
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
                 PageData data = mgr.retrievePage(form.getId());
                 data.save(); // should through exception if no save permission
                 form.copyTo(data, request.getLocale());
                 data.setUpdateTime( new java.util.Date() );
-                data.setWebsite( rreq.getCurrentWebsite() );
+                data.setWebsite( RollerSession.getRollerSession(request).getCurrentWebsite() );
 
                 validateLink( data );
 
                 mgr.storePage( data );
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
 
                 // set the (possibly) new link back into the Form bean
                 ((PageForm)actionForm).setLink( data.getLink() );
@@ -281,7 +285,7 @@ public final class PageFormAction extends DispatchAction
                                 data.getName()));
                 saveMessages(request, uiMessages);
 
-                PageCacheFilter.removeFromCache(request, rreq.getCurrentWebsite());
+                PageCacheFilter.removeFromCache(request, RollerSession.getRollerSession(request).getCurrentWebsite());
             }
             else
             {
@@ -348,17 +352,15 @@ public final class PageFormAction extends DispatchAction
     }
     
     //-----------------------------------------------------------------------
-    private void addModelObjects( RollerRequest rreq ) 
+    private void addModelObjects( HttpServletRequest request ) 
         throws RollerException {  
-            
-        HttpServletRequest request = rreq.getRequest();
-            
-        UserManager mgr = rreq.getRoller().getUserManager();
+                        
+        UserManager mgr = RollerFactory.getRoller().getUserManager();
 
-        UserData user = rreq.getAuthenticatedUser();
+        UserData user = RollerSession.getRollerSession(request).getAuthenticatedUser();
         request.setAttribute("user",user);
 
-        WebsiteData wd = rreq.getCurrentWebsite();
+        WebsiteData wd = RollerSession.getRollerSession(request).getCurrentWebsite();
         request.setAttribute("website", wd);
 
         List pages = mgr.getPages(wd);

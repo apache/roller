@@ -28,6 +28,7 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.LanguageUtil;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.tags.calendar.CalendarModel;
 import org.roller.presentation.tags.calendar.CalendarTag;
 import org.roller.presentation.tags.menu.EditorNavigationBarTag;
@@ -215,7 +216,9 @@ public class PageHelper
         String link = null;
         try
         {
-            if ( mRollerReq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
                 Hashtable params = new Hashtable();
                 params.put( RollerRequest.REFERERID_KEY, referer.getId());
@@ -252,7 +255,9 @@ public class PageHelper
     {
         try
         {
-            return mRollerReq.isUserAuthorizedToEdit();
+            RollerSession rollerSession = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
+            return rollerSession.isUserAuthorizedToEdit();
         }
         catch (Exception e)
         {

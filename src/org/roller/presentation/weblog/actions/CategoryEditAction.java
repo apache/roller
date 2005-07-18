@@ -3,20 +3,22 @@
  */
 package org.roller.presentation.weblog.actions;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.roller.model.WeblogManager;
-import org.roller.pojos.WeblogCategoryData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.weblog.formbeans.WeblogCategoryFormEx;
-
 import java.util.LinkedList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
+import org.roller.pojos.WeblogCategoryData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.weblog.formbeans.WeblogCategoryFormEx;
 
 /**
  * @struts.action path="/editor/categoryEdit" name="weblogCategoryFormEx" validate="false"
@@ -34,8 +36,8 @@ public class CategoryEditAction extends Action
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = rreq.getCurrentWebsite();
-        WeblogManager wmgr = rreq.getRoller().getWeblogManager();
+        WebsiteData wd = RollerSession.getRollerSession(request).getCurrentWebsite();
+        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         WeblogCategoryFormEx form = (WeblogCategoryFormEx)actionForm;
         
         WeblogCategoryData parentCat = null;

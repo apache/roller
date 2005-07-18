@@ -3,9 +3,9 @@
  */
 package org.roller.presentation.weblog.formbeans;
 
-import org.apache.struts.action.ActionForm;
-
 import java.util.List;
+
+import org.apache.struts.action.ActionForm;
 
 /**
  * @struts.form name="categoryDeleteForm"

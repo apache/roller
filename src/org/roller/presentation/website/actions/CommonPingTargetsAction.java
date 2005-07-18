@@ -8,16 +8,18 @@
 
 package org.roller.presentation.website.actions;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.model.PingTargetManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.PingTargetData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.forms.PingTargetForm;
 import org.roller.presentation.weblog.actions.BasePingTargetsAction;
-
-import java.util.List;
 
 /**
  * Administer common ping targets.
@@ -42,7 +44,7 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
      */
     protected List getPingTargets(RollerRequest rreq) throws RollerException
     {
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         return pingTargetMgr.getCommonPingTargets();
     }
 
@@ -52,7 +54,7 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
     protected PingTargetData createPingTarget(RollerRequest rreq, PingTargetForm pingTargetForm)
         throws RollerException
     {
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         return pingTargetMgr.createCommonPingTarget(
             pingTargetForm.getName(), pingTargetForm.getPingUrl());
     }
@@ -64,6 +66,7 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
     protected boolean hasRequiredRights(RollerRequest rreq) throws RollerException
     {
         // This mimics the check in other admin actions, but not sure why the latter is not sufficient.
-        return (rreq.isUserAuthorizedToEdit() && rreq.isAdminUser());
+        RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
+        return (rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser());
     }
 }

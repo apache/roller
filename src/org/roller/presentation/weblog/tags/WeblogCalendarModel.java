@@ -1,14 +1,6 @@
 
 package org.roller.presentation.weblog.tags;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.roller.RollerException;
-import org.roller.model.WeblogManager;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.tags.calendar.CalendarModel;
-import org.roller.util.DateUtil;
-
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,6 +10,15 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.RollerException;
+import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.tags.calendar.CalendarModel;
+import org.roller.util.DateUtil;
 
 /** 
  * Calendar model for calendar intended for use on view-weblog page.
@@ -113,7 +114,7 @@ public class WeblogCalendarModel implements CalendarModel
     {
         try
         {
-            WeblogManager mgr = mRollerReq.getRoller().getWeblogManager();
+            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             mMonthMap = mgr.getWeblogEntryStringMap(
                             mRollerReq.getWebsite(), // userName
                             startDate,              // startDate

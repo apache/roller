@@ -1,9 +1,6 @@
 
 package org.roller.presentation.tags.menu;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +8,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.roller.RollerException;
-import org.roller.util.Utilities;
 
 /////////////////////////////////////////////////////////////////////////
 

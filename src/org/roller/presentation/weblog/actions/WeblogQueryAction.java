@@ -1,20 +1,21 @@
 
 package org.roller.presentation.weblog.actions;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
+import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.weblog.formbeans.WeblogQueryForm;
 
 
@@ -44,13 +45,13 @@ public final class WeblogQueryAction extends DispatchAction
     {
         WeblogQueryForm form = (WeblogQueryForm)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WeblogManager wmgr = rreq.getRoller().getWeblogManager();
+        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         
         request.setAttribute("model", new WeblogQueryPageModel(
            request, 
            response, 
            mapping,
-           rreq.getCurrentWebsite(),
+           RollerSession.getRollerSession(request).getCurrentWebsite(),
            form.getCategoryId(),
            form.getStartDateString(),
            form.getEndDateString(),

@@ -3,22 +3,22 @@
  */
 package org.roller.presentation.bookmarks.actions;
 
+import java.util.LinkedList;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.roller.model.BookmarkManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.bookmarks.formbeans.BookmarkFormEx;
-import org.roller.presentation.forms.BookmarkForm;
-
-import java.util.LinkedList;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @struts.action path="/editor/bookmarkEdit" name="bookmarkFormEx" validate="false"
@@ -37,7 +37,7 @@ public class BookmarkEditAction extends Action
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WebsiteData wd = rreq.getWebsite();
-        BookmarkManager bmgr = rreq.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         BookmarkFormEx form = (BookmarkFormEx)actionForm;
         
         FolderData parentFolder = null;

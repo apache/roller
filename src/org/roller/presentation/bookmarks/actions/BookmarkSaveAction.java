@@ -14,6 +14,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.roller.RollerPermissionsException;
 import org.roller.model.BookmarkManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.presentation.RollerRequest;
@@ -40,13 +41,13 @@ public class BookmarkSaveAction extends Action
         {
             BookmarkFormEx form = (BookmarkFormEx)actionForm;
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            BookmarkManager bmgr = rreq.getRoller().getBookmarkManager();
+            BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
             
             BookmarkData bd = null;
             if (null != form.getId() && !form.getId().trim().equals("")) 
             {
                 bd = bmgr.retrieveBookmark(form.getId());
-                bd.save(); // should throw if save not permitted
+                bd.startEditing(); // should throw if save not permitted
             }
             else 
             {
@@ -59,7 +60,7 @@ public class BookmarkSaveAction extends Action
             }
             form.copyTo(bd, request.getLocale());
             bd.save();
-            rreq.getRoller().commit();
+            RollerFactory.getRoller().commit();
             
             request.setAttribute(
                 RollerRequest.FOLDERID_KEY,bd.getFolder().getId());  

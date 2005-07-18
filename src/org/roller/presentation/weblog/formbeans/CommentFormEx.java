@@ -1,13 +1,14 @@
 package org.roller.presentation.weblog.formbeans;
 
+import java.util.Locale;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts.action.ActionMapping;
 import org.roller.RollerException;
 import org.roller.pojos.CommentData;
 import org.roller.presentation.forms.CommentForm;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Locale;
 
 /**
  * Extends the WeblogEntryForm so that additional properties may be added.

@@ -1,6 +1,12 @@
 
 package org.roller.presentation.weblog.actions;
 
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -12,15 +18,10 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.model.RefererManager;
-import org.roller.pojos.UserData;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
-
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.roller.presentation.RollerSession;
 
 /**
  * Display today's referers.
@@ -54,18 +55,19 @@ public class ReferersAction extends DispatchAction
     {
         ActionForward forward = mapping.findForward("referers.page");
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
-        RefererManager refmgr = rreq.getRoller().getRefererManager();
+        RollerSession rollerSession = RollerSession.getRollerSession(req);
+        RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
         try
         {
-            if ( rreq.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {   
                 req.setAttribute("pageHits",
-                    new Integer(refmgr.getDayHits(rreq.getCurrentWebsite())));
+                    new Integer(refmgr.getDayHits(RollerSession.getRollerSession(req).getCurrentWebsite())));
                     
                 req.setAttribute("totalHits",
-                    new Integer(refmgr.getTotalHits(rreq.getCurrentWebsite())));
+                    new Integer(refmgr.getTotalHits(RollerSession.getRollerSession(req).getCurrentWebsite())));
                     
-                List refs = refmgr.getTodaysReferers(rreq.getCurrentWebsite());
+                List refs = refmgr.getTodaysReferers(RollerSession.getRollerSession(req).getCurrentWebsite());
                 req.setAttribute("referers",refs);        
             }
         }
@@ -85,14 +87,15 @@ public class ReferersAction extends DispatchAction
     {
         this.servlet.log("ReferersAction.reset()");
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
+        RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if ( rreq.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
-                RefererManager refmgr = rreq.getRoller().getRefererManager();
-                WebsiteData website = rreq.getCurrentWebsite();
+                RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
+                WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();
                 refmgr.forceTurnover(website.getId());
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
             }
             this.servlet.log("ReferersAction.reset(): don't have permission");
         }
@@ -111,12 +114,13 @@ public class ReferersAction extends DispatchAction
     {
         //this.servlet.log("ReferersAction.delete()");
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
+        RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if ( rreq.isUserAuthorizedToEdit() )
+            if (rollerSession.isUserAuthorizedToEdit() )
             {
-                RefererManager refmgr = rreq.getRoller().getRefererManager();
-                WebsiteData website = rreq.getCurrentWebsite();
+                RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
+                WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();
 
                 String[] deleteIds = req.getParameterValues("id");
                 if (deleteIds != null)
@@ -125,7 +129,7 @@ public class ReferersAction extends DispatchAction
                     {
                         refmgr.removeReferer(deleteIds[i]);
                     }
-                    rreq.getRoller().commit();
+                    RollerFactory.getRoller().commit();
                     ActionMessages messages = new ActionMessages();
                     messages.add(null, new ActionMessage("referers.deletedReferers"));
                     saveMessages(req, messages);

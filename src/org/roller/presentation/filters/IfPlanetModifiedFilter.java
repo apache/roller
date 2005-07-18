@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.presentation.RollerRequest;
 
 /**
@@ -118,7 +119,7 @@ public class IfPlanetModifiedFilter implements Filter
 	    throws RollerException
 	{
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        Roller roller = rreq.getRoller();
+        Roller roller = RollerFactory.getRoller();
         Date lastUpdated = roller.getPlanetManager().getLastUpdated();
         if (lastUpdated == null)
         {

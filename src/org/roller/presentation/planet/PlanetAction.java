@@ -15,6 +15,7 @@ import org.apache.struts.action.ActionMapping;
 import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.PlanetGroupData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
@@ -78,8 +79,7 @@ public class PlanetAction extends Action
          */
         public List getAggregation(int num) throws RollerException
         {
-            Roller roller = 
-                RollerRequest.getRollerRequest(mRequest).getRoller();            
+            Roller roller = RollerFactory.getRoller();           
             return roller.getPlanetManager().getAggregation(num);
         }
         /** 
@@ -90,8 +90,7 @@ public class PlanetAction extends Action
             PlanetGroupData group = null;
             try 
             {
-                Roller roller = 
-                    RollerRequest.getRollerRequest(mRequest).getRoller();  
+                Roller roller = RollerFactory.getRoller();  
                 group = roller.getPlanetManager().getGroup(name);
             }
             catch (RollerException e) 
@@ -108,8 +107,7 @@ public class PlanetAction extends Action
             List ret = new ArrayList();
             try 
             {
-                Roller roller = 
-                    RollerRequest.getRollerRequest(mRequest).getRoller();  
+                Roller roller = RollerFactory.getRoller();   
                 PlanetGroupData group= roller.getPlanetManager().getGroup(name);
                 ret = roller.getPlanetManager().getAggregation(group, num);
             }
@@ -127,8 +125,7 @@ public class PlanetAction extends Action
             List ret = new ArrayList();
             try 
             {
-                Roller roller = 
-                    RollerRequest.getRollerRequest(mRequest).getRoller();  
+                Roller roller = RollerFactory.getRoller();  
                 ret = roller.getPlanetManager().getTopSubscriptions(num);
             }
             catch (RollerException e) 
@@ -146,8 +143,7 @@ public class PlanetAction extends Action
             List ret = new ArrayList();
             try 
             {
-                Roller roller = 
-                    RollerRequest.getRollerRequest(mRequest).getRoller();  
+                Roller roller = RollerFactory.getRoller(); 
                 PlanetGroupData group= roller.getPlanetManager().getGroup(name);
                 ret = roller.getPlanetManager().getTopSubscriptions(group,num);
             }
@@ -162,8 +158,7 @@ public class PlanetAction extends Action
          */
         public List getPopularWebsites(int num) throws RollerException
         {
-            Roller roller = 
-                RollerRequest.getRollerRequest(mRequest).getRoller();            
+            Roller roller = RollerFactory.getRoller();            
             return roller.getRefererManager().getDaysPopularWebsites(num);
         }
     }

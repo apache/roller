@@ -3,22 +3,24 @@
  */
 package org.roller.presentation.weblog.actions;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.roller.model.WeblogManager;
-import org.roller.pojos.WeblogCategoryData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.weblog.formbeans.CategoryDeleteForm;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
+import org.roller.pojos.WeblogCategoryData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.weblog.formbeans.CategoryDeleteForm;
 
 /**
  * @struts.action path="/editor/categoryDelete" name="categoryDeleteForm"
@@ -39,9 +41,10 @@ public class CategoryDeleteAction extends Action
         ActionForward forward = null;
         CategoryDeleteForm form = (CategoryDeleteForm)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WeblogManager wmgr = rreq.getRoller().getWeblogManager();
-        
-        if (rreq.isUserAuthorizedToEdit())
+        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        RollerSession rollerSession = RollerSession.getRollerSession(
+                rreq.getRequest());
+        if (rollerSession.isUserAuthorizedToEdit())
         {
             String catid = request.getParameter("catid");
             WeblogCategoryData catToDelete = 
@@ -54,7 +57,7 @@ public class CategoryDeleteAction extends Action
             if (form.isDelete() == null)
             {
                 // Present CategoryDeleteOK? page to user
-                WebsiteData website = rreq.getCurrentWebsite();
+                WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
                 WeblogCategoryData theCat = wmgr.retrieveWeblogCategory(catid);
                 Iterator allCats = 
                     wmgr.getWeblogCategories(website).iterator();
@@ -102,7 +105,7 @@ public class CategoryDeleteAction extends Action
                 // move entries to destCat and remove catToDelete
                 catToDelete.remove(destCat);
                 
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
                 
                 if (null != returnId) 
                 {

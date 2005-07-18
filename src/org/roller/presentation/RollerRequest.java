@@ -17,13 +17,12 @@ import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.ParsedRequest;
-import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.PageData;
-import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
@@ -38,16 +37,16 @@ import org.roller.util.Utilities;
  * getter methods.
  * <br/><br/> 
  * 
- * These forms of pathinfo get special support:
+ * These forms of pathinfo get special support (where 'handle' indicates website):
  * <br/><br/>
  * 
  * <pre>
- * [username] - get default page for user for today's date 
- * [username]/[date] - get default page for user for specified date 
- * [username]/[pagelink] - get specified page for today's date 
- * [username]/[pagelink]/[date] - get specified page for specified date
- * [username]/[pagelink]/[anchor] - get specified page & entry (by anchor)
- * [username]/[pagelink]/[date]/[anchor] - get specified page & entry (by anchor)
+ * [handle] - get default page for user for today's date 
+ * [handle]/[date] - get default page for user for specified date 
+ * [handle]/[pagelink] - get specified page for today's date 
+ * [handle]/[pagelink]/[date] - get specified page for specified date
+ * [handle]/[pagelink]/[anchor] - get specified page & entry (by anchor)
+ * [handle]/[pagelink]/[date]/[anchor] - get specified page & entry (by anchor)
  * </pre>
  *  
  * @author David M Johnson
@@ -145,9 +144,9 @@ public class RollerRequest implements ParsedRequest
         String userName = auth.getAuthenticatedUserName(mRequest);
         if (userName != null)
         {
-            UserManager userMgr = getRoller().getUserManager();
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
             UserData currentUser = userMgr.getUser(userName);
-            getRoller().setUser(currentUser);
+            RollerFactory.getRoller().setUser(currentUser);
         }
 
         // path info may be null, (e.g. on JSP error page)
@@ -203,7 +202,7 @@ public class RollerRequest implements ParsedRequest
             //   /username/pagelink/datestring
             //   /username/pagelink/anchor (specific entry)
             //   /username/pagelink/datestring/anchor (specific entry)
-            UserManager userMgr = getRoller().getUserManager();
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
             mWebsite = userMgr.getWebsiteByHandle(pathInfo[0]);
             if (mWebsite != null)
             {
@@ -244,7 +243,7 @@ public class RollerRequest implements ParsedRequest
                         // we have the /username/pagelink/anchor form of URL
                         try
                         {
-                            WeblogManager weblogMgr = getRoller().getWeblogManager();
+                            WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
                             mWeblogEntry = weblogMgr.getWeblogEntryByAnchor(
                                 mWebsite, pathInfo[2]);
                             mDate = mWeblogEntry.getPubTime();
@@ -274,7 +273,7 @@ public class RollerRequest implements ParsedRequest
                     mIsDateSpecified = true;
 
                     // we have the /username/pagelink/date/anchor form of URL
-                    WeblogManager weblogMgr = getRoller().getWeblogManager();
+                    WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
                     mWeblogEntry = weblogMgr.getWeblogEntryByAnchor(
                                     mWebsite, pathInfo[3]);
                 }                
@@ -302,7 +301,7 @@ public class RollerRequest implements ParsedRequest
             // No path info means that we need to parse request params
             
             // First, look for user in the request params
-            UserManager userMgr = getRoller().getUserManager();            
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();            
             String userName = mRequest.getParameter(USERNAME_KEY);
             if ( userName == null )
             {
@@ -448,13 +447,6 @@ public class RollerRequest implements ParsedRequest
     {
         return mContext;
     }
-
-    //------------------------------------------------------------------------
-    /** Get Roller instance from */
-    public Roller getRoller()
-    {
-        return RollerContext.getRoller( mRequest );
-    }
     
     //-----------------------------------------------------------------------------
     
@@ -595,8 +587,8 @@ public class RollerRequest implements ParsedRequest
             {
                 try
                 {
-                    mBookmark = 
-                        getRoller().getBookmarkManager().retrieveBookmark(id);
+                    mBookmark = RollerFactory.getRoller()
+                        .getBookmarkManager().retrieveBookmark(id);
                 }
                 catch (RollerException e)
                 {
@@ -622,7 +614,8 @@ public class RollerRequest implements ParsedRequest
                 try
                 {
                     mWeblogCategory = 
-                        getRoller().getWeblogManager().retrieveWeblogCategory(id);
+                        RollerFactory.getRoller()
+                            .getWeblogManager().retrieveWeblogCategory(id);
                 }
                 catch (RollerException e)
                 {
@@ -634,8 +627,9 @@ public class RollerRequest implements ParsedRequest
                 try
                 {
                     mWeblogCategory = 
-                        getRoller().getWeblogManager().getWeblogCategoryByPath(
-                            getWebsite(), null, id);
+                        RollerFactory.getRoller()
+                            .getWeblogManager().getWeblogCategoryByPath(
+                                    getWebsite(), null, id);
                 }
                 catch (RollerException e)
                 {
@@ -661,8 +655,8 @@ public class RollerRequest implements ParsedRequest
             {
                 try
                 {
-                    folder = 
-                        getRoller().getBookmarkManager().retrieveFolder(id);
+                    folder = RollerFactory.getRoller()
+                        .getBookmarkManager().retrieveFolder(id);
                 }
                 catch (RollerException e)
                 {
@@ -687,7 +681,8 @@ public class RollerRequest implements ParsedRequest
             {
                 try
                 {
-                    mPage = getRoller().getUserManager().retrievePage(id);
+                    mPage = RollerFactory.getRoller()
+                        .getUserManager().retrievePage(id);
                 }
                 catch (RollerException e)
                 {
@@ -770,7 +765,7 @@ public class RollerRequest implements ParsedRequest
             {
                 if ( entryid != null )
                 {
-                    WeblogManager weblogMgr = getRoller().getWeblogManager();
+                    WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
                     mWeblogEntry = weblogMgr.retrieveWeblogEntry(entryid);                
                 
                     // We can use entry to find the website, if we don't have one
@@ -781,7 +776,8 @@ public class RollerRequest implements ParsedRequest
                 } 
                 else if ( mWebsite != null && anchor != null )
                 {
-                    WeblogManager weblogMgr = getRoller().getWeblogManager();
+                    WeblogManager weblogMgr = 
+                        RollerFactory.getRoller().getWeblogManager();
                     mWeblogEntry = weblogMgr.getWeblogEntryByAnchor(
                         mWebsite,anchor);
                 }                             
@@ -841,53 +837,5 @@ public class RollerRequest implements ParsedRequest
         return RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
     }
 
-    //-------------------------------------------- Authentication and authorization
-    
-    /**
-     * Get the current website from the Roller session, or null if none exists.
-     */
-    public WebsiteData getCurrentWebsite()
-    {
-        RollerSession rollerSession = RollerSession.getRollerSession(mRequest);
-        if (rollerSession != null) return rollerSession.getCurrentWebsite();
-        return null;
-    }
-
-    /**
-     * Gets the UserData specified by the request, or null if none exists.
-     * @return UserData
-     */
-    public UserData getAuthenticatedUser()
-    {
-        RollerSession rollerSession = RollerSession.getRollerSession(mRequest);
-        if (rollerSession != null) return rollerSession.getAuthenticatedUser();
-        return null;
-    }
-
-    /** 
-     * Does user have the admin role (aka global superuser)
-     */
-    public boolean isAdminUser() throws RollerException
-    {
-        UserData user = getAuthenticatedUser();
-        if (user != null && user.hasRole("admin")) return true;
-        return false;
-    }
-
-    /** 
-     * Is user authorized to edit objects in the current website. 
-     */
-    public boolean isUserAuthorizedToEdit() throws RollerException
-    {
-        RollerSession rollerSession = RollerSession.getRollerSession(mRequest);
-        UserData user = rollerSession.getAuthenticatedUser();
-        WebsiteData website = rollerSession.getCurrentWebsite();
-        if (website != null) 
-        {
-            return website.hasUserPermissions(user, 
-                (short)(PermissionsData.AUTHOR | PermissionsData.ADMIN));
-        }
-        return false;
-    }
 }
 

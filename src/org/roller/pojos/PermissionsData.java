@@ -42,6 +42,13 @@ public class PermissionsData extends PersistentObject
     }
 
     /**
+     * Check for specific permission.
+     */
+    public boolean has(short priv)
+    {
+        return (getPermissionMask() & priv) == priv;
+    }
+    /**
      * @ejb:persistent-field
      * @hibernate.id column="id" type="string"
      *     generator-class="uuid.hex" unsaved-value="null"
@@ -106,12 +113,11 @@ public class PermissionsData extends PersistentObject
     {
         this.pending = pending;
     }
-
-    /* (non-Javadoc)
-     * @see org.roller.pojos.PersistentObject#setData(org.roller.pojos.PersistentObject)
+    /**
+     * Set data from other object (no-op).
      */
     public void setData(PersistentObject vo)
     {
-        // TODO Auto-generated method stub     
+        // no-op
     }
 }

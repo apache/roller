@@ -1,5 +1,11 @@
 package org.roller.presentation.website.actions;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionErrors;
@@ -9,18 +15,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.roller.RollerException;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
-import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.UserFormEx;
 import org.roller.util.StringUtils;
-
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -50,9 +51,10 @@ public class UserEditAction extends UserBaseAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
-                UserData ud = rreq.getAuthenticatedUser();
+                UserData ud = RollerSession.getRollerSession(request).getAuthenticatedUser();
                 request.setAttribute("user",ud);
 
                 UserFormEx form = (UserFormEx)actionForm;
@@ -109,16 +111,17 @@ public class UserEditAction extends UserBaseAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if (rollerSession.isUserAuthorizedToEdit())
             {
                 ActionMessages errors = validate(form, new ActionErrors());
                 if (errors.size() == 0)
                 {
-                    UserManager mgr = rreq.getRoller().getUserManager();
+                    UserManager mgr = RollerFactory.getRoller().getUserManager();
                     UserData data = mgr.getUser( form.getUserName() );
                     
                     // Need system user to update new user
-                    rreq.getRoller().setUser(UserData.SYSTEM_USER);
+                    RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
                     
                     // Copy data from form to persistent object (won't copy over password)
                     form.copyTo(data, request.getLocale());
@@ -129,7 +132,7 @@ public class UserEditAction extends UserBaseAction
                     {
                         try
                         {
-                            data.resetPassword(rreq.getRoller(), 
+                            data.resetPassword(RollerFactory.getRoller(), 
                                form.getPasswordText(), 
                                form.getPasswordConfirm());
                         }
@@ -150,7 +153,7 @@ public class UserEditAction extends UserBaseAction
                     // Persist changes
                     mgr.storeUser( data );
                     //mgr.storeWebsite( website );
-                    rreq.getRoller().commit();
+                    RollerFactory.getRoller().commit();
                     
                     // Changing user no longer requires cache flush
                     //PageCacheFilter.removeFromCache(request, data);

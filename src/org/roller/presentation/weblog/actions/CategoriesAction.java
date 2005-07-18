@@ -22,10 +22,12 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
+import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.weblog.formbeans.CategoriesForm;
 
 /**
@@ -58,7 +60,9 @@ public class CategoriesAction extends DispatchAction
         throws RollerException
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        if (rreq.isUserAuthorizedToEdit())
+        RollerSession rollerSession = RollerSession.getRollerSession(
+                rreq.getRequest());
+        if (rollerSession.isUserAuthorizedToEdit())
         {
             addModelObjects(request, (CategoriesForm)actionForm);
             return mapping.findForward("CategoriesForm");
@@ -88,11 +92,13 @@ public class CategoriesAction extends DispatchAction
         ActionMessages messages = new ActionMessages();
         ActionForward forward = mapping.findForward("CategoriesForm");
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        if (rreq.isUserAuthorizedToEdit())
+        RollerSession rollerSession = RollerSession.getRollerSession(
+                rreq.getRequest());
+        if (rollerSession.isUserAuthorizedToEdit())
         {
             try 
             {
-                WeblogManager wmgr = rreq.getRoller().getWeblogManager();
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 CategoriesForm form = (CategoriesForm)actionForm; 
     
                 mLogger.debug("Moving categories to category, id=" 
@@ -124,7 +130,7 @@ public class CategoriesAction extends DispatchAction
                     }
                 }
     
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
                 
                 addModelObjects(request, (CategoriesForm)actionForm);
                 saveMessages(request, messages);
@@ -152,8 +158,8 @@ public class CategoriesAction extends DispatchAction
         throws RollerException
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = rreq.getCurrentWebsite();
-        WeblogManager wmgr = rreq.getRoller().getWeblogManager();
+        WebsiteData wd = RollerSession.getRollerSession(request).getCurrentWebsite();
+        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         
         TreeSet allCategories = new TreeSet(new CategoryPathComparator());
         

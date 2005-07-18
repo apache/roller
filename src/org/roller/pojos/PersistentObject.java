@@ -18,10 +18,6 @@ public abstract class PersistentObject implements Serializable
 {
 	private long mTimeStamp = 0L; // this was only for Castor, right? -Lance
 
-	public PersistentObject()
-	{
-	}
-
 	/** Setter needed by RollerImpl.storePersistentObject() */
 	public abstract void setData( PersistentObject vo );
 
@@ -31,37 +27,39 @@ public abstract class PersistentObject implements Serializable
     /** Set ID */
 	public abstract void setId( String id );
 
-	//---------------------------------------------------------- TimeStampable
+	//-------------------------------------------------------------- implementation
 
-
+    public PersistentObject()
+    {
+    }
     public void save() throws RollerException 
     {
         PersistenceStrategy pstrategy =
             RollerFactory.getRoller().getPersistenceStrategy();
         pstrategy.store(this);
     }
-    
     public void remove() throws RollerException 
     {
         PersistenceStrategy pstrategy =
             RollerFactory.getRoller().getPersistenceStrategy();
         pstrategy.remove(this);
     }
-    
-    
     public String toString() {
         return ToStringBuilder.reflectionToString(this,
                 ToStringStyle.MULTI_LINE_STYLE);
     }
-
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
     }
-    
     /** Can user associated with persistence session save this object? */
     public boolean canSave() throws RollerException
     {
         return true;
+    }
+    /** Start editing this object */
+    public void startEditing() throws RollerException
+    {
+        if (!canSave()) throw new RollerException("ERROR: edit permission denied");
     }
 }
 

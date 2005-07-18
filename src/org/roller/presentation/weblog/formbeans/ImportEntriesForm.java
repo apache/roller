@@ -3,9 +3,9 @@
  */
 package org.roller.presentation.weblog.formbeans;
 
-import org.apache.struts.action.ActionForm;
-
 import java.util.ArrayList;
+
+import org.apache.struts.action.ActionForm;
 
 /**
  * @struts.form name="importEntries"

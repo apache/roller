@@ -1,5 +1,11 @@
 package org.roller.presentation;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
@@ -7,16 +13,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.roller.RollerException;
-import org.roller.model.Roller;
-import org.roller.model.WeblogManager;
-
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.roller.config.RollerRuntimeConfig;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
 
 
 /**
@@ -98,7 +98,7 @@ public class MainPageAction extends Action
             if (list == null)
             {
                 mLogger.debug("Refreshing popular websites list");
-                Roller roller = RollerRequest.getRollerRequest(mRequest).getRoller();            
+                Roller roller = RollerFactory.getRoller();            
                 list = roller.getRefererManager().getDaysPopularWebsites(num);
                 mPopularWebsites.setObject(list);
             }
@@ -116,7 +116,7 @@ public class MainPageAction extends Action
             if (list == null)
             {
                 mLogger.debug("Refreshing recent entries list");
-                Roller roller = RollerRequest.getRollerRequest(mRequest).getRoller();			                       
+                Roller roller = RollerFactory.getRoller();		                      
                 list = roller.getWeblogManager().getWeblogEntries(
                     null,                   // userName
                     null,                   // startDate
@@ -144,7 +144,7 @@ public class MainPageAction extends Action
             if (list == null)
             {
                 mLogger.debug("Refreshing pinned entries list");
-                Roller roller = RollerRequest.getRollerRequest(mRequest).getRoller();
+                Roller roller = RollerFactory.getRoller();
                 list = roller.getWeblogManager()
                     .getWeblogEntriesPinnedToMain(new Integer(num));  
                 mPinnedEntries.setObject(list);

@@ -1,23 +1,21 @@
 
 package org.roller.presentation.tags.menu;
 
-import org.apache.commons.digester.Digester;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.roller.RollerException;
-import org.roller.config.RollerConfig;
-import org.roller.pojos.UserData;
-import org.roller.presentation.RollerRequest;
-import org.xml.sax.SAXException;
-
 import java.io.InputStream;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.digester.Digester;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.RollerException;
+import org.roller.pojos.UserData;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.xml.sax.SAXException;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -165,7 +163,7 @@ public class RollerMenuModel extends BaseRollerMenu implements MenuModel
 		RollerRequest rreq = RollerRequest.getRollerRequest(req);
 		try
 		{
-			UserData user = rreq.getAuthenticatedUser();
+			UserData user = RollerSession.getRollerSession(req).getAuthenticatedUser();
 			String fid = 
                 rreq.getFolder()==null ? null : rreq.getFolder().getId();
 			if ( user != null ) 

@@ -9,8 +9,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -22,6 +22,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.config.RollerRuntimeConfig;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.UserData;
@@ -29,8 +30,8 @@ import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.forms.WebsiteForm;
+import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.website.formbeans.WebsiteFormEx;
 
 
@@ -70,24 +71,25 @@ public final class WebsiteFormAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
-                UserData ud = rreq.getAuthenticatedUser();
+                UserData ud = RollerSession.getRollerSession(request).getAuthenticatedUser();
                 request.setAttribute("user",ud);
 
-                WebsiteData hd = rreq.getCurrentWebsite();
+                WebsiteData hd = RollerSession.getRollerSession(request).getCurrentWebsite();
                 WebsiteForm wf = (WebsiteFormEx)actionForm;
                 wf.copyFrom(hd, request.getLocale());
 
-                List cd = rreq.getRoller().getWeblogManager()
-                   .getWeblogCategories(rreq.getCurrentWebsite(), true);
+                List cd = RollerFactory.getRoller().getWeblogManager()
+                   .getWeblogCategories(RollerSession.getRollerSession(request).getCurrentWebsite(), true);
                 request.setAttribute("categories",cd);
 
-                List bcd = rreq.getRoller().getWeblogManager()
-                    .getWeblogCategories(rreq.getCurrentWebsite(), true);
+                List bcd = RollerFactory.getRoller().getWeblogManager()
+                    .getWeblogCategories(RollerSession.getRollerSession(request).getCurrentWebsite(), true);
                 request.setAttribute("bloggerCategories",bcd);
 
-                List pages = rreq.getRoller().getUserManager().getPages(rreq.getCurrentWebsite());
+                List pages = RollerFactory.getRoller().getUserManager().getPages(RollerSession.getRollerSession(request).getCurrentWebsite());
                 request.setAttribute("pages",pages);
 
                 ServletContext ctx = request.getSession().getServletContext();
@@ -122,9 +124,10 @@ public final class WebsiteFormAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WeblogManager wmgr = rreq.getRoller().getWeblogManager();
-            UserManager umgr = rreq.getRoller().getUserManager();
-            if ( rreq.isUserAuthorizedToEdit() )
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() )
             {
                 WebsiteFormEx form = (WebsiteFormEx)actionForm;
                 
@@ -166,8 +169,8 @@ public final class WebsiteFormAction extends DispatchAction
                     }
                     
                     wd.save();
-                    rreq.getRoller().getRefererManager().applyRefererFilters(wd);                    
-                    rreq.getRoller().commit();
+                    RollerFactory.getRoller().getRefererManager().applyRefererFilters(wd);                    
+                    RollerFactory.getRoller().commit();
 
                     request.getSession().setAttribute(
                         RollerSession.STATUS_MESSAGE,

@@ -3,15 +3,6 @@
  */
 package org.roller.presentation.weblog.actions;
 
-import org.apache.struts.action.ActionMapping;
-import org.roller.RollerException;
-import org.roller.model.WeblogManager;
-import org.roller.pojos.WeblogCategoryData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.BasePageModel;
-import org.roller.presentation.RollerRequest;
-import org.roller.util.DateUtil;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -20,6 +11,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.action.ActionMapping;
+import org.roller.RollerException;
+import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
+import org.roller.pojos.WeblogCategoryData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.util.DateUtil;
+
 /**
  * All data needed to render the edit-weblog page.
  * @author David M Johnson
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 public class WeblogQueryPageModel extends BasePageModel
 {
     private RollerRequest rollerRequest = null;
+    private HttpServletRequest request = null;
     private WebsiteData website = null;
     private String category = null;
     private Date startDate = null;
@@ -47,12 +50,13 @@ public class WeblogQueryPageModel extends BasePageModel
     {
         super(request, response, mapping);
         rollerRequest = RollerRequest.getRollerRequest(request);
+        this.request = request;
         
         this.website = website;
         
         if (null != categoryId && !categoryId.equals("")) 
         {
-            WeblogManager wmgr = rollerRequest.getRoller().getWeblogManager();
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             WeblogCategoryData cd = wmgr.retrieveWeblogCategory(categoryId);
             category = cd.getPath();          
         }
@@ -100,7 +104,7 @@ public class WeblogQueryPageModel extends BasePageModel
      */
     public List getRecentWeblogEntries() throws RollerException
     {
-        return rollerRequest.getRoller().getWeblogManager().getWeblogEntries(
+        return RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
                     website,
                     startDate,
                     endDate,
@@ -111,8 +115,9 @@ public class WeblogQueryPageModel extends BasePageModel
 
     public List getCategories() throws Exception
     {
-        List categories = rollerRequest.getRoller().getWeblogManager()
-            .getWeblogCategories(rollerRequest.getCurrentWebsite());
+        RollerSession rollerSession = RollerSession.getRollerSession(request);
+        List categories = RollerFactory.getRoller().getWeblogManager()
+            .getWeblogCategories(rollerSession.getCurrentWebsite());
         return categories;
     }
 

@@ -1,7 +1,6 @@
 
 package org.roller.presentation.tags.menu;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import javax.servlet.ServletContext;
@@ -12,7 +11,6 @@ import javax.servlet.jsp.PageContext;
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.util.RequestUtils;
-import org.roller.RollerException;
 import org.roller.presentation.RollerContext;
 
 

@@ -2,6 +2,7 @@ package org.roller.presentation.velocity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.velocity.VelocityContext;
 import org.roller.pojos.PageData;
 

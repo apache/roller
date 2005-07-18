@@ -20,6 +20,7 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.roller.RollerException;
 import org.roller.model.FileManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
@@ -69,7 +70,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
 
         WebsiteData website = validate(blogid, userid,password);
         RollerRequest rreq = RollerRequest.getRollerRequest();
-        Roller roller = rreq.getRoller();
+        Roller roller = RollerFactory.getRoller();
         try
         {
             Hashtable result = new Hashtable();
@@ -112,7 +113,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         mLogger.info("     UserId: " + userid);
         mLogger.info("    Publish: " + publish);
 
-        Roller roller = RollerRequest.getRollerRequest().getRoller();
+        Roller roller = RollerFactory.getRoller(); 
         WeblogManager weblogMgr = roller.getWeblogManager();
         WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
 
@@ -213,7 +214,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
 
         try
         {
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             WeblogManager weblogMgr = roller.getWeblogManager();
 
             Timestamp current = new Timestamp(System.currentTimeMillis());
@@ -274,7 +275,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         mLogger.info("     PostId: " + postid);
         mLogger.info("     UserId: " + userid);
 
-        Roller roller = RollerRequest.getRollerRequest().getRoller();
+        Roller roller = RollerFactory.getRoller(); 
         WeblogManager weblogMgr = roller.getWeblogManager();
         WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
         
@@ -319,7 +320,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
             
             byte[] bits = (byte[]) struct.get("bits");
 
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             FileManager fmgr = roller.getFileManager();
             RollerMessages msgs = new RollerMessages();
             
@@ -380,7 +381,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         {
             Vector results = new Vector();
 
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             WeblogManager weblogMgr = roller.getWeblogManager();
             if (website != null)
             {

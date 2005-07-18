@@ -8,18 +8,21 @@
 
 package org.roller.presentation.weblog.actions;
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
+import org.roller.config.PingConfig;
 import org.roller.model.PingTargetManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.PingTargetData;
 import org.roller.presentation.RollerRequest;
-import org.roller.config.PingConfig;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.forms.PingTargetForm;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Collections;
 
 /**
  * Administer custom ping targets.
@@ -52,13 +55,13 @@ public class CustomPingTargetsAction
     protected List getPingTargets(RollerRequest rreq) throws RollerException
     {
         HttpServletRequest req = rreq.getRequest();
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
 
         Boolean allowCustomTargets = new Boolean(!PingConfig.getDisallowCustomTargets());
         req.setAttribute("allowCustomTargets", allowCustomTargets);
 
         List customPingTargets = allowCustomTargets.booleanValue() ?
-            pingTargetMgr.getCustomPingTargets(rreq.getCurrentWebsite()) : Collections.EMPTY_LIST;
+            pingTargetMgr.getCustomPingTargets(RollerSession.getRollerSession(req).getCurrentWebsite()) : Collections.EMPTY_LIST;
 
         return customPingTargets;
     }
@@ -69,9 +72,10 @@ public class CustomPingTargetsAction
     protected PingTargetData createPingTarget(RollerRequest rreq, PingTargetForm pingTargetForm)
         throws RollerException
     {
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         return pingTargetMgr.createCustomPingTarget(
-            pingTargetForm.getName(), pingTargetForm.getPingUrl(), rreq.getCurrentWebsite());
+            pingTargetForm.getName(), pingTargetForm.getPingUrl(), 
+            RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite());
     }
 
 
@@ -80,6 +84,7 @@ public class CustomPingTargetsAction
      */
     protected boolean hasRequiredRights(RollerRequest rreq) throws RollerException
     {
-        return (rreq.isUserAuthorizedToEdit() && !PingConfig.getDisallowCustomTargets());
+        RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
+        return (rollerSession.isUserAuthorizedToEdit() && !PingConfig.getDisallowCustomTargets());
     }
 }

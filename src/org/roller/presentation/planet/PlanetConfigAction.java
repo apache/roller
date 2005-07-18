@@ -32,15 +32,15 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.roller.presentation.forms.PlanetConfigForm;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.PlanetManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.PlanetConfigData;
 import org.roller.pojos.PlanetGroupData;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.planet.RefreshEntriesTask;
-import org.roller.presentation.planet.SyncWebsitesTask;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.forms.PlanetConfigForm;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
@@ -66,9 +66,9 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = rreq.getRoller();
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 PlanetConfigData config = planet.getConfiguration();
                 PlanetConfigForm form = (PlanetConfigForm)actionForm;
@@ -106,9 +106,9 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = rreq.getRoller();
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 PlanetConfigData config = planet.getConfiguration();
                 if (config == null)
@@ -160,9 +160,9 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = rreq.getRoller();
+                Roller roller = RollerFactory.getRoller();
                 RefreshEntriesTask task = new RefreshEntriesTask();
                 task.init(roller, "dummy");
                 roller.getThreadManager().executeInBackground(task);
@@ -194,9 +194,9 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = (Roller)rreq.getRoller();
+                Roller roller = (Roller)RollerFactory.getRoller();
                 SyncWebsitesTask task = new SyncWebsitesTask();
                 task.init(roller, "dummy");
                 roller.getThreadManager().executeInBackground(task);

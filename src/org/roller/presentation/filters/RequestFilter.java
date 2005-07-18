@@ -1,15 +1,5 @@
 package org.roller.presentation.filters;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.struts.Globals;
-import org.roller.RollerException;
-import org.roller.model.Roller;
-import org.roller.model.UserManager;
-import org.roller.presentation.util.RequestUtil;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -25,6 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.core.Config;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.Globals;
+import org.roller.RollerException;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.util.RequestUtil;
 
 
 /**
@@ -103,10 +104,10 @@ public class RequestFilter implements Filter
                 {
                     session.removeAttribute(RollerRequest.LOGIN_COOKIE);
 
-                    UserManager mgr = rreq.getRoller().getUserManager();
+                    UserManager mgr = RollerFactory.getRoller().getUserManager();
 
                     String loginCookie = mgr.createLoginCookie(username);
-                    rreq.getRoller().commit();
+                    RollerFactory.getRoller().commit();
                     RequestUtil.setCookie(response, RollerRequest.LOGIN_COOKIE,
                                           loginCookie, request.getContextPath());
                 }
