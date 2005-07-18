@@ -24,6 +24,7 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.MainPageAction;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.weblog.formbeans.ImportEntriesForm;
 import org.roller.util.StringUtils;
@@ -50,7 +51,8 @@ public class ImportEntriesAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( !rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
+            if ( !rollerSession.isUserAuthorizedToEdit() )
             {
                 forward = mapping.findForward("access-denied");
             }
@@ -61,7 +63,7 @@ public class ImportEntriesAction extends DispatchAction
                 if (StringUtils.isNotEmpty(form.getImportFileName()))
                 {
                     // "default" values
-                    WebsiteData website = rreq.getCurrentWebsite();
+                    WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
 
                     // load selected file
                     ServletContext app = this.getServlet().getServletConfig().getServletContext();
@@ -70,7 +72,7 @@ public class ImportEntriesAction extends DispatchAction
                                       "/" + form.getImportFileName());
 
                     //ArchiveParser archiveParser =
-                        //new ArchiveParser(rreq.getRoller(), rreq.getWebsite(), f);
+                        //new ArchiveParser(RollerFactory.getRoller(), rreq.getWebsite(), f);
                     String parseMessages = null; // archiveParser.parse();
 
                     // buf will be non-zero if Entries were imported
@@ -126,7 +128,9 @@ public class ImportEntriesAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( !rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(
+                    rreq.getRequest());
+            if ( !rollerSession.isUserAuthorizedToEdit() )
             {
                 forward = mapping.findForward("access-denied");
             }
@@ -147,7 +151,7 @@ public class ImportEntriesAction extends DispatchAction
     {
 		ServletContext app = this.getServlet().getServletConfig().getServletContext();
 		String dir = RollerContext.getUploadDir( app );
-		File d = new File(dir + rreq.getCurrentWebsite().getHandle());
+		File d = new File(dir + RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite().getHandle());
 		ArrayList xmlFiles = new ArrayList();
 		if (d.mkdirs() || d.exists())
 		{

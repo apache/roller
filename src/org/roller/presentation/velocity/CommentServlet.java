@@ -29,11 +29,11 @@ import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.IndexManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.PageData;
-import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.LanguageUtil;
@@ -106,7 +106,7 @@ public class CommentServlet extends PageServlet
                 JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
             RollerRequest rreq= RollerRequest.getRollerRequest(pageContext);
-            UserManager userMgr = rreq.getRoller().getUserManager();
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
             WebsiteData website = rreq.getWebsite();
                 
             // Request specifies popup
@@ -179,7 +179,7 @@ public class CommentServlet extends PageServlet
             request.setAttribute(RollerRequest.OWNING_WEBSITE, website);
 
             // Save comment
-            WeblogManager mgr = rreq.getRoller().getWeblogManager();
+            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             CommentFormEx cf = new CommentFormEx();
             CommentData cd = new CommentData();
             RequestUtils.populate(cf, request);
@@ -193,8 +193,8 @@ public class CommentServlet extends PageServlet
                 if (RollerContext.getCommentAuthenticator().authenticate(cd, request))
                 {
                     cd.save();
-                    rreq.getRoller().commit();
-                    reindexEntry(rreq.getRoller(), entry);
+                    RollerFactory.getRoller().commit();
+                    reindexEntry(RollerFactory.getRoller(), entry);
 
                     // Refresh user's entries in page cache
                     PageCacheFilter.removeFromCache(request, website);

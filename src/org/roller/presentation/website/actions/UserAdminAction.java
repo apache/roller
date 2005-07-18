@@ -16,15 +16,13 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.roller.RollerException;
-import org.roller.business.search.operations.RebuildWebsiteIndexOperation;
-import org.roller.business.search.operations.RemoveWebsiteIndexOperation;
 import org.roller.model.IndexManager;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.website.formbeans.UserAdminForm;
 import org.roller.util.StringUtils;
 
@@ -60,10 +58,11 @@ public final class UserAdminAction extends UserBaseAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
-                UserManager mgr = rreq.getRoller().getUserManager();
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
                 
                 if (userForm != null && userForm.getUserName() != null)
                 {
@@ -122,13 +121,14 @@ public final class UserAdminAction extends UserBaseAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
-                UserManager mgr = rreq.getRoller().getUserManager();
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
                 
                 // Need system user to update user
-                rreq.getRoller().setUser(UserData.SYSTEM_USER);
+                RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
 
 			   UserData user = mgr.retrieveUser(userForm.getId());
                 userForm.copyTo(user, request.getLocale()); // doesn't copy password
@@ -150,7 +150,7 @@ public final class UserAdminAction extends UserBaseAction
                     {
                         try
                         {
-                            user.resetPassword(rreq.getRoller(), 
+                            user.resetPassword(RollerFactory.getRoller(), 
                                userForm.getPasswordText(), 
                                userForm.getPasswordConfirm());
                         }
@@ -163,7 +163,7 @@ public final class UserAdminAction extends UserBaseAction
                     
                     // Persist changes to user
                     mgr.storeUser( user );
-                    rreq.getRoller().commit(); 
+                    RollerFactory.getRoller().commit(); 
                     
                     msgs.add(ActionMessages.GLOBAL_MESSAGE,
                         new ActionMessage("userSettings.saved"));
@@ -198,13 +198,13 @@ public final class UserAdminAction extends UserBaseAction
             UserData ud) throws RollerException
     {
         // remove user's Entries from Lucene index
-        IndexManager indexManager = rreq.getRoller().getIndexManager();
-        WebsiteData website = rreq.getCurrentWebsite();
+        IndexManager indexManager = RollerFactory.getRoller().getIndexManager();
+        WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
         indexManager.removeWebsiteIndex(website); 
         
         // delete user from database
         ud.remove();
-        rreq.getRoller().commit();
+        RollerFactory.getRoller().commit();
         ud = null;
 
         request.getSession().setAttribute(
@@ -232,12 +232,13 @@ public final class UserAdminAction extends UserBaseAction
 		try
 		{
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() )
+             RollerSession rollerSession = RollerSession.getRollerSession(request);
+			if ( rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser() )
 			{
 				UserAdminForm uaf = (UserAdminForm)actionForm;
 				
 				// if admin requests an index be re-built, do it
-				IndexManager manager = rreq.getRoller().getIndexManager();								 
+				IndexManager manager = RollerFactory.getRoller().getIndexManager();								 
 				manager.rebuildWebsiteIndex();
  				request.getSession().setAttribute(
 					RollerSession.STATUS_MESSAGE,

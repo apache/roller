@@ -26,6 +26,7 @@ import org.roller.business.search.FieldConstants;
 import org.roller.business.search.operations.SearchOperation;
 import org.roller.model.IndexManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
@@ -97,7 +98,7 @@ public class SearchServlet extends BasePageServlet
             RollerRequest rreq = getRollerRequest(request, response);
             
             SearchOperation search = 
-                new SearchOperation(rreq.getRoller().getIndexManager());
+                new SearchOperation(RollerFactory.getRoller().getIndexManager());
             search.setTerm(request.getParameter("q"));
             ctx.put("term", request.getParameter("q"));
 
@@ -115,7 +116,7 @@ public class SearchServlet extends BasePageServlet
             }
 
             // execute search
-            executeSearch(rreq.getRoller(), search);
+            executeSearch(RollerFactory.getRoller(), search);
 
             Map searchResults = new TreeMap();
             if (search.getResultsCount() == -1)

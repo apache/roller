@@ -23,6 +23,7 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 
 /**
  * @jsp.tag name="FileUpload"
@@ -58,7 +59,7 @@ public class FileUploadTag extends TagSupport
             HttpServletRequest request =
                 (HttpServletRequest)pageContext.getRequest();
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WebsiteData website = rreq.getCurrentWebsite();
+            WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
             
             String maxDir = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
             String maxFile = RollerRuntimeConfig.getProperty("uploads.file.maxsize");

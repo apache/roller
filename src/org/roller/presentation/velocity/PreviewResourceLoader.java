@@ -1,5 +1,8 @@
 package org.roller.presentation.velocity;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,9 +11,6 @@ import org.apache.velocity.runtime.Runtime;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.roller.util.LRUCache2;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 /**
  * This is a simple template file loader that loads 

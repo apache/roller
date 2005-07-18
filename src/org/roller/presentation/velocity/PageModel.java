@@ -15,6 +15,7 @@ import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.BookmarkManager;
 import org.roller.model.RefererManager;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkComparator;
@@ -25,6 +26,7 @@ import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.util.StringUtils;
 
 /**
@@ -85,10 +87,10 @@ public class PageModel
         
         try
         {
-            mBookmarkMgr = rreq.getRoller().getBookmarkManager();
-            mRefererMgr  = rreq.getRoller().getRefererManager();
-            mUserMgr     = rreq.getRoller().getUserManager();
-            mWeblogMgr   = rreq.getRoller().getWeblogManager();
+            mBookmarkMgr = RollerFactory.getRoller().getBookmarkManager();
+            mRefererMgr  = RollerFactory.getRoller().getRefererManager();
+            mUserMgr     = RollerFactory.getRoller().getUserManager();
+            mWeblogMgr   = RollerFactory.getRoller().getWeblogManager();
            
             // Preload what we can for encapsulation.  What we cannot preload we
             // will use the Managers later to fetch.
@@ -319,7 +321,7 @@ public class PageModel
                 }
             }
             
-            ret = mRollerReq.getRoller().getWeblogManager().getWeblogEntryObjectMap(
+            ret = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
                             mRollerReq.getWebsite(),  
                             null,                     // startDate
                             day,                 // endDate
@@ -409,7 +411,7 @@ public class PageModel
                     catParam = null;
                 }
             }
-            WeblogManager mgr = mRollerReq.getRoller().getWeblogManager();
+            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             
             //ret = mgr.getRecentWeblogEntriesArray( 
                 //name, day, catParam, maxEntries, true );
@@ -440,6 +442,8 @@ public class PageModel
         {
             List refs = 
                 mRefererMgr.getReferersToDate(mRollerReq.getWebsite(), date);
+            RollerSession rollerSession = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
             
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
                 RefererData referer = (RefererData) rdItr.next();
@@ -449,7 +453,7 @@ public class PageModel
                     && StringUtils.isNotEmpty(excerpt) )
                 {
                     if (   referer.getVisible().booleanValue() 
-                        || this.mRollerReq.isUserAuthorizedToEdit() )
+                        || rollerSession.isUserAuthorizedToEdit() )
                     { 
                         referers.add(referer);
                     }
@@ -641,7 +645,9 @@ public class PageModel
     {
         try
         {
-            return mRollerReq.isUserAuthorizedToEdit();
+            RollerSession rollerSession = RollerSession.getRollerSession(
+                    mRollerReq.getRequest());
+            return rollerSession.isUserAuthorizedToEdit();
         }
         catch (Exception e)
         {

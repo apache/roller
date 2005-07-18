@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
 import org.roller.RollerException;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.PageData;
@@ -71,7 +72,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         mLogger.info("     PostId: " + postid);
         mLogger.info("     UserId: " + userid);
 
-        Roller roller = RollerRequest.getRollerRequest().getRoller();
+        Roller roller = RollerFactory.getRoller(); 
         WeblogManager weblogMgr = roller.getWeblogManager();
         WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
 
@@ -129,7 +130,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
 
         try
         {
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             UserManager userMgr = roller.getUserManager();
 
             PageData page = userMgr.retrievePage(templateType);
@@ -174,7 +175,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
 
         try
         {
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             UserManager userMgr = roller.getUserManager();
             PageData page = userMgr.retrievePage(templateType);
 
@@ -217,7 +218,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
 
         try
         {
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             UserManager userMgr = roller.getUserManager();
             UserData user = userMgr.getUser(userid);
 
@@ -291,7 +292,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
                 String contextUrl =
                     RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
                 
-                UserManager umgr = rreq.getRoller().getUserManager();
+                UserManager umgr = RollerFactory.getRoller().getUserManager();
                 UserData user = umgr.getUser(userid);
                 List websites = umgr.getWebsites(user, Boolean.TRUE);
                 Iterator iter = websites.iterator();
@@ -346,7 +347,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
             {
                 Timestamp current = new Timestamp(System.currentTimeMillis());
     
-                Roller roller = RollerRequest.getRollerRequest().getRoller();
+                Roller roller = RollerFactory.getRoller(); 
                 WeblogManager weblogMgr = roller.getWeblogManager();
                 WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
                 entry.setText(content);
@@ -409,7 +410,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest();
-            Roller roller = rreq.getRoller();
+            Roller roller = RollerFactory.getRoller();
 
             Timestamp current = new Timestamp(System.currentTimeMillis());
 
@@ -474,7 +475,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         {
             Vector results = new Vector();
 
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             WeblogManager weblogMgr = roller.getWeblogManager();
             if (website != null)
             {

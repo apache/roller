@@ -37,9 +37,11 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.model.PlanetManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.PlanetGroupData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.forms.PlanetGroupForm;
 
 
@@ -67,9 +69,9 @@ public final class PlanetGroupsAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = rreq.getRoller();
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
                 if (request.getParameter("groupHandle") != null)
@@ -106,13 +108,9 @@ public final class PlanetGroupsAction extends DispatchAction
         ActionForward forward = mapping.findForward("planetGroups.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = rreq.getRoller();
-                PlanetManager planet = roller.getPlanetManager();
-                PlanetGroupForm form = (PlanetGroupForm)actionForm;
-                
+                PlanetGroupForm form = (PlanetGroupForm)actionForm;              
                 form.doReset(mapping, request);
                 
                 request.setAttribute("model", 
@@ -140,9 +138,9 @@ public final class PlanetGroupsAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = rreq.getRoller();
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
                 if (form.getHandle() != null)
@@ -187,10 +185,10 @@ public final class PlanetGroupsAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
-                Roller roller = rreq.getRoller();
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 ActionErrors errors = validate(planet, form);
                 if (errors.isEmpty())
@@ -270,7 +268,7 @@ public final class PlanetGroupsAction extends DispatchAction
         {
             super(request, response, mapping);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            Roller roller = rreq.getRoller();
+            Roller roller = RollerFactory.getRoller();
             PlanetManager planet = roller.getPlanetManager();            
             PlanetGroupData externalGroup = planet.getGroup("external");
             if (externalGroup != null) 

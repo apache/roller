@@ -1,22 +1,6 @@
 
 package org.roller.presentation.website.actions;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMessages;
-import org.apache.struts.actions.DispatchAction;
-import org.roller.RollerException;
-import org.roller.model.UserManager;
-import org.roller.pojos.UserData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.MainPageAction;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.website.formbeans.UserAdminForm;
-import org.roller.presentation.website.formbeans.UserFormEx;
-import org.roller.util.Utilities;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
@@ -25,6 +9,22 @@ import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.actions.DispatchAction;
+import org.roller.RollerException;
+import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
+import org.roller.pojos.UserData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.website.formbeans.UserFormEx;
+import org.roller.util.Utilities;
 
 
 
@@ -93,7 +93,7 @@ public class UserBaseAction extends DispatchAction
         // prepare locales & timezones
         if (ud != null)
         {
-            UserManager mgr = rreq.getRoller().getUserManager();
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
             WebsiteData website = (WebsiteData)mgr.getWebsites(ud, null).get(0);
             //form.setLocale( website.getLocale() );
             //form.setTimezone( website.getTimezone() );
@@ -211,7 +211,7 @@ public class UserBaseAction extends DispatchAction
 //    protected void refreshIndexCache(HttpServletRequest request,
 //            RollerRequest rreq, UserAdminForm uaf) throws RollerException
 //    {
-//        WebsiteData website = rreq.getRoller().getUserManager().getWebsite(
+//        WebsiteData website = RollerFactory.getRoller().getUserManager().getWebsite(
 //                uaf.getUserName(), false);
 //        boolean refreshIndexCache = false;
 //        if (request.getParameter("userEnabled") == null)

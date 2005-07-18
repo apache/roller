@@ -3,17 +3,18 @@
  */
 package org.roller.presentation.weblog;
 
-import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.RollerRequest;
-
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
+
+import org.roller.model.RollerFactory;
+import org.roller.pojos.WeblogEntryData;
+import org.roller.presentation.RollerRequest;
 
 
 /**
@@ -131,7 +132,7 @@ public class TrackbackServlet extends HttpServlet
                 if (entry!=null && entry.getCommentsStillAllowed())
                 {
                     entry.addTrackback(url,title,excerpt,blogName);
-                    rreq.getRoller().commit();
+                    RollerFactory.getRoller().commit();
             
                     pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
                     pw.println("<response>");

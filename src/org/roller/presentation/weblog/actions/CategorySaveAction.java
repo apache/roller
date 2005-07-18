@@ -3,6 +3,9 @@
  */
 package org.roller.presentation.weblog.actions;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
@@ -10,13 +13,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.roller.RollerPermissionsException;
+import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.weblog.formbeans.WeblogCategoryFormEx;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @struts.action path="/editor/categorySave" name="weblogCategoryFormEx"
@@ -40,7 +42,7 @@ public class CategorySaveAction extends Action
         {
             WeblogCategoryFormEx form = (WeblogCategoryFormEx)actionForm;
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WeblogManager wmgr = rreq.getRoller().getWeblogManager();
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             
             WeblogCategoryData cd = null;
             if (null != form.getId() && !form.getId().trim().equals("")) 
@@ -51,14 +53,14 @@ public class CategorySaveAction extends Action
             else 
             {
                 cd = wmgr.createWeblogCategory();
-                cd.setWebsite(rreq.getCurrentWebsite());
+                cd.setWebsite(RollerSession.getRollerSession(request).getCurrentWebsite());
                 
                 String parentId = form.getParentId();
                 cd.setParent(wmgr.retrieveWeblogCategory(parentId));
             }
             form.copyTo(cd, request.getLocale());
             cd.save();
-            rreq.getRoller().commit();
+            RollerFactory.getRoller().commit();
             
             request.setAttribute(
                 RollerRequest.WEBLOGCATEGORYID_KEY, cd.getParent().getId());         

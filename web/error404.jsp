@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">    
-<%@ page import="org.roller.model.Roller" %>
+<% try { %><%@ page import="org.roller.model.Roller" %>
 <%@ page import="org.roller.pojos.UserData" %>
 <%@ page import="org.roller.presentation.RollerRequest" %>
 <%@ include file="/taglibs.jsp" %>

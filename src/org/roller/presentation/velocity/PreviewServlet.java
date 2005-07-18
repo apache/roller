@@ -1,11 +1,11 @@
 
 package org.roller.presentation.velocity;
 
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.context.Context;
 
 /**
  * Extend RollerServlet to load proper resource loader for page execution.

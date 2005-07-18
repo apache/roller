@@ -1,14 +1,15 @@
 package org.roller.presentation.velocity;
 
-import javax.servlet.http.HttpServletRequest; 
+import java.util.ResourceBundle;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.velocity.context.Context;
-import org.roller.pojos.CommentData;
-import org.roller.presentation.RollerSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import java.util.ResourceBundle;
+import org.apache.velocity.context.Context;
+import org.roller.pojos.CommentData;
 
 /**
  * Asks the commenter to answer a simple math question.

@@ -37,11 +37,12 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.model.PlanetManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.PlanetConfigData;
 import org.roller.pojos.PlanetGroupData;
 import org.roller.pojos.PlanetSubscriptionData;
 import org.roller.presentation.BasePageModel;
-import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.util.Technorati;
 
 
@@ -69,10 +70,9 @@ public final class PlanetSubscriptionsAction extends DispatchAction
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = rreq.getRoller();
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
                 if (request.getParameter("feedUrl") != null)
@@ -118,10 +118,9 @@ public final class PlanetSubscriptionsAction extends DispatchAction
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = rreq.getRoller();
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
                 
@@ -158,10 +157,10 @@ public final class PlanetSubscriptionsAction extends DispatchAction
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            //RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
-                Roller roller = rreq.getRoller();
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
                 if (form.getId() != null)
@@ -216,8 +215,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            Roller roller = rreq.getRoller();
+            Roller roller = RollerFactory.getRoller();
             PlanetManager planet = roller.getPlanetManager();
             PlanetSubscriptionFormEx form = (PlanetSubscriptionFormEx)actionForm;
             
@@ -227,7 +225,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
 
             PlanetGroupData targetGroup = planet.getGroup(groupHandle);
 
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
             {
 
                 PlanetSubscriptionData sub = null;
@@ -359,9 +357,6 @@ public final class PlanetSubscriptionsAction extends DispatchAction
                 ActionMapping mapping) throws RollerException
         {
             super(request, response, mapping);
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            Roller roller = rreq.getRoller();
-            PlanetManager planet = roller.getPlanetManager();
             if (group != null) 
             {
                 Set subsSet = group.getSubscriptions();

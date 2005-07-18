@@ -3,9 +3,13 @@
  */
 package org.roller.presentation.xmlrpc;
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
+import org.roller.config.RollerConfig;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
@@ -14,9 +18,6 @@ import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.util.Utilities;
-
-import java.io.Serializable;
-import org.roller.config.RollerConfig;
 
 /**
  * Base API handler does user validation, provides exception types, etc.
@@ -88,7 +89,7 @@ public class BaseAPIHandler implements Serializable
             // Get Roller request object for current thread
             RollerRequest rreq = RollerRequest.getRollerRequest();
             
-            UserManager userMgr = rreq.getRoller().getUserManager();
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
             website = userMgr.getWebsiteByHandle(blogid);
             user = userMgr.getUser(username);
             
@@ -112,7 +113,7 @@ public class BaseAPIHandler implements Serializable
     			   authenticated= user.getPassword().equals(password);
                 if (authenticated)
                 {
-                    rreq.getRoller().setUser(user);
+                    RollerFactory.getRoller().setUser(user);
                 }
             }
         }
@@ -152,7 +153,7 @@ public class BaseAPIHandler implements Serializable
             // Get Roller request object for current thread
             RollerRequest rreq = RollerRequest.getRollerRequest();
             
-            UserManager userMgr = rreq.getRoller().getUserManager();
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
             user = userMgr.getUser(username);
             
             enabled = user.getIsEnabled().booleanValue();
@@ -173,7 +174,7 @@ public class BaseAPIHandler implements Serializable
                 authenticated = user.getPassword().equals(password);
                 if (authenticated)
                 {
-                    rreq.getRoller().setUser(user);
+                    RollerFactory.getRoller().setUser(user);
                 }
             }
         }

@@ -1,13 +1,5 @@
 package org.roller.presentation.weblog.formbeans;
 
-import org.apache.commons.lang.StringUtils;
-import org.roller.RollerException;
-import org.roller.pojos.CommentData;
-import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.forms.WeblogEntryForm;
-import org.roller.util.DateUtil;
-
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -21,7 +13,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.roller.RollerException;
+import org.roller.pojos.CommentData;
 import org.roller.pojos.EntryAttributeData;
+import org.roller.pojos.WeblogEntryData;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.forms.WeblogEntryForm;
+import org.roller.util.DateUtil;
 
 /**
  * Extends the WeblogEntryForm so that additional properties may be added.
@@ -62,10 +63,10 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void initNew(HttpServletRequest request, HttpServletResponse response) 
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        if (rreq.getCurrentWebsite().getDefaultPlugins() != null)
+        if (RollerSession.getRollerSession(request).getCurrentWebsite().getDefaultPlugins() != null)
         {
             setPluginsArray(StringUtils.split(
-                    rreq.getCurrentWebsite().getDefaultPlugins(), ",") );
+                    RollerSession.getRollerSession(request).getCurrentWebsite().getDefaultPlugins(), ",") );
         }
         allowComments = Boolean.TRUE;
         updateTime = new Timestamp(new Date().getTime());

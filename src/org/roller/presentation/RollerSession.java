@@ -13,9 +13,9 @@ import org.apache.commons.collections.ArrayStack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
-import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 
@@ -41,6 +41,7 @@ public class RollerSession
     public static final String ERROR_MESSAGE   = "rollererror_message";
     public static final String STATUS_MESSAGE  = "rollerstatus_message";
 
+    //---------------------------------------------------------------- Construction
     /** 
      * Get RollerSession from request (and add user if not already present).
      */
@@ -68,8 +69,9 @@ public class RollerSession
         }
         return rollerSession;
     }
+
+    //-------------------------------------------------------------- Session events
     
-    //------------------------------------------------------------------------
     /** Create session's Roller instance */
     public void sessionCreated(HttpSessionEvent se)
     {
@@ -81,7 +83,6 @@ public class RollerSession
         rctx.sessionCreated(se);           
     }    
 
-    //------------------------------------------------------------------------
     public void sessionDestroyed(HttpSessionEvent se)
     {
         RollerContext rctx = RollerContext.getRollerContext(
@@ -91,13 +92,25 @@ public class RollerSession
         clearSession(se);        
     }
 
-    //------------------------------------------------------------------------
     /** Init session as if it was new */
     public void sessionDidActivate(HttpSessionEvent se)
     {
     }
 
-    //------------------------------------------------------------------------
+    /** Purge session before passivation. Because Roller currently does not
+     * support session recovery, failover, migration, or whatever you want
+     * to call it when sessions are saved and then restored at some later
+     * point in time.
+     */
+   public void sessionWillPassivate(HttpSessionEvent se)
+   {
+       clearSession(se);
+   }
+
+    //----------------------------------------------------------------- Breadcrumbs
+    
+    // TODO: eliminate breadcrumb stuff?
+    
     /**
      * Clear bread crumb trail.
      * @param req the request
@@ -112,7 +125,6 @@ public class RollerSession
         }
     }
     
-    //------------------------------------------------------------------------
     /**
      * Store the url of the latest request stored in the session.
      * @param useReferer If true try to return the "referer" header.
@@ -140,7 +152,6 @@ public class RollerSession
         return crumb;
     }
     
-    //------------------------------------------------------------------------
     /**
      * Store the url of the latest request stored in the session.
      * Else try to return the "referer" header.
@@ -150,18 +161,77 @@ public class RollerSession
         return getBreadCrumb(req,true);
     }
 
-    //------------------------------------------------------------------------
-    /** Purge session before passivation. Because Roller currently does not
-      * support session recovery, failover, migration, or whatever you want
-      * to call it when sessions are saved and then restored at some later
-      * point in time.
-      */
-    public void sessionWillPassivate(HttpSessionEvent se)
+    //-------------------------------------------------------- Authentication, etc.
+    
+    /**
+     * Authenticated user associated with this session.
+     */
+    public UserData getAuthenticatedUser()
     {
-        clearSession(se);
+        return authenticatedUser;
+    }
+    
+    /**
+     * Authenticated user associated with this session.
+     */
+    public void setAuthenticatedUser(UserData authenticatedUser)
+    {
+        this.authenticatedUser = authenticatedUser;
+    }
+    
+    /**
+     * Current website that user is working with.
+     */
+    public WebsiteData getCurrentWebsite()
+    {       
+        // ROLLER_2.0: allow user to pick current website instead of this...
+        /* if (currentWebsite == null) try 
+        {
+            Roller roller = RollerFactory.getRoller();
+            UserManager umgr = roller.getUserManager();
+            currentWebsite = (WebsiteData)
+                umgr.getWebsites(authenticatedUser, null).get(0);
+        }
+        catch (RollerException ignored) {} */
+        return currentWebsite;
     }
 
-    //------------------------------------------------------------------------    /*
+    /**
+     * Current website that user is working with.
+     */
+    public void setCurrentWebsite(WebsiteData currentWebsite)
+    {
+        this.currentWebsite = currentWebsite;
+    }
+
+    /** 
+     * Does our authenticated user have the global admin role? 
+     */
+    public boolean isAdminUser() throws RollerException
+    {
+        UserData user = getAuthenticatedUser();
+        if (user != null && user.hasRole("admin")) return true;
+        return false;
+    }
+
+    /** 
+     * Is our authenticated user authorized to edit objects in the current website. 
+     */
+    public boolean isUserAuthorizedToEdit() 
+        throws RollerException
+    {
+        UserData user = getAuthenticatedUser();
+        WebsiteData website = getCurrentWebsite();
+        if (website != null && user != null) 
+        {
+            return website.hasUserPermissions(user, 
+                (short)(PermissionsData.AUTHOR | PermissionsData.ADMIN));
+        }
+        return false;
+    }
+
+    //--------------------------------------------------------------------- Innards
+    
     private  void clearSession( HttpSessionEvent se )
     {
         HttpSession session = se.getSession();
@@ -177,44 +247,6 @@ public class RollerSession
                 mLogger.debug("EXCEPTION PURGING session attributes",e);
             }
         }
-    }
-    
-    /**
-     * Authenticated user associated with this session.
-     */
-    public UserData getAuthenticatedUser()
-    {
-        return authenticatedUser;
-    }
-    /**
-     * Authenticated user associated with this session.
-     */
-    public void setAuthenticatedUser(UserData authenticatedUser)
-    {
-        this.authenticatedUser = authenticatedUser;
-    }
-    /**
-     * Current website that user is working with.
-     */
-    public WebsiteData getCurrentWebsite()
-    {       
-        // ROLLER_2.0: allow user to pick website
-        if (currentWebsite == null) try 
-        {
-            Roller roller = RollerFactory.getRoller();
-            UserManager umgr = roller.getUserManager();
-            currentWebsite = (WebsiteData)
-                umgr.getWebsites(authenticatedUser, null).get(0);
-        }
-        catch (RollerException ignored) {}
-        return currentWebsite;
-    }
-    /**
-     * Current website that user is working with.
-     */
-    public void setCurrentWebsite(WebsiteData currentWebsite)
-    {
-        this.currentWebsite = currentWebsite;
-    }
+    }    
 }
 

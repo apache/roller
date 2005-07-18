@@ -35,7 +35,7 @@ request.setAttribute("popularWebsites",
 
             <span class="entryDetails">
 
-                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.user.userName}" />' class="entryDetails">
+                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.creator.userName}" />' class="entryDetails">
                 <str:truncateNicely upper="50" >
                    <c:out value="${post.website.name}" />
                 </str:truncateNicely></a> |
@@ -73,7 +73,7 @@ request.setAttribute("popularWebsites",
 
             <span class="entryDetails">
 
-                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.user.userName}" />' class="entryDetails">
+                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.creator.userName}" />' class="entryDetails">
                 <str:truncateNicely upper="50" >
                    <c:out value="${post.website.name}" />
                 </str:truncateNicely></a> |

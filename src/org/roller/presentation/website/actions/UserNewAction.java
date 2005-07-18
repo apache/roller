@@ -1,6 +1,14 @@
 
 package org.roller.presentation.website.actions;
 
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -11,24 +19,14 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.roller.RollerException;
+import org.roller.config.RollerRuntimeConfig;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
-import org.roller.presentation.MainPageAction;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.website.formbeans.UserFormEx;
 import org.roller.util.StringUtils;
-
-import java.io.IOException;
-import java.util.HashMap;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.roller.config.RollerRuntimeConfig;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
@@ -121,10 +119,10 @@ public class UserNewAction extends UserBaseAction
         else try
         {
             // Add new user
-            UserManager mgr = rreq.getRoller().getUserManager(); 
+            UserManager mgr = RollerFactory.getRoller().getUserManager(); 
             
             // Need system user to add new user
-            rreq.getRoller().setUser(UserData.SYSTEM_USER);
+            RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
 
             UserData ud = new UserData();
             form.copyTo(ud, request.getLocale()); // doesn't copy password
@@ -136,7 +134,7 @@ public class UserNewAction extends UserBaseAction
             if (    !StringUtils.isEmpty(form.getPasswordText()) 
                  && !StringUtils.isEmpty(form.getPasswordConfirm()))
             {
-               ud.resetPassword(rreq.getRoller(), 
+               ud.resetPassword(RollerFactory.getRoller(), 
                   form.getPasswordText(), form.getPasswordConfirm());
             }
             
@@ -144,7 +142,7 @@ public class UserNewAction extends UserBaseAction
             HashMap pages = rollerContext.readThemeMacros(theme);
             mgr.addUser(ud);
             mgr.createWebsite(ud, pages, theme, form.getLocale(), form.getTimezone());
-            rreq.getRoller().commit();
+            RollerFactory.getRoller().commit();
 
 			// Flush cache so user will immediately appear on index page
             //PageCacheFilter.removeFromCache( request, ud );

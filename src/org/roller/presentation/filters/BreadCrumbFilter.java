@@ -1,10 +1,5 @@
 package org.roller.presentation.filters;
 
-import org.apache.commons.collections.ArrayStack;
-import org.roller.presentation.RollerSession;
-import org.roller.util.StringUtils;
-import org.roller.util.Utilities;
-
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -17,9 +12,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.collections.ArrayStack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.config.RollerConfig;
+import org.roller.presentation.RollerSession;
+import org.roller.util.StringUtils;
+import org.roller.util.Utilities;
 
 /**
  * Intercepts requests and places URL

@@ -22,8 +22,9 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.model.IndexManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
 
 /**
@@ -70,11 +71,11 @@ public class MaintenanceAction extends DispatchAction
 	{
 		try
 		{
-			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+			if (rollerSession.isUserAuthorizedToEdit() )
 			{
-				WebsiteData website = rreq.getCurrentWebsite();
-				IndexManager manager = rreq.getRoller().getIndexManager();
+				WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
+				IndexManager manager = RollerFactory.getRoller().getIndexManager();
 				manager.rebuildWebsiteIndex(website);
 				
                 ActionMessages messages = new ActionMessages();
@@ -108,10 +109,10 @@ public class MaintenanceAction extends DispatchAction
     {
         try
         {
-			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+			if ( rollerSession.isUserAuthorizedToEdit() )
 			{
-	            PageCacheFilter.removeFromCache(request, rreq.getCurrentWebsite());
+	            PageCacheFilter.removeFromCache(request, RollerSession.getRollerSession(request).getCurrentWebsite());
 
                  ActionMessages messages = new ActionMessages();
                  messages.add(null, new ActionMessage("maintenance.message.flushed"));

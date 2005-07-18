@@ -1,5 +1,9 @@
 package org.roller.presentation.velocity;
 
+import java.io.InputStream;
+
+import javax.servlet.ServletContext;
+
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -7,10 +11,6 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.roller.presentation.RollerContext;
-
-import java.io.InputStream;
-
-import javax.servlet.ServletContext;
 
 /**
  * Tries to load Velocity resources from the Webapp.

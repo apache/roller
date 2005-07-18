@@ -3,15 +3,14 @@
  */
 package org.roller.presentation;
 
-import org.apache.struts.action.ActionMapping;
-import org.roller.RollerException;
-import org.roller.pojos.UserData;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.ActionMapping;
+import org.roller.RollerException;
 
 /**
  * Re-usable base for page models.
@@ -86,6 +85,6 @@ public class BasePageModel
     
     public boolean getIsAdmin() throws RollerException
     {
-        return RollerRequest.getRollerRequest(request).isAdminUser(); 
+        return RollerSession.getRollerSession(request).isAdminUser(); 
     }
 }

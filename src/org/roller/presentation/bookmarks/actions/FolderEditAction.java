@@ -3,19 +3,18 @@
  */
 package org.roller.presentation.bookmarks.actions;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.roller.model.BookmarkManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.FolderData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
-
-import java.util.LinkedList;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @struts.action path="/editor/folderEdit" name="folderFormEx" validate="false"
@@ -33,7 +32,7 @@ public class FolderEditAction extends Action
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        BookmarkManager bmgr = rreq.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         FolderFormEx form = (FolderFormEx)actionForm;
         
         FolderData parentFolder = null;

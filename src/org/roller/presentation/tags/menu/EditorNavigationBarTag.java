@@ -1,12 +1,13 @@
 
 package org.roller.presentation.tags.menu;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.presentation.RollerRequest;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
+import org.roller.presentation.RollerSession;
 
 
 /**
@@ -38,8 +39,8 @@ public class EditorNavigationBarTag extends MenuTag
 			HttpServletRequest request = 
 				(HttpServletRequest)pageContext.getRequest(); 
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-
-			if ( rreq.isUserAuthorizedToEdit() )
+			RollerSession rollerSession = RollerSession.getRollerSession(request);
+			if ( rollerSession.isUserAuthorizedToEdit() )
 			{
 				return super.doEndTag(pw);
 			}

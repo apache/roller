@@ -1,25 +1,5 @@
 package org.roller.presentation.website.actions;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
-import org.roller.RollerException;
-import org.roller.model.UserManager;
-import org.roller.pojos.PageData;
-import org.roller.pojos.UserData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.pagecache.PageCacheFilter;
-import org.roller.presentation.velocity.PreviewResourceLoader;
-import org.roller.presentation.website.ThemeCache;
-import org.roller.presentation.website.formbeans.ThemeEditorForm;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -33,7 +13,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.actions.DispatchAction;
+import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
+import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
+import org.roller.pojos.PageData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.velocity.PreviewResourceLoader;
+import org.roller.presentation.website.ThemeCache;
+import org.roller.presentation.website.formbeans.ThemeEditorForm;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -79,8 +79,9 @@ public class ThemeEditorAction extends DispatchAction
 		ActionForward forward = mapping.findForward("editTheme.page");
 		try
 		{
+             RollerSession rollerSession = RollerSession.getRollerSession(request);
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() )
+			if ( rollerSession.isUserAuthorizedToEdit() )
 			{
 				loadThemes( rreq, errors, true);
 				ThemeEditorForm teForm = (ThemeEditorForm)form;
@@ -122,7 +123,7 @@ public class ThemeEditorAction extends DispatchAction
 					(String)request.getSession(true).getAttribute(LAST_THEME)); 
                                 
 			     // load the current default page
-                PageData page = getDefaultPage( rreq );
+                PageData page = getDefaultPage( request );
 					teForm.setThemeTemplate( page.getTemplate() );
 					
 					
@@ -165,8 +166,9 @@ public class ThemeEditorAction extends DispatchAction
 		ActionForward forward = mapping.findForward("editTheme.page");
 		try
 		{
+             RollerSession rollerSession = RollerSession.getRollerSession(request);
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() )
+			if ( rollerSession.isUserAuthorizedToEdit() )
 			{
                 HttpSession session = request.getSession();
 				ThemeEditorForm teForm = (ThemeEditorForm)form;
@@ -187,7 +189,7 @@ public class ThemeEditorAction extends DispatchAction
 					clearThemePages(rreq, 
 						(String) session.getAttribute(LAST_THEME)); 
 						                   
-                    setThemePages(rreq, theme);
+                    setThemePages(request, theme);
 					session.setAttribute(LAST_THEME, theme);
 				}
                 else
@@ -206,9 +208,9 @@ public class ThemeEditorAction extends DispatchAction
 
 				// put the template where PreviewServlet
 				// will be able to find it
-				PageData page = getDefaultPage( rreq );			
+				PageData page = getDefaultPage( request );			
 				PreviewResourceLoader.setTemplate(page.getId(), 
-					teForm.getThemeTemplate(), rreq.getCurrentWebsite().getHandle() );
+					teForm.getThemeTemplate(), RollerSession.getRollerSession(request).getCurrentWebsite().getHandle() );
 				
 				// save the template in session for later editing
 				session.setAttribute(SESSION_TEMPLATE,
@@ -250,8 +252,9 @@ public class ThemeEditorAction extends DispatchAction
 		ActionForward forward = mapping.findForward("editTheme.page");
 		try
 		{
+             RollerSession rollerSession = RollerSession.getRollerSession(request);
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() )
+			if ( rollerSession.isUserAuthorizedToEdit() )
 			{
                  loadThemes( rreq, errors, true);
                  ThemeEditorForm teForm = (ThemeEditorForm)form;
@@ -260,7 +263,7 @@ public class ThemeEditorAction extends DispatchAction
                  RollerContext rollerContext = 
                                 RollerContext.getRollerContext( ctx );
                  
-                 WebsiteData website = rreq.getCurrentWebsite();
+                 WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
                 	
 				// load the template either from the Form
 				// or from the disk (if its a stock Theme).
@@ -282,8 +285,8 @@ public class ThemeEditorAction extends DispatchAction
                 request.getSession().removeAttribute(SESSION_TEMPLATE);
 
 				// store the template in the page
-				UserManager mgr = rreq.getRoller().getUserManager();
-				PageData page = getDefaultPage( rreq );
+				UserManager mgr = RollerFactory.getRoller().getUserManager();
+				PageData page = getDefaultPage( request );
 
 				page.setTemplate( template );
 				mgr.storePage( page);
@@ -291,10 +294,10 @@ public class ThemeEditorAction extends DispatchAction
                 saveThemePages( rreq, theme);
                 
                 // put them into the PreviewResourceLoader also
-                setThemePages(rreq, theme);
+                setThemePages(request, theme);
 
 				// clear the page cache
-				PageCacheFilter.removeFromCache(request, rreq.getCurrentWebsite());
+				PageCacheFilter.removeFromCache(request, RollerSession.getRollerSession(request).getCurrentWebsite());
 				teForm.setThemeName("Custom");
 			}
 			else
@@ -332,11 +335,12 @@ public class ThemeEditorAction extends DispatchAction
 		ActionForward forward = mapping.findForward("editTheme");
 		try
 		{
+             RollerSession rollerSession = RollerSession.getRollerSession(request);
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() )
+			if ( rollerSession.isUserAuthorizedToEdit() )
 			{
 				// clear the page cache
-				WebsiteData website = rreq.getCurrentWebsite();
+				WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
 				PageCacheFilter.removeFromCache( request, website );
                  ThemeEditorForm teForm = (ThemeEditorForm)form;
 								
@@ -413,12 +417,12 @@ public class ThemeEditorAction extends DispatchAction
 	 * @param rreq
 	 * @return PageData
 	 */
-	private PageData getDefaultPage(RollerRequest rreq) throws RollerException
+	private PageData getDefaultPage(HttpServletRequest request) throws RollerException
 	{
 		try
 		{
-			UserManager mgr = rreq.getRoller().getUserManager();
-			WebsiteData wd = rreq.getCurrentWebsite();
+			UserManager mgr = RollerFactory.getRoller().getUserManager();
+			WebsiteData wd = RollerSession.getRollerSession(request).getCurrentWebsite();
 			String defaultPageId = wd.getDefaultPageId();
 			return mgr.retrievePage( defaultPageId );
 		}
@@ -436,11 +440,11 @@ public class ThemeEditorAction extends DispatchAction
      * @param theme
      * @throws RollerException
      */
-    private void setThemePages( RollerRequest rreq, String theme )
+    private void setThemePages( HttpServletRequest request, String theme )
        throws RollerException
     {
         RollerContext rollerContext = 
-           RollerContext.getRollerContext(rreq.getRequest());
+           RollerContext.getRollerContext(request);
            
         try
         {        
@@ -450,10 +454,10 @@ public class ThemeEditorAction extends DispatchAction
             {
                 String pageName = (String) iter.next();
                 String sb = (String)pages.get( pageName );
-                UserManager umgr = rreq.getRoller().getUserManager();
-                WebsiteData website = rreq.getCurrentWebsite();
+                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
                 String handle = website.getHandle();
-                PageData page = umgr.getPageByName( rreq.getCurrentWebsite(), pageName );
+                PageData page = umgr.getPageByName( RollerSession.getRollerSession(request).getCurrentWebsite(), pageName );
                 if (page != null)
                 {
                     PreviewResourceLoader.setTemplate(page.getId(),sb, handle);
@@ -495,7 +499,7 @@ public class ThemeEditorAction extends DispatchAction
         try
         {
             //UserData ud = rreq.getUser();
-            UserManager mgr = rreq.getRoller().getUserManager();
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
             //String username = ud.getUserName();
         
             String themeDir = rollerContext.getThemePath(theme);        
@@ -509,7 +513,8 @@ public class ThemeEditorAction extends DispatchAction
                 String pageName = children[i].substring(
                     0,children[i].length()-3);
     
-                PageData page = mgr.getPageByName(rreq.getCurrentWebsite(), pageName);
+                PageData page = mgr.getPageByName(
+                        RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite(), pageName);
                 if (page != null)
                 {
                     PreviewResourceLoader.clearTemplate( page.getId() );
@@ -548,8 +553,8 @@ public class ThemeEditorAction extends DispatchAction
            
         try
         {
-            UserManager mgr = rreq.getRoller().getUserManager();
-            WebsiteData website = rreq.getCurrentWebsite();
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            WebsiteData website = RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite();
         
             HashMap pages = rollerContext.readThemeMacros(theme);
             Iterator iter = pages.keySet().iterator();
@@ -558,7 +563,8 @@ public class ThemeEditorAction extends DispatchAction
                 String pageName = (String) iter.next();
                 String pageContent = (String)pages.get( pageName );
     
-                PageData page = mgr.getPageByName( rreq.getCurrentWebsite(), pageName );
+                PageData page = mgr.getPageByName( 
+                        RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite(), pageName );
                 if (page != null)
                 {
                     // User already has page by that name, so overwrite it.
@@ -578,7 +584,7 @@ public class ThemeEditorAction extends DispatchAction
                     mgr.storePage( page );
                 }
             }
-            rreq.getRoller().commit();
+            RollerFactory.getRoller().commit();
         }
         catch (Exception e)
         {

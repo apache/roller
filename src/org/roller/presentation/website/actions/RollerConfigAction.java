@@ -48,7 +48,8 @@ public final class RollerConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser() )
             {
                 RollerConfigData rollerConfig = RollerFactory.getRoller().getConfigManager().getRollerConfig();
                 RollerConfigFormEx rcForm = (RollerConfigFormEx)actionForm;
@@ -80,7 +81,8 @@ public final class RollerConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if ( rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser() )
             {
                 RollerConfigFormEx rcForm = (RollerConfigFormEx)actionForm;
                                     				
@@ -89,9 +91,9 @@ public final class RollerConfigAction extends DispatchAction
                 rcForm.copyTo(rollerConfig, request.getLocale());
                 
                 // persist
-                rreq.getRoller().getConfigManager().storeRollerConfig(rollerConfig);
-                rreq.getRoller().getRefererManager().applyRefererFilters();
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().getConfigManager().storeRollerConfig(rollerConfig);
+                RollerFactory.getRoller().getRefererManager().applyRefererFilters();
+                RollerFactory.getRoller().commit();
                 
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(null, new ActionMessage("weblogEdit.changesSaved"));
@@ -129,7 +131,7 @@ public final class RollerConfigAction extends DispatchAction
 		try {
 			// if admin requests an index be re-built, do it
              RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			IndexManager manager = rreq.getRoller().getIndexManager();
+			IndexManager manager = RollerFactory.getRoller().getIndexManager();
 										 
 			manager.rebuildWebsiteIndex();
 			request.getSession().setAttribute(

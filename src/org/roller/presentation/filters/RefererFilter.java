@@ -1,11 +1,5 @@
 package org.roller.presentation.filters;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.roller.model.RefererManager;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
-
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -16,6 +10,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.model.RefererManager;
+import org.roller.model.RollerFactory;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
 
 
 
@@ -92,7 +93,7 @@ public class RefererFilter implements Filter
                    )
                 {
                     RefererManager refMgr = 
-                        rreq.getRoller().getRefererManager();
+                        RollerFactory.getRoller().getRefererManager();
                     isRefSpammer = refMgr.processRequest(rreq);
                 }
                 else

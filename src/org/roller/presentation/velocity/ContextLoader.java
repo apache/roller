@@ -30,7 +30,6 @@ import org.roller.model.RollerFactory;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.PageData;
 import org.roller.pojos.RollerPropertyData;
-import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.LanguageUtil;
@@ -157,7 +156,7 @@ public class ContextLoader
     {
         // if there is an "_entry" page, only load it once
         WebsiteData website = 
-            rreq.getRoller().getUserManager().getWebsiteByHandle(handle);
+            RollerFactory.getRoller().getUserManager().getWebsiteByHandle(handle);
         PageModel pageModel = (PageModel)ctx.get("pageModel");
         if (website != null && pageModel != null) 
         {
@@ -210,7 +209,9 @@ public class ContextLoader
     {
         try
         {
-            return mRollerReq.isUserAuthorizedToEdit();
+            RollerSession rollerSession = RollerSession.getRollerSession(
+                    mRollerReq.getRequest());
+            return rollerSession.isUserAuthorizedToEdit();
         }
         catch (Exception e)
         {

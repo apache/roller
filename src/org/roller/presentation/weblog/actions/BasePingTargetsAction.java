@@ -8,23 +8,25 @@
 
 package org.roller.presentation.weblog.actions;
 
-import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMessages;
-import org.apache.struts.action.ActionMessage;
-import org.apache.commons.logging.Log;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.forms.PingTargetForm;
-import org.roller.model.PingTargetManager;
-import org.roller.pojos.PingTargetData;
-import org.roller.RollerException;
+import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.actions.DispatchAction;
+import org.roller.RollerException;
+import org.roller.model.PingTargetManager;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.PingTargetData;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.forms.PingTargetForm;
 
 /**
  * Base class for both common and custom ping target operations.  The methods here apply to
@@ -111,7 +113,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         PingTargetForm pingTargetForm = (PingTargetForm) form;
         try
         {
@@ -143,7 +145,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
 
             // Appears to be ok.  Save it, commit and return refreshed view of target list.
             pingTarget.save();
-            rreq.getRoller().commit();
+            RollerFactory.getRoller().commit();
             return view(mapping, form, req, res);
         }
         catch (Exception e)
@@ -252,7 +254,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         PingTargetForm pingTargetForm = (PingTargetForm) form;
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         try
         {
             if (!hasRequiredRights(rreq))
@@ -265,7 +267,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
                 throw new RollerException("Missing ping target id.");
             }
             pingTargetMgr.removePingTarget(pingTargetId);
-            rreq.getRoller().commit();
+            RollerFactory.getRoller().commit();
             return view(mapping, form, req, res);
         }
         catch (Exception e)
@@ -285,7 +287,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
     private PingTargetData select(RollerRequest rreq) throws RollerException
     {
         String pingTargetId = rreq.getRequest().getParameter(RollerRequest.PINGTARGETID_KEY);
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         if (pingTargetId == null || pingTargetId.length() == 0)
         {
             throw new RollerException("Missing ping target id: " + pingTargetId);
@@ -311,7 +313,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
     {
         ActionMessages errors = new ActionMessages();
 
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         if (!pingTargetMgr.isNameUnique(pingTarget))
         {
             errors.add(ActionMessages.GLOBAL_MESSAGE,
