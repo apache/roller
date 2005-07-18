@@ -37,7 +37,7 @@
 
     <div id="content">
     <% 
-    Roller roller = RollerRequest.getRollerRequest(request).getRoller();
+    Roller roller = RollerFactory.getRoller();
     String userName = roller.getUser().getUserName();
     if (    !userName.equals(UserData.ANONYMOUS_USER.getUserName()) 
          && !userName.equals(UserData.SYSTEM_USER.getUserName())) { %>    
