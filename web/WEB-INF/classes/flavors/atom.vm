@@ -2,7 +2,10 @@ $pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>$utilities.textToHTML($website.name,true)</title>
     <subtitle>$utilities.textToHTML($website.description,true)</subtitle>
+    <id>$absBaseURL/flavor/${entry.website.user.userName}?flavor=atom</id>
     <link rel="alternate" type="text/html" href="$websiteURL" />
+    <link rel="self" type="application/atom+xml" 
+       href="$absBaseURL/flavor/${entry.website.user.userName}?flavor=atom" />
     <updated>$utilities.formatIso8601Date($updateTime)</updated>
     <generator uri="http://www.rollerweblogger.org" version="#showVersion() ($rollerBuildTime:$rollerBuildUser)">
        Roller Weblogger
@@ -15,7 +18,7 @@ $pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1
     #foreach( $entry in $entries )
     <entry>
         <title>$utilities.textToHTML($entry.title,true)</title>
-        <id>tag:$host,$utilities.formatIso8601Day($entry.pubTime):/$entry.website.user.userName?entry=$utilities.textToHTML($entry.anchor)</id>
+        <id>$absBaseURL$entry.permaLink</id>
         <link rel="alternate" type="text/html" href="$absBaseURL$entry.permaLink"/>
         <published>$utilities.formatIso8601Date($entry.pubTime)</published>
         <updated>$utilities.formatIso8601Date($entry.updateTime)</updated>
