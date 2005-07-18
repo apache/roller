@@ -3,9 +3,9 @@
 String username = "";
 try
 {
-    RollerRequest rreq = RollerRequest.getRollerRequest(request);
-    UserData ud = rreq.getUser();
-    username = ud.getUserName();
+    RollerSession rollerSession = RollerSession.getRollerSession(request);
+    WebsiteData wd = rollerSession.getCurrentWebsite();
+    username = wd.getHandle();
 }
 catch (Exception e)
 {

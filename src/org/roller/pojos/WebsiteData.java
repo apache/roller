@@ -692,7 +692,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         }
         if (userPerms != null && !userPerms.isPending())
         {
-            if (userPerms != null && (userPerms.getPermissionMask() & mask) > 0) 
+            if (userPerms != null && (userPerms.getPermissionMask() & mask) == mask) 
             {
                 return true;
             }
