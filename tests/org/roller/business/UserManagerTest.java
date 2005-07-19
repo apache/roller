@@ -238,7 +238,8 @@ public class UserManagerTest  extends RollerTestBase
         assertNotNull(root);
 
         List pages1 = getRoller().getUserManager().getPages(website);
-        assertEquals(3, pages1.size());
+        // new registrations require a theme, so no pages are created -- Allen G
+        assertEquals(0, pages1.size());
         getRoller().rollback();
 
         // Remove the user
