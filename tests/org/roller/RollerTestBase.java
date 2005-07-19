@@ -21,9 +21,11 @@ import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
+import org.roller.pojos.Theme;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 
 /**
@@ -130,7 +132,38 @@ public abstract class RollerTestBase extends TestCase
         pages.put("Weblog","Weblog page content");
         pages.put("_day","Day page content");
         pages.put("css","CSS page content");
-        umgr.addUser(ud, pages, "basic", "en_US_WIN", "America/Los_Angeles");
+        umgr.addUser(ud, pages, Theme.CUSTOM, "en_US_WIN", "America/Los_Angeles");
+        
+        // the addUser method no longer creates pages, so we add them manually
+        WebsiteData website = umgr.getWebsite(username);
+        Iterator iter = pages.keySet().iterator();
+        while ( iter.hasNext() )
+        {
+            String pageName = (String) iter.next();
+            String sb = (String)pages.get( pageName );
+              
+            // Store each Velocity template as a page
+            WeblogTemplate pd = new WeblogTemplate( null,
+                website,         // website
+                pageName,        // name
+                pageName,        // description
+                pageName,        // link
+                sb,              // template
+                new Date()       // updateTime                
+            );
+            umgr.storePage(pd);
+            
+            if ( pd.getName().equals("Weblog") )
+            {  
+                website.setDefaultPageId(pd.getId());                 
+            }
+            else if ( pd.getName().equals("_day") )
+            {
+                website.setWeblogDayPageId(pd.getId());                 
+            }                
+        }
+        website.save();
+        
         return ud;
     }
 
