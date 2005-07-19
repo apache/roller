@@ -7,7 +7,7 @@
 package org.roller.presentation.velocity.wrappers;
 
 import java.util.Date;
-import org.roller.model.Template;
+import org.roller.pojos.Template;
 
 
 /**

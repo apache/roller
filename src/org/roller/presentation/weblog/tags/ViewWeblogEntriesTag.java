@@ -111,7 +111,7 @@ public class ViewWeblogEntriesTag
             String pid = null; 
             if ( mDayTemplate != null )
             {
-                org.roller.model.Template page = website.getPageByLink(mDayTemplate);
+                org.roller.pojos.Template page = website.getPageByLink(mDayTemplate);
                 if (page != null)
                 {
                     pid = page.getId();

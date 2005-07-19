@@ -97,7 +97,7 @@ public class PreviewServlet extends BasePageServlet {
             else
                 tmpWebsite.setEditorTheme(Theme.CUSTOM);
             
-            org.roller.model.Template page = null;
+            org.roller.pojos.Template page = null;
             
             page = tmpWebsite.getDefaultPage();
             

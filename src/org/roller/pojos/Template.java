@@ -4,7 +4,7 @@
  * Created on June 27, 2005, 11:59 AM
  */
 
-package org.roller.model;
+package org.roller.pojos;
 
 import java.util.Date;
 

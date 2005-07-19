@@ -8,7 +8,7 @@ package org.roller.pojos;
 
 import java.io.Serializable;
 import java.util.Date;
-import org.roller.model.Template;
+import org.roller.pojos.Template;
 
 
 /**

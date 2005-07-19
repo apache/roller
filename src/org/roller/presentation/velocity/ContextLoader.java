@@ -27,7 +27,7 @@ import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
-import org.roller.model.Template;
+import org.roller.pojos.Template;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.RollerPropertyData;
 import org.roller.pojos.UserData;

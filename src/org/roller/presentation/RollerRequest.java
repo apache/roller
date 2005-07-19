@@ -19,7 +19,7 @@ import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.ParsedRequest;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
-import org.roller.model.Template;
+import org.roller.pojos.Template;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
@@ -764,7 +764,7 @@ public class RollerRequest implements ParsedRequest
     /**
      * Allow comment servlet to inject page that it has chosen.
      */
-    public void setPage(org.roller.model.Template page) 
+    public void setPage(org.roller.pojos.Template page) 
     {
         mPage = page;
     }

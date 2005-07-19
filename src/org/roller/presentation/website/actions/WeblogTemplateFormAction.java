@@ -21,7 +21,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.model.UserManager;
-import org.roller.model.Template;
+import org.roller.pojos.Template;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
