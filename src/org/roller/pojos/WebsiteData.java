@@ -15,7 +15,7 @@ import java.util.TimeZone;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.ThemeNotFoundException;
-import org.roller.model.Template;
+import org.roller.pojos.Template;
 import org.roller.model.ThemeManager;
 import org.roller.model.UserManager;
 

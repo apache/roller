@@ -74,7 +74,7 @@ public abstract class BasePageServlet extends VelocityServlet {
                 website = rreq.getWebsite();
             }
             
-            org.roller.model.Template page = null;
+            org.roller.pojos.Template page = null;
             
             // If request specified the page, then go with that
             if (rreq.getPage() != null &&
@@ -127,7 +127,7 @@ public abstract class BasePageServlet extends VelocityServlet {
     protected Template prepareForPageExecution(Context ctx,
             RollerRequest rreq,
             HttpServletResponse response,
-            org.roller.model.Template page) throws Exception {
+            org.roller.pojos.Template page) throws Exception {
         
         Template outty = null;
         
@@ -154,7 +154,7 @@ public abstract class BasePageServlet extends VelocityServlet {
         throws Exception {
         
         Template decorator = null;
-        org.roller.model.Template decorator_template = null;
+        org.roller.pojos.Template decorator_template = null;
         
         // check for user-specified decorator
         if (decorator_name != null) {

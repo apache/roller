@@ -15,7 +15,7 @@ import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.BookmarkManager;
 import org.roller.model.RefererManager;
-import org.roller.model.Template;
+import org.roller.pojos.Template;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkComparator;

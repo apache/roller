@@ -110,7 +110,7 @@ public class CommentServlet extends PageServlet
             WebsiteData website = rreq.getWebsite();
                 
             // Request specifies popup
-            org.roller.model.Template page = null;
+            org.roller.pojos.Template page = null;
             Exception pageException = null;
             try 
             {
@@ -354,6 +354,8 @@ public class CommentServlet extends PageServlet
         boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
         if (notify && site.getEmailComments().booleanValue())
         {
+            mLogger.debug("Comment notification enabled ... preparing email");
+            
             // Determine message and addressing options from init parameters
             boolean separateMessages = 
                     RollerConfig.getBooleanProperty("comment.notification.separateOwnerMessage");
@@ -444,7 +446,7 @@ public class CommentServlet extends PageServlet
             commentURL.append("/comments/");
             commentURL.append(rreq.getUser().getUserName());
             
-            org.roller.model.Template page = rreq.getPage();
+            org.roller.pojos.Template page = rreq.getPage();
             if (page == null)
             {
                 commentURL.append("?entry=");
@@ -545,6 +547,8 @@ public class CommentServlet extends PageServlet
                 }
             }
 
+            mLogger.debug("Done sending email message");
+            
         } // if email enabled
     }
 

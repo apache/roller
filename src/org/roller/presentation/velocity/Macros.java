@@ -605,7 +605,7 @@ public class Macros
             WebsiteData website = rreq.getWebsite();
             //UserManager userMgr = rreq.getRoller().getUserManager();
             
-            org.roller.model.Template pd = website.getPageByName(pageName);
+            org.roller.pojos.Template pd = website.getPageByName(pageName);
             
             Template vtemplate = null;
             if (pd != null)
@@ -933,7 +933,7 @@ public class Macros
      */
     public String showPageName()
     {
-        org.roller.model.Template pd = null;
+        org.roller.pojos.Template pd = null;
         RollerRequest rreq = getRollerRequest();
         try
         {
@@ -952,7 +952,7 @@ public class Macros
      */
     public String showPageDescription()
     {
-        org.roller.model.Template pd = null;
+        org.roller.pojos.Template pd = null;
         RollerRequest rreq = getRollerRequest();
         try
         {
@@ -972,7 +972,7 @@ public class Macros
      */
     public String showPageUpdateTime()
     {
-        org.roller.model.Template pd = null;
+        org.roller.pojos.Template pd = null;
         RollerRequest rreq = getRollerRequest();
         try
         {
