@@ -57,7 +57,7 @@ Key Targets:
 <!-- XDoclet code generation -->
 <!-- ********************************************************************* -->
 	
-<target name="generate" depends="gen-forms,gen-hibernate,gen-web" >
+<target name="generate" depends="gen-forms,gen-hibernate,gen-web,gen-wrappers" >
 </target>
 
 <!-- ============================================== -->
@@ -195,6 +195,46 @@ Key Targets:
 
 </target>
 
+<!-- ============================================== -->
+<!-- Generate pojo wrappers -->
+<target name="gen-wrappers" description="XDoclet generate pojo wrappers">
+
+    <!-- Define the XDoclet task -->
+    <taskdef  name="xdoclet" classname="xdoclet.DocletTask"
+        classpathref="xdoclet.path" />
+    
+    <xdoclet destdir="${build.generated}/src.business">
+        
+        <packageSubstitution packages="pojos" substituteWith="pojos.wrapper"/>
+        
+        <fileset dir="./src">
+            <!-- 
+                it may be easier to glob using *Data.java at some point, but
+                for now that will generate a lot of unneeded classes.
+                
+                maybe we can extend the process to only wrap classes that have
+                methods tagged with @roller.wrapPojoMethod ??
+            -->
+            <include name="org/roller/pojos/BookmarkData.java"/>
+            <include name="org/roller/pojos/CommentData.java"/>
+            <include name="org/roller/pojos/EntryAttributeData.java"/>
+            <include name="org/roller/pojos/FolderData.java"/>
+            <include name="org/roller/pojos/RefererData.java"/>
+            <include name="org/roller/pojos/Template.java"/>
+            <include name="org/roller/pojos/UserData.java"/>
+            <include name="org/roller/pojos/WeblogEntryData.java"/>
+            <include name="org/roller/pojos/WeblogCategoryData.java"/>
+            <include name="org/roller/pojos/WebsiteData.java"/>
+        </fileset>
+
+        <template 
+            destinationFile="{0}Wrapper.java"
+            templateFile="metadata/xdoclet/pojo_wrapper.xdt"
+            subTaskName="Pojo Wrappers" />
+    </xdoclet>
+        
+</target>
+        
 <!-- ********************************************************************* -->
 <!-- Compile and jar Business Tier classes -->
 <!-- ********************************************************************* -->
@@ -216,12 +256,14 @@ ro.buildUser=${user.name}
     <javac debug="${build.debug}" destdir="${build.compile_beans}"
         excludes="org/roller/presentation/**" >
         <src path="${basedir}/src" />
+        <src path="${build.generated}/src.business"/>
         &custom-src-beans;
         <classpath>
             <path refid="business.path"/>
             &custom-jars;
         </classpath>
     </javac>
+    
     <!-- Copy class resources -->
     <copy todir="${build.compile_beans}/org/roller/model">
         <fileset dir="${build.generated}/src.business" includes="*.hbm.xml"/>
