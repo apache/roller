@@ -7,8 +7,6 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.roller.model.RefererManager;
-import org.roller.model.UserManager;
-import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.RefererData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
@@ -37,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.RollerFactory;
+import org.roller.pojos.wrapper.UserDataWrapper;
+import org.roller.pojos.wrapper.WebsiteDataWrapper;
 
 /**
  * Provides the macros object that is available to Roller templates and 
@@ -279,11 +279,11 @@ public class Macros
      * @see org.roller.pojos.UserData
      * @return User object.
      */
-    public UserData getUser()
+    public UserDataWrapper getUser()
     {
         try
         {
-            return getRollerRequest().getUser();
+            return UserDataWrapper.wrap(getRollerRequest().getUser());
         }
         catch (Exception e)
         {
@@ -300,11 +300,11 @@ public class Macros
      * @see org.roller.pojos.WebsiteData
      * @return Website object.
      */
-    public WebsiteData getWebsite()
+    public WebsiteDataWrapper getWebsite()
     {
         try
         {
-            return getRollerRequest().getWebsite();
+            return WebsiteDataWrapper.wrap(getRollerRequest().getWebsite());
         }
         catch (Exception e)
         {
@@ -494,7 +494,7 @@ public class Macros
             sb.append("excerpts</a>]");
             sb.append("<br />");
 
-			List cats = rreq.getRoller().getWeblogManager()
+			List cats = RollerFactory.getRoller().getWeblogManager()
                 .getWeblogCategories(rreq.getWebsite(), false);
 			for (Iterator wbcItr = cats.iterator(); wbcItr.hasNext();) {
 				WeblogCategoryData category = (WeblogCategoryData) wbcItr.next();
@@ -1022,7 +1022,7 @@ public class Macros
         try
         {
             RollerRequest rreq = getRollerRequest();
-            RefererManager refmgr = rreq.getRoller().getRefererManager();
+            RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
 
             StringBuffer sb = new StringBuffer();
             

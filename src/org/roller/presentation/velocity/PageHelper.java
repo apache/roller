@@ -5,10 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
 import org.roller.RollerException;
-import org.roller.pojos.RefererData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.presentation.LanguageUtil;
@@ -21,8 +19,6 @@ import org.roller.presentation.tags.menu.MenuTag;
 import org.roller.presentation.weblog.tags.BigWeblogCalendarModel;
 import org.roller.presentation.weblog.tags.WeblogCalendarModel;
 import org.roller.util.StringUtils;
-
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +31,8 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
+import org.roller.pojos.wrapper.RefererDataWrapper;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 /**
  * Provides assistance to VelociMacros, filling in where Velocity falls.
@@ -181,7 +179,7 @@ public class PageHelper
     }
    
     /** Build the URL for editing an WeblogEntry **/
-    public String getEntryEditUrl(WeblogEntryData entry)
+    public String getEntryEditUrl(WeblogEntryDataWrapper entry)
     {
         Hashtable params = new Hashtable();
         params.put( RollerRequest.WEBLOGENTRYID_KEY, entry.getId());
@@ -204,7 +202,7 @@ public class PageHelper
     }
     
     //-------------------------------------------------------------------------
-    public String getToggleLinkbackDisplayHTML(RefererData referer)
+    public String getToggleLinkbackDisplayHTML(RefererDataWrapper referer)
     {
         String ret = "";
         String link = null;
@@ -473,14 +471,21 @@ public class PageHelper
      */
     public String renderPlugins(String str)
     {
+        mLogger.debug("Rendering page plugins on String");
+        
         if (mPagePlugins != null)
         {
             Iterator iter = mPagePlugins.iterator();
+            PagePlugin plugin = null;
             while (iter.hasNext())
             {
-                str = ((PagePlugin)iter.next()).render(str);
+                plugin = (PagePlugin) iter.next();
+                
+                mLogger.debug("applying plugin - ");
+                str = plugin.render(str);
             }
         }
+        
         return str;
     }
     
@@ -491,12 +496,14 @@ public class PageHelper
      * @param str
      * @return
      */
-    public String renderPlugins(WeblogEntryData entry)
+    public String renderPlugins(WeblogEntryDataWrapper entry)
     {
+        mLogger.debug("Rendering page plugins on WeblogEntryData");
+        
         // we have to make a copy to temporarily store the
         // changes wrought by Plugins (otherwise they might
         // end up persisted!).
-        WeblogEntryData copy = new WeblogEntryData(entry);
+        WeblogEntryData copy = new WeblogEntryData(entry.getPojo());
         
         if (mPagePlugins != null)
         {
@@ -526,6 +533,7 @@ public class PageHelper
                 }
             }
         }
+        
         return copy.getText();
     }
     
