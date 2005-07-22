@@ -7,7 +7,6 @@ import org.roller.model.RefererManager;
 import org.roller.model.Roller;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.RefererData;
-import org.roller.pojos.WeblogEntryData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.velocity.Macros;
 
@@ -20,6 +19,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.wrapper.RefererDataWrapper;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -53,11 +55,11 @@ public class WeblogEntryMacros extends Macros
         {
             List refs = null;
             
-            Roller roller = getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller();
             String userName = getRollerRequest().getUser().getUserName();
             RefererManager refmgr = roller.getRefererManager();
              
-            refs = refmgr.getReferersToDate( getWebsite(), view("yyyyMMdd") ); 
+            refs = refmgr.getReferersToDate( getWebsite().getPojo(), view("yyyyMMdd") ); 
                 
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
 					RefererData referer = (RefererData) rdItr.next();
@@ -70,7 +72,7 @@ public class WeblogEntryMacros extends Macros
 					if (   referer.getVisible().booleanValue() 
 						|| getRollerRequest().isUserAuthorizedToEdit() )
 					{ 
-						list.add( referer );
+						list.add( RefererDataWrapper.wrap(referer) );
 					}
 				}
               
@@ -115,7 +117,7 @@ public class WeblogEntryMacros extends Macros
      * instead.
      * @return HTML for displaying entry permalink icon with permalink.
      */
-    public String showEntryPermalink( WeblogEntryData entry )
+    public String showEntryPermalink( WeblogEntryDataWrapper entry )
     {
         HttpServletRequest request = getRollerRequest().getRequest();
         String userName = getRollerRequest().getUser().getUserName();
@@ -189,7 +191,7 @@ public class WeblogEntryMacros extends Macros
 
     //-----------------------------------------------------------------------
 
-    public String showCommentsLink( WeblogEntryData entry )
+    public String showCommentsLink( WeblogEntryDataWrapper entry )
     {
         if (entry.getWebsite().getAllowComments().booleanValue())
         {
@@ -201,7 +203,7 @@ public class WeblogEntryMacros extends Macros
             try
             {
                 rreq = RollerRequest.getRollerRequest(request);
-                WeblogManager mgr = rreq.getRoller().getWeblogManager();
+                WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
                 List comments = mgr.getComments( entry.getId() );
                 commentCount = comments.size();
             }

@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 /**
  * Apply configured PagePlugins to WeblogEntryData and display the result.
@@ -58,7 +59,7 @@ public class ApplyPluginsTag extends TagSupport
             }
             helper.setSkipFlag(skipFlag);
     
-            xformed = helper.renderPlugins(entry);
+            xformed = helper.renderPlugins(WeblogEntryDataWrapper.wrap(entry));
         }
         else
         {

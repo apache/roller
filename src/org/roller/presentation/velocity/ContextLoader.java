@@ -33,12 +33,15 @@ import org.roller.pojos.RollerPropertyData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.pojos.wrapper.CommentDataWrapper;
+import org.roller.pojos.wrapper.TemplateWrapper;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.roller.presentation.LanguageUtil;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.newsfeeds.NewsfeedCache;
-import org.roller.presentation.velocity.wrappers.TemplateWrapper;
 import org.roller.presentation.weblog.formbeans.CommentFormEx;
 import org.roller.util.RegexUtil;
 import org.roller.util.StringUtils;
@@ -129,6 +132,8 @@ public class ContextLoader
      */
     private static void loadStatusMessage(Context ctx, RollerRequest rreq)
     {
+        mLogger.debug("Loading status message");
+        
         HttpSession session = rreq.getRequest().getSession(false);
         String msg = null;
         if (session != null)
@@ -160,8 +165,10 @@ public class ContextLoader
        Context ctx, RollerRequest rreq, RollerContext rollerCtx, String userName)
        throws RollerException
     {
+        mLogger.debug("Loading weblog values");
+        
         // if there is an "_entry" page, only load it once
-        WebsiteData website = rreq.getRoller().getUserManager().getWebsite(userName);
+        WebsiteData website = RollerFactory.getRoller().getUserManager().getWebsite(userName);
         //PageModel pageModel = (PageModel)ctx.get("pageModel");
         if (website != null) 
         {
@@ -169,12 +176,12 @@ public class ContextLoader
             Template entryPage = website.getPageByName("_entry");
             if (entryPage != null)
             {
-                ctx.put("entryPage", new TemplateWrapper(entryPage));
+                ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
             }
             Template descPage = website.getPageByName("_desc");
             if (descPage != null)
             {
-                ctx.put("descPage", new TemplateWrapper(descPage));
+                ctx.put("descPage", TemplateWrapper.wrap(descPage));
             }
         }
     }
@@ -210,6 +217,8 @@ public class ContextLoader
        Context ctx, RollerRequest rreq, RollerContext rollerCtx ) 
        throws RollerException
     {
+        mLogger.debug("Loading comment values");
+        
         HttpServletRequest request = rreq.getRequest();
         
         String escapeHtml = RollerRuntimeConfig.getProperty("users.comments.escapehtml");
@@ -241,11 +250,11 @@ public class ContextLoader
             ArrayList list = new ArrayList();
             CommentData cd = new CommentData();
             commentForm.copyTo(cd, request.getLocale());
-            list.add(cd);
+            list.add(CommentDataWrapper.wrap(cd));
             ctx.put("previewComments",list);            
         }
         WeblogEntryData entry = rreq.getWeblogEntry();
-        ctx.put("entry",entry);            
+        ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));            
     }   
 
     //------------------------------------------------------------------------
@@ -254,6 +263,8 @@ public class ContextLoader
         Context ctx, RollerRequest rreq, RollerContext rollerCtx, String userName) 
         throws RollerException
     {
+        mLogger.debug("Loading path values");
+        
         HttpServletRequest request = rreq.getRequest();
         String url = null;
         if ( userName != null && !userName.equals("zzz_none_zzz"))
@@ -286,6 +297,8 @@ public class ContextLoader
     
     protected static void loadRequestParamKeys(Context ctx)
     {
+        mLogger.debug("Loading request param keys");
+        
         // Since Velocity *requires* accessor methods, these values from
         // RollerRequest are not available to it, put them into the context
         ctx.put("USERNAME_KEY",           RollerRequest.USERNAME_KEY);
@@ -311,6 +324,8 @@ public class ContextLoader
     protected static void loadRssValues(
        Context ctx, RollerRequest rreq, String userName) throws RollerException
     {
+        mLogger.debug("Loading rss values");
+        
         HttpServletRequest request = rreq.getRequest();
         
         int entryLength = -1;
@@ -357,13 +372,14 @@ public class ContextLoader
         Context ctx, RollerRequest rreq, RollerContext rollerCtx, String username)
         throws RollerException
     {
-
+        mLogger.debug("Loading utility objects");
+        
         // date formatter for macro's
         // set this up with the Locale to make sure we can reuse it with other patterns
         // in the macro's
         Locale viewLocale = (Locale) ctx.get("viewLocale");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", viewLocale);
-        WebsiteData website = rreq.getRoller().getUserManager().getWebsite(username);
+        WebsiteData website = RollerFactory.getRoller().getUserManager().getWebsite(username);
         if (website != null)
         {
             sdf.setTimeZone(website.getTimeZoneInstance());
@@ -376,7 +392,7 @@ public class ContextLoader
         // the Entry Day link.
         ctx.put("plainFormat", "yyyyMMdd");
 
-        ctx.put("page",            new TemplateWrapper(rreq.getPage()));
+        ctx.put("page",            TemplateWrapper.wrap(rreq.getPage()));
         ctx.put("utilities",       new Utilities() );
         ctx.put("stringUtils",     new StringUtils() );        
         ctx.put("rollerVersion",   rollerCtx.getRollerVersion() );
@@ -393,6 +409,8 @@ public class ContextLoader
         Context ctx, RollerRequest rreq, RollerContext rollerCtx )
         throws RollerException
     {
+        mLogger.debug("Loading website values");
+        
         String userName = null;
         UserData user = null;
         WebsiteData website = null;
@@ -413,7 +431,7 @@ public class ContextLoader
         if ( user != null )
         {
             userName = user.getUserName();
-            website = rreq.getRoller().getUserManager().getWebsite(userName);
+            website = RollerFactory.getRoller().getUserManager().getWebsite(userName);
             ctx.put("userName",      user.getUserName() );
             ctx.put("fullName",      user.getFullName() );
             ctx.put("emailAddress",  user.getEmailAddress() );
@@ -441,7 +459,7 @@ public class ContextLoader
             ctx.put("locale", Locale.getDefault());
             ctx.put("timezone", TimeZone.getDefault());
         }
-        ctx.put("website", website );
+        ctx.put("website", WebsiteDataWrapper.wrap(website) );
 
         String siteName = ((RollerPropertyData)props.get("site.name")).getValue();
         if ("Roller-based Site".equals(siteName)) siteName = "Main";
@@ -468,6 +486,8 @@ public class ContextLoader
      */
     public static void initializePagePlugins(ServletContext mContext)
     {
+        mLogger.debug("Initializing page plugins");
+        
         String pluginStr = RollerConfig.getProperty("plugins.page");
         if (mLogger.isDebugEnabled()) mLogger.debug(pluginStr);
         if (pluginStr != null)
@@ -540,6 +560,8 @@ public class ContextLoader
     private static ToolboxContext loadToolboxContext(
                     HttpServletRequest request, HttpServletResponse response, Context ctx) 
     {
+        mLogger.debug("Loading toolbox context");
+        
         ServletContext servletContext = RollerContext.getServletContext();
 
         // get the toolbox manager

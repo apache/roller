@@ -44,6 +44,7 @@ import org.roller.pojos.CommentData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.roller.presentation.MainPageAction;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
@@ -53,6 +54,7 @@ import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
 import org.roller.util.Utilities;
 
 import com.swabunga.spell.event.SpellCheckEvent;
+import org.roller.model.RollerFactory;
 
 
 
@@ -126,7 +128,7 @@ public final class WeblogEntryFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                WeblogManager wmgr = rreq.getRoller().getWeblogManager();
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 WeblogEntryData entry = rreq.getWeblogEntry();
                 WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
                 if (entry == null && form.getId() != null)
@@ -233,8 +235,8 @@ public final class WeblogEntryFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                UserManager userMgr = rreq.getRoller().getUserManager();
-                WeblogManager weblogMgr = rreq.getRoller().getWeblogManager();
+                UserManager userMgr = RollerFactory.getRoller().getUserManager();
+                WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
 
                 UserData user = rreq.getUser();
                 WebsiteData site = userMgr.getWebsite( user.getUserName() );
@@ -290,12 +292,12 @@ public final class WeblogEntryFormAction extends DispatchAction
                 entry.setUpdateTime(new Timestamp(new Date().getTime()));
                 mLogger.debug("Saving entry");
                 entry.save();
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
 
                 mLogger.debug("Populating form");
                 wf.copyFrom(entry, request.getLocale());
                 
-                reindexEntry(rreq.getRoller(), entry);
+                reindexEntry(RollerFactory.getRoller(), entry);
                 
                 // open up a new session, because we will forward to the edit action
                 //rreq.getRoller().begin(); // begin already called by RequestFilter
@@ -424,7 +426,7 @@ public final class WeblogEntryFormAction extends DispatchAction
             {
                 WeblogEntryFormEx wf = (WeblogEntryFormEx)actionForm;
                 WeblogEntryData wd = 
-                    rreq.getRoller().getWeblogManager().retrieveWeblogEntry(wf.getId());
+                    RollerFactory.getRoller().getWeblogManager().retrieveWeblogEntry(wf.getId());
                 wf.copyFrom(wd, request.getLocale());
                 if (wd == null || wd.getId() == null)
                 {
@@ -462,17 +464,17 @@ public final class WeblogEntryFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rreq.isUserAuthorizedToEdit() )
             {
-                WeblogManager mgr = rreq.getRoller().getWeblogManager();
+                WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
                 WeblogEntryData wd = mgr.retrieveWeblogEntry(request.getParameter("id"));
                 UserData user = rreq.getUser();
                 
 				// remove the index for it
                 wd.setPublishEntry(Boolean.FALSE);
-		        reindexEntry(rreq.getRoller(), wd);
+		        reindexEntry(RollerFactory.getRoller(), wd);
 
                 // remove entry itself
                 wd.remove();
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
 
 				// flush caches
                 PageCacheFilter.removeFromCache(request, user);
@@ -628,7 +630,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                 WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
 
                 // If form indicates that comments should be deleted, then delete
-                WeblogManager mgr = rreq.getRoller().getWeblogManager();
+                WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
                 String[] deleteIds = form.getDeleteComments();
                 if (deleteIds != null && deleteIds.length > 0)
                 {
@@ -659,9 +661,9 @@ public final class WeblogEntryFormAction extends DispatchAction
                     }
                 }
 
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
                 
-                reindexEntry(rreq.getRoller(), wd);
+                reindexEntry(RollerFactory.getRoller(), wd);
                 
                 request.setAttribute("model",
                         new WeblogEntryPageModel(request, response, mapping, 
@@ -712,7 +714,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                }
 
                RollerContext rctx= RollerContext.getRollerContext(request);
-               WeblogManager wmgr= rreq.getRoller().getWeblogManager();
+               WeblogManager wmgr= RollerFactory.getRoller().getWeblogManager();
                entry = wmgr.retrieveWeblogEntry(entryid);
 
                String title = entry.getTitle();
@@ -720,7 +722,9 @@ public final class WeblogEntryFormAction extends DispatchAction
                // Run entry through registered PagePlugins
                PageHelper pageHelper = PageHelper.createPageHelper(request, response);
                pageHelper.setSkipFlag(true); // don't process ReadMorePlugin
-               String excerpt = pageHelper.renderPlugins(entry);
+               // we have to wrap the entry for rendering because the
+               // page helper requires wrapped objects
+               String excerpt = pageHelper.renderPlugins(WeblogEntryDataWrapper.wrap(entry));
                excerpt = StringUtils.left( Utilities.removeHTML(excerpt),255 );
 
                String url = rctx.createEntryPermalink(entry, request, true);
