@@ -19,11 +19,34 @@ import java.util.Date;
  */
 public interface Template {
     
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getId();
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getName();
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getDescription();
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getContents();
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getLink();
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public Date getLastModified();
     
     /*

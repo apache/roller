@@ -127,6 +127,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     //------------------------------------------------------ Simple properties
     
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.id column="id" type="string"
      *  generator-class="uuid.hex" unsaved-value="null"
@@ -143,6 +144,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field 
      * @hibernate.many-to-one column="categoryid" cascade="none" not-null="true"
      */
@@ -168,6 +170,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field 
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
@@ -183,6 +186,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="title" non-null="true" unique="false"
      */
@@ -198,6 +202,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="text" non-null="true" unique="false"
      */
@@ -213,6 +218,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="anchor" non-null="true" unique="false"
      */
@@ -229,7 +235,9 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
 
     //-------------------------------------------------------------------------
     /** 
-     * Map attributes as set because XDoclet 1.2b4 map support is broken. 
+     * Map attributes as set because XDoclet 1.2b4 map support is broken.
+     *
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.EntryAttributeData"
      * @ejb:persistent-field
      * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all" 
      * @hibernate.collection-key column="entryid" type="String"
@@ -262,12 +270,20 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
             this.attMap = new HashMap();
         }
     }
-    /** Would be named getEntryAttribute, but that would set off XDoclet */
+    
+    
+    /** 
+     * Would be named getEntryAttribute, but that would set off XDoclet
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String findEntryAttribute(String name)
     {
         EntryAttributeData att = ((EntryAttributeData)attMap.get(name));
         return (att != null) ? att.getValue() : null;
     }
+    
+    
     public void putEntryAttribute(String name, String value) throws Exception
     {
         EntryAttributeData att = (EntryAttributeData)attMap.get(name);
@@ -307,6 +323,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on 
      * MySQL has only a one-second resolution.</p>
      *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="pubtime" non-null="true" unique="false"
      */
@@ -332,6 +349,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on 
      * MySQL has only a one-second resolution.</p>
      *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="updatetime" non-null="true" unique="false"
      */
@@ -347,6 +365,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="publishentry" non-null="true" unique="false"
      */
@@ -365,6 +384,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      * Some weblog entries are about one specific link.
      * @return Returns the link.
      *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="link" non-null="false" unique="false"
      */
@@ -384,6 +404,8 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
 
     /**
      * Comma-delimited list of this entry's Plugins.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="plugins" non-null="false" unique="false"
      */
@@ -399,58 +421,65 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     }
 
     
-	/**
-	 * True if comments are allowed on this weblog entry.
-     * @ejb:persistent-field 
+    /**
+     * True if comments are allowed on this weblog entry.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
      * @hibernate.property column="allowcomments" non-null="true" unique="false"
-	 */
-	public Boolean getAllowComments() {
-		return allowComments;
-	}
-	/**
-	 * True if comments are allowed on this weblog entry.
-     * @ejb:persistent-field 
-	 */
-	public void setAllowComments(Boolean allowComments) {
-		this.allowComments = allowComments;
-	}
-	
-	/**
-	 * Number of days after pubTime that comments should be allowed, or 0 for no limit.
-     * @ejb:persistent-field 
+     */
+    public Boolean getAllowComments() {
+        return allowComments;
+    }
+    /**
+     * True if comments are allowed on this weblog entry.
+     * @ejb:persistent-field
+     */
+    public void setAllowComments(Boolean allowComments) {
+        this.allowComments = allowComments;
+    }
+    
+    /**
+     * Number of days after pubTime that comments should be allowed, or 0 for no limit.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
      * @hibernate.property column="commentdays" non-null="true" unique="false"
-	 */
-	public Integer getCommentDays() {
-		return commentDays;
-	}
-	/**
-	 * Number of days after pubTime that comments should be allowed, or 0 for no limit.
-     * @ejb:persistent-field 
-	 */
-	public void setCommentDays(Integer commentDays) {
-		this.commentDays = commentDays;
-	}
-	
-	/**
-	 * True if this entry should be rendered right to left.
-     * @ejb:persistent-field 
+     */
+    public Integer getCommentDays() {
+        return commentDays;
+    }
+    /**
+     * Number of days after pubTime that comments should be allowed, or 0 for no limit.
+     * @ejb:persistent-field
+     */
+    public void setCommentDays(Integer commentDays) {
+        this.commentDays = commentDays;
+    }
+    
+    /**
+     * True if this entry should be rendered right to left.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
      * @hibernate.property column="righttoleft" non-null="true" unique="false"
-	 */
-	public Boolean getRightToLeft() {
-		return rightToLeft;
-	}
-	/**
-	 * True if this entry should be rendered right to left.
-     * @ejb:persistent-field 
-	 */
-	public void setRightToLeft(Boolean rightToLeft) {
-		this.rightToLeft = rightToLeft;
-	}
+     */
+    public Boolean getRightToLeft() {
+        return rightToLeft;
+    }
+    /**
+     * True if this entry should be rendered right to left.
+     * @ejb:persistent-field
+     */
+    public void setRightToLeft(Boolean rightToLeft) {
+        this.rightToLeft = rightToLeft;
+    }
 
     /**
      * True if story should be pinned to the top of the Roller site main blog.
      * @return Returns the pinned.
      * 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="pinnedtomain" non-null="true" unique="false"
      */
@@ -493,7 +522,9 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     
     /** 
      * True if comments are still allowed on this entry considering the 
-     * allowComments and commentDays fields. 
+     * allowComments and commentDays fields.
+     *
+     * @roller.wrapPojoMethod type="simple"
      */
     public boolean getCommentsStillAllowed() 
     {
@@ -529,6 +560,8 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     /** 
      * Format the publish time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @see java.text.SimpleDateFormat
      * @return Publish time formatted according to pattern.
      */
@@ -554,6 +587,8 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     /** 
      * Format the update time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @see java.text.SimpleDateFormat
      * @return Update time formatted according to pattern.
      */
@@ -575,11 +610,17 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
 
     //------------------------------------------------------------------------
     
+    /**
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.CommentData"
+     */
     public List getComments()
     {
         return getComments(true);
     }
     
+    /**
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.CommentData"
+     */
     public List getComments(boolean ignoreSpam)
     {
         List list = new ArrayList();
@@ -593,6 +634,9 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
 
     //------------------------------------------------------------------------
     
+    /**
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.RefererData"
+     */
     public List getReferers()
     {
         List referers = null;
@@ -653,6 +697,8 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     /**
      * Convenience method for getPermalink(category)
      * where no category is necessary.
+     * 
+     * @roller.wrapPojoMethod type="simple"
      * @return
      */
     public String getPermaLink()
@@ -680,6 +726,8 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      * require prepending the baseURL (either the full root 
      * [http://server.com/context] or at least the context
      * [/context]) in order to generate a functional link.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @param category The category name to insert into the permalink.
      * @return String
      */
@@ -690,7 +738,10 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         
         return this.getPermaLink();
     }
-        
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getCommentsLink()
     {
         String dayString = DateUtil.format8chars(this.getPubTime());
@@ -713,6 +764,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      * Return the Title of this post, or the first 255 characters of the
      * entry's text.
      * 
+     * @roller.wrapPojoMethod type="simple"
      * @return String
      */
     public String getDisplayTitle()
@@ -884,13 +936,21 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         return result;
     }
     
-    /** Return RSS 09x style description (escaped HTML version of entry text) */
+    /**
+     * Return RSS 09x style description (escaped HTML version of entry text)
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getRss09xDescription()
     {
         return getRss09xDescription(-1);
     }
     
-    /** Return RSS 09x style description (escaped HTML version of entry text) */
+    /** 
+     * Return RSS 09x style description (escaped HTML version of entry text)
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getRss09xDescription(int maxLength)
     {
         String ret = Utilities.escapeHTML(text);
@@ -981,6 +1041,8 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     
     /**
      * Convenience method to transform mPlugins to a List
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @return
      */
     public List getPluginsList()

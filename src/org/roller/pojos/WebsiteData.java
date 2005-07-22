@@ -312,6 +312,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     
     /**
      * Id of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.id column="id" type="string"
      *  generator-class="uuid.hex" unsaved-value="null"
@@ -329,6 +331,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Name of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="name" non-null="true" unique="false"
      */
@@ -345,6 +349,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Description
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="description" non-null="true" unique="false"
      */
@@ -361,6 +367,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Id of owner.
+     *
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
      * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
@@ -376,6 +384,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="defaultpageid" non-null="true" unique="false"
      */
@@ -393,6 +402,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @deprecated
      * @ejb:persistent-field
      * @hibernate.property column="weblogdayid" non-null="true" unique="false"
@@ -412,6 +422,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="enablebloggerapi" non-null="true" unique="false"
      */
@@ -427,8 +438,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * 
      * @hibernate.many-to-one column="bloggercatid" non-null="false"
      */
     public WeblogCategoryData getBloggerCategory()
@@ -447,8 +458,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * work with the top level categories that are immediately under the root.
      * Setting a different default category allows you to partition your weblog.
      * 
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
-     * 
      * @hibernate.many-to-one column="defaultcatid" non-null="false"
      */
     public WeblogCategoryData getDefaultCategory() 
@@ -463,6 +474,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="editorpage" non-null="true" unique="false"
      */
@@ -478,6 +490,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="ignorewords" non-null="true" unique="false"
      */
@@ -493,6 +506,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="allowcomments" non-null="true" unique="false"
      */
@@ -508,6 +522,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="emailcomments" non-null="true" unique="false"
      */
@@ -523,6 +538,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
     
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="emailfromaddress" non-null="true" unique="false"
      */
@@ -538,7 +554,9 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
     
     /**
-     * EditorTheme of the Website.
+     * Theme of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="editortheme" non-null="true" unique="false"
      */
@@ -555,6 +573,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Locale of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="locale" non-null="true" unique="false"
      */
@@ -571,6 +591,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Timezone of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="timezone" non-null="true" unique="false"
      */
@@ -587,6 +609,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Comma-delimited list of user's default Plugins.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="defaultplugins" non-null="false" unique="false"
      */
@@ -602,6 +626,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="isenabled" non-null="true" unique="false"
      */
@@ -748,6 +773,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     /**
      * Parse locale value and instantiate a Locale object,
      * otherwise return default Locale.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @return Locale
      */
     public Locale getLocaleInstance()
@@ -780,6 +807,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     /**
      * Return TimeZone instance for value of timezone,
      * otherwise return system default instance.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @return TimeZone
      */
     public TimeZone getTimeZoneInstance()

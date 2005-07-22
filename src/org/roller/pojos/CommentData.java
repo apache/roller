@@ -65,6 +65,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.id column="id" type="string"
      *  generator-class="uuid.hex" unsaved-value="null"
@@ -81,6 +82,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field 
      * @hibernate.many-to-one column="entryid" cascade="none" not-null="true"
      */
@@ -96,6 +98,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="name" non-null="true" unique="false"
      */
@@ -112,6 +115,8 @@ public class CommentData extends org.roller.pojos.PersistentObject
 
     /** 
      * Email
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="email" non-null="true" unique="false"
      */
@@ -127,6 +132,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="url" non-null="true" unique="false"
      */
@@ -142,6 +148,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="content" non-null="true" unique="false"
      */
@@ -157,6 +164,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="posttime" non-null="true" unique="false"
      */
@@ -172,6 +180,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="spam" non-null="false" unique="false"
      */
@@ -187,6 +196,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="notify" non-null="false" unique="false"
      */
@@ -209,6 +219,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     }
 	
 	/**
+         * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="remotehost" non-null="true" unique="false"
 	 */
