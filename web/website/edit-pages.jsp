@@ -1,8 +1,13 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %><%
+request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
 
 <roller:StatusMessage/>
 
 <h1><fmt:message key="pagesForm.title" /></h1>
+
+<c:if test="${website.editorTheme ne customTheme}">
+<p><fmt:message key="pagesForm.themesReminder"><fmt:param value="${website.editorTheme}"/></fmt:message></p>
+</c:if>
 
 <%-- table of pages --%>
 <table class="rollertable">
