@@ -47,64 +47,68 @@ public class UserData
    {
    }
 
-	public UserData( java.lang.String id, java.lang.String userName,
-                     java.lang.String password, java.lang.String fullName,
-                     java.lang.String emailAddress, java.util.Date dateCreated)
-	{
-		this.id = id;
-		this.userName = userName;
-		this.password = password;
-		this.fullName = fullName;
-		this.emailAddress = emailAddress;
-		this.dateCreated = (Date)dateCreated.clone();
-	}
-
-	public UserData( UserData otherData )
-	{
-		this.id = otherData.id;
-		this.userName = otherData.userName;
-		this.password = otherData.password;
-		this.fullName = otherData.fullName;
-		this.emailAddress = otherData.emailAddress;
-		this.dateCreated = (Date)otherData.dateCreated.clone();
-
-	}
-
-   /** Id of the User.
-     * Not remote since primary key may be extracted by other means.
-     * 
-     * @struts.validator type="required" msgkey="errors.required"
-     * @ejb:persistent-field 
-     * @hibernate.id column="id" type="string"
-     *  generator-class="uuid.hex" unsaved-value="null"
-     */
+   public UserData( java.lang.String id, java.lang.String userName,
+           java.lang.String password, java.lang.String fullName,
+           java.lang.String emailAddress, java.util.Date dateCreated) {
+       this.id = id;
+       this.userName = userName;
+       this.password = password;
+       this.fullName = fullName;
+       this.emailAddress = emailAddress;
+       this.dateCreated = (Date)dateCreated.clone();
+   }
+   
+   public UserData( UserData otherData ) {
+       this.id = otherData.id;
+       this.userName = otherData.userName;
+       this.password = otherData.password;
+       this.fullName = otherData.fullName;
+       this.emailAddress = otherData.emailAddress;
+       this.dateCreated = (Date)otherData.dateCreated.clone();
+       
+   }
+   
+   /** 
+    * Id of the User.
+    * Not remote since primary key may be extracted by other means.
+    *
+    * @roller.wrapPojoMethod type="simple"
+    * @struts.validator type="required" msgkey="errors.required"
+    * @ejb:persistent-field
+    * @hibernate.id column="id" type="string"
+    *  generator-class="uuid.hex" unsaved-value="null"
+    */
    public java.lang.String getId()
    {
       return this.id;
    }
-   /** @ejb:persistent-field */ 
-   public void setId( java.lang.String id )
-   {
-      this.id = id;
+   
+   /** @ejb:persistent-field */
+   public void setId( java.lang.String id ) {
+       this.id = id;
    }
-
-   /** User name of the user.
-     * @ejb:persistent-field 
-     * @hibernate.property column="username" non-null="true" unique="true"
-     */
-   public java.lang.String getUserName()
-   {
-      return this.userName;
+   
+   /**
+    * User name of the user.
+    *
+    * @roller.wrapPojoMethod type="simple"
+    * @ejb:persistent-field
+    * @hibernate.property column="username" non-null="true" unique="true"
+    */
+   public java.lang.String getUserName() {
+       return this.userName;
    }
-   /** @ejb:persistent-field */ 
-   public void setUserName( java.lang.String userName )
-   {
-      this.userName = userName;
+   
+   /** @ejb:persistent-field */
+   public void setUserName( java.lang.String userName ) {
+       this.userName = userName;
    }
 
    /** 
     * Get password.
     * If password encryption is enabled, will return encrypted password.
+    *
+    * @roller.wrapPojoMethod type="simple"
     * @ejb:persistent-field 
     * @hibernate.property column="passphrase" non-null="true"
     */
@@ -122,10 +126,13 @@ public class UserData
       this.password = password;
    }
 
-   /** Full name of the user.
-     * @ejb:persistent-field 
-     * @hibernate.property column="fullname" non-null="true" unique="true"
-     */
+   /** 
+    * Full name of the user.
+    *
+    * @roller.wrapPojoMethod type="simple"
+    * @ejb:persistent-field
+    * @hibernate.property column="fullname" non-null="true" unique="true"
+    */
    public java.lang.String getFullName()
    {
       return this.fullName;
@@ -136,10 +143,13 @@ public class UserData
       this.fullName = fullName;
    }
 
-   /** E-mail address of the user.
-     * @ejb:persistent-field 
-     * @hibernate.property column="emailaddress" non-null="true" unique="true"
-     */
+   /**
+    * E-mail address of the user.
+    *
+    * @roller.wrapPojoMethod type="simple"
+    * @ejb:persistent-field
+    * @hibernate.property column="emailaddress" non-null="true" unique="true"
+    */
    public java.lang.String getEmailAddress()
    {
       return this.emailAddress;
@@ -151,9 +161,10 @@ public class UserData
    }
 
    /** 
-	* @ejb:persistent-field 
-	* @hibernate.property column="datecreated" non-null="true" unique="false"
-	*/
+    * @roller.wrapPojoMethod type="simple"
+    * @ejb:persistent-field
+    * @hibernate.property column="datecreated" non-null="true" unique="false"
+    */
    public java.util.Date getDateCreated()
    {
        if (dateCreated == null) 
