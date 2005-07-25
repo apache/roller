@@ -390,8 +390,10 @@ public class PageModel
                     wrappedEntries.add(i, 
                             WeblogEntryDataWrapper.wrap((WeblogEntryData)entries.get(i)));
                 }
-                ret.put(key, wrappedEntries);
+                mRet.put(key, wrappedEntries);
             }
+
+	    ret = mRet;
             
             setFirstAndLastEntries( ret );
         }
