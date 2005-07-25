@@ -10,162 +10,179 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+
 /**
- * Upgrade Roller database from 0.9.8 to 1.0.
- * 
- * Creates root Category for each Website and associations for each Category.
- * Sets each Website's default Category and default Blogger.com Category
- * Creates associations for each Folder.
+ * Upgrade Roller Database.
  */
-public class UpgradeDatabase
-{
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(UpgradeDatabase.class);
-
-    public static void upgradeDatabase(Connection con) throws RollerException
-    {       
-        // get the db version first
-        try
-        {
-            Statement versionStatement = con.createStatement();
-            ResultSet versionResultSet = 
-              versionStatement.executeQuery("select dbversion from rollerconfig");
-            versionResultSet.next();
-            String dbversion = versionResultSet.getString(1);
-            if (dbversion != null) return;
+public class UpgradeDatabase {
+    
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(UpgradeDatabase.class);
+    
+    // the name of the property which holds the dbversion value
+    private static final String DBVERSION_PROP = "roller.database.version";
+    
+    // old version ... does nothing
+    public static void upgradeDatabase(Connection con) throws RollerException {}
+    
+    
+    /**
+     * Upgrade database if dbVersion is older than desiredVersion.
+     */
+    public static void upgradeDatabase(Connection con, String desiredVersion) 
+        throws RollerException {
+        
+        int myVersion = 0;
+        int dbversion = -1;
+        
+        // NOTE: this assumes a maximum of 3 digits for the version number
+        //       so if we get to 10.0 then we'll need to upgrade this
+        
+        // strip out non-digits
+        desiredVersion = desiredVersion.replaceAll("\\Q.\\E", "");
+        desiredVersion = desiredVersion.replaceAll("\\D", "");
+        if(desiredVersion.length() > 3)
+            desiredVersion = desiredVersion.substring(0, 3);
+        
+        // parse to an int
+        try {
+            int parsed = Integer.parseInt(desiredVersion);
             
-        } catch(Exception e) {
-            // assume this is a new db using the roller_properties table
-            return;
-        }
+            if(parsed < 100)
+                myVersion = parsed * 10;
+            else
+                myVersion = parsed;
+        } catch(Exception e) {}
         
         
-        try
-        {   
-            // Prepated statements for all queries in the loop
+        // get the current db version
+        try {
+            Statement stmt = con.createStatement();
             
-            PreparedStatement rootCatStatement = con.prepareStatement(
-               "select a.id from weblogcategoryassoc as a, weblogcategory as c "+
-               "where c.websiteid=? and a.categoryid=c.id and a.ancestorid is null and a.relation='PARENT'");                        
+            // just check in the roller_properties table
+            ResultSet rs = stmt.executeQuery(
+                    "select value from roller_properties where name = '"+DBVERSION_PROP+"'");
             
-            PreparedStatement rootCatCreateStatement = con.prepareStatement(
-               "insert into weblogcategory (id,name,description,websiteid,image) "+
-               "values (?,'root','root',?,NULL)");                        
-            
-            PreparedStatement updateWebsiteStatement = con.prepareStatement(
-               "update website set bloggercatid=?, defaultcatid=? where id=?");                        
-            
-            PreparedStatement catsStatement = con.prepareStatement(
-               "select id from weblogcategory where websiteid=? and id<>?");                        
-            
-            PreparedStatement assocCreateStatement = con.prepareStatement(
-               "insert into weblogcategoryassoc (id,categoryid,ancestorid,relation) "+
-               "values (?,?,?,'PARENT')");                        
-
-            PreparedStatement rootFolderStatement = con.prepareStatement(
-                "select id from folder where websiteid=? and parentid is null");                        
-      
-            PreparedStatement foldersStatement = con.prepareStatement(
-                "select id,parentid from folder where websiteid=?");                        
-      
-            PreparedStatement folderAssocCreateStatement = con.prepareStatement(
-                "insert into folderassoc (id,folderid,ancestorid,relation) "+
-                "values (?,?,?,'PARENT')");                        
-
-            // loop through all websites
-            Statement websitesStatement = con.createStatement();
-            ResultSet websitesResultSet = 
-                websitesStatement.executeQuery("select id from website");
-            while (websitesResultSet.next()) 
-            {
-                String websiteId = websitesResultSet.getString(1);
-                mLogger.info("Upgrading website id="+websiteId);
+            if(rs.next()) {
+                dbversion = rs.getInt(1);
                 
-                rootCatStatement.clearParameters();
-                rootCatStatement.setString(1, websiteId);
-                ResultSet rootCatResultSet = rootCatStatement.executeQuery();
-                
-                
-                if (!rootCatResultSet.first()) // if website has no root cat
-                {
-                    // then create one
-                    rootCatCreateStatement.clearParameters();
-                    rootCatCreateStatement.setString(1, websiteId+"R");
-                    rootCatCreateStatement.setString(2, websiteId);
-                    rootCatCreateStatement.executeUpdate();
-                    
-                    // and make it the default one for the website
-                    updateWebsiteStatement.clearParameters();
-                    updateWebsiteStatement.setString(1, websiteId+"R");
-                    updateWebsiteStatement.setString(2, websiteId+"R");
-                    updateWebsiteStatement.setString(3, websiteId);
-                    updateWebsiteStatement.executeUpdate();
-                    
-                    // and create an association for it
-                    assocCreateStatement.clearParameters();
-                    assocCreateStatement.setString(1, websiteId+"A0");
-                    assocCreateStatement.setString(2, websiteId+"R");
-                    assocCreateStatement.setString(3, null);
-                    assocCreateStatement.executeUpdate();
-
-                    // and create associations for all of it's children
-                    catsStatement.clearParameters();
-                    catsStatement.setString(1, websiteId);
-                    catsStatement.setString(2, websiteId+"R");
-                    ResultSet cats = catsStatement.executeQuery();
-                    int count = 1;
-                    while (cats.next())
-                    {
-                        String catid = cats.getString(1);
-                        assocCreateStatement.clearParameters();
-                        assocCreateStatement.setString(1, websiteId+"A"+count++);
-                        assocCreateStatement.setString(2, catid);
-                        assocCreateStatement.setString(3, websiteId+"R");
-                        assocCreateStatement.executeUpdate();
-                    }
-                    mLogger.debug("   Created root categories and associations");
-                    
-                    // determine root bookmark folder of website
-                    rootFolderStatement.clearParameters();
-                    rootFolderStatement.setString(1, websiteId);
-                    ResultSet rootFolderResultSet = rootFolderStatement.executeQuery();
-                    rootFolderResultSet.next();
-                    String rootFolderId = rootFolderResultSet.getString(1);
-                    
-                    // create associations for all children fo root folder
-                    foldersStatement.clearParameters();
-                    foldersStatement.setString(1, websiteId);
-                    ResultSet folders = foldersStatement.executeQuery();
-                    while (folders.next())
-                    {
-                        String id = folders.getString(1);
-                        String parentId = folders.getString(2);
-                        folderAssocCreateStatement.clearParameters();
-                        folderAssocCreateStatement.setString(1, id+"R");
-                        folderAssocCreateStatement.setString(2, id);
-                        if (parentId == null)
-                        {
-                            folderAssocCreateStatement.setString(3, null);
-                        }
-                        else
-                        {
-                            folderAssocCreateStatement.setString(3, rootFolderId);
-                        }
-                        folderAssocCreateStatement.executeUpdate();
-                    }
-                    mLogger.debug("   Created folder associations");
+            } else {
+                // tough to know if this is an upgrade with no db version :/
+                // however, if roller_properties is not empty then we at least
+                // we have someone upgrading from 1.2.x
+                rs = stmt.executeQuery("select count(*) from roller_properties");
+                if(rs.next()) {
+                    if(rs.getInt(1) > 0)
+                        dbversion = 120;
                 }
             }
             
-            Statement versionUpdateStatement = con.createStatement();
-            versionUpdateStatement.executeUpdate(
-                "update rollerconfig set dbversion='995'");
-            mLogger.info("Database upgrade complete.");
+        } catch(Exception e) {
+            // that's strange ... hopefully we didn't need to upgrade
+            mLogger.error("Couldn't lookup current database version", e);
+            return;
         }
-        catch (SQLException e)
-        {
-            mLogger.error("ERROR in database upgrade",e);
-            throw new RollerException("ERROR in database upgrade",e);
+        
+        mLogger.debug("Database version = "+dbversion);
+        mLogger.debug("Desired version = "+myVersion);
+            
+        if(dbversion < 0) {
+            mLogger.info("New installation found, setting db version to "+myVersion);
+            UpgradeDatabase.setDatabaseVersion(con, myVersion);
+            return;
+        } else if(dbversion >= myVersion) {
+            mLogger.info("Database is current, no upgrade needed");
+            return;
+        }
+        
+        mLogger.info("Database is old, beginning upgrade to version "+myVersion);
+        
+        // iterate through each upgrade as needed
+        // to add to the upgrade sequence simply add a new "else if" statement
+        // for whatever version needed and then define a new method upgradeXXX()
+        if(dbversion < 130)
+            UpgradeDatabase.upgradeTo130(con);
+        
+        // make sure the database version is the exact version
+        // we are upgrading too.
+        UpgradeDatabase.updateDatabaseVersion(con, myVersion);
+    }
+    
+    
+    /**
+     * Upgrade database for Roller 1.3.0
+     */
+    private static void upgradeTo130(Connection con) throws RollerException {
+        try {
+            /*
+             * The new theme management code is going into place and it uses
+             * the old website.themeEditor attribute to store a users theme.
+             *
+             * In pre-1.3 Roller *all* websites are considered to be using a
+             * custom theme, so we need to make sure this is properly defined
+             * by setting the theme on all websites to custom.
+             *
+             * NOTE: If we don't do this then nothing would break, but some users
+             * would be suprised that their template customizations are no longer
+             * in effect because they are using a shared theme instead.
+             */
+            
+            mLogger.info("Doing upgrade to 130 ...");
+            mLogger.info("Ensuring that all website themes are set to custom");
+            
+            PreparedStatement setCustomThemeStmt = con.prepareStatement(
+                    "update website set editortheme = ?");
+            
+            setCustomThemeStmt.setString(1, org.roller.pojos.Theme.CUSTOM);
+            setCustomThemeStmt.executeUpdate();
+            
+            mLogger.info("Upgrade to 130 complete.");
+        } catch (SQLException e) {
+            mLogger.error("Problem upgrading database to version 130", e);
+            throw new RollerException("Problem upgrading database to version 130", e);
+        }
+        
+        // If someone is upgrading to 1.3.x then we are setting the db version
+        // for the first time.  Normally we would just updateDatabaseVersion()
+        UpgradeDatabase.setDatabaseVersion(con, 130);
+    }
+
+
+    /**
+     * Insert a new database.version property.
+     *
+     * This should only be called once for new installations
+     */
+    private static void setDatabaseVersion(Connection con, int version) 
+        throws RollerException {
+        
+        try {
+            Statement stmt = con.createStatement();
+            stmt.executeUpdate("insert into roller_properties "+
+                    "values('"+DBVERSION_PROP+"', '"+version+"')");
+            
+            mLogger.debug("Set database verstion to "+version);
+        } catch(SQLException se) {
+            throw new RollerException("Error setting database version.", se);
+        }
+    }
+    
+    
+    /**
+     * Update the existing database.version property
+     */
+    private static void updateDatabaseVersion(Connection con, int version) 
+        throws RollerException {
+        
+        try {
+            Statement stmt = con.createStatement();
+            stmt.executeUpdate("update roller_properties "+
+                    "set value = '"+version+"'"+
+                    "where name = '"+DBVERSION_PROP+"'");
+            
+            mLogger.debug("Updated database verstion to "+version);
+        } catch(SQLException se) {
+            throw new RollerException("Error setting database version.", se);
         }
     }
 }

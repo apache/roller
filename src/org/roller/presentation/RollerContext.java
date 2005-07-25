@@ -1,17 +1,12 @@
 package org.roller.presentation;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimerTask;
 
@@ -39,13 +34,12 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.presentation.velocity.CommentAuthenticator;
 import org.roller.presentation.velocity.ContextLoader;
 import org.roller.presentation.velocity.DefaultCommentAuthenticator;
-import org.roller.presentation.website.ThemeCache;
 import org.roller.presentation.pings.PingQueueTask;
-import org.roller.util.DateUtil;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
 
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
+import org.roller.business.utils.UpgradeDatabase;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.config.PingConfig;
 
@@ -176,14 +170,14 @@ public class RollerContext implements ServletContextListener
             //       remove these dependencies on the webapp context if possible
             RollerConfig.setContextPath(mContext.getRealPath("/"));
             
-            Roller roller = RollerFactory.getRoller();
+            // always upgrade database first
+            upgradeDatabaseIfNeeded();
             
+            Roller roller = RollerFactory.getRoller();
             roller.begin(UserData.SYSTEM_USER);
             
-            //setupRollerConfig();
             setupRollerProperties();
             roller.getThemeManager();
-            upgradeDatabaseIfNeeded();
             setupSpellChecker();
             setupPagePlugins();
             setupIndexManager(roller);
@@ -304,7 +298,7 @@ public class RollerContext implements ServletContextListener
             InitialContext ic = new InitialContext();
             DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/rollerdb");
             Connection con = ds.getConnection();
-            RollerFactory.getRoller().upgradeDatabase(con);
+            UpgradeDatabase.upgradeDatabase(con, mVersion);
             con.close();
         }
         catch (NamingException e)
