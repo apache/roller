@@ -4,24 +4,23 @@ package org.roller.business;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties; 
+import java.util.Properties;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.roller.RollerException;
-import org.roller.RollerPermissionsException;
+import org.roller.RollerTestBase;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.PageData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.RollerTestBase;
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
@@ -187,7 +186,8 @@ public class UserManagerTest  extends RollerTestBase
             Boolean.FALSE,
             null,
             Boolean.TRUE, 
-            "");
+            "", 
+            new Date());
         umgr.storeWebsite(stored);
 
         FolderData rootFolder = getRoller().getBookmarkManager()
@@ -241,7 +241,9 @@ public class UserManagerTest  extends RollerTestBase
         pages.put("_day","Day page content");
         pages.put("css","CSS page content");
         umgr.addUser(user);
-        umgr.createWebsite(user, pages, "basic", "en_US_WIN", "America/Los_Angeles");
+        umgr.createWebsite(user, pages, 
+                user.getUserName(), user.getUserName(), user.getUserName(), 
+                "basic", "en_US_WIN", "America/Los_Angeles");
         getRoller().commit();
 
         // Verify that user has all the goodies

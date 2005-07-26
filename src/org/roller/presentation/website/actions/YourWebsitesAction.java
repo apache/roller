@@ -30,8 +30,23 @@ import org.roller.presentation.website.formbeans.YourWebsitesForm;
  */
 public class YourWebsitesAction extends DispatchAction
 {
-    private static Log mLogger =
+    private static Log mLogger = 
         LogFactory.getFactory().getInstance(YourWebsitesAction.class);
+    
+    /** If method param is not specified, use HTTP verb to pick method to call */
+    public ActionForward unspecified(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        if (request.getMethod().equals("GET"))
+        {
+            return edit(mapping, actionForm, request, response);
+        }
+        return select(mapping, actionForm, request, response);
+    }
     
     public ActionForward edit(
             ActionMapping       mapping,

@@ -5,12 +5,14 @@ package org.roller.presentation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.ActionMapping;
 import org.roller.RollerException;
+import org.roller.presentation.util.StrutsUtil;
 
 /**
  * Re-usable base for page models.
@@ -30,6 +32,8 @@ public class BasePageModel
         this.request = request;
         this.response = response;
         this.mapping = mapping;
+        request.setAttribute("locales", StrutsUtil.getLocaleBeans());        
+        request.setAttribute("timezones", StrutsUtil.getTimeZoneBeans());        
     }
 
     public String getBaseURL()
@@ -86,5 +90,15 @@ public class BasePageModel
     public boolean getIsAdmin() throws RollerException
     {
         return RollerSession.getRollerSession(request).isAdminUser(); 
+    }
+
+    public List getLocales()
+    {
+        return StrutsUtil.getLocaleBeans();
+    }
+
+    public List getTimeZones()
+    {
+        return StrutsUtil.getTimeZoneBeans();
     }
 }

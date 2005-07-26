@@ -39,15 +39,15 @@ public class UserData
    
    static final long serialVersionUID = -6354583200913127874L;
 
-   protected java.lang.String id;
-   protected java.lang.String userName;
-   protected java.lang.String password;
-   protected java.lang.String fullName;
-   protected java.lang.String emailAddress;
-   protected java.util.Date dateCreated;
+   protected String id;
+   protected String userName;
+   protected String password;
+   protected String fullName;
+   protected String emailAddress;
+   protected Date dateCreated;
    protected String  locale;
-   protected String  timezone;
-   protected Boolean isEnabled;
+   protected String  timeZone;
+   protected Boolean isEnabled = Boolean.TRUE;
    
    private Set roles = new TreeSet();
    private List permissions = new ArrayList();
@@ -56,11 +56,11 @@ public class UserData
    {
    }
 
-	public UserData( java.lang.String id, java.lang.String userName,
-                     java.lang.String password, java.lang.String fullName,
-                     java.lang.String emailAddress, 
+	public UserData( String id, String userName,
+                     String password, String fullName,
+                     String emailAddress, 
                      String locale, String timezone,
-                     java.util.Date dateCreated,
+                     Date dateCreated,
                      Boolean isEnabled)
 	{
          this.id = id;
@@ -70,7 +70,7 @@ public class UserData
          this.emailAddress = emailAddress;
          this.dateCreated = (Date)dateCreated.clone();
          this.locale = locale;
-         this.timezone = timezone;
+         this.timeZone = timezone;
          this.isEnabled = isEnabled;
 	}
 
@@ -123,12 +123,12 @@ public class UserData
      * @hibernate.id column="id" type="string"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
-   public java.lang.String getId()
+   public String getId()
    {
       return this.id;
    }
    /** @ejb:persistent-field */ 
-   public void setId( java.lang.String id )
+   public void setId( String id )
    {
       this.id = id;
    }
@@ -137,12 +137,12 @@ public class UserData
      * @ejb:persistent-field 
      * @hibernate.property column="username" non-null="true" unique="true"
      */
-   public java.lang.String getUserName()
+   public String getUserName()
    {
       return this.userName;
    }
    /** @ejb:persistent-field */ 
-   public void setUserName( java.lang.String userName )
+   public void setUserName( String userName )
    {
       this.userName = userName;
    }
@@ -153,7 +153,7 @@ public class UserData
     * @ejb:persistent-field 
     * @hibernate.property column="passphrase" non-null="true"
     */
-   public java.lang.String getPassword()
+   public String getPassword()
    {
       return this.password;
    }
@@ -162,7 +162,7 @@ public class UserData
     * If password encryption is turned on, then pass in an encrypted password. 
     * @ejb:persistent-field 
     */ 
-   public void setPassword( java.lang.String password )
+   public void setPassword( String password )
    {
       this.password = password;
    }
@@ -171,12 +171,12 @@ public class UserData
      * @ejb:persistent-field 
      * @hibernate.property column="fullname" non-null="true" unique="true"
      */
-   public java.lang.String getFullName()
+   public String getFullName()
    {
       return this.fullName;
    }
    /** @ejb:persistent-field */ 
-   public void setFullName( java.lang.String fullName )
+   public void setFullName( String fullName )
    {
       this.fullName = fullName;
    }
@@ -185,12 +185,12 @@ public class UserData
      * @ejb:persistent-field 
      * @hibernate.property column="emailaddress" non-null="true" unique="true"
      */
-   public java.lang.String getEmailAddress()
+   public String getEmailAddress()
    {
       return this.emailAddress;
    }
    /** @ejb:persistent-field */ 
-   public void setEmailAddress( java.lang.String emailAddress )
+   public void setEmailAddress( String emailAddress )
    {
       this.emailAddress = emailAddress;
    }
@@ -199,7 +199,7 @@ public class UserData
 	* @ejb:persistent-field 
 	* @hibernate.property column="datecreated" non-null="true" unique="false"
 	*/
-   public java.util.Date getDateCreated()
+   public Date getDateCreated()
    {
        if (dateCreated == null) 
        {
@@ -211,7 +211,7 @@ public class UserData
        }
    }
    /** @ejb:persistent-field */ 
-   public void setDateCreated(final java.util.Date date)
+   public void setDateCreated(final Date date)
    {
 	   if (date != null) 
 	   {
@@ -244,15 +244,15 @@ public class UserData
     * @ejb:persistent-field
     * @hibernate.property column="timezone" non-null="true" unique="false"
     */
-   public String getTimezone()
+   public String getTimeZone()
    {
-       return this.timezone;
+       return this.timeZone;
    }
 
    /** @ejb:persistent-field */
-   public void setTimezone(String timezone)
+   public void setTimeZone(String timeZone)
    {
-       this.timezone = timezone;
+       this.timeZone = timeZone;
    }
 
    //------------------------------------------------------------------- citizenship
@@ -371,7 +371,7 @@ public class UserData
       this.fullName = ((UserData)otherData).fullName;
       this.emailAddress = ((UserData)otherData).emailAddress;
       this.locale = ((UserData)otherData).locale;
-      this.timezone = ((UserData)otherData).timezone;
+      this.timeZone = ((UserData)otherData).timeZone;
       this.dateCreated = ((UserData)otherData).dateCreated;
    }
 

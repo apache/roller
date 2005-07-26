@@ -32,6 +32,6 @@ public class InviteMemberAction extends DispatchAction
         throws IOException, ServletException
     {
         ActionForward forward = mapping.findForward("inviteMembers.page");
-        return forward;
+        return forward; 
     }
 }
