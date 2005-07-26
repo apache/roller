@@ -14,6 +14,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
+import java.util.Date;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.CommentData;
+import org.roller.util.CommentSpamChecker;
 
 
 /**
@@ -130,14 +135,38 @@ public class TrackbackServlet extends HttpServlet
                 
                 if (entry!=null && entry.getCommentsStillAllowed())
                 {
-                    entry.addTrackback(url,title,excerpt,blogName);
-                    rreq.getRoller().commit();
-            
-                    pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
-                    pw.println("<response>");
-                    pw.println("<error>0</error>");
-                    pw.println("</response>");
-                    pw.flush();
+                    String modTitle = blogName + ": "  + title;
+                    if (modTitle.length() >= 250) {
+                        modTitle = modTitle.substring(0, 257);
+                        modTitle += "...";
+                    }
+                    
+                    // Track trackbacks as comments
+                    CommentData comment = new CommentData();
+                    comment.setContent("[Trackback] "+excerpt);
+                    comment.setName(blogName);
+                    comment.setUrl(url);
+                    comment.setWeblogEntry(entry);
+                    comment.setNotify(Boolean.FALSE);
+                    comment.setPostTime(new Timestamp(new Date().getTime()));
+                    
+                    // check if this is spam
+                    CommentSpamChecker checker = new CommentSpamChecker();
+                    checker.testComment(comment);
+                    if (comment.getSpam().booleanValue()) {
+                        error = "Trackback spam!";
+                        
+                    } else {
+                        // save, commit, send response
+                        comment.save();
+                        RollerFactory.getRoller().commit();
+                        
+                        pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
+                        pw.println("<response>");
+                        pw.println("<error>0</error>");
+                        pw.println("</response>");
+                        pw.flush();
+                    }
                 }
                 else if (entry!=null)
                 {
