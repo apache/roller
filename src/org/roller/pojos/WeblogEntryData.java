@@ -657,6 +657,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      * @param excerpt
      * @param blogName
      */
+    /* moved to trackback servlet -- Allen G
     public void addTrackback(
         String url, String title, String excerpt, String blogName) 
         throws RollerException
@@ -693,6 +694,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         //ref.setDateString(formatPubTime("yyyyMMdd"));        
         //mRoller.getRefererManager().storeReferer(ref);
     }
+    */
     
     /**
      * Convenience method for getPermalink(category)
