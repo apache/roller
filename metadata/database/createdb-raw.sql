@@ -98,7 +98,8 @@ create table website (
     timezone          varchar(50) null,  
     defaultplugins    varchar(255) null,
     pinnedtomain      @BOOLEAN_SQL_TYPE_FALSE@ not null,
-    isenabled         @BOOLEAN_SQL_TYPE_TRUE@ not null
+    isenabled         @BOOLEAN_SQL_TYPE_TRUE@ not null,
+    datecreated     timestamp not null
 );
 create index website_id_index        on website(id);
 create index website_userid_index    on website(userid);

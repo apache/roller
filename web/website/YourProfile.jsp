@@ -1,13 +1,13 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
 
-<br />
-<h1><fmt:message key="userSettings.userSettings" /></h1>
+<h1><fmt:message key="yourProfile.title" /></h1>
 
 <br /> 
-<html:form action="/editor/user" method="post" focus="fullName">
-    <html:hidden property="method" value="update"/></input>
+<html:form action="/editor/yourProfile" method="post" focus="fullName">
+    <html:hidden property="method" value="save"/></input>
     <html:hidden property="id"/></input>
     <html:hidden property="userName" /></input>
+    <html:hidden property="isEnabled" /></input>
     
     <div class="formrow">
        <label for="fullName" class="formrow" /><fmt:message key="userSettings.fullname" /></label>
@@ -34,27 +34,17 @@
     <div class="formrow">
        <label for="locale" class="formrow" /><fmt:message key="userSettings.locale" /></label>
        <html:select property="locale" size="1" >
-          <html:options collection="roller.locales" property="value" labelProperty="label"/>
+           <html:options collection="locales" property="value" labelProperty="label"/>
        </html:select>
     </div>
 
     <div class="formrow">
-       <label for="timezone" class="formrow" /><fmt:message key="userSettings.timezone" /></label>
-       <html:select property="timezone" size="1" >
-           <html:options collection="roller.timezones" property="value" labelProperty="label"/>
+       <label for="timeZone" class="formrow" /><fmt:message key="userSettings.timeZone" /></label>
+       <html:select property="timeZone" size="1" >
+           <html:options collection="timezones" property="value" labelProperty="label"/>
        </html:select>
     </div>
 
-    <html:hidden property="theme" /></input>
-    <%-- Not implemented for the front end yet
-    <div class="formrow">
-       <label for="theme" class="formrow" /><fmt:message key="fixme!" /></label>
-       <html:select property="theme" size="1" >
-           <html:options name="themes"/>
-       </html:select>
-    </div>
-    --%>
-    
     <br />
     <div class="control">
        <input type="submit" value='<fmt:message key="userSettings.save" />' /></input>

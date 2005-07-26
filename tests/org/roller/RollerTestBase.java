@@ -145,7 +145,8 @@ public abstract class RollerTestBase extends TestCase
         
         // Create website for user with those pages
         umgr.createWebsite(
-           ud, pages, "basic", "en_US_WIN", "America/Los_Angeles");
+           ud, pages, username, username, username, "basic", 
+           "en_US_WIN", "America/Los_Angeles");
         
         return ud;
     }

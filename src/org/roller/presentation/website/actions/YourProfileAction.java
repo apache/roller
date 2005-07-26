@@ -1,6 +1,8 @@
 package org.roller.presentation.website.actions;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import org.roller.RollerException;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.UserFormEx;
@@ -34,8 +37,22 @@ public class YourProfileAction extends UserBaseAction
     private static Log mLogger =
         LogFactory.getFactory().getInstance(YourProfileAction.class);
 
-    //-----------------------------------------------------------------------
-    /** Handle GET for user edit page */
+    /** If method param is not specified, use HTTP verb to pick method to call */
+    public ActionForward unspecified(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        if (request.getMethod().equals("GET"))
+        {
+            return edit(mapping, actionForm, request, response);
+        }
+        return save(mapping, actionForm, request, response);
+    }
+    
+    /** Load form with authenticated user and forward to your-profile page */
     public ActionForward edit(
         ActionMapping       mapping,
         ActionForm          actionForm,
@@ -46,55 +63,41 @@ public class YourProfileAction extends UserBaseAction
         ActionForward forward = mapping.findForward("yourProfile.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
-            {
-                UserData ud = RollerSession.getRollerSession(request).getAuthenticatedUser();
-                request.setAttribute("user",ud);
-
-                UserFormEx form = (UserFormEx)actionForm;
-                form.copyFrom(ud, request.getLocale());
-                
-                // User must set new password twice
-                form.setPasswordText(null);
-                form.setPasswordConfirm(null);
-
-                loadRequestObjects(request, rreq, ud, form);
-            }
-            else
-            {
-                forward = mapping.findForward("access-denied");
-            }
+            UserData ud = rollerSession.getAuthenticatedUser();
+            UserFormEx form = (UserFormEx)actionForm;
+            form.copyFrom(ud, request.getLocale());
+            form.setPasswordText(null);
+            form.setPasswordConfirm(null);
+            form.setLocale(ud.getLocale());
+            form.setTimeZone(ud.getTimeZone());
+            request.setAttribute(
+                    "model", new BasePageModel(request, response, mapping));
         }
         catch (Exception e)
         {
             mLogger.error("ERROR in action",e);
             throw new ServletException(e);
-        }
-        
+        }        
         // if user logged in with a cookie, display a warning that they
         // can't change passwords
         if (mLogger.isDebugEnabled()) 
         {
             log.debug("checking for cookieLogin...");
         }
-
         if (request.getSession().getAttribute("cookieLogin") != null) {
             ActionMessages messages = new ActionMessages();
 
             // add warning messages
             messages.add(ActionMessages.GLOBAL_MESSAGE,
-                         new ActionMessage("userSettings.cookieLogin"));
+                         new ActionMessage("yourProfile.cookieLogin"));
             saveMessages(request, messages);
         }
-        
         return forward;
     }
 
-    //-----------------------------------------------------------------------
-    /** Handle POST from user edit form */
-    public ActionForward update(
+    /** Update user based on posted form data */
+    public ActionForward save(
         ActionMapping       mapping,
         ActionForm          actionForm,
         HttpServletRequest  request,
@@ -106,64 +109,51 @@ public class YourProfileAction extends UserBaseAction
         ActionMessages msgs = new ActionMessages();
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if (rollerSession.isUserAuthorizedToEdit())
+            ActionMessages errors = validate(form, new ActionErrors());
+            if (errors.size() == 0)
             {
-                ActionMessages errors = validate(form, new ActionErrors());
-                if (errors.size() == 0)
-                {
-                    UserManager mgr = RollerFactory.getRoller().getUserManager();
-                    UserData data = mgr.getUser( form.getUserName() );
-                    
-                    // Need system user to update new user
-                    RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
-                    
-                    // Copy data from form to persistent object (won't copy over password)
-                    form.copyTo(data, request.getLocale());
-                    
-                    // If user set both password and passwordConfirm then reset password
-                    if (    !StringUtils.isEmpty(form.getPasswordText()) 
-                         && !StringUtils.isEmpty(form.getPasswordConfirm()))
-                    {
-                        try
-                        {
-                            data.resetPassword(RollerFactory.getRoller(), 
-                               form.getPasswordText(), 
-                               form.getPasswordConfirm());
-                        }
-                        catch (RollerException e)
-                        {
-                            msgs.add(ActionMessages.GLOBAL_MESSAGE, 
-                                new ActionMessage("userSettings.passwordResetError"));
-                        }
-                    } 
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                UserData data = mgr.getUser( form.getUserName() );
                 
-                    // ROLLER_2.0: user needs locale and timezone 
-                    
-//                    WebsiteData website = mgr.getWebsite(data.getUserName());
-//                    website.setEditorTheme(form.getTheme());
-//                    website.setLocale(form.getLocale());
-//                    website.setTimezone(form.getTimezone());
-    
-                    // Persist changes
-                    mgr.storeUser( data );
-                    //mgr.storeWebsite( website );
-                    RollerFactory.getRoller().commit();
-                    
-                    // Changing user no longer requires cache flush
-                    //PageCacheFilter.removeFromCache(request, data);
-    
-                    msgs.add(null, new ActionMessage("userSettings.saved"));
-                    saveMessages(request, msgs);
-                }
-                else 
+                // Need system user to update user
+                RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
+                
+                // Copy data from form to object (won't copy over password)
+                form.copyTo(data, request.getLocale());
+                
+                // If user set both password and passwordConfirm then reset password
+                if (    !StringUtils.isEmpty(form.getPasswordText()) 
+                     && !StringUtils.isEmpty(form.getPasswordConfirm()))
                 {
-                    saveErrors(request, errors);
-                }
-                return edit(mapping, actionForm, request, response);
+                    try
+                    {
+                        data.resetPassword(RollerFactory.getRoller(), 
+                           form.getPasswordText(), 
+                           form.getPasswordConfirm());
+                    }
+                    catch (RollerException e)
+                    {
+                        msgs.add(ActionMessages.GLOBAL_MESSAGE, 
+                            new ActionMessage("yourProfile.passwordResetError"));
+                    }
+                } 
+                RollerSession rses = RollerSession.getRollerSession(request);
+                rses.setAuthenticatedUser(data);
+                mgr.storeUser( data );
+                
+                RollerFactory.getRoller().commit();
+
+                request.setAttribute(
+                        "model", new BasePageModel(request, response, mapping));
+                
+                msgs.add(null, new ActionMessage("yourProfile.saved"));
+                saveMessages(request, msgs);
             }
-            return mapping.findForward("access-denied");
+            else 
+            {
+                saveErrors(request, errors);
+            }
+            return edit(mapping, actionForm, request, response);
         }
         catch (Exception e)
         {

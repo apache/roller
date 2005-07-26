@@ -1,6 +1,9 @@
 package org.roller.pojos;
 
+
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -49,6 +52,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     protected String  timezone;
     protected String  mDefaultPlugins;
     protected Boolean isEnabled;
+    protected Date dateCreated;
     
     // Associated objects
     protected UserData mUser = null; // TODO: decide if website.user is needed
@@ -77,7 +81,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                        final Boolean  emailComments,
                        final String   emailFromAddress,
                        final Boolean  isEnabled,
-                       final String   emailAddress)
+                       final String   emailAddress,
+                       final Date     dateCreated)
     {
         this.id = id;
         this.name = name;
@@ -96,6 +101,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.emailFromAddress = emailFromAddress;
         this.isEnabled = isEnabled;
         this.emailAddress = emailAddress;
+        this.dateCreated = dateCreated;
     }
 
     public WebsiteData(WebsiteData otherData)
@@ -431,6 +437,34 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.timezone = timezone;
     }
 
+    /** 
+    * @ejb:persistent-field 
+    * @hibernate.property column="datecreated" non-null="true" unique="false"
+    */
+   public Date getDateCreated()
+   {
+       if (dateCreated == null) 
+       {
+           return null;
+       }
+       else 
+       {
+           return (Date)dateCreated.clone();
+       }
+   }
+   /** @ejb:persistent-field */ 
+   public void setDateCreated(final Date date)
+   {
+       if (date != null) 
+       {
+           dateCreated = (Date)date.clone();
+       }
+       else
+       {
+           dateCreated = null;
+       }
+   }
+
     /**
      * Comma-delimited list of user's default Plugins.
      * @ejb:persistent-field
@@ -595,6 +629,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.timezone = other.timezone;
         this.mDefaultPlugins = other.mDefaultPlugins;
         this.isEnabled = other.isEnabled;
+        this.dateCreated = dateCreated;
     }
     
     /**

@@ -117,19 +117,24 @@ public interface UserManager extends Serializable
     public void addUser(UserData user) throws RollerException;
 
     /**
-     * @param ud
-     * @param pages
-     * @param theme
-     * @param locale
-     * @param timezone
-     * @param mRoller
-     * @param wmgr
-     * @return
+     * Create a fresh new website.
+     * @param ud          User creating website
+     * @param pages       Pages to be used in theme (TODO: elim. this redundancy)
+     * @param handle      Handle of new website
+     * @param name        Name of new website
+     * @param description Description of new website
+     * @param theme       Name of theme to be used
+     * @param locale      Locale code of new website
+     * @param timezone    ID of timezone of new website
+     * @return            New website object (has been saved and committed)
      * @throws RollerException
      */
     public WebsiteData createWebsite(
             UserData ud, 
             Map pages, 
+            String handle,
+            String name, 
+            String description,
             String theme, 
             String locale, 
             String timezone) throws RollerException;

@@ -128,7 +128,9 @@ public class FileManagerTest extends TestCase
         pages.put("_day","Day page content");
         pages.put("css","CSS page content");
         umgr.addUser(user);
-        umgr.createWebsite(user, pages, "basic", "en_US_WIN", "America/Los_Angeles");
+        umgr.createWebsite(user, pages, 
+                user.getUserName(), user.getUserName(), user.getUserName(), 
+                "basic", "en_US_WIN", "America/Los_Angeles");
         mRoller.commit();
         WebsiteData website = (WebsiteData)umgr.getWebsites(user,null).get(0);
         return website;

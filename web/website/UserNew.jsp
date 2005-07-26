@@ -53,14 +53,14 @@ else
     <div class="formrow">
        <label for="locale" class="formrow" /><fmt:message key="userSettings.locale" /></label>
        <html:select property="locale" size="1" >
-          <html:options collection="roller.locales" property="value" labelProperty="label"/>
+          <html:options collection="locales" property="value" labelProperty="label"/>
        </html:select>
     </div>
 
     <div class="formrow">
        <label for="timezone" class="formrow" /><fmt:message key="userSettings.timezone" /></label>
        <html:select property="timezone" size="1" >
-           <html:options collection="roller.timezones" property="value" labelProperty="label"/>
+           <html:options collection="timezones" property="value" labelProperty="label"/>
        </html:select>
     </div>
 

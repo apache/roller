@@ -16,7 +16,7 @@ import org.apache.struts.actions.DispatchAction;
 /**
  * Allows website admin to change website member permissions.
  * 
- * @struts.action path="/editor/memberPermissions" parameter="method"
+ * @struts.action path="/editor/memberPermissions" parameter="method" 
  * @struts.action-forward name="memberPermissions.page" path="/website/MemberPermissions.jsp"
  */
 public class MemberPermissionsAction extends DispatchAction

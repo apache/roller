@@ -3,6 +3,8 @@ package org.roller.presentation.website.actions;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -23,6 +25,7 @@ import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.website.formbeans.UserFormEx;
@@ -72,12 +75,12 @@ public class UserNewAction extends UserBaseAction
         try
         {
             UserFormEx userForm = (UserFormEx)actionForm;
-            loadRequestObjects(request, rreq, null, userForm);
-            userForm.setLocale(request.getLocale().toString());
-                
-            // User must set new password twice
+            userForm.setLocale( Locale.getDefault().getDisplayName() );
+            userForm.setTimeZone( TimeZone.getDefault().getID() );
             userForm.setPasswordText(null);
-            userForm.setPasswordConfirm(null);           
+            userForm.setPasswordConfirm(null);            
+            request.setAttribute(
+                    "model", new BasePageModel(request, response, mapping));
         }
         catch (Exception e)
         {
@@ -138,10 +141,10 @@ public class UserNewAction extends UserBaseAction
                   form.getPasswordText(), form.getPasswordConfirm());
             }
             
-            String theme = form.getTheme();
-            HashMap pages = rollerContext.readThemeMacros(theme);
+            //String theme = form.getTheme();
+            //HashMap pages = rollerContext.readThemeMacros(theme);
             mgr.addUser(ud);
-            mgr.createWebsite(ud, pages, theme, form.getLocale(), form.getTimezone());
+            //mgr.createWebsite(ud, pages, theme, form.getLocale(), form.getTimezone());
             RollerFactory.getRoller().commit();
 
 			// Flush cache so user will immediately appear on index page

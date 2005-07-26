@@ -222,6 +222,9 @@ public abstract class UserManagerImpl implements UserManager
     public WebsiteData createWebsite(
             UserData ud, 
             Map pages, 
+            String handle,
+            String name, 
+            String description,
             String theme, 
             String locale, 
             String timezone) throws RollerException
@@ -229,24 +232,25 @@ public abstract class UserManagerImpl implements UserManager
         Roller mRoller = RollerFactory.getRoller();
         UserManager umgr = mRoller.getUserManager();
         WeblogManager wmgr = mRoller.getWeblogManager();
-
-        WebsiteData website = new WebsiteData(null,
-            ud.getFullName()+"'s Weblog", // name
-            ud.getUserName(),             // handle
-            ud.getFullName()+"'s Weblog", // description
-            ud,                 // userId
-            "dummy",            // defaultPageId
-            "dummy",            // weblogDayPageId
-            Boolean.TRUE,       // enableBloggerApi
-            null,               // bloggerCategory
-            null,               // defaultCategory
-            "editor-text.jsp",  // editorPage
-            "",                 // ignoreWords
-            Boolean.TRUE,       // allowComments  
-            Boolean.FALSE,      // emailComments
-            "",                 // emailFromAddress
-            Boolean.TRUE,       // isEnabled
-            "dummy@example.com");  // emailAddress
+        WebsiteData website = new WebsiteData(
+            null,                // id
+            name,                // name
+            handle,              // handle
+            description,         // description
+            ud,                  // userId
+            "dummy",             // defaultPageId
+            "dummy",             // weblogDayPageId
+            Boolean.TRUE,        // enableBloggerApi
+            null,                // bloggerCategory
+            null,                // defaultCategory
+            "editor-text.jsp",   // editorPage
+            "",                  // ignoreWords
+            Boolean.TRUE,        // allowComments  
+            Boolean.FALSE,       // emailComments
+            "",                  // emailFromAddress
+            Boolean.TRUE,        // isEnabled
+            "dummy@example.com", // emailAddress
+            new Date());
         website.setEditorTheme(theme);
         website.setLocale(locale);
         website.setTimezone(timezone);
