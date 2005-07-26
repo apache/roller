@@ -75,20 +75,18 @@ public class RollerSession
     /** Create session's Roller instance */
     public void sessionCreated(HttpSessionEvent se)
     {
-        // put this in session, so that we get HttpSessionActivationListener callbacks
-        se.getSession().setAttribute(ROLLER_SESSION, this);
-        
-        RollerContext rctx = RollerContext.getRollerContext(
-            se.getSession().getServletContext());       
+        RollerSession rollerSession = new RollerSession();
+        se.getSession().setAttribute(ROLLER_SESSION, rollerSession);
+        RollerContext rctx = 
+            RollerContext.getRollerContext(se.getSession().getServletContext());           
         rctx.sessionCreated(se);           
     }    
 
     public void sessionDestroyed(HttpSessionEvent se)
     {
-        RollerContext rctx = RollerContext.getRollerContext(
-            se.getSession().getServletContext());
-        rctx.sessionDestroyed(se);           
-        
+        RollerContext rctx = 
+            RollerContext.getRollerContext(se.getSession().getServletContext());
+        rctx.sessionDestroyed(se);                 
         clearSession(se);        
     }
 
@@ -184,15 +182,6 @@ public class RollerSession
      */
     public WebsiteData getCurrentWebsite()
     {       
-        // ROLLER_2.0: allow user to pick current website instead of this...
-        /* if (currentWebsite == null) try 
-        {
-            Roller roller = RollerFactory.getRoller();
-            UserManager umgr = roller.getUserManager();
-            currentWebsite = (WebsiteData)
-                umgr.getWebsites(authenticatedUser, null).get(0);
-        }
-        catch (RollerException ignored) {} */
         return currentWebsite;
     }
 
@@ -224,20 +213,20 @@ public class RollerSession
         WebsiteData website = getCurrentWebsite();
         if (website != null && user != null) 
         {
-            return website.hasUserPermissions(user, 
-                (short)(PermissionsData.AUTHOR | PermissionsData.ADMIN));
+            return website.hasUserPermissions(user, (short)(PermissionsData.AUTHOR));
         }
         return false;
     }
 
     //--------------------------------------------------------------------- Innards
     
-    private  void clearSession( HttpSessionEvent se )
+    private void clearSession(HttpSessionEvent se)
     {
         HttpSession session = se.getSession();
         try
         {
-            session.removeAttribute( BREADCRUMB );
+            session.removeAttribute(BREADCRUMB);
+            session.removeAttribute(ROLLER_SESSION);
         }
         catch (Throwable e)
         {

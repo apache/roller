@@ -50,6 +50,12 @@ public abstract class UserManagerImpl implements UserManager
     {
     }
             
+    public PermissionsData retrievePermissionsData(String inviteId) 
+        throws RollerException
+    {
+        return (PermissionsData)mStrategy.load(inviteId, PermissionsData.class);
+    }
+    
     //--------------------------------------------------------------- Website
 
     public WebsiteData retrieveWebsite(String id) throws RollerException

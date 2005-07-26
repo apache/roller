@@ -163,13 +163,7 @@ public class RollerMenuModel extends BaseRollerMenu implements MenuModel
 		RollerRequest rreq = RollerRequest.getRollerRequest(req);
 		try
 		{
-			UserData user = RollerSession.getRollerSession(req).getAuthenticatedUser();
-			String fid = 
-                rreq.getFolder()==null ? null : rreq.getFolder().getId();
-			if ( user != null ) 
-			{
-				params.put( RollerRequest.USERNAME_KEY, user.getUserName() );
-			}
+			String fid = rreq.getFolder()==null ? null : rreq.getFolder().getId();
 			if ( fid != null ) 
 			{
 				params.put( RollerRequest.FOLDERID_KEY, fid );

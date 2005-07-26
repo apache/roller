@@ -8,6 +8,7 @@ import org.apache.struts.action.ActionForm;
  */
 public class YourWebsitesForm extends ActionForm
 {
+    private String inviteId; 
     private String websiteId; 
     public String getWebsiteId()
     {
@@ -16,5 +17,13 @@ public class YourWebsitesForm extends ActionForm
     public void setWebsiteId(String websiteId)
     {
         this.websiteId = websiteId;
+    }
+    public String getInviteId()
+    {
+        return inviteId;
+    }
+    public void setInviteId(String inviteId)
+    {
+        this.inviteId = inviteId;
     }
 }

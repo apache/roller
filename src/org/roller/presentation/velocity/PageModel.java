@@ -645,8 +645,8 @@ public class PageModel
     {
         try
         {
-            RollerSession rollerSession = RollerSession.getRollerSession(
-                    mRollerReq.getRequest());
+            RollerSession rollerSession = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
             return rollerSession.isUserAuthorizedToEdit();
         }
         catch (Exception e)
@@ -654,6 +654,13 @@ public class PageModel
             mLogger.warn("PageModel.isUserAuthorizedToEdit)", e);
         }
         return false;
+    }
+    
+    //------------------------------------------------------------------------
+    
+    public boolean isUserAuthenticated()
+    {
+        return (mRollerReq.getRequest().getUserPrincipal() != null);
     }
     
     //------------------------------------------------------------------------

@@ -24,12 +24,38 @@ public class MemberPermissionsAction extends DispatchAction
     private static Log mLogger =
         LogFactory.getFactory().getInstance(MemberPermissionsAction.class);
     
+    /** If method param is not specified, use HTTP verb to pick method to call */
+    public ActionForward unspecified(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        if (request.getMethod().equals("GET"))
+        {
+            return edit(mapping, actionForm, request, response);
+        }
+        return save(mapping, actionForm, request, response);
+    }
+    
     public ActionForward edit(
-        ActionMapping       mapping,
-        ActionForm          actionForm,
-        HttpServletRequest  request,
-        HttpServletResponse response)
-        throws IOException, ServletException
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException
+    {
+        ActionForward forward = mapping.findForward("memberPermissions.page");
+        return forward;
+    }
+    
+    public ActionForward save(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException
     {
         ActionForward forward = mapping.findForward("memberPermissions.page");
         return forward;

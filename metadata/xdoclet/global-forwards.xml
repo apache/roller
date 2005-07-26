@@ -8,8 +8,8 @@
 <forward name="page"                   path="/page"/>
 <forward name="main"                   path="/main.do"/>
 <forward name="home.page"              path="/main.do"/>
-<forward name="createUser"             path="/yourProfile.do?method=createUser"/>
-<forward name="registerUser"           path="/yourProfile.do?method=registerUser"/>
+<forward name="createUser"             path="/user.do?method=createUser"/>
+<forward name="registerUser"           path="/user.do?method=registerUser"/>
 
 <!--  editor and admin role actions -->
 <forward name="bookmarks"              path="/editor/bookmarks.do?method=selectFolder"/>

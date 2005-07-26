@@ -55,6 +55,7 @@
     <div class="control">
        <html:submit /></input>
     </div>
+    
 </html:form>
 
 <%@ include file="/theme/footer.jsp" %>
