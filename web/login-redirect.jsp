@@ -7,7 +7,8 @@ taglib uri="http://www.rollerweblogger.org/tags" prefix="roller" %>
   <roller:secure mode="unsecured" />
 </c:if>
 <%
-String dest = "editor/weblog.do?method=create&rmk=tabbedmenu.weblog&rmik=tabbedmenu.weblog.newEntry";
+// ROLLER_2.0: if user has one website, then go to editor page instead (as before)
+String dest = "editor/yourWebsites.do?method=edit&rmik=tabbedmenu.user.websites";
 response.sendRedirect(dest);
 %>
 

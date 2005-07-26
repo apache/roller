@@ -69,6 +69,9 @@ public interface UserManager extends Serializable
     public PermissionsData getPermissions(
             WebsiteData website, UserData user) throws RollerException;
     
+    public PermissionsData retrievePermissionsData(String inviteId) 
+        throws RollerException;
+
     /**
      * Invite user to join a website with specific permissions
      * @param website Website to be joined (persistent instance) 

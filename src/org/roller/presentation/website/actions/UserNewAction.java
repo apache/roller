@@ -80,7 +80,7 @@ public class UserNewAction extends UserBaseAction
             userForm.setPasswordText(null);
             userForm.setPasswordConfirm(null);            
             request.setAttribute(
-                    "model", new BasePageModel(request, response, mapping));
+                "model", new BasePageModel(request, response, mapping));
         }
         catch (Exception e)
         {

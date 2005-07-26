@@ -58,27 +58,13 @@ else
     </div>
 
     <div class="formrow">
-       <label for="timezone" class="formrow" /><fmt:message key="userSettings.timezone" /></label>
-       <html:select property="timezone" size="1" >
+       <label for="timeZone" class="formrow" /><fmt:message key="userSettings.timezone" /></label>
+       <html:select property="timeZone" size="1" >
            <html:options collection="timezones" property="value" labelProperty="label"/>
        </html:select>
     </div>
-
     <br />
-    
-    <div class="formrow">
-       <label for="theme" class="formrow" /><fmt:message key="newuser.theme" /></label>
-       <html:select property="theme" size="1" onchange="previewImage(this[selectedIndex].value)">
-           <html:options name="themes"/>
-       </html:select>
-    </div>
-    
-    <div class="formrow">
-       <label for="preview" class="formrow" />&nbsp;</label>
-       <img name="preview" 
-          src="<%= ctxPath %>/images/preview/sm-theme-basic.png" height="268" width="322" />
-    </div>
-    
+        
     <div class="control">
        <html:submit /></input>
     </div>

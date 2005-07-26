@@ -19,7 +19,7 @@ public abstract class WebsiteObject extends PersistentObject
             return true;
         }
         if (getWebsite().hasUserPermissions(
-           roller.getUser(), (short)(PermissionsData.ADMIN|PermissionsData.AUTHOR)))
+           roller.getUser(), (short)(PermissionsData.AUTHOR)))
         {
             return true;
         }

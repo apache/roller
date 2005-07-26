@@ -78,11 +78,53 @@ public class YourWebsitesAction extends DispatchAction
         if (selectedWebsite.hasUserPermissions(user, PermissionsData.LIMITED))
         {
             rollerSession.setCurrentWebsite(selectedWebsite);
-        }
+        }        
+        request.setAttribute("model",
+                new YourWebsitesPageModel(request, response, mapping));
+        ActionForward forward = mapping.findForward("yourWebsites.page");
+        return forward;
+    }
+        
+    public ActionForward accept(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        YourWebsitesForm form = (YourWebsitesForm)actionForm;
+        Roller roller = RollerFactory.getRoller();
+        PermissionsData perms = 
+            roller.getUserManager().retrievePermissionsData(form.getInviteId());
+        
+        perms.setPending(false);
+        // ROLLER_2.0: notify inviter that invitee has accepted invitation  
+        roller.commit();
         
         request.setAttribute("model",
                 new YourWebsitesPageModel(request, response, mapping));
-
+        ActionForward forward = mapping.findForward("yourWebsites.page");
+        return forward;
+    }
+        
+    public ActionForward decline(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        YourWebsitesForm form = (YourWebsitesForm)actionForm;
+        Roller roller = RollerFactory.getRoller();
+        PermissionsData perms = 
+            roller.getUserManager().retrievePermissionsData(form.getInviteId());
+        
+        perms.remove();
+        // ROLLER_2.0: notify inviter that invitee has declined invitation  
+        roller.commit();
+        
+        request.setAttribute("model",
+                new YourWebsitesPageModel(request, response, mapping));
         ActionForward forward = mapping.findForward("yourWebsites.page");
         return forward;
     }

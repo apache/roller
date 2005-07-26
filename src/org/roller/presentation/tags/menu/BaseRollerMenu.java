@@ -113,9 +113,9 @@ public abstract class BaseRollerMenu
             while (roles.hasNext())
             {
                 String role = (String)roles.next();
-                if (       role.equals("any") 
-                        || req.isUserInRole(role) 
-                        || (role.equals("admin") && rollerSession.isAdminUser()))  
+                if (    req.isUserInRole(role) 
+                     || role.equals("any")
+                     || (role.equals("admin") && rollerSession.isAdminUser()))  
                 {
                     ret = true;
                     break;

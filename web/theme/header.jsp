@@ -29,11 +29,11 @@
         </div>
     </div>
 
-    <%-- <div id="left" class="left">
+    <div id="left" class="left">
         <c:if test="${!empty leftPage}">
             <c:import url="${leftPage}" />
         </c:if>
-    </div> --%>
+    </div>
 
     <div id="content">
     <% 

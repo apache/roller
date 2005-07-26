@@ -73,6 +73,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             {
                 criteria.createAlias("permissions","permissions");
                 criteria.add(Expression.eq("permissions.user", user));
+                criteria.add(Expression.eq("permissions.pending", Boolean.FALSE));
             }
             if (enabled != null)
             {
