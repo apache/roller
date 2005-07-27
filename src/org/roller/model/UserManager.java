@@ -69,7 +69,23 @@ public interface UserManager extends Serializable
     public PermissionsData getPermissions(
             WebsiteData website, UserData user) throws RollerException;
     
-    public PermissionsData retrievePermissionsData(String inviteId) 
+    /**
+     * Get all permissions in website
+     * @param website Website (not null)
+     * @return        PermissionsData object
+     */
+    public List getAllPermissions(
+            WebsiteData website) throws RollerException;
+    
+    /**
+     * Get all permissions of user
+     * @param user User (not null)
+     * @return     PermissionsData object
+     */
+    public List getAllPermissions(
+            UserData user) throws RollerException;
+    
+    public PermissionsData retrievePermissions(String inviteId) 
         throws RollerException;
 
     /**
@@ -128,7 +144,7 @@ public interface UserManager extends Serializable
      * @param description Description of new website
      * @param theme       Name of theme to be used
      * @param locale      Locale code of new website
-     * @param timezone    ID of timezone of new website
+     * @param timeZone    ID of timeZone of new website
      * @return            New website object (has been saved and committed)
      * @throws RollerException
      */
@@ -140,7 +156,7 @@ public interface UserManager extends Serializable
             String description,
             String theme, 
             String locale, 
-            String timezone) throws RollerException;
+            String timeZone) throws RollerException;
 
     public UserData retrieveUser(String id)throws RollerException;
     public void storeUser( UserData data ) throws RollerException;

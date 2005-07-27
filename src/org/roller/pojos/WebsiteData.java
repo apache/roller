@@ -49,7 +49,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     protected String  emailAddress;
     protected String  editorTheme;
     protected String  locale;
-    protected String  timezone;
+    protected String  timeZone;
     protected String  mDefaultPlugins;
     protected Boolean isEnabled;
     protected Date dateCreated;
@@ -424,17 +424,17 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     /**
      * Timezone of the Website.
      * @ejb:persistent-field
-     * @hibernate.property column="timezone" non-null="true" unique="false"
+     * @hibernate.property column="timeZone" non-null="true" unique="false"
      */
     public String getTimezone()
     {
-        return this.timezone;
+        return this.timeZone;
     }
 
     /** @ejb:persistent-field */
-    public void setTimezone(String timezone)
+    public void setTimezone(String timeZone)
     {
-        this.timezone = timezone;
+        this.timeZone = timeZone;
     }
 
     /** 
@@ -515,7 +515,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                    "emailFromAddress=" + emailFromAddress + " " +
                    "editorTheme=" + editorTheme + " " +
                    "locale=" + locale + " " +
-                   "timezone=" + timezone + " " +
+                   "timeZone=" + timeZone + " " +
                    "defaultPlugins=" + mDefaultPlugins);
         str.append('}');
 
@@ -563,7 +563,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
             lEquals = PojoUtil.equals(lEquals, this.locale, lTest.locale);
 
-            lEquals = PojoUtil.equals(lEquals, this.timezone, lTest.timezone);
+            lEquals = PojoUtil.equals(lEquals, this.timeZone, lTest.timeZone);
 
             lEquals = PojoUtil.equals(lEquals, this.mDefaultPlugins, lTest.mDefaultPlugins);
             
@@ -595,7 +595,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         result = PojoUtil.addHashCode(result, this.emailFromAddress);
         result = PojoUtil.addHashCode(result, this.editorTheme);
         result = PojoUtil.addHashCode(result, this.locale);
-        result = PojoUtil.addHashCode(result, this.timezone);
+        result = PojoUtil.addHashCode(result, this.timeZone);
         result = PojoUtil.addHashCode(result, this.mDefaultPlugins);
 
         return result;
@@ -626,7 +626,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.emailFromAddress = other.emailFromAddress;
         this.editorTheme = other.editorTheme;
         this.locale = other.locale;
-        this.timezone = other.timezone;
+        this.timeZone = other.timeZone;
         this.mDefaultPlugins = other.mDefaultPlugins;
         this.isEnabled = other.isEnabled;
         this.dateCreated = dateCreated;
@@ -665,13 +665,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
     
     /**
-     * Return TimeZone instance for value of timezone,
+     * Return TimeZone instance for value of timeZone,
      * otherwise return system default instance.
      * @return TimeZone
      */
     public TimeZone getTimeZoneInstance()
     {
-    	if (timezone == null) 
+    	if (timeZone == null) 
         {
             if (TimeZone.getDefault() != null) 
             {
@@ -682,7 +682,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                 this.setTimezone("America/New_York");
             }
         }
-        return TimeZone.getTimeZone(timezone);
+        return TimeZone.getTimeZone(timeZone);
     }
     
     /** 

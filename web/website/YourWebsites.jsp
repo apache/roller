@@ -1,7 +1,5 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
 
-<h1><fmt:message key="yourWebsites.title" /></h1>
-    
 <script type="text/javascript">
 <!--
 function selectWebsite(id) 
@@ -21,8 +19,21 @@ function declineInvite(id)
     document.yourWebsitesForm.inviteId.value = id;
     document.yourWebsitesForm.submit();
 } 
+function resignWebsite(id,handle)
+{
+    if (confirm('<fmt:message key="yourWebsites.confirmResignation" /> [' + handle +"] ?"))
+    {
+        document.yourWebsitesForm.method.value = "resign";
+        document.yourWebsitesForm.websiteId.value = id;
+        document.yourWebsitesForm.submit();
+    }
+}
 -->
 </script>
+
+<h1><fmt:message key="yourWebsites.title" /></h1>
+    
+<p><fmt:message key="yourWebsites.description" /></p>
 
 <html:form action="/editor/yourWebsites" method="post">
     <input type="hidden" name="inviteId" value="" />
@@ -30,26 +41,63 @@ function declineInvite(id)
     <input type="hidden" name="method" value="select" />		  
 
     <c:if test="${!empty model.pendings}">
-        <fmt:message key="yourWebsites.invitations" /><br />
-	    <c:forEach var="invite" items="${model.pendings}">
-            <c:out value="${invite.website.handle}" />
-            <a href='javascript:acceptInvite("<c:out value='${invite.id}'/>")'>
-                <fmt:message key="yourWebsites.accept" />
-            </a> 
-            &nbsp;|&nbsp;
-            <a href='javascript:acceptInvite("<c:out value='${invite.id}'/>")'>
-                <fmt:message key="yourWebsites.decline" />
-            </a><br />
-	    </c:forEach>
+        <div class="messages">
+		    <c:forEach var="invite" items="${model.pendings}">
+	            <c:out value="${invite.website.handle}" />
+	            <a href='javascript:acceptInvite("<c:out value='${invite.id}'/>")'>
+	                <fmt:message key="yourWebsites.accept" />
+	            </a> 
+	            &nbsp;|&nbsp;
+	            <a href='javascript:acceptInvite("<c:out value='${invite.id}'/>")'>
+	                <fmt:message key="yourWebsites.decline" />
+	            </a><br />
+		    </c:forEach>
+        </div>
     </c:if>
-
-    <p><fmt:message key="yourWebsites.websites" /></p>
-    <c:forEach var="website" items="${model.websites}">
-        <a href='javascript:selectWebsite("<c:out value='${website.id}'/>")'>
-            <c:out value="${website.handle}" /><br />
-        </a>
-    </c:forEach>
-
+    
+    <table class="rollertable">
+        <tr class="rHeaderTr">
+           <th class="rollertable" width="20%">
+               <fmt:message key="yourWebsites.tableTitle" />
+           </th>
+           <th class="rollertable" width="20%">
+               <fmt:message key="yourWebsites.tableDescription" />
+           </th>
+           <th class="rollertable" width="20%">
+               <fmt:message key="yourWebsites.permissions" />
+           </th>
+           <th class="rollertable" width="20%">
+               <fmt:message key="yourWebsites.select" />
+           </th>
+           <th class="rollertable" width="20%">
+               <fmt:message key="yourWebsites.resign" />
+           </th>
+        </tr>
+        <c:forEach var="perms" items="${model.permissions}">
+            <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">  
+               <td class="rollertable">
+                   <c:out value="${perms.website.name}" />
+               </td>
+               <td class="rollertable">
+                   <c:out value="${perms.website.description}" />
+               </td>
+               <td class="rollertable">
+                   <c:out value="${perms.permissionMask}" />
+               </td>
+               <td class="rollertable">
+                   <a href='javascript:selectWebsite("<c:out value='${perms.website.id}'/>")'>
+                       <fmt:message key="yourWebsites.select" />
+                   </a>
+               </td>
+               <td class="rollertable">
+                   <a href='javascript:resignWebsite("<c:out value='${perms.website.id}'/>","<c:out value="${perms.website.handle}" />")'>
+                       <fmt:message key="yourWebsites.resign" />
+                   </a>
+               </td>
+            </roller:row>
+        </c:forEach>
+    </table>
+    
 </html:form>
 
 <%@ include file="/theme/footer.jsp" %>

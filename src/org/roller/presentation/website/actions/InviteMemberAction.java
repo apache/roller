@@ -95,7 +95,8 @@ public class InviteMemberAction extends DispatchAction
             }
             else
             {
-                umgr.inviteUser(website, user, PermissionsData.AUTHOR);
+                String mask = request.getParameter("permissionsMask");
+                umgr.inviteUser(website, user, Short.parseShort(mask));
                 // ROLLER_2.0: notify user by email of invitation
                 msgs.add(ActionMessages.GLOBAL_MESSAGE, 
                     new ActionMessage("inviteMembers.userInvited"));

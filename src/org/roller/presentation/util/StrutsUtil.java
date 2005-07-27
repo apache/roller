@@ -14,7 +14,7 @@ import org.roller.util.TimeZoneComparator;
 public class StrutsUtil
 {
     public static ArrayList locales;
-    public static ArrayList timezones;
+    public static ArrayList timeZones;
     
     //-----------------------------------------------------------------------
     /**
@@ -60,10 +60,10 @@ public class StrutsUtil
      */
     public static List getTimeZoneBeans() 
     {
-        if (timezones == null)
+        if (timeZones == null)
         {
             Date today = new Date();
-            timezones = new ArrayList();
+            timeZones = new ArrayList();
             TreeSet zoneTree = new TreeSet(new TimeZoneComparator());
             String[] zoneArray = TimeZone.getAvailableIDs();
             for (int i=0; i<zoneArray.length; i++)
@@ -78,11 +78,11 @@ public class StrutsUtil
                 sb.append(zone.getDisplayName(zone.inDaylightTime(today), TimeZone.SHORT));
                 sb.append(" - ");
                 sb.append(zone.getID());
-                timezones.add(new LabelValueBean(
+                timeZones.add(new LabelValueBean(
                    sb.toString(),
                    zone.getID()));
             }
         }
-        return timezones;
+        return timeZones;
     }
 }
