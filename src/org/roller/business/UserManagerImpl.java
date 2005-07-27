@@ -50,7 +50,7 @@ public abstract class UserManagerImpl implements UserManager
     {
     }
             
-    public PermissionsData retrievePermissionsData(String inviteId) 
+    public PermissionsData retrievePermissions(String inviteId) 
         throws RollerException
     {
         return (PermissionsData)mStrategy.load(inviteId, PermissionsData.class);
@@ -233,7 +233,7 @@ public abstract class UserManagerImpl implements UserManager
             String description,
             String theme, 
             String locale, 
-            String timezone) throws RollerException
+            String timeZone) throws RollerException
     {
         Roller mRoller = RollerFactory.getRoller();
         UserManager umgr = mRoller.getUserManager();
@@ -259,7 +259,7 @@ public abstract class UserManagerImpl implements UserManager
             new Date());
         website.setEditorTheme(theme);
         website.setLocale(locale);
-        website.setTimezone(timezone);
+        website.setTimezone(timeZone);
         website.save();
 
         WeblogCategoryData rootCat = wmgr.createWeblogCategory(

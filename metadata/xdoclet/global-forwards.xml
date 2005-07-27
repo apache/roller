@@ -21,8 +21,9 @@
 <forward name="importBookmarks"        path="/editor/importBookmarks.do"/>
 <forward name="importEntries"          path="/editor/importEntries.do?method=edit"/>
 <forward name="inviteMember"           path="/editor/inviteMember.do" />
+<forward name="memberPermissions"      path="/editor/memberPermissions.do" />
 <forward name="maintenance"            path="/editor/maintenance.do" />
-<forward name="newWebsite"             path="/editor/newWebsite.do?method=create" />
+<forward name="createWebsite"          path="/editor/createWebsite.do?method=create" />
 <forward name="editPages"              path="/editor/page.do?method=editPages"/>
 <forward name="editPage"               path="/editor/page.do?method=edit"/>
 <forward name="removePage"             path="/editor/page.do?method=remove"/>

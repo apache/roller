@@ -95,7 +95,7 @@ public class YourWebsitesAction extends DispatchAction
         YourWebsitesForm form = (YourWebsitesForm)actionForm;
         Roller roller = RollerFactory.getRoller();
         PermissionsData perms = 
-            roller.getUserManager().retrievePermissionsData(form.getInviteId());
+            roller.getUserManager().retrievePermissions(form.getInviteId());
         
         perms.setPending(false);
         // ROLLER_2.0: notify inviter that invitee has accepted invitation  
@@ -117,7 +117,7 @@ public class YourWebsitesAction extends DispatchAction
         YourWebsitesForm form = (YourWebsitesForm)actionForm;
         Roller roller = RollerFactory.getRoller();
         PermissionsData perms = 
-            roller.getUserManager().retrievePermissionsData(form.getInviteId());
+            roller.getUserManager().retrievePermissions(form.getInviteId());
         
         perms.remove();
         // ROLLER_2.0: notify inviter that invitee has declined invitation  
@@ -128,10 +128,38 @@ public class YourWebsitesAction extends DispatchAction
         ActionForward forward = mapping.findForward("yourWebsites.page");
         return forward;
     }
+   
+    public ActionForward resign(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        YourWebsitesForm form = (YourWebsitesForm)actionForm;
+        Roller roller = RollerFactory.getRoller();
+        RollerSession rses = RollerSession.getRollerSession(request);
+        UserData user = rses.getAuthenticatedUser();
+        WebsiteData website = 
+            roller.getUserManager().retrieveWebsite(form.getWebsiteId());
+        PermissionsData perms = 
+            roller.getUserManager().getPermissions(website, user);
+        if (perms != null) 
+        {
+            // ROLLER_2.0: notify website members that user has resigned  
+            perms.remove();
+            roller.commit();
+        }
         
+        request.setAttribute("model",
+                new YourWebsitesPageModel(request, response, mapping));
+        ActionForward forward = mapping.findForward("yourWebsites.page");
+        return forward;
+    }
+    
     public static class YourWebsitesPageModel extends BasePageModel
     {
-        private List websites = new ArrayList();
+        private List permissions = new ArrayList();
         private List pendings = new ArrayList();
         public YourWebsitesPageModel(HttpServletRequest request,
           HttpServletResponse response, ActionMapping mapping) throws RollerException
@@ -140,16 +168,16 @@ public class YourWebsitesAction extends DispatchAction
             Roller roller = RollerFactory.getRoller();
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             UserData user = rollerSession.getAuthenticatedUser();
-            websites = roller.getUserManager().getWebsites(user, Boolean.TRUE);
+            permissions = roller.getUserManager().getAllPermissions(user);
             pendings = roller.getUserManager().getPendingPermissions(user);
         }
-        public List getWebsites()
+        public List getPermissions()
         {
-            return websites;
+            return permissions;
         }
-        public void setWebsites(List websitePermissions)
+        public void setPermissions(List permissions)
         {
-            this.websites = websitePermissions;
+            this.permissions = permissions;
         }
         public List getPendings()
         {

@@ -9,7 +9,7 @@
     <html:hidden property="id"/></input>
     <html:hidden property="weblogDayPageId" />
     <html:hidden property="locale"/></input>
-    <html:hidden property="timezone"/></input>
+    <html:hidden property="timeZone"/></input>
     <html:hidden property="editorTheme"/></input>
     <html:hidden property="isEnabled"/></input>
 

@@ -59,7 +59,7 @@ public class UserData
 	public UserData( String id, String userName,
                      String password, String fullName,
                      String emailAddress, 
-                     String locale, String timezone,
+                     String locale, String timeZone,
                      Date dateCreated,
                      Boolean isEnabled)
 	{
@@ -70,7 +70,7 @@ public class UserData
          this.emailAddress = emailAddress;
          this.dateCreated = (Date)dateCreated.clone();
          this.locale = locale;
-         this.timeZone = timezone;
+         this.timeZone = timeZone;
          this.isEnabled = isEnabled;
 	}
 
@@ -242,7 +242,7 @@ public class UserData
    /**
     * Timezone of the user.
     * @ejb:persistent-field
-    * @hibernate.property column="timezone" non-null="true" unique="false"
+    * @hibernate.property column="timeZone" non-null="true" unique="false"
     */
    public String getTimeZone()
    {

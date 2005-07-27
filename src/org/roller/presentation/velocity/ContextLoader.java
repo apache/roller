@@ -440,6 +440,7 @@ public class ContextLoader
            
             // setup Timezone for future rendering
             ctx.put("timezone", website.getTimeZoneInstance());
+            ctx.put("timeZone", website.getTimeZoneInstance());
         }
         else
         {
@@ -454,6 +455,7 @@ public class ContextLoader
                 ((RollerPropertyData)props.get("site.adminemail")).getValue());
             ctx.put("locale", Locale.getDefault());
             ctx.put("timezone", TimeZone.getDefault());
+            ctx.put("timeZone", TimeZone.getDefault());
         }
         ctx.put("website", website );
 

@@ -325,9 +325,9 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
      * <p>Publish time is the time that an entry is to be (or was) made available
      * for viewing by newsfeed readers and visitors to the Roller site.</p> 
      * 
-     * <p>Roller stores time using the timezone of the server itself. When
+     * <p>Roller stores time using the timeZone of the server itself. When
      * times are displayed  in a user's weblog they must be translated 
-     * to the user's timezone.</p>
+     * to the user's timeZone.</p>
      *
      * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on 
      * MySQL has only a one-second resolution.</p>
@@ -350,9 +350,9 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
      * <p>Update time is the last time that an weblog entry was saved in the 
      * Roller weblog editor or via web services API (XML-RPC or Atom).</p> 
      *
-     * <p>Roller stores time using the timezone of the server itself. When
+     * <p>Roller stores time using the timeZone of the server itself. When
      * times are displayed  in a user's weblog they must be translated 
-     * to the user's timezone.</p>
+     * to the user's timeZone.</p>
      *
      * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on 
      * MySQL has only a one-second resolution.</p>

@@ -34,7 +34,7 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item forward="yourWebsites" name="tabbedmenu.user.websites"
                                           perms="any"
                                           roles="editor,admin" />
-        <menu-item forward="newWebsite"   name="tabbedmenu.newWebsite"
+        <menu-item forward="createWebsite"   name="tabbedmenu.createWebsite"
                                           perms="any"
                                           roles="editor,admin" />
     </menu>

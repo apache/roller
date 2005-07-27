@@ -33,7 +33,7 @@ public class BasePageModel
         this.response = response;
         this.mapping = mapping;
         request.setAttribute("locales", StrutsUtil.getLocaleBeans());        
-        request.setAttribute("timezones", StrutsUtil.getTimeZoneBeans());        
+        request.setAttribute("timeZones", StrutsUtil.getTimeZoneBeans());        
     }
 
     public String getBaseURL()

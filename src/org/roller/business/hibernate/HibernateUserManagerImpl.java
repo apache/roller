@@ -548,5 +548,43 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             throw new RollerException(e);
         }
     }
+
+    /**
+     * Get all permissions of a website (pendings not including)
+     */
+    public List getAllPermissions(WebsiteData website) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("website", website));
+        criteria.add(Expression.eq("pending", Boolean.FALSE));
+        try
+        {
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+
+    /**
+     * Get all permissions of a user.
+     */
+    public List getAllPermissions(UserData user) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("user", user));
+        criteria.add(Expression.eq("pending", Boolean.FALSE));
+        try
+        {
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
 }
 

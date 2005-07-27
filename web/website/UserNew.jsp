@@ -58,9 +58,9 @@ else
     </div>
 
     <div class="formrow">
-       <label for="timeZone" class="formrow" /><fmt:message key="userSettings.timezone" /></label>
+       <label for="timeZone" class="formrow" /><fmt:message key="userSettings.timeZone" /></label>
        <html:select property="timeZone" size="1" >
-           <html:options collection="timezones" property="value" labelProperty="label"/>
+           <html:options collection="timeZones" property="value" labelProperty="label"/>
        </html:select>
     </div>
     <br />
