@@ -57,7 +57,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     protected WebsiteData mWebsite=null;
     protected String mPlugins;
     protected Boolean allowComments = Boolean.TRUE;
-    protected Integer commentDays = new Integer(7);
+    protected Integer commentDays = new Integer(0);
     protected Boolean rightToLeft = Boolean.FALSE;
     protected Boolean pinnedToMain = Boolean.FALSE;
     
