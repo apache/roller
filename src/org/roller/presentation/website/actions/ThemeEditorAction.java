@@ -309,20 +309,36 @@ public class ThemeEditorAction extends DispatchAction {
                 
                 String username = rreq.getUser().getUserName();
                 WebsiteData website = roller.getUserManager().getWebsite(username);
-                Theme usersTheme = themeMgr.getTheme(website.getEditorTheme());
-
-                // only if custom themes are allowed
-                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
-                    try {
-                        this.saveThemePages(website, usersTheme);
-                    } catch(RollerException re) {
-                        mLogger.error(re);
-                        errors.add(null, new ActionMessage("Error customizing theme"));
-                        saveErrors(request, errors);
+                
+                try {
+                    Theme usersTheme = themeMgr.getTheme(website.getEditorTheme());
+                    
+                    // only if custom themes are allowed
+                    if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
+                        try {
+                            this.saveThemePages(website, usersTheme);
+                        } catch(RollerException re) {
+                            mLogger.error(re);
+                            errors.add(null, new ActionMessage("Error customizing theme"));
+                            saveErrors(request, errors);
+                        }
+                        
+                        // make sure to flush the page cache so ppl can see the change
+                        PageCacheFilter.removeFromCache(request, rreq.getUser());
                     }
                     
-                    // make sure to flush the page cache so ppl can see the change
-                    PageCacheFilter.removeFromCache(request, rreq.getUser());
+                } catch(ThemeNotFoundException tnfe) {
+                    // this catches the potential case where someone customizes
+                    // a theme and has their theme as "custom" but then hits the
+                    // browser back button and presses the button again, so
+                    // they are basically trying to customize a "custom" theme
+                    
+                    // log this as a warning just in case
+                    mLogger.warn(tnfe);
+                    
+                    // show the user an error message and let things go back
+                    // to the edit page
+                    errors.add(null, new ActionMessage("Oops!  You already have a custom theme."));
                 }
                 
                 // just take the user back home to the edit theme page
