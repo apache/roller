@@ -1,4 +1,5 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<% pageContext.setAttribute("leftPage","/website/YourWebsitesSidebar.jsp"); %>
 
 <script type="text/javascript">
 <!--
@@ -67,29 +68,25 @@ function resignWebsite(id,handle)
                <fmt:message key="yourWebsites.permissions" />
            </th>
            <th class="rollertable" width="20%">
-               <fmt:message key="yourWebsites.select" />
-           </th>
-           <th class="rollertable" width="20%">
                <fmt:message key="yourWebsites.resign" />
            </th>
         </tr>
         <c:forEach var="perms" items="${model.permissions}">
             <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">  
                <td class="rollertable">
-                   <c:out value="${perms.website.name}" />
+                   <a href='javascript:selectWebsite("<c:out value='${perms.website.id}'/>")'>
+                       <c:out value="${perms.website.name}" />
+                   </a>
                </td>
                <td class="rollertable">
                    <c:out value="${perms.website.description}" />
                </td>
-               <td class="rollertable">
-                   <c:out value="${perms.permissionMask}" />
+               <td class="rollertable" align="center">
+                   <c:if test="${perms.permissionMask == 0}" >LIMITED</c:if>
+                   <c:if test="${perms.permissionMask == 1}" >AUTHOR</c:if>
+                   <c:if test="${perms.permissionMask == 3}" >ADMIN</c:if>
                </td>
-               <td class="rollertable">
-                   <a href='javascript:selectWebsite("<c:out value='${perms.website.id}'/>")'>
-                       <fmt:message key="yourWebsites.select" />
-                   </a>
-               </td>
-               <td class="rollertable">
+               <td class="rollertable" align="center">
                    <a href='javascript:resignWebsite("<c:out value='${perms.website.id}'/>","<c:out value="${perms.website.handle}" />")'>
                        <fmt:message key="yourWebsites.resign" />
                    </a>

@@ -12,7 +12,7 @@
     </div>    
     
     <div class="formrow">
-       <label for="userName" class="formrow" /><fmt:message key="inviteMember.userName" /></label>
+       <label for="userName" class="formrow" /><fmt:message key="inviteMember.permissions" /></label>
        <input type="radio" name="permissionsMask" value="3"  />
        <fmt:message key="inviteMember.administrator" />
        <input type="radio" name="permissionsMask" value="1" checked />

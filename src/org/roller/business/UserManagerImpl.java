@@ -259,7 +259,7 @@ public abstract class UserManagerImpl implements UserManager
             new Date());
         website.setEditorTheme(theme);
         website.setLocale(locale);
-        website.setTimezone(timeZone);
+        website.setTimeZone(timeZone);
         website.save();
 
         WeblogCategoryData rootCat = wmgr.createWeblogCategory(

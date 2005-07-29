@@ -1,105 +1,63 @@
-.rNavigationBar {
-    float: right;
-    padding: 0px 0px 0 0;
+
+.menuTabTable {
+   height: 25px;
+}
+td.menuTabSeparator {
+    width: 10px;
+}  
+td.menuTabSelected {
+    padding: 0px; margin: 0px;
+    background-color: #CCCC99;
+    /* background-image: url(images/menutab-sel.png);
+    background-repeat: no-repeat; */
+}
+td.menuTabUnselected {
+    padding: 0px; margin: 0px;
+    background-color: #AAAA77;
+    /* background-image: url(images/menutab-unsel.png);
+    background-repeat: no-repeat; */
+}
+div.menu-tl {
+    padding: 5px 5px 0px 5px; margin: 0px; height:100%;
+    background:url("images/menutab-tl.png") no-repeat left top;    
+    background-repeat: no-repeat;
+}
+div.menu-tr {
+    margin: 0px; height:100%;
+    background:url("images/menutab-tr.png") no-repeat right top;    
+    background-repeat: no-repeat;
 }
 
-.tmTabTable {
-    height: 26px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top: 0px;
-}
 
-.tmItemTable {
-    height: 25px;
+
+.menuItemTable {
     width: 100%;
-    color: #FFFFFF;
+    height: 25px;
+    background-color: #CCCC99;
+    /* background-image: url(images/menubar.png);
+    background-repeat: repeat-x; */
 }
-
-.tmTabTable td {
-    vertical-align: middle;
+.menuItem {
+    padding: 0px 5px 0px 5px; /* TRBL */
+ }
+.menuItemTable a:link, .menuTabTable a:link {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
 }
-
-.tmItemCell {
-    background-image: url(images/tabitem.png);
-    color: #FFFFFF;
-    vertical-align: middle;
+.menuItemTable a:visited, .menuTabTable a:visited {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
 }
-
-.tmItemCell a {
-    background-color: transparent;
-    color: #FFFFFF;
+.menuItemTable a:hover, .menuTabTable a:hover {
+    color: black;
     text-decoration: underline;
-}
-
-.tmItemCell a:visited {
-    background-color: transparent;
-    color: #FFFFFF;
-}
-
-.tmItemLeft {
-    background-image: url(images/tabitem-left.png);
-    width: 9px;
-}
-
-.tmItemLinkSelected {
     font-weight: bold;
+}
+.menuItemTable a:active, .menuTabTable a:active {
+    color: black;
     text-decoration: none;
-}
-
-.tmItemRight {
-    background-image: url(images/tabitem-right.png); 
-    width: 9px;
-}
-
-.tmMenu {
-    background-image: url(images/tabmenu-unsel.png);
-    padding-left: 7px;
-    font-size:medium;
-}
-
-.tmMenu a:hover {
-    color: white;
-    font-size:medium;
-}
-
-.tmMenu a:visited {
-    background-color: transparent;
-    color: #4031a8;
-    font-size:medium;
-}
-
-.tmSelectedMenu {
-    background-image: url(images/tabmenu.png);
     font-weight: bold;
-    padding-left: 5px;
-    padding-right: 5px;
-    font-size:medium;
-}
-
-.tmSelectedMenu a, .tmSelectedMenu a:visited {
-    background-color: transparent;
-    color: #FFFFFF;
-    text-decoration: none;
-}
-
-.tmSelectedSepLeft {
-    background-image: url(images/tabmenu-left.png);
-    width: 12px;
-}
-
-.tmSelectedSepRight {
-    background-image: url(images/tabmenu-right.png);
-    width: 12px;
-}
-
-.tmSepLeft {
-    background-image: url(images/tabmenu-left-unsel.png);
-    width: 12px;
-}
-
-.tmSepRight {
-    background-image: url(images/tabmenu-right-unsel.png);
-    width: 12px;
 }
 

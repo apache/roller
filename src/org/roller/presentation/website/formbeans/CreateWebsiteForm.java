@@ -90,6 +90,6 @@ public class CreateWebsiteForm extends ActionForm
         wd.setName(name);
         wd.setDescription(description);
         wd.setLocale(this.locale);
-        wd.setTimezone(timeZone);
+        wd.setTimeZone(timeZone);
     }
 }

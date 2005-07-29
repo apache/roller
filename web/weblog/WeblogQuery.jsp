@@ -5,115 +5,71 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
 %>
 
 <h1><fmt:message key="weblogEntryQuery.title" /></h1>
-
 <roller:StatusMessage/>
+
+<p><fmt:message key="weblogEntryQuery.description" /></p>
 
 <html:form action="/editor/weblogQuery" method="post" focus="title">
 
   <%-- ========================================================= --%>
   <%-- filter by category --%>
   
-    <div id="categoryControlToggle" class="controlToggle">
-      <span id="icategoryControl">+</span>  
-      <a href="#" class="controlToggle" 
-        onclick="javascript:toggleControl('categoryControlToggle','categoryControl')">
-         <fmt:message key="weblogEntryQuery.filterByCategory" />
-      </a>
+    <div class="formrow">
+        <label for="categoryId" class="formrow">
+            <fmt:message key="weblogEntryQuery.label.category" /></label>          
+        <html:select property="categoryId" size="1" tabindex="4">
+            <html:option key="weblogEntryQuery.label.any" value="" />
+            <html:optionsCollection name="model" property="categories" value="id" label="path"  />
+        </html:select>
     </div>
-    <div id="categoryControl" class="control" style="display:none">
-
-            <label for="categoryId">
-                <fmt:message key="weblogEntryQuery.label.category" />
-            </label>
-            
-            <html:select property="categoryId" size="1" tabindex="4">
-                <html:option key="weblogEntryQuery.label.any" value="" />
-                <html:optionsCollection name="model" property="categories" value="id" label="path"  />
-            </html:select>
-            
-     </div>
-     
+  
   <%-- ========================================================= --%>
   <%-- filter by date --%>
   
-    <div id="dateControlToggle" class="controlToggle">
-      <span id="idateControl">+</span>  
-      <a href="#" class="controlToggle" onclick="javascript:toggleControl('dateControlToggle','dateControl')">
-        <fmt:message key="weblogEntryQuery.filterByPublishTime" />
-      </a>
+    <div class="formrow">
+        <label for="startDateString" class="formrow">
+           <fmt:message key="weblogEntryQuery.label.startDate" />:
+        </label>
+        <roller:Date property="startDateString" dateFormat='<%= model.getShortDateFormat() %>' />
     </div>
-    <div id="dateControl" class="control" style="display:none">
-  
-            <label for="startDateString">
-               <fmt:message key="weblogEntryQuery.label.startDate" />:
-            </label>
-            <roller:Date property="startDateString" dateFormat='<%= model.getShortDateFormat() %>' />
 
-            <label for="endDateString">
-               <fmt:message key="weblogEntryQuery.label.endDate" />:
-            </label>
-            <roller:Date property="endDateString" dateFormat='<%= model.getShortDateFormat() %>' />
-        
+    <div class="formrow">
+        <label for="endDateString" class="formrow">
+           <fmt:message key="weblogEntryQuery.label.endDate" />:
+        </label>
+        <roller:Date property="endDateString" dateFormat='<%= model.getShortDateFormat() %>' />
     </div>
 
   <%-- ========================================================= --%>
   <%-- filter by status --%>
-  
-    <div id="statusControlToggle" class="controlToggle">
-      <span id="istatusControl">+</span>  
-      <a href="#" class="controlToggle" 
-        onclick="javascript:toggleControl('statusControlToggle','statusControl')">
-         <fmt:message key="weblogEntryQuery.filterByStatus" />
-      </a>
-    </div>
-    <div id="statusControl" class="control" style="display:none">
 
-            <label for="status">
-                <fmt:message key="weblogEntryQuery.label.status" />:
-            </label>
-            
-            <html:radio property="status" value="ALL">
-                <fmt:message key="weblogEntryQuery.label.allEntries" /></html:radio>
-
-            <html:radio property="status" value="DRAFT_ONLY">
-                <fmt:message key="weblogEntryQuery.label.draftOnly" /></html:radio>
-
-            <html:radio property="status" value="PUBLISHED_ONLY" >
-                <fmt:message key="weblogEntryQuery.label.publishedOnly" /></html:radio>
-        
+    <div class="formrow">
+        <label for="status" class="formrow">
+            <fmt:message key="weblogEntryQuery.label.status" />:
+        </label>        
+        <html:radio property="status" value="ALL">
+            <fmt:message key="weblogEntryQuery.label.allEntries" /></html:radio> 
+        <html:radio property="status" value="DRAFT_ONLY">
+            <fmt:message key="weblogEntryQuery.label.draftOnly" /></html:radio>
+        <html:radio property="status" value="PUBLISHED_ONLY" >
+            <fmt:message key="weblogEntryQuery.label.publishedOnly" /></html:radio>
     </div>
 
   <%-- ========================================================= --%>
   <%-- limit number of results --%>
   
-    <div id="maxControlToggle" class="controlToggle">
-      <span id="imaxControl">+</span>  
-      <a href="#" class="controlToggle" onclick="javascript:toggleControl('maxControlToggle','maxControl')">
-        <fmt:message key="weblogEntryQuery.limitResultsReturned" />
-      </a>
+    <div class="formrow">
+        <label for="maxEntries" class="formrow">
+            <fmt:message key="weblogEntryQuery.label.maxEntries" />
+        </label>
+        <html:select property="maxEntries" size="1" tabindex="4">
+            <html:option value="25" />
+            <html:option value="50" />
+            <html:option value="75" />
+            <html:option value="100" />
+        </html:select>
     </div>
-    <div id="maxControl" class="control" style="display:none">
-
-            <label for="maxEntries">
-                <fmt:message key="weblogEntryQuery.label.maxEntries" />
-            </label>
-            
-            <html:select property="maxEntries" size="1" tabindex="4">
-                <html:option value="25" />
-                <html:option value="50" />
-                <html:option value="75" />
-                <html:option value="100" />
-            </html:select>
-
-    </div>
-
-  <script type="text/javascript">
-  <!--
-  toggleControl('categoryControlToggle','categoryControl');
-  toggleControl('dateControlToggle','dateControl');
-  -->
-  </script>
-
+    
   <%-- ========================================================= --%>
   <%-- search button --%>
   
@@ -127,10 +83,10 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
 
 </html:form>
 
+<h1><fmt:message key="weblogEntryQuery.section.searchResults" /></h1>
+
 <table class="rollertable">
-   <tr>
-      <th class="rollertable"><fmt:message key="weblogEdit.entryCol" /></th>
-   <tr>
+
    <c:forEach var="post" items="${model.recentWeblogEntries}">
       <tr>
          <td class="rollertable_entry" width="100%" >

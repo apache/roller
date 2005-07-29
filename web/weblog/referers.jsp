@@ -31,8 +31,10 @@
 <input type="submit" value='<fmt:message key="referers.deleteSelected" />' /></input>
 </html:form>
 
+<br />
+
 <%-- Form allows reset of day hits --%>
-<h2><fmt:message key="referers.hitCounters" /></h2>
+<h1><fmt:message key="referers.hitCounters" /></h1>
 <p><fmt:message key="referers.hits" />: <c:out value="${pageHits}"/></p>
 <html:form action="/editor/referers" method="post">
     <input type="hidden" name="method" value="reset" />

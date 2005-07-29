@@ -1,4 +1,5 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<% pageContext.setAttribute("leftPage","/website/MemberPermissionsSidebar.jsp"); %>
 
 <h1><fmt:message key="memberPermissions.title" /></h1>
 

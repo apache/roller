@@ -426,13 +426,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="timeZone" non-null="true" unique="false"
      */
-    public String getTimezone()
+    public String getTimeZone()
     {
         return this.timeZone;
     }
 
     /** @ejb:persistent-field */
-    public void setTimezone(String timeZone)
+    public void setTimeZone(String timeZone)
     {
         this.timeZone = timeZone;
     }
@@ -675,11 +675,11 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         {
             if (TimeZone.getDefault() != null) 
             {
-                this.setTimezone( TimeZone.getDefault().getID() );
+                this.setTimeZone( TimeZone.getDefault().getID() );
             }
             else
             {
-                this.setTimezone("America/New_York");
+                this.setTimeZone("America/New_York");
             }
         }
         return TimeZone.getTimeZone(timeZone);

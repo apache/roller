@@ -1,4 +1,5 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<% pageContext.setAttribute("leftPage","/bookmarks/BookmarksSidebar.jsp"); %>
 
 <%-- JavaScript for bookmarks table --%> 
 <script type="text/javascript">
@@ -53,7 +54,9 @@ function onMove()
        <fmt:message key="bookmarksForm.root" />
    </roller:link>
 </c:if>
+</p>
 
+<p>
 <c:if test="${!(empty folderPath)}">
     <c:forEach var="folder" items="${folderPath}">
         /
@@ -69,31 +72,13 @@ function onMove()
 </c:if>
 </p>
 
+<br />
+
 <%-- Form is a table of folders followed by bookmarks, each with checkbox --%>
 
 <html:form action="/editor/bookmarks" method="post">
 <input type="hidden" name="method" /> 
 <html:hidden property="folderId" /> 
-
-<p>
-<%-- Add Bookmark link --%>
-<img src='<c:url value="/images/BookmarkNew16.png"/>' border="0"alt="icon" />
-<roller:link page="/editor/bookmarkEdit.do">
-    <roller:linkparam id="<%= RollerRequest.FOLDERID_KEY %>"
-        name="folder" property="id" />
-    <fmt:message key="bookmarksForm.addBookmark" />
-</roller:link>
-
-&nbsp;|&nbsp;
-
-<%-- Add Folder link --%>
-<img src='<c:url value="/images/FolderNew16.png"/>' border="0"alt="icon" />
-<roller:link page="/editor/folderEdit.do">
-    <roller:linkparam id="<%= RollerRequest.PARENTID_KEY %>"
-         name="folder" property="id" />
-    <fmt:message key="bookmarksForm.addFolder" />
-</roller:link>
-</p>
 
 <p>
 <%-- Select-all button --%>
@@ -107,7 +92,16 @@ function onMove()
 <%-- Delete-selected button --%>
 <input type="button" value="<fmt:message key='bookmarksForm.delete' />" 
    onclick="onDelete()"/></input>
-</td>
+
+<%-- Move-selected button --%>
+<input type="button" value="<fmt:message key='bookmarksForm.move' />"   
+   onclick="onMove()"/></input>
+
+<%-- Move-to combo-box --%>
+<html:select property="moveToFolderId" size="1">
+    <html:options collection="allFolders" 
+        property="id" labelProperty="path"/>
+</html:select>
 </p>
 
 <table class="rollertable">
@@ -205,18 +199,6 @@ function onMove()
     </c:forEach>
 
 </table>
-
-<p>
-<%-- Move-selected button --%>
-<input type="button" value="<fmt:message key='bookmarksForm.move' />"   
-   onclick="onMove()"/></input>
-
-<%-- Move-to combo-box --%>
-<html:select property="moveToFolderId" size="1">
-    <html:options collection="allFolders" 
-        property="id" labelProperty="path"/>
-</html:select>
-</p>
 
 </html:form>
 
