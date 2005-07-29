@@ -3,6 +3,7 @@
 <roller:StatusMessage/>
 
 <h1><fmt:message key="websiteSettings.title" /></h1>
+
 <html:form action="/editor/website" method="post">
     <html:hidden property="method" value="update"/></input>
 
@@ -12,12 +13,13 @@
     <html:hidden property="timeZone"/></input>
     <html:hidden property="editorTheme"/></input>
     <html:hidden property="isEnabled"/></input>
+    <html:hidden property="defaultCategoryId"/></input>
 
 <table>
 
     <tr>
-        <td class="propname" width="30%"><fmt:message key="websiteSettings.websiteTitle" />
-        <td><html:text property="name" size="60"/></input></td>
+        <td class="propname"><fmt:message key="websiteSettings.websiteTitle" />
+        <td><html:text property="name" size="40"/></input></td>
     </tr>
 
     <tr>
@@ -36,22 +38,8 @@
     </tr>
 
     <tr>
-        <td class="propname"><fmt:message key="websiteSettings.editor" /></td>
-        <td>
-            <html:select property="editorPage" size="1">
-                <html:options name="editorPagesList" />
-            </html:select></p>
-       </td>
-    </tr>
-
-    <tr>
-        <td class="propname"><fmt:message key="websiteSettings.defaultCategory" /></td>
-        <td>
-            <html:select property="defaultCategoryId" size="1">
-                <html:options collection="categories"
-                    property="id" labelProperty="path" />
-            </html:select>
-        </td>
+        <td><h2><fmt:message key="websiteSettings.commentSettings" /></h2></td>
+        <td></td>
     </tr>
 
     <tr>
@@ -97,6 +85,20 @@ if (emailComments) { %>
 <% } %>
 
     <tr>
+        <td><h2><fmt:message key="websiteSettings.editorSettings" /></h2></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td class="propname"><fmt:message key="websiteSettings.editor" /></td>
+        <td>
+            <html:select property="editorPage" size="1">
+                <html:options name="editorPagesList" />
+            </html:select></p>
+       </td>
+    </tr>
+
+    <tr>
         <td><h2><fmt:message key="websiteSettings.bloggerApi" /></h2></td>
         <td></td>
     </tr>
@@ -123,7 +125,7 @@ if (emailComments) { %>
 
     <tr>
         <td class="propname"><fmt:message key="websiteSettings.ignoreUrls" /></td>
-        <td><html:textarea property="ignoreWords" rows="7" cols="60"/></td>
+        <td><html:textarea property="ignoreWords" rows="7" cols="40"/></td>
     </tr>
     <tr>
         <td>&nbsp;</td>

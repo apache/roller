@@ -22,7 +22,7 @@ function postWeblogEntry(publish)
             -->
         </script>
 
-<html:textarea property="text" cols="75" rows="20" style="width: 100%" tabindex="2"/>
+<html:textarea property="text" cols="75" rows="20" style="width: 95%" tabindex="2"/>
 
         <script type="text/javascript">
             <!--

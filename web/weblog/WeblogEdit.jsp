@@ -170,6 +170,7 @@ function publish() {
    <%-- the button box --%>
 
    <br />
+   <br />
    <div class="control">
 
         <%-- save draft and post buttons: only in edit and preview mode --%>

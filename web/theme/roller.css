@@ -1,10 +1,43 @@
+/* ======================================================================
+roller.css: CSS styles for Roller editor/admin UI
+====================================================================== */
+
+/* ----------------------------------------------------------------------
+Editor look and feel styles
+---------------------------------------------------------------------- */
+
+#banner {
+    background-color: #CCCC99;
+}
+    
+td.sidebarBox {
+    height:25px;
+    padding: 0px; margin: 0px;
+    background-color: #CCCC99;
+}
+
+table.sidebarBox {
+    width:100%;
+}
+
+/* ----------------------------------------------------------------------
+General styles
+---------------------------------------------------------------------- */
 
 body {
-    background: white repeat-y url(images/leftbar-blue.png);
+    height:100%;
+    background: white;
     margin: 0;
     padding: 0;
     font:small Verdana,Arial,Sans-serif;
-    color:#333;
+    color:black;
+    font:x-small/1.5em Verdana, Arial, Helvetica, sans-serif;
+    font-size: 69%;
+}
+
+input, select, option {
+    font:small Verdana,Arial,Sans-serif;
+    color:black;
     font:x-small/1.5em Verdana, Arial, Helvetica, sans-serif;
     font-size: 69%;
 }
@@ -16,7 +49,7 @@ p {
 
 h1 {
     background: transparent;
-    color: #4031a8;
+    color: #A0A060;
     letter-spacing: 0.2em;
     font-size: x-large;
     font-weight: bold;
@@ -24,7 +57,7 @@ h1 {
 
 h2 {
     background: transparent;
-    color: #4031a8;
+    color: #A0A060;
     letter-spacing: 0.2em;
     font-size: large;
     font-weight: bold;
@@ -32,7 +65,7 @@ h2 {
 
 h3 {
     background: transparent;
-    color: #4031a8;
+    color: #A0A060;
     letter-spacing: 0.2em;
     font-weight: bold;
 }
@@ -55,21 +88,25 @@ a {
 
 a:link {
     background: transparent;
-    color: #4031a8;
+    font-weight: bold;
+    color: #A0A060;
     text-decoration: underline;
 }
 
 a:visited {
     background: transparent;
-    color: #4031a8;
+    font-weight: bold;
+    color: #A0A060;
     text-decoration: underline;
 }
 
 a:hover {
+    font-weight: bold;
     text-decoration: none;
 }
 
 a:active {
+    font-weight: bold;
     text-decoration: underline overline;
 }
 
@@ -82,14 +119,15 @@ textarea {
    color: grey;
 }
 
-/* ----------------------------------------------------- */
-/* Main page */
+/* ----------------------------------------------------------------------
+Main page styles
+---------------------------------------------------------------------- */
 
 div.entryTitleBox {
    padding: 3px;
    margin: 3px;
    border: 1px #c0c0c0 solid;
-   background: #4031a8;
+   background: #CCCC99;
    color: white;
    font-size: medium;
 }
@@ -123,10 +161,6 @@ span.entryDetails, a.entryDetails, a:active.entryDetails, a:visited.entryDetails
    color: grey;
 }
 
-.bannerBox {
-   text-align: center;
-}
-
 p.websiteDescription {
    text-style: italics;
 }
@@ -137,21 +171,19 @@ p.websiteDescription {
    text-align: center;
 }
 
-/* ----------------------------------------------------- */
-/* Tables */
+/* ----------------------------------------------------------------------
+Table styles 
+---------------------------------------------------------------------- */
 
 table.rollertable {
     border-collapse: collapse;
     margin: 5px; 
-    width: 98%;
+    width: 90%;
 }
 
 table.rollertable th, table.rollertable thead th {
     border: 1px solid #ccc;
-    background: #4031a8;
-    color: white;
-    font-weight: bolder;
-    font-size: large;
+    background: #CCCC99;
 }
 
 table.rollertable thead th {
@@ -201,8 +233,9 @@ table.edit th {
     padding-right: 5px;
 }
 
-/* ----------------------------------------------------- */
-/* Calendar */
+/* ----------------------------------------------------------------------
+Calendar styles
+---------------------------------------------------------------------- */
 
 div.archiveCalendar {
     position: absolute; 
@@ -255,8 +288,9 @@ div.archiveCalendar {
 	text-align: center;
 }
 
-/* ----------------------------------------------------- */
-/* Errors and status messages */
+/* ----------------------------------------------------------------------
+Error and status message styles
+---------------------------------------------------------------------- */
 
 .statusMsg {
     background: #CCFFCC;
@@ -309,7 +343,7 @@ div.error {
 
 div.output {
     background-color: #e0e0e0;
-    border: 1px solid #a0a0a0;
+    border: 1px solid #CCCC99;
     color: #000000;
     font-size: 0.9em;
     font-weight: normal;
@@ -319,8 +353,9 @@ div.output {
     vertical-align: bottom;
 }
 
-/* ----------------------------------------------------- */
-/* Misc styles */
+/* ----------------------------------------------------------------------
+Misc styles 
+---------------------------------------------------------------------- */
 
 div.NN4 {
     display: none;
@@ -374,7 +409,9 @@ div.rNavigationBar {
     margin: 2px;
 }
 
-/* form layout */
+/* ----------------------------------------------------------------------
+form layout styles
+---------------------------------------------------------------------- */
 
 div.row { 
    padding:2px; 
@@ -388,7 +425,7 @@ div.formrow {
 label.formrow {
    float:left;
    text-align: right;
-   width:25%;
+   width:20%;
    padding-right: 1em;
 }
 
@@ -411,7 +448,9 @@ div.buttonBox {
    font-weight:bold;
 }
 
-/* weblog editor styles */
+/* ----------------------------------------------------------------------
+weblog editor styles 
+---------------------------------------------------------------------- */
 
 div.previewEntry {
    border: 1px solid gray;
@@ -424,7 +463,7 @@ div.previewEntry {
 
 div.centerTitle {
     border: 1px solid #ccc;
-    background: #5454d1;
+    background: #CCCC99;
     color: black;
     font-weight: bolder;
     font-size: large;
@@ -432,16 +471,16 @@ div.centerTitle {
 }
 
 div.control {
-    width:85%; 
-    background:#f0f0f0;
+    width:95%; 
+    background:#CCCC99;
     padding:4px;  
     margin:5px; 
 }
 
 div.controlToggle {
-    width:85%; 
+    width:95%; 
     color:black;
-    background:#f0f0f0;
+    background:#CCCC99;
     padding:4px;  
     margin:5px;  
     border-top: 1px solid #c0c0c0;

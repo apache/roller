@@ -1,10 +1,10 @@
 <%@ 
 page import="org.roller.presentation.MainPageAction" %><%@ 
-page import="java.util.Locale" %><%@ 
+page import="java.util.Locale" %><%
+pageContext.setAttribute("leftPage","main-sidebar.jsp");
+%><%@ 
 include file="/taglibs.jsp" %><%@ 
-include file="/theme/header.jsp" %>
-<table>
-<tr><%
+include file="/theme/header.jsp" %><%
 request.setAttribute("pinnedPosts",
 	((MainPageAction.MainPageData)request.getAttribute("data")).getWeblogEntriesPinnedToMain(5));
 request.setAttribute("recentPosts",
@@ -12,8 +12,6 @@ request.setAttribute("recentPosts",
 request.setAttribute("popularWebsites",
 	((MainPageAction.MainPageData)request.getAttribute("data")).getPopularWebsites(65));
 %>
-<td width="70%">
-
     <div class="bannerBox">
     <%@ include file="local-banner.jspf" %>
     </div>
@@ -90,59 +88,6 @@ request.setAttribute("popularWebsites",
 
          </div>
     </c:forEach>
-
-</td>
-<td width="30%" valign="top">
-
-    <div class="entryTitleBox"><fmt:message key="mainPage.searchWeblogs" /></div>
-
-    <div class="entryBox">
-        <form id="searchForm" method="get"
-            action="<c:out value="${baseURL}" />/search"
-            style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
-            <input type="text" id="q" name="q" size="20"
-                maxlength="255" value="<c:out value="${param.q}" />" />
-            <input type="submit" value="<fmt:message key="mainPage.searchButton" />" />
-        </form>
-        <script type="text/javascript">
-            function validateSearch(form) {
-                if (form.q.value == "") {
-                    alert("Please enter a search term to continue.");
-                    form.q.focus();
-                    return false;
-                }
-                return true;
-            }
-    </script>
-    </div>
-
-    <div class="entryTitleBox"><fmt:message key="mainPage.hotWeblogs" /></div>
-
-    <div class="entryBox">
-      <span class="hotBlogs">
-      <c:if test="${not empty popularWebsites}"> <%-- to prevent invalid XHTML --%>
-        <ul style="list-style-type:none; padding-left:2px; margin: 0px">
-        <c:forEach var="site" items="${popularWebsites}">
-           <li style="list-style-type:none; padding-left:2px; margin: 0px">
-               <a href='<c:out value="${baseURL}" />/page/<c:out value="${site.userName}" />'
-                  title='<c:out value="${site.userName}" />' >
-                  <str:truncateNicely lower="45" 
-				  	upper="45" ><c:out 
-					value="${site.websiteName}" /></str:truncateNicely></a>:
-               <c:out value="${site.hits}" /> <fmt:message key="mainPage.hits" />
-           </li>
-        </c:forEach>
-        </ul>
-      </c:if>
-      </span>
-    </div>
-
-</td>
-
-</tr>
-</table>
-
-<br />
 
 <%@ include file="/theme/footer.jsp" %>
 

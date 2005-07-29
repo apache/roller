@@ -1,4 +1,5 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<% pageContext.setAttribute("leftPage","/weblog/CategoriesSidebar.jsp"); %>
 
 <%-- JavaScript for categories table --%> 
 <script type="text/javascript">
@@ -61,21 +62,13 @@ function onMove()
 </c:if>
 </p>
 
+<br />
+
 <%-- Form is a table of categories each with checkbox --%>
 
 <html:form action="/editor/categories" method="post">
 <input type="hidden" name="method" /> 
 <html:hidden property="parentId" /> 
-
-<p>
-<%-- Add Category link --%>
-<img src='<c:url value="/images/FolderNew16.png"/>' border="0"alt="icon" />
-<roller:link page="/editor/categoryEdit.do">
-    <roller:linkparam id="<%= RollerRequest.PARENTID_KEY %>"
-         name="category" property="id" />
-    <fmt:message key="categoriesForm.addCategory" />
-</roller:link>
-</p>
 
 <p>
 <%-- Select-all button --%>

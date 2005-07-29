@@ -34,9 +34,6 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item forward="yourWebsites" name="tabbedmenu.user.websites"
                                           perms="any"
                                           roles="editor,admin" />
-        <menu-item forward="createWebsite"   name="tabbedmenu.createWebsite"
-                                          perms="any"
-                                          roles="editor,admin" />
     </menu>
     
     <menu name="tabbedmenu.weblog" perms="admin,author,limited">
@@ -45,29 +42,20 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item forward="weblogQuery"  name="tabbedmenu.weblog.archives" 
                                           perms="admin,author,limited" />
         <menu-item forward="categories"   name="tabbedmenu.weblog.categories" />
+        <menu-item forward="bookmarks"    name="tabbedmenu.bookmarks.allFolders" />
+        <menu-item forward="uploadFiles"  name="tabbedmenu.website.files" />
         <menu-item forward="referers"     name="tabbedmenu.weblog.referers" />
-        <menu-item forward="pingSetup"    name="tabbedmenu.weblog.pingSetup" 
-                                          disabledProperty="pings.disablePingUsage" />
-        <menu-item forward="customPingTargets" name="tabbedmenu.weblog.customPingTargets" 
-                                          disabledProperty="pings.disallowCustomTargets" />
-        <!-- These need work...
-        <menu-item forward="exportEntries" name="tabbedmenu.weblog.export"  />
-        <menu-item forward="importEntries" name="tabbedmenu.weblog.import"  /> -->
-    </menu>
-
-    <menu name="tabbedmenu.bookmarks">
-        <menu-item forward="bookmarks"       name="tabbedmenu.bookmarks.allFolders" />
-        <menu-item forward="importBookmarks" name="tabbedmenu.bookmarks.import" />
     </menu>
 
     <menu name="tabbedmenu.website">
         <menu-item forward="editWebsite"       name="tabbedmenu.website.settings" />
-        <menu-item forward="uploadFiles"       name="tabbedmenu.website.files" />
         <menu-item forward="editTheme"         name="tabbedmenu.website.themes" />
         <menu-item forward="editPages"         name="tabbedmenu.website.pages" />
         <menu-item forward="memberPermissions" name="tabbedmenu.website.members" />
-        <menu-item forward="inviteMember"      name="tabbedmenu.website.inviteMember" />
-        <menu-item forward="maintenance"       name="tabbedmenu.website.maintenance" />
+        <menu-item forward="pingSetup"         name="tabbedmenu.weblog.pingSetup" 
+                                               disabledProperty="pings.disablePingUsage" />
+        <menu-item forward="customPingTargets" name="tabbedmenu.weblog.customPingTargets" 
+                                               disabledProperty="pings.disallowCustomTargets" />
     </menu>
 
     <menu name="tabbedmenu.admin" roles="admin">

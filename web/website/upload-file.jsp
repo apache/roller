@@ -5,7 +5,9 @@
 <h1><fmt:message key="uploadFiles.title" /></h1>
 <roller:FileUpload />
 
-<h2><fmt:message key="uploadFiles.manageFiles" /></h2>
+<br />
+
+<h1><fmt:message key="uploadFiles.manageFiles" /></h1>
 
 <html:form action="/editor/uploadFiles" method="post">
     <roller:FileManager />

@@ -1,10 +1,6 @@
 
-        <br />
-        <center><img src="images/roller-logo.png" /></center>
+<h1><%= RollerRuntimeConfig.getProperty("site.name") %></h1>
 
-        <h1>
-           <%= RollerRuntimeConfig.getProperty("site.name") %>
-        </h1>
-        <p class="websiteDescription">
-           <%= RollerRuntimeConfig.getProperty("site.description") %>
-        </p>
+<p class="websiteDescription">
+<%= RollerRuntimeConfig.getProperty("site.description") %>
+</p>
