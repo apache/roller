@@ -314,7 +314,7 @@ Error and status message styles
     font-size: .9em;
 }
 
-.errors, .messages {
+.errors, .messages, .warnings {
     padding: 5px;
     margin-top: 10px;
 }
@@ -327,6 +327,11 @@ Error and status message styles
 .messages {
    background-color: #cfc;
    border: 1px solid green;
+}
+
+.warnings {
+   background-color:#FFFFAA;
+   border: 1px solid yellow;
 }
 
 div.error {

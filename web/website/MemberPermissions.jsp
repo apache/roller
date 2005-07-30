@@ -1,11 +1,26 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
 <% pageContext.setAttribute("leftPage","/website/MemberPermissionsSidebar.jsp"); %>
+<script>
+// <!--  
+function save() {
+    radios = document.getElementsByTagName("input");
+    var removing = false;
+    for (var i=0; i<radios.length; i++) {
+        if (radios[i].value == -1 && radios[i].checked) {
+            removing = true;
+        }
+    }
+    if (removing && !confirm("<c:out value='memberPermissions.confirmRemove' />")) return;
+    document.memberPermissionsForm.submit();
+}
+// -->
+</script>
 
 <h1><fmt:message key="memberPermissions.title" /></h1>
 
 <p><fmt:message key="memberPermissions.description" /></p>
 
-<html:form action="/editor/memberPermissions" method="post" focus="handle">
+<html:form action="/editor/memberPermissions" method="post">
     <html:hidden property="websiteId" />
     
     <table class="rollertable">
@@ -32,30 +47,33 @@
 	                <c:out value="${permission.user.userName}" />
                 </td>               
                 <td class="rollertable">
-                    <input type="radio" 
+                    <input type="radio" onchange="dirty()" 
                         <c:if test="${permission.permissionMask == 3}">checked</c:if>
                         name='perm-<c:out value="${permission.id}" />' value="3" />
                 </td>
                 <td class="rollertable">
-	                <input type="radio" 
+	                <input type="radio"  onchange="dirty()"
                         <c:if test="${permission.permissionMask == 1}">checked</c:if>
                         name='perm-<c:out value="${permission.id}" />' value="1" />
                 </td>                
                 <td class="rollertable">
-                    <input type="radio" 
+                    <input type="radio" onchange="dirty()"
                         <c:if test="${permission.permissionMask == 0}">checked</c:if>
                         name='perm-<c:out value="${permission.id}" />' value="0" />
                 </td>                
                 <td class="rollertable">
-                    <input type="radio" 
+                    <input type="radio" onchange="dirty()"
                         name='perm-<c:out value="${permission.id}" />' value="-1" />
                 </td>
            </roller:row>
        </c:forEach>
     </table>
         
+    <br />
+    
     <div class="control">
-       <input type="submit" value='<fmt:message key="memberPermissions.button.save" />'></input>
+       <input type="button" onclick="javascript:save()"
+       value='<fmt:message key="memberPermissions.button.save" />'></input>
     </div>
     
 </html:form>

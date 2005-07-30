@@ -143,6 +143,7 @@ public class CreateWebsiteAction extends DispatchAction
         private String contextURL = null;
         private String weblogURL = null;
         private String rssURL = null;
+        private WebsiteData website = null;
         public CreateWebsitePageModel(HttpServletRequest request,
                 HttpServletResponse response, ActionMapping mapping, WebsiteData wd)
         {
@@ -153,7 +154,8 @@ public class CreateWebsiteAction extends DispatchAction
             {
                 contextURL = rollerContext.getAbsoluteContextUrl(request);
                 weblogURL = contextURL + "/page/" + wd.getHandle();   
-                rssURL =    contextURL + "/rss/" + wd.getHandle();         
+                rssURL =    contextURL + "/rss/" + wd.getHandle();    
+                website = wd;
             }
         }
         public String getContextURL()
@@ -187,6 +189,14 @@ public class CreateWebsiteAction extends DispatchAction
         public void setWeblogURL(String weblogURL)
         {
             this.weblogURL = weblogURL;
+        }
+        public WebsiteData getWebsite()
+        {
+            return website;
+        }
+        public void setWebsite(WebsiteData website)
+        {
+            this.website = website;
         }
     }
 }

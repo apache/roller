@@ -49,8 +49,7 @@ public class MainPageAction extends Action
         req.setAttribute("baseURL", rctx.getContextUrl(req));
         req.setAttribute("data", new MainPageData(req));
         
-        /* I am pretty sure this value isn't used on the display anymore, 
-         * but I am scared to remove it ... Allen G */
+        // Determines if register new sers
         boolean allowNewUsers = 
                 RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
 

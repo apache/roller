@@ -22,7 +22,7 @@ import java.util.*;
  * 
  * <br />Options:<br />
  * -v Verbose<br />
- * -d Delete orphans</p>
+ * -purge Delete orphans</p>
  */
 public class ConsistencyCheck 
 {
