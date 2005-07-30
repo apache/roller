@@ -3,7 +3,7 @@
 RollerSession rollerSession = RollerSession.getRollerSession(request);
 UserData user = rollerSession.getAuthenticatedUser();
 WebsiteData website = rollerSession.getCurrentWebsite();
-boolean allowNewUsers = RollerConfig.getBooleanProperty("configForm.allowNewUsers");
+boolean allowNewUsers = RollerConfig.getBooleanProperty("users.registration.enabled");
 %>
 
 <table class="sidebarBox">

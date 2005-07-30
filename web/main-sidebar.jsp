@@ -21,7 +21,7 @@
             <input type="submit" value="<fmt:message key="mainPage.searchButton" />" />
         </form>
         <script type="text/javascript"> 
-            <!--
+            // <!--
             function validateSearch(form) {
                 if (form.q.value == "") {
                     alert("Please enter a search term to continue.");
@@ -30,7 +30,7 @@
                 }
                 return true;
             } 
-            --!>
+            // --!>
         </script>
         
         </td>

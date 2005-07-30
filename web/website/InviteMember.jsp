@@ -4,15 +4,17 @@
 
 <p><fmt:message key="inviteMember.description" /></p>
 
-<html:form action="/editor/inviteMember" method="post" focus="handle">
+<html:form action="/editor/inviteMember" method="post" focus="userName">
 
     <div class="formrow">
-       <label for="userName" class="formrow" /><fmt:message key="inviteMember.userName" /></label>
+       <label for="userName" class="formrow" />
+           <fmt:message key="inviteMember.userName" /></label>
        <html:text property="userName" size="30" maxlength="30" />
     </div>    
     
     <div class="formrow">
-       <label for="userName" class="formrow" /><fmt:message key="inviteMember.permissions" /></label>
+       <label for="userName" class="formrow" />
+           <fmt:message key="inviteMember.permissions" /></label>
        <input type="radio" name="permissionsMask" value="3"  />
        <fmt:message key="inviteMember.administrator" />
        <input type="radio" name="permissionsMask" value="1" checked />

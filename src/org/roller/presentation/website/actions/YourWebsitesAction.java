@@ -11,6 +11,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.model.Roller;
@@ -78,6 +80,10 @@ public class YourWebsitesAction extends DispatchAction
         if (selectedWebsite.hasUserPermissions(user, PermissionsData.LIMITED))
         {
             rollerSession.setCurrentWebsite(selectedWebsite);
+            ActionMessages msgs = new ActionMessages();
+            msgs.add(null, new ActionMessage(
+                    "yourWebsites.selected", selectedWebsite.getHandle()));
+            saveMessages(request, msgs);
         }        
         request.setAttribute("model",
                 new YourWebsitesPageModel(request, response, mapping));
@@ -100,6 +106,11 @@ public class YourWebsitesAction extends DispatchAction
         perms.setPending(false);
         // ROLLER_2.0: notify inviter that invitee has accepted invitation  
         roller.commit();
+
+        ActionMessages msgs = new ActionMessages();
+        msgs.add(null, new ActionMessage(
+                "yourWebsites.accepted", perms.getWebsite().getHandle()));
+        saveMessages(request, msgs);
         
         request.setAttribute("model",
                 new YourWebsitesPageModel(request, response, mapping));
@@ -122,6 +133,11 @@ public class YourWebsitesAction extends DispatchAction
         perms.remove();
         // ROLLER_2.0: notify inviter that invitee has declined invitation  
         roller.commit();
+        
+        ActionMessages msgs = new ActionMessages();
+        msgs.add(null, new ActionMessage(
+                "yourWebsites.declined", perms.getWebsite().getHandle()));
+        saveMessages(request, msgs);
         
         request.setAttribute("model",
                 new YourWebsitesPageModel(request, response, mapping));
@@ -150,6 +166,11 @@ public class YourWebsitesAction extends DispatchAction
             perms.remove();
             roller.commit();
         }
+        
+        ActionMessages msgs = new ActionMessages();
+        msgs.add(null, new ActionMessage(
+                "yourWebsites.resigned", perms.getWebsite().getHandle()));
+        saveMessages(request, msgs);
         
         request.setAttribute("model",
                 new YourWebsitesPageModel(request, response, mapping));

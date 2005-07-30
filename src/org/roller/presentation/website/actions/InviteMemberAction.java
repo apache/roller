@@ -28,7 +28,8 @@ import org.roller.presentation.website.formbeans.InviteMemberForm;
  * Allows website admin to invite new members to website.
  * 
  * @struts.action path="/editor/inviteMember" parameter="method" name="inviteMemberForm"
- * @struts.action-forward name="inviteMembers.page" path="/website/InviteMember.jsp"
+ * @struts.action-forward name="inviteMember.page"     path="/website/InviteMember.jsp"
+ * @struts.action-forward name="inviteMemberDone.page" path="/website/InviteMemberDone.jsp"
  */
 public class InviteMemberAction extends DispatchAction
 {
@@ -57,7 +58,7 @@ public class InviteMemberAction extends DispatchAction
         HttpServletResponse response)
         throws IOException, ServletException
     {
-        ActionForward forward = mapping.findForward("inviteMembers.page");
+        ActionForward forward = mapping.findForward("inviteMember.page");
         return forward; 
     }
     
@@ -68,6 +69,7 @@ public class InviteMemberAction extends DispatchAction
             HttpServletResponse response)
             throws Exception
     {
+        ActionForward forward = mapping.findForward("inviteMember.page");
         ActionMessages msgs = new ActionMessages();
         ActionMessages errors = new ActionErrors();
         InviteMemberForm form = (InviteMemberForm)actionForm;
@@ -76,7 +78,7 @@ public class InviteMemberAction extends DispatchAction
         if (user == null)
         {
             errors.add(ActionErrors.GLOBAL_ERROR, 
-                new ActionError("inviteMembers.error.userNotFound"));
+                new ActionError("inviteMember.error.userNotFound"));
         }
         else 
         {
@@ -86,25 +88,25 @@ public class InviteMemberAction extends DispatchAction
             if (perms != null && perms.isPending())
             {
                 errors.add(ActionErrors.GLOBAL_ERROR, 
-                    new ActionError("inviteMembers.error.userAlreadyInvited"));
+                    new ActionError("inviteMember.error.userAlreadyInvited"));
             }
             else if (perms != null)
             {
                 errors.add(ActionErrors.GLOBAL_ERROR, 
-                    new ActionError("inviteMembers.error.userAlreadyMember"));
+                    new ActionError("inviteMember.error.userAlreadyMember"));
             }
             else
             {
                 String mask = request.getParameter("permissionsMask");
                 umgr.inviteUser(website, user, Short.parseShort(mask));
+                request.setAttribute("user", user);
+                forward = mapping.findForward("inviteMemberDone.page");
                 // ROLLER_2.0: notify user by email of invitation
                 msgs.add(ActionMessages.GLOBAL_MESSAGE, 
-                    new ActionMessage("inviteMembers.userInvited"));
+                    new ActionMessage("inviteMember.userInvited"));
             }
         }
         if (!errors.isEmpty()) saveErrors(request, errors);
-        if (!msgs.isEmpty()) saveMessages(request, msgs);
-        ActionForward forward = mapping.findForward("inviteMembers.page");
         return forward; 
     }
 }

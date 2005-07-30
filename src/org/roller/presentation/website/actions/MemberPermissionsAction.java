@@ -9,14 +9,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.PermissionsData;
+import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerSession;
@@ -67,9 +72,13 @@ public class MemberPermissionsAction extends DispatchAction
             HttpServletResponse response)
             throws Exception
     {
+        ActionErrors errors = new ActionErrors();
+        ActionMessages msgs = new ActionMessages();
         MemberPermissionsPageModel model = 
             new MemberPermissionsPageModel(request, response, mapping);
         Iterator iter = model.getPermissions().iterator();
+        int removed = 0;
+        int changed = 0;
         while (iter.hasNext())
         {
             PermissionsData perms = (PermissionsData)iter.next();
@@ -77,11 +86,45 @@ public class MemberPermissionsAction extends DispatchAction
             if (sval != null)
             {
                 short val = Short.parseShort(sval);
-                if (val == -1) perms.remove();
-                else perms.setPermissionMask(val);
-                RollerFactory.getRoller().commit();
+                RollerSession rses = RollerSession.getRollerSession(request);
+                UserData user = rses.getAuthenticatedUser();
+                if (perms.getUser().getId().equals(user.getId()) 
+                        && val < perms.getPermissionMask())
+                {
+                    errors.add(null,new ActionError(
+                        "memberPermissions.noSelfDemotions"));
+                }
+                else if (val != perms.getPermissionMask()) 
+                {
+                    if (val == -1) 
+                    {
+                        perms.remove();
+                        removed++;
+                    }
+                    else
+                    {
+                        perms.setPermissionMask(val);
+                        changed++;
+                    }
+                }
             }
         }
+        if (removed > 0 || changed > 0)
+        {
+            RollerFactory.getRoller().commit();  
+        }
+        if (removed > 0) 
+        {
+            msgs.add(null,new ActionMessage(
+                "memberPermissions.membersRemoved", new Integer(removed)));
+        }
+        if (changed > 0)
+        {
+            msgs.add(null,new ActionMessage(
+                "memberPermissions.membersChanged", new Integer(changed)));
+        }
+        saveErrors(request, errors);
+        saveMessages(request, msgs);
         MemberPermissionsPageModel updatedModel = 
             new MemberPermissionsPageModel(request, response, mapping);
         request.setAttribute("model", updatedModel);
