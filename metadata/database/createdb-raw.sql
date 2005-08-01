@@ -177,7 +177,8 @@ create table weblogentry (
     commentdays     integer default 7 not null,
     rightToLeft     @BOOLEAN_SQL_TYPE_FALSE@ not null,
     pinnedtomain    @BOOLEAN_SQL_TYPE_FALSE@ not null,
-    locale          varchar(20) null
+    locale          varchar(20) null,
+    status          varchar(20) not null
 );
 create index weblogentry_websiteid_index on weblogentry( websiteid );
 create index weblogentry_categoryid_index on weblogentry( categoryid );

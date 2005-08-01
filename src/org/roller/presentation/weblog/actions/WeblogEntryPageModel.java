@@ -116,7 +116,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
-                WeblogManager.PUB_ONLY, // status
+                WeblogEntryData.PUBLISHED, // status
                 new Integer(20));  // maxEntries
     }
 
@@ -135,10 +135,29 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
-                WeblogManager.DRAFT_ONLY, // status
+                WeblogEntryData.DRAFT, // status
                 new Integer(20));  // maxEntries
     }
-
+    
+    /**
+     * Get recent weblog entries using request parameters to determine
+     * username, date, and category name parameters.
+     * @return List of WeblogEntryData objects.
+     * @throws RollerException
+     */
+    public List getRecentPendingEntries() throws RollerException
+    {
+        RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
+        return RollerFactory.getRoller().getWeblogManager()
+            .getWeblogEntries(
+                rollerSession.getCurrentWebsite(), 
+                null,              // startDate
+                null,              // endDate
+                null,              // catName
+                WeblogEntryData.PENDING, // status
+                new Integer(20));  // maxEntries
+    }
+ 
     public List getHoursList()
     {
         List ret = new LinkedList();

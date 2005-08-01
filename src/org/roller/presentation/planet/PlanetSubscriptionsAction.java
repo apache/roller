@@ -70,7 +70,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try
         {
-            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isAdminUser())
             {
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
@@ -118,7 +118,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
         ActionForward forward = mapping.findForward("planetSubscriptions.page");
         try
         {
-            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isAdminUser())
             {
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
@@ -158,7 +158,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
         try
         {
             //RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isAdminUser())
             {
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
@@ -225,7 +225,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
 
             PlanetGroupData targetGroup = planet.getGroup(groupHandle);
 
-            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isAdminUser())
             {
 
                 PlanetSubscriptionData sub = null;

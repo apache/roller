@@ -202,23 +202,6 @@ public class ContextLoader
         
         return uploadurl;
     }
-
-    //------------------------------------------------------------------------
-    
-    public boolean isUserAuthorizedToEdit()
-    {
-        try
-        {
-            RollerSession rollerSession = RollerSession.getRollerSession(
-                    mRollerReq.getRequest());
-            return rollerSession.isUserAuthorizedToEdit();
-        }
-        catch (Exception e)
-        {
-            mLogger.warn("PageHelper.isUserAuthorizedToEdit)", e);
-        }
-        return false;
-    }
     
     //------------------------------------------------------------------------
     

@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
+import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
@@ -46,6 +47,10 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
                                            
     static final long serialVersionUID = 2341505386843044125L;
     
+    public static final String DRAFT = "DRAFT";
+    public static final String PENDING = "PENDING";
+    public static final String PUBLISHED = "PUBLISHED";
+    
     // Simple properies
     protected String    id            = null;
     protected String    title         = null;
@@ -54,12 +59,12 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     protected String    anchor        = null;
     protected Timestamp pubTime       = null;
     protected Timestamp updateTime    = null;
-    protected Boolean   publishEntry  = null;
     protected String    plugins       = null;
     protected Boolean   allowComments = Boolean.TRUE;
     protected Integer   commentDays   = new Integer(7);
     protected Boolean   rightToLeft   = Boolean.FALSE;
     protected Boolean   pinnedToMain  = Boolean.FALSE;
+    protected String    status        = DRAFT;
     
     // Associated objects
     protected UserData           creator  = null;
@@ -81,13 +86,13 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
        WeblogCategoryData category, 
        WebsiteData website, 
        UserData creator,
-       java.lang.String title, 
-       java.lang.String link,
-       java.lang.String text, 
-       java.lang.String anchor, 
-       java.sql.Timestamp pubTime, 
-       java.sql.Timestamp updateTime, 
-       java.lang.Boolean publishEntry)
+       String title, 
+       String link,
+       String text, 
+       String anchor, 
+       Timestamp pubTime, 
+       Timestamp updateTime, 
+       String status)
     {
         this.id = id;
         this.category = category;
@@ -99,7 +104,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         this.anchor = anchor;
         this.pubTime = pubTime;
         this.updateTime = updateTime;
-        this.publishEntry = publishEntry;
+        this.status = status;
     }
 
     public WeblogEntryData(WeblogEntryData otherData)
@@ -125,7 +130,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         this.anchor = other.anchor;
         this.pubTime = other.pubTime;
         this.updateTime = other.updateTime;
-        this.publishEntry = other.publishEntry;
+        this.status = other.status;
         this.plugins = other.plugins;
         this.allowComments = other.allowComments;
         this.commentDays = other.commentDays;
@@ -373,17 +378,17 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
 
     /** 
      * @ejb:persistent-field 
-     * @hibernate.property column="publishentry" non-null="true" unique="false"
+     * @hibernate.property column="status" non-null="true" unique="false"
      */
-    public java.lang.Boolean getPublishEntry()
+    public String getStatus()
     {
-        return this.publishEntry;
+        return this.status;
     }
 
     /** @ejb:persistent-field */
-    public void setPublishEntry(java.lang.Boolean publishEntry)
+    public void setStatus(String status)
     {
-        this.publishEntry = publishEntry;
+        this.status = status;
     }
 
     /**
@@ -507,11 +512,12 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         {
             setAnchor(createAnchor());
         }
-        if (getPublishEntry() != null && getPublishEntry().booleanValue()) {
+        super.save();
+        if (isPublished()) 
+        {
             // Queue applicable pings for this update.
             RollerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(this);
         }
-        super.save();
     }
     
     //------------------------------------------------------------------------
@@ -762,7 +768,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
                     "anchor=" + anchor + " " + 
                     "pubTime=" + pubTime + " " + 
                     "updateTime=" + updateTime + " " + 
-                    "publishEntry=" + publishEntry + " " + 
+                    "status=" + status + " " + 
                     "plugins=" + plugins);
         str.append('}');
 
@@ -851,14 +857,14 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
                           this.updateTime.equals(lTest.updateTime);
             }
 
-            if (this.publishEntry == null)
+            if (this.status == null)
             {
-                lEquals = lEquals && (lTest.publishEntry == null);
+                lEquals = lEquals && (lTest.status == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.publishEntry.equals(lTest.publishEntry);
+                          this.status.equals(lTest.status);
             }
 
             if (this.plugins == null)
@@ -902,7 +908,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         result = (37 * result) + 
                  ((this.updateTime != null) ? this.updateTime.hashCode() : 0);
         result = (37 * result) + 
-                 ((this.publishEntry != null) ? this.publishEntry.hashCode() : 0);
+                 ((this.status != null) ? this.status.hashCode() : 0);
         result = (37 * result) + 
                  ((this.plugins != null) ? this.plugins.hashCode() : 0);
 
@@ -1027,4 +1033,51 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         setCreator(umgr.retrieveUser(creatorId)); 
     }
 
+    /** Convenience method for checking status */
+    public boolean isDraft() 
+    {
+        return status.equals(DRAFT);
+    }
+    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
+    public void setDraft(boolean value)
+    {
+    }
+    
+    /** Convenience method for checking status */
+    public boolean isPending() 
+    {
+        return status.equals(PENDING);
+    }
+    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
+    public void setPending(boolean value)
+    {
+    }
+    
+    /** Convenience method for checking status */
+    public boolean isPublished() 
+    {
+        return status.equals(PUBLISHED);
+    }
+    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
+    public void setPublished(boolean value)
+    {
+    }
+    
+    public boolean canSave() throws RollerException
+    {
+        Roller roller = RollerFactory.getRoller();
+        if (roller.getUser().equals(UserData.SYSTEM_USER)) 
+        {
+            return true;
+        }
+        boolean author = getWebsite().hasUserPermissions(
+                roller.getUser(), (short)(PermissionsData.AUTHOR));
+        boolean limited = getWebsite().hasUserPermissions(
+                roller.getUser(), (short)(PermissionsData.LIMITED));
+        if (author || (limited && isDraft()) || (limited && isPending()))
+        {
+            return true;
+        }
+        return false;
+    }
 }

@@ -22,10 +22,6 @@ public interface WeblogManager extends Serializable
 {
     public static final String CATEGORY_ATT = "category.att";
     
-    public static final String ALL = "ALL";
-    public static final String DRAFT_ONLY = "DRAFT_ONLY";
-    public static final String PUB_ONLY = "PUB_ONLY";
-    
     public void release();
 
     //------------------------------------------------ WeblogCategoryData CRUD
@@ -167,7 +163,7 @@ public interface WeblogManager extends Serializable
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
-     * @param status     Status of ALL, DRAFT_ONLY, or PUB_ONLY.
+     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param offset     Index of first entry to include.
      * @param length     Max number of entries to include.
      * @return List of WeblogEntryData objects in reverse chrono order.
@@ -192,7 +188,7 @@ public interface WeblogManager extends Serializable
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
-     * @param status     Status of ALL, DRAFT_ONLY, or PUB_ONLY.
+     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param maxEntries Max entries or null for no limit.
      * @return Map of Lists, keyed by Date, and containing WeblogEntryData.
      * @throws RollerException
@@ -215,7 +211,7 @@ public interface WeblogManager extends Serializable
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
-     * @param status     Status of ALL, DRAFT_ONLY, or PUB_ONLY.
+     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param maxEntries Max entries or null for no limit.
      * @return Map of Lists, keyed by Date, and containing date strings.
      * @throws RollerException

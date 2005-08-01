@@ -92,7 +92,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
         }
         Junction conjunction = Expression.conjunction();        
         conjunction.add(Expression.eq("website", current.getWebsite()));
-        conjunction.add(Expression.eq("publishEntry", Boolean.TRUE));
+        conjunction.add(Expression.eq("status", WeblogEntryData.PUBLISHED));
         
         if (next)
         {
@@ -277,16 +277,10 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
                 criteria.add(Expression.eq("category", cat));
             }
             
-            if (status != null && status.equals(DRAFT_ONLY))
+            if (status != null)
             {
-                criteria.add(
-                    Expression.eq("publishEntry", Boolean.FALSE));
+                criteria.add(Expression.eq("status", status));
             }        
-            else if (status != null && status.equals(PUB_ONLY))
-            {
-                criteria.add(
-                    Expression.eq("publishEntry", Boolean.TRUE));
-            }
 
             if (pinned != null)
             {
@@ -362,7 +356,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
         
         Session session = ((HibernateStrategy)mStrategy).getSession();
         Criteria criteria = session.createCriteria(WeblogEntryData.class);
-        criteria.add(Expression.eq("publishEntry", Boolean.TRUE));
+        criteria.add(Expression.eq("status", WeblogEntryData.PUBLISHED));
         criteria.add(Expression.le("pubTime", new Date()));
 
         try

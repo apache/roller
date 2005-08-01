@@ -250,7 +250,7 @@ public class RollerAtomHandler implements AtomHandler
                             start,             // startDate
                             end,               // endDate
                             null,              // catName
-                            WeblogManager.ALL, // status
+                            null, // status
                             new Integer(mMaxEntries + 1)); // maxEntries
                 }
                 else
@@ -260,7 +260,7 @@ public class RollerAtomHandler implements AtomHandler
                             start,             // startDate
                             end,               // endDate
                             null,              // catName
-                            WeblogManager.ALL, // status
+                            null, // status
                             offset,            // offset (for range paging)
                             mMaxEntries + 1);  // maxEntries
                 }
@@ -888,7 +888,7 @@ public class RollerAtomHandler implements AtomHandler
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
         rollerEntry.setWebsite(website);
-        rollerEntry.setPublishEntry( Boolean.TRUE );
+        rollerEntry.setStatus(WeblogEntryData.PUBLISHED);
         rollerEntry.setCategory(website.getBloggerCategory());
         
         return rollerEntry;

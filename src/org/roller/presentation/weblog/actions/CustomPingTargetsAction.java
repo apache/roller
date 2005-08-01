@@ -85,6 +85,6 @@ public class CustomPingTargetsAction
     protected boolean hasRequiredRights(RollerRequest rreq) throws RollerException
     {
         RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
-        return (rollerSession.isUserAuthorizedToEdit() && !PingConfig.getDisallowCustomTargets());
+        return (rollerSession.isUserAuthorizedToAdmin() && !PingConfig.getDisallowCustomTargets());
     }
 }

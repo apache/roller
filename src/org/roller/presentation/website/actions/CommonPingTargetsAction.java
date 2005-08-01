@@ -67,6 +67,6 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
     {
         // This mimics the check in other admin actions, but not sure why the latter is not sufficient.
         RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
-        return (rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser());
+        return (rollerSession.isUserAuthorizedToAdmin() && rollerSession.isAdminUser());
     }
 }

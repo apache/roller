@@ -41,12 +41,21 @@ function sendTrackback() {
     postWeblogEntry();
 }
 function saveDraft() {
-    document.weblogEntryFormEx.publishEntry.value = "false";
+    if (document.weblogEntryFormEx.status.value == "PUBLISHED" ) {
+        document.weblogEntryFormEx.status.value = "DRAFT";
+    } 
     document.weblogEntryFormEx.method.value = "save";
     postWeblogEntry();
 }
 function publish() {
-    document.weblogEntryFormEx.publishEntry.value = "true";
+    <c:choose>
+	    <c:when test="${model.rollerSession.userAuthorizedToAuthor}">
+	        document.weblogEntryFormEx.status.value = "PUBLISHED";
+	    </c:when>
+	    <c:otherwise>
+            document.weblogEntryFormEx.status.value = "PENDING";
+	    </c:otherwise>
+    </c:choose>
     document.weblogEntryFormEx.method.value = "save";
     postWeblogEntry();
 }
@@ -62,7 +71,7 @@ function publish() {
     <html:hidden property="creatorId"/>
     <html:hidden property="anchor"/>
     <html:hidden property="updateTime"/>
-    <html:hidden property="publishEntry"/>
+    <html:hidden property="status"/>
     <html:hidden name="method" property="method" value="save"/>
 
    <%-- ================================================================== --%>
@@ -107,7 +116,7 @@ function publish() {
            <fmt:message key="weblogEdit.status" />
         </label>
         <c:if test="${!empty weblogEntryFormEx.id}">
-            <c:if test="${weblogEntryFormEx.publishEntry}">
+            <c:if test="${weblogEntryFormEx.published}">
                 <span style="color:green; font-weight:bold">
                    <fmt:message key="weblogEdit.published" />
                    (<fmt:message key="weblogEdit.updateTime" />
@@ -115,9 +124,17 @@ function publish() {
                       dateStyle="short" timeStyle="short" />)
                 </span>
             </c:if>
-            <c:if test="${!weblogEntryFormEx.publishEntry}">
+            <c:if test="${weblogEntryFormEx.draft}">
                 <span style="color:orange; font-weight:bold">
                    <fmt:message key="weblogEdit.draft" />
+                   (<fmt:message key="weblogEdit.updateTime" />
+                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
+                      dateStyle="short" timeStyle="short" />)
+                </span>
+            </c:if>
+            <c:if test="${weblogEntryFormEx.pending}">
+                <span style="color:orange; font-weight:bold">
+                   <fmt:message key="weblogEdit.pending" />
                    (<fmt:message key="weblogEdit.updateTime" />
                    <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
                       dateStyle="short" timeStyle="short" />)
@@ -175,22 +192,42 @@ function publish() {
 
         <%-- save draft and post buttons: only in edit and preview mode --%>
         <c:if test="${model.editMode || model.previewMode}" >
-
-            <input type="button" name="post"
-                   value='<fmt:message key="weblogEdit.post" />'
-                   onclick="publish()" />
-
-            <input type="button" name="draft"
-                   value='<fmt:message key="weblogEdit.save" />'
-                   onclick="saveDraft()" />
-
-            <%-- if entry has been saved, then show delete button --%>
-            <c:if test="${!empty weblogEntryFormEx.id}">
-                <input type="button" name="draft"
-                       value='<fmt:message key="weblogEdit.deleteEntry" />'
-                       onclick="deleteWeblogEntry()" />
-            </c:if>
-
+        
+            <c:choose>
+            
+	            <c:when test="${model.rollerSession.userAuthorizedToAuthor}" >        
+                    <input type="button" name="post"
+	                       value='<fmt:message key="weblogEdit.post" />'
+	                       onclick="publish()" />
+	                <input type="button" name="draft"
+	                       value='<fmt:message key="weblogEdit.save" />'
+	                       onclick="saveDraft()" />                                      
+	                <c:if test="${!empty weblogEntryFormEx.id}">
+	                    <input type="button" name="draft"
+	                           value='<fmt:message key="weblogEdit.deleteEntry" />'
+	                           onclick="deleteWeblogEntry()" />
+	                </c:if>
+	            </c:when> 
+	            
+	            <c:when test="${model.rollerSession.userAuthorized}" > 
+                    <c:if test="${weblogEntryFormEx.status == 'DRAFT'}">       
+		                <input type="button" name="post"
+		                       value='<fmt:message key="weblogEdit.submitForReview" />'
+		                       onclick="publish()" />
+		                <input type="button" name="draft"
+		                       value='<fmt:message key="weblogEdit.save" />'
+		                       onclick="saveDraft()" />                  
+		                <%-- only show delete button for saved entries --%>
+		                <c:if test="${!empty weblogEntryFormEx.id}">
+		                    <input type="button" name="draft"
+		                           value='<fmt:message key="weblogEdit.deleteEntry" />'
+		                           onclick="deleteWeblogEntry()" />
+		                </c:if>   
+                    </c:if>            
+	            </c:when>
+                
+            </c:choose>
+             
         </c:if>
 
         <%-- edit mode buttons --%>
@@ -324,12 +361,12 @@ function publish() {
      <fmt:message key="weblogEdit.rightToLeft" />
      <br />
 
-     <c:if test="${model.isAdmin}">
+     <c:if test="${model.rollerSession.adminUser}">
          <html:checkbox property="pinnedToMain" />
          <fmt:message key="weblogEdit.pinnedToMain" />
          <br />
      </c:if>
-     <c:if test="${!model.isAdmin}">
+     <c:if test="${!model.rollerSession.adminUser}">
          <html:hidden property="pinnedToMain" />
      </c:if>
 
@@ -364,7 +401,7 @@ function publish() {
 
     <%-- ================================================================== --%>
     <%-- Trackback control --%>
-    <c:if test="${!empty weblogEntryFormEx.id}">
+    <c:if test="${!empty weblogEntryFormEx.id && model.rollerSession.userAuthorizedToAuthor}">
         <br />
         <br />
         <a name="trackbacks"></a>
@@ -381,7 +418,7 @@ function publish() {
     <%-- ================================================================== --%>
     <%-- Comments of this weblog entry --%>
 
-    <c:if test="${model.editMode && !empty model.comments}" >
+    <c:if test="${model.editMode && !empty model.comments && model.rollerSession.userAuthorizedToAuthor}" >
         <br />
         <br />
         <a name="comments"></a>

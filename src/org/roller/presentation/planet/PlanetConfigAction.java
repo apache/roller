@@ -66,7 +66,7 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isAdminUser())
             {
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
@@ -106,7 +106,7 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isAdminUser())
             {
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
@@ -160,7 +160,7 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isAdminUser())
             {
                 Roller roller = RollerFactory.getRoller();
                 RefreshEntriesTask task = new RefreshEntriesTask();
@@ -194,7 +194,7 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isAdminUser())
             {
                 Roller roller = (Roller)RollerFactory.getRoller();
                 SyncWebsitesTask task = new SyncWebsitesTask();

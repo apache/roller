@@ -85,7 +85,7 @@
     #end
 
     ## strutsUrlHelper( useIds, isAction, path, val1, val2)
-    #if( $model.isUserAuthorizedToEdit() )
+    #if( $model.isUserAuthorizedToAuthor() )
         #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "weblogCreate", "tabbedmenu.weblog", "tabbedmenu.weblog.newEntry") )
         #printNavLink( $editUrl $text.get("navigationBar.newEntry") $useCSS $vertical $delimiter )
 

@@ -88,7 +88,7 @@ public class ExportEntriesAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
-            if ( !rollerSession.isUserAuthorizedToEdit() )
+            if ( !rollerSession.isUserAuthorizedToAdmin() )
             {
                 forward = mapping.findForward("access-denied");
             }
@@ -130,7 +130,7 @@ public class ExportEntriesAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
             WeblogQueryForm form = (WeblogQueryForm)actionForm;
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {               
                 request.setAttribute("model",
                                      new BasePageModel(request, response, mapping));
@@ -164,7 +164,7 @@ public class ExportEntriesAction extends DispatchAction
                                     startDate,         // startDate
                                     endDate,           // endDate
                                     null,              // catName
-                                    WeblogManager.ALL,  // status
+                                    null,  // status
                                     null);              // maxEntries
 
                     ActionMessages messages = writeSuccessMessage(request, response, rreq, form);

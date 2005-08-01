@@ -59,7 +59,7 @@ public final class UserAdminAction extends UserBaseAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser() )
+            if (rollerSession.isAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -122,7 +122,7 @@ public final class UserAdminAction extends UserBaseAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser() )
+            if (rollerSession.isAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -233,7 +233,7 @@ public final class UserAdminAction extends UserBaseAction
 		{
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
              RollerSession rollerSession = RollerSession.getRollerSession(request);
-			if ( rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser() )
+			if (rollerSession.isAdminUser() )
 			{
 				UserAdminForm uaf = (UserAdminForm)actionForm;
 				

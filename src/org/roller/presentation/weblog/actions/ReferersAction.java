@@ -59,7 +59,7 @@ public class ReferersAction extends DispatchAction
         RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
         try
         {
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAuthor() )
             {   
                 req.setAttribute("pageHits",
                     new Integer(refmgr.getDayHits(RollerSession.getRollerSession(req).getCurrentWebsite())));
@@ -90,7 +90,7 @@ public class ReferersAction extends DispatchAction
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAuthor() )
             {
                 RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
                 WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();
@@ -117,7 +117,7 @@ public class ReferersAction extends DispatchAction
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if (rollerSession.isUserAuthorizedToEdit() )
+            if (rollerSession.isUserAuthorizedToAuthor() )
             {
                 RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
                 WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();

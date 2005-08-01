@@ -326,7 +326,7 @@ public class PageModel
                             null,                     // startDate
                             day,                 // endDate
                             catParam,                 // catName
-                            WeblogManager.PUB_ONLY,   // status
+                            WeblogEntryData.PUBLISHED,   // status
                             new Integer(maxEntries)); // maxEntries
             
             setFirstAndLastEntries( ret );
@@ -421,7 +421,7 @@ public class PageModel
                             null,                    // startDate
                             day,                      // endDate
                             catParam,                 // catName
-                            WeblogManager.PUB_ONLY,   // status
+                            WeblogEntryData.PUBLISHED,   // status
                             new Integer(maxEntries)); // maxEntries
         }
         catch (Exception e)
@@ -453,7 +453,7 @@ public class PageModel
                     && StringUtils.isNotEmpty(excerpt) )
                 {
                     if (   referer.getVisible().booleanValue() 
-                        || rollerSession.isUserAuthorizedToEdit() )
+                        || rollerSession.isUserAuthorizedToAdmin() )
                     { 
                         referers.add(referer);
                     }
@@ -647,7 +647,7 @@ public class PageModel
         {
             RollerSession rollerSession = 
                 RollerSession.getRollerSession(mRollerReq.getRequest());
-            return rollerSession.isUserAuthorizedToEdit();
+            return rollerSession.isUserAuthorizedToAdmin();
         }
         catch (Exception e)
         {

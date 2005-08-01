@@ -218,7 +218,7 @@ public class PageHelper
         {
             RollerSession rollerSession = 
                 RollerSession.getRollerSession(mRollerReq.getRequest());
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 Hashtable params = new Hashtable();
                 params.put( RollerRequest.REFERERID_KEY, referer.getId());
@@ -257,7 +257,7 @@ public class PageHelper
         {
             RollerSession rollerSession = 
                 RollerSession.getRollerSession(mRollerReq.getRequest());
-            return rollerSession.isUserAuthorizedToEdit();
+            return rollerSession.isUserAuthorizedToAdmin();
         }
         catch (Exception e)
         {

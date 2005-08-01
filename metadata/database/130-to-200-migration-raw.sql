@@ -25,6 +25,7 @@ alter table website add constraint website_handle_uq unique (handle@INDEXSIZE@);
 
 -- Add userid to weblogentry so we can track original creator of entry
 alter table weblogentry add column userid varchar(48) @ALTER_TABLE_NOT_NULL@;
+alter table weblogentry add column status varchar(20) @ALTER_TABLE_NOT_NULL@;
 create index weblogentry_userid_index on weblogentry(userid);
 
 alter table rolleruser add column isenabled @BOOLEAN_SQL_TYPE_TRUE@ @ALTER_TABLE_NOT_NULL@;

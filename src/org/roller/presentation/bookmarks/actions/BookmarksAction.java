@@ -62,7 +62,7 @@ public class BookmarksAction extends DispatchAction
         throws RollerException
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor())
         {
             addModelObjects(request, (BookmarksForm)actionForm);
             return mapping.findForward("BookmarksForm");
@@ -90,7 +90,7 @@ public class BookmarksAction extends DispatchAction
         throws RollerException
     {
         Roller roller = RollerFactory.getRoller();
-        if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor())
         {
             BookmarkManager bmgr = roller.getBookmarkManager();
             BookmarksForm form = (BookmarksForm)actionForm;
@@ -145,7 +145,7 @@ public class BookmarksAction extends DispatchAction
         ActionMessages messages = new ActionMessages();
         ActionForward forward = mapping.findForward("BookmarksForm");
         Roller roller = RollerFactory.getRoller();
-        if (RollerSession.getRollerSession(request).isUserAuthorizedToEdit())
+        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor())
         {
             try 
             {

@@ -68,7 +68,7 @@ public class PermissionsTest extends RollerTestBase
                 null,       // start
                 new Date(), // end
                 null,       // cat
-                WeblogManager.ALL,
+                null,
                 new Integer(1));
         WeblogEntryData entry = (WeblogEntryData)entries.get(0);
         assertNotNull(entry);
