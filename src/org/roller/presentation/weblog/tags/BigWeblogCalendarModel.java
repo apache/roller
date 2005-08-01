@@ -58,7 +58,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel
                             startDate,              // startDate
                             endDate,                // endDate
                             catName,                // catName
-                            WeblogManager.PUB_ONLY, // status
+                            WeblogEntryData.PUBLISHED, // status
                             null 
             );
         }

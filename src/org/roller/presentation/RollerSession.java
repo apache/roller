@@ -204,16 +204,39 @@ public class RollerSession
     }
 
     /** 
-     * Is our authenticated user authorized to edit objects in the current website. 
+     * Is session's authenticated user authorized to work in current website?
      */
-    public boolean isUserAuthorizedToEdit() 
+    public boolean isUserAuthorized() 
         throws RollerException
+    {
+        return hasPermissions(PermissionsData.LIMITED);
+    }
+    
+    /** 
+     * Is session's authenticated user authorized to post in current weblog?
+     */
+    public boolean isUserAuthorizedToAuthor() 
+        throws RollerException
+    {
+        return hasPermissions(PermissionsData.AUTHOR);
+    }
+    
+    /** 
+     * Is session's authenticated user authorized to admin current weblog?
+     */
+    public boolean isUserAuthorizedToAdmin() 
+        throws RollerException
+    {
+        return hasPermissions(PermissionsData.ADMIN);
+    }
+    
+    private boolean hasPermissions(short mask) 
     {
         UserData user = getAuthenticatedUser();
         WebsiteData website = getCurrentWebsite();
         if (website != null && user != null) 
         {
-            return website.hasUserPermissions(user, (short)(PermissionsData.AUTHOR));
+            return website.hasUserPermissions(user, mask);
         }
         return false;
     }

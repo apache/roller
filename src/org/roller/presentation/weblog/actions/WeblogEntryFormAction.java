@@ -87,9 +87,8 @@ public final class WeblogEntryFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("weblogEdit.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if (rollerSession.isUserAuthorizedToEdit())
+            if (rollerSession.isUserAuthorized())
             {
                 WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm; 
                 form.initNew(request, response);
@@ -129,10 +128,11 @@ public final class WeblogEntryFormAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogEntryData entry = rreq.getWeblogEntry();
+            if (     rollerSession.isUserAuthorizedToAuthor() 
+                 || (rollerSession.isUserAuthorized() && entry.isDraft()))
             {
-                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-                WeblogEntryData entry = rreq.getWeblogEntry();
                 WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
                 if (entry == null && form.getId() != null)
                 {
@@ -201,7 +201,7 @@ public final class WeblogEntryFormAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAuthor() )
             {
                 request.setAttribute("model",
                    new WeblogEntryPageModel(request, response, mapping, 
@@ -236,42 +236,23 @@ public final class WeblogEntryFormAction extends DispatchAction
         ActionMessages uiMessages = new ActionMessages();
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
-            {
-                UserManager userMgr = RollerFactory.getRoller().getUserManager();
-                WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
-
-                WebsiteData site = RollerSession.getRollerSession(request).getCurrentWebsite();
-                WeblogEntryFormEx wf = (WeblogEntryFormEx)actionForm;
-                
-                // I was getting column 'x' cannot be null, so I fixed it here.
-                // A better solution might be to change the table so it allows
-                // nulls for these columns.
-                if (wf.getAllowComments() == null)
-                {
-                	wf.setAllowComments(Boolean.FALSE);
-                }
-                if (wf.getRightToLeft() == null)
-                {
-                    wf.setRightToLeft(Boolean.FALSE);
-                }
-                if (wf.getPinnedToMain() == null)
-                {
-                    wf.setPinnedToMain(Boolean.FALSE);
-                }
-                if (wf.getPublishEntry() == null)
-                {
-                    wf.setPublishEntry(Boolean.FALSE);
-                }
-               
-                WeblogEntryData entry = null;
+            WeblogEntryFormEx    wf = (WeblogEntryFormEx)actionForm;
+            Roller           roller = RollerFactory.getRoller();
+            RollerSession      rses = RollerSession.getRollerSession(request);
+            UserManager     userMgr = roller.getUserManager();
+            WeblogManager weblogMgr = roller.getWeblogManager();
+            WebsiteData        site = rses.getCurrentWebsite();
+            WeblogEntryData   entry = null;
+            
+            if ( rses.isUserAuthorizedToAuthor() 
+                 || (rses.isUserAuthorized() 
+                        && !wf.getStatus().equals(WeblogEntryData.PUBLISHED) ))
+            {                             
                 if (wf.getId() == null || wf.getId().trim().length()==0) 
                 {
                     entry = new WeblogEntryData();  
                     UserData ud = userMgr.retrieveUser(
-                            RollerSession.getRollerSession(request).getAuthenticatedUser().getId());
+                            rses.getAuthenticatedUser().getId());
                     entry.setCreator(ud);
                     entry.setWebsite( site );
                 }
@@ -294,7 +275,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                 {
                    mLogger.debug("Invalid MediaCast attributes");
                 }
-                
+
                 // Store value object (creates new or updates existing)
                 entry.setUpdateTime(new Timestamp(new Date().getTime()));
                 mLogger.debug("Saving entry");
@@ -327,9 +308,18 @@ public final class WeblogEntryFormAction extends DispatchAction
                                 (WeblogEntryFormEx)actionForm,
                                 WeblogEntryPageModel.EDIT_MODE));
                 
-                uiMessages.add(null, new ActionMessage("weblogEdit.changesSaved"));
-                saveMessages(request, uiMessages);
-                
+                if (!rses.isUserAuthorizedToAuthor() && 
+                        rses.isUserAuthorized() && entry.isPending())
+                {
+                    uiMessages.add(null, 
+                            new ActionMessage("weblogEdit.submitedForReview"));
+                }
+                else 
+                {
+                    uiMessages.add(null, 
+                            new ActionMessage("weblogEdit.changesSaved"));
+                }
+                saveMessages(request, uiMessages);               
                 mLogger.debug("operation complete");
             }
             else
@@ -427,13 +417,14 @@ public final class WeblogEntryFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("weblogEntryRemove.page");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            Roller roller = RollerFactory.getRoller();
+            WeblogEntryFormEx wf = (WeblogEntryFormEx)actionForm;
+            WeblogEntryData wd = 
+                roller.getWeblogManager().retrieveWeblogEntry(wf.getId());
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if (     rollerSession.isUserAuthorizedToAuthor() 
+                 || (rollerSession.isUserAuthorized() && wd.isDraft()) )
             {
-                WeblogEntryFormEx wf = (WeblogEntryFormEx)actionForm;
-                WeblogEntryData wd = 
-                    RollerFactory.getRoller().getWeblogManager().retrieveWeblogEntry(wf.getId());
                 wf.copyFrom(wd, request.getLocale());
                 if (wd == null || wd.getId() == null)
                 {
@@ -468,18 +459,19 @@ public final class WeblogEntryFormAction extends DispatchAction
     {
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+            WeblogEntryData wd = mgr.retrieveWeblogEntry(request.getParameter("id"));
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if (     rollerSession.isUserAuthorizedToAuthor() 
+                 || (rollerSession.isUserAuthorized() && wd.isDraft()) )
             {
-                WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-                WeblogEntryData wd = mgr.retrieveWeblogEntry(request.getParameter("id"));
                 
                 // Flush the page cache
-                PageCacheFilter.removeFromCache(request, RollerSession.getRollerSession(request).getCurrentWebsite());
+                PageCacheFilter.removeFromCache(request, 
+                        RollerSession.getRollerSession(request).getCurrentWebsite());
 
 				// remove the index for it
-                wd.setPublishEntry(Boolean.FALSE);
+                wd.setStatus(WeblogEntryData.DRAFT);
 		       reindexEntry(RollerFactory.getRoller(), wd);
 
                 wd.remove();
@@ -517,7 +509,7 @@ public final class WeblogEntryFormAction extends DispatchAction
         {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAuthor() )
             {
                 HttpSession session = request.getSession(true);
                 WeblogEntryFormEx wf = (WeblogEntryFormEx)actionForm;
@@ -576,7 +568,7 @@ public final class WeblogEntryFormAction extends DispatchAction
         {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAuthor() )
             {
                 HttpSession session = request.getSession(true);
                 WeblogEntryFormEx wf = (WeblogEntryFormEx)actionForm;
@@ -627,7 +619,7 @@ public final class WeblogEntryFormAction extends DispatchAction
         RollerSession rollerSession = RollerSession.getRollerSession(request);
         try
         {
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAuthor() )
             {
                 WeblogEntryData wd = rreq.getWeblogEntry();
                 if (wd == null || wd.getId() == null)
@@ -711,9 +703,8 @@ public final class WeblogEntryFormAction extends DispatchAction
        WeblogEntryData entry = null;
        try
        {
-           RollerRequest rreq = RollerRequest.getRollerRequest(request);
            RollerSession rollerSession = RollerSession.getRollerSession(request);
-           if (rollerSession.isUserAuthorizedToEdit())
+           if (rollerSession.isUserAuthorizedToAuthor())
            {
                WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
                String entryid = form.getId();
@@ -872,7 +863,7 @@ public final class WeblogEntryFormAction extends DispatchAction
         //manager.removeEntryIndexOperation(entry); 
         
         // if published, index the entry
-        if (entry.getPublishEntry() == Boolean.TRUE) 
+        if (entry.isPublished()) 
         {
             manager.addEntryReIndexOperation(entry);
         }

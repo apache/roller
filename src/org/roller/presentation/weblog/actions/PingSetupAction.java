@@ -320,6 +320,6 @@ public class PingSetupAction extends DispatchAction
     private boolean isAuthorized(RollerRequest rreq) throws RollerException
     {
         RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
-        return rollerSession.isUserAuthorizedToEdit() && !PingConfig.getDisablePingUsage();
+        return rollerSession.isUserAuthorizedToAdmin() && !PingConfig.getDisablePingUsage();
     }
 }

@@ -110,7 +110,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation
                     null,                   // startDate
                     new Date(),             // endDate // don't index 'future' entries
                     null,                   // catName
-                    WeblogManager.PUB_ONLY, // status
+                    WeblogEntryData.PUBLISHED, // status
                     null);    
 
                 for (Iterator wbItr = entries.iterator(); wbItr.hasNext();) 

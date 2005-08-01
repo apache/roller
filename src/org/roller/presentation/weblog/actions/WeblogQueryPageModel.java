@@ -16,6 +16,7 @@ import org.roller.RollerException;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
+import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
@@ -34,7 +35,7 @@ public class WeblogQueryPageModel extends BasePageModel
     private String category = null;
     private Date startDate = null;
     private Date endDate = null;
-    private String status = WeblogManager.PUB_ONLY;
+    private String status = WeblogEntryData.PUBLISHED;
     private Integer maxEntries = null;
 
     public WeblogQueryPageModel(

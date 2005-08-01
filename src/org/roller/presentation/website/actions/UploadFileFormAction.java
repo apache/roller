@@ -60,7 +60,7 @@ public final class UploadFileFormAction extends DispatchAction
         {
             rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( !rollerSession.isUserAuthorizedToEdit() )
+            if ( !rollerSession.isUserAuthorizedToAuthor() )
             {
                 return mapping.findForward("access-denied");
             }
@@ -205,7 +205,7 @@ public final class UploadFileFormAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( !rollerSession.isUserAuthorizedToEdit() )
+            if ( !rollerSession.isUserAuthorizedToAuthor() )
             {
                 return mapping.findForward("access-denied");
             }

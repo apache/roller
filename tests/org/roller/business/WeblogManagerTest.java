@@ -97,7 +97,7 @@ public class WeblogManagerTest extends RollerTestBase
         
         WeblogEntryData e1 = new WeblogEntryData(
             null, c1, wd, ud, "title1", null, "text", "anchor", 
-            new Timestamp(0), new Timestamp(0), Boolean.FALSE);
+            new Timestamp(0), new Timestamp(0), WeblogEntryData.DRAFT);
         e1.save();
         
         WeblogCategoryData c2 = wmgr.createWeblogCategory(); 
@@ -108,7 +108,7 @@ public class WeblogManagerTest extends RollerTestBase
       
         WeblogEntryData e2 = new WeblogEntryData(
             null, c2, wd, ud, "title2", null, "text", "anchor", 
-            new Timestamp(0), new Timestamp(0), Boolean.FALSE);
+            new Timestamp(0), new Timestamp(0), WeblogEntryData.DRAFT);
         e2.save();
         
         WeblogCategoryData c3 = wmgr.createWeblogCategory(); 
@@ -119,7 +119,7 @@ public class WeblogManagerTest extends RollerTestBase
         
         WeblogEntryData e3 = new WeblogEntryData(
             null, c3, wd, ud, "title3", null, "text", "anchor", 
-            new Timestamp(0), new Timestamp(0), Boolean.FALSE);
+            new Timestamp(0), new Timestamp(0), WeblogEntryData.DRAFT);
         e3.save();
         
         getRoller().commit(); 
@@ -186,22 +186,22 @@ public class WeblogManagerTest extends RollerTestBase
         // Create four entries in 1st category
         WeblogEntryData e1 = new WeblogEntryData(
                 null, t1, wd, ud, "title1", null, "text1", "anchor", 
-                new Timestamp(0), new Timestamp(0), Boolean.FALSE);
+                new Timestamp(0), new Timestamp(0), WeblogEntryData.DRAFT);
         e1.save();
         
         WeblogEntryData e2 = new WeblogEntryData(
                 null, t1, wd, ud, "title2", null, "text2", "anchor", 
-                new Timestamp(0), new Timestamp(0), Boolean.FALSE);
+                new Timestamp(0), new Timestamp(0), WeblogEntryData.DRAFT);
         e2.save();
         
         WeblogEntryData e3 = new WeblogEntryData(
                 null, t1, wd, ud, "title3", null, "text3", "anchor", 
-                new Timestamp(0), new Timestamp(0), Boolean.FALSE);
+                new Timestamp(0), new Timestamp(0), WeblogEntryData.DRAFT);
         e3.save();
         
         WeblogEntryData e4 = new WeblogEntryData(
                 null, t1, wd, ud, "title4", null, "text4", "anchor", 
-                new Timestamp(0), new Timestamp(0), Boolean.FALSE);
+                new Timestamp(0), new Timestamp(0), WeblogEntryData.DRAFT);
         e4.save();
         
         getRoller().commit(); 
@@ -216,7 +216,7 @@ public class WeblogManagerTest extends RollerTestBase
                         null,                       // startDate
                         new Date(),                 // endDate
                         "toplevel1",                 // catName
-                        WeblogManager.ALL,           // status
+                        null,           // status
                         new Integer(15));           // maxEntries
 
         assertEquals(4, entries.size());
@@ -345,14 +345,14 @@ public class WeblogManagerTest extends RollerTestBase
         //System.out.println("# entries:" + lastEntryIndex);
         WeblogEntryData entry1 = null;
         //WeblogEntryData entry1 = (WeblogEntryData)mEntriesCreated.get(lastEntryIndex);
-        if (entry1 == null || !entry1.getPublishEntry().booleanValue()) // if not published, find one
+        if (entry1 == null || !entry1.isPublished()) // if not published, find one
         {
             for (int i=lastEntryIndex; i >= 0; i--)
             {
                 entry1 = (WeblogEntryData)        
                     mEntriesCreated.get(i); // last entry is newest
                 //System.out.println("entry " + i + "published:" + entry1.getPublishEntry());
-                if (entry1.getPublishEntry().booleanValue()) {
+                if (entry1.isPublished()) {
                     break;
                 }
             }
@@ -386,7 +386,7 @@ public class WeblogManagerTest extends RollerTestBase
             temp = (WeblogEntryData)        
                 mEntriesCreated.get(i); // last entry is newest
             //System.out.println("entry " + i + "published:" + entry1.getPublishEntry());
-            if (temp.getPublishEntry().booleanValue()) 
+            if (temp.isPublished()) 
             {
                 if (entry1 ==  null || entry1.getPubTime().compareTo(temp.getPubTime()) < 0)
                 {   
@@ -655,7 +655,7 @@ public class WeblogManagerTest extends RollerTestBase
                         null,                    // startDate
                         new Date(),              // endDate
                         null,                    // catName
-                        WeblogManager.PUB_ONLY,  // status
+                        WeblogEntryData.PUBLISHED,  // status
                         null);                   // maxEntries
         assertEquals(mExpectedPublishedEntryCount, publishedEntries.size());
                     
@@ -665,7 +665,7 @@ public class WeblogManagerTest extends RollerTestBase
                         null,                    // startDate
                         new Date(),              // endDate
                         null,                    // catName
-                        WeblogManager.DRAFT_ONLY,  // status
+                        WeblogEntryData.DRAFT,  // status
                         null);                   // maxEntries
         assertEquals(mExpectedEntryCount-mExpectedPublishedEntryCount, draftEntries.size());
                           
@@ -675,7 +675,7 @@ public class WeblogManagerTest extends RollerTestBase
                         null,                    // startDate
                         new Date(),              // endDate
                         null,                    // catName
-                        WeblogManager.ALL,       // status
+                        null,       // status
                         null);                   // maxEntries
         assertEquals(mExpectedEntryCount, allEntries.size());
 
@@ -741,7 +741,7 @@ public class WeblogManagerTest extends RollerTestBase
 
         WeblogEntryData entry = new WeblogEntryData(
                 null, cat, website, user, "title2", null, "text2", "attributetest", 
-                new Timestamp(0), new Timestamp(0), Boolean.FALSE);
+                new Timestamp(0), new Timestamp(0), WeblogEntryData.DRAFT);
         entry.save();
         assertNotNull(entry.getId());
                 
@@ -778,7 +778,7 @@ public class WeblogManagerTest extends RollerTestBase
                 null,       // start
                 new Date(), // end
                 null,       // cat
-                WeblogManager.ALL,
+                null,
                 new Integer(1));
         WeblogEntryData entry = (WeblogEntryData)entries.get(0);
         assertNotNull(entry);

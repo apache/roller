@@ -35,7 +35,7 @@
                     <a href="$link" class="storyLink">
                         Comments [$commentCount]</a>
                 <span class="noDisplay">]</span> 
-            #if ($pageHelper.isUserAuthorizedToEdit())
+            #if ($pageHelper.isUserAuthorizedToAuthor())
                 &nbsp;&nbsp;[<a href="$pageHelper.getEntryEditUrl($entry)">Edit</a>]
             #end
         #end

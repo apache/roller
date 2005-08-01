@@ -59,7 +59,7 @@ public final class PageFormAction extends DispatchAction
         try
         {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 PageForm form = (PageForm)actionForm;
                 PageData data = new PageData();
@@ -114,7 +114,7 @@ public final class PageFormAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 PageData pd = rreq.getPage();
                 PageForm pf = (PageForm)actionForm;
@@ -149,7 +149,7 @@ public final class PageFormAction extends DispatchAction
         try
         {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 addModelObjects(request);
             }
@@ -178,7 +178,7 @@ public final class PageFormAction extends DispatchAction
         try
         {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 PageForm form = (PageForm)actionForm;
                 PageData data = new PageData();
@@ -227,7 +227,7 @@ public final class PageFormAction extends DispatchAction
         {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 PageData cd = rreq.getPage();
                 PageForm pf = (PageForm)actionForm;
@@ -261,7 +261,7 @@ public final class PageFormAction extends DispatchAction
         try
         {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 PageForm form = (PageForm)actionForm;
                 UserManager mgr = RollerFactory.getRoller().getUserManager();

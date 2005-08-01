@@ -17,6 +17,7 @@ import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
+import org.roller.pojos.WeblogEntryData;
 
 
 /**
@@ -121,7 +122,7 @@ public class MainPageAction extends Action
                     null,                   // startDate
                     new Date(),             // endDate
                     null,                   // catName
-                    WeblogManager.PUB_ONLY, // status
+                    WeblogEntryData.PUBLISHED, // status
                     new Integer(num));       // maxEntries
                 mRecentEntries.setObject(list);
             }

@@ -45,7 +45,7 @@ public class ExportRssTest extends StrutsActionTestBase
                         null,               // startDate
                         new Date(),         // endDate
                         null,               // catName
-                        WeblogManager.ALL,  // status
+                        null,  // status
                         new Integer(5));   // maxEntries
         
         try

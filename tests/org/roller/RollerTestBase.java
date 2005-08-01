@@ -221,7 +221,7 @@ public abstract class RollerTestBase extends TestCase
                  null,      // anchor
                  day,        // pubTime
                  day,        // updateTime
-                 Boolean.TRUE ); // publishEntry
+                 WeblogEntryData.PUBLISHED ); // publishEntry
             wd.save();
             
             // roll calendar back to today
@@ -235,6 +235,8 @@ public abstract class RollerTestBase extends TestCase
             day.setNanos(0); // kludge
 
             boolean published = k%2==0 ? true : false;
+            String status = published 
+                ? WeblogEntryData.PUBLISHED : WeblogEntryData.DRAFT;
 
             wd = new WeblogEntryData(
                     null,      // id
@@ -247,7 +249,7 @@ public abstract class RollerTestBase extends TestCase
                     null,      // anchor
                     day,        // pubTime
                     day,        // updateTime
-                    new Boolean(published) ); // publishEntry
+                    status ); // publishEntry
             wd.save();
 
             // add at beginning of list

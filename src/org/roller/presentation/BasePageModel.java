@@ -87,9 +87,9 @@ public class BasePageModel
         return response;
     }
     
-    public boolean getIsAdmin() throws RollerException
+    public RollerSession getRollerSession()
     {
-        return RollerSession.getRollerSession(request).isAdminUser(); 
+        return RollerSession.getRollerSession(request);
     }
 
     public List getLocales()

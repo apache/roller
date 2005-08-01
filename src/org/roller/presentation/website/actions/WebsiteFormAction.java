@@ -72,7 +72,7 @@ public final class WebsiteFormAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 UserData ud = RollerSession.getRollerSession(request).getAuthenticatedUser();
                 request.setAttribute("user",ud);
@@ -127,7 +127,7 @@ public final class WebsiteFormAction extends DispatchAction
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             UserManager umgr = RollerFactory.getRoller().getUserManager();
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 WebsiteFormEx form = (WebsiteFormEx)actionForm;
                 

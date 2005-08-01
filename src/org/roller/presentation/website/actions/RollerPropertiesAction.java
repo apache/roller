@@ -110,7 +110,7 @@ public class RollerPropertiesAction extends DispatchAction {
         try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToEdit() && rollerSession.isAdminUser() ) {
+            if ( rollerSession.isUserAuthorizedToAdmin() && rollerSession.isAdminUser() ) {
             
                 // just grab our properties map and put it in the request
                 Roller mRoller = RollerFactory.getRoller();

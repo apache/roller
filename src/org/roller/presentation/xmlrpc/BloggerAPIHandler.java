@@ -352,7 +352,14 @@ public class BloggerAPIHandler extends BaseAPIHandler
                 WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
                 entry.setText(content);
                 entry.setUpdateTime(current);
-                entry.setPublishEntry(Boolean.valueOf(publish));
+                if (Boolean.valueOf(publish).booleanValue())
+                {
+                    entry.setStatus(WeblogEntryData.PUBLISHED);
+                }
+                else
+                {
+                    entry.setStatus(WeblogEntryData.DRAFT);
+                }
     
                 entry.save();
                 roller.commit();
@@ -420,9 +427,15 @@ public class BloggerAPIHandler extends BaseAPIHandler
             entry.setPubTime(current);
             entry.setUpdateTime(current);
             entry.setWebsite(website);
-            entry.setPublishEntry(Boolean.valueOf(publish));
             entry.setCategory(website.getBloggerCategory());
-
+            if (Boolean.valueOf(publish).booleanValue())
+            {
+                entry.setStatus(WeblogEntryData.PUBLISHED);
+            }
+            else
+            {
+                entry.setStatus(WeblogEntryData.DRAFT);
+            }
             entry.save();
             roller.commit();
             flushPageCache(entry.getWebsite());
@@ -484,7 +497,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
                                 null,                   // startDate
                                 new Date(),             // endDate
                                 null,                   // catName
-                                WeblogManager.ALL,      // status
+                                null,      // status
                                 new Integer(numposts)); // maxEntries 
                 
                 Iterator iter = entries.values().iterator();

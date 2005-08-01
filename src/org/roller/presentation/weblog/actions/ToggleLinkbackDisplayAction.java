@@ -41,7 +41,7 @@ public class ToggleLinkbackDisplayAction extends Action
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if ( rollerSession.isUserAuthorizedToEdit() )
+            if ( rollerSession.isUserAuthorizedToAuthor() )
             {
                 String refid = req.getParameter(RollerRequest.REFERERID_KEY);
                 if ( refid != null )

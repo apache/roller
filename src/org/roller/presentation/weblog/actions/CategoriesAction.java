@@ -62,7 +62,7 @@ public class CategoriesAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerSession rollerSession = RollerSession.getRollerSession(
                 rreq.getRequest());
-        if (rollerSession.isUserAuthorizedToEdit())
+        if (rollerSession.isUserAuthorizedToAuthor())
         {
             addModelObjects(request, (CategoriesForm)actionForm);
             return mapping.findForward("CategoriesForm");
@@ -94,7 +94,7 @@ public class CategoriesAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerSession rollerSession = RollerSession.getRollerSession(
                 rreq.getRequest());
-        if (rollerSession.isUserAuthorizedToEdit())
+        if (rollerSession.isUserAuthorizedToAuthor())
         {
             try 
             {

@@ -52,7 +52,7 @@ public class ImportEntriesAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
-            if ( !rollerSession.isUserAuthorizedToEdit() )
+            if ( !rollerSession.isUserAuthorizedToAdmin() )
             {
                 forward = mapping.findForward("access-denied");
             }
@@ -130,7 +130,7 @@ public class ImportEntriesAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(
                     rreq.getRequest());
-            if ( !rollerSession.isUserAuthorizedToEdit() )
+            if ( !rollerSession.isUserAuthorizedToAdmin() )
             {
                 forward = mapping.findForward("access-denied");
             }

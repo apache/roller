@@ -72,7 +72,7 @@ public class MaintenanceAction extends DispatchAction
 		try
 		{
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-			if (rollerSession.isUserAuthorizedToEdit() )
+			if (rollerSession.isUserAuthorizedToAdmin() )
 			{
 				WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
 				IndexManager manager = RollerFactory.getRoller().getIndexManager();
@@ -110,7 +110,7 @@ public class MaintenanceAction extends DispatchAction
         try
         {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-			if ( rollerSession.isUserAuthorizedToEdit() )
+			if ( rollerSession.isUserAuthorizedToAdmin() )
 			{
 	            PageCacheFilter.removeFromCache(request, RollerSession.getRollerSession(request).getCurrentWebsite());
 

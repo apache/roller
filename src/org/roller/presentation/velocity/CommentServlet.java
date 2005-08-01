@@ -277,7 +277,7 @@ public class CommentServlet extends PageServlet
         manager.removeEntryIndexOperation(entry);
 
         // if published, index the entry
-        if (entry.getPublishEntry() == Boolean.TRUE)
+        if (entry.isPublished());
         {
             manager.addEntryIndexOperation(entry);
         }

@@ -48,14 +48,20 @@ Each menu or menu item is governed by four attrbibutes:
     </menu>
 
     <menu name="tabbedmenu.website">
-        <menu-item forward="editWebsite"       name="tabbedmenu.website.settings" />
-        <menu-item forward="editTheme"         name="tabbedmenu.website.themes" />
-        <menu-item forward="editPages"         name="tabbedmenu.website.pages" />
-        <menu-item forward="memberPermissions" name="tabbedmenu.website.members" />
+        <menu-item forward="editWebsite"       name="tabbedmenu.website.settings" 
+                                               perms="admin" />
+        <menu-item forward="editTheme"         name="tabbedmenu.website.themes" 
+                                               perms="admin" />
+        <menu-item forward="editPages"         name="tabbedmenu.website.pages" 
+                                               perms="admin" />
+        <menu-item forward="memberPermissions" name="tabbedmenu.website.members" 
+                                               perms="admin" />
         <menu-item forward="pingSetup"         name="tabbedmenu.weblog.pingSetup" 
-                                               disabledProperty="pings.disablePingUsage" />
+                                               disabledProperty="pings.disablePingUsage" 
+                                               perms="admin" />
         <menu-item forward="customPingTargets" name="tabbedmenu.weblog.customPingTargets" 
-                                               disabledProperty="pings.disallowCustomTargets" />
+                                               disabledProperty="pings.disallowCustomTargets" 
+                                               perms="admin" />
     </menu>
 
     <menu name="tabbedmenu.admin" roles="admin" perms="any">

@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
+import org.roller.pojos.WeblogEntryData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.tags.calendar.CalendarModel;
 import org.roller.util.DateUtil;
@@ -120,7 +121,7 @@ public class WeblogCalendarModel implements CalendarModel
                             startDate,              // startDate
                             endDate,                // endDate
                             catName,                // catName
-                            WeblogManager.PUB_ONLY, // status
+                            WeblogEntryData.PUBLISHED, // status
                             null 
             );
         }

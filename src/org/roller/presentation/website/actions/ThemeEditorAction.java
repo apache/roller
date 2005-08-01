@@ -81,7 +81,7 @@ public class ThemeEditorAction extends DispatchAction
 		{
              RollerSession rollerSession = RollerSession.getRollerSession(request);
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rollerSession.isUserAuthorizedToEdit() )
+			if ( rollerSession.isUserAuthorizedToAdmin() )
 			{
 				loadThemes( rreq, errors, true);
 				ThemeEditorForm teForm = (ThemeEditorForm)form;
@@ -168,7 +168,7 @@ public class ThemeEditorAction extends DispatchAction
 		{
              RollerSession rollerSession = RollerSession.getRollerSession(request);
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rollerSession.isUserAuthorizedToEdit() )
+			if ( rollerSession.isUserAuthorizedToAdmin() )
 			{
                 HttpSession session = request.getSession();
 				ThemeEditorForm teForm = (ThemeEditorForm)form;
@@ -254,7 +254,7 @@ public class ThemeEditorAction extends DispatchAction
 		{
              RollerSession rollerSession = RollerSession.getRollerSession(request);
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rollerSession.isUserAuthorizedToEdit() )
+			if ( rollerSession.isUserAuthorizedToAdmin() )
 			{
                  loadThemes( rreq, errors, true);
                  ThemeEditorForm teForm = (ThemeEditorForm)form;
@@ -337,7 +337,7 @@ public class ThemeEditorAction extends DispatchAction
 		{
              RollerSession rollerSession = RollerSession.getRollerSession(request);
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rollerSession.isUserAuthorizedToEdit() )
+			if ( rollerSession.isUserAuthorizedToAdmin() )
 			{
 				// clear the page cache
 				WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();

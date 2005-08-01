@@ -186,7 +186,7 @@ public class AtomServletTest extends RollerTestBase
             getRoller().getUserManager().getWebsites(user, null).get(0);
         WeblogEntryData entry = (WeblogEntryData) 
             getRoller().getWeblogManager().getWeblogEntries(
-                website, null, null, null, WeblogManager.ALL, new Integer(1)).get(0);
+                website, null, null, null, null, new Integer(1)).get(0);
 
         Entry fetchedEntry = getEntry(user, entry.getId());
         assertEquals(entry.getId(), fetchedEntry.getId());
@@ -249,7 +249,7 @@ public class AtomServletTest extends RollerTestBase
         
         WeblogEntryData entry = (WeblogEntryData) 
             getRoller().getWeblogManager().getWeblogEntries(
-                website, null, null, null, WeblogManager.ALL, new Integer(1)).get(0);
+                website, null, null, null, null, new Integer(1)).get(0);
         
         // Fetch that entry using Atom
         Entry fetchedEntry = getEntry(user, entry.getId());
@@ -289,7 +289,7 @@ public class AtomServletTest extends RollerTestBase
 
         WeblogEntryData entry = (WeblogEntryData) 
             getRoller().getWeblogManager().getWeblogEntries(
-                website, null, null, null, WeblogManager.ALL, new Integer(1)).get(0);
+                website, null, null, null, null, new Integer(1)).get(0);
 
         Entry fetchedEntry = getEntry(user, entry.getId());
         assertEquals(entry.getId(), fetchedEntry.getId());

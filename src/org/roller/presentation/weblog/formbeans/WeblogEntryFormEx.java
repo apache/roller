@@ -68,6 +68,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
             setPluginsArray(StringUtils.split(
                     RollerSession.getRollerSession(request).getCurrentWebsite().getDefaultPlugins(), ",") );
         }
+        status = WeblogEntryData.DRAFT;
         allowComments = Boolean.TRUE;
         updateTime = new Timestamp(new Date().getTime());
         pubTime = updateTime;
@@ -100,20 +101,26 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         
         entry.setPlugins( StringUtils.join(this.pluginsArray,",") );
         
-        // checkboxes don't send a value for unchecked
-        if (entry.getPublishEntry() == null)
-        {
-            entry.setPublishEntry(Boolean.FALSE);
-        }
         if (getCategoryId() != null) 
         {
             entry.setCategoryId(getCategoryId());
         }       
-        
         if (getCreatorId() != null) 
         {
             entry.setCreatorId(getCreatorId());
         }       
+        if (getAllowComments() == null)
+        {
+            entry.setAllowComments(Boolean.FALSE);
+        }
+        if (getRightToLeft() == null)
+        {
+            entry.setRightToLeft(Boolean.FALSE);
+        }
+        if (getPinnedToMain() == null)
+        {
+            entry.setPinnedToMain(Boolean.FALSE);
+        }        
         
         Iterator params = paramMap.keySet().iterator();
         while (params.hasNext())
@@ -395,6 +402,24 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void setCreatorId(String creatorId)
     {
         mCreatorId = creatorId;
+    }
+
+    /** Convenience method for checking status */
+    public boolean isDraft() 
+    {
+        return status.equals(WeblogEntryData.DRAFT);
+    }
+    
+    /** Convenience method for checking status */
+    public boolean isPending() 
+    {
+        return status.equals(WeblogEntryData.PENDING);
+    }
+    
+    /** Convenience method for checking status */
+    public boolean isPublished() 
+    {
+        return status.equals(WeblogEntryData.PUBLISHED);
     }
 }
 

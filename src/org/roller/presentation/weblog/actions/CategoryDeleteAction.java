@@ -44,7 +44,7 @@ public class CategoryDeleteAction extends Action
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         RollerSession rollerSession = RollerSession.getRollerSession(
                 rreq.getRequest());
-        if (rollerSession.isUserAuthorizedToEdit())
+        if (rollerSession.isUserAuthorizedToAuthor())
         {
             String catid = request.getParameter("catid");
             WeblogCategoryData catToDelete = 
