@@ -41,9 +41,7 @@ function sendTrackback() {
     postWeblogEntry();
 }
 function saveDraft() {
-    if (document.weblogEntryFormEx.status.value == "PUBLISHED" ) {
-        document.weblogEntryFormEx.status.value = "DRAFT";
-    } 
+    document.weblogEntryFormEx.status.value = "DRAFT"; 
     document.weblogEntryFormEx.method.value = "save";
     postWeblogEntry();
 }

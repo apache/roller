@@ -10,10 +10,10 @@ import java.util.List;
 
 import net.sf.hibernate.Criteria;
 import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.expression.EqExpression;
 import net.sf.hibernate.expression.Expression;
+import net.sf.hibernate.expression.MatchMode;
 import net.sf.hibernate.expression.Order;
 
 import org.apache.commons.logging.Log;
@@ -585,6 +585,46 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         {
             throw new RollerException(e);
         }
+    }
+
+    public List getUsersStartingWith(String startsWith, 
+            int offset, int length, Boolean enabled) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(UserData.class);  
+        List rawresults = new ArrayList();
+        List results = new ArrayList();
+        if (enabled != null)
+        {
+            criteria.add(Expression.eq("isEnabled", Boolean.TRUE));
+        }
+        if (startsWith != null) 
+        {
+            criteria.add(Expression.disjunction()
+                .add(Expression.like("userName", startsWith, MatchMode.START))
+                .add(Expression.like("emailAddress", startsWith, MatchMode.START)));
+        }
+        try
+        {
+            rawresults = criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+        int pos = 0;
+        int count = 0;
+        Iterator iter = rawresults.iterator();
+        while (iter.hasNext() && count < length)
+        {
+            UserData user = (UserData)iter.next();
+            if (pos++ >= offset) 
+            {
+                results.add(user);
+                count++;
+            }
+        }
+        return results;
     }
 }
 

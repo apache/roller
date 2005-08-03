@@ -38,8 +38,8 @@ body {
 input, select, option {
     font:small Verdana,Arial,Sans-serif;
     color:black;
-    font:x-small/1.5em Verdana, Arial, Helvetica, sans-serif;
-    font-size: 69%;
+    font:small/1.5em Verdana, Arial, Helvetica, sans-serif;
+    font-size: 100%;
 }
 
 p {

@@ -10,7 +10,7 @@ function save() {
             removing = true;
         }
     }
-    if (removing && !confirm("<c:out value='memberPermissions.confirmRemove' />")) return;
+    if (removing && !confirm("<fmt:message key='memberPermissions.confirmRemove' />")) return;
     document.memberPermissionsForm.submit();
 }
 // -->

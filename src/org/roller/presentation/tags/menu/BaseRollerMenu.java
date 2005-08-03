@@ -113,9 +113,10 @@ public abstract class BaseRollerMenu
             while (roles.hasNext())
             {
                 String role = (String)roles.next();
-                if (    req.isUserInRole(role) 
-                     || role.equals("any")
-                     || (role.equals("admin") && rollerSession.isAdminUser()))  
+                if (    req.isUserInRole(role) || role.equals("any")
+                     || (role.equals("admin") 
+                             && rollerSession != null 
+                             && rollerSession.isAdminUser()))  
                 {
                     ret = true;
                     break;
@@ -126,7 +127,8 @@ public abstract class BaseRollerMenu
         // finally make sure that user has required website permissions
         if (ret && mPerms != null && mPerms.size() > 0)
         {
-            UserData user = rollerSession.getAuthenticatedUser();
+            UserData user = null;
+            if (rollerSession != null) user = rollerSession.getAuthenticatedUser();
             WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();
             PermissionsData permsData = null;
             if (user != null && website != null) 

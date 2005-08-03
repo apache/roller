@@ -25,7 +25,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
 			           name="post" property="id" />
 			           <roller:linkparam id="method" value="edit" />
 			           <img src='<c:url value="/images/Edit16.png"/>' align="absmiddle" border="0" alt="icon" title="Edit" />
-			           <str:truncateNicely lower="23" upper="27">
+			           <str:truncateNicely lower="50">
 			              <c:out value="${post.title}" />
 			           </str:truncateNicely>
 			    </roller:link>
@@ -58,7 +58,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
                            name="post" property="id" />
                            <roller:linkparam id="method" value="edit" />
                            <img src='<c:url value="/images/Edit16.png"/>' align="absmiddle" border="0" alt="icon" title="Edit" />
-                           <str:truncateNicely lower="23" upper="27">
+                           <str:truncateNicely lower="50">
                               <c:out value="${post.title}" />
                            </str:truncateNicely>
                     </roller:link>
@@ -90,7 +90,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
                            name="post" property="id" />
                            <roller:linkparam id="method" value="edit" />
                            <img src='<c:url value="/images/Edit16.png"/>' align="absmiddle" border="0" alt="icon" title="Edit" />
-                           <str:truncateNicely lower="23" upper="27">
+                           <str:truncateNicely lower="50">
                               <c:out value="${post.title}" />
                            </str:truncateNicely>
                     </roller:link>
