@@ -250,6 +250,17 @@ public interface UserManager extends Serializable
      * Remove contents of website.
      */
     public void removeWebsiteContents(WebsiteData data) throws RollerException;
+
+    /**
+     * Returns users whose usernames or email addresses start with a string.
+     * @param startsWith String to match userNames and emailAddresses against
+     * @param offset     Offset into results (for paging)
+     * @param length     Max to return (for paging)
+     * @param enabled    True for only enalbed, false for disabled, null for all
+     * @return List of (up to length) users that match startsWith string
+     */
+    public List getUsersStartingWith(String startsWith, 
+            int offset, int length, Boolean enabled) throws RollerException;
 }
 
 

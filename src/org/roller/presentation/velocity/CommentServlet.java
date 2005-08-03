@@ -269,7 +269,8 @@ public class CommentServlet extends PageServlet
      * Re-index the WeblogEntry so that the new comment gets indexed.
      * @param entry
      */
-    private void reindexEntry(Roller roller, WeblogEntryData entry) throws RollerException
+    private void reindexEntry(Roller roller, WeblogEntryData entry) 
+    throws RollerException
     {
         IndexManager manager = roller.getIndexManager();
 
@@ -308,16 +309,22 @@ public class CommentServlet extends PageServlet
 
     // Email notification
 
-    // agangolli: Incorporated suggested changes from Ken Blackler, with server-wide configurable options
+    // agangolli: Incorporated suggested changes from Ken Blackler, with server-wide 
+    // configurable options
     // TODO: Make the addressing options configurable on a per-website basis.
 
     private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
 
-    // Servlet init params that control how messages are addressed server-wide.  These default to false for old behavior
-    // Controls whether the owner and commenters get separate messages (owner's message contains a link to the entry edit page).
-    private static final String SEPARATE_OWNER_MSG_PARAM = CommentServlet.class.getName() + ".separateOwnerMessage";
-    // Controls whether the commenters addresses are placed in a Bcc header or a visible address field
-    private static final String HIDE_COMMENTER_ADDRESSES_PARAM = CommentServlet.class.getName() + ".hideCommenterAddresses";
+    // Servlet init params that control how messages are addressed server-wide.  
+    // These default to false for old behavior
+    // Controls whether the owner and commenters get separate messages (owner's 
+    // message contains a link to the entry edit page).
+    private static final String SEPARATE_OWNER_MSG_PARAM = 
+        CommentServlet.class.getName() + ".separateOwnerMessage";
+    // Controls whether the commenters addresses are placed in a Bcc header or 
+    // a visible address field
+    private static final String HIDE_COMMENTER_ADDRESSES_PARAM = 
+        CommentServlet.class.getName() + ".hideCommenterAddresses";
 
 
     /**
@@ -349,14 +356,17 @@ public class CommentServlet extends PageServlet
         }
 
         // Send e-mail to owner and subscribed users (if enabled)
-        boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+        boolean notify = RollerRuntimeConfig.getBooleanProperty(
+                "users.comments.emailnotify");
         if (notify && site.getEmailComments().booleanValue())
         {
             // Determine message and addressing options from init parameters
             boolean separateMessages = 
-                    RollerConfig.getBooleanProperty("comment.notification.separateOwnerMessage");
+                    RollerConfig.getBooleanProperty(
+                            "comment.notification.separateOwnerMessage");
             boolean hideCommenterAddrs = 
-                    RollerConfig.getBooleanProperty("comment.notification.hideCommenterAddresses");
+                    RollerConfig.getBooleanProperty(
+                            "comment.notification.hideCommenterAddresses");
 
             //------------------------------------------
             // --- Determine the "from" address
@@ -400,12 +410,14 @@ public class CommentServlet extends PageServlet
 
             //------------------------------------------
             // --- Form the messages to be sent -
-            // For simplicity we always build separate owner and commenter messages even if sending a single one
+            // For simplicity we always build separate owner and commenter messages 
+            // even if sending a single one
             
             // Determine with mime type to use for e-mail
             StringBuffer msg = new StringBuffer();
             StringBuffer ownermsg = new StringBuffer();
-            boolean escapeHtml = RollerRuntimeConfig.getBooleanProperty("users.comments.escapehtml");
+            boolean escapeHtml = 
+                RollerRuntimeConfig.getBooleanProperty("users.comments.escapehtml");
                         
             if (!escapeHtml)
             {
@@ -510,22 +522,27 @@ public class CommentServlet extends PageServlet
                 {
                     // Send separate messages to owner and commenters
                     sendMessage(session, from,
-                        new String[]{website.getEmailAddress()}, null, null, subject, ownermsg.toString(), isHtml);
+                        new String[]{website.getEmailAddress()}, 
+                        null, null, subject, ownermsg.toString(), isHtml);
                     if (commenterAddrs.length > 0)
                     {
-                        // If hiding commenter addrs, they go in Bcc: otherwise in the To: of the second message
+                        // If hiding commenter addrs, they go in Bcc: otherwise in 
+                        // the To: of the second message
                         String[] to = hideCommenterAddrs ? null : commenterAddrs;
                         String[] bcc = hideCommenterAddrs ? commenterAddrs : null;
-                        sendMessage(session, from, to, null, bcc, subject, msg.toString(), isHtml);
+                        sendMessage(session, from, to, null, bcc, 
+                                subject, msg.toString(), isHtml);
 
                     }
                 }
                 else
                 {
-                    // Single message.  User in To: header, commenters in either cc or bcc depending on hiding option
+                    // Single message.  User in To: header, commenters in either cc 
+                    // or bcc depending on hiding option
                     String[] cc = hideCommenterAddrs ? null : commenterAddrs;
                     String[] bcc = hideCommenterAddrs ? commenterAddrs : null;
-                    sendMessage(session, from, new String[]{website.getEmailAddress()}, cc, bcc, subject,
+                    sendMessage(session, from, 
+                        new String[]{website.getEmailAddress()}, cc, bcc, subject,
                         ownermsg.toString(), isHtml);
                 }
             }
@@ -546,9 +563,11 @@ public class CommentServlet extends PageServlet
         } // if email enabled
     }
 
-    // This is somewhat ridiculous, but avoids duplicating a bunch of logic in the already messy sendEmailNotification
-    private void sendMessage(Session session, String from, String[] to, String[] cc, String[] bcc, String subject,
-                             String msg, boolean isHtml) throws MessagingException
+    // This is somewhat ridiculous, but avoids duplicating a bunch of logic in the 
+    // already messy sendEmailNotification
+    private void sendMessage(Session session, String from, String[] to, String[] cc, 
+            String[] bcc, String subject,
+            String msg, boolean isHtml) throws MessagingException
     {
         if (isHtml)
             MailUtil.sendHTMLMessage(session, from, to, cc, bcc, subject, msg);

@@ -47,7 +47,7 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item forward="referers"     name="tabbedmenu.weblog.referers" />
     </menu>
 
-    <menu name="tabbedmenu.website">
+    <menu name="tabbedmenu.website" perms="admin">
         <menu-item forward="editWebsite"       name="tabbedmenu.website.settings" 
                                                perms="admin" />
         <menu-item forward="editTheme"         name="tabbedmenu.website.themes" 

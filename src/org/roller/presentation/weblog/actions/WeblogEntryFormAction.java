@@ -6,17 +6,24 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.ResourceBundle;
 
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +40,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.util.RequestUtils;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.model.IndexManager;
@@ -42,6 +50,7 @@ import org.roller.model.RollerSpellCheck;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
@@ -52,6 +61,7 @@ import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.velocity.PageHelper;
 import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
+import org.roller.util.MailUtil;
 import org.roller.util.Utilities;
 
 import com.swabunga.spell.event.SpellCheckEvent;
@@ -311,8 +321,10 @@ public final class WeblogEntryFormAction extends DispatchAction
                 if (!rses.isUserAuthorizedToAuthor() && 
                         rses.isUserAuthorized() && entry.isPending())
                 {
+                    notifyWebsiteAuthorsOfPendingEntry(request, entry);
                     uiMessages.add(null, 
                             new ActionMessage("weblogEdit.submitedForReview"));
+                    
                 }
                 else 
                 {
@@ -341,6 +353,102 @@ public final class WeblogEntryFormAction extends DispatchAction
         return forward;
     }
     
+    /**
+     * Inform authors and admins of entry's website that entry is pending.
+     * @param entry
+     * @throws RollerException
+     * @throws MalformedURLException
+     */
+    private void notifyWebsiteAuthorsOfPendingEntry(
+            HttpServletRequest request, WeblogEntryData entry) 
+    {
+        try
+        {
+            Roller roller = RollerFactory.getRoller();
+            UserManager umgr = roller.getUserManager();
+            javax.naming.Context ctx = (javax.naming.Context)
+                new InitialContext().lookup("java:comp/env");
+            Session mailSession = 
+                (Session)ctx.lookup("mail/Session");
+            if (mailSession != null)
+            {
+                String userName = entry.getCreator().getUserName();
+                String from = entry.getCreator().getEmailAddress();
+                String cc[] = new String[] {from};
+                String bcc[] = new String[0];
+                String to[];
+                String subject;
+                String content;
+                
+                // list of enabled website authors and admins
+                ArrayList reviewers = new ArrayList();
+                List websiteUsers = umgr.getUsers(entry.getWebsite(), Boolean.TRUE);
+                
+                // build list of reviewers (website users with author permission)
+                Iterator websiteUserIter = websiteUsers.iterator();
+                while (websiteUserIter.hasNext())
+                {
+                    UserData websiteUser = (UserData)websiteUserIter.next();
+                    if (entry.getWebsite().hasUserPermissions(
+                            websiteUser, PermissionsData.AUTHOR)
+                         && websiteUser.getEmailAddress() != null) 
+                    {
+                        reviewers.add(websiteUser.getEmailAddress());
+                    }
+                }
+                to = (String[])reviewers.toArray(new String[reviewers.size()]);
+                
+                // Figure URL to entry edit page
+                RollerContext rc = RollerContext.getRollerContext(request);
+                String rootURL = rc.getAbsoluteContextUrl(request);
+                if (rootURL == null || rootURL.trim().length()==0)
+                {
+                    rootURL = RequestUtils.serverURL(request) + request.getContextPath();
+                }               
+                String editURL = rootURL 
+                    + "/editor/weblog.do?method=edit&entryid=" + entry.getId(); 
+                
+                ResourceBundle resources = ResourceBundle.getBundle(
+                    "ApplicationResources", entry.getWebsite().getLocaleInstance());
+                StringBuffer sb = new StringBuffer();
+                sb.append(
+                    MessageFormat.format(
+                        resources.getString("weblogEntry.pendingEntrySubject"),
+                        new Object[] {entry.getWebsite().getName()})
+                );
+                subject = sb.toString();
+                sb = new StringBuffer();
+                sb.append(
+                    MessageFormat.format(
+                        resources.getString("weblogEntry.pendingEntryContent"),
+                        new Object[] { userName, userName, editURL })
+                );
+                content = sb.toString();
+                MailUtil.sendTextMessage(
+                        mailSession, from, to, cc, bcc, subject, content);
+            }
+        }
+        catch (NamingException e)
+        {
+            mLogger.error("ERROR: Notification email(s) not sent, "
+                    + "Roller's mail session not properly configured");
+        }
+        catch (MessagingException e)
+        {
+            mLogger.error("ERROR: Notification email(s) not sent, "
+                    + "due to Roller configuration or mail server problem.");
+        }
+        catch (MalformedURLException e)
+        {
+            mLogger.error("ERROR: Notification email(s) not sent, "
+                    + "Roller site URL is malformed?");
+        }
+        catch (RollerException e)
+        {
+            throw new RuntimeException("FATAL ERROR: unable to find Roller object");
+        }
+    }
+
     private boolean checkMediaCast(WeblogEntryData entry)
     {
         boolean valid = false;
