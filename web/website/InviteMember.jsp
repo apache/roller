@@ -103,6 +103,11 @@ function handleUserResponse() {
        <input type="submit" value='<fmt:message key="inviteMember.button.save" />'></input>
     </div>
     
+    <div class="helptext">
+        <img src="../images/TipOfTheDay16.gif" alt="info-icon" align="bottom" />
+        <fmt:message key="memberPermissions.permissionHelp" />
+    </div> 
+
 </html:form>
 
 <%@ include file="/theme/footer.jsp" %>

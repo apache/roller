@@ -1,5 +1,5 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
-<% pageContext.setAttribute("leftPage","/website/MemberPermissionsSidebar.jsp"); %>
+
 <script>
 // <!--  
 function save() {
@@ -69,12 +69,27 @@ function save() {
        </c:forEach>
     </table>
         
-    <br />
+    <p>
+        <img src="../images/ComposeMail16.gif" alt="mail-icon" align="bottom" />
+        <roller:link page="/editor/inviteMember.do">
+           <fmt:message key="memberPermissions.inviteMember" />
+        </roller:link>
+    </p>
     
     <div class="control">
        <input type="button" onclick="javascript:save()"
        value='<fmt:message key="memberPermissions.button.save" />'></input>
     </div>
+    
+    <div class="helptext">
+        <img src="../images/TipOfTheDay16.gif" alt="info-icon" align="bottom" />
+        <fmt:message key="memberPermissions.whyInvite" />
+    </div> 
+    
+    <div class="helptext">
+        <img src="../images/TipOfTheDay16.gif" alt="info-icon" align="bottom" />
+        <fmt:message key="memberPermissions.permissionHelp" />
+    </div> 
     
 </html:form>
     

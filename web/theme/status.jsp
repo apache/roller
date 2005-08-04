@@ -24,7 +24,7 @@ boolean allowNewUsers = RollerConfig.getBooleanProperty("users.registration.enab
                     <fmt:message key="mainPage.currentWebsite" />:<br />
                     [<b><%= website.getHandle() %></b>]<br />
                  <% } %> 
-                 <br />
+                <fmt:message key="navigationBar.youMay" />&nbsp;
 			    <html:link forward="logout-redirect"><fmt:message key="navigationBar.logout"/></html:link>
             <% } else if (allowNewUsers) { %>
 			    <html:link forward="login-redirect"><fmt:message key="navigationBar.login"/></html:link>

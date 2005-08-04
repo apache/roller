@@ -26,7 +26,7 @@ function syncWebsites()
            <fmt:message key="planetConfig.title" />
         </label>
         <html:text property="title" size="40" maxlength="255" />
-        <img src="../images/help.jpeg" alt="help" 
+        <img src="../images/Help16.gif" alt="help" 
            title='<fmt:message key="planetConfig.tip.title" />' />
     </div>
     
@@ -35,7 +35,7 @@ function syncWebsites()
            <fmt:message key="planetConfig.siteUrl" />
         </label>
         <html:text property="siteUrl" size="40" maxlength="255" />
-        <img src="../images/help.jpeg" alt="help" 
+        <img src="../images/Help16.gif" alt="help" 
            title='<fmt:message key="planetConfig.tip.siteUrl" />' />
     </div>
     
@@ -44,7 +44,7 @@ function syncWebsites()
            <fmt:message key="planetConfig.adminEmail" />
         </label>
         <html:text property="adminEmail" size="40" maxlength="255" />
-        <img src="../images/help.jpeg" alt="help" 
+        <img src="../images/Help16.gif" alt="help" 
            title='<fmt:message key="planetConfig.tip.adminEmail" />' />
     </div>
     
@@ -53,7 +53,7 @@ function syncWebsites()
            <fmt:message key="planetConfig.cacheDir" />
         </label>
         <html:text property="cacheDir" size="40" maxlength="255" />
-        <img src="../images/help.jpeg" alt="help" 
+        <img src="../images/Help16.gif" alt="help" 
            title='<fmt:message key="planetConfig.tip.cacheDir" />' />
     </div>
     
@@ -62,7 +62,7 @@ function syncWebsites()
             <fmt:message key="planetConfig.proxyHost" />
         </label>
         <html:text property="proxyHost" size="40" maxlength="255" />
-        <img src="../images/help.jpeg" alt="help" 
+        <img src="../images/Help16.gif" alt="help" 
            title='<fmt:message key="planetConfig.tip.proxyHost" />' />
     </div>
     
@@ -71,7 +71,7 @@ function syncWebsites()
             <fmt:message key="planetConfig.proxyPort" />
         </label>
         <html:text property="proxyPort" size="40" maxlength="255" />
-        <img src="../images/help.jpeg" alt="help" 
+        <img src="../images/Help16.gif" alt="help" 
            title='<fmt:message key="planetConfig.tip.proxyPort" />' />
     </div>
     

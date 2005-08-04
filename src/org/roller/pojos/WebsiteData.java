@@ -734,5 +734,39 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         }
         return false;
     }
+    
+    /** Get number of users associated with website */
+    public int getUserCount() 
+    {
+        return getPermissions().size();
+    }
+    
+    /** No-op needed to please XDoclet generated code */
+    public void setUserCount()
+    {
+        // no-op
+    }
+    
+    public int getAdminUserCount() 
+    {
+        int count = 0;
+        PermissionsData userPerms = null;
+        Iterator iter = getPermissions().iterator();
+        while (iter.hasNext())
+        {
+            PermissionsData perms = (PermissionsData) iter.next();
+            if (perms.getPermissionMask() == PermissionsData.ADMIN) 
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    /** No-op needed to please XDoclet generated code */
+    public void setAdminUserCount() 
+    {
+        // no-op
+    }
 }
 

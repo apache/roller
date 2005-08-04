@@ -2,19 +2,23 @@
 
 <table class="sidebarBox" >
     <tr>
-       <td class="sidebarBox">
+       <td class="sidebarBox"> 
           <div class="menu-tr"><div class="menu-tl">
-             <fmt:message key="mainPage.actions" />
+             <fmt:message key="mainPage.sidebarHelpTitle" />
           </div></div>
        </td>
     </tr>    
     <tr>
         <td>
-             <p>
-                <roller:link page="/editor/createWebsite.do">
-                    <fmt:message key="yourWebsites.createWebsite" />
-                </roller:link>
-			</p>
+            <img src="../images/Help16.gif" alt="help-icon" align="bottom" />
+            <c:choose>
+                <c:when test="${model.groupBloggingEnabled}">
+                   <fmt:message key="yourWebsites.groupBloggingEnabled" />  
+                </c:when>
+                <c:when test="${!model.groupBloggingEnabled}">
+                    <fmt:message key="yourWebsites.groupBloggingDisabled" />
+                </c:when>
+            </c:choose>
         </td>
     </tr>
 </table>

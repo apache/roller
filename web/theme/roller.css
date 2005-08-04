@@ -119,6 +119,14 @@ textarea {
    color: grey;
 }
 
+div.helptext {
+   background: #f0f0f0;
+   border: 1px #c0c0c0 solid;
+   padding: 2px;
+   margin: 30px 10px 10px 0px;
+   width: 75%; 
+}
+
 /* ----------------------------------------------------------------------
 Main page styles
 ---------------------------------------------------------------------- */
@@ -126,8 +134,8 @@ Main page styles
 div.entryTitleBox {
    padding: 3px;
    margin: 3px;
-   border: 1px #c0c0c0 solid;
-   background: #CCCC99;
+   border: 1px #A0A060 solid;
+   background: #c0c080;
    color: white;
    font-size: medium;
 }
@@ -176,8 +184,7 @@ Table styles
 ---------------------------------------------------------------------- */
 
 table.rollertable {
-    border-collapse: collapse;
-    margin: 5px; 
+    border-collapse: collapse; 
     width: 90%;
 }
 
@@ -219,7 +226,7 @@ table.rollertable td.center {
 td.rollertable_entry, div.rollertable_entry {
     border: 1px solid #ccc;
     background: inherit;
-    padding:5px;
+    padding: 5px;
     vertical-align: top;
 }
 
@@ -320,7 +327,7 @@ Error and status message styles
 }
 
 .errors {
-   background-color:#fcc;
+   background-color: #fcc;
    border: 1px solid red;
 }
 
@@ -395,7 +402,7 @@ div.rNavigationBar {
 .page {
     visibility: hidden;
     position: absolute;
-    float:left;
+    float: left;
     background-color: white;
     border: 1px gray solid;
     padding: 10px;
@@ -419,18 +426,18 @@ form layout styles
 ---------------------------------------------------------------------- */
 
 div.row { 
-   padding:2px; 
+   padding: 2px; 
 }
 
 div.formrow {
-   float:left:
-   width:80%;
+   float: left:
+   width: 80%;
 }
 
 label.formrow {
-   float:left;
+   float: left;
    text-align: right;
-   width:20%;
+   width: 20%;
    padding-right: 1em;
 }
 
@@ -440,17 +447,17 @@ div.buttonBox {
    background-color: #f3f3f3;
    padding: 3px;
    margin-top: 5em;
-   clear:both;
+   clear: both;
 }
 
 .left {
-   font-size:small;
+   font-size: small;
    width: 136px;
 }
 
 .leftTitle {
-   font-size:small;
-   font-weight:bold;
+   font-size: small;
+   font-weight: bold;
 }
 
 /* ----------------------------------------------------------------------
@@ -459,11 +466,11 @@ weblog editor styles
 
 div.previewEntry {
    border: 1px solid gray;
-   clear:both;
+   clear: both;
    height: 22em;
    width: 98%;
    padding: 10px;
-   overflow:auto;
+   overflow: auto;
 }
 
 div.centerTitle {
@@ -476,41 +483,41 @@ div.centerTitle {
 }
 
 div.control {
-    width:95%; 
-    background:#CCCC99;
-    padding:4px;  
-    margin:5px; 
+    width: 90%; 
+    background: #CCCC99;
+    padding: 4px;  
+    margin: 5px 5px 5px 0px; 
 }
 
 div.controlToggle {
-    width:95%; 
-    color:black;
-    background:#CCCC99;
-    padding:4px;  
-    margin:5px;  
-    border-top: 1px solid #c0c0c0;
+    width: 90%; 
+    color: black;
+    background: #CCCC99;
+    padding: 4px;  
+    margin: 5px 5px 5px 0px; 
+    border: 1px solid #c0c0c0;
 }
 
 a.controlToggle {
-    color:black;
+    color: black;
     background: transparent;
     text-decoration: none;
 }
 
 a.controlToggle:link {
-    color:black;
+    color: black;
     background: transparent;
     text-decoration: none;
 }
 
 a.controlToggle:visited {
-    color:black;
+    color: black;
     background: transparent;
     text-decoration: none;
 }
 
 a.controlToggle:hover {
-    color:black;
+    color: black;
     background: transparent;
     text-decoration: underline;
     font-weight: bold;
