@@ -8,6 +8,7 @@
 </fmt:message>
 </p>
 
+<img src="../images/ComposeMail16.gif" alt="mail-icon" align="bottom" />
 <roller:link page="/editor/inviteMember.do">
    <fmt:message key="inviteMemberDone.inviteAnother" />
 </roller:link>

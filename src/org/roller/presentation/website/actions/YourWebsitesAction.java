@@ -15,6 +15,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.PermissionsData;
@@ -180,6 +181,7 @@ public class YourWebsitesAction extends DispatchAction
     
     public static class YourWebsitesPageModel extends BasePageModel
     {
+        private boolean groupBloggingEnabled = true;
         private List permissions = new ArrayList();
         private List pendings = new ArrayList();
         public YourWebsitesPageModel(HttpServletRequest request,
@@ -190,7 +192,9 @@ public class YourWebsitesAction extends DispatchAction
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             UserData user = rollerSession.getAuthenticatedUser();
             permissions = roller.getUserManager().getAllPermissions(user);
-            pendings = roller.getUserManager().getPendingPermissions(user);
+            pendings = roller.getUserManager().getPendingPermissions(user); 
+            groupBloggingEnabled = 
+                    RollerConfig.getBooleanProperty("groupblogging.enabled");
         }
         public List getPermissions()
         {
@@ -207,6 +211,14 @@ public class YourWebsitesAction extends DispatchAction
         public void setPendings(List pendings)
         {
             this.pendings = pendings;
+        }
+
+        public boolean isGroupBloggingEnabled() {
+            return groupBloggingEnabled;
+        }
+
+        public void setGroupBloggingEnabled(boolean groupBloggingEnabled) {
+            this.groupBloggingEnabled = groupBloggingEnabled;
         }
     }
 }

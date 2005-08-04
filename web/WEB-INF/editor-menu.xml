@@ -54,7 +54,8 @@ Each menu or menu item is governed by four attrbibutes:
                                                perms="admin" />
         <menu-item forward="editPages"         name="tabbedmenu.website.pages" 
                                                perms="admin" />
-        <menu-item forward="memberPermissions" name="tabbedmenu.website.members" 
+        <menu-item forward="memberPermissions" enabledProperty="groupblogging.enabled"
+                                               name="tabbedmenu.website.members" 
                                                perms="admin" />
         <menu-item forward="pingSetup"         name="tabbedmenu.weblog.pingSetup" 
                                                disabledProperty="pings.disablePingUsage" 
