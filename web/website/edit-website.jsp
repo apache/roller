@@ -10,6 +10,7 @@
     <html:hidden property="id"/></input>
     <html:hidden property="weblogDayPageId" />
     <html:hidden property="locale"/></input>
+    <html:hidden property="handle"/></input>
     <html:hidden property="timeZone"/></input>
     <html:hidden property="editorTheme"/></input>
     <html:hidden property="isEnabled"/></input>
@@ -25,6 +26,16 @@
     <tr>
         <td class="propname"><fmt:message key="websiteSettings.websiteDescription" /></td>
         <td><html:textarea property="description" rows="3" cols="40"/></td>
+    </tr>
+
+    <tr>
+        <td class="propname"><fmt:message key="websiteSettings.emailAddress" />
+        <td><html:text property="emailAddress" size="40"/></input></td>
+    </tr>
+
+    <tr>
+        <td class="propname"><fmt:message key="websiteSettings.emailFromAddress" />
+        <td><html:text property="emailFromAddress" size="40"/></input></td>
     </tr>
 
     <tr>
@@ -127,16 +138,13 @@ if (emailComments) { %>
         <td class="propname"><fmt:message key="websiteSettings.ignoreUrls" /></td>
         <td><html:textarea property="ignoreWords" rows="7" cols="40"/></td>
     </tr>
-    <tr>
-        <td>&nbsp;</td>
-    </tr>
-    <tr>
-        <td class="buttonBox" colspan="2">
-            <input type="submit" value='<fmt:message key="websiteSettings.button.update" />' />
-        </td>
-    </tr>
+
 </table>
 
+<div class="control">
+    <input type="submit" value='<fmt:message key="websiteSettings.button.update" />' />
+</div>
+        
 </html:form>
 
 <%@ include file="/theme/footer.jsp" %>

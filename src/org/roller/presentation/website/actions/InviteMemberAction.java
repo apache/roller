@@ -1,6 +1,16 @@
 package org.roller.presentation.website.actions;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ResourceBundle;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,13 +26,18 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.util.RequestUtils;
+import org.roller.RollerException;
+import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.InviteMemberForm;
+import org.roller.util.MailUtil;
 
 /**
  * Allows website admin to invite new members to website.
@@ -101,7 +116,7 @@ public class InviteMemberAction extends DispatchAction
                 umgr.inviteUser(website, user, Short.parseShort(mask));
                 request.setAttribute("user", user);
                 forward = mapping.findForward("inviteMemberDone.page");
-                // ROLLER_2.0: notify user by email of invitation
+                notifyInvitee(request, website, user);
                 msgs.add(ActionMessages.GLOBAL_MESSAGE, 
                     new ActionMessage("inviteMember.userInvited"));
             }
@@ -109,4 +124,88 @@ public class InviteMemberAction extends DispatchAction
         if (!errors.isEmpty()) saveErrors(request, errors);
         return forward; 
     }
+    
+    /**
+     * Inform invitee of new invitation.
+     */
+    private void notifyInvitee(
+            HttpServletRequest request, WebsiteData website, UserData user) 
+            throws Exception
+    {
+        try
+        {
+            Roller roller = RollerFactory.getRoller();
+            UserManager umgr = roller.getUserManager();
+            javax.naming.Context ctx = (javax.naming.Context)
+                new InitialContext().lookup("java:comp/env");
+            Session mailSession = 
+                (Session)ctx.lookup("mail/Session");
+            if (mailSession != null)
+            {
+                String userName = user.getUserName();
+                String from = website.getEmailAddress();
+                String cc[] = new String[] {from};
+                String bcc[] = new String[0];
+                String to[] = new String[] {user.getEmailAddress()};
+                String subject;
+                String content;
+                
+                // Figure URL to entry edit page
+                RollerContext rc = RollerContext.getRollerContext(request);
+                String rootURL = rc.getAbsoluteContextUrl(request);
+                if (rootURL == null || rootURL.trim().length()==0)
+                {
+                    rootURL = RequestUtils.serverURL(request) 
+                                  + request.getContextPath();
+                }               
+                String url = rootURL + "/editor/yourWebsites.do";
+                
+                ResourceBundle resources = ResourceBundle.getBundle(
+                    "ApplicationResources", 
+                    website.getLocaleInstance());
+                StringBuffer sb = new StringBuffer();
+                sb.append(MessageFormat.format(
+                   resources.getString("inviteMember.notificationSubject"),
+                   new Object[] {
+                           website.getName(), 
+                           website.getHandle()})
+                );
+                subject = sb.toString();
+                sb = new StringBuffer();
+                sb.append(MessageFormat.format(
+                   resources.getString("inviteMember.notificationContent"),
+                   new Object[] {
+                           website.getName(), 
+                           website.getHandle(), 
+                           user.getUserName(), 
+                           url
+                }));
+                content = sb.toString();
+                MailUtil.sendTextMessage(
+                        mailSession, from, to, cc, bcc, subject, content);
+            }
+        }
+        catch (NamingException e)
+        {
+            mLogger.error("ERROR: Notification email(s) not sent, "
+                    + "Roller's mail session not properly configured", e);
+        }
+        catch (MessagingException e)
+        {
+            mLogger.error("ERROR: Notification email(s) not sent, "
+                    + "due to Roller configuration or mail server problem.", e);
+        }
+        catch (MalformedURLException e)
+        {
+            mLogger.error("ERROR: Notification email(s) not sent, "
+                    + "Roller site URL is malformed?", e);
+        }
+        catch (RollerException e)
+        {
+            throw new RuntimeException(
+                    "FATAL ERROR: unable to find Roller object", e);
+        }
+    }
+
+
 }
