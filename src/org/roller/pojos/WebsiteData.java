@@ -53,7 +53,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     protected String  mDefaultPlugins;
     protected Boolean isEnabled;
     protected Date dateCreated;
-    
+       
     // Associated objects
     protected UserData mUser = null; // TODO: decide if website.user is needed
     protected List     permissions = new ArrayList();    
@@ -742,7 +742,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
     
     /** No-op needed to please XDoclet generated code */
-    public void setUserCount()
+    private int userCount = 0; 
+    public void setUserCount(int userCount)
     {
         // no-op
     }
@@ -764,7 +765,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
     
     /** No-op needed to please XDoclet generated code */
-    public void setAdminUserCount() 
+    private int adminUserCount = 0; 
+    public void setAdminUserCount(int adminUserCount) 
     {
         // no-op
     }
