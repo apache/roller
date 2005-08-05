@@ -19,7 +19,7 @@ $pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1
         <created>$utilities.formatIso8601Date($entry.pubTime)</created>
         <modified>$utilities.formatIso8601Date($entry.updateTime)</modified>
         #if( $userName == "zzz_none_zzz" )
-        <author><name>$entry.website.user.fullName</name></author>
+        <author><name>$entry.creator.fullName</name></author>
         #end
         <link rel="alternate" type="text/html" href="$absBaseURL$entry.permaLink"/>
         <id>tag:$host,$utilities.formatIso8601Day($entry.pubTime):/$entry.website.user.userName?anchor=$entry.anchor</id>

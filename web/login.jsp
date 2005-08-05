@@ -25,7 +25,9 @@
     </tr>
     <tr>
         <th><fmt:message key="loginPage.userName" />:</th>
-        <td><input type="text" name="j_username" id="j_username" size="25" /></td>
+        <td>
+            <input type="text" name="j_username" id="j_username" size="25" />
+        </td>
     </tr>
     <tr>
         <th><fmt:message key="loginPage.password" />:</th>

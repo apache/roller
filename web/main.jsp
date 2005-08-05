@@ -29,16 +29,18 @@ request.setAttribute("popularWebsites",
                 <str:truncateNicely upper="90" >
                    <c:out value="${post.displayTitle}" />
                 </str:truncateNicely></a>
-            </a><br />
+            </a><br /> 
 
             <span class="entryDetails">
 
-                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.creator.userName}" />' class="entryDetails">
+                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.handle}" />' class="entryDetails">
                 <str:truncateNicely upper="50" >
                    <c:out value="${post.website.name}" />
                 </str:truncateNicely></a> |
                 <c:out value="${post.category.path}" /> |
-                <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" />
+                <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" /> |
+                <fmt:message key="mainPage.postedBy" />&nbsp;
+                <c:out value="${post.creator.userName}" />
                 <c:if test="${!empty post.link}">
                    | <a href='<c:out value="${post.link}" />' class="entryDetails"><fmt:message key="mainPage.link" /></a>
                 </c:if>
@@ -71,12 +73,14 @@ request.setAttribute("popularWebsites",
 
             <span class="entryDetails">
 
-                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.creator.userName}" />' class="entryDetails">
+                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.handle}" />' class="entryDetails">
                 <str:truncateNicely upper="50" >
                    <c:out value="${post.website.name}" />
                 </str:truncateNicely></a> |
                 <c:out value="${post.category.path}" /> |
-                <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" />
+                <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" /> |
+                <fmt:message key="mainPage.postedBy" />
+                <c:out value="${post.creator.userName}" />
                 <c:if test="${!empty post.link}">
                    | <a href='<c:out value="${post.link}" />' class="entryDetails"><fmt:message key="mainPage.link" /></a>
                 </c:if>

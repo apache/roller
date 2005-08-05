@@ -23,7 +23,7 @@ $pageHelper.setContentType("application/rss+xml;charset=utf-8")<?xml version="1.
     <comments>$absBaseURL$utilities.textToHTML($entry.commentsLink)</comments>
     #end
     <pubDate>$utilities.formatRfc822Date($entry.pubTime)</pubDate>
-    <dc:creator>$utilities.textToHTML($entry.website.user.fullName,true)</dc:creator>
+    <dc:creator>$utilities.textToHTML($entry.creator.fullName,true)</dc:creator>
     #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
     #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
     #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )

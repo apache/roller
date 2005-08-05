@@ -6,7 +6,7 @@
 <%@ include file="/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Roller :: Editor</title>
+<title>Roller ERROR</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script type="text/javascript" 
         src="<%= request.getContextPath() %>/theme/scripts/roller.js"></script>
@@ -58,6 +58,40 @@ exception = (Exception)request.getAttribute("javax.servlet.error.exception");
    <% exception.printStackTrace(new java.io.PrintWriter(out)); %>
    </textarea></form>
 <% } %>
-<%@ include file="/theme/footer.jsp" %>
+
+
+
+
+<br />
+<br />
+
+        <div id="footer" class="clearfix">
+            <a href="http://www.rollerweblogger.org">
+                Powered by Roller Weblogger</a> | 
+                
+            <a href="http://opensource.atlassian.com/projects/roller/Dashboard.jspa">
+                <fmt:message key="footer.reportIssue" /></a> | 
+                
+            <a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide">
+                <fmt:message key="footer.userGuide" /></a> | 
+                
+            <a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=RollerMacros">
+                <fmt:message key="footer.macros" /></a> | 
+                
+            <a href="http://sourceforge.net/mail/?group_id=47722">
+                <fmt:message key="footer.mailingLists" /></a>
+        </div><!-- end footer -->
+    
+</div> <!-- end centercontent --> 
+
+<div id="rightcontent"> 
+</div>
+
+</div> <!-- end wrapper -->
+
+</body>
+</html>
+
+<% } catch (Exception e) { e.printStackTrace(); } %>
 
     
