@@ -18,19 +18,20 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.config.RollerRuntimeConfig;
+import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.UserData;
-import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.forms.WebsiteForm;
 import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.website.formbeans.WebsiteFormEx;
 
@@ -71,33 +72,38 @@ public final class WebsiteFormAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if (rses.isUserAuthorizedToAdmin())
             {
-                UserData ud = RollerSession.getRollerSession(request).getAuthenticatedUser();
+                Roller roller = RollerFactory.getRoller();
+                UserManager umgr = roller.getUserManager();
+                WeblogManager wmgr = roller.getWeblogManager();
+                UserData ud = rses.getAuthenticatedUser();
                 request.setAttribute("user",ud);
 
-                WebsiteData hd = RollerSession.getRollerSession(request).getCurrentWebsite();
-                WebsiteForm wf = (WebsiteFormEx)actionForm;
-                wf.copyFrom(hd, request.getLocale());
+                WebsiteData website = 
+                    umgr.retrieveWebsite(rses.getCurrentWebsite().getId());
+                WebsiteFormEx wf = (WebsiteFormEx)actionForm;
+                wf.copyFrom(website, request.getLocale());
 
-                List cd = RollerFactory.getRoller().getWeblogManager()
-                   .getWeblogCategories(RollerSession.getRollerSession(request).getCurrentWebsite(), true);
+                List cd = wmgr.getWeblogCategories(website, true);
                 request.setAttribute("categories",cd);
 
-                List bcd = RollerFactory.getRoller().getWeblogManager()
-                    .getWeblogCategories(RollerSession.getRollerSession(request).getCurrentWebsite(), true);
+                List bcd = wmgr.getWeblogCategories(website, true);
                 request.setAttribute("bloggerCategories",bcd);
 
-                List pages = RollerFactory.getRoller().getUserManager().getPages(RollerSession.getRollerSession(request).getCurrentWebsite());
+                List pages = umgr.getPages(website);
                 request.setAttribute("pages",pages);
 
                 ServletContext ctx = request.getSession().getServletContext();
                 String editorPages = 
                         RollerRuntimeConfig.getProperty("users.editor.pages");
                 
-                List epages = Arrays.asList(StringUtils.split(StringUtils.deleteWhitespace(editorPages), ","));
+                List epages = Arrays.asList(StringUtils.split(
+                        StringUtils.deleteWhitespace(editorPages), ","));
                 request.setAttribute("editorPagesList", epages);
+                
+                rses.setCurrentWebsite(website);
             }
             else
             {
@@ -120,6 +126,8 @@ public final class WebsiteFormAction extends DispatchAction
         HttpServletResponse response)
         throws IOException, ServletException
     {
+        ActionErrors errors = new ActionErrors();
+        ActionMessages messages = new ActionMessages();        
         ActionForward forward = mapping.findForward("editWebsite");
         try
         {
@@ -130,22 +138,7 @@ public final class WebsiteFormAction extends DispatchAction
             if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 WebsiteFormEx form = (WebsiteFormEx)actionForm;
-                
-                // checkboxes return no value when not checked
-                if (form.getAllowComments() == null)
-                {
-                    form.setAllowComments( Boolean.FALSE );
-                }
-                if (form.getEmailComments() == null)
-                {
-                    form.setEmailComments( Boolean.FALSE );
-                }
-                if (form.getEnableBloggerApi() == null)
-                {
-                    form.setEnableBloggerApi( Boolean.FALSE );
-                }
-
-                if(!form.getDefaultPageId().equals(form.getWeblogDayPageId()))
+                if (!form.getDefaultPageId().equals(form.getWeblogDayPageId()))
                 {                    
                     WebsiteData wd = umgr.retrieveWebsite(form.getId());
                     wd.save(); // should throw if save not permitted
@@ -153,31 +146,16 @@ public final class WebsiteFormAction extends DispatchAction
                     // ensure isEnabled can't be changed
                     form.setIsEnabled(wd.getIsEnabled());
                     form.copyTo(wd, request.getLocale());
-                    
-                    if (form.getDefaultCategoryId() != null) 
-                    {
-                        WeblogCategoryData defaultCat = 
-                            wmgr.retrieveWeblogCategory(form.getDefaultCategoryId());
-                        wd.setDefaultCategory(defaultCat);
-                    }
-                    
-                    if (form.getBloggerCategoryId() != null) 
-                    {
-                        WeblogCategoryData bloggerCat = 
-                            wmgr.retrieveWeblogCategory(form.getBloggerCategoryId());
-                        wd.setBloggerCategory(bloggerCat);
-                    }
-                    
+                                        
                     wd.save();
                     RollerFactory.getRoller().getRefererManager().applyRefererFilters(wd);                    
                     RollerFactory.getRoller().commit();
 
-                    request.getSession().setAttribute(
-                        RollerSession.STATUS_MESSAGE,
-                        "Successfully submitted new Weblog templates");
+                   messages.add(null, 
+                     new ActionMessage("websiteSettings.savedChanges"));
 
                     request.getSession().setAttribute(
-                        RollerRequest.WEBSITEID_KEY,form.getId());
+                        RollerRequest.WEBSITEID_KEY, form.getId());
 
                     // clear the page cache for this user
                     PageCacheFilter.removeFromCache(request, wd);
@@ -187,15 +165,15 @@ public final class WebsiteFormAction extends DispatchAction
                     String editorPages = 
                         RollerRuntimeConfig.getProperty("users.editor.pages");
                 
-                    List epages = Arrays.asList(StringUtils.split(org.apache.commons.lang.StringUtils.deleteWhitespace(editorPages), ","));
+                    List epages = Arrays.asList(StringUtils.split(
+                        org.apache.commons.lang.StringUtils.deleteWhitespace(editorPages), ","));
                     request.setAttribute("editorPagesList", epages);                
                 }
                 else
                 {
-                    request.getSession().setAttribute(
-                        RollerSession.ERROR_MESSAGE,
-                        "CHANGES REJECTED: Cannot set default page template "
-                        +"and day template to same template");
+                    errors.add(null, 
+                        new ActionError("websiteSettings.error.sameTemplate"));                   
+                    saveErrors(request, errors);
                 }
             }
             else
@@ -207,9 +185,7 @@ public final class WebsiteFormAction extends DispatchAction
         }
         catch (RollerPermissionsException e)
         {
-            ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError("error.permissions.deniedSave"));
-            saveErrors(request, errors);
             forward = mapping.findForward("access-denied");
         }
         catch (RollerException re)
@@ -222,6 +198,8 @@ public final class WebsiteFormAction extends DispatchAction
             mLogger.error("Unexpected exception",e);
             throw new ServletException(e);
         }
+        if (errors.size() > 0) saveErrors(request, errors);
+        if (messages.size() > 0) saveMessages(request, messages);  
         return forward;
     }
 

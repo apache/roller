@@ -431,8 +431,10 @@ public final class WeblogEntryFormAction extends DispatchAction
                 sb.append(
                     MessageFormat.format(
                         resources.getString("weblogEntry.pendingEntrySubject"),
-                        new Object[] {entry.getWebsite().getName()})
-                );
+                        new Object[] {
+                            entry.getWebsite().getName(), 
+                            entry.getWebsite().getHandle()
+                }));
                 subject = sb.toString();
                 sb = new StringBuffer();
                 sb.append(

@@ -52,6 +52,13 @@ public class RollerSession
         if (session != null) 
         {
             rollerSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
+            if (rollerSession == null) 
+            {
+                // HttpSession with no RollerSession? 
+                // Must be a session that was de-serialzied from a previous run.
+                rollerSession = new RollerSession();
+                session.setAttribute(ROLLER_SESSION, rollerSession);
+            }
             Principal principal = request.getUserPrincipal();
             if (rollerSession.getAuthenticatedUser() == null && principal != null)
             {

@@ -35,8 +35,8 @@ function resignWebsite(id,handle)
 <%-- Choose appropriate prompt at start of page --%>
 <br />
 <c:choose>
-    <c:when test="${empty model.permissions}">
-       <p><fmt:message key="yourWebsites.noBlog" />
+    <c:when test="${empty model.permissions && !model.groupBloggingEnabled}">
+       <p><fmt:message key="yourWebsites.noBlogs" />
        <roller:link page="/editor/createWebsite.do">
           <fmt:message key="yourWebsites.createAWeblog" />
        </roller:link></p>
@@ -130,11 +130,11 @@ function resignWebsite(id,handle)
         
         <c:when test="${empty model.permissions}">
             <h1><fmt:message key="yourWebsites.title" /></h1>    
-            <p><fmt:message key="yourWebsites.youHaveNone" /></p>
             <p>
+                <fmt:message key="yourWebsites.youHaveNone" />
                 <roller:link page="/editor/createWebsite.do">
                     <fmt:message key="yourWebsites.youCanCreateOne" />
-                </roller:link>
+                </roller:link>?
             </p>            
         </c:when>
         
@@ -143,7 +143,7 @@ function resignWebsite(id,handle)
 </html:form>
 <br />
     
-<c:if test="${model.groupBloggingEnabled}">
+<c:if test="${model.groupBloggingEnabled && !empty model.permissions}">
     <div class="helptext">
         <img src="../images/TipOfTheDay16.gif" alt="info-icon" align="bottom" />
         <fmt:message key="createWebsite.whyCreateMore" />
