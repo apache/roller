@@ -28,7 +28,7 @@ import org.roller.model.PingTargetManager;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RefererData;
 import org.roller.pojos.RoleData;
@@ -117,7 +117,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     /** 
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
-    public PageData getPageByLink(WebsiteData website, String pagelink)
+    public WeblogTemplate getPageByLink(WebsiteData website, String pagelink)
         throws RollerException
     {
         if (website == null)
@@ -127,14 +127,14 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             throw new RollerException("Pagelink is null");
                                                                       
         Session session = ((HibernateStrategy)mStrategy).getSession();
-        Criteria criteria = session.createCriteria(PageData.class);
+        Criteria criteria = session.createCriteria(WeblogTemplate.class);
         criteria.add(Expression.eq("website",website));
         criteria.add(Expression.eq("link",pagelink));        
         criteria.setMaxResults(1);
         try
         {
             List list = criteria.list();
-            return list.size()!=0 ? (PageData)list.get(0) : null;
+            return list.size()!=0 ? (WeblogTemplate)list.get(0) : null;
         }
         catch (HibernateException e)
         {
@@ -299,7 +299,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             throw new RollerException("website is null");
                                                                       
         Session session = ((HibernateStrategy)mStrategy).getSession();
-        Criteria criteria = session.createCriteria(PageData.class);
+        Criteria criteria = session.createCriteria(WeblogTemplate.class);
         criteria.add(Expression.eq("website",website)); 
         criteria.addOrder(Order.asc("name"));
         try
@@ -315,7 +315,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     /** 
      * @see org.roller.model.UserManager#getPageByName(WebsiteData, java.lang.String)
      */
-    public PageData getPageByName(WebsiteData website, String pagename) 
+    public WeblogTemplate getPageByName(WebsiteData website, String pagename) 
         throws RollerException
     {
         if (website == null)
@@ -325,14 +325,14 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             throw new RollerException("Page name is null");
                                    
         Session session = ((HibernateStrategy)mStrategy).getSession();
-        Criteria criteria = session.createCriteria(PageData.class);
+        Criteria criteria = session.createCriteria(WeblogTemplate.class);
         criteria.add(Expression.eq("website", website));
         criteria.add(Expression.eq("name", pagename));
         criteria.setMaxResults(1);
         try
         {
             List list = criteria.list();
-            return list.size()!=0 ? (PageData)list.get(0) : null;
+            return list.size()!=0 ? (WeblogTemplate)list.get(0) : null;
         }
         catch (HibernateException e)
         {
@@ -439,12 +439,12 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             }
             
             // remove associated pages
-            Criteria pageQuery = session.createCriteria(PageData.class);
+            Criteria pageQuery = session.createCriteria(WeblogTemplate.class);
             pageQuery.add(Expression.eq("website", website));
             List pages = pageQuery.list();
             for (Iterator iter = pages.iterator(); iter.hasNext();) 
             {
-                PageData page = (PageData) iter.next();
+                WeblogTemplate page = (WeblogTemplate) iter.next();
                 page.remove();
             }
             

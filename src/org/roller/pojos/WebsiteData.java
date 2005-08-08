@@ -1,19 +1,24 @@
 package org.roller.pojos;
 
-
-
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
-
 import org.apache.commons.lang.StringUtils;
 import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.util.PojoUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.ThemeNotFoundException;
+import org.roller.model.ThemeManager;
+import org.roller.model.UserManager;
+
 
 /**
  * Website has many-to-many association with users. Website has one-to-many and 
@@ -32,6 +37,9 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
 {
     static final long serialVersionUID = 206437645033737127L;
+    
+    private static Log mLogger = 
+        LogFactory.getFactory().getInstance(WebsiteData.class);
     
     // Simple properties
     protected String  id;
@@ -132,7 +140,218 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
     
     /**
+     * Lookup the default page for this website.
+     */
+    public Template getDefaultPage() throws RollerException {
+        
+        Template template = null;
+        
+        // first check if this user has selected a theme
+        // if so then return the themes Weblog template
+        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
+            try {
+                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                Theme usersTheme = themeMgr.getTheme(this.editorTheme);
+                
+                // this is a bit iffy :/
+                // we assume that all theme use "Weblog" for a default template
+                template = usersTheme.getTemplate("Weblog");
+                
+            } catch(ThemeNotFoundException tnfe) {
+                // i sure hope not!
+                mLogger.error(tnfe);
+            }
+        }
+        
+        // if we didn't get the Template from a theme then look in the db
+        if(template == null) {
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            template = userMgr.retrievePage(this.defaultPageId);
+        }
+        
+        if(template != null)
+            mLogger.debug("returning default template id ["+template.getId()+"]");
+        
+        return template;
+    }
+    
+    
+    /**
+     * Lookup a Template for this website by id.
+     */
+    public Template getPageById(String id) throws RollerException {
+        
+        if(id == null)
+            return null;
+        
+        Template template = null;
+        
+        // first check if this user has selected a theme
+        // if so then return the proper theme template
+        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
+            
+            // we don't actually expect to get lookups for theme pages by id
+            // but we have to be thorough and check anyways
+            String[] split = id.split(":",  2);
+            
+            // only continue if this looks like a theme id
+            // and the theme name matches this users current theme
+            if(split.length == 2 && split[0].equals(this.editorTheme)) {
+                try {
+                    ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                    Theme usersTheme = themeMgr.getTheme(this.editorTheme);
+                    template = usersTheme.getTemplate(split[1]);
+                    
+                } catch(ThemeNotFoundException tnfe) {
+                    // i sure hope not!
+                    mLogger.error(tnfe);
+                }
+            }
+            
+        }
+        
+        // if we didn't get the Template from a theme then look in the db
+        if(template == null) {
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            template = userMgr.getPageByName(this, name);
+        }
+        
+        return template;
+    }
+    
+    
+    /**
+     * Lookup a Template for this website by name.
+     */
+    public Template getPageByName(String name) throws RollerException {
+        
+        if(name == null)
+            return null;
+        
+        mLogger.debug("looking up template ["+name+"]");
+        
+        Template template = null;
+        
+        // first check if this user has selected a theme
+        // if so then return the proper theme template
+        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
+            
+            try {
+                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                Theme usersTheme = themeMgr.getTheme(this.editorTheme);
+                template = usersTheme.getTemplate(name);
+
+            } catch(ThemeNotFoundException tnfe) {
+                // i sure hope not!
+                mLogger.error(tnfe);
+            }
+            
+        }
+        
+        // if we didn't get the Template from a theme then look in the db
+        if(template == null) {
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            template = userMgr.getPageByName(this, name);
+        }
+        
+        if(template != null)
+            mLogger.debug("returning template ["+template.getId()+"]");
+        
+        return template;
+    }
+    
+    
+    /**
+     * Lookup a template for this website by link.
+     */
+    public Template getPageByLink(String link) throws RollerException {
+        
+        if(link == null)
+            return null;
+        
+        mLogger.debug("looking up template ["+link+"]");
+        
+        Template template = null;
+        
+        // first check if this user has selected a theme
+        // if so then return the proper theme template
+        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
+            
+            try {
+                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                Theme usersTheme = themeMgr.getTheme(this.editorTheme);
+                template = usersTheme.getTemplateByLink(link);
+
+            } catch(ThemeNotFoundException tnfe) {
+                // i sure hope not!
+                mLogger.error(tnfe);
+            }
+            
+        }
+        
+        // if we didn't get the Template from a theme then look in the db
+        if(template == null) {
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            template = userMgr.getPageByLink(this, link);
+        }
+        
+        if(template != null)
+            mLogger.debug("returning template ["+template.getId()+"]");
+        
+        return template;
+    }
+    
+    
+    /**
+     * Get a list of all pages that are part of this website.
+     */
+    public List getPages() {
+        
+        Map pages = new HashMap();
+        
+        // first get the pages from the db
+        try {
+            Template template = null;
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            Iterator dbPages = userMgr.getPages(this).iterator();
+            while(dbPages.hasNext()) {
+                template = (Template) dbPages.next();
+                pages.put(template.getName(), template);
+            }
+        } catch(Exception e) {
+            // db error
+            mLogger.error(e);
+        }
+        
+            
+        // now get theme pages if needed and put them in place of db pages
+        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
+            try {
+                Template template = null;
+                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                Theme usersTheme = themeMgr.getTheme(this.editorTheme);
+                Iterator themePages = usersTheme.getTemplates().iterator();
+                while(themePages.hasNext()) {
+                    template = (Template) themePages.next();
+                    
+                    // note that this will put theme pages over custom
+                    // pages in the pages list, which is what we want
+                    pages.put(template.getName(), template);
+                }
+            } catch(Exception e) {
+                // how??
+                mLogger.error(e);
+            }
+        }
+        
+        return new ArrayList(pages.values());
+    }
+    
+    
+    /**
      * Id of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.id column="id" type="string"
      *  generator-class="uuid.hex" unsaved-value="null"
@@ -166,6 +385,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Name of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="name" non-null="true" unique="false"
      */
@@ -182,6 +403,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Description
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="description" non-null="true" unique="false"
      */
@@ -198,6 +421,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Original creator of website
+     *
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
      * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
@@ -213,6 +438,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="defaultpageid" non-null="true" unique="false"
      */
@@ -230,6 +456,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @deprecated
      * @ejb:persistent-field
      * @hibernate.property column="weblogdayid" non-null="true" unique="false"
@@ -249,6 +476,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="enablebloggerapi" non-null="true" unique="false"
      */
@@ -264,8 +492,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * 
      * @hibernate.many-to-one column="bloggercatid" non-null="false"
      */
     public WeblogCategoryData getBloggerCategory()
@@ -284,8 +512,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * work with the top level categories that are immediately under the root.
      * Setting a different default category allows you to partition your weblog.
      * 
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
-     * 
      * @hibernate.many-to-one column="defaultcatid" non-null="false"
      */
     public WeblogCategoryData getDefaultCategory() 
@@ -300,6 +528,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="editorpage" non-null="true" unique="false"
      */
@@ -315,6 +544,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="ignorewords" non-null="true" unique="false"
      */
@@ -330,6 +560,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="allowcomments" non-null="true" unique="false"
      */
@@ -345,6 +576,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="emailcomments" non-null="true" unique="false"
      */
@@ -360,6 +592,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
     
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="emailfromaddress" non-null="true" unique="false"
      */
@@ -376,6 +609,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     
     /**
      * @ejb:persistent-field
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="emailaddress" non-null="true" unique="false"
      */
     public String getEmailAddress()
@@ -391,6 +625,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     
     /**
      * EditorTheme of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="editortheme" non-null="true" unique="false"
      */
@@ -407,6 +643,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Locale of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="locale" non-null="true" unique="false"
      */
@@ -423,6 +661,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Timezone of the Website.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="timeZone" non-null="true" unique="false"
      */
@@ -467,6 +707,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 
     /**
      * Comma-delimited list of user's default Plugins.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="defaultplugins" non-null="false" unique="false"
      */
@@ -482,6 +724,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
      * @hibernate.property column="isenabled" non-null="true" unique="false"
      */
@@ -635,6 +878,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     /**
      * Parse locale value and instantiate a Locale object,
      * otherwise return default Locale.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @return Locale
      */
     public Locale getLocaleInstance()
@@ -667,6 +912,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     /**
      * Return TimeZone instance for value of timeZone,
      * otherwise return system default instance.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @return TimeZone
      */
     public TimeZone getTimeZoneInstance()

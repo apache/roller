@@ -123,6 +123,9 @@ public abstract class RollerFactory
     }
     
 	
+	/**
+	 * Set Roller to be returned by factory.
+	 */
 	public static void setRoller(Roller roller)
 	{
 		if (roller != null) rollerInstance = roller;

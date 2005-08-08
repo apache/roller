@@ -31,6 +31,15 @@ function syncWebsites()
     </div>
     
     <div class="formrow">
+        <label for="description" class="formrow" />
+           <fmt:message key="planetConfig.description" />
+        </label>
+        <html:text property="description" size="40" maxlength="255" />
+        <img src="../images/help.jpeg" alt="help" 
+           title='<fmt:message key="planetConfig.tip.description" />' />
+    </div>
+    
+    <div class="formrow">
         <label for="siteUrl" class="formrow" />
            <fmt:message key="planetConfig.siteUrl" />
         </label>

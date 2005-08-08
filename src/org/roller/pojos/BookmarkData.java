@@ -74,6 +74,8 @@ public class BookmarkData extends WebsiteObject
     //------------------------------------------------------------- Attributes
     
     /** 
+     * @roller.wrapPojoMethod type="simple"
+     *
      * @ejb:persistent-field 
      * 
      * @hibernate.id column="id" type="string"
@@ -93,6 +95,8 @@ public class BookmarkData extends WebsiteObject
     /** 
      * Name of bookmark.
      * 
+     * @roller.wrapPojoMethod type="simple"
+     *
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator-args arg0resource="bookmarkForm.name"
      * 
@@ -113,6 +117,8 @@ public class BookmarkData extends WebsiteObject
 
     /** 
      * Description of bookmark.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * 
      * @ejb:persistent-field 
      * 
@@ -131,6 +137,8 @@ public class BookmarkData extends WebsiteObject
 
     /** 
      * URL of bookmark.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * 
      * @ejb:persistent-field 
      * 
@@ -149,6 +157,8 @@ public class BookmarkData extends WebsiteObject
 
     /** 
      * Weight indicates prominence of link
+     *
+     * @roller.wrapPojoMethod type="simple"
      * 
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator type="integer" msgkey="errors.integer"
@@ -171,6 +181,8 @@ public class BookmarkData extends WebsiteObject
 
     /** 
      * Priority determines order of display 
+     *
+     * @roller.wrapPojoMethod type="simple"
      * 
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator type="integer" msgkey="errors.integer"
@@ -193,6 +205,8 @@ public class BookmarkData extends WebsiteObject
 
     /** 
      * @ejb:persistent-field 
+     *
+     * @roller.wrapPojoMethod type="simple"
      * 
      * @hibernate.property column="image" non-null="true" unique="false"
      */
@@ -209,6 +223,8 @@ public class BookmarkData extends WebsiteObject
 
     /** 
      * @ejb:persistent-field 
+     *
+     * @roller.wrapPojoMethod type="simple"
      * 
      * @hibernate.property column="feedurl" non-null="true" unique="false"
      */
@@ -226,6 +242,7 @@ public class BookmarkData extends WebsiteObject
     //---------------------------------------------------------- Relationships
     
     /** 
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field 
      * @hibernate.many-to-one column="folderid" cascade="none" not-null="true"
      */

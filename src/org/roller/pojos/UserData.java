@@ -127,6 +127,7 @@ public class UserData
    {
       return this.id;
    }
+
    /** @ejb:persistent-field */ 
    public void setId( String id )
    {
@@ -150,6 +151,8 @@ public class UserData
    /** 
     * Get password.
     * If password encryption is enabled, will return encrypted password.
+    *
+    * @roller.wrapPojoMethod type="simple"
     * @ejb:persistent-field 
     * @hibernate.property column="passphrase" non-null="true"
     */
@@ -167,10 +170,13 @@ public class UserData
       this.password = password;
    }
 
-   /** Full name of the user.
-     * @ejb:persistent-field 
-     * @hibernate.property column="fullname" non-null="true" unique="true"
-     */
+   /** 
+    * Full name of the user.
+    *
+    * @roller.wrapPojoMethod type="simple"
+    * @ejb:persistent-field
+    * @hibernate.property column="fullname" non-null="true" unique="true"
+    */
    public String getFullName()
    {
       return this.fullName;
@@ -181,10 +187,13 @@ public class UserData
       this.fullName = fullName;
    }
 
-   /** E-mail address of the user.
-     * @ejb:persistent-field 
-     * @hibernate.property column="emailaddress" non-null="true" unique="true"
-     */
+   /**
+    * E-mail address of the user.
+    *
+    * @roller.wrapPojoMethod type="simple"
+    * @ejb:persistent-field
+    * @hibernate.property column="emailaddress" non-null="true" unique="true"
+    */
    public String getEmailAddress()
    {
       return this.emailAddress;
@@ -196,9 +205,10 @@ public class UserData
    }
 
    /** 
-	* @ejb:persistent-field 
-	* @hibernate.property column="datecreated" non-null="true" unique="false"
-	*/
+    * @roller.wrapPojoMethod type="simple"
+    * @ejb:persistent-field
+    * @hibernate.property column="datecreated" non-null="true" unique="false"
+    */
    public Date getDateCreated()
    {
        if (dateCreated == null) 

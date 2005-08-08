@@ -36,6 +36,7 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
     }
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.id column="id" type="string" 
      *    generator-class="uuid.hex" unsaved-value="null"
@@ -51,7 +52,7 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
     }
 
     /**
-    	* Setter is needed in RollerImpl.storePersistentObject()
+     * Setter is needed in RollerImpl.storePersistentObject()
      */
     public void setData(org.roller.pojos.PersistentObject otherData)
     {
@@ -62,6 +63,7 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
     }
 
     /** 
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field 
      * @hibernate.many-to-one column="entryid" cascade="none" not-null="true"
      */
@@ -76,6 +78,7 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="name" non-null="true" unique="false"
      */
@@ -90,6 +93,7 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
     }
     
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="value" non-null="true" unique="false"
      */

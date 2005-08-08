@@ -2,34 +2,44 @@ package org.roller.pojos;
 
 import java.io.Serializable;
 import java.util.Date;
+import org.roller.RollerException;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 
 
-/** Page bean.
- * @author David M Johnson
+
+/**
+ * Pojo that represents a single user defined template page.
  *
- * @ejb:bean name="PageData"
+ * This template is different from the generic template because it also
+ * contains a reference to the website it is part of.
+ *
+ * @author David M Johnson
+ * 
+ * @ejb:bean name="WeblogTemplate"
  * @struts.form include-all="true"
  * @hibernate.class table="webpage" 
  * hibernate.jcs-cache usage="read-write"
  */
-public class PageData extends WebsiteObject implements Serializable
+public class WeblogTemplate extends PersistentObject
+   implements Serializable, Template
 {
    static final long serialVersionUID = -613737191638263428L;
 
-   protected java.lang.String id;
-   protected java.lang.String name;
-   protected java.lang.String description;
-   protected java.lang.String link;
-   protected java.lang.String template;
-   protected java.util.Date updateTime;
+   private java.lang.String id;
+   private java.lang.String name;
+   private java.lang.String description;
+   private java.lang.String link;
+   private java.lang.String contents;
+   private java.util.Date lastModified;
 
    protected WebsiteData mWebsite = null;
 
-   public PageData()
+   public WeblogTemplate()
    {
    }
 
-   public PageData( 
+   public WeblogTemplate( 
        java.lang.String id,
        WebsiteData website,
        java.lang.String name,
@@ -43,19 +53,19 @@ public class PageData extends WebsiteObject implements Serializable
       this.name = name;
       this.description = description;
       this.link = link;
-      this.template = template;
-      this.updateTime = (Date)updateTime.clone();
+      this.contents = template;
+      this.lastModified = (Date)updateTime.clone();
    }
 
-   public PageData( PageData otherData )
+   public WeblogTemplate( WeblogTemplate otherData )
    {
       this.id = otherData.id;
       this.mWebsite = otherData.mWebsite;
       this.name = otherData.name;
       this.description = otherData.description;
       this.link = otherData.link;
-      this.template = otherData.template;
-      this.updateTime = otherData.updateTime;
+      this.contents = otherData.contents;
+      this.lastModified = otherData.lastModified;
 
    }
 
@@ -135,34 +145,34 @@ public class PageData extends WebsiteObject implements Serializable
     * @ejb:persistent-field 
     * @hibernate.property column="template" non-null="true" unique="false"
     */
-   public java.lang.String getTemplate()
+   public java.lang.String getContents()
    {
-      return this.template;
+      return this.contents;
    }
    /** @ejb:persistent-field */ 
-   public void setTemplate( java.lang.String template )
+   public void setContents( java.lang.String template )
    {
-      this.template = template;
+      this.contents = template;
    }
 
    /** 
     * @ejb:persistent-field 
     * @hibernate.property column="updatetime" non-null="true" unique="false"
     */
-   public java.util.Date getUpdateTime()
+   public java.util.Date getLastModified()
    {
-      return (Date)this.updateTime.clone();
+      return (Date)this.lastModified.clone();
    }   
    /** @ejb:persistent-field */ 
-   public void setUpdateTime(final java.util.Date newtime )
+   public void setLastModified(final java.util.Date newtime )
    {
       if (newtime != null)	
       {
-      	 updateTime = (Date)newtime.clone();
+      	 lastModified = (Date)newtime.clone();
       }
       else 
       {
-      	 updateTime = null;
+      	 lastModified = null;
       }
    }
 
@@ -171,8 +181,8 @@ public class PageData extends WebsiteObject implements Serializable
       StringBuffer str = new StringBuffer("{");
 
       str.append("id=" + id + " " + "name=" + name + " " + "description=" 
-      + description + " " + "link=" + link + " " + "template=" + template 
-      + " " + "updateTime=" + updateTime);
+      + description + " " + "link=" + link + " " + "template=" + contents 
+      + " " + "updateTime=" + lastModified);
       str.append('}');
 
       return(str.toString());
@@ -180,9 +190,9 @@ public class PageData extends WebsiteObject implements Serializable
 
    public boolean equals( Object pOther )
    {
-      if( pOther instanceof PageData )
+      if( pOther instanceof WeblogTemplate )
       {
-         PageData lTest = (PageData) pOther;
+         WeblogTemplate lTest = (WeblogTemplate) pOther;
          boolean lEquals = true;
 
          if( this.id == null )
@@ -225,21 +235,21 @@ public class PageData extends WebsiteObject implements Serializable
          {
             lEquals = lEquals && this.link.equals( lTest.link );
          }
-         if( this.template == null )
+         if( this.contents == null )
          {
-            lEquals = lEquals && ( lTest.template == null );
+            lEquals = lEquals && ( lTest.contents == null );
          }
          else
          {
-            lEquals = lEquals && this.template.equals( lTest.template );
+            lEquals = lEquals && this.contents.equals( lTest.contents );
          }
-         if( this.updateTime == null )
+         if( this.lastModified == null )
          {
-            lEquals = lEquals && ( lTest.updateTime == null );
+            lEquals = lEquals && ( lTest.lastModified == null );
          }
          else
          {
-            lEquals = lEquals && this.updateTime.equals( lTest.updateTime );
+            lEquals = lEquals && this.lastModified.equals( lTest.lastModified );
          }
 
          return lEquals;
@@ -258,8 +268,8 @@ public class PageData extends WebsiteObject implements Serializable
       result = 37*result + ((this.name != null) ? this.name.hashCode() : 0);
       result = 37*result + ((this.description != null) ? this.description.hashCode() : 0);
       result = 37*result + ((this.link != null) ? this.link.hashCode() : 0);
-      result = 37*result + ((this.template != null) ? this.template.hashCode() : 0);
-      result = 37*result + ((this.updateTime != null) ? this.updateTime.hashCode() : 0);
+      result = 37*result + ((this.contents != null) ? this.contents.hashCode() : 0);
+      result = 37*result + ((this.lastModified != null) ? this.lastModified.hashCode() : 0);
       return result;
       }
 
@@ -269,19 +279,33 @@ public class PageData extends WebsiteObject implements Serializable
    public void setData( org.roller.pojos.PersistentObject otherData )
    {
 
-      this.id = ((PageData)otherData).id;
+      this.id = ((WeblogTemplate) otherData).id;
 
-      this.mWebsite = ((PageData)otherData).mWebsite;
+      this.mWebsite = ((WeblogTemplate) otherData).mWebsite;
 
-      this.name = ((PageData)otherData).name;
+      this.name = ((WeblogTemplate) otherData).name;
 
-      this.description = ((PageData)otherData).description;
+      this.description = ((WeblogTemplate) otherData).description;
 
-      this.link = ((PageData)otherData).link;
+      this.link = ((WeblogTemplate) otherData).link;
 
-      this.template = ((PageData)otherData).template;
+      this.contents = ((WeblogTemplate) otherData).contents;
 
-      this.updateTime = ((PageData)otherData).updateTime;
+      this.lastModified = ((WeblogTemplate) otherData).lastModified;
+   }
+
+   public boolean canSave() throws RollerException
+   {
+       Roller roller = RollerFactory.getRoller();
+       if (roller.getUser().equals(UserData.SYSTEM_USER)) 
+       {
+           return true;
+       }
+       if (getWebsite().hasUserPermissions(roller.getUser(), PermissionsData.ADMIN))
+       {
+           return true;
+       }
+       return false;
    }
 
 }

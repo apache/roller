@@ -19,7 +19,7 @@ import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RoleData;
 import org.roller.pojos.UserCookieData;
@@ -116,13 +116,13 @@ public abstract class UserManagerImpl implements UserManager
     /** 
      * @see org.roller.model.UserManager#retrievePage(java.lang.String)
      */
-    public PageData retrievePageReadOnly(String id) throws RollerException
+    public WeblogTemplate retrievePageReadOnly(String id) throws RollerException
     {
         // Don't hit database for templates stored on disk
         if (id != null && id.endsWith(".vm")) return null; 
 
         // Hibernate has a read-only flag: LockMode.READ
-        return (PageData)mStrategy.load(id,PageData.class);
+        return (WeblogTemplate)mStrategy.load(id,WeblogTemplate.class);
     }
 
     //------------------------------------------------------------------- Role
@@ -144,22 +144,22 @@ public abstract class UserManagerImpl implements UserManager
 
     //------------------------------------------------------------------- Page
 
-    public PageData retrievePage(String id) throws RollerException
+    public WeblogTemplate retrievePage(String id) throws RollerException
     {
         // Don't hit database for templates stored on disk
         if (id != null && id.endsWith(".vm")) return null; 
 
-        return (PageData)mStrategy.load(id,PageData.class);
+        return (WeblogTemplate)mStrategy.load(id,WeblogTemplate.class);
     }
  
     public void removePage(String id) throws RollerException
     {
-        mStrategy.remove(id,PageData.class);
+        mStrategy.remove(id,WeblogTemplate.class);
     }
 
     public void removePageSafely(String id) throws RollerException
     {
-        PageData pd = retrievePageReadOnly(id);
+        WeblogTemplate pd = retrievePageReadOnly(id);
         if (pd == null) return;
 
         WebsiteData wd = pd.getWebsite();
@@ -174,14 +174,14 @@ public abstract class UserManagerImpl implements UserManager
     }
 
     /**
-     * @see org.roller.model.UserManager#storePage(org.roller.pojos.PageData)
+     * @see org.roller.model.UserManager#storePage(org.roller.pojos.WeblogTemplate)
      */
-    public void storePage(PageData data) throws RollerException
+    public void storePage(WeblogTemplate data) throws RollerException
     {
         mStrategy.store(data);
     }
     
-    public String fixPageLink(PageData data) throws RollerException
+    public String fixPageLink(WeblogTemplate data) throws RollerException
     {
         String link = Utilities.removeHTML(data.getName());
         link = Utilities.removeNonAlphanumeric(link);
@@ -348,37 +348,6 @@ public abstract class UserManagerImpl implements UserManager
            "",
             zero, zero, null);
         b6.save();
-
-        //
-        // READ THEME FILES AND CREATE PAGES FOR USER
-        //
-        Iterator iter = pages.keySet().iterator();
-        while ( iter.hasNext() )
-        {
-            String pageName = (String) iter.next();
-            String sb = (String)pages.get( pageName );
-              
-            // Store each Velocity template as a page
-            PageData pd = new PageData( null,
-                website,         // website
-                pageName,        // name
-                pageName,        // description
-                pageName,        // link
-                sb,              // template
-                new Date()       // updateTime                
-            );
-            mStrategy.store(pd);
-            
-            if ( pd.getName().equals("Weblog") )
-            {  
-                website.setDefaultPageId(pd.getId());                 
-            }
-            else if ( pd.getName().equals("_day") )
-            {
-                website.setWeblogDayPageId(pd.getId());                 
-            }                
-        }
-        mStrategy.store(website); 
         
         // Add user as member of website
         PermissionsData perms = new PermissionsData();

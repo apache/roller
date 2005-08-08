@@ -33,7 +33,7 @@ import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.LanguageUtil;
@@ -110,12 +110,12 @@ public class CommentServlet extends PageServlet
             WebsiteData website = rreq.getWebsite();
                 
             // Request specifies popup
-            PageData page = null;
+            org.roller.pojos.Template page = null;
             Exception pageException = null;
             try 
             {
                 // Does user have a popupcomments page?
-                page = userMgr.getPageByName(website, "_popupcomments");
+                page = website.getPageByName("_popupcomments");
             }
             catch(Exception e )
             {
@@ -130,7 +130,7 @@ public class CommentServlet extends PageServlet
             // User doesn't have one so return the default
             if (page == null) 
             {
-                page = new PageData("/popupcomments.vm", website, "Comments", 
+                page = new WeblogTemplate("/popupcomments.vm", website, "Comments", 
                     "Comments", "dummy_link", "dummy_template", new Date());
             }
             rreq.setPage(page);
@@ -360,6 +360,8 @@ public class CommentServlet extends PageServlet
                 "users.comments.emailnotify");
         if (notify && site.getEmailComments().booleanValue())
         {
+            mLogger.debug("Comment notification enabled ... preparing email");
+            
             // Determine message and addressing options from init parameters
             boolean separateMessages = 
                     RollerConfig.getBooleanProperty(
@@ -454,10 +456,10 @@ public class CommentServlet extends PageServlet
             commentURL.append("/comments/");
             commentURL.append(site.getHandle());
             
-            PageData page = rreq.getPage();
+            org.roller.pojos.Template page = rreq.getPage();
             if (page == null)
             {
-                commentURL.append("?anchor=");
+                commentURL.append("?entry=");
             }
             else
             {
@@ -560,6 +562,8 @@ public class CommentServlet extends PageServlet
                 }
             }
 
+            mLogger.debug("Done sending email message");
+            
         } // if email enabled
     }
 

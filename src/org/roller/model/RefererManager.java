@@ -105,19 +105,34 @@ public interface RefererManager extends Serializable
 
     //---------------------------------------------- Referer tracking turnover
 
+    /**
+     * Force refer of referer hit counts and deletes all referers that do nto have excerpts.
+     */
     public void forceTurnover(String websiteId) throws RollerException;
 
+    /**
+     * Check to see if it's time for turnover.
+     */
     public void checkForTurnover(boolean forceTurnover, String websiteId)
             throws RollerException;
 
     //----------------------------------------------- Standard manager methods
 
+    /**
+     * Retrieve referer specifie by ID.
+     */
     public RefererData retrieveReferer(String id)
         throws RollerException;
 
+    /**
+     * Remove referer specified by ID.
+     */
     public void removeReferer( String id )
         throws RollerException;
 
+    /**
+     * Release all resources associated with Roller session.
+     */
     public void release();
 }
 

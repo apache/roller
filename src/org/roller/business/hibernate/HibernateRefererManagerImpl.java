@@ -108,6 +108,8 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             
             String[] ignoreWords = StringUtils.split(
                 StringUtils.deleteWhitespace(website.getIgnoreWords()),",");
+            if (ignoreWords.length == 0) return;
+            
             Junction or = Expression.disjunction();          
             for (int i=0; i<ignoreWords.length; i++) 
             {

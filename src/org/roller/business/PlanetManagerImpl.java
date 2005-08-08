@@ -39,13 +39,17 @@ public abstract class PlanetManagerImpl implements PlanetManager
     protected Roller roller = null;
     protected PersistenceStrategy strategy;
     protected Date lastUpdated = new Date();
-    protected List aggregation = null;
     protected Map lastUpdatedByGroup = new HashMap();
     
     // Cache up to 20 aggregations, each for up to 30 minutes
     // TODO: make this aggregation cache configurable
     protected LRUCache2 aggregationsByGroup = 
-            new LRUCache2(20, 30 * 60 * 1000);
+        new LRUCache2(20, 30 * 60 * 1000);
+    
+    // Cache up to 20 aggregations, each for up to 30 minutes
+    // TODO: make this top-subscriptions cache configurable
+    protected LRUCache2 topSubscriptionsByGroup = 
+        new LRUCache2(20, 30 * 60 * 1000);
 
     private static Log logger =
         LogFactory.getFactory().getInstance(PlanetManagerImpl.class);
@@ -209,6 +213,7 @@ public abstract class PlanetManagerImpl implements PlanetManager
                 }
                 sub.purgeEntries();
                 sub.addEntries(newEntries); 
+                if (roller != null) roller.commit();
             }
             long subEndTime = System.currentTimeMillis();  
             logger.info("   " + count + " - " 
@@ -226,8 +231,8 @@ public abstract class PlanetManagerImpl implements PlanetManager
 
     public synchronized void clearCachedAggregations() 
     {
-        aggregation = null;
         aggregationsByGroup.purge();
+        topSubscriptionsByGroup.purge();
         lastUpdatedByGroup.clear();
         lastUpdated = new Date();
     }

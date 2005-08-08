@@ -18,21 +18,23 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Manages autoping storage/retrieval, queries and queue.
+ */
 public interface AutoPingManager extends Serializable
 {
     /**
-     * Release all resources.
+     * Release all resources associated with Roller session.
      */
     public void release();
 
     /**
      * Create an auto ping configuration specifying that the given ping target is to be pinged when the given website
      * changes.
-     *
      * @param pingTarget target to ping
-     * @param website    website whose changes should trigger the ping
+     * @param website website whose changes should trigger the ping
      * @return new auto ping configuration
-     * @throws RollerException
+     * @throws RollerException 
      */
     public AutoPingData createAutoPing(PingTargetData pingTarget, WebsiteData website)
         throws RollerException;

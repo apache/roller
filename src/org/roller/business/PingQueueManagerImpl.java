@@ -14,6 +14,9 @@ import org.roller.RollerException;
 import org.roller.model.PingQueueManager;
 import org.roller.pojos.PingQueueEntryData;
 
+/**
+ * Abstract implementation of PingQueueManager.
+ */
 public abstract class PingQueueManagerImpl implements PingQueueManager
 {
     protected PersistenceStrategy persistenceStrategy;

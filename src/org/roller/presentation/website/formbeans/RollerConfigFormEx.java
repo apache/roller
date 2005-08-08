@@ -8,8 +8,6 @@ import org.roller.RollerException;
 import org.roller.pojos.RollerConfigData;
 import org.roller.presentation.forms.RollerConfigForm;
 
-import sun.security.krb5.internal.crypto.d;
-
 /**
  * These properties are not persistent and are only needed for the UI.
  *

@@ -19,6 +19,7 @@ import org.roller.RollerException;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.EntryAttributeData;
 import org.roller.pojos.WeblogEntryData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.forms.WeblogEntryForm;
@@ -63,16 +64,17 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void initNew(HttpServletRequest request, HttpServletResponse response) 
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        if (RollerSession.getRollerSession(request).getCurrentWebsite().getDefaultPlugins() != null)
+        RollerSession rses = RollerSession.getRollerSession(request); 
+        if (rses.getCurrentWebsite().getDefaultPlugins() != null)
         {
             setPluginsArray(StringUtils.split(
-                    RollerSession.getRollerSession(request).getCurrentWebsite().getDefaultPlugins(), ",") );
+                    rses.getCurrentWebsite().getDefaultPlugins(), ",") );
         }
         status = WeblogEntryData.DRAFT;
         allowComments = Boolean.TRUE;
         updateTime = new Timestamp(new Date().getTime());
         pubTime = updateTime;
-        initPubTimeDateString(request.getLocale());        
+        initPubTimeDateStrings(rses.getCurrentWebsite(), request.getLocale());        
     }
     
     /**
@@ -82,6 +84,8 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         throws RollerException
     {
         super.copyTo(entry, locale);
+        
+        // First parts the date string from the calendar 
         final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
         final Date newDate;
         try
@@ -92,8 +96,11 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         {
             throw new RollerException("ERROR parsing date.");
         }
+        
+        // Now handle the time from the hour, minute and second combos
         final Calendar cal = Calendar.getInstance(locale);
         cal.setTime(newDate);
+        cal.setTimeZone(entry.getWebsite().getTimeZoneInstance());
         cal.set(Calendar.HOUR_OF_DAY, getHours().intValue());
         cal.set(Calendar.MINUTE, getMinutes().intValue());
         cal.set(Calendar.SECOND, getSeconds().intValue());
@@ -151,7 +158,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         mCategoryId = entry.getCategory().getId();
         mCreatorId = entry.getCreator().getId();
         
-        initPubTimeDateString(locale);
+        initPubTimeDateStrings(entry.getWebsite(), locale);
         
         if (entry.getPlugins() != null)
         {
@@ -196,14 +203,17 @@ public class WeblogEntryFormEx extends WeblogEntryForm
      * Localize the PubTime date string.
      * @param locale
      */
-    private void initPubTimeDateString(Locale locale)
+    private void initPubTimeDateStrings(WebsiteData website, Locale locale)
     {
-        Calendar cal = Calendar.getInstance(locale);
-        cal.setTime(getPubTime());        
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(getPubTime()); 
+        cal.setTimeZone(website.getTimeZoneInstance());
         mHours = new Integer(cal.get(Calendar.HOUR_OF_DAY));
         mMinutes = new Integer(cal.get(Calendar.MINUTE));
-        mSeconds = new Integer(cal.get(Calendar.SECOND));        
-        DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+        mSeconds = new Integer(cal.get(Calendar.SECOND));
+        
+        DateFormat df = DateFormat.getDateInstance(
+           DateFormat.SHORT, locale);
         mDateString = df.format(getPubTime());
     }
 

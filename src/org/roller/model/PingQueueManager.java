@@ -25,7 +25,7 @@ import java.util.List;
 public interface PingQueueManager extends Serializable
 {
     /**
-     * Release resources.
+     * Release all resources associated with Roller session.
      */
     public void release();
 

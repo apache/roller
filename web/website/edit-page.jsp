@@ -4,7 +4,7 @@
 
 <html:form action="/editor/page" method="post">
 
-	<h1><fmt:message key="pageForm.editPage" />:<bean:write name="pageForm" property="name" /></h1>
+	<h1><fmt:message key="pageForm.editPage" />:<bean:write name="weblogTemplateForm" property="name" /></h1>
 	
     <table>
         <tr>
@@ -24,7 +24,7 @@
         </tr>
         <tr>
             <td><fmt:message key="pageForm.template" /><br />
-            <html:textarea property="template" cols="80" rows="30" style="width: 100%" />
+            <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
             </td>
         </tr>
     </table>

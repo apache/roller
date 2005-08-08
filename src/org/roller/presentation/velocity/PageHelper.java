@@ -1,6 +1,4 @@
 package org.roller.presentation.velocity;
-
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,12 +17,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
 import org.roller.RollerException;
-import org.roller.pojos.RefererData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.pojos.wrapper.RefererDataWrapper;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.roller.presentation.LanguageUtil;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
@@ -165,29 +163,20 @@ public class PageHelper
     
     /**
      * Evaluates the String as a Velocimacro, returning the results.
+     *
+     * @deprecated shouldn't be used anymore because it's dangerous
      * 
      * @param str String
      * @return String
      */
     public String evaluateString(String str)
     {
-        if (mVelocityContext == null) return str;
-        
-        StringWriter sw = new StringWriter();
-        try
-        {
-            Velocity.evaluate( mVelocityContext, sw, "evalStr", str );
-            return sw.toString();
-        }
-        catch (Exception e)
-        {
-            mLogger.warn("VelocityHelper.evaluateString()", e);
-        }
-        return "";
+        // we no longer allow users to do this because it is dangerous
+        return str;
     }
    
     /** Build the URL for editing an WeblogEntry **/
-    public String getEntryEditUrl(WeblogEntryData entry)
+    public String getEntryEditUrl(WeblogEntryDataWrapper entry)
     {
         Hashtable params = new Hashtable();
         params.put( RollerRequest.WEBLOGENTRYID_KEY, entry.getId());
@@ -210,7 +199,7 @@ public class PageHelper
     }
     
     //-------------------------------------------------------------------------
-    public String getToggleLinkbackDisplayHTML(RefererData referer)
+    public String getToggleLinkbackDisplayHTML(RefererDataWrapper referer)
     {
         String ret = "";
         String link = null;
@@ -483,14 +472,21 @@ public class PageHelper
      */
     public String renderPlugins(String str)
     {
+        mLogger.debug("Rendering page plugins on String");
+        
         if (mPagePlugins != null)
         {
             Iterator iter = mPagePlugins.iterator();
+            PagePlugin plugin = null;
             while (iter.hasNext())
             {
-                str = ((PagePlugin)iter.next()).render(str);
+                plugin = (PagePlugin) iter.next();
+                
+                mLogger.debug("applying plugin - ");
+                str = plugin.render(str);
             }
         }
+        
         return str;
     }
     
@@ -501,12 +497,14 @@ public class PageHelper
      * @param str
      * @return
      */
-    public String renderPlugins(WeblogEntryData entry)
+    public String renderPlugins(WeblogEntryDataWrapper entry)
     {
+        mLogger.debug("Rendering page plugins on WeblogEntryData");
+        
         // we have to make a copy to temporarily store the
         // changes wrought by Plugins (otherwise they might
         // end up persisted!).
-        WeblogEntryData copy = new WeblogEntryData(entry);
+        WeblogEntryData copy = new WeblogEntryData(entry.getPojo());
         
         if (mPagePlugins != null)
         {
@@ -536,6 +534,7 @@ public class PageHelper
                 }
             }
         }
+        
         return copy.getText();
     }
     

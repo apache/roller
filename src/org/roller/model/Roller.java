@@ -86,16 +86,29 @@ public interface Roller extends Serializable
     public IndexManager getIndexManager() throws RollerException;
     
     /**
-     * Get PlanetManager associated with the Roller instance.
+     * Get PlanetManager associated with this Roller instance.
      */
     public PlanetManager getPlanetManager() throws RollerException;
 
-        
+    /**
+     * Get ThemeManager associated with this Roller instance.
+     */
+    public ThemeManager getThemeManager() throws RollerException;
+    
     /** Begin transaction for a thread.
      */ 
     public void begin() throws RollerException;
+    /**
+     * Start Roller session on behalf of specified user.
+     */
     public void begin(UserData user) throws RollerException;
+    /**
+     * Set user for Roller session.
+     */
     public void setUser(UserData user) throws RollerException;
+    /**
+     * Get user associated with Roller session.
+     */
     public UserData getUser() throws RollerException;
     
     /** Commit transaction for a thread.
@@ -107,7 +120,8 @@ public interface Roller extends Serializable
      */ 
     public void rollback();
     
-    /** Rollback and release associated resources for a thread.
+    /**
+     * Release all resources associated with Roller session.
      */ 
     public void release();
 

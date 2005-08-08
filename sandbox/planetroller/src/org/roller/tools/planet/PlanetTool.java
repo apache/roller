@@ -238,6 +238,11 @@ public class PlanetTool extends PlanetManagerImpl
     {
         throw new RuntimeException("Not implemented");
     }
+    
+    public List getTopSubscriptions(PlanetGroupData group, int max) throws RollerException
+    {
+        throw new RuntimeException("Not implemented");
+    }
 
     public List getTopSubscriptions(PlanetGroupData group, int max) throws RollerException
     {

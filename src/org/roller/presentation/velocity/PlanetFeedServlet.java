@@ -1,11 +1,10 @@
 package org.roller.presentation.velocity;
+
 import java.io.IOException;
 import java.util.Date;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -64,7 +63,8 @@ public class PlanetFeedServlet extends VelocityServlet
                 RollerFactory.getRoller().getPlanetManager();
             if (request.getParameter("group") != null) 
             {
-                context.put("groupName", request.getParameter("group"));
+                context.put("group", 
+                        planet.getGroup(request.getParameter("group")));
             }
             context.put("planet", planet);
             context.put("date", new Date());

@@ -10,6 +10,7 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
+import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.PlanetManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -59,8 +60,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask
         try
         {
             List liveUserFeeds = new ArrayList();            
-            String baseURL = 
-                roller.getConfigManager().getRollerConfig().getAbsoluteURL();
+            String baseURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
             if (baseURL == null || baseURL.trim().length()==0)
             {
                 logger.error("ERROR: cannot sync websites with Planet Roller - "

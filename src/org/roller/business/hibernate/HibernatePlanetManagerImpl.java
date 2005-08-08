@@ -47,7 +47,7 @@ import org.roller.pojos.PlanetSubscriptionData;
  */
 public class HibernatePlanetManagerImpl extends PlanetManagerImpl
 {
-    private List topSubscriptions;
+    private static final String NO_GROUP = "zzz_nogroup_zzz"; 
     
     private static Log logger = 
         LogFactory.getFactory().getInstance(HibernatePlanetManagerImpl.class);
@@ -194,20 +194,14 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
     public synchronized List getAggregation(PlanetGroupData group, int maxEntries) 
         throws RollerException
     {
-        long startTime = System.currentTimeMillis();
         List ret = null;
         try
         {
-            if (group != null) 
-            {
-                ret = (List)aggregationsByGroup.get(group);
-            }
-            else 
-            {
-                ret = aggregation;
-            }
+            String groupHandle = (group == null) ? NO_GROUP : group.getHandle();
+            ret = (List)aggregationsByGroup.get(groupHandle);
             if (ret == null) 
             {
+                long startTime = System.currentTimeMillis();
                 Session session = 
                     ((HibernateStrategy)strategy).getSession();
                 if (group != null)
@@ -241,16 +235,12 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
                 {
                     retLastUpdated = new Date();
                 }
-                if (group != null)
-                {
-                    aggregationsByGroup.put(group, ret);
-                    lastUpdatedByGroup.put(group, retLastUpdated);
-                }
-                else
-                {
-                    aggregation = ret;
-                    lastUpdated = retLastUpdated;
-                }
+                aggregationsByGroup.put(groupHandle, ret);
+                lastUpdatedByGroup.put(groupHandle, retLastUpdated);
+
+                long endTime = System.currentTimeMillis();
+                logger.info("Generated aggregation in "
+                                    +((endTime-startTime)/1000.0)+" seconds");
             }
         }
         catch (Exception e)
@@ -258,9 +248,6 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
             logger.error("ERROR: building aggregation for: "+group, e);
             throw new RollerException(e);
         }
-        long endTime = System.currentTimeMillis();
-        logger.info("Generated aggregation in "
-                                    +((endTime-startTime)/1000.0)+" seconds");
         return ret; 
     }
 
@@ -316,7 +303,9 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
 
     public synchronized List getTopSubscriptions(int max) throws RollerException
     {
-        if (topSubscriptions == null)
+        String groupHandle = NO_GROUP;
+        List ret = (List)topSubscriptionsByGroup.get(groupHandle);
+        if (ret == null)
         {
             try
             {
@@ -325,20 +314,23 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
                         session.createCriteria(PlanetSubscriptionData.class);
                 criteria.setMaxResults(max);
                 criteria.addOrder(Order.desc("inboundblogs"));
-                topSubscriptions = criteria.list();
+                ret = criteria.list();
             }
             catch (HibernateException e)
             {
                 throw new RollerException(e);
             }
+            topSubscriptionsByGroup.put(groupHandle, ret);
         }
-        return topSubscriptions;
+        return ret;
     }
 
     public synchronized List getTopSubscriptions(
             PlanetGroupData group, int max) throws RollerException
     {
-        if (topSubscriptions == null)
+        String groupHandle = (group == null) ? NO_GROUP : group.getHandle();
+        List ret = (List)topSubscriptionsByGroup.get(groupHandle);
+        if (ret == null)
         {
             try
             {
@@ -351,21 +343,15 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
                    +"order by sub.inboundblogs desc");
                 query.setString("groupHandle", group.getHandle());
                 query.setMaxResults(max);
-                topSubscriptions = query.list();
+                ret = query.list();
             }
             catch (HibernateException e)
             {
                 throw new RollerException(e);
             }
+            topSubscriptionsByGroup.put(groupHandle, ret);
         }
-        return topSubscriptions;
+        return ret;
     }
-
-    public synchronized void clearCachedAggregations() 
-    {
-        super.clearCachedAggregations();
-        topSubscriptions = null;
-    }
-
 }
 
