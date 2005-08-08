@@ -4,8 +4,24 @@
   <title></title>
 </head>
 <body>
-Abstract implementation of the Roller backend interfaces defined in the
-org.roller.model package. The Roller presentation layer should not use
-any of the org.roller.business.* classes directly.
+Abstract implementation of the business layer interfaces.
+
+<p>At this level we avoid dependance on specific persistence engines 
+(e.g. Hibernate). We do this by using an interface named 
+{@link org.roller.business.PersistenceStrategy PersistenceStrategy} 
+to store, retrieve and remove 
+{@link org.roller.pojos.PersistentObject PersistentObjects}.</p>
+
+<img src="roller-persistence.png" 
+    alt="diagram of Roller persistence object and strategy" />
+
+<p>The diagram below illustrates the dependency relationships between the 
+{@link org.roller.pojos org.roller.pojos}, 
+{@link org.roller.model org.roller.model}, and 
+org.roller.business packages.</p>
+
+<img src="roller-services-impl.png" 
+    alt="diagram of Roller business and persistence layers" />
+
 </body>
 </html>

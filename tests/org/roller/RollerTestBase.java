@@ -22,9 +22,11 @@ import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.PermissionsData;
+import org.roller.pojos.Theme;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 
 /**

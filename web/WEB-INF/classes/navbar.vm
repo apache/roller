@@ -1,5 +1,5 @@
 #**
- * Macros to display the Roller Navigation bars.
+ * Roller menus and navigation bars.
  * @author Lance Lavandowska (conversion to Velocimacros)
  *#
 
@@ -28,15 +28,15 @@
 #end
 
 #**
- * Print a link for a menu item.  Take into consideration:
- * 1. Should this be particularly CSS friendly.
- * 2. Or is this specifically a vertical menu.
- * 3. Otherwise use the specified delimiter.
+ * Print a link for a menu item.  Take into consideration:<br />
+ * 1. Should this be particularly CSS friendly.<br />
+ * 2. Or is this specifically a vertical menu.<br />
+ * 3. Otherwise use the specified delimiter.<br />
  *
- * @param linkUrl The URL to be used in the href attribute.
+ * @param linkUrl   The URL to be used in the href attribute.
  * @param linkValue The value used to look up the link's label.
- * @param useCSS  Use CSS based formatting.
- * @param vertical Use "hard-formatting" to create vertical menu.
+ * @param useCSS    Use CSS based formatting.
+ * @param vertical  Use "hard-formatting" to create vertical menu.
  * @param delimiter Seperate horizontal items with this value.
  *#
 #macro( printNavLink $linkUrl $linkValue $useCSS $vertical $delimiter )
@@ -49,8 +49,9 @@
 #**
  * Show Roller Page Navigation Bar, includes links to all pages
  * except those that are hidden (because the start with "_").
- * @param vertical True if bar is to be displayed vertically.
+ * @param vertical  True if bar is to be displayed vertically.
  * @param delimiter Delimiter between entries in bar.
+ * @param useCSS    Use CSS based formatting.
  *#
 #macro( showNavBar2 $vertical $delimiter $useCSS)
     #set( $container = "div" )
@@ -107,7 +108,10 @@
 #end
 
 #**
- * Backwards compatibility version.
+ * Show Roller Page Navigation Bar, includes links to all pages
+ * except those that are hidden (because the start with "_").
+ * @param vertical  True if bar is to be displayed vertically.
+ * @param delimiter Delimiter between entries in bar.
  *#
 #macro( showNavBar $vertical $delimiter )
     #showNavBar2( $vertical $delimiter false)

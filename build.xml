@@ -57,7 +57,7 @@ Key Targets:
 <!-- XDoclet code generation -->
 <!-- ********************************************************************* -->
 	
-<target name="generate" depends="gen-forms,gen-hibernate,gen-web" >
+<target name="generate" depends="gen-forms,gen-hibernate,gen-web,gen-wrappers" >
 </target>
 
 <!-- ============================================== -->
@@ -74,6 +74,7 @@ Key Targets:
 
     <!-- Use EJBDoclet to generate Struts forms -->
     <ejbdoclet destdir="${build.generated}/src" excludedtags="@version,@author">
+	<fileset dir="./src" includes="org/roller/pojos/WeblogTemplate.java" />
         <fileset dir="./src" includes="org/roller/pojos/*Data.java" />
         <fileset dir="./src" includes="org/roller/business/*Data.java" /> 
         &custom-gen-web;
@@ -129,6 +130,7 @@ Key Targets:
         excludedtags="@version,@author"
         addedtags="@xdoclet-generated at ${TODAY}"
         force="true">
+	<fileset dir="./src" includes="org/roller/pojos/WeblogTemplate.java" />
         <fileset dir="./src" includes="org/roller/pojos/*Data.java" />
         <fileset dir="./src" includes="org/roller/pojos/*Assoc.java" />
         <fileset dir="./src" includes="org/roller/business/*Data.java" />
@@ -193,6 +195,46 @@ Key Targets:
 
 </target>
 
+<!-- ============================================== -->
+<!-- Generate pojo wrappers -->
+<target name="gen-wrappers" description="XDoclet generate pojo wrappers">
+
+    <!-- Define the XDoclet task -->
+    <taskdef  name="xdoclet" classname="xdoclet.DocletTask"
+        classpathref="xdoclet.path" />
+    
+    <xdoclet destdir="${build.generated}/src.business">
+        
+        <packageSubstitution packages="pojos" substituteWith="pojos.wrapper"/>
+        
+        <fileset dir="./src">
+            <!-- 
+                it may be easier to glob using *Data.java at some point, but
+                for now that will generate a lot of unneeded classes.
+                
+                maybe we can extend the process to only wrap classes that have
+                methods tagged with @roller.wrapPojoMethod ??
+            -->
+            <include name="org/roller/pojos/BookmarkData.java"/>
+            <include name="org/roller/pojos/CommentData.java"/>
+            <include name="org/roller/pojos/EntryAttributeData.java"/>
+            <include name="org/roller/pojos/FolderData.java"/>
+            <include name="org/roller/pojos/RefererData.java"/>
+            <include name="org/roller/pojos/Template.java"/>
+            <include name="org/roller/pojos/UserData.java"/>
+            <include name="org/roller/pojos/WeblogEntryData.java"/>
+            <include name="org/roller/pojos/WeblogCategoryData.java"/>
+            <include name="org/roller/pojos/WebsiteData.java"/>
+        </fileset>
+
+        <template 
+            destinationFile="{0}Wrapper.java"
+            templateFile="metadata/xdoclet/pojo_wrapper.xdt"
+            subTaskName="Pojo Wrappers" />
+    </xdoclet>
+        
+</target>
+        
 <!-- ********************************************************************* -->
 <!-- Compile and jar Business Tier classes -->
 <!-- ********************************************************************* -->
@@ -214,12 +256,14 @@ ro.buildUser=${user.name}
     <javac debug="${build.debug}" destdir="${build.compile_beans}"
         excludes="org/roller/presentation/**" >
         <src path="${basedir}/src" />
+        <src path="${build.generated}/src.business"/>
         &custom-src-beans;
         <classpath>
             <path refid="business.path"/>
             &custom-jars;
         </classpath>
     </javac>
+    
     <!-- Copy class resources -->
     <copy todir="${build.compile_beans}/org/roller/model">
         <fileset dir="${build.generated}/src.business" includes="*.hbm.xml"/>
@@ -386,12 +430,6 @@ ro.buildUser=${user.name}
     <copy todir="${build.stage_web}/WEB-INF/tlds">
         <fileset dir="${ro.tools}/lib" includes="*.tld"/>
     </copy>
-    <!-- Copy applet jars to root of servlet context -->
-    <copy todir="${build.stage_web}">
-        <fileset dir="${ro.tools}/lib">
-            <include name="ekitapplet.jar"/>
-        </fileset>
-    </copy>
     <!-- copy database related files -->
     <antcall target="stage-dbscripts" />
 
@@ -464,9 +502,17 @@ ro.buildUser=${user.name}
 </target>
 
 <!-- ********************************************************************* -->
-<!-- Generate Javadocs -->
+<!-- Generate Javadocs and Velocidocs -->
 <!-- ********************************************************************* -->
 	
+<target name="docs" depends="javadoc,velocidoc" >
+    <copy todir="${build.javadoc}">
+        <fileset dir="${build.velocidoc}/docs">
+            <include name="*.css"/>
+        </fileset>
+    </copy>
+</target>
+
 <target name="javadoc">
     <mkdir dir="${build.javadoc}"/>
     <javadoc
@@ -491,31 +537,36 @@ ro.buildUser=${user.name}
         <link href="http://jakarta.apache.org/struts/doc-1.0.2/api"/>
         <link href="http://hibernate.bluemars.net/hib_docs/api/"/>
     </javadoc>
-
-    <antcall target="velocidoc" />
+    <copy todir="${build.javadoc}">
+        <fileset dir="${basedir}/src">
+            <include name="**/roller*.png"/>
+        </fileset>
+    </copy>
 </target>
 	
 <target name="velocidoc">
     <mkdir dir="${build.velocidoc}/temp"/>
     <copy todir="${build.velocidoc}/temp">
         <fileset dir="./web/WEB-INF/classes/">
-            <include name="bookmarks.vm" />
+            <include name="bookmark.vm" />
             <include name="comments.vm" />
             <include name="navbar.vm" />
-            <include name="navbar-css.vm" />
             <include name="referer.vm" />
             <include name="roller.vm" />
             <include name="rssmacros.vm" />
             <include name="user.vm" />
             <include name="weblog.vm" />
             <include name="website.vm" />
+            <!--
+            -->
         </fileset>
     </copy>
     <mkdir dir="${build.velocidoc}/docs"/>
     <java fork="true" jar="${ro.tools}/buildtime/velocidoc-app.jar">
-        <arg line="-s ${build.velocidocs}/temp -d ${build.velocidoc}/docs"/>
-        <arg line="-ctl ${ro.tools}/buildtime/velocidoc-templates/control.vm"/>
-        <arg line="-src ${ro.tools}/buildtime/velocidoc-templates/"/>
+        <arg line="-s ${build.velocidoc}/temp \
+           -d ${build.velocidoc}/docs \
+           -t ${ro.tools}/buildtime/velocidoc-templates/ \
+           -c ${ro.tools}/buildtime/velocidoc-templates/control.vm "/>
     </java>
 </target>
 

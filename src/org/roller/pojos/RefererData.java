@@ -83,6 +83,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * Unique ID and primary key of this Referer.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.id column="id" type="string"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
@@ -98,6 +100,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * ID of website that this referer refers to.
+     *
+     * @roller.wrapPojoMethod type="pojo"
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
     public org.roller.pojos.WebsiteData getWebsite()
@@ -111,6 +115,7 @@ public class RefererData extends org.roller.pojos.PersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="pojo"
      * @hibernate.many-to-one column="entryid" cascade="none"
      */
     public org.roller.pojos.WeblogEntryData getWeblogEntry()
@@ -128,6 +133,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * Date string in YYYYMMDD format.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="datestr" non-null="true" unique="false"
      */
     public java.lang.String getDateString()
@@ -142,6 +149,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * URL of the refering page.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="refurl" non-null="true" unique="false"
      */
     public java.lang.String getRefererUrl()
@@ -156,6 +165,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * Requested URL, the URL linked to by the refering page.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="refpermalink" non-null="true" unique="false"
      */
     public java.lang.String getRefererPermalink()
@@ -170,6 +181,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * Requested URL, the URL linked to by the refering page.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="requrl" non-null="true" unique="false"
      */
     public java.lang.String getRequestUrl()
@@ -183,7 +196,9 @@ public class RefererData extends org.roller.pojos.PersistentObject
     }
 
     /** 
-     * The text on the refering page that surrounds the refering link.  
+     * The text on the refering page that surrounds the refering link. 
+     *
+     * @roller.wrapPojoMethod type="simple" 
      * @hibernate.property column="title" non-null="true" unique="false"
      */
     public java.lang.String getTitle()
@@ -198,6 +213,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * The text on the refering page that surrounds the refering link.  
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="excerpt" non-null="true" unique="false"
      */
     public java.lang.String getExcerpt()
@@ -212,6 +229,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * Should this referer be displayed?
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="visible" non-null="true" unique="false"
      */
     public java.lang.Boolean getVisible()
@@ -226,6 +245,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * Is this referer a duplicate?
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="duplicate" non-null="true" unique="false"
      */
     public java.lang.Boolean getDuplicate()
@@ -240,6 +261,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * Hits received today from this referer.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="dayhits" non-null="true" unique="false"
      */
     public java.lang.Integer getDayHits()
@@ -254,6 +277,8 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     /** 
      * Total hits received from this referer.
+     *
+     * @roller.wrapPojoMethod type="simple"
      * @hibernate.property column="totalhits" non-null="true" unique="false"
      */
     public java.lang.Integer getTotalHits()
@@ -267,6 +292,10 @@ public class RefererData extends org.roller.pojos.PersistentObject
     }
 
     //-------------------------------------------------------------------------
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getDisplayUrl(int maxWidth, boolean includeHits)
     {
         StringBuffer sb = new StringBuffer();
@@ -323,6 +352,10 @@ public class RefererData extends org.roller.pojos.PersistentObject
     }
 
     //-------------------------------------------------------------------------
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getUrl()
     {
         if (getRefererPermalink() != null)
@@ -336,6 +369,10 @@ public class RefererData extends org.roller.pojos.PersistentObject
     }
 
     //-------------------------------------------------------------------------
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getDisplayUrl()
     {
         return getDisplayUrl(50, false);

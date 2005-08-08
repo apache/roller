@@ -11,6 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.roller.business.IndexManagerImpl;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.WeblogEntryData;
 
 
@@ -49,7 +51,7 @@ public class AddEntryOperation extends WriteToIndexOperation
     public void doRun()
     {    	
         IndexWriter writer = beginWriting();
-
+        Roller roller = RollerFactory.getRoller();
         try
         {
             if (writer != null)
@@ -63,6 +65,7 @@ public class AddEntryOperation extends WriteToIndexOperation
         }
         finally
         {
+            if (roller != null) roller.release();
             endWriting();
         }    	
     }

@@ -22,7 +22,7 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
@@ -133,8 +133,8 @@ public class BloggerAPIHandler extends BaseAPIHandler
             Roller roller = RollerFactory.getRoller(); 
             UserManager userMgr = roller.getUserManager();
 
-            PageData page = userMgr.retrievePage(templateType);
-            page.setTemplate(templateData);
+            WeblogTemplate page = userMgr.retrievePage(templateType);
+            page.setContents(templateData);
             userMgr.storePage(page);
             flushPageCache(page.getWebsite());
 
@@ -177,7 +177,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
         {
             Roller roller = RollerFactory.getRoller(); 
             UserManager userMgr = roller.getUserManager();
-            PageData page = userMgr.retrievePage(templateType);
+            WeblogTemplate page = userMgr.retrievePage(templateType);
 
             if ( null == page )
             {
@@ -185,7 +185,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
             }
             else
             {
-                return page.getTemplate();
+                return page.getContents();
             }
         }
         catch (Exception e)

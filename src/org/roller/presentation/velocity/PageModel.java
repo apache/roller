@@ -15,16 +15,23 @@ import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.BookmarkManager;
 import org.roller.model.RefererManager;
+import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
+import org.roller.pojos.Template;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
-import org.roller.pojos.BookmarkComparator;
+import org.roller.pojos.CommentData;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.PageData;
 import org.roller.pojos.RefererData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.pojos.wrapper.CommentDataWrapper;
+import org.roller.pojos.wrapper.FolderDataWrapper;
+import org.roller.pojos.wrapper.RefererDataWrapper;
+import org.roller.pojos.wrapper.TemplateWrapper;
+import org.roller.pojos.wrapper.WeblogCategoryDataWrapper;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.util.StringUtils;
@@ -51,14 +58,11 @@ public class PageModel
     private HashMap              mPageMap = new HashMap();
     private RollerRequest        mRollerReq = null;
     private String               mHandle = null;
-    private WebsiteData          mWebsite = null;
-    
-    private WeblogEntryData      mNextEntry = null;
-    private WeblogEntryData      mPreviousEntry = null;
-
-    private WeblogEntryData      mLastEntry = null;
-
-    private WeblogEntryData      mFirstEntry;
+    private WebsiteData          mWebsite = null;    
+    private WeblogEntryDataWrapper      mNextEntry = null;
+    private WeblogEntryDataWrapper      mPreviousEntry = null;
+    private WeblogEntryDataWrapper      mLastEntry = null;
+    private WeblogEntryDataWrapper      mFirstEntry = null;
         
     //------------------------------------------------------------------------
     
@@ -98,12 +102,16 @@ public class PageModel
             // Get the pages, put into context & load map
             if (mWebsite != null)
             {
-                List pages = mUserMgr.getPages(mWebsite);
+                // if we have website from RollerRequest, use it
+                mWebsite = rreq.getWebsite();
+                
+                // Get the pages, put into context & load map
+                List pages = mWebsite.getPages();
                 Iterator pageIter = pages.iterator();
                 while (pageIter.hasNext())
                 {
-                    PageData page = (PageData) pageIter.next();
-                    mPageMap.put(page.getName(), page); 
+                    Template page = (Template) pageIter.next();
+                    mPageMap.put(page.getName(), TemplateWrapper.wrap(page));
                 }
             }
         }
@@ -116,12 +124,19 @@ public class PageModel
     //------------------------------------------------------------------------
     
     /** Encapsulates folder.getBookmarks() & sorting */
-    public Collection getBookmarks(FolderData folder)
+    public Collection getBookmarks(FolderDataWrapper folder)
     {
+        mLogger.debug("Getting bookmarks for folder : "+folder.getName());
+        
+        // since we already have a wrapped pojo we know the output
+        // will be wrapped as well :)
         Collection bookmarks = folder.getBookmarks();
-        List list = new ArrayList(bookmarks);
-        Collections.sort( list, new BookmarkComparator() );
-        return list;
+        
+        // TODO: need to setup new BookmarkWrapperComparator
+        //List mBookmarks = new ArrayList(bookmarks);
+        //Collections.sort( mBookmarks, new BookmarkComparator() );
+        
+        return bookmarks;
     }
     
     //------------------------------------------------------------------------
@@ -129,11 +144,20 @@ public class PageModel
     /** Get top level bookmark folders. */
     public Collection getTopLevelFolders()
     {
-        Collection tops = null;
+        List tops = null;
         try
         {
-            tops = mBookmarkMgr.getRootFolder(
-                    mUserMgr.getWebsiteByHandle(mHandle)).getFolders();
+            Collection mTops = mBookmarkMgr.getRootFolder(
+                mUserMgr.getWebsiteByHandle(mHandle)).getFolders();
+            
+            // wrap pojos
+            tops = new ArrayList(mTops.size());
+            Iterator it = mTops.iterator();
+            int i=0;
+            while(it.hasNext()) {
+                tops.add(i, FolderDataWrapper.wrap((FolderData) it.next()));
+                i++;
+            }
         }
         catch (RollerException e)
         {
@@ -163,15 +187,25 @@ public class PageModel
     /** Get comments for weblog entry specified by request */
     public List getComments( WeblogEntryData entry )
     {
+        List comments = new ArrayList();
         try
         {
-            return mWeblogMgr.getComments( entry.getId() );
+            Collection mComments = mWeblogMgr.getComments( entry.getId() );
+            
+            // wrap pojos
+            comments = new ArrayList(mComments.size());
+            Iterator it = mComments.iterator();
+            int i=0;
+            while(it.hasNext()) {
+                comments.add(i, CommentDataWrapper.wrap((CommentData) it.next()));
+                i++;
+            }
         }
         catch (RollerException e)
         {
             mLogger.error("PageModel getComments()", e);
         }
-        return new ArrayList();
+        return comments;
     }
     
     //------------------------------------------------------------------------
@@ -193,12 +227,13 @@ public class PageModel
     //------------------------------------------------------------------------
     
     /** Encapsulates BookmarkManager.getFolder() */
-    public FolderData getFolder(String folderPath)
+    public FolderDataWrapper getFolder(String folderPath)
     {
         try
         {
-            return mBookmarkMgr.getFolder(
-                mUserMgr.getWebsiteByHandle(mHandle), folderPath);
+            return FolderDataWrapper.wrap(
+                    mBookmarkMgr.getFolder( 
+                        mUserMgr.getWebsiteByHandle(mHandle), folderPath));
         }
         catch (RollerException e)
         {
@@ -210,9 +245,9 @@ public class PageModel
     //------------------------------------------------------------------------
     
     /** Encapsulates UserManager.getPageByName() */
-    public PageData getUsersPageByName(WebsiteData website, String pageName)
+    public TemplateWrapper getUsersPageByName(WebsiteData website, String pageName)
     {
-        PageData page = null;
+        TemplateWrapper page = null;
         try
         {
             if (website == null) 
@@ -221,7 +256,7 @@ public class PageModel
             if (pageName == null) 
                 throw new NullPointerException("pageName is null");
                 
-            page = mUserMgr.getPageByName(website, pageName);
+            page = TemplateWrapper.wrap(website.getPageByName(pageName));
         }
         catch (NullPointerException npe)
         {
@@ -237,9 +272,9 @@ public class PageModel
     //------------------------------------------------------------------------
     
     /** Encapsulates UserManager.getPageByName() */
-    public PageData getPageByName(String pageName)
+    public TemplateWrapper getPageByName(String pageName)
     {
-        return (PageData)mPageMap.get(pageName);
+        return (TemplateWrapper) mPageMap.get(pageName);
     }
     
     //------------------------------------------------------------------------
@@ -247,15 +282,20 @@ public class PageModel
     /** Encapsulates UserManager.getPageByName() */
     public String getPageIdByName(String pageName)
     {
-        PageData pd = (PageData)mPageMap.get(pageName);
-        if ( pd != null ) 
-        {
-            return pd.getId();
+        mLogger.debug("looking up page ["+pageName+"]");
+        
+        String template_id = null;
+        
+        try {
+            Template pd = mWebsite.getPageByName(pageName);
+            template_id = pd.getId();
+        } catch(Exception e) {
+            mLogger.error(e);
         }
-        else
-        {
-            return null;
-        }
+        
+        mLogger.debug("returning template id ["+template_id+"]");
+        
+        return template_id;
     }
     
     //------------------------------------------------------------------------
@@ -321,13 +361,31 @@ public class PageModel
                 }
             }
             
-            ret = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
+            Map mRet = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
                             mRollerReq.getWebsite(),  
                             null,                     // startDate
                             day,                 // endDate
                             catParam,                 // catName
                             WeblogEntryData.PUBLISHED,   // status
                             new Integer(maxEntries)); // maxEntries
+            
+            // need to wrap pojos
+            java.util.Date key = null;
+            Iterator days = mRet.keySet().iterator();
+            while(days.hasNext()) {
+                key = (java.util.Date)days.next();
+                
+                // now we need to go through each entry in a day and wrap
+                List wrappedEntries = new ArrayList();
+                List entries = (List) mRet.get(key);
+                for(int i=0; i < entries.size(); i++) {
+                    wrappedEntries.add(i, 
+                            WeblogEntryDataWrapper.wrap((WeblogEntryData)entries.get(i)));
+                }
+                mRet.put(key, wrappedEntries);
+            }
+
+	    ret = mRet;
             
             setFirstAndLastEntries( ret );
         }
@@ -355,7 +413,7 @@ public class PageModel
             int valSize = vals.size();
             if (valSize > 0) 
             {
-                mFirstEntry = (WeblogEntryData)vals.get(0);
+                mFirstEntry = (WeblogEntryDataWrapper)vals.get(0);
             }
             
             // get last entry in map
@@ -363,7 +421,7 @@ public class PageModel
             valSize = vals.size();
             if (valSize > 0)
             {
-                mLastEntry = (WeblogEntryData)vals.get(--valSize);
+                mLastEntry = (WeblogEntryDataWrapper)vals.get(--valSize);
             }
         }
     }
@@ -416,13 +474,22 @@ public class PageModel
             //ret = mgr.getRecentWeblogEntriesArray( 
                 //name, day, catParam, maxEntries, true );
             
-            ret = mgr.getWeblogEntries(
+            List mEntries = mgr.getWeblogEntries(
                             mRollerReq.getWebsite(), 
                             null,                    // startDate
                             day,                      // endDate
                             catParam,                 // catName
                             WeblogEntryData.PUBLISHED,   // status
                             new Integer(maxEntries)); // maxEntries
+            
+            // wrap pojos
+            ret = new ArrayList(mEntries.size());
+            Iterator it = mEntries.iterator();
+            int i=0;
+            while(it.hasNext()) {
+                ret.add(i, WeblogEntryDataWrapper.wrap((WeblogEntryData) it.next()));
+                i++;
+            }
         }
         catch (Exception e)
         {
@@ -455,7 +522,7 @@ public class PageModel
                     if (   referer.getVisible().booleanValue() 
                         || rollerSession.isUserAuthorizedToAdmin() )
                     { 
-                        referers.add(referer);
+                        referers.add(RefererDataWrapper.wrap(referer));
                     }
                 }
             }
@@ -477,7 +544,16 @@ public class PageModel
         List referers = null;
         try
         {
-            referers = mRefererMgr.getTodaysReferers(mRollerReq.getWebsite());
+            List mReferers = mRefererMgr.getTodaysReferers(mRollerReq.getWebsite());
+            
+            // wrap pojos
+            referers = new ArrayList(mReferers.size());
+            Iterator it = mReferers.iterator();
+            int i=0;
+            while(it.hasNext()) {
+                referers.add(i, RefererDataWrapper.wrap((RefererData) it.next()));
+                i++;
+            }
          
         }
         catch (RollerException e)
@@ -515,6 +591,7 @@ public class PageModel
         Iterator iter = weblogEntries.iterator();
         while (iter.hasNext())
         {
+            // NOTE: this will need to be WeblogEntryDataWrapper
             WeblogEntryData wd = (WeblogEntryData)iter.next();
             if ( updateTime == null )
             {
@@ -557,7 +634,18 @@ public class PageModel
                 {
                     category = mRollerReq.getWebsite().getDefaultCategory();
                 }
-                ret = category.getWeblogCategories();
+                
+                List mRet = category.getWeblogCategories();
+                
+                // wrap pojos
+                ret = new ArrayList(mRet.size());
+                Iterator it = mRet.iterator();
+                int i=0;
+                while(it.hasNext()) {
+                    ret.add(i, WeblogCategoryDataWrapper.wrap((WeblogCategoryData) it.next()));
+                    i++;
+                }
+        
                 mCategories.put(categoryName, ret);
             }
             catch (RollerException e) 
@@ -571,9 +659,14 @@ public class PageModel
     //------------------------------------------------------------------------
     
     /** Encapsulates RollerRequest.getWeblogEntry() */
-    public WeblogEntryData getWeblogEntry()
+    public WeblogEntryDataWrapper getWeblogEntry()
     {
-        return mRollerReq.getWeblogEntry();
+        WeblogEntryData entry = mRollerReq.getWeblogEntry();
+        
+        if(entry != null)
+            return WeblogEntryDataWrapper.wrap(entry);
+        else
+            return null;
     }
     
     //------------------------------------------------------------------------
@@ -581,9 +674,9 @@ public class PageModel
     /**
      * Get the next occurring Entry.
      */
-    public WeblogEntryData getNextEntry()
+    public WeblogEntryDataWrapper getNextEntry()
     {
-        WeblogEntryData currentEntry = getWeblogEntry();
+        WeblogEntryDataWrapper currentEntry = getWeblogEntry();
         if (mFirstEntry != null) currentEntry = mFirstEntry;
         if (mNextEntry == null && currentEntry != null) 
         {
@@ -594,7 +687,11 @@ public class PageModel
             }
             try
             {
-                mNextEntry = mWeblogMgr.getNextEntry(currentEntry, catName);
+                WeblogEntryData nextEntry = 
+                        mWeblogMgr.getNextEntry(currentEntry.getPojo(), catName);
+                
+                if(nextEntry != null)
+                    mNextEntry = WeblogEntryDataWrapper.wrap(nextEntry);
                 
                 // make sure that mNextEntry is not published to future
                 if (mNextEntry != null && 
@@ -616,12 +713,12 @@ public class PageModel
     /**
      * Get the previous occurring Entry.
      */
-    public WeblogEntryData getPreviousEntry()
+    public WeblogEntryDataWrapper getPreviousEntry()
     {
-        WeblogEntryData currentEntry = getWeblogEntry();
+        WeblogEntryDataWrapper currentEntry = getWeblogEntry();
         if (mLastEntry != null) currentEntry = mLastEntry;
         if (mPreviousEntry == null && currentEntry != null )
-        {
+        {   
             String catName = null;
             if (mRollerReq.getWeblogCategory() != null)
             {
@@ -629,7 +726,11 @@ public class PageModel
             }
             try
             {
-                mPreviousEntry = mWeblogMgr.getPreviousEntry(currentEntry, catName);
+                WeblogEntryData prevEntry = 
+                        mWeblogMgr.getPreviousEntry(currentEntry.getPojo(), catName);
+                
+                if(prevEntry != null)
+                    mPreviousEntry = WeblogEntryDataWrapper.wrap(prevEntry);
             }
             catch (RollerException e)
             {
@@ -672,17 +773,22 @@ public class PageModel
     
     //------------------------------------------------------------------------
     
-    public FolderData getFolderByPath(String path)
+    public FolderDataWrapper getFolderByPath(String path)
     {
         try
         {
-            return mBookmarkMgr.getFolderByPath(mWebsite, null, path);
+            FolderData folder = mBookmarkMgr.getFolderByPath(
+                mWebsite, null, path);
+            
+            if(folder != null)
+                return FolderDataWrapper.wrap(folder);
         }
         catch (RollerException e)
         {
             mLogger.error(e);
-            return null;
         }
+        
+        return null;
     }
 
     /**
@@ -693,15 +799,25 @@ public class PageModel
      */
     public List getRecentComments(int maxCount)
     {
+        List recentComments = new ArrayList();
         try
         {
-            return mWeblogMgr.getRecentComments(mRollerReq.getWebsite(), maxCount);
+            List recent = mWeblogMgr.getRecentComments(mRollerReq.getWebsite(), maxCount);
+            
+            // wrap pojos
+            recentComments = new ArrayList(recent.size());
+            Iterator it = recent.iterator();
+            int i=0;
+            while(it.hasNext()) {
+                recentComments.add(i, CommentDataWrapper.wrap((CommentData) it.next()));
+                i++;
+            }
         }
         catch (RollerException e)
         {
             mLogger.error(e);
-            return new ArrayList();
         }
+        return recentComments;
     }
  
     public boolean getEmailComments() 

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.roller.RollerException;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RoleData;
 import org.roller.pojos.UserData;
@@ -159,11 +159,26 @@ public interface UserManager extends Serializable
             String timeZone) throws RollerException;
 
     public UserData retrieveUser(String id)throws RollerException;
+    /**
+     * Store user.
+     */
     public void storeUser( UserData data ) throws RollerException;
 
+    /**
+     * Get all user roles.
+     */
     public List getUserRoles(UserData user) throws RollerException;
+    /**
+     * Get role by ID
+     */
     public RoleData retrieveRole(String id) throws RollerException;
+    /**
+     * Store role.
+     */
     public void storeRole( RoleData data ) throws RollerException;
+    /**
+     * Remove role by ID.
+     */
     public void removeRole( String id ) throws RollerException;
 
     //------------------------------------------------------------ WebsiteData
@@ -183,24 +198,36 @@ public interface UserManager extends Serializable
         throws RollerException;
 
     public WebsiteData retrieveWebsite(String id) throws RollerException;
+    /**
+     * Store website
+     */
     public void storeWebsite(WebsiteData data) throws RollerException;
 
-    //--------------------------------------------------------------- PageData
+    //--------------------------------------------------------------- WeblogTemplate
     
     /** Get user's page by name */
-    public PageData getPageByName(WebsiteData w, String p) throws RollerException;
+    public WeblogTemplate getPageByName(WebsiteData w, String p) throws RollerException;
 
     /** Get user's page by link */
-    public PageData getPageByLink(WebsiteData w, String p) throws RollerException;
+    public WeblogTemplate getPageByLink(WebsiteData w, String p) throws RollerException;
 
     /** Fix page link using page name */
-    public String fixPageLink(PageData data) throws RollerException;
+    public String fixPageLink(WeblogTemplate data) throws RollerException;
 
     /** Get users pages */
     public List getPages(WebsiteData w) throws RollerException;
 
-    public PageData retrievePage(String id) throws RollerException;
-    public void storePage(PageData data) throws RollerException;
+    /**
+     * Get page by ID
+     */
+    public WeblogTemplate retrievePage(String id) throws RollerException;
+    /**
+     * Store page
+     */
+    public void storePage(WeblogTemplate data) throws RollerException;
+    /**
+     * Remove page by ID
+     */
     public void removePage(String id) throws RollerException;
 
 
@@ -218,7 +245,7 @@ public interface UserManager extends Serializable
 	/**
 	 * Retrieve the Page in read-only mode (does hibernate support this?).
 	 */
-	public PageData retrievePageReadOnly(String id) throws RollerException;
+	public WeblogTemplate retrievePageReadOnly(String id) throws RollerException;
     
     /**
      * Validates a user based on a cookie value.  If successful, it returns

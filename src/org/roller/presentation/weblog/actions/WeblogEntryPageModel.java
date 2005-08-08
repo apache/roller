@@ -236,12 +236,14 @@ public class WeblogEntryPageModel extends BasePageModel
         return this.form;
     }
 
+    /** returns a dummied-up weblog entry object */
     public WeblogEntryData getWeblogEntry() throws RollerException
     {
         if (weblogEntry == null) 
         {
             RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
             weblogEntry = new WeblogEntryData();
+            weblogEntry.setWebsite(rollerSession.getCurrentWebsite());
             form.copyTo(weblogEntry, 
                     getRequest().getLocale(), getRequest().getParameterMap());
             weblogEntry.setWebsite(rollerSession.getCurrentWebsite());

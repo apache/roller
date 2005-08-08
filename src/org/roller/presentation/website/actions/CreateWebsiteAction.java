@@ -103,7 +103,7 @@ public class CreateWebsiteAction extends DispatchAction
             
             // Need system user to add new user
             RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
-            HashMap pages = rollerContext.readThemeMacros(form.getTheme());
+            HashMap pages = null; //rollerContext.readThemeMacros(form.getTheme());
             WebsiteData website = mgr.createWebsite(
                user, 
                pages, 
@@ -149,7 +149,7 @@ public class CreateWebsiteAction extends DispatchAction
         {
             super(request, response, mapping);
             RollerContext rollerContext = RollerContext.getRollerContext(request);
-            themes = Arrays.asList(rollerContext.getThemeNames());
+            // ROLLER_2.0: fix this: themes = Arrays.asList(rollerContext.getThemeNames());
             if (wd != null) 
             {
                 contextURL = rollerContext.getAbsoluteContextUrl(request);

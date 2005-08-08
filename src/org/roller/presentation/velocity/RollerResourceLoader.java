@@ -12,7 +12,7 @@ import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.roller.RollerException;
 import org.roller.model.Roller;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.presentation.RollerContext;
 
 /**
@@ -77,14 +77,14 @@ public class RollerResourceLoader extends ResourceLoader
 
         try
         {
-            PageData page = getPage( name );
+            WeblogTemplate page = getPage( name );
             if (page == null)
             {
             	throw new ResourceNotFoundException(
 					"RollerResourceLoader: page \"" + 
 					name + "\" not found");
             }
-            return new ByteArrayInputStream( page.getTemplate().getBytes("UTF-8") );
+            return new ByteArrayInputStream( page.getContents().getBytes("UTF-8") );
         }
         catch (UnsupportedEncodingException uex)
         {
@@ -118,14 +118,14 @@ public class RollerResourceLoader extends ResourceLoader
         String name = resource.getName();
         try
         {
-            PageData page = getPage( name );
+            WeblogTemplate page = getPage( name );
             
             if (mLogger.isDebugEnabled())
             {
                 mLogger.debug(name + ": resource=" + resource.getLastModified() + 
-							    " vs. page=" + page.getUpdateTime().getTime());
+							    " vs. page=" + page.getLastModified().getTime());
             }
-            return page.getUpdateTime().getTime();
+            return page.getLastModified().getTime();
         }
         catch (RollerException re)
         {
@@ -134,7 +134,7 @@ public class RollerResourceLoader extends ResourceLoader
         return 0;
     }
 
-    public PageData getPage(String id) throws RollerException
+    public WeblogTemplate getPage(String id) throws RollerException
     {
     	if (getRoller() == null) throw new RollerException(
 			"RollerResourceLoader.getRoller() returned NULL");

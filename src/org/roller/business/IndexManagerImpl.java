@@ -26,21 +26,20 @@ import org.roller.business.search.operations.RemoveEntryOperation;
 import org.roller.business.search.operations.RemoveWebsiteIndexOperation;
 import org.roller.business.search.operations.WriteToIndexOperation;
 import org.roller.model.IndexManager;
-import org.roller.model.ThreadManager;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 
 import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
+import org.roller.config.RollerConfig;
+import org.roller.model.RollerFactory;
+import org.roller.util.StringUtils;
 
 /**
+ * Lucene implementation of IndexManager. This is the central entry point into the Lucene
+ * searching API.
  * @author aim4min
- * @author mraible (formatting and indexDir configurable)
- * 
- * This is the lucene manager. This is the central entry point into the Lucene
- * searching API. This should be retrieved from the roller context, and not
- * instatiated manually.
- *  
+ * @author mraible (formatting and making indexDir configurable)
  */
 public class IndexManagerImpl implements IndexManager
 {
@@ -55,7 +54,7 @@ public class IndexManagerImpl implements IndexManager
     //~ Instance fields
     // ========================================================
 
-    private ThreadManager mThreadManager;
+    private boolean searchEnabled = true;
 
     File indexConsistencyMarker;
 
@@ -81,72 +80,106 @@ public class IndexManagerImpl implements IndexManager
      * @param indexDir -
      *            the path to the index directory
      */
-    public IndexManagerImpl(String indexDir, ThreadManager manager)
+    public IndexManagerImpl()
     {
-        this.mThreadManager = manager;
+        // check config to see if the internal search is enabled
+        String enabled = RollerConfig.getProperty("search.enabled");
+        if("false".equalsIgnoreCase(enabled))
+            this.searchEnabled = false;
+        
+        // we also need to know what our index directory is
+        String indexDir = RollerConfig.getProperty("search.index.dir");
+        if (indexDir.indexOf("${user.home}") != -1) 
+        {
+            indexDir = StringUtils.replace(
+                    indexDir, "${user.home}",
+                    System.getProperty("user.home"));
+        }
 
-        this.indexDir = indexDir;
+        this.indexDir = indexDir.replace('/', File.separatorChar);
+        
+        // a little debugging
+        mLogger.info("search enabled: " + this.searchEnabled);
+        mLogger.info("index dir: " + this.indexDir);
 
         String test = indexDir + File.separator + ".index-inconsistent";
         indexConsistencyMarker = new File(test);
 
-        // 1. If inconsistency marker exists.
-        //     Delete index
-        // 2. if we're using RAM index
-        //     load ram index wrapper around index
-        //
-        if (indexConsistencyMarker.exists())
+        // only setup the index if search is enabled
+        if (this.searchEnabled) 
         {
-            getFSDirectory(true);
-            inconsistentAtStartup = true;
-        }
-        else
-        {
-            try
+            
+            // 1. If inconsistency marker exists.
+            //     Delete index
+            // 2. if we're using RAM index
+            //     load ram index wrapper around index
+            //
+            if (indexConsistencyMarker.exists()) 
             {
-                File makeIndexDir = new File(indexDir);
-                if (!makeIndexDir.exists())
-                {
-                    makeIndexDir.mkdirs();
-                    inconsistentAtStartup = true;
-                }
-                indexConsistencyMarker.createNewFile();
-            }
-            catch (IOException e)
+                getFSDirectory(true);
+                inconsistentAtStartup = true;
+            } 
+            else 
             {
-                mLogger.error(e);
-            }
-        }
-
-        if (indexExists())
-        {
-            if (useRAMIndex)
-            {
-                Directory filesystem = getFSDirectory(false);
-
-                try
+                try 
                 {
-                    fRAMindex = new RAMDirectory(filesystem);
-                }
-                catch (IOException e)
+                    File makeIndexDir = new File(indexDir);
+                    if (!makeIndexDir.exists()) 
+                    {
+                        makeIndexDir.mkdirs();
+                        inconsistentAtStartup = true;
+                    }
+                    indexConsistencyMarker.createNewFile();
+                } 
+                catch (IOException e) 
                 {
-                    mLogger.error("Error creating in-memory index", e);
+                    mLogger.error(e);
                 }
             }
-        }
-        else
-        {
-            if (useRAMIndex)
+            
+            if (indexExists()) 
             {
-                fRAMindex = new RAMDirectory();
-                createIndex(fRAMindex);
-            }
-            else
+                if (useRAMIndex) 
+                {
+                    Directory filesystem = getFSDirectory(false);
+                    
+                    try 
+                    {
+                        fRAMindex = new RAMDirectory(filesystem);
+                    } 
+                    catch (IOException e)                     
+                    {
+                        mLogger.error("Error creating in-memory index", e);
+                    }
+                }
+            } 
+            else 
             {
-                createIndex(getFSDirectory(true));
+                if (useRAMIndex) 
+                {
+                    fRAMindex = new RAMDirectory();
+                    createIndex(fRAMindex);
+                } 
+                else 
+                {
+                    createIndex(getFSDirectory(true));
+                }
             }
+            
+            if (isInconsistentAtStartup())
+            {
+                mLogger.info(
+                    "Index was inconsistent. Rebuilding index in the background...");
+                try 
+                {                    
+                    rebuildWebsiteIndex();
+                }
+                catch (RollerException e) 
+                {
+                    mLogger.error("ERROR: scheduling re-index operation");
+                }
+            }       
         }
-
     }
 
     //~ Methods
@@ -208,11 +241,19 @@ public class IndexManagerImpl implements IndexManager
         return new StandardAnalyzer();
     }
 
-    public void scheduleIndexOperation(final IndexOperation op)
+    private void scheduleIndexOperation(final IndexOperation op)
     {
         try
         {
-            mThreadManager.executeInBackground(op);
+            // only if search is enabled
+            if(this.searchEnabled) {
+                mLogger.debug("Starting scheduled index operation: "+op.getClass().getName());
+                RollerFactory.getRoller().getThreadManager().executeInBackground(op);
+            }
+        }
+        catch (RollerException re)
+        {
+            mLogger.error("Error getting thread manager", re);
         }
         catch (InterruptedException e)
         {
@@ -227,7 +268,15 @@ public class IndexManagerImpl implements IndexManager
     {
         try
         {
-            mThreadManager.executeInForeground(op);
+            // only if search is enabled
+            if(this.searchEnabled) {
+                mLogger.debug("Executing index operation now: "+op.getClass().getName());
+                RollerFactory.getRoller().getThreadManager().executeInForeground(op);
+            }
+        }
+        catch (RollerException re)
+        {
+            mLogger.error("Error getting thread manager", re);
         }
         catch (InterruptedException e)
         {

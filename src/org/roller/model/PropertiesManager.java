@@ -18,7 +18,9 @@ import org.roller.pojos.RollerPropertyData;
 public interface PropertiesManager extends Serializable 
 {
     
-    /** Release any resources used */
+    /**
+     * Release all resources associated with Roller session.
+     */
     public void release();
 
     /** Save a single property */

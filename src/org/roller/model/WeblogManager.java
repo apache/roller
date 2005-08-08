@@ -22,6 +22,9 @@ public interface WeblogManager extends Serializable
 {
     public static final String CATEGORY_ATT = "category.att";
     
+    /**
+     * Release all resources associated with Roller session.
+     */
     public void release();
 
     //------------------------------------------------ WeblogCategoryData CRUD
@@ -37,9 +40,18 @@ public interface WeblogManager extends Serializable
         String description,
         String image) throws RollerException;
 
+    /**
+     * Get category by ID
+     */
     public WeblogCategoryData retrieveWeblogCategory(String id)
         throws RollerException;
 
+    /**
+     * Recategorize all entries with one category to another.
+     * @param srcId 
+     * @param destId 
+     * @throws org.roller.RollerException 
+     */
     public void moveWeblogCategoryContents(String srcId, String destId)
         throws RollerException;
 
@@ -98,37 +110,76 @@ public interface WeblogManager extends Serializable
         WeblogCategoryData ancestor,
         String relation) throws RollerException;
 
+    /**
+     * Get category assoc. by ID
+     */
     public WeblogCategoryAssoc retrieveWeblogCategoryAssoc(String id)
         throws RollerException;
 
     //------------------------------------------------------- CommentData CRUD
 
+    /**
+     * Get comment by ID
+     */
     public CommentData retrieveComment(String id)
         throws RollerException;
 
+    /**
+     * Get comments by entry ID
+     * @param entryId 
+     * @throws org.roller.RollerException 
+     * @return 
+     */
     public abstract List getComments( String entryId )
         throws RollerException;
 
+    /**
+     * Get comments by entry ID, optionally excluding spam
+     * @param entryId 
+     * @param nospam 
+     * @throws org.roller.RollerException 
+     * @return 
+     */
     public abstract List getComments( String entryId, boolean nospam )
         throws RollerException;
 
+    /**
+     * Remove comment by ID
+     */
     public void removeComment( String id )
         throws RollerException;
 
+    /**
+     * Remove comments specified by array of IDs
+     * @param ids 
+     * @throws org.roller.RollerException 
+     */
     public void removeComments( String[] ids )
         throws RollerException;
 
+    /**
+     * Remove all comments of entry specified by ID
+     */
     public void removeCommentsForEntry(String entryId)
     	throws RollerException;
     
+    /**
+     * Get most recent X comments in website.
+     */
     public List getRecentComments(WebsiteData website, int maxCount) 
         throws RollerException;
 
     //------------------------------------------------------- WeblogEntry CRUD
 
+    /**
+     * Get weblog entry by ID
+     */
     public WeblogEntryData retrieveWeblogEntry(String id)
         throws RollerException;
 
+    /**
+     * Remove weblog entry by ID
+     */
     public void removeWeblogEntry( String id )
         throws RollerException;
 

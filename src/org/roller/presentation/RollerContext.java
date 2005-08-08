@@ -1,17 +1,12 @@
 package org.roller.presentation;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimerTask;
 
@@ -43,12 +38,13 @@ import org.roller.presentation.pings.PingQueueTask;
 import org.roller.presentation.velocity.CommentAuthenticator;
 import org.roller.presentation.velocity.ContextLoader;
 import org.roller.presentation.velocity.DefaultCommentAuthenticator;
-import org.roller.presentation.website.ThemeCache;
-import org.roller.util.DateUtil;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
-
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
+import org.roller.business.utils.UpgradeDatabase;
+import org.roller.config.RollerRuntimeConfig;
+import org.roller.config.PingConfig;
+
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -168,14 +164,23 @@ public class RollerContext implements ServletContextListener
             // is set to ${webapp.context}
             RollerConfig.setUploadsDir(ctxPath);
             
+            // set the roller context real path in RollerConfig
+            // NOTE: it seems that a few backend classes do actually need
+            //       to know what the real path to the roller context is,
+            //       so we set this property to give them the info they need.
+            //
+            //       this is really not a best practice and we should try to
+            //       remove these dependencies on the webapp context if possible
+            RollerConfig.setContextPath(mContext.getRealPath("/"));
+            
+            // always upgrade database first
+            upgradeDatabaseIfNeeded();
             
             Roller roller = RollerFactory.getRoller();
-            
             roller.begin(UserData.SYSTEM_USER);
             
-            //setupRollerConfig();
             setupRollerProperties();
-            upgradeDatabaseIfNeeded();
+            roller.getThemeManager();
             setupSpellChecker();
             setupPagePlugins();
             setupIndexManager(roller);
@@ -296,7 +301,7 @@ public class RollerContext implements ServletContextListener
             InitialContext ic = new InitialContext();
             DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/rollerdb");
             Connection con = ds.getConnection();
-            RollerFactory.getRoller().upgradeDatabase(con);
+            UpgradeDatabase.upgradeDatabase(con, mVersion);
             con.close();
         }
         catch (NamingException e)
@@ -428,31 +433,7 @@ public class RollerContext implements ServletContextListener
         return mAuthenticator;
     }
 
-    //-----------------------------------------------------------------------
-    /**
-     * Returns RollerConfig object. Changed so that it always tries
-     * to fetch from the database first. If it should error, return
-     * the stored copy.
-     */
-    /* not available anymore ... use the new config classes instead -- Allen G
-    public RollerConfigData getRollerConfig()
-    {
-        if (mConfig == null)
-        {
-            try 
-            {
-    			    mConfig = getRoller(null).getConfigManager().getRollerConfig();
-    		    } 
-            catch (RollerException e) 
-            {
-    			mLogger.error("Unable to get RollerConfig from database");
-    		    }
-        }
-        return mConfig;
-    }
-    */
 
-    //-----------------------------------------------------------------------
     /**
      *  Gets the hard-drive location of the upload directory.
      */
@@ -469,7 +450,7 @@ public class RollerContext implements ServletContextListener
         return uploaddir;
     }
 
-    //-----------------------------------------------------------------------
+
     /**
      * Gets the base url for the upload directory.
      */
@@ -601,68 +582,17 @@ public class RollerContext implements ServletContextListener
             {
                 baseUrl = getContextUrl(request);
             }
-
-            String dayString = DateUtil.format8chars(entry.getPubTime());
-
-            link =
-                Utilities.escapeHTML(
-                    baseUrl
-                        + "/page/"
-                        + entry.getWebsite().getHandle()
-                        + "/"
-                        + dayString
-                        + "#"
-                        + entry.getAnchor());
+            link = Utilities.escapeHTML(baseUrl + entry.getPermaLink());
         }
         catch (Exception e)
         {
             mLogger.error("Unexpected exception", e);
         }
+        
         return link;
     }
 
-    //-----------------------------------------------------------------------
-    /**
-     * Return the real filepath to the theme.
-     *
-     * @param theme
-     * @return String
-     */
-    public String getThemePath(String theme)
-    {
-        String themespath = RollerRuntimeConfig.getProperty("users.themes.path");
 
-        // Figure path to new user theme
-        return mContext.getRealPath(
-            "/" + themespath + "/" + theme);
-    }
-
-    //-----------------------------------------------------------------------
-    /**
-     * Get the list of Theme names.  This consists
-     * of the directories under the /themes directory.
-     *
-     * @return String[]
-     */
-    public String[] getThemeNames()
-    {
-        String themespath = RollerRuntimeConfig.getProperty("users.themes.path");
-        
-        String themesPath =
-            mContext.getRealPath("/" + themespath);
-        File themeDir = new File(themesPath);
-        return themeDir.list(new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
-            {
-                File file =
-                    new File(dir.getAbsolutePath() + File.separator + name);
-                return file.isDirectory();
-            }
-        });
-    }
-
-    //-----------------------------------------------------------------------
     /**
      * Returns the mContext.
      * @return ServletContext
@@ -672,94 +602,7 @@ public class RollerContext implements ServletContextListener
         return mContext;
     }
 
-    //-----------------------------------------------------------------------
-    /**
-     * Reads the Theme files from harddisk (if necessary) and places them into a
-     * ThemeCache.  If the requested Theme's pages are already in the cache,
-     * return them instead.
-     *
-     * @param themeName
-     * @return HashMap
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    public HashMap readThemeMacros(String themeName)
-        throws FileNotFoundException, IOException
-    {
-        if (mLogger.isDebugEnabled())
-        {
-            mLogger.debug("themeName=" + themeName);
-        }
-
-        // Load all Velocity templates from root directory of the theme
-        String pageName = null;
-        String themeDir = this.getThemePath(themeName);
-        String[] children = getThemeFilenames(themeDir);
-        HashMap pages = new HashMap();
-        ThemeCache themeCache = ThemeCache.getInstance();
-        for (int i = 0; i < children.length; i++)
-        {
-            pageName = children[i].substring(0, children[i].length() - 3);
-
-            if (themeCache.getFromCache(themeName, pageName) != null)
-            {
-                pages.put(
-                    pageName,
-                    themeCache.getFromCache(themeName, pageName));
-            }
-            else
-            {
-                BufferedReader rdr = null;
-                try
-                {
-                    rdr = new BufferedReader(
-                        new FileReader(
-                            themeDir + File.separator + children[i]));
-                    String line = null;
-                    StringBuffer sb = new StringBuffer();
-                    while (null != (line = rdr.readLine()))
-                    {
-                        sb.append(line);
-                        sb.append("\n");
-                    }
     
-                    pages.put(pageName, sb.toString());
-                    themeCache.putIntoCache(themeName, pageName, sb.toString());
-                }
-                finally 
-                {
-                    if (rdr != null) rdr.close();
-                }
-            }
-        }
-        return pages;
-    }
-
-    //-----------------------------------------------------------------------
-
-    public static String[] getThemeFilenames(String themeDir)
-    {
-        ThemeCache themeCache = ThemeCache.getInstance();
-        if (themeCache.getFileList(themeDir) != null)
-        {
-            return themeCache.getFileList(themeDir);
-        }
-
-        File dir = new File(themeDir);
-        FilenameFilter filter = new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
-            {
-                return name.endsWith(".vm");
-            }
-        };
-        String[] children = dir.list(filter);
-        themeCache.setFileList(themeDir, children);
-        return children;
-    }
-
-    //-----------------------------------------------------------------------
-
     /** Roller version */
     public String getRollerVersion()
     {

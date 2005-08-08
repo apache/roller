@@ -124,6 +124,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         String title = (String)postcontent.get("title");
         if (title == null) title = "";
 
+        Date dateCreated = (Date)postcontent.get("dateCreated");
+        if (dateCreated == null) dateCreated = (Date)postcontent.get("pubDate");
+
         String cat = null;
         if ( postcontent.get("categories") != null )
         {
@@ -150,6 +153,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
             {
                 entry.setStatus(WeblogEntryData.DRAFT);
             }
+            if (dateCreated != null) 
+            {
+                entry.setPubTime(new Timestamp(dateCreated.getTime()));
+            }
+
 
 
             if ( cat != null )
@@ -207,6 +215,10 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         String title = (String)postcontent.get("title");
         if (title == null) title = "";
 
+        Date dateCreated = (Date)postcontent.get("dateCreated");
+        if (dateCreated == null) dateCreated = (Date)postcontent.get("pubDate");
+        if (dateCreated == null) dateCreated = new Date();
+
         String cat = null;
         if ( postcontent.get("categories") != null )
         {
@@ -225,12 +237,13 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
             Roller roller = RollerFactory.getRoller(); 
             WeblogManager weblogMgr = roller.getWeblogManager();
 
-            Timestamp current = new Timestamp(System.currentTimeMillis());
+            Timestamp current =
+                new Timestamp(System.currentTimeMillis());
 
             WeblogEntryData entry = new WeblogEntryData();
             entry.setTitle(title);
             entry.setText(description);
-            entry.setPubTime(current);
+            entry.setPubTime(new Timestamp(dateCreated.getTime()));
             entry.setUpdateTime(current);
             entry.setWebsite(website);
             if (Boolean.valueOf(publish).booleanValue())

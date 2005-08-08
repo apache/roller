@@ -1,17 +1,5 @@
 package org.roller.presentation.velocity;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.TimeZone;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -25,6 +13,18 @@ import org.roller.presentation.RollerContext;
 import org.roller.util.RegexUtil;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.TimeZone;
 
 /**
  * Does a lot of the same work as ContextLoader in preparing
@@ -197,12 +197,12 @@ public class ExportRss
         ctx.put("locale", locale);
         
         // setup Timezone for future rendering
-        ctx.put("timeZone", website.getTimeZoneInstance());
+        ctx.put("timezone", website.getTimeZoneInstance());
 
         // date formats need to be run through the Localized
         // SimpleDateFormat and pulled back out as localized patterns.
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", locale);  
-        sdf.setTimeZone( (TimeZone)ctx.get("timeZone") );    
+        sdf.setTimeZone( (TimeZone)ctx.get("timezone") );    
         ctx.put("plainFormat",     sdf.toLocalizedPattern());
         
         sdf.applyPattern("EEEE MMMM dd, yyyy");

@@ -54,6 +54,7 @@ import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.roller.presentation.MainPageAction;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
@@ -65,6 +66,7 @@ import org.roller.util.MailUtil;
 import org.roller.util.Utilities;
 
 import com.swabunga.spell.event.SpellCheckEvent;
+import org.roller.model.RollerFactory;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -598,18 +600,21 @@ public final class WeblogEntryFormAction extends DispatchAction
             if (     rollerSession.isUserAuthorizedToAuthor() 
                  || (rollerSession.isUserAuthorized() && wd.isDraft()) )
             {
-                
                 // Flush the page cache
                 PageCacheFilter.removeFromCache(request, 
                    RollerSession.getRollerSession(request).getCurrentWebsite());
-
 				// remove the index for it
                 wd.setStatus(WeblogEntryData.DRAFT);
-		       reindexEntry(RollerFactory.getRoller(), wd);
+		        reindexEntry(RollerFactory.getRoller(), wd);
 
+                // remove entry itself
                 wd.remove();
                 RollerFactory.getRoller().commit();
 
+				// flush caches
+                PageCacheFilter.removeFromCache(request, wd.getWebsite());
+                MainPageAction.flushMainPageCache();
+                
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(null, 
                     new ActionMessage("weblogEdit.entryRemoved"));
@@ -861,7 +866,9 @@ public final class WeblogEntryFormAction extends DispatchAction
                PageHelper pageHelper = 
                    PageHelper.createPageHelper(request, response);
                pageHelper.setSkipFlag(true); // don't process ReadMorePlugin
-               String excerpt = pageHelper.renderPlugins(entry);
+               // we have to wrap the entry for rendering because the
+               // page helper requires wrapped objects
+               String excerpt = pageHelper.renderPlugins(WeblogEntryDataWrapper.wrap(entry));
                excerpt = StringUtils.left( Utilities.removeHTML(excerpt),255 );
 
                String url = rctx.createEntryPermalink(entry, request, true);

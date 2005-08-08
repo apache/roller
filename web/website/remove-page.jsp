@@ -2,15 +2,15 @@
 
 
 <h3>
-<jsp:useBean id="pageForm" scope="session" 
-	class="org.roller.presentation.forms.PageForm"/>
-Remove Page [<jsp:getProperty name="pageForm" property="name"/>]
+<jsp:useBean id="weblogTemplateForm" scope="session" 
+	class="org.roller.presentation.forms.WeblogTemplateForm"/>
+Remove Page [<jsp:getProperty name="weblogTemplateForm" property="name"/>]
 </h3>
 
 <p>Are you sure you want to remove this page?</p>
 <p>
-Page name = [<jsp:getProperty name="pageForm" property="name"/>]<br />
-Page id = [<jsp:getProperty name="pageForm" property="id"/>]
+Page name = [<jsp:getProperty name="weblogTemplateForm" property="name"/>]<br />
+Page id = [<jsp:getProperty name="weblogTemplateForm" property="id"/>]
 </p>
 
 <table>

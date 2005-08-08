@@ -88,6 +88,8 @@ public class FolderData extends HierarchicalPersistentObject
 
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getObjectPropertyName()
+     *
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getObjectPropertyName()
     {
@@ -96,12 +98,17 @@ public class FolderData extends HierarchicalPersistentObject
 
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getAncestorPropertyName()
+     *
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getAncestorPropertyName()
     {
         return "ancestorFolder";
     }
 
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public boolean isInUse()
     {
         try
@@ -114,6 +121,9 @@ public class FolderData extends HierarchicalPersistentObject
         }
     }
     
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public boolean descendentOf(FolderData ancestor) 
         throws RollerException
     {
@@ -123,6 +133,8 @@ public class FolderData extends HierarchicalPersistentObject
     //------------------------------------------------------------- Attributes
     
     /** 
+     * @roller.wrapPojoMethod type="simple"
+     * 
      * @ejb:persistent-field 
      * 
      * @hibernate.id column="id" type="string"
@@ -140,6 +152,8 @@ public class FolderData extends HierarchicalPersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
+     *
      * @struts.validator type="required" msgkey="errors.required"
      * @struts.validator type="mask" msgkey="errors.noslashes"
      * @struts.validator-var name="mask" value="${noslashes}"
@@ -162,6 +176,8 @@ public class FolderData extends HierarchicalPersistentObject
 
     /** 
      * Description
+     *
+     * @roller.wrapPojoMethod type="simple"
      * 
      * @ejb:persistent-field 
      * 
@@ -180,7 +196,11 @@ public class FolderData extends HierarchicalPersistentObject
 
     //---------------------------------------------------------- Relationships
     
-    /** Get path to this bookmark folder. */
+    /**
+     * Get path to this bookmark folder.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
     public String getPath() throws RollerException
     {
         if (mNewParent != null) 
@@ -197,6 +217,8 @@ public class FolderData extends HierarchicalPersistentObject
     }
         
     /** 
+     * @roller.wrapPojoMethod type="pojo"
+     *
      * @ejb:persistent-field 
      * 
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
@@ -212,7 +234,11 @@ public class FolderData extends HierarchicalPersistentObject
         this.website = website;
     }
 
-    /** Return parent category, or null if category is root of hierarchy. */
+    /**
+     * Return parent category, or null if category is root of hierarchy.
+     *
+     * @roller.wrapPojoMethod type="pojo"
+     */
     public FolderData getParent() throws RollerException
     {
         if (mNewParent != null)
@@ -237,7 +263,11 @@ public class FolderData extends HierarchicalPersistentObject
         mNewParent = parent;
     }
 
-    /** Query to get child categories of this category. */
+    /**
+     * Query to get child categories of this category.
+     *
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.FolderData"
+     */
     public List getFolders() throws RollerException
     {
         if (folders == null)
@@ -258,7 +288,9 @@ public class FolderData extends HierarchicalPersistentObject
     //------------------------------------------------------ Bookmark children
     
     /** 
-      * @ejb:persistent-field
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.BookmarkData"
+     *
+     * @ejb:persistent-field
      * 
      * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="delete" 
      * @hibernate.collection-key column="folderid" 
@@ -291,6 +323,8 @@ public class FolderData extends HierarchicalPersistentObject
     }
 
     /**
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.BookmarkData"
+     *
      * @param subfolders
      */
     public List retrieveBookmarks(boolean subfolders) throws RollerException

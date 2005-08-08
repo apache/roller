@@ -37,8 +37,17 @@ public interface FileManager extends Serializable
     public void saveFile(WebsiteData site, String name, long size, InputStream is) 
         throws RollerException;
 
+    /**
+     * Get directory in which uploaded files are stored
+     */
     public String getUploadDir();
+    /**
+     * Get base URL where uploaded files are made available.
+     */
     public String getUploadUrl();
     
+    /**
+     * Release all resources associated with Roller session.
+     */
     public void release();
 }

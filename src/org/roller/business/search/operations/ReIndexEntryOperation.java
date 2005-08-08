@@ -9,12 +9,14 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexReader;
-import org.roller.business.IndexManagerImpl;
-import org.roller.pojos.WeblogEntryData;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.roller.business.IndexManagerImpl;
 import org.roller.business.search.FieldConstants;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.WeblogEntryData;
 
 /**
  * @author aim4min
@@ -69,6 +71,7 @@ public class ReIndexEntryOperation extends WriteToIndexOperation
         }
         
         IndexWriter writer = beginWriting();
+        Roller roller = RollerFactory.getRoller();
         try
         {
             if (writer != null)
@@ -82,6 +85,7 @@ public class ReIndexEntryOperation extends WriteToIndexOperation
         }
         finally
         {
+            if (roller != null) roller.release();
             endWriting();
         }    	
     }    

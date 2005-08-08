@@ -30,7 +30,9 @@ public interface IndexManager
     /** Execute operation immediately */
     public abstract void executeIndexOperationNow(final IndexOperation op);
     
-    /** Release to be called at end of request processing */
+    /**
+     * Release all resources associated with Roller session.
+     */
     public abstract void release();
     
     /** Shutdown to be called on application shutdown */

@@ -1,651 +1,429 @@
 package org.roller.presentation.website.actions;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-
-import javax.servlet.ServletContext;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
-import org.roller.config.RollerRuntimeConfig;
-import org.roller.model.RollerFactory;
-import org.roller.model.UserManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
+import org.roller.ThemeNotFoundException;
+import org.roller.config.RollerRuntimeConfig;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
+import org.roller.model.ThemeManager;
+import org.roller.model.UserManager;
+import org.roller.pojos.Theme;
+import org.roller.pojos.ThemeTemplate;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
-import org.roller.presentation.velocity.PreviewResourceLoader;
-import org.roller.presentation.website.ThemeCache;
-import org.roller.presentation.website.formbeans.ThemeEditorForm;
 
-
-/////////////////////////////////////////////////////////////////////////////
 
 /**
- * Actions for theme chooser page.
- * 
- * @author llavandowska
- * 
+ * Struts Action class that handles the website theme chooser page.
+ *
+ * @author Allen Gilliland
+ *
  * @struts.action name="themeEditorForm" path="/editor/themeEditor"
  *    scope="session" parameter="method"
- * 
+ *
  * @struts.action-forward name="editTheme.page" path="/website/theme-editor.jsp"
  */
-public class ThemeEditorAction extends DispatchAction
-{
-	private static final String SESSION_TEMPLATE = "weblog.template";
-    private static final String LAST_THEME = "weblog.prev.theme";
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(ThemeEditorAction.class);
-    private ThemeCache themeCache = ThemeCache.getInstance();
-	
-	/**
-     * Take user to edit theme page.
+public class ThemeEditorAction extends DispatchAction {
+    
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(ThemeEditorAction.class);
+    
+    
+    /**
+     * Default action method.
+     */
+    public ActionForward unspecified(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
+        
+        // make "edit" our default action
+        return this.edit(mapping, actionForm, request, response);
+    }
+    
+    
+    /**
+     * Base action method.
      * 
-     * @param mapping Struts action mapping.
-     * @param form Theme editor form bean.
-     * @param request Servlet request.
-     * @param response Servlet response.
-     * @return Forward to edit-website page.
-     * @throws IOException
-     * @throws ServletException
-	 */
-	//-----------------------------------------------------------------------
-	public ActionForward edit(
-		ActionMapping       mapping,
-		ActionForm          form,
-		HttpServletRequest  request,
-		HttpServletResponse response)
-		throws IOException, ServletException
-	{
-		ActionErrors errors = new ActionErrors();
-		ActionForward forward = mapping.findForward("editTheme.page");
-		try
-		{
-             RollerSession rollerSession = RollerSession.getRollerSession(request);
-			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rollerSession.isUserAuthorizedToAdmin() )
-			{
-				loadThemes( rreq, errors, true);
-				ThemeEditorForm teForm = (ThemeEditorForm)form;
-				
-				teForm.setThemeName(null); // start fresh
+     * Shows the theme chooser page with this users current theme selected.
+     **/
+    public ActionForward edit(
+            ActionMapping       mapping,
+            ActionForm          form,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
+        
+        ActionErrors errors = new ActionErrors();
+        ActionForward forward = mapping.findForward("editTheme.page");
+        try {
+            RollerSession rses = RollerSession.getRollerSession(request);
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            if ( rses.isUserAuthorizedToAdmin() ) {
                 
-                if (mLogger.isDebugEnabled())
-                {
-                    mLogger.debug("loaded themes, form="+teForm);
-                }  
+                // get users current theme and our themes list
+                Roller roller = RollerFactory.getRoller();
+                ThemeManager themeMgr = roller.getThemeManager();
                 
-//				// if a custom template has been previewed already,
-//				// it'll be in memory.
-//				String template = 
-//                   (String)request.getSession().getAttribute(SESSION_TEMPLATE);
-//                
-//                if (mLogger.isDebugEnabled())
-//                {
-//                    mLogger.debug("got template="+template);
-//                }
-//                
-//				if (StringUtils.isNotEmpty(template))
-//				{
-//					// load the template in memory
-//					teForm.setThemeTemplate( template );
-//                    
-//                    if (mLogger.isDebugEnabled())
-//                    {
-//                        mLogger.debug("set template");
-//                    }
-//				}
-//				// otherwise the "custom" template will need be loaded
-//				// from the current page.
-//				else
-//				{
+                String username = rses.getAuthenticatedUser().getUserName();
+                WebsiteData website = rses.getCurrentWebsite();
+                String currentTheme = website.getEditorTheme();
+                List themes = themeMgr.getEnabledThemesList();
                 
-				// clear any previously set themes
-                clearThemePages(rreq, 
-					(String)request.getSession(true).getAttribute(LAST_THEME)); 
-                                
-			     // load the current default page
-                PageData page = getDefaultPage( request );
-					teForm.setThemeTemplate( page.getTemplate() );
-					
-					
-				//}				
-			}
-			else
-			{
-				forward = mapping.findForward("access-denied");
-			}
-		}
-		catch (Exception e)
-		{
+                // if we allow custom themes then add it to the end of the list
+                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed"))
+                    themes.add(Theme.CUSTOM);
+                
+                // on the first pass just show a preview of the current theme
+                request.setAttribute("previewTheme", currentTheme);
+                request.setAttribute("currentTheme", currentTheme);
+                request.setAttribute("themesList", themes);
+                
+                mLogger.debug("Previewing theme "+currentTheme+" to "+username);
+                
+            } else {
+                forward = mapping.findForward("access-denied");
+            }
+            
+        } catch (Exception e) {
             mLogger.error("ERROR in action",e);
-			throw new ServletException(e); 
-		}
-		return forward;
-	}
+            throw new ServletException(e);
+        }
+        
+        return forward;
+    }
+    
 
-	//-----------------------------------------------------------------------
-	/**
-	 * Load the template/theme to be previewed.  The template must be stashed
-	 * in PreviewResourceLoader so that PreviewServlet can find it.
-     * 
-     * @param mapping Struts action mapping.
-     * @param form Theme editor form bean.
-     * @param request Servlet request.
-     * @param response Servlet response.
-     * @return Forward to edit-website page.
-     * @throws IOException
-     * @throws ServletException
-	 */
-	public ActionForward preview(
-		ActionMapping       mapping,
-		ActionForm          form,
-		HttpServletRequest  request,
-		HttpServletResponse response)
-		throws IOException, ServletException
-	{
-		ActionErrors errors = new ActionErrors();
-		ActionForward forward = mapping.findForward("editTheme.page");
-		try
-		{
-             RollerSession rollerSession = RollerSession.getRollerSession(request);
-			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rollerSession.isUserAuthorizedToAdmin() )
-			{
-                HttpSession session = request.getSession();
-				ThemeEditorForm teForm = (ThemeEditorForm)form;
-				
-                String theme = teForm.getThemeName();
-                ServletContext ctx = rreq.getServletContext();
-                RollerContext rollerContext =
-                    RollerContext.getRollerContext( ctx );
-                                      
-                boolean showCustom = false;
-				if ( !"Custom".equals( theme ) )
-				{
-                    // if it isn't a custom template, load it from file
-					String sb = this.readTheme(rollerContext, theme);
-					teForm.setThemeTemplate( sb );
+    /**
+     * Preview action method.
+     *
+     * Happens when the user selects a new preview theme from the dropdown menu.
+     * Shows a new preview theme.
+     */
+    public ActionForward preview(
+            ActionMapping       mapping,
+            ActionForm          form,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
+        
+        ActionErrors errors = new ActionErrors();
+        ActionForward forward = mapping.findForward("editTheme.page");
+        try {
+            RollerSession rses = RollerSession.getRollerSession(request);            
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            if ( rses.isUserAuthorizedToAdmin() ) {
 
-					// clear any previously set themes
-					clearThemePages(rreq, 
-						(String) session.getAttribute(LAST_THEME)); 
-						                   
-                    setThemePages(request, theme);
-					session.setAttribute(LAST_THEME, theme);
-				}
-                else
-                {
-                	showCustom = true;
-                    clearThemePages(rreq, 
-                        (String) session.getAttribute(LAST_THEME));
+                // get users current theme
+                Roller roller = RollerFactory.getRoller();
+                ThemeManager themeMgr = roller.getThemeManager();
+                
+                String username = rses.getAuthenticatedUser().getUserName();
+                WebsiteData website = rses.getCurrentWebsite();
+                String currentTheme = website.getEditorTheme();
+                List themes = themeMgr.getEnabledThemesList();
+                
+                // if we allow custom themes then add it to the end of the list
+                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed"))
+                    themes.add(Theme.CUSTOM);
+                
+                // set the current theme in the request
+                request.setAttribute("currentTheme", currentTheme);
+                request.setAttribute("themesList", themes);
+                
+                String theme = request.getParameter("theme");
+                try {
+                    Theme previewTheme = themeMgr.getTheme(theme);
+                    
+                    if(previewTheme.isEnabled()) {
+                        // make sure the view knows what theme to preview
+                        request.setAttribute("previewTheme", previewTheme.getName());
+                    
+                        mLogger.debug("Previewing theme "+previewTheme.getName()+
+                                " to "+username);
+                    } else {
+                        request.setAttribute("previewTheme", currentTheme);
+                        errors.add(null, new ActionMessage("Theme not enabled"));
+                        saveErrors(request, errors);
+                    }
+
+                } catch(ThemeNotFoundException tnfe) {
+                    // hmm ... maybe they chose "custom"?
+                    if(theme != null && theme.equals(Theme.CUSTOM)) {
+                        request.setAttribute("previewTheme", Theme.CUSTOM);
+                    } else {
+                        // we should never get here
+                        request.setAttribute("previewTheme", currentTheme);
+                        errors.add(null, new ActionMessage("Theme not found"));
+                        saveErrors(request, errors);
+                    }
+                }
+                
+            } else {
+                forward = mapping.findForward("access-denied");
+            }
+            
+        } catch (Exception e) {
+            mLogger.error("ERROR in action",e);
+            throw new ServletException(e);
+        }
+        
+        return forward;
+    }
+    
+
+    /**
+     * Save action method.
+     *
+     * Happens when the user clicks the "Save" button to set a new theme.
+     * This method simply updates the WebsiteData.editorTheme property with
+     * the value of the new theme.
+     */
+    public ActionForward save(
+            ActionMapping       mapping,
+            ActionForm          form,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
+        
+        ActionErrors errors = new ActionErrors();
+        ActionForward forward = mapping.findForward("editTheme.page");
+        try {
+            RollerSession rses = RollerSession.getRollerSession(request);
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            if ( rses.isUserAuthorizedToAdmin() ) {
+                
+                String newTheme = null;
+                
+                // lookup what theme the user wants first
+                String theme = request.getParameter("theme");
+                try {
+                    Roller roller = RollerFactory.getRoller();
+                    ThemeManager themeMgr = roller.getThemeManager();
+                    Theme previewTheme = themeMgr.getTheme(theme);
+                    
+                    if(previewTheme.isEnabled()) {
+                        newTheme = previewTheme.getName();
+                    } else {
+                        errors.add(null, new ActionMessage("Theme not enabled"));
+                        saveErrors(request, errors);
+                    }
+                    
+                } catch(ThemeNotFoundException tnfe) {
+                    // possibly selected "custom"
+                    if(theme != null && theme.equals(Theme.CUSTOM)) {
+                        newTheme = Theme.CUSTOM;
+                    } else {
+                        // hmm ... that's weird
+                        mLogger.warn(tnfe);
+                        errors.add(null, new ActionMessage("Theme not found"));
+                        saveErrors(request, errors);
+                    }
+                }
+                
+                // update theme for website and save
+                if(newTheme != null) {
+                    try {
+                        Roller roller = RollerFactory.getRoller();
+                        String username = rses.getAuthenticatedUser().getUserName();
+                        WebsiteData website = rses.getCurrentWebsite();
+                        website.setEditorTheme(newTheme);
+                        website.save();
                         
-                    session.removeAttribute(LAST_THEME);
-					//session.removeAttribute(SESSION_TEMPLATE);
-                    
-				   //UserData ud = rreq.getUser();
-				   //PreviewResourceLoader.clearAllTemplates( ud.getUserName());
+                        mLogger.debug("Saved theme "+newTheme+
+                                " for "+username);
+                        
+                        // make sure to flush the page cache so ppl can see the change
+                        PageCacheFilter.removeFromCache(request, website);
+                
+                        // update complete ... now just send them back to edit
+                        return this.edit(mapping, form, request, response);
+                        
+                    } catch(RollerException re) {
+                        mLogger.error(re);
+                        errors.add(null, new ActionMessage("Error setting theme"));
+                        saveErrors(request, errors);
+                    }
                 }
-				loadThemes( rreq, errors, showCustom);
-
-				// put the template where PreviewServlet
-				// will be able to find it
-				PageData page = getDefaultPage( request );			
-				PreviewResourceLoader.setTemplate(page.getId(), 
-					teForm.getThemeTemplate(), RollerSession.getRollerSession(request).getCurrentWebsite().getHandle() );
-				
-				// save the template in session for later editing
-				session.setAttribute(SESSION_TEMPLATE,
-					teForm.getThemeTemplate() );
-			}
-			else
-			{
-				forward = mapping.findForward("access-denied");
-			}
-		}
-		catch (Exception e)
-		{
-            mLogger.error("ERROR in action",e);
-			throw new ServletException(e);
-		}
-		return forward;
-	}	
-
-	//-----------------------------------------------------------------------
-	/**
-	 * Save the selected Theme or edited template as the Weblog pages template.
-     * 
-     * @param mapping Struts action mapping.
-     * @param form Theme editor form bean.
-     * @param request Servlet request.
-     * @param response Servlet response.
-     * @return Forward to edit-website page.
-     * @throws IOException
-     * @throws ServletException
-	 */
-	public ActionForward save(
-		ActionMapping       mapping,
-		ActionForm          form,
-		HttpServletRequest  request,
-		HttpServletResponse response)
-		throws IOException, ServletException
-	{
-		ActionErrors errors = new ActionErrors();
-		ActionForward forward = mapping.findForward("editTheme.page");
-		try
-		{
-             RollerSession rollerSession = RollerSession.getRollerSession(request);
-			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rollerSession.isUserAuthorizedToAdmin() )
-			{
-                 loadThemes( rreq, errors, true);
-                 ThemeEditorForm teForm = (ThemeEditorForm)form;
-                 String theme = teForm.getThemeName();
-                 ServletContext ctx = rreq.getServletContext();
-                 RollerContext rollerContext = 
-                                RollerContext.getRollerContext( ctx );
-                 
-                 WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
-                	
-				// load the template either from the Form
-				// or from the disk (if its a stock Theme).
-				String template = "";
-				if ( "Custom".equals( theme ) )
-				{
-					// use the edited template
-					template = teForm.getThemeTemplate();
-				}
-				else
-				{
-					// Figure path to new user theme
-					String sb = this.readTheme(rollerContext, theme);
-					template = sb;
-				}
-
-                // clear the places holding onto the template
-                PreviewResourceLoader.clearAllTemplates(website.getHandle());
-                request.getSession().removeAttribute(SESSION_TEMPLATE);
-
-				// store the template in the page
-				UserManager mgr = RollerFactory.getRoller().getUserManager();
-				PageData page = getDefaultPage( request );
-
-				page.setTemplate( template );
-				mgr.storePage( page);
                 
-                saveThemePages( rreq, theme);
+                // if we got down here then there was an error :(
+                // send the user back to preview page with errors already set
+                return this.preview(mapping, form, request, response);
                 
-                // put them into the PreviewResourceLoader also
-                setThemePages(request, theme);
-
-				// clear the page cache
-				PageCacheFilter.removeFromCache(request, RollerSession.getRollerSession(request).getCurrentWebsite());
-				teForm.setThemeName("Custom");
-			}
-			else
-			{
-				forward = mapping.findForward("access-denied");
-			}
-		}
-		catch (Exception e)
-		{
+            } else {
+                forward = mapping.findForward("access-denied");
+            }
+        } catch (Exception e) {
             mLogger.error("ERROR in action",e);
-			throw new ServletException(e);
-		}
-		return forward;
-	}
-	
-
-	/**
-     * Cancel choosing of theme.
-     * 
-	 * @param mapping Struts action mapping.
-	 * @param form Theme editor form bean.
-	 * @param request Servlet request.
-	 * @param response Servlet response.
-	 * @return Forward to edit-website page.
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	public ActionForward cancel(
-		ActionMapping       mapping,
-		ActionForm          form,
-		HttpServletRequest  request,
-		HttpServletResponse response)
-		throws IOException, ServletException
-	{
-		ActionForward forward = mapping.findForward("editTheme");
-		try
-		{
-             RollerSession rollerSession = RollerSession.getRollerSession(request);
-			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rollerSession.isUserAuthorizedToAdmin() )
-			{
-				// clear the page cache
-				WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
-				PageCacheFilter.removeFromCache( request, website );
-                 ThemeEditorForm teForm = (ThemeEditorForm)form;
-								
-				// clear the places holding onto the template
-				PreviewResourceLoader.clearAllTemplates( website.getHandle() );
-				request.getSession().removeAttribute(SESSION_TEMPLATE);
-				teForm.setThemeName("Custom");
-			}
-			else
-			{
-				forward = mapping.findForward("access-denied");
-			}
-		}
-		catch (Exception e)
-		{
-            mLogger.error("ERROR in action",e);
-			throw new ServletException(e);
-		}
-		return forward;
-	}
-	
-	/**
-	 * Load the Themes from disk ONCE per user session.
-     * 
-	 * @param rreq
-	 * @param errors
-	 */
-	private void loadThemes( 
-        RollerRequest rreq, ActionErrors errors, boolean listCustom)
-	{
-		HttpSession session = rreq.getRequest().getSession(false);
-		try
-		{
-			// Figure path to new user templates
-			ServletContext ctx = rreq.getServletContext();
-			String[] themes = null;			
-			if (ctx.getAttribute("themeStore") != null)
-			{
-				themes = (String[]) ctx.getAttribute("themeStore");
-			}
-			else
-			{
-				RollerContext rollerContext = 
-								RollerContext.getRollerContext( ctx );
-				themes = rollerContext.getThemeNames();
-				ctx.setAttribute("themeStore", themes);
-			}
-			
-			// need to insert "Custom" as the top theme.
-			// "Custom" means the hand-edited template.
-			if (listCustom)
-			{
-				// probably should use arraycopy here?
-				String[] themes2 = new String[ themes.length+1 ];
-				themes2[0] = "Custom";
-				for (int i=1; i<themes2.length; i++)
-				{
-					themes2[i] = themes[i-1];
-				}
-				themes = themes2;
-			}
-			session.setAttribute( "themes", themes );
-		}
-		catch (Exception e)
-		{
-			errors.add(ActionErrors.GLOBAL_ERROR,
-				new ActionError("error.editing.user", e.toString()));
-		}
-	}
-	
-	/**
-	 * Get the Default Page for the website specified by request.
-     * 
-	 * @param rreq
-	 * @return PageData
-	 */
-	private PageData getDefaultPage(HttpServletRequest request) throws RollerException
-	{
-		try
-		{
-			UserManager mgr = RollerFactory.getRoller().getUserManager();
-			WebsiteData wd = RollerSession.getRollerSession(request).getCurrentWebsite();
-			String defaultPageId = wd.getDefaultPageId();
-			return mgr.retrievePage( defaultPageId );
-		}
-		catch (Exception e)
-		{
-            mLogger.error("ERROR in action",e);
-			throw new RollerException( e );
-		}
-	}
+            throw new ServletException(e);
+        }
+        return forward;
+    }
+   
     
     /**
-     * Loads theme into preview resource loader.
-     * 
-     * @param rreq
-     * @param theme
-     * @throws RollerException
+     * Customize action method.
+     *
+     * Happens when a user clicks the "Customize" button on their current theme.
+     * This method copies down all the theme templates from the currently
+     * selected theme into the users custom template pages and updates the users
+     * theme to "custom".
      */
-    private void setThemePages( HttpServletRequest request, String theme )
-       throws RollerException
-    {
-        RollerContext rollerContext = 
-           RollerContext.getRollerContext(request);
-           
-        try
-        {        
-            HashMap pages = rollerContext.readThemeMacros(theme);
-            Iterator iter = pages.keySet().iterator();
-            while ( iter.hasNext() )
-            {
-                String pageName = (String) iter.next();
-                String sb = (String)pages.get( pageName );
-                UserManager umgr = RollerFactory.getRoller().getUserManager();
-                WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
-                String handle = website.getHandle();
-                PageData page = umgr.getPageByName( RollerSession.getRollerSession(request).getCurrentWebsite(), pageName );
-                if (page != null)
-                {
-                    PreviewResourceLoader.setTemplate(page.getId(),sb, handle);
-                }
-                else
-                {
-                    PreviewResourceLoader.setTemplate(pageName, sb, handle);
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            mLogger.error("ERROR in action",e);
-            throw new RollerException( e );
-        }
+    public ActionForward customize(
+            ActionMapping       mapping,
+            ActionForm          form,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
         
+        ActionErrors errors = new ActionErrors();
+        ActionForward forward = mapping.findForward("editTheme.page");
+        try {
+            RollerSession rses = RollerSession.getRollerSession(request);
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            if ( rses.isUserAuthorizedToAdmin() ) {
+                
+                // copy down current theme to weblog templates
+                Roller roller = RollerFactory.getRoller();
+                ThemeManager themeMgr = roller.getThemeManager();
+                
+                String username = rses.getAuthenticatedUser().getUserName();
+                WebsiteData website = rses.getCurrentWebsite();
+                
+                try {
+                    Theme usersTheme = themeMgr.getTheme(website.getEditorTheme());
+                    
+                    // only if custom themes are allowed
+                    if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
+                        try {
+                            this.saveThemePages(website, usersTheme);
+                        } catch(RollerException re) {
+                            mLogger.error(re);
+                            errors.add(null, new ActionMessage("Error customizing theme"));
+                            saveErrors(request, errors);
+                        }
+                        
+                        // make sure to flush the page cache so ppl can see the change
+                        PageCacheFilter.removeFromCache(request, website);
+                    }
+                    
+                } catch(ThemeNotFoundException tnfe) {
+                    // this catches the potential case where someone customizes
+                    // a theme and has their theme as "custom" but then hits the
+                    // browser back button and presses the button again, so
+                    // they are basically trying to customize a "custom" theme
+                    
+                    // log this as a warning just in case
+                    mLogger.warn(tnfe);
+                    
+                    // show the user an error message and let things go back
+                    // to the edit page
+                    errors.add(null, new ActionMessage("Oops!  You already have a custom theme."));
+                }
+                
+                // just take the user back home to the edit theme page
+                return this.edit(mapping, form, request, response);
+                
+            } else {
+                forward = mapping.findForward("access-denied");
+            }
+        } catch (Exception e) {
+            mLogger.error("ERROR in action",e);
+            throw new ServletException(e);
+        }
+        return forward;
     }
     
-    /**
-     * Clears users preview theme from the preview resource loader.
-     * 
-     * @param rreq
-     * @param theme
-     * @throws RollerException
-     */
-    private void clearThemePages( RollerRequest rreq, String theme )
-       throws RollerException
-    {
-        if (mLogger.isDebugEnabled()) 
-        {
-            mLogger.debug("theme="+theme);
-        }
-        
-    	if (theme == null) return;
-    	
-        RollerContext rollerContext = 
-           RollerContext.getRollerContext(rreq.getRequest());
-           
-        try
-        {
-            //UserData ud = rreq.getUser();
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
-            //String username = ud.getUserName();
-        
-            String themeDir = rollerContext.getThemePath(theme);        
-            String[] children = RollerContext.getThemeFilenames(themeDir);
-            
-            // Custom theme won't have any files
-            if (children == null) return;
-                    
-            for (int i = 0; i < children.length; i++)
-            {
-                String pageName = children[i].substring(
-                    0,children[i].length()-3);
-    
-                PageData page = mgr.getPageByName(
-                        RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite(), pageName);
-                if (page != null)
-                {
-                    PreviewResourceLoader.clearTemplate( page.getId() );
-                }
-                else
-                {
-                    PreviewResourceLoader.clearTemplate( pageName );
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            if (mLogger.isDebugEnabled())
-            {
-                mLogger.debug("clearThemePages error: ", e);
-            }
-            
-            throw new RollerException( e );
-        }
-        
-    }
     
     /**
-     * Reads theme pages from disk and saves them as pages in website of
-     * the user specified by the RollerRequest. 
-     * 
+     * Helper method that copies down the pages from a given theme into a
+     * users weblog templates.
+     *
      * @param rreq Request wrapper.
      * @param theme Name of theme to save.
      * @throws RollerException
      */
-    private void saveThemePages( RollerRequest rreq, String theme )
-       throws RollerException
-    {
-        RollerContext rollerContext = 
-           RollerContext.getRollerContext(rreq.getRequest());
-           
-        try
-        {
-            UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData website = RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite();
+    private void saveThemePages(WebsiteData website, Theme theme)
+        throws RollerException {
         
-            HashMap pages = rollerContext.readThemeMacros(theme);
-            Iterator iter = pages.keySet().iterator();
-            while ( iter.hasNext() )
-            {
-                String pageName = (String) iter.next();
-                String pageContent = (String)pages.get( pageName );
-    
-                PageData page = mgr.getPageByName( 
-                        RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite(), pageName );
-                if (page != null)
-                {
+        mLogger.debug("Setting custom templates for website: "+website.getName());
+        
+        try {
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            
+            Collection templates = theme.getTemplates();
+            Iterator iter = templates.iterator();
+            ThemeTemplate theme_template = null;
+            while ( iter.hasNext() ) {
+                theme_template = (ThemeTemplate) iter.next();
+                //String pageContent = (String) templates.get( pageName );
+                
+                WeblogTemplate template = 
+                        userMgr.getPageByName(website, theme_template.getName());
+                if (template != null) {
                     // User already has page by that name, so overwrite it.
-                    page.setTemplate( pageContent );
-                }
-                else
-                {
+                    template.setContents(theme_template.getContents());
+                    
+                } else {
                     // User does not have page by that name, so create new page.
-                    page = new PageData( null,
-                        website,         // website
-                        pageName,        // name
-                        pageName,        // description
-                        pageName,        // link
-                        pageContent,     // template
-                        new Date()       // updateTime                
-                    );
-                    mgr.storePage( page );
+                    template = new WeblogTemplate( null,
+                            website,                            // website
+                            theme_template.getName(),           // name
+                            theme_template.getDescription(),    // description
+                            theme_template.getName(),           // link
+                            theme_template.getContents(),       // contents
+                            new Date()                          // last mod
+                            );
+                    userMgr.storePage( template );
                 }
             }
+            
+            // now update this website's theme to custom
+            website.setEditorTheme(Theme.CUSTOM);
+            
+            // if this is the first time someone is customizing a theme then
+            // we need to set a default page
+            if(website.getDefaultPageId() == null ||
+                    website.getDefaultPageId().equals("dummy")) {
+                // we have to go back to the db to figure out the id
+                WeblogTemplate template = userMgr.getPageByName(website, "Weblog");
+                if(template != null) {
+                    mLogger.debug("Setting default page to "+template.getId());
+                    website.setDefaultPageId(template.getId());
+                }
+            }
+            
+            // save our updated website
+            userMgr.storeWebsite(website);
+            
+            // commit?  i still don't understand when this is needed :/
             RollerFactory.getRoller().commit();
-        }
-        catch (Exception e)
-        {
+            
+        } catch (Exception e) {
             mLogger.error("ERROR in action",e);
             throw new RollerException( e );
         }
         
-    }
-    
-    /**
-     * Read the 'Weblog.vm' file for a theme and return it as a String.
-     * 
-     * @param ctx Roller context.
-     * @param theme Name of theme.
-     * @return Theme in the form of a string.
-     * @throws RollerException
-     */
-    public String readTheme(RollerContext ctx, String theme)
-        throws RollerException
-    {
-        String fileName = "Weblog.vm";
-        if (themeCache.getFromCache(theme, fileName) != null)
-        {
-            return themeCache.getFromCache(theme, fileName);
-        }
-        
-        String themesDir = RollerRuntimeConfig.getProperty("users.themes.path");
-        
-        String themeFile = RollerContext.getServletContext(
-            ).getRealPath( "/" + themesDir
-            + "/" + theme + "/" + fileName );
-                        
-        // Import weblog page template from specified theme
-        StringBuffer sb = new StringBuffer();
-        BufferedReader rdr = null;
-        try
-        {
-            rdr = new BufferedReader(
-                                    new FileReader(themeFile));
-            String line = null;
-            while ( null != (line = rdr.readLine()) )
-            {
-                sb.append( line );
-                sb.append("\n");
-            }
-            themeCache.putIntoCache(theme, fileName, sb.toString());
-        }
-        catch (Exception e)
-        {
-            mLogger.error("themeFile:" + themeFile, e);
-            throw new RollerException( e );
-        }
-        finally
-        {
-            try {
-                if (rdr != null) rdr.close();
-            } catch (IOException ioe) {
-                mLogger.warn("unable to close " + themeFile);
-            }
-        }
-        
-        return sb.toString();
     }
 }

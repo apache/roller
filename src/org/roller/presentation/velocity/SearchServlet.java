@@ -1,14 +1,11 @@
 package org.roller.presentation.velocity;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
@@ -24,6 +21,7 @@ import org.apache.velocity.context.Context;
 import org.roller.RollerException;
 import org.roller.business.search.FieldConstants;
 import org.roller.business.search.operations.SearchOperation;
+import org.roller.config.RollerConfig;
 import org.roller.model.IndexManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -37,6 +35,7 @@ import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.util.DateUtil;
 import org.roller.util.StringUtils;
+
 
 
 /**
@@ -59,25 +58,42 @@ public class SearchServlet extends BasePageServlet
     
     /* Where to start fetching results */
     private static int OFFSET = 0;
+    
+    /* is searching enabled? */
+    private boolean searchEnabled = true;
+    
 
     //~ Methods ================================================================
 
     public Template handleRequest(HttpServletRequest request,
                         HttpServletResponse response, Context ctx) throws Exception
     {
-         // set request Charcter Encoding here, because the SearchServlet
-         // is not preceeded by the RequestFilter
-         mLogger.debug("handleRequest()");
-		try
-		{
-			// insure that incoming data is parsed as UTF-8
-			request.setCharacterEncoding("UTF-8");
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			throw new ServletException("Can't set incoming encoding to UTF-8");
-		}
-    	        
+        // Note: Removed request character encoding here; was too late; it is now set uniformly in CharEncodingFilter.
+        // See ROL-760.
+
+        String enabled = RollerConfig.getProperty("search.enabled");
+        if("false".equalsIgnoreCase(enabled))
+            this.searchEnabled = false;
+        
+        if(! this.searchEnabled) {
+            Template outty = null;
+            Exception pageException = null;
+            try {
+                ContextLoader.setupContext(
+                        ctx, RollerRequest.getRollerRequest(request), response );
+                outty = getTemplate( "searchdisabled.vm", "UTF-8" );
+            } catch (Exception e) {
+                pageException = e;
+                response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
+            }
+            
+            if (pageException != null) {
+                mLogger.error("EXCEPTION: in RollerServlet", pageException);
+                request.setAttribute("DisplayException", pageException);
+            }
+            return outty;
+        }
+
         ctx.put("term", "");
         ctx.put("hits", new Integer(0));
         ctx.put("searchResults", new TreeMap());          

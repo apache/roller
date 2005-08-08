@@ -22,12 +22,12 @@ import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.forms.PageForm;
+import org.roller.presentation.forms.WeblogTemplateForm;
 import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
@@ -36,17 +36,17 @@ import org.roller.util.Utilities;
 /////////////////////////////////////////////////////////////////////////////
 /**
  * Page form action.
- * @struts.action name="pageForm" path="/editor/page"
+ * @struts.action name="weblogTemplateForm" path="/editor/page"
  *  	scope="session" parameter="method"
  * 
  * @struts.action-forward name="removePage.page" path="/website/remove-page.jsp"
  * @struts.action-forward name="editPage.page" path="/website/edit-page.jsp"
  * @struts.action-forward name="editPages.page" path="/website/edit-pages.jsp"
  */
-public final class PageFormAction extends DispatchAction
+public final class WeblogTemplateFormAction extends DispatchAction
 {
     private static Log mLogger = 
-        LogFactory.getFactory().getInstance(PageFormAction.class);
+        LogFactory.getFactory().getInstance(WeblogTemplateFormAction.class);
         
     public ActionForward add(
         ActionMapping       mapping,
@@ -58,18 +58,19 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPages.page");
         try
         {
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if ( rses.isUserAuthorizedToAdmin() )
             {
-                PageForm form = (PageForm)actionForm;
-                PageData data = new PageData();
+                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+                WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
-                WebsiteData hd = RollerSession.getRollerSession(request).getCurrentWebsite();
+                WebsiteData hd = rreq.getWebsite();
 
                 data.setWebsite( hd );
-                data.setUpdateTime( new java.util.Date() );
+                data.setLastModified( new java.util.Date() );
                 data.setDescription("");
-                data.setTemplate("");
+                data.setContents("");
                 validateLink( data );
 
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -82,11 +83,12 @@ public final class PageFormAction extends DispatchAction
                                 data.getName()));
                 saveMessages(request, uiMessages);
                 
-                PageCacheFilter.removeFromCache( request, RollerSession.getRollerSession(request).getCurrentWebsite() );
+                UserData user = rses.getAuthenticatedUser();
+                PageCacheFilter.removeFromCache( request, hd );
                     
                 actionForm.reset(mapping,request);                
                 
-                addModelObjects(request);
+                addModelObjects(rreq);
             }
             else
             {
@@ -113,16 +115,17 @@ public final class PageFormAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if ( rses.isUserAuthorizedToAdmin() )
             {
-                PageData pd = rreq.getPage();
-                PageForm pf = (PageForm)actionForm;
+                UserData ud = rses.getAuthenticatedUser();
+                WeblogTemplate pd = (WeblogTemplate) rreq.getPage();
+                WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
 
-                PageCacheFilter.removeFromCache( request, RollerSession.getRollerSession(request).getCurrentWebsite() );
+                PageCacheFilter.removeFromCache( request, pd.getWebsite() );
                 
-                addModelObjects(request);
+                addModelObjects(rreq);
             }
             else
             {
@@ -148,10 +151,11 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPages.page");
         try
         {
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if ( rses.isUserAuthorizedToAdmin() )
             {
-                addModelObjects(request);
+                addModelObjects(rreq);
             }
             else
             {
@@ -177,20 +181,22 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPages");
         try
         {
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if ( rses.isUserAuthorizedToAdmin() )
             {
-                PageForm form = (PageForm)actionForm;
-                PageData data = new PageData();
+                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+                WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
 
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
                 mgr.removePageSafely( data.getId() );
                 RollerFactory.getRoller().commit();
 
-                PageCacheFilter.removeFromCache( request, RollerSession.getRollerSession(request).getCurrentWebsite() );
+                UserData user = rses.getAuthenticatedUser();
+                PageCacheFilter.removeFromCache( request, data.getWebsite() );
                     
-                addModelObjects(request);
+                addModelObjects(rreq);
 
                 actionForm.reset(mapping,request);
             }
@@ -225,15 +231,15 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("removePage.page");
         try
         {
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            if ( rses.isUserAuthorizedToAdmin() )
             {
-                PageData cd = rreq.getPage();
-                PageForm pf = (PageForm)actionForm;
+                WeblogTemplate cd = (WeblogTemplate) rreq.getPage();
+                WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(cd, request.getLocale());
 
-                UserData ud = RollerSession.getRollerSession(request).getAuthenticatedUser();
+                UserData ud = rses.getAuthenticatedUser();
                 request.setAttribute("user",ud);
             }
             else
@@ -260,16 +266,17 @@ public final class PageFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPage.page");
         try
         {
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            RollerSession rses = RollerSession.getRollerSession(request);
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            if ( rses.isUserAuthorizedToAdmin() )
             {
-                PageForm form = (PageForm)actionForm;
+                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
-                PageData data = mgr.retrievePage(form.getId());
+                WeblogTemplate data = mgr.retrievePage(form.getId());
                 data.save(); // should through exception if no save permission
                 form.copyTo(data, request.getLocale());
-                data.setUpdateTime( new java.util.Date() );
-                data.setWebsite( RollerSession.getRollerSession(request).getCurrentWebsite() );
+                data.setLastModified( new java.util.Date() );
+                data.setWebsite(mgr.retrieveWebsite(form.getWebsite().getId()));
 
                 validateLink( data );
 
@@ -277,7 +284,7 @@ public final class PageFormAction extends DispatchAction
                 RollerFactory.getRoller().commit();
 
                 // set the (possibly) new link back into the Form bean
-                ((PageForm)actionForm).setLink( data.getLink() );
+                ((WeblogTemplateForm)actionForm).setLink( data.getLink() );
 
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(ActionMessages.GLOBAL_MESSAGE, 
@@ -285,7 +292,8 @@ public final class PageFormAction extends DispatchAction
                                 data.getName()));
                 saveMessages(request, uiMessages);
 
-                PageCacheFilter.removeFromCache(request, RollerSession.getRollerSession(request).getCurrentWebsite());
+                UserData user = rses.getAuthenticatedUser();
+                PageCacheFilter.removeFromCache(request, data.getWebsite());
             }
             else
             {
@@ -319,7 +327,7 @@ public final class PageFormAction extends DispatchAction
      * characters that are web-safe), this is a much easier
      * test-and-correct.  Otherwise we would need a RegEx package.
      */
-    private void validateLink( PageData data )
+    private void validateLink( WeblogTemplate data )
     {
         // if data.getLink() is null or empty
         // use the title ( data.getName() )
@@ -352,15 +360,17 @@ public final class PageFormAction extends DispatchAction
     }
     
     //-----------------------------------------------------------------------
-    private void addModelObjects( HttpServletRequest request ) 
+    private void addModelObjects( RollerRequest rreq ) 
         throws RollerException {  
-                        
-        UserManager mgr = RollerFactory.getRoller().getUserManager();
+            
+        HttpServletRequest request = rreq.getRequest();            
+        UserManager mgr = RollerFactory.getRoller().getUserManager();        
+        RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
 
-        UserData user = RollerSession.getRollerSession(request).getAuthenticatedUser();
+        UserData user = rses.getAuthenticatedUser();
         request.setAttribute("user",user);
 
-        WebsiteData wd = RollerSession.getRollerSession(request).getCurrentWebsite();
+        WebsiteData wd = rses.getCurrentWebsite();
         request.setAttribute("website", wd);
 
         List pages = mgr.getPages(wd);

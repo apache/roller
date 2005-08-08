@@ -138,8 +138,11 @@ public final class WebsiteFormAction extends DispatchAction
             if ( rollerSession.isUserAuthorizedToAdmin() )
             {
                 WebsiteFormEx form = (WebsiteFormEx)actionForm;
-                if (!form.getDefaultPageId().equals(form.getWeblogDayPageId()))
-                {                    
+
+                /* we don't need this check any longer -- Allen G
+                if(!form.getDefaultPageId().equals(form.getWeblogDayPageId()))
+                {
+                */               
                     WebsiteData wd = umgr.retrieveWebsite(form.getId());
                     wd.save(); // should throw if save not permitted
 
@@ -168,6 +171,7 @@ public final class WebsiteFormAction extends DispatchAction
                     List epages = Arrays.asList(StringUtils.split(
                         org.apache.commons.lang.StringUtils.deleteWhitespace(editorPages), ","));
                     request.setAttribute("editorPagesList", epages);                
+                /*
                 }
                 else
                 {
@@ -175,6 +179,7 @@ public final class WebsiteFormAction extends DispatchAction
                         new ActionError("websiteSettings.error.sameTemplate"));                   
                     saveErrors(request, errors);
                 }
+                */
             }
             else
             {

@@ -18,11 +18,12 @@ import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.ParsedRequest;
 import org.roller.model.RollerFactory;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.Template;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.PageData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
@@ -64,7 +65,7 @@ public class RollerRequest implements ParsedRequest
     private String             mDateString = null;
     private String             mPathInfo = null; 
     private String             mPageLink = null;
-    private PageData           mPage;
+    private Template           mPage;
     private PageContext        mPageContext = null;
     private HttpServletRequest mRequest = null;
     private WebsiteData        mWebsite;
@@ -74,7 +75,8 @@ public class RollerRequest implements ParsedRequest
         
     private static ThreadLocal mRollerRequestTLS = new ThreadLocal();
     
-    public static final String ANCHOR_KEY             = "anchor";
+    public static final String ANCHOR_KEY             = "entry";
+    public static final String ANCHOR_KEY_OLD         = "anchor";
     public static final String USERNAME_KEY           = "username";
     public static final String WEBSITEHANDLE_KEY      = "blog";
     public static final String WEBSITEID_KEY          = "websiteid";
@@ -148,7 +150,7 @@ public class RollerRequest implements ParsedRequest
             UserData currentUser = userMgr.getUser(userName);
             RollerFactory.getRoller().setUser(currentUser);
         }
-
+        
         // path info may be null, (e.g. on JSP error page)
         mPathInfo = mRequest.getPathInfo();
         mPathInfo = (mPathInfo!=null) ? mPathInfo : "";            
@@ -211,7 +213,7 @@ public class RollerRequest implements ParsedRequest
                     // we have the /username form of URL
                     mDate = getDate(true);
                     mDateString = DateUtil.format8chars(mDate);
-                    mPage = userMgr.retrievePage(mWebsite.getDefaultPageId());
+                    mPage = mWebsite.getDefaultPage();
                 }
                 else if ( pathInfo.length == 2 )
                 {
@@ -222,20 +224,20 @@ public class RollerRequest implements ParsedRequest
                         mDate = getDate(true);
                         mDateString = DateUtil.format8chars(mDate);
                         mPageLink = pathInfo[1];
-                        mPage = userMgr.getPageByLink(mWebsite, pathInfo[1]);
+                        mPage = mWebsite.getPageByLink(pathInfo[1]);
                     }
                     else
                     {
                         // we have the /username/datestring form of URL
                         mDateString = pathInfo[1];
-                        mPage = userMgr.retrievePage(mWebsite.getDefaultPageId());
+                        mPage = mWebsite.getDefaultPage();
                         mIsDateSpecified = true;
                     }               
                 }
                 else if ( pathInfo.length == 3 )
                 {
                     mPageLink = pathInfo[1];
-                    mPage = userMgr.getPageByLink(mWebsite, pathInfo[1]);
+                    mPage = mWebsite.getPageByLink(pathInfo[1]);
                     
                     mDate = parseDate(pathInfo[2]);
                     if ( mDate == null ) // pre-jdk1.4 --> || mDate.getYear() <= 70 )
@@ -266,7 +268,7 @@ public class RollerRequest implements ParsedRequest
                 {
                     // we have the /username/pagelink/datestring/anchor form of URL
                     mPageLink = pathInfo[1];
-                    mPage = userMgr.getPageByLink(mWebsite, pathInfo[1]);
+                    mPage = mWebsite.getPageByLink(pathInfo[1]);
                     
                     mDate = parseDate(pathInfo[2]);
                     mDateString = pathInfo[2];
@@ -314,16 +316,17 @@ public class RollerRequest implements ParsedRequest
             if ( pageId != null )
             {
                 mPage = userMgr.retrievePage(pageId);
-                
+                /*
                 // We can use page to find the user, if we don't have one yet
                 if ( mWebsite == null )
                 {
                     mWebsite = mPage.getWebsite();
-                }                    
+                }
+                 */                    
             }
             else if (mWebsite != null) 
             {
-                mPage = userMgr.retrievePage( mWebsite.getDefaultPageId() );
+                mPage = mWebsite.getDefaultPage();
             }
                                        
             // Look for day in request params 
@@ -669,10 +672,10 @@ public class RollerRequest implements ParsedRequest
 
     //------------------------------------------------------------------------
     /**
-     * Gets the PageData specified by the request, or null.
-     * @return PageData
+     * Gets the WeblogTemplate specified by the request, or null.
+     * @return WeblogTemplate
      */
-    public PageData getPage()
+    public Template getPage()
     {
         if (mPage == null)
         {
@@ -696,7 +699,7 @@ public class RollerRequest implements ParsedRequest
     /**
      * Allow comment servlet to inject page that it has chosen.
      */
-    public void setPage(PageData page) 
+    public void setPage(org.roller.pojos.Template page) 
     {
         mPage = page;
     }
@@ -756,6 +759,7 @@ public class RollerRequest implements ParsedRequest
         {        
             // Look for anchor or entry ID that identifies a specific entry 
             String anchor = mRequest.getParameter(ANCHOR_KEY);
+            if (anchor == null) anchor = mRequest.getParameter(ANCHOR_KEY_OLD);
             String entryid = mRequest.getParameter(WEBLOGENTRYID_KEY);
             if (entryid == null) 
             {

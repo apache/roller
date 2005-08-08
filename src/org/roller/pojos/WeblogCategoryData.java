@@ -125,6 +125,8 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
 
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getObjectPropertyName()
+     *
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getObjectPropertyName()
     {
@@ -133,6 +135,8 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
 
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getAncestorPropertyName()
+     *
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getAncestorPropertyName()
     {
@@ -142,9 +146,10 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     //------------------------------------------------------- Simple properties
 
     /**
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
-      * @hibernate.id column="id" type="string"
-      *  generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" type="string"
+     *  generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()
     {
@@ -157,6 +162,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="name" non-null="true" unique="false"
      */
@@ -172,6 +178,8 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
 
     /** 
      * Description
+     * 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="description" non-null="true" unique="false"
      */
@@ -186,6 +194,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     }
 
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="image" non-null="true" unique="false"
      */
@@ -201,6 +210,8 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
 
     /**
      * Get path in category hierarhcy.
+     *
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getPath()
     {
@@ -221,6 +232,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     //------------------------------------------------------------ Associations
 
     /** 
+     * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
      *  
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
@@ -250,7 +262,11 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
 //        WeblogCategoryAssoc = weblogCategoryAssoc;
 //    }
 
-    /** Return parent category, or null if category is root of hierarchy. */
+    /** 
+     * Return parent category, or null if category is root of hierarchy.
+     *
+     * @roller.wrapPojoMethod type="pojo"
+     */
     public WeblogCategoryData getParent() throws RollerException
     {
         if (mNewParent != null)
@@ -275,7 +291,11 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         mNewParent = parent;
     }
 
-    /** Query to get child categories of this category. */
+    /**
+     * Query to get child categories of this category.
+     *
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.WeblogCategoryData"
+     */
     public List getWeblogCategories() throws RollerException
     {
         if (mWeblogCategories == null)
@@ -293,6 +313,9 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         return mWeblogCategories;
     }
 
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
     public boolean descendentOf(WeblogCategoryData ancestor) 
         throws RollerException
     {
@@ -302,6 +325,8 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     /** 
      * Determine if category is in use. Returns true if any weblog entries 
      * use this category or any of it's subcategories.
+     *
+     * @roller.wrapPojoMethod type="simple"
      */
     public boolean isInUse() 
     {
@@ -357,6 +382,9 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     /** 
      * Retrieve all weblog entries in this category and, optionally, include
      * weblog entries all sub-categories.
+     *
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.WeblogEntryData"
+     *
      * @param subcats True if entries from sub-categories are to be returned.
      * @return List of WeblogEntryData objects.
      * @throws RollerException

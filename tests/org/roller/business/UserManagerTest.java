@@ -18,6 +18,7 @@ import org.roller.RollerTestBase;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.FolderData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
@@ -258,7 +259,8 @@ public class UserManagerTest  extends RollerTestBase
         assertNotNull(root);
 
         List pages1 = getRoller().getUserManager().getPages(website);
-        assertEquals(3, pages1.size());
+        // new registrations require a theme, so no pages are created -- Allen G
+        assertEquals(0, pages1.size());
         getRoller().rollback();
 
         // Remove the website and user

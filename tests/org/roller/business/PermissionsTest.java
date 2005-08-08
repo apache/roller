@@ -12,7 +12,7 @@ import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
@@ -152,7 +152,7 @@ public class PermissionsTest extends RollerTestBase
         UserData testuser0 = umgr.getUser("testuser0");
         WebsiteData website0 = (WebsiteData)umgr.getWebsites(testuser0, null).get(0);
         assertNotNull(website0);
-        PageData page = (PageData)getRoller().getUserManager().getPages(website0).get(0);
+        WeblogTemplate page = (WeblogTemplate)getRoller().getUserManager().getPages(website0).get(0);
         assertNotNull(page);
         
         // and tries to save it

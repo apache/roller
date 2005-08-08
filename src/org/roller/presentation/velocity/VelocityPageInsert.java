@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.velocity.VelocityContext;
-import org.roller.pojos.PageData;
+import org.roller.pojos.WeblogTemplate;
 
 /**
  * A web page insert is a big of HTML that is inserted into a page into 
@@ -15,7 +15,7 @@ import org.roller.pojos.PageData;
 public interface VelocityPageInsert 
 {
     public void display(
-        PageData page,
+        WeblogTemplate page,
         VelocityContext context,
         HttpServletRequest request, 
         HttpServletResponse response);

@@ -27,11 +27,15 @@ import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
+import org.roller.pojos.Template;
 import org.roller.pojos.CommentData;
-import org.roller.pojos.PageData;
 import org.roller.pojos.RollerPropertyData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.pojos.wrapper.CommentDataWrapper;
+import org.roller.pojos.wrapper.TemplateWrapper;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.roller.presentation.LanguageUtil;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
@@ -123,6 +127,8 @@ public class ContextLoader
      */
     private static void loadStatusMessage(Context ctx, RollerRequest rreq)
     {
+        mLogger.debug("Loading status message");
+        
         HttpSession session = rreq.getRequest().getSession(false);
         String msg = null;
         if (session != null)
@@ -154,47 +160,29 @@ public class ContextLoader
        Context ctx, RollerRequest rreq, RollerContext rollerCtx, String handle)
        throws RollerException
     {
+        mLogger.debug("Loading weblog values");
+        
         // if there is an "_entry" page, only load it once
         WebsiteData website = 
             RollerFactory.getRoller().getUserManager().getWebsiteByHandle(handle);
-        PageModel pageModel = (PageModel)ctx.get("pageModel");
-        if (website != null && pageModel != null) 
+        if (website != null) 
         {
             /* alternative display pages - customization */
-            PageData entryPage = pageModel.getUsersPageByName(website, "_entry");
+            Template entryPage = website.getPageByName("_entry");
             if (entryPage != null)
             {
-                ctx.put("entryPage", entryPage);
+                ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
             }
-            PageData descPage = pageModel.getUsersPageByName(website, "_desc");
+            Template descPage = website.getPageByName("_desc");
             if (descPage != null)
             {
-                ctx.put("descPage", descPage);
+                ctx.put("descPage", TemplateWrapper.wrap(descPage));
             }
         }
     }
 
     private static String figureResourcePath( RollerRequest rreq )
-    {
-        /*  old way -- Allen G
-        HttpServletRequest request = rreq.getRequest();
-        RollerContext rCtx = RollerContext.getRollerContext( request );
-        RollerConfigData  rollerConfig = rCtx.getRollerConfig();
-    
-        StringBuffer sb = new StringBuffer();
-        String uploadPath = rollerConfig.getUploadPath();
-        if ( uploadPath != null && uploadPath.trim().length() > 0 )
-        {
-            sb.append( uploadPath );
-        }
-        else
-        {
-            sb.append( request.getContextPath() );
-            sb.append( RollerContext.USER_RESOURCES );
-        }
-        return sb.toString();
-        */
-        
+    {   
         String uploadurl = null;
         try {
             uploadurl = RollerFactory.getRoller().getFileManager().getUploadUrl();
@@ -209,6 +197,8 @@ public class ContextLoader
        Context ctx, RollerRequest rreq, RollerContext rollerCtx ) 
        throws RollerException
     {
+        mLogger.debug("Loading comment values");
+        
         HttpServletRequest request = rreq.getRequest();
         
         String escapeHtml = RollerRuntimeConfig.getProperty("users.comments.escapehtml");
@@ -221,7 +211,7 @@ public class ContextLoader
         
         // Make sure comment form object is available in context
         CommentFormEx commentForm = 
-            (CommentFormEx)request.getAttribute("commentForm");
+                (CommentFormEx) request.getAttribute("commentForm");
         if ( commentForm == null )
         {
             commentForm = new CommentFormEx();
@@ -240,11 +230,11 @@ public class ContextLoader
             ArrayList list = new ArrayList();
             CommentData cd = new CommentData();
             commentForm.copyTo(cd, request.getLocale());
-            list.add(cd);
+            list.add(CommentDataWrapper.wrap(cd));
             ctx.put("previewComments",list);            
         }
         WeblogEntryData entry = rreq.getWeblogEntry();
-        ctx.put("entry",entry);            
+        ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));            
     }   
 
     //------------------------------------------------------------------------
@@ -253,6 +243,8 @@ public class ContextLoader
         Context ctx, RollerRequest rreq, RollerContext rollerCtx, String userName) 
         throws RollerException
     {
+        mLogger.debug("Loading path values");
+        
         HttpServletRequest request = rreq.getRequest();
         String url = null;
         if ( userName != null && !userName.equals("zzz_none_zzz"))
@@ -285,6 +277,8 @@ public class ContextLoader
     
     protected static void loadRequestParamKeys(Context ctx)
     {
+        mLogger.debug("Loading request param keys");
+        
         // Since Velocity *requires* accessor methods, these values from
         // RollerRequest are not available to it, put them into the context
         ctx.put("USERNAME_KEY",           RollerRequest.USERNAME_KEY);
@@ -310,6 +304,8 @@ public class ContextLoader
     protected static void loadRssValues(
        Context ctx, RollerRequest rreq, String handle) throws RollerException
     {
+        mLogger.debug("Loading rss values");
+        
         HttpServletRequest request = rreq.getRequest();
         
         int entryLength = -1;
@@ -356,7 +352,8 @@ public class ContextLoader
         Context ctx, RollerRequest rreq, RollerContext rollerCtx, String handle)
         throws RollerException
     {
-
+        mLogger.debug("Loading utility objects");
+        
         // date formatter for macro's
         // set this up with the Locale to make sure we can reuse it with other patterns
         // in the macro's
@@ -375,7 +372,7 @@ public class ContextLoader
         // the Entry Day link.
         ctx.put("plainFormat", "yyyyMMdd");
 
-        ctx.put("page",            rreq.getPage() );
+        ctx.put("page",            TemplateWrapper.wrap(rreq.getPage()));
         ctx.put("utilities",       new Utilities() );
         ctx.put("stringUtils",     new StringUtils() );        
         ctx.put("rollerVersion",   rollerCtx.getRollerVersion() );
@@ -414,7 +411,6 @@ public class ContextLoader
             ctx.put("userName",      handle);
             ctx.put("fullName",      website.getName() );
             ctx.put("emailAddress",  website.getEmailAddress() );
-
             ctx.put("encodedEmail",  RegexUtil.encode(website.getEmailAddress()));
             ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(website.getEmailAddress()));
             
@@ -440,7 +436,7 @@ public class ContextLoader
             ctx.put("timezone", TimeZone.getDefault());
             ctx.put("timeZone", TimeZone.getDefault());
         }
-        ctx.put("website", website );
+        ctx.put("website", WebsiteDataWrapper.wrap(website) );
 
         String siteName = ((RollerPropertyData)props.get("site.name")).getValue();
         if ("Roller-based Site".equals(siteName)) siteName = "Main";
@@ -467,6 +463,8 @@ public class ContextLoader
      */
     public static void initializePagePlugins(ServletContext mContext)
     {
+        mLogger.debug("Initializing page plugins");
+        
         String pluginStr = RollerConfig.getProperty("plugins.page");
         if (mLogger.isDebugEnabled()) mLogger.debug(pluginStr);
         if (pluginStr != null)
@@ -539,6 +537,8 @@ public class ContextLoader
     private static ToolboxContext loadToolboxContext(
                     HttpServletRequest request, HttpServletResponse response, Context ctx) 
     {
+        mLogger.debug("Loading toolbox context");
+        
         ServletContext servletContext = RollerContext.getServletContext();
 
         // get the toolbox manager
