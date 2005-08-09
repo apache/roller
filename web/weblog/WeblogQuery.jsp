@@ -49,9 +49,9 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
         </label>        
         <html:radio property="status" value="ALL">
             <fmt:message key="weblogEntryQuery.label.allEntries" /></html:radio> 
-        <html:radio property="status" value="DRAFT_ONLY">
+        <html:radio property="status" value="DRAFT">
             <fmt:message key="weblogEntryQuery.label.draftOnly" /></html:radio>
-        <html:radio property="status" value="PUBLISHED_ONLY" >
+        <html:radio property="status" value="PUBLISHED" >
             <fmt:message key="weblogEntryQuery.label.publishedOnly" /></html:radio>
     </div>
 

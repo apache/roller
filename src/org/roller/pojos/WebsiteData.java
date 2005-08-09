@@ -59,7 +59,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     protected String  locale;
     protected String  timeZone;
     protected String  mDefaultPlugins;
-    protected Boolean isEnabled;
+    protected Boolean enabled;
     protected Date dateCreated;
        
     // Associated objects
@@ -88,7 +88,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                        final Boolean  allowComments,
                        final Boolean  emailComments,
                        final String   emailFromAddress,
-                       final Boolean  isEnabled,
+                       final Boolean  enabled,
                        final String   emailAddress,
                        final Date     dateCreated)
     {
@@ -107,7 +107,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.allowComments = allowComments;
         this.emailComments = emailComments;
         this.emailFromAddress = emailFromAddress;
-        this.isEnabled = isEnabled;
+        this.enabled = enabled;
         this.emailAddress = emailAddress;
         this.dateCreated = dateCreated;
     }
@@ -728,15 +728,15 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * @ejb:persistent-field
      * @hibernate.property column="isenabled" non-null="true" unique="false"
      */
-    public Boolean getIsEnabled()
+    public Boolean getEnabled()
     {
-        return this.isEnabled;
+        return this.enabled;
     }
     
     /** @ejb:persistent-field */ 
-    public void setIsEnabled(Boolean isEnabled)
+    public void setEnabled(Boolean enabled)
     {
-        this.isEnabled = isEnabled;
+        this.enabled = enabled;
     }
 
     public String toString()
@@ -871,7 +871,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.locale = other.locale;
         this.timeZone = other.timeZone;
         this.mDefaultPlugins = other.mDefaultPlugins;
-        this.isEnabled = other.isEnabled;
+        this.enabled = other.enabled;
         this.dateCreated = dateCreated;
     }
     

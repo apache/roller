@@ -75,18 +75,18 @@ public class UserManagerTest  extends RollerTestBase
                                  "password",
                                  "EnabledUser",
                                  "enabledUser@example.com");
-        enabledUser.setIsEnabled(Boolean.TRUE);
+        enabledUser.setEnabled(Boolean.TRUE);
         enabledSite = ((WebsiteData)umgr.getWebsites(enabledUser, null).get(0));
-        enabledSite.setIsEnabled(Boolean.TRUE);       
+        enabledSite.setEnabled(Boolean.TRUE);       
 
         disabledUser = createUser(disabledUserName,
                                  "password",
                                  "DisabledUser",
                                  "disabledUser@example.com");
                 
-        disabledUser.setIsEnabled(Boolean.FALSE);
+        disabledUser.setEnabled(Boolean.FALSE);
         disabledSite = ((WebsiteData)umgr.getWebsites(disabledUser, null).get(0));
-        disabledSite.setIsEnabled(Boolean.FALSE);  
+        disabledSite.setEnabled(Boolean.FALSE);  
 
         getRoller().commit();
     }

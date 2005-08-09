@@ -1,8 +1,10 @@
 <%@ include file="/taglibs.jsp" %>
 <%
+RollerContext rctx = RollerContext.getRollerContext(request);
 RollerSession rollerSession = RollerSession.getRollerSession(request);
 UserData user = rollerSession.getAuthenticatedUser();
 WebsiteData website = rollerSession.getCurrentWebsite();
+String absURL = rctx.getAbsoluteContextUrl(request);
 boolean allowNewUsers = RollerConfig.getBooleanProperty("users.registration.enabled");
 %>
 <br />
@@ -22,7 +24,7 @@ boolean allowNewUsers = RollerConfig.getBooleanProperty("users.registration.enab
                  [<b><%= user.getUserName() %></b>].<br />
                  <% if (website != null) { %>
                     <fmt:message key="mainPage.currentWebsite" />:<br />
-                    [<b><%= website.getHandle() %></b>]<br />
+                    [<b><a href='<%= absURL + "/page/" + website.getHandle() %>'><%= website.getHandle() %></a></b>]<br />
                  <% } %> 
                 <fmt:message key="navigationBar.youMay" />&nbsp;
 			    <html:link forward="logout-redirect"><fmt:message key="navigationBar.logout"/></html:link>

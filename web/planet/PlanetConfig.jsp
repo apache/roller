@@ -35,7 +35,7 @@ function syncWebsites()
            <fmt:message key="planetConfig.description" />
         </label>
         <html:text property="description" size="40" maxlength="255" />
-        <img src="../images/help.jpeg" alt="help" 
+        <img src="../images/Help16.gif" alt="help" 
            title='<fmt:message key="planetConfig.tip.description" />' />
     </div>
     
@@ -84,7 +84,10 @@ function syncWebsites()
            title='<fmt:message key="planetConfig.tip.proxyPort" />' />
     </div>
     
-    <input type="submit" value='<fmt:message key="planetConfig.button.post" />' />
+    <br />
+    <div class="control">
+        <input type="submit" value='<fmt:message key="planetConfig.button.post" />' />
+    </div>
     
     <br />      
     <br />      
@@ -97,7 +100,7 @@ function syncWebsites()
 
     <input type="button" name="sync"
        value='<fmt:message key="planetConfig.button.syncWebsites" />'
-       onclick="syncWebsites()" />  
+       onclick="syncWebsites()" /> 
 
 </html:form>
 

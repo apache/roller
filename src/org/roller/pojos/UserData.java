@@ -39,15 +39,15 @@ public class UserData
    
    static final long serialVersionUID = -6354583200913127874L;
 
-   protected String id;
-   protected String userName;
-   protected String password;
-   protected String fullName;
-   protected String emailAddress;
-   protected Date dateCreated;
+   protected String  id;
+   protected String  userName;
+   protected String  password;
+   protected String  fullName;
+   protected String  emailAddress;
+   protected Date    dateCreated;
    protected String  locale;
    protected String  timeZone;
-   protected Boolean isEnabled = Boolean.TRUE;
+   protected Boolean enabled = Boolean.TRUE;
    
    private Set roles = new TreeSet();
    private List permissions = new ArrayList();
@@ -71,7 +71,7 @@ public class UserData
          this.dateCreated = (Date)dateCreated.clone();
          this.locale = locale;
          this.timeZone = timeZone;
-         this.isEnabled = isEnabled;
+         this.enabled = enabled;
 	}
 
 	public UserData( UserData otherData )
@@ -104,15 +104,15 @@ public class UserData
      * @ejb:persistent-field
      * @hibernate.property column="isenabled" non-null="true" unique="false"
      */
-    public Boolean getIsEnabled()
+    public Boolean getEnabled()
     {
-        return this.isEnabled;
+        return this.enabled;
     }
     
     /** @ejb:persistent-field */ 
-    public void setIsEnabled(Boolean isEnabled)
+    public void setEnabled(Boolean enabled)
     {
-        this.isEnabled = isEnabled;
+        this.enabled = enabled;
     }
     
     /** Id of the User.

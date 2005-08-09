@@ -70,15 +70,14 @@ public class PageHelper
         if (rreq != null) 
         {
             mPageContext = rreq.getPageContext();
-            WebsiteData website = null;
             if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null)
             {
-                website = (WebsiteData)
+                mWebsite = (WebsiteData)
                     rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
             }
             else if ( rreq.getWebsite() != null )
             {
-                website = rreq.getWebsite();
+                mWebsite = rreq.getWebsite();
             }
         }
         

@@ -171,7 +171,7 @@ public abstract class RollerTestBase extends TestCase
                 "Test User #"+i,      // fullName
                 "test"+i+"@test.com"  // emailAddress
                 );
-            ud.setIsEnabled(new Boolean(i%2 == 0)); // half of users are disabled
+            ud.setEnabled(new Boolean(i%2 == 0)); // half of users are disabled
             WebsiteData website = (WebsiteData)umgr.getWebsites(ud, null).get(0);
             mWebsitesCreated.add(website);
             mUsersCreated.add(ud);

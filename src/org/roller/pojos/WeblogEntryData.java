@@ -215,6 +215,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     }
     
     /** 
+     * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="title" non-null="true" unique="false"
      */

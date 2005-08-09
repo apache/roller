@@ -18,6 +18,7 @@ import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.bookmarks.formbeans.BookmarkFormEx;
 
 /**
@@ -36,7 +37,8 @@ public class BookmarkEditAction extends Action
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = rreq.getWebsite();
+        RollerSession rses = RollerSession.getRollerSession(request);
+        WebsiteData wd = rses.getCurrentWebsite();
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         BookmarkFormEx form = (BookmarkFormEx)actionForm;
         

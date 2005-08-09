@@ -48,7 +48,7 @@ public class RollerXmlRpcServerTest extends RollerTestBase
     {
         ArrayList params = new ArrayList();
         params.add("roller"); // appkey
-        params.add("roller"); // blogid
+        params.add("testuser0"); // blogid
         params.add("testuser0"); // userid
         params.add("password"); // password
         params.add(new Integer(5)); // numposts

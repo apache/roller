@@ -25,6 +25,7 @@ import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.roller.presentation.RollerSession;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
@@ -106,8 +107,11 @@ public final class ImportBookmarksFormAction extends Action
                         RollerRequest rreq = 
                             RollerRequest.getRollerRequest(request);
                         BookmarkManager bm = 
-                            RollerFactory.getRoller().getBookmarkManager();    
-                        bm.importBookmarks(rreq.getWebsite(), folderName, data);
+                            RollerFactory.getRoller().getBookmarkManager();
+                        RollerSession rses = 
+                            RollerSession.getRollerSession(request);
+                        bm.importBookmarks(
+                            rses.getCurrentWebsite(), folderName, data);
                         
                         RollerFactory.getRoller().commit();
                     }

@@ -257,7 +257,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
             else 
             {
                 criteria.createAlias("website","w");
-                criteria.add(Expression.eq("w.isEnabled", Boolean.TRUE));
+                criteria.add(Expression.eq("w.enabled", Boolean.TRUE));
             }
     
             if (startDate != null)

@@ -9,7 +9,7 @@
     <html:hidden property="method" value="save"/></input>
     <html:hidden property="id"/></input>
     <html:hidden property="userName" /></input>
-    <html:hidden property="isEnabled" /></input>
+    <html:hidden property="enabled" /></input>
     
     <div class="formrow">
        <label for="fullName" class="formrow" /><fmt:message key="userSettings.fullname" /></label>

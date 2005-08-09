@@ -94,8 +94,8 @@ public class BaseAPIHandler implements Serializable
             user = userMgr.getUser(username);
             
             enabled = website.getEnableBloggerApi().booleanValue() 
-                   && website.getIsEnabled().booleanValue() 
-                      && user.getIsEnabled().booleanValue();
+                   && website.getEnabled().booleanValue() 
+                      && user.getEnabled().booleanValue();
             if (enabled)
             {    
                 // are passwords encrypted?
@@ -156,7 +156,7 @@ public class BaseAPIHandler implements Serializable
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             user = userMgr.getUser(username);
             
-            enabled = user.getIsEnabled().booleanValue();
+            enabled = user.getEnabled().booleanValue();
             if (enabled)
             {    
                 // are passwords encrypted?
