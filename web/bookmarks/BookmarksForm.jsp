@@ -32,44 +32,34 @@ function onMove()
 //-->
 </script>
 
-<h1>
-    <fmt:message key="bookmarksForm.folder" />:&nbsp;
-    <c:if test="${empty folder}">
-        <fmt:message key="bookmarksForm.root" />
-    </c:if>
-    <c:if test="${!(empty folder)}">
-        <c:out value="${folder.name}" />
-    </c:if>
-</h1>
-
-<%-- Folder path --%>
-
 <p>
-<b><fmt:message key="bookmarksForm.path" /></b>:
-
-<c:if test="${empty folderPath}">
-   /
-   <roller:link page="/editor/bookmarks.do">
-       <roller:linkparam id="method" value="selectFolder" />
-       <fmt:message key="bookmarksForm.root" />
-   </roller:link>
-</c:if>
-</p>
-
-<p>
-<c:if test="${!(empty folderPath)}">
-    <c:forEach var="folder" items="${folderPath}">
-        /
-        <roller:link page="/editor/bookmarks.do">
-            <roller:linkparam id="method" value="selectFolder" />
-            <roller:linkparam 
-                id="<%= RollerRequest.FOLDERID_KEY %>" 
-                name="folder" property="id" />
-            <c:out value="${folder.name}" />
-        </roller:link>
-    </c:forEach>
-    <br />
-</c:if>
+<c:choose>
+    <c:when test="${empty folderPath}">
+       <h1><fmt:message key="bookmarksForm.rootTitle" /></h1>
+       <p><fmt:message key="bookmarksForm.rootPrompt" /></p>
+    </c:when>
+    
+    <c:when test="${!(empty folderPath)}">
+        <h1>
+            <fmt:message key="bookmarksForm.folder" />
+            [<c:out value="${folder.name}" />]
+        </h1>
+        <p>
+        <b><fmt:message key="bookmarksForm.path" /></b>:
+        <c:forEach var="folder" items="${folderPath}">
+            /
+            <roller:link page="/editor/bookmarks.do">
+                <roller:linkparam id="method" value="selectFolder" />
+                <roller:linkparam 
+                    id="<%= RollerRequest.FOLDERID_KEY %>" 
+                    name="folder" property="id" />
+                <c:out value="${folder.name}" />
+            </roller:link>
+        </c:forEach>
+        <p>
+        <p><fmt:message key="bookmarksForm.folderPrompt" /></p>
+    </c:when>
+</c:choose>
 </p>
 
 <br />

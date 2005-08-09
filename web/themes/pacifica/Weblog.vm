@@ -61,8 +61,7 @@
 
                   <span class="label"><br>LINKS</span><br>
 
-                  #showBookmarks("Blogroll" false false)<br>
-                  #showBookmarks("News" true false)<br>
+                  #showBlogroll()<br>
                   #showBasicNavBar(true)<br>
 
                   #showEditorNavBar(true)<br><br>

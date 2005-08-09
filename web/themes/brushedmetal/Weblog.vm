@@ -27,8 +27,7 @@
 	 <hr />
 
          <h3>BlogRoll</h3>
-         #showBookmarks("Blogroll" true true)
-         #showBookmarks("News" true true)
+         #showBlogroll()
 
          <h3>Newsfeeds</h3>
          #showRSSBadge()<br />

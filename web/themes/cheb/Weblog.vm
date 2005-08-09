@@ -32,10 +32,7 @@
         #showSearchForm()
     </div>
     <div class="item">
-        #showBookmarks("Blogroll" false false )
-    <div>
-    <div class="item">
-        #showBookmarks("News" false false)
+        #showBlogroll()
     </div>
     <div class="item">
         #showEditorNavBar(true)

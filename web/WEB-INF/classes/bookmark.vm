@@ -107,3 +107,5 @@
     #end
 #end
 
+#macro( showBlogroll )#showBookmarks("/" false false)#end
+
