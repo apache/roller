@@ -24,42 +24,34 @@ function onMove()
 //-->
 </script>
 
-<h1>
-    <fmt:message key="categoriesForm.parent" />:&nbsp;
-    <c:if test="${empty category}">
-        <fmt:message key="categoriesForm.root" />
-    </c:if>
-    <c:if test="${!(empty category)}">
-        <c:out value="${category.name}" />
-    </c:if>
-</h1>
-
-<%-- Category path --%>
-
 <p>
-<b><fmt:message key="categoriesForm.path" /></b>:
-
-<c:if test="${empty categoryPath}">
-   /
-   <roller:link page="/editor/categories.do">
-       <roller:linkparam id="method" value="selectCategory" />
-       <fmt:message key="categoriesForm.root" />
-   </roller:link>
-</c:if>
-
-<c:if test="${!(empty categoryPath)}">
-    <c:forEach var="category" items="${categoryPath}">
-        /
-        <roller:link page="/editor/categories.do">
-            <roller:linkparam id="method" value="selectCategory" />
-            <roller:linkparam 
-                id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
-                name="category" property="id" />
-            <c:out value="${category.name}" />
-        </roller:link>
-    </c:forEach>
-    <br />
-</c:if>
+<c:choose>
+    <c:when test="${empty categoryPath}">
+       <h1><fmt:message key="categoriesForm.rootTitle" /></h1>
+       <p><fmt:message key="categoriesForm.rootPrompt" /></p>
+    </c:when>
+    
+    <c:when test="${!(empty categoryPath)}">
+        <h1>
+            <fmt:message key="categoriesForm.parent" />
+            [<c:out value="${category.name}" />]
+        </h1>
+        <p>
+        <b><fmt:message key="categoriesForm.path" /></b>:
+        <c:forEach var="category" items="${categoryPath}">
+            /
+            <roller:link page="/editor/categories.do">
+                <roller:linkparam id="method" value="selectCategory" />
+                <roller:linkparam 
+                    id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
+                    name="category" property="id" />
+                <c:out value="${category.name}" />
+            </roller:link>
+        </c:forEach>
+        </p>
+        <p><fmt:message key="categoriesForm.categoryPrompt" /></p>
+    </c:when>
+</c:choose>
 </p>
 
 <br />

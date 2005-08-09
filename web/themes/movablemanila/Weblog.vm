@@ -33,8 +33,7 @@
    <div align="center">#showWeblogCalendar()</div>
 
    <div class="sidetitle">BlogRoll</div>
-         #showBookmarks("Blogroll" true true)
-         #showBookmarks("News" true true)
+         #showBlogroll()
 
    <div class="sidetitle">Newsfeeds</div>
          #showRSSBadge()<br />

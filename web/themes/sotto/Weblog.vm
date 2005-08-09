@@ -107,13 +107,7 @@
 
         <div class="sidebarBox">
             <div class="links">
-                #showBookmarks("Blogroll" true false)
-            </div>
-        </div>
-
-        <div class="sidebarBox">
-            <div class="links">
-                #showBookmarks("News" true false)
+                #showBlogroll()
             </div>
         </div>
 

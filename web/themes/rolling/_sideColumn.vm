@@ -18,9 +18,7 @@
 
 <div class="box"><h2 class="box">links</h2>
 <br/>
-#showBookmarks("Blogroll" true true)
-<br/>
-#showBookmarks("News" true true)
+#showBlogroll()
 <br/>
 </div>
 

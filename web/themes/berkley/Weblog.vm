@@ -184,7 +184,9 @@ function deleteCookie (name) {
             <td><img src="#showThemePath('berkley')/images/ctrl_title_t.gif"></td>
         </tr>
         <tr>
-            <td class="ctrl_content">#showBookmarks("Blogroll" true false)</td>
+            <td class="ctrl_content">
+                #showBlogroll()
+            </td>
             <td>&nbsp;</td>
         </tr>
     </table>

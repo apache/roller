@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.model.BookmarkManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -269,85 +270,50 @@ public abstract class UserManagerImpl implements UserManager
             "root",  // description
             null ); // image
         rootCat.save();
-        
-        WeblogCategoryData generalCat = wmgr.createWeblogCategory(
-            website,         // websiteId
-            rootCat,
-            "General",       // name
-            "General",       // description
-            null );         // image
-        generalCat.save();
-            
-        WeblogCategoryData javaCat = wmgr.createWeblogCategory(
-            website,         // websiteId
-            rootCat,
-            "Java",          // name
-            "Java",          // description
-            null );          // image
-        javaCat.save();
-            
-        WeblogCategoryData musicCat = wmgr.createWeblogCategory(
-            website,         // websiteId
-            rootCat,
-            "Music",         // name
-            "Music",         // description
-            null );         // image
-        musicCat.save();
-        
+
+        String cats = RollerConfig.getProperty("newuser.categories");
+        if (cats != null)
+        {
+            String[] splitcats = cats.split(",");
+            for (int i=0; i<splitcats.length; i++)
+            {
+                WeblogCategoryData c = wmgr.createWeblogCategory(
+                    website,         // website
+                    rootCat,         // parent
+                    splitcats[i],    // name
+                    splitcats[i],    // description
+                    null );          // image
+                c.save();
+            }
+        }        
         website.setBloggerCategory(rootCat);
         website.setDefaultCategory(rootCat);
-        
-        Integer zero = new Integer(0);
-        
-        BookmarkManager bmgr = mRoller.getBookmarkManager();
-                    
+                
+        BookmarkManager bmgr = mRoller.getBookmarkManager();                    
         FolderData root = bmgr.createFolder(
             null, "root", "root", website);
         root.save();
 
-        FolderData blogroll = bmgr.createFolder(
-            root, "Blogroll", "Blogroll", website);
-        blogroll.save();
-
-        BookmarkData b1 = bmgr.createBookmark(
-            blogroll, "Dave Johnson", "",
-            "http://rollerweblogger.org/page/roller",
-            "http://rollerweblogger.org/rss/roller",
-            zero, zero, null);
-        b1.save();
-
-        BookmarkData b2 = bmgr.createBookmark(
-            blogroll, "Matt Raible", "",
-            "http://raibledesigns.com/page/rd",
-            "http://raibledesigns.com/rss/rd",
-            zero, zero, null);
-        b2.save();
-
-        BookmarkData b3 = bmgr.createBookmark(
-            blogroll, "Lance Lavandowska", "",
-            "http://brainopolis.dnsalias.com/roller/page/lance/",
-            "http://brainopolis.dnsalias.com/roller/rss/lance/",
-            zero, zero, null);
-        b3.save();
-        
-        
-        FolderData news = bmgr.createFolder(
-            root, "News", "News", website);
-        news.save();
-
-        BookmarkData b5 = bmgr.createBookmark(
-            news, "CNN", "",
-            "http://www.cnn.com",
-            "",
-            zero, zero, null);
-        b5.save();
-
-        BookmarkData b6 = bmgr.createBookmark(
-            news, "NY Times", "", 
-           "http://nytimes.com",
-           "",
-            zero, zero, null);
-        b6.save();
+        Integer zero = new Integer(0);
+        String blogroll = RollerConfig.getProperty("newuser.blogroll");
+        if (blogroll != null)
+        {
+            String[] splitroll = blogroll.split(",");
+            for (int i=0; i<splitroll.length; i++)
+            {
+                String[] rollitems = splitroll[i].split("\\|");
+                BookmarkData b = bmgr.createBookmark(
+                    root,                // parent
+                    rollitems[0],        // name
+                    "",                  // description
+                    rollitems[1].trim(), // url
+                    null,                // feedurl
+                    zero,                // weight
+                    zero,                // priority
+                    null);               // image
+                b.save();                    
+            }
+        }
         
         // Add user as member of website
         PermissionsData perms = new PermissionsData();

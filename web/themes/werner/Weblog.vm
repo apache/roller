@@ -48,9 +48,7 @@
 
  <div class="menubox"><h2 class="box">links</h2>
   <br/>
-  #showBookmarks("Blogroll" true false )
-  <br/>
-  #showBookmarks("News" true false )
+  #showBlogroll()
   <br/>
  </div>
 
