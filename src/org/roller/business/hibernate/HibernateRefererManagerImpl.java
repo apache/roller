@@ -292,7 +292,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             results = session.find(
                "select sum(h.dayHits),sum(h.totalHits) from h in class " +
                "org.roller.pojos.RefererData " +
-               "where h.website.isEnabled=? and h.website.id=? ",
+               "where h.website.enabled=? and h.website.id=? ",
                args, types);
         }
         catch (HibernateException e)

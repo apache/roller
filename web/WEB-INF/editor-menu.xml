@@ -22,12 +22,11 @@ Each menu or menu item is governed by four attrbibutes:
 <menu-bar>
 
     <menu name="tabbedmenu.main" roles="any" perms="any">
+        <menu-item forward="main"         name="tabbedmenu.main"    
+                                          perms="any" roles="any" />
         <menu-item forward="planet"       name="tabbedmenu.planet" 
                                           perms="any" roles="any" 
                                           enabledProperty="planet.aggregator.enabled" />
-        <menu-item forward="main"         name="tabbedmenu.main"    
-                                          perms="any" roles="any" 
-                                          disabledProperty="planet.aggregator.enabled" />
         <menu-item forward="yourProfile"  name="tabbedmenu.website.user"
                                           perms="any"
                                           roles="editor,admin" />

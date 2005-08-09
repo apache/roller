@@ -77,7 +77,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             }
             if (enabled != null)
             {
-                criteria.add(Expression.eq("isEnabled", enabled));
+                criteria.add(Expression.eq("enabled", enabled));
             }
             return criteria.list();
         }
@@ -104,7 +104,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             }
             if (enabled != null)
             {
-                criteria.add(Expression.eq("isEnabled", enabled));
+                criteria.add(Expression.eq("enabled", enabled));
             }
             return criteria.list();
         }
@@ -160,7 +160,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
                 criteria.add(
                    Expression.conjunction()
                        .add(new EqExpression("handle", handle, true))
-                       .add(Expression.eq("isEnabled", enabled)));
+                       .add(Expression.eq("enabled", enabled)));
             }
             else
             {
@@ -192,7 +192,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
                 criteria.add(
                    Expression.conjunction()
                        .add(new EqExpression("userName", userName, true))
-                       .add(Expression.eq("isEnabled", enabled)));
+                       .add(Expression.eq("enabled", enabled)));
             }
             else
             {
@@ -365,7 +365,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         Criteria criteria = session.createCriteria(UserData.class);            
         if (enabled != null)
         {
-            criteria.add(Expression.eq("isEnabled", enabled));
+            criteria.add(Expression.eq("enabled", enabled));
         }
         try
         {
@@ -596,7 +596,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         List results = new ArrayList();
         if (enabled != null)
         {
-            criteria.add(Expression.eq("isEnabled", Boolean.TRUE));
+            criteria.add(Expression.eq("enabled", Boolean.TRUE));
         }
         if (startsWith != null) 
         {

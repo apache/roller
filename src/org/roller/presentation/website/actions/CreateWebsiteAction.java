@@ -1,13 +1,10 @@
 package org.roller.presentation.website.actions;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,13 +19,14 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
+import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
+import org.roller.model.ThemeManager;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.CreateWebsiteForm;
 
@@ -65,7 +63,7 @@ public class CreateWebsiteAction extends DispatchAction
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
-            throws IOException, ServletException
+            throws Exception
     {
         CreateWebsiteForm form = (CreateWebsiteForm)actionForm;
         form.setLocale( Locale.getDefault().toString() );
@@ -145,11 +143,14 @@ public class CreateWebsiteAction extends DispatchAction
         private String rssURL = null;
         private WebsiteData website = null;
         public CreateWebsitePageModel(HttpServletRequest request,
-                HttpServletResponse response, ActionMapping mapping, WebsiteData wd)
+            HttpServletResponse response, ActionMapping mapping, WebsiteData wd)
+            throws RollerException
         {
             super(request, response, mapping);
             RollerContext rollerContext = RollerContext.getRollerContext(request);
-            // ROLLER_2.0: fix this: themes = Arrays.asList(rollerContext.getThemeNames());
+            Roller roller = RollerFactory.getRoller();
+            ThemeManager themeMgr = roller.getThemeManager();
+            themes = themeMgr.getEnabledThemesList();
             if (wd != null) 
             {
                 contextURL = rollerContext.getAbsoluteContextUrl(request);

@@ -65,7 +65,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
-                WebsiteData hd = rreq.getWebsite();
+                WebsiteData hd = rses.getCurrentWebsite();
 
                 data.setWebsite( hd );
                 data.setLastModified( new java.util.Date() );
@@ -186,18 +186,18 @@ public final class WeblogTemplateFormAction extends DispatchAction
             if ( rses.isUserAuthorizedToAdmin() )
             {
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
-                WeblogTemplate data = new WeblogTemplate();
-                form.copyTo(data, request.getLocale());
-
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
-                mgr.removePageSafely( data.getId() );
+                
+                // fetch template to be deleted (we'll need its website)
+                WeblogTemplate template = mgr.retrievePage(form.getId());
+                
+                mgr.removePageSafely(template.getId());
                 RollerFactory.getRoller().commit();
 
                 UserData user = rses.getAuthenticatedUser();
-                PageCacheFilter.removeFromCache( request, data.getWebsite() );
+                PageCacheFilter.removeFromCache(request, template.getWebsite());
                     
                 addModelObjects(rreq);
-
                 actionForm.reset(mapping,request);
             }
             else

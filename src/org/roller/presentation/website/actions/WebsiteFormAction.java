@@ -146,8 +146,8 @@ public final class WebsiteFormAction extends DispatchAction
                     WebsiteData wd = umgr.retrieveWebsite(form.getId());
                     wd.save(); // should throw if save not permitted
 
-                    // ensure isEnabled can't be changed
-                    form.setIsEnabled(wd.getIsEnabled());
+                    // ensure getEnabled can't be changed
+                    form.setEnabled(wd.getEnabled());
                     form.copyTo(wd, request.getLocale());
                                         
                     wd.save();

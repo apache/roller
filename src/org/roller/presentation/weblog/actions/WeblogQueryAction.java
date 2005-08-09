@@ -47,6 +47,8 @@ public final class WeblogQueryAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         
+        String status= form.getStatus().equals("ALL") ? null : form.getStatus();
+        
         request.setAttribute("model", new WeblogQueryPageModel(
            request, 
            response, 
@@ -55,7 +57,7 @@ public final class WeblogQueryAction extends DispatchAction
            form.getCategoryId(),
            form.getStartDateString(),
            form.getEndDateString(),
-           form.getStatus(),
+           status,
            form.getMaxEntries())); 
         
         return mapping.findForward("weblogQuery.page");

@@ -73,15 +73,12 @@
         </tr>
         
     </x:forEach>
-        
-        <tr>
-            <td class="buttonBox" colspan="2">
-                <input class="buttonBox" type="submit" value="<fmt:message key="configForm.save"/>"/>
-            </td>
-        </tr>
 
     </table>
-
+    
+            <div class="control">
+                <input class="buttonBox" type="submit" value="<fmt:message key="configForm.save"/>"/>
+            </div>
 <form>
 
 

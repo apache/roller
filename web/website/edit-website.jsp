@@ -13,7 +13,7 @@
     <html:hidden property="handle"/></input>
     <html:hidden property="timeZone"/></input>
     <html:hidden property="editorTheme"/></input>
-    <html:hidden property="isEnabled"/></input>
+    <html:hidden property="enabled"/></input>
     <html:hidden property="defaultCategoryId"/></input>
 
 <table>

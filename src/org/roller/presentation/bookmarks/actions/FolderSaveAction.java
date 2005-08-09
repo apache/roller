@@ -19,6 +19,7 @@ import org.roller.model.RollerFactory;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 
 /**
@@ -40,7 +41,8 @@ public class FolderSaveAction extends Action
         ActionForward forward = mapping.findForward("Bookmarks");
         FolderFormEx form = (FolderFormEx)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = rreq.getWebsite();
+        RollerSession rses = RollerSession.getRollerSession(request);
+        WebsiteData wd = rses.getCurrentWebsite();
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         FolderData fd = null;

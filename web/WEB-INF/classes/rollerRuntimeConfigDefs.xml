@@ -29,29 +29,33 @@
    
       <property-def  name="site.name"  key="configForm.siteName">
          <type>string</type>
-	 <default-value>Roller Site</default-value>
+         <default-value>Roller Site</default-value>
       </property-def>
       <property-def  name="site.description"  key="configForm.siteDescription">
          <type>string</type>
-	 <default-value>Roller Site</default-value>
+         <default-value>Roller Site</default-value>
       </property-def>
       <property-def  name="site.adminemail"  key="configForm.siteAdminEmail">
          <type>string</type>
-	 <default-value></default-value>
+         <default-value></default-value>
       </property-def>
       <property-def  name="site.absoluteurl"  key="configForm.absoluteUrl">
          <type>string</type>
-	 <default-value></default-value>
+         <default-value></default-value>
       </property-def>
       <property-def name="site.linkbacks.enabled" key="configForm.enableLinkback">
          <type>boolean</type>
-	 <default-value>false</default-value>
+         <default-value>false</default-value>
       </property-def>
       <property-def name="pings.suspendPingProcessing" key="configForm.suspendPingProcessing">
          <type>boolean</type>
-	 <default-value>false</default-value>
+         <default-value>false</default-value>
       </property-def>
-      
+      <property-def  name="site.emailnotify"  key="configForm.emailNotification">
+         <type>boolean</type>
+         <!-- defaults to false because we don't distribute mail jars -->
+         <default-value>false</default-value>
+      </property-def>      
    </display-group >
 
    <!-- User Settings Group -->
@@ -59,25 +63,26 @@
    
       <property-def  name="users.registration.enabled"  key="configForm.allowNewUsers">
          <type>boolean</type>
-	 <default-value>true</default-value>
+         <default-value>true</default-value>
       </property-def>
       <property-def  name="users.editor.pages"  key="configForm.editorPages">
          <type>text</type>
-	 <default-value>editor-ekit.jsp,editor-text.jsp,editor-dhtml.jsp,editor-text-js.jsp,editor-wiki-js.jsp,editor-rte.jsp</default-value>
+         <default-value>editor-ekit.jsp,editor-text.jsp,editor-dhtml.jsp,editor-text-js.jsp,editor-wiki-js.jsp,editor-rte.jsp</default-value>
          <rows>3</rows>
          <cols>40</cols>
       </property-def>
       <property-def  name="users.comments.autoformat"  key="configForm.autoformatComments">
          <type>boolean</type>
-	 <default-value>true</default-value>
+         <default-value>true</default-value>
       </property-def>
       <property-def  name="users.comments.escapehtml"  key="configForm.escapeCommentHtml">
          <type>boolean</type>
-	 <default-value>false</default-value>
+         <default-value>false</default-value>
       </property-def>
       <property-def  name="users.comments.emailnotify"  key="configForm.emailComments">
          <type>boolean</type>
-	 <default-value>true</default-value>
+         <!-- defaults to false because we don't distribute mail jars -->
+         <default-value>false</default-value> 
       </property-def>
 
    </display-group >
@@ -87,23 +92,23 @@
    
       <property-def  name="uploads.enabled"  key="configForm.enableFileUploads">
          <type>boolean</type>
-	 <default-value>true</default-value>
+         <default-value>true</default-value>
       </property-def>
       <property-def  name="uploads.types.allowed"  key="configForm.allowedExtensions">
          <type>string</type>
-	 <default-value>jpg,jpeg,gif,png</default-value>
+         <default-value>jpg,jpeg,gif,png</default-value>
       </property-def>
       <property-def  name="uploads.types.forbid"  key="configForm.forbiddenExtensions">
          <type>string</type>
-	 <default-value></default-value>
+         <default-value></default-value>
       </property-def>
       <property-def  name="uploads.file.maxsize"  key="configForm.maxFileSize">
          <type>string</type>
-	 <default-value>1.00</default-value>
+         <default-value>1.00</default-value>
       </property-def>
       <property-def  name="uploads.dir.maxsize"  key="configForm.maxDirSize">
          <type>string</type>
-	 <default-value>4.00</default-value>
+         <default-value>4.00</default-value>
       </property-def>
 
    </display-group >
@@ -112,11 +117,11 @@
    
       <property-def  name="users.themes.path"  key="configForm.newUserThemes">
          <type>string</type>
-	 <default-value>/themes</default-value>
+         <default-value>/themes</default-value>
       </property-def>
       <property-def  name="themes.customtheme.allowed"  key="configForm.allowCustomTheme">
          <type>boolean</type>
-	 <default-value>true</default-value>
+         <default-value>true</default-value>
       </property-def>
       
    </display-group>
@@ -137,7 +142,7 @@
    
       <property-def  name="spam.referers.ignorewords"  key="websiteSettings.ignoreUrls">
          <type>text</type>
-	 <default-value></default-value>
+         <default-value></default-value>
          <rows>7</rows>
          <cols>40</cols>
       </property-def>
