@@ -53,7 +53,7 @@ import org.roller.presentation.forms.PlanetGroupForm;
  *                scope="request" parameter="method"
  * 
  * @struts.action-forward name="planetGroups.page" 
- *                        path="/planet/PlanetGroups.jsp"
+ *                        path=".PlanetGroups"
  */
 public final class PlanetGroupsAction extends DispatchAction
 {

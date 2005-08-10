@@ -25,7 +25,7 @@ import org.roller.presentation.weblog.formbeans.CategoryDeleteForm;
 /**
  * @struts.action path="/editor/categoryDelete" name="categoryDeleteForm"
  * @struts.action-forward name="Categories" path="/editor/categories.do?method=selectCategory"
- * @struts.action-forward name="CategoryDeleteOK" path="/weblog/CategoryDeleteOK.jsp"
+ * @struts.action-forward name="CategoryDeleteOK" path=.CategoryDeleteOK"
  * 
  * @author Dave Johnson
  */

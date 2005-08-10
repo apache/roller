@@ -55,7 +55,7 @@ import org.roller.util.Technorati;
  *                scope="request" parameter="method"
  * 
  * @struts.action-forward name="planetSubscriptions.page" 
- *                        path="/planet/PlanetSubscriptions.jsp"
+ *                        path=".PlanetSubscriptions"
  */
 public final class PlanetSubscriptionsAction extends DispatchAction
 {

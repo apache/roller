@@ -39,9 +39,9 @@ import org.roller.util.Utilities;
  * @struts.action name="weblogTemplateForm" path="/editor/page"
  *  	scope="session" parameter="method"
  * 
- * @struts.action-forward name="removePage.page" path="/website/remove-page.jsp"
- * @struts.action-forward name="editPage.page" path="/website/edit-page.jsp"
- * @struts.action-forward name="editPages.page" path="/website/edit-pages.jsp"
+ * @struts.action-forward name="removePage.page" path=".remove-page"
+ * @struts.action-forward name="editPage.page" path=".edit-page"
+ * @struts.action-forward name="editPages.page" path=".edit-pages"
  */
 public final class WeblogTemplateFormAction extends DispatchAction
 {

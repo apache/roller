@@ -45,7 +45,7 @@ import org.roller.util.DateUtil;
  * @struts.action path="/editor/exportEntries" name="weblogQueryForm" 
  *    scope="request" parameter="method"
  * 
- * @struts.action-forward name="exportEntries.page" path="/weblog/export-entries.jsp"
+ * @struts.action-forward name="exportEntries.page" path=".export-entries"
  * 
  * @author lance.lavandowska
  */

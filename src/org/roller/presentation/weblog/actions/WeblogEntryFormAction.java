@@ -76,8 +76,8 @@ import org.roller.model.RollerFactory;
  * @struts.action name="weblogEntryFormEx" path="/editor/weblog"
  *     scope="request" parameter="method"
  *  
- * @struts.action-forward name="weblogEdit.page" path="/weblog/WeblogEdit.jsp"
- * @struts.action-forward name="weblogEntryRemove.page" path="/weblog/WeblogEntryRemove.jsp"
+ * @struts.action-forward name="weblogEdit.page" path=".WeblogEdit"
+ * @struts.action-forward name="weblogEntryRemove.page" path=".WeblogEntryRemove"
  */
 public final class WeblogEntryFormAction extends DispatchAction
 {

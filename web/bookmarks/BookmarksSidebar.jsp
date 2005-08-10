@@ -1,5 +1,5 @@
 <%@ include file="/taglibs.jsp" %>
-
+<%@ include file="/theme/status.jsp" %>
 <table class="sidebarBox" >
     <tr>
        <td class="sidebarBox">

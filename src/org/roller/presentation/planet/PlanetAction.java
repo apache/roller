@@ -25,7 +25,7 @@ import org.roller.presentation.RollerContext;
 /**
  * Main page action for Roller Planet.
  * @struts.action name="main" path="/planet" scope="request"
- * @struts.action-forward name="planet.page" path="/planet.jsp"
+ * @struts.action-forward name="planet.page" path=".planet"
  */
 public class PlanetAction extends Action
 {

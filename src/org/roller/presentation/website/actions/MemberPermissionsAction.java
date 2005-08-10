@@ -30,7 +30,7 @@ import org.roller.presentation.RollerSession;
  * Allows website admin to change website member permissions.
  * 
  * @struts.action path="/editor/memberPermissions" parameter="method" name="memberPermissionsForm"
- * @struts.action-forward name="memberPermissions.page" path="/website/MemberPermissions.jsp"
+ * @struts.action-forward name="memberPermissions.page" path=".MemberPermissions"
  */
 public class MemberPermissionsAction extends DispatchAction
 {

@@ -34,7 +34,7 @@ import org.roller.util.StringUtils;
  * @struts.action name="userAdminForm" path="/admin/user"
  *  	scope="request" parameter="method"
  * 
- * @struts.action-forward name="adminUser.page" path="/website/UserAdmin.jsp"
+ * @struts.action-forward name="adminUser.page" path=".UserAdmin"
  */
 public final class UserAdminAction extends UserBaseAction
 {

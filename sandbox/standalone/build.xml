@@ -96,9 +96,13 @@ Makes the following assumptions:
         todir="./build/roller-demo/server/lib" />
    <copy file="${roller.srcdir}/tools/buildtime/hsqldb.jar" 
         todir="./build/roller-demo/common/lib" />
+   <copy file="${roller.srcdir}/tools/lib/mail.jar" 
+        todir="./build/roller-demo/common/lib" />
+   <copy file="${roller.srcdir}/tools/lib/activation.jar" 
+        todir="./build/roller-demo/common/lib" />
 	
    <!-- Custom local-banner -->
-   <copy file="./tomcat/localbanner.jspf" 
+   <copy file="./tomcat/local-banner.jspf" 
         todir="./build/roller-demo/webapps/roller" />
 
    <!-- Our own server.xml: adds HSQLDB startup -->         

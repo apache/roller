@@ -33,7 +33,7 @@ import org.roller.presentation.pagecache.PageCacheFilter;
  * 
  * @struts.action path="/editor/maintenance" name="maintenanceForm" scope="request" parameter="method"
  * 
- * @struts.action-forward name="maintenance.page" path="/website/Maintenance.jsp"
+ * @struts.action-forward name="maintenance.page" path=".Maintenance"
  */
 public class MaintenanceAction extends DispatchAction 
 {

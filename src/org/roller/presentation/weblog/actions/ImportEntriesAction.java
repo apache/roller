@@ -34,7 +34,7 @@ import org.roller.util.StringUtils;
  * @struts.action name="importEntries" path="/editor/importEntries"
  *                scope="request" parameter="method"
  * 
- * @struts.action-forward name="importEntries.page" path="/weblog/import-entries.jsp"
+ * @struts.action-forward name="importEntries.page" path=".import-entries"
  *
  * @author lance.lavandowska
  */

@@ -1,8 +1,8 @@
 <global-forwards>
-<forward name="access-denied"          path="/denied.jsp"/>
-<forward name="error"                  path="/error.jsp"/>
-<forward name="login-redirect"         path="/login-redirect.jsp"/>
-<forward name="logout-redirect"        path="/logout-redirect.jsp"/>
+<forward name="access-denied"          path=".denied"/>
+<forward name="error"                  path=".error"/>
+<forward name="login-redirect"         path="login-redirect.jsp"/>
+<forward name="logout-redirect"        path="logout-redirect.jsp"/>
 
 <!-- unprotected actions -->
 <forward name="page"                   path="/page"/>

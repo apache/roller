@@ -25,9 +25,9 @@ import org.roller.presentation.weblog.actions.BasePingTargetsAction;
  * Administer common ping targets.
  *
  * @struts.action name="pingTargetForm" path="/admin/commonPingTargets" scope="request" parameter="method"
- * @struts.action-forward name="pingTargets.page" path="/website/CommonPingTargets.jsp"
- * @struts.action-forward name="pingTargetEdit.page" path="/website/CommonPingTargetEdit.jsp"
- * @struts.action-forward name="pingTargetDeleteOK.page" path="/website/CommonPingTargetDeleteOK.jsp"
+ * @struts.action-forward name="pingTargets.page" path=".CommonPingTargets"
+ * @struts.action-forward name="pingTargetEdit.page" path=".CommonPingTargetEdit"
+ * @struts.action-forward name="pingTargetDeleteOK.page" path=".CommonPingTargetDeleteOK"
  */
 public class CommonPingTargetsAction extends BasePingTargetsAction
 {

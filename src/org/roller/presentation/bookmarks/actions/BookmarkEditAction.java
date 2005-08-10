@@ -23,7 +23,7 @@ import org.roller.presentation.bookmarks.formbeans.BookmarkFormEx;
 
 /**
  * @struts.action path="/editor/bookmarkEdit" name="bookmarkFormEx" validate="false"
- * @struts.action-forward name="BookmarkForm" path="/bookmarks/BookmarkForm.jsp"
+ * @struts.action-forward name="BookmarkForm" path=".BookmarkForm"
  * 
  * @author Dave Johnson
  */

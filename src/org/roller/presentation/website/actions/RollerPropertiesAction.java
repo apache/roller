@@ -44,7 +44,7 @@ import org.roller.presentation.RollerSession;
  *  scope="request" parameter="method"
  *
  * @struts.action-forward name="rollerProperties.page"
- *  path="/website/rollerProperties.jsp"
+ *  path=".rollerProperties"
  */
 public class RollerPropertiesAction extends DispatchAction {
     

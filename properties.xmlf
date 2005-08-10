@@ -13,11 +13,11 @@
 <property name="build.velocidoc"     value="${ro.build}/velocidoc"/>
 <property name="build.jspc"          value="${ro.build}/jspc"/>
 <property name="build.reports"       value="${ro.build}/reports"/>
-<property name="tools.struts"    value="${ro.tools}/struts-1.2.4" />
-<property name="tools.hibernate" value="${ro.tools}/hibernate-2.1" />
-<property name="tools.jstl"      value="${ro.tools}/standard-1.0.3" />
-<property name="tools.xdoclet"   value="${ro.tools}/buildtime/xdoclet-1.2" />
-<property name="tools.tomcat"    value="${ro.tools}/buildtime/tomcat-4.1.24" />
+<property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
+<property name="tools.hibernate"     value="${ro.tools}/hibernate-2.1" />
+<property name="tools.jstl"          value="${ro.tools}/standard-1.0.3" />
+<property name="tools.xdoclet"    value="${ro.tools}/buildtime/xdoclet-1.2" />
+<property name="tools.tomcat"     value="${ro.tools}/buildtime/tomcat-4.1.24" />
 
 <!--
 If you would like Ant to copy all the jar files that Resin needs
@@ -40,16 +40,15 @@ in the "base.path" definition.
 <!-- **************************************************************** -->
 
 <fileset id="base.jars" dir="${ro.tools}/lib">
-    <include name="commons-cache.jar" />
-    <include name="concurrent-1.3.2.jar"/>
-    <include name="log4j-1.2.4.jar"/>
-    <include name="jazzy-core.jar" />
     <include name="commons-betwixt-1.0-beta-1.jar" />
+    <include name="commons-cache.jar" />
+    <include name="commons-codec-1.1.jar" />
+    <include name="concurrent-1.3.2.jar"/>
+    <include name="jazzy-core.jar" />
+    <include name="lucene-1.4.3.jar"/>
+    <include name="log4j-1.2.4.jar"/>
     <include name="rome-0.6.jar"/>
     <include name="rome-fetcher-0.6.jar"/>
-    <include name="commons-httpclient-2.0.2.jar"/>
-    <include name="lucene-1.4.3.jar"/>
-    <include name="commons-codec-1.1.jar" />
     <include name="velocity-1.4.jar"/>
     <include name="velocity-dep-1.4.jar"/>
     <include name="velocity-tools-1.1.jar"/>

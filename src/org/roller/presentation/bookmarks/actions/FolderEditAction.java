@@ -18,7 +18,7 @@ import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 
 /**
  * @struts.action path="/editor/folderEdit" name="folderFormEx" validate="false"
- * @struts.action-forward name="FolderForm" path="/bookmarks/FolderForm.jsp"
+ * @struts.action-forward name="FolderForm" path=".FolderForm"
  * 
  * @author Dave Johnson
  */
