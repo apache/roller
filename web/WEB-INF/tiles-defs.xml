@@ -93,7 +93,7 @@
 
 <definition name=".BookmarksForm" extends=".tiles-mainpage" >
     <put name="content" value="/bookmarks/BookmarksForm.jsp" />
-    <put name="sidebar" value="/weblog/BookmarksSidebar.jsp" />
+    <put name="sidebar" value="/bookmarks/BookmarksSidebar.jsp" />
 </definition>
 <definition name=".BookmarkForm" extends=".tiles-mainpage" >
     <put name="content" value="/bookmarks/BookmarkForm.jsp" />
