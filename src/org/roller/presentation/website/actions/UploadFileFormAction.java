@@ -35,7 +35,7 @@ import org.roller.util.RollerMessages;
  * @struts.action name="uploadFiles" path="/editor/uploadFiles"
  *  	parameter="method" scope="request" validate="false"
  * 
- * @struts.action-forward name="uploadFiles.page" path="/website/upload-file.jsp"
+ * @struts.action-forward name="uploadFiles.page" path=".upload-file"
  */
 public final class UploadFileFormAction extends DispatchAction
 {

@@ -26,7 +26,7 @@ import org.roller.presentation.weblog.formbeans.WeblogQueryForm;
  * @struts.action path="/editor/weblogQuery" name="weblogQueryForm" 
  *     scope="session" parameter="method"
  * 
- * @struts.action-forward name="weblogQuery.page" path="/weblog/WeblogQuery.jsp"
+ * @struts.action-forward name="weblogQuery.page" path=".WeblogQuery"
  */
 public final class WeblogQueryAction extends DispatchAction
 {

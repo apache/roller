@@ -30,9 +30,9 @@ import org.roller.presentation.RollerSession;
 /////////////////////////////////////////////////////////////////////////////
 /**
  * @struts.action name="folderFormEx" path="/editor/importBookmarks" 
- *  scope="request" input="/bookmarks/import.jsp" validate="false"
+ *  scope="request" input=".import" validate="false"
  * 
- * @struts.action-forward name="importBookmarks.page" path="/bookmarks/import.jsp"
+ * @struts.action-forward name="importBookmarks.page" path=".import"
  * 
  * TODO Should import into folder with same name as imported file
  */

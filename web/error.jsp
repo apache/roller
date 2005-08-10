@@ -21,7 +21,7 @@
 <% try { %>
    <roller:NavigationBar/>    	
 <% } 
-catch (Exception e) 
+catch (Throwable e) 
 {
    System.err.println("ERROR: while displaying error page error page");
    e.printStackTrace();
@@ -40,12 +40,12 @@ messageObj = request.getAttribute("javax.servlet.error.message");
 typeObj = request.getAttribute("javax.servlet.error.type");
 
 String code=null, message=null, type=null;
-if ( null != codeObj ) code = codeObj.toString();
+if ( null != codeObj )       code = codeObj.toString();
 if ( null != messageObj ) message = messageObj.toString();
-if ( null != typeObj ) type = typeObj.toString();
+if ( null != typeObj )       type = typeObj.toString();
 String reason = null != code ? code : type;
 
-exception = (Exception)request.getAttribute("javax.servlet.error.exception");
+exception = (Throwable)request.getAttribute("javax.servlet.error.exception");
 %>
 <br />
 <h2 class="error"><fmt:message key="errorPage.title" /></h2>
@@ -92,6 +92,6 @@ exception = (Exception)request.getAttribute("javax.servlet.error.exception");
 </body>
 </html>
 
-<% } catch (Exception e) { e.printStackTrace(); } %>
+<% } catch (Throwable e) { e.printStackTrace(); } %>
 
     

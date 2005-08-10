@@ -30,7 +30,7 @@ import org.roller.util.StringUtils;
  * Allows user to edit his/her profile.
  * 
  * @struts.action name="userFormEx" path="/editor/yourProfile" parameter="method"
- * @struts.action-forward name="yourProfile.page" path="/website/YourProfile.jsp"
+ * @struts.action-forward name="yourProfile.page" path=".YourProfile"
  */
 public class YourProfileAction extends UserBaseAction
 {

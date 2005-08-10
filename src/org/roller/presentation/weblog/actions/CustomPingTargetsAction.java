@@ -28,9 +28,9 @@ import org.roller.presentation.forms.PingTargetForm;
  * Administer custom ping targets.
  *
  * @struts.action name="pingTargetForm" path="/editor/customPingTargets" scope="request" parameter="method"
- * @struts.action-forward name="pingTargets.page" path="/weblog/CustomPingTargets.jsp"
- * @struts.action-forward name="pingTargetEdit.page" path="/weblog/CustomPingTargetEdit.jsp"
- * @struts.action-forward name="pingTargetDeleteOK.page" path="/weblog/CustomPingTargetDeleteOK.jsp"
+ * @struts.action-forward name="pingTargets.page" path=".CustomPingTargets"
+ * @struts.action-forward name="pingTargetEdit.page" path=".CustomPingTargetEdit"
+ * @struts.action-forward name="pingTargetDeleteOK.page" path=".CustomPingTargetDeleteOK"
  */
 public class CustomPingTargetsAction
     extends BasePingTargetsAction

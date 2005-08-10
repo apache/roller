@@ -38,8 +38,8 @@ import org.roller.util.StringUtils;
  * @struts.action name="userFormEx" path="/user" 
  * 		scope="session" parameter="method"
  * 
- * @struts.action-forward name="registerUser.page" path="/website/UserNew.jsp"
- * @struts.action-forward name="welcome.page" path="/website/welcome.jsp"
+ * @struts.action-forward name="registerUser.page" path=".UserNew"
+ * @struts.action-forward name="welcome.page" path=".welcome"
  */
 public class UserNewAction extends UserBaseAction
 {

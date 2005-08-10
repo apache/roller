@@ -40,7 +40,7 @@ import org.roller.presentation.pagecache.PageCacheFilter;
  * @struts.action name="themeEditorForm" path="/editor/themeEditor"
  *    scope="session" parameter="method"
  *
- * @struts.action-forward name="editTheme.page" path="/website/theme-editor.jsp"
+ * @struts.action-forward name="editTheme.page" path=".theme-editor"
  */
 public class ThemeEditorAction extends DispatchAction {
     

@@ -23,7 +23,7 @@ import org.roller.pojos.WeblogEntryData;
 /**
  * Main page action for Roller.
  * @struts.action name="main" path="/main" scope="request"
- * @struts.action-forward name="main.page" path="/main.jsp"
+ * @struts.action-forward name="main.page" path=".main"
  */
 public class MainPageAction extends Action
 {

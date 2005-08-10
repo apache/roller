@@ -34,7 +34,7 @@ import org.roller.presentation.weblog.formbeans.CategoriesForm;
  * Actions that are initiated from the CategoriesForm.
  * 
  * @struts.action name="categoriesForm" path="/editor/categories" parameter="method"
- * @struts.action-forward name="CategoriesForm" path="/weblog/CategoriesForm.jsp"
+ * @struts.action-forward name="CategoriesForm" path=".CategoriesForm"
  * 
  * @author Dave Johnson
  */

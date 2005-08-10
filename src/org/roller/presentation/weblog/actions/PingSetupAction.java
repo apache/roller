@@ -48,8 +48,8 @@ import org.roller.presentation.pings.WeblogUpdatePinger;
  * Actions for setting up automatic ping configuration for a weblog.
  *
  * @struts.action name="pingSetupForm" path="/editor/pingSetup" scope="request" parameter="method"
- * @struts.action-forward name="pingSetup.page" path="/weblog/Pings.jsp"
- * @struts.action-forward name="pingResult.page" path="/weblog/PingResult.jsp"
+ * @struts.action-forward name="pingSetup.page" path=".Pings"
+ * @struts.action-forward name="pingResult.page" path=".PingResult"
  */
 public class PingSetupAction extends DispatchAction
 {

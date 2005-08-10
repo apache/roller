@@ -36,7 +36,7 @@ import org.roller.presentation.bookmarks.formbeans.BookmarksForm;
  * Actions that are initiated from the BookmarksForm.
  *
  * @struts.action name="bookmarksForm" path="/editor/bookmarks" parameter="method"
- * @struts.action-forward name="BookmarksForm" path="/bookmarks/BookmarksForm.jsp"
+ * @struts.action-forward name="BookmarksForm" path=".BookmarksForm"
  *
  * @author Dave Johnson
  */

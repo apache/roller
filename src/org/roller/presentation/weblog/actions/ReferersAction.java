@@ -28,7 +28,7 @@ import org.roller.presentation.RollerSession;
  * @struts.action name="refererForm" path="/editor/referers"
  *      scope="session" parameter="method"
  * 
- * @struts.action-forward name="referers.page" path="/weblog/referers.jsp"
+ * @struts.action-forward name="referers.page" path=".referers"
  */
 public class ReferersAction extends DispatchAction
 {    

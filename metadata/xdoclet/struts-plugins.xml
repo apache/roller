@@ -5,6 +5,11 @@
         value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
 </plug-in>
 
+<plug-in className="org.apache.struts.tiles.TilesPlugin">
+    <set-property 
+        property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
+</plug-in>
+
 <!-- 
 <plug-in className="com.octo.captcha.module.struts.CaptchaServicePlugin"/>
 -->

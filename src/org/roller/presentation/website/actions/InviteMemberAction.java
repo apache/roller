@@ -43,8 +43,8 @@ import org.roller.util.MailUtil;
  * Allows website admin to invite new members to website.
  * 
  * @struts.action path="/editor/inviteMember" parameter="method" name="inviteMemberForm"
- * @struts.action-forward name="inviteMember.page"     path="/website/InviteMember.jsp"
- * @struts.action-forward name="inviteMemberDone.page" path="/website/InviteMemberDone.jsp"
+ * @struts.action-forward name="inviteMember.page"     path=".InviteMember"
+ * @struts.action-forward name="inviteMemberDone.page" path=".InviteMemberDone"
  */
 public class InviteMemberAction extends DispatchAction
 {

@@ -43,7 +43,7 @@ import org.roller.presentation.website.formbeans.WebsiteFormEx;
  * @struts.action name="websiteFormEx" path="/editor/website" 
  * 		scope="session" parameter="method"
  * 
- * @struts.action-forward name="editWebsite.page" path="/website/edit-website.jsp"
+ * @struts.action-forward name="editWebsite.page" path=".edit-website"
  */
 public final class WebsiteFormAction extends DispatchAction
 {

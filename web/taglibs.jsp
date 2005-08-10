@@ -4,6 +4,7 @@ taglib uri="http://java.sun.com/jstl/fmt"    prefix="fmt" %><%@
 taglib uri="http://struts.apache.org/tags-bean"  prefix="bean" %><%@ 
 taglib uri="http://struts.apache.org/tags-html"  prefix="html" %><%@ 
 taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %><%@ 
+taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %><%@ 
 taglib uri="http://jakarta.apache.org/taglibs/string-1.0.1" prefix="str" %><%@ 
 taglib uri="http://www.rollerweblogger.org/tags" prefix="roller" %><%@ 
 page import="org.roller.model.Roller" %><%@ 

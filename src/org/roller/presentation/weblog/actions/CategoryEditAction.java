@@ -22,7 +22,7 @@ import org.roller.presentation.weblog.formbeans.WeblogCategoryFormEx;
 
 /**
  * @struts.action path="/editor/categoryEdit" name="weblogCategoryFormEx" validate="false"
- * @struts.action-forward name="CategoryForm" path="/weblog/CategoryForm.jsp"
+ * @struts.action-forward name="CategoryForm" path=".CategoryForm"
  * 
  * @author Dave Johnson
  */

@@ -34,8 +34,8 @@ import org.roller.presentation.website.formbeans.CreateWebsiteForm;
  * Allows user to create a new website.
  * 
  * @struts.action path="/editor/createWebsite" parameter="method" name="createWebsiteForm"
- * @struts.action-forward name="createWebsite.page" path="/website/CreateWebsite.jsp"
- * @struts.action-forward name="createWebsiteDone.page" path="/website/CreateWebsiteDone.jsp"
+ * @struts.action-forward name="createWebsite.page" path=".CreateWebsite"
+ * @struts.action-forward name="createWebsiteDone.page" path=".CreateWebsiteDone"
  */
 public class CreateWebsiteAction extends DispatchAction
 {

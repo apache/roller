@@ -5,6 +5,8 @@
 WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model");
 %>
 
+<%@ include file="/theme/status.jsp" %>
+
 <table class="sidebarBox" >
     <tr>
        <td class="sidebarBox">

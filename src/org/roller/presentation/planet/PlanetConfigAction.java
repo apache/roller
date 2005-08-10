@@ -50,7 +50,7 @@ import org.roller.presentation.forms.PlanetConfigForm;
  *                scope="request" parameter="method"
  * 
  * @struts.action-forward name="planetConfig.page" 
- *                        path="/planet/PlanetConfig.jsp"
+ *                        path=".PlanetConfig"
  */
 public final class PlanetConfigAction extends DispatchAction
 {
