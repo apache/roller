@@ -112,7 +112,6 @@ function saveUsername(theForm) {
 </div>
 
 <div id="rightcontent"> 
-   <tiles:insert attribute="sidebar" />
 </div>
 
 </div> <!-- end wrapper -->
