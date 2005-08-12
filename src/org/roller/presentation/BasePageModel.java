@@ -38,7 +38,8 @@ public class BasePageModel
 
     public String getBaseURL()
     {
-		return request.getContextPath();
+        RollerContext rctx = RollerContext.getRollerContext(request);
+		return rctx.getAbsoluteContextUrl(request);
 	}
 
     public String getShortDateFormat()

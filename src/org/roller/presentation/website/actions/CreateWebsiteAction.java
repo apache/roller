@@ -29,6 +29,7 @@ import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.CreateWebsiteForm;
+import org.roller.util.Utilities;
 
 /**
  * Allows user to create a new website.
@@ -57,6 +58,16 @@ public class CreateWebsiteAction extends DispatchAction
         return save(mapping, actionForm, request, response);
     }
     
+    public ActionForward cancel(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        return mapping.findForward("yourWebsites");
+    }
+    
     /** Present new website form to user */
     public ActionForward create(
             ActionMapping       mapping,
@@ -82,7 +93,7 @@ public class CreateWebsiteAction extends DispatchAction
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
-            throws IOException, ServletException
+            throws Exception
     {
         CreateWebsiteForm form = (CreateWebsiteForm)actionForm;
         ActionMessages msgs = new ActionMessages();
@@ -126,13 +137,45 @@ public class CreateWebsiteAction extends DispatchAction
             saveErrors(request,errors);          
             mLogger.error("ERROR in createWebsite", e);
         }
-        ActionForward forward = mapping.findForward("createWebsiteDone.page");
-        return forward;
+        if (errors.size() == 0) 
+        {
+            return mapping.findForward("createWebsiteDone.page");
+        }
+        else
+        {
+            return mapping.findForward("createWebsite.page");
+        }
     }
         
     private ActionMessages validate(CreateWebsiteForm form, ActionErrors errors)
+        throws RollerException
     {
-        return new ActionMessages();
+        ActionMessages messages = new ActionMessages();        
+        String safeHandle = Utilities.replaceNonAlphanumeric(form.getHandle());
+        if (form.getHandle() == null || "".equals(form.getHandle().trim()))
+        {
+            errors.add( ActionErrors.GLOBAL_ERROR,
+               new ActionError("createWeblog.error.missingHandle"));
+        }
+        else if (!safeHandle.equals(form.getHandle()) )
+        {
+            errors.add( ActionErrors.GLOBAL_ERROR,
+               new ActionError("createWeblog.error.invalidHandle"));
+        }
+        
+        if (form.getEmailAddress() == null || "".equals(form.getEmailAddress().trim()))
+        {
+            errors.add( ActionErrors.GLOBAL_ERROR,
+               new ActionError("createWeblog.error.missingEmailAddress"));
+        }
+        
+        Roller roller = RollerFactory.getRoller();
+        if (roller.getUserManager().getWebsiteByHandle(form.getHandle()) != null) 
+        {
+            messages.add(ActionErrors.GLOBAL_ERROR, 
+                    new ActionError("createWeblog.error.handleExists"));
+        }
+        return messages;
     }
 
     public static class CreateWebsitePageModel extends BasePageModel

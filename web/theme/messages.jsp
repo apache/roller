@@ -1,5 +1,4 @@
-
-<% try { %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
 function dirty() {
@@ -32,4 +31,3 @@ function dirty() {
     </div>
 </logic:messagesPresent>
 
-<% } catch (Throwable e) { e.printStackTrace(); } %>

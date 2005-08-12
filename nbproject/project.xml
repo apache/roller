@@ -34,14 +34,14 @@
                     <location>sandbox/standalone/src</location>
                 </source-folder>
                 <source-folder>
-                    <label>build/generated/src.business</label>
-                    <type>java</type>
-                    <location>build/generated/src.business</location>
-                </source-folder>
-                <source-folder>
                     <label>build/generated/src.presentation</label>
                     <type>java</type>
                     <location>build/generated/src.presentation</location>
+                </source-folder>
+                <source-folder>
+                    <label>build/generated/src.business</label>
+                    <type>java</type>
+                    <location>build/generated/src.business</location>
                 </source-folder>
             </folders>
             <ide-actions>
@@ -107,12 +107,12 @@
                         <location>sandbox/standalone/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>build/generated/src.business</label>
-                        <location>build/generated/src.business</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>build/generated/src.presentation</label>
                         <location>build/generated/src.presentation</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>build/generated/src.business</label>
+                        <location>build/generated/src.business</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>

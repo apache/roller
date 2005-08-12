@@ -1,19 +1,11 @@
 <%@ include file="/taglibs.jsp" %>
 
-<%@ include file="/theme/status.jsp" %>
+<div class="sidebarfade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+            <div class="sidebarBody">
 
-<table class="sidebarBox">
-
-    <tr>
-       <td class="sidebarBox">
-          <div class="menu-tr"><div class="menu-tl">
              <fmt:message key="mainPage.searchWeblogs" />
-          </div></div>
-       </td>
-    </tr>
-    
-    <tr>
-        <td>
         
         <form id="searchForm" method="get"
             action="<c:out value="${baseURL}" />/search"
@@ -32,28 +24,26 @@
                 }
                 return true;
             } 
-            // --!>
+            // -->
         </script>
         
-        </td>
-    </tr>
-    
-</table>
+			<br />
+			<br />
+			<br />
+			
+            </div>
+        </div>
+    </div>
+</div>	
 
 <br />
 
-<table class="sidebarBox">
+<div class="sidebarfade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+            <div class="sidebarBody">
 
-    <tr>
-       <td class="sidebarBox">
-          <div class="menu-tr"><div class="menu-tl">
              <fmt:message key="mainPage.hotWeblogs" />
-          </div></div>
-       </td>
-    </tr>  
-      
-    <tr>
-        <td>
         
 	      <c:if test="${not empty popularWebsites}"> <%-- to prevent invalid XHTML --%>
 	        <ul style="list-style-type:none; padding-left:2px; margin: 0px">
@@ -70,12 +60,14 @@
 	        </ul>
 	      </c:if>
           
-        </td>
-    </tr>
-    
-</table>
-    
-<br />
+			<br />
+			<br />
+			<br />
+			
+            </div>
+        </div>
+    </div>
+</div>	
 
     
     

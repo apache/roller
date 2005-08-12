@@ -3,8 +3,15 @@
 
 <script type="text/javascript">
 <!--
-function selectWebsite(id) 
+function selectWebsiteAction(id, action) 
 {
+    document.yourWebsitesForm.method.value = action;
+    document.yourWebsitesForm.websiteId.value = id;
+    document.yourWebsitesForm.submit();
+} 
+function manageWeblog(id) 
+{
+    document.yourWebsitesForm.method.value = "newEntry";
     document.yourWebsitesForm.websiteId.value = id;
     document.yourWebsitesForm.submit();
 } 
@@ -33,7 +40,6 @@ function resignWebsite(id,handle)
 </script>
 
 <%-- Choose appropriate prompt at start of page --%>
-<br />
 <c:choose>
     <c:when test="${empty model.permissions && !model.groupBloggingEnabled}">
        <p><fmt:message key="yourWebsites.noBlogs" />
@@ -67,91 +73,86 @@ function resignWebsite(id,handle)
     </c:if>
 
     <c:choose>
+    
         <c:when test="${!empty model.permissions}">
             <h1><fmt:message key="yourWebsites.title" /></h1>    
-            <p><fmt:message key="yourWebsites.websiteTablesPrompt" /></p>
-            <table class="rollertable">
-                <tr class="rHeaderTr">
-                   <th class="rollertable" width="20%">
-                       <fmt:message key="yourWebsites.tableTitle" />
-                   </th>
-                   <th class="rollertable" width="20%">
-                       <fmt:message key="yourWebsites.tableDescription" />
-                   </th>
-                   <th class="rollertable" width="20%">
-                       <fmt:message key="yourWebsites.permissions" />
-                   </th>
-                   <th class="rollertable" width="20%">
-                       <fmt:message key="yourWebsites.resign" />
-                   </th>
-                </tr>
+            <p><fmt:message key="yourWebsites.prompt" /></p>
+            <table cellspacing="6px" cellpadding="4px" width="100%" >
+
                 <c:forEach var="perms" items="${model.permissions}">
-                    <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">  
-                       <td class="rollertable">
-                           <a href='javascript:selectWebsite("<c:out value='${perms.website.id}'/>")'>
-                               <c:out value="${perms.website.name}" />
-                           </a>
+                    <tr>  
+                       <td style="border: 1px solid grey" >
+                       
+                           <table width="100%">
+                           <tr>
+                           <td width="80%">
+                      
+                               <h3 style="border-bottom: 1px #e5e5e5 solid; margin:0px; padding:5px">
+                                   <fmt:message key='yourWebsites.weblog' />:
+                                   <c:out value="${perms.website.name}" />
+                                   [<c:out value="${perms.website.handle}" />] 
+                               </h3>
+
+                               <div class="formrow">
+                                   <label class="formrow"><fmt:message key='yourWebsites.weblog' /> URL</b></label>
+                                   <a href='<c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />'>
+                                       <c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />
+                                   </a>                           
+                               </div>
+
+                               <div class="formrow">
+                                   <label class="formrow"><fmt:message key='yourWebsites.permission' /></label>
+                                   <c:if test="${perms.permissionMask == 0}" >LIMITED</c:if>
+                                   <c:if test="${perms.permissionMask == 1}" >AUTHOR</c:if>
+                                   <c:if test="${perms.permissionMask == 3}" >ADMIN</c:if>
+                               </div>
+
+                               <div class="formrow">
+                                   <label class="formrow"><fmt:message key='yourWebsites.description' /></label>    
+                                   <c:out value="${perms.website.description}" />
+                               </div>
+                               
+                           </td>
+                           
+                           <td width="20%" align="center">
+
+                                   <fmt:message key='yourWebsites.actions' />                       
+                                   <br />
+                                   <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "newEntry")'>
+                                       <fmt:message key="yourWebsites.newEntry" /></a>
+                                   <br />
+                                   <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "editEntries")'>
+                                       <fmt:message key="yourWebsites.editEntries" /></a> 
+                                   <br />
+                                   <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "manageWeblog")'>
+                                       <fmt:message key="yourWebsites.manage" /></a> 
+                                   <br />
+                                   <c:choose>
+                                       <c:when test="${perms.website.adminUserCount == 1 && perms.permissionMask == 3}">
+                                           <%-- <fmt:message key="yourWebsites.notAllowed" /> --%>
+                                       </c:when>
+                                       <c:otherwise>
+                                          <a href='javascript:resignWebsite("<c:out value='${perms.website.id}'/>","<c:out value="${perms.website.handle}" />")'>
+                                              <fmt:message key='yourWebsites.resign' />
+                                          </a>
+                                       </c:otherwise>
+                                   </c:choose>
+                               </div>
+
+                           </td>
+                           </tr>
+                           </table>
+                           
                        </td>
-                       <td class="rollertable">
-                           <c:out value="${perms.website.description}" />
-                       </td>
-                       <td class="rollertable" align="center">
-                           <c:if test="${perms.permissionMask == 0}" >LIMITED</c:if>
-                           <c:if test="${perms.permissionMask == 1}" >AUTHOR</c:if>
-                           <c:if test="${perms.permissionMask == 3}" >ADMIN</c:if>
-                       </td>
-                       <td class="rollertable" align="center">
-                           <c:choose>
-                               <c:when test="${perms.website.adminUserCount == 1 && perms.permissionMask == 3}">
-                                   <fmt:message key="yourWebsites.notAllowed" />
-                               </c:when>
-                               <c:otherwise>
-                                  <a href='javascript:resignWebsite("<c:out value='${perms.website.id}'/>","<c:out value="${perms.website.handle}" />")'>
-                                      <img src="../images/Remove16.gif" alt="remove-icon" border="0" align="bottom" 
-                                          title="<fmt:message key='yourWebsites.resign' />" />
-                                  </a>
-                               </c:otherwise>
-                           </c:choose>
-                       </td>
-                    </roller:row>
+                    </tr>
                 </c:forEach>
-            </table>    
-           
-            <c:if test="${model.groupBloggingEnabled}">               
-                <p>
-                    <img src="../images/New16.gif" alt="new-icon" />
-                    <roller:link page="/editor/createWebsite.do">
-                        <fmt:message key="yourWebsites.createWebsite" />
-                    </roller:link>
-                </p>
-            </c:if> <%-- group blogging enabled --%>
-              
+                
+            </table>
+    
         </c:when>
-        
-        <c:when test="${empty model.permissions}">
-            <h1><fmt:message key="yourWebsites.title" /></h1>    
-            <p>
-                <fmt:message key="yourWebsites.youHaveNone" />
-                <roller:link page="/editor/createWebsite.do">
-                    <fmt:message key="yourWebsites.youCanCreateOne" />
-                </roller:link>?
-            </p>            
-        </c:when>
-        
+                  
     </c:choose>
 
 </html:form>
-<br />
-    
-<c:if test="${model.groupBloggingEnabled && !empty model.permissions}">
-    <div class="helptext">
-        <img src="../images/TipOfTheDay16.gif" alt="info-icon" align="bottom" />
-        <fmt:message key="createWebsite.whyCreateMore" />
-    </div>
-    <div class="helptext">
-        <img src="../images/TipOfTheDay16.gif" alt="info-icon" align="bottom" />
-        <fmt:message key="memberPermissions.permissionHelp" />
-    </div>    
-</c:if> <%-- group blogging enabled --%>
 
 <%@ include file="/theme/footer.jsp" %>

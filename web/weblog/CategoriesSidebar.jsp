@@ -1,28 +1,28 @@
 <%@ include file="/taglibs.jsp" %>
 
-<%@ include file="/theme/status.jsp" %>
-
-<table class="sidebarBox" >
-    <tr>
-       <td class="sidebarBox">
-          <div class="menu-tr"><div class="menu-tl">
-             <fmt:message key="mainPage.actions" />
-          </div></div>
-       </td>
-    </tr>    
-    <tr>
-        <td>
-			<p>
+<div class="sidebarfade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+            <div class="sidebarBody">
+            
+            <h3><fmt:message key="mainPage.actions" /></h3>
+            <hr />
+            
 			<%-- Add Category link --%>
-			<img src='<c:url value="/images/FolderNew16.png"/>' border="0"alt="icon" />
+			<p>
+            <img src='<c:url value="/images/FolderNew16.png"/>' border="0"alt="icon" />
 			<roller:link page="/editor/categoryEdit.do">
 			    <roller:linkparam id="<%= RollerRequest.PARENTID_KEY %>"
 			         name="category" property="id" />
 			    <fmt:message key="categoriesForm.addCategory" />
 			</roller:link>
 			</p>
-        </td>
-    </tr>
-</table>
-
-<br />
+			
+			<br />
+			<br />
+			<br />
+			
+            </div>
+        </div>
+    </div>
+</div>			

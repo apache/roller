@@ -12,7 +12,7 @@
 	    #end
 	    <div class="menu-tr">
 	       <div class="menu-tl">
-	          <a href="$menu.getUrl( $ctx )">$text.get( $menu.getName() )</a> 
+	          &nbsp;&nbsp;<a href="$menu.getUrl( $ctx )">$text.get( $menu.getName() )</a>&nbsp;&nbsp; 
 	       </div>
 	    </div>
 	    </td>	    
