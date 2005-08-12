@@ -48,7 +48,7 @@ public class YourWebsitesAction extends DispatchAction
         {
             return edit(mapping, actionForm, request, response);
         }
-        return select(mapping, actionForm, request, response);
+        return edit(mapping, actionForm, request, response);
     }
     
     public ActionForward edit(
@@ -65,7 +65,40 @@ public class YourWebsitesAction extends DispatchAction
         return forward;
     }
         
-    public ActionForward select(
+    public ActionForward newEntry(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        selectWebsite(mapping, actionForm, request, response);
+        return mapping.findForward("weblogCreate");
+    }
+    
+    public ActionForward editEntries(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        selectWebsite(mapping, actionForm, request, response);
+        return mapping.findForward("weblogQuery");
+    }
+    
+    public ActionForward manageWeblog(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        selectWebsite(mapping, actionForm, request, response);
+        return mapping.findForward("editWebsite");
+    }
+    
+    public void selectWebsite(
             ActionMapping       mapping,
             ActionForm          actionForm,
             HttpServletRequest  request,
@@ -86,10 +119,6 @@ public class YourWebsitesAction extends DispatchAction
                     "yourWebsites.selected", selectedWebsite.getHandle()));
             saveMessages(request, msgs);
         }        
-        request.setAttribute("model",
-                new YourWebsitesPageModel(request, response, mapping));
-        ActionForward forward = mapping.findForward("yourWebsites.page");
-        return forward;
     }
         
     public ActionForward accept(

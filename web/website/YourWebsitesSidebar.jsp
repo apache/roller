@@ -1,26 +1,52 @@
 <%@ include file="/taglibs.jsp" %>
 
-<table class="sidebarBox" >
-    <tr>
-       <td class="sidebarBox"> 
-          <div class="menu-tr"><div class="menu-tl">
-             <fmt:message key="mainPage.sidebarHelpTitle" />
-          </div></div>
-       </td>
-    </tr>    
-    <tr>
-        <td>
-            <img src="../images/Help16.gif" alt="help-icon" align="bottom" />
-            <c:choose>
-                <c:when test="${model.groupBloggingEnabled}">
-                   <fmt:message key="yourWebsites.groupBloggingEnabled" />  
-                </c:when>
-                <c:when test="${!model.groupBloggingEnabled}">
-                    <fmt:message key="yourWebsites.groupBloggingDisabled" />
-                </c:when>
-            </c:choose>
-        </td>
-    </tr>
-</table>
-
-<br />
+<div class="sidebarfade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+            <div class="sidebarBody">
+            
+             <h3><fmt:message key="yourWebsites.shortCuts" /></h3>
+             <hr />
+          
+            <c:if test="${model.groupBloggingEnabled}">               
+                <p>
+                    <roller:link forward="createWebsite">
+                       <fmt:message key="yourWebsites.createWeblog" />
+                    </roller:link>
+                    <br />
+                    <fmt:message key="yourWebsites.createWeblog.desc" />
+                </p>
+            </c:if>
+            
+            <p>
+                <roller:link forward="yourProfile">
+                   <fmt:message key="yourWebsites.editProfile" />
+                </roller:link>
+                <br />
+                <fmt:message key="yourWebsites.editProfile.desc" />
+            </p>
+            
+            <p>
+                <roller:link forward="rollerConfig">
+                   <fmt:message key="yourWebsites.globalAdmin" />
+                </roller:link>            
+                <br />
+                <fmt:message key="yourWebsites.globalAdmin.desc" />
+            </p>
+            
+            <p>
+                <roller:link forward="planetConfig">
+                   <fmt:message key="yourWebsites.planetAdmin" />
+                </roller:link>            
+                <br />
+                <fmt:message key="yourWebsites.planetAdmin.desc" />
+            </p>
+            
+			<br />
+			<br />
+			<br />
+			
+            </div>
+        </div>
+    </div>
+</div>	

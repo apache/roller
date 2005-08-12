@@ -52,6 +52,16 @@ public class YourProfileAction extends UserBaseAction
         return save(mapping, actionForm, request, response);
     }
     
+    public ActionForward cancel(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        return mapping.findForward("yourWebsites");
+    }
+    
     /** Load form with authenticated user and forward to your-profile page */
     public ActionForward edit(
         ActionMapping       mapping,
@@ -146,14 +156,14 @@ public class YourProfileAction extends UserBaseAction
                 request.setAttribute(
                         "model", new BasePageModel(request, response, mapping));
                 
-                msgs.add(null, new ActionMessage("yourProfile.saved"));
+                //msgs.add(null, new ActionMessage("yourProfile.saved"));
                 saveMessages(request, msgs);
             }
             else 
             {
                 saveErrors(request, errors);
             }
-            return edit(mapping, actionForm, request, response);
+            return mapping.findForward("yourWebsites");
         }
         catch (Exception e)
         {

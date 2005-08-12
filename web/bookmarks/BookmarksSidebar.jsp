@@ -1,16 +1,13 @@
 <%@ include file="/taglibs.jsp" %>
-<%@ include file="/theme/status.jsp" %>
-<table class="sidebarBox" >
-    <tr>
-       <td class="sidebarBox">
-          <div class="menu-tr"><div class="menu-tl">
-             <fmt:message key="mainPage.actions" />
-          </div></div>
-       </td>
-    </tr>    
-    <tr>
-        <td>
-        
+
+<div class="sidebarfade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+            <div class="sidebarBody">
+            
+            <h3><fmt:message key="mainPage.actions" /></h3>
+            <hr />
+            
             <p>
 			<%-- Add Bookmark link --%>
 			<img src='<c:url value="/images/BookmarkNew16.png"/>' border="0"alt="icon" />
@@ -31,9 +28,11 @@
 			    <fmt:message key="bookmarksForm.addFolder" />
 			</roller:link>
 			</p>
+			<br />
+			<br />
+			<br />
             
-        </td>
-    </tr>
-</table>
-
-<br />
+            </div>
+        </div>
+    </div>
+</div>	

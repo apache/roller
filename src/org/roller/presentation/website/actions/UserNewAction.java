@@ -60,6 +60,16 @@ public class UserNewAction extends UserBaseAction
         return registerUser(mapping, actionForm, request, response);
     }
     
+    public ActionForward cancel(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        return mapping.findForward("user");
+    }
+    
     //------------------------------------------------------------------------
     /** Process GET of user registration page (allows users to register themselves. */
     public ActionForward registerUser(

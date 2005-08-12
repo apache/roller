@@ -1,53 +1,34 @@
-/* ======================================================================
-layout.css: CSS styles for layout of Roller editor/admin UI
-Uses blue robot layout - http://bluerobot.com/web/layouts/layout2.html
-====================================================================== */
+
+#wrapper {
+    margin: 20px;
+    height: 100%;
+}
 
 #banner {
-    margin:0px 0px 10px 0px;
-    padding:17px 0px 0px 20px;
-    /* For IE5/Win's benefit height = [correct height] + [top padding] + [top and bottom border widths] */
-    height:33px; /* 14px + 17px + 2px = 33px */
-    border-style:solid;
-    border-color:black;
-    border-width:1px 0px; /* top and bottom borders: 1px; left and right borders: 0px */
-    line-height:11px;
-    background-color:#eee;
+    height: 90px; 
+}
 
-/* Here is the ugly brilliant hack that protects IE5/Win from its own stupidity. 
-Thanks to Tantek Celik for the hack and to Eric Costello for publicizing it. 
-IE5/Win incorrectly parses the "\"}"" value, prematurely closing the style 
-declaration. The incorrect IE5/Win value is above, while the correct value is 
-below. See http://glish.com/css/hacks.asp for details. */
-    voice-family: "\"}\"";
-    voice-family:inherit;
-    height:14px; /* the correct height */
-    }
-/* I've heard this called the "be nice to Opera 5" rule. Basically, it feeds correct 
-length values to user agents that exhibit the parsing error exploited above yet get 
-the CSS box model right and understand the CSS2 parent-child selector. ALWAYS include
-a "be nice to Opera 5" rule every time you use the Tantek Celik hack (above). */
-body>#banner {height:14px;}
+#footer {
+    margin: 0px;
+    width: 100%;
+}
+
+.bannerBox td, table.bannerBox {
+    height: 15px;
+}
 
 #centercontent {
-    margin:0px 210px 50px 10px;
-    padding:10px;
-    }
+    margin: 0px 220px 15px 15px;
+    padding: 0px 50px 0px 0px;
+}
 
 #rightcontent {
-    position:absolute;
-    top:50px;
-    right:20px;
-    width:185px;
-    padding:5px;
-    line-height:17px;
-/* Again, the ugly brilliant hack. */
-    voice-family: "\"}\"";
-    voice-family:inherit;
-    width:185px;
-    }
-/* Again, "be nice to Opera 5". */
-body>#Menu {width:150px;}
+    position: absolute;
+    top:   106px;
+    right:  15px;
+    width: 230px;
+    padding: 20px;
+}
 
 div#loginTable {
     margin: 20px;
@@ -56,43 +37,4 @@ div#loginTable {
     padding: 10px 5px 0px 5px;
     width: 350px;
 }
-
-/*
-div#header {
-    border-top: 1px solid white;
-    background: white;
-}
-
-div#content {
-    margin: 0 0 0 0px;
-    padding: 10px;
-    padding-top: 0;
-}
-
-div#sidebar { 
-    position: absolute;
-    right: 0px;
-    width: 136px;
-    padding: 10px;
-}
-
-div#footer {
-    margin-top:40px;
-    border-top: 1px gray dotted;
-    width: 100%;
-    text-align: left;
-}
-
-div#separator {
-    background: transparent;
-    border-top: 1px solid #C0C0C0;
-    color: #666666;
-    font-size: 0.9em;
-    margin-top: 30px;
-    padding: 5px 0px 10px 5px;
-    text-align: left;
-}
-
-*/
-
 

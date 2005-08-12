@@ -6,18 +6,26 @@ roller.css: CSS styles for Roller editor/admin UI
 Editor look and feel styles
 ---------------------------------------------------------------------- */
 
-#banner {
-    background-color: #CCCC99;
-}
-    
-td.sidebarBox {
-    height:25px;
-    padding: 0px; margin: 0px;
-    background-color: #CCCC99;
+#wrapper {
+    background: white;
 }
 
-table.sidebarBox {
-    width:100%;
+table.bannerBox {
+    width: 100%;
+    background: url("images/two-topgrey.png") repeat-x top;
+}
+
+#footer {
+    padding: 4px;
+}
+
+.sidebarfade {
+    padding: 0px; 
+    width: 100%;
+    background: url("images/two-sidebarfade.png") repeat-x top;
+}
+.sidebarfadeBody {
+    padding: 0px 5px 0px 5px; 
 }
 
 /* ----------------------------------------------------------------------
@@ -25,20 +33,19 @@ General styles
 ---------------------------------------------------------------------- */
 
 body {
-    height:100%;
-    background: white;
+    height: 100%;
+    background: grey;
     margin: 0;
     padding: 0;
-    font:small Verdana,Arial,Sans-serif;
-    color:black;
-    font:x-small/1.5em Verdana, Arial, Helvetica, sans-serif;
+    font: small Verdana,Arial,Sans-serif;
+    font: x-small/1.5em Verdana, Arial, Helvetica, sans-serif;
     font-size: 69%;
 }
 
 input, select, option {
-    font:small Verdana,Arial,Sans-serif;
-    color:black;
-    font:small/1.5em Verdana, Arial, Helvetica, sans-serif;
+    font: small Verdana,Arial,Sans-serif;
+    color: black;
+    font: small/1.5em Verdana, Arial, Helvetica, sans-serif;
     font-size: 100%;
 }
 
@@ -49,7 +56,7 @@ p {
 
 h1 {
     background: transparent;
-    color: #A0A060;
+    color: #e93e3e;
     letter-spacing: 0.2em;
     font-size: x-large;
     font-weight: bold;
@@ -57,7 +64,7 @@ h1 {
 
 h2 {
     background: transparent;
-    color: #A0A060;
+    color: #e93e3e;
     letter-spacing: 0.2em;
     font-size: large;
     font-weight: bold;
@@ -65,9 +72,13 @@ h2 {
 
 h3 {
     background: transparent;
-    color: #A0A060;
+    color: #e93e3e;
     letter-spacing: 0.2em;
     font-weight: bold;
+}
+
+div.sidebarfade h3 {
+    margin: 0px; padding: 0px; 
 }
 
 img {
@@ -88,25 +99,21 @@ a {
 
 a:link {
     background: transparent;
-    font-weight: bold;
-    color: #A0A060;
+    color: #5241b5;
     text-decoration: underline;
 }
 
 a:visited {
     background: transparent;
-    font-weight: bold;
-    color: #A0A060;
+    color: #5241b5;
     text-decoration: underline;
 }
 
 a:hover {
-    font-weight: bold;
     text-decoration: none;
 }
 
 a:active {
-    font-weight: bold;
     text-decoration: underline overline;
 }
 
@@ -134,8 +141,7 @@ Main page styles
 div.entryTitleBox {
    padding: 3px;
    margin: 3px;
-   border: 1px #A0A060 solid;
-   background: #c0c080;
+   background: #5241b5;
    color: white;
    font-size: medium;
 }
@@ -154,6 +160,7 @@ div.entryBoxPinned {
 }
 
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
+   color: #e93e3e;
    font-size: medium;
    font-weight: bold;
 }
@@ -185,16 +192,17 @@ Table styles
 
 table.rollertable {
     border-collapse: collapse; 
-    width: 90%;
+    width: 100%;
 }
 
-table.rollertable th, table.rollertable thead th {
+table.rollertable th, table.rollertable th {
     border: 1px solid #ccc;
-    background: #CCCC99;
+    background: #5241b5;
 }
 
-table.rollertable thead th {
-    font-size: 1em;
+table.rollertable th {
+    font-size: 1.5em;
+    color: white;
 }
 
 table.rollertable td, table.rollertable tbody td {
@@ -213,7 +221,7 @@ table.rollertable td.center {
 .rollertable_even td {
     border: 1px solid #ccc;
     background: #EEEEEE;
-    color: inherit;
+    color: white;
     vertical-align: top;
 }
 
@@ -221,6 +229,7 @@ table.rollertable td.center {
     border: 1px solid #ccc;
     background: inherit;
     vertical-align: top;
+    color: white;
 }
 
 td.rollertable_entry, div.rollertable_entry {
@@ -441,6 +450,18 @@ label.formrow {
    padding-right: 1em;
 }
 
+div.sideformrow {
+   float: left:
+   width: 80%;
+}
+
+label.formrow {
+   float: left;
+   text-align: right;
+   width: 30%;
+   padding-right: 1em;
+}
+
 div.buttonBox {
    width: 98%; 
    border: 1px solid black;
@@ -475,7 +496,7 @@ div.previewEntry {
 
 div.centerTitle {
     border: 1px solid #ccc;
-    background: #CCCC99;
+    background: #5a86a5;
     color: black;
     font-weight: bolder;
     font-size: large;
@@ -483,19 +504,17 @@ div.centerTitle {
 }
 
 div.control {
-    width: 90%; 
-    background: #CCCC99;
+    width: 100%; 
+    background: #5241b5;
     padding: 4px;  
     margin: 5px 5px 5px 0px; 
 }
 
 div.controlToggle {
-    width: 90%; 
-    color: black;
-    background: #CCCC99;
+    width: 100%; 
     padding: 4px;  
-    margin: 5px 5px 5px 0px; 
-    border: 1px solid #c0c0c0;
+    margin: 5px 5px 5px 0px;
+    background: url("images/two-togglegrey.png") repeat-x top;
 }
 
 a.controlToggle {

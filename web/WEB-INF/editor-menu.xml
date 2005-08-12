@@ -1,5 +1,6 @@
 <!-- 
-Defines the Roller Editor GUI menu and roles allowed to use each menu. 
+Defines the Roller Weblog Editor/Admin UI menu and roles allowed to use each 
+menu. See also, admin-menu.xml, which defines the Global Admin menu.
 Each menu or menu item is governed by four attrbibutes:
 
     1) roles: these are the global roles the are allowed to view item
@@ -20,20 +21,6 @@ Each menu or menu item is governed by four attrbibutes:
     4) disable property: if true, don't show this menu
 -->
 <menu-bar>
-
-    <menu name="tabbedmenu.main" roles="any" perms="any">
-        <menu-item forward="main"         name="tabbedmenu.main"    
-                                          perms="any" roles="any" />
-        <menu-item forward="planet"       name="tabbedmenu.planet" 
-                                          perms="any" roles="any" 
-                                          enabledProperty="planet.aggregator.enabled" />
-        <menu-item forward="yourProfile"  name="tabbedmenu.website.user"
-                                          perms="any"
-                                          roles="editor,admin" />
-        <menu-item forward="yourWebsites" name="tabbedmenu.user.websites"
-                                          perms="any"
-                                          roles="editor,admin" />
-    </menu>
     
     <menu name="tabbedmenu.weblog" perms="admin,author,limited">
         <menu-item forward="weblogCreate" name="tabbedmenu.weblog.newEntry" 
@@ -62,27 +49,6 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item forward="customPingTargets" name="tabbedmenu.weblog.customPingTargets" 
                                                disabledProperty="pings.disallowCustomTargets" 
                                                perms="admin" />
-    </menu>
-
-    <menu name="tabbedmenu.admin" roles="admin" perms="any">
-        <menu-item forward="rollerConfig"      name="tabbedmenu.admin.config" 
-                                               roles="admin" perms="any"/>
-        <menu-item forward="adminUser"         name="tabbedmenu.admin.userAdmin" 
-                                               roles="admin" perms="any"/>
-        <menu-item forward="createUser"        name="tabbedmenu.admin.createUser" 
-                                               roles="admin" perms="any"/>
-        <menu-item forward="commonPingTargets" name="tabbedmenu.admin.pingTargets"
-                                               roles="admin" perms="any"/>
-    </menu>
-
-    <menu name="tabbedmenu.planet" roles="admin" perms="any"
-        enabledProperty="planet.aggregator.enabled">
-        <menu-item forward="planetConfig"        name="tabbedmenu.admin.planetConfig" 
-                                                 roles="admin" perms="any" />
-        <menu-item forward="planetSubscriptions" name="tabbedmenu.admin.planetSubscriptions" 
-                                                 roles="admin" perms="any" />
-        <menu-item forward="planetGroups"        name="tabbedmenu.admin.planetGroups" 
-                                                 roles="admin" perms="any" />
     </menu>
 
 </menu-bar>

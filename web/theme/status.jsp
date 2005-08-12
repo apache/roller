@@ -7,40 +7,37 @@ WebsiteData website = rollerSession.getCurrentWebsite();
 String absURL = rctx.getAbsoluteContextUrl(request);
 boolean allowNewUsers = RollerConfig.getBooleanProperty("users.registration.enabled");
 %>
-<br />
-
-<table class="sidebarBox">
-    <tr>
-       <td class="sidebarBox">
-          <div class="menu-tr"><div class="menu-tl">
-             <fmt:message key="mainPage.status" />
-          </div></div>
-       </td>
-    </tr>
+<table class="bannerBox">
 	<tr>
-		<td>
+	
+		<td align="left">
 			<% if (user != null) { %>
-			    <fmt:message key="mainPage.loggedInAs" />:<br />
-                 [<b><%= user.getUserName() %></b>].<br />
+			    <fmt:message key="mainPage.loggedInAs" />:
+                 [<b><%= user.getUserName() %></b>].
                  <% if (website != null) { %>
-                    <fmt:message key="mainPage.currentWebsite" />:<br />
-                    [<b><a href='<%= absURL + "/page/" + website.getHandle() %>'><%= website.getHandle() %></a></b>]<br />
+                    <fmt:message key="mainPage.currentWebsite" />:
+                    [<b><a href='<%= absURL + "/page/" + website.getHandle() %>'><%= website.getHandle() %></a></b>]
                  <% } %> 
-                <fmt:message key="navigationBar.youMay" />&nbsp;
-			    <html:link forward="logout-redirect"><fmt:message key="navigationBar.logout"/></html:link>
+            <% } %>
+		</td>
+		
+		<td align="right">
+		    <roller:link forward="yourWebsites">
+                <fmt:message key="mainPage.mainMenu" />
+            </roller:link>
+			<% if (user != null) { %>
+			    | <html:link forward="logout-redirect"><fmt:message key="navigationBar.logout"/></html:link>
             <% } else if (allowNewUsers) { %>
-			    <html:link forward="login-redirect"><fmt:message key="navigationBar.login"/></html:link>
-                 <br /><br />
-			    <html:link forward="registerUser"><fmt:message key="navigationBar.register"/></html:link>
+			    | <html:link forward="login-redirect"><fmt:message key="navigationBar.login"/></html:link>
+			    | <html:link forward="registerUser"><fmt:message key="navigationBar.register"/></html:link>
             <% } else { %>
-			    <html:link forward="login-redirect"><fmt:message key="navigationBar.login"/></html:link>
+			    | <html:link forward="login-redirect"><fmt:message key="navigationBar.login"/></html:link>
             <% } %>
 
 		</td>
+		
 	</tr>
 </table>
-
-<br />
 
 
 
