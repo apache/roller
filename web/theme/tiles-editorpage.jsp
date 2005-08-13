@@ -13,7 +13,9 @@
    
     <div id="banner">
         <tiles:insert attribute="status" /><br />
-        <roller:Menu model="editor-menu.xml" view="/menu-tabbed.vm" />
+        <div id="menu">
+            <roller:Menu model="editor-menu.xml" view="/menu-tabbed.vm" />
+        </div>
     </div>
     
     <div id="leftcontent"> 
