@@ -30,7 +30,7 @@ div.menu-tr {
 .menuItemTable {
     width: 100%;
     height: 25px;
-    background-color: #5241b5;
+    background-color: #bdbdbd;
 }
 .menuItem {
     padding: 0px 5px 0px 5px; /* TRBL */
@@ -40,12 +40,12 @@ div.menu-tr {
 }
 
 .menuItemTable a:link, .menuItemTable a:visited, .menuItemTable a:hover, .menuItemTable a:active {
-    color: white;
+    color: #FFF;
     text-decoration: none;
 }
 
 .menuTabTable a:link, .menuTabTable a:visited, .menuTabTable a:hover, .menuTabTable a:active {
-    color: white;
+    color: #FFF;
     text-decoration: none;
 }
 

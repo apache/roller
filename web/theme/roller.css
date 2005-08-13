@@ -16,7 +16,7 @@ table.bannerBox {
 }
 
 #footer {
-    padding: 4px;
+    padding: 0px;
 }
 
 .sidebarfade {
@@ -34,7 +34,7 @@ General styles
 
 body {
     height: 100%;
-    background: grey;
+    background: white;
     margin: 0;
     padding: 0;
     font: small Verdana,Arial,Sans-serif;
@@ -141,7 +141,7 @@ Main page styles
 div.entryTitleBox {
    padding: 3px;
    margin: 3px;
-   background: #5241b5;
+   background: #c6c3c6;
    color: white;
    font-size: medium;
 }
@@ -156,7 +156,7 @@ div.entryBoxPinned {
    padding: 3px;
    margin: 3px;
    border: 1px #c0c0c0 solid;
-   background: #e7e7ff;
+   background: #e5e5e5;
 }
 
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
@@ -197,7 +197,7 @@ table.rollertable {
 
 table.rollertable th, table.rollertable th {
     border: 1px solid #ccc;
-    background: #5241b5;
+    background: #c6c3c6;
 }
 
 table.rollertable th {
@@ -496,7 +496,7 @@ div.previewEntry {
 
 div.centerTitle {
     border: 1px solid #ccc;
-    background: #5a86a5;
+    background: #c6c3c6;
     color: black;
     font-weight: bolder;
     font-size: large;
@@ -505,7 +505,7 @@ div.centerTitle {
 
 div.control {
     width: 100%; 
-    background: #5241b5;
+    background: #c6c3c6;
     padding: 4px;  
     margin: 5px 5px 5px 0px; 
 }

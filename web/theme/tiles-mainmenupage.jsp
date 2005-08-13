@@ -12,16 +12,14 @@
     height: 30px; 
 }
 #centercontent {
-    margin:0px 330px 50px 10px;
-    padding:10px;
+    margin: 0px 350px 50px 10px;
+    padding: 10px;
 }
 #rightcontent {
-    position:absolute;
-    top:50px;
-    right:20px;
-    width:300px;
-    padding:15px;
-    line-height:17px;
+    position: absolute;
+    top:     35px;
+    right:   10px;
+    width:  340px;
 }
 </style>
 </head>

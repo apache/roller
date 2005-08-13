@@ -1,11 +1,14 @@
 
 #wrapper {
-    margin: 20px;
     height: 100%;
 }
 
 #banner {
     height: 90px; 
+}
+
+#menu {
+    padding: 0px 10px 0px 10px;
 }
 
 #footer {
@@ -24,10 +27,9 @@
 
 #rightcontent {
     position: absolute;
-    top:   106px;
-    right:  15px;
+    top:   100px;
+    right:  10px;
     width: 230px;
-    padding: 20px;
 }
 
 div#loginTable {
