@@ -10,35 +10,39 @@
           
             <c:if test="${model.groupBloggingEnabled}">               
                 <p>
+                    <h3>
                     <roller:link forward="createWebsite">
                        <fmt:message key="yourWebsites.createWeblog" />
                     </roller:link>
-                    <br />
+                    </h3>
                     <fmt:message key="yourWebsites.createWeblog.desc" />
                 </p>
             </c:if>
             
             <p>
+                <h3>
                 <roller:link forward="yourProfile">
                    <fmt:message key="yourWebsites.editProfile" />
                 </roller:link>
-                <br />
+                </h3>
                 <fmt:message key="yourWebsites.editProfile.desc" />
             </p>
             
             <p>
+                <h3>
                 <roller:link forward="rollerConfig">
                    <fmt:message key="yourWebsites.globalAdmin" />
-                </roller:link>            
-                <br />
+                </roller:link> 
+                </h3>          
                 <fmt:message key="yourWebsites.globalAdmin.desc" />
             </p>
             
             <p>
+                <h3>
                 <roller:link forward="planetConfig">
                    <fmt:message key="yourWebsites.planetAdmin" />
                 </roller:link>            
-                <br />
+                </h3>
                 <fmt:message key="yourWebsites.planetAdmin.desc" />
             </p>
             

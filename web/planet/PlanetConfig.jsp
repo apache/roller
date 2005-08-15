@@ -18,79 +18,62 @@ function syncWebsites()
     <html:hidden property="method" value="saveConfig" />
     <html:hidden property="id" />
     
-    <h3><fmt:message key="planetConfig.pageTitle" /></h3>
-    <p><i><fmt:message key="planetConfig.prompt" /></i></p>
+    <h1><fmt:message key="planetConfig.pageTitle" /></h1>
+    <p class="subtitle"><fmt:message key="planetConfig.subtitle" /></p>
+    <p><fmt:message key="planetConfig.prompt" /></p>
 
-    <div class="formrow">
-        <label for="title" class="formrow" />
-           <fmt:message key="planetConfig.title" />
-        </label>
-        <html:text property="title" size="40" maxlength="255" />
-        <img src="../images/Help16.gif" alt="help" 
-           title='<fmt:message key="planetConfig.tip.title" />' />
-    </div>
-    
-    <div class="formrow">
-        <label for="description" class="formrow" />
-           <fmt:message key="planetConfig.description" />
-        </label>
-        <html:text property="description" size="40" maxlength="255" />
-        <img src="../images/Help16.gif" alt="help" 
-           title='<fmt:message key="planetConfig.tip.description" />' />
-    </div>
-    
-    <div class="formrow">
-        <label for="siteUrl" class="formrow" />
-           <fmt:message key="planetConfig.siteUrl" />
-        </label>
-        <html:text property="siteUrl" size="40" maxlength="255" />
-        <img src="../images/Help16.gif" alt="help" 
-           title='<fmt:message key="planetConfig.tip.siteUrl" />' />
-    </div>
-    
-    <div class="formrow">
-        <label for="adminEmail" class="formrow" />
-           <fmt:message key="planetConfig.adminEmail" />
-        </label>
-        <html:text property="adminEmail" size="40" maxlength="255" />
-        <img src="../images/Help16.gif" alt="help" 
-           title='<fmt:message key="planetConfig.tip.adminEmail" />' />
-    </div>
-    
-    <div class="formrow">
-        <label for="cacheDir" class="formrow" />
-           <fmt:message key="planetConfig.cacheDir" />
-        </label>
-        <html:text property="cacheDir" size="40" maxlength="255" />
-        <img src="../images/Help16.gif" alt="help" 
-           title='<fmt:message key="planetConfig.tip.cacheDir" />' />
-    </div>
-    
-    <div class="formrow">
-        <label for="proxyHost" class="formrow" />
-            <fmt:message key="planetConfig.proxyHost" />
-        </label>
-        <html:text property="proxyHost" size="40" maxlength="255" />
-        <img src="../images/Help16.gif" alt="help" 
-           title='<fmt:message key="planetConfig.tip.proxyHost" />' />
-    </div>
-    
-    <div class="formrow">
-        <label for="proxyPort" class="formrow" />
-            <fmt:message key="planetConfig.proxyPort" />
-        </label>
-        <html:text property="proxyPort" size="40" maxlength="255" />
-        <img src="../images/Help16.gif" alt="help" 
-           title='<fmt:message key="planetConfig.tip.proxyPort" />' />
-    </div>
-    
+    <table class="formtable">
+
+    <tr>
+        <td class="label"><label for="title" /><fmt:message key="planetConfig.title" /></label></td>
+        <td class="field"><html:text property="title" size="40" maxlength="255" /></td>
+        <td class="description"><fmt:message key="planetConfig.tip.title" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="description" /><fmt:message key="planetConfig.description" /></label></td>
+        <td class="field"><html:text property="description" size="40" maxlength="255" /></td>
+        <td class="description"><fmt:message key="planetConfig.tip.description" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="siteUrl" /><fmt:message key="planetConfig.siteUrl" /></label></td>
+        <td class="field"><html:text property="siteUrl" size="40" maxlength="255" /></td>
+        <td class="description"><fmt:message key="planetConfig.tip.siteUrl" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="adminEmail" /><fmt:message key="planetConfig.adminEmail" /></label></td>
+        <td class="field"><html:text property="adminEmail" size="40" maxlength="255" /></td>
+        <td class="description"><fmt:message key="planetConfig.tip.adminEmail" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="cacheDir" /><fmt:message key="planetConfig.cacheDir" /></label></td>
+        <td class="field"><html:text property="cacheDir" size="40" maxlength="255" /></td>
+        <td class="description"><fmt:message key="planetConfig.tip.cacheDir" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="proxyHost" /><fmt:message key="planetConfig.proxyHost" /></label></td>
+        <td class="field"><html:text property="proxyHost" size="40" maxlength="255" /></td>
+        <td class="description"><fmt:message key="planetConfig.tip.proxyHost" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="proxyPort" /><fmt:message key="planetConfig.proxyPort" /></label></td>
+        <td class="field"><html:text property="proxyPort" size="6" maxlength="6" /></td>
+        <td class="description"><fmt:message key="planetConfig.tip.proxyPort" /></td>
+    </tr>
+
+    </table>
+
     <br />
     <div class="control">
         <input type="submit" value='<fmt:message key="planetConfig.button.post" />' />
     </div>
     
-    <br />      
-    <br />      
+    <br />           
     <h3><fmt:message key="planetConfig.title.control" /></h3>
     <p><i><fmt:message key="planetConfig.prompt.control" /></i></p>
     

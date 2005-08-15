@@ -71,6 +71,8 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
             <br />
             <br />
             <br />
+            <br />
+            <br />
         </label> 
         <div>
         <html:radio property="status" value="ALL">

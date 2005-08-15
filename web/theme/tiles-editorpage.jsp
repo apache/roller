@@ -8,15 +8,11 @@
     <link rel="stylesheet" type="text/css" media="all"
         href="<%= request.getContextPath() %>/theme/layout.css" />
 <style type="text/css">
-.formtable td.label { 
-    text-align: right;
-    width: 30%; 
-}
-.formtable td.field { 
-    width: 50%; 
-}
-.formtable td.description { 
-    width: 0%; 
+#rightcontent {
+    position: absolute;
+    top:   147px;
+    right:  15px;
+    width: 230px;
 }
 </style>
 </head>
@@ -42,6 +38,7 @@
     </div>
     
     <div id="rightcontent"> 
+       <tiles:insert attribute="default-sidebar" />
        <tiles:insert attribute="sidebar" />
     </div>  
 

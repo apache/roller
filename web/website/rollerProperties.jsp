@@ -16,7 +16,7 @@
 
 <input type="hidden" name="method" value="update">
 
-    <table class="formtable">
+    <table class="formtableNoDesc">
     
     <x:forEach select="$configDefs//config-def[@name='global-properties']/display-group">
         <c:set var="displayGroupKey"><x:out select="@key"/></c:set>

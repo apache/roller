@@ -30,6 +30,7 @@ import org.roller.model.PropertiesManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.RollerPropertyData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 
@@ -75,6 +76,9 @@ public class RollerPropertiesAction extends DispatchAction {
         
         ActionForward forward = mapping.findForward("rollerProperties.page");
         try {
+            BasePageModel pageModel = 
+                    new BasePageModel(request, response, mapping);
+            request.setAttribute("model",pageModel);                
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             if (rollerSession.isAdminUser() ) {
@@ -110,6 +114,9 @@ public class RollerPropertiesAction extends DispatchAction {
         try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
+            BasePageModel pageModel = 
+                    new BasePageModel(request, response, mapping);
+            request.setAttribute("model",pageModel);                
             if ( rollerSession.isUserAuthorizedToAdmin() && rollerSession.isAdminUser() ) {
             
                 // just grab our properties map and put it in the request
