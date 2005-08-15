@@ -7,8 +7,8 @@ String absURL = rctx.getAbsoluteContextUrl(request);
 boolean allowNewUsers = RollerConfig.getBooleanProperty("users.registration.enabled");
 %>
 <div class="bannerBox">
-   <img src="<%= request.getContextPath() %>/theme/images/two-bigbadge2.png" 
-      style="padding: 13px 0px 0px 15px;"/>
+   <img src="<%= request.getContextPath() %>/theme/images/two-bigbadge.png" 
+      style="padding: 15px 0px 0px 15px;"/>
 </div>
 
 <div class="statusBox">
