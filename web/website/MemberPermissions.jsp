@@ -1,5 +1,7 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
 
+<div class="prop"></div> <%-- force minimum height --%>
+        
 <script>
 // <!--  
 function save() {
@@ -17,6 +19,11 @@ function save() {
 </script>
 
 <h1><fmt:message key="memberPermissions.title" /></h1>
+<p class="subtitle">
+    <fmt:message key="memberPermissions.subtitle" >
+        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+    </fmt:message>
+</p>
 
 <p><fmt:message key="memberPermissions.description" /></p>
 
@@ -68,31 +75,17 @@ function save() {
            </roller:row>
        </c:forEach>
     </table>
-        
-    <p>
-        <img src="../images/ComposeMail16.gif" alt="mail-icon" align="bottom" />
-        <roller:link page="/editor/inviteMember.do">
-           <fmt:message key="memberPermissions.inviteMember" />
-        </roller:link>
-    </p>
-    
+    <br />
+     
     <div class="control">
        <input type="button" onclick="javascript:save()"
        value='<fmt:message key="memberPermissions.button.save" />'></input>
     </div>
     
-    <div class="helptext">
-        <img src="../images/TipOfTheDay16.gif" alt="info-icon" align="bottom" />
-        <fmt:message key="memberPermissions.whyInvite" />
-    </div> 
-    
-    <div class="helptext">
-        <img src="../images/TipOfTheDay16.gif" alt="info-icon" align="bottom" />
-        <fmt:message key="memberPermissions.permissionHelp" />
-    </div> 
-    
 </html:form>
     
+<div class="clear"></div> <%-- force minimum height --%>
+        
 <%@ include file="/theme/footer.jsp" %>
 
 

@@ -28,6 +28,7 @@ import org.roller.model.RollerFactory;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.bookmarks.formbeans.BookmarksForm;
@@ -64,7 +65,7 @@ public class BookmarksAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor())
         {
-            addModelObjects(request, (BookmarksForm)actionForm);
+            addModelObjects(request, response, mapping, (BookmarksForm)actionForm);
             return mapping.findForward("BookmarksForm");
         }
         else
@@ -117,7 +118,7 @@ public class BookmarksAction extends DispatchAction
             }
             roller.commit();
 
-            addModelObjects(request, (BookmarksForm)actionForm);
+            addModelObjects(request, response, mapping, (BookmarksForm)actionForm);
             return mapping.findForward("BookmarksForm");
         }
         else
@@ -192,7 +193,7 @@ public class BookmarksAction extends DispatchAction
                 }
                 roller.commit();
     
-                addModelObjects(request, (BookmarksForm)actionForm);
+                addModelObjects(request, response, mapping, (BookmarksForm)actionForm);
                 saveMessages(request, messages);
             }
             catch (RollerException e)
@@ -214,7 +215,9 @@ public class BookmarksAction extends DispatchAction
      * @param request
      * @throws RollerException
      */
-    private void addModelObjects(HttpServletRequest request, BookmarksForm form)
+    private void addModelObjects(
+        HttpServletRequest request, HttpServletResponse response, 
+        ActionMapping mapping, BookmarksForm form)
         throws RollerException
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
@@ -225,6 +228,9 @@ public class BookmarksAction extends DispatchAction
 
         TreeSet allFolders = new TreeSet(new FolderPathComparator());
 
+        BasePageModel pageModel = new BasePageModel(request, response, mapping);
+        request.setAttribute("model",pageModel);
+        
         // Find folderid wherever it may be
         String folderId = (String)request.getAttribute(RollerRequest.FOLDERID_KEY);
         if (null == folderId)

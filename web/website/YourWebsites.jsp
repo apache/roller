@@ -1,6 +1,5 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
 <% pageContext.setAttribute("leftPage","/website/YourWebsitesSidebar.jsp"); %>
-
 <script type="text/javascript">
 <!--
 function selectWebsiteAction(id, action) 
@@ -55,8 +54,10 @@ function resignWebsite(id,handle)
     <input type="hidden" name="method" value="select" />		  
 
     <c:if test="${!empty model.pendings}">
+    
         <h1><fmt:message key="yourWebsites.invitations" /></h1>    
-        <p><fmt:message key="yourWebsites.invitationsPrompt" /></p>
+        <p class="subtitle"><fmt:message key="yourWebsites.invitationsPrompt" /></p>
+        
         <c:forEach var="invite" items="${model.pendings}">
             <fmt:message key="yourWebsites.youAreInvited" >
                <fmt:param value="${invite.website.handle}" />
@@ -75,20 +76,23 @@ function resignWebsite(id,handle)
     <c:choose>
     
         <c:when test="${!empty model.permissions}">
+        
             <h1><fmt:message key="yourWebsites.title" /></h1>    
-            <p><fmt:message key="yourWebsites.prompt" /></p>
-            <table cellspacing="6px" cellpadding="4px" width="100%" >
-
+            <p class="subtitle"><fmt:message key="yourWebsites.prompt" /></p>
+            
+            <div class="entryTitleBox" style="margin: 0px 20px 0px 0px">
+                <fmt:message key="yourWebsites.existingWebsites" />
+            </div>
+    
                 <c:forEach var="perms" items="${model.permissions}">
-                    <tr>  
-                       <td style="border: 1px solid grey" >
+                
+                    <div class="entryBox" style="margin: 0px 40px 0px 0px; border-width: 0px 0px 1px 0px;">  
                        
                            <table width="100%">
                            <tr>
-                           <td width="80%">
+                           <td width="80%" style="padding: 0px 10px 0px 10px">
                       
                                <h3 style="border-bottom: 1px #e5e5e5 solid; margin:0px; padding:5px">
-                                   <fmt:message key='yourWebsites.weblog' />:
                                    <c:out value="${perms.website.name}" />
                                    [<c:out value="${perms.website.handle}" />] 
                                </h3>
@@ -114,7 +118,7 @@ function resignWebsite(id,handle)
                                
                            </td>
                            
-                           <td width="20%" align="center">
+                           <td width="20%" align="left">
 
                                    <fmt:message key='yourWebsites.actions' />                       
                                    <br />
@@ -141,14 +145,13 @@ function resignWebsite(id,handle)
 
                            </td>
                            </tr>
-                           </table>
                            
-                       </td>
-                    </tr>
+                       </table>
+                    
+                    </div>
+                    
                 </c:forEach>
-                
-            </table>
-    
+                    
         </c:when>
                   
     </c:choose>

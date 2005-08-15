@@ -1,4 +1,16 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<script type="text/javascript">
+<!--
+function previewImage(theme) {
+    <% String ctxPath = request.getContextPath(); %>
+    document.preview.src="<%= ctxPath %>/images/preview/sm-theme-" + theme + ".png";
+}
+function cancel() {
+    document.weblogTemplateForm.method.value="cancel"; 
+    document.weblogTemplateForm.submit();
+}
+-->
+</script>
 
 <roller:StatusMessage/>
 
@@ -31,10 +43,11 @@
 
     <html:hidden property="id"/>
     <html:hidden property="name"/>
+    <input type="hidden" name="method" value="update" />
 
     <br />
     <input type="submit" value='<fmt:message key="pageForm.save" />' /></input>
-    <html:hidden property="method" value="update"/>
+    <input type="button" value='<fmt:message key="application.done" />' onclick="cancel()" /></input>
 
 </html:form>
 

@@ -7,28 +7,13 @@
     <tiles:insert attribute="head" />     
     <link rel="stylesheet" type="text/css" media="all"
         href="<%= request.getContextPath() %>/theme/layout.css" />
-<style type="text/css">
-#banner {
-    height: 30px; 
-}
-#centercontent {
-    margin: 0px 230px 15px 15px;
-    padding: 0px 25px 0px 0px;
-}
-#rightcontent {
-    position: absolute;
-    top:     35px;
-    right:   10px;
-    width:  230px;
-}
-</style>
 </head>
 <body>
 
 <div id="wrapper">
    
-    <div id="banner">
-        <tiles:insert attribute="status" /><br />
+    <div id="header">
+        <tiles:insert attribute="status" />
     </div>
     
     <div id="leftcontent"> 
@@ -36,16 +21,15 @@
     
     <div id="centercontent">   
         <tiles:insert attribute="content" />    
+        <div id="footer">
+            <tiles:insert attribute="footer" />
+        </div> 
     </div>
     
     <div id="rightcontent"> 
        <tiles:insert attribute="sidebar" />
     </div>  
  
-    <div id="footer">
-        <tiles:insert attribute="footer" />
-    </div> 
-
 </div>
 
 </body>

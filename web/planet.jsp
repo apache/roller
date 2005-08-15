@@ -28,7 +28,7 @@ request.setAttribute("featuredGroup2_entries",((PlanetAction.PlanetPageData)
 %>
 <td width="70%" valign="top">
 
-    <div class="bannerBox">
+    <div>
     <%@ include file="local-banner-planet.jspf" %>
     </div>
     

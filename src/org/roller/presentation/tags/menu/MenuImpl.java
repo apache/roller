@@ -118,10 +118,10 @@ public class MenuImpl extends BaseRollerMenu implements Menu
         {
             menuKey = (String)req.getAttribute(RollerMenuModel.MENU_KEY);
         }
-        if (null == menuKey) 
-        {
-            menuKey = (String)ses.getAttribute(mMenuId+"_"+RollerMenuModel.MENU_KEY);
-        }
+        //if (null == menuKey) 
+        //{
+           //menuKey = (String)ses.getAttribute(mMenuId+"_"+RollerMenuModel.MENU_KEY);
+        //}
 
         if (menuKey != null && menuKey.equals(mName)) 
         {

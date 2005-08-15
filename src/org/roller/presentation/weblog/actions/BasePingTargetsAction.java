@@ -25,8 +25,10 @@ import org.roller.RollerException;
 import org.roller.model.PingTargetManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.PingTargetData;
-import org.roller.presentation.RollerRequest;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.forms.PingTargetForm;
+import org.roller.presentation.RollerRequest;
+
 
 /**
  * Base class for both common and custom ping target operations.  The methods here apply to
@@ -82,6 +84,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         try
         {
+            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            req.setAttribute("model",pageModel);            
             if (!hasRequiredRights(rreq))
             {
                 return mapping.findForward(ACCESS_DENIED_PAGE);
@@ -117,6 +121,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
         PingTargetForm pingTargetForm = (PingTargetForm) form;
         try
         {
+            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            req.setAttribute("model",pageModel);            
             if (!hasRequiredRights(rreq))
             {
                 return mapping.findForward(ACCESS_DENIED_PAGE);
@@ -169,6 +175,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
                                 HttpServletRequest req, HttpServletResponse res)
         throws Exception
     {
+        BasePageModel pageModel = new BasePageModel(req, res, mapping);
+        req.setAttribute("model",pageModel);            
         return mapping.findForward(PING_TARGET_EDIT_PAGE);
     }
 
@@ -190,6 +198,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         try
         {
+            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            req.setAttribute("model",pageModel);            
             if (!hasRequiredRights(rreq))
             {
                 return mapping.findForward(ACCESS_DENIED_PAGE);
@@ -223,6 +233,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         try
         {
+            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            req.setAttribute("model",pageModel);            
             if (!hasRequiredRights(rreq))
             {
                 return mapping.findForward(ACCESS_DENIED_PAGE);

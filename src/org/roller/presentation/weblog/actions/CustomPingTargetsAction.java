@@ -12,17 +12,22 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import org.roller.RollerException;
 import org.roller.config.PingConfig;
 import org.roller.model.PingTargetManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.PingTargetData;
+import org.roller.presentation.forms.PingTargetForm;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.forms.PingTargetForm;
+
 
 /**
  * Administer custom ping targets.
@@ -86,5 +91,15 @@ public class CustomPingTargetsAction
     {
         RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
         return (rollerSession.isUserAuthorizedToAdmin() && !PingConfig.getDisallowCustomTargets());
+    }
+
+    public ActionForward cancel(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        return view(mapping, actionForm, request, response);
     }
 }

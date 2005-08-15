@@ -62,6 +62,7 @@
     <put name="content" value="/website/YourWebsites.jsp" />
     <put name="sidebar" value="/website/YourWebsitesSidebar.jsp" />
 </definition>
+
 <definition name=".YourProfile" extends=".tiles-simplepage" >
     <put name="content" value="/website/YourProfile.jsp" />
 </definition>
@@ -82,38 +83,62 @@
     <put name="content" value="/weblog/WeblogEdit.jsp" />
     <put name="sidebar" value="/weblog/WeblogEditSidebar.jsp" />
 </definition>
-<definition name=".WeblogEntryRemove" extends=".tiles-editorpage" >
-    <put name="content" value="/weblog/WeblogEntryRemove.jsp" />
-</definition>
-
 <definition name=".WeblogQuery" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/WeblogQuery.jsp" />
     <put name="sidebar" value="/weblog/WeblogQuerySidebar.jsp" />
 </definition>
-
 <definition name=".CategoriesForm" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/CategoriesForm.jsp" />
     <put name="sidebar" value="/weblog/CategoriesSidebar.jsp" />
 </definition>
-<definition name=".CategoryDeleteOK" extends=".tiles-editorpage" >
-    <put name="content" value="/weblog/CategoryDeleteOK.jsp" />
-</definition>
-<definition name=".CategoryForm" extends=".tiles-editorpage" >
-    <put name="content" value="/weblog/CategoryForm.jsp" />
-</definition>
-
 <definition name=".referers" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/referers.jsp" />
 </definition>
+<definition name=".BookmarksForm" extends=".tiles-editorpage" >
+    <put name="content" value="/bookmarks/BookmarksForm.jsp" />
+    <put name="sidebar" value="/bookmarks/BookmarksSidebar.jsp" />
+</definition>
+<definition name=".upload-file" extends=".tiles-editorpage" >
+    <put name="content" value="/website/upload-file.jsp" />
+</definition>
 
+<definition name=".WeblogEntryRemove" extends=".tiles-simplepage" >
+    <put name="content" value="/weblog/WeblogEntryRemove.jsp" />
+</definition>
+<definition name=".CategoryForm" extends=".tiles-simplepage" >
+    <put name="content" value="/weblog/CategoryForm.jsp" />
+</definition>
+<definition name=".CategoryDeleteOK" extends=".tiles-simplepage" >
+    <put name="content" value="/weblog/CategoryDeleteOK.jsp" />
+</definition>
+<definition name=".BookmarkForm" extends=".tiles-simplepage" >
+    <put name="content" value="/bookmarks/BookmarkForm.jsp" />
+</definition>
+<definition name=".FolderForm" extends=".tiles-simplepage" >
+    <put name="content" value="/bookmarks/FolderForm.jsp" />
+</definition>
+<definition name=".import" extends=".tiles-simplepage" >
+    <put name="content" value="/bookmarks/import.jsp" />
+</definition>
 
 <!-- weblog admin pages (and associates) -->
 
+<definition name=".edit-website" extends=".tiles-editorpage" >
+    <put name="content" value="/website/edit-website.jsp" />
+</definition>
+<definition name=".theme-editor" extends=".tiles-editorpage" >
+    <put name="content" value="/website/theme-editor.jsp" />
+</definition>
+<definition name=".edit-pages" extends=".tiles-editorpage"  >
+    <put name="content" value="/website/edit-pages.jsp" />
+    <put name="sidebar" value="/website/edit-pages-sidebar.jsp" />
+</definition>
+<definition name=".MemberPermissions" extends=".tiles-editorpage" >
+    <put name="content" value="/website/MemberPermissions.jsp" />
+    <put name="sidebar" value="/website/MemberPermissionsSidebar.jsp" />
+</definition>
 <definition name=".CustomPingTargets" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/CustomPingTargets.jsp" />
-</definition>
-<definition name=".CustomPingTargetEdit" extends=".tiles-editorpage" >
-    <put name="content" value="/weblog/CustomPingTargetEdit.jsp" />
 </definition>
 <definition name=".PingResult" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/PingResult.jsp" />
@@ -121,53 +146,24 @@
 <definition name=".Pings" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/Pings.jsp" />
 </definition>
-<definition name=".CustomPingTargetDeleteOK" extends=".tiles-editorpage" >
+
+<definition name=".CustomPingTargetDeleteOK" extends=".tiles-simplepage" >
     <put name="content" value="/weblog/CustomPingTargetDeleteOK.jsp" />
 </definition>
-
-<definition name=".BookmarksForm" extends=".tiles-editorpage" >
-    <put name="content" value="/bookmarks/BookmarksForm.jsp" />
-    <put name="sidebar" value="/bookmarks/BookmarksSidebar.jsp" />
+<definition name=".CustomPingTargetEdit" extends=".tiles-simplepage" >
+    <put name="content" value="/weblog/CustomPingTargetEdit.jsp" />
 </definition>
-<definition name=".BookmarkForm" extends=".tiles-editorpage" >
-    <put name="content" value="/bookmarks/BookmarkForm.jsp" />
-</definition>
-<definition name=".import" extends=".tiles-editorpage" >
-    <put name="content" value="/bookmarks/import.jsp" />
-</definition>
-<definition name=".FolderForm" extends=".tiles-editorpage" >
-    <put name="content" value="/bookmarks/FolderForm.jsp" />
-</definition>
-
-<definition name=".edit-website" extends=".tiles-editorpage" >
-    <put name="content" value="/website/edit-website.jsp" />
-</definition>
-<definition name=".InviteMember" extends=".tiles-editorpage" >
+<definition name=".InviteMember" extends=".tiles-simplepage" >
     <put name="content" value="/website/InviteMember.jsp" />
 </definition>
-<definition name=".InviteMemberDone" extends=".tiles-editorpage" >
+<definition name=".InviteMemberDone" extends=".tiles-simplepage" >
     <put name="content" value="/website/InviteMemberDone.jsp" />
 </definition>
-<definition name=".theme-editor" extends=".tiles-editorpage" >
-    <put name="content" value="/website/theme-editor.jsp" />
-</definition>
-<definition name=".edit-page" extends=".tiles-editorpage"  >
+<definition name=".edit-page" extends=".tiles-simplepage"  >
     <put name="content" value="/website/edit-page.jsp" />
 </definition>
-<definition name=".upload-file" extends=".tiles-editorpage" >
-    <put name="content" value="/website/upload-file.jsp" />
-</definition>
-<definition name=".MemberPermissions" extends=".tiles-editorpage" >
-    <put name="content" value="/website/MemberPermissions.jsp" />
-</definition>
-<definition name=".remove-page" extends=".tiles-editorpage"  >
+<definition name=".remove-page" extends=".tiles-simplepage"  >
     <put name="content" value="/website/remove-page.jsp" />
-</definition>
-<definition name=".edit-pages" extends=".tiles-editorpage"  >
-    <put name="content" value="/website/edit-pages.jsp" />
-</definition>
-<definition name=".Maintenance" extends=".tiles-editorpage" >
-    <put name="content" value="/website/Maintenance.jsp" />
 </definition>
 
 
@@ -179,9 +175,6 @@
 <definition name=".UserAdmin" extends=".tiles-adminpage" >
     <put name="content" value="/website/UserAdmin.jsp" />
 </definition>
-<definition name=".UserNew" extends=".tiles-adminpage" >
-    <put name="content" value="/website/UserNew.jsp" />
-</definition>
 <definition name=".CommonPingTargets" extends=".tiles-adminpage" >
     <put name="content" value="/website/CommonPingTargets.jsp" />
 </definition>
@@ -192,6 +185,9 @@
     <put name="content" value="/website/CommonPingTargetEdit.jsp" />
 </definition>
 
+<definition name=".UserNew" extends=".tiles-simplepage" >
+    <put name="content" value="/website/UserNew.jsp" />
+</definition>
 
 <definition name=".PlanetSubscriptions" extends=".tiles-adminpage" >
     <put name="content" value="/planet/PlanetSubscriptions.jsp" />

@@ -24,6 +24,7 @@ import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.FileManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.UploadFileForm;
@@ -55,6 +56,8 @@ public final class UploadFileFormAction extends DispatchAction
         RollerRequest rreq = null;
         ActionForward fwd = mapping.findForward("uploadFiles.page");
         WebsiteData website = null;
+        BasePageModel pageModel = new BasePageModel(request, response, mapping);
+        request.setAttribute("model", pageModel);
         RollerMessages msgs = new RollerMessages();
         try
         {
@@ -162,6 +165,8 @@ public final class UploadFileFormAction extends DispatchAction
         UploadFileForm theForm = (UploadFileForm)actionForm;
         ActionForward fwd = mapping.findForward("uploadFiles.page");
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        BasePageModel pageModel = new BasePageModel(request, response, mapping);
+        request.setAttribute("model", pageModel);
         try
         {
             FileManager fmgr = RollerFactory.getRoller().getFileManager();
@@ -205,6 +210,8 @@ public final class UploadFileFormAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
+            BasePageModel pageModel = new BasePageModel(request, response, mapping);
+            request.setAttribute("model", pageModel);
             if ( !rollerSession.isUserAuthorizedToAuthor() )
             {
                 return mapping.findForward("access-denied");

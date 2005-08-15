@@ -3,12 +3,21 @@
 <roller:StatusMessage/>
 
 <h1><fmt:message key="uploadFiles.title" /></h1>
+<p class="subtitle">
+    <fmt:message key="uploadFiles.subtitle" >
+        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+    </fmt:message>
+</p>  
+<p class="pagetip">
+    <fmt:message key="uploadFiles.tip" />
+</p>
+
 <roller:FileUpload />
 
 <br />
 
 <h1><fmt:message key="uploadFiles.manageFiles" /></h1>
-
+    
 <html:form action="/editor/uploadFiles" method="post">
     <roller:FileManager />
     <table>

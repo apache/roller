@@ -1,6 +1,10 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
 <script type="text/javascript">
 // <!--
+function cancel() {
+    document.inviteMemberForm.method.value="cancel"; 
+    document.inviteMemberForm.submit();
+}
 function createRequestObject() {
     var ro;
     var browser = navigator.appName;
@@ -70,7 +74,8 @@ function handleUserResponse() {
 <p><fmt:message key="inviteMember.description" /></p>
 
 <html:form action="/editor/inviteMember" method="post" focus="userName">
-
+    <input name="method" type="hidden" value="save" />
+    
     <div class="formrow">
        <label for="userName" class="formrow" />
            <fmt:message key="inviteMember.userName" /></label>
@@ -87,7 +92,7 @@ function handleUserResponse() {
        </div>
     </div>    
     
-     <div class="formrow">
+     <div class="permissionsMask">
        <label for="userName" class="formrow" />
            <fmt:message key="inviteMember.permissions" /></label>
        <input type="radio" name="permissionsMask" value="3"  />
@@ -99,14 +104,8 @@ function handleUserResponse() {
     </div>
                   
     <br />      
-    <div class="control">
-       <input type="submit" value='<fmt:message key="inviteMember.button.save" />'></input>
-    </div>
-    
-    <div class="helptext">
-        <img src="../images/TipOfTheDay16.gif" alt="info-icon" align="bottom" />
-        <fmt:message key="memberPermissions.permissionHelp" />
-    </div> 
+    <input type="submit" value='<fmt:message key="inviteMember.button.save" />'></input>
+    <input type="button" value='<fmt:message key="application.cancel" />' onclick="cancel()"></input>
 
 </html:form>
 

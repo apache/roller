@@ -9,16 +9,21 @@ function cancel() {
 </script>
 
 <h1><fmt:message key="yourProfile.title" /></h1>
-<p><fmt:message key="yourProfile.description" /></p>
+<p class="subtitle"><fmt:message key="yourProfile.description" /></p>
 
 <html:form action="/editor/yourProfile" method="post" focus="fullName">
     <input type="hidden" name="method" value="save"></input> 
-    <html:hidden property="userName" /></input>
     <html:hidden property="id" /></input>  
     <html:hidden property="password" /></input>  
     <html:hidden property="enabled" /></input>
            
 <table class="formtable">
+
+<tr>
+    <td class="label"><label for="userName" /><fmt:message key="userSettings.username" /></label></td>
+    <td class="field"><html:text style="background: #e5e5e5" property="userName" readonly="true" /></td>
+    <td class="description"><fmt:message key="yourProfile.tip.userName" /></td>
+</tr>
 
 <tr>
     <td class="label"><label for="fullName" /><fmt:message key="userSettings.fullname" /></label></td>
@@ -70,7 +75,6 @@ function cancel() {
     
 </table>
 
-<br />
 <br />
 
 <input type="submit" value='<fmt:message key="userSettings.button.save" />'></input>

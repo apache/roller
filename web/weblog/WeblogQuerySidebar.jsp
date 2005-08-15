@@ -21,7 +21,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
   <%-- filter by category --%>
   
     <div class="sideformrow">
-        <label for="categoryId" class="formrow">
+        <label for="categoryId" class="sideformrow">
             <fmt:message key="weblogEntryQuery.label.category" /></label>          
         <html:select property="categoryId" size="1" tabindex="4">
             <html:option key="weblogEntryQuery.label.any" value="" />
@@ -33,14 +33,14 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
   <%-- filter by date --%>
   
     <div class="sideformrow">
-        <label for="startDateString" class="formrow">
+        <label for="startDateString" class="sideformrow">
            <fmt:message key="weblogEntryQuery.label.startDate" />:
         </label>
         <roller:Date property="startDateString" dateFormat='<%= model.getShortDateFormat() %>' />
     </div>
 
     <div class="sideformrow">
-        <label for="endDateString" class="formrow">
+        <label for="endDateString" class="sideformrow">
            <fmt:message key="weblogEntryQuery.label.endDate" />:
         </label>
         <roller:Date property="endDateString" dateFormat='<%= model.getShortDateFormat() %>' />
@@ -50,7 +50,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
   <%-- limit number of results --%>
   
     <div class="sideformrow">
-        <label for="maxEntries" class="formrow">
+        <label for="maxEntries" class="sideformrow">
             <fmt:message key="weblogEntryQuery.label.maxEntries" />
         </label>
         <html:select property="maxEntries" size="1" tabindex="4">
@@ -65,7 +65,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
   <%-- filter by status --%>
 
     <div class="sideformrow">
-        <label for="status" class="formrow">
+        <label for="status" class="sideformrow">
             <fmt:message key="weblogEntryQuery.label.status" />:
             <br />
             <br />

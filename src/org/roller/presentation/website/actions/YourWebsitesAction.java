@@ -114,10 +114,10 @@ public class YourWebsitesAction extends DispatchAction
         if (selectedWebsite.hasUserPermissions(user, PermissionsData.LIMITED))
         {
             rollerSession.setCurrentWebsite(selectedWebsite);
-            ActionMessages msgs = new ActionMessages();
-            msgs.add(null, new ActionMessage(
-                    "yourWebsites.selected", selectedWebsite.getHandle()));
-            saveMessages(request, msgs);
+            //ActionMessages msgs = new ActionMessages();
+            //msgs.add(null, new ActionMessage(
+                    //"yourWebsites.selected", selectedWebsite.getHandle()));
+            //saveMessages(request, msgs);
         }        
     }
         

@@ -16,13 +16,13 @@
 
 <input type="hidden" name="method" value="update">
 
-    <table border="0">
+    <table class="formtable">
     
     <x:forEach select="$configDefs//config-def[@name='global-properties']/display-group">
         <c:set var="displayGroupKey"><x:out select="@key"/></c:set>
     
         <tr>
-            <td colspan="2"><h2><fmt:message key="${displayGroupKey}" /></h2></td>
+            <td colspan="3"><h2><fmt:message key="${displayGroupKey}" /></h2></td>
         </tr>
     
         <x:forEach select="property-def">
@@ -30,19 +30,19 @@
             <c:set var="name"><x:out select="@name"/></c:set>
         
             <tr>
-                <td class="propname"><fmt:message key="${propLabelKey}" /></td>
+                <td class="label"><fmt:message key="${propLabelKey}" /></td>
               
                 <%-- choose the right html input element for the display --%>
                 <x:choose>
                 
                   <%-- "string" type means use a simple textbox --%>
                   <x:when select="type='string'">
-                    <td><input type="text" name='<c:out value="${name}"/>' value='<c:out value="${RollerProps[name].value}"/>' size="35" /></td>
+                    <td class="field"><input type="text" name='<c:out value="${name}"/>' value='<c:out value="${RollerProps[name].value}"/>' size="35" /></td>
                   </x:when>
                   
                   <%-- "text" type means use a full textarea --%>
                   <x:when select="type='text'">
-                    <td>
+                    <td class="field">
                       <textarea name='<c:out value="${name}"/>' rows="<x:out select="rows"/>" cols="<x:out select="cols"/>"><c:out value="${RollerProps[name].value}"/></textarea>
                     </td>
                   </x:when>
@@ -51,19 +51,21 @@
                   <x:when select="type='boolean'">
                     <c:choose>
                       <c:when test="${RollerProps[name].value eq 'true'}">
-                          <td><input type="checkbox" name='<c:out value="${name}"/>' CHECKED></td>
+                          <td class="field"><input type="checkbox" name='<c:out value="${name}"/>' CHECKED></td>
                       </c:when>
                       <c:otherwise>
-                          <td><input type="checkbox" name='<c:out value="${name}"/>'></td>
+                          <td class="field"><input type="checkbox" name='<c:out value="${name}"/>'></td>
                       </c:otherwise>
                     </c:choose>
                   </x:when>
                   
                   <%-- if it's something we don't understand then use textbox --%>
                   <x:otherwise>
-                    <td><input type="text" name='<c:out value="${name}"/>' size="50" /></td>
+                    <td class="field"><input type="text" name='<c:out value="${name}"/>' size="50" /></td>
                   </x:otherwise>
                 </x:choose>
+                
+                <td class="description"><%-- <fmt:message key="" /> --%></td>
             </tr>
           
         </x:forEach>
@@ -76,9 +78,10 @@
 
     </table>
     
-            <div class="control">
-                <input class="buttonBox" type="submit" value="<fmt:message key="configForm.save"/>"/>
-            </div>
+    <div class="control">
+        <input class="buttonBox" type="submit" value="<fmt:message key="configForm.save"/>"/>
+    </div>
+    
 <form>
 
 

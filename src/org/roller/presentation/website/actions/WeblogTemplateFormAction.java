@@ -25,10 +25,11 @@ import org.roller.model.UserManager;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.forms.WeblogTemplateForm;
 import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.forms.WeblogTemplateForm;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
 
@@ -88,7 +89,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
                     
                 actionForm.reset(mapping,request);                
                 
-                addModelObjects(rreq);
+                addModelObjects(request, response, mapping);
             }
             else
             {
@@ -125,7 +126,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
 
                 PageCacheFilter.removeFromCache( request, pd.getWebsite() );
                 
-                addModelObjects(rreq);
+                addModelObjects(request, response, mapping);
             }
             else
             {
@@ -155,7 +156,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
             RollerSession rses = RollerSession.getRollerSession(request);
             if ( rses.isUserAuthorizedToAdmin() )
             {
-                addModelObjects(rreq);
+                addModelObjects(request, response, mapping);
             }
             else
             {
@@ -197,8 +198,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 UserData user = rses.getAuthenticatedUser();
                 PageCacheFilter.removeFromCache(request, template.getWebsite());
                     
-                addModelObjects(rreq);
-                actionForm.reset(mapping,request);
+                addModelObjects(request, response, mapping);
+                actionForm.reset(mapping, request);
             }
             else
             {
@@ -360,13 +361,19 @@ public final class WeblogTemplateFormAction extends DispatchAction
     }
     
     //-----------------------------------------------------------------------
-    private void addModelObjects( RollerRequest rreq ) 
-        throws RollerException {  
-            
-        HttpServletRequest request = rreq.getRequest();            
+    private void addModelObjects( 
+        HttpServletRequest  request,
+        HttpServletResponse response,
+        ActionMapping mapping)
+    throws RollerException 
+    {             
         UserManager mgr = RollerFactory.getRoller().getUserManager();        
-        RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
+        RollerSession rses = RollerSession.getRollerSession(request);
 
+        BasePageModel pageModel = 
+            new BasePageModel(request, response, mapping);
+        request.setAttribute("model",pageModel); 
+                
         UserData user = rses.getAuthenticatedUser();
         request.setAttribute("user",user);
 

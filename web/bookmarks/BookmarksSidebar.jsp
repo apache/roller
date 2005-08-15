@@ -28,7 +28,7 @@
 			    <fmt:message key="bookmarksForm.addFolder" />
 			</roller:link>
 			</p>
-			<br />
+
 			<br />
 			<br />
             

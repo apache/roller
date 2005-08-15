@@ -1,7 +1,7 @@
 <%@ include file="/taglibs.jsp" %>
-<br />
-<br />
-<br />
+
+<div style="margin: 10px 4px 4px 4px;">
+
 <a href="http://www.rollerweblogger.org">
     Powered by Roller Weblogger</a> | 
 
@@ -16,6 +16,8 @@
 
 <a href="http://sourceforge.net/mail/?group_id=47722">
     <fmt:message key="footer.mailingLists" /></a>
+    
+</div>
 
 
 

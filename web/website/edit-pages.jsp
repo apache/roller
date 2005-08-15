@@ -4,6 +4,14 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
 <roller:StatusMessage/>
 
 <h1><fmt:message key="pagesForm.title" /></h1>
+<p class="subtitle">
+   <fmt:message key="pagesForm.subtitle" >
+       <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+   </fmt:message>
+</p>  
+<p class="pagetip">
+   <fmt:message key="pagesForm.tip" />
+</p>
 
 <c:if test="${website.editorTheme ne customTheme}">
 <p><fmt:message key="pagesForm.themesReminder"><fmt:param value="${website.editorTheme}"/></fmt:message></p>
@@ -54,19 +62,6 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
 </table>
 
 <p><fmt:message key="pagesForm.hiddenNote" /></p>
-
-<%-- form to add a new page --%>
-<h2><fmt:message key="pagesForm.addNewPage" /></h2>
-<html:form action="/editor/page" method="post" focus="name">
-
-    <fmt:message key="pagesForm.name"/>: <html:text property="name" size="30"/>
-	
-	<input type="submit" value='<fmt:message key="pagesForm.add" />' />
-	<input type="hidden" property="template" 
-		value="<html><body><fmt:message key="pagesForm.emptyPage" /></body></html>" />
-	<html:hidden property="method" value="add"/>
-	
-</html:form>
 
 <%@ include file="/theme/footer.jsp" %>
 
