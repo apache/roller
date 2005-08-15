@@ -1,5 +1,8 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
 <% pageContext.setAttribute("leftPage","/website/YourWebsitesSidebar.jsp"); %>
+
+<div class="prop"></div> <%-- force minimum height --%>
+
 <script type="text/javascript">
 <!--
 function selectWebsiteAction(id, action) 
@@ -80,13 +83,13 @@ function resignWebsite(id,handle)
             <h1><fmt:message key="yourWebsites.title" /></h1>    
             <p class="subtitle"><fmt:message key="yourWebsites.prompt" /></p>
             
-            <div class="entryTitleBox" style="margin: 0px 20px 0px 0px">
+            <div class="entryTitleBox" >
                 <fmt:message key="yourWebsites.existingWebsites" />
             </div>
     
                 <c:forEach var="perms" items="${model.permissions}">
                 
-                    <div class="entryBox" style="margin: 0px 40px 0px 0px; border-width: 0px 0px 1px 0px;">  
+                    <div class="entryBox">  
                        
                            <table width="100%">
                            <tr>
@@ -157,5 +160,7 @@ function resignWebsite(id,handle)
     </c:choose>
 
 </html:form>
+
+<div class="clear"></div> <%-- force minimum height --%>
 
 <%@ include file="/theme/footer.jsp" %>

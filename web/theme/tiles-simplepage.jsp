@@ -7,6 +7,18 @@
     <tiles:insert attribute="head" />     
     <link rel="stylesheet" type="text/css" media="all"
         href="<%= request.getContextPath() %>/theme/layout.css" />
+<style type="text/css">
+#centercontent {
+    margin: 15px 60px 0px 15px;
+    padding: 0px;
+}
+#rightcontent {
+    position: absolute;
+    top:   120px;
+    right:  15px;
+    width: 50px;
+}
+</style>
 </head>
 <body>
 <div id="wrapper"> 
