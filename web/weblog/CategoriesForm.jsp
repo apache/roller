@@ -27,8 +27,15 @@ function onMove()
 <p>
 <c:choose>
     <c:when test="${empty categoryPath}">
-       <h1><fmt:message key="categoriesForm.rootTitle" /></h1>
-       <p><fmt:message key="categoriesForm.rootPrompt" /></p>
+    <h1><fmt:message key="categoriesForm.rootTitle" /></h1>
+    <p class="subtitle">
+        <fmt:message key="categoriesForm.subtitle" >
+            <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+        </fmt:message>
+    </p>  
+    <p class="pagetip">
+        <fmt:message key="categoriesForm.rootPrompt" />
+    </p> 
     </c:when>
     
     <c:when test="${!(empty categoryPath)}">
@@ -54,7 +61,6 @@ function onMove()
 </c:choose>
 </p>
 
-<br />
 
 <%-- Form is a table of categories each with checkbox --%>
 
@@ -62,7 +68,6 @@ function onMove()
 <input type="hidden" name="method" /> 
 <html:hidden property="parentId" /> 
 
-<p>
 <%-- Select-all button --%>
 <input type="button" value="<fmt:message key='categoriesForm.checkAll' />" 
    onclick="setChecked(1)" /></input>
@@ -84,7 +89,8 @@ function onMove()
     <html:options collection="allCategories" 
         property="id" labelProperty="path"/>
 </html:select>
-</p>
+
+<p />
 
 <table class="rollertable">
 

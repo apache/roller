@@ -1,42 +1,36 @@
+/* ======================================================================
+layout.css: Base CSS layout for Roller's web UI (position and sizing only)
+====================================================================== */
 
 #wrapper {
-    height: 100%;
-}
-
-#banner {
-    height: 90px; 
-}
-
-#menu {
-    padding: 0px 10px 0px 10px;
-}
-
-#footer {
-    margin: 0px;
     width: 100%;
 }
-
-.bannerBox td, table.bannerBox {
-    height: 15px;
+#header {
+    height: 105px; 
+    margin: 0px;
+    padding: 0px;
 }
-
+#menu {
+    padding: 0px 0px 0px 0px;
+}
 #centercontent {
-    margin: 0px 220px 15px 15px;
-    padding: 0px 50px 0px 0px;
+    margin: 15px 260px 0px 15px;
+    padding: 0px;
 }
-
 #rightcontent {
     position: absolute;
-    top:   100px;
-    right:  10px;
+    top:   120px;
+    right:  15px;
     width: 230px;
 }
-
-div#loginTable {
-    margin: 20px;
-    border: 1px solid #C0C0C0;
-    color: inherit;
-    padding: 10px 5px 0px 5px;
-    width: 350px;
+.prop {
+    height: 300px;
+    float: right;
+    width: 1px;
+}
+.clear {
+    clear: both;
+    height: 1px;
+    overflow: hidden;
 }
 

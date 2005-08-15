@@ -36,7 +36,14 @@ function onMove()
 <c:choose>
     <c:when test="${empty folderPath}">
        <h1><fmt:message key="bookmarksForm.rootTitle" /></h1>
-       <p><fmt:message key="bookmarksForm.rootPrompt" /></p>
+       <p class="subtitle">
+           <fmt:message key="bookmarksForm.subtitle" >
+               <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+           </fmt:message>
+       </p>  
+       <p class="pagetip">
+           <fmt:message key="bookmarksForm.rootPrompt" />
+       </p>
     </c:when>
     
     <c:when test="${!(empty folderPath)}">
@@ -62,15 +69,12 @@ function onMove()
 </c:choose>
 </p>
 
-<br />
-
 <%-- Form is a table of folders followed by bookmarks, each with checkbox --%>
 
 <html:form action="/editor/bookmarks" method="post">
 <input type="hidden" name="method" /> 
 <html:hidden property="folderId" /> 
 
-<p>
 <%-- Select-all button --%>
 <input type="button" value="<fmt:message key='bookmarksForm.checkAll' />" 
    onclick="setChecked(1)" /></input>
@@ -92,7 +96,8 @@ function onMove()
     <html:options collection="allFolders" 
         property="id" labelProperty="path"/>
 </html:select>
-</p>
+
+<p />
 
 <table class="rollertable">
 

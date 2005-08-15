@@ -28,6 +28,7 @@ import org.roller.model.ThemeManager;
 import org.roller.model.UserManager;
 import org.roller.pojos.Theme;
 import org.roller.pojos.ThemeTemplate;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
 
@@ -82,6 +83,10 @@ public class ThemeEditorAction extends DispatchAction {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rses.isUserAuthorizedToAdmin() ) {
                 
+                BasePageModel pageModel = 
+                        new BasePageModel(request, response, mapping);
+                request.setAttribute("model",pageModel);          
+                    
                 // get users current theme and our themes list
                 Roller roller = RollerFactory.getRoller();
                 ThemeManager themeMgr = roller.getThemeManager();
@@ -139,6 +144,11 @@ public class ThemeEditorAction extends DispatchAction {
                 Roller roller = RollerFactory.getRoller();
                 ThemeManager themeMgr = roller.getThemeManager();
                 
+                    
+                BasePageModel pageModel = 
+                        new BasePageModel(request, response, mapping);
+                request.setAttribute("model",pageModel);          
+                    
                 String username = rses.getAuthenticatedUser().getUserName();
                 WebsiteData website = rses.getCurrentWebsite();
                 String currentTheme = website.getEditorTheme();
@@ -214,6 +224,10 @@ public class ThemeEditorAction extends DispatchAction {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rses.isUserAuthorizedToAdmin() ) {
                 
+                BasePageModel pageModel = 
+                        new BasePageModel(request, response, mapping);
+                request.setAttribute("model",pageModel);          
+                    
                 String newTheme = null;
                 
                 // lookup what theme the user wants first
@@ -304,6 +318,10 @@ public class ThemeEditorAction extends DispatchAction {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rses.isUserAuthorizedToAdmin() ) {
                 
+                BasePageModel pageModel = 
+                        new BasePageModel(request, response, mapping);
+                request.setAttribute("model",pageModel);          
+                    
                 // copy down current theme to weblog templates
                 Roller roller = RollerFactory.getRoller();
                 ThemeManager themeMgr = roller.getThemeManager();

@@ -1,24 +1,35 @@
 /* ======================================================================
-roller.css: CSS styles for Roller editor/admin UI
+roller.css: Base CSS styles for Roller web UI (colors, fonts, etc.)
 ====================================================================== */
 
-/* ----------------------------------------------------------------------
-Editor look and feel styles
----------------------------------------------------------------------- */
-
-#wrapper {
-    background: white;
-}
-
-table.bannerBox {
+.bannerBox {
+    background: url("images/two-banner.png") repeat-x top;
+    height: 78px; 
     width: 100%;
-    background: url("images/two-topgrey.png") repeat-x top;
 }
-
-#footer {
-    padding: 0px;
+.statusBox {
+    height: 25px; 
+    width: 100%;
+    background: #ad3431;
+    color: white;
 }
-
+.statusBox a {
+    color: white;
+}
+.statusBox a:link {
+    color: white;
+}
+.statusBox a:visited {
+    color: white;
+}
+.bannerLeft {
+    float: left; 
+    padding: 4px 15px 4px 15px;
+}
+.bannerRight {
+    float: right; 
+    padding: 4px 15px 4px 15px;
+}
 .sidebarfade {
     padding: 0px; 
     width: 100%;
@@ -33,14 +44,79 @@ General styles
 ---------------------------------------------------------------------- */
 
 body {
-    height: 100%;
     background: white;
-    margin: 0;
-    padding: 0;
+    margin: 0px;
+    padding: 0px;
     font: small Verdana,Arial,Sans-serif;
     font: x-small/1.5em Verdana, Arial, Helvetica, sans-serif;
     font-size: 69%;
 }
+p {
+    background: transparent;
+    color: #000000;
+}
+p.subtitle {
+    border-top: 1px grey solid;
+    margin: 5px 0px 15px 0px;
+}
+p.pagetip {
+    margin: 0px 0px 15px 0px;
+}
+h1 {
+    background: transparent;
+    color: #ad3537;
+    font-size: x-large;
+    font-weight: bold;
+    margin: 10px 0px 5px 0px;
+}
+h2 {
+    background: transparent;
+    color: #ad3537;
+    font-size: large;
+    font-weight: bold;
+}
+h3 {
+    background: transparent;
+    color: #ad3537;
+    font-weight: bold;
+}
+div.sidebarfade h3 {
+    margin: 0px; padding: 0px; 
+}
+img {
+    border: 0px;
+    overflow: auto;
+}
+img.w3c {
+    border: 0px;
+    height: 31px;
+    width: 88px;
+    margin-right: 5px;
+}
+a {
+    background: transparent;
+    text-decoration: none;
+}
+a:link {
+    background: transparent;
+    color: #ad3537;
+    text-decoration: underline;
+}
+a:visited {
+    background: transparent;
+    color: #ad3537;
+    text-decoration: underline;
+}
+a:hover {
+    text-decoration: none;
+}
+a:active {
+    text-decoration: underline overline;
+}
+
+/* ----------------------------------------------------------------------
+form layout styles
+---------------------------------------------------------------------- */
 
 input, select, option {
     font: small Verdana,Arial,Sans-serif;
@@ -48,142 +124,75 @@ input, select, option {
     font: small/1.5em Verdana, Arial, Helvetica, sans-serif;
     font-size: 100%;
 }
-
-p {
-    background: transparent;
-    color: #000000;
-}
-
-h1 {
-    background: transparent;
-    color: #e93e3e;
-    letter-spacing: 0.2em;
-    font-size: x-large;
-    font-weight: bold;
-}
-
-h2 {
-    background: transparent;
-    color: #e93e3e;
-    letter-spacing: 0.2em;
-    font-size: large;
-    font-weight: bold;
-}
-
-h3 {
-    background: transparent;
-    color: #e93e3e;
-    letter-spacing: 0.2em;
-    font-weight: bold;
-}
-
-div.sidebarfade h3 {
-    margin: 0px; padding: 0px; 
-}
-
-img {
-    border: 0px;
-}
-
-img.w3c {
-    border: 0px;
-    height: 31px;
-    width: 88px;
-    margin-right: 5px;
-}
-
-a {
-    background: transparent;
-    text-decoration: none;
-}
-
-a:link {
-    background: transparent;
-    color: #5241b5;
-    text-decoration: underline;
-}
-
-a:visited {
-    background: transparent;
-    color: #5241b5;
-    text-decoration: underline;
-}
-
-a:hover {
-    text-decoration: none;
-}
-
-a:active {
-    text-decoration: underline overline;
-}
-
 textarea {
    margin: 3px 0px 0px 0px;
 }
-
-.details {
+div.row { 
+   padding: 2px; 
+}
+div.formrow {
+   float: left:
+   width: 80%;
+}
+label.formrow {
+   float: left;
+   text-align: right;
+   width: 20%;
+   padding-right: 1em;
+}
+label.formrow {
+   float: left;
+   text-align: right;
+   width: 15%;
+   padding-right: 1em;
+}
+div.buttonBox {
+   width: 98%; 
+   border: 1px solid black;
+   background-color: #f3f3f3;
+   padding: 3px;
+   margin-top: 5em;
+   clear: both;
+}
+.left {
    font-size: small;
-   color: grey;
+   width: 136px;
 }
-
-div.helptext {
-   background: #f0f0f0;
-   border: 1px #c0c0c0 solid;
-   padding: 2px;
-   margin: 30px 10px 10px 0px;
-   width: 75%; 
-}
-
-/* ----------------------------------------------------------------------
-Main page styles
----------------------------------------------------------------------- */
-
-div.entryTitleBox {
-   padding: 3px;
-   margin: 3px;
-   background: #c6c3c6;
-   color: white;
-   font-size: medium;
-}
-
-div.entryBox {
-   padding: 3px;
-   margin: 3px;
-   border: 1px #c0c0c0 solid;
-}
-
-div.entryBoxPinned {
-   padding: 3px;
-   margin: 3px;
-   border: 1px #c0c0c0 solid;
-   background: #e5e5e5;
-}
-
-a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
-   color: #e93e3e;
-   font-size: medium;
+.leftTitle {
+   font-size: small;
    font-weight: bold;
 }
-
-span.hotBlogs, a.hotBlogs, a:active.hotBlogs, a:visited.hotBlogs, ul.hotBlogs {
-   font-size: small;
-   padding-left:0px;
-   list-style-type:none
+.formtable { 
+    width: 100%; 
+    border-collapse: collapse; 
+} 
+.formtable td.label, .formtable td.field, .formtable td.description  {
+    vertical-align: top;
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+    border-color: #e5e5e5;
+    padding: 4px 10px 4px 10px;
+}
+.formtable td.label { 
+    text-align: right;
+    width: 15%; 
+}
+.formtable td.field { 
+    width: 30%; 
+}
+.formtable td.description { 
+    width: 55%; 
 }
 
-span.entryDetails, a.entryDetails, a:active.entryDetails, a:visited.entryDetails {
-   font-size: small;
-   color: grey;
+div.sideformrow {
+   float: left:
+   width: 100%;
 }
-
-p.websiteDescription {
-   text-style: italics;
-}
-
-.version {
-   font-size: small;
-   color: grey;
-   text-align: center;
+label.sideformrow {
+   float: left;
+   text-align: right;
+   width: 30%;
+   padding-right: 1em;
 }
 
 /* ----------------------------------------------------------------------
@@ -194,56 +203,46 @@ table.rollertable {
     border-collapse: collapse; 
     width: 100%;
 }
-
 table.rollertable th, table.rollertable th {
     border: 1px solid #ccc;
-    background: #c6c3c6;
+    background: #c6ab74;
 }
-
 table.rollertable th {
     font-size: 1.5em;
     color: white;
 }
-
 table.rollertable td, table.rollertable tbody td {
-    border: 1px solid #ccc;
+    border: 1px solid #c6ab74;
     vertical-align: top;
 }
-
 table.rollertable tbody td {
     padding: 3px;
 }
-
 table.rollertable td.center {
     text-align: center;
 }
-
 .rollertable_even td {
     border: 1px solid #ccc;
     background: #EEEEEE;
-    color: white;
+    color: black;
     vertical-align: top;
 }
-
 .rollertable_odd td{
     border: 1px solid #ccc;
     background: inherit;
     vertical-align: top;
-    color: white;
+    color: black;
 }
-
 td.rollertable_entry, div.rollertable_entry {
     border: 1px solid #ccc;
     background: inherit;
     padding: 5px;
     vertical-align: top;
 }
-
 td.propname {
     padding: 0px 0px 0px 3em;
     vertical-align: top;
 }
-
 table.edit th {
     text-align: right;
     padding-right: 5px;
@@ -259,13 +258,11 @@ div.archiveCalendar {
     right: 20px;
     font-size: 11px;
 }
-
 .hCalendarDay {
 	border-width: thin;
 	font-size: .9em;
 	text-align: center;
 }
-
 .hCalendarDayCurrent {
 	border-style: dotted;
 	border-width: thin;
@@ -273,32 +270,27 @@ div.archiveCalendar {
 	font-weight: bolder;
 	text-align: center;
 }
-
 .hCalendarDayLinked {
 	border-width: thin;
 	font-size: .9em;
 	font-weight: bolder;
 	text-align: center;
 }
-
 .hCalendarDayNameRow {
 	font-size: .9em;
 	background-color: #eee;
     border-bottom: 1px solid #ccc;
 	text-align: center;
 }
-
 .hCalendarDayNotInMonth {
 	background: transparent;
 	color: #AAAAAA;
 	font-size: .9em;
 	text-align: center;
 }
-
 .hCalendarNextPrev {
 	text-align: center;
 }
-
 .hCalendarMonthYearRow {
 	font-weight: bold;
 	text-align: center;
@@ -318,38 +310,31 @@ Error and status message styles
     padding: 3px;
     width: 98%;
 }
-
 .error {
     background: transparent;
     color: #FF0000;
 }
-
 .warning {
     background: transparent;
     color: #FF0000;
     font-size: .9em;
 }
-
 .errors, .messages, .warnings {
     padding: 5px;
-    margin-top: 10px;
+    margin: 10px 0px 10px 0px;
 }
-
 .errors {
    background-color: #fcc;
    border: 1px solid red;
 }
-
 .messages {
    background-color: #cfc;
    border: 1px solid green;
 }
-
 .warnings {
    background-color:#FFFFAA;
    border: 1px solid yellow;
 }
-
 div.error {
     background-color: #ffcccc;
     border: 1px solid #000000;
@@ -361,7 +346,6 @@ div.error {
     text-align: left;
     vertical-align: bottom;
 }
-
 div.output {
     background-color: #e0e0e0;
     border: 1px solid #CCCC99;
@@ -381,18 +365,15 @@ Misc styles
 div.NN4 {
     display: none;
 }
-
 div.rNavigationBar {
     margin-bottom: 20px;
     margin-right: 10px;
 }
-
 .entryDate {
     background: transparent;
     color: #989898;
     font-style: italic;
 }
-
 .commentTitle {
     background: #FFFFDD;
     border: 1px solid #000;
@@ -402,12 +383,10 @@ div.rNavigationBar {
     font-size: .9em;
     width: 98%;
 }
-
 .version {
     font-size: x-small;
     color: #808080;
 }
-
 .page {
     visibility: hidden;
     position: absolute;
@@ -418,7 +397,6 @@ div.rNavigationBar {
     width: 80%;
     height: 40em;
 }
-
 .tab {
     background-color: white;
     border-top: 1px gray solid;
@@ -431,54 +409,59 @@ div.rNavigationBar {
 }
 
 /* ----------------------------------------------------------------------
-form layout styles
+Main page styles
 ---------------------------------------------------------------------- */
 
-div.row { 
-   padding: 2px; 
+div.entryTitleBox {
+   padding: 4px;
+   margin: 4px 0px 4px 0px;
+   background: #c6ab74;
+   color: white;
+   font-size: medium;
 }
-
-div.formrow {
-   float: left:
-   width: 80%;
+div.entryBox {
+   padding: 4px;
+   margin: 4px 0px 4px 0px;
+   border: 1px #c6ab74 solid;
 }
-
-label.formrow {
-   float: left;
-   text-align: right;
-   width: 20%;
-   padding-right: 1em;
+div.entryBoxPinned {
+   padding: 4px;
+   margin: 4px 0px 4px 0px;
+   border: 1px #c0c0c0 solid;
+   background: #e5e5e5;
 }
-
-div.sideformrow {
-   float: left:
-   width: 80%;
-}
-
-label.formrow {
-   float: left;
-   text-align: right;
-   width: 30%;
-   padding-right: 1em;
-}
-
-div.buttonBox {
-   width: 98%; 
-   border: 1px solid black;
-   background-color: #f3f3f3;
-   padding: 3px;
-   margin-top: 5em;
-   clear: both;
-}
-
-.left {
-   font-size: small;
-   width: 136px;
-}
-
-.leftTitle {
-   font-size: small;
+a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
+   color: #ad3537;
+   font-size: medium;
    font-weight: bold;
+}
+span.hotBlogs, a.hotBlogs, a:active.hotBlogs, a:visited.hotBlogs, ul.hotBlogs {
+   font-size: small;
+   padding-left:0px;
+   list-style-type:none
+}
+span.entryDetails, a.entryDetails, a:active.entryDetails, a:visited.entryDetails {
+   font-size: small;
+   color: grey;
+}
+p.websiteDescription {
+   text-style: italics;
+}
+.version {
+   font-size: small;
+   color: grey;
+   text-align: center;
+}
+.details {
+   font-size: small;
+   color: grey;
+}
+div.helptext {
+   background: #f0f0f0;
+   border: 1px #c0c0c0 solid;
+   padding: 2px;
+   margin: 30px 10px 10px 0px;
+   width: 75%; 
 }
 
 /* ----------------------------------------------------------------------
@@ -493,48 +476,41 @@ div.previewEntry {
    padding: 10px;
    overflow: auto;
 }
-
 div.centerTitle {
     border: 1px solid #ccc;
-    background: #c6c3c6;
+    background: #c6ab74;
     color: black;
     font-weight: bolder;
     font-size: large;
     text-align: center;
 }
-
 div.control {
     width: 100%; 
-    background: #c6c3c6;
+    background: #c6ab74;
     padding: 4px;  
     margin: 5px 5px 5px 0px; 
 }
-
 div.controlToggle {
     width: 100%; 
     padding: 4px;  
     margin: 5px 5px 5px 0px;
     background: url("images/two-togglegrey.png") repeat-x top;
 }
-
 a.controlToggle {
     color: black;
     background: transparent;
     text-decoration: none;
 }
-
 a.controlToggle:link {
     color: black;
     background: transparent;
     text-decoration: none;
 }
-
 a.controlToggle:visited {
     color: black;
     background: transparent;
     text-decoration: none;
 }
-
 a.controlToggle:hover {
     color: black;
     background: transparent;

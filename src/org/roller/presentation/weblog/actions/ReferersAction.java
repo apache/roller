@@ -20,6 +20,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.model.RefererManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 
@@ -61,6 +62,8 @@ public class ReferersAction extends DispatchAction
         {
             if ( rollerSession.isUserAuthorizedToAuthor() )
             {   
+                BasePageModel pageModel = new BasePageModel(req, res, mapping);
+                req.setAttribute("model", pageModel);
                 req.setAttribute("pageHits",
                     new Integer(refmgr.getDayHits(RollerSession.getRollerSession(req).getCurrentWebsite())));
                     

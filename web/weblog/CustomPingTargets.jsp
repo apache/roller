@@ -1,15 +1,19 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
 
-<br />
 <h1><fmt:message key="customPingTargets.customPingTargets" /></h1>
+<p class="subtitle">
+   <fmt:message key="customPingTargets.subtitle" >
+       <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+   </fmt:message>
+</p>  
 
 <c:choose>
   <c:when test="${allowCustomTargets}">
     <!-- Only show the form if custom targets are allowed -->
-    <p/>
+    <p class="pagetip">
     <fmt:message key="customPingTargets.explanation"/>
-    <p/>
+    </p>
 
     <table class="rollertable">
     
@@ -62,19 +66,23 @@
     
     </table>
     
-    <p/>
+    <br />
+    
     <html:form action="/editor/customPingTargets" method="post">
         <div class="control">
            <html:hidden property="method" value="addNew" />
            <input type="submit" value='<fmt:message key="pingTarget.addNew"/>' />
         </div>
     </html:form>
-    <p/>
   </c:when>
+  
   <c:otherwise>
      <!--  Otherwise custom targets are not allowed; explain the situation to the user -->
-    <fmt:message key="customPingTargets.disAllowedExplanation"/>
+    <p class="pagetip">
+        <fmt:message key="customPingTargets.disAllowedExplanation"/>
+    </p>
   </c:otherwise>
+  
 </c:choose>
 
 <%@ include file="/theme/footer.jsp" %>

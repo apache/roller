@@ -24,7 +24,6 @@ import org.roller.presentation.weblog.formbeans.CategoryDeleteForm;
 
 /**
  * @struts.action path="/editor/categoryDelete" name="categoryDeleteForm"
- * @struts.action-forward name="Categories" path="/editor/categories.do?method=selectCategory"
  * @struts.action-forward name="CategoryDeleteOK" path=.CategoryDeleteOK"
  * 
  * @author Dave Johnson
@@ -90,7 +89,7 @@ public class CategoryDeleteAction extends Action
                         request.setAttribute(
                                 RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
                     }               
-                    forward = mapping.findForward("Categories");
+                    forward = mapping.findForward("categories");
                 }
             }
             else if (form.isDelete().booleanValue()) 

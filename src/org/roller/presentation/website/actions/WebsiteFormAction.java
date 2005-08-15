@@ -30,6 +30,7 @@ import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
@@ -103,6 +104,10 @@ public final class WebsiteFormAction extends DispatchAction
                         StringUtils.deleteWhitespace(editorPages), ","));
                 request.setAttribute("editorPagesList", epages);
                 
+                    
+                BasePageModel pageModel = new BasePageModel(request, response, mapping);
+                request.setAttribute("model",pageModel);   
+                    
                 rses.setCurrentWebsite(website);
             }
             else
@@ -170,7 +175,10 @@ public final class WebsiteFormAction extends DispatchAction
                 
                     List epages = Arrays.asList(StringUtils.split(
                         org.apache.commons.lang.StringUtils.deleteWhitespace(editorPages), ","));
-                    request.setAttribute("editorPagesList", epages);                
+                    request.setAttribute("editorPagesList", epages);   
+                    
+                    BasePageModel pageModel = new BasePageModel(request, response, mapping);
+                    request.setAttribute("model",pageModel);                
                 /*
                 }
                 else

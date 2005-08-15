@@ -1,59 +1,64 @@
 <global-forwards>
 <forward name="access-denied"          path=".denied"/>
 <forward name="error"                  path=".error"/>
-<forward name="login-redirect"         path="login-redirect.jsp"/>
-<forward name="logout-redirect"        path="logout-redirect.jsp"/>
+<forward name="login-redirect"         path="/login-redirect.jsp"/>
+<forward name="logout-redirect"        path="/logout-redirect.jsp"/>
 
 <!-- unprotected actions -->
 <forward name="page"                   path="/page"/>
 <forward name="main"                   path="/main.do"/>
 <forward name="home.page"              path="/main.do"/>
+<forward name="planet"                 path="/planet.do"/>
 <forward name="createUser"             path="/user.do?method=createUser"/>
 <forward name="registerUser"           path="/user.do?method=registerUser"/>
 
-<!--  editor and admin role actions -->
-<forward name="bookmarks"              path="/editor/bookmarks.do?method=selectFolder"/>
-<forward name="comment"                path="/editor/comment.do?method=edit" />
-<forward name="comments.delete"        path="/editor/comment.do?method=delete"/>
-<forward name="categories"             path="/editor/categories.do?method=selectCategory"/>
-<forward name="exportEntries"          path="/editor/exportEntries.do?method=edit"/>
-<forward name="exportEntries.done"     path="/editor/exportEntries.do?method=unspecified"/>
-<forward name="importBookmarks"        path="/editor/importBookmarks.do"/>
-<forward name="importEntries"          path="/editor/importEntries.do?method=edit"/>
-<forward name="inviteMember"           path="/editor/inviteMember.do" />
-<forward name="memberPermissions"      path="/editor/memberPermissions.do" />
-<forward name="maintenance"            path="/editor/maintenance.do" />
+<!--  landing page actions -->
+
+<forward name="yourProfile"            path="/editor/yourProfile.do?method=edit" />
+<forward name="yourWebsites"           path="/editor/yourWebsites.do?method=edit" />
 <forward name="createWebsite"          path="/editor/createWebsite.do?method=create" />
-<forward name="editPages"              path="/editor/page.do?method=editPages"/>
+
+<!--  editor/author actions -->
+
+<forward name="weblogEdit"             path="/editor/weblog.do?method=edit&amp;rmik=tabbedmenu.weblog.newEntry"/>
+<forward name="weblogCreate"           path="/editor/weblog.do?method=create&amp;rmik=tabbedmenu.weblog.newEntry"/>
+<forward name="weblogQuery"            path="/editor/weblogQuery.do?method=query&amp;rmik=tabbedmenu.weblog.archives"/>
+<forward name="categories"             path="/editor/categories.do?method=selectCategory&amp;rmik=tabbedmenu.weblog.categories"/>
+<forward name="bookmarks"              path="/editor/bookmarks.do?method=selectFolder&amp;rmik=tabbedmenu.bookmarks.allFolders"/>
+<forward name="importBookmarks"        path="/editor/importBookmarks.do"/>
+<forward name="uploadFiles"            path="/editor/uploadFiles.do?rmik=tabbedmenu.website.files"/>
+<forward name="referers"               path="/editor/referers.do?rmik=tabbedmenu.weblog.referers"/>
+
+
+<!-- manage weblog actions -->
+
+<forward name="editWebsite"            path="/editor/website.do?method=edit&amp;rmik=tabbedmenu.website.settings"/>
+<forward name="editTheme"              path="/editor/themeEditor.do?method=edit&amp;rmik=tabbedmenu.website.themes"/>
+<forward name="editPages"              path="/editor/page.do?method=editPages&amp;rmik=tabbedmenu.website.pages"/>
 <forward name="editPage"               path="/editor/page.do?method=edit"/>
 <forward name="removePage"             path="/editor/page.do?method=remove"/>
 <forward name="removePage.ok"          path="/editor/page.do?method=removeOk"/>
-<forward name="referers"               path="/editor/referers.do"/>
-<forward name="pingSetup"              path="/editor/pingSetup.do" />
-<forward name="customPingTargets"      path="/editor/customPingTargets.do" />
-<forward name="editTheme"              path="/editor/themeEditor.do?method=edit"/>
+<forward name="memberPermissions"      path="/editor/memberPermissions.do?rmik=tabbedmenu.website.members" />
+<forward name="inviteMember"           path="/editor/inviteMember.do" />
+<forward name="pingSetup"              path="/editor/pingSetup.do?rmik=tabbedmenu.weblog.pingSetup" />
+<forward name="customPingTargets"      path="/editor/customPingTargets.do?rmik=tabbedmenu.weblog.customPingTargets" />
+
 <forward name="trackback"              path="/editor/trackback.do?method=send"/>
 <forward name="toggleLinkback"         path="/editor/toggleLinkback.do"/>
-<forward name="uploadFiles"            path="/editor/uploadFiles.do"/>
-<forward name="weblogEdit"             path="/editor/weblog.do?method=edit"/>
-<forward name="weblogCreate"           path="/editor/weblog.do?method=create"/>
-<forward name="flushCache"             path="/editor/weblog.do?method=flushCache"/>
-<forward name="weblogQuery"            path="/editor/weblogQuery.do?method=query"/>
-<forward name="editWebsite"            path="/editor/website.do?method=edit"/>
-<forward name="yourProfile"            path="/editor/yourProfile.do?method=edit" />
-<forward name="yourWebsites"           path="/editor/yourWebsites.do?method=edit" />
 
-<!-- admin role only actions -->
+<!-- global admin actions -->
+
+<forward name="rollerConfig"           path="/admin/rollerConfig.do?method=edit&amp;rmik=tabbedmenu.admin.config"/>
+<forward name="adminUser"              path="/admin/user.do?method=edit&amp;rmik=tabbedmenu.admin.userAdmin"/>
 <forward name="addUser"                path="/admin/user.do?method=add"/>
-<forward name="adminUser"              path="/admin/user.do?method=edit"/>
-<forward name="rollerConfig"           path="/admin/rollerConfig.do?method=edit"/>
-<forward name="commonPingTargets"      path="/admin/commonPingTargets.do"/>
+<forward name="commonPingTargets"      path="/admin/commonPingTargets.do?rmik=tabbedmenu.admin.pingTargets"/>
 
-<forward name="planet"                   path="/planet.do"/>
-<forward name="planetConfig"             path="/admin/planetConfig.do?method=getConfig"/>
-<forward name="planetSubscriptions"      path="/admin/planetSubscriptions.do?method=getSubscriptions"/>
-<forward name="planetGroups"             path="/admin/planetGroups.do?method=getGroups"/>
-<forward name="planetGroupSubscriptions" path="/admin/planetGroupSubscriptions.do?method=getGroupSubscriptions"/>
+<!-- planet admin actions -->
+
+<forward name="planetConfig"             path="/admin/planetConfig.do?method=getConfig&amp;rmik=tabbedmenu.admin.planetConfig"/>
+<forward name="planetSubscriptions"      path="/admin/planetSubscriptions.do?method=getSubscriptions&amp;rmik=tabbedmenu.admin.planetSubscriptions"/>
+<forward name="planetGroups"             path="/admin/planetGroups.do?method=getGroups&amp;rmik=tabbedmenu.admin.planetGroups"/>
+<forward name="planetGroupSubscriptions" path="/admin/planetGroupSubscriptions.do?method=getGroupSubscriptions&amp;rmik=tabbedmenu.admin.planetSubscriptions"/>
 
 </global-forwards>
 

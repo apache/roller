@@ -3,10 +3,13 @@
 
 <br />
 <h1><fmt:message key="commonPingTargets.commonPingTargets" /></h1>
+<p class="subtitle">
+    <fmt:message key="commonPingTargets.subtitle" >
+        <fmt:param value="${model.weblogEntry.website.handle}" />
+    </fmt:message>
+</p>
 
-<p/>
-<fmt:message key="commonPingTargets.explanation"/>
-<p/>
+<p/><fmt:message key="commonPingTargets.explanation"/><p/>
 
 <table class="rollertable">
 

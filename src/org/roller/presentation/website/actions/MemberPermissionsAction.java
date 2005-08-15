@@ -52,6 +52,16 @@ public class MemberPermissionsAction extends DispatchAction
         return save(mapping, actionForm, request, response);
     }
     
+    public ActionForward cancel(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        return edit(mapping, actionForm, request, response);
+    }
+    
     public ActionForward edit(
             ActionMapping       mapping,
             ActionForm          actionForm,

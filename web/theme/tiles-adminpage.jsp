@@ -7,29 +7,40 @@
     <tiles:insert attribute="head" />     
     <link rel="stylesheet" type="text/css" media="all"
         href="<%= request.getContextPath() %>/theme/layout.css" />
+<style type="text/css">
+.formtable td.label { 
+    text-align: right;
+    width: 30%; 
+}
+.formtable td.field { 
+    width: 50%; 
+}
+.formtable td.description { 
+    width: 0%; 
+}
+</style>
 </head>
 <body>
 
 <div id="wrapper">
    
-    <div id="banner">
-        <tiles:insert attribute="status" /><br />
-        <div id="menu">
-            <roller:Menu model="admin-menu.xml" view="/menu-tabbed.vm" />
-        </div>
+    <div id="header">
+        <tiles:insert attribute="status" />
     </div>
 
     <div id="centercontent">        
+        <div id="menu">
+            <roller:Menu model="admin-menu.xml" view="/menu-tabbed.vm" />
+        </div>
         <tiles:insert attribute="messages" />    
         <tiles:insert attribute="content" />    
+        <div id="footer" class="clearfix">
+            <tiles:insert attribute="footer" />
+        </div>
     </div>
 
     <div id="rightcontent"> 
        <tiles:insert attribute="sidebar" />
-    </div>
-    
-    <div id="footer" class="clearfix">
-        <tiles:insert attribute="footer" />
     </div>
     
 </div>

@@ -16,6 +16,14 @@ try {
 }
 %>
 <h1><fmt:message key="themeEditor.title" /></h1>
+<p class="subtitle">
+   <fmt:message key="themeEditor.subtitle" >
+       <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+   </fmt:message>
+</p>  
+<p class="pagetip">
+   <fmt:message key="themeEditor.tip" />
+</p>
 
 <form action="themeEditor.do" method="post">
 
@@ -26,7 +34,7 @@ try {
         <tr>
             <td>
                 <p>
-                    Your current theme is : <b><c:out value="${currentTheme}"/></b><br/>
+                    <fmt:message key="themeEditor.yourCurrentTheme" />: <b><c:out value="${currentTheme}"/></b><br/>
                     
                     <c:choose>
                         <c:when test="${currentTheme ne previewTheme}" >
@@ -46,8 +54,7 @@ try {
                         </c:when>
                         
                         <c:when test="${(currentTheme ne customTheme) and allowCustom}">
-                            If you like you may customize a personal copy of this theme.<br/>
-                            <fmt:message key="themeEditor.saveWarning" /><br/>
+                            <fmt:message key="themeEditor.youMayCustomize" /><br/>
                             <input type="button" 
                                 value='<fmt:message key="themeEditor.customize" />'
                                 name="customizeButton" 

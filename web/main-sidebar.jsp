@@ -5,8 +5,9 @@
         <div class="menu-tl">
             <div class="sidebarBody">
 
-             <fmt:message key="mainPage.searchWeblogs" />
-        
+             <h3><fmt:message key="mainPage.searchWeblogs" /></h3>
+             <hr />
+             
         <form id="searchForm" method="get"
             action="<c:out value="${baseURL}" />/search"
             style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
@@ -28,8 +29,6 @@
         </script>
         
 			<br />
-			<br />
-			<br />
 			
             </div>
         </div>
@@ -43,7 +42,8 @@
         <div class="menu-tl">
             <div class="sidebarBody">
 
-             <fmt:message key="mainPage.hotWeblogs" />
+             <h3><fmt:message key="mainPage.hotWeblogs" /></h3>
+             <hr />
         
 	      <c:if test="${not empty popularWebsites}"> <%-- to prevent invalid XHTML --%>
 	        <ul style="list-style-type:none; padding-left:2px; margin: 0px">
@@ -60,8 +60,6 @@
 	        </ul>
 	      </c:if>
           
-			<br />
-			<br />
 			<br />
 			
             </div>

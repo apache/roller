@@ -1,21 +1,9 @@
+/* ======================================================================
+menu.css: CSS layout and styles for Roller tabbed menu
+====================================================================== */
 
-.menuTabTable {
-    height: 25px;
-}
-td.menuTabSeparator {
-    width: 10px;
-}  
-td.menuTabSelected {
-    padding: 0px; 
-    margin: 0px;
-    font-weight: bold;
-    background: url("images/menutab-sel.png");
-}
-td.menuTabUnselected {
-    padding: 0px; 
-    margin: 0px;
-    background: url("images/menutab-unsel.png");
-}
+/* rounded corners */
+
 div.menu-tl {
     padding: 5px 5px 0px 5px; margin: 0px; height:100%;
     background: url("images/menutab-tl.png") no-repeat left top;    
@@ -27,32 +15,62 @@ div.menu-tr {
     background-repeat: no-repeat;
 }
 
-.menuItemTable {
-    width: 100%;
-    height: 25px;
-    background-color: #bdbdbd;
-}
-.menuItem {
-    padding: 0px 5px 0px 5px; /* TRBL */
-}
-.menuItemSelected {
+/* style selected and unselected menu links*/
+
+td.menuTabSelected a:link, td.menuTabSelected a:visited, td.menuTabSelected a:hover, td.menuTabSelected a:active {
+    color: black;
+    text-decoration: none;
     font-weight: bold;
 }
-
-.menuItemTable a:link, .menuItemTable a:visited, .menuItemTable a:hover, .menuItemTable a:active {
-    color: #FFF;
-    text-decoration: none;
-}
-
-.menuTabTable a:link, .menuTabTable a:visited, .menuTabTable a:hover, .menuTabTable a:active {
-    color: #FFF;
-    text-decoration: none;
-}
-
-.menuTabUnselected a:link, .menuTabUnselected a:visited, .menuTabUnselected a:hover, .menuTabUnselected a:active {
+td.menuTabUnselected a:link, td.menuTabUnselected a:visited, td.menuTabUnselected a:hover, td.menuTabUnselected a:active {
     color: black;
     text-decoration: none;
 }
+a.menuItemSelected:link, a.menuItemSelected:visited, a.menuItemSelected:hover, a.menuItemSelected:active {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+}
+a.menuItemUnselected:link, a.menuItemUnselected:visited, a.menuItemUnselected:hover, a.menuItemUnselected:active {
+    color: black;
+    text-decoration: none;
+}
+
+/* ----------------------------------------------------------------------
+Menu tab table (the tabs)
+---------------------------------------------------------------------- */
+
+.menuTabTable {
+    height: 27px;
+}
+td.menuTabSeparator {
+    width: 10px;
+}  
+td.menuTabSelected {
+    padding: 0px; 
+    margin: 0px;
+    background: url("images/menutab-sel.png");
+}
+td.menuTabUnselected {
+    padding: 0px; 
+    margin: 0px;
+    background: url("images/menutab-unsel.png");
+}
+
+/* ----------------------------------------------------------------------
+Menu item table (the bar below the tabs)
+---------------------------------------------------------------------- */
+
+.menuItemTable {
+    width: 100%;
+    height: 27px;
+    background-color: #c6ab74;
+}
+.menuItemSelected, .menuItemUnselected {
+    padding: 0px 5px 0px 5px; /* TRBL */
+}
+
+
 
 
 

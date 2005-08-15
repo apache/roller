@@ -1,11 +1,14 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
 
-<br />
 <h1><fmt:message key="pings.title" /></h1>
-
-<p/>
-<fmt:message key="pings.explanation"/>
+<p class="subtitle">
+   <fmt:message key="pings.subtitle" >
+       <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+   </fmt:message>
+</p>  
+<p class="pagetip">
+    <fmt:message key="pings.explanation"/>
 <p/>
 
 <p/>
@@ -90,18 +93,11 @@
   </c:forEach>
 </table>
 
-<p/>
-&nbsp;
-<p/>
-&nbsp;
-<p/>
+<br />
 
 <c:if test="${allowCustomTargets}">
-  <p/>
   <h2><fmt:message key="pings.customPingTargets"/></h2>
-  <p/>
-
-
+  
   <p/>
   <c:choose>
     <c:when test="${!empty customPingTargets}">

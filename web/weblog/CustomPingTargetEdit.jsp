@@ -1,5 +1,12 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
-
+<script type="text/javascript">
+// <!--
+function cancel() {
+    document.pingTargetForm.method.value="cancel"; 
+    document.pingTargetForm.submit();
+}
+// -->
+</script> 
 <br />
 <h1><fmt:message key="pingTarget.pingTarget" /></h1>
 
@@ -15,13 +22,14 @@
 
     <div class="formrow">
        <label for="pingUrl" class="formrow"><fmt:message key="pingTarget.pingUrl" /></label>
-       <html:text property="pingUrl" size="100" maxlength="255" />
+       <html:text property="pingUrl" size="45" maxlength="255" />
     </div>
 
     <p/>
     <div class="formrow">
        <label for="" class="formrow">&nbsp;</label>
-       <input type="submit" value='<fmt:message key="pingTarget.save" />' />
+       <input type="submit" value='<fmt:message key="pingTarget.save" />' />&nbsp;
+       <input type="button" value='<fmt:message key="application.cancel" />' onclick="cancel()"></input>
     </div>
 
 </html:form>

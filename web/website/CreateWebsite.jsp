@@ -13,7 +13,7 @@ function cancel() {
 </script>
 
 <h1><fmt:message key="createWebsite.title" /></h1>
-<p><fmt:message key="createWebsite.prompt" /></p>
+<p class="subtitle"><fmt:message key="createWebsite.prompt" /></p>
 
 <br /> 
 <html:form action="/editor/createWebsite" method="post" focus="handle">
@@ -78,7 +78,9 @@ function cancel() {
     <td class="description"><fmt:message key="createWebsite.tip.theme" /></td>
 </tr>
 </table>
-    
+
+<br />
+   
 <input type="submit" value='<fmt:message key="createWebsite.button.save" />'></input>
 <input type="button" value='<fmt:message key="createWebsite.button.cancel" />' onclick="cancel()"></input>
     

@@ -26,6 +26,7 @@ import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.weblog.formbeans.CategoriesForm;
@@ -64,7 +65,7 @@ public class CategoriesAction extends DispatchAction
                 rreq.getRequest());
         if (rollerSession.isUserAuthorizedToAuthor())
         {
-            addModelObjects(request, (CategoriesForm)actionForm);
+            addModelObjects(request, response, mapping, (CategoriesForm)actionForm);
             return mapping.findForward("CategoriesForm");
         }
         else
@@ -132,7 +133,7 @@ public class CategoriesAction extends DispatchAction
     
                 RollerFactory.getRoller().commit();
                 
-                addModelObjects(request, (CategoriesForm)actionForm);
+                addModelObjects(request, response, mapping, (CategoriesForm)actionForm);
                 saveMessages(request, messages);
             }
             catch (RollerException e)
@@ -154,7 +155,9 @@ public class CategoriesAction extends DispatchAction
      * @param request
      * @throws RollerException
      */
-    private void addModelObjects(HttpServletRequest request, CategoriesForm form) 
+    private void addModelObjects(
+        HttpServletRequest request, HttpServletResponse response, 
+        ActionMapping mapping, CategoriesForm form) 
         throws RollerException
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
@@ -162,6 +165,9 @@ public class CategoriesAction extends DispatchAction
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         
         TreeSet allCategories = new TreeSet(new CategoryPathComparator());
+        
+        BasePageModel pageModel = new BasePageModel(request, response, mapping);
+        request.setAttribute("model",pageModel);
         
         // Find catid wherever it may be
         String catId = (String)request.getAttribute(RollerRequest.WEBLOGCATEGORYID_KEY);

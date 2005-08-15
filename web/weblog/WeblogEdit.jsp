@@ -63,9 +63,19 @@ function publish() {
 <c:choose>
     <c:when test="${empty weblogEntryFormEx.id}">
         <h1><fmt:message key="weblogEdit.title.newEntry" /></h1>
+        <p class="subtitle">
+            <fmt:message key="weblogEdit.subtitle.newEntry" >
+                <fmt:param value="${model.weblogEntry.website.handle}" />
+            </fmt:message>
+        </p>
     </c:when>
     <c:otherwise>
         <h1><fmt:message key="weblogEdit.title.editEntry" /></h1>
+        <p class="subtitle">
+            <fmt:message key="weblogEdit.subtitle.editEntry" >
+                <fmt:param value="${model.weblogEntry.website.handle}" />
+            </fmt:message>
+        </p>
     </c:otherwise>
 </c:choose>
 
@@ -397,7 +407,6 @@ function publish() {
 
         </c:if>
     </div>
-    <br />
 
     
     <%-- ================================================================== --%>

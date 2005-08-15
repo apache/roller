@@ -2,6 +2,15 @@
 
 <%-- Form allows deleting of referers --%>
 <h1><fmt:message key="referers.todaysReferers" /></h1>
+<p class="subtitle">
+    <fmt:message key="referers.subtitle" >
+        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+    </fmt:message>
+</p>  
+<p class="pagetip">
+    <fmt:message key="referers.tip" />
+</p>
+
 <html:form action="/editor/referers" method="post">
 <input type="hidden" name="method" value="delete" />
 

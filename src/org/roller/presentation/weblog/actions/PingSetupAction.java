@@ -38,6 +38,7 @@ import org.roller.model.RollerFactory;
 import org.roller.pojos.AutoPingData;
 import org.roller.pojos.PingTargetData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
@@ -57,7 +58,10 @@ public class PingSetupAction extends DispatchAction
         LogFactory.getFactory().getInstance(PingSetupAction.class);
 
     private static final String PING_SETUP_PAGE = "pingSetup.page";
-    private static final String PING_RESULT_PAGE = "pingResult.page";
+    
+    // Changing this to take your back to the pings setup page instead of
+    // ping result page, no need for extra page.
+    private static final String PING_RESULT_PAGE = "pingSetup.page"; // "pingResult.page";
 
     /* (non-Javadoc)
      * @see org.apache.struts.actions.DispatchAction#unspecified(
@@ -93,6 +97,9 @@ public class PingSetupAction extends DispatchAction
                 return mapping.findForward("access-denied");
             }
 
+            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            req.setAttribute("model",pageModel);
+        
             List commonPingTargets = pingTargetMgr.getCommonPingTargets();
             req.setAttribute("commonPingTargets", commonPingTargets);
 
@@ -206,7 +213,7 @@ public class PingSetupAction extends DispatchAction
             autoPingMgr.removeAutoPing(pingTarget, 
                     RollerSession.getRollerSession(req).getCurrentWebsite());
             RollerFactory.getRoller().commit();
-
+        
             return view(mapping, form, req, res);
         }
         catch (Exception e)
@@ -249,8 +256,18 @@ public class PingSetupAction extends DispatchAction
                     {
                         if (mLogger.isDebugEnabled()) mLogger.debug("Ping Result: " + pingResult);
                         ActionMessages errors = new ActionMessages();
-                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("ping.transmittedButErrorReturned"));
-                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(pingResult.getMessage()));
+                        if (pingResult.getMessage() != null && pingResult.getMessage().trim().length() > 0)
+                        {
+                            errors.add(ActionMessages.GLOBAL_MESSAGE, 
+                                new ActionMessage("ping.transmittedButError"));
+                            errors.add(ActionMessages.GLOBAL_MESSAGE, 
+                                new ActionMessage(pingResult.getMessage()));
+                        }
+                        else
+                        {
+                            errors.add(ActionMessages.GLOBAL_MESSAGE, 
+                                new ActionMessage("ping.transmissionFailed"));
+                        }
                         saveErrors(req, errors);
                     }
                     else
@@ -277,7 +294,7 @@ public class PingSetupAction extends DispatchAction
                 addSpecificMessages(ex, errors);
                 saveErrors(req, errors);
             }
-            return mapping.findForward(PING_RESULT_PAGE);
+            return view(mapping, form , req, res);
         }
         catch (Exception ex)
         {

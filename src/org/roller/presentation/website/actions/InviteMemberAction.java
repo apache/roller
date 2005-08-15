@@ -66,6 +66,17 @@ public class InviteMemberAction extends DispatchAction
         return save(mapping, actionForm, request, response);
     }
     
+    /** If method param is not specified, use HTTP verb to pick method to call */
+    public ActionForward cancel(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        return mapping.findForward("memberPermissions");
+    }
+    
     public ActionForward edit(
         ActionMapping       mapping,
         ActionForm          actionForm,
