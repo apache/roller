@@ -1,6 +1,6 @@
 <%@ include file="/taglibs.jsp" %>
 
-<div style="margin: 10px 4px 4px 4px;">
+<div style="margin: 25px 4px 4px 4px; border-top: 1px solid grey">
 
 <a href="http://www.rollerweblogger.org">
     Powered by Roller Weblogger</a> | 
