@@ -487,31 +487,39 @@ div.centerTitle {
 div.control {
     width: 100%; 
     background: #c6ab74;
-    padding: 4px;  
-    margin: 5px 5px 5px 0px; 
 }
 div.controlToggle {
     width: 100%; 
-    padding: 4px;  
-    margin: 5px 5px 5px 0px;
+    height: 20px;
     background: url("images/two-togglegrey.png") repeat-x top;
 }
+.control input { 
+    margin: 5px; 
+}
 a.controlToggle {
+    margin: 5px; 
+    padding: 5px;
     color: black;
     background: transparent;
     text-decoration: none;
 }
-a.controlToggle:link {
+a.controlToggle:link { 
+    margin: 5px; 
+    padding: 5px;
     color: black;
     background: transparent;
     text-decoration: none;
 }
 a.controlToggle:visited {
+    margin: 5px; 
+    padding: 5px;
     color: black;
     background: transparent;
     text-decoration: none;
 }
 a.controlToggle:hover {
+    margin: 5px; 
+    padding: 5px;
     color: black;
     background: transparent;
     text-decoration: underline;
