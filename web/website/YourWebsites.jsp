@@ -96,6 +96,7 @@ function resignWebsite(id,handle)
                            <td width="80%" style="padding: 0px 10px 0px 10px">
                       
                                <h3 style="border-bottom: 1px #e5e5e5 solid; margin:0px; padding:5px">
+                                   <img src='<c:url value="/images/Folder16.png"/>' />
                                    <c:out value="${perms.website.name}" />
                                    [<c:out value="${perms.website.handle}" />] 
                                </h3>
@@ -125,12 +126,15 @@ function resignWebsite(id,handle)
 
                                    <fmt:message key='yourWebsites.actions' />                       
                                    <br />
+                                   <img src='<c:url value="/images/New16.gif"/>' />
                                    <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "newEntry")'>
                                        <fmt:message key="yourWebsites.newEntry" /></a>
                                    <br />
+                                   <img src='<c:url value="/images/Edit16.png"/>' />
                                    <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "editEntries")'>
                                        <fmt:message key="yourWebsites.editEntries" /></a> 
                                    <br />
+                                   <img src='<c:url value="/images/Edit16.png"/>' />
                                    <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "manageWeblog")'>
                                        <fmt:message key="yourWebsites.manage" /></a> 
                                    <br />

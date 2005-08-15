@@ -21,6 +21,7 @@ import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.UserAdminForm;
@@ -43,8 +44,8 @@ public final class UserAdminAction extends UserBaseAction
 
     //-----------------------------------------------------------------------
     /** 
-     * Show query for user page or, if userName specified in request, show
-     * the admin user page for the specified user.
+     * Show query for user page or, if userName specified in request, 
+     * show the admin user page for the specified user.
      */
     public ActionForward edit(
         ActionMapping       mapping,
@@ -61,16 +62,16 @@ public final class UserAdminAction extends UserBaseAction
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             if (rollerSession.isAdminUser() )
             {
+                 request.setAttribute(
+                    "model", new BasePageModel(request, response, mapping));
                 UserAdminForm userForm = (UserAdminForm)actionForm;
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
-                
+                UserManager mgr = RollerFactory.getRoller().getUserManager();                
                 if (userForm != null && userForm.getUserName() != null)
                 {
                     UserData user = mgr.getUser(userForm.getUserName(), null);                    
                     if (user != null)
                     {
-                        userForm.copyFrom(user, request.getLocale());
-                        
+                        userForm.copyFrom(user, request.getLocale());                        
                         // User must set new password twice
                         userForm.setPasswordText(null);
                         userForm.setPasswordConfirm(null);
@@ -218,6 +219,39 @@ public final class UserAdminAction extends UserBaseAction
         return ud;
     }
 
+    //-----------------------------------------------------------------------
+    /**
+	 * Cancel from edit user. 
+	 */
+	public ActionForward cancel(
+		ActionMapping       mapping,
+		ActionForm          actionForm,
+		HttpServletRequest  request,
+		HttpServletResponse response)
+		throws IOException, ServletException
+	{
+         UserAdminForm userForm = (UserAdminForm)actionForm;
+         userForm.setUserName(null);         
+         userForm.setNewUser(false);
+         return edit(mapping, actionForm, request, response);
+    }
+    
+    //-----------------------------------------------------------------------
+    /**
+	 * Create new user. 
+	 */
+	public ActionForward newUser(
+		ActionMapping       mapping,
+		ActionForm          actionForm,
+		HttpServletRequest  request,
+		HttpServletResponse response)
+		throws IOException, ServletException
+	{
+         UserAdminForm userForm = (UserAdminForm)actionForm;
+         userForm.setNewUser(true);
+         return edit(mapping, actionForm, request, response);
+    }
+    
     //-----------------------------------------------------------------------
     /**
 	 * Rebuild a user's search index.

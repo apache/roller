@@ -19,8 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 public class UserAdminForm extends UserFormEx
 {
     private boolean mDelete = false;
-    private Boolean mUserEnabled = Boolean.FALSE;
+    //private Boolean mUserEnabled = Boolean.FALSE;
     private Boolean mUserAdmin = Boolean.FALSE;
+    private boolean newUser = false;
 
     public UserAdminForm()
     {
@@ -55,21 +56,21 @@ public class UserAdminForm extends UserFormEx
 		mDelete = false;
 	}
 
-    /**
+    /*
      * @return Returns the mEnabled.
      */
-    public Boolean getUserEnabled()
-    {
-        return this.mUserEnabled;
-    }
+    //public Boolean getUserEnabled()
+    //{
+        //return this.mUserEnabled;
+    //}
     
-    /**
+    /*
      * @param enabled The mEnabled to set.
      */
-    public void setUserEnabled(Boolean enabled)
-    {
-        this.mUserEnabled = enabled;
-    }
+    //public void setUserEnabled(Boolean enabled)
+    //{
+        //this.mUserEnabled = enabled;
+    //}
     
     /**
      * @return Returns the mUserAdmin.
@@ -106,5 +107,15 @@ public class UserAdminForm extends UserFormEx
     {
         super.copyFrom(user, locale);
         mUserAdmin = user.hasRole("admin") ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    public boolean isNewUser() 
+    {
+        return newUser;
+    }
+
+    public void setNewUser(boolean newUser) 
+    {
+        this.newUser = newUser;
     }
 }

@@ -162,11 +162,12 @@ div.buttonBox {
    font-size: small;
    font-weight: bold;
 }
-.formtable { 
+.formtable, .formtableNoDesc { 
     width: 100%; 
     border-collapse: collapse; 
 } 
-.formtable td.label, .formtable td.field, .formtable td.description  {
+.formtable td.label, .formtable td.field, .formtable td.description,
+.formtableNoDesc td.label, .formtableNoDesc td.field, .formtableNoDesc  {
     vertical-align: top;
     border-style: solid;
     border-width: 0px 0px 1px 0px;
@@ -175,15 +176,24 @@ div.buttonBox {
 }
 .formtable td.label { 
     text-align: right;
-    width: 15%; 
+    width: 20%; 
 }
 .formtable td.field { 
     width: 30%; 
 }
 .formtable td.description { 
-    width: 55%; 
+    width: 50%; 
 }
-
+.formtableNoDesc td.label { 
+    text-align: right;
+    width: 40%; 
+}
+.formtableNoDesc td.field { 
+    width: 40%; 
+}
+.formtableNoDesc td.description { 
+    width: 0%; 
+}
 div.sideformrow {
    float: left:
    width: 100%;
@@ -317,7 +327,8 @@ Error and status message styles
 .warning {
     background: transparent;
     color: #FF0000;
-    font-size: .9em;
+    font-size: 120%;
+    font-weight: bold;
 }
 .errors, .messages, .warnings {
     padding: 5px;

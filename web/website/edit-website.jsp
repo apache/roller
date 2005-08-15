@@ -21,7 +21,7 @@
     <html:hidden property="enabled"/></input>
     <html:hidden property="defaultCategoryId"/></input>
 
-<table class="formtable">
+<table class="formtableNoDesc">
 
     <tr>
         <td class="label"><fmt:message key="websiteSettings.websiteTitle" />

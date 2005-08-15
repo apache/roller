@@ -1,80 +1,156 @@
 <%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<script type="text/javascript">
+// <!--
+function cancel() {
+    document.userAdminForm.method.value="cancel"; 
+    document.userAdminForm.submit();
+}
+<%@ include file="/theme/scripts/ajax-user.js" %>
+// -->
+</script> 
 
 <%-- If user name is not specified, then allow user to choose a user to be loaded --%>
 <c:if test="${empty userAdminForm.userName}">
-    <br />
-    <h1><fmt:message key="userAdmin.searchUserTitle" /></h1>
-    <br />
-		<html:form action="/admin/user" method="post">
-		    <html:hidden property="method" value="edit" />
-		    <p><fmt:message key="userAdmin.enterUserName" /></p>
-		    <strong><fmt:message key="userAdmin.editUser" />:</strong>         
-		    <html:text property="userName" size="10" />
-		    <input type="submit" value='<fmt:message key="userAdmin.edit" />' />
-		</html:form>
+
+    <h1><fmt:message key="userAdmin.title.searchUser" /></h1>
+    <p class="subtitle"><fmt:message key="userAdmin.subtitle.searchUser" /></p>
+
+    <html:form action="/admin/user" method="post" focus="userName">
+        <input name="method" type="hidden" value="edit" />    
+        <div class="formrow">
+           <label for="userName" class="formrow" />
+               <fmt:message key="inviteMember.userName" /></label>
+           <div>
+               <input name="userName" id="userName" size="30" maxlength="30" 
+                   onfocus="onUserNameFocus()" onkeyup="onUserNameChange()" /><br />
+           </div>
+        </div>        
+        <div class="formrow">
+           <label class="formrow" />&nbsp;</label>
+           <div>
+               <select id="userList" size="10" onchange="onUserSelected()" style="width:300px"></select>
+           </div>
+        </div>                      
+        <br />       
+        <div class="control">
+            <input type="submit" value='<fmt:message key="userAdmin.edit" />' />
+        </div>
+    </html:form>
+
 </c:if>
 
 <%-- If a user name is specified, then show the admin user form --%>
-<c:if test="${not empty userAdminForm.userName}">
-    <br />
-	  <h1>
-	     <fmt:message key="userAdmin.editUserTitle" >
-	        <fmt:param value="${userAdminForm.userName}" />
-	     </fmt:message>
-	  </h1>			
-    <br />
+<c:if test="${not empty userAdminForm.userName || userAdminForm.newUser == true}">
+
+    <c:choose>
+        <c:when test="${not empty userAdminForm.userName}">
+            <h1>
+                <fmt:message key="userAdmin.title.editUser" >
+                    <fmt:param value="${userAdminForm.userName}" />
+                </fmt:message>
+            </h1>			
+            <p class="subtitle"><fmt:message key="userAdmin.subtitle.editUser" /></p>
+        </c:when>
+        <c:otherwise>
+            <h1>
+                <fmt:message key="userAdmin.title.createNewUser" />
+            </h1>			
+            <p class="subtitle"><fmt:message key="userAdmin.subtitle.createNewUser" /></p>
+        </c:otherwise>
+    </c:choose>
+    
     <html:form action="/admin/user" method="post">
-        <html:hidden property="method" value="update"/></input>
-        
+        <html:hidden property="method" value="update"/></input>        
         <html:hidden property="id"/></input>
         <html:hidden property="userName" /></input>
+        <html:hidden property="adminCreated" /></input>
+        <html:hidden property="newUser" /></input>
         
-        <div class="formrow">
-           <label for="fullName" class="formrow" /><fmt:message key="userAdmin.fullname" /></label>
-           <html:text property="fullName" size="30" maxlength="30" />
-        </div>
-        
-        <c:if test="${cookieLogin != 'true'}">
-        <div class="formrow">
-           <label for="passwordText" class="formrow" /><fmt:message key="userAdmin.password" /></label>
+    <table class="formtable">
+    <tr>
+        <td class="label"><label for="fullName" /><fmt:message key="userSettings.fullname" /></label></td>
+        <td class="field"><html:text property="fullName" size="30" maxlength="30" /></td>
+        <td class="description"><fmt:message key="userAdmin.tip.fullName" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="userName" /><fmt:message key="userSettings.username" /></label></td>
+        <td class="field"><html:text readonly="true"  style="background: #e5e5e5" property="userName" size="30" maxlength="30" /></td>
+        <td class="description"><fmt:message key="userAdmin.tip.userName" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="passwordText" /><fmt:message key="userSettings.password" /></label></td>
+        <td class="field">
            <html:password property="passwordText" size="20" maxlength="20" />
-        </div>       
-        <div class="formrow">
-           <label for="passwordConfirm" class="formrow" />
-              <fmt:message key="userAdmin.passwordConfirm" />
-           </label>
-           <html:password property="passwordConfirm" size="20" maxlength="20" />
-        </div>
-        </c:if>
-        
-        <div class="formrow">
-           <label for="emailAddress" class="formrow" /><fmt:message key="userAdmin.email" /></label>
-           <html:text property="emailAddress" size="40" maxlength="40" /></input>
-        </div>        
-        <br />
-        
-        <div class="formrow">
-           <label for="userEnabled" class="formrow" /><fmt:message key="userAdmin.enabled" /></label>
-           <html:checkbox property="userEnabled" value="true" />
-        </div>
-        <br /> 
-       
-        <div class="formrow">
-           <label for="userAdmin" class="formrow" /><fmt:message key="userAdmin.userAdmin" /></label>
+           <html:hidden property="password" />
+       </td>
+        <td class="description"><fmt:message key="userAdmin.tip.password" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="passwordConfirm" /><fmt:message key="userSettings.passwordConfirm" /></label></td>
+        <td class="field"><html:password property="passwordConfirm" size="20" maxlength="20" /></td>
+        <td class="description"><fmt:message key="userAdmin.tip.passwordConfirm" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="emailAddress" /><fmt:message key="userSettings.email" /></label></td>
+        <td class="field"><html:text property="emailAddress" size="40" maxlength="40" /></td>
+        <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="locale" /><fmt:message key="userSettings.locale" /></label></td>
+        <td class="field">
+           <html:select property="locale" size="1" >
+              <html:options collection="locales" property="value" labelProperty="label"/>
+           </html:select>
+        </td>
+        <td class="description"><fmt:message key="userAdmin.tip.locale" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="timeZone" /><fmt:message key="userSettings.timeZone" /></label></td>
+        <td class="field">
+           <html:select property="timeZone" size="1" >
+               <html:options collection="timeZones" property="value" labelProperty="label"/>
+           </html:select>
+        </td>
+        <td class="description"><fmt:message key="userAdmin.tip.timeZone" /></td>
+    </tr>
+
+    <tr>
+        <td class="label"><label for="userEnabled" /><fmt:message key="userAdmin.enabled" /></label></td>
+        <td class="field">
+           <html:checkbox property="enabled" value="true" />
+        </td>
+        <td class="description"><fmt:message key="userAdmin.tip.enabled" /></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><label for="userAdmin" /><fmt:message key="userAdmin.userAdmin" /></label></td>
+        <td class="field">
            <html:checkbox property="userAdmin" value="true" />
-        </div>        
-        <br />
-        
-        <div class="formrow">
-           <label for="delete" class="formrow" /><fmt:message key="userAdmin.delete" /></label>
+        </td>
+        <td class="description"><fmt:message key="userAdmin.tip.userAdmin" /></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><label for="delete" /><fmt:message key="userAdmin.delete" /></label></td>
+        <td class="field">
            <html:checkbox property="delete" />
-           <span class="warning"><fmt:message key="userAdmin.warning" /></span>
-        </div>        
-        <br />
-        
-        <div class="control">
-           <input type="submit" value='<fmt:message key="userAdmin.save" />'/></input>
-        </div>
+        </td>
+        <td class="description"><span class="warning"><fmt:message key="userAdmin.warning" /></span></td>
+    </tr>
+
+    </table>
+    <br />
+
+    <div class="control">
+       <input type="submit" value='<fmt:message key="userAdmin.save" />'/></input>
+       <input type="button" value='<fmt:message key="application.cancel" />' onclick="cancel()"></input>
+    </div>
         
     </html:form>
     

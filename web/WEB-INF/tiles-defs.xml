@@ -21,21 +21,23 @@
 </definition>
 
 <definition name=".tiles-editorpage" path="/theme/tiles-editorpage.jsp">
-   <put name="content"  value="${content}" />
-   <put name="status"   value="/theme/status.jsp" />
-   <put name="sidebar"  value="/theme/tiles-sidebar.jsp" />
-   <put name="footer"   value="/theme/tiles-footer.jsp" />
-   <put name="head"     value="/theme/tiles-head.jsp" />
-   <put name="messages" value="/theme/messages.jsp" />
+   <put name="content"         value="${content}" />
+   <put name="status"          value="/theme/status.jsp" />
+   <put name="sidebar"         value="/theme/tiles-sidebar.jsp" />
+   <put name="default-sidebar" value="/theme/tiles-editorsidebar.jsp" />
+   <put name="footer"          value="/theme/tiles-footer.jsp" />
+   <put name="head"            value="/theme/tiles-head.jsp" />
+   <put name="messages"        value="/theme/messages.jsp" />
 </definition>
 
 <definition name=".tiles-adminpage" path="/theme/tiles-adminpage.jsp">
-   <put name="content"  value="${content}" />
-   <put name="status"   value="/theme/status.jsp" />
-   <put name="sidebar"  value="/theme/tiles-sidebar.jsp" />
-   <put name="footer"   value="/theme/tiles-footer.jsp" />
-   <put name="head"     value="/theme/tiles-head.jsp" />
-   <put name="messages" value="/theme/messages.jsp" />
+   <put name="content"         value="${content}" />
+   <put name="status"          value="/theme/status.jsp" />
+   <put name="sidebar"         value="/theme/tiles-sidebar.jsp" />
+   <put name="default-sidebar" value="/theme/tiles-adminsidebar.jsp" />
+   <put name="footer"          value="/theme/tiles-footer.jsp" />
+   <put name="head"            value="/theme/tiles-head.jsp" />
+   <put name="messages"        value="/theme/messages.jsp" />
 </definition>
 
 <definition name=".tiles-simplepage" path="/theme/tiles-simplepage.jsp">
