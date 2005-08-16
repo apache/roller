@@ -7,7 +7,7 @@
             
             <h3><fmt:message key="mainPage.actions" /></h3>
             <hr />
-            <img src='<c:url value="/images/ComposeMail16.png"/>' alt="mail-icon" align="bottom" />
+            <img src='<c:url value="/images/ComposeMail16.gif"/>' alt="mail-icon" align="bottom" />
             <roller:link page="/editor/inviteMember.do">
                <fmt:message key="memberPermissions.inviteMember" />
             </roller:link>

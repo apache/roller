@@ -44,7 +44,6 @@ import org.roller.util.MailUtil;
  * 
  * @struts.action path="/editor/inviteMember" parameter="method" name="inviteMemberForm"
  * @struts.action-forward name="inviteMember.page"     path=".InviteMember"
- * @struts.action-forward name="inviteMemberDone.page" path=".InviteMemberDone"
  */
 public class InviteMemberAction extends DispatchAction
 {
@@ -126,13 +125,23 @@ public class InviteMemberAction extends DispatchAction
                 String mask = request.getParameter("permissionsMask");
                 umgr.inviteUser(website, user, Short.parseShort(mask));
                 request.setAttribute("user", user);
-                forward = mapping.findForward("inviteMemberDone.page");
-                notifyInvitee(request, website, user);
+                try 
+                {
+                    notifyInvitee(request, website, user);
+                }
+                catch (RollerException e)
+                {
+                    errors.add(ActionErrors.GLOBAL_ERROR, 
+                        new ActionError("error.untranslated", e.getMessage()));                
+                }               
                 msgs.add(ActionMessages.GLOBAL_MESSAGE, 
                     new ActionMessage("inviteMember.userInvited"));
+                
+                forward = mapping.findForward("memberPermissions");                
             }
         }
-        if (!errors.isEmpty()) saveErrors(request, errors);
+        saveErrors(request, errors);
+        saveMessages(request, msgs);
         return forward; 
     }
     
@@ -141,7 +150,7 @@ public class InviteMemberAction extends DispatchAction
      */
     private void notifyInvitee(
             HttpServletRequest request, WebsiteData website, UserData user) 
-            throws Exception
+            throws RollerException
     {
         try
         {
@@ -198,17 +207,17 @@ public class InviteMemberAction extends DispatchAction
         }
         catch (NamingException e)
         {
-            mLogger.error("ERROR: Notification email(s) not sent, "
+            throw new RollerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured", e);
         }
         catch (MessagingException e)
         {
-            mLogger.error("ERROR: Notification email(s) not sent, "
-                    + "due to Roller configuration or mail server problem.", e);
+            throw new RollerException("ERROR: Notification email(s) not sent, "
+                + "due to Roller configuration or mail server problem.", e);
         }
         catch (MalformedURLException e)
         {
-            mLogger.error("ERROR: Notification email(s) not sent, "
+            throw new RollerException("ERROR: Notification email(s) not sent, "
                     + "Roller site URL is malformed?", e);
         }
         catch (RollerException e)

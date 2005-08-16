@@ -48,8 +48,7 @@ body {
     margin: 0px;
     padding: 0px;
     font: small Verdana,Arial,Sans-serif;
-    font: x-small/1.5em Verdana, Arial, Helvetica, sans-serif;
-    font-size: 69%;
+    font: small/1.5em Verdana, Arial, Helvetica, sans-serif;
 }
 p {
     background: transparent;
