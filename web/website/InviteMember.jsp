@@ -6,7 +6,7 @@ function cancel() {
     document.inviteMemberForm.method.value="cancel"; 
     document.inviteMemberForm.submit();
 }
-<%@ include file="/scripts/ajax-user.js" %>
+<%@ include file="/theme/scripts/ajax-user.js" %>
 // -->
 </script> 
 
