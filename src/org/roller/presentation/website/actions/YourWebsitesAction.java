@@ -225,8 +225,7 @@ public class YourWebsitesAction extends DispatchAction
             pendings = roller.getUserManager().getPendingPermissions(user); 
             groupBloggingEnabled = 
                 RollerConfig.getBooleanProperty("groupblogging.enabled");
-            planetAggregatorEnabled = 
-                RollerConfig.getBooleanProperty("planet.aggregator.enabled");
+            setPlanetAggregatorEnabled(RollerConfig.getBooleanProperty("planet.aggregator.enabled"));
         }
         public List getPermissions()
         {
@@ -251,6 +250,14 @@ public class YourWebsitesAction extends DispatchAction
 
         public void setGroupBloggingEnabled(boolean groupBloggingEnabled) {
             this.groupBloggingEnabled = groupBloggingEnabled;
+        }
+
+        public boolean isPlanetAggregatorEnabled() {
+            return planetAggregatorEnabled;
+        }
+
+        public void setPlanetAggregatorEnabled(boolean planetAggregatorEnabled) {
+            this.planetAggregatorEnabled = planetAggregatorEnabled;
         }
     }
 }
