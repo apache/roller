@@ -187,7 +187,7 @@ public class PingTargetData extends PersistentObject implements Serializable
      * @return one of the condition codes {@link #CONDITION_OK}, {@link #CONDITION_FAILING}, {@link
      *         #CONDITION_DISABLED}.
      * @ejb:persistent-field
-     * @hibernate.property column="conditioncode" not-null="true"
+     * @hibernate.property column="condition" not-null="true"
      */
     public int getConditionCode()
     {
