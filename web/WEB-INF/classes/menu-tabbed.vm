@@ -30,7 +30,7 @@
                 #foreach( $item in $currentMenu.getMenuItems() )
                     #if ($item.isPermitted($req))
                         #if ( $count > 0 )
-                            &nbsp;|&nbsp; 
+                            | 
                         #end
                         #if ( $item.isSelected( $req ) )                               
                             <a class="menuItemSelected" href="$item.getUrl($ctx)">$text.get( $item.getName() )</a>

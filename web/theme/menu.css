@@ -67,7 +67,7 @@ Menu item table (the bar below the tabs)
     background-color: #c6ab74;
 }
 .menuItemSelected, .menuItemUnselected {
-    padding: 0px 5px 0px 5px; /* TRBL */
+    padding: 0px 1px 0px 1px; /* TRBL */
 }
 
 

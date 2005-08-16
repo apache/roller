@@ -4,9 +4,7 @@
 <br />
 <h1><fmt:message key="commonPingTargets.commonPingTargets" /></h1>
 <p class="subtitle">
-    <fmt:message key="commonPingTargets.subtitle" >
-        <fmt:param value="${model.weblogEntry.website.handle}" />
-    </fmt:message>
+    <fmt:message key="commonPingTargets.subtitle" />
 </p>
 
 <p/><fmt:message key="commonPingTargets.explanation"/><p/>

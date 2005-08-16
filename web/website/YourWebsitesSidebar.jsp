@@ -5,7 +5,7 @@
         <div class="menu-tl">
             <div class="sidebarBody">
             
-             <h3><fmt:message key="yourWebsites.shortCuts" /></h3>
+             <h3><fmt:message key="yourWebsites.actions" /></h3>
              <hr />
           
             <c:if test="${!empty model.permissions && model.groupBloggingEnabled}">               

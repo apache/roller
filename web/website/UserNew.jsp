@@ -82,6 +82,7 @@ function cancel() {
 </tr>
     
 </table>
+<br />
 
 <input type="submit" value='<fmt:message key="userRegister.button.save" />'></input>
 <input type="button" value='<fmt:message key="userSettings.button.cancel" />' onclick="cancel()"></input>
