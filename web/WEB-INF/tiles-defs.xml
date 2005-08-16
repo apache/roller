@@ -18,6 +18,7 @@
    <put name="sidebar" value="/theme/tiles-sidebar.jsp" />
    <put name="footer"  value="/theme/tiles-footer.jsp" />
    <put name="head"    value="/theme/tiles-head.jsp" />
+   <put name="messages"        value="/theme/messages.jsp" />
 </definition>
 
 <definition name=".tiles-editorpage" path="/theme/tiles-editorpage.jsp">

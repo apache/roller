@@ -22,7 +22,7 @@ String reason = null != code ? code : type;
 
 exception = (Throwable)request.getAttribute("javax.servlet.error.exception");
 %>
-<br />
+
 <h2 class="error"><fmt:message key="errorPage.title" /></h2>
 <p><fmt:message key="errorPage.message" /></p>
 <p><%= message %></p>

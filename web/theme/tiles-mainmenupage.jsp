@@ -28,6 +28,7 @@ label.formrow {
     </div>
     
     <div id="centercontent">   
+        <tiles:insert attribute="messages" /> 
         <tiles:insert attribute="content" />    
         <div id="footer">
             <tiles:insert attribute="footer" />

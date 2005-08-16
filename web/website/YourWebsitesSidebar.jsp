@@ -8,7 +8,7 @@
              <h3><fmt:message key="yourWebsites.shortCuts" /></h3>
              <hr />
           
-            <c:if test="${model.groupBloggingEnabled}">               
+            <c:if test="${!empty model.permissions && model.groupBloggingEnabled}">               
                 <p>
                     <h3>
                     <roller:link forward="createWebsite">
@@ -28,23 +28,27 @@
                 <fmt:message key="yourWebsites.editProfile.desc" />
             </p>
             
-            <p>
-                <h3>
-                <roller:link forward="rollerConfig">
-                   <fmt:message key="yourWebsites.globalAdmin" />
-                </roller:link> 
-                </h3>          
-                <fmt:message key="yourWebsites.globalAdmin.desc" />
-            </p>
-            
-            <p>
-                <h3>
-                <roller:link forward="planetConfig">
-                   <fmt:message key="yourWebsites.planetAdmin" />
-                </roller:link>            
-                </h3>
-                <fmt:message key="yourWebsites.planetAdmin.desc" />
-            </p>
+            <c:if test="${model.rollerSession.adminUser}">               
+                <p>
+                    <h3>
+                    <roller:link forward="rollerConfig">
+                       <fmt:message key="yourWebsites.globalAdmin" />
+                    </roller:link> 
+                    </h3>          
+                    <fmt:message key="yourWebsites.globalAdmin.desc" />
+                </p>
+
+                <c:if test="${model.planetAggregatorEnabled}">               
+                    <p>
+                        <h3>
+                        <roller:link forward="planetConfig">
+                           <fmt:message key="yourWebsites.planetAdmin" />
+                        </roller:link>            
+                        </h3>
+                        <fmt:message key="yourWebsites.planetAdmin.desc" />
+                    </p>
+                </c:if>
+            </c:if>
             
 			<br />
 			

@@ -210,7 +210,8 @@ public class YourWebsitesAction extends DispatchAction
     
     public static class YourWebsitesPageModel extends BasePageModel
     {
-        private boolean groupBloggingEnabled = true;
+        private boolean planetAggregatorEnabled = false;
+        private boolean groupBloggingEnabled = false;
         private List permissions = new ArrayList();
         private List pendings = new ArrayList();
         public YourWebsitesPageModel(HttpServletRequest request,
@@ -223,7 +224,9 @@ public class YourWebsitesAction extends DispatchAction
             permissions = roller.getUserManager().getAllPermissions(user);
             pendings = roller.getUserManager().getPendingPermissions(user); 
             groupBloggingEnabled = 
-                    RollerConfig.getBooleanProperty("groupblogging.enabled");
+                RollerConfig.getBooleanProperty("groupblogging.enabled");
+            planetAggregatorEnabled = 
+                RollerConfig.getBooleanProperty("planet.aggregator.enabled");
         }
         public List getPermissions()
         {
