@@ -1,12 +1,5 @@
-	
-<% try { %>
-   <roller:NavigationBar/>    	
-<% } 
-catch (Exception e) 
-{
-   System.err.println("ERROR: while displaying error page error page");
-   e.printStackTrace();
-} %>
+
+<%@ include file="/taglibs.jsp" %>
 
 <%@ page import="java.io.*,org.roller.util.Utilities" isErrorPage="true" %>
 

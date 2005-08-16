@@ -117,7 +117,7 @@ public class RollerPropertiesAction extends DispatchAction {
             BasePageModel pageModel = 
                     new BasePageModel(request, response, mapping);
             request.setAttribute("model",pageModel);                
-            if ( rollerSession.isUserAuthorizedToAdmin() && rollerSession.isAdminUser() ) {
+            if (rollerSession.isAdminUser()) {
             
                 // just grab our properties map and put it in the request
                 Roller mRoller = RollerFactory.getRoller();

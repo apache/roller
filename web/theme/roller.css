@@ -127,25 +127,6 @@ input, select, option {
 textarea {
    margin: 3px 0px 0px 0px;
 }
-div.row { 
-   padding: 2px; 
-}
-div.formrow {
-   float: left:
-   width: 80%;
-}
-label.formrow {
-   float: left;
-   text-align: right;
-   width: 20%;
-   padding-right: 1em;
-}
-label.formrow {
-   float: left;
-   text-align: right;
-   width: 15%;
-   padding-right: 1em;
-}
 div.buttonBox {
    width: 98%; 
    border: 1px solid black;
@@ -162,6 +143,7 @@ div.buttonBox {
    font-size: small;
    font-weight: bold;
 }
+
 .formtable, .formtableNoDesc { 
     width: 100%; 
     border-collapse: collapse; 
@@ -193,6 +175,20 @@ div.buttonBox {
 }
 .formtableNoDesc td.description { 
     width: 0%; 
+}
+
+div.row { 
+   padding: 2px; 
+}
+div.formrow {
+   float: left:
+   width: 80%;
+}
+label.formrow {
+   float: left;
+   text-align: right;
+   width: 20%;
+   padding-right: 1em;
 }
 div.sideformrow {
    float: left:

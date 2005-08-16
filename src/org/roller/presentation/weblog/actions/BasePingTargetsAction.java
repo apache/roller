@@ -117,7 +117,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = 
+                RollerFactory.getRoller().getPingTargetManager();
         PingTargetForm pingTargetForm = (PingTargetForm) form;
         try
         {
@@ -132,8 +133,11 @@ public abstract class BasePingTargetsAction extends DispatchAction
             String pingTargetId = pingTargetForm.getId();
             if (pingTargetId != null && pingTargetId.length() > 0)
             {
-                pingTarget = pingTargetMgr.retrievePingTarget(pingTargetForm.getId());
-                if (pingTarget == null) throw new RollerException("No such ping target id: " + pingTargetId);
+                pingTarget = pingTargetMgr.retrievePingTarget(
+                        pingTargetForm.getId());
+                if (pingTarget == null) 
+                    throw new RollerException(
+                            "No such ping target id: " + pingTargetId);
                 pingTargetForm.copyTo(pingTarget, req.getLocale());
             }
             else
@@ -149,9 +153,16 @@ public abstract class BasePingTargetsAction extends DispatchAction
                 return mapping.findForward(PING_TARGET_EDIT_PAGE);
             }
 
-            // Appears to be ok.  Save it, commit and return refreshed view of target list.
+            // Appears to be ok.  
+            // Save it, commit and return refreshed view of target list.
             pingTarget.save();
             RollerFactory.getRoller().commit();
+            
+            ActionMessages msgs = new ActionMessages();
+            msgs.add(ActionMessages.GLOBAL_MESSAGE, 
+                    new ActionMessage("pingTarget.saved"));
+            saveMessages(req, msgs);     
+            
             return view(mapping, form, req, res);
         }
         catch (Exception e)

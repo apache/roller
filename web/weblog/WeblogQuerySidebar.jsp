@@ -60,6 +60,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
             <html:option value="100" />
         </html:select>
     </div>
+    <br />
     
   <%-- ========================================================= --%>
   <%-- filter by status --%>

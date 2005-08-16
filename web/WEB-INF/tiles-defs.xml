@@ -181,10 +181,11 @@
 <definition name=".CommonPingTargets" extends=".tiles-adminpage" >
     <put name="content" value="/website/CommonPingTargets.jsp" />
 </definition>
-<definition name=".CommonPingTargetDeleteOK" extends=".tiles-adminpage" >
+
+<definition name=".CommonPingTargetDeleteOK" extends=".tiles-simplepage" >
     <put name="content" value="/website/CommonPingTargetDeleteOK.jsp" />
 </definition>
-<definition name=".CommonPingTargetEdit" extends=".tiles-adminpage" >
+<definition name=".CommonPingTargetEdit" extends=".tiles-simplepage" >
     <put name="content" value="/website/CommonPingTargetEdit.jsp" />
 </definition>
 

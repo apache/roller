@@ -12,6 +12,9 @@
 <roller:StatusMessage/>
 
 <h1><fmt:message key="configForm.title" /></h1>
+<p class="subtitle"><fmt:message key="configForm.subtitle" /></a>
+<p><fmt:message key="configForm.prompt" /></a>
+
 <form action="rollerConfig.do" method="post">
 
 <input type="hidden" name="method" value="update">
