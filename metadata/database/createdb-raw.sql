@@ -218,7 +218,7 @@ create table pingtarget (
     name         varchar(255) not null, -- short descriptive name of the ping target
     pingurl      varchar(255) not null,  -- URL to receive the ping
     websiteid    varchar(48) null, -- if not null, this is a custom target defined by the associated website
-    condition    integer default 0 not null, -- condition code
+    conditioncode    integer default 0 not null, -- condition code
     lastsuccess  timestamp null -- last successful use
 );
 create index pingtarget_websiteid_index on pingtarget( websiteid );
