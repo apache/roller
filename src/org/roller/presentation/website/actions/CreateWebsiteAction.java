@@ -1,11 +1,8 @@
 package org.roller.presentation.website.actions;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,6 +13,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
@@ -104,13 +102,12 @@ public class CreateWebsiteAction extends DispatchAction
         }
         else try
         {
-            // Add new user
             RollerContext rollerContext = RollerContext.getRollerContext(request);
             UserData user = 
                 RollerSession.getRollerSession(request).getAuthenticatedUser();
             UserManager mgr = RollerFactory.getRoller().getUserManager(); 
             
-            // Need system user to add new user
+            // Need system user to create website
             RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
             HashMap pages = null; //rollerContext.readThemeMacros(form.getTheme());
             WebsiteData website = mgr.createWebsite(
@@ -123,28 +120,22 @@ public class CreateWebsiteAction extends DispatchAction
                form.getLocale(), 
                form.getTimeZone());
             RollerFactory.getRoller().commit();
-
-            // Flush cache so user will immediately appear on index page
-            //PageCacheFilter.removeFromCache( request, ud );
-            //MainPageAction.flushMainPageCache();
             
             request.setAttribute("model", 
-                    new CreateWebsitePageModel(request, response, mapping, website));                
+               new CreateWebsitePageModel(request, response, mapping, website));  
+            
+            msgs.add(ActionMessages.GLOBAL_MESSAGE, 
+               new ActionMessage("createWebsite.created", form.getHandle()));
+            saveMessages(request, msgs);     
         }
         catch (RollerException e)
         {
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError(e.getMessage()));
-            saveErrors(request,errors);          
+            errors.add(ActionErrors.GLOBAL_ERROR, 
+                new ActionError(e.getMessage()));
+            saveErrors(request, errors);          
             mLogger.error("ERROR in createWebsite", e);
         }
-        if (errors.size() == 0) 
-        {
-            return mapping.findForward("createWebsiteDone.page");
-        }
-        else
-        {
-            return mapping.findForward("createWebsite.page");
-        }
+        return mapping.findForward("yourWebsites");
     }
         
     private ActionMessages validate(CreateWebsiteForm form, ActionErrors errors)

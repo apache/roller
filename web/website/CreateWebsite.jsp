@@ -17,7 +17,7 @@ function cancel() {
 
 <br /> 
 <html:form action="/editor/createWebsite" method="post" focus="handle">
-<input type="hidden" name="method" ></input> 
+<input type="hidden" name="method" value="save"></input> 
 
 <table class="formtable">
 
@@ -41,7 +41,7 @@ function cancel() {
 
 <tr>
     <td class="label"><label for="emailAddress" /><fmt:message key="createWebsite.emailAddress" /></label></td>
-    <td class="field"><html:text property="emailAddress" size="30" maxlength="30" /></td>
+    <td class="field"><html:text property="emailAddress" size="40" maxlength="50" /></td>
     <td class="description"><fmt:message key="createWebsite.tip.email" /></td>
 </tr>
 

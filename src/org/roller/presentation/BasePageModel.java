@@ -102,4 +102,5 @@ public class BasePageModel
     {
         return StrutsUtil.getTimeZoneBeans();
     }
+
 }

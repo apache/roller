@@ -41,23 +41,26 @@ function resignWebsite(id,handle)
 -->
 </script>
 
-<%-- Choose appropriate prompt at start of page --%>
-<c:choose>
-    <c:when test="${empty model.permissions && !model.groupBloggingEnabled}">
-       <p><fmt:message key="yourWebsites.noBlogs" />
-       <roller:link page="/editor/createWebsite.do">
-          <fmt:message key="yourWebsites.createAWeblog" />
-       </roller:link></p>
-    </c:when>
-</c:choose>
-
 <html:form action="/editor/yourWebsites" method="post">
     <input type="hidden" name="inviteId" value="" />
     <input type="hidden" name="websiteId" value="" />
     <input type="hidden" name="method" value="select" />		  
 
-    <c:if test="${!empty model.pendings}">
+<%-- Choose appropriate prompt at start of page --%>
+<c:choose>
+
+    <c:when test="${empty model.permissions && empty model.pendings}">
+        <h1><fmt:message key="yourWebsites.title.welcomeNoBlog" /></h1>    
+        <p class="subtitle"><fmt:message key="yourWebsites.subtitle.welcomeNoBlog" /></p>        
+        <p>
+        <fmt:message key="yourWebsites.prompt.welcomeNoBlog" />
+        <roller:link page="/editor/createWebsite.do">
+           <fmt:message key="yourWebsites.createOne" />
+        </roller:link>?
+        </p>
+    </c:when>
     
+    <c:when test="${!empty model.pendings}">    
         <h1><fmt:message key="yourWebsites.invitations" /></h1>    
         <p class="subtitle"><fmt:message key="yourWebsites.invitationsPrompt" /></p>
         
@@ -74,94 +77,92 @@ function resignWebsite(id,handle)
             </a><br />
         </c:forEach>
         <br />
-    </c:if>
-
-    <c:choose>
+    </c:when>
     
-        <c:when test="${!empty model.permissions}">
-        
-            <h1><fmt:message key="yourWebsites.title" /></h1>    
-            <p class="subtitle"><fmt:message key="yourWebsites.prompt" /></p>
+</c:choose>
             
-            <div class="entryTitleBox" >
-                <fmt:message key="yourWebsites.existingWebsites" />
+<c:if test="${!empty model.permissions}">
+
+    <h1><fmt:message key="yourWebsites.title" /></h1>    
+    <p class="subtitle"><fmt:message key="yourWebsites.prompt" /></p>
+
+    <div class="entryTitleBox" >
+        <fmt:message key="yourWebsites.existingWebsites" />
+    </div>
+
+        <c:forEach var="perms" items="${model.permissions}">
+
+            <div class="entryBox">  
+
+                   <table width="100%">
+                   <tr>
+                   <td width="80%" style="padding: 0px 10px 0px 10px">
+
+                       <h3 style="border-bottom: 1px #e5e5e5 solid; margin:0px; padding:5px">
+                           <img src='<c:url value="/images/Folder16.png"/>' />
+                           <c:out value="${perms.website.name}" />
+                           [<c:out value="${perms.website.handle}" />] 
+                       </h3>
+
+                       <div class="formrow">
+                           <label class="formrow"><fmt:message key='yourWebsites.weblog' /> URL</b></label>
+                           <a href='<c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />'>
+                               <c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />
+                           </a>                           
+                       </div>
+
+                       <div class="formrow">
+                           <label class="formrow"><fmt:message key='yourWebsites.permission' /></label>
+                           <c:if test="${perms.permissionMask == 0}" >LIMITED</c:if>
+                           <c:if test="${perms.permissionMask == 1}" >AUTHOR</c:if>
+                           <c:if test="${perms.permissionMask == 3}" >ADMIN</c:if>
+                       </div>
+
+                       <div class="formrow">
+                           <label class="formrow"><fmt:message key='yourWebsites.description' /></label>    
+                           <c:out value="${perms.website.description}" />
+                       </div>
+
+                   </td>
+
+                   <td width="20%" align="left">
+
+                           <fmt:message key='yourWebsites.actions' />                       
+                           <br />
+                           <img src='<c:url value="/images/New16.gif"/>' />
+                           <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "newEntry")'>
+                               <fmt:message key="yourWebsites.newEntry" /></a>
+                           <br />
+                           <img src='<c:url value="/images/Edit16.png"/>' />
+                           <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "editEntries")'>
+                               <fmt:message key="yourWebsites.editEntries" /></a> 
+                           <br />
+                           <img src='<c:url value="/images/Edit16.png"/>' />
+                           <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "manageWeblog")'>
+                               <fmt:message key="yourWebsites.manage" /></a> 
+                           <br />
+                           <c:choose>
+                               <c:when test="${perms.website.adminUserCount == 1 && perms.permissionMask == 3}">
+                                   <%-- <fmt:message key="yourWebsites.notAllowed" /> --%>
+                               </c:when>
+                               <c:otherwise>
+                                  <a href='javascript:resignWebsite("<c:out value='${perms.website.id}'/>","<c:out value="${perms.website.handle}" />")'>
+                                      <fmt:message key='yourWebsites.resign' />
+                                  </a>
+                               </c:otherwise>
+                           </c:choose>
+                       </div>
+
+                   </td>
+                   </tr>
+
+               </table>
+
             </div>
-    
-                <c:forEach var="perms" items="${model.permissions}">
-                
-                    <div class="entryBox">  
-                       
-                           <table width="100%">
-                           <tr>
-                           <td width="80%" style="padding: 0px 10px 0px 10px">
-                      
-                               <h3 style="border-bottom: 1px #e5e5e5 solid; margin:0px; padding:5px">
-                                   <img src='<c:url value="/images/Folder16.png"/>' />
-                                   <c:out value="${perms.website.name}" />
-                                   [<c:out value="${perms.website.handle}" />] 
-                               </h3>
 
-                               <div class="formrow">
-                                   <label class="formrow"><fmt:message key='yourWebsites.weblog' /> URL</b></label>
-                                   <a href='<c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />'>
-                                       <c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />
-                                   </a>                           
-                               </div>
+        </c:forEach>
 
-                               <div class="formrow">
-                                   <label class="formrow"><fmt:message key='yourWebsites.permission' /></label>
-                                   <c:if test="${perms.permissionMask == 0}" >LIMITED</c:if>
-                                   <c:if test="${perms.permissionMask == 1}" >AUTHOR</c:if>
-                                   <c:if test="${perms.permissionMask == 3}" >ADMIN</c:if>
-                               </div>
-
-                               <div class="formrow">
-                                   <label class="formrow"><fmt:message key='yourWebsites.description' /></label>    
-                                   <c:out value="${perms.website.description}" />
-                               </div>
-                               
-                           </td>
-                           
-                           <td width="20%" align="left">
-
-                                   <fmt:message key='yourWebsites.actions' />                       
-                                   <br />
-                                   <img src='<c:url value="/images/New16.gif"/>' />
-                                   <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "newEntry")'>
-                                       <fmt:message key="yourWebsites.newEntry" /></a>
-                                   <br />
-                                   <img src='<c:url value="/images/Edit16.png"/>' />
-                                   <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "editEntries")'>
-                                       <fmt:message key="yourWebsites.editEntries" /></a> 
-                                   <br />
-                                   <img src='<c:url value="/images/Edit16.png"/>' />
-                                   <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "manageWeblog")'>
-                                       <fmt:message key="yourWebsites.manage" /></a> 
-                                   <br />
-                                   <c:choose>
-                                       <c:when test="${perms.website.adminUserCount == 1 && perms.permissionMask == 3}">
-                                           <%-- <fmt:message key="yourWebsites.notAllowed" /> --%>
-                                       </c:when>
-                                       <c:otherwise>
-                                          <a href='javascript:resignWebsite("<c:out value='${perms.website.id}'/>","<c:out value="${perms.website.handle}" />")'>
-                                              <fmt:message key='yourWebsites.resign' />
-                                          </a>
-                                       </c:otherwise>
-                                   </c:choose>
-                               </div>
-
-                           </td>
-                           </tr>
-                           
-                       </table>
-                    
-                    </div>
-                    
-                </c:forEach>
-                    
-        </c:when>
-                  
-    </c:choose>
+</c:if>
 
 </html:form>
 
