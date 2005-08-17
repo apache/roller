@@ -3,24 +3,24 @@ roller.css: Base CSS styles for Roller web UI (colors, fonts, etc.)
 ====================================================================== */
 
 .bannerBox {
-    background: url("images/two-banner.png") repeat-x top;
+    /* CUSTOMIZABLE background: url("images/two-banner.png") repeat-x top; */
     height: 78px; 
     width: 100%;
 }
 .statusBox {
     height: 25px; 
     width: 100%;
-    background: #ad3431;
+    /* CUSTOMIZABLE background: #ad3431; */
     color: white;
 }
 .statusBox a {
-    color: white;
+    /* CUSTOMIZABLE color: white; */
 }
 .statusBox a:link {
-    color: white;
+    /* CUSTOMIZABLE color: white; */
 }
 .statusBox a:visited {
-    color: white;
+    /* CUSTOMIZABLE color: white; */
 }
 .bannerLeft {
     float: left; 
@@ -33,7 +33,7 @@ roller.css: Base CSS styles for Roller web UI (colors, fonts, etc.)
 .sidebarfade {
     padding: 0px; 
     width: 100%;
-    background: url("images/two-sidebarfade.png") repeat-x top;
+    /* CUSTOMIZABLE background: url("images/two-sidebarfade.png") repeat-x top; */
 }
 .sidebarfadeBody {
     padding: 0px 5px 0px 5px; 
@@ -63,20 +63,20 @@ p.pagetip {
 }
 h1 {
     background: transparent;
-    color: #ad3537;
+    /* CUSTOMIZABLE color: #ad3537; */
     font-size: x-large;
     font-weight: bold;
     margin: 10px 0px 5px 0px;
 }
 h2 {
     background: transparent;
-    color: #ad3537;
+    /* CUSTOMIZABLE color: #ad3537; */
     font-size: large;
     font-weight: bold;
 }
 h3 {
     background: transparent;
-    color: #ad3537;
+    /* CUSTOMIZABLE color: #ad3537; */
     font-weight: bold;
 }
 div.sidebarfade h3 {
@@ -98,12 +98,12 @@ a {
 }
 a:link {
     background: transparent;
-    color: #ad3537;
+    /* CUSTOMIZABLE color: #ad3537; */
     text-decoration: underline;
 }
 a:visited {
     background: transparent;
-    color: #ad3537;
+    /* CUSTOMIZABLE color: #ad3537; */
     text-decoration: underline;
 }
 a:hover {
@@ -210,14 +210,13 @@ table.rollertable {
 }
 table.rollertable th, table.rollertable th {
     border: 1px solid #ccc;
-    background: #c6ab74;
+    /* CUSTOMIZABLE background: #c6ab74; */
 }
 table.rollertable th {
-    font-size: 1.5em;
     color: white;
 }
 table.rollertable td, table.rollertable tbody td {
-    border: 1px solid #c6ab74;
+    /* CUSTOMIZABLE border: 1px solid #c6ab74; */
     vertical-align: top;
 }
 table.rollertable tbody td {
@@ -421,23 +420,23 @@ Main page styles
 div.entryTitleBox {
    padding: 4px;
    margin: 4px 0px 4px 0px;
-   background: #c6ab74;
-   color: white;
+   /* CUSTOMIZABLE background: #c6ab74; */
+   /* CUSTOMIZABLE color: white; */
    font-size: medium;
 }
 div.entryBox {
    padding: 4px;
    margin: 4px 0px 4px 0px;
-   border: 1px #c6ab74 solid;
+   /* CUSTOMIZABLE border: 1px #c6ab74 solid;
 }
 div.entryBoxPinned {
    padding: 4px;
    margin: 4px 0px 4px 0px;
    border: 1px #c0c0c0 solid;
-   background: #e5e5e5;
+   /* CUSTOMIZABLE background: #e5e5e5; */
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
-   color: #ad3537;
+   /* CUSTOMIZABLE color: #ad3537; */
    font-size: medium;
    font-weight: bold;
 }
@@ -484,7 +483,7 @@ div.previewEntry {
 }
 div.centerTitle {
     border: 1px solid #ccc;
-    background: #c6ab74;
+    /* CUSTOMIZABLE background: #c6ab74; */
     color: black;
     font-weight: bolder;
     font-size: large;
@@ -492,12 +491,12 @@ div.centerTitle {
 }
 div.control {
     width: 100%; 
-    background: #c6ab74;
+    /* CUSTOMIZABLE background: #c6ab74; */
 }
 div.controlToggle {
     width: 100%; 
     height: 20px;
-    background: url("images/two-togglegrey.png") repeat-x top;
+    /* background: url("images/two-togglegrey.png") repeat-x top; */
 }
 .control input { 
     margin: 5px; 
