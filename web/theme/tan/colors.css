@@ -1,0 +1,102 @@
+
+/* Customizable colors and images */
+
+/* ------------------------------------------------------------------------ */
+/* add colors and images to roller.css */
+
+.bannerBox {
+    background: url("two-banner.png") repeat-x top;
+}
+.sidebarfade {
+    background: url("two-sidebarfade.png") repeat-x top;
+}
+.statusBox {
+    background: #ad3431;
+    color: white;
+}
+.statusBox a {
+    color: white;
+}
+.statusBox a:link {
+    color: white;
+}
+.statusBox a:visited {
+    color: white;
+}
+h1 {
+    color: #ad3537;
+}
+h2 {
+    color: #ad3537;
+}
+h3 {
+    background: transparent;
+    color: #ad3537;
+    font-weight: bold;
+}
+a:link {
+    color: #ad3537;
+}
+a:visited {
+    color: #ad3537;
+}
+table.rollertable th, table.rollertable th {
+    background: #c6ab74;
+}
+table.rollertable td, table.rollertable tbody td {
+    border: 1px solid #c6ab74;
+}
+a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
+   color: #ad3537;
+}
+div.centerTitle {
+    background: #c6ab74;
+}
+div.control {
+    background: #c6ab74; 
+}
+div.controlToggle {
+    background: url("two-togglegrey.png") repeat-x top; 
+}
+div.entryTitleBox {
+   background: #c6ab74; 
+   color: white; 
+}
+div.entryBox {
+   border: 1px #c6ab74 solid;
+}
+div.entryBoxPinned {
+   background: #e5e5e5; 
+}
+a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
+   color: #ad3537; 
+   font-size: medium;
+   font-weight: bold;
+}
+
+/* ------------------------------------------------------------------------ */
+/* add colors and iamges to menu.css */
+
+td.menuTabSelected {
+    background: url("menutab-sel.png");
+}
+td.menuTabUnselected {
+    background: url("menutab-unsel.png");
+}
+.menuItemTable {
+    background-color: #c6ab74;
+}
+td.menuTabSelected a:link, td.menuTabSelected a:visited, td.menuTabSelected a:hover, td.menuTabSelected a:active {
+    color: black;
+}
+td.menuTabUnselected a:link, td.menuTabUnselected a:visited, td.menuTabUnselected a:hover, td.menuTabUnselected a:active {
+    color: black;
+}
+a.menuItemSelected:link, a.menuItemSelected:visited, a.menuItemSelected:hover, a.menuItemSelected:active {
+    color: black;
+}
+a.menuItemUnselected:link, a.menuItemUnselected:visited, a.menuItemUnselected:hover, a.menuItemUnselected:active {
+    color: black;
+}
+
+

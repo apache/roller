@@ -18,21 +18,21 @@ div.menu-tr {
 /* style selected and unselected menu links*/
 
 td.menuTabSelected a:link, td.menuTabSelected a:visited, td.menuTabSelected a:hover, td.menuTabSelected a:active {
-    color: black;
+    /* CUSTOMIZABLE color: black; */
     text-decoration: none;
     font-weight: bold;
 }
 td.menuTabUnselected a:link, td.menuTabUnselected a:visited, td.menuTabUnselected a:hover, td.menuTabUnselected a:active {
-    color: black;
+    /* CUSTOMIZABLE color: black; */
     text-decoration: none;
 }
 a.menuItemSelected:link, a.menuItemSelected:visited, a.menuItemSelected:hover, a.menuItemSelected:active {
-    color: black;
+    /* CUSTOMIZABLE color: black; */
     text-decoration: none;
     font-weight: bold;
 }
 a.menuItemUnselected:link, a.menuItemUnselected:visited, a.menuItemUnselected:hover, a.menuItemUnselected:active {
-    color: black;
+    /* CUSTOMIZABLE color: black; */
     text-decoration: none;
 }
 
@@ -49,12 +49,12 @@ td.menuTabSeparator {
 td.menuTabSelected {
     padding: 0px; 
     margin: 0px;
-    background: url("images/menutab-sel.png");
+    /* CUSTOMIZABLE background: url("images/menutab-sel.png"); */
 }
 td.menuTabUnselected {
     padding: 0px; 
     margin: 0px;
-    background: url("images/menutab-unsel.png");
+    /* CUSTOMIZABLE background: url("images/menutab-unsel.png"); */
 }
 
 /* ----------------------------------------------------------------------
@@ -64,7 +64,7 @@ Menu item table (the bar below the tabs)
 .menuItemTable {
     width: 100%;
     height: 27px;
-    background-color: #c6ab74;
+    /* CUSTOMIZABLE background-color: #c6ab74; */
 }
 .menuItemSelected, .menuItemUnselected {
     padding: 0px 1px 0px 1px; /* TRBL */
