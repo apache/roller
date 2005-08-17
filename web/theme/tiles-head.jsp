@@ -1,11 +1,14 @@
 <%@ include file="/taglibs.jsp" %>
 
 <script type="text/javascript"
-    src="<%= request.getContextPath() %>/theme/scripts/roller.js"></script>    
+    src="<%= request.getContextPath() %>/theme/scripts/roller.js"></script> 
+   
 <link rel="stylesheet" type="text/css" media="all"
      href="<%= request.getContextPath() %>/theme/roller.css" />
+     
 <link rel="stylesheet" type="text/css" media="all"
      href="<%= request.getContextPath() %>/theme/tan/colors.css" />
+     
 <link rel="stylesheet" type="text/css" media="all"
      href="<%= request.getContextPath() %>/theme/menu.css" />
 <link rel="stylesheet" type="text/css" media="all"
