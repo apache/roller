@@ -38,8 +38,6 @@ public abstract class PlanetManagerImpl implements PlanetManager
 {
     protected Roller roller = null;
     protected PersistenceStrategy strategy;
-    protected Date lastUpdated = new Date();
-    protected Map lastUpdatedByGroup = new HashMap();
     
     // Cache up to 20 aggregations, each for up to 30 minutes
     // TODO: make this aggregation cache configurable
@@ -229,21 +227,4 @@ public abstract class PlanetManagerImpl implements PlanetManager
                 + ((endTime-startTime)/1000.0) + " seconds");
     }
 
-    public synchronized void clearCachedAggregations() 
-    {
-        aggregationsByGroup.purge();
-        topSubscriptionsByGroup.purge();
-        lastUpdatedByGroup.clear();
-        lastUpdated = new Date();
-    }
-    
-    public Date getLastUpdated()
-    {
-        return lastUpdated;
-    }
-    
-    public Date getLastUpdated(PlanetGroupData group)
-    {
-        return (Date)lastUpdatedByGroup.get(group);
-    }
 }
