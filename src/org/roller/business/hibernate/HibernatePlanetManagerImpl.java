@@ -18,8 +18,10 @@ package org.roller.business.hibernate;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.hibernate.Criteria;
 import net.sf.hibernate.HibernateException;
@@ -46,9 +48,9 @@ import org.roller.pojos.PlanetSubscriptionData;
  * @author Dave Johnson
  */
 public class HibernatePlanetManagerImpl extends PlanetManagerImpl
-{
-    private static final String NO_GROUP = "zzz_nogroup_zzz"; 
-    
+{    
+    protected Map lastUpdatedByGroup = new HashMap();
+    protected static final String NO_GROUP = "zzz_nogroup_zzz";
     private static Log logger = 
         LogFactory.getFactory().getInstance(HibernatePlanetManagerImpl.class);
 
@@ -352,6 +354,23 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
             topSubscriptionsByGroup.put(groupHandle, ret);
         }
         return ret;
+    }
+        
+    public synchronized void clearCachedAggregations() 
+    {
+        aggregationsByGroup.purge();
+        topSubscriptionsByGroup.purge();
+        lastUpdatedByGroup.clear();
+    }
+    
+    public Date getLastUpdated()
+    {
+        return (Date)lastUpdatedByGroup.get(NO_GROUP);
+    }
+    
+    public Date getLastUpdated(PlanetGroupData group)
+    {
+        return (Date)lastUpdatedByGroup.get(group);
     }
 }
 
