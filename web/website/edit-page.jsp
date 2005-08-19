@@ -23,12 +23,14 @@
             </td>
         </tr>
         <tr>
-            <td><fmt:message key="pageForm.template" /><br />
-            <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
+
             </td>
         </tr>
     </table>
-
+    
+    <fmt:message key="pageForm.template" /><br />
+    <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
+            
     <html:hidden property="id"/>
     <html:hidden property="name"/>
 

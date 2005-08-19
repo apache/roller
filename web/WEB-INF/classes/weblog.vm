@@ -240,38 +240,6 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
 #end
 
 #**
- * Display link to chronologically previous entry in the
- * same category (if specified).
-**#
-#macro( showPreviousEntryLink $category)
-    <span id="previousEntry">
-    #if( $pageModel.previousEntry )
-        #if ( $category != 'nil' )#set( $catPath = $category )#end  ## was a category supplied?
-        #set( $previousEntry = $pageModel.previousEntry )
-        <a href="$ctxPath$previousEntry.getPermaLink($catPath)"
-            title="Previous Entries"
-            >&laquo; $utilities.truncateNicely($previousEntry.title, 30, 30, "...")</a>
-    #end
-    </span>
-#end
-
-#**
- * Display link to chronologically next entry in the
- * same category (if specified).
-**#
-#macro( showNextEntryLink $category)
-    <span id="nextEntry">
-    #if( $pageModel.nextEntry )
-        #if ( $category != 'nil' )#set( $catPath = $category )#end  ## was a category supplied?
-        #set( $nextEntry = $pageModel.nextEntry )
-        <a href="$ctxPath$nextEntry.getPermaLink($catPath)"
-            title="Next Entries"
-            >$utilities.truncateNicely($nextEntry.title, 30, 30, "...") &raquo;</a>
-    #end
-    </span>
-#end
-
-#**
  * Shows weblog entries from specified category 
  * using specified page as a "day template" for the display of each day.
  * If a specific weblog entry is specified by the current request (using
@@ -318,11 +286,6 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
         #if( $searchResults )
             #showSearchPager()
         #end
-
-        <div class="next-previous">
-        #showPreviousEntryLink($category)
-        #showNextEntryLink($category)
-        </div>
     #end
 #end
 
@@ -431,27 +394,55 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
  * display link to "main" page if either is present.
 **#
 #macro( showNextPreviousLinks )
+    #set( $npcat = 'nil' )
     #set( $catLink = "" )
-    #if ( $catPath ) #set( $catLink = "?catname=$catPath" ) #end
+    #if ( $catPath && $catPath != "") 
+        #set( $npcat = $catPath )
+        #set( $catLink = "?catname=$catPath" ) 
+    #end
     <div class="next-previous">
     #if ($pageModel.previousEntry)
-        #set( $previousEntry = $pageModel.previousEntry )
-        <a href="$ctxPath/page/$userName/$page.link/$utilities.encode($previousEntry.anchor)$catLink"
-            title="$previousEntry.title"
-            >&laquo; $utilities.truncateNicely($previousEntry.title, 30, 30, "...")</a> |
+        #showPrevEntryLink($npcat) |
     #end
-
     #if ( $pageModel.previousEntry || $pageModel.nextEntry)
         <a href="$ctxPath/page/$userName/$page.link$catLink">$page.name</a>
     #end
-
     #if ($pageModel.nextEntry)
-        #set( $nextEntry = $pageModel.nextEntry )
-        | <a href="$ctxPath/page/$userName/$page.link/$utilities.encode($nextEntry.anchor)$catLink"
-            title="$nextEntry.title"
-            >$utilities.truncateNicely($nextEntry.title, 30, 30, "...") &raquo;</a>
+        | #showNextEntryLink($npcat)
     #end
     </div>
+#end
+
+#**
+ * Display link to chronologically previous entry in the
+ * same category (if specified).
+**#
+#macro( showPrevEntryLink $category)
+    <span id="previousEntry">
+    #if( $pageModel.previousEntry )
+        #set( $prev = $pageModel.previousEntry )
+        #set( $prevURL = "$baseURL/page/${prev.website.user.userName}/#formatDate($plainFormat ${prev.pubTime})" )
+        #if ( $category != 'nil' ) #set( $prevURL = "$prevURL?catname=$category" )#end
+        <a href="$prevURL" title="Previous Entries"
+            >&laquo; $utilities.truncateNicely($prev.title, 30, 30, "...")</a>
+    #end
+    </span>
+#end
+
+#**
+ * Display link to chronologically next entry in the
+ * same category (if specified).
+**#
+#macro( showNextEntryLink $category)
+    <span id="nextEntry">
+    #if( $pageModel.nextEntry )
+        #set( $next = $pageModel.nextEntry )
+        #set( $nextURL = "$baseURL/page/${next.website.user.userName}/#formatDate($plainFormat ${next.pubTime})" )
+        #if ( $category != 'nil' ) #set( $nextURL = "$nextURL?catname=$category" )#end 
+        <a href="$nextURL" title="Next Entries"
+            >$utilities.truncateNicely($next.title, 30, 30, "...") &raquo;</a>
+    #end
+    </span>
 #end
 
 #**
