@@ -1,10 +1,9 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <%@ page import="org.roller.presentation.weblog.actions.WeblogQueryPageModel" %>
 <%
 WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model");
 %>
 
-<h1><fmt:message key="weblogEntryQuery.title" /></h1>
 <p class="subtitle">
     <fmt:message key="weblogEntryQuery.subtitle" >
         <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -58,8 +57,6 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
    <fmt:message key="weblogEntryQuery.noneFound" />
    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 </c:if>
-   
-<%@ include file="/theme/footer.jsp" %>
 
 <script type="text/javascript">
 <!--

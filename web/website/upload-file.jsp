@@ -1,8 +1,7 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <roller:StatusMessage/>
 
-<h1><fmt:message key="uploadFiles.title" /></h1>
 <p class="subtitle">
     <fmt:message key="uploadFiles.subtitle" >
         <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -41,5 +40,5 @@ a name reference and IE seems to only focus on file inputs via elements[0]?
 </script>
 
 
-<%@ include file="/theme/footer.jsp" %>
+
 

@@ -67,11 +67,15 @@ div.entryBox {
 }
 div.entryBoxPinned {
    background: #e5e5e5; 
+   border: 1px #c0c0c0 solid;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
    color: #ad3537; 
    font-size: medium;
    font-weight: bold;
+}
+div.yourWeblogBox {
+   border-top: 1px #c6ab74 solid;
 }
 
 /* ------------------------------------------------------------------------ */

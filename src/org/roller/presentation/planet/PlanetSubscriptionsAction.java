@@ -16,6 +16,7 @@
 package org.roller.presentation.planet;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +96,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
                 form.setGroupHandle(groupHandle);
                 request.setAttribute("model", 
                     new SubscriptionsPageModel(
-                            targetGroup, request, response, mapping));
+                            targetGroup, request, response, mapping, form));
             }
             else
             {
@@ -134,7 +135,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
                 form.setGroupHandle(groupHandle);
                 request.setAttribute("model", 
                     new SubscriptionsPageModel(
-                            targetGroup, request, response, mapping));
+                            targetGroup, request, response, mapping, form));
             }
             else
             {
@@ -185,7 +186,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
                     form.setGroupHandle(groupHandle);
                     request.setAttribute("model", 
                         new SubscriptionsPageModel(
-                                targetGroup, request, response, mapping));
+                                targetGroup, request, response, mapping, form));
                     
                     ActionMessages messages = new ActionMessages();
                     messages.add(null, 
@@ -264,7 +265,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
             }
             request.setAttribute("model", 
                 new SubscriptionsPageModel(
-                        targetGroup, request, response, mapping));
+                        targetGroup, request, response, mapping, form));
         }
         catch (RollerException e)
         {
@@ -350,13 +351,17 @@ public final class PlanetSubscriptionsAction extends DispatchAction
     {
         private List subscriptions = null;
         private boolean unconfigured = false;
+        private PlanetSubscriptionFormEx form = null;
+        
         public SubscriptionsPageModel(
                 PlanetGroupData group,
                 HttpServletRequest request,
                 HttpServletResponse response,
-                ActionMapping mapping) throws RollerException
+                ActionMapping mapping, 
+                PlanetSubscriptionFormEx form) throws RollerException
         {
-            super(request, response, mapping);
+            super("dummy", request, response, mapping);
+            this.form = form;
             if (group != null) 
             {
                 Set subsSet = group.getSubscriptions();
@@ -367,10 +372,26 @@ public final class PlanetSubscriptionsAction extends DispatchAction
                 unconfigured = true;
             }
         }
+       
+        public String getTitle()
+        {
+            if (!form.getGroupHandle().equals("external")) 
+            {
+                return MessageFormat.format(
+                    bundle.getString("planetSubscriptions.titleGroup"), 
+                    new String[] {form.getGroupHandle()});
+            }
+            else 
+            {
+                return bundle.getString("planetSubscriptions.title");
+            }
+        }
+        
         public List getSubscriptions()
         {
             return subscriptions;
         }
+        
         public boolean isUnconfigured()
         {
             return unconfigured;

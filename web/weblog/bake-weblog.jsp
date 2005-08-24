@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 
 <div id="content" style="margin-top: 40px">
 
@@ -12,5 +12,3 @@
         <input type=hidden name="method" value="bake" />
     </html:form>
 </div>
-
-<%@ include file="/theme/footer.jsp"%>

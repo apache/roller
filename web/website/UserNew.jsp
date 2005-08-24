@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <%
 String ctxPath = request.getContextPath();
 boolean allowNewUsers = RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
@@ -17,7 +17,6 @@ function cancel() {
 -->
 </script>
 
-<h1><fmt:message key="newUser.addNewUser" /></h1>
 <p><fmt:message key="userRegister.prompt" /></p>
 
 <html:form action="/user" method="post" focus="userName">
@@ -93,5 +92,4 @@ function cancel() {
 } // end allowNewUsers check
 %>
 
-<%@ include file="/theme/footer.jsp"%>
 

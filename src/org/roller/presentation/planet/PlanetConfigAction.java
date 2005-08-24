@@ -69,8 +69,8 @@ public final class PlanetConfigAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isAdminUser())
             {
-                BasePageModel pageModel = 
-                        new BasePageModel(request, response, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                    "planetConfig.pageTitle", request, response, mapping);
                 request.setAttribute("model",pageModel);                
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
@@ -112,8 +112,8 @@ public final class PlanetConfigAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isAdminUser())
             {
-                BasePageModel pageModel = 
-                        new BasePageModel(request, response, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                    "planetConfig.pageTitle", request, response, mapping);
                 request.setAttribute("model",pageModel);                
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
@@ -169,8 +169,8 @@ public final class PlanetConfigAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isAdminUser())
             {
-                BasePageModel pageModel = 
-                        new BasePageModel(request, response, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                    "planetConfig.pageTitle", request, response, mapping);
                 request.setAttribute("model",pageModel);                
                 Roller roller = RollerFactory.getRoller();
                 RefreshEntriesTask task = new RefreshEntriesTask();
@@ -206,8 +206,8 @@ public final class PlanetConfigAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if (RollerSession.getRollerSession(request).isAdminUser())
             {
-                BasePageModel pageModel = 
-                        new BasePageModel(request, response, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                    "planetConfig.pageTitle", request, response, mapping);
                 request.setAttribute("model",pageModel);                
                 Roller roller = (Roller)RollerFactory.getRoller();
                 SyncWebsitesTask task = new SyncWebsitesTask();

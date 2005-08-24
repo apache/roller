@@ -23,8 +23,8 @@
 <body>
 <div id="wrapper"> 
    
-    <div id="header">
-        <tiles:insert attribute="status" />
+    <div id="banner">
+        <tiles:insert attribute="banner" />
     </div>
     
     <div id="leftcontent"> 

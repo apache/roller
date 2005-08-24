@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <% pageContext.setAttribute("leftPage","/website/YourWebsitesSidebar.jsp"); %>
 
 <div class="prop"></div> <%-- force minimum height --%>
@@ -46,12 +46,13 @@ function resignWebsite(id,handle)
     <input type="hidden" name="websiteId" value="" />
     <input type="hidden" name="method" value="select" />		  
 
+<p class="subtitle"><fmt:message key="yourWebsites.subtitle" /></p>
+
 <%-- Choose appropriate prompt at start of page --%>
 <c:choose>
 
-    <c:when test="${empty model.permissions && empty model.pendings}">
-        <h1><fmt:message key="yourWebsites.title.welcomeNoBlog" /></h1>    
-        <p class="subtitle"><fmt:message key="yourWebsites.subtitle.welcomeNoBlog" /></p>        
+    <c:when test="${empty model.permissions && empty model.pendings}"> 
+        <p><fmt:message key="yourWebsites.subtitle.welcomeNoBlog" /></p>        
         <p>
         <fmt:message key="yourWebsites.prompt.welcomeNoBlog" />
         <roller:link page="/editor/createWebsite.do">
@@ -60,9 +61,8 @@ function resignWebsite(id,handle)
         </p>
     </c:when>
     
-    <c:when test="${!empty model.pendings}">    
-        <h1><fmt:message key="yourWebsites.invitations" /></h1>    
-        <p class="subtitle"><fmt:message key="yourWebsites.invitationsPrompt" /></p>
+    <c:when test="${!empty model.pendings}">      
+        <p><fmt:message key="yourWebsites.invitationsPrompt" /></p>
         
         <c:forEach var="invite" items="${model.pendings}">
             <fmt:message key="yourWebsites.youAreInvited" >
@@ -82,17 +82,12 @@ function resignWebsite(id,handle)
 </c:choose>
             
 <c:if test="${!empty model.permissions}">
-
-    <h1><fmt:message key="yourWebsites.title" /></h1>    
-    <p class="subtitle"><fmt:message key="yourWebsites.prompt" /></p>
-
-    <div class="entryTitleBox" >
-        <fmt:message key="yourWebsites.existingWebsites" />
-    </div>
+    <h2><fmt:message key="yourWebsites.weblogs.title" /></h2>
+    <p class="subtitle"><fmt:message key="yourWebsites.weblogs.prompt" /></p>
 
         <c:forEach var="perms" items="${model.permissions}">
 
-            <div class="entryBox">  
+            <div class="yourWeblogBox">  
 
                    <table width="100%">
                    <tr>
@@ -169,4 +164,4 @@ function resignWebsite(id,handle)
 
 <div class="clear"></div> <%-- force minimum height --%>
 
-<%@ include file="/theme/footer.jsp" %>
+

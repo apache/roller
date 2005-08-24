@@ -31,9 +31,10 @@ import org.roller.presentation.RollerRequest;
 
 
 /**
- * Base class for both common and custom ping target operations.  The methods here apply to
- * creating, editing and removing ping targets.  Operations for maintaining automatic ping
- * configurations are handled by {@link PingSetupAction}.
+ * Base class for both common and custom ping target operations.  The methods 
+ * here apply to creating, editing and removing ping targets.  Operations for 
+ * maintaining automatic ping configurations are handled by 
+ * {@link PingSetupAction}.
  */
 public abstract class BasePingTargetsAction extends DispatchAction
 {
@@ -42,6 +43,10 @@ public abstract class BasePingTargetsAction extends DispatchAction
     protected static final String PING_TARGET_EDIT_PAGE = "pingTargetEdit.page";
     protected static final String PING_TARGET_DELETE_PAGE = "pingTargetDeleteOK.page";
     protected static final String ACCESS_DENIED_PAGE = "access-denied";
+    
+    public abstract String getPingTargetsTitle();
+    public abstract String getPingTargetEditTitle();
+    public abstract String getPingTargetDeleteOKTitle();    
 
     public BasePingTargetsAction() {
 
@@ -84,7 +89,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         try
         {
-            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            BasePageModel pageModel = 
+                new BasePageModel(getPingTargetsTitle(), req, res, mapping);
             req.setAttribute("model",pageModel);            
             if (!hasRequiredRights(rreq))
             {
@@ -122,7 +128,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
         PingTargetForm pingTargetForm = (PingTargetForm) form;
         try
         {
-            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            BasePageModel pageModel = 
+                new BasePageModel(getPingTargetEditTitle(), req, res, mapping);
             req.setAttribute("model",pageModel);            
             if (!hasRequiredRights(rreq))
             {
@@ -186,7 +193,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
                                 HttpServletRequest req, HttpServletResponse res)
         throws Exception
     {
-        BasePageModel pageModel = new BasePageModel(req, res, mapping);
+        BasePageModel pageModel = 
+            new BasePageModel(getPingTargetEditTitle(), req, res, mapping);
         req.setAttribute("model",pageModel);            
         return mapping.findForward(PING_TARGET_EDIT_PAGE);
     }
@@ -209,7 +217,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         try
         {
-            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            BasePageModel pageModel = 
+                new BasePageModel(getPingTargetEditTitle(), req, res, mapping);
             req.setAttribute("model",pageModel);            
             if (!hasRequiredRights(rreq))
             {
@@ -244,7 +253,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         try
         {
-            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            BasePageModel pageModel = new BasePageModel(
+                    getPingTargetDeleteOKTitle(), req, res, mapping);
             req.setAttribute("model",pageModel);            
             if (!hasRequiredRights(rreq))
             {

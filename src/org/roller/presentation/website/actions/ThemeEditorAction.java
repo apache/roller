@@ -83,8 +83,8 @@ public class ThemeEditorAction extends DispatchAction {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rses.isUserAuthorizedToAdmin() ) {
                 
-                BasePageModel pageModel = 
-                        new BasePageModel(request, response, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                        "themeEditor.title", request, response, mapping);
                 request.setAttribute("model",pageModel);          
                     
                 // get users current theme and our themes list
@@ -145,8 +145,8 @@ public class ThemeEditorAction extends DispatchAction {
                 ThemeManager themeMgr = roller.getThemeManager();
                 
                     
-                BasePageModel pageModel = 
-                        new BasePageModel(request, response, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                        "themeEditor.title", request, response, mapping);
                 request.setAttribute("model",pageModel);          
                     
                 String username = rses.getAuthenticatedUser().getUserName();
@@ -224,8 +224,8 @@ public class ThemeEditorAction extends DispatchAction {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rses.isUserAuthorizedToAdmin() ) {
                 
-                BasePageModel pageModel = 
-                        new BasePageModel(request, response, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                        "themeEditor.title", request, response, mapping);
                 request.setAttribute("model",pageModel);          
                     
                 String newTheme = null;
@@ -318,8 +318,8 @@ public class ThemeEditorAction extends DispatchAction {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             if ( rses.isUserAuthorizedToAdmin() ) {
                 
-                BasePageModel pageModel = 
-                        new BasePageModel(request, response, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                        "themeEditor.title", request, response, mapping);
                 request.setAttribute("model",pageModel);          
                     
                 // copy down current theme to weblog templates

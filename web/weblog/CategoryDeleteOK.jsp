@@ -1,6 +1,6 @@
 <% 
 try { 
-%><%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+%><%@ include file="/taglibs.jsp" %>
 
 <script type="text/javascript">
 <!-- 
@@ -53,8 +53,6 @@ function deleteNo()
 
 </html:form>
 
-
-<%@ include file="/theme/footer.jsp" %>
 
 <% 
 } catch (Throwable e) {

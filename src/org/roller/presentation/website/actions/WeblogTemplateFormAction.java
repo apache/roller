@@ -59,6 +59,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPages.page");
         try
         {
+            request.setAttribute("model", new BasePageModel(
+                "pagesForm.title", request, response, mapping));   
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
             if ( rses.isUserAuthorizedToAdmin() )
@@ -115,6 +117,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPage.page");
         try
         {
+            request.setAttribute("model", new BasePageModel(
+                "pageForm.title", request, response, mapping));   
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
             if ( rses.isUserAuthorizedToAdmin() )
@@ -154,6 +158,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
+            request.setAttribute("model", new BasePageModel(
+                "pagesForm.title", request, response, mapping));            
             if ( rses.isUserAuthorizedToAdmin() )
             {
                 addModelObjects(request, response, mapping);
@@ -180,6 +186,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
         throws IOException, ServletException
     {
         ActionForward forward = mapping.findForward("editPages");
+        request.setAttribute("model", new BasePageModel(
+            "pagesForm.title", request, response, mapping));
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
@@ -230,6 +238,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
         throws IOException, ServletException
     {
         ActionForward forward = mapping.findForward("removePage.page");
+        request.setAttribute("model", new BasePageModel(
+            "editPages.title.removeOK", request, response, mapping));
         try
         {
             RollerSession rses = RollerSession.getRollerSession(request);
@@ -269,6 +279,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
         {
             RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            request.setAttribute("model", new BasePageModel(
+                "pageForm.title", request, response, mapping));
             if ( rses.isUserAuthorizedToAdmin() )
             {
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
@@ -357,6 +369,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
         HttpServletResponse response)
         throws IOException, ServletException
     {
+        request.setAttribute("model", new BasePageModel(
+                "pagesForm.title", request, response, mapping));
         return (mapping.findForward("editPages"));
     }
     
@@ -369,10 +383,6 @@ public final class WeblogTemplateFormAction extends DispatchAction
     {             
         UserManager mgr = RollerFactory.getRoller().getUserManager();        
         RollerSession rses = RollerSession.getRollerSession(request);
-
-        BasePageModel pageModel = 
-            new BasePageModel(request, response, mapping);
-        request.setAttribute("model",pageModel); 
                 
         UserData user = rses.getAuthenticatedUser();
         request.setAttribute("user",user);

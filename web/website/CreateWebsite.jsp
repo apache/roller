@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
 function previewImage(theme) {
@@ -12,7 +12,6 @@ function cancel() {
 -->
 </script>
 
-<h1><fmt:message key="createWebsite.title" /></h1>
 <p class="subtitle"><fmt:message key="createWebsite.prompt" /></p>
 
 <br /> 
@@ -86,6 +85,6 @@ function cancel() {
     
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>
+
 
 

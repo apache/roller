@@ -6,12 +6,12 @@ package org.roller.presentation;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.ActionMapping;
-import org.roller.RollerException;
 import org.roller.presentation.util.StrutsUtil;
 
 /**
@@ -20,11 +20,16 @@ import org.roller.presentation.util.StrutsUtil;
  */
 public class BasePageModel
 {
+    protected static ResourceBundle bundle = 
+        ResourceBundle.getBundle("ApplicationResources");  
+    
+    private String titleKey = null;
     private HttpServletRequest request = null;
     private HttpServletResponse response = null;
     private ActionMapping mapping = null;
     
     public BasePageModel(
+            String titleKey,
             HttpServletRequest request,
             HttpServletResponse response,
             ActionMapping mapping)
@@ -32,10 +37,16 @@ public class BasePageModel
         this.request = request;
         this.response = response;
         this.mapping = mapping;
+        this.titleKey = titleKey;
         request.setAttribute("locales", StrutsUtil.getLocaleBeans());        
         request.setAttribute("timeZones", StrutsUtil.getTimeZoneBeans());        
     }
 
+    public String getTitle() 
+    {
+        return bundle.getString(titleKey);
+    }
+    
     public String getBaseURL()
     {
         RollerContext rctx = RollerContext.getRollerContext(request);

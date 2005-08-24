@@ -3,8 +3,7 @@ page import="org.roller.presentation.MainPageAction" %><%@
 page import="java.util.Locale" %><%
 pageContext.setAttribute("leftPage","main-sidebar.jsp");
 %><%@ 
-include file="/taglibs.jsp" %><%@ 
-include file="/theme/header.jsp" %><%
+include file="/taglibs.jsp" %><%
 request.setAttribute("pinnedPosts",
 	((MainPageAction.MainPageData)request.getAttribute("data")).getWeblogEntriesPinnedToMain(5));
 request.setAttribute("recentPosts",
@@ -92,7 +91,5 @@ request.setAttribute("popularWebsites",
 
          </div>
     </c:forEach>
-
-<%@ include file="/theme/footer.jsp" %>
 
 

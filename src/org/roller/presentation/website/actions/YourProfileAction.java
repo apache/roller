@@ -1,8 +1,6 @@
 package org.roller.presentation.website.actions;
 
 import java.io.IOException;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +19,6 @@ import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
 import org.roller.presentation.BasePageModel;
-import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.UserFormEx;
 import org.roller.util.StringUtils;
@@ -81,8 +78,8 @@ public class YourProfileAction extends UserBaseAction
             form.setPasswordConfirm(null);
             form.setLocale(ud.getLocale());
             form.setTimeZone(ud.getTimeZone());
-            request.setAttribute(
-                    "model", new BasePageModel(request, response, mapping));
+            request.setAttribute("model", new BasePageModel(
+                "yourProfile.title", request, response, mapping));
         }
         catch (Exception e)
         {
@@ -153,8 +150,8 @@ public class YourProfileAction extends UserBaseAction
                 
                 RollerFactory.getRoller().commit();
 
-                request.setAttribute(
-                        "model", new BasePageModel(request, response, mapping));
+                request.setAttribute("model", new BasePageModel(
+                        "yourProfile.title", request, response, mapping));
                 
                 //msgs.add(null, new ActionMessage("yourProfile.saved"));
                 saveMessages(request, msgs);

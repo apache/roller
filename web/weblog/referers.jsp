@@ -1,7 +1,6 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <%-- Form allows deleting of referers --%>
-<h1><fmt:message key="referers.todaysReferers" /></h1>
 <p class="subtitle">
     <fmt:message key="referers.subtitle" >
         <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -50,4 +49,3 @@
     <input type="submit" value='<fmt:message key="referers.reset" />' /></input>
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>

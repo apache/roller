@@ -95,7 +95,7 @@ public class ExportEntriesAction extends DispatchAction
             else
             {
                 request.setAttribute("model",
-                    new BasePageModel(request, response, mapping));
+                    new BasePageModel("", request, response, mapping));
             }
         }
         catch (Exception e)
@@ -133,7 +133,7 @@ public class ExportEntriesAction extends DispatchAction
             if ( rollerSession.isUserAuthorizedToAdmin() )
             {               
                 request.setAttribute("model",
-                                     new BasePageModel(request, response, mapping));
+                        new BasePageModel("", request, response, mapping));
                 
                 Locale locale = Locale.getDefault();//rreq.getWebsite().getLocaleInstance();
                 final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);

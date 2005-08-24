@@ -82,7 +82,7 @@ public class WeblogEntryPageModel extends BasePageModel
             WeblogEntryFormEx form,
             PageMode mode) throws RollerException
     {
-        super(request, response, mapping);
+        super("dummy", request, response, mapping);
         this.rollerRequest = RollerRequest.getRollerRequest(request);  
         this.form = form;
         this.mode = mode;
@@ -94,6 +94,15 @@ public class WeblogEntryPageModel extends BasePageModel
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             comments = wmgr.getComments(form.getId(), false);
         }
+    }
+    
+    public String getTitle() 
+    {
+        if (StringUtils.isEmpty(form.getId()))
+        {
+            return bundle.getString("weblogEdit.title.newEntry");
+        }
+        return bundle.getString("weblogEdit.title.editEntry");
     }
 
     public String getBaseURL()

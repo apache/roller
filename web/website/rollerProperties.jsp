@@ -1,6 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jstl/xml" prefix="x" %>
 <%@ include file="/taglibs.jsp" %>
-<%@ include file="/theme/header.jsp" %>
 
 <%-- Start by parsing our config defs using the jstl xml toolkit --%>
 <%-- Then we'll progress through the config defs and print out the form --%>
@@ -11,7 +10,6 @@
 
 <roller:StatusMessage/>
 
-<h1><fmt:message key="configForm.title" /></h1>
 <p class="subtitle"><fmt:message key="configForm.subtitle" /></a>
 <p><fmt:message key="configForm.prompt" /></a>
 
@@ -87,5 +85,3 @@
     
 <form>
 
-
-<%@ include file="/theme/footer.jsp" %>

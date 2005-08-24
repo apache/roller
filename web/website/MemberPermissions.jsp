@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <div class="prop"></div> <%-- force minimum height --%>
         
@@ -18,7 +18,6 @@ function save() {
 // -->
 </script>
 
-<h1><fmt:message key="memberPermissions.title" /></h1>
 <p class="subtitle">
     <fmt:message key="memberPermissions.subtitle" >
         <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -86,6 +85,6 @@ function save() {
     
 <div class="clear"></div> <%-- force minimum height --%>
         
-<%@ include file="/theme/footer.jsp" %>
+
 
 

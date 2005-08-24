@@ -25,5 +25,4 @@
     </div>
 </div>	
 
-<%@ include file="/theme/footer.jsp" %>
 

@@ -105,7 +105,8 @@ public final class WebsiteFormAction extends DispatchAction
                 request.setAttribute("editorPagesList", epages);
                 
                     
-                BasePageModel pageModel = new BasePageModel(request, response, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                    "websiteSettings.title", request, response, mapping);
                 request.setAttribute("model",pageModel);   
                     
                 rses.setCurrentWebsite(website);
@@ -177,7 +178,8 @@ public final class WebsiteFormAction extends DispatchAction
                         org.apache.commons.lang.StringUtils.deleteWhitespace(editorPages), ","));
                     request.setAttribute("editorPagesList", epages);   
                     
-                    BasePageModel pageModel = new BasePageModel(request, response, mapping);
+                    BasePageModel pageModel = new BasePageModel(
+                        "websiteSettings.title", request, response, mapping);
                     request.setAttribute("model",pageModel);                
                 /*
                 }

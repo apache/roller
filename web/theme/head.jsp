@@ -1,5 +1,10 @@
 <%@ include file="/taglibs.jsp" %>
 
+<%-- 
+This default stuff goes in the HTML head element of each page
+You can override it with your own file via WEB-INF/tiles-def.xml
+--%>
+
 <script type="text/javascript"
     src="<%= request.getContextPath() %>/theme/scripts/roller.js"></script> 
    

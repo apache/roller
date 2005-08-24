@@ -1,7 +1,6 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
-<h1><fmt:message key="pings.title" /></h1>
 <p class="subtitle">
    <fmt:message key="pings.subtitle" >
        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -186,4 +185,4 @@
   </c:if><!-- end if non-empty custom targets list -->
 </c:if><!-- end if custom ping targets are allowed -->
 
-<%@ include file="/theme/footer.jsp" %>
+
