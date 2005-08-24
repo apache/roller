@@ -451,3 +451,24 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
 #macro( showAnchorTag $entry )
     <a name="$utilities.encode($entry.anchor)" id="$utilities.encode($entry.anchor)"></a>
 #end
+
+#**
+ * Display a trackback auto-discovery comment for a WeblogEntry.
+ **#
+#macro( showTrackbackAutodiscovery $entry )
+<!--
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:Description
+    rdf:about="$absBaseURL$entry.permaLink"
+    trackback:ping="#showTrackbackURL($entry)"
+    dc:title="$entry.title"
+    dc:identifier="$absBaseURL$entry.permaLink"
+    dc:subject="$entry.category.name"
+    dc:description="$entry.title"
+    dc:creator="$entry.website.user.userName"
+    dc:date="$entry.pubTime" />
+</rdf:RDF>
+-->
+#end
