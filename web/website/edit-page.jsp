@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
 function previewImage(theme) {
@@ -16,7 +16,10 @@ function cancel() {
 
 <html:form action="/editor/page" method="post">
 
-	<h1><fmt:message key="pageForm.editPage" />:<bean:write name="weblogTemplateForm" property="name" /></h1>
+	<p class="subtitle">
+        <fmt:message key="pageForm.editPage" />:
+        <bean:write name="weblogTemplateForm" property="name" />
+	</p>
 	
     <table>
         <tr>
@@ -61,6 +64,5 @@ doesn't seem to work for forms with duplicate named elements.
 // -->
 </script>
 
-<%@ include file="/theme/footer.jsp" %>
 
 

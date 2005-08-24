@@ -1,5 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
-<% pageContext.setAttribute("leftPage","/weblog/CategoriesSidebar.jsp"); %>
+<%@ include file="/taglibs.jsp" %>
 
 <%-- JavaScript for categories table --%> 
 <script type="text/javascript">
@@ -24,10 +23,8 @@ function onMove()
 //-->
 </script>
 
-<p>
 <c:choose>
-    <c:when test="${empty categoryPath}">
-    <h1><fmt:message key="categoriesForm.rootTitle" /></h1>
+    <c:when test="${empty model.categoryPath}">
     <p class="subtitle">
         <fmt:message key="categoriesForm.subtitle" >
             <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -38,28 +35,23 @@ function onMove()
     </p> 
     </c:when>
     
-    <c:when test="${!(empty categoryPath)}">
-        <h1>
-            <fmt:message key="categoriesForm.parent" />
-            [<c:out value="${category.name}" />]
-        </h1>
+    <c:otherwise>
         <p>
         <b><fmt:message key="categoriesForm.path" /></b>:
-        <c:forEach var="category" items="${categoryPath}">
+        <c:forEach var="loopcategory" items="${model.categoryPath}">
             /
             <roller:link page="/editor/categories.do">
                 <roller:linkparam id="method" value="selectCategory" />
                 <roller:linkparam 
                     id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
-                    name="category" property="id" />
-                <c:out value="${category.name}" />
+                    name="loopcategory" property="id" />
+                <c:out value="${loopcategory.name}" />
             </roller:link>
         </c:forEach>
         </p>
         <p><fmt:message key="categoriesForm.categoryPrompt" /></p>
-    </c:when>
+    </c:otherwise>
 </c:choose>
-</p>
 
 
 <%-- Form is a table of categories each with checkbox --%>
@@ -104,12 +96,12 @@ function onMove()
     </tr>
 
     <%-- Categories --%>
-    <c:forEach var="category" items="${categories}" >
+    <c:forEach var="loopcategory" items="${model.category.weblogCategories}" >
         <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">
 
             <td class="rollertable">
                 <html:multibox property="selectedCategories">
-                    <c:out value="${category.id}" />
+                    <c:out value="${loopcategory.id}" />
                 </html:multibox>
             </td>
 
@@ -121,20 +113,20 @@ function onMove()
                    <roller:linkparam id="method" value="selectCategory" />
                    <roller:linkparam 
                        id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
-                       name="category" property="id" />
-                   <str:truncateNicely lower="15" upper="20" ><c:out value="${category.name}" /></str:truncateNicely>
+                       name="loopcategory" property="id" />
+                   <str:truncateNicely lower="15" upper="20" ><c:out value="${loopcategory.name}" /></str:truncateNicely>
                </roller:link>
             </td>
 
             <td class="rollertable">
-                <str:truncateNicely lower="30" upper="35" ><c:out value="${category.description}" /></str:truncateNicely>
+                <str:truncateNicely lower="30" upper="35" ><c:out value="${loopcategory.description}" /></str:truncateNicely>
             </td>
 
             <td class="rollertable" align="center">
                <roller:link page="/editor/categoryEdit.do">
                    <roller:linkparam 
                        id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
-                       name="category" property="id" />
+                       name="loopcategory" property="id" />
                    <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" />
                </roller:link>
             </td>
@@ -143,7 +135,7 @@ function onMove()
                <roller:link page="/editor/categoryDelete.do">
                    <roller:linkparam 
 	                   id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
-	                   name="category" property="id" />
+	                   name="loopcategory" property="id" />
                    <roller:linkparam 
 	                   id="method" value="deleteSelected" />
                    <img src='<c:url value="/images/Remove16.gif"/>' border="0" alt="icon" />
@@ -157,4 +149,3 @@ function onMove()
 
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>

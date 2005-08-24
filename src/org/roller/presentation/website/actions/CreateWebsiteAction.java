@@ -180,7 +180,7 @@ public class CreateWebsiteAction extends DispatchAction
             HttpServletResponse response, ActionMapping mapping, WebsiteData wd)
             throws RollerException
         {
-            super(request, response, mapping);
+            super("createWebsite.title", request, response, mapping);
             RollerContext rollerContext = RollerContext.getRollerContext(request);
             Roller roller = RollerFactory.getRoller();
             ThemeManager themeMgr = roller.getThemeManager();

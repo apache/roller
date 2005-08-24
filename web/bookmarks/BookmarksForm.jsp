@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <% pageContext.setAttribute("leftPage","/bookmarks/BookmarksSidebar.jsp"); %>
 
 <%-- JavaScript for bookmarks table --%> 
@@ -32,10 +32,8 @@ function onMove()
 //-->
 </script>
 
-<p>
 <c:choose>
-    <c:when test="${empty folderPath}">
-       <h1><fmt:message key="bookmarksForm.rootTitle" /></h1>
+    <c:when test="${empty model.folderPath}">
        <p class="subtitle">
            <fmt:message key="bookmarksForm.subtitle" >
                <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -46,28 +44,23 @@ function onMove()
        </p>
     </c:when>
     
-    <c:when test="${!(empty folderPath)}">
-        <h1>
-            <fmt:message key="bookmarksForm.folder" />
-            [<c:out value="${folder.name}" />]
-        </h1>
-        <p>
-        <b><fmt:message key="bookmarksForm.path" /></b>:
-        <c:forEach var="folder" items="${folderPath}">
+    <c:otherwise>
+        <p class="subtitle">
+        <fmt:message key="bookmarksForm.path" />:
+        <c:forEach var="loopfolder" items="${model.folderPath}">
             /
             <roller:link page="/editor/bookmarks.do">
                 <roller:linkparam id="method" value="selectFolder" />
                 <roller:linkparam 
                     id="<%= RollerRequest.FOLDERID_KEY %>" 
-                    name="folder" property="id" />
-                <c:out value="${folder.name}" />
+                    name="loopfolder" property="id" />
+                <c:out value="${loopfolder.name}" />
             </roller:link>
         </c:forEach>
         <p>
         <p><fmt:message key="bookmarksForm.folderPrompt" /></p>
-    </c:when>
+    </c:otherwise>
 </c:choose>
-</p>
 
 <%-- Form is a table of folders followed by bookmarks, each with checkbox --%>
 
@@ -111,12 +104,12 @@ function onMove()
     </tr>
 
     <%-- Folders --%>
-    <c:forEach var="folder" items="${folders}" >
+    <c:forEach var="loopfolder" items="${model.folder.folders}" >
         <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">
 
             <td class="rollertable">
                 <html:multibox property="selectedFolders">
-                    <c:out value="${folder.id}" />
+                    <c:out value="${loopfolder.id}" />
                 </html:multibox>
             </td>
 
@@ -128,20 +121,20 @@ function onMove()
                    <roller:linkparam id="method" value="selectFolder" />
                    <roller:linkparam 
                        id="<%= RollerRequest.FOLDERID_KEY %>" 
-                       name="folder" property="id" />
-                   <str:truncateNicely lower="15" upper="20" ><c:out value="${folder.name}" /></str:truncateNicely>
+                       name="loopfolder" property="id" />
+                   <str:truncateNicely lower="15" upper="20" ><c:out value="${loopfolder.name}" /></str:truncateNicely>
                </roller:link>
             </td>
 
             <td class="rollertable">
-                <str:truncateNicely lower="30" upper="35" ><c:out value="${folder.description}" /></str:truncateNicely>
+                <str:truncateNicely lower="30" upper="35" ><c:out value="${loopfolder.description}" /></str:truncateNicely>
             </td>
 
             <td class="rollertable" align="center">
                <roller:link page="/editor/folderEdit.do">
                    <roller:linkparam 
                        id="<%= RollerRequest.FOLDERID_KEY %>" 
-                       name="folder" property="id" />
+                       name="loopfolder" property="id" />
                    <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" />
                </roller:link>
             </td>
@@ -152,38 +145,38 @@ function onMove()
     </c:forEach>
 
     <%-- Bookmarks --%>
-    <c:forEach var="bookmark" items="${bookmarks}" >
+    <c:forEach var="loopbookmark" items="${model.folder.bookmarks}" >
         <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">
 
             <td class="rollertable">
                 <html:multibox property="selectedBookmarks">
-                    <c:out value="${bookmark.id}" />
+                    <c:out value="${loopbookmark.id}" />
                 </html:multibox>
             </td>
 
             <td class="rollertable" align="center"><img src='<c:url value="/images/Bookmark16.png"/>' alt="icon" /></td>
             
             <td class="rollertable">
-                <str:truncateNicely lower="15" upper="20" ><c:out value="${bookmark.name}" /></str:truncateNicely>
+                <str:truncateNicely lower="15" upper="20" ><c:out value="${loopbookmark.name}" /></str:truncateNicely>
             </td>
 
             <td class="rollertable">
-                <str:truncateNicely lower="30" upper="35" ><c:out value="${bookmark.description}" /></str:truncateNicely>
+                <str:truncateNicely lower="30" upper="35" ><c:out value="${loopbookmark.description}" /></str:truncateNicely>
             </td>
 
             <td class="rollertable" align="center">
                <roller:link page="/editor/bookmarkEdit.do">
                    <roller:linkparam 
                        id="<%= RollerRequest.BOOKMARKID_KEY %>" 
-                       name="bookmark" property="id" />                   
+                       name="loopbookmark" property="id" />                   
                    <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" 
                        title="<fmt:message key='bookmarksForm.edit.tip' />" />
                </roller:link>
             </td>
 
             <td class="rollertable" align="center">
-                <c:if test="${!empty bookmark.url}" >
-                   <a href="<c:out value='${bookmark.url}'/>">
+                <c:if test="${!empty loopbookmark.url}" >
+                   <a href="<c:out value='${loopbookmark.url}'/>">
                        <img src='<c:url value="/images/WebVisit16.png"/>' border="0" alt="icon" 
                            title="<fmt:message key='bookmarksForm.visitLink.tip' />" />
                    </a>
@@ -196,5 +189,3 @@ function onMove()
 </table>
 
 </html:form>
-
-<%@ include file="/theme/footer.jsp" %>

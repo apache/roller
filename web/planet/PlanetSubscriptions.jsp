@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
 function cancelEditing()
@@ -151,4 +151,3 @@ function deleteSubscription()
     <fmt:message key="planetSubscriptions.unconfigured" />
 </c:if>
 
-<%@ include file="/theme/footer.jsp" %>

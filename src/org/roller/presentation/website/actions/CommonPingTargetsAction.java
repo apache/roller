@@ -38,6 +38,19 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
         return mLogger;
     }
 
+    public String getPingTargetsTitle() 
+    {
+        return "commonPingTargets.commonPingTargets";    
+    }
+    public String getPingTargetEditTitle()
+    {
+        return "pingTarget.pingTarget";    
+    }
+    public String getPingTargetDeleteOKTitle() 
+    {
+        return "pingTarget.confirmRemoveTitle";    
+    }
+    
     /*
      * Get the ping targets for the view.  Here we return the common ping targets for the
      * entire site.

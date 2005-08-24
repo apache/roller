@@ -43,7 +43,19 @@ public class CustomPingTargetsAction
     private static Log mLogger =
         LogFactory.getFactory().getInstance(CustomPingTargetsAction.class);
 
-
+    public String getPingTargetsTitle() 
+    {
+        return "customPingTargets.customPingTargets";    
+    }
+    public String getPingTargetEditTitle()
+    {
+        return "pingTarget.pingTarget";    
+    }
+    public String getPingTargetDeleteOKTitle() 
+    {
+        return "pingTarget.confirmRemoveTitle";    
+    }
+    
     public CustomPingTargetsAction() {
         super();
     }

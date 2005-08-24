@@ -89,8 +89,8 @@ public class UserNewAction extends UserBaseAction
             userForm.setTimeZone( TimeZone.getDefault().getID() );
             userForm.setPasswordText(null);
             userForm.setPasswordConfirm(null);            
-            request.setAttribute(
-                "model", new BasePageModel(request, response, mapping));
+            request.setAttribute("model", new BasePageModel(
+                    "newUser.addNewUser", request, response, mapping));
         }
         catch (Exception e)
         {

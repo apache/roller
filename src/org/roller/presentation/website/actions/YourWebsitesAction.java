@@ -214,10 +214,11 @@ public class YourWebsitesAction extends DispatchAction
         private boolean groupBloggingEnabled = false;
         private List permissions = new ArrayList();
         private List pendings = new ArrayList();
+        
         public YourWebsitesPageModel(HttpServletRequest request,
           HttpServletResponse response, ActionMapping mapping) throws RollerException
         {
-            super(request, response, mapping);
+            super("yourWebsites.title", request, response, mapping);
             Roller roller = RollerFactory.getRoller();
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             UserData user = rollerSession.getAuthenticatedUser();
@@ -259,5 +260,6 @@ public class YourWebsitesAction extends DispatchAction
         public void setPlanetAggregatorEnabled(boolean planetAggregatorEnabled) {
             this.planetAggregatorEnabled = planetAggregatorEnabled;
         }
+    
     }
 }

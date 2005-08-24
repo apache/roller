@@ -1,7 +1,6 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
-<h1><fmt:message key="customPingTargets.customPingTargets" /></h1>
 <p class="subtitle">
    <fmt:message key="customPingTargets.subtitle" >
        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -85,4 +84,4 @@
   
 </c:choose>
 
-<%@ include file="/theme/footer.jsp" %>
+

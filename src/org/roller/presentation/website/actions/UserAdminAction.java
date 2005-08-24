@@ -2,6 +2,7 @@
 package org.roller.presentation.website.actions;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -62,9 +63,9 @@ public final class UserAdminAction extends UserBaseAction
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             if (rollerSession.isAdminUser() )
             {
-                 request.setAttribute(
-                    "model", new BasePageModel(request, response, mapping));
                 UserAdminForm userForm = (UserAdminForm)actionForm;
+                request.setAttribute("model", 
+                  new UserAdminPageModel(request, response, mapping, userForm));
                 UserManager mgr = RollerFactory.getRoller().getUserManager();                
                 if (userForm != null && userForm.getUserName() != null)
                 {
@@ -287,5 +288,28 @@ public final class UserAdminAction extends UserBaseAction
 		return edit(mapping, actionForm, request, response);
 	}
 
+    public class UserAdminPageModel extends BasePageModel 
+    {
+        private UserAdminForm userAdminForm = null;
+        public UserAdminPageModel(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            ActionMapping mapping,
+            UserAdminForm form)
+        {
+            super("dummy", request, response, mapping);
+            userAdminForm = form;
+        }
+        public String getTitle() 
+        {
+            if (StringUtils.isEmpty(userAdminForm.getUserName())) 
+            {
+                return bundle.getString("userAdmin.title.searchUser");
+            }
+            return MessageFormat.format(
+                    bundle.getString("userAdmin.title.editUser"), 
+                    new String[] { userAdminForm.getUserName() } );
+        }
+    }
 }
 

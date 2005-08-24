@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <h1><fmt:message key="maintenance.title" /></h1>
     
@@ -18,6 +18,6 @@
     		  
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>
+
 
 

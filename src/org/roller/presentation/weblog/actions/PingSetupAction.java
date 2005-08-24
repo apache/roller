@@ -97,7 +97,8 @@ public class PingSetupAction extends DispatchAction
                 return mapping.findForward("access-denied");
             }
 
-            BasePageModel pageModel = new BasePageModel(req, res, mapping);
+            BasePageModel pageModel = 
+                    new BasePageModel("pings.title", req, res, mapping);
             req.setAttribute("model",pageModel);
         
             List commonPingTargets = pingTargetMgr.getCommonPingTargets();

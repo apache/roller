@@ -3,13 +3,17 @@
  */
 package org.roller.presentation.bookmarks.actions;
 
+import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -220,76 +224,10 @@ public class BookmarksAction extends DispatchAction
         ActionMapping mapping, BookmarksForm form)
         throws RollerException
     {
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        //WebsiteData wd = rreq.getWebsite();
-        RollerSession rollerSession = RollerSession.getRollerSession(request);
-        WebsiteData wd = rollerSession.getCurrentWebsite();
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
 
-        TreeSet allFolders = new TreeSet(new FolderPathComparator());
-
-        BasePageModel pageModel = new BasePageModel(request, response, mapping);
-        request.setAttribute("model",pageModel);
-        
-        // Find folderid wherever it may be
-        String folderId = (String)request.getAttribute(RollerRequest.FOLDERID_KEY);
-        if (null == folderId)
-        {
-            folderId = request.getParameter(RollerRequest.FOLDERID_KEY);
-        }
-        if (null == folderId)
-        {
-            folderId = form.getFolderId();
-        }
-
-        FolderData folder = null;
-        if (null == folderId || folderId.equals("null"))
-        {
-            folder = bmgr.getRootFolder(wd);
-        }
-        else
-        {
-            folder = bmgr.retrieveFolder(folderId);
-        }
-        form.setFolderId(folder.getId());
-
-        request.setAttribute("folder", folder);
-        request.setAttribute("folders", folder.getFolders());
-        request.setAttribute("bookmarks", folder.getBookmarks());
-
-        if (null != folder.getParent())
-        {
-            LinkedList folderPath = new LinkedList();
-            folderPath.add(0, folder);
-            FolderData parent = folder.getParent();
-            while (parent != null)
-            {
-                folderPath.add(0, parent);
-                parent = parent.getParent();
-            }
-            request.setAttribute("folderPath", folderPath);
-
-            request.setAttribute(
-                RollerRequest.PARENTID_KEY, folder.getParent().getId());
-        }
-
-        // Build list of all folders, except for current one, sorted by path.
-        Iterator iter = bmgr.getAllFolders(wd).iterator();
-
-        // Build list of only children
-        //Iterator iter = folder.getFolders().iterator();
-
-        //int max = 20, count = 0;
-        while (iter.hasNext()) // && count < max)
-        {
-            //count++;
-            FolderData fd = (FolderData) iter.next();
-            if (!fd.getId().equals(folderId))
-            {
-                allFolders.add(fd);
-            }
-        }
-        request.setAttribute("allFolders", allFolders);
+        BookmarksPageModel pageModel = 
+                new BookmarksPageModel(request, response, mapping, form);
+        request.setAttribute("model", pageModel);
     }
 
     private static final class FolderPathComparator implements Comparator
@@ -308,5 +246,114 @@ public class BookmarksAction extends DispatchAction
             }
             return res;
         }
+    }
+    
+    public class BookmarksPageModel extends BasePageModel
+    {
+        private List folderPath = null;
+        private TreeSet allFolders = null;
+        private FolderData folder = null;   
+        
+        public BookmarksPageModel(
+                HttpServletRequest request,
+                HttpServletResponse response,
+                ActionMapping mapping,
+                BookmarksForm form) throws RollerException
+        {
+            super("",  request, response, mapping);
+            
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            //WebsiteData wd = rreq.getWebsite();
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            WebsiteData wd = rollerSession.getCurrentWebsite();
+            BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+
+            allFolders = new TreeSet(new FolderPathComparator());
+
+            // Find folderid wherever it may be
+            String folderId = (
+                    String)request.getAttribute(RollerRequest.FOLDERID_KEY);
+            if (null == folderId)
+            {
+                folderId = request.getParameter(RollerRequest.FOLDERID_KEY);
+            }
+            if (null == folderId)
+            {
+                folderId = form.getFolderId();
+            }
+
+            if (null == folderId || folderId.equals("null"))
+            {
+                folder = bmgr.getRootFolder(wd);
+            }
+            else
+            {
+                folder = bmgr.retrieveFolder(folderId);
+            }
+            form.setFolderId(folder.getId());
+
+            if (null != folder.getParent())
+            {
+                folderPath = new LinkedList();
+                folderPath.add(0, folder);
+                FolderData parent = folder.getParent();
+                while (parent != null)
+                {
+                    folderPath.add(0, parent);
+                    parent = parent.getParent();
+                }
+                request.setAttribute(
+                    RollerRequest.PARENTID_KEY, folder.getParent().getId());
+            }
+
+            // Build list of all folders, except for current one, sorted by path.
+            Iterator iter = bmgr.getAllFolders(wd).iterator();
+
+            // Build list of only children
+            //Iterator iter = folder.getFolders().iterator();
+
+            //int max = 20, count = 0;
+            while (iter.hasNext()) // && count < max)
+            {
+                //count++;
+                FolderData fd = (FolderData) iter.next();
+                if (!fd.getId().equals(folderId))
+                {
+                    allFolders.add(fd);
+                }
+            }
+            
+            // for Struts tags
+            request.setAttribute("allFolders", allFolders);            
+            request.setAttribute("folder", folder);
+        }
+        
+        public String getTitle()
+        {
+            if (folderPath == null || folderPath.isEmpty()) 
+            {
+                return bundle.getString("bookmarksForm.rootTitle");
+            }
+            else 
+            {
+                return MessageFormat.format(
+                    bundle.getString("bookmarksForm.folderTitle"),
+                    new String[] {folder.getName()});
+            }
+        }
+        public List getFolderPath() 
+        {
+            return folderPath;
+        }
+        public Set getAllFolders() 
+        {
+            return allFolders;
+        }
+        public FolderData getFolder()
+        {
+            return folder;
+        }
+                
+
     }
 }

@@ -49,7 +49,7 @@ public class WeblogQueryPageModel extends BasePageModel
             String status,
             Integer maxEntries) throws RollerException
     {
-        super(request, response, mapping);
+        super("weblogEntryQuery.title", request, response, mapping);
         rollerRequest = RollerRequest.getRollerRequest(request);
         this.request = request;
         

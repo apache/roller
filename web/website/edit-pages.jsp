@@ -1,9 +1,8 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %><%
+<%@ include file="/taglibs.jsp" %><%
 request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
 
 <roller:StatusMessage/>
 
-<h1><fmt:message key="pagesForm.title" /></h1>
 <p class="subtitle">
    <fmt:message key="pagesForm.subtitle" >
        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -63,5 +62,5 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
 
 <p><fmt:message key="pagesForm.hiddenNote" /></p>
 
-<%@ include file="/theme/footer.jsp" %>
+
 

@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
 function cancelEditing()
@@ -15,7 +15,6 @@ function deleteGroup()
 </script>
 <c:if test="${!(model.unconfigured)}" >
 
-    <h1><fmt:message key="planetGroups.pagetitle" /></h1>
     <p class="subtitle"><fmt:message key="planetGroups.subtitle" /></p>
 
     <p>
@@ -126,6 +125,6 @@ function deleteGroup()
     <fmt:message key="planetGroups.unconfigured" />
 </c:if>
 
-<%@ include file="/theme/footer.jsp" %>
+
 
 

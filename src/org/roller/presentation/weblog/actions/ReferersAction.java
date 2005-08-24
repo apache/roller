@@ -62,7 +62,8 @@ public class ReferersAction extends DispatchAction
         {
             if ( rollerSession.isUserAuthorizedToAuthor() )
             {   
-                BasePageModel pageModel = new BasePageModel(req, res, mapping);
+                BasePageModel pageModel = new BasePageModel(
+                        "referers.todaysReferers", req, res, mapping);
                 req.setAttribute("model", pageModel);
                 req.setAttribute("pageHits",
                     new Integer(refmgr.getDayHits(RollerSession.getRollerSession(req).getCurrentWebsite())));

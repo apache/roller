@@ -11,69 +11,67 @@
     background: url("two-sidebarfade.png") repeat-x top;
 }
 .statusBox {
-    background: #00038a;
-    color: white;
+    background: #dee7e7;
+    color: black;
 }
 .statusBox a {
-    color: white;
+    color: black;
 }
 .statusBox a:link {
-    color: white;
+    color: black;
 }
 .statusBox a:visited {
-    color: white;
+    color: black;
 }
 h1 {
-    color: #00038a;
+    color: #e77100;
 }
 h2 {
-    color: #00038a;
+    color: black;
 }
 h3 {
-    color: #00038a;
+    color: black;
 }
 a:link {
-    color: #00038a;
+    color: #31556b;
 }
 a:visited {
-    color: #00038a;
+    color: #31556b;
 }
 table.rollertable th, table.rollertable th {
-    background: #00038a;
+    background: #52829c;
 }
 table.rollertable td, table.rollertable tbody td {
-    border: 1px solid #00038a;
+    border: 1px solid #52829c;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
    color: black;
 }
 div.centerTitle {
-    background: #9192b0;
+    background: #dee7ef;
 }
 div.control {
-    background: #9192b0; 
+    background: #dee7ef; 
 }
 div.controlToggle {
     background: url("two-togglegrey.png") repeat-x top; 
 }
 div.entryTitleBox {
-   background: #9192b0; 
+   background: red; 
    color: white; 
 }
 div.entryBox {
-   border: 1px #9192b0 solid;
+   border: 1px red solid;
 }
 div.entryBoxPinned {
    background: #e5e5e5; 
    border: 1px #c0c0c0 solid;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
-   color: #00038a; 
-   font-size: medium;
-   font-weight: bold;
+   color: #ad3537; 
 }
 div.yourWeblogBox {
-   border-top: 1px #00038a solid;
+   border-top: 1px #ad3537 solid;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -86,7 +84,7 @@ td.menuTabUnselected {
     background: url("menutab-unsel.png");
 }
 .menuItemTable {
-    background-color: #00038a;
+    background-color: #52829c;
     color: white;
 }
 td.menuTabSelected a:link, td.menuTabSelected a:visited, td.menuTabSelected a:hover, td.menuTabSelected a:active {

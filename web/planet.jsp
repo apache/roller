@@ -2,8 +2,7 @@
 <%@ 
 page import="org.roller.presentation.planet.PlanetAction" %><%@ 
 page import="java.util.Locale" %><%@ 
-include file="/taglibs.jsp" %><%@ 
-include file="/theme/header.jsp" %>
+include file="/taglibs.jsp" %>
 
 <table>
 <tr>
@@ -167,6 +166,5 @@ request.setAttribute("featuredGroup2_entries",((PlanetAction.PlanetPageData)
 
 <br />
 
-<%@ include file="/theme/footer.jsp" %>
 <% } catch (Exception e) {e.printStackTrace();} %>
 

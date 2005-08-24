@@ -1,8 +1,7 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <roller:StatusMessage/>
 
-<h1><fmt:message key="websiteSettings.title" /></h1>
 <p class="subtitle">
    <fmt:message key="websiteSettings.subtitle" >
        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -168,5 +167,4 @@ if (emailComments) { %>
         
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>
 

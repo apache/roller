@@ -1,5 +1,5 @@
 <%@ include file="/taglibs.jsp" %>
-<%@ include file="/theme/header.jsp" %>
+
 <script type="text/javascript">
 // <!--
 function cancel() {
@@ -50,6 +50,6 @@ function cancel() {
 
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>
+
 
 

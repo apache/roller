@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <%@ page import="org.roller.pojos.*" %>
 <%@ page import="org.roller.presentation.weblog.formbeans.WeblogEntryFormEx" %>
 <%@ page import="org.roller.presentation.weblog.actions.WeblogEntryPageModel" %>
@@ -62,7 +62,6 @@ function publish() {
 
 <c:choose>
     <c:when test="${empty weblogEntryFormEx.id}">
-        <h1><fmt:message key="weblogEdit.title.newEntry" /></h1>
         <p class="subtitle">
             <fmt:message key="weblogEdit.subtitle.newEntry" >
                 <fmt:param value="${model.weblogEntry.website.handle}" />
@@ -70,7 +69,6 @@ function publish() {
         </p>
     </c:when>
     <c:otherwise>
-        <h1><fmt:message key="weblogEdit.title.editEntry" /></h1>
         <p class="subtitle">
             <fmt:message key="weblogEdit.subtitle.editEntry" >
                 <fmt:param value="${model.weblogEntry.website.handle}" />
@@ -488,7 +486,6 @@ Add this back in once it has been properly internationalized
         src="<%= request.getContextPath() %>/keepalive.jsp" ></iframe>
 --%>
 
-<%@ include file="/theme/footer.jsp" %>
 
 <script type="text/javascript">
 <!--

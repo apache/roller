@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <h2>
 <jsp:useBean id="weblogEntryFormEx"  scope="session"
@@ -32,4 +32,3 @@
     </tr>
 </table>
 
-<%@ include file="/theme/footer.jsp" %>

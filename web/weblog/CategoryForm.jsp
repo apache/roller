@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 
 <h3>
@@ -61,5 +61,3 @@
 
 </html:form>
 
-
-<%@ include file="/theme/footer.jsp" %>

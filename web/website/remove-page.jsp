@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 
 <h3>
@@ -32,5 +32,5 @@ Page id = [<jsp:getProperty name="weblogTemplateForm" property="id"/>]
 </tr>
 </table>
 
-<%@ include file="/theme/footer.jsp" %>
+
 

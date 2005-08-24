@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <h3>
 <img src='<c:url value="/images/Folder24.png" />' alt="folder" align="absmiddle" />
@@ -53,4 +53,3 @@
 
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>

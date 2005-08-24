@@ -266,7 +266,7 @@ public final class PlanetGroupsAction extends DispatchAction
             HttpServletResponse response,
             ActionMapping mapping) throws RollerException
         {
-            super(request, response, mapping);
+            super("planetGroups.pagetitle", request, response, mapping);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             Roller roller = RollerFactory.getRoller();
             PlanetManager planet = roller.getPlanetManager();            

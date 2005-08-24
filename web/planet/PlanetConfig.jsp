@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
 function refreshEntries()
@@ -18,7 +18,6 @@ function syncWebsites()
     <html:hidden property="method" value="saveConfig" />
     <html:hidden property="id" />
     
-    <h1><fmt:message key="planetConfig.pageTitle" /></h1>
     <p class="subtitle"><fmt:message key="planetConfig.subtitle" /></p>
     <p><fmt:message key="planetConfig.prompt" /></p>
 
@@ -88,7 +87,6 @@ function syncWebsites()
 </html:form>
 
 
-<%@ include file="/theme/footer.jsp" %>
 
 
 

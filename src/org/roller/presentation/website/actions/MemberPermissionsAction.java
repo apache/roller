@@ -148,7 +148,7 @@ public class MemberPermissionsAction extends DispatchAction
         public MemberPermissionsPageModel(HttpServletRequest request,
           HttpServletResponse response, ActionMapping mapping) throws RollerException
         {
-            super(request, response, mapping);
+            super("memberPermissions.title", request, response, mapping);
             Roller roller = RollerFactory.getRoller();
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             WebsiteData website = rollerSession.getCurrentWebsite();

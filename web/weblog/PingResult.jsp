@@ -1,5 +1,5 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <!-- This page consists only of result messages from the ping -->
 
@@ -12,4 +12,4 @@
 <form>
 </div>
 
-<%@ include file="/theme/footer.jsp" %>
+

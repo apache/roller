@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 // <!--
 function cancel() {
@@ -12,7 +12,6 @@ function cancel() {
 <%-- If user name is not specified, then allow user to choose a user to be loaded --%>
 <c:if test="${empty userAdminForm.userName}">
 
-    <h1><fmt:message key="userAdmin.title.searchUser" /></h1>
     <p class="subtitle"><fmt:message key="userAdmin.subtitle.searchUser" /></p>
 
     <html:form action="/admin/user" method="post" focus="userName">
@@ -43,12 +42,7 @@ function cancel() {
 <c:if test="${not empty userAdminForm.userName || userAdminForm.newUser == true}">
 
     <c:choose>
-        <c:when test="${not empty userAdminForm.userName}">
-            <h1>
-                <fmt:message key="userAdmin.title.editUser" >
-                    <fmt:param value="${userAdminForm.userName}" />
-                </fmt:message>
-            </h1>			
+        <c:when test="${not empty userAdminForm.userName}">		
             <p class="subtitle"><fmt:message key="userAdmin.subtitle.editUser" /></p>
         </c:when>
         <c:otherwise>
@@ -156,6 +150,6 @@ function cancel() {
     
 </c:if>
 
-<%@ include file="/theme/footer.jsp" %>
+
 
 

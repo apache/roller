@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <%
 // this just makes the name for a custom theme available to our jstl EL
 String customTheme = org.roller.pojos.Theme.CUSTOM;
@@ -15,7 +15,6 @@ try {
     throw new ServletException(e);
 }
 %>
-<h1><fmt:message key="themeEditor.title" /></h1>
 <p class="subtitle">
    <fmt:message key="themeEditor.subtitle" >
        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
@@ -119,4 +118,4 @@ try {
     // -->
 </script>
 
-<%@ include file="/theme/footer.jsp"%>
+

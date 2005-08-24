@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 // <!--
 function cancel() {
@@ -7,8 +7,6 @@ function cancel() {
 }
 // -->
 </script> 
-<br />
-<h1><fmt:message key="pingTarget.pingTarget" /></h1>
 
 <br />
 <html:form action="/editor/customPingTargets" method="post" focus="name">
@@ -34,4 +32,3 @@ function cancel() {
 
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>

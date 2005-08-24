@@ -1,7 +1,6 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
-<h3>
-<img src='<c:url value="/images/Bookmark24.png"/>' alt="bookmark" align="absmiddle" />
+<p class="subtitle">
 <c:if test="${state == 'add'}">
     <fmt:message key="bookmarkForm.addBookmark" />
 </c:if>
@@ -11,7 +10,7 @@
 <c:if test="${state == 'correct'}">
     <fmt:message key="bookmarkForm.correctBookmark" />
 </c:if>
-</h3>
+</p>
 
 <p>
 <b><fmt:message key="bookmarksForm.path" /></b>:
@@ -78,5 +77,3 @@
     </p>
 
 </html:form>
-
-<%@ include file="/theme/footer.jsp" %>

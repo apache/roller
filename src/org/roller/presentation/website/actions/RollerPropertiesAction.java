@@ -76,8 +76,8 @@ public class RollerPropertiesAction extends DispatchAction {
         
         ActionForward forward = mapping.findForward("rollerProperties.page");
         try {
-            BasePageModel pageModel = 
-                    new BasePageModel(request, response, mapping);
+            BasePageModel pageModel = new BasePageModel(
+                    "configForm.title", request, response, mapping);
             request.setAttribute("model",pageModel);                
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
@@ -114,8 +114,8 @@ public class RollerPropertiesAction extends DispatchAction {
         try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            BasePageModel pageModel = 
-                    new BasePageModel(request, response, mapping);
+            BasePageModel pageModel = new BasePageModel(
+                    "configForm.title", request, response, mapping);
             request.setAttribute("model",pageModel);                
             if (rollerSession.isAdminUser()) {
             

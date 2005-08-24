@@ -1,8 +1,6 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
-<br />
-<h1><fmt:message key="commonPingTargets.commonPingTargets" /></h1>
 <p class="subtitle">
     <fmt:message key="commonPingTargets.subtitle" />
 </p>
@@ -69,4 +67,3 @@
 </html:form>
 <p/>
 
-<%@ include file="/theme/footer.jsp" %>
