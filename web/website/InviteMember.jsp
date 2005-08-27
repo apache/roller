@@ -10,9 +10,7 @@ function cancel() {
 // -->
 </script> 
 
-<h1><fmt:message key="inviteMember.title" /></h1>
-
-<p><fmt:message key="inviteMember.description" /></p>
+<p class="subtitle"><fmt:message key="inviteMember.description" /></p>
 
 <html:form action="/editor/inviteMember" method="post" focus="userName">
     <input name="method" type="hidden" value="save" />

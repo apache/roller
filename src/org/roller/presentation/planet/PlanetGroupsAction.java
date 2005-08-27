@@ -69,7 +69,7 @@ public final class PlanetGroupsAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isAdminUser())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
@@ -108,7 +108,7 @@ public final class PlanetGroupsAction extends DispatchAction
         ActionForward forward = mapping.findForward("planetGroups.page");
         try
         {
-            if (RollerSession.getRollerSession(request).isAdminUser())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;              
                 form.doReset(mapping, request);
@@ -138,7 +138,7 @@ public final class PlanetGroupsAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isAdminUser())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
@@ -185,7 +185,7 @@ public final class PlanetGroupsAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isAdminUser())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 PlanetGroupForm form = (PlanetGroupForm)actionForm;
                 Roller roller = RollerFactory.getRoller();

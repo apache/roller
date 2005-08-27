@@ -24,6 +24,7 @@ import org.roller.RollerException;
 import org.roller.model.IndexManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
 
@@ -71,11 +72,13 @@ public class MaintenanceAction extends DispatchAction
 	{
 		try
 		{
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-			if (rollerSession.isUserAuthorizedToAdmin() )
+            RollerRequest rreq  = RollerRequest.getRollerRequest(request);
+            WebsiteData website = rreq.getWebsite();            
+            RollerSession rses = RollerSession.getRollerSession(request);
+			if (rses.isUserAuthorizedToAdmin(website) )
 			{
-				WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
-				IndexManager manager = RollerFactory.getRoller().getIndexManager();
+				IndexManager manager = 
+                        RollerFactory.getRoller().getIndexManager();
 				manager.rebuildWebsiteIndex(website);
 				
                 ActionMessages messages = new ActionMessages();
@@ -109,10 +112,12 @@ public class MaintenanceAction extends DispatchAction
     {
         try
         {
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-			if ( rollerSession.isUserAuthorizedToAdmin() )
+            RollerRequest rreq  = RollerRequest.getRollerRequest(request);
+            WebsiteData website = rreq.getWebsite();            
+            RollerSession rses = RollerSession.getRollerSession(request);
+			if ( rses.isUserAuthorizedToAdmin(website) )
 			{
-	            PageCacheFilter.removeFromCache(request, RollerSession.getRollerSession(request).getCurrentWebsite());
+	            PageCacheFilter.removeFromCache(request, website);
 
                  ActionMessages messages = new ActionMessages();
                  messages.add(null, new ActionMessage("maintenance.message.flushed"));

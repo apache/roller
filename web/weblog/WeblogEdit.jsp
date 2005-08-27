@@ -47,7 +47,7 @@ function saveDraft() {
 }
 function publish() {
     <c:choose>
-	    <c:when test="${model.rollerSession.userAuthorizedToAuthor}">
+	    <c:when test="${model.userAuthorizedToAuthor}">
 	        document.weblogEntryFormEx.status.value = "PUBLISHED";
 	    </c:when>
 	    <c:otherwise>
@@ -82,6 +82,7 @@ function publish() {
     <html:hidden property="day"/>
     <html:hidden property="id"/>
     <html:hidden property="creatorId"/>
+    <html:hidden property="websiteId"/>
     <html:hidden property="anchor"/>
     <html:hidden property="updateTime"/>
     <html:hidden property="status"/>
@@ -287,12 +288,12 @@ function publish() {
      <fmt:message key="weblogEdit.rightToLeft" />
      <br />
 
-     <c:if test="${model.rollerSession.adminUser}">
+     <c:if test="${model.rollerSession.globalAdminUser}">
          <html:checkbox property="pinnedToMain" />
          <fmt:message key="weblogEdit.pinnedToMain" />
          <br />
      </c:if>
-     <c:if test="${!model.rollerSession.adminUser}">
+     <c:if test="${!model.rollerSession.globalAdminUser}">
          <html:hidden property="pinnedToMain" />
      </c:if>
 
@@ -338,7 +339,7 @@ function publish() {
         
             <c:choose>
             
-	            <c:when test="${model.rollerSession.userAuthorizedToAuthor}" >        
+	            <c:when test="${model.userAuthorizedToAuthor}" >        
                     <input type="button" name="post"
 	                       value='<fmt:message key="weblogEdit.post" />'
 	                       onclick="publish()" />
@@ -352,7 +353,7 @@ function publish() {
 	                </c:if>
 	            </c:when> 
 	            
-	            <c:when test="${model.rollerSession.userAuthorized}" > 
+	            <c:when test="${model.userAuthorized}" > 
                     <c:if test="${weblogEntryFormEx.status == 'DRAFT'}">       
 		                <input type="button" name="post"
 		                       value='<fmt:message key="weblogEdit.submitForReview" />'
@@ -409,7 +410,7 @@ function publish() {
     
     <%-- ================================================================== --%>
     <%-- Trackback control --%>
-    <c:if test="${!empty weblogEntryFormEx.id && model.rollerSession.userAuthorizedToAuthor}">
+    <c:if test="${!empty weblogEntryFormEx.id && model.userAuthorizedToAuthor}">
         <br />
         <br />
         <a name="trackbacks"></a>
@@ -426,7 +427,7 @@ function publish() {
     <%-- ================================================================== --%>
     <%-- Comments of this weblog entry --%>
 
-    <c:if test="${model.editMode && !empty model.comments && model.rollerSession.userAuthorizedToAuthor}" >
+    <c:if test="${model.editMode && !empty model.comments && model.userAuthorizedToAuthor}" >
         <br />
         <br />
         <a name="comments"></a>

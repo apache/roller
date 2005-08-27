@@ -28,7 +28,7 @@
                 <fmt:message key="yourWebsites.editProfile.desc" />
             </p>
             
-            <c:if test="${model.rollerSession.adminUser}">               
+            <c:if test="${model.rollerSession.globalAdminUser}">               
                 <p>
                     <h3>
                     <roller:link forward="rollerConfig">

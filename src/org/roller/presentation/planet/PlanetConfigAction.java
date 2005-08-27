@@ -67,7 +67,7 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isAdminUser())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 BasePageModel pageModel = new BasePageModel(
                     "planetConfig.pageTitle", request, response, mapping);
@@ -110,7 +110,7 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isAdminUser())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 BasePageModel pageModel = new BasePageModel(
                     "planetConfig.pageTitle", request, response, mapping);
@@ -167,7 +167,7 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isAdminUser())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 BasePageModel pageModel = new BasePageModel(
                     "planetConfig.pageTitle", request, response, mapping);
@@ -204,7 +204,7 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (RollerSession.getRollerSession(request).isAdminUser())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
                 BasePageModel pageModel = new BasePageModel(
                     "planetConfig.pageTitle", request, response, mapping);

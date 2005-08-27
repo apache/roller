@@ -11,7 +11,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
             <div class="sidebarBody"> 
         
 <h3><fmt:message key="weblogEdit.pendingEntries" /></h3>
-<hr />
+
 <c:if test="${empty model.recentPendingEntries}">
    <fmt:message key="application.none" />
 </c:if>
@@ -29,23 +29,10 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
     </roller:link>
     <br />
 </c:forEach>
-<br />
-<br />
-                
-            </div>
-        </div>
-    </div>
-</div>
-
-<br />
-
-<div class="sidebarfade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            <div class="sidebarBody">
-            
+    
+         
+<hr />            
 <h3><fmt:message key="weblogEdit.draftEntries" /></h3>
-<hr />
 
 <c:if test="${empty model.recentDraftEntries}">
    <fmt:message key="application.none" />
@@ -63,26 +50,14 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
            </str:truncateNicely>
     </roller:link>
     <br />
-</c:forEach> 
-<br />
-<br />
-                
-            </div>
-        </div>
-    </div>
-</div>
+</c:forEach>             
 
-<br />
 
-<c:if test="${model.rollerSession.userAuthorizedToAuthor}">
-
-<div class="sidebarfade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            <div class="sidebarBody">
+<c:if test="${model.userAuthorizedToAuthor}">
             
-<h3><fmt:message key="weblogEdit.publishedEntries" /></h3>
 <hr />
+<h3><fmt:message key="weblogEdit.publishedEntries" /></h3>
+
 <c:if test="${empty model.recentPublishedEntries}">
    <fmt:message key="application.none" />
 </c:if>
@@ -100,18 +75,13 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
     </roller:link>                    
     <br />
 </c:forEach>
-<br />
-<br />
                 
             </div>
         </div>
     </div>
 </div>
-
-<br />  
  
 </c:if>
 
-<br />
 
 

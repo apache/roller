@@ -6,7 +6,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
 
 <p class="subtitle">
     <fmt:message key="weblogEntryQuery.subtitle" >
-        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+        <fmt:param value="${model.website.handle}" />
     </fmt:message>
 </p>
 <p class="pagetip">

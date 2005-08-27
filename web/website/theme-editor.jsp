@@ -5,11 +5,12 @@ String customTheme = org.roller.pojos.Theme.CUSTOM;
 request.setAttribute("customTheme", customTheme);
 boolean allowCustom = org.roller.config.RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed");
 request.setAttribute("allowCustom", new Boolean(allowCustom));
+RollerRequest rreq = RollerRequest.getRollerRequest(request);
 
 String username = "";
 try {
     RollerSession rollerSession = RollerSession.getRollerSession(request);
-    WebsiteData wd = rollerSession.getCurrentWebsite();
+    WebsiteData wd = rreq.getWebsite();
     username = wd.getHandle();
 } catch (Exception e) {
     throw new ServletException(e);
@@ -17,7 +18,7 @@ try {
 %>
 <p class="subtitle">
    <fmt:message key="themeEditor.subtitle" >
-       <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+       <fmt:param value="${model.website.handle}" />
    </fmt:message>
 </p>  
 <p class="pagetip">

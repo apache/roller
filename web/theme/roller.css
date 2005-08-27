@@ -1,5 +1,8 @@
 /* ======================================================================
-roller.css: Base CSS styles for Roller web UI (colors, fonts, etc.)
+roller.css: Base CSS styles for Roller web UI
+
+CUSTOMIZABLE color and background image setttings have been separated out
+and placed in separate colors.css files for different color schemes.
 ====================================================================== */
 
 .bannerBox {
@@ -7,21 +10,20 @@ roller.css: Base CSS styles for Roller web UI (colors, fonts, etc.)
     height: 78px; 
     width: 100%;
 }
-.statusBox {
+.bannerStatusBox {
     height: 25px; 
     width: 100%;
     /* CUSTOMIZABLE background: #ad3431; */
-    color: white;
 }
-.statusBox a {
-    /* CUSTOMIZABLE color: white; */
+/* 
+CUSTOMIZABLE
+.bannerStatusBox a {
 }
-.statusBox a:link {
-    /* CUSTOMIZABLE color: white; */
+.bannerStatusBox a:link {
 }
-.statusBox a:visited {
-    /* CUSTOMIZABLE color: white; */
+.bannerStatusBox a:visited {
 }
+*/
 .bannerLeft {
     float: left; 
     padding: 4px 15px 4px 15px;
@@ -453,6 +455,7 @@ p.websiteDescription {
    text-style: italics;
 }
 .yourWeblogBox {
+   width: 80%;
    padding: 4px;
    margin: 4px 0px 4px 0px;
 }

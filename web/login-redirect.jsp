@@ -18,9 +18,8 @@ List websites = roller.getUserManager().getWebsites(user, Boolean.TRUE);
 if (websites.size() == 1) {
     WebsiteData website = (WebsiteData)websites.get(0);
     website.hasUserPermissions(user, PermissionsData.LIMITED);
-    rollerSession.setCurrentWebsite(website);
     response.sendRedirect(
-        "editor/weblog.do?method=create&rmk=tabbedmenu.weblog&rmik=tabbedmenu.weblog.newEntry");
+        "editor/weblog.do?method=create&rmk=tabbedmenu.weblog&rmik=tabbedmenu.weblog.newEntry&weblog="+website.getHandle());
 } else {
     response.sendRedirect(
        "editor/yourWebsites.do?method=edit&rmik=tabbedmenu.user.websites");

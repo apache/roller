@@ -89,7 +89,7 @@ public class PingSetupAction extends DispatchAction
         ActionForward forward = mapping.findForward(PING_SETUP_PAGE);
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
-        WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();
+        WebsiteData website = rreq.getWebsite();
         try
         {
             if (!isAuthorized(rreq))
@@ -132,7 +132,7 @@ public class PingSetupAction extends DispatchAction
         throws RollerException
     {
         AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
-        WebsiteData website = RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite();
+        WebsiteData website = rreq.getWebsite();
 
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
         Map isEnabled = new HashMap();
@@ -182,7 +182,7 @@ public class PingSetupAction extends DispatchAction
             }
             PingTargetData pingTarget = select(rreq);
             AutoPingData autoPing = autoPingMgr.createAutoPing(pingTarget, 
-                    RollerSession.getRollerSession(req).getCurrentWebsite());
+                    rreq.getWebsite());
             autoPingMgr.storeAutoPing(autoPing);
             RollerFactory.getRoller().commit();
 
@@ -211,8 +211,7 @@ public class PingSetupAction extends DispatchAction
                 return mapping.findForward("access-denied");
             }
             PingTargetData pingTarget = select(rreq);
-            autoPingMgr.removeAutoPing(pingTarget, 
-                    RollerSession.getRollerSession(req).getCurrentWebsite());
+            autoPingMgr.removeAutoPing(pingTarget, rreq.getWebsite());
             RollerFactory.getRoller().commit();
         
             return view(mapping, form, req, res);
@@ -236,7 +235,7 @@ public class PingSetupAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(req);
             String absoluteUrl = RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
             PingTargetData pingTarget = select(rreq);
-            WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();
+            WebsiteData website = rreq.getWebsite();
             try
             {
                 if (!isAuthorized(rreq))
@@ -337,7 +336,8 @@ public class PingSetupAction extends DispatchAction
 
     private boolean isAuthorized(RollerRequest rreq) throws RollerException
     {
-        RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
-        return rollerSession.isUserAuthorizedToAdmin() && !PingConfig.getDisablePingUsage();
+        RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
+        return rses.isUserAuthorizedToAdmin(rreq.getWebsite()) 
+            && !PingConfig.getDisablePingUsage();
     }
 }

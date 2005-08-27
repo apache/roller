@@ -59,7 +59,7 @@ public class FileUploadTag extends TagSupport
             HttpServletRequest request =
                 (HttpServletRequest)pageContext.getRequest();
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
+            WebsiteData website = rreq.getWebsite();
             
             String maxDir = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
             String maxFile = RollerRuntimeConfig.getProperty("uploads.file.maxsize");

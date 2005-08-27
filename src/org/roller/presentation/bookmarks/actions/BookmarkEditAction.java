@@ -17,6 +17,7 @@ import org.roller.model.RollerFactory;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.bookmarks.formbeans.BookmarkFormEx;
@@ -38,7 +39,6 @@ public class BookmarkEditAction extends Action
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerSession rses = RollerSession.getRollerSession(request);
-        WebsiteData wd = rses.getCurrentWebsite();
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         BookmarkFormEx form = (BookmarkFormEx)actionForm;
         
@@ -53,6 +53,9 @@ public class BookmarkEditAction extends Action
                 
             // Pass bookmark's Folder on as attribute.                 
             parentFolder = bd.getFolder();
+
+            request.setAttribute("model", new BasePageModel(
+                "bookmarkForm.edit.title", request, response, mapping));
         }
         else if (null != request.getParameter("correct"))
         {
@@ -61,6 +64,9 @@ public class BookmarkEditAction extends Action
                 
             // Folder is specified by request param, pass it on as attribute.                 
             parentFolder = bmgr.retrieveFolder(rreq.getFolder().getId());        
+            
+            request.setAttribute("model", new BasePageModel(
+                "bookmarkForm.correct.title", request, response, mapping));
         }
         else
         {
@@ -68,7 +74,10 @@ public class BookmarkEditAction extends Action
             request.setAttribute("state","add");
             
             // Folder is specified by request param, pass it on as attribute.                 
-            parentFolder = bmgr.retrieveFolder(rreq.getFolder().getId());        
+            parentFolder = bmgr.retrieveFolder(rreq.getFolder().getId()); 
+            
+            request.setAttribute("model", new BasePageModel(
+                "bookmarkForm.add.title", request, response, mapping));
         }
         
         // Build folder path for display on page
@@ -87,8 +96,7 @@ public class BookmarkEditAction extends Action
             }
             request.setAttribute("parentFolder", parentFolder);
             request.setAttribute("folderPath", folderPath);
-        }
-
+        }        
         return mapping.findForward("BookmarkForm");
     }
     

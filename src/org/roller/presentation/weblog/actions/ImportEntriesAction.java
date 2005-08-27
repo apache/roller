@@ -52,7 +52,8 @@ public class ImportEntriesAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
-            if ( !rollerSession.isUserAuthorizedToAdmin() )
+            if ( rreq.getWebsite() == null 
+                  || !rollerSession.isUserAuthorizedToAdmin(rreq.getWebsite()))
             {
                 forward = mapping.findForward("access-denied");
             }
@@ -63,10 +64,11 @@ public class ImportEntriesAction extends DispatchAction
                 if (StringUtils.isNotEmpty(form.getImportFileName()))
                 {
                     // "default" values
-                    WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
+                    WebsiteData website = rreq.getWebsite();
 
                     // load selected file
-                    ServletContext app = this.getServlet().getServletConfig().getServletContext();
+                    ServletContext app =
+                            getServlet().getServletConfig().getServletContext();
                     String dir = RollerContext.getUploadDir( app );
                     File f = new File(dir + website.getHandle() +
                                       "/" + form.getImportFileName());
@@ -128,9 +130,9 @@ public class ImportEntriesAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(
-                    rreq.getRequest());
-            if ( !rollerSession.isUserAuthorizedToAdmin() )
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if ( rreq.getWebsite() == null 
+                 || !rses.isUserAuthorizedToAdmin(rreq.getWebsite()) )
             {
                 forward = mapping.findForward("access-denied");
             }
@@ -151,7 +153,7 @@ public class ImportEntriesAction extends DispatchAction
     {
 		ServletContext app = this.getServlet().getServletConfig().getServletContext();
 		String dir = RollerContext.getUploadDir( app );
-		File d = new File(dir + RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite().getHandle());
+		File d = new File(dir + rreq.getWebsite().getHandle());
 		ArrayList xmlFiles = new ArrayList();
 		if (d.mkdirs() || d.exists())
 		{

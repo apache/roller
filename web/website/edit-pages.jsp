@@ -5,7 +5,7 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
 
 <p class="subtitle">
    <fmt:message key="pagesForm.subtitle" >
-       <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+       <fmt:param value="${model.website.handle}" />
    </fmt:message>
 </p>  
 <p class="pagetip">
@@ -36,7 +36,7 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
             <td class="center">
                <roller:link forward="editPage">
                   <roller:linkparam id="username" name="user" property="userName" />
-                  <roller:linkparam id="pageid" name="p" property="id" />
+                  <roller:linkparam id="pageId" name="p" property="id" />
                   <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" />
                </roller:link>
             </td>
@@ -46,7 +46,7 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
                  <c:when test="${p.id != website.defaultPageId}">
                    <roller:link forward="removePage.ok">
                       <roller:linkparam id="username" name="user" property="userName" />
-                      <roller:linkparam id="pageid" name="p" property="id" />
+                      <roller:linkparam id="pageId" name="p" property="id" />
                       <img src='<c:url value="/images/Remove16.gif"/>' border="0" alt="icon" />
                    </roller:link>
                  </c:when>

@@ -3,7 +3,7 @@
 <%-- Form allows deleting of referers --%>
 <p class="subtitle">
     <fmt:message key="referers.subtitle" >
-        <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+        <fmt:param value="${model.website.handle}" />
     </fmt:message>
 </p>  
 <p class="pagetip">

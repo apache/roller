@@ -111,7 +111,7 @@ public final class ImportBookmarksFormAction extends Action
                         RollerSession rses = 
                             RollerSession.getRollerSession(request);
                         bm.importBookmarks(
-                            rses.getCurrentWebsite(), folderName, data);
+                            rreq.getWebsite(), folderName, data);
                         
                         RollerFactory.getRoller().commit();
                     }

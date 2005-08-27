@@ -60,18 +60,19 @@ public class ReferersAction extends DispatchAction
         RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
         try
         {
-            if ( rollerSession.isUserAuthorizedToAuthor() )
+            if (rreq.getWebsite() != null 
+                 && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
             {   
                 BasePageModel pageModel = new BasePageModel(
                         "referers.todaysReferers", req, res, mapping);
                 req.setAttribute("model", pageModel);
                 req.setAttribute("pageHits",
-                    new Integer(refmgr.getDayHits(RollerSession.getRollerSession(req).getCurrentWebsite())));
+                    new Integer(refmgr.getDayHits(rreq.getWebsite())));
                     
                 req.setAttribute("totalHits",
-                    new Integer(refmgr.getTotalHits(RollerSession.getRollerSession(req).getCurrentWebsite())));
+                    new Integer(refmgr.getTotalHits(rreq.getWebsite())));
                     
-                List refs = refmgr.getTodaysReferers(RollerSession.getRollerSession(req).getCurrentWebsite());
+                List refs = refmgr.getTodaysReferers(rreq.getWebsite());
                 req.setAttribute("referers",refs);        
             }
         }
@@ -94,10 +95,11 @@ public class ReferersAction extends DispatchAction
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if ( rollerSession.isUserAuthorizedToAuthor() )
+            if (rreq.getWebsite() != null 
+                  && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
             {
                 RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
-                WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();
+                WebsiteData website = rreq.getWebsite();
                 refmgr.forceTurnover(website.getId());
                 RollerFactory.getRoller().commit();
             }
@@ -121,10 +123,11 @@ public class ReferersAction extends DispatchAction
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if (rollerSession.isUserAuthorizedToAuthor() )
+            if (rreq.getWebsite() != null 
+                 && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
             {
                 RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
-                WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();
+                WebsiteData website = rreq.getWebsite();
 
                 String[] deleteIds = req.getParameterValues("id");
                 if (deleteIds != null)

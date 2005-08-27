@@ -87,8 +87,10 @@ public class ExportEntriesAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
-            if ( !rollerSession.isUserAuthorizedToAdmin() )
+            RollerSession rses = 
+                    RollerSession.getRollerSession(rreq.getRequest());
+            if (     rreq.getWebsite() == null 
+                 || !rses.isUserAuthorizedToAdmin(rreq.getWebsite()))
             {
                 forward = mapping.findForward("access-denied");
             }
@@ -128,9 +130,10 @@ public class ExportEntriesAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
+            RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
             WeblogQueryForm form = (WeblogQueryForm)actionForm;
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            if ( rreq.getWebsite() != null 
+                    && rses.isUserAuthorizedToAdmin(rreq.getWebsite()) )
             {               
                 request.setAttribute("model",
                         new BasePageModel("", request, response, mapping));
@@ -160,7 +163,7 @@ public class ExportEntriesAction extends DispatchAction
                     //System.out.println("Export: got " + entries.size() + " entries.");
                     
                     List entries = weblogMgr.getWeblogEntries(
-                                    RollerSession.getRollerSession(request).getCurrentWebsite(), // userName
+                                    rreq.getWebsite(), // userName
                                     startDate,         // startDate
                                     endDate,           // endDate
                                     null,              // catName
@@ -173,7 +176,7 @@ public class ExportEntriesAction extends DispatchAction
                     Map entryMap = seperateByPeriod(entries, form.getFileBy());
 
                     // now export each List in the entryMap
-                    ExportRss exporter = new ExportRss(RollerSession.getRollerSession(request).getCurrentWebsite());
+                    ExportRss exporter = new ExportRss(rreq.getWebsite());
                     String exportTo = form.getExportFormat().toLowerCase();
                     if ("atom".equals(exportTo))
                     {
@@ -275,7 +278,8 @@ public class ExportEntriesAction extends DispatchAction
             JspFactory.getDefaultFactory().getPageContext( 
                 this.getServlet(), request, response, "", true, 8192, true);
         Map params = new HashMap();
-        params.put( RollerRequest.WEBSITEHANDLE_KEY,  RollerSession.getRollerSession(request).getCurrentWebsite().getHandle());
+        params.put( RollerRequest.WEBLOG_KEY,  
+            rreq.getWebsite().getHandle());
         params.put("rmik", "Files");
         String filesLink = RequestUtils.computeURL(
              pageContext, (String)null, (String)null, (String)null,

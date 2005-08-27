@@ -66,10 +66,12 @@ public class BookmarksAction extends DispatchAction
         HttpServletResponse response)
         throws RollerException
     {
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor())
+        BookmarksPageModel pageModel = new BookmarksPageModel(
+            request, response, mapping, (BookmarksForm)actionForm);
+        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor(
+                pageModel.getFolder().getWebsite()))
         {
-            addModelObjects(request, response, mapping, (BookmarksForm)actionForm);
+            request.setAttribute("model", pageModel);
             return mapping.findForward("BookmarksForm");
         }
         else
@@ -95,7 +97,11 @@ public class BookmarksAction extends DispatchAction
         throws RollerException
     {
         Roller roller = RollerFactory.getRoller();
-        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor())
+        BookmarksPageModel pageModel = new BookmarksPageModel(
+            request, response, mapping, (BookmarksForm)actionForm);
+        request.setAttribute("model", pageModel);
+        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor(
+            pageModel.getFolder().getWebsite()))
         {
             BookmarkManager bmgr = roller.getBookmarkManager();
             BookmarksForm form = (BookmarksForm)actionForm;
@@ -122,7 +128,6 @@ public class BookmarksAction extends DispatchAction
             }
             roller.commit();
 
-            addModelObjects(request, response, mapping, (BookmarksForm)actionForm);
             return mapping.findForward("BookmarksForm");
         }
         else
@@ -150,7 +155,11 @@ public class BookmarksAction extends DispatchAction
         ActionMessages messages = new ActionMessages();
         ActionForward forward = mapping.findForward("BookmarksForm");
         Roller roller = RollerFactory.getRoller();
-        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor())
+        BookmarksPageModel pageModel = new BookmarksPageModel(
+            request, response, mapping, (BookmarksForm)actionForm);
+        request.setAttribute("model", pageModel);
+        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor(
+            pageModel.getFolder().getWebsite()))
         {
             try 
             {
@@ -196,8 +205,6 @@ public class BookmarksAction extends DispatchAction
                     }
                 }
                 roller.commit();
-    
-                addModelObjects(request, response, mapping, (BookmarksForm)actionForm);
                 saveMessages(request, messages);
             }
             catch (RollerException e)
@@ -212,22 +219,6 @@ public class BookmarksAction extends DispatchAction
             forward = mapping.findForward("access-denied");
         }
         return forward;
-    }
-
-    /**
-     * Load model objects for display in BookmarksForm.
-     * @param request
-     * @throws RollerException
-     */
-    private void addModelObjects(
-        HttpServletRequest request, HttpServletResponse response, 
-        ActionMapping mapping, BookmarksForm form)
-        throws RollerException
-    {
-
-        BookmarksPageModel pageModel = 
-                new BookmarksPageModel(request, response, mapping, form);
-        request.setAttribute("model", pageModel);
     }
 
     private static final class FolderPathComparator implements Comparator
@@ -263,16 +254,14 @@ public class BookmarksAction extends DispatchAction
             super("",  request, response, mapping);
             
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            //WebsiteData wd = rreq.getWebsite();
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            WebsiteData wd = rollerSession.getCurrentWebsite();
             BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
 
             allFolders = new TreeSet(new FolderPathComparator());
 
             // Find folderid wherever it may be
-            String folderId = (
-                    String)request.getAttribute(RollerRequest.FOLDERID_KEY);
+            String folderId = (String)
+                request.getAttribute(RollerRequest.FOLDERID_KEY);
             if (null == folderId)
             {
                 folderId = request.getParameter(RollerRequest.FOLDERID_KEY);
@@ -284,11 +273,13 @@ public class BookmarksAction extends DispatchAction
 
             if (null == folderId || folderId.equals("null"))
             {
-                folder = bmgr.getRootFolder(wd);
+                website = rreq.getWebsite();
+                folder = bmgr.getRootFolder(website);
             }
             else
             {
                 folder = bmgr.retrieveFolder(folderId);
+                website = folder.getWebsite();
             }
             form.setFolderId(folder.getId());
 
@@ -307,7 +298,7 @@ public class BookmarksAction extends DispatchAction
             }
 
             // Build list of all folders, except for current one, sorted by path.
-            Iterator iter = bmgr.getAllFolders(wd).iterator();
+            Iterator iter = bmgr.getAllFolders(website).iterator();
 
             // Build list of only children
             //Iterator iter = folder.getFolders().iterator();

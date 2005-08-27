@@ -25,7 +25,7 @@ function deleteNo()
 
 <html:form action="/editor/categoryDelete" method="post">
 
-	<html:hidden property="catid" />
+	<html:hidden property="catId" />
 	<html:hidden property="confirmDelete" />
 
 	<c:if test="${categoryDeleteForm.inUse}" >

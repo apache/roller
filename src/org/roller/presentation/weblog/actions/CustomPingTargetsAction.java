@@ -78,7 +78,7 @@ public class CustomPingTargetsAction
         req.setAttribute("allowCustomTargets", allowCustomTargets);
 
         List customPingTargets = allowCustomTargets.booleanValue() ?
-            pingTargetMgr.getCustomPingTargets(RollerSession.getRollerSession(req).getCurrentWebsite()) : Collections.EMPTY_LIST;
+            pingTargetMgr.getCustomPingTargets(rreq.getWebsite()) : Collections.EMPTY_LIST;
 
         return customPingTargets;
     }
@@ -92,7 +92,7 @@ public class CustomPingTargetsAction
         PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         return pingTargetMgr.createCustomPingTarget(
             pingTargetForm.getName(), pingTargetForm.getPingUrl(), 
-            RollerSession.getRollerSession(rreq.getRequest()).getCurrentWebsite());
+            rreq.getWebsite());
     }
 
 
@@ -101,8 +101,9 @@ public class CustomPingTargetsAction
      */
     protected boolean hasRequiredRights(RollerRequest rreq) throws RollerException
     {
-        RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
-        return (rollerSession.isUserAuthorizedToAdmin() && !PingConfig.getDisallowCustomTargets());
+        RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
+        return (rses.isUserAuthorizedToAdmin(rreq.getWebsite()) 
+            && !PingConfig.getDisallowCustomTargets());
     }
 
     public ActionForward cancel(

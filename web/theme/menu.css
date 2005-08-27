@@ -64,6 +64,7 @@ Menu item table (the bar below the tabs)
 .menuItemTable {
     width: 100%;
     height: 27px;
+    padding: 0px 0px 0px 10px;
     /* CUSTOMIZABLE background-color: #c6ab74; */
 }
 .menuItemSelected, .menuItemUnselected {

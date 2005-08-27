@@ -8,14 +8,13 @@ layout.css: Base CSS layout for Roller's web UI (position and sizing only)
 #banner {
     height: 105px; 
     margin: 0px;
-    padding: 0px;
+    padding: 0px 0px 0px 0px;
 }
 #menu {
     padding: 0px 15px 0px 15px;
 }
 #centercontent {
-    margin: 15px 260px 0px 15px;
-    padding: 0px;
+    margin: 15px 15px 0px 15px;
 }
 #rightcontent {
     position: absolute;

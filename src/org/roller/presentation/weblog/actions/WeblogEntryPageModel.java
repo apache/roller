@@ -121,7 +121,7 @@ public class WeblogEntryPageModel extends BasePageModel
         RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
-                rollerSession.getCurrentWebsite(), // userName
+                getWeblogEntry().getWebsite(), // userName
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
@@ -140,7 +140,7 @@ public class WeblogEntryPageModel extends BasePageModel
         RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
-                rollerSession.getCurrentWebsite(), 
+                getWeblogEntry().getWebsite(), 
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
@@ -159,7 +159,7 @@ public class WeblogEntryPageModel extends BasePageModel
         RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
-                rollerSession.getCurrentWebsite(), 
+                getWeblogEntry().getWebsite(), 
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
@@ -202,7 +202,7 @@ public class WeblogEntryPageModel extends BasePageModel
         // Select editor page selected by user (simple text editor,
         // DHTML editor, Ekit Java applet, etc.
         RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
-        String editorPage = rollerSession.getCurrentWebsite().getEditorPage();
+        String editorPage = weblogEntry.getWebsite().getEditorPage();
         if (StringUtils.isEmpty( editorPage ))
         {
             editorPage = "editor-text.jsp";
@@ -232,7 +232,7 @@ public class WeblogEntryPageModel extends BasePageModel
     {
         RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
         return RollerFactory.getRoller().getWeblogManager()
-            .getWeblogCategories(rollerSession.getCurrentWebsite(), false);
+            .getWeblogCategories(weblogEntry.getWebsite(), false);
     }
 
     public List getComments() throws Exception
@@ -250,12 +250,11 @@ public class WeblogEntryPageModel extends BasePageModel
     {
         if (weblogEntry == null) 
         {
-            RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
             weblogEntry = new WeblogEntryData();
-            weblogEntry.setWebsite(rollerSession.getCurrentWebsite());
+            weblogEntry.setWebsite(getWebsite());
             form.copyTo(weblogEntry, 
                     getRequest().getLocale(), getRequest().getParameterMap());
-            weblogEntry.setWebsite(rollerSession.getCurrentWebsite());
+            weblogEntry.setWebsite(weblogEntry.getWebsite());
         }
         return weblogEntry;
     }
@@ -361,4 +360,16 @@ public class WeblogEntryPageModel extends BasePageModel
     public void setWords(ArrayList words) {
         this.words = words;
     }
+
+    public boolean getUserAuthorized() throws RollerException
+    {
+        return getRollerSession().isUserAuthorized(getWeblogEntry().getWebsite());
+    }
+    
+    public boolean getUserAuthorizedToAuthor() throws RollerException
+    {
+        return getRollerSession().isUserAuthorizedToAuthor(getWeblogEntry().getWebsite());
+    }
+    
+    
 }

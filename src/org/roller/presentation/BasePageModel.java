@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.ActionMapping;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.util.StrutsUtil;
 
 /**
@@ -23,10 +24,11 @@ public class BasePageModel
     protected static ResourceBundle bundle = 
         ResourceBundle.getBundle("ApplicationResources");  
     
-    private String titleKey = null;
-    private HttpServletRequest request = null;
-    private HttpServletResponse response = null;
-    private ActionMapping mapping = null;
+    protected String titleKey = null;
+    protected HttpServletRequest request = null;
+    protected HttpServletResponse response = null;
+    protected ActionMapping mapping = null;
+    protected WebsiteData website = null;
     
     public BasePageModel(
             String titleKey,
@@ -40,8 +42,20 @@ public class BasePageModel
         this.titleKey = titleKey;
         request.setAttribute("locales", StrutsUtil.getLocaleBeans());        
         request.setAttribute("timeZones", StrutsUtil.getTimeZoneBeans());        
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        website = rreq.getWebsite();
     }
 
+    public WebsiteData getWebsite() 
+    {
+        return website;
+    }
+    
+    public void setWebsite(WebsiteData website) 
+    {
+        this.website = website;
+    }
+    
     public String getTitle() 
     {
         return bundle.getString(titleKey);

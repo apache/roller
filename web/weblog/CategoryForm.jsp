@@ -1,18 +1,17 @@
 <%@ include file="/taglibs.jsp" %>
 
 
-<h3>
-<img src='<c:url value="/images/Folder24.png"/>' alt="category" align="absmiddle" />
+<p class="subtitle">
 <c:if test="${state == 'add'}">
-    <fmt:message key="categoryForm.addCategory" /></h3>
+    <fmt:message key="categoryForm.add.subtitle" /></h3>
 </c:if>
 <c:if test="${state == 'edit'}">
-    <fmt:message key="categoryForm.editCategory" />
+    <fmt:message key="categoryForm.edit.subtitle" />
 </c:if>
 <c:if test="${state == 'correct'}">
-    <fmt:message key="categoryForm.correctCategory" />
+    <fmt:message key="categoryForm.correct.subtitle" />
 </c:if>
-</h3>
+</p>
 
 <p>
 <b><fmt:message key="categoriesForm.path" /></b>:
@@ -29,9 +28,6 @@
     <html:hidden property="method" name="method" value="update"/>
     <html:hidden property="id" />
     <html:hidden property="parentId" />
-    
-    <input type="hidden" name="<%= RollerRequest.PARENTID_KEY %>" 
-    	value="<%= request.getAttribute(RollerRequest.PARENTID_KEY) %>" />
 
     <table>
 
@@ -54,9 +50,13 @@
     
     <p>
     <input type="submit" value="<fmt:message key='categoryForm.save' />" />
+    <c:url var="categoriesUrl" value="/editor/categories.do">
+       <c:param name="method" value="selectCategory" />
+       <c:param name="weblog" value="${model.website.handle}" />
+       <c:param name="categoryid" value="${requestScope.parentId}" />
+    </c:url>
     <input type="button" value="<fmt:message key='categoryForm.cancel' />" 
-        onclick="window.location = 'categories.do?method=selectCategory&amp;categoryid=<%=
-        request.getAttribute(RollerRequest.PARENTID_KEY) %>'" />
+        onclick="window.location = '<c:out value="${categoriesUrl}" />'" />
     </p>
 
 </html:form>

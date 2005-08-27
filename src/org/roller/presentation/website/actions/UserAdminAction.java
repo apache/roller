@@ -61,7 +61,7 @@ public final class UserAdminAction extends UserBaseAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if (rollerSession.isAdminUser() )
+            if (rollerSession.isGlobalAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
                 request.setAttribute("model", 
@@ -124,7 +124,7 @@ public final class UserAdminAction extends UserBaseAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if (rollerSession.isAdminUser() )
+            if (rollerSession.isGlobalAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -201,7 +201,7 @@ public final class UserAdminAction extends UserBaseAction
     {
         // remove user's Entries from Lucene index
         IndexManager indexManager = RollerFactory.getRoller().getIndexManager();
-        WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
+        WebsiteData website = rreq.getWebsite();
         indexManager.removeWebsiteIndex(website); 
         
         // delete user from database
@@ -268,7 +268,7 @@ public final class UserAdminAction extends UserBaseAction
 		{
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
              RollerSession rollerSession = RollerSession.getRollerSession(request);
-			if (rollerSession.isAdminUser() )
+			if (rollerSession.isGlobalAdminUser() )
 			{
 				UserAdminForm uaf = (UserAdminForm)actionForm;
 				

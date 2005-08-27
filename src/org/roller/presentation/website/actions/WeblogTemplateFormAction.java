@@ -63,14 +63,13 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 "pagesForm.title", request, response, mapping));   
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
-            if ( rses.isUserAuthorizedToAdmin() )
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) )
             {
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
-                WebsiteData hd = rses.getCurrentWebsite();
-
-                data.setWebsite( hd );
+                data.setWebsite( website );
                 data.setLastModified( new java.util.Date() );
                 data.setDescription("");
                 data.setContents("");
@@ -87,7 +86,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 saveMessages(request, uiMessages);
                 
                 UserData user = rses.getAuthenticatedUser();
-                PageCacheFilter.removeFromCache( request, hd );
+                PageCacheFilter.removeFromCache( request, website );
                     
                 actionForm.reset(mapping,request);                
                 
@@ -121,7 +120,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 "pageForm.title", request, response, mapping));   
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
-            if ( rses.isUserAuthorizedToAdmin() )
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) )
             {
                 UserData ud = rses.getAuthenticatedUser();
                 WeblogTemplate pd = (WeblogTemplate) rreq.getPage();
@@ -160,7 +160,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
             RollerSession rses = RollerSession.getRollerSession(request);
             request.setAttribute("model", new BasePageModel(
                 "pagesForm.title", request, response, mapping));            
-            if ( rses.isUserAuthorizedToAdmin() )
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) )
             {
                 addModelObjects(request, response, mapping);
             }
@@ -192,7 +193,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
-            if ( rses.isUserAuthorizedToAdmin() )
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) )
             {
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -244,7 +246,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
         {
             RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rses.isUserAuthorizedToAdmin() )
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) )
             {
                 WeblogTemplate cd = (WeblogTemplate) rreq.getPage();
                 WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
@@ -281,7 +284,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             request.setAttribute("model", new BasePageModel(
                 "pageForm.title", request, response, mapping));
-            if ( rses.isUserAuthorizedToAdmin() )
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) )
             {
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -383,11 +387,12 @@ public final class WeblogTemplateFormAction extends DispatchAction
     {             
         UserManager mgr = RollerFactory.getRoller().getUserManager();        
         RollerSession rses = RollerSession.getRollerSession(request);
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
                 
         UserData user = rses.getAuthenticatedUser();
         request.setAttribute("user",user);
 
-        WebsiteData wd = rses.getCurrentWebsite();
+        WebsiteData wd = rreq.getWebsite();
         request.setAttribute("website", wd);
 
         List pages = mgr.getPages(wd);
