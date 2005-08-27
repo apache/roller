@@ -16,6 +16,7 @@ import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.weblog.formbeans.WeblogCategoryFormEx;
@@ -36,10 +37,10 @@ public class CategoryEditAction extends Action
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = RollerSession.getRollerSession(request).getCurrentWebsite();
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         WeblogCategoryFormEx form = (WeblogCategoryFormEx)actionForm;
         
+        BasePageModel pageModel = null;
         WeblogCategoryData parentCat = null;
         if (null!=rreq.getWeblogCategory() && null==request.getParameter("correct")) 
         {
@@ -48,21 +49,22 @@ public class CategoryEditAction extends Action
             WeblogCategoryData cd = rreq.getWeblogCategory();
             form.copyFrom(cd, request.getLocale());
             request.setAttribute("state","edit"); 
-                
-            // Pass Category's parent id on as attribute.                 
-            parentCat = cd.getParent();
-            request.setAttribute(
-                RollerRequest.WEBLOGCATEGORYID_KEY, parentCat.getId());
+                             
+            parentCat = cd.getParent();            
+            pageModel = new BasePageModel(
+                "categoryForm.edit.title", request, response, mapping);
+            pageModel.setWebsite(cd.getWebsite());
         }
         else if (null != request.getParameter("correct"))
         {
             // We are correcting a previously submtted form.
-            request.setAttribute("state","correcting"); 
-                
-            // Cat is specified by request param, pass it on as attribute.                 
-            parentCat = wmgr.retrieveWeblogCategory(rreq.getWeblogCategory().getId());
-            request.setAttribute(
-                RollerRequest.WEBLOGCATEGORYID_KEY, parentCat.getId());                
+            // already submitted form then load that Category into the form.
+            WeblogCategoryData cd = rreq.getWeblogCategory();
+            request.setAttribute("state","correcting");    
+            
+            parentCat = wmgr.retrieveWeblogCategory(rreq.getWeblogCategory().getId());          
+            pageModel = new BasePageModel(
+                "categoryForm.correct.title", request, response, mapping);
         }
         else
         {
@@ -71,7 +73,10 @@ public class CategoryEditAction extends Action
             
             // Cat is specified by request param, pass it on as attribute. 
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
-            form.setParentId(parentId);                            
+            form.setParentId(parentId);    
+            
+            pageModel = new BasePageModel(
+                "categoryForm.add.title", request, response, mapping);
         }
         
         // Build cat path for display on page
@@ -88,7 +93,8 @@ public class CategoryEditAction extends Action
             request.setAttribute("parentCategory", parentCat);
             request.setAttribute("categoryPath", categoryPath);
         }
-
+        
+        request.setAttribute("model", pageModel);
         return mapping.findForward("CategoryForm");
     }
     

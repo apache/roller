@@ -162,11 +162,10 @@ public class RollerMenuModel extends BaseRollerMenu implements MenuModel
 		RollerRequest rreq = RollerRequest.getRollerRequest(req);
 		try
 		{
-			String fid = rreq.getFolder()==null ? null : rreq.getFolder().getId();
-			if ( fid != null ) 
-			{
-				params.put( RollerRequest.FOLDERID_KEY, fid );
-			}
+            if (rreq.getWebsite() != null) 
+            {
+                params.put(RollerRequest.WEBLOG_KEY, rreq.getWebsite().getHandle());
+            }
 		}
 		catch (Exception e)
 		{

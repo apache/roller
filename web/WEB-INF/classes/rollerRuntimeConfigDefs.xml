@@ -31,6 +31,10 @@
          <type>string</type>
          <default-value>Roller Site</default-value>
       </property-def>
+      <property-def  name="site.shortName"  key="configForm.shortName">
+         <type>string</type>
+         <default-value>Front Page</default-value>
+      </property-def>
       <property-def  name="site.description"  key="configForm.siteDescription">
          <type>string</type>
          <default-value>Roller Site</default-value>

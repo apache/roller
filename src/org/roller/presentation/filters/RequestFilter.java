@@ -80,14 +80,14 @@ public class RequestFilter implements Filter
                     session.removeAttribute(RollerRequest.LOGIN_COOKIE);
 
                     UserManager mgr = RollerFactory.getRoller().getUserManager();
-
                     String loginCookie = mgr.createLoginCookie(username);
                     RollerFactory.getRoller().commit();
                     RequestUtil.setCookie(response, RollerRequest.LOGIN_COOKIE,
-                                          loginCookie, request.getContextPath());
+                                         loginCookie, request.getContextPath());
                 }
             }
-
+            
+          
         }
         catch (RollerException e)
         {
@@ -96,7 +96,7 @@ public class RequestFilter implements Filter
             return;
         }
 
-        if (session != null)
+        /*if (session != null)
         {
             // look for messages and errors in the request, and if they
             // exist, stuff them in the request - in Struts 1.2, you don't
@@ -113,7 +113,7 @@ public class RequestFilter implements Filter
                         session.getAttribute(Globals.ERROR_KEY));
                 session.removeAttribute(Globals.ERROR_KEY);
             }
-        }
+        }*/
 
         Date updateTime = null;
         try

@@ -81,7 +81,7 @@ public class RollerPropertiesAction extends DispatchAction {
             request.setAttribute("model",pageModel);                
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if (rollerSession.isAdminUser() ) {
+            if (rollerSession.isGlobalAdminUser() ) {
                 
                 // just grab our properties map and put it in the request
                 Roller mRoller = RollerFactory.getRoller();
@@ -117,7 +117,7 @@ public class RollerPropertiesAction extends DispatchAction {
             BasePageModel pageModel = new BasePageModel(
                     "configForm.title", request, response, mapping);
             request.setAttribute("model",pageModel);                
-            if (rollerSession.isAdminUser()) {
+            if (rollerSession.isGlobalAdminUser()) {
             
                 // just grab our properties map and put it in the request
                 Roller mRoller = RollerFactory.getRoller();

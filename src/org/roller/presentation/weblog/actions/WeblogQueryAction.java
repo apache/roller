@@ -53,7 +53,7 @@ public final class WeblogQueryAction extends DispatchAction
            request, 
            response, 
            mapping,
-           RollerSession.getRollerSession(request).getCurrentWebsite(),
+           rreq.getWebsite(),
            form.getCategoryId(),
            form.getStartDateString(),
            form.getEndDateString(),

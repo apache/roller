@@ -1,25 +1,33 @@
 <%@ include file="/taglibs.jsp" %>
 
+<c:if test="${!empty parentFolder.parent.path}">
+    <c:set var="folderName" value="${parentFolder.parent.path}" />
+</c:if>
+<c:if test="${empty parentFolder.parent.path}">
+    <c:set var="folderName" value="/" />
+</c:if>
+
 <p class="subtitle">
 <c:if test="${state == 'add'}">
-    <fmt:message key="bookmarkForm.addBookmark" />
+    <fmt:message key="bookmarkForm.add.subtitle" >
+        <fmt:param value="${folderName}" />
+    </fmt:message>
 </c:if>
 <c:if test="${state == 'edit'}">
-    <fmt:message key="bookmarkForm.editBookmark" />
+    <fmt:message key="bookmarkForm.edit.subtitle" >
+        <fmt:param value="${folderName}" />
+    </fmt:message>
 </c:if>
 <c:if test="${state == 'correct'}">
-    <fmt:message key="bookmarkForm.correctBookmark" />
+    <fmt:message key="bookmarkForm..correct.subtitle" >
+        <fmt:param value="${folderName}" />
+    </fmt:message>
 </c:if>
 </p>
 
 <p>
 <b><fmt:message key="bookmarksForm.path" /></b>:
-<c:if test="${!empty parentFolder.parent.path}">
-    <c:out value="${parentFolder.parent.path}" />
-</c:if>
-<c:if test="${empty parentFolder.parent.path}">
-    /
-</c:if>
+   <c:out value="${folderName}" />
 </p>
 
 <html:form action="/editor/bookmarkSave" method="post" focus="name">
@@ -72,7 +80,7 @@
     <p>
     <input type="submit" value="<fmt:message key='bookmarkForm.save'/>" />
     <input type="button" value="<fmt:message key='bookmarkForm.cancel' />" 
-        onclick="window.location = 'bookmarks.do?method=selectFolder&amp;folderid=<%=
+        onclick="window.location = 'bookmarks.do?method=selectFolder&amp;folderId=<%=
         request.getAttribute(RollerRequest.FOLDERID_KEY) %>'" />
     </p>
 

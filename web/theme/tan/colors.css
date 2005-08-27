@@ -1,5 +1,5 @@
 
-/* Customizable colors and images */
+/* TAN : Customizable colors and images */
 
 /* ------------------------------------------------------------------------ */
 /* add colors and images to roller.css */
@@ -8,19 +8,19 @@
     background: url("two-banner.png") repeat-x top;
 }
 .sidebarfade {
-    background: url("two-sidebarfade.png") repeat-x top;
+    background: url("two-sidebarfade.png") repeat-x bottom;
 }
-.statusBox {
+.bannerStatusBox {
     background: #ad3431;
     color: white;
 }
-.statusBox a {
+.bannerStatusBox a {
     color: white;
 }
-.statusBox a:link {
+.bannerStatusBox a:link {
     color: white;
 }
-.statusBox a:visited {
+.bannerStatusBox a:visited {
     color: white;
 }
 h1 {
@@ -89,7 +89,7 @@ td.menuTabUnselected {
 }
 .menuItemTable {
     background-color: #c6ab74;
-    color: white;
+    color: black;
 }
 td.menuTabSelected a:link, td.menuTabSelected a:visited, td.menuTabSelected a:hover, td.menuTabSelected a:active {
     color: black;

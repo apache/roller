@@ -1,5 +1,0 @@
-
-<%-- default is no sidebar --%>
-
-
-

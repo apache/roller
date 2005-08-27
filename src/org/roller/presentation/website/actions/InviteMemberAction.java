@@ -3,9 +3,6 @@ package org.roller.presentation.website.actions;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ResourceBundle;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -34,8 +31,9 @@ import org.roller.model.UserManager;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerSession;
+import org.roller.presentation.RollerRequest;
 import org.roller.presentation.website.formbeans.InviteMemberForm;
 import org.roller.util.MailUtil;
 
@@ -83,7 +81,9 @@ public class InviteMemberAction extends DispatchAction
         HttpServletResponse response)
         throws IOException, ServletException
     {
-        ActionForward forward = mapping.findForward("inviteMember.page");
+        ActionForward forward = mapping.findForward("inviteMember.page");        
+        request.setAttribute("model", new BasePageModel(
+            "inviteMember.title", request, response, mapping));
         return forward; 
     }
     
@@ -100,6 +100,10 @@ public class InviteMemberAction extends DispatchAction
         InviteMemberForm form = (InviteMemberForm)actionForm;
         UserManager umgr = RollerFactory.getRoller().getUserManager();
         UserData user = umgr.getUser(form.getUserName());
+        
+        request.setAttribute("model", new BasePageModel(
+            "inviteMember.title", request, response, mapping));
+
         if (user == null)
         {
             errors.add(ActionErrors.GLOBAL_ERROR, 
@@ -107,8 +111,8 @@ public class InviteMemberAction extends DispatchAction
         }
         else 
         {
-            RollerSession rses = RollerSession.getRollerSession(request);
-            WebsiteData website = rses.getCurrentWebsite();
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            WebsiteData website = rreq.getWebsite();
             PermissionsData perms = umgr.getPermissions(website, user);
             if (perms != null && perms.isPending())
             {

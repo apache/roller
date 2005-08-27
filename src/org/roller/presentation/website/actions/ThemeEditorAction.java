@@ -81,7 +81,8 @@ public class ThemeEditorAction extends DispatchAction {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rses.isUserAuthorizedToAdmin() ) {
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) ) {
                 
                 BasePageModel pageModel = new BasePageModel(
                         "themeEditor.title", request, response, mapping);
@@ -92,7 +93,6 @@ public class ThemeEditorAction extends DispatchAction {
                 ThemeManager themeMgr = roller.getThemeManager();
                 
                 String username = rses.getAuthenticatedUser().getUserName();
-                WebsiteData website = rses.getCurrentWebsite();
                 String currentTheme = website.getEditorTheme();
                 List themes = themeMgr.getEnabledThemesList();
                 
@@ -138,7 +138,8 @@ public class ThemeEditorAction extends DispatchAction {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);            
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rses.isUserAuthorizedToAdmin() ) {
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website)) {
 
                 // get users current theme
                 Roller roller = RollerFactory.getRoller();
@@ -150,7 +151,6 @@ public class ThemeEditorAction extends DispatchAction {
                 request.setAttribute("model",pageModel);          
                     
                 String username = rses.getAuthenticatedUser().getUserName();
-                WebsiteData website = rses.getCurrentWebsite();
                 String currentTheme = website.getEditorTheme();
                 List themes = themeMgr.getEnabledThemesList();
                 
@@ -222,7 +222,8 @@ public class ThemeEditorAction extends DispatchAction {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rses.isUserAuthorizedToAdmin() ) {
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) ) {
                 
                 BasePageModel pageModel = new BasePageModel(
                         "themeEditor.title", request, response, mapping);
@@ -261,7 +262,6 @@ public class ThemeEditorAction extends DispatchAction {
                     try {
                         Roller roller = RollerFactory.getRoller();
                         String username = rses.getAuthenticatedUser().getUserName();
-                        WebsiteData website = rses.getCurrentWebsite();
                         website.setEditorTheme(newTheme);
                         website.save();
                         
@@ -316,7 +316,8 @@ public class ThemeEditorAction extends DispatchAction {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rses.isUserAuthorizedToAdmin() ) {
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) ) {
                 
                 BasePageModel pageModel = new BasePageModel(
                         "themeEditor.title", request, response, mapping);
@@ -327,7 +328,6 @@ public class ThemeEditorAction extends DispatchAction {
                 ThemeManager themeMgr = roller.getThemeManager();
                 
                 String username = rses.getAuthenticatedUser().getUserName();
-                WebsiteData website = rses.getCurrentWebsite();
                 
                 try {
                     Theme usersTheme = themeMgr.getTheme(website.getEditorTheme());

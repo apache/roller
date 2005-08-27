@@ -12,6 +12,8 @@ function cancel() {
 -->
 </script>
 
+<h1><fmt:message key="createWebsite.title" /></h1>
+
 <p class="subtitle"><fmt:message key="createWebsite.prompt" /></p>
 
 <br /> 

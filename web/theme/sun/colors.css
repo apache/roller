@@ -1,5 +1,5 @@
 
-/* Customizable colors and images */
+/* SUN : Customizable colors and images */
 
 /* ------------------------------------------------------------------------ */
 /* add colors and images to roller.css */
@@ -10,17 +10,17 @@
 .sidebarfade {
     background: url("two-sidebarfade.png") repeat-x top;
 }
-.statusBox {
+.bannerStatusBox {
     background: #dee7e7;
     color: black;
 }
-.statusBox a {
+.bannerStatusBox a {
     color: black;
 }
-.statusBox a:link {
+.bannerStatusBox a:link {
     color: black;
 }
-.statusBox a:visited {
+.bannerStatusBox a:visited {
     color: black;
 }
 h1 {

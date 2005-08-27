@@ -65,62 +65,6 @@ public class YourWebsitesAction extends DispatchAction
         return forward;
     }
         
-    public ActionForward newEntry(
-            ActionMapping       mapping,
-            ActionForm          actionForm,
-            HttpServletRequest  request,
-            HttpServletResponse response)
-            throws Exception
-    {
-        selectWebsite(mapping, actionForm, request, response);
-        return mapping.findForward("weblogCreate");
-    }
-    
-    public ActionForward editEntries(
-            ActionMapping       mapping,
-            ActionForm          actionForm,
-            HttpServletRequest  request,
-            HttpServletResponse response)
-            throws Exception
-    {
-        selectWebsite(mapping, actionForm, request, response);
-        return mapping.findForward("weblogQuery");
-    }
-    
-    public ActionForward manageWeblog(
-            ActionMapping       mapping,
-            ActionForm          actionForm,
-            HttpServletRequest  request,
-            HttpServletResponse response)
-            throws Exception
-    {
-        selectWebsite(mapping, actionForm, request, response);
-        return mapping.findForward("editWebsite");
-    }
-    
-    public void selectWebsite(
-            ActionMapping       mapping,
-            ActionForm          actionForm,
-            HttpServletRequest  request,
-            HttpServletResponse response)
-            throws Exception
-    {
-        YourWebsitesForm form = (YourWebsitesForm)actionForm;
-        Roller roller = RollerFactory.getRoller();
-        WebsiteData selectedWebsite = 
-            roller.getUserManager().retrieveWebsite(form.getWebsiteId());
-        RollerSession rollerSession = RollerSession.getRollerSession(request);
-        UserData user = rollerSession.getAuthenticatedUser();
-        if (selectedWebsite.hasUserPermissions(user, PermissionsData.LIMITED))
-        {
-            rollerSession.setCurrentWebsite(selectedWebsite);
-            //ActionMessages msgs = new ActionMessages();
-            //msgs.add(null, new ActionMessage(
-                    //"yourWebsites.selected", selectedWebsite.getHandle()));
-            //saveMessages(request, msgs);
-        }        
-    }
-        
     public ActionForward accept(
             ActionMapping       mapping,
             ActionForm          actionForm,

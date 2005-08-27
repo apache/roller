@@ -92,11 +92,7 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
         {
             itemKey = (String)req.getAttribute(RollerMenuModel.MENU_ITEM_KEY);
         }
-        if (null == itemKey) 
-        {
-            itemKey = (String)ses.getAttribute(mMenuId+"_"+RollerMenuModel.MENU_ITEM_KEY);
-        }
-
+        
         if (itemKey != null && itemKey.equals(mName)) 
         {
             selected = true;
@@ -111,13 +107,17 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 			{
 				// Is the forward path in the request's URL?
 				String url = req.getRequestURL().toString();
-				
-				if ( url.indexOf( fConfig.getPath() ) != -1 )
+                String path = fConfig.getPath();
+                if (path != null)
+                {
+                    int end = path.indexOf("?");
+                    path = (end == -1) ? path : path.substring(0, end);
+                }				
+				if ( url.indexOf(path) != -1 )
 				{
 					//  Yes it is, so return true - this item is selected
 					selected = true;
-				}
-				
+				}				
 			}
 		}
 		if (ses != null && selected)

@@ -73,8 +73,9 @@ public final class WebsiteFormAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            WebsiteData website = rreq.getWebsite();
             RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses.isUserAuthorizedToAdmin())
+            if (rses.isUserAuthorizedToAdmin(website))
             {
                 Roller roller = RollerFactory.getRoller();
                 UserManager umgr = roller.getUserManager();
@@ -82,8 +83,6 @@ public final class WebsiteFormAction extends DispatchAction
                 UserData ud = rses.getAuthenticatedUser();
                 request.setAttribute("user",ud);
 
-                WebsiteData website = 
-                    umgr.retrieveWebsite(rses.getCurrentWebsite().getId());
                 WebsiteFormEx wf = (WebsiteFormEx)actionForm;
                 wf.copyFrom(website, request.getLocale());
 
@@ -108,8 +107,6 @@ public final class WebsiteFormAction extends DispatchAction
                 BasePageModel pageModel = new BasePageModel(
                     "websiteSettings.title", request, response, mapping);
                 request.setAttribute("model",pageModel);   
-                    
-                rses.setCurrentWebsite(website);
             }
             else
             {
@@ -137,19 +134,18 @@ public final class WebsiteFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editWebsite");
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            WebsiteFormEx form = (WebsiteFormEx)actionForm;
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             UserManager umgr = RollerFactory.getRoller().getUserManager();
+            WebsiteData wd = umgr.retrieveWebsite(form.getId());
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            if ( rollerSession.isUserAuthorizedToAdmin(wd))
             {
-                WebsiteFormEx form = (WebsiteFormEx)actionForm;
 
                 /* we don't need this check any longer -- Allen G
                 if(!form.getDefaultPageId().equals(form.getWeblogDayPageId()))
                 {
                 */               
-                    WebsiteData wd = umgr.retrieveWebsite(form.getId());
                     wd.save(); // should throw if save not permitted
 
                     // ensure getEnabled can't be changed

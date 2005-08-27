@@ -34,6 +34,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
 {
     private String mCategoryId = null;
     private String mCreatorId = null;
+    private String mWebsiteId = null;
     private Date mDate = new Date();    
     private String mDateString = null;        
     private Integer mHours = new Integer(0);
@@ -65,16 +66,16 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerSession rses = RollerSession.getRollerSession(request); 
-        if (rses.getCurrentWebsite().getDefaultPlugins() != null)
+        if (rreq.getWebsite().getDefaultPlugins() != null)
         {
             setPluginsArray(StringUtils.split(
-                    rses.getCurrentWebsite().getDefaultPlugins(), ",") );
+                    rreq.getWebsite().getDefaultPlugins(), ",") );
         }
         status = WeblogEntryData.DRAFT;
         allowComments = Boolean.TRUE;
         updateTime = new Timestamp(new Date().getTime());
         pubTime = updateTime;
-        initPubTimeDateStrings(rses.getCurrentWebsite(), request.getLocale());        
+        initPubTimeDateStrings(rreq.getWebsite(), request.getLocale());        
     }
     
     /**
@@ -111,11 +112,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         if (getCategoryId() != null) 
         {
             entry.setCategoryId(getCategoryId());
-        }       
-        if (getCreatorId() != null) 
-        {
-            entry.setCreatorId(getCreatorId());
-        }       
+        }             
         if (getAllowComments() == null)
         {
             entry.setAllowComments(Boolean.FALSE);
@@ -156,7 +153,8 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     {
         super.copyFrom(entry, locale);
         mCategoryId = entry.getCategory().getId();
-        mCreatorId = entry.getCreator().getId();
+        mCreatorId = entry.getCreator().getId();       
+        mWebsiteId = entry.getWebsite().getId();
         
         initPubTimeDateStrings(entry.getWebsite(), locale);
         
@@ -412,6 +410,15 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void setCreatorId(String creatorId)
     {
         mCreatorId = creatorId;
+    }
+
+    public String getWebsiteId()
+    {
+        return mWebsiteId;
+    }
+    public void setWebsiteId(String websiteId)
+    {
+        mWebsiteId = websiteId;
     }
 
     /** Convenience method for checking status */

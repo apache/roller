@@ -31,7 +31,6 @@ public class RollerSession
     static final long serialVersionUID = 5890132909166913727L;
 
     private UserData authenticatedUser = null;
-    private WebsiteData currentWebsite = null;
     
     private static Log mLogger =
         LogFactory.getFactory().getInstance(RollerSession.class);
@@ -184,26 +183,10 @@ public class RollerSession
         this.authenticatedUser = authenticatedUser;
     }
     
-    /**
-     * Current website that user is working with.
-     */
-    public WebsiteData getCurrentWebsite()
-    {       
-        return currentWebsite;
-    }
-
-    /**
-     * Current website that user is working with.
-     */
-    public void setCurrentWebsite(WebsiteData currentWebsite)
-    {
-        this.currentWebsite = currentWebsite;
-    }
-
     /** 
      * Does our authenticated user have the global admin role? 
      */
-    public boolean isAdminUser() throws RollerException
+    public boolean isGlobalAdminUser() throws RollerException
     {
         UserData user = getAuthenticatedUser();
         if (user != null && user.hasRole("admin")) return true;
@@ -213,35 +196,34 @@ public class RollerSession
     /** 
      * Is session's authenticated user authorized to work in current website?
      */
-    public boolean isUserAuthorized() 
+    public boolean isUserAuthorized(WebsiteData website) 
         throws RollerException
     {
-        return hasPermissions(PermissionsData.LIMITED);
+        return hasPermissions(website, PermissionsData.LIMITED);
     }
     
     /** 
      * Is session's authenticated user authorized to post in current weblog?
      */
-    public boolean isUserAuthorizedToAuthor() 
+    public boolean isUserAuthorizedToAuthor(WebsiteData website) 
         throws RollerException
     {
-        return hasPermissions(PermissionsData.AUTHOR);
+        return hasPermissions(website, PermissionsData.AUTHOR);
     }
     
     /** 
      * Is session's authenticated user authorized to admin current weblog?
      */
-    public boolean isUserAuthorizedToAdmin() 
+    public boolean isUserAuthorizedToAdmin(WebsiteData website) 
         throws RollerException
     {
-        return hasPermissions(PermissionsData.ADMIN);
+        return hasPermissions(website, PermissionsData.ADMIN);
     }
     
-    private boolean hasPermissions(short mask) 
+    private boolean hasPermissions(WebsiteData website, short mask) 
     {
         UserData user = getAuthenticatedUser();
-        WebsiteData website = getCurrentWebsite();
-        if (website != null && user != null) 
+        if (user != null) 
         {
             return website.hasUserPermissions(user, mask);
         }

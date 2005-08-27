@@ -39,15 +39,14 @@ public class CategoryDeleteAction extends Action
     {
         ActionForward forward = null;
         CategoryDeleteForm form = (CategoryDeleteForm)actionForm;
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-        RollerSession rollerSession = RollerSession.getRollerSession(
-                rreq.getRequest());
-        if (rollerSession.isUserAuthorizedToAuthor())
-        {
-            String catid = request.getParameter("catid");
-            WeblogCategoryData catToDelete = 
+
+        String catid = request.getParameter("catid");
+        WeblogCategoryData catToDelete = 
                 wmgr.retrieveWeblogCategory(catid);
+        RollerSession rses = RollerSession.getRollerSession(request);
+        if (rses.isUserAuthorizedToAuthor(catToDelete.getWebsite()))
+        {
             String returnId = null;
             if (catToDelete.getParent() != null)
             {
@@ -56,7 +55,8 @@ public class CategoryDeleteAction extends Action
             if (form.isDelete() == null)
             {
                 // Present CategoryDeleteOK? page to user
-                WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
+                RollerRequest rreq = RollerRequest.getRollerRequest(request);
+                WebsiteData website = rreq.getWebsite();
                 WeblogCategoryData theCat = wmgr.retrieveWeblogCategory(catid);
                 Iterator allCats = 
                     wmgr.getWeblogCategories(website).iterator();
@@ -111,7 +111,7 @@ public class CategoryDeleteAction extends Action
                     request.setAttribute(
                         RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
                 }               
-                forward = mapping.findForward("Categories");
+                forward = mapping.findForward("categories");
             }
             else 
             {
@@ -121,7 +121,7 @@ public class CategoryDeleteAction extends Action
                     request.setAttribute(
                        RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
                 }               
-                forward = mapping.findForward("Categories");   
+                forward = mapping.findForward("categories");   
             }
         }
         else

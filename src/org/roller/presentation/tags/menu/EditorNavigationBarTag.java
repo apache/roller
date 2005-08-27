@@ -40,7 +40,7 @@ public class EditorNavigationBarTag extends MenuTag
 				(HttpServletRequest)pageContext.getRequest(); 
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
 			RollerSession rollerSession = RollerSession.getRollerSession(request);
-			if ( rollerSession.isAdminUser() )
+			if ( rollerSession.isGlobalAdminUser() )
 			{
 				return super.doEndTag(pw);
 			}

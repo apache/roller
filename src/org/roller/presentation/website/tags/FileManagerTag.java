@@ -51,8 +51,7 @@ public class FileManagerTag extends TagSupport
             HttpServletRequest request =
                 (HttpServletRequest)pageContext.getRequest();
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            //UserData user = RollerSession.getRollerSession(request).getAuthenticatedUser();
-            WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
+            WebsiteData website = rreq.getWebsite();
 
             // for formatting the file size
             DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance();
@@ -88,7 +87,7 @@ public class FileManagerTag extends TagSupport
                     // to PRIMARY
                     java.text.Collator locCollator =
                         java.text.Collator.getInstance(
-                            RollerSession.getRollerSession(request).getCurrentWebsite().getLocaleInstance());
+                            rreq.getWebsite().getLocaleInstance());
                     locCollator.setStrength(Collator.PRIMARY);
                     java.util.Arrays.sort(files, locCollator);
 

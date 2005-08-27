@@ -4,19 +4,7 @@
 <div class="prop"></div> <%-- force minimum height --%>
 
 <script type="text/javascript">
-<!--
-function selectWebsiteAction(id, action) 
-{
-    document.yourWebsitesForm.method.value = action;
-    document.yourWebsitesForm.websiteId.value = id;
-    document.yourWebsitesForm.submit();
-} 
-function manageWeblog(id) 
-{
-    document.yourWebsitesForm.method.value = "newEntry";
-    document.yourWebsitesForm.websiteId.value = id;
-    document.yourWebsitesForm.submit();
-} 
+<!-- 
 function acceptInvite(id) 
 {
     document.yourWebsitesForm.method.value = "accept";
@@ -124,18 +112,34 @@ function resignWebsite(id,handle)
 
                            <fmt:message key='yourWebsites.actions' />                       
                            <br />
+                           
+                           <c:url value="/editor/weblog.do" var="newEntry">
+                               <c:param name="method" value="create" />
+                               <c:param name="weblog" value="${perms.website.handle}" />
+                           </c:url>
                            <img src='<c:url value="/images/New16.gif"/>' />
-                           <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "newEntry")'>
+                           <a href='<c:out value="${newEntry}" />'>
                                <fmt:message key="yourWebsites.newEntry" /></a>
                            <br />
+                           
+                           <c:url value="/editor/weblogQuery.do" var="editEntries">
+                               <c:param name="method" value="query" />
+                               <c:param name="weblog" value="${perms.website.handle}" />
+                           </c:url>
                            <img src='<c:url value="/images/Edit16.png"/>' />
-                           <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "editEntries")'>
+                           <a href='<c:out value="${editEntries}" />'>
                                <fmt:message key="yourWebsites.editEntries" /></a> 
                            <br />
+                           
+                           <c:url value="/editor/website.do" var="manageWeblog">
+                               <c:param name="method" value="edit" />
+                               <c:param name="weblog" value="${perms.website.handle}" />
+                           </c:url>
                            <img src='<c:url value="/images/Edit16.png"/>' />
-                           <a href='javascript:selectWebsiteAction("<c:out value='${perms.website.id}'/>", "manageWeblog")'>
+                           <a href='<c:out value="${manageWeblog}" />'>
                                <fmt:message key="yourWebsites.manage" /></a> 
                            <br />
+                           
                            <c:choose>
                                <c:when test="${perms.website.adminUserCount == 1 && perms.permissionMask == 3}">
                                    <%-- <fmt:message key="yourWebsites.notAllowed" /> --%>

@@ -64,12 +64,12 @@ public class CategoriesAction extends DispatchAction
         HttpServletResponse response)
         throws RollerException
     {
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        RollerSession rollerSession = RollerSession.getRollerSession(
-                rreq.getRequest());
-        if (rollerSession.isUserAuthorizedToAuthor())
+        CategoriesPageModel pageModel = new CategoriesPageModel(
+                request, response, mapping, (CategoriesForm)actionForm);
+        RollerSession rses = RollerSession.getRollerSession(request);
+        if (rses.isUserAuthorizedToAuthor(pageModel.getCategory().getWebsite()))
         {
-            addModelObjects(request, response, mapping, (CategoriesForm)actionForm);
+            request.setAttribute("model", pageModel);
             return mapping.findForward("CategoriesForm");
         }
         else
@@ -96,11 +96,14 @@ public class CategoriesAction extends DispatchAction
     {
         ActionMessages messages = new ActionMessages();
         ActionForward forward = mapping.findForward("CategoriesForm");
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        RollerSession rollerSession = RollerSession.getRollerSession(
-                rreq.getRequest());
-        if (rollerSession.isUserAuthorizedToAuthor())
+
+        CategoriesPageModel pageModel = new CategoriesPageModel(
+                request, response, mapping, (CategoriesForm)actionForm);
+        
+        RollerSession rses = RollerSession.getRollerSession(request);
+        if (rses.isUserAuthorizedToAuthor(pageModel.getCategory().getWebsite()))
         {
+            request.setAttribute("model", pageModel);
             try 
             {
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
@@ -133,11 +136,8 @@ public class CategoriesAction extends DispatchAction
                                 "categoriesForm.warn.notMoving",cd.getName()));
                         }
                     }
-                }
-    
+                }    
                 RollerFactory.getRoller().commit();
-                
-                addModelObjects(request, response, mapping, (CategoriesForm)actionForm);
                 saveMessages(request, messages);
             }
             catch (RollerException e)
@@ -152,21 +152,6 @@ public class CategoriesAction extends DispatchAction
             forward = mapping.findForward("access-denied");
         }
         return forward;
-    }
-
-    /**
-     * Load model objects for display in CategoriesForm.
-     * @param request
-     * @throws RollerException
-     */
-    private void addModelObjects(
-        HttpServletRequest request, HttpServletResponse response, 
-        ActionMapping mapping, CategoriesForm form) 
-        throws RollerException
-    {
-        CategoriesPageModel pageModel = 
-            new CategoriesPageModel(request, response, mapping, form);
-        request.setAttribute("model",pageModel);
     }
 
     private static final class CategoryPathComparator implements Comparator
@@ -200,8 +185,6 @@ public class CategoriesAction extends DispatchAction
             this.form = form;
             
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WebsiteData wd = 
-                RollerSession.getRollerSession(request).getCurrentWebsite();
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
 
             allCategories = new TreeSet(new CategoryPathComparator());
@@ -221,11 +204,12 @@ public class CategoriesAction extends DispatchAction
             cat = null;
             if (null == catId || catId.equals("null"))
             {
-                cat = wmgr.getRootWeblogCategory(wd);
+                cat = wmgr.getRootWeblogCategory(website);
             }
             else 
             {
-                cat = wmgr.retrieveWeblogCategory(catId);            
+                cat = wmgr.retrieveWeblogCategory(catId);  
+                website = cat.getWebsite();
             }
             form.setId(cat.getId());
 
@@ -249,7 +233,7 @@ public class CategoriesAction extends DispatchAction
 
             // Build collection of all Categories, except for current one, 
             // sorted by path.
-            Iterator iter = wmgr.getWeblogCategories(wd).iterator();
+            Iterator iter = wmgr.getWeblogCategories(website).iterator();
             while (iter.hasNext())
             {
                 WeblogCategoryData cd = (WeblogCategoryData) iter.next();

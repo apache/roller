@@ -42,7 +42,7 @@ public class FolderSaveAction extends Action
         FolderFormEx form = (FolderFormEx)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerSession rses = RollerSession.getRollerSession(request);
-        WebsiteData wd = rses.getCurrentWebsite();
+        WebsiteData wd = rreq.getWebsite();
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         
         FolderData fd = null;

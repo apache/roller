@@ -13,6 +13,7 @@ import org.apache.struts.action.ActionMapping;
 import org.roller.model.BookmarkManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.FolderData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 
@@ -45,6 +46,9 @@ public class FolderEditAction extends Action
             FolderData fd = rreq.getFolder();
             form.copyFrom(fd, request.getLocale());
             parentFolder = fd.getParent();
+            
+            request.setAttribute("model", new BasePageModel(
+                "folderForm.add.title", request, response, mapping));
         }
         else if (null != request.getParameter("correct"))
         {
@@ -53,6 +57,9 @@ public class FolderEditAction extends Action
             
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
             parentFolder = bmgr.retrieveFolder(parentId);
+
+            request.setAttribute("model", new BasePageModel(
+                "folderForm.correct.title", request, response, mapping));
         }
         else
         {
@@ -61,6 +68,9 @@ public class FolderEditAction extends Action
             
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
             parentFolder = bmgr.retrieveFolder(parentId);
+            
+            request.setAttribute("model", new BasePageModel(
+                "folderForm.add.title", request, response, mapping));
         }
         
         request.setAttribute(RollerRequest.PARENTID_KEY, parentFolder.getId());

@@ -13,6 +13,7 @@ import org.roller.model.RollerFactory;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.util.Utilities;
@@ -116,7 +117,7 @@ public abstract class BaseRollerMenu
                 if (    req.isUserInRole(role) || role.equals("any")
                      || (role.equals("admin") 
                              && rollerSession != null 
-                             && rollerSession.isAdminUser()))  
+                             && rollerSession.isGlobalAdminUser()))  
                 {
                     ret = true;
                     break;
@@ -129,7 +130,14 @@ public abstract class BaseRollerMenu
         {
             UserData user = null;
             if (rollerSession != null) user = rollerSession.getAuthenticatedUser();
-            WebsiteData website = RollerSession.getRollerSession(req).getCurrentWebsite();
+            
+            WebsiteData website = rreq.getWebsite();
+            BasePageModel pageModel = (BasePageModel)req.getAttribute("model");
+            if (pageModel != null)
+            {
+                website = pageModel.getWebsite();
+            }            
+            
             PermissionsData permsData = null;
             if (user != null && website != null) 
             {

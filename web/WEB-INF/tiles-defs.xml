@@ -5,55 +5,60 @@
 <tiles-definitions>
 
 <definition name=".tiles-frontpage" path="/theme/tiles-frontpage.jsp">
-   <put name="content" value="${content}" />
-   <put name="banner"  value="/theme/banner.jsp" />
-   <put name="footer"  value="/theme/footer.jsp" />
-   <put name="head"    value="/theme/head.jsp" />
-   <put name="banner"  value="/theme/banner.jsp" />
+   <put name="banner"       value="/theme/banner.jsp" />
+   <put name="bannerStatus" value="/theme/bannerStatus.jsp" />
+   <put name="head"         value="/theme/head.jsp" />
+   <put name="styles"       value="/theme/css-sidebar-high.jsp" />
+   <put name="content"      value="${content}" />
+   <put name="sidebar"      value="/theme/empty.jsp" />
+   <put name="footer"       value="/theme/footer.jsp" />
 </definition>
 
 <definition name=".tiles-mainmenupage" path="/theme/tiles-mainmenupage.jsp">
-   <put name="content"  value="${content}" />
-   <put name="banner"   value="/theme/banner.jsp" />
-   <put name="sidebar"  value="/theme/sidebar.jsp" />
-   <put name="footer"   value="/theme/footer.jsp" />
-   <put name="head"     value="/theme/head.jsp" />
-   <put name="messages" value="/theme/messages.jsp" />
+   <put name="banner"       value="/theme/banner.jsp" />
+   <put name="bannerStatus" value="/theme/bannerStatus.jsp" />
+   <put name="head"         value="/theme/head.jsp" />
+   <put name="styles"       value="/theme/css-sidebar-high.jsp" />
+   <put name="messages"     value="/theme/messages.jsp" />
+   <put name="content"      value="${content}" />
+   <put name="sidebar"      value="/theme/empty.jsp" />
+   <put name="footer"       value="/theme/footer.jsp" />
 </definition>
 
-<definition name=".tiles-editorpage" path="/theme/tiles-editorpage.jsp">
-   <put name="content"  value="${content}" />
-   <put name="banner"   value="/theme/banner.jsp" />
-   <put name="sidebar"  value="/theme/sidebar.jsp" />
-   <put name="footer"   value="/theme/footer.jsp" />
-   <put name="head"     value="/theme/head.jsp" />
-   <put name="messages" value="/theme/messages.jsp" />
-   <put name="styles"   value="/theme/styles.jsp" />
-</definition>
-
-<definition name=".tiles-adminpage" path="/theme/tiles-adminpage.jsp">
-   <put name="content"  value="${content}" />
-   <put name="banner"   value="/theme/banner.jsp" />
-   <put name="sidebar"  value="/theme/sidebar.jsp" />
-   <put name="footer"   value="/theme/footer.jsp" />
-   <put name="head"     value="/theme/head.jsp" />
-   <put name="messages" value="/theme/messages.jsp" />
-   <put name="styles"   value="/theme/styles.jsp" />
+<definition name=".tiles-tabbedpage" path="/theme/tiles-tabbedpage.jsp">
+   <put name="bannerStatus" value="/theme/bannerStatus.jsp" />
+   <put name="head"         value="/theme/head.jsp" />
+   <put name="styles"       value="/theme/empty.jsp" />
+   <put name="menu"         value="${menu}" />
+   <put name="messages"     value="/theme/messages.jsp" />
+   <put name="content"      value="${content}" />
+   <put name="sidebar"      value="/theme/empty.jsp" />
+   <put name="footer"       value="/theme/footer.jsp" />
 </definition>
 
 <definition name=".tiles-simplepage" path="/theme/tiles-simplepage.jsp">
-   <put name="content"  value="${content}" />
-   <put name="banner"   value="/theme/banner.jsp" />
-   <put name="footer"   value="/theme/footer.jsp" />
-   <put name="head"     value="/theme/head.jsp" />
-   <put name="messages" value="/theme/messages.jsp" />
+   <put name="banner"       value="/theme/empty.jsp" />
+   <put name="bannerStatus" value="/theme/bannerStatus.jsp" />
+   <put name="head"         value="/theme/head.jsp" />
+   <put name="styles"       value="/theme/empty.jsp" />
+   <put name="messages"     value="/theme/messages.jsp" />
+   <put name="content"      value="${content}" />
+   <put name="footer"       value="/theme/footer.jsp" />
 </definition>
 
-    
+<definition name=".tiles-editorpage" extends=".tiles-tabbedpage" >
+   <put name="menu" value="/theme/menu-editor.jsp" />
+</definition>
+
+<definition name=".tiles-adminpage" extends=".tiles-tabbedpage" >
+   <put name="menu" value="/theme/menu-admin.jsp" />
+</definition>
+
 <definition name=".main" extends=".tiles-frontpage" >
     <put name="content" value="/main.jsp" />
     <put name="sidebar" value="/main-sidebar.jsp" />
 </definition>
+
 <definition name=".planet" extends=".tiles-frontpage" >
     <put name="content" value="/planet.jsp" />
 </definition>
@@ -64,6 +69,7 @@
 <definition name=".YourWebsites" extends=".tiles-mainmenupage" >
     <put name="content" value="/website/YourWebsites.jsp" />
     <put name="sidebar" value="/website/YourWebsitesSidebar.jsp" />
+    <put name="styles" value="/theme/css-sidebar-high.jsp" />
 </definition>
 
 <definition name=".YourProfile" extends=".tiles-simplepage" >
@@ -85,14 +91,17 @@
 <definition name=".WeblogEdit" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/WeblogEdit.jsp" />
     <put name="sidebar" value="/weblog/WeblogEditSidebar.jsp" />
+    <put name="styles" value="/theme/css-sidebar-low.jsp" />
 </definition>
 <definition name=".WeblogQuery" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/WeblogQuery.jsp" />
     <put name="sidebar" value="/weblog/WeblogQuerySidebar.jsp" />
+    <put name="styles" value="/theme/css-sidebar-low.jsp" />
 </definition>
 <definition name=".CategoriesForm" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/CategoriesForm.jsp" />
     <put name="sidebar" value="/weblog/CategoriesSidebar.jsp" />
+    <put name="styles" value="/theme/css-sidebar-low.jsp" />
 </definition>
 <definition name=".referers" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/referers.jsp" />
@@ -100,27 +109,28 @@
 <definition name=".BookmarksForm" extends=".tiles-editorpage" >
     <put name="content" value="/bookmarks/BookmarksForm.jsp" />
     <put name="sidebar" value="/bookmarks/BookmarksSidebar.jsp" />
+    <put name="styles" value="/theme/css-sidebar-low.jsp" />
 </definition>
 <definition name=".upload-file" extends=".tiles-editorpage" >
     <put name="content" value="/website/upload-file.jsp" />
 </definition>
 
-<definition name=".WeblogEntryRemove" extends=".tiles-adminpage" >
+<definition name=".WeblogEntryRemove" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/WeblogEntryRemove.jsp" />
 </definition>
-<definition name=".CategoryForm" extends=".tiles-adminpage" >
+<definition name=".CategoryForm" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/CategoryForm.jsp" />
 </definition>
-<definition name=".CategoryDeleteOK" extends=".tiles-adminpage" >
+<definition name=".CategoryDeleteOK" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/CategoryDeleteOK.jsp" />
 </definition>
-<definition name=".BookmarkForm" extends=".tiles-adminpage" >
+<definition name=".BookmarkForm" extends=".tiles-editorpage" >
     <put name="content" value="/bookmarks/BookmarkForm.jsp" />
 </definition>
-<definition name=".FolderForm" extends=".tiles-adminpage" >
+<definition name=".FolderForm" extends=".tiles-editorpage" >
     <put name="content" value="/bookmarks/FolderForm.jsp" />
 </definition>
-<definition name=".import" extends=".tiles-adminpage" >
+<definition name=".import" extends=".tiles-editorpage" >
     <put name="content" value="/bookmarks/import.jsp" />
 </definition>
 
@@ -135,10 +145,12 @@
 <definition name=".edit-pages" extends=".tiles-editorpage"  >
     <put name="content" value="/website/edit-pages.jsp" />
     <put name="sidebar" value="/website/edit-pages-sidebar.jsp" />
+    <put name="styles" value="/theme/css-sidebar-low.jsp" />
 </definition>
 <definition name=".MemberPermissions" extends=".tiles-editorpage" >
     <put name="content" value="/website/MemberPermissions.jsp" />
     <put name="sidebar" value="/website/MemberPermissionsSidebar.jsp" />
+    <put name="styles" value="/theme/css-sidebar-low.jsp" />
 </definition>
 <definition name=".CustomPingTargets" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/CustomPingTargets.jsp" />
@@ -150,22 +162,22 @@
     <put name="content" value="/weblog/Pings.jsp" />
 </definition>
 
-<definition name=".CustomPingTargetDeleteOK" extends=".tiles-adminpage" >
+<definition name=".CustomPingTargetDeleteOK" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/CustomPingTargetDeleteOK.jsp" />
 </definition>
-<definition name=".CustomPingTargetEdit" extends=".tiles-adminpage" >
+<definition name=".CustomPingTargetEdit" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/CustomPingTargetEdit.jsp" />
 </definition>
-<definition name=".InviteMember" extends=".tiles-adminpage" >
+<definition name=".InviteMember" extends=".tiles-editorpage" >
     <put name="content" value="/website/InviteMember.jsp" />
 </definition>
-<definition name=".InviteMemberDone" extends=".tiles-adminpage" >
+<definition name=".InviteMemberDone" extends=".tiles-editorpage" >
     <put name="content" value="/website/InviteMemberDone.jsp" />
 </definition>
-<definition name=".edit-page" extends=".tiles-adminpage"  >
+<definition name=".edit-page" extends=".tiles-editorpage"  >
     <put name="content" value="/website/edit-page.jsp" />
 </definition>
-<definition name=".remove-page" extends=".tiles-adminpage"  >
+<definition name=".remove-page" extends=".tiles-editorpage"  >
     <put name="content" value="/website/remove-page.jsp" />
 </definition>
 

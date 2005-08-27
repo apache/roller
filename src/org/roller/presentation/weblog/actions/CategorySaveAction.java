@@ -53,7 +53,7 @@ public class CategorySaveAction extends Action
             else 
             {
                 cd = wmgr.createWeblogCategory();
-                cd.setWebsite(RollerSession.getRollerSession(request).getCurrentWebsite());
+                cd.setWebsite(rreq.getWebsite());
                 
                 String parentId = form.getParentId();
                 cd.setParent(wmgr.retrieveWeblogCategory(parentId));

@@ -27,7 +27,7 @@ function onMove()
     <c:when test="${empty model.categoryPath}">
     <p class="subtitle">
         <fmt:message key="categoriesForm.subtitle" >
-            <fmt:param value="${model.rollerSession.currentWebsite.handle}" />
+            <fmt:param value="${model.website.handle}" />
         </fmt:message>
     </p>  
     <p class="pagetip">

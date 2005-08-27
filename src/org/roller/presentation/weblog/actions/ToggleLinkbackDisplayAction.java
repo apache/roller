@@ -41,7 +41,8 @@ public class ToggleLinkbackDisplayAction extends Action
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if ( rollerSession.isUserAuthorizedToAuthor() )
+            if (rreq.getWebsite() != null 
+                 && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
             {
                 String refid = req.getParameter(RollerRequest.REFERERID_KEY);
                 if ( refid != null )
@@ -56,7 +57,7 @@ public class ToggleLinkbackDisplayAction extends Action
                     
                     RollerFactory.getRoller().commit();
                     
-                    PageCacheFilter.removeFromCache( req, RollerSession.getRollerSession(req).getCurrentWebsite() );
+                    PageCacheFilter.removeFromCache( req, rreq.getWebsite() );
                 }                
             }
         }
@@ -72,7 +73,7 @@ public class ToggleLinkbackDisplayAction extends Action
 		{
 			RollerContext rctx = RollerContext.getRollerContext(
 				rreq.getServletContext());
-			url = rctx.getContextUrl( req, RollerSession.getRollerSession(req).getCurrentWebsite());
+			url = rctx.getContextUrl( req, rreq.getWebsite());
 			res.sendRedirect(url);
 		}
 		catch (Exception e)

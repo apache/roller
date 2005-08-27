@@ -1,26 +1,27 @@
 <%@ include file="/taglibs.jsp" %>
 
-<h3>
-<img src='<c:url value="/images/Folder24.png" />' alt="folder" align="absmiddle" />
+<c:if test="${!empty parentFolder.parent.path}">
+    <c:set var="folderName" value="${parentFolder.parent.path}" />
+</c:if>
+<c:if test="${empty parentFolder.parent.path}">
+    <c:set var="folderName" value="/" />
+</c:if>
+
+<p class="subtitle">
 <c:if test="${state == 'add'}">
-    <fmt:message key="folderForm.addFolder" /></h3>
+    <fmt:message key="folderForm.add.subtitle" /></h3>
 </c:if>
 <c:if test="${state == 'edit'}">
-    <fmt:message key="folderForm.editFolder" />
+    <fmt:message key="folderForm.edit.subtitle" />
 </c:if>
 <c:if test="${state == 'correct'}">
-    <fmt:message key="folderForm.correctFolder" />
+    <fmt:message key="folderForm.correct.subtitle" />
 </c:if>
-</h3>
+</p>
 
 <p>
 <b><fmt:message key="bookmarksForm.path" /></b>:
-<c:if test="${!empty parentFolder.parent.path}">
-    <c:out value="${parentFolder.parent.path}" />
-</c:if>
-<c:if test="${empty parentFolder.parent.path}">
-    /
-</c:if>
+<c:out value="${folderName}" />
 </p>
 
 <html:form action="/editor/folderSave" method="post" focus="name">
@@ -47,7 +48,7 @@
     <p>
     <input type="submit" value="<fmt:message key='folderForm.save' />" />
     <input type="button" value="<fmt:message key='folderForm.cancel' />" 
-        onclick="window.location = 'bookmarks.do?method=selectFolder&amp;folderid=<%=
+        onclick="window.location = 'bookmarks.do?method=selectFolder&amp;folderId=<%=
         request.getAttribute(RollerRequest.PARENTID_KEY) %>'" />
     </p>
 

@@ -509,7 +509,7 @@ public class PageModel
         {
             List refs = 
                 mRefererMgr.getReferersToDate(mRollerReq.getWebsite(), date);
-            RollerSession rollerSession = 
+            RollerSession rses = 
                 RollerSession.getRollerSession(mRollerReq.getRequest());
             
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
@@ -520,7 +520,7 @@ public class PageModel
                     && StringUtils.isNotEmpty(excerpt) )
                 {
                     if (   referer.getVisible().booleanValue() 
-                        || rollerSession.isUserAuthorizedToAdmin() )
+                        || rses.isUserAuthorizedToAdmin(referer.getWebsite()) )
                     { 
                         referers.add(RefererDataWrapper.wrap(referer));
                     }
@@ -746,9 +746,13 @@ public class PageModel
     {
         try
         {
-            RollerSession rollerSession = 
+            RollerSession rses = 
                 RollerSession.getRollerSession(mRollerReq.getRequest());
-            return rollerSession.isUserAuthorizedToAdmin();
+            if (rses.getAuthenticatedUser() != null 
+                   && mRollerReq.getWebsite() != null)
+            {
+                return rses.isUserAuthorizedToAdmin(mRollerReq.getWebsite());
+            }
         }
         catch (Exception e)
         {

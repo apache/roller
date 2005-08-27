@@ -415,7 +415,7 @@ public class SearchServlet extends BasePageServlet
     private boolean checkForWebsite(HttpServletRequest request)
     {
         if (StringUtils.isNotEmpty(
-                request.getParameter(RollerRequest.WEBSITEHANDLE_KEY))) 
+                request.getParameter(RollerRequest.WEBLOG_KEY))) 
         {
             return true;
         }

@@ -18,12 +18,12 @@ import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.ParsedRequest;
 import org.roller.model.RollerFactory;
-import org.roller.model.RollerFactory;
 import org.roller.pojos.Template;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
@@ -71,31 +71,34 @@ public class RollerRequest implements ParsedRequest
     private WebsiteData        mWebsite;
     private WeblogEntryData    mWeblogEntry;
     private WeblogCategoryData mWeblogCategory;
-    private boolean           mIsDateSpecified = false;
+    private boolean            mIsDateSpecified = false;
         
     private static ThreadLocal mRollerRequestTLS = new ThreadLocal();
     
+    public static final String WEBLOG_KEY             = "weblog";
     public static final String ANCHOR_KEY             = "entry";
     public static final String ANCHOR_KEY_OLD         = "anchor";
     public static final String USERNAME_KEY           = "username";
-    public static final String WEBSITEHANDLE_KEY      = "blog";
-    public static final String WEBSITEID_KEY          = "websiteid";
-    public static final String FOLDERID_KEY           = "folderid";
-    public static final String PARENTID_KEY           = "parentid";
-    public static final String NEWSFEEDID_KEY         = "feedid";
-    public static final String PAGEID_KEY             = "pageid";
+
     public static final String PAGELINK_KEY           = "pagelink";
-    public static final String PINGTARGETID_KEY       = "pingtargetid";
     public static final String EXCERPTS_KEY           = "excerpts";
-    public static final String BOOKMARKID_KEY         = "bookmarkid";
-    public static final String REFERERID_KEY          = "refid";
-    public static final String WEBLOGENTRYID_KEY      = "entryid";
     public static final String WEBLOGENTRY_COUNT      = "count";
     public static final String WEBLOGCATEGORYNAME_KEY = "catname";
-    public static final String WEBLOGCATEGORYID_KEY   = "catid";
     public static final String WEBLOGENTRIES_KEY      = "entries";
     public static final String WEBLOGDAY_KEY          = "day";
-    public static final String WEBLOGCOMMENTID_KEY    = "catid";
+    
+    public static final String WEBLOGENTRYID_KEY      = "entryid";
+    
+    public static final String WEBLOGCATEGORYID_KEY   = "catId";
+    public static final String PINGTARGETID_KEY       = "pingtargetId";
+    public static final String REFERERID_KEY          = "refId";
+    public static final String WEBLOGCOMMENTID_KEY    = "catId";
+    public static final String WEBSITEID_KEY          = "websiteId";
+    public static final String BOOKMARKID_KEY         = "bookmarkId";
+    public static final String FOLDERID_KEY           = "folderId";
+    public static final String PARENTID_KEY           = "parentId";
+    public static final String NEWSFEEDID_KEY         = "feedId";
+    public static final String PAGEID_KEY             = "pageId";
     public static final String LOGIN_COOKIE           = "sessionId";
     
     public static final String OWNING_WEBSITE         = "OWNING_WEBSITE";
@@ -311,18 +314,22 @@ public class RollerRequest implements ParsedRequest
                 userName = mRequest.getRemoteUser(); 
             }
             
+            String handle = mRequest.getParameter(RollerRequest.WEBLOG_KEY);
+            String websiteid = mRequest.getParameter(RollerRequest.WEBSITEID_KEY);
+            if (handle != null && mWebsite == null) 
+            {
+                mWebsite = userMgr.getWebsiteByHandle(handle); 
+            }
+            else if (websiteid != null && mWebsite == null )
+            {
+                mWebsite = userMgr.retrieveWebsite(websiteid); 
+            }
+            
             // Look for page ID in request params
             String pageId = mRequest.getParameter(RollerRequest.PAGEID_KEY);                    
             if ( pageId != null )
             {
-                mPage = userMgr.retrievePage(pageId);
-                /*
-                // We can use page to find the user, if we don't have one yet
-                if ( mWebsite == null )
-                {
-                    mWebsite = mPage.getWebsite();
-                }
-                 */                    
+                mPage = userMgr.retrievePage(pageId);                 
             }
             else if (mWebsite != null) 
             {

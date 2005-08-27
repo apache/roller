@@ -206,7 +206,8 @@ public class PageHelper
         {
             RollerSession rollerSession = 
                 RollerSession.getRollerSession(mRollerReq.getRequest());
-            if ( rollerSession.isUserAuthorizedToAdmin() )
+            if ( mRollerReq.getWebsite() != null 
+              && rollerSession.isUserAuthorizedToAdmin(mRollerReq.getWebsite()))
             {
                 Hashtable params = new Hashtable();
                 params.put( RollerRequest.REFERERID_KEY, referer.getId());
@@ -243,9 +244,13 @@ public class PageHelper
     {
         try
         {
-            RollerSession rollerSession = 
+            RollerSession rses = 
                 RollerSession.getRollerSession(mRollerReq.getRequest());
-            return rollerSession.isUserAuthorizedToAdmin();
+            if ( rses.getAuthenticatedUser() != null 
+                    && mRollerReq.getWebsite() != null)
+            {
+                return rses.isUserAuthorizedToAdmin(mRollerReq.getWebsite());
+            }
         }
         catch (Exception e)
         {
@@ -429,7 +434,7 @@ public class PageHelper
             } 
             if (mWebsite != null)
             {
-                params.put(RollerRequest.WEBSITEHANDLE_KEY, mWebsite.getHandle());
+                params.put(RollerRequest.WEBLOG_KEY, mWebsite.getHandle());
             }
         }
         

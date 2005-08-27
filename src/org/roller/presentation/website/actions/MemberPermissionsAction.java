@@ -24,6 +24,7 @@ import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 
 /**
@@ -150,8 +151,9 @@ public class MemberPermissionsAction extends DispatchAction
         {
             super("memberPermissions.title", request, response, mapping);
             Roller roller = RollerFactory.getRoller();
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            WebsiteData website = rollerSession.getCurrentWebsite();
+            WebsiteData website = rreq.getWebsite();
             permissions = roller.getUserManager().getAllPermissions(website);
         }
         public List getPermissions()

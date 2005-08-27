@@ -55,7 +55,7 @@ public final class UploadFileFormAction extends DispatchAction
     {
         RollerRequest rreq = null;
         ActionForward fwd = mapping.findForward("uploadFiles.page");
-        WebsiteData website = null;
+        WebsiteData website = website = rreq.getWebsite();;
         BasePageModel pageModel = 
             new BasePageModel("uploadFiles.title", request, response, mapping);
         request.setAttribute("model", pageModel);
@@ -64,11 +64,11 @@ public final class UploadFileFormAction extends DispatchAction
         {
             rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
-            if ( !rollerSession.isUserAuthorizedToAuthor() )
+            
+            if ( !rollerSession.isUserAuthorizedToAuthor(website) )
             {
                 return mapping.findForward("access-denied");
             }
-            website = RollerSession.getRollerSession(request).getCurrentWebsite();
         }
         catch (Exception e)
         {
@@ -172,7 +172,7 @@ public final class UploadFileFormAction extends DispatchAction
         try
         {
             FileManager fmgr = RollerFactory.getRoller().getFileManager();
-            WebsiteData website = RollerSession.getRollerSession(request).getCurrentWebsite();
+            WebsiteData website = rreq.getWebsite();
             String[] deleteFiles = theForm.getDeleteFiles();
             for (int i=0; i<deleteFiles.length; i++)
             {
@@ -215,7 +215,8 @@ public final class UploadFileFormAction extends DispatchAction
             BasePageModel pageModel = 
              new BasePageModel("uploadFiles.title", request, response, mapping);
             request.setAttribute("model", pageModel);
-            if ( !rollerSession.isUserAuthorizedToAuthor() )
+            WebsiteData website = rreq.getWebsite();
+            if ( !rollerSession.isUserAuthorizedToAuthor(website) )
             {
                 return mapping.findForward("access-denied");
             }
