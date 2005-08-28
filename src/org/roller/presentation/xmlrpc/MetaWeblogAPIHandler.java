@@ -22,6 +22,7 @@ import org.roller.model.FileManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
+import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
@@ -208,7 +209,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         mLogger.info("     UserId: " + userid);
         mLogger.info("    Publish: " + publish);
 
-        WebsiteData website = validate(blogid, userid,password);
+        WebsiteData website = validate(blogid, userid, password);
 
         Hashtable postcontent = struct;
         String description = (String)postcontent.get("description");
@@ -236,7 +237,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         {
             Roller roller = RollerFactory.getRoller(); 
             WeblogManager weblogMgr = roller.getWeblogManager();
-
+            UserData user = roller.getUserManager().getUser(userid);
             Timestamp current =
                 new Timestamp(System.currentTimeMillis());
 
@@ -246,6 +247,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
             entry.setPubTime(new Timestamp(dateCreated.getTime()));
             entry.setUpdateTime(current);
             entry.setWebsite(website);
+            entry.setCreator(user);
             if (Boolean.valueOf(publish).booleanValue())
             {
                 entry.setStatus(WeblogEntryData.PUBLISHED);
