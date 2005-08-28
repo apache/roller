@@ -27,6 +27,7 @@ try {
 
 <form action="themeEditor.do" method="post">
 
+    <input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
     <input type=hidden name="method" value="preview" />
 
     <table width="95%">

@@ -18,7 +18,8 @@ import org.apache.struts.util.RequestUtils;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.RollerSession;
+import org.roller.presentation.website.actions.UploadFileFormAction;
+
 
 /**
  * @jsp.tag name="FileManager"
@@ -51,7 +52,7 @@ public class FileManagerTag extends TagSupport
             HttpServletRequest request =
                 (HttpServletRequest)pageContext.getRequest();
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WebsiteData website = rreq.getWebsite();
+            WebsiteData website = UploadFileFormAction.getWebsite(request);
 
             // for formatting the file size
             DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance();
@@ -87,7 +88,7 @@ public class FileManagerTag extends TagSupport
                     // to PRIMARY
                     java.text.Collator locCollator =
                         java.text.Collator.getInstance(
-                            rreq.getWebsite().getLocaleInstance());
+                            website.getLocaleInstance());
                     locCollator.setStrength(Collator.PRIMARY);
                     java.util.Arrays.sort(files, locCollator);
 
