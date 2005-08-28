@@ -7,6 +7,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionMapping;
 
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.config.ModuleConfig;
@@ -87,6 +89,7 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 		boolean selected = false;
         HttpSession ses = req.getSession(false);
         
+        // first look for menu state in request params, then attributes
         String itemKey = req.getParameter(RollerMenuModel.MENU_ITEM_KEY );
         if (null == itemKey) 
         {
@@ -97,29 +100,28 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
         {
             selected = true;
         }
-		else
+		else if (mForward != null) 
 		{
-			// Is this item's forward the one being requested?
+			// next, can we use Struts forward name to find menu state
             ServletContext ctx = RollerContext.getServletContext();     
-			ModuleConfig mConfig = RequestUtils.getModuleConfig(req,ctx);
-			ForwardConfig fConfig = mConfig.findForwardConfig(mForward);						
-			if (fConfig != null)
+			ModuleConfig mConfig = RequestUtils.getModuleConfig(req, ctx);
+			ForwardConfig fconfig = mConfig.findForwardConfig(mForward);
+            ActionMapping amapping = 
+                    (ActionMapping)req.getAttribute(Globals.MAPPING_KEY);            
+			if (fconfig != null && amapping != null)
 			{
-				// Is the forward path in the request's URL?
-				String url = req.getRequestURL().toString();
-                String path = fConfig.getPath();
-                if (path != null)
+                String reqPath = amapping.getPath();
+                String fwdPath = fconfig.getPath();
+                int end = fwdPath.indexOf(".do");
+                fwdPath = (end == -1) ? fwdPath : fwdPath.substring(0, end);
+                if  (fwdPath.equals(reqPath))
                 {
-                    int end = path.indexOf("?");
-                    path = (end == -1) ? path : path.substring(0, end);
-                }				
-				if ( url.indexOf(path) != -1 )
-				{
-					//  Yes it is, so return true - this item is selected
-					selected = true;
-				}				
+                    selected = true;
+                }
 			}
 		}
+        
+        // still not found, look for menu state in session attributes
 		if (ses != null && selected)
 		{
 			ses.setAttribute(mMenuId+"_"+RollerMenuModel.MENU_ITEM_KEY, mName);
