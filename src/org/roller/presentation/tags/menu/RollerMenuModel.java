@@ -12,9 +12,9 @@ import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
-import org.roller.pojos.UserData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.RollerSession;
 import org.xml.sax.SAXException;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -162,11 +162,17 @@ public class RollerMenuModel extends BaseRollerMenu implements MenuModel
 		RollerRequest rreq = RollerRequest.getRollerRequest(req);
 		try
 		{
-            if (rreq.getWebsite() != null) 
+            WebsiteData website = rreq.getWebsite();
+            BasePageModel pageModel = (BasePageModel)req.getAttribute("model");
+            if (website == null && pageModel != null) 
             {
-                params.put(RollerRequest.WEBLOG_KEY, rreq.getWebsite().getHandle());
+                website = pageModel.getWebsite();              
             }
-		}
+            if (website != null)
+            {
+                params.put(RollerRequest.WEBLOG_KEY, website.getHandle());
+            }
+        }
 		catch (Exception e)
 		{
 			mLogger.error("ERROR getting user in menu model", e);
