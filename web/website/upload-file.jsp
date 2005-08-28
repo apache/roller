@@ -26,6 +26,7 @@
           </td>
        </tr>
     </table>
+    <input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
     <input type="hidden" name="method" value="delete"></input>
 </html:form>
 

@@ -23,7 +23,7 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.RollerSession;
+import org.roller.presentation.website.actions.UploadFileFormAction;
 
 /**
  * @jsp.tag name="FileUpload"
@@ -59,7 +59,7 @@ public class FileUploadTag extends TagSupport
             HttpServletRequest request =
                 (HttpServletRequest)pageContext.getRequest();
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WebsiteData website = rreq.getWebsite();
+            WebsiteData website = UploadFileFormAction.getWebsite(request);
             
             String maxDir = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
             String maxFile = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
@@ -118,6 +118,8 @@ public class FileUploadTag extends TagSupport
                 pw.println("<input type=\"submit\" value=\""
                     +bundle.getString("uploadFiles.upload")+"\" />");
                 pw.println("<input type=\"hidden\" name=\"method\" value=\"upload\" /><br /><br />");
+                pw.println("<input type=\"hidden\" name=\"weblog\" value=\"" 
+                        + website.getHandle() + "\" /><br /><br />");
                 pw.println(MessageFormat.format(
                     bundle.getString("uploadFiles.quotaNote"),
                     new String[] {maxFileMB.toString(), maxDirMB.toString()}));

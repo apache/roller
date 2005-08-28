@@ -22,6 +22,7 @@ import org.apache.struts.upload.FormFile;
 import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.FileManager;
+import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
@@ -40,6 +41,7 @@ import org.roller.util.RollerMessages;
  */
 public final class UploadFileFormAction extends DispatchAction
 {
+    private static final String HANDLE = "fileupload.website.handle";
     private static Log mLogger = 
         LogFactory.getFactory().getInstance(UploadFileFormAction.class);
 
@@ -53,19 +55,19 @@ public final class UploadFileFormAction extends DispatchAction
         HttpServletResponse response)
         throws IOException, ServletException
     {
-        RollerRequest rreq = null;
         ActionForward fwd = mapping.findForward("uploadFiles.page");
-        WebsiteData website = website = rreq.getWebsite();;
-        BasePageModel pageModel = 
-            new BasePageModel("uploadFiles.title", request, response, mapping);
+        WebsiteData website = getWebsite(request);
+        
+        BasePageModel pageModel = new BasePageModel(
+                "uploadFiles.title", request, response, mapping);
         request.setAttribute("model", pageModel);
+        pageModel.setWebsite(website);
+                
         RollerMessages msgs = new RollerMessages();
         try
-        {
-            rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            
-            if ( !rollerSession.isUserAuthorizedToAuthor(website) )
+        {            
+            RollerSession rses = RollerSession.getRollerSession(request);            
+            if ( !rses.isUserAuthorizedToAuthor(website) )
             {
                 return mapping.findForward("access-denied");
             }
@@ -165,14 +167,16 @@ public final class UploadFileFormAction extends DispatchAction
         ActionErrors errors = new ActionErrors();
         UploadFileForm theForm = (UploadFileForm)actionForm;
         ActionForward fwd = mapping.findForward("uploadFiles.page");
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        
+        WebsiteData website = getWebsite(request);
         BasePageModel pageModel = 
             new BasePageModel("uploadFiles.title", request, response, mapping);
+        pageModel.setWebsite(website);
         request.setAttribute("model", pageModel);
+
         try
         {
             FileManager fmgr = RollerFactory.getRoller().getFileManager();
-            WebsiteData website = rreq.getWebsite();
             String[] deleteFiles = theForm.getDeleteFiles();
             for (int i=0; i<deleteFiles.length; i++)
             {
@@ -210,13 +214,15 @@ public final class UploadFileFormAction extends DispatchAction
     {       
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
-            BasePageModel pageModel = 
-             new BasePageModel("uploadFiles.title", request, response, mapping);
+            WebsiteData website = getWebsite(request);
+            
+            BasePageModel pageModel = new BasePageModel(
+                "uploadFiles.title", request, response, mapping);
+            pageModel.setWebsite(website);
             request.setAttribute("model", pageModel);
-            WebsiteData website = rreq.getWebsite();
-            if ( !rollerSession.isUserAuthorizedToAuthor(website) )
+            
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if ( !rses.isUserAuthorizedToAuthor(website) )
             {
                 return mapping.findForward("access-denied");
             }
@@ -229,5 +235,34 @@ public final class UploadFileFormAction extends DispatchAction
         return mapping.findForward("uploadFiles.page"); 
     }
 
+    /** 
+     * Other actions can get the website handle from request params, but 
+     * request params don't come accross in a file-upload post so we have to 
+     * stash the website handle in the session.
+     */
+    public static WebsiteData getWebsite(HttpServletRequest request) 
+        throws ServletException
+    {
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        WebsiteData website = rreq.getWebsite();
+        if (website != null) 
+        {
+            request.getSession().setAttribute(HANDLE, website.getHandle());
+        }
+        else 
+        {
+            String handle = (String)request.getSession().getAttribute(HANDLE);
+            Roller roller = RollerFactory.getRoller();
+            try 
+            {
+                website = roller.getUserManager().getWebsiteByHandle(handle);
+            }
+            catch (RollerException e)
+            {
+                throw new ServletException(e);
+            }
+        }
+        return website;
+    }
 }
 
