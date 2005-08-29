@@ -89,7 +89,7 @@ public abstract class PlanetManagerImpl implements PlanetManager
         FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
         //FeedFetcher feedFetcher = new HttpClientFeedFetcher(feedInfoCache);
         feedFetcher.setUsingDeltaEncoding(false);
-        feedFetcher.setUserAgent("Roller Planet 1.1-dev"); 
+        feedFetcher.setUserAgent("RollerPlanetAggregator"); 
         
         // Loop through all subscriptions in the system
         Iterator subs = getAllSubscriptions();

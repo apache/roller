@@ -82,10 +82,10 @@ div.yourWeblogBox {
 /* add colors and iamges to menu.css */
 
 td.menuTabSelected {
-    background: url("menutab-sel.png");
+    background: url("menutab-sel.png") repeat-x;
 }
 td.menuTabUnselected {
-    background: url("menutab-unsel.png");
+    background: url("menutab-unsel.png") repeat-x;
 }
 .menuItemTable {
     background-color: #c6ab74;

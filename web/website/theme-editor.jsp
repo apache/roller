@@ -3,18 +3,9 @@
 // this just makes the name for a custom theme available to our jstl EL
 String customTheme = org.roller.pojos.Theme.CUSTOM;
 request.setAttribute("customTheme", customTheme);
+
 boolean allowCustom = org.roller.config.RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed");
 request.setAttribute("allowCustom", new Boolean(allowCustom));
-RollerRequest rreq = RollerRequest.getRollerRequest(request);
-
-String username = "";
-try {
-    RollerSession rollerSession = RollerSession.getRollerSession(request);
-    WebsiteData wd = rreq.getWebsite();
-    username = wd.getHandle();
-} catch (Exception e) {
-    throw new ServletException(e);
-}
 %>
 <p class="subtitle">
    <fmt:message key="themeEditor.subtitle" >
@@ -98,7 +89,7 @@ try {
         <tr>
             <td>
                 <iframe name="preview" id="preview" 
-                src='<%= request.getContextPath() %>/preview/<%= username %>?theme=<c:out value="${previewTheme}"/>' 
+                src='<%= request.getContextPath() %>/preview/<c:out value="${model.website.handle}" />?theme=<c:out value="${previewTheme}"/>' 
                 frameborder=1 width="100%" height="400" 
                 marginheight="0" marginwidth="0"></iframe>
             </td>

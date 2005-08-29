@@ -25,10 +25,7 @@ import org.roller.presentation.RollerContext;
 public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 {
 	private String mMenuId = null;
-	
-	/** Name of Struts forward */
-	String mForward = null;
-	
+		
 	/** Is this the default menu? */
 	boolean mDefault = false;
 
@@ -39,8 +36,7 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 	/** Construct with name and Struts forward */
 	public MenuItemImpl(String n, String f) 
     { 
-        super(n); 
-        mForward = f; 
+        super(n, f); 
     }
 
 	/** Parent menu's ID */ 
@@ -48,40 +44,6 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 
 	/** Parent menu's ID */
 	public String getMenuId() { return mMenuId; }
-
-	/** Struts forward */ 
-	public String getForward() { return mForward; }
-
-	/** Struts forward */ 
-	public void setForward( String forward ) { mForward = forward; }
-
-	/** Name of Struts forward menu item should link to */
-	public String getUrl( PageContext pctx ) 
-	{
-		String url = null;
-		try 
-		{
-			Hashtable params = RollerMenuModel.createParams(
-					(HttpServletRequest)pctx.getRequest());
-			params.put( RollerMenuModel.MENU_ITEM_KEY, getName() );
-
-			url = RequestUtils.computeURL( 
-				pctx, 
-				mForward, // forward
-				null,     // href
-				null,     // page
-				null,
-				params,   // params 
-				null,     // anchor
-				false );  // redirect
-		}
-		catch (Exception e)
-		{
-			pctx.getServletContext().log(
-				"ERROR in menu item creating URL",e);
-		}
-		return url;
-	}
 
 	/** Given a request, tells if menu item is selected */ 
 	public boolean isSelected( HttpServletRequest req )

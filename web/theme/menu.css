@@ -41,7 +41,7 @@ Menu tab table (the tabs)
 ---------------------------------------------------------------------- */
 
 .menuTabTable {
-    height: 27px;
+    height: 24px;
 }
 td.menuTabSeparator {
     width: 10px;
@@ -52,8 +52,8 @@ td.menuTabSelected {
     /* CUSTOMIZABLE background: url("images/menutab-sel.png"); */
 }
 td.menuTabUnselected {
-    padding: 0px; 
-    margin: 0px;
+    padding: 0px 0px 0px 0px; 
+    margin: 0px 0px 0px 0px;
     /* CUSTOMIZABLE background: url("images/menutab-unsel.png"); */
 }
 

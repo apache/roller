@@ -48,12 +48,6 @@ function syncWebsites()
     </tr>
 
     <tr>
-        <td class="label"><label for="cacheDir" /><fmt:message key="planetConfig.cacheDir" /></label></td>
-        <td class="field"><html:text property="cacheDir" size="40" maxlength="255" /></td>
-        <td class="description"><fmt:message key="planetConfig.tip.cacheDir" /></td>
-    </tr>
-
-    <tr>
         <td class="label"><label for="proxyHost" /><fmt:message key="planetConfig.proxyHost" /></label></td>
         <td class="field"><html:text property="proxyHost" size="40" maxlength="255" /></td>
         <td class="description"><fmt:message key="planetConfig.tip.proxyHost" /></td>

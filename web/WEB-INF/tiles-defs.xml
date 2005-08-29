@@ -10,6 +10,7 @@
    <put name="head"         value="/theme/head.jsp" />
    <put name="styles"       value="/theme/css-sidebar-high.jsp" />
    <put name="content"      value="${content}" />
+   <put name="search"       value="/theme/search.jsp" />
    <put name="sidebar"      value="/theme/empty.jsp" />
    <put name="footer"       value="/theme/footer.jsp" />
 </definition>
@@ -60,7 +61,8 @@
 </definition>
 
 <definition name=".planet" extends=".tiles-frontpage" >
-    <put name="content" value="/planet.jsp" />
+    <put name="content" value="/planet/planet.jsp" />
+    <put name="sidebar" value="/planet/planet-sidebar.jsp" />
 </definition>
 
 
