@@ -1,6 +1,0 @@
-
-<h1><c:out value="${data.title}" /></h1>
-
-<p class="subtitle">
-    <c:out value="${data.description}" />
-</p>

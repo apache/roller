@@ -1,6 +1,0 @@
-
-<h1><%= RollerRuntimeConfig.getProperty("site.name") %></h1>
-
-<p class="subtitle">
-    <%= RollerRuntimeConfig.getProperty("site.description") %>
-</p>
