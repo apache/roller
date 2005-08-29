@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.business.PersistenceStrategy;
 import org.roller.business.PlanetManagerImpl;
+import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.pojos.PlanetConfigData;
 import org.roller.pojos.PlanetEntryData;
@@ -99,18 +100,28 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
     
     public PlanetConfigData getConfiguration() throws RollerException
     {
+        PlanetConfigData config = null;
         try
         {
             Session session = ((HibernateStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetConfigData.class);
             criteria.setMaxResults(1);
             List list = criteria.list();
-            return list.size()!=0 ? (PlanetConfigData)list.get(0) : null;
+            config = list.size()!=0 ? (PlanetConfigData)list.get(0) : null;
+            
+            // We inject the cache dir into the config object here to maintain
+            // compatibility with the standaline version of the aggregator.
+            if (config != null) 
+            {
+                config.setCacheDir(
+                    RollerConfig.getProperty("planet.aggregator.cache.dir"));
+            }                
         }
         catch (HibernateException e)
         {
             throw new RollerException(e);
         }
+        return config;
     }
     
     public List getGroups() throws RollerException

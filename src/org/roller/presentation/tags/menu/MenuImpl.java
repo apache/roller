@@ -2,12 +2,19 @@
 package org.roller.presentation.tags.menu;
 
 import java.util.Vector;
+import javax.servlet.ServletContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.config.ForwardConfig;
+import org.apache.struts.config.ModuleConfig;
+import org.apache.struts.util.RequestUtils;
 
 import org.roller.RollerException;
+import org.roller.presentation.RollerContext;
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +32,7 @@ public class MenuImpl extends BaseRollerMenu implements Menu
 	public MenuImpl() {}
 
 	/** Construct with name */
-	public MenuImpl(String n) { super(n); }
+	public MenuImpl(String n) { super(n, null); }
 	
 	/** Add MenuItemImpl to MenuImpl */
 	public void addItem( MenuItemImpl item ) { mMenuItems.addElement(item); };
@@ -113,57 +120,73 @@ public class MenuImpl extends BaseRollerMenu implements Menu
         boolean selected = false;
         HttpSession ses = req.getSession(false);
         
+        // try to get state from request param then attribute
         String menuKey = req.getParameter(RollerMenuModel.MENU_KEY );
         if (null == menuKey) 
         {
             menuKey = (String)req.getAttribute(RollerMenuModel.MENU_KEY);
         }
-        //if (null == menuKey) 
-        //{
-           //menuKey = (String)ses.getAttribute(mMenuId+"_"+RollerMenuModel.MENU_KEY);
-        //}
-
         if (menuKey != null && menuKey.equals(mName)) 
         {
             selected = true;
         }
-		else
+        // next, if submenu is selected, then we're selected
+        else if (getSelectedMenuItem(req, false) != null)
 		{
-			if ( getSelectedMenuItem( req, false ) != null ) 
+            selected = true;
+		}
+        // next, try to use Struts forward to determine state
+        else if (mForward != null)
+        {
+            ServletContext ctx = RollerContext.getServletContext();     
+			ModuleConfig mConfig = RequestUtils.getModuleConfig(req, ctx);
+			ForwardConfig fconfig = mConfig.findForwardConfig(mForward);
+            ActionMapping amapping = 
+                    (ActionMapping)req.getAttribute(Globals.MAPPING_KEY);            
+			if (fconfig != null && amapping != null)
 			{
-				selected = true;
+                String reqPath = amapping.getPath();
+                String fwdPath = fconfig.getPath();
+                int end = fwdPath.indexOf(".do");
+                fwdPath = (end == -1) ? fwdPath : fwdPath.substring(0, end);
+                if  (fwdPath.equals(reqPath))
+                {
+                    selected = true;
+                }
 			}
-		}
-
-		if ( ses != null && selected )
-		{
-			ses.setAttribute(mMenuId + "_" + RollerMenuModel.MENU_KEY, mName);
-		}
-
+        }
 		return selected;
 	}
 
 	/** Name of Struts forward menu item should link to */
-	public String getUrl( PageContext pctx ) 
+	public String getUrl(PageContext pctx) 
 	{
 		String url = null;
 		try 
 		{
-			HttpServletRequest req = (HttpServletRequest)pctx.getRequest();
-			String surl = getDefaultMenuItem( req ).getUrl( pctx ); 
-			StringBuffer sb = new StringBuffer( surl ); 
-			if ( surl.indexOf("?") == -1 )
-			{
-				sb.append( "?" ); 
-			}
-			else
-			{
-				sb.append( "&amp;" ); 
-			}
-			sb.append( RollerMenuModel.MENU_KEY );
-			sb.append( "=" ); 
-			sb.append( getName() );	
-			url = sb.toString();
+            // If no forward specified, use default submenu URL
+            if (mForward == null && mMenuItems != null && mMenuItems.size() > 0)
+            {
+                HttpServletRequest req = (HttpServletRequest)pctx.getRequest();
+                String surl = getDefaultMenuItem( req ).getUrl( pctx ); 
+                StringBuffer sb = new StringBuffer( surl ); 
+                if ( surl.indexOf("?") == -1 )
+                {
+                    sb.append( "?" ); 
+                }
+                else
+                {
+                    sb.append( "&amp;" ); 
+                }
+                sb.append( RollerMenuModel.MENU_KEY );
+                sb.append( "=" ); 
+                sb.append( getName() );	
+                url = sb.toString();
+            }
+            else
+            {
+                return super.getUrl(pctx);
+            }
 		}
 		catch (Exception e)
 		{

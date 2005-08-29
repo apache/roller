@@ -2,10 +2,13 @@ package org.roller.presentation.tags.menu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
+import org.apache.struts.util.RequestUtils;
 
 import org.roller.RollerException;
 import org.roller.config.RollerConfig;
@@ -25,6 +28,7 @@ import org.roller.util.Utilities;
 public abstract class BaseRollerMenu
 {
     protected String mName = null;
+	protected String mForward = null;
     protected String mEnabledProperty = null;
     protected String mDisabledProperty = null;
     protected List mRoles = new ArrayList();
@@ -35,9 +39,10 @@ public abstract class BaseRollerMenu
         init();
     }
     
-    public BaseRollerMenu(String name) 
+    public BaseRollerMenu(String name, String forward) 
     { 
         mName = name; 
+        mForward = forward;
         init();
     }
     
@@ -59,6 +64,12 @@ public abstract class BaseRollerMenu
     /** Name of menu */
     public String getName() { return mName; }
     
+    /** Struts forward */ 
+	public String getForward() { return mForward; }
+
+	/** Struts forward */ 
+	public void setForward( String forward ) { mForward = forward; }
+
     /** Roles allowed to view menu, comma separated */ 
     public void setRoles( String roles ) 
     {
@@ -105,11 +116,12 @@ public abstract class BaseRollerMenu
         }
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
-        boolean ret = false;
+        boolean ret = true;
    
         // next, make sure that users role permits it
         if (mRoles != null && mRoles.size() > 0)
         {
+            ret = false;
             Iterator roles = mRoles.iterator();
             while (roles.hasNext())
             {
@@ -166,4 +178,33 @@ public abstract class BaseRollerMenu
         }
         return ret;
     }
+    
+	/** Name of Struts forward menu item should link to */
+	public String getUrl( PageContext pctx ) 
+	{
+		String url = null;
+		try 
+		{
+			Hashtable params = RollerMenuModel.createParams(
+					(HttpServletRequest)pctx.getRequest());
+			params.put( RollerMenuModel.MENU_ITEM_KEY, getName() );
+
+			url = RequestUtils.computeURL( 
+				pctx, 
+				mForward, // forward
+				null,     // href
+				null,     // page
+				null,
+				params,   // params 
+				null,     // anchor
+				false );  // redirect
+		}
+		catch (Exception e)
+		{
+			pctx.getServletContext().log(
+				"ERROR in menu item creating URL",e);
+		}
+		return url;
+	}
+
 }

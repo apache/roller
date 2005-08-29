@@ -235,24 +235,6 @@ public final class PlanetConfigAction extends DispatchAction
     public ActionErrors validate(PlanetConfigForm form)
     {
         ActionErrors errors = new ActionErrors();
-        if (form.getCacheDir()==null || form.getCacheDir().trim().length()==0)
-        {
-            errors.add(null, new ActionError("planetConfig.error.feedUrl"));
-        }
-        else
-        {
-            File file = new File(form.getCacheDir());
-            if (!file.isDirectory())
-            {
-                errors.add(null, new ActionError(
-                        "planetConfig.error.cacheDirNotFound"));
-            }
-            if (!file.canWrite())
-            {
-                errors.add(null, new ActionError(
-                        "planetConfig.error.cacheDirNotWritable"));
-            }
-        }
         if (form.getProxyHost()!=null && form.getProxyHost().trim().length()>0)
         {
             if (form.getProxyPort()<1)
