@@ -75,6 +75,9 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
     </roller:link>                    
     <br />
 </c:forEach>
+
+<br />
+<br />
                 
             </div>
         </div>

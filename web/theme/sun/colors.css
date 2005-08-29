@@ -4,33 +4,38 @@
 /* ------------------------------------------------------------------------ */
 /* add colors and images to roller.css */
 
+.bannerlogo {
+    margin: 0px 0px 0px 0px;
+}
 .bannerBox {
-    background: url("two-banner.png") repeat-x top;
+    background: url("two-banner.gif") repeat-x top;
+    border-bottom: 2px black solid;
 }
 .sidebarfade {
-    background: url("two-sidebarfade.png") repeat-x top;
+    background: url("two-sidebarfade.gif") repeat-x bottom;
+}
+.sidebarfade_hotblogs {
+    background: #dee7ef;
+}
+.sidebarfade_search {
+    background: url("two-sidebarfade-search.gif") repeat-x bottom;
 }
 .bannerStatusBox {
-    background: #dee7e7;
-    color: black;
-}
-.bannerStatusBox a {
-    color: black;
-}
-.bannerStatusBox a:link {
-    color: black;
-}
-.bannerStatusBox a:visited {
-    color: black;
+    color: #31556b;
+    background: #dee7ef;
 }
 h1 {
     color: #e77100;
 }
 h2 {
-    color: black;
+    color: #e77100;
 }
 h3 {
     color: black;
+}
+p.subtitle {
+    color: #505050;
+    font-size: 120%;
 }
 a:link {
     color: #31556b;
@@ -54,34 +59,42 @@ div.control {
     background: #dee7ef; 
 }
 div.controlToggle {
-    background: url("two-togglegrey.png") repeat-x top; 
+    background: url("two-togglegrey.gif") repeat-x top; 
 }
 div.entryTitleBox {
-   background: red; 
    color: white; 
 }
 div.entryBox {
-   border: 1px red solid;
+   border-bottom: 1px grey solid;
+   background: #e7e3e7;
+   margin: 0px 0px 0px 0px;
+}
+div.entryTitleBox {
+   padding: 4px;
+   font-size: medium;
 }
 div.entryBoxPinned {
    background: #e5e5e5; 
    border: 1px #c0c0c0 solid;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
-   color: #ad3537; 
+   color: #52829c; 
 }
 div.yourWeblogBox {
-   border-top: 1px #ad3537 solid;
+   border-top: 1px grey solid;
+}
+td.actions {
+    background: #e9e9e9;
 }
 
 /* ------------------------------------------------------------------------ */
 /* add colors and iamges to menu.css */
 
 td.menuTabSelected {
-    background: url("menutab-sel.png");
+    background: url("menutab-sel.gif");
 }
 td.menuTabUnselected {
-    background: url("menutab-unsel.png");
+    background: url("menutab-unsel.gif");
 }
 .menuItemTable {
     background-color: #52829c;
@@ -91,7 +104,7 @@ td.menuTabSelected a:link, td.menuTabSelected a:visited, td.menuTabSelected a:ho
     color: white;
 }
 td.menuTabUnselected a:link, td.menuTabUnselected a:visited, td.menuTabUnselected a:hover, td.menuTabUnselected a:active {
-    color: white;
+    color: #52829c;
 }
 a.menuItemSelected:link, a.menuItemSelected:visited, a.menuItemSelected:hover, a.menuItemSelected:active {
     color: white;

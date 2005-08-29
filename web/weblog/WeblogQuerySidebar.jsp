@@ -102,6 +102,9 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
 
 </html:form>
 
+<br />
+<br />
+
             </div>
         </div>
     </div>

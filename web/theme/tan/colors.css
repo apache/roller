@@ -4,11 +4,21 @@
 /* ------------------------------------------------------------------------ */
 /* add colors and images to roller.css */
 
+.bannerlogo {
+    margin: 15px 0px 0px 15px;
+}
+
 .bannerBox {
-    background: url("two-banner.png") repeat-x top;
+    background: url("two-banner.gif") repeat-x top;
 }
 .sidebarfade {
-    background: url("two-sidebarfade.png") repeat-x bottom;
+    background: url("two-sidebarfade.gif") repeat-x bottom;
+}
+.sidebarfade_hotblogs {
+    background: url("two-sidebarfade.gif") repeat-x bottom;
+}
+.sidebarfade_search {
+    background: url("two-sidebarfade.gif") repeat-x bottom;
 }
 .bannerStatusBox {
     background: #ad3431;
@@ -56,7 +66,7 @@ div.control {
     background: #c6ab74; 
 }
 div.controlToggle {
-    background: url("two-togglegrey.png") repeat-x top; 
+    background: url("two-togglegrey.gif") repeat-x top; 
 }
 div.entryTitleBox {
    background: #c6ab74; 
@@ -82,10 +92,10 @@ div.yourWeblogBox {
 /* add colors and iamges to menu.css */
 
 td.menuTabSelected {
-    background: url("menutab-sel.png") repeat-x;
+    background: url("menutab-sel.gif") repeat-x;
 }
 td.menuTabUnselected {
-    background: url("menutab-unsel.png") repeat-x;
+    background: url("menutab-unsel.gif") repeat-x;
 }
 .menuItemTable {
     background-color: #c6ab74;
