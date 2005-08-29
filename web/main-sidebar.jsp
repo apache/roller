@@ -1,6 +1,6 @@
 <%@ include file="/taglibs.jsp" %>
 
-<div class="sidebarfade">
+<div class="sidebarfade_hotblogs">
     <div class="menu-tr">
         <div class="menu-tl">
             <div class="sidebarBody">
