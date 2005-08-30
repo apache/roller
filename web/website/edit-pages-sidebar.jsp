@@ -13,8 +13,7 @@
                 <fmt:message key="pagesForm.name"/>: <input type="text" name="name" size="30" />
 
                 <input type="submit" value='<fmt:message key="pagesForm.add" />' />
-                <input type="hidden" property="template" 
-                    value="<html><body><fmt:message key="pagesForm.emptyPage" /></body></html>" />
+                <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
                 <html:hidden property="method" value="add"/>
 
              </html:form>

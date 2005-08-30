@@ -9,6 +9,8 @@ import org.apache.struts.action.ActionForm;
 public class InviteMemberForm extends ActionForm
 {
     private String userName;
+    private String websiteId;
+    
     public String getUserName()
     {
         return userName;
@@ -16,5 +18,15 @@ public class InviteMemberForm extends ActionForm
     public void setUserName(String userName)
     {
         this.userName = userName;
+    }
+
+    public String getWebsiteId() 
+    {
+        return websiteId;
+    }
+
+    public void setWebsiteId(String websiteId) 
+    {
+        this.websiteId = websiteId;
     }
 }
