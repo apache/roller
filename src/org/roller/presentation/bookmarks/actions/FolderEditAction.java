@@ -47,8 +47,10 @@ public class FolderEditAction extends Action
             form.copyFrom(fd, request.getLocale());
             parentFolder = fd.getParent();
             
-            request.setAttribute("model", new BasePageModel(
-                "folderForm.add.title", request, response, mapping));
+            BasePageModel pageModel = new BasePageModel(
+                "folderForm.add.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         else if (null != request.getParameter("correct"))
         {
@@ -57,9 +59,11 @@ public class FolderEditAction extends Action
             
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
             parentFolder = bmgr.retrieveFolder(parentId);
-
-            request.setAttribute("model", new BasePageModel(
-                "folderForm.correct.title", request, response, mapping));
+            
+            BasePageModel pageModel = new BasePageModel(
+                "folderForm.correct.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         else
         {
@@ -69,8 +73,10 @@ public class FolderEditAction extends Action
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
             parentFolder = bmgr.retrieveFolder(parentId);
             
-            request.setAttribute("model", new BasePageModel(
-                "folderForm.add.title", request, response, mapping));
+            BasePageModel pageModel = new BasePageModel(
+                "folderForm.add.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         
         request.setAttribute(RollerRequest.PARENTID_KEY, parentFolder.getId());

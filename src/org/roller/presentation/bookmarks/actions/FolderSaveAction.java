@@ -12,11 +12,10 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.roller.RollerException;
-import org.roller.RollerPermissionsException;
 import org.roller.model.BookmarkManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.FolderData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
@@ -42,61 +41,40 @@ public class FolderSaveAction extends Action
         FolderFormEx form = (FolderFormEx)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerSession rses = RollerSession.getRollerSession(request);
-        WebsiteData wd = rreq.getWebsite();
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
-        
+        WebsiteData website = null;
+                
         FolderData fd = null;
         if (null != form.getId() && !form.getId().trim().equals("")) 
         {
             fd = bmgr.retrieveFolder(form.getId());
-            fd.save(); // should throw if save not permitted
+            website = fd.getWebsite();
         }
         else 
         {
-            fd = bmgr.createFolder();
-        
+            fd = bmgr.createFolder();        
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
-            FolderData parent = null;
-            if (null != parentId && !parentId.trim().equalsIgnoreCase("null"))
-            {
-                parent = bmgr.retrieveFolder(parentId);
-            }
-            else 
-            {
-                parent = bmgr.getRootFolder(wd);
-            }
+            FolderData parent = bmgr.retrieveFolder(parentId);
+            website = parent.getWebsite();
             fd.setParent(parent);
-            fd.setWebsite(wd);
+            fd.setWebsite(website);
         }
         
-        // Copy form values to object
-        form.copyTo(fd, request.getLocale());
-            
-        try 
+        if (fd.getWebsite().hasUserPermissions(
+                rses.getAuthenticatedUser(), PermissionsData.AUTHOR))
         {
-            // Store object and commit
+            // Copy form values to object
+            form.copyTo(fd, request.getLocale());
             fd.save();
             RollerFactory.getRoller().commit();
         }
-        catch (RollerPermissionsException e)
+        else
         {
             ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError("error.permissions.deniedSave"));
             saveErrors(request, errors);
             forward = mapping.findForward("access-denied");
-        }
-        catch (RollerException re)
-        {
-            RollerFactory.getRoller().rollback();
-            ActionErrors errors = new ActionErrors();
-            String msg = (null != re.getRootCause())
-                ? re.getRootCause().toString()
-                : re.toString();
-            errors.add(ActionErrors.GLOBAL_ERROR, 
-               new ActionError("folderForm.save.exception", msg));
-            saveErrors(request,errors);            
-        }
-         
+        }         
         if (null != fd.getParent()) 
         {
             request.setAttribute(

@@ -60,7 +60,6 @@ public class StrutsActionTestBase extends RollerTestBase
         UserManager umgr = getRoller().getUserManager();
         UserData user = umgr.getUser(username);
         WebsiteData website = (WebsiteData)umgr.getWebsites(user, null).get(0); 
-        rollerSession.setCurrentWebsite(website);
         session.setAttribute(RollerSession.ROLLER_SESSION, rollerSession);
     }
     

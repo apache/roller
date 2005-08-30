@@ -89,10 +89,10 @@ public class RollerRequest implements ParsedRequest
     
     public static final String WEBLOGENTRYID_KEY      = "entryid";
     
-    public static final String WEBLOGCATEGORYID_KEY   = "catId";
+    public static final String WEBLOGCATEGORYID_KEY   = "categoryId";
     public static final String PINGTARGETID_KEY       = "pingtargetId";
     public static final String REFERERID_KEY          = "refId";
-    public static final String WEBLOGCOMMENTID_KEY    = "catId";
+    public static final String WEBLOGCOMMENTID_KEY    = "commentId";
     public static final String WEBSITEID_KEY          = "websiteId";
     public static final String BOOKMARKID_KEY         = "bookmarkId";
     public static final String FOLDERID_KEY           = "folderId";

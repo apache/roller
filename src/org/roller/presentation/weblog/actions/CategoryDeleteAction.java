@@ -24,8 +24,8 @@ import org.roller.presentation.weblog.formbeans.CategoryDeleteForm;
 
 /**
  * @struts.action path="/editor/categoryDelete" name="categoryDeleteForm"
- * @struts.action-forward name="CategoryDeleteOK" path=.CategoryDeleteOK"
- * 
+ * @struts.action-forward name="CategoryDeleteOK" path=".CategoryDeleteOK"
+ *
  * @author Dave Johnson
  */
 public class CategoryDeleteAction extends Action
@@ -37,11 +37,11 @@ public class CategoryDeleteAction extends Action
         HttpServletResponse response)
         throws Exception
     {
-        ActionForward forward = null;
+        ActionForward forward = mapping.findForward("categories");
         CategoryDeleteForm form = (CategoryDeleteForm)actionForm;
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
 
-        String catid = request.getParameter("catid");
+        String catid = request.getParameter(RollerRequest.WEBLOGCATEGORYID_KEY);
         WeblogCategoryData catToDelete = 
                 wmgr.retrieveWeblogCategory(catid);
         RollerSession rses = RollerSession.getRollerSession(request);
@@ -56,10 +56,9 @@ public class CategoryDeleteAction extends Action
             {
                 // Present CategoryDeleteOK? page to user
                 RollerRequest rreq = RollerRequest.getRollerRequest(request);
-                WebsiteData website = rreq.getWebsite();
                 WeblogCategoryData theCat = wmgr.retrieveWeblogCategory(catid);
                 Iterator allCats = 
-                    wmgr.getWeblogCategories(website).iterator();
+                    wmgr.getWeblogCategories(theCat.getWebsite()).iterator();
                 List destCats = new LinkedList();
                 while (allCats.hasNext())
                 {
@@ -76,7 +75,7 @@ public class CategoryDeleteAction extends Action
                 if (destCats.size() > 0)
                 {
                     form.setName(theCat.getName());
-                    form.setCatid(catid);
+                    form.setCategoryId(catid); 
                     form.setCats(destCats);
                     form.setInUse(Boolean.valueOf(catToDelete.isInUse()));
                     forward = mapping.findForward("CategoryDeleteOK");
@@ -89,7 +88,6 @@ public class CategoryDeleteAction extends Action
                         request.setAttribute(
                                 RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
                     }               
-                    forward = mapping.findForward("categories");
                 }
             }
             else if (form.isDelete().booleanValue()) 
@@ -111,7 +109,6 @@ public class CategoryDeleteAction extends Action
                     request.setAttribute(
                         RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
                 }               
-                forward = mapping.findForward("categories");
             }
             else 
             {
@@ -121,7 +118,6 @@ public class CategoryDeleteAction extends Action
                     request.setAttribute(
                        RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
                 }               
-                forward = mapping.findForward("categories");   
             }
         }
         else

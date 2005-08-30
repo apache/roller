@@ -24,6 +24,7 @@
     </div>
     
     <div id="centercontent">   
+        <h1><c:out value="${model.title}" /></h1>
         <tiles:insert attribute="messages" />    
         <tiles:insert attribute="content" />    
         <div id="footer">
