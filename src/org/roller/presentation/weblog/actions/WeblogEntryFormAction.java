@@ -144,20 +144,21 @@ public final class WeblogEntryFormAction extends DispatchAction
             RollerSession rses = RollerSession.getRollerSession(request);
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             WeblogEntryData entry = rreq.getWeblogEntry();           
+            WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
+            if (entry == null && form.getId() != null)
+            {
+                entry = wmgr.retrieveWeblogEntry(form.getId());
+            }
                 
             if (rses.isUserAuthorizedToAuthor(entry.getWebsite()) 
-            || (rses.isUserAuthorized(entry.getWebsite()) && entry.isDraft()))
+              || (rses.isUserAuthorized(entry.getWebsite()) && entry.isDraft()))
             {
-                WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
-                if (entry == null && form.getId() != null)
-                {
-                    entry= wmgr.retrieveWeblogEntry(form.getId());
-                }
                 form.copyFrom(entry, request.getLocale());
-
-                request.setAttribute("model",
-                        new WeblogEntryPageModel(request, response, mapping,
-                                form, WeblogEntryPageModel.EDIT_MODE));
+                WeblogEntryPageModel pageModel = new WeblogEntryPageModel(
+                    request, response, mapping, form, 
+                        WeblogEntryPageModel.EDIT_MODE);
+                pageModel.setWebsite(entry.getWebsite());
+                request.setAttribute("model", pageModel);
             }
             else
             {
@@ -594,8 +595,8 @@ public final class WeblogEntryFormAction extends DispatchAction
                  || (rses.isUserAuthorized(wd.getWebsite()) && wd.isDraft()) )
             {
                 // Flush the page cache
-                PageCacheFilter.removeFromCache(
-                        request, wd.getWebsite());
+                PageCacheFilter.removeFromCache(request, wd.getWebsite());
+                
 				// remove the index for it
                 wd.setStatus(WeblogEntryData.DRAFT);
 		        reindexEntry(RollerFactory.getRoller(), wd);
@@ -612,6 +613,8 @@ public final class WeblogEntryFormAction extends DispatchAction
                 uiMessages.add(null, 
                     new ActionMessage("weblogEdit.entryRemoved"));
                 saveMessages(request, uiMessages);
+                
+                RollerRequest.getRollerRequest().setWebsite(wd.getWebsite());
             }
             else
             {

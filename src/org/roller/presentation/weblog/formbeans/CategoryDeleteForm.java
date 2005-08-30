@@ -13,7 +13,7 @@ import org.apache.struts.action.ActionForm;
 public class CategoryDeleteForm extends ActionForm
 {
     private String name;
-    private String catid = null;
+    private String categoryId = null;
     private String moveToWeblogCategoryId = null;
     private List cats = null;
     private Boolean inUse = Boolean.FALSE;
@@ -30,9 +30,9 @@ public class CategoryDeleteForm extends ActionForm
     /**
      * @return
      */
-    public String getCatid()
+    public String getCategoryId()
     {
-        return catid;
+        return categoryId;
     }
 
     /**
@@ -62,9 +62,9 @@ public class CategoryDeleteForm extends ActionForm
     /**
      * @param string
      */
-    public void setCatid(String string)
+    public void setCategoryId(String string)
     {
-        catid = string;
+        categoryId = string;
     }
 
     /**

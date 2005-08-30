@@ -9,13 +9,19 @@
 
 <p class="subtitle">
 <c:if test="${state == 'add'}">
-    <fmt:message key="folderForm.add.subtitle" /></h3>
+    <fmt:message key="folderForm.add.subtitle" >
+        <fmt:param value="${folderName}" />
+    </fmt:message>
 </c:if>
 <c:if test="${state == 'edit'}">
-    <fmt:message key="folderForm.edit.subtitle" />
+    <fmt:message key="folderForm.edit.subtitle" >
+        <fmt:param value="${folderName}" />
+    </fmt:message>
 </c:if>
 <c:if test="${state == 'correct'}">
-    <fmt:message key="folderForm.correct.subtitle" />
+    <fmt:message key="folderForm.correct.subtitle" >
+        <fmt:param value="${folderName}" />
+    </fmt:message>
 </c:if>
 </p>
 

@@ -58,6 +58,7 @@ function onMove()
 
 <html:form action="/editor/categories" method="post">
 <input type="hidden" name="method" /> 
+<input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' /> 
 <html:hidden property="parentId" /> 
 
 <%-- Select-all button --%>

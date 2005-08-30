@@ -66,10 +66,6 @@ public abstract class PersistentObject implements Serializable
     {
         return true;
     }
-    /** Start editing this object */
-    public void startEditing() throws RollerException
-    {
-        if (!canSave()) throw new RollerException("ERROR: edit permission denied");
-    }
+
 }
 
