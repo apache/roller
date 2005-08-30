@@ -24,6 +24,7 @@ import org.roller.config.PingConfig;
 import org.roller.model.PingTargetManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.PingTargetData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.forms.PingTargetForm;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
@@ -99,10 +100,11 @@ public class CustomPingTargetsAction
     /*
      *  Check if the user has editing rights.
      */
-    protected boolean hasRequiredRights(RollerRequest rreq) throws RollerException
+    protected boolean hasRequiredRights(RollerRequest rreq, WebsiteData website) 
+        throws RollerException
     {
         RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
-        return (rses.isUserAuthorizedToAdmin(rreq.getWebsite()) 
+        return (rses.isUserAuthorizedToAdmin(website)
             && !PingConfig.getDisallowCustomTargets());
     }
 
