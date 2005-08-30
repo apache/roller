@@ -1,5 +1,9 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
 <%@ include file="/taglibs.jsp" %>
+<%
+BasePageModel pageModel = (BasePageModel)request.getAttribute("model");
+String websiteHandle = pageModel.getWebsite().getHandle();
+%>
 
 <p class="subtitle">
    <fmt:message key="customPingTargets.subtitle" >
@@ -42,6 +46,8 @@
                            id="<%= RollerRequest.PINGTARGETID_KEY %>"
                            name="pingTarget" property="id" />
                        <roller:linkparam
+                           id="weblog" value="<%= websiteHandle %>" />
+                       <roller:linkparam
     	                   id="method" value="editSelected" />
                        <img src='<c:url value="/images/Edit16.png"/>' border="0"
                             alt="<fmt:message key="pingTarget.edit" />" />
@@ -53,6 +59,8 @@
                        <roller:linkparam
     	                   id="<%= RollerRequest.PINGTARGETID_KEY %>"
     	                   name="pingTarget" property="id" />
+                       <roller:linkparam
+                           id="weblog" value="<%= websiteHandle %>" />
                        <roller:linkparam
     	                   id="method" value="deleteSelected" />
                        <img src='<c:url value="/images/Remove16.gif"/>' border="0"
@@ -70,6 +78,7 @@
     <html:form action="/editor/customPingTargets" method="post">
         <div class="control">
            <html:hidden property="method" value="addNew" />
+           <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />           
            <input type="submit" value='<fmt:message key="pingTarget.addNew"/>' />
         </div>
     </html:form>

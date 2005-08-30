@@ -24,6 +24,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.model.PingTargetManager;
 import org.roller.model.RollerFactory;
+import org.roller.pojos.WebsiteData;
 import org.roller.pojos.PingTargetData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.forms.PingTargetForm;
@@ -92,7 +93,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
             BasePageModel pageModel = 
                 new BasePageModel(getPingTargetsTitle(), req, res, mapping);
             req.setAttribute("model",pageModel);            
-            if (!hasRequiredRights(rreq))
+            if (!hasRequiredRights(rreq, rreq.getWebsite()))
             {
                 return mapping.findForward(ACCESS_DENIED_PAGE);
             }
@@ -131,7 +132,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
             BasePageModel pageModel = 
                 new BasePageModel(getPingTargetEditTitle(), req, res, mapping);
             req.setAttribute("model",pageModel);            
-            if (!hasRequiredRights(rreq))
+            if (!hasRequiredRights(rreq, rreq.getWebsite()))
             {
                 return mapping.findForward(ACCESS_DENIED_PAGE);
             }
@@ -220,7 +221,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
             BasePageModel pageModel = 
                 new BasePageModel(getPingTargetEditTitle(), req, res, mapping);
             req.setAttribute("model",pageModel);            
-            if (!hasRequiredRights(rreq))
+            if (!hasRequiredRights(rreq, rreq.getWebsite()))
             {
                 return mapping.findForward(ACCESS_DENIED_PAGE);
             }
@@ -256,7 +257,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
             BasePageModel pageModel = new BasePageModel(
                     getPingTargetDeleteOKTitle(), req, res, mapping);
             req.setAttribute("model",pageModel);            
-            if (!hasRequiredRights(rreq))
+            if (!hasRequiredRights(rreq, rreq.getWebsite()))
             {
                 return mapping.findForward(ACCESS_DENIED_PAGE);
             }
@@ -290,7 +291,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
         PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         try
         {
-            if (!hasRequiredRights(rreq))
+            if (!hasRequiredRights(rreq, rreq.getWebsite()))
             {
                 return mapping.findForward(ACCESS_DENIED_PAGE);
             }
@@ -311,7 +312,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
     }
 
     // TODO: Consider unifying with other RollerRequest methods
-    /*
+    /**
      * Helper to select the ping target specified by the id in the request.
      * @param rreq
      * @return the ping target specified by the id in the request
@@ -334,19 +335,22 @@ public abstract class BasePingTargetsAction extends DispatchAction
         return pingTarget;
     }
 
-    /*
+    /**
      * Private helper to validate a ping target.
-     * @param rreq       the request
+     * @param rreq the request
      * @param pingTarget the ping target to validate
-     * @return an <code>ActionMessages</code> object with <code>ActionMessage</code> for each error encountered, empty if no
-     * errors were encountered.
+     * @return an <code>ActionMessages</code> object with 
+     *         <code>ActionMessage</code> for each error encountered, 
+     *         empty if no errors were encountered.
      * @throws RollerException
      */
-    private ActionMessages validate(RollerRequest rreq, PingTargetData pingTarget) throws RollerException
+    private ActionMessages validate(
+        RollerRequest rreq, PingTargetData pingTarget) throws RollerException
     {
         ActionMessages errors = new ActionMessages();
 
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = 
+                RollerFactory.getRoller().getPingTargetManager();
         if (!pingTargetMgr.isNameUnique(pingTarget))
         {
             errors.add(ActionMessages.GLOBAL_MESSAGE,
@@ -365,26 +369,33 @@ public abstract class BasePingTargetsAction extends DispatchAction
     }
 
 
-    /*
-     *  Helper defined by the subclass to determine if user has adequate rights for the action.
-     *  This and the {@link org.roller.pojos.PingTargetData#canSave()} method determine the access
-     *  control for the action.
+    /**
+     * Helper defined by the subclass to determine if user has adequate 
+     * rights for the action. This and the 
+     * {@link org.roller.pojos.PingTargetData#canSave()} method determine the 
+     * access control for the action.
      */
-    protected abstract boolean hasRequiredRights(RollerRequest rreq) throws RollerException;
+    protected abstract boolean hasRequiredRights(
+            RollerRequest rreq, WebsiteData website) throws RollerException;
 
-    /*
+    /**
      * Get the logger from the concrete subclass
      */
     protected abstract Log getLogger();
 
-    /*
-     * Get the ping targets for the view.  This is implemented differently in the concrete subclasses.
+    /**
+     * Get the ping targets for the view.  This is implemented differently in 
+     * the concrete subclasses.
      */
-    protected abstract List getPingTargets(RollerRequest rreq) throws RollerException;
+    protected abstract List getPingTargets(RollerRequest rreq) 
+        throws RollerException;
 
 
-    /*
-     * Create a new ping target (blank). This is implemented differently in the concrete subclasses.
+    /**
+     * Create a new ping target (blank). This is implemented differently in 
+     * the concrete subclasses.
      */
-    protected abstract PingTargetData createPingTarget(RollerRequest rreq, PingTargetForm pingTargetForm) throws RollerException;
+    protected abstract PingTargetData createPingTarget(
+        RollerRequest rreq, PingTargetForm pingTargetForm) 
+            throws RollerException;
 }

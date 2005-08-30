@@ -8,10 +8,16 @@ function cancel() {
 // -->
 </script> 
 
-<br />
+<p class="subtitle">
+<fmt:message key="customPingTarget.subtitle">
+    <fmt:param value="${model.website.handle}" />
+</fmt:message>
+</p>
+
 <html:form action="/editor/customPingTargets" method="post" focus="name">
     <html:hidden property="method" value="save" />
     <html:hidden property="id" />
+    <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
 
     <div class="formrow">
        <label for="name" class="formrow"><fmt:message key="pingTarget.name" /></label>

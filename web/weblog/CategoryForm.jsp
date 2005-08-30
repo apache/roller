@@ -3,7 +3,8 @@
 
 <p class="subtitle">
 <c:if test="${state == 'add'}">
-    <fmt:message key="categoryForm.add.subtitle" /></h3>
+    <fmt:message key="categoryForm.add.subtitle" />
+    
 </c:if>
 <c:if test="${state == 'edit'}">
     <fmt:message key="categoryForm.edit.subtitle" />

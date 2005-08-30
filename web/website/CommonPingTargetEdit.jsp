@@ -1,7 +1,10 @@
 <%@ include file="/taglibs.jsp" %>
 
 
-<br />
+<p class="subtitle">
+<fmt:message key="commonPingTarget.subtitle"/>
+</p>
+
 <html:form action="/admin/commonPingTargets" method="post" focus="name">
     <html:hidden property="method" value="save" />
     <html:hidden property="id" />
