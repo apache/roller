@@ -149,8 +149,15 @@ public final class WeblogEntryFormAction extends DispatchAction
             {
                 entry = wmgr.retrieveWeblogEntry(form.getId());
             }
-                
-            if (rses.isUserAuthorizedToAuthor(entry.getWebsite()) 
+            if (entry == null)
+            {   
+                ResourceBundle resources = ResourceBundle.getBundle(
+                    "ApplicationResources", request.getLocale());
+                request.setAttribute("javax.servlet.error.message", 
+                    resources.getString("weblogEntry.notFound"));  
+                forward = mapping.findForward("error");
+            }                
+            else if (rses.isUserAuthorizedToAuthor(entry.getWebsite()) 
               || (rses.isUserAuthorized(entry.getWebsite()) && entry.isDraft()))
             {
                 form.copyFrom(entry, request.getLocale());
@@ -421,8 +428,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                     + "/editor/weblog.do?method=edit&entryid=" + entry.getId();
                 
                 ResourceBundle resources = ResourceBundle.getBundle(
-                    "ApplicationResources", 
-                    entry.getWebsite().getLocaleInstance());
+                    "ApplicationResources", request.getLocale());
                 StringBuffer sb = new StringBuffer();
                 sb.append(
                     MessageFormat.format(
@@ -555,9 +561,11 @@ public final class WeblogEntryFormAction extends DispatchAction
                 wf.copyFrom(wd, request.getLocale());
                 if (wd == null || wd.getId() == null)
                 {
-                    throw new NullPointerException(
-                        "Unable to find WeblogEntry for " +
-                        request.getParameter(RollerRequest.WEBLOGENTRYID_KEY));
+                    ResourceBundle resources = ResourceBundle.getBundle(
+                        "ApplicationResources", request.getLocale());
+                    request.setAttribute("javax.servlet.error.message", 
+                        resources.getString("weblogEntry.notFound"));  
+                    forward = mapping.findForward("error");
                 }
             }
             else
@@ -763,52 +771,57 @@ public final class WeblogEntryFormAction extends DispatchAction
             {
                 if (wd == null || wd.getId() == null)
                 {
-                    throw new NullPointerException(
-                        "Unable to find WeblogEntry for "+
-                        request.getParameter(RollerRequest.WEBLOGENTRYID_KEY));
+                    ResourceBundle resources = ResourceBundle.getBundle(
+                        "ApplicationResources", request.getLocale());
+                    request.setAttribute("javax.servlet.error.message", 
+                        resources.getString("weblogEntry.notFound"));  
+                    forward = mapping.findForward("error");                    
                 }
-                WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
-
-                // If form indicates that comments should be deleted, delete
-                WeblogManager mgr= RollerFactory.getRoller().getWeblogManager();
-                String[] deleteIds = form.getDeleteComments();
-                if (deleteIds != null && deleteIds.length > 0)
+                else 
                 {
-                    mgr.removeComments( deleteIds );
-                }
+                    WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
 
-                List comments = mgr.getComments(wd.getId(), false); // spam too
-                if (form.getSpamComments() != null)
-                {
-                    // comments marked as spam
-                    List spamIds = Arrays.asList(form.getSpamComments());
-
-                    // iterate over all comments, check each to see if
-                    // is in the spamIds list.  If so, mark it as spam.
-                    Iterator it = comments.iterator();
-                    while (it.hasNext())
+                    // If form indicates that comments should be deleted, delete
+                    WeblogManager mgr= RollerFactory.getRoller().getWeblogManager();
+                    String[] deleteIds = form.getDeleteComments();
+                    if (deleteIds != null && deleteIds.length > 0)
                     {
-                        CommentData comment = (CommentData)it.next();
-                        if (spamIds.contains(comment.getId()))
-                        {
-                            comment.setSpam(Boolean.TRUE);                            
-                        }
-                        else 
-                        {
-                            comment.setSpam(Boolean.FALSE);
-                        }
-                        comment.save();
+                        mgr.removeComments( deleteIds );
                     }
-                }
 
-                RollerFactory.getRoller().commit();
-                
-                reindexEntry(RollerFactory.getRoller(), wd);
-                
-                request.setAttribute("model",
-                        new WeblogEntryPageModel(request, response, mapping, 
-                                (WeblogEntryFormEx)actionForm,
-                                WeblogEntryPageModel.EDIT_MODE));
+                    List comments = mgr.getComments(wd.getId(), false); // spam too
+                    if (form.getSpamComments() != null)
+                    {
+                        // comments marked as spam
+                        List spamIds = Arrays.asList(form.getSpamComments());
+
+                        // iterate over all comments, check each to see if
+                        // is in the spamIds list.  If so, mark it as spam.
+                        Iterator it = comments.iterator();
+                        while (it.hasNext())
+                        {
+                            CommentData comment = (CommentData)it.next();
+                            if (spamIds.contains(comment.getId()))
+                            {
+                                comment.setSpam(Boolean.TRUE);                            
+                            }
+                            else 
+                            {
+                                comment.setSpam(Boolean.FALSE);
+                            }
+                            comment.save();
+                        }
+                    }
+
+                    RollerFactory.getRoller().commit();
+
+                    reindexEntry(RollerFactory.getRoller(), wd);
+
+                    request.setAttribute("model",
+                            new WeblogEntryPageModel(request, response, mapping, 
+                                    (WeblogEntryFormEx)actionForm,
+                                    WeblogEntryPageModel.EDIT_MODE));
+                }
             }
             else
             {

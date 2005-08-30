@@ -16,6 +16,7 @@ import org.roller.RollerException;
 import org.roller.model.PingTargetManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.PingTargetData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.forms.PingTargetForm;
@@ -76,10 +77,11 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
     /*
      * Check if request carries admin rights.
      */
-    protected boolean hasRequiredRights(RollerRequest rreq) throws RollerException
+    protected boolean hasRequiredRights(
+            RollerRequest rreq, WebsiteData website) throws RollerException
     {
-        // This mimics the check in other admin actions, but not sure why the latter is not sufficient.
-        RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
+        RollerSession rollerSession = 
+                RollerSession.getRollerSession(rreq.getRequest());
         return rollerSession.isGlobalAdminUser();
     }
 }
