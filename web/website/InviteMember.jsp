@@ -13,7 +13,8 @@ function cancel() {
 <p class="subtitle"><fmt:message key="inviteMember.description" /></p>
 
 <html:form action="/editor/inviteMember" method="post" focus="userName">
-    <input name="method" type="hidden" value="save" />
+    <html:hidden property="websiteId" />
+    <input name="method" type="hidden" value="send" />
     
     <div class="formrow">
        <label for="userName" class="formrow" />

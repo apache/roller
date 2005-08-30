@@ -69,7 +69,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
-                data.setWebsite( website );
+                data.setWebsite(website);
                 data.setLastModified( new java.util.Date() );
                 data.setDescription("");
                 data.setContents("");
@@ -90,7 +90,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
                     
                 actionForm.reset(mapping,request);                
                 
-                addModelObjects(request, response, mapping);
+                addModelObjects(request, response, mapping, website);
             }
             else
             {
@@ -115,22 +115,25 @@ public final class WeblogTemplateFormAction extends DispatchAction
     {
         ActionForward forward = mapping.findForward("editPage.page");
         try
-        {
-            request.setAttribute("model", new BasePageModel(
-                "pageForm.title", request, response, mapping));   
+        {            
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rses = RollerSession.getRollerSession(request);
-            WebsiteData website = rreq.getWebsite();
-            if ( rses.isUserAuthorizedToAdmin(website) )
+            WeblogTemplate pd = (WeblogTemplate)rreq.getPage();
+            
+            RollerSession rses = RollerSession.getRollerSession(request);            
+            if ( rses.isUserAuthorizedToAdmin(pd.getWebsite()) )
             {
+                BasePageModel pageModel = new BasePageModel(
+                    "pageForm.title", request, response, mapping);
+                pageModel.setWebsite(pd.getWebsite());
+                request.setAttribute("model", pageModel); 
+                
                 UserData ud = rses.getAuthenticatedUser();
-                WeblogTemplate pd = (WeblogTemplate) rreq.getPage();
                 WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
 
                 PageCacheFilter.removeFromCache( request, pd.getWebsite() );
                 
-                addModelObjects(request, response, mapping);
+                addModelObjects(request, response, mapping, pd.getWebsite());
             }
             else
             {
@@ -163,7 +166,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
             WebsiteData website = rreq.getWebsite();
             if ( rses.isUserAuthorizedToAdmin(website) )
             {
-                addModelObjects(request, response, mapping);
+                addModelObjects(request, response, mapping, website);
             }
             else
             {
@@ -191,24 +194,22 @@ public final class WeblogTemplateFormAction extends DispatchAction
             "pagesForm.title", request, response, mapping));
         try
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rses = RollerSession.getRollerSession(request);
-            WebsiteData website = rreq.getWebsite();
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+            WeblogTemplate template = mgr.retrievePage(form.getId());
+            WebsiteData website = template.getWebsite();
+            
+            RollerSession rses = RollerSession.getRollerSession(request);          
             if ( rses.isUserAuthorizedToAdmin(website) )
             {
-                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
-                
-                // fetch template to be deleted (we'll need its website)
-                WeblogTemplate template = mgr.retrievePage(form.getId());
-                
                 mgr.removePageSafely(template.getId());
                 RollerFactory.getRoller().commit();
 
                 UserData user = rses.getAuthenticatedUser();
                 PageCacheFilter.removeFromCache(request, template.getWebsite());
                     
-                addModelObjects(request, response, mapping);
+                addModelObjects(
+                        request, response, mapping, template.getWebsite());
                 actionForm.reset(mapping, request);
             }
             else
@@ -232,6 +233,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
     }
 
     //-----------------------------------------------------------------------
+    /** Send user to remove confirmation page */
     public ActionForward removeOk(
         ActionMapping       mapping,
         ActionForm          actionForm,
@@ -246,10 +248,10 @@ public final class WeblogTemplateFormAction extends DispatchAction
         {
             RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WebsiteData website = rreq.getWebsite();
+            WeblogTemplate cd = (WeblogTemplate) rreq.getPage();
+            WebsiteData website = cd.getWebsite();
             if ( rses.isUserAuthorizedToAdmin(website) )
             {
-                WeblogTemplate cd = (WeblogTemplate) rreq.getPage();
                 WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(cd, request.getLocale());
 
@@ -280,20 +282,17 @@ public final class WeblogTemplateFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPage.page");
         try
         {
-            RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            request.setAttribute("model", new BasePageModel(
-                "pageForm.title", request, response, mapping));
-            WebsiteData website = rreq.getWebsite();
-            if ( rses.isUserAuthorizedToAdmin(website) )
+            WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
+            WeblogTemplate data = mgr.retrievePage(form.getId());
+            WebsiteData website = data.getWebsite();
+            
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if (rses.isUserAuthorizedToAdmin(website))
             {
-                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
-                WeblogTemplate data = mgr.retrievePage(form.getId());
-                data.save(); // should through exception if no save permission
                 form.copyTo(data, request.getLocale());
                 data.setLastModified( new java.util.Date() );
-                data.setWebsite(mgr.retrieveWebsite(form.getWebsite().getId()));
 
                 validateLink( data );
 
@@ -311,6 +310,11 @@ public final class WeblogTemplateFormAction extends DispatchAction
 
                 UserData user = rses.getAuthenticatedUser();
                 PageCacheFilter.removeFromCache(request, data.getWebsite());
+                
+                BasePageModel pageModel = new BasePageModel(
+                    "pageForm.title", request, response, mapping);
+                pageModel.setWebsite(website);
+                request.setAttribute("model", pageModel);
             }
             else
             {
@@ -374,7 +378,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
         throws IOException, ServletException
     {
         request.setAttribute("model", new BasePageModel(
-                "pagesForm.title", request, response, mapping));
+            "pagesForm.title", request, response, mapping));
         return (mapping.findForward("editPages"));
     }
     
@@ -382,7 +386,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
     private void addModelObjects( 
         HttpServletRequest  request,
         HttpServletResponse response,
-        ActionMapping mapping)
+        ActionMapping mapping, 
+        WebsiteData website)
     throws RollerException 
     {             
         UserManager mgr = RollerFactory.getRoller().getUserManager();        
@@ -390,13 +395,13 @@ public final class WeblogTemplateFormAction extends DispatchAction
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
                 
         UserData user = rses.getAuthenticatedUser();
-        request.setAttribute("user",user);
+        request.setAttribute("user", user);
 
         WebsiteData wd = rreq.getWebsite();
-        request.setAttribute("website", wd);
+        request.setAttribute("website", website);
 
-        List pages = mgr.getPages(wd);
-        request.setAttribute("pages",pages);
+        List pages = mgr.getPages(website);
+        request.setAttribute("pages", pages);
     }
 }
 

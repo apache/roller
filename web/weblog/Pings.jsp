@@ -1,5 +1,9 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
 <%@ include file="/taglibs.jsp" %>
+<%
+BasePageModel pageModel = (BasePageModel)request.getAttribute("model");
+String websiteHandle = pageModel.getWebsite().getHandle();
+%>
 
 <p class="subtitle">
    <fmt:message key="pings.subtitle" >
@@ -60,6 +64,8 @@
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
                      <roller:linkparam
+                       id="weblog" value="<%= websiteHandle %>" />
+                     <roller:linkparam
                        id="method" value="disableSelected" />
                      <fmt:message key="pingTarget.disable"/>
                  </roller:link>
@@ -69,6 +75,8 @@
                      <roller:linkparam
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
+                     <roller:linkparam
+                       id="weblog" value="<%= websiteHandle %>" />
                      <roller:linkparam
                        id="method" value="enableSelected" />
                      <fmt:message key="pingTarget.enable"/>
@@ -82,6 +90,8 @@
                      <roller:linkparam
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
+                     <roller:linkparam
+                       id="weblog" value="<%= websiteHandle %>" />
                      <roller:linkparam
                        id="method" value="pingSelectedNow" />
                     <fmt:message key="pingTarget.sendPingNow"/>
@@ -152,6 +162,8 @@
                              name="pingTarget" property="id" />
                            <roller:linkparam
                              id="method" value="disableSelected" />
+                           <roller:linkparam
+                             id="weblog" value="<%= websiteHandle %>" />
                            <fmt:message key="pingTarget.disable"/>
                        </roller:link>
                     </c:when>
@@ -162,6 +174,8 @@
                               name="pingTarget" property="id" />
                            <roller:linkparam
                              id="method" value="enableSelected" />
+                           <roller:linkparam
+                             id="weblog" value="<%= websiteHandle %>" />
                            <fmt:message key="pingTarget.enable"/>
                        </roller:link>
                     </c:otherwise>
@@ -175,6 +189,8 @@
                             name="pingTarget" property="id" />
                          <roller:linkparam
                             id="method" value="pingSelectedNow" />
+                           <roller:linkparam
+                             id="weblog" value="<%= websiteHandle %>" />
                          <fmt:message key="pingTarget.sendPingNow"/>
                      </roller:link>
                   </td>

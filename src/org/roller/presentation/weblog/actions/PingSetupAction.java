@@ -92,7 +92,7 @@ public class PingSetupAction extends DispatchAction
         WebsiteData website = rreq.getWebsite();
         try
         {
-            if (!isAuthorized(rreq))
+            if (!isAuthorized(rreq, website))
             {
                 return mapping.findForward("access-denied");
             }
@@ -174,13 +174,13 @@ public class PingSetupAction extends DispatchAction
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        PingTargetData pingTarget = select(rreq);
         try
         {
-            if (!isAuthorized(rreq))
+            if (!isAuthorized(rreq, rreq.getWebsite()))
             {
                 return mapping.findForward("access-denied");
             }
-            PingTargetData pingTarget = select(rreq);
             AutoPingData autoPing = autoPingMgr.createAutoPing(pingTarget, 
                     rreq.getWebsite());
             autoPingMgr.storeAutoPing(autoPing);
@@ -204,13 +204,13 @@ public class PingSetupAction extends DispatchAction
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        PingTargetData pingTarget = select(rreq);
         try
         {
-            if (!isAuthorized(rreq))
+            if (!isAuthorized(rreq, rreq.getWebsite()))
             {
                 return mapping.findForward("access-denied");
             }
-            PingTargetData pingTarget = select(rreq);
             autoPingMgr.removeAutoPing(pingTarget, rreq.getWebsite());
             RollerFactory.getRoller().commit();
         
@@ -238,7 +238,7 @@ public class PingSetupAction extends DispatchAction
             WebsiteData website = rreq.getWebsite();
             try
             {
-                if (!isAuthorized(rreq))
+                if (!isAuthorized(rreq, website))
                 {
                     return mapping.findForward("access-denied");
                 }
@@ -251,7 +251,8 @@ public class PingSetupAction extends DispatchAction
                 }
                 else
                 {
-                    WeblogUpdatePinger.PingResult pingResult = WeblogUpdatePinger.sendPing(absoluteUrl, pingTarget, website);
+                    WeblogUpdatePinger.PingResult pingResult = 
+                        WeblogUpdatePinger.sendPing(absoluteUrl, pingTarget, website);
                     if (pingResult.isError())
                     {
                         if (mLogger.isDebugEnabled()) mLogger.debug("Ping Result: " + pingResult);
@@ -334,10 +335,11 @@ public class PingSetupAction extends DispatchAction
         }
     }
 
-    private boolean isAuthorized(RollerRequest rreq) throws RollerException
+    private boolean isAuthorized(RollerRequest rreq, WebsiteData website) 
+        throws RollerException
     {
         RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
-        return rses.isUserAuthorizedToAdmin(rreq.getWebsite()) 
+        return rses.isUserAuthorizedToAdmin(website) 
             && !PingConfig.getDisablePingUsage();
     }
 }

@@ -137,7 +137,12 @@ public final class WebsiteFormAction extends DispatchAction
             WebsiteFormEx form = (WebsiteFormEx)actionForm;
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             UserManager umgr = RollerFactory.getRoller().getUserManager();
+            
             WebsiteData wd = umgr.retrieveWebsite(form.getId());
+            
+            // Set website in request, so subsequent action gets it
+            RollerRequest.getRollerRequest(request).setWebsite(wd);
+            
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             if ( rollerSession.isUserAuthorizedToAdmin(wd))
             {

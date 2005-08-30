@@ -8,7 +8,6 @@ function cancel() {
 -->
 </script>
 
-<h1><fmt:message key="yourProfile.title" /></h1>
 <p class="subtitle"><fmt:message key="yourProfile.description" /></p>
 
 <html:form action="/editor/yourProfile" method="post" focus="fullName">

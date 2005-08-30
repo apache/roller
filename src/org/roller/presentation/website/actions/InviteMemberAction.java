@@ -41,7 +41,7 @@ import org.roller.util.MailUtil;
  * Allows website admin to invite new members to website.
  * 
  * @struts.action path="/editor/inviteMember" parameter="method" name="inviteMemberForm"
- * @struts.action-forward name="inviteMember.page"     path=".InviteMember"
+ * @struts.action-forward name="inviteMember.page" path=".InviteMember"
  */
 public class InviteMemberAction extends DispatchAction
 {
@@ -60,7 +60,7 @@ public class InviteMemberAction extends DispatchAction
         {
             return edit(mapping, actionForm, request, response);
         }
-        return save(mapping, actionForm, request, response);
+        return send(mapping, actionForm, request, response);
     }
     
     /** If method param is not specified, use HTTP verb to pick method to call */
@@ -81,13 +81,18 @@ public class InviteMemberAction extends DispatchAction
         HttpServletResponse response)
         throws IOException, ServletException
     {
-        ActionForward forward = mapping.findForward("inviteMember.page");        
-        request.setAttribute("model", new BasePageModel(
-            "inviteMember.title", request, response, mapping));
+        ActionForward forward = mapping.findForward("inviteMember.page"); 
+        
+        BasePageModel pageModel = new BasePageModel(
+            "inviteMember.title", request, response, mapping);
+        request.setAttribute("model", pageModel);
+        
+        InviteMemberForm form = (InviteMemberForm)actionForm;
+        form.setWebsiteId(pageModel.getWebsite().getId());
         return forward; 
     }
     
-    public ActionForward save(
+    public ActionForward send(
             ActionMapping       mapping,
             ActionForm          actionForm,
             HttpServletRequest  request,
@@ -101,9 +106,6 @@ public class InviteMemberAction extends DispatchAction
         UserManager umgr = RollerFactory.getRoller().getUserManager();
         UserData user = umgr.getUser(form.getUserName());
         
-        request.setAttribute("model", new BasePageModel(
-            "inviteMember.title", request, response, mapping));
-
         if (user == null)
         {
             errors.add(ActionErrors.GLOBAL_ERROR, 
@@ -118,11 +120,15 @@ public class InviteMemberAction extends DispatchAction
             {
                 errors.add(ActionErrors.GLOBAL_ERROR, 
                     new ActionError("inviteMember.error.userAlreadyInvited"));
+                request.setAttribute("model", new BasePageModel(
+                    "inviteMember.title", request, response, mapping));
             }
             else if (perms != null)
             {
                 errors.add(ActionErrors.GLOBAL_ERROR, 
                     new ActionError("inviteMember.error.userAlreadyMember"));
+                request.setAttribute("model", new BasePageModel(
+                    "inviteMember.title", request, response, mapping));
             }
             else
             {
@@ -140,6 +146,9 @@ public class InviteMemberAction extends DispatchAction
                 }               
                 msgs.add(ActionMessages.GLOBAL_MESSAGE, 
                     new ActionMessage("inviteMember.userInvited"));
+                
+                request.setAttribute("model", new BasePageModel(
+                    "inviteMemberDone.title", request, response, mapping));
                 
                 forward = mapping.findForward("memberPermissions");                
             }

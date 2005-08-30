@@ -13,15 +13,6 @@ function dirty() {
 -->
 </script>
 
-<%-- Error Messages --%>
-<logic:messagesPresent>
-    <div id="errors" class="errors">
-        <html:messages id="error">
-            <c:out value="${error}" /><br />
-        </html:messages>
-    </div>
-</logic:messagesPresent>
-
 <%-- Success Messages --%>
 <logic:messagesPresent message="true">
     <div id="messages" class="messages">
@@ -31,3 +22,11 @@ function dirty() {
     </div>
 </logic:messagesPresent>
 
+<%-- Error Messages --%>
+<logic:messagesPresent>
+    <div id="errors" class="errors">
+        <html:messages id="error">
+            <c:out value="${error}" /><br />
+        </html:messages>
+    </div>
+</logic:messagesPresent>

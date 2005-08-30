@@ -37,16 +37,16 @@ function cancel() {
             <html:textarea property="description" rows="3" cols="50"/>
             </td>
         </tr>
-        <tr>
-            <td><fmt:message key="pageForm.template" /><br />
-            <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
-            </td>
-        </tr>
+
     </table>
 
+    <fmt:message key="pageForm.template" /><br />
+    <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
+            
     <html:hidden property="id"/>
     <html:hidden property="name"/>
     <input type="hidden" name="method" value="update" />
+    <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
 
     <br />
     <input type="submit" value='<fmt:message key="pageForm.save" />' /></input>

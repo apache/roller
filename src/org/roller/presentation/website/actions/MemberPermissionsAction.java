@@ -26,6 +26,7 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
+import org.roller.presentation.website.formbeans.MemberPermissionsForm;
 
 /**
  * Allows website admin to change website member permissions.
@@ -53,6 +54,17 @@ public class MemberPermissionsAction extends DispatchAction
         return save(mapping, actionForm, request, response);
     }
     
+    /** Called after invite user action posted */
+    public ActionForward send(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        return edit(mapping, actionForm, request, response);
+    }
+    
     public ActionForward cancel(
             ActionMapping       mapping,
             ActionForm          actionForm,
@@ -70,8 +82,12 @@ public class MemberPermissionsAction extends DispatchAction
             HttpServletResponse response)
             throws Exception
     {
-        request.setAttribute("model", 
-                new MemberPermissionsPageModel(request, response, mapping));
+        MemberPermissionsPageModel pageModel = 
+           new MemberPermissionsPageModel(request, response, mapping);
+        request.setAttribute("model", pageModel);
+        
+        MemberPermissionsForm form = (MemberPermissionsForm)actionForm;
+        form.setWebsiteId(pageModel.getWebsite().getId());
         ActionForward forward = mapping.findForward("memberPermissions.page");
         return forward;
     }
@@ -85,8 +101,10 @@ public class MemberPermissionsAction extends DispatchAction
     {
         ActionErrors errors = new ActionErrors();
         ActionMessages msgs = new ActionMessages();
+        
         MemberPermissionsPageModel model = 
             new MemberPermissionsPageModel(request, response, mapping);
+        
         Iterator iter = model.getPermissions().iterator();
         int removed = 0;
         int changed = 0;
