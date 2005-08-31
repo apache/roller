@@ -26,14 +26,13 @@ td.menuTabSeparator {
     width: 4px;
 }  
 td.menuTabSelected {
+    font-weight: bold;
     padding: 0px; 
     margin: 0px;
-    /* CUSTOMIZABLE background: url("images/menutab-sel.gif"); */
 }
 td.menuTabUnselected {
     padding: 0px 0px 0px 0px; 
     margin: 0px 0px 0px 0px;
-    /* CUSTOMIZABLE background: url("images/menutab-unsel.gif"); */
 }
 
 /* ----------------------------------------------------------------------
@@ -44,9 +43,12 @@ Menu item table (the bar below the tabs)
     width: 100%;
     height: 27px;
     padding: 0px 0px 0px 10px;
-    /* CUSTOMIZABLE background-color: #c6ab74; */
 }
-.menuItemSelected, .menuItemUnselected {
+.menuItemSelected {
+    font-weight: bold;
+    padding: 0px 1px 0px 1px; /* TRBL */
+}
+.menuItemUnselected {
     padding: 0px 1px 0px 1px; /* TRBL */
 }
 
