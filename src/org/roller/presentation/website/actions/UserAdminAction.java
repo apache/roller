@@ -3,6 +3,7 @@ package org.roller.presentation.website.actions;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -18,6 +19,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.roller.RollerException;
 import org.roller.model.IndexManager;
+import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
@@ -59,17 +61,16 @@ public final class UserAdminAction extends UserBaseAction
         ActionMessages msgs = new ActionMessages();
         try
         {
+            UserData user = null;
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             if (rollerSession.isGlobalAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
-                request.setAttribute("model", 
-                  new UserAdminPageModel(request, response, mapping, userForm));
                 UserManager mgr = RollerFactory.getRoller().getUserManager();                
                 if (userForm != null && userForm.getUserName() != null)
                 {
-                    UserData user = mgr.getUser(userForm.getUserName(), null);                    
+                    user = mgr.getUser(userForm.getUserName(), null);                    
                     if (user != null)
                     {
                         userForm.copyFrom(user, request.getLocale());                        
@@ -84,6 +85,8 @@ public final class UserAdminAction extends UserBaseAction
                         userForm.setUserName("");
                     }
                 }
+                request.setAttribute("model", new UserAdminPageModel(
+                        request, response, mapping, userForm, user));
             }
             else
             {
@@ -291,14 +294,23 @@ public final class UserAdminAction extends UserBaseAction
     public class UserAdminPageModel extends BasePageModel 
     {
         private UserAdminForm userAdminForm = null;
+        private List permissions = new ArrayList();
+        
         public UserAdminPageModel(
             HttpServletRequest request,
             HttpServletResponse response,
             ActionMapping mapping,
-            UserAdminForm form)
+            UserAdminForm form,
+            UserData user) throws RollerException
         {
             super("dummy", request, response, mapping);
             userAdminForm = form;
+            
+            if (user != null)
+            {
+                Roller roller = RollerFactory.getRoller();
+                permissions = roller.getUserManager().getAllPermissions(user);
+            }
         }
         public String getTitle() 
         {
@@ -309,6 +321,14 @@ public final class UserAdminAction extends UserBaseAction
             return MessageFormat.format(
                     bundle.getString("userAdmin.title.editUser"), 
                     new String[] { userAdminForm.getUserName() } );
+        }
+        public List getPermissions()
+        {
+            return permissions;
+        }
+        public void setPermissions(List permissions)
+        {
+            this.permissions = permissions;
         }
     }
 }

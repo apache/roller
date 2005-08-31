@@ -13,4 +13,4 @@ rocp=${rocp}:./tools/buildtime/ant-1.6.2/commons-net-1.2.2.jar
 rocp=${rocp}:./tools/buildtime/ant-1.6.2/jakarta-oro-2.0.8.jar
 rocp=${rocp}:./tools/buildtime/junit-3.8.1.jar
 
-${JAVA_HOME}/bin/java -Djava.home=${JAVA_HOME} -classpath ${rocp} org.apache.tools.ant.Main $1 $2 $3 $4 $5
+${JAVA_HOME}/bin/java -Xmx300m -Djava.home=${JAVA_HOME} -classpath ${rocp} org.apache.tools.ant.Main $1 $2 $3 $4 $5
