@@ -961,6 +961,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      */
     public boolean hasUserPermissions(UserData user, short mask)
     {
+        // look for user in website's permissions
         PermissionsData userPerms = null;
         Iterator iter = getPermissions().iterator();
         while (iter.hasNext())
@@ -972,6 +973,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                 break;
             }
         }
+        // if we found one, does it satisfy the mask?
         if (userPerms != null && !userPerms.isPending())
         {
             if (userPerms != null && (userPerms.getPermissionMask() & mask) == mask) 
@@ -979,6 +981,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                 return true;
             }
         }
+        // otherwise, check to see if user is a global admin
+        if (user != null && user.hasRole("admin")) return true;
         return false;
     }
     

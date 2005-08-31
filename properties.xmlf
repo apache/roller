@@ -17,7 +17,7 @@
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-2.1" />
 <property name="tools.jstl"          value="${ro.tools}/standard-1.0.3" />
 <property name="tools.xdoclet"    value="${ro.tools}/buildtime/xdoclet-1.2" />
-<property name="tools.tomcat"     value="${ro.tools}/buildtime/tomcat-4.1.24" />
+<property name="tools.tomcat"     value="${ro.tools}/buildtime/tomcat-5.0.28" />
 
 <!--
 If you would like Ant to copy all the jar files that Resin needs
@@ -74,6 +74,7 @@ in the "base.path" definition.
 
 <fileset id="servlet.jars" dir="${tools.tomcat}">
     <include name="servlet-api.jar"/>
+    <include name="jsp-api.jar"/>
 </fileset>
 
 <fileset id="mail.jars" dir="${ro.tools}/lib">
@@ -161,11 +162,10 @@ in the "base.path" definition.
           <include name="*.jar"/>
        </fileset>
     </path>
+    <fileset refid="servlet.jars"/>
     <path location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
     <path location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
     <path location="${ro.tools}/buildtime/hsqldb.jar"/>
-    <path location="${ro.tools}/buildtime/tomcat-4.1.24/servlet-api.jar"/> 
-    <path location="${ro.tools}/buildtime/tomcat-4.1.24/jasper-runtime.jar"/> 
     <path location="${ro.tools}/lib/mm.mysql-2.0.14-bin.jar"/>
 </path>
 

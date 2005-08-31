@@ -140,6 +140,62 @@ function cancel() {
 
     </table>
     <br />
+    
+    <h3><fmt:message key="userAdmin.userWeblogs" /></h3>
+        
+    <c:choose>
+        <c:when test="${!empty model.permissions}"> 
+   
+            <p><fmt:message key="userAdmin.userMemberOf" /></p>  
+            <table class="rollertable" style="width: 80%">
+            <c:forEach var="perms" items="${model.permissions}">
+               <tr>
+                   <td width="%30">
+                       <a href='<c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />'>
+                           <c:out value="${perms.website.name}" /> [<c:out value="${perms.website.handle}" />] 
+                       </a>
+                   </td>
+                   <td width="%15">
+                       <c:url value="/editor/weblog.do" var="newEntry">
+                           <c:param name="method" value="create" />
+                           <c:param name="weblog" value="${perms.website.handle}" />
+                       </c:url>
+                       <img src='<c:url value="/images/New16.gif"/>' />
+                       <a href='<c:out value="${newEntry}" />'>
+                           <fmt:message key="userAdmin.newEntry" /></a>
+                   </td>
+                   <td width="%15">
+                       <c:url value="/editor/weblogQuery.do" var="editEntries">
+                           <c:param name="method" value="query" />
+                           <c:param name="weblog" value="${perms.website.handle}" />
+                       </c:url>
+                       <img src='<c:url value="/images/Edit16.png"/>' />
+                       <a href='<c:out value="${editEntries}" />'>
+                           <fmt:message key="userAdmin.editEntries" /></a> 
+                   </td>
+                   <td width="%15">
+                       <c:url value="/editor/website.do" var="manageWeblog">
+                           <c:param name="method" value="edit" />
+                           <c:param name="weblog" value="${perms.website.handle}" />
+                       </c:url>
+                       <img src='<c:url value="/images/Edit16.png"/>' />
+                       <a href='<c:out value="${manageWeblog}" />'>
+                           <fmt:message key="userAdmin.manage" /></a>
+                   </td>
+               </tr>
+            </c:forEach>    
+            </table>
+            
+        </c:when>
+        
+        <c:otherwise>
+            <fmt:message key="userAdmin.userHasNoWeblogs" />
+        </c:otherwise>
+        
+    </c:choose>
+    
+    <br />
+    <br />
 
     <div class="control">
        <input type="submit" value='<fmt:message key="userAdmin.save" />'/></input>

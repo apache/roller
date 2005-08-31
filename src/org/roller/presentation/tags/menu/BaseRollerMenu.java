@@ -114,9 +114,11 @@ public abstract class BaseRollerMenu
                 return false;
             }
         }
-        RollerSession rollerSession = RollerSession.getRollerSession(req);
+        RollerSession rses = RollerSession.getRollerSession(req);
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         boolean ret = true;
+        
+        if (rses != null && rses.isGlobalAdminUser()) return true;
    
         // next, make sure that users role permits it
         if (mRoles != null && mRoles.size() > 0)
@@ -126,10 +128,7 @@ public abstract class BaseRollerMenu
             while (roles.hasNext())
             {
                 String role = (String)roles.next();
-                if (    req.isUserInRole(role) || role.equals("any")
-                     || (role.equals("admin") 
-                             && rollerSession != null 
-                             && rollerSession.isGlobalAdminUser()))  
+                if (req.isUserInRole(role) || role.equals("any"))  
                 {
                     ret = true;
                     break;
@@ -141,7 +140,7 @@ public abstract class BaseRollerMenu
         if (ret && mPerms != null && mPerms.size() > 0)
         {
             UserData user = null;
-            if (rollerSession != null) user = rollerSession.getAuthenticatedUser();
+            if (rses != null) user = rses.getAuthenticatedUser();
             
             WebsiteData website = rreq.getWebsite();
             BasePageModel pageModel = (BasePageModel)req.getAttribute("model");
@@ -153,8 +152,8 @@ public abstract class BaseRollerMenu
             PermissionsData permsData = null;
             if (user != null && website != null) 
             {
-                permsData =
-                    RollerFactory.getRoller().getUserManager().getPermissions(website, user);
+                permsData = RollerFactory.getRoller()
+                               .getUserManager().getPermissions(website, user);
             }
             ret = false;
             Iterator perms = mPerms.iterator();
