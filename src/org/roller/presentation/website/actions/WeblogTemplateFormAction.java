@@ -402,6 +402,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
 
         List pages = mgr.getPages(website);
         request.setAttribute("pages", pages);
+        
+        request.setAttribute("page", rreq.getPage());
     }
 }
 

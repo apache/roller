@@ -2,6 +2,7 @@
 package org.roller.presentation.website.actions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,8 @@ import org.roller.presentation.website.formbeans.WebsiteFormEx;
  * @struts.action name="websiteFormEx" path="/editor/website" 
  * 		scope="session" parameter="method"
  * 
- * @struts.action-forward name="editWebsite.page" path=".edit-website"
+ * @struts.action-forward name="editWebsite.page" path=".edit-website" 
+ * @struts.action-forward name="removeWebsite.page" path=".WebsiteRemove" 
  */
 public final class WebsiteFormAction extends DispatchAction
 {
@@ -56,7 +58,7 @@ public final class WebsiteFormAction extends DispatchAction
         ActionForm          actionForm,
         HttpServletRequest  request,
         HttpServletResponse response)
-        throws IOException, ServletException
+        throws Exception
     {
         return update( mapping, actionForm, request, response );
     }
@@ -104,8 +106,8 @@ public final class WebsiteFormAction extends DispatchAction
                 request.setAttribute("editorPagesList", epages);
                 
                     
-                BasePageModel pageModel = new BasePageModel(
-                    "websiteSettings.title", request, response, mapping);
+                WebsitePageModel pageModel = new WebsitePageModel(
+                  "websiteSettings.title", request, response, mapping, website);
                 request.setAttribute("model",pageModel);   
             }
             else
@@ -127,7 +129,7 @@ public final class WebsiteFormAction extends DispatchAction
         ActionForm          actionForm,
         HttpServletRequest  request,
         HttpServletResponse response)
-        throws IOException, ServletException
+        throws Exception
     {
         ActionErrors errors = new ActionErrors();
         ActionMessages messages = new ActionMessages();        
@@ -179,8 +181,9 @@ public final class WebsiteFormAction extends DispatchAction
                         org.apache.commons.lang.StringUtils.deleteWhitespace(editorPages), ","));
                     request.setAttribute("editorPagesList", epages);   
                     
-                    BasePageModel pageModel = new BasePageModel(
-                        "websiteSettings.title", request, response, mapping);
+                    WebsitePageModel pageModel = 
+                        new WebsitePageModel("websiteSettings.title", 
+                                request, response, mapping, wd);
                     request.setAttribute("model",pageModel);                
                 /*
                 }
@@ -218,6 +221,104 @@ public final class WebsiteFormAction extends DispatchAction
         if (messages.size() > 0) saveMessages(request, messages);  
         return forward;
     }
+    
+    //-----------------------------------------------------------------------
+    /** Send user to remove confirmation page */
+    public ActionForward removeOk(
+        ActionMapping       mapping,
+        ActionForm          actionForm,
+        HttpServletRequest  request,
+        HttpServletResponse response)
+        throws Exception
+    {
+        WebsiteFormEx form = (WebsiteFormEx)actionForm;
+        UserManager umgr = RollerFactory.getRoller().getUserManager();
+        WebsiteData website = umgr.retrieveWebsite(form.getId());
+        ActionForward forward = mapping.findForward("removeWebsite.page");
+        request.setAttribute("model", new WebsitePageModel(
+            "websiteRemove.title", request, response, mapping, website));
+        try
+        {
+            RollerSession rses = RollerSession.getRollerSession(request);            
+            if (rses.isUserAuthorizedToAdmin(website))
+            {
+                form.copyFrom(website, request.getLocale());               
+                request.setAttribute("website", website);
+            }
+            else
+            {
+                forward = mapping.findForward("access-denied");
+            }
+        }
+        catch (Exception e)
+        {
+            mLogger.error("ERROR in action",e);
+            throw new ServletException(e);
+        }
+        return forward;
+    }
 
+    //-----------------------------------------------------------------------
+    public ActionForward remove(
+        ActionMapping       mapping,
+        ActionForm          actionForm,
+        HttpServletRequest  request,
+        HttpServletResponse response)
+        throws Exception
+    {
+        ActionForward forward = mapping.findForward("yourWebsites");
+        try
+        {
+            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            WebsiteFormEx form = (WebsiteFormEx)actionForm;
+            WebsiteData website = umgr.retrieveWebsite(form.getId());
+            
+            RollerSession rses = RollerSession.getRollerSession(request);          
+            if ( rses.isUserAuthorizedToAdmin(website) )
+            {
+                website.remove();
+                RollerFactory.getRoller().commit();
+
+                PageCacheFilter.removeFromCache(request, website);                    
+                actionForm.reset(mapping, request);
+            }
+            else
+            {
+                forward = mapping.findForward("access-denied");
+            }
+        }
+        catch (RollerException e)
+        {
+            ActionErrors errors = new ActionErrors();
+            errors.add(null, new ActionError(
+                    "error.internationalized",e.getRootCauseMessage()));
+            saveErrors(request, errors);       
+        }
+        catch (Exception e)
+        {
+            mLogger.error("ERROR in action",e);
+            throw new ServletException(e);
+        }
+        return forward;
+    }
+
+    public class WebsitePageModel extends BasePageModel 
+    {
+        private List permissions = new ArrayList();
+        public WebsitePageModel(
+                String titleKey,
+                HttpServletRequest request,
+                HttpServletResponse response,
+                ActionMapping mapping, 
+                WebsiteData website) throws RollerException
+        {
+            super(titleKey, request, response, mapping);
+            this.website = website;
+            Roller roller = RollerFactory.getRoller();
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            UserData user = rollerSession.getAuthenticatedUser();
+            permissions = roller.getUserManager().getAllPermissions(website);
+        }
+    }
 }
 

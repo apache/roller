@@ -1,6 +1,6 @@
 
 <error-page>
-    <exception-type>java.lang.Exception</exception-type>
+    <exception-type>org.roller.RollerException</exception-type>
     <location>/error.jsp</location>
 </error-page>
 

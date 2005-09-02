@@ -164,6 +164,9 @@
     <put name="content" value="/weblog/Pings.jsp" />
 </definition>
 
+<definition name=".WebsiteRemove" extends=".tiles-simplepage" >
+    <put name="content" value="/website/WebsiteRemove.jsp" />
+</definition>
 <definition name=".CustomPingTargetDeleteOK" extends=".tiles-simplepage" >
     <put name="content" value="/weblog/CustomPingTargetDeleteOK.jsp" />
 </definition>

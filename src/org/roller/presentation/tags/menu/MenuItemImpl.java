@@ -25,6 +25,8 @@ import org.roller.presentation.RollerContext;
 public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 {
 	private String mMenuId = null;
+    
+    //private Vector mMenuItems = new Vector();
 		
 	/** Is this the default menu? */
 	boolean mDefault = false;
@@ -90,7 +92,18 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 		}
 		return selected;
 	}
+    
+    /*
+    public Vector getMenuItems() 
+    {
+        return mMenuItems;
+    }
 
+    public addMenuItem(MenuItem item)
+    {
+        mMenuItems.add(item);
+    }
+    */
 }
 
 
