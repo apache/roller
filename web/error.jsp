@@ -1,4 +1,5 @@
 <%@ include file="/taglibs.jsp" %>
+<%@ page isErrorPage="true" %>
 <tiles:insert page="/theme/tiles-simplepage.jsp">
    <tiles:put name="banner"       value="/theme/banner.jsp" />
    <tiles:put name="bannerStatus" value="/theme/bannerStatus.jsp" />

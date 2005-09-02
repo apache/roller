@@ -5,8 +5,6 @@ Default footer for all pages.
 You can override it with your own file via WEB-INF/tiles-def.xml
 --%>
 
-<div style="margin: 25px 4px 4px 4px; border-top: 1px solid grey">
-
 <a href="http://www.rollerweblogger.org">
     Powered by Roller Weblogger</a> | 
 
@@ -22,7 +20,6 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <a href="http://sourceforge.net/mail/?group_id=47722">
     <fmt:message key="footer.mailingLists" /></a>
     
-</div>
 
 
 

@@ -1,31 +1,36 @@
 <%@ include file="/taglibs.jsp" %>
 
 
-<h3>
-<jsp:useBean id="weblogTemplateForm" scope="session" 
-	class="org.roller.presentation.forms.WeblogTemplateForm"/>
-Remove Page [<jsp:getProperty name="weblogTemplateForm" property="name"/>]
-</h3>
+<p class="subtitle">
+<fmt:message key="pageRemove.subtitle" />
+</p>
 
-<p>Are you sure you want to remove this page?</p>
 <p>
-Page name = [<jsp:getProperty name="weblogTemplateForm" property="name"/>]<br />
-Page id = [<jsp:getProperty name="weblogTemplateForm" property="id"/>]
+<fmt:message key="pageRemove.youSure"> 
+    <fmt:param value="${page.name}" />
+</fmt:message>
+
+</p>
+
+<p>
+<fmt:message key="pageRemove.pageId" /> = [<c:out value="${page.id}" />]
+<br />
+<fmt:message key="pageRemove.pageName" /> = [<c:out value="${page.name}" />]
 </p>
 
 <table>
 <tr>
 	<td>
 		<html:form action="/editor/page" method="post">
-			<html:submit value="Yes"/></input>
+			<input type="submit" value='<fmt:message key="application.yes" />' ></input>
 			<html:hidden property="method" value="remove"/></input>
 			<html:hidden property="id" /></input>
 		</html:form>
 	</td>
 	<td>
 		<html:form action="/editor/page" method="post">
-			<html:hidden name="user" property="userName" /></input>
-			<html:submit value="No"/></input>
+			<input type="submit" value='<fmt:message key="application.no" />' ></input>
+			<html:hidden property="id" /></input>
 			<html:hidden property="method" value="cancel"/></input>
 		</html:form>
 	</td>

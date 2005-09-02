@@ -140,17 +140,13 @@ function resignWebsite(id,handle)
                                <fmt:message key="yourWebsites.manage" /></a> 
                            <br />
                            
-                           <c:choose>
-                               <c:when test="${perms.website.adminUserCount == 1 && perms.permissionMask == 3}">
-                                   <%-- <fmt:message key="yourWebsites.notAllowed" /> --%>
-                               </c:when>
-                               <c:otherwise>
-                                  <img src='<c:url value="/images/Remove16.gif"/>' />
-                                  <a href='javascript:resignWebsite("<c:out value='${perms.website.id}'/>","<c:out value="${perms.website.handle}" />")'>
-                                      <fmt:message key='yourWebsites.resign' />
-                                  </a>
-                               </c:otherwise>
-                           </c:choose>
+                           <c:if test="${perms.website.adminUserCount > 1 && perms.permissionMask == 3}">
+                              <img src='<c:url value="/images/Remove16.gif"/>' />
+                              <a href='javascript:resignWebsite("<c:out value='${perms.website.id}'/>","<c:out value="${perms.website.handle}" />")'>
+                                  <fmt:message key='yourWebsites.resign' />
+                              </a>
+                           </c:if>
+                           
                        </div>
 
                    </td>

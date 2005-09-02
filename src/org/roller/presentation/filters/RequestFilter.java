@@ -92,7 +92,9 @@ public class RequestFilter implements Filter
         catch (RollerException e)
         {
             // An error initializing the request is considered to be a 404
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(
+                    HttpServletResponse.SC_NOT_FOUND, 
+                    "Page not found or error parsing requested URL");
             return;
         }
 

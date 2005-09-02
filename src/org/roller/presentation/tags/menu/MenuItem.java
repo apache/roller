@@ -1,5 +1,6 @@
 
 package org.roller.presentation.tags.menu;
+import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 
 /** An individual menu item, contained in a Menu */ 
@@ -16,5 +17,8 @@ public interface MenuItem
     
     /** Name of true/false configuration property that enables this menu */ 
     public void setEnabledProperty( String enabledProperty );
+
+    /** Collection of MenuItemImpl objects */
+	//public Vector getMenuItems();
 }
 

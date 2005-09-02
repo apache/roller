@@ -1,4 +1,4 @@
-<%@ page language="java" errorPage="/error.jsp" contentType="text/html; charset=UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 
 <%@ taglib uri="http://java.sun.com/jstl/core"       prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt"        prefix="fmt" %>

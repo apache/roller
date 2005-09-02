@@ -28,6 +28,9 @@ and placed in separate colors.css files for different color schemes.
 .sidebarfadeBody {
     padding: 0px 5px 0px 5px; 
 }
+#footer {
+    border-top: 1px grey solid;
+}
 
 /* ----------------------------------------------------------------------
 General styles
