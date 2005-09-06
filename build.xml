@@ -385,11 +385,11 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.stage_web}/WEB-INF/lib"/>
     <mkdir dir="${build.stage_web}/WEB-INF/tlds"/>
 
-    <!-- Jar up web classes 
+    <!-- Jar up web classes -->
     <jar jarfile="${build.stage_web}/WEB-INF/lib/rollerweb.jar">
         <fileset dir="${build.compile_web}" excludes="**/tomcat/**"/>
     </jar>
-    -->
+
 
     <!-- Copy web contents to staging, plus README files. -->
     <antcall target="copy-web" />
