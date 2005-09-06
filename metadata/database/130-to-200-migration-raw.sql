@@ -20,7 +20,7 @@ create table roller_audit_log (
 -- Add new handle field to uniquely identify websites in URLs
 alter table website add column handle varchar(255) @ALTER_TABLE_NOT_NULL@;
 alter table website add column datecreated  timestamp @ALTER_TABLE_NOT_NULL@;
-create index website_handle_index on userrole(handle);
+create index website_handle_index on website(handle);
 alter table website add constraint website_handle_uq unique (handle@INDEXSIZE@);
 
 -- Add userid to weblogentry so we can track original creator of entry
