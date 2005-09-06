@@ -1,37 +1,15 @@
 
 package org.roller.presentation.website.actions;
 
-import java.util.Collection;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
+import org.apache.commons.lang.CharSetUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.roller.RollerException;
-import org.roller.model.RollerFactory;
-import org.roller.model.UserManager;
-import org.roller.pojos.UserData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
+import org.roller.config.RollerConfig;
 import org.roller.presentation.website.formbeans.UserFormEx;
-import org.roller.util.DateUtil;
-import org.roller.util.Utilities;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-import java.util.TreeSet;
-
-import org.roller.model.RollerFactory;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -42,12 +20,20 @@ public class UserBaseAction extends DispatchAction
 {
     private static Log mLogger =
         LogFactory.getFactory().getInstance(UserBaseAction.class);
+    
+    protected static String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";    
 
     //------------------------------------------------------------------------
     /** Validate user form. TODO: replace with Struts validation. */
     protected ActionMessages validate( UserFormEx form, ActionMessages errors ) {
 
-        String safe = Utilities.replaceNonAlphanumeric(form.getUserName());
+    	String allowed = RollerConfig.getProperty("username.allowedChars");
+    	if(allowed == null || allowed.trim().length() == 0) {
+    	       allowed = DEFAULT_ALLOWED_CHARS;
+    	}
+
+    	String safe = CharSetUtils.keep(form.getUserName(), allowed);
+    	
         if ( "".equals(form.getUserName().trim()))
         {
             errors.add( ActionErrors.GLOBAL_ERROR,

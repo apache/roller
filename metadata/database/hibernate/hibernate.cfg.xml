@@ -10,9 +10,11 @@
         <property name="connection.datasource">java:comp/env/jdbc/rollerdb</property>
         <property name="dialect">net.sf.hibernate.dialect.MySQLDialect</property>
         <!--
-        If you want to use HSQLDB or PostgreSQL, then use the right dialect   
+        If you want to use HSQLDB, PostgreSQL, DB2 or Derby, then use the right dialect   
         <property name="dialect">net.sf.hibernate.dialect.HQLDBDialect</property> 
         <property name="dialect">net.sf.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="dialect">net.sf.hibernate.dialect.DB2SQLDialect</property>
+        <property name="dialect">net.sf.hibernate.dialect.DerbyDialect</property>
         -->
 
         <!--

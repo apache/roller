@@ -974,6 +974,7 @@ public class Utilities
      */
     public static final String textToHTML(String text, boolean xml)
     {
+        if (text == null) return null;
         final StringBuffer html = new StringBuffer();
 
         // Loop thru each characters of the text

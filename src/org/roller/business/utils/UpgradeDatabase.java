@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.roller.pojos.PermissionsData;
 
 
 /**
@@ -98,10 +99,18 @@ public class UpgradeDatabase {
         mLogger.info("Database is old, beginning upgrade to version "+myVersion);
         
         // iterate through each upgrade as needed
-        // to add to the upgrade sequence simply add a new "else if" statement
+        // to add to the upgrade sequence simply add a new "if" statement
         // for whatever version needed and then define a new method upgradeXXX()
-        if(dbversion < 130)
+        if(dbversion < 130) 
+        {
             UpgradeDatabase.upgradeTo130(con);
+            dbversion = 130;
+        }
+        if (dbversion < 200)
+        {
+            UpgradeDatabase.upgradeTo200(con);
+            dbversion = 200;
+        }
         
         // make sure the database version is the exact version
         // we are upgrading too.
@@ -136,7 +145,10 @@ public class UpgradeDatabase {
             setCustomThemeStmt.setString(1, org.roller.pojos.Theme.CUSTOM);
             setCustomThemeStmt.executeUpdate();
             
+            if (!con.getAutoCommit()) con.commit();
+            
             mLogger.info("Upgrade to 130 complete.");
+            
         } catch (SQLException e) {
             mLogger.error("Problem upgrading database to version 130", e);
             throw new RollerException("Problem upgrading database to version 130", e);
@@ -145,6 +157,78 @@ public class UpgradeDatabase {
         // If someone is upgrading to 1.3.x then we are setting the db version
         // for the first time.  Normally we would just updateDatabaseVersion()
         UpgradeDatabase.setDatabaseVersion(con, 130);
+    }
+
+    /**
+     * Upgrade database for Roller 2.0.0
+     */
+    private static void upgradeTo200(Connection con) throws RollerException {
+        try {
+            mLogger.info("Doing upgrade to 200 ...");
+            mLogger.info("Populating roller_user_permissions table");
+            
+            PreparedStatement websitesQuery = con.prepareStatement(
+                "select w.id, u.id, u.username from "
+              + "website as w, rolleruser as u where u.id=w.userid");
+            PreparedStatement websiteUpdate = con.prepareStatement(
+                "update website set handle=? where id=?");         
+            PreparedStatement entryUpdate = con.prepareStatement(
+                "update weblogentry set userid=?, status=?, "
+              + "pubtime=pubtime, updatetime=updatetime "
+              + "where publishentry=?");            
+            PreparedStatement permsInsert = con.prepareStatement(
+                "insert roller_user_permissions "
+              + "(id, website_id, user_id, permission_mask, pending) "
+              + "values (?,?,?,?,?)");
+             
+            // loop through websites, each has a user
+            ResultSet websiteSet = websitesQuery.executeQuery();
+            while (websiteSet.next()) {
+                String websiteid = websiteSet.getString("w.id");
+                String userid = websiteSet.getString("u.id");
+                String handle = websiteSet.getString("u.username");
+                mLogger.info("Processing website: " + handle);
+                       
+                // use website user's username as website handle
+                websiteUpdate.clearParameters();
+                websiteUpdate.setString(1, handle);
+                websiteUpdate.setString(2, websiteid);
+                websiteUpdate.executeUpdate();
+                
+                // update all of pubished entries to include userid and status
+                entryUpdate.clearParameters();
+                entryUpdate.setString( 1, userid);
+                entryUpdate.setString( 2, "PUBLISHED");
+                entryUpdate.setBoolean(3, true);
+                entryUpdate.executeUpdate();                               
+                
+                // update all of draft entries to include userid and status
+                entryUpdate.clearParameters();
+                entryUpdate.setString( 1, userid);
+                entryUpdate.setString( 2, "DRAFT");
+                entryUpdate.setBoolean(3, false);
+                entryUpdate.executeUpdate();                               
+                
+                // add  permission for user in website
+                permsInsert.clearParameters();
+                permsInsert.setString( 1, websiteid+"p");
+                permsInsert.setString( 2, websiteid);
+                permsInsert.setString( 3, userid);
+                permsInsert.setShort(  4, PermissionsData.ADMIN);
+                permsInsert.setBoolean(5, false);
+                permsInsert.executeUpdate();
+            }
+            
+            if (!con.getAutoCommit()) con.commit();
+            
+            mLogger.info("Upgrade to 200 complete.");
+            
+        } catch (SQLException e) {
+            mLogger.error("Problem upgrading database to version 200", e);
+            throw new RollerException("Problem upgrading database to version 200", e);
+        }
+        
+        UpgradeDatabase.updateDatabaseVersion(con, 200);
     }
 
 
