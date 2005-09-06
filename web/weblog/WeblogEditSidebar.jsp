@@ -31,7 +31,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
 </c:forEach>
     
          
-<hr />            
+<hr size="1" noshade="noshade" />            
 <h3><fmt:message key="weblogEdit.draftEntries" /></h3>
 
 <c:if test="${empty model.recentDraftEntries}">
@@ -55,7 +55,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
 
 <c:if test="${model.userAuthorizedToAuthor}">
             
-<hr />
+<hr size="1" noshade="noshade" />
 <h3><fmt:message key="weblogEdit.publishedEntries" /></h3>
 
 <c:if test="${empty model.recentPublishedEntries}">

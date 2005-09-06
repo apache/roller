@@ -17,20 +17,28 @@ div.menu-tr {
     background-repeat: no-repeat;
 }
 
+td.menuTabSelected a, td.menuTabUnselected a {
+    vertical-align: middle;
+    text-align: middle;
+}
+
 /* ----------------------------------------------------------------------
 Menu tab table (the tabs)
 ---------------------------------------------------------------------- */
 
 .menuTabTable {
-    height: 22px;
+    height: 21px;
 }
 td.menuTabSeparator {
     width: 4px;
 }  
 td.menuTabSelected {
-    font-weight: bold;
-    padding: 0px; 
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-bottom: 0px;
     margin: 0px;
+    padding-TOP: 0px;
+    font-weight: bold;
 }
 td.menuTabUnselected {
     padding: 0px 0px 0px 0px; 
@@ -42,17 +50,24 @@ Menu item table (the bar below the tabs)
 ---------------------------------------------------------------------- */
 
 .menuItemTable {
+    padding-right: 0px;
+    padding-bottom: 0px;
     width: 100%;
+    padding-top: 0px;
     height: 25px;
-    padding: 0px 0px 0px 10px;
 }
 .menuItemSelected {
+    padding-right: 1px;
+    padding-left: 1px;
+    padding-bottom: 0px;
+    padding-top: 0px;
     font-weight: bold;
-    padding: 0px 1px 0px 1px; /* TRBL */
 }
 .menuItemUnselected {
     padding: 0px 1px 0px 1px; /* TRBL */
 }
+
+
 
 
 

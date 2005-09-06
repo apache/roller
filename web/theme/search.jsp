@@ -6,7 +6,7 @@
             <div class="sidebarBody">
 
              <h3><fmt:message key="mainPage.searchWeblogs" /></h3>
-             <hr />
+             <hr size="1" noshade="noshade" />
              
         <form id="searchForm" method="get"
             action="<c:out value="${baseURL}" />/search"

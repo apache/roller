@@ -1,8 +1,8 @@
 #
 #   MT-Blacklist Master Copy
 #
-#   Last update:        2005/08/02 09:08:55
-#   Number of entries:  3101
+#   Last update:        2005/08/26 10:18:13
+#   Number of entries:  3117
 #
 #   This is the master copy of the MT-Blacklist plugin
 #   spammer blacklist. You can import this file through
@@ -34,6 +34,7 @@
 -site.info
 .gb.com
 .lycos.de
+.static.net
 01-beltonen.com
 01-klingeltoene.at
 01-klingeltoene.de
@@ -565,6 +566,7 @@ calendari-donne.com
 calendari-donne.net
 calendaridonne.com
 calendaridonne.net
+california-real-estate-sale.com
 callingcardchoice.com
 cambridgetherapynotebook.co.uk
 camemberts.org
@@ -767,6 +769,7 @@ creditrepairsoft.com
 creditsharpie.com
 crepesuzette.com
 crescentarian.net
+crpublish.com
 cum-facials.us
 cumfiesta-4u.com
 cumfietavideos.com
@@ -2054,6 +2057,7 @@ pagetwo.org
 pai-gow-keno.com
 painkillersonline.biz
 paisleydevelopmentassociation.org
+pamperedchef-online.com
 paololinks.porkyhost.com
 paperscn.com
 paramountseedfarms.net
@@ -2092,6 +2096,8 @@ payment-processing.com
 paysites.info
 pc-choices.com
 pcdweb.com
+pedronetwork.com
+pedronetwork.com
 peepissing.com
 penelopeschenk.com
 penilestretch.com
@@ -2107,6 +2113,7 @@ personal-injury-lawyer.us.com
 personalads.us.com
 personales.com
 personals-online-personals.com
+personalserotic.com
 petlesbians.com
 petroglyphx.com
 phantadu.de
@@ -2441,10 +2448,14 @@ seitensprung-gratis.com
 selectedsex.com
 selena-u.ru
 selten-angeklickt.de
+semax14.info
+semax15.info
+semax16.info
 sempo-tahoe.com
 senior.mine.nu
 seoy.com
 servepics.com
+servicesdating.net
 sesso-gratis.cc
 sesso-online.net
 sessoanalex.com
@@ -2464,6 +2475,7 @@ sex-pic-sex.com
 sex-pussy.us
 sex-toys-next-day.com
 sex4dollar.com
+sexadultdating.com
 sexbrides.com
 sexchat.ccx
 sexcia.com
@@ -2682,9 +2694,11 @@ svitonline.com
 swedenet.com
 swedenetwork.com
 sweet-horny.com
+sweetbuyz.com
 sweethotgirls.com
 sweetteenbodies.com
 swinger-story.blogspot.com
+swingersadult.net
 swingersunidos.com
 sydney-harbour.info
 sylphiel.org
@@ -2852,6 +2866,7 @@ tt33tt.com
 tt7.org
 tubegator.com
 tuff-enuff.fnpsites.com
+turist.com.pl
 tvforum.org
 twinky.org
 tygef.org
@@ -3030,6 +3045,7 @@ x-stories.org
 x-video-poker.com
 x-video-poker.us
 xadulthosting.com
+xadultpersonals.com
 xaper.com
 xdolar.com
 xfreehosting.com

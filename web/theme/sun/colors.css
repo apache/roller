@@ -5,7 +5,7 @@
 /* add colors and images to roller.css */
 
 .bannerlogo {
-    margin: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 5px;
 }
 .bannerBox {
     background: url("two-banner.gif") repeat-x top;
@@ -112,5 +112,12 @@ a.menuItemSelected:link, a.menuItemSelected:visited, a.menuItemSelected:hover, a
 a.menuItemUnselected:link, a.menuItemUnselected:visited, a.menuItemUnselected:hover, a.menuItemUnselected:active {
     color: white;
 }
-
+a.menuItemSelected:hover {
+    color: white;
+    text-decoration: none;
+}
+td.menuTabSelected a:hover {
+    color: white;
+    text-decoration: none;
+}
 

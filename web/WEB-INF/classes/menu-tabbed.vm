@@ -23,7 +23,7 @@
 
 <table class="menuItemTable" cellspacing="0">
     <tr>
-        <td>
+        <td class="padleft">
             #set( $count = 0 )
             #set( $currentMenu = $menuModel.getSelectedMenu( $req ) )
             #if( $currentMenu.isPermitted( $req ) ) 

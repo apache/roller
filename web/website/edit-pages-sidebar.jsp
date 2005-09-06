@@ -6,7 +6,7 @@
             <div class="sidebarBody">
             
              <h3><fmt:message key="pagesForm.addNewPage" /></h3>
-             <hr />
+             <hr size="1" noshade="noshade" />
              
              <html:form action="/editor/page" method="post" focus="name">
 

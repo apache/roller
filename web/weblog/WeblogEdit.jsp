@@ -106,8 +106,6 @@ function publish() {
             <html:optionsCollection name="model" property="categories" value="id" label="path"  />
         </html:select>
     </div>
-
-    <br />
     
     <div class="row">
         <label style="width:10%; float:left;" for="link"><fmt:message key="weblogEdit.pubTime" /></label>

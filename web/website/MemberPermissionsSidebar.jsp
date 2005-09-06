@@ -6,7 +6,7 @@
             <div class="sidebarBody">
             
             <h3><fmt:message key="mainPage.actions" /></h3>
-            <hr />
+            <hr size="1" noshade="noshade" />
             <img src='<c:url value="/images/ComposeMail16.gif"/>' alt="mail-icon" align="bottom" />
             <c:url value="/editor/inviteMember.do" var="inviteUrl">
                <c:param name="weblog" value="${model.website.handle}" />
@@ -35,7 +35,7 @@
             <h3>
                 <fmt:message key="memberPermissions.permissionsHelpTitle" />
             </h3>
-            <hr />
+            <hr size="1" noshade="noshade" />
             
             <fmt:message key="memberPermissions.permissionHelp" />	
 		    <br />

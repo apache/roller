@@ -1,7 +1,9 @@
 <%@ include file="/taglibs.jsp" %>
+
 <%
-String themename = RollerConfig.getProperty("editor.theme");
-String logourl = "/theme/" + themename + "/logo.gif";
+String theme = request.getParameter("theme");
+if (theme == null) theme = RollerConfig.getProperty("editor.theme");
+String logourl = "/theme/" + theme + "/logo.gif";
 request.setAttribute("logourl", logourl);
 %>
 <div class="bannerBox">

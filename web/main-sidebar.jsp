@@ -6,7 +6,7 @@
             <div class="sidebarBody">
 
              <h3><fmt:message key="mainPage.hotWeblogs" /></h3>
-             <hr />
+             <hr size="1" noshade="noshade" />
         
 	      <c:if test="${not empty popularWebsites}"> <%-- to prevent invalid XHTML --%>
 	        <ul style="list-style-type:none; padding-left:2px; margin: 0px">
