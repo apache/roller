@@ -385,10 +385,11 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.stage_web}/WEB-INF/lib"/>
     <mkdir dir="${build.stage_web}/WEB-INF/tlds"/>
 
-    <!-- Jar up web classes -->
+    <!-- Jar up web classes 
     <jar jarfile="${build.stage_web}/WEB-INF/lib/rollerweb.jar">
         <fileset dir="${build.compile_web}" excludes="**/tomcat/**"/>
     </jar>
+    -->
 
     <!-- Copy web contents to staging, plus README files. -->
     <antcall target="copy-web" />
@@ -397,6 +398,7 @@ ro.buildUser=${user.name}
     <copy todir="${build.stage_web}/WEB-INF/classes">
         <fileset dir="./metadata/database/hibernate" includes="hibernate.cfg.xml"/>
         <fileset dir="${ro.tools}/lib" includes="oscache.properties"/>
+        <fileset dir="${build.compile_web}" excludes="**/tomcat/**"/>
     </copy>
 
     <!-- Copy WEB-INF contents to staging -->
@@ -490,7 +492,33 @@ ro.buildUser=${user.name}
       </filterset>
       <mapper type="glob" from="*-raw.sql" to="*.sql" />
     </copy>
+	
+    <!-- DB2 -->
+    <copy toDir="${dbscripts}/db2">
+  	  &custom-dbscripts;
+      <fileset dir="./metadata/database">
+        <include name="*.sql" />
+        <exclude name="droptables.sql" />
+      </fileset>
+      <filterset>
+        <filtersfile file="./metadata/database/db_db2.properties"/>
+      </filterset>
+      <mapper type="glob" from="*-raw.sql" to="*.sql" />
+    </copy>	
 
+    <!-- Apache Derby -->
+    <copy toDir="${dbscripts}/derby">
+  	  &custom-dbscripts;
+      <fileset dir="./metadata/database">
+        <include name="*.sql" />
+        <exclude name="droptables.sql" />
+      </fileset>
+      <filterset>
+        <filtersfile file="./metadata/database/db_derby.properties"/>
+      </filterset>
+      <mapper type="glob" from="*-raw.sql" to="*.sql" />
+    </copy>	
+	
 </target>
 
 <!-- ********************************************************************* -->

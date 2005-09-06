@@ -52,6 +52,8 @@ in the "base.path" definition.
     <include name="velocity-1.4.jar"/>
     <include name="velocity-dep-1.4.jar"/>
     <include name="velocity-tools-1.1.jar"/>
+    <include name="mail.jar"/>
+    <include name="activation.jar"/>        
 </fileset>
 
 <fileset id="presentation.jars" dir="${ro.tools}/lib">

@@ -105,11 +105,6 @@ public class WeblogEntryPageModel extends BasePageModel
         return bundle.getString("weblogEdit.title.editEntry");
     }
 
-    public String getBaseURL()
-    {
-		return getRequest().getContextPath();
-	}
-
     /**
      * Get recent weblog entries using request parameters to determine
      * username, date, and category name parameters.
