@@ -14,7 +14,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
     href="<%= request.getContextPath() %>/theme/calendar.css" />
       
 <%
-String theme = request.getParameter("theme");
+String theme = request.getParameter("look");
 if (theme == null) theme = RollerConfig.getProperty("editor.theme");
 %>
 <link rel="stylesheet" type="text/css" media="all" 
