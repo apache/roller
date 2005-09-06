@@ -93,7 +93,7 @@ Page element styles: boxes and borders, etc.
     padding: 4px 15px 4px 15px;
 }
 #footer {
-    padding: 10px 0px 0px 0px;
+    margin: 10px 0px 0px 0px;
     border-top: 1px grey solid;
 }
 .sidebarfade, .sidebarfade_hotblogs, .sidebarfade_search, {
