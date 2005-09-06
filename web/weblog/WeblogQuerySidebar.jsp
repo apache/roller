@@ -11,7 +11,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
             <div class="sidebarBody">
 
 <h3><fmt:message key="weblogEntryQuery.sidebarTitle" /></h3>
-<hr />
+<hr size="1" noshade="noshade" />
 
 <p><fmt:message key="weblogEntryQuery.sidebarDescription" /></p>
 

@@ -57,7 +57,7 @@ Makes the following assumptions:
    <delete dir="./build/roller-demo/webapps/webdav" />
 
    <!-- unzip JSPWiki, unjar its WAR into ./build/roller-demo/webapps -->
-   <mkdir  dir="./build/roller-demo/webapps/wiki" />
+   <!-- <mkdir  dir="./build/roller-demo/webapps/wiki" />
    <unzip  src="./jspwiki/${jspwiki.filename}" dest="./build" />
    <unjar  src="./build/JSPWiki/JSPWiki.war" 
           dest="./build/roller-demo/webapps/wiki" />
@@ -66,11 +66,11 @@ Makes the following assumptions:
        <fileset dir="./jspwiki/default" includes="**/**" />
    </copy>
    <copy file="./jspwiki/jspwiki.properties" overwrite="true"
-        todir="./build/roller-demo/webapps/wiki/WEB-INF" />
+        todir="./build/roller-demo/webapps/wiki/WEB-INF" /> -->
    
    <!-- Roller wiki plugin goes in JSPWiki webapp -->
-   <copy file="./build/roller-jspwiki.jar" 
-        todir="./build/roller-demo/webapps/wiki/WEB-INF/lib" />
+   <!-- <copy file="./build/roller-jspwiki.jar" 
+        todir="./build/roller-demo/webapps/wiki/WEB-INF/lib" /> -->
 
    <!-- Copy Roller from its build directory -->       
    <mkdir dir="./build/roller-demo/webapps/roller" />

@@ -6,7 +6,7 @@
             <div class="sidebarBody">
             
             <h3><fmt:message key="mainPage.actions" /></h3>
-            <hr />
+            <hr size="1" noshade="noshade" />
             
 			<%-- Add Category link --%>
 			<p>
