@@ -24,7 +24,7 @@ create table rolleruser (
     timezone        varchar(50),    
     isenabled       @BOOLEAN_SQL_TYPE_TRUE@ not null
 );
-alter table rolleruser add constraint rolleruser_username_uq unique ( username@INDEXSIZE@ );
+alter table rolleruser add constraint ru_username_uq unique ( username@INDEXSIZE@ );
 
 create table userrole (
     id               varchar(48) not null primary key,
@@ -32,8 +32,8 @@ create table userrole (
     username         varchar(255) not null,
     userid           varchar(48) not null
 );
-create index userrole_userid_index on userrole( userid );
-create index userrole_username_index on userrole( username@INDEXSIZE@ );
+create index ur_userid_idx on userrole( userid );
+create index ur_username_idx on userrole( username@INDEXSIZE@ );
 
 -- User permissions within a website
 -- permission_mask: bitmask 001 limited, 011 author, 100 admin
@@ -67,8 +67,8 @@ create table usercookie (
     cookieid        varchar(100) not null,
     datecreated     timestamp not null
 );
-create index usercookie_username_index on usercookie( username@INDEXSIZE@ );
-create index usercookie_cookieid_index on usercookie( cookieid@INDEXSIZE@ );
+create index uc_username_idx on usercookie( username@INDEXSIZE@ );
+create index uc_cookieid_idx on usercookie( cookieid@INDEXSIZE@ );
 
 create table webpage (
     id              varchar(48)  not null primary key,
@@ -79,9 +79,9 @@ create table webpage (
     template        @TEXT_SQL_TYPE@ not null,
     updatetime      timestamp     not null
 );
-create index webpage_name_index on webpage( name@INDEXSIZE@ );
-create index webpage_link_index on webpage( link@INDEXSIZE@ );
-create index webpage_id_index on webpage( websiteid );
+create index wp_name_idx on webpage( name@INDEXSIZE@ );
+create index wp_link_idx on webpage( link@INDEXSIZE@ );
+create index wp_id_idx on webpage( websiteid );
 
 create table website (
     id                varchar(48) not null primary key,
@@ -108,10 +108,12 @@ create table website (
     isenabled         @BOOLEAN_SQL_TYPE_TRUE@ not null,
     datecreated     timestamp not null
 );
-create index website_userid_index    on website(userid);
-create index website_isenabled_index on website(isenabled);
-create index website_handle_index    on website(handle);
-alter table website add constraint website_handle_uq unique (handle@INDEXSIZE@);
+create index ws_userid_idx    on website(userid);
+create index ws_isenabled_idx on website(isenabled);
+alter table website add constraint ws_handle_uq unique (handle@INDEXSIZE@);
+
+-- This index is not necessary because of handle is already a primary key.
+-- create index ws_handle_idx    on website(handle);
 
 create table folder (
     id               varchar(48) not null primary key,
@@ -120,7 +122,7 @@ create table folder (
     websiteid        varchar(48) not null,
     parentid        varchar(48)
 );
-create index folder_websiteid_index on folder( websiteid );
+create index fo_websiteid_idx on folder( websiteid );
 
 create table folderassoc (
     id               varchar(48) not null primary key,
@@ -128,9 +130,9 @@ create table folderassoc (
     ancestorid       varchar(40),
     relation         varchar(20) not null
 );
-create index folderassoc_folderid_index on folderassoc( folderid );
-create index folderassoc_ancestorid_index on folderassoc( ancestorid );
-create index folderassoc_relation_index on folderassoc( relation );
+create index fa_folderid_idx on folderassoc( folderid );
+create index fa_ancestorid_idx on folderassoc( ancestorid );
+create index fa_relation_idx on folderassoc( relation );
 
 create table bookmark (
     id               varchar(48) not null primary key,
@@ -143,7 +145,7 @@ create table bookmark (
     image            varchar(255),
     feedurl          varchar(255)
 );
-create index bookmark_folderid_index on bookmark( folderid );
+create index bm_folderid_idx on bookmark( folderid );
 
 create table weblogcategory (
     id               varchar(48)  not null primary key,
@@ -152,7 +154,7 @@ create table weblogcategory (
     websiteid        varchar(48)  not null,
     image            varchar(255)
 );
-create index weblogcategory_websiteid_index on weblogcategory( websiteid );
+create index wc_websiteid_idx on weblogcategory( websiteid );
 -- alter table weblogcategory add unique category_nameparentid_uq (parentid, name(20));
 
 create table weblogcategoryassoc (
@@ -161,9 +163,9 @@ create table weblogcategoryassoc (
     ancestorid       varchar(40),
     relation         varchar(20) not null
 );
-create index weblogcategoryassoc_categoryid_index on weblogcategoryassoc( categoryid );
-create index weblogcategoryassoc_ancestorid_index on weblogcategoryassoc( ancestorid );
-create index weblogcategoryassoc_relation_index on weblogcategoryassoc( relation );
+create index wca_categoryid_idx on weblogcategoryassoc( categoryid );
+create index wca_ancestorid_idx on weblogcategoryassoc( ancestorid );
+create index wca_relation_idx on weblogcategoryassoc( relation );
 
 create table weblogentry (
     id              varchar(48)  not null primary key,
@@ -185,12 +187,12 @@ create table weblogentry (
     locale          varchar(20),
     status          varchar(20) not null
 );
-create index weblogentry_websiteid_index on weblogentry( websiteid );
-create index weblogentry_categoryid_index on weblogentry( categoryid );
-create index weblogentry_pubtime_index on weblogentry( pubtime,publishentry,websiteid );
-create index weblogentry_pinnedtomain_index on weblogentry(pinnedtomain);
-create index weblogentry_publishentry_index on weblogentry(publishentry);
-create index weblogentry_userid_index on weblogentry(userid);
+create index we_websiteid_idx on weblogentry( websiteid );
+create index we_categoryid_idx on weblogentry( categoryid );
+create index we_pubtime_idx on weblogentry( pubtime,publishentry,websiteid );
+create index we_pinnedtom_idx on weblogentry(pinnedtomain);
+create index we_pubentry_idx on weblogentry(publishentry);
+create index we_userid_idx on weblogentry(userid);
 
 create table newsfeed (
     id              varchar(48) not null primary key,
@@ -199,7 +201,7 @@ create table newsfeed (
     link            varchar(255) not null,
     websiteid       varchar(48) not null
 );
-create index newsfeed_websiteid_index on newsfeed( websiteid );
+create index nf_websiteid_idx on newsfeed( websiteid );
 
 
 create table comment (
@@ -214,7 +216,7 @@ create table comment (
     notify  @BOOLEAN_SQL_TYPE_FALSE@ not null,
     remotehost varchar(128)
 );
-create index comment_entryid_index on comment( entryid );
+create index co_entryid_idx on comment( entryid );
 
 -- Ping Feature Tables
 -- name: short descriptive name of the ping target
@@ -230,7 +232,7 @@ create table pingtarget (
     conditioncode    integer default 0 not null,
     lastsuccess  timestamp
 );
-create index pingtarget_websiteid_index on pingtarget( websiteid );
+create index pt_websiteid_idx on pingtarget( websiteid );
 
 -- auto ping configurations
 -- websiteid:  fk reference to website for which this auto ping configuration applies
@@ -240,8 +242,8 @@ create table autoping (
     websiteid     varchar(48) not null,
     pingtargetid  varchar(48) not null 
 );
-create index autoping_websiteid_index on autoping( websiteid );
-create index autoping_pingtargetid_index on autoping( pingtargetid );
+create index ap_websiteid_idx on autoping( websiteid );
+create index ap_pingtid_idx on autoping( pingtargetid );
 
 -- autopingid: fk reference to ping configuration
 -- categoryid: fk reference to category
@@ -250,8 +252,8 @@ create table pingcategory (
     autopingid  varchar(48) not null, 
     categoryid    varchar(48) not null 
 );
-create index pingcategory_autopingid_index on pingcategory( autopingid );
-create index pingcategory_categoryid_index on pingcategory( categoryid );
+create index pc_autopingid_idx on pingcategory( autopingid );
+create index pc_categoryid_idx on pingcategory( categoryid );
 
 -- entrytime: timestamp of original entry onto the ping queue
 -- pingtargetid: weak fk reference to ping target (not constrained)
@@ -264,9 +266,9 @@ create table pingqueueentry (
     websiteid      varchar(48) not null,  
     attempts       integer not null
 );
-create index pingqueueentry_entrytime_index on pingqueueentry( entrytime );
-create index pingqueueentry_pingtargetid_index on pingqueueentry( pingtargetid );
-create index pingqueueentry_websiteid_index on pingqueueentry( websiteid );
+create index pqe_entrytime_idx on pingqueueentry( entrytime );
+create index pqe_pingtid_idx on pingqueueentry( pingtargetid );
+create index pqe_websiteid_idx on pingqueueentry( websiteid );
 
 
 -- Referer tracks URLs that refer to websites and entries
@@ -286,13 +288,13 @@ create table referer (
     visible   @BOOLEAN_SQL_TYPE_FALSE@ not null,
     duplicate @BOOLEAN_SQL_TYPE_FALSE@ not null
 );
-create index referer_websiteid_index on referer( websiteid );
-create index referer_entryid_index on referer( entryid );
-create index referer_refurl_index on referer( refurl@INDEXSIZE@ );
-create index referer_requrl_index on referer( requrl@INDEXSIZE@ );
-create index referer_datestr_index on referer( datestr );
-create index referer_refpermalink_index on referer( refpermalink@INDEXSIZE@ );
-create index referer_duplicate_index on referer( duplicate );
+create index ref_websiteid_idx on referer( websiteid );
+create index ref_entryid_idx on referer( entryid );
+create index ref_refurl_idx on referer( refurl@INDEXSIZE@ );
+create index ref_requrl_idx on referer( requrl@INDEXSIZE@ );
+create index ref_datestr_idx on referer( datestr );
+create index ref_refpermlnk_idx on referer( refpermalink@INDEXSIZE@ );
+create index ref_duplicate_idx on referer( duplicate );
 
 -- Configuration options for Roller, should only ever be one row
 -- Deprecated in 1.2: configuration now stored in roller_properties table
@@ -340,16 +342,16 @@ create table entryattribute (
     name     varchar(255) not null,
     value    @TEXT_SQL_TYPE@ not null
 );
-create index entryattribute_entryid_index on entryattribute( entryid );
-alter table entryattribute add constraint entryattribute_name_uq unique ( entryid, name@INDEXSIZE@ );
+create index ea_entryid_idx on entryattribute( entryid );
+alter table entryattribute add constraint ea_name_uq unique ( entryid, name@INDEXSIZE@ );
 
 create table rag_group_subscription (
     id               varchar(48) not null primary key,
     group_id         varchar(48) not null,
     subscription_id  varchar(48) not null
 );
-create index rag_group_subscription_gid on rag_group_subscription(group_id@INDEXSIZE@); 
-create index rag_group_subscription_sid on rag_group_subscription(subscription_id@INDEXSIZE@); 
+create index raggs_gid_idx on rag_group_subscription(group_id@INDEXSIZE@); 
+create index raggs_sid_idx on rag_group_subscription(subscription_id@INDEXSIZE@); 
 
 create table rag_config (
     id               varchar(48) not null primary key,
@@ -378,7 +380,7 @@ create table rag_group (
     max_page_entries integer default 30,
     max_feed_entries integer default 30
 );
-alter table rag_group add constraint rag_group_handle_uq unique ( handle@INDEXSIZE@ );
+alter table rag_group add constraint ragg_handle_uq unique ( handle@INDEXSIZE@ );
 
 create table rag_subscription (
     id               varchar(48) not null primary key,
@@ -390,7 +392,7 @@ create table rag_subscription (
     inbound_links    integer default -1,
     inbound_blogs    integer default -1
 );
-alter table rag_subscription add constraint rag_feed_url_uq unique ( feed_url@INDEXSIZE_LARGE@ );
+alter table rag_subscription add constraint rags_feed_url_uq unique ( feed_url@INDEXSIZE_LARGE@ );
 
 create table rag_entry (
     id               varchar(48) not null primary key,
@@ -405,34 +407,34 @@ create table rag_entry (
     published        timestamp not null,
     updated          timestamp    
 );
-create index rag_entry_sid on rag_entry(subscription_id@INDEXSIZE@); 
+create index rage_sid_idx on rag_entry(subscription_id@INDEXSIZE@); 
 
 -- *****************************************************
 -- Now add the foreign key relationships
 
 -- user, role and website
 
-alter table website add constraint website_userid_fk
+alter table website add constraint ws_userid_fk
     foreign key ( userid ) references rolleruser ( id ) @ADDL_FK_PARAMS@ ;
 
-alter table userrole add constraint userrole_userid_fk
+alter table userrole add constraint ur_userid_fk
     foreign key ( userid ) references rolleruser( id ) @ADDL_FK_PARAMS@ ;
 
 -- page, entry, category, comment
 
-alter table webpage add constraint weblogpage_websiteid_fk
+alter table webpage add constraint wp_websiteid_fk
     foreign key ( websiteid ) references website( id ) @ADDL_FK_PARAMS@ ;
 
-alter table weblogentry add constraint weblogentry_websiteid_fk
+alter table weblogentry add constraint we_websiteid_fk
     foreign key ( websiteid ) references website( id ) @ADDL_FK_PARAMS@ ;
 
-alter table weblogentry add constraint weblogentry_categoryid_fk
+alter table weblogentry add constraint wc_categoryid_fk
     foreign key ( categoryid ) references weblogcategory( id ) @ADDL_FK_PARAMS@ ;
 
-alter table weblogcategory add constraint weblogcategory_websiteid_fk
+alter table weblogcategory add constraint wc_websiteid_fk
     foreign key ( websiteid ) references website( id ) @ADDL_FK_PARAMS@ ;
 
-alter table comment add constraint comment_entryid_fk
+alter table comment add constraint co_entryid_fk
     foreign key ( entryid ) references weblogentry( id ) @ADDL_FK_PARAMS@ ;
 
 alter table entryattribute add constraint att_entryid_fk
@@ -440,43 +442,43 @@ alter table entryattribute add constraint att_entryid_fk
 
 -- referer
 
-alter table referer add constraint referer_entryid_fk
+alter table referer add constraint ref_entryid_fk
     foreign key ( entryid ) references weblogentry( id ) @ADDL_FK_PARAMS@ ;
 
-alter table referer add constraint referer_websiteid_fk
+alter table referer add constraint ref_websiteid_fk
     foreign key ( websiteid ) references website( id ) @ADDL_FK_PARAMS@ ;
 
 -- folder and bookmark
 
-alter table folder add constraint folder_websiteid_fk
+alter table folder add constraint fo_websiteid_fk
     foreign key ( websiteid ) references website( id ) @ADDL_FK_PARAMS@ ;
 
--- alter table folder add constraint folder_parentid_fk
+-- alter table folder add constraint fo_parentid_fk
 --     foreign key ( parentid ) references folder( id );
 
-alter table bookmark add constraint bookmark_folderid_fk
+alter table bookmark add constraint bm_folderid_fk
     foreign key ( folderid ) references folder( id ) @ADDL_FK_PARAMS@ ;
 
 -- newsfeed
 
-alter table newsfeed add constraint newsfeed_websiteid_fk
+alter table newsfeed add constraint nf_websiteid_fk
     foreign key ( websiteid ) references website( id ) @ADDL_FK_PARAMS@ ;
 
 -- pingtarget, autoping, pingcategory
 
-alter table pingtarget add constraint pingtarget_websiteid_fk
+alter table pingtarget add constraint pt_websiteid_fk
     foreign key (websiteid) references website(id) @ADDL_FK_PARAMS@ ;
 
-alter table autoping add constraint autoping_websiteid_fk
+alter table autoping add constraint ap_websiteid_fk
     foreign key (websiteid) references website(id) @ADDL_FK_PARAMS@ ;
 
-alter table autoping add constraint autoping_pingtargetid_fk
+alter table autoping add constraint ap_pingtargetid_fk
     foreign key (pingtargetid) references pingtarget(id) @ADDL_FK_PARAMS@ ;
 
-alter table pingcategory add constraint pingcategory_autopingid_fk
+alter table pingcategory add constraint pc_autopingid_fk
     foreign key (autopingid) references autoping(id) @ADDL_FK_PARAMS@ ;
 
-alter table pingcategory add constraint pingcategory_categoryid_fk
+alter table pingcategory add constraint pc_categoryid_fk
     foreign key (categoryid) references weblogcategory(id) @ADDL_FK_PARAMS@ ;
 
 
