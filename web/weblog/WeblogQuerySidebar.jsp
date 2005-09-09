@@ -99,6 +99,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
         onclick="submit()">
     </input>
     <html:hidden name="method" property="method" value="query"/>
+    <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
 
 </html:form>
 
