@@ -126,7 +126,7 @@ public class UserManagerTest  extends RollerTestBase
         getRoller().begin(UserData.SYSTEM_USER);
         stored = new UserData(
             null,
-            "testUserStorage",
+            "testUserStorage2",
             "password2",
             "TestUser2",
             "testuser2@example.com",
@@ -162,35 +162,36 @@ public class UserManagerTest  extends RollerTestBase
 
         user = new UserData(
             null,
-            "testWebsiteStorage",
+            "testWebsiteStorage3",
             "password3",
             "TestUser3",
             "testuser3@example.com",
             "en_US_WIN", "America/Los_Angeles",
             new java.util.Date(), Boolean.TRUE);
-        umgr.storeUser( user );
-
+        umgr.storeUser(user);
+        
         stored = new WebsiteData(
-            null,
-            "testsite",
-            "testsite",
-            "Testsite",
-            user,
-            "dpid",
-            "wpid",
-            Boolean.FALSE,
-            null,
-            null,
-            "edit-weblog.jsp",
-            "ignore",
-            Boolean.TRUE,
-            Boolean.FALSE,
-            null,
-            Boolean.TRUE, 
-            "", 
-            new Date());
+            null,          // id
+            "testsite3",    // name
+            "testsite3",    // handle 
+            "Testsite3",    // description
+            user,          // creating user
+            "dpid",        // default page ID
+            "wpid",        // default day page ID
+            Boolean.FALSE, // enable blogger API
+            null,          // blogger category
+            null,          // default category
+            "edit-weblog.jsp", // editor page
+            "ignore",      // ignore words
+            Boolean.TRUE,  // allow comments
+            Boolean.FALSE, // email comments
+            null,          // email from address
+            Boolean.TRUE,  // enabled
+            "",            // email address
+            new Date());   // date created
+        stored.setEditorTheme("theme");
         umgr.storeWebsite(stored);
-
+        
         FolderData rootFolder = getRoller().getBookmarkManager()
             .createFolder(null, "root", "root", stored);
         rootFolder.save();
@@ -201,8 +202,7 @@ public class UserManagerTest  extends RollerTestBase
 
         stored.setBloggerCategory(rootCategory);
         stored.setDefaultCategory(rootCategory);
-        stored.save();
-
+        
         getRoller().commit();
 
         getRoller().begin(UserData.SYSTEM_USER);
@@ -370,29 +370,30 @@ public class UserManagerTest  extends RollerTestBase
         assertTrue(user.hasRole("editor"));
     }
     
+    /** Each website should be able to return a page named Weblog */
     public void testGetPageByName() throws RollerException
     {
         UserManager umgr = getRoller().getUserManager();
         WebsiteData wd0 = (WebsiteData)umgr.getWebsites(
                 umgr.getUser(enabledUserName), null).get(0);
-        assertNotNull(getRoller().getUserManager().getPageByName(wd0, "Weblog"));
+        assertNotNull(wd0.getPageByName("Weblog"));
     }
 
+    /** Each website should be able to return a page with link=Weblog */
     public void testGetPageByLink() throws RollerException
     {
         UserManager umgr = getRoller().getUserManager();
         WebsiteData wd0 = (WebsiteData)umgr.getWebsites(
                 umgr.getUser(enabledUserName), null).get(0);
-        assertNotNull(getRoller().getUserManager().getPageByLink(wd0,"Weblog"));
+        assertNotNull(wd0.getPageByLink("Weblog"));
     }
 
     public void testGetPages() throws RollerException
     {
-        // testuser0 is enabled and has 3 pages
         UserManager umgr = getRoller().getUserManager();
         WebsiteData wd0 = (WebsiteData)umgr.getWebsites(
                 umgr.getUser(enabledUserName), null).get(0);
-        assertEquals(3, getRoller().getUserManager().getPages(wd0).size());
+        assertEquals(5, wd0.getPages().size());
     }
 
     public void hide_testUpdateIfNeeded() throws Exception

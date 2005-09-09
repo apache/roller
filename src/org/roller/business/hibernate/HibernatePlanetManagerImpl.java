@@ -23,12 +23,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Query;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.expression.Expression;
-import net.sf.hibernate.expression.Order;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -256,7 +256,7 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
                                     +((endTime-startTime)/1000.0)+" seconds");
             }
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             logger.error("ERROR: building aggregation for: "+group, e);
             throw new RollerException(e);
@@ -291,7 +291,7 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
             List list = criteria.list();
             return list.iterator();
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             throw new RuntimeException(
                     "ERROR fetching subscription collection", e);
@@ -307,7 +307,7 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
                 "select count(*) from org.roller.pojos.PlanetSubscriptionData").uniqueResult();
             return count.intValue();
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             throw new RuntimeException(
                     "ERROR fetching subscription count", e);

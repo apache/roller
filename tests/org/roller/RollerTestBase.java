@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.business.BookmarkManagerTest;
+import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
@@ -55,7 +56,7 @@ public abstract class RollerTestBase extends TestCase
     protected List mUsersCreated = new ArrayList();
 
     /** Number of full website/users to create */
-    protected int mBlogCount = 2;
+    protected int mBlogCount = 3;
     /** Number of categories to create in each category of tree. */
     protected int mCatCount = 2;
     /** Depth of created category tree. */
@@ -115,6 +116,8 @@ public abstract class RollerTestBase extends TestCase
         UserManager umgr = getRoller().getUserManager();
         mWebsite = (WebsiteData)umgr.getWebsites(mUser, null).get(0);
         getRoller().commit();
+        
+        RollerConfig.setContextPath("./build/roller");
     }
 
     //-----------------------------------------------------------------------
@@ -176,8 +179,6 @@ public abstract class RollerTestBase extends TestCase
             mWebsitesCreated.add(website);
             mUsersCreated.add(ud);
 
-            getRoller().commit();
-
             mLogger.debug("Created user "+ud.getUserName());
 
             // ensure that the first weblog entry created is the newest
@@ -185,10 +186,10 @@ public abstract class RollerTestBase extends TestCase
             mCalendar.setTime(new Date());
 
             // create categories
-            getRoller().begin(UserData.SYSTEM_USER);
             website  = umgr.retrieveWebsite(website.getId());
             WeblogCategoryData rootCat = wmgr.getRootWeblogCategory(website);
             createCategoryPostsAndComments(0, wmgr, ud, website, rootCat);
+
             getRoller().commit();
         }
 
@@ -339,7 +340,6 @@ public abstract class RollerTestBase extends TestCase
         try
         {
             deleteWebsite(testUsername);
-            //getRoller().release();
         }
         catch (RollerException e)
         {
@@ -358,10 +358,14 @@ public abstract class RollerTestBase extends TestCase
         mLogger.debug("try to delete " + deleteMe);
         getRoller().begin(UserData.SYSTEM_USER);
         UserManager umgr = getRoller().getUserManager();
+        
         UserData user = umgr.getUser(deleteMe);
+
         WebsiteData website = (WebsiteData)umgr.getWebsites(user, null).get(0);
         website.remove();
+
         user.remove();
+        
         getRoller().commit();
     }
 

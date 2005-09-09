@@ -3,9 +3,9 @@
  */
 package org.roller.business.hibernate;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 import org.roller.RollerException;
 import org.roller.business.ConfigManagerImpl;

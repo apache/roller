@@ -771,6 +771,39 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         {
             WebsiteData lTest = (WebsiteData) pOther;
             boolean lEquals = true;
+            lEquals = PojoUtil.equals(lEquals, this.getId(), lTest.getId());
+            lEquals = PojoUtil.equals(lEquals, this.getName(), lTest.getName());
+            lEquals = PojoUtil.equals(lEquals, this.getDescription(), lTest.getDescription());
+            lEquals = PojoUtil.equals(lEquals, this.getCreator(), lTest.getCreator());
+            lEquals = PojoUtil.equals(lEquals, this.getDefaultPageId(), lTest.getDefaultPageId());
+            lEquals = PojoUtil.equals(lEquals, this.getWeblogDayPageId(), lTest.getWeblogDayPageId());
+            lEquals = PojoUtil.equals(lEquals, this.getEnableBloggerApi(), lTest.getEnableBloggerApi());
+            lEquals = PojoUtil.equals(lEquals, this.getBloggerCategory(), lTest.getBloggerCategory());
+            lEquals = PojoUtil.equals(lEquals, this.getDefaultCategory(), lTest.getDefaultCategory());
+            lEquals = PojoUtil.equals(lEquals, this.getEditorPage(), lTest.getEditorPage());
+            lEquals = PojoUtil.equals(lEquals, this.getIgnoreWords(), lTest.getIgnoreWords());
+            lEquals = PojoUtil.equals(lEquals, this.getAllowComments(), lTest.getAllowComments());           
+            lEquals = PojoUtil.equals(lEquals, this.getEmailComments(), lTest.getEmailComments());
+            lEquals = PojoUtil.equals(lEquals, this.getEmailAddress(), lTest.getEmailAddress());            
+            lEquals = PojoUtil.equals(lEquals, this.getEmailFromAddress(), lTest.getEmailFromAddress());
+            lEquals = PojoUtil.equals(lEquals, this.getEditorTheme(), lTest.getEditorTheme());
+            lEquals = PojoUtil.equals(lEquals, this.getLocale(), lTest.getLocale());
+            lEquals = PojoUtil.equals(lEquals, this.getTimeZone(), lTest.getTimeZone());
+            lEquals = PojoUtil.equals(lEquals, this.getDefaultPlugins(), lTest.getDefaultPlugins());  
+            return lEquals;
+        }
+        else
+        {
+            return false;
+        }
+    }
+        
+    /*public boolean equals(Object pOther)
+    {
+        if (pOther instanceof WebsiteData)
+        {
+            WebsiteData lTest = (WebsiteData) pOther;
+            boolean lEquals = true;
 
             lEquals = PojoUtil.equals(lEquals, this.id, lTest.id);
 
@@ -816,7 +849,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         {
             return false;
         }
-    }
+    }*/
 
     public int hashCode()
     {

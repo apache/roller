@@ -426,11 +426,10 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         {
             WeblogCategoryData lTest = (WeblogCategoryData) pOther;
             boolean lEquals = true;
-            lEquals = PojoUtil.equals(lEquals, this.id, lTest.id);
-            lEquals = PojoUtil.equals(lEquals, this.mWebsite.getId(), lTest.mWebsite.getId());
-            lEquals = PojoUtil.equals(lEquals, this.name, lTest.name);
-            lEquals = PojoUtil.equals(lEquals, this.description, lTest.description);
-            lEquals = PojoUtil.equals(lEquals, this.image, lTest.image);
+            lEquals = PojoUtil.equals(lEquals, this.getId(), lTest.getId());
+            lEquals = PojoUtil.equals(lEquals, this.getName(), lTest.getName());
+            lEquals = PojoUtil.equals(lEquals, this.getDescription(), lTest.getDescription());
+            lEquals = PojoUtil.equals(lEquals, this.getImage(), lTest.getImage());
             return lEquals;
         }
         else
