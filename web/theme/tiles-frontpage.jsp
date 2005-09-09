@@ -58,6 +58,8 @@ request.setAttribute("siteDescription", siteDescription);
     </div>  
  
 </div>
-
+<div id="datetagdiv" 
+   style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
+</div>
 </body>
 </html>
