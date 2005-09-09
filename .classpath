@@ -22,16 +22,6 @@
 	<classpathentry kind="lib" path="tools/buildtime/ant-1.6.2/ant-junit.jar"/>
 	<classpathentry kind="lib" path="tools/buildtime/ant-1.6.2/ant-commons-net.jar"/>
 	<classpathentry kind="lib" path="tools/buildtime/ant-1.6.2/ant.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/hibernate2.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/lib/xalan-2.4.0.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/lib/proxool-0.8.3.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/lib/odmg-3.0.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/lib/jta.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/lib/jdom.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/lib/ehcache-0.7.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/lib/dom4j-1.4.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/lib/cglib-full-2.0.1.jar"/>
-	<classpathentry kind="lib" path="tools/hibernate-2.1/lib/c3p0-0.8.4.5.jar"/>
 	<classpathentry kind="lib" path="tools/lib/xmlrpc-2.0.jar"/>
 	<classpathentry kind="lib" path="tools/lib/xmlrpc-1.2-b1.jar"/>
 	<classpathentry kind="lib" path="tools/lib/velocity-tools-1.1.jar"/>
@@ -70,5 +60,14 @@
 	<classpathentry kind="lib" path="contrib/lib/jython.jar"/>
 	<classpathentry kind="lib" path="contrib/lib/JSPWiki.jar"/>
 	<classpathentry kind="lib" path="tools/buildtime/junit-3.8.1.jar"/>
+	<classpathentry sourcepath="/Applications/Java/hibernate-3.0/src" kind="lib" path="tools/hibernate-3.0/hibernate3.jar"/>
+	<classpathentry kind="lib" path="tools/hibernate-3.0/lib/jta.jar"/>
+	<classpathentry kind="lib" path="tools/hibernate-3.0/lib/jdbc2_0-stdext.jar"/>
+	<classpathentry kind="lib" path="tools/hibernate-3.0/lib/ehcache-1.1.jar"/>
+	<classpathentry kind="lib" path="tools/hibernate-3.0/lib/dom4j-1.6.jar"/>
+	<classpathentry kind="lib" path="tools/hibernate-3.0/lib/cglib-2.1.jar"/>
+	<classpathentry kind="lib" path="tools/hibernate-3.0/lib/asm-attrs.jar"/>
+	<classpathentry kind="lib" path="tools/hibernate-3.0/lib/asm.jar"/>
+	<classpathentry kind="lib" path="tools/lib/jdom.jar"/>
 	<classpathentry kind="output" path="classes.eclipse"/>
 </classpath>

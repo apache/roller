@@ -8,13 +8,13 @@
         <!-- By default Roller uses a JNDI DataSource and the MySQLDialect -->
         <property name="show_sql">false</property>
         <property name="connection.datasource">java:comp/env/jdbc/rollerdb</property>
-        <property name="dialect">net.sf.hibernate.dialect.MySQLDialect</property>
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         <!--
         If you want to use HSQLDB, PostgreSQL, DB2 or Derby, then use the right dialect   
-        <property name="dialect">net.sf.hibernate.dialect.HQLDBDialect</property> 
-        <property name="dialect">net.sf.hibernate.dialect.PostgreSQLDialect</property>
-        <property name="dialect">net.sf.hibernate.dialect.DB2SQLDialect</property>
-        <property name="dialect">net.sf.hibernate.dialect.DerbyDialect</property>
+        <property name="dialect">org.hibernate.dialect.HQLDBDialect</property> 
+        <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="dialect">org.hibernate.dialect.DB2SQLDialect</property>
+        <property name="dialect">org.hibernate.dialect.DerbyDialect</property>
         -->
 
         <!--
@@ -23,20 +23,20 @@
         <property name="hibernate.connection.url">jdbc:hsqldb:hsql://localhost:3219</property>
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.password"></property>
-        <property name="hibernate.dialect">net.sf.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
 
         <property name="hibernate.connection.driver_class">org.gjt.mm.mysql.Driver</property>
         <property name="hibernate.connection.url">
                         jdbc:mysql://localhost/roller?user=roller&amp;password=tiger</property>
         <property name="hibernate.connection.username">roller</property>
         <property name="hibernate.connection.password">tiger</property>
-        <property name="hibernate.dialect">net.sf.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost/rollerdb</property>
         <property name="hibernate.connection.username">scott</property>
         <property name="hibernate.connection.password">tiger</property>
-        <property name="hibernate.dialect">net.sf.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         -->
 
         <mapping resource="org/roller/business/HitCountData.hbm.xml" />

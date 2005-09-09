@@ -222,11 +222,10 @@ public abstract class WeblogManagerImpl implements WeblogManager
     public void removeCommentsForEntry(String entryId) throws RollerException
     {
 		List comments = getComments(entryId, false); // get all Comments
-		Iterator it = comments.iterator();
-		while (it.hasNext())
-		{
-			removeComment( ((CommentData)it.next()).getId() );
-		}
+        for (int i=comments.size()-1; i>=0; i--)
+        {
+            ((CommentData)comments.get(i)).remove();
+        }
 	}
 
     //---------------------------------------------------- CommentData Queries

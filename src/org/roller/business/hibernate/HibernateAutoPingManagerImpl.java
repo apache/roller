@@ -8,10 +8,10 @@
 
 package org.roller.business.hibernate;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.expression.Expression;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
 import org.roller.RollerException;
 import org.roller.business.PersistenceStrategy;
 import org.roller.business.AutoPingManagerImpl;

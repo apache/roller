@@ -1,6 +1,14 @@
 Hibernate - Relational Persistence for Idiomatic Java
 =====================================================
-version 2.1.4, 02. June 2004
+version 3.0.5, 25 May 2005
+
+Instructions
+------------
+Unzip to installation directory.
+
+See index.html in the doc/reference directory.
+
+Required jars are distributed in the lib subdirectory.
 
 Latest Documentation:
 
@@ -15,9 +23,9 @@ Free Technical Support:
 
    http://forum.hibernate.org
 
-Commercial Support:
+Commercial Support and Training:
 
-   http://www.hibernate.org/Support/CommercialSupportForHibernate
+   http://hibernate.org/SupportTraining
    
    
 Get Up And Running Quick
@@ -25,19 +33,22 @@ Get Up And Running Quick
 Demo:
 
    (1) copy your JDBC driver to the lib directory
-   (2) edit src/hibernate.properties
+   (2) edit etc/hibernate.properties
    (3) run "ant eg" or "build eg"
    (4) browse the sourcecode in eg/org/hibernate/auction
 
 Tests:
 
    (1) copy your JDBC driver to the lib directory
-   (2) edit src/hibernate.properties
+   (2) edit etc/hibernate.properties
    (3) run "ant junitreport" or "build junitreport"
    (4) see test_output/index.html
 
-Legal
------------
-This software is distributed under the terms of the FSF Lesser Gnu Public License (see lgpl.txt).
 
-This product includes software developed by the Apache Software Foundation (http://www.apache.org/).
+Other Stuff
+-----------
+This software is distributed under the terms of the FSF Lesser Gnu 
+Public License (see lgpl.txt).
+
+This product includes software developed by the Apache Software 
+Foundation (http://www.apache.org/).

@@ -15,6 +15,7 @@ public class TestAll extends TestCase
     public static Test suite()
     {
         TestSuite suite = new TestSuite();
+        suite.addTest(WebsiteTest.suite());
         suite.addTest(ConfigManagerTest.suite());
         suite.addTest(PermissionsTest.suite());
         suite.addTest(UserManagerTest.suite());
@@ -23,7 +24,7 @@ public class TestAll extends TestCase
         suite.addTest(IndexManagerTest.suite());             
         suite.addTest(BookmarkManagerTest.suite());
         suite.addTest(FileManagerTest.suite());
-        suite.addTest(PlanetManagerTest.suite());
+        suite.addTest(PlanetManagerTest.suite()); 
         return suite;
     }
     public TestAll(String testName)

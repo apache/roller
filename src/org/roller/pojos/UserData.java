@@ -13,6 +13,7 @@ import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
+import org.roller.util.PojoUtil;
 import org.roller.util.Utilities;
 
 
@@ -283,6 +284,25 @@ public class UserData
 
    public boolean equals( Object pOther )
    {
+       if (pOther instanceof UserData)
+       {
+           UserData lTest = (UserData) pOther;
+           boolean lEquals = true;
+           lEquals = PojoUtil.equals(lEquals, this.getId(), lTest.getId());
+           lEquals = PojoUtil.equals(lEquals, this.getUserName(), lTest.getUserName());
+           lEquals = PojoUtil.equals(lEquals, this.getPassword(), lTest.getPassword());
+           lEquals = PojoUtil.equals(lEquals, this.getFullName(), lTest.getFullName());
+           lEquals = PojoUtil.equals(lEquals, this.getEmailAddress(), lTest.getEmailAddress());
+           return lEquals;
+       }
+       else
+       {
+           return false;
+       }
+    }
+   
+   /*public boolean equals( Object pOther )
+   {
       if( pOther instanceof UserData )
       {
          UserData lTest = (UserData) pOther;
@@ -344,7 +364,7 @@ public class UserData
       {
          return false;
       }
-   }
+   }*/
    
     private boolean datesEquivalent(Date d1, Date d2)
     {
@@ -391,14 +411,14 @@ public class UserData
      */
     public void remove() throws RollerException
     {
-        UserManager uMgr = RollerFactory.getRoller().getUserManager();
+        UserManager uMgr = RollerFactory.getRoller().getUserManager();   
         
         // remove user roles
-        Iterator roles = uMgr.getUserRoles(this).iterator();
-        while (roles.hasNext()) 
-        {
-            ((RoleData)roles.next()).remove();
-        }
+        //Iterator roles = uMgr.getUserRoles(this).iterator();
+        //while (roles.hasNext()) 
+        //{
+            //((RoleData)roles.next()).remove();
+        //}
         super.remove();
     }
     

@@ -10,7 +10,7 @@
         <property name="hibernate.connection.url">jdbc:hsqldb:hsql://localhost:7475</property>
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.password"></property>
-        <property name="hibernate.dialect">net.sf.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
 
         <mapping resource="org/roller/business/HitCountData.hbm.xml" />
         <mapping resource="org/roller/pojos/BookmarkData.hbm.xml" />

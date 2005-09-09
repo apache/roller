@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.expression.EqExpression;
-import net.sf.hibernate.expression.Expression;
-import net.sf.hibernate.expression.MatchMode;
-import net.sf.hibernate.expression.Order;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -159,14 +158,14 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             {
                 criteria.add(
                    Expression.conjunction()
-                       .add(new EqExpression("handle", handle, true))
+                       .add(Expression.eq("handle", handle))
                        .add(Expression.eq("enabled", enabled)));
             }
             else
             {
                 criteria.add(
                     Expression.conjunction()
-                        .add(new EqExpression("handle", handle, true)));
+                        .add(Expression.eq("handle", handle)));
             }        
             return (WebsiteData)criteria.uniqueResult();
         }
@@ -191,14 +190,14 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             {
                 criteria.add(
                    Expression.conjunction()
-                       .add(new EqExpression("userName", userName, true))
+                       .add(Expression.eq("userName", userName))
                        .add(Expression.eq("enabled", enabled)));
             }
             else
             {
                 criteria.add(
                     Expression.conjunction()
-                        .add(new EqExpression("userName", userName, true)));
+                        .add(Expression.eq("userName", userName)));
             }        
             return (UserData)criteria.uniqueResult();
         }
@@ -377,26 +376,6 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         }
     }
 
-//    public void removeUserWebsites(UserData user) throws RollerException
-//    {
-//        Session session = ((HibernateStrategy)mStrategy).getSession();
-//        Criteria criteria = session.createCriteria(WebsiteData.class);
-//        criteria.add(Expression.eq("user", user));
-//        try
-//        {
-//            List websites = criteria.list();
-//            for (Iterator iter = websites.iterator(); iter.hasNext();) 
-//            {
-//                WebsiteData website = (WebsiteData)iter.next();
-//                website.remove();
-//            }            
-//        }
-//        catch (HibernateException e)
-//        {
-//            throw new RollerException(e);
-//        }
-//    }
-
     /** 
      * @see org.roller.model.UserManager#removeWebsiteContents(org.roller.pojos.WebsiteData)
      */
@@ -410,24 +389,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             //UserManager umgr = RollerFactory.getRoller().getUserManager();
             BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            //PersistenceStrategy pstrat = RollerFactory.getRoller().getPersistenceStrategy();
-            //QueryFactory factory = pstrat.getQueryFactory();
             
-            // remove folders (takes bookmarks with it)
-            FolderData rootFolder = bmgr.getRootFolder(website);
-            if (null != rootFolder)
-            { 
-                rootFolder.remove();
-                // Still cannot get all Bookmarks cleared!                
-//                Iterator allFolders = bmgr.getAllFolders(website).iterator();
-//                while (allFolders.hasNext()) 
-//                {
-//                    FolderData aFolder = (FolderData)allFolders.next();
-//                    bmgr.deleteFolderContents(aFolder);
-//                    aFolder.remove();
-//                }
-            }
-                        
             // remove entries
             Criteria entryQuery = session.createCriteria(WeblogEntryData.class);
             entryQuery.add(Expression.eq("website", website));
@@ -435,9 +397,25 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             for (Iterator iter = entries.iterator(); iter.hasNext();) 
             {
                 WeblogEntryData entry = (WeblogEntryData) iter.next();
+                System.out.println("Removing entry: " + entry.getId());
                 entry.remove();
             }
             
+            // remove folders (takes bookmarks with it)
+            FolderData rootFolder = bmgr.getRootFolder(website);
+            if (null != rootFolder)
+            { 
+                rootFolder.remove();
+                // Still cannot get all Bookmarks cleared!                
+                Iterator allFolders = bmgr.getAllFolders(website).iterator();
+                while (allFolders.hasNext()) 
+                {
+                    FolderData aFolder = (FolderData)allFolders.next();
+                    bmgr.deleteFolderContents(aFolder);
+                    aFolder.remove();
+                }
+            }
+                        
             // remove associated pages
             Criteria pageQuery = session.createCriteria(WeblogTemplate.class);
             pageQuery.add(Expression.eq("website", website));
@@ -463,11 +441,11 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             if (null != rootCat)
             {
                 rootCat.remove();
-                Iterator it = wmgr.getWeblogCategories(website).iterator();
-                while (it.hasNext()) 
-                {
-                     ((WeblogCategoryData)it.next()).remove();
-                }
+//                Iterator it = wmgr.getWeblogCategories(website).iterator();
+//                while (it.hasNext()) 
+//                {
+//                     ((WeblogCategoryData)it.next()).remove();
+//                }
             }
 
             // Remove the website's ping queue entries

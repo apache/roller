@@ -418,7 +418,6 @@ ro.buildUser=${user.name}
         <fileset refid="commons.jars" />
         <fileset refid="struts.jars" />
         <fileset refid="jstl.jars" />
-        <fileset refid="xml.jars" />
         &custom-jars;
         <fileset dir="${ro.tools}/lib">
             <include name="mm.mysql-2.0.14-bin.jar" if="resinServer"/>

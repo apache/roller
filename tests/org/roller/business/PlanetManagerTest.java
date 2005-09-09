@@ -77,7 +77,7 @@ public class PlanetManagerTest extends TestCase
         {   // retrieve config and default group
             roller.begin();
             PlanetConfigData config = planet.getConfiguration();
-            assertEquals("test_cache_dir",config.getCacheDir());
+            assertEquals("/var/roller/planetcache",config.getCacheDir());
             assertEquals("test_title", config.getTitle());
             assertEquals("test_admin_email", config.getAdminEmail());
             

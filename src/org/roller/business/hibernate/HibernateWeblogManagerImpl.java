@@ -3,12 +3,12 @@
  */
 package org.roller.business.hibernate;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.expression.Expression;
-import net.sf.hibernate.expression.Junction;
-import net.sf.hibernate.expression.Order;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -505,19 +505,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
                 RefererData referer = (RefererData) iter.next();
                 referer.remove();
             }
-            
-            // remove comments
-            /*
-            Criteria commentQuery = session.createCriteria(RefererData.class);
-            commentQuery.add(Expression.eq("weblogEntry", entry));
-            List comments = commentQuery.list();
-            */
-            List comments = RollerFactory.getRoller().getWeblogManager().getComments(entry.getId(), false);
-            for (Iterator iter = comments.iterator(); iter.hasNext();) 
-            {
-                CommentData comment = (CommentData) iter.next();
-                comment.remove();
-            }
+            removeCommentsForEntry(entry.getId());
         }
         catch (HibernateException e)
         {

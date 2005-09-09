@@ -2,6 +2,7 @@ package org.roller.business;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -9,10 +10,8 @@ import junit.framework.TestSuite;
 import org.roller.RollerPermissionsException;
 import org.roller.RollerTestBase;
 import org.roller.model.UserManager;
-import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
@@ -55,13 +54,13 @@ public class PermissionsTest extends RollerTestBase
         getRoller().begin(UserData.ANONYMOUS_USER);
         UserManager umgr = getRoller().getUserManager();
         
-        // evil testuser
-        UserData testuser = umgr.getUser("testuser");       
-        assertNotNull(testuser);
+        // evil badguy
+        UserData badguy = umgr.getUser("testuser0");       
+        assertNotNull(badguy);
         
-        // gets hold of testuser0's entry
-        UserData testuser0 = umgr.getUser("testuser0");
-        WebsiteData website0 = (WebsiteData)umgr.getWebsites(testuser0, null).get(0);
+        // gets hold of goodguy's entry
+        UserData goodguy = umgr.getUser("testuser2");
+        WebsiteData website0 = (WebsiteData)umgr.getWebsites(goodguy, null).get(0);
         assertNotNull(website0);
         List entries = getRoller().getWeblogManager().getWeblogEntries(
                 website0,
@@ -74,7 +73,7 @@ public class PermissionsTest extends RollerTestBase
         assertNotNull(entry);
         
         // and tries to save it
-        getRoller().setUser(testuser);
+        getRoller().setUser(badguy);
         boolean denied = false; 
         try 
         {
@@ -95,18 +94,15 @@ public class PermissionsTest extends RollerTestBase
         UserManager umgr = getRoller().getUserManager();
         
         // evil testuser
-        UserData testuser = umgr.getUser("testuser");       
+        UserData testuser = umgr.getUser("testuser0");       
         assertNotNull(testuser);
         
         // gets hold of testuser0's entry
-        UserData testuser0 = umgr.getUser("testuser0");
+        UserData testuser0 = umgr.getUser("testuser2");
         WebsiteData website0 = (WebsiteData)umgr.getWebsites(testuser0, null).get(0);
         assertNotNull(website0);
-        List folders = getRoller().getBookmarkManager().getAllFolders(website0);
-        FolderData root = (FolderData)folders.get(0);
-        FolderData folder = (FolderData)root.getFolders().get(0);
-        
-        BookmarkData bookmark = (BookmarkData)(folder.getBookmarks().iterator().next());
+        FolderData root = getRoller().getBookmarkManager().getRootFolder(website0);
+        BookmarkData bookmark = (BookmarkData)root.getBookmarks().iterator().next();
         assertNotNull(bookmark);
         
         // and tries to save it
@@ -123,90 +119,22 @@ public class PermissionsTest extends RollerTestBase
         }       
         assertTrue(denied);
         
-        getRoller().setUser(testuser);
-        denied = false; 
-        try 
-        {
-            folder.save();
-        }
-        catch (RollerPermissionsException e)
-        {
-            // permission denied!
-            denied = true;
-        }       
-        assertTrue(denied);
-       
         getRoller().rollback();
     }
 
-    public void testPagePermissions() throws Exception
-    {
-        getRoller().begin(UserData.ANONYMOUS_USER);
-        UserManager umgr = getRoller().getUserManager();
-        
-        // evil testuser
-        UserData testuser = umgr.getUser("testuser");       
-        assertNotNull(testuser);
-        
-        // gets hold of testuser0's entry
-        UserData testuser0 = umgr.getUser("testuser0");
-        WebsiteData website0 = (WebsiteData)umgr.getWebsites(testuser0, null).get(0);
-        assertNotNull(website0);
-        WeblogTemplate page = (WeblogTemplate)getRoller().getUserManager().getPages(website0).get(0);
-        assertNotNull(page);
-        
-        // and tries to save it
-        getRoller().setUser(testuser);
-        boolean denied = false; 
-        try 
-        {
-            page.save();
-        }
-        catch (RollerPermissionsException e)
-        {
-            // permission denied!
-            denied = true;
-        }       
-        assertTrue(denied);
-        
-        
-        // and tries to save it
-        getRoller().setUser(testuser);
-        denied = false; 
-        try 
-        {
-            website0.save();
-        }
-        catch (RollerPermissionsException e)
-        {
-            // permission denied!
-            denied = true;
-        }       
-        assertTrue(denied);
-
-        
-        getRoller().rollback();
-    }
-
-    /*
-     Disabling this test for now because it won't work.
+    /** Verify that user without global admin role cannot save config property */
     public void testConfigPermissions() throws Exception
     {
         getRoller().begin(UserData.ANONYMOUS_USER);
         
-        // evil testuser0
         UserData testuser0 = getRoller().getUserManager().getUser("testuser0");       
         assertNotNull(testuser0);
-        
-        // gets hold of testuser's (an admin) entry
-        WebsiteData website = getRoller().getUserManager().getWebsite("testuser");
-        assertNotNull(website);
         
         Map config = getRoller().getPropertiesManager().getProperties();
         assertNotNull(config);
         
         // and tries to save it
-        getRoller().setUser(testuser0);
+        getRoller().setUser(testuser0);                
         boolean denied = false; 
         try 
         {
@@ -220,7 +148,6 @@ public class PermissionsTest extends RollerTestBase
         assertTrue(denied);
         getRoller().rollback();
     }
-    */
     
     /**
      * Tests permissions object creation and invitations, specifically:
@@ -394,10 +321,9 @@ public class PermissionsTest extends RollerTestBase
                  assertNull(getRoller().getPersistenceStrategy().load(
                          permsId, PermissionsData.class));                 
              }
-             getRoller().commit();   
-                         
+             getRoller().commit();                          
          }
-         catch (Exception e)
+         catch (Throwable e)
          {
              e.printStackTrace();
              fail();

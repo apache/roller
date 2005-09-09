@@ -11,18 +11,18 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.Hibernate;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.expression.Expression;
-import net.sf.hibernate.expression.Junction;
-import net.sf.hibernate.expression.Order;
-import net.sf.hibernate.type.Type;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
+import org.hibernate.type.Type;
 import org.roller.RollerException;
 import org.roller.business.PersistenceStrategy;
 import org.roller.business.RefererManagerImpl;
@@ -289,11 +289,12 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
         List results;
         try
         {
-            results = session.find(
+            Query q = session.createQuery(
                "select sum(h.dayHits),sum(h.totalHits) from h in class " +
                "org.roller.pojos.RefererData " +
-               "where h.website.enabled=? and h.website.id=? ",
-               args, types);
+               "where h.website.enabled=? and h.website.id=? ");
+            q.setParameters(args, types);
+            results = q.list();
         }
         catch (HibernateException e)
         {

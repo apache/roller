@@ -1,6 +1,6 @@
 package org.roller.business.hibernate;
 
-import net.sf.hibernate.Session;
+import org.hibernate.Session;
 
 import org.roller.model.PersistenceSession;
 import org.roller.pojos.UserData;
