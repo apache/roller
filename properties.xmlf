@@ -83,6 +83,7 @@ in the "base.path" definition.
 <fileset id="jstl.jars" dir="${ro.tools}/standard-1.0.3/lib">
     <include name="jstl.jar"/>
     <include name="standard.jar"/>
+    <include name="saxpath.jar"/>
     <include name="jaxen-full.jar"/>
 </fileset>
 
