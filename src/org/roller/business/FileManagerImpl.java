@@ -37,20 +37,17 @@ public class FileManagerImpl implements FileManager
     
     /**
      * Create file manager.
-     * @param roller   Roller instance.
-     * @param realPath Path to Servlet context directory
      */
     public FileManagerImpl()
     {
         String uploaddir = RollerConfig.getProperty("uploads.dir");
         String uploadurl = RollerConfig.getProperty("uploads.url");
-        
+
+        // Note: System property expansion is now handled by RollerConfig.
+
         if(uploaddir == null || uploaddir.trim().length() < 1)
-            uploaddir = "${user.home}"+File.separator+"roller_data"+File.separator+"uploads";
-        
-        if(uploaddir.startsWith("${user.home}"))
-            uploaddir = System.getProperty("user.home") + uploaddir.substring(12);
-        
+            uploaddir = System.getProperty("user.home") + File.separator+"roller_data"+File.separator+"uploads";
+
         if( ! uploaddir.endsWith(File.separator))
             uploaddir += File.separator;
         
