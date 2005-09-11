@@ -88,13 +88,8 @@ public class IndexManagerImpl implements IndexManager
             this.searchEnabled = false;
         
         // we also need to know what our index directory is
+        // Note: system property expansion is now handled by RollerConfig
         String indexDir = RollerConfig.getProperty("search.index.dir");
-        if (indexDir.indexOf("${user.home}") != -1) 
-        {
-            indexDir = StringUtils.replace(
-                    indexDir, "${user.home}",
-                    System.getProperty("user.home"));
-        }
 
         this.indexDir = indexDir.replace('/', File.separatorChar);
         
