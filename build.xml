@@ -140,9 +140,15 @@ Key Targets:
 
     <replace dir="${build.compile_beans}/org/roller/pojos"
         token="Hibernate Mapping DTD 2.0//EN" 
-	    value="Hibernate Mapping DTD 3.0//EN"/>
-        	
+        value="Hibernate Mapping DTD 3.0//EN"/>
     <replace dir="${build.compile_beans}/org/roller/pojos"
+        token="hibernate-mapping-2.0.dtd" 
+        value="hibernate-mapping-3.0.dtd"/>
+        
+    <replace dir="${build.compile_beans}/org/roller/business"
+        token="Hibernate Mapping DTD 2.0//EN" 
+        value="Hibernate Mapping DTD 3.0//EN"/>
+    <replace dir="${build.compile_beans}/org/roller/business"
         token="hibernate-mapping-2.0.dtd" 
         value="hibernate-mapping-3.0.dtd"/>
         
