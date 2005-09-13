@@ -103,7 +103,7 @@ public class RollerRuntimeConfig {
             // unmarshall the config defs file
             try {
                 InputStream is = 
-                        RollerConfig.class.getResourceAsStream(runtime_config);
+                        RollerRuntimeConfig.class.getResourceAsStream(runtime_config);
                 
                 RuntimeConfigDefsParser parser = new RuntimeConfigDefsParser();
                 configDefs = parser.unmarshall(is);

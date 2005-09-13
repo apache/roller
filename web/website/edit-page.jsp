@@ -37,9 +37,11 @@ function cancel() {
             <html:textarea property="description" rows="3" cols="50"/>
             </td>
         </tr>
-
     </table>
-
+    
+    <fmt:message key="pageForm.template" /><br />
+    <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
+            
     <fmt:message key="pageForm.template" /><br />
     <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
             

@@ -52,6 +52,7 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
 {
     protected Map lastUpdatedByGroup = new HashMap();
     protected static final String NO_GROUP = "zzz_nogroup_zzz";     
+
     private static Log logger = 
         LogFactory.getFactory().getInstance(HibernatePlanetManagerImpl.class);
 
@@ -366,7 +367,7 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
         }
         return ret;
     }
-
+    
     public synchronized void clearCachedAggregations() 
     {
         aggregationsByGroup.purge();
