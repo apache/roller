@@ -215,6 +215,10 @@ public abstract class PropertiesManagerImpl implements PropertiesManager
         RuntimeConfigDefs runtimeConfigDefs = 
                 RollerRuntimeConfig.getRuntimeConfigDefs();
         
+        // can't do initialization without our config defs
+        if(runtimeConfigDefs == null)
+            return props;
+        
         // iterator through all the definitions and add properties
         // that are not already in our props map
         ConfigDef configDef = null;

@@ -35,6 +35,9 @@ public class RuntimeConfigDefsParser {
     public RuntimeConfigDefs unmarshall(InputStream instream) 
         throws IOException, JDOMException {
         
+        if(instream == null)
+            throw new IOException("InputStream is null!");
+        
         RuntimeConfigDefs configs = new RuntimeConfigDefs();
         
         SAXBuilder builder = new SAXBuilder();
