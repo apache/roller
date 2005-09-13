@@ -42,9 +42,6 @@ function cancel() {
     <fmt:message key="pageForm.template" /><br />
     <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
             
-    <fmt:message key="pageForm.template" /><br />
-    <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
-            
     <html:hidden property="id"/>
     <html:hidden property="name"/>
     <input type="hidden" name="method" value="update" />
