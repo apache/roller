@@ -371,6 +371,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * Short URL safe string that uniquely identifies the website.
      * @ejb:persistent-field
      * @hibernate.property column="handle" non-null="true" unique="true"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getHandle()
     {

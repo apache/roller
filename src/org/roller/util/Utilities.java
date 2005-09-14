@@ -974,7 +974,7 @@ public class Utilities
      */
     public static final String textToHTML(String text, boolean xml)
     {
-        if (text == null) return null;
+        if (text == null) return "null";
         final StringBuffer html = new StringBuffer();
 
         // Loop thru each characters of the text
@@ -1019,6 +1019,7 @@ public class Utilities
      */
     public static final String textToCDATA(String text)
     {
+        if (text == null) return "null";
         final StringBuffer html = new StringBuffer();
 
         // Loop thru each characters of the text

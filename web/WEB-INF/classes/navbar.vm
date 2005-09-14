@@ -86,17 +86,19 @@
     #end
 
     ## strutsUrlHelper( useIds, isAction, path, val1, val2)
-    #if( $model.isUserAuthorizedToAuthor() )
-        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "weblogCreate", "tabbedmenu.weblog", "tabbedmenu.weblog.newEntry") )
+    #if( $pageModel.isUserAuthorizedToEdit() )
+        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "weblogCreate", $website.handle, "") )
         #printNavLink( $editUrl $text.get("navigationBar.newEntry") $useCSS $vertical $delimiter )
 
-        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "editWebsite", "tabbedmenu.website", "tabbedmenu.website.settings") )
-        #printNavLink( $editUrl $text.get("navigationBar.settings") $useCSS $vertical $delimiter )
+        #if( $pageModel.isUserAuthorizedToAdmin() )
+           #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "editWebsite", $website.handle, "") )
+           #printNavLink( $editUrl $text.get("navigationBar.settings") $useCSS $vertical $delimiter )
+        #end
 
         #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "logout-redirect", "", "") )
         #printNavLink( $editUrl $text.get("navigationBar.logout") $useCSS $vertical $delimiter )
     #else
-        #if( $model.isUserAuthenticated() )
+        #if( $pageModel.isUserAuthenticated() )
            #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "logout-redirect", "", "") )
            #printNavLink( $editUrl $text.get("navigationBar.logout") $useCSS $vertical $delimiter )
         #else

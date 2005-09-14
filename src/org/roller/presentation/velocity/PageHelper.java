@@ -407,7 +407,7 @@ public class PageHelper
         String path, String val1, String val2)
     {
         Hashtable params = new Hashtable();
-        return strutsUrlHelper( useIds, isAction, path, val1, val2, params);
+        return strutsUrlHelper1( useIds, isAction, path, val1, val2, params);
     }
     
     //------------------------------------------------------------------------
@@ -422,7 +422,7 @@ public class PageHelper
      * @param val2
      * @return String
      */
-    public String strutsUrlHelper( boolean useIds, boolean isAction, 
+    public String strutsUrlHelper1( boolean useIds, boolean isAction, 
         String path, String val1, String val2, Hashtable params)
     {
         if (useIds)
@@ -441,8 +441,7 @@ public class PageHelper
         if (StringUtils.isNotEmpty(val1) && !val1.equals("null"))
         {
             params.clear();
-            params.put("rmk", val1);
-            params.put("rmik", val2);
+            params.put("weblog", val1);
         }
         
         String returnUrl = "";

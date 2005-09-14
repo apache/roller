@@ -751,12 +751,33 @@ public class PageModel
             if (rses.getAuthenticatedUser() != null 
                    && mRollerReq.getWebsite() != null)
             {
+                return rses.isUserAuthorizedToAuthor(mRollerReq.getWebsite());
+            }
+        }
+        catch (Exception e)
+        {
+            mLogger.warn("PageModel.isUserAuthorizedToEdit()", e);
+        }
+        return false;
+    }
+    
+    //------------------------------------------------------------------------
+    
+    public boolean isUserAuthorizedToAdmin()
+    {
+        try
+        {
+            RollerSession rses = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
+            if (rses.getAuthenticatedUser() != null 
+                   && mRollerReq.getWebsite() != null)
+            {
                 return rses.isUserAuthorizedToAdmin(mRollerReq.getWebsite());
             }
         }
         catch (Exception e)
         {
-            mLogger.warn("PageModel.isUserAuthorizedToEdit)", e);
+            mLogger.warn("PageModel.isUserAuthorizedToAdmin()", e);
         }
         return false;
     }
