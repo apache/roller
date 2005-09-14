@@ -517,6 +517,24 @@ div.helptext {
     padding-left: 8px;
 }
 
+#logoshadow {
+    position: absolute;
+    top: 15px;
+    left: 15px;    
+    width: 165px;
+    height: 50px;
+    background: url("logo-shadow.png") top left;
+    _background: #600 url("/roller20/theme/spacer.png") repeat;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/roller20/theme/logo-shadow.png', sizingMethod='crop');
+}
+#logoimage {
+    width: 159px;
+    height: 44px;  
+    background: url("transparent-logo.png") top left;
+    _background: #600 url("/roller20/theme/spacer.png") repeat;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/roller20/theme/transparent-logo.png', sizingMethod='crop');
+}
+
 
 
         

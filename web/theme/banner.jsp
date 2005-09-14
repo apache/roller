@@ -7,5 +7,9 @@ String logourl = "/theme/" + theme + "/logo.gif";
 request.setAttribute("logourl", logourl);
 %>
 <div class="bannerBox">
-   <img class="bannerlogo" src='<c:url value="${logourl}" />' />
+    <div id="logoshadow">
+       <div id="logoimage">
+       </div>
+    </div>
 </div>
+
