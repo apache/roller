@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="sandbox/standalone/src"/>
 	<classpathentry kind="src" path="contrib/plugins/src"/>
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="src" path="build/generated/src.business"/>

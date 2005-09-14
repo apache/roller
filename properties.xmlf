@@ -58,7 +58,7 @@ in the "base.path" definition.
 </fileset>
 
 <fileset id="presentation.jars" dir="${ro.tools}/lib">
-    <include name="xmlrpc-2.0.jar"/>
+    <include name="xmlrpc-1.2-b1.jar"/>
     <include name="taglibs-string.jar"/>
 </fileset>
 

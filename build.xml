@@ -412,7 +412,7 @@ ro.buildUser=${user.name}
     <copy todir="${build.stage_web}/WEB-INF/classes">
         <fileset dir="./metadata/database/hibernate" includes="hibernate.cfg.xml"/>
         <fileset dir="${ro.tools}/lib" includes="oscache.properties"/>
-        <fileset dir="${build.compile_web}" excludes="**/tomcat/**"/>
+        <!-- <fileset dir="${build.compile_web}" excludes="**/tomcat/**"/> -->
     </copy>
 
     <!-- Copy WEB-INF contents to staging -->
