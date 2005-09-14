@@ -44,7 +44,7 @@
 
       <%-- End of required area --%>
 
-      <textarea class="editor" wrap="virtual" name="text" rows="25" cols="80" style="width:100%;"><wiki:CheckRequestContext context="edit"><wiki:InsertPage mode="plain" /></wiki:CheckRequestContext></textarea>
+      <textarea class="editor" wrap="virtual" name="text" rows="50" cols="80" style="width:100%;"><wiki:CheckRequestContext context="edit"><wiki:InsertPage mode="plain" /></wiki:CheckRequestContext></textarea>
 
       <p>      
       <input type="submit" name="ok" value="Save" />

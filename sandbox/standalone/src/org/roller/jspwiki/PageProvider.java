@@ -5,11 +5,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.providers.VersioningFileProvider;
 
 public class PageProvider extends VersioningFileProvider {
 	
-	public void initialize(Properties properties)
+	public void initialize(WikiEngine engine, Properties properties)
 			throws NoRequiredPropertyException, IOException {
 		
 		String rollerPageDir = System.getProperty("rollerPageDir");
@@ -19,6 +20,6 @@ public class PageProvider extends VersioningFileProvider {
 			properties.put(PROP_PAGEDIR, rollerPageDir);
 		} 
 		
-		super.initialize(properties);
+		super.initialize(engine, properties);
 	}
 }
