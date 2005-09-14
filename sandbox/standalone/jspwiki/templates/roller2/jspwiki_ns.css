@@ -1,0 +1,36 @@
+/* Put any Netscape 4 -specific definitions here. */
+H1,H2,H3,H4 { font-family: Arial, Helvetica, sans-serif }
+H1 { font-size: 36px }
+H2 { font-size: 24px }
+H3 { font-size: 20px }
+H4 { font-size: 16px }
+P,UL,OL,BODY,TD { font-size: 16px }
+FORM { font-size: 14px }
+PRE { font-size: 14px }
+H1.pagename {}
+
+
+/* For the CalendarTag */
+
+ TABLE.calendar  { font-size: 60%;
+                   text-align: center; }
+
+ TD.month        { font-size: 70%;
+                   text-align: center;
+                   font-weight: bold;
+                   font-family: sans-serif; }
+
+ TD.weekdays     { color: #FF0000;        /* days heading */
+                   font-size: 60%; }
+
+ TD.days         { font-size: 60%; 
+                   text-align: center;}
+										 
+ TD.link         { color: #FF2222; background: #E0E0E0;
+                   font-size: 60%;
+                   text-align: center; }
+
+ TD.othermonth   { color: #707070; 
+                   font-size: 60%; 
+                   text-align: center}
+
