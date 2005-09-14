@@ -10,16 +10,22 @@ Makes the following assumptions:
 -->
 <project name="roller_demo" default="roller_demo">
 
+<!--
+You must download Tomcat and JSPWiki yourself and ensure that the three 
+properties below point to the downloaded files.
+-->
 <property name="tomcat.filename" value="./components/jakarta-tomcat-5.0.28.tar.gz" />	
 <property name="tomcat.basename" value="jakarta-tomcat-5.0.28" />	
 <property name="jspwiki.filename" value="./components/jspwiki-2.2.33-bin.zip" />
+
 <property name="roller.srcdir" value="../.." />
 
-<target name="roller_demo" depends="init_database" >
+<target name="roller_demo" depends="create_bundle" >
 </target>
 
-<target name="tomcat_plugins"
-    description="Build HSQLDB startup listener and JSPWiki page provider">  	
+<target name="plugins"
+    description="Build HSQLDB startup listener and JSPWiki page provider">
+
     <mkdir dir="./build/classes" />
     <javac debug="${build.debug}" srcdir="./src" destdir="./build/classes" >
         <classpath>
@@ -42,7 +48,7 @@ Makes the following assumptions:
         includes="org/roller/jspwiki/**" />
 </target>
 
-<target name="copy_components" depends="tomcat_plugins"
+<target name="create_bundle" depends="plugins"
    description="Copy in Tomcat, JSPWiki, Roller, and plugin jars">
 
    <!-- untar Tomcat, put it in ./build/roller-demo -->
@@ -96,9 +102,11 @@ Makes the following assumptions:
     
 </target>
 	
-<target name="init_database" depends="copy_components"
-    description="" >
+<target name="init_database" depends="create_bundle"
+	description="Create fresh new Roller database in the bundle" >
 
+	<!-- assumes that build/roller-demo/blogdata/ directory is empty -->
+	
     <!-- Start HSQLDB with Roller's custom startdb task -->
     <taskdef name="startdb" classname="org.roller.ant.StartHsqldbTask" 
         classpath="./build/roller-demo/common/lib/hsqldb.jar;${roller.srcdir}/build/tests/WEB-INF/classes" />
@@ -113,7 +121,7 @@ Makes the following assumptions:
         src="./build/roller-demo/webapps/roller/WEB-INF/dbscripts/hsql/createdb.sql"
         classpath="./build/roller-demo/common/lib/hsqldb.jar" />
         
-    <!-- Shutdown HSQLDB -->
+    <!-- Shutdown HSQLDB --> 
     <stopdb port="3219"/>
     
 </target>
