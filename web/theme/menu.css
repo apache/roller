@@ -6,20 +6,24 @@ menu.css: CSS layout and styles for Roller tabbed menu
 
 div.menu-tl {
     margin: 0px; 
+    padding: 0px; 
     height: 100%;
-    background: url("images/menutab-tl.gif") no-repeat left top;    
+    background: url("images/menutab-tl.gif") no-repeat top left;   
     background-repeat: no-repeat;
+    vertical-align: middle;
+    display: table;
 }
 div.menu-tr {
     margin: 0px; 
+    padding: 0px; 
     height: 100%;
-    background: url("images/menutab-tr.gif") no-repeat right top;    
+    background: url("images/menutab-tr.gif") no-repeat top right;    
     background-repeat: no-repeat;
 }
 
-td.menuTabSelected a, td.menuTabUnselected a {
-    vertical-align: middle;
-    text-align: middle;
+td div.menu-tr div.menu-tl a {
+   display: table-cell;
+   vertical-align: middle;
 }
 
 /* ----------------------------------------------------------------------
@@ -27,22 +31,22 @@ Menu tab table (the tabs)
 ---------------------------------------------------------------------- */
 
 .menuTabTable {
-    height: 21px;
+    height: 25px;
+    _height: 21px; /* for IE */
+    margin: 0px; 
+    padding: 0px; 
 }
 td.menuTabSeparator {
     width: 4px;
 }  
 td.menuTabSelected {
-    padding-right: 0px;
-    padding-left: 0px;
-    padding-bottom: 0px;
-    margin: 0px;
-    padding-TOP: 0px;
+    margin: 0px; 
+    padding: 0px; 
     font-weight: bold;
 }
 td.menuTabUnselected {
-    padding: 0px 0px 0px 0px; 
-    margin: 0px 0px 0px 0px;
+    margin: 0px; 
+    padding: 0px; 
 }
 
 /* ----------------------------------------------------------------------

@@ -4,8 +4,8 @@
 /* ------------------------------------------------------------------------ */
 /* add colors and images to roller.css */
 
-.bannerlogo {
-    margin: 0px 0px 0px 5px;
+#logoimage {
+    background-color: #e77100;
 }
 .bannerBox {
     background: url("two-banner.gif") repeat-x top;
