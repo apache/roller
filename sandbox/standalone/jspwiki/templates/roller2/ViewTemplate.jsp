@@ -20,16 +20,15 @@
    
     <div id="banner">
         <div class="bannerBox">
-           <img class="bannerlogo" src='<wiki:BaseURL/>/templates/roller/tan/logo.gif' />
+           <img class="bannerlogo" src='<wiki:BaseURL/>/templates/roller2/tan/logo.gif' />
         </div>
         <div class="bannerStatusBox">
            <div class="bannerLeft">
               Your trail: <wiki:Breadcrumbs maxpages="5"  />
            </div>
            <div class="bannerRight">
-              <a href="/main.do">Roller</a> 
-              ||<a href="/planet.do">Planet</a> 
-              | <a href="/wiki">Wiki</a>
+              <a href="/roller/main.do">Roller</a>  
+              | <a href="/wiki">JSPWiki</a>
            </div>
         </div>
     </div>
