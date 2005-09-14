@@ -340,7 +340,7 @@
                 <td>$text.get( "macro.weblog.url" )</td>
                 <td><input name="url" type="text" class="commentFormInput" size="50"/></td>
            </tr>
-           #if ($model.emailComments)
+           #if ($pageModel.emailComments)
            <tr>
               <td></td>
               <td>

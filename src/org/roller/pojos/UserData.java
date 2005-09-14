@@ -153,7 +153,6 @@ public class UserData
     * Get password.
     * If password encryption is enabled, will return encrypted password.
     *
-    * @roller.wrapPojoMethod type="simple"
     * @ejb:persistent-field 
     * @hibernate.property column="passphrase" non-null="true"
     */

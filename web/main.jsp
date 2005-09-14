@@ -56,6 +56,7 @@ request.setAttribute("popularWebsites",
 </c:if>
 
 <c:forEach var="post" items="${recentPosts}">
+    <c:if test="${!post.pinnedToMain}">
     <div class="entryBox">
 
         <a href='<c:out value="${baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
@@ -84,6 +85,7 @@ request.setAttribute("popularWebsites",
         <roller:ApplyPlugins name="post" scope="page" stripHtml="true" maxLength="200" skipFlag="true" />
 
     </div>
+    </c:if>
 </c:forEach>
 
 <br />

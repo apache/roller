@@ -134,7 +134,7 @@
     <a href="$baseURL$entry.permaLink"
         title="$text.get( "macro.weblog.entrypermalink.title" )"
         class="entrypermalink">Permalink</a>
-    #if ($pageHelper.isUserAuthorizedToAuthor())
+    #if ($pageHelper.isUserAuthorizedToEdit())
         [<a href="$pageHelper.getEntryEditUrl($entry)">$text.get( "macro.weblog.entrypermalink.edit" )</a>]
     #end
 #end
@@ -348,7 +348,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
            #else
               $var.title
            #end
-           #if ($pageHelper.isUserAuthorizedToAuthor())
+           #if ($pageHelper.isUserAuthorizedToEdit())
               &nbsp;[<a href="$pageHelper.getEntryEditUrl($var)">$text.get( "macro.weblog.editentry" )</a>]
            #end
            </li>
