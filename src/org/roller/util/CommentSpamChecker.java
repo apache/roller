@@ -45,7 +45,7 @@ public class CommentSpamChecker
         }
         finally
         {
-            RollerFactory.getRoller().release();
+            //RollerFactory.getRoller().release();
         }
     }
     
