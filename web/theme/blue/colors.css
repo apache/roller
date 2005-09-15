@@ -4,6 +4,9 @@
 /* ------------------------------------------------------------------------ */
 /* add colors and images to roller.css */
 
+#logobackground {
+    background: #00038a !important; 
+}
 .bannerBox {
     background: url("two-banner.png") repeat-x top;
 }

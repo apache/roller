@@ -516,24 +516,33 @@ div.helptext {
 .padleft {
     padding-left: 8px;
 }
-
+.bannerBox {
+    height: 78px;
+    width: 100%;
+    background:#f00;
+}
+/* Transparent PNG fix for IE, thanks to Kenneth M. Kolano */
 #logoshadow {
-    position: absolute;
+    position: relative;
     top: 15px;
-    left: 15px;    
+    left: 15px;
     width: 165px;
     height: 50px;
-    background: url("logo-shadow.png") top left;
-    _background: #600 url("/roller20/theme/spacer.png") repeat;
-    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/roller20/theme/logo-shadow.png', sizingMethod='crop');
+    _background: transparent !important;
+    background-image: url(logo-shadow.png); 
+}
+#logobackground {
+    width: 159px;
+    height: 44px;
 }
 #logoimage {
     width: 159px;
-    height: 44px;  
-    background: url("transparent-logo.png") top left;
-    _background: #600 url("/roller20/theme/spacer.png") repeat;
-    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/roller20/theme/transparent-logo.png', sizingMethod='crop');
+    height: 44px;
+    display: block;
+    cursor: pointer; /* Make IE show correct cursor for link */
+    background-image: url(transparent-logo.png);
 }
+
 
 
 
