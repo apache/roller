@@ -96,8 +96,17 @@ public class ThemeEditorAction extends DispatchAction {
                 String currentTheme = website.getEditorTheme();
                 List themes = themeMgr.getEnabledThemesList();
                 
+                // this checks if the website has a default page template
+                // if not then we don't allow for a custom theme
+                boolean allowCustomTheme = true;
+                if(website.getDefaultPageId() == null
+                        || website.getDefaultPageId().equals("dummy")
+                        || website.getDefaultPageId().trim().equals(""))
+                    allowCustomTheme = false;
+                
                 // if we allow custom themes then add it to the end of the list
-                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed"))
+                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")
+                        && allowCustomTheme)
                     themes.add(Theme.CUSTOM);
                 
                 // on the first pass just show a preview of the current theme
@@ -154,8 +163,17 @@ public class ThemeEditorAction extends DispatchAction {
                 String currentTheme = website.getEditorTheme();
                 List themes = themeMgr.getEnabledThemesList();
                 
+                // this checks if the website has a default page template
+                // if not then we don't allow for a custom theme
+                boolean allowCustomTheme = true;
+                if(website.getDefaultPageId() == null
+                        || website.getDefaultPageId().equals("dummy")
+                        || website.getDefaultPageId().trim().equals(""))
+                    allowCustomTheme = false;
+                
                 // if we allow custom themes then add it to the end of the list
-                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed"))
+                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")
+                        && allowCustomTheme)
                     themes.add(Theme.CUSTOM);
                 
                 // set the current theme in the request
@@ -423,6 +441,7 @@ public class ThemeEditorAction extends DispatchAction {
             // if this is the first time someone is customizing a theme then
             // we need to set a default page
             if(website.getDefaultPageId() == null ||
+                    website.getDefaultPageId().trim().equals("") ||
                     website.getDefaultPageId().equals("dummy")) {
                 // we have to go back to the db to figure out the id
                 WeblogTemplate template = userMgr.getPageByName(website, "Weblog");
