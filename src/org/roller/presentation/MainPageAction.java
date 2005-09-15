@@ -48,7 +48,10 @@ public class MainPageAction extends Action
         req.setAttribute("version",rctx.getRollerVersion());
         req.setAttribute("buildTime",rctx.getRollerBuildTime());
         req.setAttribute("baseURL", rctx.getContextUrl(req));
-        req.setAttribute("data", new MainPageData(req));
+        
+        MainPageData model = new MainPageData(req, res, mapping);
+        req.setAttribute("model", model);
+        req.setAttribute("data", model);
         
         // Determines if register new sers
         boolean allowNewUsers = 
@@ -79,12 +82,16 @@ public class MainPageAction extends Action
     /**
      * Page model. 
      */
-    public static class MainPageData 
+    public static class MainPageData extends BasePageModel
     {
         private HttpServletRequest mRequest = null;
         
-        public MainPageData(HttpServletRequest req) 
+        public MainPageData(
+                HttpServletRequest req, 
+                HttpServletResponse res, 
+                ActionMapping mapping) 
         {
+            super("dummyTitleKey", req, res, mapping);
             mRequest = req;
         }
         
