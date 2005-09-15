@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.EntryAttributeData;
@@ -32,6 +34,9 @@ import org.roller.util.DateUtil;
  */
 public class WeblogEntryFormEx extends WeblogEntryForm
 {
+    private static Log mLogger =
+        LogFactory.getFactory().getInstance(WeblogEntryFormEx.class);
+    
     private String mCategoryId = null;
     private String mCreatorId = null;
     private String mWebsiteId = null;
@@ -50,11 +55,13 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public WeblogEntryFormEx()
     {
         super();
+        mLogger.debug("default construction");
     }
 
     public WeblogEntryFormEx(WeblogEntryData entryData, java.util.Locale locale) 
         throws RollerException
     {
+        mLogger.debug("construction from existing entry");
         copyFrom(entryData, locale);
     }
     
@@ -64,6 +71,8 @@ public class WeblogEntryFormEx extends WeblogEntryForm
      */
     public void initNew(HttpServletRequest request, HttpServletResponse response) 
     {
+        mLogger.debug("init new called");
+        
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerSession rses = RollerSession.getRollerSession(request); 
         if (rreq.getWebsite().getDefaultPlugins() != null)
@@ -73,9 +82,11 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         }
         status = WeblogEntryData.DRAFT;
         allowComments = Boolean.TRUE;
-        updateTime = new Timestamp(new Date().getTime());
-        pubTime = updateTime;
-        initPubTimeDateStrings(rreq.getWebsite(), request.getLocale());        
+        
+        // we want pubTime and updateTime to be empty for new entries -- AG
+        //updateTime = new Timestamp(new Date().getTime());
+        //pubTime = updateTime;
+        //initPubTimeDateStrings(rreq.getWebsite(), request.getLocale());        
     }
     
     /**
@@ -84,14 +95,17 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void copyTo(WeblogEntryData entry, Locale locale, Map paramMap) 
         throws RollerException
     {
+        mLogger.debug("copy to called");
+        
         super.copyTo(entry, locale);
         
         // First parts the date string from the calendar 
         final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
-        final Date newDate;
+        Date newDate = null;
         try
         {
-            newDate = df.parse(getDateString());
+            if(getDateString() != null && !"0/0/0".equals(getDateString()))
+                newDate = df.parse(getDateString());
         }
         catch (ParseException e)
         {
@@ -99,13 +113,15 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         }
         
         // Now handle the time from the hour, minute and second combos
-        final Calendar cal = Calendar.getInstance(locale);
-        cal.setTime(newDate);
-        cal.setTimeZone(entry.getWebsite().getTimeZoneInstance());
-        cal.set(Calendar.HOUR_OF_DAY, getHours().intValue());
-        cal.set(Calendar.MINUTE, getMinutes().intValue());
-        cal.set(Calendar.SECOND, getSeconds().intValue());
-        entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
+        if(newDate != null) {
+            final Calendar cal = Calendar.getInstance(locale);
+            cal.setTime(newDate);
+            cal.setTimeZone(entry.getWebsite().getTimeZoneInstance());
+            cal.set(Calendar.HOUR_OF_DAY, getHours().intValue());
+            cal.set(Calendar.MINUTE, getMinutes().intValue());
+            cal.set(Calendar.SECOND, getSeconds().intValue());
+            entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
+        }
         
         entry.setPlugins( StringUtils.join(this.pluginsArray,",") );
         
@@ -151,6 +167,8 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void copyFrom(WeblogEntryData entry, Locale locale) 
         throws RollerException
     {
+        mLogger.debug("copy from called");
+        
         super.copyFrom(entry, locale);
         mCategoryId = entry.getCategory().getId();
         mCreatorId = entry.getCreator().getId();       
@@ -203,16 +221,27 @@ public class WeblogEntryFormEx extends WeblogEntryForm
      */
     private void initPubTimeDateStrings(WebsiteData website, Locale locale)
     {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(getPubTime()); 
-        cal.setTimeZone(website.getTimeZoneInstance());
-        mHours = new Integer(cal.get(Calendar.HOUR_OF_DAY));
-        mMinutes = new Integer(cal.get(Calendar.MINUTE));
-        mSeconds = new Integer(cal.get(Calendar.SECOND));
+        mLogger.debug("init pub time date sting called");
         
-        DateFormat df = DateFormat.getDateInstance(
-           DateFormat.SHORT, locale);
-        mDateString = df.format(getPubTime());
+        if(getPubTime() != null) {
+            mLogger.debug("figuring pubtime values");
+            
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(getPubTime());
+            cal.setTimeZone(website.getTimeZoneInstance());
+            mHours = new Integer(cal.get(Calendar.HOUR_OF_DAY));
+            mMinutes = new Integer(cal.get(Calendar.MINUTE));
+            mSeconds = new Integer(cal.get(Calendar.SECOND));
+            
+            DateFormat df = DateFormat.getDateInstance(
+                    DateFormat.SHORT, locale);
+            mDateString = df.format(getPubTime());
+            
+        } else {
+            mLogger.debug("pubtime is null, must be a draft");
+            
+            mDateString = "0/0/0";
+        }
     }
 
     /**
@@ -286,6 +315,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
      */
     public void setDateString(String dateString) throws ParseException
     {
+        mLogger.debug("somebody setting date string");
         mDateString = dateString;
     }
 
@@ -346,10 +376,12 @@ public class WeblogEntryFormEx extends WeblogEntryForm
             javax.servlet.ServletRequest request)
     {
         super.doReset(mapping, request);
+        mLogger.debug("reset called");
         
         pluginsArray = new String[0];
         
         // reset time fields to current time
+        /* we want the date fields to be empty by default now -- Allen G
         Calendar cal = Calendar.getInstance(request.getLocale());
         Date now = new Date();
         cal.setTime(now);        
@@ -358,6 +390,8 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         mSeconds = new Integer(cal.get(Calendar.SECOND));        
         DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, request.getLocale());
         mDateString = df.format(now);
+        */
+        mDateString = "0/0/0";
     }
 
     /**

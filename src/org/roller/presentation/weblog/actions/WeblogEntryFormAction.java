@@ -285,6 +285,26 @@ public final class WeblogEntryFormAction extends DispatchAction
                     entry = weblogMgr.retrieveWeblogEntry(wf.getId());
                     entry.save(); // should throw if save not permitted
                 }
+                
+                mLogger.debug("setting update time now");
+                wf.setUpdateTime(new Timestamp(new Date().getTime()));
+                
+                if("PUBLISHED".equals(wf.getStatus()) &&
+                        "0/0/0".equals(wf.getDateString())) {
+                    mLogger.debug("setting pubtime now");
+                    
+                    /* NOTE: the wf.copyTo() method will override this value
+                     * based on data submitted with the form if that data is
+                     * not null.  check the method to verify.
+                     *
+                     * this means that setting the pubtime here only takes
+                     * effect if the entry is being published for the first
+                     * time.
+                     */
+                    wf.setPubTime(wf.getUpdateTime());
+                }
+                
+                mLogger.debug("copying submitted form data to entry object");
                 wf.copyTo(entry, request.getLocale(),request.getParameterMap());
 
                 // Fetch MediaCast content type and length

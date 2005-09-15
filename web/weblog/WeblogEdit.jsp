@@ -84,7 +84,8 @@ function publish() {
     <html:hidden property="creatorId"/>
     <html:hidden property="websiteId"/>
     <html:hidden property="anchor"/>
-    <html:hidden property="updateTime"/>
+    <%-- updateTime is now set after the entry is submitted -- Allen G
+    <html:hidden property="updateTime"/> --%>
     <html:hidden property="status"/>
     <html:hidden property="link"/>
     <html:hidden name="method" property="method" value="save"/>
