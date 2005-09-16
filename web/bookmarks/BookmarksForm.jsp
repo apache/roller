@@ -89,8 +89,9 @@ function onMove()
     <html:options collection="allFolders" 
         property="id" labelProperty="path"/>
 </html:select>
-
 <p />
+
+<br />
 
 <table class="rollertable">
 

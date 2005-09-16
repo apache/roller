@@ -24,6 +24,7 @@ div.menu-tr {
 td div.menu-tr div.menu-tl a {
    display: table-cell;
    vertical-align: middle;
+   padding: 0px 5px 0px 5px;
 }
 
 /* ----------------------------------------------------------------------

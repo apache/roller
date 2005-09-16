@@ -442,6 +442,9 @@ public class ContextLoader
         if ("Roller-based Site".equals(siteName)) siteName = "Main";
         ctx.put("siteName", siteName);        
 
+        String siteShortName = ((RollerPropertyData)props.get("site.shortName")).getValue();
+        ctx.put("siteShortName", siteShortName);        
+
         // add language of the session (using locale of viewer set by Struts)
         ctx.put(
             "viewLocale",

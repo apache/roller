@@ -56,14 +56,9 @@
 #macro( showNavBar2 $vertical $delimiter $useCSS)
     #set( $container = "div" )
     #if ( $useCSS ) #set( $container = "ul" ) #end
-    #set( $rawUrl = "$ctxPath/page/$userName" )
+    #set( $rawUrl = "$ctxPath/page/$website.handle" )
     <$container class="rNavigationBar">
-    #if ($siteName=="Main")
-        #set( $mainUrl = "$ctxPath?rmk=tabbedmenu.main&amp;rmik=tabbedmenu.main" )
-        #printNavLink( $mainUrl $text.get("navigationBar.main") $useCSS $vertical "" )
-    #else
-        #printNavLink( "$ctxPath/" $siteName $useCSS $vertical "" )
-    #end
+    #printNavLink( "$ctxPath/" $siteShortName $useCSS $vertical "" )
     #if( $website )
         #foreach( $iPage in $pages )
             #set( $invisible = $iPage.Name.startsWith("_") )
