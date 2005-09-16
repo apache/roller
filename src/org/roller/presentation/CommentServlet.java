@@ -122,9 +122,13 @@ public class CommentServlet extends HttpServlet {
             
             mLogger.debug("Doing comment posting for entry = "+entry_permalink);
             
+            // check if we even allow comments
+            if(!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled"))
+                throw new Exception("Comments are disabled for this site.");
+            
             if (!entry.getWebsite().getAllowComments().booleanValue() ||
                     !entry.getCommentsStillAllowed())
-                throw new Exception("Comments not allowed");
+                throw new Exception("Comments not allowed on this entry");
             
             WebsiteData website = entry.getWebsite();
             
