@@ -65,16 +65,18 @@ div.control {
 div.controlToggle {
     background: url("two-togglegrey.png") repeat-x top; 
 }
-div.entryTitleBox {
-   background: #9192b0; 
-   color: white; 
-}
 div.entryBox {
-   border: 1px #9192b0 solid;
+   border-bottom: 1px #573dea solid;
+   background: #e5e5e5;
+   margin: 0px 0px 0px 0px;
+}
+div.entryTitleBox {
+   padding: 4px;
+   font-size: medium;
 }
 div.entryBoxPinned {
    background: #e5e5e5; 
-   border: 1px #c0c0c0 solid;
+   border-bottom: 1px #573dea solid;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
    color: #573dea; 
