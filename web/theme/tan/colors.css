@@ -11,13 +11,13 @@
     background: url("two-banner.gif") repeat-x top;
 }
 .sidebarfade {
-    background: url("two-sidebarfade.gif") repeat-x bottom;
+    background: #f5f0e6;
 }
 .sidebarfade_hotblogs {
-    background: url("two-sidebarfade.gif") repeat-x bottom;
+    background: #f5f0e6;
 }
 .sidebarfade_search {
-    background: url("two-sidebarfade.gif") repeat-x bottom;
+    background: #f5f0e6;
 }
 .bannerStatusBox {
     background: #ad3431;
@@ -68,15 +68,21 @@ div.controlToggle {
     background: url("two-togglegrey.gif") repeat-x top; 
 }
 div.entryTitleBox {
-   background: #c6ab74; 
    color: white; 
+   background: #c6ab74; 
 }
 div.entryBox {
-   border: 1px #c6ab74 solid;
+   border-bottom: 1px #c8af7b solid;
+   background: #f5f0e6;
+   margin: 0px 0px 0px 0px;
+}
+div.entryTitleBox {
+   padding: 4px;
+   font-size: medium;
 }
 div.entryBoxPinned {
-   background: #e5e5e5; 
-   border: 1px #c0c0c0 solid;
+   background: #f5f0e6; 
+   border-bottom: 1px #c8af7b solid;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
    color: #ad3537; 

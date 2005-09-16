@@ -18,7 +18,7 @@ boolean allowNewUsers = RollerConfig.getBooleanProperty("users.registration.enab
         <% } %>
         
         <c:if test="${!empty model.website}" >
-           | <fmt:message key="mainPage.currentWebsite" />
+           - <fmt:message key="mainPage.currentWebsite" />
            <b><a href='<c:out value="${model.baseURL}" />/page/<c:out value="${model.website.handle}" />'>
                <c:out value="${model.website.handle}" />
            </a></b>

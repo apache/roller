@@ -5,9 +5,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <tiles:insert attribute="head" />     
 <style type="text/css">
-#banner {
-    height: 30px; 
-}
 <tiles:insert attribute="styles" />
 </style>
 </head>

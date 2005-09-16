@@ -52,7 +52,6 @@ request.setAttribute("popularWebsites",
 
          </div>
     </c:forEach>
-    <br />
 </c:if>
 
 <c:forEach var="post" items="${recentPosts}">

@@ -115,7 +115,7 @@ div.entryBox {
 }
 div.entryBoxPinned {
    padding: 4px;
-   margin: 4px 0px 4px 0px;
+   margin: 0px 0px 0px 0px;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
    font-size: small;

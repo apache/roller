@@ -5,13 +5,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <tiles:insert attribute="head" />     
 <style type="text/css">
+<tiles:insert attribute="styles" />
 label.formrow {
    float: left;
    text-align: right;
    width: 30%;
    padding-right: 1em;
 }
-<tiles:insert attribute="styles" />
+#rightcontent {
+    position: absolute;
+    top:    40px;
+    right:  15px;
+    width: 230px;
+}
 </style>
 </head>
 <body>
@@ -19,7 +25,6 @@ label.formrow {
 <div id="wrapper"> 
    
     <div id="banner">
-        <tiles:insert attribute="banner" />
         <tiles:insert attribute="bannerStatus" />
     </div>
     

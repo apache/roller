@@ -16,12 +16,21 @@ request.setAttribute("siteDescription", siteDescription);
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <tiles:insert attribute="head" />     
 <style type="text/css">
+#centercontent {
+    margin: 15px 260px 0px 15px;
+}
+#rightcontent {
+    position: absolute;
+    top:   120px;
+    right:  15px;
+    width: 230px;
+}
 .menuItemTable {
     width: 100%;
     height: 2px;
     padding: 0px 0px 0px 10px;
 }
-   <tiles:insert attribute="styles" />
+<tiles:insert attribute="styles" />
 </style>
 </head>
 <body>
