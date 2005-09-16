@@ -34,11 +34,13 @@ function resignWebsite(id,handle)
     <input type="hidden" name="websiteId" value="" />
     <input type="hidden" name="method" value="select" />		  
 
+<%-- TITLE: Main Menu --%>
 <p class="subtitle"><fmt:message key="yourWebsites.subtitle" /></p>
 
 <%-- Choose appropriate prompt at start of page --%>
 <c:choose>
 
+    <%-- PROMPT: Welcome... you have no blog --%>
     <c:when test="${empty model.permissions && empty model.pendings}"> 
         <p><fmt:message key="yourWebsites.subtitle.welcomeNoBlog" /></p>        
         <p>
@@ -49,6 +51,7 @@ function resignWebsite(id,handle)
         </p>
     </c:when>
     
+    <%-- PROMPT: You have invitation(s) --%>
     <c:when test="${!empty model.pendings}">      
         <p><fmt:message key="yourWebsites.invitationsPrompt" /></p>
         
@@ -70,8 +73,9 @@ function resignWebsite(id,handle)
 </c:choose>
             
 <c:if test="${!empty model.permissions}">
-    <h2><fmt:message key="yourWebsites.weblogs.title" /></h2>
-    <p class="subtitle"><fmt:message key="yourWebsites.weblogs.prompt" /></p>
+
+    <%-- SUBTITLE: Your weblogs --%>    
+    <h3><fmt:message key="yourWebsites.weblogs.title" /></h3>
 
         <c:forEach var="perms" items="${model.permissions}">
 
