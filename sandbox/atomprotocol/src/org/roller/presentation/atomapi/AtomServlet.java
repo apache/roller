@@ -46,6 +46,7 @@ import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.WireFeedOutput;
+import java.io.StringWriter;
 
 /**
  * Atom Servlet implements Atom by calling a Roller independent handler.
@@ -55,8 +56,7 @@ import com.sun.syndication.io.WireFeedOutput;
  */
 public class AtomServlet extends HttpServlet
 {
-    /** We use Rome to parse/generate Atom feeds and it does Atom format 0.3 */
-    public static final String FEED_TYPE = "atom_0.3"; 
+    public static final String FEED_TYPE = "atom_1.0"; 
     
     private static Log mLogger = 
         LogFactory.getFactory().getInstance(AtomServlet.class);
@@ -105,6 +105,7 @@ public class AtomServlet extends HttpServlet
                     AtomCollection col = null;
                     if (ranges != null) 
                     {
+                        // return a range of collection members
                         AtomCollection.Range range = 
                             AtomCollection.parseRange(req.getHeader("Range"));
                         int offset = 0;
@@ -120,6 +121,7 @@ public class AtomServlet extends HttpServlet
                     {
                         col= handler.getCollection(pathInfo);
                     }
+                    // serialize collection to XML and write it out
                     Document doc = AtomCollection.collectionToDocument(col);
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
@@ -180,16 +182,18 @@ public class AtomServlet extends HttpServlet
             {
                 if (handler.isEntryCollectionURI(pathInfo)) 
                 {
-                    // parse incoming entry
+                    // parse incoming entry                    
                     Entry unsavedEntry = parseEntry(
                         new InputStreamReader(req.getInputStream()));
                     
                     // call handler to post it
                     Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
-                    Iterator links = savedEntry.getAlternateLinks().iterator();
+                    Iterator links = savedEntry.getLinks().iterator();
+                    
+                    // return alternate link as Location header
                     while (links.hasNext()) {
                         Link link = (Link) links.next();
-                        if (link.getRel().equals("alternate")) {
+                        if (link.getRel().equals("alternate") || link.getRel() == null) {
                             res.addHeader("Location", link.getHref());
                             break;
                         }
@@ -359,7 +363,13 @@ public class AtomServlet extends HttpServlet
         Element entryElement= (Element)feedDoc.getRootElement().getChildren().get(0);
         XMLOutputter outputter = new XMLOutputter();
         outputter.setFormat(Format.getPrettyFormat());
-        outputter.output(entryElement, writer);
+        
+        StringWriter sw = new StringWriter();  // DEBUG
+        outputter.output(entryElement, sw);    // DEBUG
+        System.out.println(sw.toString());     // DEBUG    
+        writer.write(sw.toString());           // DEBUG
+        
+        //outputter.output(entryElement, writer);
     }
     
     /** 

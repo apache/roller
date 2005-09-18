@@ -65,6 +65,7 @@ public class AtomCollection
 {
     public static final Namespace ns = 
         Namespace.getNamespace("http://purl.org/atom/app#");
+    
     private static SimpleDateFormat df =
         new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssZ" );
     private String next    = null;

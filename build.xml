@@ -404,10 +404,6 @@ ro.buildUser=${user.name}
         <fileset dir="${build.compile_web}" excludes="**/tomcat/**"/>
     </jar>
 
-
-    <!-- Copy web contents to staging, plus README files. -->
-    <antcall target="copy-web" />
-
     <!-- Copy database configs to classpath in staging -->
     <copy todir="${build.stage_web}/WEB-INF/classes">
         <fileset dir="./metadata/database/hibernate" includes="hibernate.cfg.xml"/>
@@ -441,12 +437,17 @@ ro.buildUser=${user.name}
             <include name="xmlParserAPIs-2.3.0.jar" if="resinServer"/>
         </fileset>
     </copy>
-    <!-- Copy DTDs and TLDs  -->
+
+	<!-- Copy DTDs and TLDs  -->
     <copy todir="${build.stage_web}/WEB-INF/tlds">
         <fileset dir="${ro.tools}/lib" includes="*.tld"/>
     </copy>
-    <!-- copy database related files -->
+
+	<!-- copy database related files -->
     <antcall target="stage-dbscripts" />
+
+    <!-- Copy web contents to staging, plus README files. -->
+    <antcall target="copy-web" />
 
     <ant inheritAll="false" dir="contrib" />
 

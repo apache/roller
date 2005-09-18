@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="sandbox/atomprotocol/src"/>
 	<classpathentry kind="src" path="sandbox/standalone/src"/>
 	<classpathentry kind="src" path="contrib/plugins/src"/>
 	<classpathentry kind="src" path="tests"/>
@@ -23,14 +24,11 @@
 	<classpathentry kind="lib" path="tools/buildtime/ant-1.6.2/ant-junit.jar"/>
 	<classpathentry kind="lib" path="tools/buildtime/ant-1.6.2/ant-commons-net.jar"/>
 	<classpathentry kind="lib" path="tools/buildtime/ant-1.6.2/ant.jar"/>
-	<classpathentry kind="lib" path="tools/lib/xmlrpc-2.0.jar"/>
 	<classpathentry kind="lib" path="tools/lib/xmlrpc-1.2-b1.jar"/>
 	<classpathentry kind="lib" path="tools/lib/velocity-tools-1.1.jar"/>
 	<classpathentry kind="lib" path="tools/lib/velocity-dep-1.4.jar"/>
 	<classpathentry kind="lib" path="tools/lib/velocity-1.4.jar"/>
 	<classpathentry kind="lib" path="tools/lib/taglibs-string.jar"/>
-	<classpathentry kind="lib" path="tools/lib/rome-fetcher-0.6.jar"/>
-	<classpathentry kind="lib" path="tools/lib/rome-0.6.jar"/>
 	<classpathentry kind="lib" path="tools/lib/mm.mysql-2.0.14-bin.jar"/>
 	<classpathentry kind="lib" path="tools/lib/mail.jar"/>
 	<classpathentry kind="lib" path="tools/lib/lucene-1.4.3.jar"/>
@@ -70,5 +68,8 @@
 	<classpathentry kind="lib" path="tools/hibernate-3.0/lib/asm-attrs.jar"/>
 	<classpathentry kind="lib" path="tools/hibernate-3.0/lib/asm.jar"/>
 	<classpathentry kind="lib" path="tools/lib/jdom.jar"/>
+	<classpathentry kind="lib" path="sandbox/atomprotocol/lib/rome-fetcher-0.8.jar"/>
+	<classpathentry kind="lib" path="sandbox/atomprotocol/lib/rome-0.8.jar"/>
+	<classpathentry kind="lib" path="sandbox/standalone/lib/catalina.jar"/>
 	<classpathentry kind="output" path="classes.eclipse"/>
 </classpath>
