@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package org.roller.presentation.atomapi;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,10 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
+import org.roller.RollerException;
 import org.roller.model.FileManager;
 import org.roller.model.Roller;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.UserData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
@@ -45,27 +46,29 @@ import org.roller.util.RollerMessages;
 import org.roller.util.Utilities;
 
 import com.sun.syndication.feed.atom.Content;
+import com.sun.syndication.feed.atom.Category;
 import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.io.impl.Base64;
+import org.roller.RollerException;
 
 /**
  * Roller's Atom Protocol implementation.
  * <pre>
  * Here are the URIs suppored:
- * 
+ *
  *    URI type             URI form                          Handled by
- *    --------             --------                          ----------                                        
- *    Introspection URI    /blog-name                        getIntrosection()               
+ *    --------             --------                          ----------
+ *    Introspection URI    /                                 getIntrosection()
  *    Collection URI       /blog-name/<collection-name>      getCollection()
  *    Collection-next URI  /blog-name/<collection-name>/id   getCollection()
  *    Member URI           /blog-name/<object-name>          post<object-name>()
  *    Member URI           /blog-name/<object-name>/id       get<object-name>()
  *    Member URI           /blog-name/<object-name>/id       put<object-name>()
  *    Member URI           /blog-name/<object-name>/id       delete<object-name>()
- * 
- *    Until group blogging is supported username == blogname.
- * 
+ *
+ *    Until group blogging is supported weblogHandle == blogname.
+ *
  *    Collection-names   Object-names
  *    ----------------   ------------
  *       entries           entry
@@ -78,50 +81,41 @@ import com.sun.syndication.io.impl.Base64;
  *
  * @author David M Johnson
  */
-public class RollerAtomHandler implements AtomHandler
-{
-    private HttpServletRequest mRequest; 
-    private Roller             mRoller; 
+public class RollerAtomHandler implements AtomHandler {
+    private HttpServletRequest mRequest;
+    private Roller             mRoller;
     private RollerContext      mRollerContext;
     private String             mUsername;
     private int                mMaxEntries = 20;
     //private MessageDigest    md5Helper = null;
     //private MD5Encoder       md5Encoder = new MD5Encoder();
     
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(RollerAtomHandler.class);
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(RollerAtomHandler.class);
     
-    private SimpleDateFormat timestampFormat = 
-        new SimpleDateFormat("yyyyMMddHHmmss" );
-
     //---------------------------------------------------------------- construction
     
-    /** 
+    /**
      * Create Atom handler for a request and attempt to authenticate user.
-     * If user is authenticated, then getAuthenticatedUsername() will return 
+     * If user is authenticated, then getAuthenticatedUsername() will return
      * then user's name, otherwise it will return null.
      */
-    public RollerAtomHandler(HttpServletRequest request)
-    {
+    public RollerAtomHandler(HttpServletRequest request) {
         mRequest = request;
         mRoller = RollerContext.getRoller(request);
         mRollerContext = RollerContext.getRollerContext(request);
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         mUsername = authenticateWSSE(request);
- 
-        if (mUsername != null) 
-        {
-            try
-            {
+        
+        if (mUsername != null) {
+            try {
                 UserData user = mRoller.getUserManager().getUser(mUsername);
                 mRoller.setUser(user);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 mLogger.error("ERROR: setting user", e);
             }
-        }                 
+        }
         //        try
         //        {
         //            md5Helper = MessageDigest.getInstance("MD5");
@@ -133,13 +127,12 @@ public class RollerAtomHandler implements AtomHandler
     }
     
     /**
-     * Return username of authenticated user or null if there is none.
+     * Return weblogHandle of authenticated user or null if there is none.
      */
-    public String getAuthenticatedUsername()
-    {
+    public String getAuthenticatedUsername() {
         return mUsername;
     }
-  
+    
     //---------------------------------------------------------------- introspection
     
     /**
@@ -147,53 +140,54 @@ public class RollerAtomHandler implements AtomHandler
      * Since a user can (currently) have only one blog, one workspace is returned.
      * The workspace will contain collections for entries, categories and resources.
      */
-    public AtomService getIntrospection(String[] pathInfo) throws Exception 
-    {
-        if (pathInfo.length == 1) 
-        {
-            String username = pathInfo[0];
+    public AtomService getIntrospection(String[] pathInfo) throws Exception {
+        if (pathInfo.length == 0) {
             String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
-            
             AtomService service = new AtomService();
-
-            AtomService.Workspace workspace = new AtomService.Workspace();
-            workspace.setTitle("Workspace: Collections for " + username);
-            service.addWorkspace(workspace);
-
-            AtomService.Collection entryCol = new AtomService.Collection();
-            entryCol.setTitle("Collection: Weblog Entries for " + username);
-            entryCol.setContents("entries");
-            entryCol.setHref(absUrl + "/atom/"+mUsername+"/entries");
-            workspace.addCollection(entryCol);
-            
-            AtomService.Collection catCol = new AtomService.Collection();
-            catCol.setTitle("Collection: Categories for " + username);
-            catCol.setContents("categories");
-            catCol.setHref(absUrl + "/atom/"+mUsername+"/categories");            
-            workspace.addCollection(catCol);
-            
-            AtomService.Collection uploadCol = new AtomService.Collection();
-            uploadCol.setTitle("Collection: File uploads for " + username);
-            uploadCol.setContents("generic");
-            uploadCol.setHref(absUrl + "/atom/"+mUsername+"/resources");            
-            workspace.addCollection(uploadCol);
-            
+            UserData user = mRoller.getUserManager().getUser(mUsername);
+            List perms = mRoller.getUserManager().getAllPermissions(user);
+            if (perms != null) {
+                for (Iterator iter=perms.iterator(); iter.hasNext();) {
+                    PermissionsData perm = (PermissionsData)iter.next();
+                    String handle = perm.getWebsite().getHandle();
+                    AtomService.Workspace workspace = new AtomService.Workspace();
+                    workspace.setTitle("Workspace: Collections for " + handle);
+                    service.addWorkspace(workspace);
+                    
+                    AtomService.Collection entryCol = new AtomService.Collection();
+                    entryCol.setTitle("Collection: Weblog Entries for " + handle);
+                    entryCol.setContents("entries");
+                    entryCol.setHref(absUrl + "/atom/"+handle+"/entries");
+                    workspace.addCollection(entryCol);
+                    
+                    AtomService.Collection catCol = new AtomService.Collection();
+                    catCol.setTitle("Collection: Categories for " + handle);
+                    catCol.setContents("categories");
+                    catCol.setHref(absUrl + "/atom/"+handle+"/categories");
+                    workspace.addCollection(catCol);
+                    
+                    AtomService.Collection uploadCol = new AtomService.Collection();
+                    uploadCol.setTitle("Collection: File uploads for " + handle);
+                    uploadCol.setContents("generic");
+                    uploadCol.setHref(absUrl + "/atom/"+handle+"/resources");
+                    workspace.addCollection(uploadCol);
+                }
+            }
             return service;
         }
         throw new Exception("ERROR: bad URL in getIntrospection()");
     }
     
     //----------------------------------------------------------------- collections
-
-    /** 
+    
+    /**
      * Returns collection specified by pathInfo with no date range specified.
      * Just calls the other getCollection(), but with offset = -1.
      */
-    public AtomCollection getCollection(String[] pathInfo) throws Exception
-    {
+    public AtomCollection getCollection(String[] pathInfo) throws Exception {
         return getCollection(pathInfo, null, new Date(), -1);
     }
-
+    
     /**
      * Returns collection specified by pathInfo, constrained by a date range and
      * starting at an offset within the collection.Returns 20 items at a time.
@@ -209,42 +203,33 @@ public class RollerAtomHandler implements AtomHandler
      * @param offset   Offset within collection (for paging)
      */
     public AtomCollection getCollection(
-            String[] pathInfo, Date start, Date end, int offset) 
-        throws Exception
-    {
-        if (pathInfo.length > 0 && pathInfo[1].equals("entries"))
-        {
+            String[] pathInfo, Date start, Date end, int offset)
+            throws Exception {
+        if (pathInfo.length > 0 && pathInfo[1].equals("entries")) {
             return getCollectionOfEntries(pathInfo, start, end, offset);
-        }
-        else if (pathInfo.length > 0 && pathInfo[1].equals("resources"))
-        {
+        } else if (pathInfo.length > 0 && pathInfo[1].equals("resources")) {
             return getCollectionOfResources(pathInfo, start, end, offset);
-        }
-        else if (pathInfo.length > 0 && pathInfo[1].equals("categories"))
-        {
+        } else if (pathInfo.length > 0 && pathInfo[1].equals("categories")) {
             return getCollectionOfCategories(pathInfo, start, end, offset);
         }
         throw new Exception("ERROR: bad URL in getCollection()");
     }
-
+    
     /**
      * Helper method that returns collection of entries, called by getCollection().
      */
     public AtomCollection getCollectionOfEntries(
-            String[] pathInfo, Date start, Date end, int offset) 
-        throws Exception
-    {
+            String[] pathInfo, Date start, Date end, int offset)
+            throws Exception {
         String handle = pathInfo[0];
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         List entries = null;
-        if (canView(website)) 
-        {
+        if (canView(website)) {
             if (pathInfo.length == 2) // handle /blogname/entries
             {
                 // return most recent blog entries
-                if (offset == -1)
-                {
+                if (offset == -1) {
                     entries = mRoller.getWeblogManager().getWeblogEntries(
                             website,           // website
                             start,             // startDate
@@ -252,9 +237,7 @@ public class RollerAtomHandler implements AtomHandler
                             null,              // catName
                             null, // status
                             new Integer(mMaxEntries + 1)); // maxEntries
-                }
-                else
-                {
+                } else {
                     entries = mRoller.getWeblogManager().getWeblogEntries(
                             website,           // website
                             start,             // startDate
@@ -264,37 +247,33 @@ public class RollerAtomHandler implements AtomHandler
                             offset,            // offset (for range paging)
                             mMaxEntries + 1);  // maxEntries
                 }
-            }
-            else if (pathInfo.length == 3) // handle /blogname/entries/entryid
+            } else if (pathInfo.length == 3) // handle /blogname/entries/entryid
             {
                 // return entries previous to entry specified by pathInfo
-                String entryid = pathInfo[2];               
+                String entryid = pathInfo[2];
                 WeblogManager wmgr = mRoller.getWeblogManager();
                 WeblogEntryData entry = wmgr.retrieveWeblogEntry(entryid);
                 entries = wmgr.getPreviousEntries(entry, null, mMaxEntries + 1);
-            }
-            else throw new Exception("ERROR: bad URL");
+            } else throw new Exception("ERROR: bad URL");
             
             // build collection
             AtomCollection col = new AtomCollection();
-            if (entries.size() > mMaxEntries) 
-            {
+            if (entries.size() > mMaxEntries) {
                 // there are more entries, so include next link
-                WeblogEntryData lastEntry = 
-                    (WeblogEntryData)entries.get(entries.size() - 1);
+                WeblogEntryData lastEntry =
+                        (WeblogEntryData)entries.get(entries.size() - 1);
                 col.setNext(createNextLink(lastEntry, start, end, offset));
             }
-            // add up to max entries to collection 
+            // add up to max entries to collection
             int count = 0;
             Iterator iter = entries.iterator();
-            while (iter.hasNext() && count++ < mMaxEntries)
-            {
+            while (iter.hasNext() && count++ < mMaxEntries) {
                 WeblogEntryData rollerEntry = (WeblogEntryData)iter.next();
                 AtomCollection.Member member = new AtomCollection.Member();
                 member.setTitle(rollerEntry.getDisplayTitle());
                 member.setUpdated(rollerEntry.getUpdateTime());
-                member.setHref(absUrl 
-                    + "/atom/" + handle + "/entry/" + rollerEntry.getId());
+                member.setHref(absUrl
+                        + "/atom/" + handle + "/entry/" + rollerEntry.getId());
                 col.addMember(member);
             }
             return col;
@@ -306,82 +285,78 @@ public class RollerAtomHandler implements AtomHandler
      * Helper method that returns collection of resources, called by getCollection().
      */
     public AtomCollection getCollectionOfResources(
-            String[] pathInfo, Date start, Date end, int offset) throws Exception
-    {
+            String[] pathInfo, Date start, Date end, int offset) throws Exception {
         String handle = pathInfo[0];
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         FileManager fmgr = mRoller.getFileManager();
         File[] files = fmgr.getFiles(website);
-        if (canView(website)) 
-        {
+        if (canView(website)) {
             AtomCollection col = new AtomCollection();
-            for (int i=0; i<files.length; i++)
-            {
+            for (int i=0; i<files.length; i++) {
                 AtomCollection.Member member = new AtomCollection.Member();
                 member.setTitle(files[i].getName());
                 member.setUpdated(new Date(files[i].lastModified()));
-                member.setHref(absUrl 
-                    + "/atom/" + website.getHandle() + "/resource/" + files[i].getName() );
+                member.setHref(absUrl
+                        + "/atom/" + website.getHandle() + "/resource/" + files[i].getName() );
                 col.addMember(member);
             }
             return col;
         }
-        throw new Exception("ERROR: not authorized");       
+        throw new Exception("ERROR: not authorized");
     }
-
+    
     /**
      * Helper method that returns collection of categories, called by getCollection().
      */
     public AtomCollection getCollectionOfCategories(
-            String[] pathInfo, Date start, Date end, int offset) throws Exception
-    {
+            String[] pathInfo, Date start, Date end, int offset) throws Exception {
         String handle = pathInfo[0];
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         WeblogManager wmgr = mRoller.getWeblogManager();
         List items = wmgr.getWeblogCategories(website);
-        if (canView(website)) 
-        {
+        if (canView(website)) {
             AtomCollection col = new AtomCollection();
             Iterator iter = items.iterator();
             Date now = new Date();
-            while (iter.hasNext())
-            {
+            while (iter.hasNext()) {
                 WeblogCategoryData item = (WeblogCategoryData)iter.next();
                 AtomCollection.Member member = new AtomCollection.Member();
-                member.setTitle(item.getPath());
+                String name = item.getPath();
+                if (name.equals("/")) continue;
+                member.setTitle(name);
                 member.setUpdated(now);
-                member.setHref(
-                    absUrl + "/atom/" + website.getHandle() + "/category/" + item.getId());
+                member.setHref(absUrl + "/atom/"  
+                    + website.getHandle() + "/category/" + item.getId());
                 col.addMember(member);
             }
             return col;
         }
-        throw new Exception("ERROR: not authorized");       
+        throw new Exception("ERROR: not authorized");
     }
-
+    
     //--------------------------------------------------------------------- entries
     
     /**
      * Create entry in the entry collection (a Roller blog has only one).
      */
-    public Entry postEntry(String[] pathInfo, Entry entry) throws Exception
-    {
+    public Entry postEntry(String[] pathInfo, Entry entry) throws Exception {
         // authenticated client posted a weblog entry
         String handle = pathInfo[0];
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
-        if (canEdit(website))
-        {            
+        UserData creator = mRoller.getUserManager().getUser(mUsername);
+        if (canEdit(website)) {
             // Save it and commit it
             WeblogEntryData rollerEntry = createRollerEntry(website, entry);
-            rollerEntry.save();   
+            rollerEntry.setCreator(creator);
+            rollerEntry.save();
             mRoller.commit();
-                        
-            // Throttle one entry per second 
+            
+            // Throttle one entry per second
             // (MySQL timestamp has 1 sec resolution, damnit)
             Thread.sleep(1000);
-                        
+            
             // TODO: ping the appropriate ping
             // TODO: flush the cache on Atom post
             //flushPageCache(mRequest);
@@ -394,39 +369,50 @@ public class RollerAtomHandler implements AtomHandler
     /**
      * Retrieve entry, URI like this /blog-name/entry/id
      */
-    public Entry getEntry(String[] pathInfo) throws Exception
-    {
+    public Entry getEntry(String[] pathInfo) throws Exception {
         if (pathInfo.length == 3) // URI is /blogname/entries/entryid
         {
-            WeblogEntryData entry = 
-                mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
-            if (!canView(entry))
-            {
+            WeblogEntryData entry =
+                    mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
+            if (!canView(entry)) {
                 throw new Exception("ERROR not authorized to view entry");
-            }
-            else if (entry != null) 
-            {
+            } else if (entry != null) {
                 return createAtomEntry(entry);
             }
             throw new Exception("ERROR: entry not found");
         }
         throw new Exception("ERROR: bad URI");
     }
-
+    
     /**
      * Update entry, URI like this /blog-name/entry/id
      */
-    public Entry putEntry(String[] pathInfo, Entry entry) throws Exception
-    {
+    public Entry putEntry(String[] pathInfo, Entry entry) throws Exception {
         if (pathInfo.length == 3) // URI is /blogname/entries/entryid
-        { 
-            WeblogEntryData rollerEntry = 
-                mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
-            if (canEdit(rollerEntry))
-            {    
+        {
+            WeblogEntryData rollerEntry =
+                    mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
+            if (canEdit(rollerEntry)) {
                 rollerEntry.setTitle(entry.getTitle());
-                rollerEntry.setText(((Content)entry.getContents().get(0)).getValue());
+                
+                // TODO: don't assume type is HTML or TEXT
+                rollerEntry.setText(entry.getContent().getValue());
+                
                 rollerEntry.setUpdateTime(new Timestamp(new Date().getTime()));
+                if (entry.getPublished() != null) {
+                    rollerEntry.setPubTime(
+                        new Timestamp(entry.getPublished().getTime()));
+                }
+                if (entry.getCategories() != null
+                        && entry.getCategories().size() > 0) {
+                    Category atomCat = (Category)entry.getCategories().get(0);
+                    WeblogCategoryData cat = 
+                        mRoller.getWeblogManager().getWeblogCategoryByPath(
+                            rollerEntry.getWebsite(), atomCat.getTerm());
+                    if (cat != null) {
+                        rollerEntry.setCategory(cat);
+                    }
+                }
                 rollerEntry.save();
                 mRoller.commit();
                 return createAtomEntry(rollerEntry);
@@ -435,18 +421,16 @@ public class RollerAtomHandler implements AtomHandler
         }
         throw new Exception("ERROR: bad URI");
     }
-
+    
     /**
      * Delete entry, URI like this /blog-name/entry/id
      */
-    public void deleteEntry(String[] pathInfo) throws Exception
-    {
+    public void deleteEntry(String[] pathInfo) throws Exception {
         if (pathInfo.length == 3) // URI is /blogname/entries/entryid
-        { 
-            WeblogEntryData rollerEntry = 
-                mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
-            if (canEdit(rollerEntry))
-            {    
+        {
+            WeblogEntryData rollerEntry =
+                    mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
+            if (canEdit(rollerEntry)) {
                 rollerEntry.remove();
                 mRoller.commit();
                 return;
@@ -455,43 +439,38 @@ public class RollerAtomHandler implements AtomHandler
         }
         throw new Exception("ERROR: bad URI");
     }
-
+    
     //-------------------------------------------------------------------- resources
-
+    
     /**
      * Create new resource in generic collection (a Roller blog has only one).
      * TODO: can we avoid saving temporary file?
      * TODO: do we need to handle mutli-part MIME uploads?
      * TODO: use Jakarta Commons File-upload?
      */
-    public String postResource(String[] pathInfo, 
+    public String postResource(String[] pathInfo,
             String name, String contentType, InputStream is)
-            throws Exception
-    {
+            throws Exception {
         // authenticated client posted a weblog entry
         String handle = pathInfo[0];
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
-        if (canEdit(website) && pathInfo.length > 1)
-        {
-            try
-            {
+        if (canEdit(website) && pathInfo.length > 1) {
+            try {
                 FileManager fmgr = mRoller.getFileManager();
                 RollerMessages msgs = new RollerMessages();
                 
                 // save to temp file
-                if (name == null) 
-                {
+                if (name == null) {
                     throw new Exception(
-                        "ERROR[postResource]: No 'name' present in HTTP headers");
+                            "ERROR[postResource]: No 'name' present in HTTP headers");
                 }
                 File tempFile = File.createTempFile(name,"tmp");
                 FileOutputStream fos = new FileOutputStream(tempFile);
                 Utilities.copyInputToOutput(is, fos);
                 fos.close();
                 
-                // If save is allowed by Roller system-wide policies   
-                if (fmgr.canSave(website, name, tempFile.length(), msgs)) 
-                {
+                // If save is allowed by Roller system-wide policies
+                if (fmgr.canSave(website, name, tempFile.length(), msgs)) {
                     // Then save the file
                     FileInputStream fis = new FileInputStream(tempFile);
                     fmgr.saveFile(website, name, tempFile.length(), fis);
@@ -499,16 +478,14 @@ public class RollerAtomHandler implements AtomHandler
                     
                     // TODO: build URL to uploaded file should be done in FileManager
                     String uploadPath = RollerContext.getUploadPath(
-                        mRequest.getSession(true).getServletContext());
+                            mRequest.getSession(true).getServletContext());
                     uploadPath += "/" + website.getHandle() + "/" + name;
                     return RequestUtils.printableURL(
-                        RequestUtils.absoluteURL(mRequest, uploadPath));                    
+                            RequestUtils.absoluteURL(mRequest, uploadPath));
                 }
                 tempFile.delete();
                 throw new Exception("File upload denied because:" + msgs.toString());
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 String msg = "ERROR in atom.postResource";
                 mLogger.error(msg,e);
                 throw new Exception(msg);
@@ -516,51 +493,43 @@ public class RollerAtomHandler implements AtomHandler
         }
         throw new Exception("ERROR not authorized to edit website");
     }
-        
-    /** 
+    
+    /**
      * Get absolute path to resource specified by path info.
      */
-    public String getResourceFilePath(String[] pathInfo) throws Exception
-    {
+    public String getResourceFilePath(String[] pathInfo) throws Exception {
         // ==> /<blogname>/resources/<filename>
         String uploadPath = RollerContext.getUploadPath(
                 mRequest.getSession(true).getServletContext());
         return uploadPath + File.separator + pathInfo[2];
-    }    
+    }
     
     /**
      * Update resource specified by pathInfo using data from input stream.
      * Expects pathInfo of form /blog-name/resources/name
      */
-    public void putResource(String[] pathInfo, 
-            String contentType, InputStream is) throws Exception
-    {
-        if (pathInfo.length > 2)
-        {
-           String name = pathInfo[2];  
-           postResource(pathInfo, name, contentType, is);
+    public void putResource(String[] pathInfo,
+            String contentType, InputStream is) throws Exception {
+        if (pathInfo.length > 2) {
+            String name = pathInfo[2];
+            postResource(pathInfo, name, contentType, is);
         }
         throw new Exception("ERROR: bad pathInfo");
     }
-
+    
     /**
      * Delete resource specified by pathInfo.
      * Expects pathInfo of form /blog-name/resources/name
      */
-    public void deleteResource(String[] pathInfo) throws Exception
-    {
+    public void deleteResource(String[] pathInfo) throws Exception {
         // authenticated client posted a weblog entry
         String handle = pathInfo[0];
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
-        if (canEdit(website) && pathInfo.length > 1)
-        {
-            try
-            {
+        if (canEdit(website) && pathInfo.length > 1) {
+            try {
                 FileManager fmgr = mRoller.getFileManager();
                 fmgr.deleteFile(website, pathInfo[2]);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 String msg = "ERROR in atom.deleteResource";
                 mLogger.error(msg,e);
                 throw new Exception(msg);
@@ -568,96 +537,84 @@ public class RollerAtomHandler implements AtomHandler
         }
         throw new Exception("ERROR not authorized to edit website");
     }
-
+    
     //------------------------------------------------------------------ URI testers
     
     /**
      * True if URL is the introspection URI.
      */
-    public boolean isIntrospectionURI(String[] pathInfo)
-    {
-        if (pathInfo.length == 1 && pathInfo[0].equals(mUsername)) return true;
+    public boolean isIntrospectionURI(String[] pathInfo) {
+        if (pathInfo.length==0) return true;
         return false;
     }
     
     /**
      * True if URL is a entry URI.
      */
-    public boolean isEntryURI(String[] pathInfo)     
-    {
+    public boolean isEntryURI(String[] pathInfo) {
         if (pathInfo.length > 1 && pathInfo[1].equals("entry")) return true;
         return false;
     }
-
+    
     /**
      * True if URL is a resource URI.
      */
-   public boolean isResourceURI(String[] pathInfo)     
-    {
+    public boolean isResourceURI(String[] pathInfo) {
         if (pathInfo.length > 1 && pathInfo[1].equals("resource")) return true;
         return false;
     }
-
+    
     /**
      * True if URL is a category URI.
      */
-    public boolean isCategoryURI(String[] pathInfo)     
-    {
+    public boolean isCategoryURI(String[] pathInfo) {
         if (pathInfo.length > 1 && pathInfo[1].equals("category")) return true;
         return false;
     }
-
+    
     /**
      * True if URL is a collection URI of any sort.
      */
-    public boolean isCollectionURI(String[] pathInfo) 
-    {
+    public boolean isCollectionURI(String[] pathInfo) {
         if (pathInfo.length > 1 && pathInfo[1].equals("entries")) return true;
         if (pathInfo.length > 1 && pathInfo[1].equals("resources")) return true;
         if (pathInfo.length > 1 && pathInfo[1].equals("categories")) return true;
         return false;
     }
-
+    
     /**
      * True if URL is a entry collection URI.
      */
-    public boolean isEntryCollectionURI(String[] pathInfo) 
-    {
+    public boolean isEntryCollectionURI(String[] pathInfo) {
         if (pathInfo.length > 1 && pathInfo[1].equals("entries")) return true;
         return false;
     }
-
+    
     /**
      * True if URL is a resource collection URI.
      */
-    public boolean isResourceCollectionURI(String[] pathInfo) 
-    {
+    public boolean isResourceCollectionURI(String[] pathInfo) {
         if (pathInfo.length > 1 && pathInfo[1].equals("resources")) return true;
         return false;
     }
-
+    
     /**
      * True if URL is a category collection URI.
      */
-    public boolean isCategoryCollectionURI(String[] pathInfo) 
-    {
+    public boolean isCategoryCollectionURI(String[] pathInfo) {
         if (pathInfo.length > 1 && pathInfo[1].equals("categories")) return true;
         return false;
     }
-
+    
     //------------------------------------------------------------------ permissions
     
     /**
      * Return true if user is allowed to edit an entry.
      */
-    private boolean canEdit(WeblogEntryData entry)
-    {
-        try 
-        {
+    private boolean canEdit(WeblogEntryData entry) {
+        try {
             return entry.canSave();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mLogger.error("ERROR: checking website.canSave()");
         }
         return false;
@@ -666,14 +623,10 @@ public class RollerAtomHandler implements AtomHandler
     /**
      * Return true if user is allowed to edit a website.
      */
-    private boolean canEdit(WebsiteData website)
-    {
-        try 
-        {
+    private boolean canEdit(WebsiteData website) {
+        try {
             return website.canSave();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mLogger.error("ERROR: checking website.canSave()");
         }
         return false;
@@ -682,27 +635,24 @@ public class RollerAtomHandler implements AtomHandler
     /**
      * Return true if user is allowed to view an entry.
      */
-    private boolean canView(WeblogEntryData entry)
-    {
+    private boolean canView(WeblogEntryData entry) {
         return canEdit(entry);
     }
     
     /**
      * Return true if user is allowed to view a website.
      */
-    private boolean canView(WebsiteData website)
-    {
+    private boolean canView(WebsiteData website) {
         return canEdit(website);
     }
-
+    
     //-------------------------------------------------------------- authentication
-
-    /** 
+    
+    /**
      * Perform WSSE authentication based on information in request.
-     * Will not work if Roller password encryption is turned on. 
+     * Will not work if Roller password encryption is turned on.
      */
-    protected String authenticateWSSE(HttpServletRequest request) 
-    {
+    protected String authenticateWSSE(HttpServletRequest request) {
         String wsseHeader = request.getHeader("X-WSSE");
         if (wsseHeader == null) return null;
         
@@ -712,99 +662,77 @@ public class RollerAtomHandler implements AtomHandler
         String nonce = null;
         String passwordDigest = null;
         String[] tokens = wsseHeader.split(",");
-        for (int i = 0; i < tokens.length; i++)
-        {
+        for (int i = 0; i < tokens.length; i++) {
             int index = tokens[i].indexOf('=');
-            if (index != -1)
-            {
+            if (index != -1) {
                 String key = tokens[i].substring(0, index).trim();
                 String value = tokens[i].substring(index + 1).trim();
                 value = value.replaceAll("\"", "");
-                if (key.startsWith("UsernameToken"))
-                {
+                if (key.startsWith("UsernameToken")) {
                     userName = value;
-                }
-                else if (key.equalsIgnoreCase("nonce"))
-                {
+                } else if (key.equalsIgnoreCase("nonce")) {
                     nonce = value;
-                }
-                else if (key.equalsIgnoreCase("passworddigest"))
-                {
+                } else if (key.equalsIgnoreCase("passworddigest")) {
                     passwordDigest = value;
-                }
-                else if (key.equalsIgnoreCase("created"))
-                {
+                } else if (key.equalsIgnoreCase("created")) {
                     created = value;
                 }
             }
         }
         String digest = null;
-        try
-        {
+        try {
             UserData user = mRoller.getUserManager().getUser(userName);
             digest = WSSEUtilities.generateDigest(
-                        WSSEUtilities.base64Decode(nonce), 
-                        created.getBytes("UTF-8"), 
-                        user.getPassword().getBytes("UTF-8"));
-            if (digest.equals(passwordDigest))
-            {
+                    WSSEUtilities.base64Decode(nonce),
+                    created.getBytes("UTF-8"),
+                    user.getPassword().getBytes("UTF-8"));
+            if (digest.equals(passwordDigest)) {
                 ret = userName;
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mLogger.error("ERROR in wsseAuthenticataion: " + e.getMessage(), e);
         }
         return ret;
     }
-
-    /** 
-     * Untested (and currently unused) implementation of BASIC authentication 
+    
+    /**
+     * Untested (and currently unused) implementation of BASIC authentication
      */
-    public String authenticateBASIC(HttpServletRequest request)
-    {
+    public String authenticateBASIC(HttpServletRequest request) {
         boolean valid = false;
         String userID = null;
         String password = null;
-        try 
-        {
+        try {
             String authHeader = request.getHeader("Authorization");
-            if (authHeader != null) 
-            {
-               StringTokenizer st = new StringTokenizer(authHeader);
-               if (st.hasMoreTokens()) 
-               {
-                  String basic = st.nextToken();
-                  if (basic.equalsIgnoreCase("Basic")) 
-                  {
-                     String credentials = st.nextToken();
-                     String userPass = new String(Base64.decode(credentials));
-                     int p = userPass.indexOf(":");
-                     if (p != -1) 
-                     {
-                        userID = userPass.substring(0, p);
-                        UserData user = mRoller.getUserManager().getUser(userID);
-                        String realpassword = LoginServlet.getEncryptedPassword(
-                            request, user.getUserName(), user.getPassword());
-                        password = userPass.substring(p+1);
-                        if (    (!userID.trim().equals(user.getUserName())) 
-                             && (!password.trim().equals(realpassword))) 
-                        {
-                           valid = true;
+            if (authHeader != null) {
+                StringTokenizer st = new StringTokenizer(authHeader);
+                if (st.hasMoreTokens()) {
+                    String basic = st.nextToken();
+                    if (basic.equalsIgnoreCase("Basic")) {
+                        String credentials = st.nextToken();
+                        String userPass = new String(Base64.decode(credentials));
+                        int p = userPass.indexOf(":");
+                        if (p != -1) {
+                            userID = userPass.substring(0, p);
+                            UserData user = mRoller.getUserManager().getUser(userID);
+                            String realpassword = LoginServlet.getEncryptedPassword(
+                                    request, user.getUserName(), user.getPassword());
+                            password = userPass.substring(p+1);
+                            if (    (!userID.trim().equals(user.getUserName()))
+                            && (!password.trim().equals(realpassword))) {
+                                valid = true;
+                            }
                         }
-                     }
-                  }
-               }
+                    }
+                }
             }
-        }
-        catch (Exception e) 
-        {
+        } catch (Exception e) {
             mLogger.debug(e);
         }
         if (valid) return userID;
         return null;
     }
- 
+    
     //----------------------------------------------------------- internal utilities
     
     /**
@@ -812,56 +740,52 @@ public class RollerAtomHandler implements AtomHandler
      * Puts state date, end date and off set in request parameters.
      */
     private String createNextLink(
-            WeblogEntryData entry, Date start, Date end, int offset)
-    {
+            WeblogEntryData entry, Date start, Date end, int offset) {
         SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssZ" );
         String absUrl = mRollerContext.getAbsoluteContextUrl();
         String url = absUrl + "/atom/" + mUsername + "/entries/" + entry.getId();
-        if (offset != -1 && start != null && end != null) 
-        {
-            url  = url + "?Range=" + df.format(start) + "/" + df.format(end); 
-        }
-        else if (offset != -1 && start != null)
-        {
+        if (offset != -1 && start != null && end != null) {
+            url  = url + "?Range=" + df.format(start) + "/" + df.format(end);
+        } else if (offset != -1 && start != null) {
             url  = url + "?Range=" + df.format(start) + "/";
+        } else if (offset != -1 && end != null) {
+            url  = url + "?Range=/" + df.format(end);
         }
-        else if (offset != -1 && end != null)
-        {
-            url  = url + "?Range=/" + df.format(end); 
-        }
-        if (offset != -1)
-        {
+        if (offset != -1) {
             url = url + "&offset=" + (offset + mMaxEntries);
         }
         return url;
-    }    
+    }
     
     /**
      * Create a Rome Atom entry based on a Roller entry.
      * Content is escaped.
      * Link is stored as rel=alternate link.
      */
-    private Entry createAtomEntry(WeblogEntryData entry)
-    {
+    private Entry createAtomEntry(WeblogEntryData entry) {
         Entry atomEntry = new Entry();
         Content content = new Content();
-        content.setMode(Content.ESCAPED);
+        content.setType(Content.HTML);
         content.setValue(entry.getText());
-        List contents = new ArrayList();
-        contents.add(content);
         
-        atomEntry.setId(       entry.getId()); 
-        atomEntry.setTitle(    entry.getTitle());
-        atomEntry.setContents( contents);
-        atomEntry.setIssued(   entry.getPubTime()); 
-        atomEntry.setModified( entry.getUpdateTime());
-       
+        atomEntry.setId(        entry.getId());
+        atomEntry.setTitle(     entry.getTitle());
+        atomEntry.setContent(   content);
+        atomEntry.setPublished( entry.getPubTime());
+        atomEntry.setUpdated(   entry.getUpdateTime());
+        
+        List categories = new ArrayList();
+        Category atomCat = new Category();
+        atomCat.setTerm(entry.getCategory().getPath());
+        categories.add(atomCat);
+        atomEntry.setCategories(categories); 
+                
         List links = new ArrayList();
         Link altlink = new Link();
         altlink.setRel("alternate");
         altlink.setHref(entry.getPermaLink());
         links.add(altlink);
-        atomEntry.setAlternateLinks(links);
+        atomEntry.setLinks(links);
         
         return atomEntry;
     }
@@ -869,28 +793,37 @@ public class RollerAtomHandler implements AtomHandler
     /**
      * Create a Roller weblog entry based on a Rome Atom entry object
      */
-    private WeblogEntryData createRollerEntry(WebsiteData website, Entry entry)
-    {
+    private WeblogEntryData createRollerEntry(WebsiteData website, Entry entry) 
+        throws RollerException {
+
         Timestamp current = new Timestamp(System.currentTimeMillis());
         Timestamp pubTime = current;
         Timestamp updateTime = current;
-        if (entry.getIssued() != null)
-        {
-            pubTime = new Timestamp( entry.getIssued().getTime() );
+        if (entry.getPublished() != null) {
+            pubTime = new Timestamp( entry.getPublished().getTime() );
         }
-        if (entry.getModified() != null)
-        {
-            updateTime = new Timestamp( entry.getModified().getTime() );
+        if (entry.getUpdated() != null) {
+            updateTime = new Timestamp( entry.getUpdated().getTime() );
         }
         WeblogEntryData rollerEntry = new WeblogEntryData();
         rollerEntry.setTitle(entry.getTitle());
-        rollerEntry.setText( ((Content)entry.getContents().get(0)).getValue() );
+        rollerEntry.setText(entry.getContent().getValue());
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
         rollerEntry.setWebsite(website);
         rollerEntry.setStatus(WeblogEntryData.PUBLISHED);
-        rollerEntry.setCategory(website.getBloggerCategory());
         
+        List categories = entry.getCategories();
+        if (categories != null && categories.size() > 0) {
+            Category cat = (Category)categories.get(0);
+            System.out.println(cat.getTerm());
+            WeblogCategoryData rollerCat = 
+                mRoller.getWeblogManager().getWeblogCategoryByPath(
+                    website, cat.getTerm());
+            rollerEntry.setCategory(rollerCat);
+        } else {
+            rollerEntry.setCategory(website.getBloggerCategory());
+        }
         return rollerEntry;
-    }    
+    }
 }

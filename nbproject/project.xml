@@ -48,6 +48,11 @@
                     <type>java</type>
                     <location>build/generated/src.presentation</location>
                 </source-folder>
+                <source-folder>
+                    <label>sandbox/atomprotocol/src</label>
+                    <type>java</type>
+                    <location>sandbox/atomprotocol/src</location>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -123,6 +128,10 @@
                         <label>build/generated/src.presentation</label>
                         <location>build/generated/src.presentation</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>sandbox/atomprotocol/src</label>
+                        <location>sandbox/atomprotocol/src</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -145,7 +154,8 @@
                 <package-root>contrib/plugins/src</package-root>
                 <package-root>build/generated/src.business</package-root>
                 <package-root>build/generated/src.presentation</package-root>
-                <classpath mode="compile">tools/hibernate-2.1/lib/jdom.jar:tools/buildtime/junit-3.8.1.jar:tools/lib/activation.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-codec-1.1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/mail.jar:tools/lib/mm.mysql-2.0.14-bin.jar:tools/lib/rome-0.6.jar:tools/lib/rome-fetcher-0.6.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/hibernate-2.1/hibernate2.jar:tools/hibernate-2.1/lib/c3p0-0.8.4.5.jar:tools/hibernate-2.1/lib/cglib-full-2.0.1.jar:tools/hibernate-2.1/lib/dom4j-1.4.jar:tools/hibernate-2.1/lib/ehcache-0.7.jar:tools/hibernate-2.1/lib/jta.jar:tools/hibernate-2.1/lib/odmg-3.0.jar:tools/hibernate-2.1/lib/proxool-0.8.3.jar:tools/hibernate-2.1/lib/xalan-2.4.0.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar</classpath>
+                <package-root>sandbox/atomprotocol/src</package-root>
+                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/activation.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-codec-1.1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/mail.jar:tools/lib/mm.mysql-2.0.14-bin.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:sandbox/atomprotocol/lib/rome-0.8.jar:sandbox/atomprotocol/lib/rome-fetcher-0.8.jar:tools/hibernate-3.0/hibernate3.jar:tools/lib/jdom.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
         </java-data>
