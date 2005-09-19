@@ -39,7 +39,7 @@
     </style>
     <!-- Edit your _css Page Template -->
     <link rel="stylesheet" type="text/css"
-         href="$ctxPath/page/$userName/_css" />
+         href="${ctxPath}/page/${website.handle}/_css" />
 </head>
 <body>
 
