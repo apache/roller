@@ -54,7 +54,12 @@
       <property-def name="pings.suspendPingProcessing" key="configForm.suspendPingProcessing">
          <type>boolean</type>
          <default-value>false</default-value>
-      </property-def>    
+      </property-def>
+      <property-def  name="site.emailnotify"  key="configForm.emailNotification">
+         <type>boolean</type>
+         <!-- defaults to false because we don't distribute mail jars -->
+         <default-value>false</default-value>
+      </property-def>
    </display-group >
 
    <!-- User Settings Group -->
