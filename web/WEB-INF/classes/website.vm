@@ -65,7 +65,7 @@ $pageHelper.setContentType($ctype)## comment here kills trailing whitespace
  * @param divider        The text to place between each category.
  *#
 #macro( showWeblogSubcategoryChooser2 $parentCategory $divider )
-    #set( $rawUrl = "$ctxPath/page/$userName/$page.link" )
+    #set( $rawUrl = "${ctxPath}/page/${website.handle}" )
 
     <div class="rWeblogCategoryChooser">
     #set( $weblogUrl = $rawUrl )

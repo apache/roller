@@ -40,7 +40,7 @@
     #if (($entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
         <div class="comments" id="comments">
             <div id="commentTwisty$entry.Id" class="commentTwisty"
-                onclick="toggleComments('$entry.Id', '$ctxPath/page/$userName'); return false;">
+                onclick="toggleComments('$entry.Id', '${ctxPath}/page/${website.handle}'); return false;">
             <a href="$ctxPath$entry.permaLink" class="plain">
             #if($commentCount == 0)
                 $text.get( "macro.weblog.addcomment" )

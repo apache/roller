@@ -94,7 +94,7 @@
  * @param day Date object that specifies day (type java.util.Date).
  *#
 #macro( showDayPermalink $day )
-    <a href="$baseURL/page/$userName/#formatDate($plainFormat $day )"><img
+    <a href="${ctxPath}/page/${website.handle}/#formatDate($plainFormat $day )"><img
         class="daypermalink"
         src="$ctxPath/images/permalink.gif"
         title="$text.get( "macro.weblog.daypermalink.title" )"
@@ -144,14 +144,15 @@
  * @param entry WeblogEntry object.
  *#
 #macro( showTrackbackURL $entry )
-$absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
+$absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anchor)
+#end
 
 #**
  * Display search form for searching a weblog.  This is only a form, no div
  * or anything around it.
  *#
 #macro( showSearchForm )
-    <form id="searchForm" method="get" action="$ctxPath/search/$userName"
+    <form id="searchForm" method="get" action="${ctxPath}/search/${website.handle}"
         style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
         <p>
           <input type="text" id="q" name="q" size="20"
@@ -187,7 +188,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
 
         $text.get( "macro.weblog.searchhits", [$hits])
 
-        <form method="get" action="$ctxPath/search/$userName"
+        <form method="get" action="${ctxPath}/search/${website.handle}"
             style="margin: 5px">
             <input type="text" id="q" name="q" size="31"
                 maxlength="255" value="$term"
@@ -202,7 +203,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
             <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
         </form>
 
-        $text.get( "macro.weblog.searchgoogle", [$term, $absBaseURL, $ctxPath, $userName] )
+        $text.get( "macro.weblog.searchgoogle", [$term, $absBaseURL, $ctxPath, ${website.handle}] )
     </div>
     <script type="text/javascript"
         src="$ctxPath/theme/scripts/searchhi.js"></script>
@@ -315,7 +316,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
    #foreach( $day in $xmap.keySet() )
        #set( $recentEntries = $xmap.get($day) )
        #foreach ($var in $recentEntries)
-           <li class="recentposts"><a href="$baseURL/page/$userName/?entry=$utilities.encode($var.anchor)">$var.title</a></li>
+           <li class="recentposts"><a href="${ctxPath}/page/${website.handle}?entry=$utilities.encode($var.anchor)">$var.title</a></li>
        #end
    #end
    </ul>
@@ -405,7 +406,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
         #showPrevEntryLink($npcat) |
     #end
     #if ( $pageModel.previousEntry || $pageModel.nextEntry)
-        <a href="$ctxPath/page/$userName/$page.link$catLink">$page.name</a>
+        <a href="${ctxPath}/page/${website.handle}$catLink">$page.name</a>
     #end
     #if ($pageModel.nextEntry)
         | #showNextEntryLink($npcat)
@@ -421,8 +422,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
     <span id="previousEntry">
     #if( $pageModel.previousEntry )
         #set( $prev = $pageModel.previousEntry )
-        #set( $prevURL = "$baseURL/page/${prev.website.user.userName}/#formatDate($plainFormat ${prev.pubTime})" )
-        #if ( $category != 'nil' ) #set( $prevURL = "$prevURL?catname=$category" )#end
+        #set( $prevURL = "${ctxPath}${prev.permaLink}" )
         <a href="$prevURL" title="Previous Entries"
             >&laquo; $utilities.truncateNicely($prev.title, 30, 30, "...")</a>
     #end
@@ -437,8 +437,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
     <span id="nextEntry">
     #if( $pageModel.nextEntry )
         #set( $next = $pageModel.nextEntry )
-        #set( $nextURL = "$baseURL/page/${next.website.user.userName}/#formatDate($plainFormat ${next.pubTime})" )
-        #if ( $category != 'nil' ) #set( $nextURL = "$nextURL?catname=$category" )#end 
+        #set( $nextURL = "${ctxPath}${next.permaLink}" )
         <a href="$nextURL" title="Next Entries"
             >$utilities.truncateNicely($next.title, 30, 30, "...") &raquo;</a>
     #end
@@ -467,7 +466,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
     dc:identifier="$absBaseURL$entry.permaLink"
     dc:subject="$entry.category.name"
     dc:description="$entry.title"
-    dc:creator="$entry.website.user.userName"
+    dc:creator="$entry.website.creator.userName"
     dc:date="$entry.pubTime" />
 </rdf:RDF>
 -->
