@@ -29,11 +29,6 @@ create index user_isenabled_index on rolleruser( isenabled );
 
 -- -----------------------------------------------------
 
-insert roller_properties (name,value) values ('site.shortName','');
-insert roller_properties (name,value) values ('planet.cache.dir','/var/roller/planet-cache');
-
--- -----------------------------------------------------
-
 -- Audit log records time and comment about change
 -- user_id: user that made change
 -- object_id: id of associated object, if any
@@ -48,6 +43,16 @@ create table roller_audit_log (
     comment         varchar(255) not null, 
     change_time     timestamp              
 );
+
+
+-- -----------------------------------------------------
+
+-- update weblogentry.pubtime to be a "datetime" field instead of "timestamp"
+-- "timestamp" doesn't work anymore because we want the value to be null until
+-- the weblogentry is published, and "timestamps" are set automatically
+
+alter table weblogentry modify pubtime datetime NULL;
+
 
 -- -----------------------------------------------------
 -- For ROL-754. MySQL 5.x introduced a new keyword "condition"
