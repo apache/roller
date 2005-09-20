@@ -75,8 +75,12 @@ public class CreateWebsiteAction extends DispatchAction
             throws Exception
     {
         CreateWebsiteForm form = (CreateWebsiteForm)actionForm;
-        form.setLocale( Locale.getDefault().toString() );
-        form.setTimeZone( TimeZone.getDefault().getID() );      
+        
+        RollerSession rses = RollerSession.getRollerSession(request);
+        UserData user = rses.getAuthenticatedUser();        
+        form.setLocale(user.getLocale());
+        form.setTimeZone(user.getTimeZone());         
+        form.setEmailAddress(user.getEmailAddress());
 
         request.setAttribute("model", 
             new CreateWebsitePageModel(request, response, mapping, null));

@@ -163,13 +163,17 @@ if (emailComments) { %>
     <input type="submit" value='<fmt:message key="websiteSettings.button.update" />' />
 </div>
         
-<c:if test="${model.website.adminUserCount == 1}">
+<c:if test="${model.website.adminUserCount == 1 && model.groupBloggingEnabled}">
     <br />
     <br />
     <h2><fmt:message key="websiteSettings.removeWebsiteHeading" /></h2>
     <p class="subtitle">
         <fmt:message key="websiteSettings.removeWebsite" />
+        <span class="warning">
+            <fmt:message key="websiteSettings.removeWebsiteWarning" />
+        </span>
     </p>
+    <br />
     <input type="button" value='<fmt:message key="websiteSettings.button.remove" />'  
         onclick='document.websiteFormEx.method.value="removeOk"; document.websiteFormEx.submit()' />
     <br />

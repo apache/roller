@@ -26,9 +26,9 @@ String websiteHandle = pageModel.getWebsite().getHandle();
   <%-- Headings --%>
   <tr class="rollertable">
   <th class="rollertable" width="20%"><fmt:message key="pingTarget.name" /></th>
-  <th class="rollertable" width="50%"><fmt:message key="pingTarget.pingUrl" /></th>
+  <th class="rollertable" width="40%"><fmt:message key="pingTarget.pingUrl" /></th>
   <th class="rollertable" width="20%" colspan=2><fmt:message key="pingTarget.auto" /></th>
-  <th class="rollertable" width="10%"><fmt:message key="pingTarget.manual" /></th>
+  <th class="rollertable" width="20%"><fmt:message key="pingTarget.manual" /></th>
   </tr>
 
   <%-- Table of current common targets with actions --%>
@@ -123,9 +123,9 @@ String websiteHandle = pageModel.getWebsite().getHandle();
      <%-- Headings --%>
      <tr class="rollertable">
      <th class="rollertable" width="20%"><fmt:message key="pingTarget.name" /></th>
-     <th class="rollertable" width="50%"><fmt:message key="pingTarget.pingUrl" /></th>
+     <th class="rollertable" width="40%"><fmt:message key="pingTarget.pingUrl" /></th>
      <th class="rollertable" width="20%" colspan=2><fmt:message key="pingTarget.auto" /></th>
-     <th class="rollertable" width="10%"><fmt:message key="pingTarget.manual" /></th>
+     <th class="rollertable" width="20%"><fmt:message key="pingTarget.manual" /></th>
      </tr>
 
       <%-- Table of current custom targets with actions --%>
