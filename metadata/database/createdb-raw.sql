@@ -36,7 +36,7 @@ create index ur_userid_idx on userrole( userid );
 create index ur_username_idx on userrole( username@INDEXSIZE@ );
 
 -- User permissions within a website
--- permission_mask: bitmask 001 limited, 011 author, 100 admin
+-- permission_mask: bitmask 000 limited, 001 author, 011 admin
 -- pending: pending user acceptance of invitation to join website
 create table roller_user_permissions (
     id              varchar(48) not null primary key,
