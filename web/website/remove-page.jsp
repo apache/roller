@@ -25,6 +25,7 @@
 			<input type="submit" value='<fmt:message key="application.yes" />' ></input>
 			<html:hidden property="method" value="remove"/></input>
 			<html:hidden property="id" /></input>
+			<input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
 		</html:form>
 	</td>
 	<td>
@@ -32,6 +33,7 @@
 			<input type="submit" value='<fmt:message key="application.no" />' ></input>
 			<html:hidden property="id" /></input>
 			<html:hidden property="method" value="cancel"/></input>
+			<input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
 		</html:form>
 	</td>
 </tr>

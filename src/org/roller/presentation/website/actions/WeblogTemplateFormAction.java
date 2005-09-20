@@ -159,12 +159,21 @@ public final class WeblogTemplateFormAction extends DispatchAction
         ActionForward forward = mapping.findForward("editPages.page");
         try
         {
+            WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
             request.setAttribute("model", new BasePageModel(
-                "pagesForm.title", request, response, mapping));            
+                "pagesForm.title", request, response, mapping)); 
+            
             WebsiteData website = rreq.getWebsite();
-            if ( rses.isUserAuthorizedToAdmin(website) )
+            if (website == null && form.getId()!=null) 
+            {
+                UserManager mgr = RollerFactory.getRoller().getUserManager();                
+                WeblogTemplate template = mgr.retrievePage(form.getId());
+                website = template.getWebsite();
+            }
+            
+            if ( rses.isUserAuthorizedToAdmin(website))
             {
                 addModelObjects(request, response, mapping, website);
             }
@@ -242,18 +251,23 @@ public final class WeblogTemplateFormAction extends DispatchAction
         throws IOException, ServletException
     {
         ActionForward forward = mapping.findForward("removePage.page");
-        request.setAttribute("model", new BasePageModel(
-            "editPages.title.removeOK", request, response, mapping));
         try
         {
             RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WeblogTemplate cd = (WeblogTemplate) rreq.getPage();
-            WebsiteData website = cd.getWebsite();
+            WeblogTemplate page = (WeblogTemplate) rreq.getPage();
+            WebsiteData website = page.getWebsite();
             if ( rses.isUserAuthorizedToAdmin(website) )
             {
-                WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
-                pf.copyFrom(cd, request.getLocale());
+                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+                form.copyFrom(page, request.getLocale());
+
+                addModelObjects(request, response, mapping, page.getWebsite());
+                
+                BasePageModel pageModel = new BasePageModel(
+                    "editPages.title.removeOK", request, response, mapping);
+                pageModel.setWebsite(website);
+                request.setAttribute("model", pageModel);
 
                 UserData ud = rses.getAuthenticatedUser();
                 request.setAttribute("user",ud);
