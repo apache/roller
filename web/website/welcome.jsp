@@ -6,6 +6,9 @@
 
 <p><a href='<c:out value="${contextURL}"/>/login-redirect.jsp'><fmt:message key="welcome.clickHere" /></a> 
 <fmt:message key="welcome.toLoginAndPost" /></p>
+<br />
+<br />
+<br />
 
 
 

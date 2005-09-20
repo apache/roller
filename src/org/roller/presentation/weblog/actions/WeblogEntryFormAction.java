@@ -711,6 +711,11 @@ public final class WeblogEntryFormAction extends DispatchAction
 
                     return save(mapping, wf, request, response);
                 }
+                else 
+                {
+                    return display(WeblogEntryPageModel.EDIT_MODE, 
+                                mapping, actionForm, request, response);
+                }
             }
         }
         catch (Exception e)

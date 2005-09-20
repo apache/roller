@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
+import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -305,6 +306,7 @@ public final class WebsiteFormAction extends DispatchAction
     public class WebsitePageModel extends BasePageModel 
     {
         private List permissions = new ArrayList();
+        private boolean groupBloggingEnabled = false;
         public WebsitePageModel(
                 String titleKey,
                 HttpServletRequest request,
@@ -318,6 +320,14 @@ public final class WebsiteFormAction extends DispatchAction
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             UserData user = rollerSession.getAuthenticatedUser();
             permissions = roller.getUserManager().getAllPermissions(website);
+            groupBloggingEnabled = 
+                RollerConfig.getBooleanProperty("groupblogging.enabled");
+        }
+        public boolean isGroupBloggingEnabled() {
+            return groupBloggingEnabled;
+        }
+        public void setGroupBloggingEnabled(boolean groupBloggingEnabled) {
+            this.groupBloggingEnabled = groupBloggingEnabled;
         }
     }
 }

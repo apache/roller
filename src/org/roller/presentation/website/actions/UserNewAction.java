@@ -67,11 +67,11 @@ public class UserNewAction extends UserBaseAction
             HttpServletResponse response)
             throws Exception
     {
-        return mapping.findForward("user");
+        return mapping.findForward("main");
     }
     
     //------------------------------------------------------------------------
-    /** Process GET of user registration page (allows users to register themselves. */
+    /** Process GET of user registration page (allows users to register themselves). */
     public ActionForward registerUser(
         ActionMapping       mapping,
         ActionForm          actionForm,
@@ -85,8 +85,10 @@ public class UserNewAction extends UserBaseAction
         try
         {
             UserFormEx userForm = (UserFormEx)actionForm;
-            userForm.setLocale( Locale.getDefault().getDisplayName() );
-            userForm.setTimeZone( TimeZone.getDefault().getID() );
+            
+            userForm.setLocale(Locale.getDefault().toString());
+            userForm.setTimeZone(TimeZone.getDefault().getID());
+            
             userForm.setPasswordText(null);
             userForm.setPasswordConfirm(null);            
             request.setAttribute("model", new BasePageModel(

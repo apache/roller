@@ -22,6 +22,7 @@ import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.YourWebsitesForm;
 
@@ -29,7 +30,7 @@ import org.roller.presentation.website.formbeans.YourWebsitesForm;
  * Allows user to view and pick from list of his/her websites.
  * 
  * @struts.action path="/editor/yourWebsites" name="yourWebsitesForm" parameter="method"
- * @struts.action-forward name="yourWebsites.page" path=".YourWebsites"
+ * @struts.action-forward name="yourWebsites.page" path=".yourWebsites"
  */
 public class YourWebsitesAction extends DispatchAction
 {
@@ -130,13 +131,13 @@ public class YourWebsitesAction extends DispatchAction
         Roller roller = RollerFactory.getRoller();
         RollerSession rses = RollerSession.getRollerSession(request);
         UserData user = rses.getAuthenticatedUser();
-        WebsiteData website = 
-            roller.getUserManager().retrieveWebsite(form.getWebsiteId());
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        WebsiteData website = rreq.getWebsite();
         PermissionsData perms = 
             roller.getUserManager().getPermissions(website, user);
         if (perms != null) 
         {
-            // ROLLER_2.0: notify website members that user has resigned  
+            // TODO: notify website members that user has resigned  
             perms.remove();
             roller.commit();
         }

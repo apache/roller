@@ -8,7 +8,7 @@
              <h3><fmt:message key="yourWebsites.actions" /></h3>
              <hr size="1" noshade="noshade" />
           
-            <c:if test="${!empty model.permissions && model.groupBloggingEnabled}">               
+            <c:if test="${model.groupBloggingEnabled}">               
                 <h3>
                 <roller:link forward="createWebsite">
                    <fmt:message key="yourWebsites.createWeblog" />
