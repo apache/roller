@@ -15,7 +15,11 @@ alter table website add column handle varchar(255) @ALTER_TABLE_NOT_NULL@;
 alter table website add column datecreated  timestamp @ALTER_TABLE_NOT_NULL@;
 alter table website add column emailaddress varchar(255) @ALTER_TABLE_NOT_NULL@;
 create index website_handle_index on website(handle);
-alter table website add constraint website_handle_uq unique (handle@INDEXSIZE@);
+
+-- this constraint won't work for upgrades until the handle column is
+-- populated with data, otherwise all columns are '' which will not
+-- satisfy the 'unique' condition
+-- alter table website add constraint website_handle_uq unique (handle@INDEXSIZE@);
 
 -- Add userid to weblogentry so we can track original creator of entry
 alter table weblogentry add column userid varchar(48) @ALTER_TABLE_NOT_NULL@;
