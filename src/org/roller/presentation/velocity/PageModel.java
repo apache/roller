@@ -663,7 +663,7 @@ public class PageModel
     {
         WeblogEntryData entry = mRollerReq.getWeblogEntry();
         
-        if(entry != null)
+        if(entry != null && entry.getStatus().equals(WeblogEntryData.PUBLISHED))
             return WeblogEntryDataWrapper.wrap(entry);
         else
             return null;

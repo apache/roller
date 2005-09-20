@@ -233,8 +233,11 @@ public class ContextLoader
             list.add(CommentDataWrapper.wrap(cd));
             ctx.put("previewComments",list);            
         }
+        
         WeblogEntryData entry = rreq.getWeblogEntry();
-        ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));            
+        if (entry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
+            ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));            
+        }
     }   
 
     //------------------------------------------------------------------------
