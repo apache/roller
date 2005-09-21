@@ -1,4 +1,4 @@
-package org.roller.presentation.atomapi;
+package org.roller.presentation.atomapi04;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,6 +24,10 @@ import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.MockRollerContext;
+import org.roller.presentation.atomapi.AtomCollection;
+import org.roller.presentation.atomapi.AtomService;
+import org.roller.presentation.atomapi.AtomServlet;
+import org.roller.presentation.atomapi.WSSEUtilities;
 import org.roller.util.Utilities;
 
 import com.mockrunner.mock.web.ActionMockObjectFactory;
