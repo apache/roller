@@ -30,7 +30,7 @@ import org.roller.presentation.website.formbeans.YourWebsitesForm;
  * Allows user to view and pick from list of his/her websites.
  * 
  * @struts.action path="/editor/yourWebsites" name="yourWebsitesForm" parameter="method"
- * @struts.action-forward name="yourWebsites.page" path=".yourWebsites"
+ * @struts.action-forward name="yourWebsites.page" path=".YourWebsites"
  */
 public class YourWebsitesAction extends DispatchAction
 {
