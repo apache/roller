@@ -255,42 +255,47 @@ public final class WeblogEntryFormAction extends DispatchAction
         ActionForm          actionForm,
         HttpServletRequest  request,
         HttpServletResponse response)
-        throws IOException, ServletException
-    {
+        throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("weblogEdit.page");
         ActionMessages uiMessages = new ActionMessages();
-        try
-        {
-            WeblogEntryFormEx    wf = (WeblogEntryFormEx)actionForm;
+        try {
+            WeblogEntryFormEx  form = (WeblogEntryFormEx)actionForm;
             Roller           roller = RollerFactory.getRoller();
             RollerSession      rses = RollerSession.getRollerSession(request);
             UserManager     userMgr = roller.getUserManager();
             WeblogManager weblogMgr = roller.getWeblogManager();
-            UserData           ud  = userMgr.retrieveUser(wf.getCreatorId());
-            WebsiteData       site = userMgr.retrieveWebsite(wf.getWebsiteId());
+            UserData           ud  = userMgr.retrieveUser(form.getCreatorId());
+            WebsiteData       site = userMgr.retrieveWebsite(form.getWebsiteId());
             WeblogEntryData  entry = null;
             
             if ( rses.isUserAuthorizedToAuthor(site) 
                  || (rses.isUserAuthorized(site) 
-                        && !wf.getStatus().equals(WeblogEntryData.PUBLISHED) ))
-            {                             
-                if (wf.getId() == null || wf.getId().trim().length()==0) 
-                {
+                    && !form.getStatus().equals(WeblogEntryData.PUBLISHED) )) { 
+                
+                ActionErrors errors = validateEntry(null, form);
+                if (errors.size() > 0) {
+                    saveErrors(request, errors);
+                    request.setAttribute("model",
+                        new WeblogEntryPageModel(request, response, mapping,
+                                (WeblogEntryFormEx)actionForm,
+                                WeblogEntryPageModel.EDIT_MODE));
+                    return forward;                    
+                }
+                
+                if (form.getId() == null || form.getId().trim().length()==0) {
                     entry = new WeblogEntryData();  
                     entry.setCreator(ud);
                     entry.setWebsite( site );
-                }
-                else 
-                {
-                    entry = weblogMgr.retrieveWeblogEntry(wf.getId());
-                    entry.save(); // should throw if save not permitted
+                } else {
+                    entry = weblogMgr.retrieveWeblogEntry(form.getId());
                 }
                 
                 mLogger.debug("setting update time now");
-                wf.setUpdateTime(new Timestamp(new Date().getTime()));
+                form.setUpdateTime(new Timestamp(new Date().getTime()));
                 
-                if("PUBLISHED".equals(wf.getStatus()) &&
-                        "0/0/0".equals(wf.getDateString())) {
+                if("PUBLISHED".equals(form.getStatus()) &&
+                        "0/0/0".equals(form.getDateString())) {
                     mLogger.debug("setting pubtime now");
                     
                     /* NOTE: the wf.copyTo() method will override this value
@@ -301,22 +306,20 @@ public final class WeblogEntryFormAction extends DispatchAction
                      * effect if the entry is being published for the first
                      * time.
                      */
-                    wf.setPubTime(wf.getUpdateTime());
+                    form.setPubTime(form.getUpdateTime());
                 }
                 
                 mLogger.debug("copying submitted form data to entry object");
-                wf.copyTo(entry, request.getLocale(),request.getParameterMap());
+                form.copyTo(entry, request.getLocale(),request.getParameterMap());
 
                 // Fetch MediaCast content type and length
                 mLogger.debug("Checking MediaCast attributes");
-                if (!checkMediaCast(entry)) 
-                {
+                if (!checkMediaCast(entry)) {
                    mLogger.debug("Invalid MediaCast attributes");
                    uiMessages.add(null, 
                      new ActionMessage("weblogEdit.message.mediaCastProblem"));
                 }
-                else if (mLogger.isDebugEnabled()) 
-                {
+                else if (mLogger.isDebugEnabled()) {
                    mLogger.debug("Invalid MediaCast attributes");
                 }
 
@@ -327,7 +330,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                 RollerFactory.getRoller().commit();
 
                 mLogger.debug("Populating form");
-                wf.copyFrom(entry, request.getLocale());
+                form.copyFrom(entry, request.getLocale());
                                
                 request.setAttribute(
                         RollerRequest.WEBLOGENTRYID_KEY, entry.getId());
@@ -351,8 +354,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                                 WeblogEntryPageModel.EDIT_MODE));
                 
                 if (!rses.isUserAuthorizedToAuthor(site) && 
-                        rses.isUserAuthorized(site) && entry.isPending())
-                {
+                        rses.isUserAuthorized(site) && entry.isPending()) {
                     // implies that entry just changed to pending
                     notifyWebsiteAuthorsOfPendingEntry(request, entry);
                     uiMessages.add(null,
@@ -362,29 +364,24 @@ public final class WeblogEntryFormAction extends DispatchAction
                     actionForm = new WeblogEntryFormEx();
                     request.setAttribute(mapping.getName(), actionForm);
                     forward = create(mapping, actionForm, request, response);
-                }
-                else 
-                {
+                } else {
                     uiMessages.add(null, 
                         new ActionMessage("weblogEdit.changesSaved"));
                 }
                 saveMessages(request, uiMessages);               
                 mLogger.debug("operation complete");
-            }
-            else
-            {
+                
+            } else {
                 forward = mapping.findForward("access-denied");
             }
         }
-        catch (RollerPermissionsException e)
-        {
+        catch (RollerPermissionsException e) {
             ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError("error.permissions.deniedSave"));
             saveErrors(request, errors);
             forward = mapping.findForward("access-denied");
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             throw new ServletException(e);
         }
         return forward;
@@ -1052,5 +1049,16 @@ public final class WeblogEntryFormAction extends DispatchAction
             manager.addEntryReIndexOperation(entry);
         }
     }
+
+    public ActionErrors validateEntry(ActionErrors errors, WeblogEntryFormEx form) {
+        if (errors == null) errors = new ActionErrors();
+        if (StringUtils.isEmpty(form.getTitle()) 
+            && StringUtils.isEmpty(form.getText())) {
+            errors.add(null, new ActionError("weblogEdit.error.incompleteEntry"));
+        }
+        return errors;
+    } 
+                            
+
 }
 
