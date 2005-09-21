@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.roller.presentation.atomapi;
+package org.roller.presentation.atomapi04;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,6 +24,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.jdom.Document;
+import org.roller.presentation.atomapi.AtomCollection;
+import org.roller.presentation.atomapi.AtomService;
 
 /**
  * @author Dave Johnson
