@@ -14,7 +14,9 @@ boolean allowNewUsers = RollerConfig.getBooleanProperty("users.registration.enab
     
         <% if (user != null) { %>
             <fmt:message key="mainPage.loggedInAs" />
-             <b><%= user.getUserName() %></b>
+            <html:link forward="yourProfile">
+               <%= user.getUserName() %>
+            </html:link>
         <% } %>
         
         <c:if test="${!empty model.website}" >
