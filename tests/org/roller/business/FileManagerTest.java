@@ -130,7 +130,7 @@ public class FileManagerTest extends TestCase
         umgr.addUser(user);
         umgr.createWebsite(user, pages, 
                 user.getUserName(), user.getUserName(), user.getUserName(), 
-                "basic", "en_US_WIN", "America/Los_Angeles");
+                "dummy@example.com","basic", "en_US_WIN", "America/Los_Angeles");
         mRoller.commit();
         WebsiteData website = (WebsiteData)umgr.getWebsites(user,null).get(0);
         return website;

@@ -56,7 +56,7 @@ public class WebsiteTest extends TestCase
         
         // Create website for user with those pages
         WebsiteData website = umgr.createWebsite(
-           user, pages, "testuser", "testuser", "testuser", "basic", 
+           user, pages, "testuser", "testuser", "testuser","dummy@example.com","basic", 
            "en_US_WIN", "America/Los_Angeles");
         
         Timestamp day = new Timestamp(new Date().getTime());

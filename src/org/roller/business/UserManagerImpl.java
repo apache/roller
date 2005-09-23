@@ -232,6 +232,7 @@ public abstract class UserManagerImpl implements UserManager
             String handle,
             String name, 
             String description,
+            String email,
             String theme, 
             String locale, 
             String timeZone) throws RollerException
@@ -256,7 +257,7 @@ public abstract class UserManagerImpl implements UserManager
             Boolean.FALSE,       // emailComments
             "",                  // emailFromAddress
             Boolean.TRUE,        // isEnabled
-            "dummy@example.com", // emailAddress
+            email,               // emailAddress
             new Date());
         website.setEditorTheme(theme);
         website.setLocale(locale);

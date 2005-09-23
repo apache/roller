@@ -244,7 +244,7 @@ public class UserManagerTest  extends RollerTestBase
         umgr.addUser(user);
         umgr.createWebsite(user, pages, 
                 user.getUserName(), user.getUserName(), user.getUserName(), 
-                "basic", "en_US_WIN", "America/Los_Angeles");
+                "dummy@example.com","basic", "en_US_WIN", "America/Los_Angeles");
         getRoller().commit();
 
         // Verify that user has all the goodies

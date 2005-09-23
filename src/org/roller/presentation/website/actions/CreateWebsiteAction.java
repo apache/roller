@@ -120,6 +120,7 @@ public class CreateWebsiteAction extends DispatchAction
                form.getHandle(), 
                form.getName(), 
                form.getDescription(), 
+               form.getEmailAddress(),
                form.getTheme(), 
                form.getLocale(), 
                form.getTimeZone());
