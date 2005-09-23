@@ -154,6 +154,7 @@ public interface UserManager extends Serializable
             String handle,
             String name, 
             String description,
+            String email,
             String theme, 
             String locale, 
             String timeZone) throws RollerException;
