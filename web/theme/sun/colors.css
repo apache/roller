@@ -89,6 +89,10 @@ div.yourWeblogBox {
 td.actions {
     background: #e9e9e9;
 }
+input.searchButton {
+    color: white;
+    background: #e77100;
+}
 .sidebarBodyHead {
     background: #3d5c71;
     color: white;
@@ -108,10 +112,6 @@ td.actions {
 }
 .searchSidebarBody {
     background: #d1d766;
-}
-input.searchButton {
-    color: white;
-    background: #e77100;
 }
 
 /* ------------------------------------------------------------------------ */

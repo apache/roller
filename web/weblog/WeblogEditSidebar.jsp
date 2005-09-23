@@ -9,6 +9,8 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
     <div class="menu-tr">
         <div class="menu-tl">
         
+<div class="sidebarInner">
+
 <h3><fmt:message key="weblogEdit.pendingEntries" /></h3>
 
 <c:if test="${empty model.recentPendingEntries}">
@@ -77,7 +79,8 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
 
 <br />
 <br />
-                
+</div>
+       
         </div>
     </div>
 </div>

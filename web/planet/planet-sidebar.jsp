@@ -10,6 +10,7 @@
 
 <div class="sidebarBody">
 
+<div class="sidebarInner">
   <c:if test="${not empty topBlogs}"> <%-- to prevent invalid XHTML --%>
     <ul style="list-style-type:none; padding-left:2px; margin: 0px">
         <c:forEach var="blog" items="${topBlogs}">
@@ -30,6 +31,7 @@
   </c:if>  
 
  <br />	
+</div>
 
 </div>
 

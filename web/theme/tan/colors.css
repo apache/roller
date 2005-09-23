@@ -10,15 +10,6 @@
 .bannerBox {
     background: url("two-banner.gif") repeat-x top;
 }
-.sidebarFade {
-    background: #f5f0e6;
-}
-.sidebarFade_hotblogs {
-    background: #f5f0e6;
-}
-.sidebarFade_search {
-    background: #f5f0e6;
-}
 .bannerStatusBox {
     background: #ad3431;
     color: white;
@@ -67,17 +58,17 @@ div.control {
 div.controlToggle {
     background: url("two-togglegrey.gif") repeat-x top; 
 }
+div.entriesBox {
+   background: #f5f0e6;
+}
 div.entryTitleBox {
    color: white; 
    background: #c6ab74; 
 }
 div.entryBox {
    border-bottom: 1px #c8af7b solid;
-   background: #f5f0e6;
-   margin: 0px 0px 0px 0px;
 }
 div.entryTitleBox {
-   padding: 4px;
    font-size: medium;
 }
 div.entryBoxPinned {
@@ -91,6 +82,30 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
 }
 div.yourWeblogBox {
    border-top: 1px #c6ab74 solid;
+}
+input.searchButton {
+    color: white;
+    background: #ad3431;
+}
+.sidebarBodyHead {
+    background: #ad3431;
+    color: white;
+}
+.searchSidebarBodyHead h3 {
+    color: black;
+}
+.sidebarBodyHead h3 {
+    color: white;
+}
+.sidebarFade, div.sidebarBody {
+    background: #f5f0e6;
+    color: #666666;
+}
+.searchSidebarHead {
+    background: #f5f0e6;
+}
+.searchSidebarBody {
+    background: #f5f0e6;
 }
 
 /* ------------------------------------------------------------------------ */
