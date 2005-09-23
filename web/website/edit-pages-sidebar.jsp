@@ -4,6 +4,7 @@
     <div class="menu-tr">
         <div class="menu-tl">
             
+<div class="sidebarInner">
              <h3><fmt:message key="pagesForm.addNewPage" /></h3>
              <hr size="1" noshade="noshade" />
              
@@ -18,6 +19,7 @@
              </html:form>
              <br />
              
+</div>
         </div>
     </div>
 </div>	

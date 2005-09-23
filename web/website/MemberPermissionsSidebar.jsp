@@ -4,6 +4,8 @@
     <div class="menu-tr">
         <div class="menu-tl">
             
+        <div class="sidebarInner">
+
             <h3><fmt:message key="mainPage.actions" /></h3>
             <hr size="1" noshade="noshade" />
             <img src='<c:url value="/images/ComposeMail16.gif"/>' alt="mail-icon" align="bottom" />
@@ -17,7 +19,7 @@
             <fmt:message key="memberPermissions.whyInvite" />       
 			<br />
 			<br />
-					
+        </div>					
         </div>
     </div>
 </div>	
@@ -29,6 +31,7 @@
     <div class="menu-tr">
         <div class="menu-tl">
             <div class="sidebarBody">
+            <div class="sidebarInner">
             
             <h3>
                 <fmt:message key="memberPermissions.permissionsHelpTitle" />
@@ -38,7 +41,7 @@
             <fmt:message key="memberPermissions.permissionHelp" />	
 		    <br />
 		    <br />
-		    
+        </div>		    
             </div>
         </div>
     </div>

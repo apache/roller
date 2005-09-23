@@ -4,6 +4,7 @@
     <div class="menu-tr">
         <div class="menu-tl">
             
+<div class="sidebarInner">
             <h3><fmt:message key="mainPage.actions" /></h3>
             <hr size="1" noshade="noshade" />
             
@@ -18,6 +19,7 @@
 			</p>
 			
 			<br />
+</div>
 			
         </div>
     </div>

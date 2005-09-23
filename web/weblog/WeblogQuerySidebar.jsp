@@ -9,6 +9,8 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
     <div class="menu-tr">
         <div class="menu-tl">
 
+<div class="sidebarInner">
+        
 <h3><fmt:message key="weblogEntryQuery.sidebarTitle" /></h3>
 <hr size="1" noshade="noshade" />
 
@@ -104,6 +106,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
 
 <br />
 <br />
+</div> <!-- sidebarInner -->
 
         </div>
     </div>
