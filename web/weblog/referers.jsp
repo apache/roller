@@ -11,6 +11,7 @@
 </p>
 
 <html:form action="/editor/referers" method="post">
+<input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
 <input type="hidden" name="method" value="delete" />
 
 <%-- Table of referers, with check box for each --%>
@@ -45,6 +46,7 @@
 <h1><fmt:message key="referers.hitCounters" /></h1>
 <p><fmt:message key="referers.hits" />: <c:out value="${pageHits}"/></p>
 <html:form action="/editor/referers" method="post">
+    <input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
     <input type="hidden" name="method" value="reset" />
     <input type="submit" value='<fmt:message key="referers.reset" />' /></input>
 </html:form>
