@@ -10,13 +10,13 @@
 .bannerBox {
     background: url("two-banner.gif") repeat-x top;
 }
-.sidebarfade {
+.sidebarFade {
     background: #f5f0e6;
 }
-.sidebarfade_hotblogs {
+.sidebarFade_hotblogs {
     background: #f5f0e6;
 }
-.sidebarfade_search {
+.sidebarFade_search {
     background: #f5f0e6;
 }
 .bannerStatusBox {

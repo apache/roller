@@ -20,6 +20,9 @@ request.setAttribute("popularWebsites",
     </div>
 </c:if>
 
+<div class="entriesBox">
+<div class="entriesBoxInner">
+
 <c:if test="${!empty pinnedPosts}">
 
     <c:forEach var="post" items="${pinnedPosts}">
@@ -29,15 +32,17 @@ request.setAttribute("popularWebsites",
                 <str:truncateNicely upper="90" >
                    <c:out value="${post.displayTitle}" />
                 </str:truncateNicely></a>
-            </a><br /> 
+            </a>
+            <br /> 
 
             <span class="entryDetails">
 
                 <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.handle}" />' class="entryDetails">
+                
                 <str:truncateNicely upper="50" >
                    <c:out value="${post.website.name}" />
                 </str:truncateNicely></a> |
-                <c:out value="${post.category.path}" /> |
+                <c:out value="${post.category.name}" /> |
                 <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" /> |
                 <fmt:message key="mainPage.postedBy" />&nbsp;
                 <c:out value="${post.creator.userName}" />
@@ -47,8 +52,7 @@ request.setAttribute("popularWebsites",
                 <br />
 
             </span>
-
-            <roller:ApplyPlugins name="post" scope="page" maxLength="250" skipFlag="true" />
+            <roller:ApplyPlugins name="post" scope="page" skipFlag="false" />
 
          </div>
     </c:forEach>
@@ -65,12 +69,11 @@ request.setAttribute("popularWebsites",
         </a><br />
 
         <span class="entryDetails">
-
-            <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.handle}" />' class="entryDetails">
+            <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.handle}" />'>
             <str:truncateNicely upper="50" >
                <c:out value="${post.website.name}" />
             </str:truncateNicely></a> |
-            <c:out value="${post.category.path}" /> |
+            <c:out value="${post.category.name}" /> |
             <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" /> |
             <fmt:message key="mainPage.postedBy" />
             <c:out value="${post.creator.userName}" />
@@ -78,14 +81,18 @@ request.setAttribute("popularWebsites",
                | <a href='<c:out value="${post.link}" />' class="entryDetails"><fmt:message key="mainPage.link" /></a>
             </c:if>
             <br />
-
         </span>
-
-        <roller:ApplyPlugins name="post" scope="page" stripHtml="true" maxLength="200" skipFlag="true" />
-
+        
+        <span class="entryDescription">
+        <roller:ApplyPlugins name="post" scope="page" stripHtml="true" maxLength="120" skipFlag="true" />
+        </span>
+        
     </div>
     </c:if>
 </c:forEach>
+
+</div> <!-- entriesBoxInner -->
+</div> <!-- entriesBox -->
 
 <br />
 

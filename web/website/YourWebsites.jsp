@@ -114,7 +114,7 @@ function resignWebsite(id,handle)
 
                </td>
 
-               <td class="actions" width="25%" align="left">
+               <td class="actions" width="25%" align="left" style="padding: 4px">
 
                        <fmt:message key='yourWebsites.actions' />                       
                        <br />

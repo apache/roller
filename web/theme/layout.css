@@ -10,11 +10,31 @@ layout.css: Base CSS layout for Roller's web UI (position and sizing only)
     margin: 0px;
     padding: 0px 0px 0px 0px;
 }
+.bannerBox {
+    height: 78px; 
+    width: 100%;
+}
+.bannerStatusBox {
+    height: 21px; 
+    width: 100%;
+}
+.sidebarBodyHead {
+    height: 25px;
+}
+.searchSidebarHead {
+   height: 5px;
+}
+.searchSidebarBody {
+   margin: 0px 0px 0px 0px;
+}
+.searchSidebarBody input {
+   margin: 5px;
+}
 #menu {
-    padding: 0px 15px 0px 15px;
+    padding: 0px 10px 0px 10px;
 }
 #centercontent {
-    margin: 15px 15px 0px 15px;
+    margin: 10px 10px 0px 10px;
 }
 #rightcontent {
     position: absolute;

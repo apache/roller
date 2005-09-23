@@ -17,6 +17,9 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
     <fmt:message key="weblogEntryQuery.queryResults" />
 </div>
 
+<div class="entriesBox">
+<div class="entriesBoxInner">
+
 <c:forEach var="post" items="${model.recentWeblogEntries}">
 
     <div class="entryBox">
@@ -52,6 +55,8 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
     </div>
 
 </c:forEach>
+</div> <!-- entriesBoxInner -->
+</div> <!-- entriesBox -->
 
 <c:if test="${empty model.recentWeblogEntries}" >
    <fmt:message key="weblogEntryQuery.noneFound" />

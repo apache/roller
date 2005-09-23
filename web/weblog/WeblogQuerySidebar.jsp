@@ -5,10 +5,9 @@
 WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model");
 %>
 
-<div class="sidebarfade">
+<div class="sidebarFade">
     <div class="menu-tr">
         <div class="menu-tl">
-            <div class="sidebarBody">
 
 <h3><fmt:message key="weblogEntryQuery.sidebarTitle" /></h3>
 <hr size="1" noshade="noshade" />
@@ -106,7 +105,6 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
 <br />
 <br />
 
-            </div>
         </div>
     </div>
 </div>

@@ -17,12 +17,12 @@ request.setAttribute("siteDescription", siteDescription);
 <tiles:insert attribute="head" />     
 <style type="text/css">
 #centercontent {
-    margin: 15px 260px 0px 15px;
+    margin: 15px 260px 0px 10px;
 }
 #rightcontent {
     position: absolute;
-    top:   120px;
-    right:  15px;
+    top:   150px;
+    right:  10px;
     width: 230px;
 }
 .menuItemTable {
@@ -46,8 +46,7 @@ request.setAttribute("siteDescription", siteDescription);
     </div>
     
     <div id="centercontent"> 
-        <h1><c:out value="${siteTitle}" /></h1>
-        <p class="subtitle"><c:out value="${siteDescription}" /></p>
+        <tiles:insert attribute="title" />
         <c:choose>
             <c:when test="${planetEnabled}">
                <roller:Menu model="planet-menu.xml" view="/menu-tabbed.vm" />
@@ -63,6 +62,7 @@ request.setAttribute("siteDescription", siteDescription);
     
     <div id="rightcontent">
        <tiles:insert attribute="search" />
+       <br />
        <tiles:insert attribute="sidebar" />
     </div>  
  

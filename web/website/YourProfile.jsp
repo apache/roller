@@ -1,12 +1,4 @@
 <%@ include file="/taglibs.jsp" %>
-<script type="text/javascript">
-<!--
-function cancel() {
-    document.userFormEx.method.value="cancel"; 
-    document.userFormEx.submit();
-}
--->
-</script>
 
 <p class="subtitle"><fmt:message key="yourProfile.description" /></p>
 
@@ -76,8 +68,7 @@ function cancel() {
 
 <br />
 
-<input type="submit" value='<fmt:message key="userSettings.button.save" />'></input>
-<input type="button" value='<fmt:message key="userSettings.button.cancel" />' onclick="cancel()"></input>
+<input type="submit" value='<fmt:message key="userSettings.button.save" />' ></input>
 
 </html:form>
 
