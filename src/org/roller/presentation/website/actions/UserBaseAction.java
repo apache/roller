@@ -31,7 +31,6 @@ public class UserBaseAction extends DispatchAction
     	if(allowed == null || allowed.trim().length() == 0) {
     	       allowed = DEFAULT_ALLOWED_CHARS;
     	}
-
     	String safe = CharSetUtils.keep(form.getUserName(), allowed);
     	
         if ( "".equals(form.getUserName().trim()))
