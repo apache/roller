@@ -1,10 +1,9 @@
 package org.roller.presentation.website.actions;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.CharSetUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +16,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.ThemeManager;
@@ -27,7 +27,7 @@ import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.CreateWebsiteForm;
-import org.roller.util.Utilities;
+
 
 /**
  * Allows user to create a new website.
@@ -38,6 +38,8 @@ import org.roller.util.Utilities;
  */
 public class CreateWebsiteAction extends DispatchAction
 {
+    protected static String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";    
+
     private static Log mLogger =
         LogFactory.getFactory().getInstance(CreateWebsiteAction.class);
     
@@ -100,9 +102,12 @@ public class CreateWebsiteAction extends DispatchAction
         CreateWebsiteForm form = (CreateWebsiteForm)actionForm;
         ActionMessages msgs = new ActionMessages();
         ActionMessages errors = validate(form, new ActionErrors());
+        ActionForward forward = mapping.findForward("yourWebsites");
+        WebsiteData website = null;
         if (!errors.isEmpty())
         {
             saveErrors(request, errors);
+            forward = mapping.findForward("createWebsite.page");
         }
         else try
         {
@@ -114,7 +119,7 @@ public class CreateWebsiteAction extends DispatchAction
             // Need system user to create website
             RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
             HashMap pages = null; //rollerContext.readThemeMacros(form.getTheme());
-            WebsiteData website = mgr.createWebsite(
+            website = mgr.createWebsite(
                user, 
                pages, 
                form.getHandle(), 
@@ -140,28 +145,33 @@ public class CreateWebsiteAction extends DispatchAction
             saveErrors(request, errors);          
             mLogger.error("ERROR in createWebsite", e);
         }
-        return mapping.findForward("yourWebsites");
+        request.setAttribute("model", 
+            new CreateWebsitePageModel(request, response, mapping, website));  
+        return forward; 
     }
         
-    private ActionMessages validate(CreateWebsiteForm form, ActionErrors errors)
+    private ActionMessages validate(CreateWebsiteForm form, ActionErrors messages)
         throws RollerException
-    {
-        ActionMessages messages = new ActionMessages();        
-        String safeHandle = Utilities.replaceNonAlphanumeric(form.getHandle());
+    {        
+        String allowed = RollerConfig.getProperty("username.allowedChars");
+    	if(allowed == null || allowed.trim().length() == 0) {
+    	       allowed = DEFAULT_ALLOWED_CHARS;
+    	}
+    	String safe = CharSetUtils.keep(form.getHandle(), allowed);
+
         if (form.getHandle() == null || "".equals(form.getHandle().trim()))
         {
-            errors.add( ActionErrors.GLOBAL_ERROR,
+            messages.add( ActionErrors.GLOBAL_ERROR,
                new ActionError("createWeblog.error.missingHandle"));
         }
-        else if (!safeHandle.equals(form.getHandle()) )
+        else if (!safe.equals(form.getHandle()) )
         {
-            errors.add( ActionErrors.GLOBAL_ERROR,
+            messages.add( ActionErrors.GLOBAL_ERROR,
                new ActionError("createWeblog.error.invalidHandle"));
-        }
-        
+        }        
         if (form.getEmailAddress() == null || "".equals(form.getEmailAddress().trim()))
         {
-            errors.add( ActionErrors.GLOBAL_ERROR,
+            messages.add( ActionErrors.GLOBAL_ERROR,
                new ActionError("createWeblog.error.missingEmailAddress"));
         }
         
