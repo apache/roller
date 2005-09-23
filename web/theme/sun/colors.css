@@ -10,19 +10,16 @@
 .bannerBox {
     background: url("two-banner.gif") repeat-x top;
     border-bottom: 2px black solid;
-}
-.sidebarfade {
-    background: url("two-sidebarfade.gif") repeat-x bottom;
-}
-.sidebarfade_hotblogs {
-    background: #dee7ef;
-}
-.sidebarfade_search {
-    background: url("two-sidebarfade-search.gif") repeat-x bottom;
+    color: #666666;
 }
 .bannerStatusBox {
-    color: #31556b;
-    background: #dee7ef;
+    background: #ccdae3;
+    border-top: 2px black solid;
+    color: #666666;
+}
+#footer {
+    border: none; 
+    color: #5d7992;
 }
 h1 {
     color: #e77100;
@@ -37,20 +34,26 @@ p.subtitle {
     color: #505050;
     font-size: 120%;
 }
+a {
+	color: #35556B;
+}
 a:link {
-    color: #31556b;
+	color: #35556B;
 }
 a:visited {
-    color: #31556b;
+	color: #35556B;
+}
+a:hover {
+	color: #35556B;
+}
+a:active {
+	color: #35556B;
 }
 table.rollertable th, table.rollertable th {
     background: #52829c;
 }
 table.rollertable td, table.rollertable tbody td {
     border: 1px solid #52829c;
-}
-a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
-   color: black;
 }
 div.centerTitle {
     background: #dee7ef;
@@ -61,30 +64,54 @@ div.control {
 div.controlToggle {
     background: url("two-togglegrey.gif") repeat-x top; 
 }
+div.entriesBox {
+   background: #e3e3e3;
+}
 div.entryTitleBox {
-   color: white; 
+    color: #35556B; 
+    background: #dee7ef; 
 }
 div.entryBox {
-   border-bottom: 1px grey solid;
-   background: #e7e3e7;
-   margin: 0px 0px 0px 0px;
-}
-div.entryTitleBox {
-   padding: 4px;
-   font-size: medium;
+   border-bottom: 1px #999999 solid;
 }
 div.entryBoxPinned {
-   background: #e5e5e5; 
-   border: 1px #c0c0c0 solid;
+   border-bottom: 1px grey solid;
 }
-a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
-   color: #52829c; 
+.entryDetails {
+    color: #666666;
+}
+.entryDescription {
+    color: black;
 }
 div.yourWeblogBox {
    border-top: 1px grey solid;
 }
 td.actions {
     background: #e9e9e9;
+}
+.sidebarBodyHead {
+    background: #3d5c71;
+    color: white;
+}
+.searchSidebarBodyHead h3 {
+    color: black;
+}
+.sidebarBodyHead h3 {
+    color: white;
+}
+.sidebarFade, div.sidebarBody {
+    background: #ccdae3;
+    color: #666666;
+}
+.searchSidebarHead {
+    background: #d1d766;
+}
+.searchSidebarBody {
+    background: #d1d766;
+}
+input.searchButton {
+    color: white;
+    background: #e77100;
 }
 
 /* ------------------------------------------------------------------------ */

@@ -10,17 +10,17 @@
 .bannerBox {
     background: url("two-banner.png") repeat-x top;
 }
-.sidebarfade {
-    background: #e5e5e5;
+.sidebarFade {
+    background: #e3e3e3;
 }
-.sidebarfade_hotblogs {
-    background: #e5e5e5;
+.sidebarFade_hotblogs {
+    background: #e3e3e3;
 }
-.sidebarfade_search {
-    background: #e5e5e5;
+.sidebarFade_search {
+    background: #e3e3e3;
 }
 .bannerStatusBox {
-    background: #e5e5e5;
+    background: #e3e3e3;
     color: #573dea;
 }
 .bannerStatusBox a {
@@ -57,17 +57,17 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
    color: black;
 }
 div.centerTitle {
-    background: #e5e5e5;
+    background: #e3e3e3;
 }
 div.control {
-    background: #e5e5e5; 
+    background: #e3e3e3; 
 }
 div.controlToggle {
     background: url("two-togglegrey.png") repeat-x top; 
 }
 div.entryBox {
    border-bottom: 1px #573dea solid;
-   background: #e5e5e5;
+   background: #e3e3e3;
    margin: 0px 0px 0px 0px;
 }
 div.entryTitleBox {
@@ -75,7 +75,7 @@ div.entryTitleBox {
    font-size: medium;
 }
 div.entryBoxPinned {
-   background: #e5e5e5; 
+   background: #e3e3e3; 
    border-bottom: 1px #573dea solid;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {

@@ -1,12 +1,8 @@
 <%@ include file="/taglibs.jsp" %>
 
-<%-- 
-Default footer for all pages.
-You can override it with your own file via WEB-INF/tiles-def.xml
---%>
-
 <a href="http://www.rollerweblogger.org">
-    Powered by Roller Weblogger</a> | 
+    Powered by Roller Weblogger</a> 
+    <%= RollerContext.getRollerContext(request).getRollerVersion() %> | 
 
 <a href="http://opensource.atlassian.com/projects/roller/Dashboard.jspa">
     <fmt:message key="footer.reportIssue" /></a> | 
@@ -19,7 +15,6 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <a href="http://sourceforge.net/mail/?group_id=47722">
     <fmt:message key="footer.mailingLists" /></a>
-    
 
 
 

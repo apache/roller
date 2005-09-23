@@ -6,13 +6,14 @@
 
 <definition name=".tiles-frontpage" path="/theme/tiles-frontpage.jsp">
    <put name="banner"       value="/theme/banner.jsp" />
+   <put name="title"        value="/theme/title.jsp" />
    <put name="bannerStatus" value="/theme/bannerStatus.jsp" />
    <put name="head"         value="/theme/head.jsp" />
    <put name="styles"       value="/theme/css-banner.jsp" />
    <put name="content"      value="${content}" />
    <put name="search"       value="/theme/search.jsp" />
    <put name="sidebar"      value="/theme/empty.jsp" />
-   <put name="footer"       value="/theme/footer.jsp" />
+   <put name="footer"       value="/theme/footerMain.jsp" />
 </definition>
 
 <definition name=".tiles-mainmenupage" path="/theme/tiles-mainmenupage.jsp">

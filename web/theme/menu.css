@@ -8,6 +8,7 @@ div.menu-tl {
     margin: 0px; 
     padding: 0px; 
     height: 100%;
+    width: 100%;
     background: url("images/menutab-tl.gif") no-repeat top left;   
     background-repeat: no-repeat;
     vertical-align: middle;
@@ -17,6 +18,7 @@ div.menu-tr {
     margin: 0px; 
     padding: 0px; 
     height: 100%;
+    width: 100%;
     background: url("images/menutab-tr.gif") no-repeat top right;    
     background-repeat: no-repeat;
 }

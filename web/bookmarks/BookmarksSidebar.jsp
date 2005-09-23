@@ -1,9 +1,8 @@
 <%@ include file="/taglibs.jsp" %>
 
-<div class="sidebarfade">
+<div class="sidebarFade">
     <div class="menu-tr">
         <div class="menu-tl">
-            <div class="sidebarBody">
             
             <h3><fmt:message key="mainPage.actions" /></h3>
             <hr size="1" noshade="noshade" />
@@ -32,7 +31,6 @@
 			<br />
 			<br />
             
-            </div>
         </div>
     </div>
 </div>	
