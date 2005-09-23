@@ -50,7 +50,7 @@ import java.io.StringWriter;
 
 /**
  * Atom Servlet implements Atom by calling a Roller independent handler.
- * @web.servlet name="AtomServlet"
+ * @web.servlet name="AtomServlet04"
  * @web.servlet-mapping url-pattern="/atom04/*"
  * @author David M Johnson
  */
@@ -162,6 +162,7 @@ public class AtomServlet extends HttpServlet
         else 
         {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            res.setHeader("WWW-Authenticate", "Basic realm=\"Protected Territory\"");
         }
     }
     
