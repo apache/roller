@@ -60,9 +60,8 @@ public class AtomCollection
         Namespace.getNamespace("http://purl.org/atom/app#");
     
     private List memberTypes = new ArrayList(); // array of strings
-    private String dateRangeTemplate = null;
-    private String indexTemplate = null;
-
+    private List searchTemplates = new ArrayList(); // array of strings
+            
     public AtomCollection()
     {
     }
@@ -72,14 +71,19 @@ public class AtomCollection
         return memberTypes;
     }
 
-    public void setMemberTypes(List memberTypes)
-    {
-        this.memberTypes = memberTypes;
-    }
-
     public void addMemberType(String memberType)
     {
         memberTypes.add(memberType);
+    }
+    
+    public List getSearchTemplates()
+    {
+        return searchTemplates;
+    }
+
+    public void addSearchTemplate(String searchTemplate)
+    {
+        searchTemplates.add(searchTemplate);
     }
 
     /** Deserialize an Atom Collection XML document into an object */
@@ -88,17 +92,18 @@ public class AtomCollection
     {
         AtomCollection collection = new AtomCollection();
         Element root = document.getRootElement();
-//        if (root.getAttribute("next") != null)
-//        {
-//            collection.setNext(root.getAttribute("next").getValue());
-//        }
-//        List mems = root.getChildren("member", ns);
-//        Iterator iter = mems.iterator();
-//        while (iter.hasNext())
-//        {
-//            Element e = (Element) iter.next();
-//            collection.addMember(AtomCollection.elementToMember(e));
-//        }
+        List types = root.getChildren("member-type", ns);
+        for (Iterator i=types.iterator(); i.hasNext();)
+        {
+            Element e = (Element)i.next();
+            collection.addMemberType(e.getText());
+        }
+        List templates = root.getChildren("search-template", ns);
+        for (Iterator i=types.iterator(); i.hasNext();)
+        {
+            Element e = (Element)i.next();
+            collection.addMemberType(e.getText());
+        }
         return collection;
     }
 
@@ -106,18 +111,18 @@ public class AtomCollection
     public static Document collectionToDocument(AtomCollection collection)
     {
         Document doc = new Document();
-//        Element root = new Element("collection", ns);
-//        doc.setRootElement(root);
-//        if (collection.getNext() != null)
-//        {
-//            root.setAttribute("next", collection.getNext());
-//        }
-//        Iterator iter = collection.getMembers().iterator();
-//        while (iter.hasNext())
-//        {
-//            Member member = (Member) iter.next();
-//            root.addContent(AtomCollection.memberToElement(member));
-//        }
+        /*Element root = new Element("collection", ns);
+        doc.setRootElement(root);
+        if (collection.getNext() != null)
+        {
+            root.setAttribute("next", collection.getNext());
+        }
+        Iterator iter = collection.getMembers().iterator();
+        while (iter.hasNext())
+        {
+            Member member = (Member) iter.next();
+            root.addContent(AtomCollection.memberToElement(member));
+        }*/
         return doc;
     }
 

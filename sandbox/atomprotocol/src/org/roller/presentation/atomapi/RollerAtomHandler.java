@@ -258,12 +258,12 @@ public class RollerAtomHandler implements AtomHandler {
             
             // build collection
             AtomCollection col = new AtomCollection();
-            if (entries.size() > mMaxEntries) {
+            /* if (entries.size() > mMaxEntries) {
                 // there are more entries, so include next link
                 WeblogEntryData lastEntry =
                         (WeblogEntryData)entries.get(entries.size() - 1);
                 col.setNext(createNextLink(lastEntry, start, end, offset));
-            }
+            } 
             // add up to max entries to collection
             int count = 0;
             Iterator iter = entries.iterator();
@@ -275,7 +275,7 @@ public class RollerAtomHandler implements AtomHandler {
                 member.setHref(absUrl
                         + "/atom/" + handle + "/entry/" + rollerEntry.getId());
                 col.addMember(member);
-            }
+            } */
             return col;
         }
         throw new Exception("ERROR: not authorized");
@@ -293,14 +293,14 @@ public class RollerAtomHandler implements AtomHandler {
         File[] files = fmgr.getFiles(website);
         if (canView(website)) {
             AtomCollection col = new AtomCollection();
-            for (int i=0; i<files.length; i++) {
+            /* for (int i=0; i<files.length; i++) {
                 AtomCollection.Member member = new AtomCollection.Member();
                 member.setTitle(files[i].getName());
                 member.setUpdated(new Date(files[i].lastModified()));
                 member.setHref(absUrl
                         + "/atom/" + website.getHandle() + "/resource/" + files[i].getName() );
                 col.addMember(member);
-            }
+            } */
             return col;
         }
         throw new Exception("ERROR: not authorized");
@@ -318,7 +318,7 @@ public class RollerAtomHandler implements AtomHandler {
         List items = wmgr.getWeblogCategories(website);
         if (canView(website)) {
             AtomCollection col = new AtomCollection();
-            Iterator iter = items.iterator();
+            /* Iterator iter = items.iterator();
             Date now = new Date();
             while (iter.hasNext()) {
                 WeblogCategoryData item = (WeblogCategoryData)iter.next();
@@ -330,7 +330,7 @@ public class RollerAtomHandler implements AtomHandler {
                 member.setHref(absUrl + "/atom/"  
                     + website.getHandle() + "/category/" + item.getId());
                 col.addMember(member);
-            }
+            } */
             return col;
         }
         throw new Exception("ERROR: not authorized");

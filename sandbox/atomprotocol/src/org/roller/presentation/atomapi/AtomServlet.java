@@ -105,7 +105,7 @@ public class AtomServlet extends HttpServlet
                     AtomCollection col = null;
                     if (ranges != null) 
                     {
-                        // return a range of collection members
+                        /* // return a range of collection members
                         AtomCollection.Range range = 
                             AtomCollection.parseRange(req.getHeader("Range"));
                         int offset = 0;
@@ -115,7 +115,7 @@ public class AtomServlet extends HttpServlet
                             offset = Integer.parseInt(offsetString);
                         }
                         col= handler.getCollection(
-                            pathInfo, range.start, range.end, offset);
+                            pathInfo, range.start, range.end, offset); */
                     }
                     else 
                     {
@@ -182,7 +182,7 @@ public class AtomServlet extends HttpServlet
             {
                 if (handler.isEntryCollectionURI(pathInfo)) 
                 {
-                    // parse incoming entry                    
+                    /* // parse incoming entry                    
                     Entry unsavedEntry = parseEntry(
                         new InputStreamReader(req.getInputStream()));
                     
@@ -202,7 +202,7 @@ public class AtomServlet extends HttpServlet
                     res.setStatus(HttpServletResponse.SC_CREATED);
                     Writer writer = res.getWriter(); 
                     serializeEntry(savedEntry, writer);                    
-                    writer.close();
+                    writer.close(); */
                 }
                 else if (handler.isResourceCollectionURI(pathInfo)) 
                 {

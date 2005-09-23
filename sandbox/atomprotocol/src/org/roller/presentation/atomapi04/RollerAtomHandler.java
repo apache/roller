@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
-import org.roller.RollerException;
 import org.roller.model.FileManager;
 import org.roller.model.Roller;
 import org.roller.model.WeblogManager;
@@ -87,6 +86,7 @@ public class RollerAtomHandler implements AtomHandler {
     private RollerContext      mRollerContext;
     private String             mUsername;
     private int                mMaxEntries = 20;
+    private static String      ctx = "/atom04/";
     //private MessageDigest    md5Helper = null;
     //private MD5Encoder       md5Encoder = new MD5Encoder();
     
@@ -106,7 +106,8 @@ public class RollerAtomHandler implements AtomHandler {
         mRollerContext = RollerContext.getRollerContext(request);
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
-        mUsername = authenticateWSSE(request);
+        mUsername = authenticateBASIC(request);
+        //mUsername = authenticateWSSE(request);
         
         if (mUsername != null) {
             try {
@@ -157,19 +158,19 @@ public class RollerAtomHandler implements AtomHandler {
                     AtomService.Collection entryCol = new AtomService.Collection();
                     entryCol.setTitle("Collection: Weblog Entries for " + handle);
                     entryCol.setContents("entries");
-                    entryCol.setHref(absUrl + "/atom/"+handle+"/entries");
+                    entryCol.setHref(absUrl + ctx +handle+"/entries");
                     workspace.addCollection(entryCol);
                     
                     AtomService.Collection catCol = new AtomService.Collection();
                     catCol.setTitle("Collection: Categories for " + handle);
                     catCol.setContents("categories");
-                    catCol.setHref(absUrl + "/atom/"+handle+"/categories");
+                    catCol.setHref(absUrl + ctx + handle+"/categories");
                     workspace.addCollection(catCol);
                     
                     AtomService.Collection uploadCol = new AtomService.Collection();
                     uploadCol.setTitle("Collection: File uploads for " + handle);
                     uploadCol.setContents("generic");
-                    uploadCol.setHref(absUrl + "/atom/"+handle+"/resources");
+                    uploadCol.setHref(absUrl + ctx + handle+"/resources");
                     workspace.addCollection(uploadCol);
                 }
             }
@@ -273,7 +274,7 @@ public class RollerAtomHandler implements AtomHandler {
                 member.setTitle(rollerEntry.getDisplayTitle());
                 member.setUpdated(rollerEntry.getUpdateTime());
                 member.setHref(absUrl
-                        + "/atom/" + handle + "/entry/" + rollerEntry.getId());
+                        + ctx + handle + "/entry/" + rollerEntry.getId());
                 col.addMember(member);
             }
             return col;
@@ -298,7 +299,7 @@ public class RollerAtomHandler implements AtomHandler {
                 member.setTitle(files[i].getName());
                 member.setUpdated(new Date(files[i].lastModified()));
                 member.setHref(absUrl
-                        + "/atom/" + website.getHandle() + "/resource/" + files[i].getName() );
+                        + ctx + website.getHandle() + "/resource/" + files[i].getName() );
                 col.addMember(member);
             }
             return col;
@@ -327,7 +328,7 @@ public class RollerAtomHandler implements AtomHandler {
                 if (name.equals("/")) continue;
                 member.setTitle(name);
                 member.setUpdated(now);
-                member.setHref(absUrl + "/atom/"  
+                member.setHref(absUrl + ctx  
                     + website.getHandle() + "/category/" + item.getId());
                 col.addMember(member);
             }
@@ -648,7 +649,34 @@ public class RollerAtomHandler implements AtomHandler {
     
     //-------------------------------------------------------------- authentication
     
-    /**
+    protected String authenticateBASIC(HttpServletRequest request) {
+        String authorization = request.getHeader("Authorization");
+        if (authorization != null) {
+            try { 
+                StringTokenizer toker = new StringTokenizer(authorization, " ");
+                String basic = toker.nextToken();
+                if (toker.hasMoreTokens()) {
+                    String digest = toker.nextToken();
+                    String pair = new String(WSSEUtilities.base64Decode(digest));
+                    toker = new StringTokenizer(pair,":");
+                    String pairName = toker.nextToken();
+                    UserData user = mRoller.getUserManager().getUser(pairName);
+                    if (user != null && toker.hasMoreTokens()) {
+                        String pairPass = toker.nextToken();
+                        if (user.getPassword().equals(pairPass)) {
+                            return pairName;
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                mLogger.error(e);
+            }
+        }
+        return null;
+    }
+
+   /**
      * Perform WSSE authentication based on information in request.
      * Will not work if Roller password encryption is turned on.
      */
@@ -698,7 +726,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Untested (and currently unused) implementation of BASIC authentication
      */
-    public String authenticateBASIC(HttpServletRequest request) {
+    /*public String authenticateBASIC(HttpServletRequest request) {
         boolean valid = false;
         String userID = null;
         String password = null;
@@ -715,8 +743,9 @@ public class RollerAtomHandler implements AtomHandler {
                         if (p != -1) {
                             userID = userPass.substring(0, p);
                             UserData user = mRoller.getUserManager().getUser(userID);
-                            String realpassword = LoginServlet.getEncryptedPassword(
-                                    request, user.getUserName(), user.getPassword());
+                            //String realpassword = LoginServlet.getEncryptedPassword(
+                                    //request, user.getUserName(), user.getPassword());
+                            String realpassword = user.getPassword();
                             password = userPass.substring(p+1);
                             if (    (!userID.trim().equals(user.getUserName()))
                             && (!password.trim().equals(realpassword))) {
@@ -731,7 +760,7 @@ public class RollerAtomHandler implements AtomHandler {
         }
         if (valid) return userID;
         return null;
-    }
+    }*/
     
     //----------------------------------------------------------- internal utilities
     
@@ -743,7 +772,7 @@ public class RollerAtomHandler implements AtomHandler {
             WeblogEntryData entry, Date start, Date end, int offset) {
         SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssZ" );
         String absUrl = mRollerContext.getAbsoluteContextUrl();
-        String url = absUrl + "/atom/" + mUsername + "/entries/" + entry.getId();
+        String url = absUrl + ctx + mUsername + "/entries/" + entry.getId();
         if (offset != -1 && start != null && end != null) {
             url  = url + "?Range=" + df.format(start) + "/" + df.format(end);
         } else if (offset != -1 && start != null) {
@@ -806,8 +835,8 @@ public class RollerAtomHandler implements AtomHandler {
             updateTime = new Timestamp( entry.getUpdated().getTime() );
         }
         WeblogEntryData rollerEntry = new WeblogEntryData();
-        rollerEntry.setTitle(entry.getTitle());
-        rollerEntry.setText(entry.getContent().getValue());
+        if (entry.getTitle() != null) rollerEntry.setTitle(entry.getTitle());
+        if (entry.getContent() != null) rollerEntry.setText(entry.getContent().getValue());
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
         rollerEntry.setWebsite(website);
