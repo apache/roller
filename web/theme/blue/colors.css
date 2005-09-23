@@ -10,15 +10,6 @@
 .bannerBox {
     background: url("two-banner.png") repeat-x top;
 }
-.sidebarFade {
-    background: #e3e3e3;
-}
-.sidebarFade_hotblogs {
-    background: #e3e3e3;
-}
-.sidebarFade_search {
-    background: #e3e3e3;
-}
 .bannerStatusBox {
     background: #e3e3e3;
     color: #573dea;
@@ -78,6 +69,9 @@ div.entryBoxPinned {
    background: #e3e3e3; 
    border-bottom: 1px #573dea solid;
 }
+div.entriesBox {
+   background: #e3e3e3;
+}
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
    color: #573dea; 
    font-size: medium;
@@ -85,6 +79,30 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
 }
 div.yourWeblogBox {
    border-top: 1px #573dea solid;
+}
+input.searchButton {
+    color: white;
+    background: #432eb3;
+}
+.sidebarBodyHead {
+    background: #432eb3;
+    color: white;
+}
+.searchSidebarBodyHead h3 {
+    color: black;
+}
+.sidebarBodyHead h3 {
+    color: white;
+}
+.sidebarFade, div.sidebarBody {
+    background: #e3e3e3;
+    color: #666666;
+}
+.searchSidebarHead {
+    background: #e3e3e3;
+}
+.searchSidebarBody {
+    background: #e3e3e3;
 }
 
 /* ------------------------------------------------------------------------ */
