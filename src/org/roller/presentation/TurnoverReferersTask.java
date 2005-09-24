@@ -4,7 +4,6 @@
 package org.roller.presentation;
 
 import java.util.TimerTask;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
@@ -13,32 +12,58 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.ScheduledTask;
 
+
 /**
- * @author aim4min
+ * Reset referer counts.
+ *
+ * @author Allen Gilliland
  */
-public class TurnoverReferersTask extends TimerTask implements ScheduledTask
-{
-    private static Log mLogger = LogFactory.getFactory().getInstance(
-            TurnoverReferersTask.class);
-    private RefererManager refManager = null;
+public class TurnoverReferersTask extends TimerTask implements ScheduledTask {
     
-    public void init(Roller roller, String realPath) throws RollerException
-    {
-        refManager = roller.getRefererManager();
+    private static Log mLogger = LogFactory.getLog(TurnoverReferersTask.class);
+    
+    
+    /**
+     * Task init.
+     */
+    public void init(Roller roller, String realPath) throws RollerException {
+        mLogger.debug("initing");
     }
-    public void run()
-    {
-        if (refManager != null)
-            try
-            {
-                RollerFactory.getRoller().begin();
-                refManager.checkForTurnover(false, null);
-                RollerFactory.getRoller().commit();
-                RollerFactory.getRoller().release();
-            }
-            catch (RollerException e)
-            {
-                mLogger.error("Error while checking for referer turnover", e);
-            }
+    
+    
+    /**
+     * Execute the task.
+     */
+    public void run() {
+        
+        mLogger.info("task started");
+        
+        try {
+            Roller roller = RollerFactory.getRoller();
+            
+            roller.begin();
+            roller.getRefererManager().checkForTurnover(true, null);
+            roller.commit();
+            roller.release();
+            
+        } catch (RollerException e) {
+            mLogger.error("Error while checking for referer turnover", e);
+        } catch (Exception ee) {
+            mLogger.error("unexpected exception", ee);
+        }
+        
+        mLogger.info("task completed");
     }
+    
+    
+    /**
+     * Main method so that this task may be run from outside the webapp.
+     */
+    public static void main(String[] args) throws Exception {
+        
+        TurnoverReferersTask task = new TurnoverReferersTask();
+        task.init(null, null);
+        task.run();
+    }
+    
 }
