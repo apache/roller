@@ -1,6 +1,4 @@
 <%@ include file="/taglibs.jsp" %>
-
-<div class="prop"></div> <%-- force minimum height --%>
         
 <script>
 // <!--  
@@ -82,8 +80,6 @@ function save() {
     </div>
     
 </html:form>
-    
-<div class="clear"></div> <%-- force minimum height --%>
         
 
 
