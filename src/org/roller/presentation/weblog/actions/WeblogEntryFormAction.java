@@ -1052,8 +1052,7 @@ public final class WeblogEntryFormAction extends DispatchAction
 
     public ActionErrors validateEntry(ActionErrors errors, WeblogEntryFormEx form) {
         if (errors == null) errors = new ActionErrors();
-        if (StringUtils.isEmpty(form.getTitle()) 
-            && StringUtils.isEmpty(form.getText())) {
+        if (StringUtils.isEmpty(form.getTitle())) {
             errors.add(null, new ActionError("weblogEdit.error.incompleteEntry"));
         }
         return errors;
