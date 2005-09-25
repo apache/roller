@@ -14,7 +14,7 @@ import org.roller.pojos.CommentData;
 public class CommentSpamChecker
 {
     private static Log mLogger = LogFactory.getLog(CommentSpamChecker.class);
-    private Blacklist blacklist = Blacklist.getBlacklist(null,null);
+    private Blacklist blacklist = Blacklist.getBlacklist();
 
     // -----------------------------------------------------------------------
     /**
