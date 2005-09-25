@@ -158,7 +158,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                 forward = mapping.findForward("error");
             }                
             else if (rses.isUserAuthorizedToAuthor(entry.getWebsite()) 
-              || (rses.isUserAuthorized(entry.getWebsite()) && entry.isDraft()))
+              || (rses.isUserAuthorized(entry.getWebsite()) && !entry.isPublished()))
             {
                 form.copyFrom(entry, request.getLocale());
                 WeblogEntryPageModel pageModel = new WeblogEntryPageModel(
