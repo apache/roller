@@ -175,7 +175,7 @@ public class UpgradeDatabase {
             PreparedStatement entryUpdate = con.prepareStatement(
                 "update weblogentry set userid=?, status=?, "
               + "pubtime=pubtime, updatetime=updatetime "
-              + "where publishentry=?");            
+              + "where publishentry=? and websiteid=?");            
             PreparedStatement permsInsert = con.prepareStatement(
                 "insert roller_user_permissions "
               + "(id, website_id, user_id, permission_mask, pending) "
@@ -200,6 +200,7 @@ public class UpgradeDatabase {
                 entryUpdate.setString( 1, userid);
                 entryUpdate.setString( 2, "PUBLISHED");
                 entryUpdate.setBoolean(3, true);
+                entryUpdate.setString( 4, websiteid);
                 entryUpdate.executeUpdate();                               
                 
                 // update all of draft entries to include userid and status
@@ -207,6 +208,7 @@ public class UpgradeDatabase {
                 entryUpdate.setString( 1, userid);
                 entryUpdate.setString( 2, "DRAFT");
                 entryUpdate.setBoolean(3, false);
+                entryUpdate.setString( 4, websiteid);
                 entryUpdate.executeUpdate();                               
                 
                 // add  permission for user in website
