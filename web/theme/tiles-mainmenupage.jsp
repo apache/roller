@@ -6,12 +6,6 @@
 <tiles:insert attribute="head" />     
 <style type="text/css">
 <tiles:insert attribute="styles" />
-label.formrow {
-   float: left;
-   text-align: right;
-   width: 30%;
-   padding-right: 1em;
-}
 #centercontent {
     margin: 15px 260px 0px 10px;
 }
@@ -38,9 +32,6 @@ label.formrow {
         <h1><c:out value="${model.title}" /></h1>
         <tiles:insert attribute="messages" /> 
         <tiles:insert attribute="content" />    
-        <div id="footer">
-            <tiles:insert attribute="footer" />
-        </div> 
     </div>
     
     <div id="rightcontent"> 
@@ -48,6 +39,9 @@ label.formrow {
     </div> 
     
 </div>
+<div id="footer">
+    <tiles:insert attribute="footer" />
+</div> 
 <div id="datetagdiv" 
    style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
 </div>
