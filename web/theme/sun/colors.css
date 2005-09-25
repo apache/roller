@@ -1,4 +1,3 @@
-
 /* SUN : Customizable colors and images */
 
 /* ------------------------------------------------------------------------ */
@@ -13,8 +12,7 @@
     color: #666666;
 }
 .bannerStatusBox {
-    background: #ccdae3;
-    border-top: 2px black solid;
+    background: #dde6ec;
     color: #666666;
 }
 #footer {
@@ -31,8 +29,11 @@ h3 {
     color: black;
 }
 p.subtitle {
-    color: #505050;
+    color: #000000;
     font-size: 120%;
+}
+.subtitle span {
+    color: #52829c;
 }
 a {
 	color: #35556B;
@@ -83,11 +84,8 @@ div.entryBoxPinned {
 .entryDescription {
     color: black;
 }
-div.yourWeblogBox {
-   border-top: 1px grey solid;
-}
-td.actions {
-    background: #e9e9e9;
+.yourWeblogBox {
+   border-top: 1px solid grey;
 }
 input.searchButton {
     color: white;
@@ -119,9 +117,11 @@ input.searchButton {
 
 td.menuTabSelected {
     background: url("menutab-sel.gif");
+    /* background-color: #52829c; */
 }
 td.menuTabUnselected {
     background: url("menutab-unsel.gif");
+    /* background-color: #bdbdbd; */
 }
 .menuItemTable {
     background-color: #52829c;
@@ -148,3 +148,11 @@ td.menuTabSelected a:hover {
     text-decoration: none;
 }
 
+/* for main menu page */
+
+span.mm_weblog_name {
+    color: #707277;
+}
+td.mm_table_actions {
+    background: #fff4d4;
+}
