@@ -24,9 +24,8 @@ p.pagetip {
 }
 h1 {
     background: transparent;
-    font-size: 19px;
+    font-size: 20px;
     font-weight: bold;
-    letter-spacing: 0.2em;
 }
 h2 {
     background: transparent;
@@ -75,21 +74,21 @@ Page element styles: boxes and borders, etc.
     font-weight: bold;
 }
 .bannerLeft {
-    float: left; 
-    padding: 4px 15px 4px 15px;
+    padding: 4px 15px 4px 10px;
 }
 .bannerRight {
-    float: right; 
-    padding: 4px 15px 4px 15px;
+    padding: 4px 10px 4px 15px;
+    text-align: right;
 }
 .bannerBox {
-    height: 78px;
     width: 100%;
-    background:#f00;
+    background: #f00;
 }
 #footer {
-    margin: 10px 0px 0px 0px;
-    border-top: 1px grey solid;
+    margin: 25px 0px 20px 0px;
+    font-size: smaller;
+    text-align: center;
+    clear: both;
 }
 .sidebarBodyHead h3, .searchSidebarBody h3 {
    padding: 5px;
@@ -207,7 +206,8 @@ div.buttonBox {
     width: 30%; 
 }
 .formtable td.description { 
-    width: 50%; 
+    width: 50%;
+    line-height: 140%;
 }
 .formtableNoDesc td.label { 
     text-align: right;
@@ -245,18 +245,8 @@ label.sideformrow {
 }
 
 div.yourWeblogBox {
-   width: 95%;
-   padding: 5px 0px 5px 0px;
-}
-div.yourWeblogBox div.formrow {
-   float: left:
-   width: 80%;
-}
-div.yourWeblogBox label.formrow {
-   float: left;
-   text-align: left;
-   width: 20%;
-   padding-right: 1em;
+   padding: 8px 0px 10px 0px;
+   margin-right: 10px;
 }
 
 /* ----------------------------------------------------------------------
@@ -574,7 +564,34 @@ div.helptext {
     background-image: url(transparent-logo.png);
 }
 
+/* main menu page */
 
+span.mm_weblog_name {
+    font-size: large;
+    font-weight: bold;
+}
+table.mm_table {
+    margin-top: 8px;
+}
+td.mm_table_actions {
+    padding-left: 4px;
+}
+td.mm_subtable_label {
+    width: 100px;
+    vertical-align: top;
+    font-weight: bold;
+}
 
+/* weblog entry form page */
 
-        
+span.entryEditSidebarLink {
+    font-size: smaller;
+}
+.entryEditTable td {
+    padding: 0px 0px 8px 0px;
+}
+td.entryEditFormLabel {
+    padding-right: 15px;
+    padding-left: 2px;
+    font-weight: bold;
+}

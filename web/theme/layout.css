@@ -6,16 +6,13 @@ layout.css: Base CSS layout for Roller's web UI (position and sizing only)
     width: 100%;
 }
 #banner {
-    height: 30px; 
     margin: 0px;
     padding: 0px 0px 0px 0px;
 }
 .bannerBox {
-    height: 78px; 
     width: 100%;
 }
 .bannerStatusBox {
-    height: 21px; 
     width: 100%;
 }
 .sidebarBodyHead {

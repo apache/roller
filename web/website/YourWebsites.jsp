@@ -1,42 +1,6 @@
 <%@ include file="/taglibs.jsp" %>
 <% pageContext.setAttribute("leftPage","/website/YourWebsitesSidebar.jsp"); %>
 
-<div class="prop"></div> <%-- force minimum height --%>
-
-<script type="text/javascript">
-<!-- 
-function acceptInvite(id) 
-{
-    document.yourWebsitesForm.method.value = "accept";
-    document.yourWebsitesForm.inviteId.value = id;
-    document.yourWebsitesForm.submit();
-} 
-function declineInvite(id) 
-{
-    document.yourWebsitesForm.method.value = "decline";
-    document.yourWebsitesForm.inviteId.value = id;
-    document.yourWebsitesForm.submit();
-} 
-function resignWebsite(id,handle)
-{
-    if (confirm('<fmt:message key="yourWebsites.confirmResignation" /> [' + handle +"] ?"))
-    {
-        document.yourWebsitesForm.method.value = "resign";
-        document.yourWebsitesForm.websiteId.value = id;
-        document.yourWebsitesForm.submit();
-    }
-}
--->
-</script>
-
-<html:form action="/editor/yourWebsites" method="post">
-    <input type="hidden" name="inviteId" value="" />
-    <input type="hidden" name="websiteId" value="" />
-    <input type="hidden" name="method" value="select" />		  
-
-<%-- TITLE: Main Menu --%>
-<p class="subtitle"><fmt:message key="yourWebsites.subtitle" /></p>
-
 <%-- Choose appropriate prompt at start of page --%>
 <c:choose>
 
@@ -60,64 +24,67 @@ function resignWebsite(id,handle)
             <fmt:message key="yourWebsites.youAreInvited" >
                <fmt:param value="${invite.website.handle}" />
             </fmt:message>
-            <a href='javascript:acceptInvite("<c:out value='${invite.id}'/>")'>
+            <c:url value="/editor/yourWebsites.do" var="acceptInvite">
+                <c:param name="method" value="accept" />
+                <c:param name="inviteId" value="${invite.id}" />
+            </c:url>
+            <a href='<c:out value="${acceptInvite}" />'>
                 <fmt:message key="yourWebsites.accept" />
             </a> 
             &nbsp;|&nbsp;
-            <a href='javascript:declineInvite("<c:out value='${invite.id}'/>")'>
+            <c:url value="/editor/yourWebsites.do" var="declineInvite">
+                <c:param name="method" value="decline" />
+                <c:param name="inviteId" value="${invite.id}" />
+            </c:url>
+            <a href='<c:out value="${declineInvite}" />'>
                 <fmt:message key="yourWebsites.decline" />
             </a><br />
         </c:forEach>
         <br />
     </c:when>
     
+    <%-- PROMPT: default ... select a weblog to edit --%>
     <c:otherwise> 
-        <p><fmt:message key="yourWebsites.prompt.hasBlog" /></p>        
+        <p class="subtitle"><fmt:message key="yourWebsites.prompt.hasBlog" /></p>        
     </c:otherwise>
 
 </c:choose>
-            
+
+<%-- if we have weblogs, then loop through and list them --%>
 <c:if test="${!empty model.permissions}">
-    <br />
+    
     <c:forEach var="perms" items="${model.permissions}">
 
         <div class="yourWeblogBox">  
 
-               <table width="100%">
+            <span class="mm_weblog_name"><img src='<c:url value="/images/Folder16.png"/>' />&nbsp;<c:out value="${perms.website.name}" /></span>
+                
+            <table class="mm_table" width="100%" cellpadding="0" cellspacing="0">
                <tr>
-               <td width="75%" style="padding: 0px 10px 0px 10px">
+               <td valign="top">
 
-                   <h3 style="border-bottom: 1px #e5e5e5 solid; margin:0px; padding:5px">
-                       <img src='<c:url value="/images/Folder16.png"/>' />
-                       <c:out value="${perms.website.name}" />
-                       [<c:out value="${perms.website.handle}" />] 
-                   </h3>
-
-                   <table>
+                   <table cellpadding="0" cellspacing="0">
                        <tr>
-                           <td width="30%"><b><fmt:message key='yourWebsites.weblog' /></b></td>
-                           <td width="80%"><a href='<c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />'>
-                               <c:out value="${perms.website.handle}" />
+                           <td class="mm_subtable_label"><fmt:message key='yourWebsites.weblog' /></td>
+                           <td><a href='<c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />'>
+                               <c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />
                            </a></td>                          
                        </tr>
                        <tr>
-                           <td><b><fmt:message key='yourWebsites.permission' /></b></td>
+                           <td class="mm_subtable_label"><fmt:message key='yourWebsites.permission' /></td>
                            <td><c:if test="${perms.permissionMask == 0}" >LIMITED</c:if>
                            <c:if test="${perms.permissionMask == 1}" >AUTHOR</c:if>
                            <c:if test="${perms.permissionMask == 3}" >ADMIN</c:if></td>
                        </tr>
                        <tr>
-                           <td><b><fmt:message key='yourWebsites.description' /></b></td>   
+                           <td class="mm_subtable_label"><fmt:message key='yourWebsites.description' /></td>   
                            <td><c:out value="${perms.website.description}" /></td>
                        </tr>
                    </table>
 
                </td>
-
-               <td class="actions" width="25%" align="left" style="padding: 4px">
-
-                       <fmt:message key='yourWebsites.actions' />                       
-                       <br />
+               
+               <td class="mm_table_actions" width="20%" align="left" >
 
                        <c:url value="/editor/weblog.do" var="newEntry">
                            <c:param name="method" value="create" />
@@ -160,21 +127,14 @@ function resignWebsite(id,handle)
                           </a>
                        </c:if>
 
-                   </div>
-
                </td>
                </tr>
-
-           </table>
-
+            </table>
+            
         </div>
-
+        
     </c:forEach>
 
 </c:if>
-
-</html:form>
-
-<div class="clear"></div> <%-- force minimum height --%>
 
 

@@ -17,7 +17,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
    <span><fmt:message key="application.none" /></span>
 </c:if>
 <c:forEach var="post" items="${model.recentPendingEntries}">
-    <span><roller:link page="/editor/weblog.do">
+    <span class="entryEditSidebarLink"><roller:link page="/editor/weblog.do">
        <roller:linkparam
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />
@@ -39,7 +39,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
    <span><fmt:message key="application.none" /></span>
 </c:if>
 <c:forEach var="post" items="${model.recentDraftEntries}">
-    <span><roller:link page="/editor/weblog.do">
+    <span class="entryEditSidebarLink"><roller:link page="/editor/weblog.do">
        <roller:linkparam
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />
@@ -63,7 +63,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
    <span><fmt:message key="application.none" /></span>
 </c:if>
 <c:forEach var="post" items="${model.recentPublishedEntries}">
-    <span><roller:link page="/editor/weblog.do">
+    <span class="entryEditSidebarLink"><roller:link page="/editor/weblog.do">
        <roller:linkparam
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />

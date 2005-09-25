@@ -93,26 +93,28 @@ function publish() {
    <%-- ================================================================== --%>
    <%-- weblog entry fields: title, link, category, etc. --%>
 
-   <div class="row">
-        <label style="width:10%; float:left;" for="title"><fmt:message key="weblogEdit.title" /></label>
-        <c:if test="${!empty weblogEntryFormEx.id}">
-        <a href="#trackbacks" style="float:right"><fmt:message key="weblogEdit.trackbacks" /></a>
-        </c:if>
-        <html:text property="title" size="70" maxlength="255" tabindex="1" />
-    </div>
+   <table class="entryEditTable" cellpadding="0" cellspacing="0">
+       <tr><td class="entryEditFormLabel">
+        <label for="title"><fmt:message key="weblogEdit.title" /></label>
+        </td><td>
+        <html:text property="title" size="50" maxlength="255" tabindex="1" />
+       </td></tr>
 
-    <div class="row">
-        <label style="width:10%; float:left;" for="categoryId"><fmt:message key="weblogEdit.category" /></label>
+    <tr><td class="entryEditFormLabel">
+        <label for="categoryId"><fmt:message key="weblogEdit.category" /></label>
+        </td><td>
         <html:select property="categoryId" size="1" tabindex="4">
             <html:optionsCollection name="model" property="categories" value="id" label="path"  />
         </html:select>
-    </div>
+    </td></tr>
     
-    <div class="row">
-        <label style="width:10%; float:left;" for="link"><fmt:message key="weblogEdit.pubTime" /></label>
+    <tr><td class="entryEditFormLabel">
+        <label for="link"><fmt:message key="weblogEdit.pubTime" /></label>
+        
         <c:if test="${model.editMode && !empty model.comments}" >
         <a href="#comments" style="float:right"><fmt:message key="weblogEdit.comments" /></a>
         </c:if>
+        </td><td>
         <div>
            <html:select property="hours">
                <html:options name="model" property="hoursList" />
@@ -129,23 +131,25 @@ function publish() {
            <roller:Date property="dateString" dateFormat='<%= model.getShortDateFormat() %>' />
            <c:out value="${model.weblogEntry.website.timeZone}" />
         </div>
-    </div>
+    </td></tr>
     
     <c:if test="${!empty weblogEntryFormEx.id}">
-        <div class="row">
-            <label style="width:10%; float:left;" for="categoryId">
+        <tr><td class="entryEditFormLabel">
+            <label for="categoryId">
                <fmt:message key="weblogEdit.permaLink" />
             </label>
+            </td><td>
             <a href='<c:out value="${model.permaLink}" />'>
                <c:out value="${model.permaLink}" />
             </a>
-        </div>
+        </td></tr>
     </c:if>
 
-    <div class="row">
-        <label style="width:10%; float:left;" for="title">
+    <tr><td class="entryEditFormLabel">
+        <label for="title">
            <fmt:message key="weblogEdit.status" />
         </label>
+    </td><td>
         <c:if test="${!empty weblogEntryFormEx.id}">
             <c:if test="${weblogEntryFormEx.published}">
                 <span style="color:green; font-weight:bold">
@@ -175,9 +179,8 @@ function publish() {
         <c:if test="${empty weblogEntryFormEx.id}">
            <span style="color:red; font-weight:bold"><fmt:message key="weblogEdit.unsaved" /></span>
         </c:if>
-    </div>
-
-    
+    </td></tr>
+   </table>
     
     <%-- ================================================================== --%>
     <%-- Weblog edit, preview, or spell check area --%>
@@ -188,7 +191,7 @@ function publish() {
     <div style="width: 100%;"> <%-- need this div to control text-area size in IE 6 --%>
 
        <%-- include edit page --%>
-       <div style="clear:both">
+       <div >
             <jsp:include page="<%= model.getEditorPage() %>" />
        </div>
 
@@ -215,7 +218,6 @@ function publish() {
            <c:out value="${model.spellCheckHtml}" escapeXml="false" />
         </div>
     </c:if>
-
     
     
   <h2><fmt:message key="weblogEdit.otherSettings" /></h2>
@@ -330,7 +332,7 @@ function publish() {
    <%-- ================================================================== --%>
    <%-- the button box --%>
 
-   <br />
+   <br></br>
    <div class="control">
 
         <%-- save draft and post buttons: only in edit and preview mode --%>
