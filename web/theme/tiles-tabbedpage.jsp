@@ -26,16 +26,16 @@
     
     <div id="centercontent">   
         <tiles:insert attribute="messages" /> 
-        <tiles:insert attribute="content" />   
-        <div id="footer">
-            <tiles:insert attribute="footer" />
-        </div> 
+        <tiles:insert attribute="content" />    
     </div>
     
     <div id="rightcontent"> 
        <tiles:insert attribute="sidebar" />
     </div>  
    
+</div>
+<div id="footer">
+    <tiles:insert attribute="footer" />
 </div>
 <div id="datetagdiv" 
    style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
