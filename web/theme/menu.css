@@ -2,6 +2,12 @@
 menu.css: CSS layout and styles for Roller tabbed menu
 ====================================================================== */
 
+/* page title just above menu */
+
+#menu h1 {
+    line-height: 120%;
+}
+
 /* rounded corners */
 
 div.menu-tl {
