@@ -8,7 +8,7 @@ import junit.framework.TestSuite;
 
 import org.roller.presentation.filters.PersistenceSessionFilter;
 import org.roller.presentation.filters.RequestFilter;
-import org.roller.presentation.velocity.SearchServlet;
+import org.roller.presentation.search.SearchServlet;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockServletConfig;

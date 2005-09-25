@@ -86,6 +86,11 @@
 <definition name=".welcome" extends=".tiles-simplepage" >
     <put name="content" value="/website/welcome.jsp" />
 </definition>
+<definition name=".search" extends=".tiles-simplepage" >
+    <put name="content" value="/theme/searchResults.jsp" />
+    <put name="banner"  value="/theme/banner.jsp" />
+    <put name="styles"  value="/theme/css-banner.jsp" />
+</definition>
 
 
 <!-- weblog editor pages (and associates) -->
