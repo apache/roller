@@ -40,6 +40,9 @@ a:link {
 a:visited {
     color: #ad3537;
 }
+.subtitle span {
+    color: #ad3431;
+}
 table.rollertable th, table.rollertable th {
     background: #c6ab74;
 }
@@ -134,4 +137,11 @@ a.menuItemUnselected:link, a.menuItemUnselected:visited, a.menuItemUnselected:ho
     color: black;
 }
 
+/* for main menu page */
 
+span.mm_weblog_name {
+    color: #707277;
+}
+td.mm_table_actions {
+    background: #fff4d4;
+}
