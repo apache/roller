@@ -13,7 +13,7 @@
      <h3><fmt:message key="mainPage.searchWeblogs" /></h3>
 
      <form id="searchForm" method="get"
-        action="<c:out value="${baseURL}" />/search"
+        action="<c:out value="${baseURL}" />/sitesearch.do"
         style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
         <input type="text" id="q" name="q" size="20"
             maxlength="255" value="<c:out value="${param.q}" />" />

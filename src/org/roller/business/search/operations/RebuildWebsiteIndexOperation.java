@@ -71,8 +71,12 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation
         {
             if (reader != null)
             {
-                Term tWebsite = IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, 
-                                   website.getHandle());
+                Term tWebsite = null;
+                if (website != null) 
+                {
+                    tWebsite = IndexUtil.getTerm(
+                        FieldConstants.WEBSITE_HANDLE, website.getHandle());
+                }
                 if (tWebsite != null)
                 {
                     reader.delete(tWebsite);
