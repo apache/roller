@@ -397,7 +397,11 @@ public class RollerAtomHandler implements AtomHandler {
                 rollerEntry.setTitle(entry.getTitle());
                 
                 // TODO: don't assume type is HTML or TEXT
-                rollerEntry.setText(entry.getContent().getValue());
+                List contents = entry.getContents();
+                if (contents != null && contents.size() > 0) {
+                    Content romeContent = (Content)contents.get(0);
+                    rollerEntry.setText(romeContent.getValue());
+                }
                 
                 rollerEntry.setUpdateTime(new Timestamp(new Date().getTime()));
                 if (entry.getPublished() != null) {
@@ -796,10 +800,12 @@ public class RollerAtomHandler implements AtomHandler {
         Content content = new Content();
         content.setType(Content.HTML);
         content.setValue(entry.getText());
+        List contents = new ArrayList();
+        contents.add(content);
         
         atomEntry.setId(        entry.getId());
         atomEntry.setTitle(     entry.getTitle());
-        atomEntry.setContent(   content);
+        atomEntry.setContents(  contents);
         atomEntry.setPublished( entry.getPubTime());
         atomEntry.setUpdated(   entry.getUpdateTime());
         
@@ -814,7 +820,7 @@ public class RollerAtomHandler implements AtomHandler {
         altlink.setRel("alternate");
         altlink.setHref(entry.getPermaLink());
         links.add(altlink);
-        atomEntry.setLinks(links);
+        atomEntry.setAlternateLinks(links);
         
         return atomEntry;
     }
@@ -836,7 +842,10 @@ public class RollerAtomHandler implements AtomHandler {
         }
         WeblogEntryData rollerEntry = new WeblogEntryData();
         if (entry.getTitle() != null) rollerEntry.setTitle(entry.getTitle());
-        if (entry.getContent() != null) rollerEntry.setText(entry.getContent().getValue());
+        if (entry.getContents() != null && entry.getContents().size() > 0) {
+            Content content = (Content)entry.getContents().get(0);
+            rollerEntry.setText(content.getValue());
+        }
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
         rollerEntry.setWebsite(website);

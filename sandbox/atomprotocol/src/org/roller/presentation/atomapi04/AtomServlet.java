@@ -189,7 +189,7 @@ public class AtomServlet extends HttpServlet
                     
                     // call handler to post it
                     Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
-                    Iterator links = savedEntry.getLinks().iterator();
+                    Iterator links = savedEntry.getAlternateLinks().iterator();
                     
                     // return alternate link as Location header
                     while (links.hasNext()) {
