@@ -10,29 +10,35 @@
 </head>
 <body>
 
-<div id="wrapper"> 
-   
-    <div id="banner">
-        <tiles:insert attribute="banner" />
-        <tiles:insert attribute="bannerStatus" />
-    </div>
-    
-    <div id="leftcontent"> 
-    </div>
-    
-    <div id="centercontent">   
-        <h1><c:out value="${model.title}" /></h1>
-        <tiles:insert attribute="messages" />    
-        <tiles:insert attribute="content" />  
-    </div>
-    
-    <div id="rightcontent"> 
-    </div> 
-    
+<div id="banner">
+    <tiles:insert attribute="banner" />
+    <tiles:insert attribute="bannerStatus" />
 </div>
+    
+<div id="wrapper"> 
+    <div id="leftcontent_wrap">
+        <div id="leftcontent"> 
+        </div>
+    </div>
+    
+    <div id="centercontent_wrap">
+        <div id="centercontent">   
+            <h1><c:out value="${model.title}" /></h1>
+            <tiles:insert attribute="messages" /> 
+            <tiles:insert attribute="content" />    
+        </div>
+    </div>
+    
+    <div id="rightcontent_wrap">
+        <div id="rightcontent"> 
+        </div>
+    </div>
+</div>
+
 <div id="footer">
     <tiles:insert attribute="footer" />
 </div>
+
 <div id="datetagdiv" 
    style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
 </div>

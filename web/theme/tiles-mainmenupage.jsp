@@ -6,42 +6,39 @@
 <tiles:insert attribute="head" />     
 <style type="text/css">
 <tiles:insert attribute="styles" />
-#centercontent {
-    margin: 15px 260px 0px 10px;
-}
-#rightcontent {
-    position: absolute;
-    top:    40px;
-    right:  10px;
-    width: 230px;
-}
 </style>
 </head>
 <body>
 
-<div id="wrapper"> 
-   
-    <div id="banner">
-        <tiles:insert attribute="bannerStatus" />
-    </div>
-    
-    <div id="leftcontent"> 
-    </div>
-    
-    <div id="centercontent">   
-        <h1><c:out value="${model.title}" /></h1>
-        <tiles:insert attribute="messages" /> 
-        <tiles:insert attribute="content" />    
-    </div>
-    
-    <div id="rightcontent"> 
-       <tiles:insert attribute="sidebar" />
-    </div> 
-    
+<div id="banner">
+    <tiles:insert attribute="bannerStatus" />
 </div>
+
+<div id="content">
+    <div id="leftcontent_wrap">
+        <div id="leftcontent"> 
+        </div>
+    </div>
+    
+    <div id="centercontent_wrap">
+        <div id="centercontent">   
+            <h1><c:out value="${model.title}" /></h1>
+            <tiles:insert attribute="messages" /> 
+            <tiles:insert attribute="content" />    
+        </div>
+    </div>
+    
+    <div id="rightcontent_wrap">
+        <div id="rightcontent"> 
+            <tiles:insert attribute="sidebar" />
+        </div>
+    </div>
+</div>
+
 <div id="footer">
     <tiles:insert attribute="footer" />
-</div> 
+</div>
+
 <div id="datetagdiv" 
    style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
 </div>
