@@ -25,26 +25,24 @@ import org.roller.pojos.WeblogEntryData;
  * @struts.action name="main" path="/main" scope="request"
  * @struts.action-forward name="main.page" path=".main"
  */
-public class MainPageAction extends Action
-{
+public class MainPageAction extends Action {
     // TODO: make timeouts configurable
     private static TimedHolder mPopularWebsites = new TimedHolder(30 * 60 * 1000);
     private static TimedHolder mRecentEntries = new TimedHolder(120 * 60 * 1000);
     private static TimedHolder mPinnedEntries = new TimedHolder(120 * 60 * 1000);
     
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(MainPageAction.class);
-        
-	/**
-	 * Loads model and forwards to main.page.
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(MainPageAction.class);
+    
+    /**
+     * Loads model and forwards to main.page.
      */
-	public ActionForward execute(
-		ActionMapping mapping, ActionForm form,
-		HttpServletRequest req, HttpServletResponse res)
-		throws Exception
-	{        
+    public ActionForward execute(
+            ActionMapping mapping, ActionForm form,
+            HttpServletRequest req, HttpServletResponse res)
+            throws Exception {
         RollerContext rctx = RollerContext.getRollerContext(req);
-		
+        
         req.setAttribute("version",rctx.getRollerVersion());
         req.setAttribute("buildTime",rctx.getRollerBuildTime());
         req.setAttribute("baseURL", rctx.getContextUrl(req));
@@ -54,106 +52,92 @@ public class MainPageAction extends Action
         req.setAttribute("data", model);
         
         // Determines if register new sers
-        boolean allowNewUsers = 
+        boolean allowNewUsers =
                 RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
-
+        
         java.security.Principal prince = req.getUserPrincipal();
-        if (prince != null) 
-        {
+        if (prince != null) {
             req.setAttribute("loggedIn",Boolean.TRUE);
             req.setAttribute("userName",prince.getName());
-        } 
-        else if (allowNewUsers)
-        {   
+        } else if (allowNewUsers) {
             req.setAttribute("allowNewUsers",Boolean.TRUE);
         }
         req.setAttribute("leftPage","/theme/status.jsp");
         
         return mapping.findForward("main.page");
-	}
+    }
     
-    public static void flushMainPageCache()
-    {
+    public static void flushMainPageCache() {
         mLogger.debug("Flushing recent and pinned entries");
-        mRecentEntries.expire();    
-        mPinnedEntries.expire();    
+        mRecentEntries.expire();
+        mPinnedEntries.expire();
     }
     
     /**
-     * Page model. 
+     * Page model.
      */
-    public static class MainPageData extends BasePageModel
-    {
+    public static class MainPageData extends BasePageModel {
         private HttpServletRequest mRequest = null;
         
         public MainPageData(
-                HttpServletRequest req, 
-                HttpServletResponse res, 
-                ActionMapping mapping) 
-        {
+                HttpServletRequest req,
+                HttpServletResponse res,
+                ActionMapping mapping) {
             super("dummyTitleKey", req, res, mapping);
             mRequest = req;
         }
         
-        /** 
+        /**
          * Get list of most popular websites in terms of day hits.
          * @param num Number of entries to return (takes effect on next cache refresh)
          */
-        public List getPopularWebsites(int num) throws RollerException
-        {
+        public List getPopularWebsites(int num) throws RollerException {
             List list = (List)mPopularWebsites.getObject();
-            if (list == null)
-            {
+            if (list == null) {
                 mLogger.debug("Refreshing popular websites list");
-                Roller roller = RollerFactory.getRoller();            
+                Roller roller = RollerFactory.getRoller();
                 list = roller.getRefererManager().getDaysPopularWebsites(num);
                 mPopularWebsites.setObject(list);
             }
             return list;
-       }
+        }
         
-        /** 
+        /**
          * Get list of recent weblog entries.
          * @param num Number of entries to return (takes effect on next cache refresh)
          */
-        public List getRecentWeblogEntries(int num) throws RollerException
-        {
+        public List getRecentWeblogEntries(int num) throws RollerException {
             List list = (List)mRecentEntries.getObject();
             try {
-            if (list == null)
-            {
-                mLogger.debug("Refreshing recent entries list");
-                Roller roller = RollerFactory.getRoller();		                      
-                list = roller.getWeblogManager().getWeblogEntries(
-                    null,                   // userName
-                    null,                   // startDate
-                    new Date(),             // endDate
-                    null,                   // catName
-                    WeblogEntryData.PUBLISHED, // status
-                    new Integer(num));       // maxEntries
-                mRecentEntries.setObject(list);
-            }
-            } 
-            catch (Exception e) 
-            {
+                if (list == null) {
+                    mLogger.debug("Refreshing recent entries list");
+                    Roller roller = RollerFactory.getRoller();
+                    list = roller.getWeblogManager().getWeblogEntries(
+                            null,                   // userName
+                            null,                   // startDate
+                            new Date(),             // endDate
+                            null,                   // catName
+                            WeblogEntryData.PUBLISHED, // status
+                            new Integer(num));       // maxEntries
+                    mRecentEntries.setObject(list);
+                }
+            } catch (Exception e) {
                 mLogger.error(e);
             }
             return list;
         }
         
-        /** 
-         * Get list of recent weblog pinned entries 
+        /**
+         * Get list of recent weblog pinned entries
          * @param num Number of entries to return (takes effect on next cache refresh)
          */
-        public List getWeblogEntriesPinnedToMain(int num) throws RollerException
-        {
+        public List getWeblogEntriesPinnedToMain(int num) throws RollerException {
             List list = (List)mPinnedEntries.getObject();
-            if (list == null)
-            {
+            if (list == null) {
                 mLogger.debug("Refreshing pinned entries list");
                 Roller roller = RollerFactory.getRoller();
                 list = roller.getWeblogManager()
-                    .getWeblogEntriesPinnedToMain(new Integer(num));  
+                .getWeblogEntriesPinnedToMain(new Integer(num));
                 mPinnedEntries.setObject(list);
             }
             return list;
@@ -161,38 +145,30 @@ public class MainPageAction extends Action
     }
     
     /** Hold object and expire after timeout passes. */
-    public static class TimedHolder 
-    {
+    public static class TimedHolder {
         private Object obj = null;
         private long updated = 0L;
         private long timeout = 3000L;  // 3 seconds ?? -Lance
         
         /** Create holder with timeout */
-        public TimedHolder(long timeout)
-        {
+        public TimedHolder(long timeout) {
             this.timeout = timeout;
         }
         /** Set object and reset the timeout clock */
-        public synchronized void setObject(Object obj)
-        {
+        public synchronized void setObject(Object obj) {
             this.obj = obj;
             this.updated = new Date().getTime();
         }
         /** Force object to expire */
-        public synchronized void expire()
-        {
+        public synchronized void expire() {
             this.obj = null;
         }
         /** Get object or null if object has expired */
-        public Object getObject()
-        {
+        public Object getObject() {
             long currentTime = new Date().getTime();
-            if ((currentTime - this.updated) > this.timeout)
-            {
+            if ((currentTime - this.updated) > this.timeout) {
                 return null;
-            }
-            else 
-            {
+            } else {
                 return this.obj;
             }
         }

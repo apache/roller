@@ -13,8 +13,8 @@
     <ul>
         <c:forEach var="site" items="${popularWebsites}">
            <li>
-               <a href='<c:out value="${baseURL}" />/page/<c:out value="${site.userName}" />'
-                  title='<c:out value="${site.userName}" />' >
+               <a href='<c:out value="${baseURL}" />/page/<c:out value="${site.websiteHandle}" />'
+                  title='<c:out value="${site.websiteHandle}" />' >
                   <str:truncateNicely lower="45" 
                     upper="45" ><c:out 
                     value="${site.websiteName}" /></str:truncateNicely></a>:
