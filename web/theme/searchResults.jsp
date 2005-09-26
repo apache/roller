@@ -44,7 +44,7 @@ org.roller.presentation.search.SearchResultsPageModel searchResults =
         class="google"><fmt:message key="macro.searchresults.hits_2" /></a>
 
     <%-- Form to search again --%>
-    <form method="get" action="$ctxPath/search"
+    <form method="get" action='<c:out value="${searchResults.baseURL}" />/sitesearch.do'
         style="margin: 5px">
         <input type="text" id="q" name="q" size="31"
             maxlength="255" value='<c:out value="${searchResults.term}" />'
@@ -67,7 +67,7 @@ org.roller.presentation.search.SearchResultsPageModel searchResults =
             </c:forEach>
             </select>
         </c:if>
-        <input type="submit" value="$text.get("macro.searchresults.again")" />
+        <input type="submit" value='<fmt:message key="macro.searchresults.again" />' />
     </form>
 </p>
 
@@ -95,48 +95,47 @@ org.roller.presentation.search.SearchResultsPageModel searchResults =
         <%-- Get map of  entries for one day --%>
         <c:set var="dayMap" value="${searchResults.results[dayKey]}" />        
         
-            <%-- Display date --%>
-            <h3><c:out value="${dayKey}" /></h3><br />
-            
-            <%-- Loop to display entries --%>
-            <div class="daybox" style="margin: 0px 5px 0px 10px">
-            <c:forEach var="post" items="${dayMap}">
+        <%-- Display date --%>
+        <h3><c:out value="${dayKey}" /></h3><br />
 
-                <a href='<c:out value="${searchResults.baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
-                    <str:truncateNicely upper="90" >
-                       <c:out value="${post.displayTitle}" />
-                    </str:truncateNicely></a>
-                </a><br />
-                
-                <span class="entryDetails">
-                    <a href='<c:out value="${searchResults.baseURL}" />/page/<c:out value="${post.website.handle}" />'>
-                    <str:truncateNicely upper="50" >
-                       <c:out value="${post.website.name}" />
-                    </str:truncateNicely></a> |
-                    <c:out value="${post.category.name}" /> |
-                    <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" /> |
-                    <fmt:message key="mainPage.postedBy" />
-                    <c:out value="${post.creator.userName}" />
-                    <c:if test="${!empty post.link}">
-                       | <a href='<c:out value="${post.link}" />' class="entryDetails"><fmt:message key="mainPage.link" /></a>
-                    </c:if>
-                    <br />
-                </span>
-                
-               <span class="entryDescription">
-                   <roller:ApplyPlugins name="post" scope="page" stripHtml="true" maxLength="120" skipFlag="true" />
-               </span>
-        
-               <span style="font-size:x-small;">(<a
-                 href='<c:url value="?q=${searchResults.term}&weblog=${post.website.handle}" />'>restrict search</a> 
-                 to just this blog)
-               </span>
-                     
-            </c:forEach>
-            </div> <%-- daybox --%>
-            <br />
-            <br />
-        </div>
+        <%-- Loop to display entries --%>
+        <div class="daybox" style="margin: 0px 5px 0px 10px">
+        <c:forEach var="post" items="${dayMap}">
+
+            <a href='<c:out value="${searchResults.baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
+                <str:truncateNicely upper="90" >
+                   <c:out value="${post.displayTitle}" />
+                </str:truncateNicely></a>
+            </a><br />
+
+            <span class="entryDetails">
+                <a href='<c:out value="${searchResults.baseURL}" />/page/<c:out value="${post.website.handle}" />'>
+                <str:truncateNicely upper="50" >
+                   <c:out value="${post.website.name}" />
+                </str:truncateNicely></a> |
+                <c:out value="${post.category.name}" /> |
+                <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" /> |
+                <fmt:message key="mainPage.postedBy" />
+                <c:out value="${post.creator.userName}" />
+                <c:if test="${!empty post.link}">
+                   | <a href='<c:out value="${post.link}" />' class="entryDetails"><fmt:message key="mainPage.link" /></a>
+                </c:if>
+                <br />
+            </span>
+
+           <span class="entryDescription">
+               <roller:ApplyPlugins name="post" scope="page" stripHtml="true" maxLength="120" skipFlag="true" />
+           </span>
+
+           <span style="font-size:x-small;">(<a
+             href='<c:url value="?q=${searchResults.term}&weblog=${post.website.handle}" />'>restrict search</a> 
+             to just this blog)
+           </span>
+
+        </c:forEach>
+        </div> <%-- daybox --%>
+        <br />
+        <br />
                 
     </c:forEach>
     
