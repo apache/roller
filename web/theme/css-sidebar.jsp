@@ -1,11 +1,7 @@
-#centercontent {
-    margin: 15px 260px 0px 10px;
+#centercontent_wrap {
+    width: 70%;
 }
-#rightcontent {
-    position: absolute;
-    top:   130px;
-    right:  10px;
-    width: 230px;
+#rightcontent_wrap {
+    width: 30%;
 }
-
 
