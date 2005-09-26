@@ -9,6 +9,16 @@ function cancel() {
     document.createWebsiteForm.method.value="cancel"; 
     document.createWebsiteForm.submit();
 }
+function handlePreview() {
+	previewSpan = document.getElementById("handlePreview");
+	var n1 = previewSpan.childNodes[0];
+    var n2 = document.createTextNode(document.createWebsiteForm.handle.value);
+    if (n1 == null) {
+	    previewSpan.appendChild(n2);
+    } else {
+	    previewSpan.replaceChild(n2, n1);
+    }
+}
 -->
 </script>
 
@@ -34,7 +44,13 @@ function cancel() {
 
 <tr>
     <td class="label"><label for="handle" /><fmt:message key="createWebsite.handle" /></label></td>
-    <td class="field"><html:text property="handle" size="30" maxlength="30" /></td>
+    <td class="field">
+        <html:text property="handle" size="30" maxlength="30" onkeyup="handlePreview()" /><br />
+        <span style="text-size:70%">
+            <fmt:message key="createWebsite.weblogUrl" />:&nbsp;
+            <c:out value="${model.baseURL}" />/page/<span id="handlePreview" style="color:red">handle</span>
+        </span>
+    </td>
     <td class="description"><fmt:message key="createWebsite.tip.handle" /></td>
 </tr>
 
