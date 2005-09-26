@@ -2,9 +2,6 @@
 layout.css: Base CSS layout for Roller's web UI (position and sizing only)
 ====================================================================== */
 
-#wrapper {
-    width: 100%;
-}
 #banner {
     margin: 0px;
     padding: 0px 0px 0px 0px;
@@ -30,14 +27,40 @@ layout.css: Base CSS layout for Roller's web UI (position and sizing only)
 #menu {
     padding: 0px 10px 0px 10px;
 }
+#content {
+}
+/*  
+    NOTE: these wrap divs are kinda lame, however they are necessary.
+    the problem is that when 2 divs are floated side-by-side then the
+    calculation of their widths does not include padding or margins.
+
+    so without the wrap divs then putting a margin or padding value in any
+    of the XXXcontent divs forces the width calculation to be > 100% and 
+    the divs don't fit next to each other anymore :(
+
+    to get around this we put a XXXcontent_wrap around the XXXcontent divs
+    to do the float and set the width.  margin, padding, borders, etc
+    should be applied directly to the XXXcontent div.
+*/
+#centercontent_wrap {
+    float: left;
+    display: inline;
+}
 #centercontent {
-    margin: 10px 10px 0px 10px;
+    margin: 10px;
+}
+#rightcontent_wrap {
+    float: right;
+    display: inline;
 }
 #rightcontent {
-    position: absolute;
-    top:   40px;
-    right:  15px;
-    width: 230px;
+    margin: 10px;
+}
+#footer {
+    clear: both;
+    padding: 15px 0px 15px 0px;
+    font-size: smaller;
+    text-align: center;
 }
 .prop {
     height: 300px;
