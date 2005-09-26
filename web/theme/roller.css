@@ -85,12 +85,6 @@ Page element styles: boxes and borders, etc.
     width: 100%;
     background: #f00;
 }
-#footer {
-    margin: 25px 0px 20px 0px;
-    font-size: smaller;
-    text-align: center;
-    clear: both;
-}
 .sidebarBodyHead h3, .searchSidebarBody h3 {
    padding: 5px;
 }
@@ -247,7 +241,6 @@ label.sideformrow {
 
 div.yourWeblogBox {
    padding: 8px 0px 10px 0px;
-   margin-right: 10px;
 }
 
 /* ----------------------------------------------------------------------
@@ -543,9 +536,11 @@ div.helptext {
 .padleft {
     padding-left: 8px;
 }
+#logo {
+    padding: 15px 0px 10px 15px;
+}
 /* Transparent PNG fix for IE, thanks to Kenneth M. Kolano */
 #logoshadow {
-    position: relative;
     top: 15px;
     left: 15px;
     width: 165px;
