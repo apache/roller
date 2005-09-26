@@ -16,15 +16,6 @@ request.setAttribute("siteDescription", siteDescription);
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <tiles:insert attribute="head" />     
 <style type="text/css">
-#centercontent {
-    margin: 15px 260px 0px 10px;
-}
-#rightcontent {
-    position: absolute;
-    top:   150px;
-    right:  10px;
-    width: 230px;
-}
 .menuItemTable {
     width: 100%;
     height: 2px;
@@ -35,17 +26,19 @@ request.setAttribute("siteDescription", siteDescription);
 </head>
 <body>
 
+<div id="banner">
+    <tiles:insert attribute="banner" />
+    <tiles:insert attribute="bannerStatus" />
+</div>
+    
 <div id="wrapper">
-   
-    <div id="banner">
-        <tiles:insert attribute="banner" />
-        <tiles:insert attribute="bannerStatus" />
+    <div id="leftcontent_wrap">
+        <div id="leftcontent"> 
+        </div>
     </div>
     
-    <div id="leftcontent"> 
-    </div>
-    
-    <div id="centercontent"> 
+    <div id="centercontent_wrap">
+        <div id="centercontent"> 
         <tiles:insert attribute="title" />
         <c:choose>
             <c:when test="${planetEnabled}">
@@ -54,19 +47,24 @@ request.setAttribute("siteDescription", siteDescription);
             <c:otherwise>
             </c:otherwise>
         </c:choose>       
-        <tiles:insert attribute="content" />    
-        <div id="footer">
-            <tiles:insert attribute="footer" />
-        </div> 
+        <tiles:insert attribute="content" />
+        </div>
     </div>
     
-    <div id="rightcontent">
-       <tiles:insert attribute="search" />
-       <br />
-       <tiles:insert attribute="sidebar" />
-    </div>  
+    <div id="rightcontent_wrap">
+        <div id="rightcontent"> 
+            <tiles:insert attribute="search" />
+            <br />
+            <tiles:insert attribute="sidebar" />
+        </div>
+    </div>
  
 </div>
+
+<div id="footer">
+    <tiles:insert attribute="footer" />
+</div> 
+        
 <div id="datetagdiv" 
    style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
 </div>
