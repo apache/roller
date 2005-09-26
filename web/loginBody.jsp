@@ -5,24 +5,18 @@
 
 <h1><fmt:message key="loginPage.title" /></h1>
 
-<p style="border-top: 1px grey solid"><fmt:message key="loginPage.prompt" /></p>
-        
+<p><fmt:message key="loginPage.prompt" /></p>
+      
+<logic:present parameter="error">
+    <div class="error" style="margin-bottom: 15px"><bean:message key="error.password.mismatch"/></div>
+</logic:present>
+
 <form method="post" 
       id="loginForm" 
       action="<c:url value="/auth/"/>"
       onsubmit="saveUsername(this)">
       
     <table>
-    
-        <tr>
-            <td colspan="2">
-                <logic:present parameter="error">
-                    <div class="error">
-                        <bean:message key="error.password.mismatch"/>
-                    </div>
-                </logic:present>
-            </td>
-        </tr>
         
         <tr>
             <th><fmt:message key="loginPage.userName" />:</th>
