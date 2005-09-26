@@ -9,11 +9,11 @@
    <put name="title"        value="/theme/title.jsp" />
    <put name="bannerStatus" value="/theme/bannerStatus.jsp" />
    <put name="head"         value="/theme/head.jsp" />
-   <put name="styles"       value="/theme/css-banner.jsp" />
+   <put name="styles"       value="/theme/css-sidebar.jsp" />
    <put name="content"      value="${content}" />
    <put name="search"       value="/theme/search.jsp" />
    <put name="sidebar"      value="/theme/empty.jsp" />
-   <put name="footer"       value="/theme/footerMain.jsp" />
+   <put name="footer"       value="/theme/footer.jsp" />
 </definition>
 
 <definition name=".tiles-mainmenupage" path="/theme/tiles-mainmenupage.jsp">
@@ -71,7 +71,7 @@
 <definition name=".YourWebsites" extends=".tiles-mainmenupage" >
     <put name="content" value="/website/YourWebsites.jsp" />
     <put name="sidebar" value="/website/YourWebsitesSidebar.jsp" />
-    <put name="styles" value="/theme/css-sidebar-high.jsp" />
+    <put name="styles" value="/theme/css-sidebar.jsp" />
 </definition>
 
 <definition name=".YourProfile" extends=".tiles-simplepage" >
