@@ -1382,7 +1382,7 @@ function CP_getCalendar() {
 		else {
 			result += '		<A CLASS="'+this.cssPrefix+'cpTodayText" HREF="javascript:'+windowref+this.returnFunction+'(\''+now.getFullYear()+'\',\''+(now.getMonth()+1)+'\',\''+now.getDate()+'\');'+windowref+'CP_hideCalendar(\''+this.index+'\');">'+this.todayText+'</A>\n';
 			}
-		result += '		<BR>\n';
+		result += '		<BR><A CLASS="'+this.cssPrefix+'cpTodayText" HREF="javascript:document.'+window.CP_targetInput.form.name+'.'+window.CP_targetInput.name+'.value=\'\';'+windowref+'CP_hideCalendar(\''+this.index+'\');">Clear</A>\n';
 		result += '	</TD></TR></TABLE></CENTER></TD></TR></TABLE>\n';
 	}
 
