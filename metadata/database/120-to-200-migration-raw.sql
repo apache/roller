@@ -255,4 +255,4 @@ alter table pingcategory add constraint pc_autopingid_fk
     foreign key (autopingid) references autoping(id) @ADDL_FK_PARAMS@ ;
 
 alter table pingcategory add constraint pc_categoryid_fk
-    foreign key (categoryid) references weblogcategory(id) @ADDL_FK_PARAMS@ 
+    foreign key (categoryid) references weblogcategory(id) @ADDL_FK_PARAMS@ ;
