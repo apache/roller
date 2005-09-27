@@ -37,7 +37,7 @@ import org.roller.util.DateUtil;
 import org.roller.util.StringUtils;
 
 /**
- * Encapsulate seach result in page model so I can be used from Velocity or JSP.
+ * Encapsulate seach result in page model so it can be used from Velocity or JSP.
  * @author Min (original code)
  * @author Dave Johnson (encapsulation)
  */
