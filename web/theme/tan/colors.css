@@ -62,7 +62,7 @@ div.controlToggle {
     background: url("two-togglegrey.gif") repeat-x top; 
 }
 div.entriesBox {
-   background: #f5f0e6;
+   background: #f5e9d0;
 }
 div.entryTitleBox {
    color: white; 
@@ -75,7 +75,7 @@ div.entryTitleBox {
    font-size: medium;
 }
 div.entryBoxPinned {
-   background: #f5f0e6; 
+   background: #f5e9d0; 
    border-bottom: 1px #c8af7b solid;
 }
 a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
@@ -101,14 +101,14 @@ input.searchButton {
     color: white;
 }
 .sidebarFade, div.sidebarBody {
-    background: #f5f0e6;
+    background: #f5e9d0;
     color: #666666;
 }
 .searchSidebarHead {
-    background: #f5f0e6;
+    background: #f5e9d0;
 }
 .searchSidebarBody {
-    background: #f5f0e6;
+    background: #f5e9d0;
 }
 
 /* ------------------------------------------------------------------------ */

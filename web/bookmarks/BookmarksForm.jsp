@@ -80,18 +80,18 @@ function onMove()
 <input type="button" value="<fmt:message key='bookmarksForm.delete' />" 
    onclick="onDelete()"/></input>
 
-<%-- Move-selected button --%>
-<input type="button" value="<fmt:message key='bookmarksForm.move' />"   
-   onclick="onMove()"/></input>
+<c:if test="${!empty model.allFolders}">
+    <%-- Move-selected button --%>
+    <input type="button" value="<fmt:message key='bookmarksForm.move' />"   
+       onclick="onMove()"/></input>
 
-<%-- Move-to combo-box --%>
-<html:select property="moveToFolderId" size="1">
-    <html:options collection="allFolders" 
-        property="id" labelProperty="path"/>
-</html:select>
+    <%-- Move-to combo-box --%>
+    <html:select property="moveToFolderId" size="1">
+        <html:options collection="allFolders" 
+            property="id" labelProperty="path"/>
+    </html:select>
+</c:if>
 <p />
-
-<br />
 
 <table class="rollertable">
 

@@ -13,7 +13,6 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +30,6 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
@@ -99,7 +97,6 @@ public class BookmarksAction extends DispatchAction
         Roller roller = RollerFactory.getRoller();
         BookmarksPageModel pageModel = new BookmarksPageModel(
             request, response, mapping, (BookmarksForm)actionForm);
-        request.setAttribute("model", pageModel);
         if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor(
             pageModel.getFolder().getWebsite()))
         {
@@ -128,6 +125,10 @@ public class BookmarksAction extends DispatchAction
             }
             roller.commit();
 
+            // recreate model now that folder  is deleted
+            pageModel = new BookmarksPageModel(
+                request, response, mapping, (BookmarksForm)actionForm);
+            request.setAttribute("model", pageModel);
             return mapping.findForward("BookmarksForm");
         }
         else
@@ -275,6 +276,7 @@ public class BookmarksAction extends DispatchAction
             {
                 website = rreq.getWebsite();
                 folder = bmgr.getRootFolder(website);
+                folderId = folder.getId();
             }
             else
             {
@@ -299,24 +301,20 @@ public class BookmarksAction extends DispatchAction
 
             // Build list of all folders, except for current one, sorted by path.
             Iterator iter = bmgr.getAllFolders(website).iterator();
-
-            // Build list of only children
-            //Iterator iter = folder.getFolders().iterator();
-
-            //int max = 20, count = 0;
-            while (iter.hasNext()) // && count < max)
+            while (iter.hasNext())
             {
-                //count++;
                 FolderData fd = (FolderData) iter.next();
                 if (!fd.getId().equals(folderId))
                 {
                     allFolders.add(fd);
                 }
             }
-            
-            // for Struts tags
-            request.setAttribute("allFolders", allFolders);            
-            request.setAttribute("folder", folder);
+            if (allFolders.size() > 0) {
+                request.setAttribute("allFolders", allFolders); // for Struts tags
+            } else {
+                allFolders = null;
+            }
+            request.setAttribute("folder", folder); // for Struts tags          
         }
         
         public String getTitle()
