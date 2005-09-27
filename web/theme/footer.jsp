@@ -1,8 +1,7 @@
 <%@ include file="/taglibs.jsp" %>
 
-<a href="http://www.rollerweblogger.org">
-    Powered by Roller Weblogger</a> 
-    <%= RollerContext.getRollerContext(request).getRollerVersion() %> | 
+Powered by <a href="http://www.rollerweblogger.org">Roller Weblogger</a> 
+<%= RollerContext.getRollerContext(request).getRollerVersion() %> |
 
 <a href="http://opensource.atlassian.com/projects/roller/Dashboard.jspa">
     <fmt:message key="footer.reportIssue" /></a> | 
