@@ -41,7 +41,7 @@
    <put name="banner"       value="/theme/empty.jsp" />
    <put name="bannerStatus" value="/theme/bannerStatus.jsp" />
    <put name="head"         value="/theme/head.jsp" />
-   <put name="styles"       value="/theme/empty.jsp" />
+   <put name="styles"       value="/theme/css-nosidebar.jsp" />
    <put name="messages"     value="/theme/messages.jsp" />
    <put name="content"      value="${content}" />
    <put name="footer"       value="/theme/footer.jsp" />
