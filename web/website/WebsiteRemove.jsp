@@ -8,6 +8,10 @@
 <fmt:message key="websiteRemove.youSure"> 
     <fmt:param value="${website.name}" />
 </fmt:message>
+<br/>
+<span class="warning">
+    <fmt:message key="websiteSettings.removeWebsiteWarning" />
+</span>
 </p>
 
 <p>

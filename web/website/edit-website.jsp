@@ -167,8 +167,8 @@ if (emailComments) { %>
     <br />
     <br />
     <h2><fmt:message key="websiteSettings.removeWebsiteHeading" /></h2>
-    <p class="subtitle">
-        <fmt:message key="websiteSettings.removeWebsite" />
+    <p>
+        <fmt:message key="websiteSettings.removeWebsite" /><br/>
         <span class="warning">
             <fmt:message key="websiteSettings.removeWebsiteWarning" />
         </span>
