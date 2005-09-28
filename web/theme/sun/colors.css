@@ -84,7 +84,7 @@ div.entryBoxPinned {
     color: black;
 }
 .yourWeblogBox {
-   border-top: 1px solid grey;
+   border-top: 1px solid #999;
 }
 input.searchButton {
     color: white;

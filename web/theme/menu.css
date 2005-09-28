@@ -32,7 +32,7 @@ div.menu-tr {
 td div.menu-tr div.menu-tl a {
    display: table-cell;
    vertical-align: middle;
-   padding: 0px 5px 0px 5px;
+   padding: 3px 5px 0px 5px;
 }
 
 /* ----------------------------------------------------------------------
@@ -52,10 +52,12 @@ td.menuTabSelected {
     margin: 0px; 
     padding: 0px; 
     font-weight: bold;
+    vertical-align: top;
 }
 td.menuTabUnselected {
     margin: 0px; 
     padding: 0px; 
+    vertical-align: top;
 }
 
 /* ----------------------------------------------------------------------
