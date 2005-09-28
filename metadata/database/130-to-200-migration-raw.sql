@@ -80,6 +80,26 @@ update pingtarget pt set pt.conditioncode=pt.condition;
 
 -- Removing all indexes, foreign key with long names to support DB2
 
+alter table website drop foreign key website_userid_fk;
+alter table userrole drop foreign key userrole_userid_fk;
+alter table webpage drop foreign key weblogpage_websiteid_fk;
+alter table weblogentry drop foreign key weblogentry_websiteid_fk;
+alter table weblogentry drop foreign key weblogentry_categoryid_fk;
+alter table weblogcategory drop foreign key weblogcategory_websiteid_fk;
+alter table comment drop foreign key comment_entryid_fk;
+alter table entryattribute drop foreign key att_entryid_fk;
+alter table referer drop foreign key referer_entryid_fk;
+alter table referer drop foreign key referer_websiteid_fk;
+alter table folder drop foreign key folder_websiteid_fk;
+alter table bookmark drop foreign key bookmark_folderid_fk;
+alter table newsfeed drop foreign key newsfeed_websiteid_fk;
+alter table pingtarget drop foreign key pingtarget_websiteid_fk;
+alter table autoping drop foreign key autoping_websiteid_fk;
+alter table autoping drop foreign key autoping_pingtargetid_fk;
+alter table pingcategory drop foreign key pingcategory_autopingid_fk;
+alter table pingcategory drop foreign key pingcategory_categoryid_fk;
+
+
 alter table userrole drop index userrole_userid_index;
 alter table userrole drop index userrole_username_index;
 alter table usercookie drop index usercookie_username_index;
@@ -128,24 +148,6 @@ alter table rag_group drop index rag_group_handle;
 alter table rag_subscription drop index rag_subscription_feed_url; 
 alter table rag_entry drop index rag_entry_sid;
 
-alter table website drop foreign key website_userid_fk;
-alter table userrole drop foreign key userrole_userid_fk;
-alter table webpage drop foreign key weblogpage_websiteid_fk;
-alter table weblogentry drop foreign key weblogentry_websiteid_fk;
-alter table weblogentry drop foreign key weblogentry_categoryid_fk;
-alter table weblogcategory drop foreign key weblogcategory_websiteid_fk;
-alter table comment drop foreign key comment_entryid_fk;
-alter table entryattribute drop foreign key att_entryid_fk;
-alter table referer drop foreign key referer_entryid_fk;
-alter table referer drop foreign key referer_websiteid_fk;
-alter table folder drop foreign key folder_websiteid_fk;
-alter table bookmark drop foreign key bookmark_folderid_fk;
-alter table newsfeed drop foreign key newsfeed_websiteid_fk;
-alter table pingtarget drop foreign key pingtarget_websiteid_fk;
-alter table autoping drop foreign key autoping_websiteid_fk;
-alter table autoping drop foreign key autoping_pingtargetid_fk;
-alter table pingcategory drop foreign key pingcategory_autopingid_fk;
-alter table pingcategory drop foreign key pingcategory_categoryid_fk;
 
 -- Adding all new indexes with short names
 
