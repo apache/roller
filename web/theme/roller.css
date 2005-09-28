@@ -237,6 +237,7 @@ label.sideformrow {
    text-align: left;
    width: 30%;
    padding-right: 1em;
+   font-size: smaller;
 }
 
 div.yourWeblogBox {
@@ -360,10 +361,8 @@ Error and status message styles
     color: #FF0000;
 }
 .warning {
-    background: transparent;
-    color: #FF0000;
-    font-size: 120%;
-    font-weight: bold;
+    color: #f00;
+    font-size: larger;
 }
 .errors, .messages, .warnings {
     padding: 5px;
@@ -378,7 +377,7 @@ Error and status message styles
    border: 1px solid green;
 }
 .warnings {
-   background-color:#FFFFAA;
+   background-color: #FFFFAA;
    border: 1px solid yellow;
 }
 div.error {

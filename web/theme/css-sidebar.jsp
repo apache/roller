@@ -2,6 +2,6 @@
     width: 70%;
 }
 #rightcontent_wrap {
-    width: 30%;
+    width: 29%;
 }
 
