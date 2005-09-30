@@ -22,6 +22,9 @@ request.setAttribute("featuredGroup2_entries",((PlanetAction.PlanetPageData)
    request.getAttribute("data")).getAggregation("featuredGroup2",20));
 %>
 
+<div class="entriesBox">
+<div class="entriesBoxInner">
+
 <c:forEach var="post" items="${aggregation}">
 
     <div class="entryBox">
@@ -55,6 +58,8 @@ request.setAttribute("featuredGroup2_entries",((PlanetAction.PlanetPageData)
     </div>
 
 </c:forEach>
+</div> <!-- entriesBoxInner -->
+</div> <!-- entriesBox -->
 
 <br />
 
