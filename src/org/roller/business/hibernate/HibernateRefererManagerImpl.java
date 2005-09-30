@@ -181,21 +181,21 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             if (con.getMetaData().getDriverName().startsWith("HSQL")) {
                 // special handling for HSQLDB
                 stmt = con.prepareStatement(
-                        "select top ? u.username,w.name,w.name,w.handle,sum(r.dayhits) as s "+
-                        "from rolleruser as u, website as w, referer as r "+
-                        "where r.websiteid=w.id and w.userid=u.id and w.isenabled=? " +
-                        "group by u.username,w.name,w.id order by s desc");
+                        "select top ? w.id,w.name,w.handle,sum(r.dayhits) as s "+
+                        "from website as w, referer as r "+
+                        "where r.websiteid=w.id and and w.isenabled=? " +
+                        "group by w.name,w.handle,w.id order by s desc");
                 stmt.setInt(1, max);
                 stmt.setBoolean(2, true);
             } else {
                 stmt = con.prepareStatement(
-                        "select u.username,w.name,w.name,w.handle,sum(r.dayhits) as s "+
-                        "from rolleruser as u, website as w, referer as r "+
-                        "where r.websiteid=w.id and w.userid=u.id and w.isenabled= ? " +
+                        "select w.id,w.name,w.handle,sum(r.dayhits) as s "+
+                        "from website as w, referer as r "+
+                        "where r.websiteid=w.id and w.isenabled= ? " +
                         // Ben Walding (a Postgres SQL user): Basically, you have
                         // to have all non-aggregated columns that exist in your
                         // 'SELECT' section, in the 'GROUP BY' section as well:
-                        "group by u.username,w.name,w.id order by s desc limit ?");
+                        "group by w.name,w.handle,w.id order by s desc limit ?");
                 // and not this: "group by w.id order by s desc");
                 stmt.setBoolean(1, true);
                 stmt.setInt(2, max);
@@ -204,14 +204,12 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             if ( rs.next() ) {
                 do
                 {
-                    String userName = rs.getString(1);
-                    String name = rs.getString(2);
-                    String websiteName = rs.getString(3);
-                    String websiteHandle = rs.getString(4);
-                    Integer hits = new Integer(rs.getInt(5));
+                    String websiteId = rs.getString(1);
+                    String websiteName = rs.getString(2);
+                    String websiteHandle = rs.getString(3);
+                    Integer hits = new Integer(rs.getInt(4));
                     list.add(new WebsiteDisplayData(
-                            name,
-                            userName,
+                            websiteId,
                             websiteName,
                             websiteHandle,
                             hits));

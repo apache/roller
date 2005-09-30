@@ -17,7 +17,6 @@ public class WebsiteDisplayData extends PersistentObject {
     static final long serialVersionUID = 5264701383470813687L;
     
     private String mId;
-    private String mUserName = null;
     private String mWebsiteName = null;
     private String mWebsiteHandle = null;
     private Integer mHits = new Integer(0);
@@ -34,13 +33,11 @@ public class WebsiteDisplayData extends PersistentObject {
      */
     public WebsiteDisplayData(
             String id,
-            String userName,
             String websiteName,
             String websiteHandle,
             Integer hits) {
         super();
         mId = id;
-        mUserName = userName;
         mWebsiteName = websiteName;
         mWebsiteHandle = websiteHandle;
         mHits = hits;
@@ -66,22 +63,7 @@ public class WebsiteDisplayData extends PersistentObject {
     public void setId(String id) {
         mId = id;
     }
-    
-    
-    /**
-     * @ejb:persistent-field
-     */
-    public String getUserName() {
-        return mUserName;
-    }
-    
-    /**
-     * @param string
-     */
-    public void setUserName(String string) {
-        mUserName = string;
-    }
-    
+        
     /**
      * @ejb:persistent-field
      */
