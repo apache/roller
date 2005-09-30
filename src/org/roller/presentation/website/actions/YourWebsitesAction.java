@@ -159,6 +159,7 @@ public class YourWebsitesAction extends DispatchAction
         private boolean groupBloggingEnabled = false;
         private List permissions = new ArrayList();
         private List pendings = new ArrayList();
+        private int userWeblogCount = 0;
         
         public YourWebsitesPageModel(HttpServletRequest request,
           HttpServletResponse response, ActionMapping mapping) throws RollerException
@@ -168,6 +169,7 @@ public class YourWebsitesAction extends DispatchAction
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             UserData user = rollerSession.getAuthenticatedUser();
             permissions = roller.getUserManager().getAllPermissions(user);
+            userWeblogCount = permissions.size();
             pendings = roller.getUserManager().getPendingPermissions(user); 
             groupBloggingEnabled = 
                 RollerConfig.getBooleanProperty("groupblogging.enabled");
@@ -205,6 +207,12 @@ public class YourWebsitesAction extends DispatchAction
         public void setPlanetAggregatorEnabled(boolean planetAggregatorEnabled) {
             this.planetAggregatorEnabled = planetAggregatorEnabled;
         }
-    
+
+        public int getUserWeblogCount() {
+            return userWeblogCount;
+        }
+        public void setUserWeblogCount(int count) {
+            userWeblogCount = count;
+        }
     }
 }
