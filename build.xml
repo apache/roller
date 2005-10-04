@@ -714,6 +714,7 @@ ro.buildUser=${user.name}
 
     <mkdir dir="${build.tests}" />
     <mkdir dir="${build.tests}/logs" />
+    <mkdir dir="${build.tests}/planet-cache" />
     <mkdir dir="${build.tests}/WEB-INF/classes" />
     <mkdir dir="${build.tests}/WEB-INF/classes/themes" />
     
@@ -738,8 +739,11 @@ ro.buildUser=${user.name}
     testing without interfering with the "real" build in ${build.stage_web}
     -->
 	
-	<copy file="${basedir}/personal/testing/roller.properties"
+	<copy file="${basedir}/web/WEB-INF/classes/roller.properties"
         todir="${build.tests}/WEB-INF/classes/"/>
+
+	<copy file="${basedir}/personal/testing/roller-custom.properties"
+        todir="${build.tests}"/>
 
     <copy file="${basedir}/personal/testing/hibernate.cfg.xml"
         tofile="${build.tests}/WEB-INF/classes/hibernate.cfg.xml" />
@@ -863,6 +867,7 @@ ro.buildUser=${user.name}
         <jvmarg value="-DrollerImpl=hibernate"/>
         <jvmarg value="-Dro.build=${ro.build}"/>
         <jvmarg value="-Dcatalina.base=${build.tests}"/> <!-- needed to satisfy ref in log4j.properties -->
+        <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
         <formatter type="xml"/>
         <classpath>
             <path refid="junit.path"/>

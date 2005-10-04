@@ -77,7 +77,7 @@ public class PlanetManagerTest extends TestCase
         {   // retrieve config and default group
             roller.begin();
             PlanetConfigData config = planet.getConfiguration();
-            assertEquals("/var/roller/planetcache",config.getCacheDir());
+            assertEquals("./build/tests/planet-cache",config.getCacheDir());
             assertEquals("test_title", config.getTitle());
             assertEquals("test_admin_email", config.getAdminEmail());
             
@@ -103,7 +103,6 @@ public class PlanetManagerTest extends TestCase
             roller.rollback();
         }
     }
-    
     public void testGroupStorage() throws Exception
     {
         Roller roller = getRoller();
@@ -141,7 +140,6 @@ public class PlanetManagerTest extends TestCase
             roller.rollback();
         }
     }
-    
     public void testSubscriptionStorage() throws Exception
     {
         Roller roller = getRoller();
@@ -305,8 +303,8 @@ public class PlanetManagerTest extends TestCase
                 PlanetGroupData group = planet.getGroup("test_handle");
                 assertNotNull(group);
                 
-                planet.deleteSubscription(sub);
                 planet.deleteGroup(group);
+                planet.deleteSubscription(sub);
                 
                 PlanetConfigData config = planet.getConfiguration();
                 config.remove();
@@ -316,6 +314,7 @@ public class PlanetManagerTest extends TestCase
         catch (Exception e) 
         {
             e.printStackTrace();
+            fail();
         }
     }
     public void testAggregations() throws Exception
@@ -384,9 +383,9 @@ public class PlanetManagerTest extends TestCase
                 List littleag = planet.getAggregation(group, 10);
                 assertEquals(littleag.size(), count);
                                   
+                planet.deleteGroup(group);
                 planet.deleteSubscription(sub1);
                 planet.deleteSubscription(sub2);
-                planet.deleteGroup(group);
                 
                 PlanetConfigData config = planet.getConfiguration();
                 config.remove();
@@ -396,6 +395,7 @@ public class PlanetManagerTest extends TestCase
         catch (Exception e)
         {
             e.printStackTrace();
+            fail();
         }
     }
     public void testSubscriptionCount() throws Exception
@@ -421,11 +421,17 @@ public class PlanetManagerTest extends TestCase
                 roller.begin();
                 assertEquals(2, planet.getSubscriptionCount());
                 roller.rollback();
+                
+                roller.begin();
+                planet.getSubscription(feed_url1).remove();
+                planet.getSubscription(feed_url2).remove();
+                roller.commit();
             }     
         }
         catch (Exception e) 
         {
             e.printStackTrace();
+            fail();
         }
     }
     /*
