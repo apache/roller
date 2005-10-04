@@ -8,6 +8,7 @@ import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.ScheduledTask;
+import org.roller.pojos.UserData;
 
 /**
  * Run the Planet Roller refresh-entries method to fetch and parse newsfeeds.
@@ -36,7 +37,7 @@ public class RefreshEntriesTask extends TimerTask implements ScheduledTask
     {
         try
         {
-            roller.begin();
+            roller.begin(UserData.SYSTEM_USER);
             roller.getPlanetManager().refreshEntries();
             roller.commit();
             roller.release();
