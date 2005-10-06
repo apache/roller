@@ -5,16 +5,12 @@
 <c:choose>
 
     <%-- PROMPT: Welcome... you have no blog --%>
-    <c:when test="${model.groupBloggingEnabled && empty model.permissions && empty model.pendings}"> 
+    <c:when test="${empty model.permissions && empty model.pendings}"> 
         <p><fmt:message key="yourWebsites.prompt.noBlog" />
         <roller:link page="/editor/createWebsite.do">
            <fmt:message key="yourWebsites.createOne" />
         </roller:link></p>
-    </c:when>
-    
-    <c:when test="${!model.groupBloggingEnabled && empty model.permissions && empty model.pendings}"> 
-        <p><fmt:message key="yourWebsites.prompt.noBlogNoCreate" /></p>        
-    </c:when>
+    </c:when>      
     
     <%-- PROMPT: You have invitation(s) --%>
     <c:when test="${!empty model.pendings}">      

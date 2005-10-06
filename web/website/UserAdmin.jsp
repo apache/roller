@@ -13,6 +13,7 @@ function cancel() {
 <c:if test="${empty userAdminForm.userName}">
 
     <p class="subtitle"><fmt:message key="userAdmin.subtitle.searchUser" /></p>
+    <p><fmt:message key="userAdmin.prompt.searchUser" /></p>
 
     <html:form action="/admin/user" method="post" focus="userName">
         <input name="method" type="hidden" value="edit" />    
@@ -21,7 +22,7 @@ function cancel() {
                <fmt:message key="inviteMember.userName" /></label>
            <div>
                <input name="userName" id="userName" size="30" maxlength="30" 
-                   onfocus="onUserNameFocus()" onkeyup="onUserNameChange()" /><br />
+                   onfocus="onUserNameFocus(null)" onkeyup="onUserNameChange(null)" /><br />
            </div>
         </div>        
         <div class="formrow">
@@ -44,12 +45,14 @@ function cancel() {
     <c:choose>
         <c:when test="${not empty userAdminForm.userName}">		
             <p class="subtitle"><fmt:message key="userAdmin.subtitle.editUser" /></p>
+            <p><fmt:message key="userAdmin.prompt.editUser" /></p>
         </c:when>
         <c:otherwise>
             <h1>
                 <fmt:message key="userAdmin.title.createNewUser" />
             </h1>			
             <p class="subtitle"><fmt:message key="userAdmin.subtitle.createNewUser" /></p>
+            <p><fmt:message key="userAdmin.prompt.createNewUser" /></p>
         </c:otherwise>
     </c:choose>
     

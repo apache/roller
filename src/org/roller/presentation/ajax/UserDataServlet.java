@@ -19,6 +19,7 @@ import org.roller.pojos.UserData;
  * Return list of users matching a startsWith strings. <br />
  * Accepts request params (none required):<br />
  *     startsWith: string to be matched against username and email address<br />
+ *     enabled: true include only enabled users (default: no restriction<br />
  *     offset: offset into results (for paging)<br />
  *     length: number of users to return (max is 50)<br /><br />
  * List format:<br />
@@ -28,7 +29,7 @@ import org.roller.pojos.UserData;
  *     usernameN, emailaddressN <br/>
  * 
  * @web.servlet name="UserDataServlet" 
- * @web.servlet-mapping url-pattern="/userdata/*"
+ * @web.servlet-mapping url-pattern="/editor/userdata/*"
  * @author David M Johnson
  */
 public class UserDataServlet extends HttpServlet {
@@ -36,9 +37,12 @@ public class UserDataServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {    
         
-        String startsWith = request.getParameter("startsWith");        
+        String startsWith = request.getParameter("startsWith");
+        Boolean enabledOnly = null;
         int offset = 0;
         int length = MAX_LENGTH;
+        if ("true".equals(request.getParameter("enabled"))) enabledOnly = Boolean.TRUE;
+        if ("false".equals(request.getParameter("enabled"))) enabledOnly = Boolean.FALSE;
         try { offset = Integer.parseInt(request.getParameter("offset"));
         } catch (Throwable ignored) {}             
         try { length = Integer.parseInt(request.getParameter("length"));
@@ -48,7 +52,7 @@ public class UserDataServlet extends HttpServlet {
         try {
             UserManager umgr = roller.getUserManager();
             List users = 
-                umgr.getUsersStartingWith(startsWith, offset, length, Boolean.TRUE);
+             umgr.getUsersStartingWith(startsWith, offset, length, enabledOnly);
             Iterator userIter = users.iterator();
             while (userIter.hasNext()) {
                 UserData user = (UserData)userIter.next();

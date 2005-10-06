@@ -76,6 +76,7 @@ public class CreateWebsiteAction extends DispatchAction
             HttpServletResponse response)
             throws Exception
     {
+         ActionForward forward = mapping.findForward("createWebsite.page");
         CreateWebsiteForm form = (CreateWebsiteForm)actionForm;
         
         RollerSession rses = RollerSession.getRollerSession(request);
@@ -84,10 +85,18 @@ public class CreateWebsiteAction extends DispatchAction
         form.setTimeZone(user.getTimeZone());         
         form.setEmailAddress(user.getEmailAddress());
 
-        request.setAttribute("model", 
-            new CreateWebsitePageModel(request, response, mapping, null));
-        
-        ActionForward forward = mapping.findForward("createWebsite.page");
+        if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
+            Roller roller = RollerFactory.getRoller();            
+            List permissions = roller.getUserManager().getAllPermissions(user);
+            if (permissions.size() > 0) {
+                // sneaky user trying to get around 1 blog limit that applies
+                // only when group blogging is disabled
+                forward = mapping.findForward("access-denied");
+            }           
+        } else {
+            request.setAttribute("model", 
+                new CreateWebsitePageModel(request, response, mapping, null));
+        }
         return forward;
     }
     
@@ -102,7 +111,8 @@ public class CreateWebsiteAction extends DispatchAction
         CreateWebsiteForm form = (CreateWebsiteForm)actionForm;
         ActionMessages msgs = new ActionMessages();
         ActionMessages errors = validate(form, new ActionErrors());
-        ActionForward forward = mapping.findForward("yourWebsites");
+        ActionForward forward = mapping.findForward("yourWebsites"); 
+        Roller roller = RollerFactory.getRoller();
         WebsiteData website = null;
         if (!errors.isEmpty())
         {
@@ -114,29 +124,38 @@ public class CreateWebsiteAction extends DispatchAction
             RollerContext rollerContext = RollerContext.getRollerContext(request);
             UserData user = 
                 RollerSession.getRollerSession(request).getAuthenticatedUser();
-            UserManager mgr = RollerFactory.getRoller().getUserManager(); 
+            UserManager mgr = roller.getUserManager(); 
             
-            // Need system user to create website
-            RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
-            HashMap pages = null; //rollerContext.readThemeMacros(form.getTheme());
-            website = mgr.createWebsite(
-               user, 
-               pages, 
-               form.getHandle(), 
-               form.getName(), 
-               form.getDescription(), 
-               form.getEmailAddress(),
-               form.getTheme(), 
-               form.getLocale(), 
-               form.getTimeZone());
-            RollerFactory.getRoller().commit();
-            
-            request.setAttribute("model", 
-               new CreateWebsitePageModel(request, response, mapping, website));  
-            
-            msgs.add(ActionMessages.GLOBAL_MESSAGE, 
-               new ActionMessage("createWebsite.created", form.getHandle()));
-            saveMessages(request, msgs);     
+            if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {          
+                List permissions = roller.getUserManager().getAllPermissions(user);
+                if (permissions.size() > 0) {
+                    // sneaky user trying to get around 1 blog limit that applies
+                    // only when group blogging is disabled
+                    forward = mapping.findForward("access-denied");
+                }
+            } else {                   
+                // Need system user to create website
+                roller.setUser(UserData.SYSTEM_USER);
+                HashMap pages = null; //rollerContext.readThemeMacros(form.getTheme());
+                website = mgr.createWebsite(
+                   user, 
+                   pages, 
+                   form.getHandle(), 
+                   form.getName(), 
+                   form.getDescription(), 
+                   form.getEmailAddress(),
+                   form.getTheme(), 
+                   form.getLocale(), 
+                   form.getTimeZone());
+                roller.commit();
+
+                request.setAttribute("model", 
+                   new CreateWebsitePageModel(request, response, mapping, website));  
+
+                msgs.add(ActionMessages.GLOBAL_MESSAGE, 
+                   new ActionMessage("createWebsite.created", form.getHandle()));
+                saveMessages(request, msgs);  
+            }
         }
         catch (RollerException e)
         {

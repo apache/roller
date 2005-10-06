@@ -10,7 +10,8 @@ function cancel() {
 // -->
 </script> 
 
-<p class="subtitle"><fmt:message key="inviteMember.description" /></p>
+<p class="subtitle"><fmt:message key="inviteMember.subtitle" /></p>
+<p><fmt:message key="inviteMember.prompt" /></p>
 
 <html:form action="/editor/inviteMember" method="post" focus="userName">
     <html:hidden property="websiteId" />
@@ -21,7 +22,7 @@ function cancel() {
            <fmt:message key="inviteMember.userName" /></label>
        <div>
            <input name="userName" id="userName" size="30" maxlength="30" 
-               onfocus="onUserNameFocus()" onkeyup="onUserNameChange()" /><br />
+               onfocus="onUserNameFocus(true)" onkeyup="onUserNameChange(true)" /><br />
        </div>
     </div>    
     
