@@ -65,7 +65,11 @@ public class RollerSession
                 {
                     UserManager umgr = RollerFactory.getRoller().getUserManager();
                     UserData user = umgr.getUser(principal.getName());
-                    rollerSession.setAuthenticatedUser(user);
+                    // only set authenticated user if user is enabled
+                    if (user.getEnabled().booleanValue()) 
+                    {
+                        rollerSession.setAuthenticatedUser(user);  
+                    }                    
                 }
                 catch (RollerException e)
                 {
@@ -189,7 +193,8 @@ public class RollerSession
     public boolean isGlobalAdminUser() throws RollerException
     {
         UserData user = getAuthenticatedUser();
-        if (user != null && user.hasRole("admin")) return true;
+        if (user != null && user.hasRole("admin") 
+            && user.getEnabled().booleanValue()) return true;
         return false;
     }
 
@@ -199,7 +204,10 @@ public class RollerSession
     public boolean isUserAuthorized(WebsiteData website) 
         throws RollerException
     {
-        return hasPermissions(website, PermissionsData.LIMITED);
+        UserData user = getAuthenticatedUser();
+        if (user != null && user.getEnabled().booleanValue()) 
+            return hasPermissions(website, PermissionsData.LIMITED);
+        return false;
     }
     
     /** 
@@ -208,7 +216,10 @@ public class RollerSession
     public boolean isUserAuthorizedToAuthor(WebsiteData website) 
         throws RollerException
     {
-        return hasPermissions(website, PermissionsData.AUTHOR);
+        UserData user = getAuthenticatedUser();
+        if (user != null && user.getEnabled().booleanValue()) 
+            return hasPermissions(website, PermissionsData.AUTHOR);
+        return false;
     }
     
     /** 
@@ -217,7 +228,10 @@ public class RollerSession
     public boolean isUserAuthorizedToAdmin(WebsiteData website) 
         throws RollerException
     {
-        return hasPermissions(website, PermissionsData.ADMIN);
+        UserData user = getAuthenticatedUser();
+        if (user != null && user.getEnabled().booleanValue()) 
+            return hasPermissions(website, PermissionsData.ADMIN);
+        return false;
     }
     
     private boolean hasPermissions(WebsiteData website, short mask) 

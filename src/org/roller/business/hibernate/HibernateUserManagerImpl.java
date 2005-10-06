@@ -574,7 +574,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         List results = new ArrayList();
         if (enabled != null)
         {
-            criteria.add(Expression.eq("enabled", Boolean.TRUE));
+            criteria.add(Expression.eq("enabled", enabled));
         }
         if (startsWith != null) 
         {

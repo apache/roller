@@ -12,21 +12,23 @@ function createRequestObject() {
 }
 var http = createRequestObject();
 var init = false;
-var userURL = "<%= request.getContextPath() %>" + "/userdata";
+var isBusy = false;
+var userURL = "<%= request.getContextPath() %>" + "/editor/userdata?length=50";
 
-function onUserNameFocus() {
+function onUserNameFocus(enabled) {
     if (!init) {
         init = true;
-        sendUserRequest(userURL);
+        u = userURL;
+        if (enabled != null) u = u + "&enabled=" + enabled;
+        sendUserRequest(u);
     }
 }
-function onUserNameChange() {
+function onUserNameChange(enabled) {
+    u = userURL;
+    if (enabled != null) u = u + "&enabled=" + enabled;
     userName = document.getElementById("userName");
-    if (userName.value.length > 0) {
-        sendUserRequest(userURL + "?startsWith=" + userName.value);
-    } else {
-        sendUserRequest(userURL);
-    }
+    if (userName.value.length > 0) u = u + "&startsWith=" + userName.value;
+    sendUserRequest(u);
 }
 function onUserSelected() {
     userList = document.getElementById("userList");
@@ -35,6 +37,8 @@ function onUserSelected() {
     userName.value = user.value;
 }
 function sendUserRequest(url) {
+    if (isBusy) http.abort();
+    isBusy = true;
     http.open('get', url);
     http.onreadystatechange = handleUserResponse;
     http.send(null);
@@ -58,6 +62,6 @@ function handleUserResponse() {
                 }
             }
         }  
-        //userList.onchange = onUserSelected();
+        isBusy = false;
     }
 }
