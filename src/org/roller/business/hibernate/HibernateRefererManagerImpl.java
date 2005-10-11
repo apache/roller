@@ -187,6 +187,23 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
                         "group by w.name,w.handle,w.id order by s desc");
                 stmt.setInt(1, max);
                 stmt.setBoolean(2, true);
+            } else if(con.getMetaData().getDriverName().startsWith("Apache Derby")) {
+	           // special handling for Derby
+				stmt = con.prepareStatement(
+				        "select u.username,w.name,w.name,sum(r.dayhits) as s "+
+				    "from rolleruser as u, website as w, referer as r "+
+				    "where r.websiteid=w.id and w.userid=u.id and w.isenabled=? " +
+				    "group by u.username,w.name,w.id order by s desc");
+				stmt.setBoolean(1, true);
+            } else if(con.getMetaData().getDriverName().startsWith("IBM DB2")) {
+           // special handling for IBM DB2
+                stmt = con.prepareStatement(
+                        "select u.username,w.name,w.name,sum(r.dayhits) as s "+
+                        "from rolleruser as u, website as w, referer as r "+
+                        "where r.websiteid=w.id and w.userid=u.id and w.isenabled= ? " +
+                        "group by u.username,w.name,w.id order by s desc fetch first " +
+                        Integer.toString(max) + " rows only");
+                stmt.setBoolean(1, true);
             } else {
                 stmt = con.prepareStatement(
                         "select w.id,w.name,w.handle,sum(r.dayhits) as s "+
@@ -213,6 +230,10 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
                             websiteName,
                             websiteHandle,
                             hits));
+                    if(list.size() >= max) {
+                    	rs.close();
+                    	break;
+                    }
                 }
                 while ( rs.next() );
             }

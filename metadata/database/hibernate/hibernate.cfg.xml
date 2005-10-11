@@ -13,7 +13,7 @@
         If you want to use HSQLDB, PostgreSQL, DB2 or Derby, then use the right dialect   
         <property name="dialect">org.hibernate.dialect.HQLDBDialect</property> 
         <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-        <property name="dialect">org.hibernate.dialect.DB2SQLDialect</property>
+        <property name="dialect">org.hibernate.dialect.DB2Dialect</property>
         <property name="dialect">org.hibernate.dialect.DerbyDialect</property>
         -->
 
