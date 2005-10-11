@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -43,6 +45,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
+import org.roller.config.RollerConfig;
 import org.roller.model.IndexManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -909,64 +912,89 @@ public final class WeblogEntryFormAction extends DispatchAction
 
                if (form.getTrackbackUrl() != null)
                {
-                   try
+            	   // by default let all trackbacks to be sent
+            	   boolean allowTrackback = true;
+
+            	   String allowedURLs = RollerConfig.getProperty("trackback.allowedURLs");
+                   if (allowedURLs != null)
                    {
-                       // Construct data
-
-                       String data = URLEncoder.encode("title", "UTF-8")
-                           +"="+URLEncoder.encode(title, "UTF-8");
-
-                       data += ("&" + URLEncoder.encode("excerpt", "UTF-8")
-                                 +"="+URLEncoder.encode(excerpt,"UTF-8"));
-
-                       data += ("&" + URLEncoder.encode("url", "UTF-8")
-                                 +"="+URLEncoder.encode(url,"UTF-8"));
-
-                       data += ("&" + URLEncoder.encode("blog_name", "UTF-8")
-                                 +"="+URLEncoder.encode(blog_name,"UTF-8"));
-
-                       // Send data
-                       URL tburl = new URL(form.getTrackbackUrl());
-                       URLConnection conn = tburl.openConnection();
-                       conn.setDoOutput(true);
-
-                       OutputStreamWriter wr =
-                           new OutputStreamWriter(conn.getOutputStream());
-                       BufferedReader rd = null;
-                       try
+                	   // in the case that the administrator has enabled trackbacks
+                	   // for only specific URLs, set it to false by default
+                	   allowTrackback = false;
+                       String[] splitURLs = allowedURLs.split("\\|\\|");
+                       for (int i=0; i<splitURLs.length; i++)
                        {
-                           wr.write(data);
-                           wr.flush();
-    
-                           // Get the response
-                           rd = new BufferedReader(new InputStreamReader(
-                               conn.getInputStream()));
-    
-                           String line;
-                           StringBuffer resultBuff = new StringBuffer();
-                           while ((line = rd.readLine()) != null)
-                           {
-                               resultBuff.append(
-                                   Utilities.escapeHTML(line, true));
-                               resultBuff.append("<br />");
-                           }
-                           
-                           ActionMessages resultMsg = new ActionMessages();
-                           resultMsg.add(ActionMessages.GLOBAL_MESSAGE,
-                               new ActionMessage("weblogEdit.trackbackResults", 
-                               resultBuff));
-                           saveMessages(request, resultMsg);
-                       }
-                       finally
-                       {
-                           wr.close();
-                           rd.close();
+                    	   Matcher m = Pattern.compile(splitURLs[i]).matcher(form.getTrackbackUrl());
+                    	   if (m.matches()) {
+                    		   allowTrackback = true;
+                    		   break;
+                    	   }
                        }
                    }
-                   catch (IOException e)
-                   {
-                       errors.add(ActionErrors.GLOBAL_ERROR,
-                           new ActionError("error.trackback",e));
+                   
+                   if(!allowTrackback) {
+              	     errors.add(ActionErrors.GLOBAL_ERROR,
+	                           new ActionError("error.trackbackNotAllowed"));
+                   } else {
+	                   try
+	                   {
+	                       // Construct data
+	
+	                       String data = URLEncoder.encode("title", "UTF-8")
+	                           +"="+URLEncoder.encode(title, "UTF-8");
+	
+	                       data += ("&" + URLEncoder.encode("excerpt", "UTF-8")
+	                                 +"="+URLEncoder.encode(excerpt,"UTF-8"));
+	
+	                       data += ("&" + URLEncoder.encode("url", "UTF-8")
+	                                 +"="+URLEncoder.encode(url,"UTF-8"));
+	
+	                       data += ("&" + URLEncoder.encode("blog_name", "UTF-8")
+	                                 +"="+URLEncoder.encode(blog_name,"UTF-8"));
+	
+	                       // Send data
+	                       URL tburl = new URL(form.getTrackbackUrl());
+	                       URLConnection conn = tburl.openConnection();
+	                       conn.setDoOutput(true);
+	
+	                       OutputStreamWriter wr =
+	                           new OutputStreamWriter(conn.getOutputStream());
+	                       BufferedReader rd = null;
+	                       try
+	                       {
+	                           wr.write(data);
+	                           wr.flush();
+	    
+	                           // Get the response
+	                           rd = new BufferedReader(new InputStreamReader(
+	                               conn.getInputStream()));
+	    
+	                           String line;
+	                           StringBuffer resultBuff = new StringBuffer();
+	                           while ((line = rd.readLine()) != null)
+	                           {
+	                               resultBuff.append(
+	                                   Utilities.escapeHTML(line, true));
+	                               resultBuff.append("<br />");
+	                           }
+	                           
+	                           ActionMessages resultMsg = new ActionMessages();
+	                           resultMsg.add(ActionMessages.GLOBAL_MESSAGE,
+	                               new ActionMessage("weblogEdit.trackbackResults", 
+	                               resultBuff));
+	                           saveMessages(request, resultMsg);
+	                       }
+	                       finally
+	                       {
+	                           wr.close();
+	                           rd.close();
+	                       }
+	                   }
+	                   catch (IOException e)
+	                   {
+	                       errors.add(ActionErrors.GLOBAL_ERROR,
+	                           new ActionError("error.trackback",e));
+	                   }
                    }
                }
                else
