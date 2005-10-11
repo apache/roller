@@ -17,13 +17,13 @@ import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.ParsedRequest;
+import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.Template;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
-import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
@@ -207,15 +207,14 @@ public class RollerRequest implements ParsedRequest
             //   /username/pagelink/datestring
             //   /username/pagelink/anchor (specific entry)
             //   /username/pagelink/datestring/anchor (specific entry)
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            Roller roller = RollerFactory.getRoller();
+            UserManager userMgr = roller.getUserManager();
             mWebsite = userMgr.getWebsiteByHandle(pathInfo[0]);
             if (mWebsite != null)
             {
                 if ( pathInfo.length == 1 )
                 {
                     // we have the /username form of URL
-                    mDate = getDate(true);
-                    mDateString = DateUtil.format8chars(mDate);
                     mPage = mWebsite.getDefaultPage();
                 }
                 else if ( pathInfo.length == 2 )
@@ -224,8 +223,6 @@ public class RollerRequest implements ParsedRequest
                     if ( mDate == null ) // pre-jdk1.4 --> || mDate.getYear() <= 70 )
                     {
                         // we have the /username/pagelink form of URL
-                        mDate = getDate(true);
-                        mDateString = DateUtil.format8chars(mDate);
                         mPageLink = pathInfo[1];
                         mPage = mWebsite.getPageByLink(pathInfo[1]);
                     }
@@ -248,11 +245,9 @@ public class RollerRequest implements ParsedRequest
                         // we have the /username/pagelink/anchor form of URL
                         try
                         {
-                            WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
+                            WeblogManager weblogMgr = roller.getWeblogManager();
                             mWeblogEntry = weblogMgr.getWeblogEntryByAnchor(
                                 mWebsite, pathInfo[2]);
-                            mDate = mWeblogEntry.getPubTime();
-                            mDateString = DateUtil.format8chars(mDate);
                         }
                         catch (Exception damn)
                         {
@@ -283,13 +278,18 @@ public class RollerRequest implements ParsedRequest
                                     mWebsite, pathInfo[3]);
                 }                
             }
+            if (mDate == null && mWeblogEntry != null)
+            {
+                mDate = mWeblogEntry.getPubTime();
+                mDateString = DateUtil.format8chars(mDate);
+            }
         }
         catch ( Exception ignored )
         {
             mLogger.debug("Exception parsing pathInfo",ignored);
         }
         
-        if ( mWebsite==null || mDate==null || mPage==null )
+        if ( mWebsite==null || mPage==null )
         {            
             String msg = "Invalid pathInfo: "+StringUtils.join(pathInfo,"|");
             mLogger.info(msg);                       
@@ -798,6 +798,11 @@ public class RollerRequest implements ParsedRequest
                 mLogger.error("EXCEPTION getting weblog entry",e);
                 mLogger.error("anchor=" + anchor);
                 mLogger.error("entryid=" + entryid);
+            }
+            if (mDate == null && mWeblogEntry != null)
+            {
+                mDate = mWeblogEntry.getPubTime();
+                mDateString = DateUtil.format8chars(mDate);
             }
         }           
         return mWeblogEntry;
