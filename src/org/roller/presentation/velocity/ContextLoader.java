@@ -179,6 +179,13 @@ public class ContextLoader
                 ctx.put("descPage", TemplateWrapper.wrap(descPage));
             }
         }
+        
+        boolean commentsEnabled = 
+            RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
+        boolean trackbacksEnabled = 
+            RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
+        ctx.put("commentsEnabled", new Boolean(commentsEnabled) );
+        ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
     }
 
     private static String figureResourcePath( RollerRequest rreq )
@@ -201,13 +208,15 @@ public class ContextLoader
         
         HttpServletRequest request = rreq.getRequest();
         
-        String escapeHtml = RollerRuntimeConfig.getProperty("users.comments.escapehtml");
-        String autoFormat = RollerRuntimeConfig.getProperty("users.comments.autoformat");
+        String escapeHtml = 
+            RollerRuntimeConfig.getProperty("users.comments.escapehtml");
+        String autoFormat = 
+            RollerRuntimeConfig.getProperty("users.comments.autoformat");
         
         // Add comments related values to context
         ctx.put("isCommentPage", Boolean.TRUE);
         ctx.put("escapeHtml", new Boolean(escapeHtml) );
-        ctx.put("autoformat", new Boolean(autoFormat) );
+        ctx.put("autoformat", new Boolean(autoFormat) );        
         
         // Make sure comment form object is available in context
         CommentFormEx commentForm = 

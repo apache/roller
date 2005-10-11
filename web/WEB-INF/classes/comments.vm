@@ -10,7 +10,7 @@
  *#
 #macro( showCommentsLink $entry )
     #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
-    #if (($entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
+    #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
         #set( $link = "$ctxPath$entry.permaLink&popup=true#comments" )
         <a href="$link " onclick="window.open('$link', 'comments',
             'width=480,height=480,scrollbars=yes,status=yes,resizable'); return false;"
@@ -24,7 +24,7 @@
  *#
 #macro( showCommentsPageLink $entry )
     #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
-    #if (($entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
+    #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
         #set( $link = "$ctxPath$entry.permaLink#comments" )
         <a href="$link" class="entrycommentslink">$text.get( "macro.weblog.comments" ) [$commentCount]</a>
     #end
@@ -37,7 +37,7 @@
  *#
 #macro( showCommentsDiv $entry )
     #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
-    #if (($entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
+    #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
         <div class="comments" id="comments">
             <div id="commentTwisty$entry.Id" class="commentTwisty"
                 onclick="toggleComments('$entry.Id', '${ctxPath}/page/${website.handle}'); return false;">

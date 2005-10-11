@@ -171,11 +171,13 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
         #set( $day = $entry.pubTime )
         #set( $entries = [ $entry ] )
         #parse( $dayTemplateId )
-        <div class="trackbackUrl">
-           $text.get( "macro.weblog.trackback" ) #showTrackbackURL($entry)
-        </div>
+        #if($trackbacksEnabled)
+           <div class="trackbackUrl">
+              $text.get( "macro.weblog.trackback" ) #showTrackbackURL($entry)
+           </div>
+        #end
         #showComments($entry)
-        #if($website.allowComments && $entry.commentsStillAllowed)
+        #if($commentsEnabled && $website.allowComments && $entry.commentsStillAllowed)
             #showCommentForm($entry)
         #else
             $text.get("comments.disabled")

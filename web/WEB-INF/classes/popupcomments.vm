@@ -49,7 +49,7 @@
 
 <div class="comments">
 #showComments($entry)
-#if($website.allowComments && $entry.commentsStillAllowed)
+#if($commentsEnabled && $website.allowComments && $entry.commentsStillAllowed)
     #showCommentForm($entry)
 #else
     $text.get("comments.disabled")
