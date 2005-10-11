@@ -65,7 +65,7 @@ public class UpgradeDatabase {
                     "select value from roller_properties where name = '"+DBVERSION_PROP+"'");
             
             if(rs.next()) {
-                dbversion = rs.getInt(1);
+                dbversion = Integer.parseInt(rs.getString(1));
                 
             } else {
                 // tough to know if this is an upgrade with no db version :/
