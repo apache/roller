@@ -1,4 +1,4 @@
-package org.roller.presentation;
+package org.roller.presentation.servlets;
 
 import java.io.*;
 import java.util.Date;
