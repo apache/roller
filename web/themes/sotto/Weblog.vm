@@ -17,7 +17,7 @@
 <div id="mainContainer">
 
     <div id="pageBanner">
-        <h1><a href="$ctxPath/page/$userName">#showWebsiteTitle()</a></h1>
+        <h1><a href="$ctxPath/page/$website.handle">#showWebsiteTitle()</a></h1>
     </div>
     <div id="gutter">
       <span id="gutterimage1">&nbsp;</span>
@@ -26,7 +26,7 @@
       <span class="floatSpacer"></span>
     </div>
     <ul id="adminBar">
-      <li><a href="$ctxPath/page/$userName">Home</a></li>
+      <li><a href="$ctxPath/page/$website.handle">Home</a></li>
     ## showBasicNavBar was wrapped with a div, so I'm not using it
     #if( $website )
         #foreach( $iPage in $pages )
@@ -39,7 +39,7 @@
                 ## hopefully there will be no spaces in link
                 <li>
                 #if( !$isSelected )
-                    <a href="$ctxPath/page/$userName/$iPage.Link">#end$iPage.Name#if( !$isSelected )</a>#end
+                    <a href="$ctxPath/page/$website.handle/$iPage.Link">#end$iPage.Name#if( !$isSelected )</a>#end
                 </li>
             #end
         #end
@@ -71,7 +71,7 @@
         <div class="standardSpacer">&nbsp;</div>
 
         <div class="sidebarBox">
-            <form id="searchForm" method="get" action="$ctxPath/search/$userName"
+            <form id="searchForm" method="get" action="$ctxPath/search/$website.handle"
                 onsubmit="return validateSearch(this)">
                 <div>
                 <label for="q" class="styled" accesskey="4">Search this site:</label>
@@ -112,7 +112,7 @@
         </div>
 
         <p class="sidebarBox">
-            <a title="RSS 1.0 Newsfeed" href="$ctxPath/rss/$userName">
+            <a title="RSS 1.0 Newsfeed" href="$ctxPath/rss/$website.handle">
             <img class="noBorder" alt="[RSS Newsfeed]"
                 src="#showThemeImagePath("sotto" "valid-rss.png")" />
             </a>
@@ -121,9 +121,9 @@
         <p class="sidebarBox">
             Valid
             <a title="Valid XHTML?"
-                href="http://validator.w3.org/check?uri=$absBaseURL$ctxPath/page/$userName">XHTML</a>
+                href="http://validator.w3.org/check?uri=$absBaseURL$ctxPath/page/$website.handle">XHTML</a>
             or <a title="Valid CSS?"
-                href="http://jigsaw.w3.org/css-validator/validator?uri=$absBaseURL$ctxPath/page/$userName">CSS</a>?
+                href="http://jigsaw.w3.org/css-validator/validator?uri=$absBaseURL$ctxPath/page/$website.handle">CSS</a>?
         </p>
 
         <div class="sidebarBox">

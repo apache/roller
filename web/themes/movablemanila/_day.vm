@@ -1,5 +1,5 @@
 <div class="date">
-    <a href="$baseURL/page/$userName/#formatDate($plainFormat $day )">
+    <a href="$baseURL/page/$website.handle/#formatDate($plainFormat $day )">
         <img
            class="daypermalink"
            src="#showThemeImagePath("movablemanila" "dateArrow.gif")"
