@@ -7,7 +7,9 @@
 </h2>   
 #foreach( $entry in $entries )
   <a name="$utilities.encode($entry.anchor)" id="$utilities.encode($entry.anchor)"></a>
-  <b>$entry.title</b> #showEntryText($entry)
+  <b>$entry.title</b>
+    #showEntryText($entry)
+    $text.get("macro.weblog.postedby") $entry.creator.userName
   <span class="dateStamp">(#showTimestamp($entry.pubTime))</span>
   #showEntryPermalink( $entry )
   #showCommentsPageLink( $entry )

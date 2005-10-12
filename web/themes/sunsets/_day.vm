@@ -46,6 +46,7 @@
         <a name="$utilities.encode($entry.anchor)" id="$utilities.encode($entry.anchor)"></a>
         <b>$entry.title</b> <br /><br />
         #showEntryText( $entry ) 
+        $text.get("macro.weblog.postedby") $entry.creator.userName
         <span class="dateStamp">#showTimestamp($entry.pubTime)</span>
         #showEntryPermalink( $entry )
     </p>
