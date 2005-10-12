@@ -183,7 +183,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
                 stmt = con.prepareStatement(
                         "select top ? w.id,w.name,w.handle,sum(r.dayhits) as s "+
                         "from website as w, referer as r "+
-                        "where r.websiteid=w.id and and w.isenabled=? " +
+                        "where r.websiteid=w.id and w.isenabled=? " +
                         "group by w.name,w.handle,w.id order by s desc");
                 stmt.setInt(1, max);
                 stmt.setBoolean(2, true);
