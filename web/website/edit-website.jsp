@@ -39,12 +39,6 @@
     </tr>
 
     <tr>
-        <td class="label"><fmt:message key="websiteSettings.emailFromAddress" />
-        <td class="field"><html:text property="emailFromAddress" size="40"/></input></td>
-        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
-    </tr>
-
-    <tr>
         <td class="label"><fmt:message key="websiteSettings.homePage" /></td>
         <td class="field">
             <html:select property="defaultPageId" size="1">
