@@ -250,7 +250,7 @@ public class CommentServlet extends HttpServlet {
      *
      * TODO: Make the addressing options configurable on a per-website basis.
      */
-    private void sendEmailNotification(HttpServletRequest request,
+    static void sendEmailNotification(HttpServletRequest request,
                         RollerRequest rreq,
                         WeblogEntryData entry,
                         CommentData cd) 
@@ -445,7 +445,7 @@ public class CommentServlet extends HttpServlet {
      * This is somewhat ridiculous, but avoids duplicating a bunch of logic 
      * in the already messy sendEmailNotification.
      */
-    private void sendMessage(Session session, String from, String[] to, String[] cc, String[] bcc, String subject,
+    static void sendMessage(Session session, String from, String[] to, String[] cc, String[] bcc, String subject,
             String msg, boolean isHtml) throws MessagingException {
         if (isHtml)
             MailUtil.sendHTMLMessage(session, from, to, cc, bcc, subject, msg);

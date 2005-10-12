@@ -20,6 +20,7 @@ import org.roller.util.CommentSpamChecker;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.pagecache.PageCacheFilter;
 
 
 /**
@@ -148,6 +149,12 @@ public class TrackbackServlet extends HttpServlet {
                         // save, commit, send response
                         comment.save();
                         RollerFactory.getRoller().commit();
+                        
+                        // Refresh user's entries in page cache
+                        PageCacheFilter.removeFromCache(req, entry.getWebsite());
+                    
+                        // Send email notifications
+                        CommentServlet.sendEmailNotification(req, rreq, entry, comment);
                         
                         pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
                         pw.println("<response>");
