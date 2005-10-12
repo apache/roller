@@ -1,7 +1,7 @@
 /*
  * Created on Apr 13, 2003
  */
-package org.roller.presentation.weblog;
+package org.roller.presentation.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;

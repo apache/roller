@@ -1,4 +1,4 @@
-package org.roller.presentation;
+package org.roller.presentation.servlets;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.roller.config.RollerConfig;
+import org.roller.presentation.*;
 
 
 

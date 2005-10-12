@@ -1,4 +1,4 @@
-package org.roller.presentation;
+package org.roller.presentation.servlets;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -38,6 +38,7 @@ import org.roller.presentation.weblog.formbeans.CommentFormEx;
 import org.roller.util.CommentSpamChecker;
 import org.roller.util.MailUtil;
 import org.roller.util.StringUtils;
+import org.roller.presentation.*;
 
 
 /**

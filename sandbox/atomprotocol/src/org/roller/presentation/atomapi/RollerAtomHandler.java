@@ -40,7 +40,7 @@ import org.roller.pojos.PermissionsData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.LoginServlet;
+import org.roller.presentation.servlets.LoginServlet;
 import org.roller.presentation.RollerContext;
 import org.roller.util.RollerMessages;
 import org.roller.util.Utilities;
