@@ -89,7 +89,6 @@
 <definition name=".search" extends=".tiles-simplepage" >
     <put name="content" value="/theme/searchResults.jsp" />
     <put name="banner"  value="/theme/banner.jsp" />
-    <put name="styles"  value="/theme/css-banner.jsp" />
 </definition>
 
 
