@@ -916,11 +916,11 @@ public final class WeblogEntryFormAction extends DispatchAction
             	   boolean allowTrackback = true;
 
             	   String allowedURLs = RollerConfig.getProperty("trackback.allowedURLs");
-                   if (allowedURLs != null)
+                   if (allowedURLs != null && allowedURLs.trim().length() > 0)
                    {
-                	   // in the case that the administrator has enabled trackbacks
-                	   // for only specific URLs, set it to false by default
-                	   allowTrackback = false;
+                       // in the case that the administrator has enabled trackbacks
+                       // for only specific URLs, set it to false by default
+                       allowTrackback = false;
                        String[] splitURLs = allowedURLs.split("\\|\\|");
                        for (int i=0; i<splitURLs.length; i++)
                        {
