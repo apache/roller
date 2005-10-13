@@ -351,19 +351,9 @@ public class CommentServlet extends HttpServlet {
             }
             
             // Build link back to comment
-            
             StringBuffer commentURL = new StringBuffer(rootURL);
-            commentURL.append("/comments/");
-            commentURL.append(user.getUserName());
-            
-            org.roller.pojos.Template page = rreq.getPage();
-            if (page == null) {
-                commentURL.append("?entry=");
-            } else {
-                commentURL.append("/").append(page.getLink()).append("/");
-            }
-            
-            commentURL.append(entry.getAnchor());
+            commentURL.append(entry.getPermaLink());
+            commentURL.append("#comments");
             
             if (escapeHtml) {
                 msg.append(commentURL.toString());
