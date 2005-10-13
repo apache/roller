@@ -82,7 +82,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel
         {
             if ( day == null )
             {
-                url = mRes.encodeURL(mSelfUrl + mCatName);
+                url = mSelfUrl + mCatName;
             }
             else 
             {
@@ -98,17 +98,17 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel
                         mStarDateFormat.format(entry.getPubTime());
                     
                     // append 8 char date string on end of selfurl
-                    url = mRes.encodeURL(mSelfUrl+"/"+dateString+mCatName);
+                    url = mSelfUrl+"/"+dateString+mCatName;
                 }
                 else if ( entries != null )
                 {
-                    url = mRes.encodeURL(mSelfUrl+"/"+mCatName);
+                    url = mSelfUrl+"/"+mCatName;
                 }
                 else if ( valid ) 
                 {
                     // Make the date yyyyMMdd and append it to URL
                     dateString = mStarDateFormat.format( day );
-                    url = mRes.encodeURL(mSelfUrl+"/"+dateString+mCatName);
+                    url = mSelfUrl+"/"+dateString+mCatName;
                 }
             }
         }
@@ -143,7 +143,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel
                     ((WeblogEntryData)entries.get(0)).getPubTime());
                                 
                 // append 8 char date string on end of selfurl
-                String dayUrl = mRes.encodeURL(mSelfUrl+"/"+ dateString+mCatName );
+                String dayUrl = mSelfUrl+"/"+ dateString+mCatName;
 
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
                 sb.append("<a href=\"");
