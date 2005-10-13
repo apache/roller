@@ -2,16 +2,21 @@ $pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>$utilities.textToHTML($website.name,true)</title>
     <subtitle>$utilities.textToHTML($website.description,true)</subtitle>
-    #if( $userName != "zzz_none_zzz" )    
-    <id>$absBaseURL/flavor/${website.handle}?flavor=atom</id>
-    <link rel="alternate" type="text/html" href="$websiteURL" />
-    <link rel="self" type="application/atom+xml" 
-       href="$absBaseURL/flavor/${website.handle}?flavor=atom" />
+    #if( $catPath && $catPath.length() > 0) 
+       #set( $postfix = "?catname=$catPath" ) 
     #else
-    <id>$absBaseURL/flavor?flavor=atom</id>
-    <link rel="alternate" type="text/html" href="$websiteURL" />
-    <link rel="self" type="application/atom+xml" 
-        href="$absBaseURL/flavor?flavor=atom" />
+       #set( $postfix = "" ) 
+    #end
+    #if( $userName != "zzz_none_zzz" )    
+       <id>$absBaseURL/atom/${website.handle}</id>
+       <link rel="alternate" type="text/html" href="$websiteURL" />
+       <link rel="self" type="application/atom+xml" 
+            href="$absBaseURL/atom/${website.handle}$postfix" />
+    #else
+       <id>$absBaseURL/atom</id>
+       <link rel="alternate" type="text/html" href="$websiteURL" />
+       <link rel="self" type="application/atom+xml" 
+            href="$absBaseURL/atom$postfix" />
     #end
     <updated>$utilities.formatIso8601Date($updateTime)</updated>
     <generator uri="http://www.rollerweblogger.org" version="#showVersion() ($rollerBuildTime:$rollerBuildUser)">

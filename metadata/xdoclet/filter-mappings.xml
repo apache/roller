@@ -97,7 +97,15 @@ time, so the only place we should us it is on the RSS feed.
 -->
 <filter-mapping>
     <filter-name>IfModifiedFilter</filter-name>
+    <url-pattern>/atom/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>IfModifiedFilter</filter-name>
     <url-pattern>/rss/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>IfModifiedFilter</filter-name>
+    <url-pattern>/flavor/*</url-pattern>
 </filter-mapping>
 
 <filter-mapping>
@@ -120,6 +128,10 @@ time, so the only place we should us it is on the RSS feed.
 
 <filter-mapping>
     <filter-name>RssGzipFilter</filter-name>
+    <url-pattern>/atom/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>RssGzipFilter</filter-name>
     <url-pattern>/rss/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
@@ -140,6 +152,10 @@ time, so the only place we should us it is on the RSS feed.
 <filter-mapping>
     <filter-name>RssCacheFilter</filter-name>
     <url-pattern>/rss/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>RssCacheFilter</filter-name>
+    <url-pattern>/atom/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
     <filter-name>RssCacheFilter</filter-name>

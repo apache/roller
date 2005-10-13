@@ -37,6 +37,7 @@ import javax.servlet.jsp.PageContext;
   *
   * @web.servlet name="RssServlet"
   * @web.servlet-mapping url-pattern="/rss/*"
+  * @web.servlet-mapping url-pattern="/atom/*"
   * @web.servlet-mapping url-pattern="/flavor/*"
   */
 public class FlavorServlet extends VelocityServlet
@@ -93,12 +94,23 @@ public class FlavorServlet extends VelocityServlet
 
             final String useTemplate;
             PageModel pageModel = (PageModel)ctx.get("pageModel");
-            if (    request.getServletPath().endsWith("rss")
-                 && pageModel.getPageByName("_rss") != null )
+            if (request.getServletPath().endsWith("rss"))
             {
-                // If the request specified the "/rss" mapping and the
-                // user has defined an RSS override page, we will use that.
-                useTemplate = pageModel.getPageByName("_rss").getId();
+                if (pageModel.getPageByName("_rss") != null) 
+                    // If the request specified the "/rss" mapping and the
+                    // user has defined an RSS override page, we will use that.
+                    useTemplate = pageModel.getPageByName("_rss").getId();
+                else
+                    useTemplate = "/flavors/rss.vm";
+            }
+            else if (request.getServletPath().endsWith("atom"))
+            {
+                if (pageModel.getPageByName("_atom") != null) 
+                    // If the request specified the "/atom" mapping and the
+                    // user has defined an Atom override page, we will use that.
+                    useTemplate = pageModel.getPageByName("_atom").getId();
+                else
+                    useTemplate = "/flavors/atom.vm";
             }
             else if (request.getParameter("flavor") != null)
             {
