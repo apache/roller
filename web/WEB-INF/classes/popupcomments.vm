@@ -57,7 +57,7 @@
 </div>
 
 <div id="footer">       
-<a href="http://opensource.atlassian.com/projects/roller/Dashboard.jspa">
+<a href="http://opensource.atlassian.com/projects/roller/">
    <fmt:message key="footer.reportIssue" /></a> | 
 <a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide">
    <fmt:message key="footer.userGuide" /></a> | 
