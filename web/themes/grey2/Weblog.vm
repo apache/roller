@@ -92,9 +92,7 @@
     #showBlogroll()<br>
     #showBasicNavBar(true)<br>
    <!-- Use the basic format to add as many links as you like --> #showEditorNavBar(true)<br>
-    <a href="http://comatised.com/design"><font face="Verdana"
- style="font-size: 8pt;"><br>
-   design</font></a></td>
+   </td>
    </tr>
 
         </tbody>
