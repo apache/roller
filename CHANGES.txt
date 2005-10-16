@@ -295,7 +295,7 @@ Fixes these bugs:
 For the full details of bug fixes, see Roller's JIRA issue tracking system 
 at the URL below:
 
-   http://opensource.atlassian.com/projects/roller/BrowseProject.jspa
+   http://opensource.atlassian.com/projects/roller/
 
 ---------------------------------------------------------------------------------
 0.9.7.1: Bug fix release
@@ -323,7 +323,7 @@ Fixes these bugs:
 For the full details of bug fixes, see Roller's JIRA issue tracking system 
 at the URL below:
 
-   http://opensource.atlassian.com/projects/roller/BrowseProject.jspa   
+   http://opensource.atlassian.com/projects/roller/
    
 ---------------------------------------------------------------------------------
 0.9.7: Major new release
@@ -358,7 +358,7 @@ Summary of new features:
 For the full list of bug fixes, see Roller's JIRA issue tracking system 
 at the URL below:
 
-   http://opensource.atlassian.com/projects/roller/BrowseProject.jspa
+   http://opensource.atlassian.com/projects/roller/
 
 
 ---------------------------------------------------------------------------------
@@ -395,7 +395,7 @@ Summary of new features:
 For the full list of enhancements and bug fixes, see Roller's JIRA issue
 tracking system at the URL below:
 
-   http://opensource.atlassian.com/projects/roller/BrowseProject.jspa
+   http://opensource.atlassian.com/projects/roller/
 
 -----------------------------------------------------------------------------
 0.9.5: Enhancements, better database support, bug fixes (August 31, 2002)
