@@ -3,7 +3,7 @@
 Powered by <a href="http://www.rollerweblogger.org">Roller Weblogger</a> 
 <%= RollerContext.getRollerContext(request).getRollerVersion() %> |
 
-<a href="http://opensource2.atlassian.com/projects/roller/secure/Dashboard.jspa">
+<a href="http://opensource2.atlassian.com/projects/roller/">
     <fmt:message key="footer.reportIssue" /></a> | 
 
 <a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide20">
