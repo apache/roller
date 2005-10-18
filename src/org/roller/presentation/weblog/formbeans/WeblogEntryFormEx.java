@@ -108,16 +108,19 @@ public class WeblogEntryFormEx extends WeblogEntryForm
             
             TimeZone timezone = entry.getWebsite().getTimeZoneInstance();
             try {
-                // gather submitted pubtime in a string
-                String time = getHours()+":"+getMinutes()+":"+getSeconds();
-                String datetime = getDateString()+" "+time;
-                mLogger.debug("datetime = "+datetime);
+                DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+                Date newDate = df.parse(getDateString());
                 
-                // now parse pubtime in a timezone sensitive manner
-                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
-                sdf.setTimeZone(timezone);
-                pubtime = sdf.parse(datetime);
-                entry.setPubTime(new Timestamp(pubtime.getTime()));
+                // Now handle the time from the hour, minute and second combos
+                if(newDate != null) {
+                    Calendar cal = Calendar.getInstance(locale);
+                    cal.setTime(newDate);
+                    cal.setTimeZone(timezone);
+                    cal.set(Calendar.HOUR_OF_DAY, getHours().intValue());
+                    cal.set(Calendar.MINUTE, getMinutes().intValue());
+                    cal.set(Calendar.SECOND, getSeconds().intValue());
+                    entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
+                }
                 
             } catch(Exception e) {
                 mLogger.error(e);
