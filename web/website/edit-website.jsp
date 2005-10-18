@@ -10,10 +10,8 @@
     <html:hidden property="method" value="update"/></input>
 
     <html:hidden property="id"/></input>
-    <html:hidden property="weblogDayPageId" />
-    <html:hidden property="locale"/></input>
+    <html:hidden property="weblogDayPageId" /></input>
     <html:hidden property="handle"/></input>
-    <html:hidden property="timeZone"/></input>
     <html:hidden property="editorTheme"/></input>
     <html:hidden property="enabled"/></input>
     <html:hidden property="defaultCategoryId"/></input>
@@ -35,6 +33,26 @@
     <tr>
         <td class="label"><fmt:message key="websiteSettings.emailAddress" />
         <td class="field"><html:text property="emailAddress" size="40"/></input></td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="createWebsite.locale" />
+        <td class="field">
+            <html:select property="locale" size="1" >
+                <html:options collection="locales" property="value" labelProperty="label"/>
+            </html:select>
+        </td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="createWebsite.timeZone" />
+        <td class="field">
+            <html:select property="timeZone" size="1" >
+                <html:options collection="timeZones" property="value" labelProperty="label"/>
+            </html:select>
+        </td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
 
