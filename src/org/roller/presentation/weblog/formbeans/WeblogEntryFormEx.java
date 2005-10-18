@@ -2,9 +2,11 @@ package org.roller.presentation.weblog.formbeans;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +28,7 @@ import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.forms.WeblogEntryForm;
 import org.roller.util.DateUtil;
+
 
 /**
  * Extends the WeblogEntryForm so that additional properties may be added.
@@ -99,28 +102,28 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         
         super.copyTo(entry, locale);
         
-        // First parts the date string from the calendar 
-        final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
-        Date newDate = null;
-        try
-        {
-            if(getDateString() != null && !"0/0/0".equals(getDateString()))
-                newDate = df.parse(getDateString());
-        }
-        catch (ParseException e)
-        {
-            throw new RollerException("ERROR parsing date.");
-        }
-        
-        // Now handle the time from the hour, minute and second combos
-        if(newDate != null) {
-            final Calendar cal = Calendar.getInstance(locale);
-            cal.setTime(newDate);
-            cal.setTimeZone(entry.getWebsite().getTimeZoneInstance());
-            cal.set(Calendar.HOUR_OF_DAY, getHours().intValue());
-            cal.set(Calendar.MINUTE, getMinutes().intValue());
-            cal.set(Calendar.SECOND, getSeconds().intValue());
-            entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
+        // calculate date for pubtime
+        if(getDateString() != null && !"0/0/0".equals(getDateString())) {
+            Date pubtime = null;
+            
+            TimeZone timezone = entry.getWebsite().getTimeZoneInstance();
+            try {
+                // gather submitted pubtime in a string
+                String time = getHours()+":"+getMinutes()+":"+getSeconds();
+                String datetime = getDateString()+" "+time;
+                mLogger.debug("datetime = "+datetime);
+                
+                // now parse pubtime in a timezone sensitive manner
+                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
+                sdf.setTimeZone(timezone);
+                pubtime = sdf.parse(datetime);
+                entry.setPubTime(new Timestamp(pubtime.getTime()));
+                
+            } catch(Exception e) {
+                mLogger.error(e);
+            }
+
+            mLogger.debug("set pubtime to "+entry.getPubTime());
         }
         
         entry.setPlugins( StringUtils.join(this.pluginsArray,",") );
@@ -235,6 +238,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
             
             DateFormat df = DateFormat.getDateInstance(
                     DateFormat.SHORT, locale);
+            df.setTimeZone(website.getTimeZoneInstance());
             mDateString = df.format(getPubTime());
             
         } else {
