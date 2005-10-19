@@ -182,9 +182,9 @@ public class IfModifiedFilter implements Filter
         {
             handle = pathInfoArray[0];
         }
-        else if (pathInfoArray.length > 1) 
+        else if (handle == null || pathInfoArray.length > 1) 
         {
-            // request is for a specific date or anchor, can't return 304
+            // request for main page or specific date/anchor, can't return 304
             return null;
         }
     
