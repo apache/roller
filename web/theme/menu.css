@@ -1,0 +1,105 @@
+.rNavigationBar {
+    float: right;
+    padding: 0px 0px 0 0;
+}
+
+.tmTabTable {
+    height: 26px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 0px;
+}
+
+.tmItemTable {
+    height: 25px;
+    width: 100%;
+    color: #FFFFFF;
+}
+
+.tmTabTable td {
+    vertical-align: middle;
+}
+
+.tmItemCell {
+    background-image: url(images/tabitem.png);
+    color: #FFFFFF;
+    vertical-align: middle;
+}
+
+.tmItemCell a {
+    background-color: transparent;
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+.tmItemCell a:visited {
+    background-color: transparent;
+    color: #FFFFFF;
+}
+
+.tmItemLeft {
+    background-image: url(images/tabitem-left.png);
+    width: 9px;
+}
+
+.tmItemLinkSelected {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.tmItemRight {
+    background-image: url(images/tabitem-right.png); 
+    width: 9px;
+}
+
+.tmMenu {
+    background-image: url(images/tabmenu-unsel.png);
+    padding-left: 7px;
+    font-size:medium;
+}
+
+.tmMenu a:hover {
+    color: white;
+    font-size:medium;
+}
+
+.tmMenu a:visited {
+    background-color: transparent;
+    color: #4031a8;
+    font-size:medium;
+}
+
+.tmSelectedMenu {
+    background-image: url(images/tabmenu.png);
+    font-weight: bold;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size:medium;
+}
+
+.tmSelectedMenu a, .tmSelectedMenu a:visited {
+    background-color: transparent;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.tmSelectedSepLeft {
+    background-image: url(images/tabmenu-left.png);
+    width: 12px;
+}
+
+.tmSelectedSepRight {
+    background-image: url(images/tabmenu-right.png);
+    width: 12px;
+}
+
+.tmSepLeft {
+    background-image: url(images/tabmenu-left-unsel.png);
+    width: 12px;
+}
+
+.tmSepRight {
+    background-image: url(images/tabmenu-right-unsel.png);
+    width: 12px;
+}
+

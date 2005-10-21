@@ -1,0 +1,32 @@
+@import url(simple.css);
+
+body, .commentTwisty, .comments, .commentByline,
+.commentFormInput, .commentFormTextarea, .commentFormRow {
+    font-family: 'Lucida Grande', Geneva, Verdana, Arial, Helvetica, sans-serif !important;
+}
+
+div#header {
+    background: #000 url(../images/capricorn.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 150px;
+}
+
+div#content a {
+    background-color: transparent;
+    color: #CC3300;
+}
+
+div.entry {
+    background-color: #C74900;
+    color: #fff;
+    border: 1px solid #000;
+}
+
+div.trackbackUrl {
+    background-color: transparent;
+    color: red;
+    font-weight: bold;
+}
+
+

@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /images
+Disallow: /language
+Disallow: /resources
+Disallow: /theme
+Disallow: /trackback
+Disallow: /login-redirect.jsp
+Disallow: /comment.do
+Disallow: /main.do
+Disallow: /user.do

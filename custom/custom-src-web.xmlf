@@ -1,0 +1,8 @@
+
+<!-- Custom classes to include in front-end compilation
+ Your classes must be under the package org.roller.presentation.
+<src dir="${basedir}/sandbox/planetroller/src" />
+
+<src path="${basedir}/sandbox/planetroller/src" />
+-->
+

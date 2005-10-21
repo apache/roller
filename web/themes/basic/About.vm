@@ -1,0 +1,17 @@
+<h1>#showPageName() Me</h1>
+
+<p>This is an About page, just a simple example of how you can create your own page.</p>
+
+<p>You can show information about yourself:<br>
+Username: $userName<br>
+Full Name: $fullName<br>
+Website Title: #showWebsiteTitle()<br>
+Website Description: #showWebsiteDescription()<br>
+This Page's Name: #showPageName()<br>
+This Page's Description: #showPageDescription()<br>
+This Page's Update Time: #showTimestamp($page.updateTime)<br>
+Show a picture: \#showResourceImage($fileName $linkUrl $alt $border $halign $valign)
+</p>
+
+<p>Don't forget to put a "nav bar" on your pages:</p>
+#showNavBar(false "|")
