@@ -1,9 +1,16 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %><%
+<%@ include file="/taglibs.jsp" %><%
 request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
 
 <roller:StatusMessage/>
 
-<h1><fmt:message key="pagesForm.title" /></h1>
+<p class="subtitle">
+   <fmt:message key="pagesForm.subtitle" >
+       <fmt:param value="${model.website.handle}" />
+   </fmt:message>
+</p>  
+<p class="pagetip">
+   <fmt:message key="pagesForm.tip" />
+</p>
 
 <c:if test="${website.editorTheme ne customTheme}">
 <p><fmt:message key="pagesForm.themesReminder"><fmt:param value="${website.editorTheme}"/></fmt:message></p>
@@ -29,7 +36,7 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
             <td class="center">
                <roller:link forward="editPage">
                   <roller:linkparam id="username" name="user" property="userName" />
-                  <roller:linkparam id="pageid" name="p" property="id" />
+                  <roller:linkparam id="pageId" name="p" property="id" />
                   <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" />
                </roller:link>
             </td>
@@ -39,7 +46,7 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
                  <c:when test="${p.id != website.defaultPageId}">
                    <roller:link forward="removePage.ok">
                       <roller:linkparam id="username" name="user" property="userName" />
-                      <roller:linkparam id="pageid" name="p" property="id" />
+                      <roller:linkparam id="pageId" name="p" property="id" />
                       <img src='<c:url value="/images/Remove16.gif"/>' border="0" alt="icon" />
                    </roller:link>
                  </c:when>
@@ -55,18 +62,5 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
 
 <p><fmt:message key="pagesForm.hiddenNote" /></p>
 
-<%-- form to add a new page --%>
-<h2><fmt:message key="pagesForm.addNewPage" /></h2>
-<html:form action="/editor/page" method="post" focus="name">
 
-    <fmt:message key="pagesForm.name"/>: <html:text property="name" size="30"/>
-	
-	<input type="submit" value='<fmt:message key="pagesForm.add" />' />
-	<input type="hidden" property="template" 
-		value="<html><body><fmt:message key="pagesForm.emptyPage" /></body></html>" />
-	<html:hidden property="method" value="add"/>
-	
-</html:form>
-
-<%@ include file="/theme/footer.jsp" %>
 

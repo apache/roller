@@ -165,7 +165,7 @@ public class AutoPingData extends PersistentObject implements Serializable
         return "AutoPingData{" +
             "id='" + id + "'" +
             ", pingTarget=" + pingTarget +
-            ", website= " + (website == null ? "null" : "{id='" + website.getId() + "', user='" + website.getUser().getUserName() + "'} ") +
+            ", website= " + (website == null ? "null" : "{id='" + website.getId() +"'} ") +
             "}";
     }
 }

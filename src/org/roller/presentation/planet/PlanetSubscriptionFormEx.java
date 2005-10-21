@@ -1,7 +1,5 @@
 package org.roller.presentation.planet;
 
-import java.util.Locale;
-import org.roller.pojos.PlanetSubscriptionData;
 import org.roller.presentation.forms.PlanetSubscriptionForm;
 
 /**

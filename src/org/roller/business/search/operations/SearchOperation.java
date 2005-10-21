@@ -49,7 +49,7 @@ public class SearchOperation extends ReadFromIndexOperation
     //~ Instance fields ========================================================
 
     private String term;
-    private String username;
+    private String websiteHandle;
     private String category;
     private Hits searchresults;
     private String parseError;
@@ -91,7 +91,7 @@ public class SearchOperation extends ReadFromIndexOperation
                     term, SEARCH_FIELDS, new StandardAnalyzer());
 
             Term tUsername =
-                IndexUtil.getTerm(FieldConstants.USERNAME, username);
+                IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, websiteHandle);
 
             if (tUsername != null)
             {
@@ -146,9 +146,9 @@ public class SearchOperation extends ReadFromIndexOperation
     /**
      * @param string
      */
-    public void setUsername(String username)
+    public void setWebsiteHandle(String websiteHandle)
     {
-        this.username = username;
+        this.websiteHandle = websiteHandle;
     }
 
     /**

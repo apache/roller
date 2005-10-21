@@ -21,10 +21,11 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
-import org.roller.business.search.operations.RebuildUserIndexOperation;
 import org.roller.model.IndexManager;
-import org.roller.pojos.UserData;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
 
 /**
@@ -33,7 +34,7 @@ import org.roller.presentation.pagecache.PageCacheFilter;
  * 
  * @struts.action path="/editor/maintenance" name="maintenanceForm" scope="request" parameter="method"
  * 
- * @struts.action-forward name="maintenance.page" path="/website/Maintenance.jsp"
+ * @struts.action-forward name="maintenance.page" path=".Maintenance"
  */
 public class MaintenanceAction extends DispatchAction 
 {
@@ -71,12 +72,14 @@ public class MaintenanceAction extends DispatchAction
 	{
 		try
 		{
-			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() )
+            RollerRequest rreq  = RollerRequest.getRollerRequest(request);
+            WebsiteData website = rreq.getWebsite();            
+            RollerSession rses = RollerSession.getRollerSession(request);
+			if (rses.isUserAuthorizedToAdmin(website) )
 			{
-				UserData ud = rreq.getUser();
-				IndexManager manager = rreq.getRoller().getIndexManager();
-				manager.rebuildUserIndex();
+				IndexManager manager = 
+                        RollerFactory.getRoller().getIndexManager();
+				manager.rebuildWebsiteIndex(website);
 				
                 ActionMessages messages = new ActionMessages();
                 messages.add(null, new ActionMessage("maintenance.message.indexed"));
@@ -109,15 +112,16 @@ public class MaintenanceAction extends DispatchAction
     {
         try
         {
-			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() )
+            RollerRequest rreq  = RollerRequest.getRollerRequest(request);
+            WebsiteData website = rreq.getWebsite();            
+            RollerSession rses = RollerSession.getRollerSession(request);
+			if ( rses.isUserAuthorizedToAdmin(website) )
 			{
-				UserData user = rreq.getUser();
-	            PageCacheFilter.removeFromCache(request, user);
+	            PageCacheFilter.removeFromCache(request, website);
 
-                ActionMessages messages = new ActionMessages();
-                messages.add(null, new ActionMessage("maintenance.message.flushed"));
-                saveMessages(request, messages);
+                 ActionMessages messages = new ActionMessages();
+                 messages.add(null, new ActionMessage("maintenance.message.flushed"));
+                 saveMessages(request, messages);
             }
         }
         catch (Exception e)

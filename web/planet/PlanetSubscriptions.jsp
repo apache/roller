@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
 function cancelEditing()
@@ -15,19 +15,31 @@ function deleteSubscription()
 </script>
 <c:if test="${!(model.unconfigured)}" >
 
-    <h2>
-    <fmt:message key="planetSubscriptions.pageTitle" />
+    <h1>
+        <fmt:message key="planetSubscriptions.title" />    
         <c:if test='${planetSubscriptionFormEx.groupHandle != "external"}' >
            &nbsp;[group: <c:out value="${planetSubscriptionFormEx.groupHandle}" />]
-        </c:if>
-    </h2>
-       
-    <c:if test="${empty planetSubscriptionFormEx.id}" >
-        <p><i><fmt:message key="planetSubscriptions.prompt.add" /></i></p>
-    </c:if>
-    <c:if test="${!empty planetSubscriptionFormEx.id}" >
-        <p><i><fmt:message key="planetSubscriptions.prompt.edit" /></i></p>
-    </c:if>
+        </c:if>        
+    </h1>
+   
+    <c:choose>
+        <c:when test='${empty planetSubscriptionFormEx.id && planetSubscriptionFormEx.groupHandle == "external"}' >
+            <p class="subtitle"><fmt:message key="planetSubscriptions.subtitle.addMain" /></p>
+            <p><fmt:message key="planetSubscriptions.prompt.addMain" /></p>
+        </c:when>
+        <c:when test='${empty planetSubscriptionFormEx.id && planetSubscriptionFormEx.groupHandle != "external"}' >
+            <p class="subtitle">
+                <fmt:message key="planetSubscriptions.subtitle.add" >
+                    <fmt:param value="${planetSubscriptionFormEx.groupHandle}" />
+                </fmt:message>
+            </p>
+            <p><fmt:message key="planetSubscriptions.prompt.add" /></p>
+        </c:when>
+        <c:when test="${!empty planetSubscriptionFormEx.id}" >
+            <p class="subtitle"><fmt:message key="planetSubscriptions.subtitle.edit" /></p>
+            <p><fmt:message key="planetSubscriptions.prompt.edit" /></p>
+        </c:when>
+    </c:choose>
     
     <html:form action="/admin/planetSubscriptions" method="post">
         <html:hidden property="method" value="saveSubscription" />
@@ -139,4 +151,3 @@ function deleteSubscription()
     <fmt:message key="planetSubscriptions.unconfigured" />
 </c:if>
 
-<%@ include file="/theme/footer.jsp" %>

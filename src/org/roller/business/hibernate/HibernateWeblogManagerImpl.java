@@ -3,12 +3,12 @@
  */
 package org.roller.business.hibernate;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.expression.Expression;
-import net.sf.hibernate.expression.Junction;
-import net.sf.hibernate.expression.Order;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -92,7 +92,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
         }
         Junction conjunction = Expression.conjunction();        
         conjunction.add(Expression.eq("website", current.getWebsite()));
-        conjunction.add(Expression.eq("publishEntry", Boolean.TRUE));
+        conjunction.add(Expression.eq("status", WeblogEntryData.PUBLISHED));
         
         if (next)
         {
@@ -257,7 +257,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
             else 
             {
                 criteria.createAlias("website","w");
-                criteria.add(Expression.eq("w.isEnabled", Boolean.TRUE));
+                criteria.add(Expression.eq("w.enabled", Boolean.TRUE));
             }
     
             if (startDate != null)
@@ -277,16 +277,10 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
                 criteria.add(Expression.eq("category", cat));
             }
             
-            if (status != null && status.equals(DRAFT_ONLY))
+            if (status != null)
             {
-                criteria.add(
-                    Expression.eq("publishEntry", Boolean.FALSE));
+                criteria.add(Expression.eq("status", status));
             }        
-            else if (status != null && status.equals(PUB_ONLY))
-            {
-                criteria.add(
-                    Expression.eq("publishEntry", Boolean.TRUE));
-            }
 
             if (pinned != null)
             {
@@ -340,40 +334,35 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
     /**
      * Gets the Date of the latest Entry publish time.
      *
-     * @param userName User name of weblog or null for all users
-     * @param catName Category name of posts or null for all categories
-     * @return Date Of last publish time
+     * @param handle   Handle of website or null for all users
+     * @param catName  Category name of posts or null for all categories
+     * @return         Date Of last publish time
      * @throws RollerException
      */
-    public Date getWeblogLastPublishTime( String userName, String catName )
+    public Date getWeblogLastPublishTime(WebsiteData website, String catName)
         throws RollerException
     {
         WeblogCategoryData cat = null;
         Roller mRoller = RollerFactory.getRoller();
-        if (userName != null) 
+        if (catName != null && website != null)
+        {    
+           cat = getWeblogCategoryByPath(website, null, catName);
+           if (cat == null) catName = null;
+        }
+        if (catName != null && catName.trim().equals("/"))
         {
-            WebsiteData website = mRoller.getUserManager().getWebsite(userName);
-            if (catName != null && website != null)
-            {    
-               cat = getWeblogCategoryByPath(website, null, catName);
-               if (cat == null) catName = null;
-            }
-            if (catName != null && catName.trim().equals("/"))
-            {
-                catName = null;
-            }
+            catName = null;
         }
         
         Session session = ((HibernateStrategy)mStrategy).getSession();
         Criteria criteria = session.createCriteria(WeblogEntryData.class);
-        criteria.add(Expression.eq("publishEntry", Boolean.TRUE));
+        criteria.add(Expression.eq("status", WeblogEntryData.PUBLISHED));
         criteria.add(Expression.le("pubTime", new Date()));
 
         try
         {
-            if ( userName != null )
+            if (website != null)
             {
-                WebsiteData website = mRoller.getUserManager().getWebsite(userName);
                 criteria.add(Expression.eq("website", website));
             }
 
@@ -516,19 +505,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
                 RefererData referer = (RefererData) iter.next();
                 referer.remove();
             }
-            
-            // remove comments
-            /*
-            Criteria commentQuery = session.createCriteria(RefererData.class);
-            commentQuery.add(Expression.eq("weblogEntry", entry));
-            List comments = commentQuery.list();
-            */
-            List comments = RollerFactory.getRoller().getWeblogManager().getComments(entry.getId(), false);
-            for (Iterator iter = comments.iterator(); iter.hasNext();) 
-            {
-                CommentData comment = (CommentData) iter.next();
-                comment.remove();
-            }
+            removeCommentsForEntry(entry.getId());
         }
         catch (HibernateException e)
         {

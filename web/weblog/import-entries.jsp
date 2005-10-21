@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <h1><fmt:message key="weblogEntryImport.title" /></h1>
 
@@ -28,5 +28,3 @@
     </table>
 
 </html:form>
-
-<%@ include file="/theme/footer.jsp" %>

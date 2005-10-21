@@ -1,24 +1,24 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <%
 // this just makes the name for a custom theme available to our jstl EL
 String customTheme = org.roller.pojos.Theme.CUSTOM;
 request.setAttribute("customTheme", customTheme);
+
 boolean allowCustom = org.roller.config.RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed");
 request.setAttribute("allowCustom", new Boolean(allowCustom));
-
-String username = "";
-try {
-    RollerRequest rreq = RollerRequest.getRollerRequest(request);
-    UserData ud = rreq.getUser();
-    username = ud.getUserName();
-} catch (Exception e) {
-    throw new ServletException(e);
-}
 %>
-<h1><fmt:message key="themeEditor.title" /></h1>
+<p class="subtitle">
+   <fmt:message key="themeEditor.subtitle" >
+       <fmt:param value="${model.website.handle}" />
+   </fmt:message>
+</p>  
+<p class="pagetip">
+   <fmt:message key="themeEditor.tip" />
+</p>
 
 <form action="themeEditor.do" method="post">
 
+    <input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
     <input type=hidden name="method" value="preview" />
 
     <table width="95%">
@@ -26,7 +26,7 @@ try {
         <tr>
             <td>
                 <p>
-                    Your current theme is : <b><c:out value="${currentTheme}"/></b><br/>
+                    <fmt:message key="themeEditor.yourCurrentTheme" />: <b><c:out value="${currentTheme}"/></b><br/>
                     
                     <c:choose>
                         <c:when test="${currentTheme ne previewTheme}" >
@@ -46,8 +46,7 @@ try {
                         </c:when>
                         
                         <c:when test="${(currentTheme ne customTheme) and allowCustom}">
-                            If you like you may customize a personal copy of this theme.<br/>
-                            <fmt:message key="themeEditor.saveWarning" /><br/>
+                            <fmt:message key="themeEditor.youMayCustomize" /><br/>
                             <input type="button" 
                                 value='<fmt:message key="themeEditor.customize" />'
                                 name="customizeButton" 
@@ -90,7 +89,7 @@ try {
         <tr>
             <td>
                 <iframe name="preview" id="preview" 
-                src='<%= request.getContextPath() %>/preview/<%= username %>?theme=<c:out value="${previewTheme}"/>' 
+                src='<%= request.getContextPath() %>/preview/<c:out value="${model.website.handle}" />?theme=<c:out value="${previewTheme}"/>' 
                 frameborder=1 width="100%" height="400" 
                 marginheight="0" marginwidth="0"></iframe>
             </td>
@@ -112,4 +111,4 @@ try {
     // -->
 </script>
 
-<%@ include file="/theme/footer.jsp"%>
+

@@ -136,12 +136,10 @@ function toggleControl(toggleId, targetId) {
         toggle = document.getElementById(toggleId);
     	if (target.style.display == "none") {
     		target.style.display = "";  
-    		toggle.style.background = "#e7e7ff";  
             expanded = true;  
                   
     	} else {
-    		target.style.display = "none";
-    		toggle.style.background = "#f0f0f0";  
+    		target.style.display = "none";  
             expanded = false;
     	}
         togglePlusMinus("i" + targetId);

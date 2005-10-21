@@ -1,5 +1,9 @@
 package org.roller.presentation.weblog.actions;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
@@ -7,14 +11,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.roller.model.RefererManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.RefererData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -36,26 +38,26 @@ public class ToggleLinkbackDisplayAction extends Action
 	{
          
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
-        String userName = rreq.getUser().getUserName();
-
+        RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if ( rreq.isUserAuthorizedToEdit() )
+            if (rreq.getWebsite() != null 
+                 && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
             {
                 String refid = req.getParameter(RollerRequest.REFERERID_KEY);
                 if ( refid != null )
                 {
                     RefererManager refmgr = 
-                        rreq.getRoller().getRefererManager();                        
+                        RollerFactory.getRoller().getRefererManager();                        
                     RefererData ref = refmgr.retrieveReferer(refid); 
                     boolean was = ref.getVisible()==null ? 
                                   false : ref.getVisible().booleanValue(); 
                     ref.setVisible(Boolean.valueOf( !was )); // what up, dog?                     
                     ref.save();
                     
-                    rreq.getRoller().commit();
+                    RollerFactory.getRoller().commit();
                     
-                    PageCacheFilter.removeFromCache( req, rreq.getUser() );
+                    PageCacheFilter.removeFromCache( req, rreq.getWebsite() );
                 }                
             }
         }
@@ -71,7 +73,7 @@ public class ToggleLinkbackDisplayAction extends Action
 		{
 			RollerContext rctx = RollerContext.getRollerContext(
 				rreq.getServletContext());
-			url = rctx.getContextUrl( req, userName);
+			url = rctx.getContextUrl( req, rreq.getWebsite());
 			res.sendRedirect(url);
 		}
 		catch (Exception e)

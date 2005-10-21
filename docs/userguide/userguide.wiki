@@ -57,7 +57,7 @@ Orignal text is ''Copyright © 2003 David M Johnson''
 
 Roller is a Weblogger. Roller makes it easy for you to maintain a weblog, even if you are have little or no knowledge of HTML. All you have to do is go to a web site that is running the Roller software, sign up for an account and bam you have a weblog. You can start posting right away. You will need to know a little about HTML if you want to kick it up a notch by customizing the layout of your Weblog and adding new pages to your Weblog website. More on that later.
 
-Please note that Roller is currently beta quality code not necessarily ready for prime time there are probably a number of design flaws and an even larger number of bugs. As always with software of all sorts, and especially pre-release software such as this, use at your own risk.  If you find a flaw, a bug, or something that you do not like please contribute back to the Roller project be reporting that bug to the Roller development team's [JIRA issue tracking system|http://opensource.atlassian.com/projects/roller/Dashboard.jspa].
+Please note that Roller is currently beta quality code not necessarily ready for prime time there are probably a number of design flaws and an even larger number of bugs. As always with software of all sorts, and especially pre-release software such as this, use at your own risk.  If you find a flaw, a bug, or something that you do not like please contribute back to the Roller project be reporting that bug to the Roller development team's [JIRA issue tracking system|http://opensource.atlassian.com/projects/roller/].
 
 
 

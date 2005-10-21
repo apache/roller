@@ -5,7 +5,7 @@ import java.util.Date;
 import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
-import org.roller.pojos.Template;
+
 
 
 /**
@@ -301,7 +301,7 @@ public class WeblogTemplate extends PersistentObject
        {
            return true;
        }
-       if (roller.getUser().equals(getWebsite().getUser()))
+       if (getWebsite().hasUserPermissions(roller.getUser(), PermissionsData.ADMIN))
        {
            return true;
        }

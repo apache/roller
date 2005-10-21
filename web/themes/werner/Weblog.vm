@@ -26,7 +26,7 @@
    <br/>
    A blog by
    <br/>
-   $userName
+   $website.handle
    <br/>
    $obfuscatedEmail
    <br/><br/>
@@ -48,9 +48,7 @@
 
  <div class="menubox"><h2 class="box">links</h2>
   <br/>
-  #showBookmarks("Blogroll" true false )
-  <br/>
-  #showBookmarks("News" true false )
+  #showBlogroll()
   <br/>
  </div>
 
@@ -63,9 +61,13 @@
    #showReferers(20 25)
  </div>
 
+<!-- Commented out as Werner could just have temporary problems.
+     Currently the DNS aliases to a bad DNS.
+     bayard 20051015
  <div class="menubox"><h2 class="box">design by</h2>
    <a href="http://www.shiftat.com/blog/page/werner/">Werner Ramaeker</a>
  </div>
+-->
 </div>
 
 </body>

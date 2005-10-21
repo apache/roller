@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.presentation.RollerContext;
 

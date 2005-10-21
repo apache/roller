@@ -1,20 +1,21 @@
 
 package org.roller.presentation.weblog.actions;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
+import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.weblog.formbeans.WeblogQueryForm;
 
 
@@ -25,7 +26,7 @@ import org.roller.presentation.weblog.formbeans.WeblogQueryForm;
  * @struts.action path="/editor/weblogQuery" name="weblogQueryForm" 
  *     scope="session" parameter="method"
  * 
- * @struts.action-forward name="weblogQuery.page" path="/weblog/WeblogQuery.jsp"
+ * @struts.action-forward name="weblogQuery.page" path=".WeblogQuery"
  */
 public final class WeblogQueryAction extends DispatchAction
 {
@@ -44,7 +45,9 @@ public final class WeblogQueryAction extends DispatchAction
     {
         WeblogQueryForm form = (WeblogQueryForm)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WeblogManager wmgr = rreq.getRoller().getWeblogManager();
+        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        
+        String status= form.getStatus().equals("ALL") ? null : form.getStatus();
         
         request.setAttribute("model", new WeblogQueryPageModel(
            request, 
@@ -54,7 +57,7 @@ public final class WeblogQueryAction extends DispatchAction
            form.getCategoryId(),
            form.getStartDateString(),
            form.getEndDateString(),
-           form.getStatus(),
+           status,
            form.getMaxEntries())); 
         
         return mapping.findForward("weblogQuery.page");

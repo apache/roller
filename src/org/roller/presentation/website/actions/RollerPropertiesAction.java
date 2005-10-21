@@ -9,9 +9,11 @@ package org.roller.presentation.website.actions;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -28,7 +30,9 @@ import org.roller.model.PropertiesManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.RollerPropertyData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 
 
 
@@ -41,7 +45,7 @@ import org.roller.presentation.RollerRequest;
  *  scope="request" parameter="method"
  *
  * @struts.action-forward name="rollerProperties.page"
- *  path="/website/rollerProperties.jsp"
+ *  path=".rollerProperties"
  */
 public class RollerPropertiesAction extends DispatchAction {
     
@@ -72,8 +76,12 @@ public class RollerPropertiesAction extends DispatchAction {
         
         ActionForward forward = mapping.findForward("rollerProperties.page");
         try {
+            BasePageModel pageModel = new BasePageModel(
+                    "configForm.title", request, response, mapping);
+            request.setAttribute("model",pageModel);                
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() ) {
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if (rollerSession.isGlobalAdminUser() ) {
                 
                 // just grab our properties map and put it in the request
                 Roller mRoller = RollerFactory.getRoller();
@@ -105,7 +113,11 @@ public class RollerPropertiesAction extends DispatchAction {
         ActionErrors errors = new ActionErrors();
         try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() ) {
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            BasePageModel pageModel = new BasePageModel(
+                    "configForm.title", request, response, mapping);
+            request.setAttribute("model",pageModel);                
+            if (rollerSession.isGlobalAdminUser()) {
             
                 // just grab our properties map and put it in the request
                 Roller mRoller = RollerFactory.getRoller();

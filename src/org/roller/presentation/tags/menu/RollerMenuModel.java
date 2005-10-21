@@ -1,23 +1,21 @@
 
 package org.roller.presentation.tags.menu;
 
-import org.apache.commons.digester.Digester;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.roller.RollerException;
-import org.roller.config.RollerConfig;
-import org.roller.pojos.UserData;
-import org.roller.presentation.RollerRequest;
-import org.xml.sax.SAXException;
-
 import java.io.InputStream;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.digester.Digester;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.RollerException;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerRequest;
+import org.xml.sax.SAXException;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -164,18 +162,17 @@ public class RollerMenuModel extends BaseRollerMenu implements MenuModel
 		RollerRequest rreq = RollerRequest.getRollerRequest(req);
 		try
 		{
-			UserData user = rreq.getUser();
-			String fid = 
-                rreq.getFolder()==null ? null : rreq.getFolder().getId();
-			if ( user != null ) 
-			{
-				params.put( RollerRequest.USERNAME_KEY, user.getUserName() );
-			}
-			if ( fid != null ) 
-			{
-				params.put( RollerRequest.FOLDERID_KEY, fid );
-			}
-		}
+            WebsiteData website = rreq.getWebsite();
+            BasePageModel pageModel = (BasePageModel)req.getAttribute("model");
+            if (website == null && pageModel != null) 
+            {
+                website = pageModel.getWebsite();              
+            }
+            if (website != null)
+            {
+                params.put(RollerRequest.WEBLOG_KEY, website.getHandle());
+            }
+        }
 		catch (Exception e)
 		{
 			mLogger.error("ERROR getting user in menu model", e);

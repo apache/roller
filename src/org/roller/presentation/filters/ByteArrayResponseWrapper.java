@@ -1,8 +1,8 @@
 package org.roller.presentation.filters;
 
-import java.io.PrintWriter;
-import java.io.OutputStreamWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletResponse;

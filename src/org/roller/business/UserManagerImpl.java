@@ -3,16 +3,25 @@
  */
 package org.roller.business;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.model.BookmarkManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WeblogTemplate;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RoleData;
 import org.roller.pojos.UserCookieData;
 import org.roller.pojos.UserData;
@@ -20,13 +29,6 @@ import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.util.RandomGUID;
 import org.roller.util.Utilities;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import org.roller.model.RollerFactory;
 
 /**
  * Abstract base implementation using PersistenceStrategy.
@@ -49,6 +51,12 @@ public abstract class UserManagerImpl implements UserManager
     {
     }
             
+    public PermissionsData retrievePermissions(String inviteId) 
+        throws RollerException
+    {
+        return (PermissionsData)mStrategy.load(inviteId, PermissionsData.class);
+    }
+    
     //--------------------------------------------------------------- Website
 
     public WebsiteData retrieveWebsite(String id) throws RollerException
@@ -68,15 +76,6 @@ public abstract class UserManagerImpl implements UserManager
     {
         mStrategy.remove(id,WebsiteData.class);
     }
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    /** 
-     * This method is a hotspot, it is called on every page request.
-     */
-    public WebsiteData getWebsite(String userName) throws RollerException
-    {
-        return getWebsite(userName, true);
-    } 
 
     //------------------------------------------------------------------- User
 
@@ -99,28 +98,19 @@ public abstract class UserManagerImpl implements UserManager
 
     public UserData getUser(String userName) throws RollerException
     {
-        return getUser(userName, true);
+        return getUser(userName, Boolean.TRUE);
     }
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -     
-    public UserData getUser(String userName, boolean enabledOnly) throws RollerException
+    public WebsiteData getWebsiteByHandle(String handle) throws RollerException
     {
-        if (userName==null )
-            throw new RollerException("userName is null");
-        
-        WebsiteData website = getWebsite(userName, enabledOnly);
-        if (website != null)
-        {
-            return website.getUser();
-        }
-        return null;
+        return getWebsiteByHandle(handle, Boolean.TRUE);
     }
 
     //-----------------------------------------------------------------------
 
     public List getUsers() throws RollerException
     {
-        return getUsers(true);
+        return getUsers(Boolean.TRUE);
     }
 
     //------------------------------------------------------------------------    
@@ -175,8 +165,11 @@ public abstract class UserManagerImpl implements UserManager
 
         WebsiteData wd = pd.getWebsite();
         if (pd.getId() == wd.getDefaultPageId()) {
-            mLogger.error("Refusing to remove default page from website of: " +  wd.getUser().getUserName());
-            throw new RollerException(new IllegalArgumentException("Page is default page of website."));
+            mLogger.error(
+                   "Refusing to remove default page from website with handle: " 
+                   +  wd.getHandle());
+            throw new RollerException(
+                   new IllegalArgumentException("Page is default page of website."));
         }
         removePage(id);        
     }
@@ -208,13 +201,11 @@ public abstract class UserManagerImpl implements UserManager
      * @param ud  User object representing the new user.
      * @param themeDir Directory containing the theme for this user
      */
-    public void addUser(UserData ud, Map pages, String theme, 
-                        String locale, String timezone)
+    public void addUser(UserData ud)
         throws RollerException
     {        
         Roller mRoller = RollerFactory.getRoller();
         UserManager umgr = mRoller.getUserManager();
-        WeblogManager wmgr = mRoller.getWeblogManager();
         if (    umgr.getUser(ud.getUserName()) != null 
              || umgr.getUser(ud.getUserName().toLowerCase()) != null) 
         {
@@ -227,35 +218,50 @@ public abstract class UserManagerImpl implements UserManager
         {
             // Make first user an admin
             adminUser = true;
-        }
-        
+        }        
         mStrategy.store(ud);
+        if (adminUser) ud.grantRole("admin");
         
         RoleData rd = new RoleData(null, ud, "editor");
         mStrategy.store(rd);
-        
-        //
-        // CREATE WEBSITE AND CATEGORIES FOR USER
-        //
-        
-        WebsiteData website = new WebsiteData(null,
-            ud.getFullName()+"'s Weblog", // name
-            ud.getFullName()+"'s Weblog", // description
-            ud,                // userId
-            "dummy",           // defaultPageId
-            "dummy",           // weblogDayPageId
-            Boolean.TRUE,      // enableBloggerApi
+    }
+    
+    public WebsiteData createWebsite(
+            UserData ud, 
+            Map pages, 
+            String handle,
+            String name, 
+            String description,
+            String email,
+            String theme, 
+            String locale, 
+            String timeZone) throws RollerException
+    {
+        Roller mRoller = RollerFactory.getRoller();
+        UserManager umgr = mRoller.getUserManager();
+        WeblogManager wmgr = mRoller.getWeblogManager();
+        WebsiteData website = new WebsiteData(
+            null,                // id
+            name,                // name
+            handle,              // handle
+            description,         // description
+            ud,                  // userId
+            "dummy",             // defaultPageId
+            "dummy",             // weblogDayPageId
+            Boolean.TRUE,        // enableBloggerApi
             null,                // bloggerCategory
             null,                // defaultCategory
-            "editor-text.jsp", // editorPage
-            "",                // ignoreWords
-            Boolean.TRUE,      // allowComments  
-            Boolean.FALSE,     // emailComments
-            "",                // emailFromAddress
-            Boolean.TRUE);     // isEnabled
+            "editor-text.jsp",   // editorPage
+            "",                  // ignoreWords
+            Boolean.TRUE,        // allowComments  
+            Boolean.FALSE,       // emailComments
+            "",                  // emailFromAddress
+            Boolean.TRUE,        // isEnabled
+            email,               // emailAddress
+            new Date());
         website.setEditorTheme(theme);
         website.setLocale(locale);
-        website.setTimezone(timezone);
+        website.setTimeZone(timeZone);
         website.save();
 
         WeblogCategoryData rootCat = wmgr.createWeblogCategory(
@@ -265,125 +271,62 @@ public abstract class UserManagerImpl implements UserManager
             "root",  // description
             null ); // image
         rootCat.save();
-        
-        WeblogCategoryData generalCat = wmgr.createWeblogCategory(
-            website,         // websiteId
-            rootCat,
-            "General",       // name
-            "General",       // description
-            null );         // image
-        generalCat.save();
-            
-        WeblogCategoryData javaCat = wmgr.createWeblogCategory(
-            website,         // websiteId
-            rootCat,
-            "Java",          // name
-            "Java",          // description
-            null );          // image
-        javaCat.save();
-            
-        WeblogCategoryData musicCat = wmgr.createWeblogCategory(
-            website,         // websiteId
-            rootCat,
-            "Music",         // name
-            "Music",         // description
-            null );         // image
-        musicCat.save();
-        
+
+        String cats = RollerConfig.getProperty("newuser.categories");
+        if (cats != null)
+        {
+            String[] splitcats = cats.split(",");
+            for (int i=0; i<splitcats.length; i++)
+            {
+                WeblogCategoryData c = wmgr.createWeblogCategory(
+                    website,         // website
+                    rootCat,         // parent
+                    splitcats[i],    // name
+                    splitcats[i],    // description
+                    null );          // image
+                c.save();
+            }
+        }        
         website.setBloggerCategory(rootCat);
         website.setDefaultCategory(rootCat);
-        
-        Integer zero = new Integer(0);
-        
-        BookmarkManager bmgr = mRoller.getBookmarkManager();
-                    
+                
+        BookmarkManager bmgr = mRoller.getBookmarkManager();                    
         FolderData root = bmgr.createFolder(
             null, "root", "root", website);
         root.save();
 
-        FolderData blogroll = bmgr.createFolder(
-            root, "Blogroll", "Blogroll", website);
-        blogroll.save();
-
-        BookmarkData b1 = bmgr.createBookmark(
-            blogroll, "Dave Johnson", "",
-            "http://rollerweblogger.org/page/roller",
-            "http://rollerweblogger.org/rss/roller",
-            zero, zero, null);
-        b1.save();
-
-        BookmarkData b2 = bmgr.createBookmark(
-            blogroll, "Matt Raible", "",
-            "http://raibledesigns.com/page/rd",
-            "http://raibledesigns.com/rss/rd",
-            zero, zero, null);
-        b2.save();
-
-        BookmarkData b3 = bmgr.createBookmark(
-            blogroll, "Lance Lavandowska", "",
-            "http://brainopolis.dnsalias.com/roller/page/lance/",
-            "http://brainopolis.dnsalias.com/roller/rss/lance/",
-            zero, zero, null);
-        b3.save();
-        
-        
-        FolderData news = bmgr.createFolder(
-            root, "News", "News", website);
-        news.save();
-
-        BookmarkData b5 = bmgr.createBookmark(
-            news, "CNN", "",
-            "http://www.cnn.com",
-            "",
-            zero, zero, null);
-        b5.save();
-
-        BookmarkData b6 = bmgr.createBookmark(
-            news, "NY Times", "", 
-           "http://nytimes.com",
-           "",
-            zero, zero, null);
-        b6.save();
-
-        //
-        // READ THEME FILES AND CREATE PAGES FOR USER
-        //
-        /* new registrations require choosing a theme
-         * now that themes are shared we don't save page themplates -- Allen G
-        Iterator iter = pages.keySet().iterator();
-        while ( iter.hasNext() )
+        Integer zero = new Integer(0);
+        String blogroll = RollerConfig.getProperty("newuser.blogroll");
+        if (blogroll != null)
         {
-            String pageName = (String) iter.next();
-            String sb = (String)pages.get( pageName );
-              
-            // Store each Velocity template as a page
-            WeblogTemplate pd = new WeblogTemplate( null,
-                website,         // website
-                pageName,        // name
-                pageName,        // description
-                pageName,        // link
-                sb,              // template
-                new Date()       // updateTime                
-            );
-            mStrategy.store(pd);
-            
-            if ( pd.getName().equals("Weblog") )
-            {  
-                website.setDefaultPageId(pd.getId());                 
-            }
-            else if ( pd.getName().equals("_day") )
+            String[] splitroll = blogroll.split(",");
+            for (int i=0; i<splitroll.length; i++)
             {
-                website.setWeblogDayPageId(pd.getId());                 
-            }                
+                String[] rollitems = splitroll[i].split("\\|");
+                BookmarkData b = bmgr.createBookmark(
+                    root,                // parent
+                    rollitems[0],        // name
+                    "",                  // description
+                    rollitems[1].trim(), // url
+                    null,                // feedurl
+                    zero,                // weight
+                    zero,                // priority
+                    null);               // image
+                b.save();                    
+            }
         }
-        */
         
-        if (adminUser) ud.grantRole("admin");
-        
-        // Save website with blogger cat id, defauld page id and day id
-        mStrategy.store(website); 
+        // Add user as member of website
+        PermissionsData perms = new PermissionsData();
+        perms.setUser(ud);
+        perms.setWebsite(website);
+        perms.setPending(false);
+        perms.setPermissionMask(PermissionsData.ADMIN);
+        perms.save();
+
+        return website;
     }
-    
+
     /**
      * @see org.roller.model.UserManager#createLoginCookie(java.lang.String)
      */
@@ -417,5 +360,44 @@ public abstract class UserManagerImpl implements UserManager
             cookieString = cookie.getUsername() + "|" + cookie.getCookieId();
         }
         return cookieString;
+    }
+
+    /**
+     * Creates and stores a pending PermissionsData for user and website specified.
+     */
+    public PermissionsData inviteUser(WebsiteData website, 
+            UserData user, short mask) throws RollerException
+    {
+        if (website == null) throw new RollerException("Website cannot be null");
+        if (user == null) throw new RollerException("User cannot be null");        
+        PermissionsData perms = new PermissionsData();
+        perms.setWebsite(website);
+        perms.setUser(user);
+        perms.setPermissionMask(mask);
+        mStrategy.store(perms);
+        return perms;
+    }
+    
+    /**
+     * Remove user permissions from a website.
+     */
+    public void retireUser(WebsiteData website, UserData user) throws RollerException
+    {
+        if (website == null) throw new RollerException("Website cannot be null");
+        if (user == null) throw new RollerException("User cannot be null");        
+        Iterator perms = website.getPermissions().iterator();
+        PermissionsData target = null;
+        while (perms.hasNext())
+        {
+            PermissionsData pd = (PermissionsData)perms.next();
+            if (pd.getUser().getId().equals(user.getId()))
+            {
+                target = pd;
+                break;
+            }
+        }
+        if (target == null) throw new RollerException("User not member of website");
+        website.removePermission(target);
+        target.remove();
     }
 }

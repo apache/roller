@@ -39,7 +39,7 @@ public class BlacklistTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        blacklist = Blacklist.getBlacklist(null,null);
+        blacklist = Blacklist.getBlacklist();
     }
 
     /**

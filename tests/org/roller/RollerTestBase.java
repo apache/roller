@@ -16,11 +16,13 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.business.BookmarkManagerTest;
+import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.Theme;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
@@ -40,16 +42,21 @@ public abstract class RollerTestBase extends TestCase
 
     private Roller mRoller = null;
 
-    /** Simple website created by addUser(), no frills. */
-    protected WebsiteData mWebsite = null;
+    /** Simple user created */
+    protected UserData mUser = null;
+    /** User name of simple user */
     protected String testUsername = "testuser";
+    /** Simple website created (no entryes, categories, bookmarks, etc.) */
+    protected WebsiteData mWebsite = null;
 
-    /** Collection of websites created, each with category tree. */
-    protected List mWebsites = new LinkedList();
+    /** Full websites created, each with entries, cats, bookmarks, etc. */
+    protected List mWebsitesCreated = new LinkedList();
+    
+    /** Users created, user X has permissions in full website X */
+    protected List mUsersCreated = new ArrayList();
 
-    /** Number of website/users to create */
-    protected int mBlogCount = 1;
-
+    /** Number of full website/users to create */
+    protected int mBlogCount = 3;
     /** Number of categories to create in each category of tree. */
     protected int mCatCount = 2;
     /** Depth of created category tree. */
@@ -59,15 +66,18 @@ public abstract class RollerTestBase extends TestCase
     /** Number of comments to creaate per weblog entry */
     protected int mCommentCount = 2;
     
-    protected int mExpectedEntryCount = mEntriesPerCatCount + 
-                                        mEntriesPerCatCount*mCatCount + 
-                                        mEntriesPerCatCount*(mCatCount*mCatDepth);
-    protected int mExpectedPublishedEntryCount = (int)(mEntriesPerCatCount*0.5) + 
-                                        (int)(mEntriesPerCatCount*0.5)*mCatCount + 
-                                        (int)(mEntriesPerCatCount*0.5)*(mCatCount*mCatDepth);
+    /** Total number of entries created */
+    protected int mExpectedEntryCount = 
+        mEntriesPerCatCount + 
+        mEntriesPerCatCount*mCatCount + 
+        mEntriesPerCatCount*(mCatCount*mCatDepth);
+    
+    /** Total number of entries created in published status */
+    protected int mExpectedPublishedEntryCount = 
+        (int)(mEntriesPerCatCount*0.5) + 
+        (int)(mEntriesPerCatCount*0.5)*mCatCount + 
+        (int)(mEntriesPerCatCount*0.5)*(mCatCount*mCatDepth);
 
-    /** Store users to make teardown easy. */
-    protected List mUsersCreated = new ArrayList();
     /** Store categories for use in asserts. */
     protected List mCategoriesCreated = new ArrayList();
     /** Store entries for use in asserts. */
@@ -97,72 +107,51 @@ public abstract class RollerTestBase extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        UserManager umgr = getRoller().getUserManager();
-
         getRoller().begin(UserData.SYSTEM_USER);
-
-        // create User
-        UserData user = createUser(umgr,
+        mUser = createUser(
                    testUsername,
                    "password",
                    "TestUser",
                    "testuser@example.com");
-
-        // get website
-        mWebsite = umgr.getWebsite(user.getUserName());
+        UserManager umgr = getRoller().getUserManager();
+        mWebsite = (WebsiteData)umgr.getWebsites(mUser, null).get(0);
         getRoller().commit();
+        
+        RollerConfig.setContextPath("./build/roller");
     }
 
     //-----------------------------------------------------------------------
     protected UserData createUser(
-                    UserManager umgr,
                     String username,
                     String password,
                     String fullName,
                     String email) throws RollerException
     {
+        UserManager umgr = getRoller().getUserManager();
+        WeblogManager wmgr = getRoller().getWeblogManager();
+
+        // Create and add new new user
         UserData ud = new UserData(null,
-            username,         // userName
-            password,           // password
+            username,      // userName
+            password,      // password
             fullName,      // fullName
-            email, // emailAddress
-            new java.util.Date()  // dateCreated
-            );
+            email,         // emailAddress
+            "en_US_WIN", 
+            "America/Los_Angeles",
+            new java.util.Date(), // dateCreated
+            Boolean.TRUE);
+        umgr.addUser(ud);
+
+        // Create list of pages to be loaded into website
         Map pages = new HashMap();
         pages.put("Weblog","Weblog page content");
         pages.put("_day","Day page content");
         pages.put("css","CSS page content");
-        umgr.addUser(ud, pages, Theme.CUSTOM, "en_US_WIN", "America/Los_Angeles");
         
-        // the addUser method no longer creates pages, so we add them manually
-        WebsiteData website = umgr.getWebsite(username);
-        Iterator iter = pages.keySet().iterator();
-        while ( iter.hasNext() )
-        {
-            String pageName = (String) iter.next();
-            String sb = (String)pages.get( pageName );
-              
-            // Store each Velocity template as a page
-            WeblogTemplate pd = new WeblogTemplate( null,
-                website,         // website
-                pageName,        // name
-                pageName,        // description
-                pageName,        // link
-                sb,              // template
-                new Date()       // updateTime                
-            );
-            umgr.storePage(pd);
-            
-            if ( pd.getName().equals("Weblog") )
-            {  
-                website.setDefaultPageId(pd.getId());                 
-            }
-            else if ( pd.getName().equals("_day") )
-            {
-                website.setWeblogDayPageId(pd.getId());                 
-            }                
-        }
-        website.save();
+        // Create website for user with those pages
+        umgr.createWebsite(
+           ud, pages, username, username, username,"dummy@example.com","basic", 
+           "en_US_WIN", "America/Los_Angeles");
         
         return ud;
     }
@@ -179,17 +168,16 @@ public abstract class RollerTestBase extends TestCase
         {
             getRoller().begin(UserData.SYSTEM_USER);
 
-            UserData ud = createUser(umgr,
+            UserData ud = createUser(
                 "testuser"+i,         // userName
                 "password",           // password
                 "Test User #"+i,      // fullName
                 "test"+i+"@test.com"  // emailAddress
                 );
-            WebsiteData website = umgr.getWebsite(ud.getUserName());
-            mWebsites.add(website);
+            ud.setEnabled(new Boolean(i%2 == 0)); // half of users are disabled
+            WebsiteData website = (WebsiteData)umgr.getWebsites(ud, null).get(0);
+            mWebsitesCreated.add(website);
             mUsersCreated.add(ud);
-
-            getRoller().commit();
 
             mLogger.debug("Created user "+ud.getUserName());
 
@@ -198,10 +186,10 @@ public abstract class RollerTestBase extends TestCase
             mCalendar.setTime(new Date());
 
             // create categories
-            getRoller().begin(UserData.SYSTEM_USER);
             website  = umgr.retrieveWebsite(website.getId());
             WeblogCategoryData rootCat = wmgr.getRootWeblogCategory(website);
-            createCategoryPostsAndComments(0, wmgr, website, rootCat);
+            createCategoryPostsAndComments(0, wmgr, ud, website, rootCat);
+
             getRoller().commit();
         }
 
@@ -211,6 +199,7 @@ public abstract class RollerTestBase extends TestCase
     private void createCategoryPostsAndComments(
             int depth,
             WeblogManager wmgr,
+            UserData user,
             WebsiteData website,
             WeblogCategoryData rootCat) throws RollerException
     {
@@ -228,13 +217,14 @@ public abstract class RollerTestBase extends TestCase
                  null,      // id
                  rootCat,    // category
                  website,    // websiteId
+                 user,
                  "Future Blog", // title
                  null,
                  "Blog to the Future", // text
                  null,      // anchor
                  day,        // pubTime
                  day,        // updateTime
-                 Boolean.TRUE ); // publishEntry
+                 WeblogEntryData.PUBLISHED ); // publishEntry
             wd.save();
             
             // roll calendar back to today
@@ -248,18 +238,21 @@ public abstract class RollerTestBase extends TestCase
             day.setNanos(0); // kludge
 
             boolean published = k%2==0 ? true : false;
+            String status = published 
+                ? WeblogEntryData.PUBLISHED : WeblogEntryData.DRAFT;
 
             wd = new WeblogEntryData(
                     null,      // id
                     rootCat,    // category
                     website,    // websiteId
+                    user,
                     rootCat.getName() + ":entry"+k, // title
                     null,
                     rootCat.getName() + ":entry"+k, // text
                     null,      // anchor
                     day,        // pubTime
                     day,        // updateTime
-                    new Boolean(published) ); // publishEntry
+                    status ); // publishEntry
             wd.save();
 
             // add at beginning of list
@@ -306,7 +299,7 @@ public abstract class RollerTestBase extends TestCase
 
             if (depth < mCatDepth)
             {
-                createCategoryPostsAndComments(depth+1, wmgr, website, cat);
+                createCategoryPostsAndComments(depth+1, wmgr, user, website, cat);
             }
         }
     }
@@ -317,11 +310,18 @@ public abstract class RollerTestBase extends TestCase
     {
         getRoller().begin(UserData.SYSTEM_USER);
         UserManager umgr = getRoller().getUserManager();
-        for (Iterator iter = mUsersCreated.iterator(); iter.hasNext();)
+        for (Iterator siteIter = mWebsitesCreated.iterator(); siteIter.hasNext();)
         {
-            UserData element = (UserData) iter.next();
-            element = umgr.retrieveUser(element.getId());
-            element.remove();
+            WebsiteData site = (WebsiteData) siteIter.next();
+            site = umgr.retrieveWebsite(site.getId());
+            if (site != null) site.remove();
+        }
+        
+        for (Iterator userIter = mUsersCreated.iterator(); userIter.hasNext();)
+        {
+            UserData user = (UserData) userIter.next();
+            user = umgr.retrieveUser(user.getId());
+            if (user != null) user.remove();
         }
         getRoller().commit();
     }
@@ -340,7 +340,6 @@ public abstract class RollerTestBase extends TestCase
         try
         {
             deleteWebsite(testUsername);
-            //getRoller().release();
         }
         catch (RollerException e)
         {
@@ -358,11 +357,15 @@ public abstract class RollerTestBase extends TestCase
     {
         mLogger.debug("try to delete " + deleteMe);
         getRoller().begin(UserData.SYSTEM_USER);
-        mWebsite = getRoller().getUserManager().getWebsite(deleteMe);
-        if (mWebsite != null)
-        {
-            mWebsite.getUser().remove();
-        }
+        UserManager umgr = getRoller().getUserManager();
+        
+        UserData user = umgr.getUser(deleteMe);
+
+        WebsiteData website = (WebsiteData)umgr.getWebsites(user, null).get(0);
+        website.remove();
+
+        user.remove();
+        
         getRoller().commit();
     }
 

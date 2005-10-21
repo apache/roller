@@ -20,7 +20,9 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.roller.RollerException;
 import org.roller.model.FileManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
+import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
@@ -67,9 +69,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         mLogger.info("     BlogId: " + blogid);
         mLogger.info("     UserId: " + userid);
 
-        WebsiteData website = validate(userid,password);
+        WebsiteData website = validate(blogid, userid,password);
         RollerRequest rreq = RollerRequest.getRollerRequest();
-        Roller roller = rreq.getRoller();
+        Roller roller = RollerFactory.getRoller();
         try
         {
             Hashtable result = new Hashtable();
@@ -77,7 +79,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
             List cats = weblogMgr.getWeblogCategories(website, false);
             for (Iterator wbcItr = cats.iterator(); wbcItr.hasNext();) {
                 WeblogCategoryData category = (WeblogCategoryData) wbcItr.next();
-                result.put(category.getPath(), createCategoryStruct(category));
+                result.put(category.getPath(), 
+                           createCategoryStruct(category, userid));
             }
             return result;
         }
@@ -111,9 +114,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         mLogger.info("     UserId: " + userid);
         mLogger.info("    Publish: " + publish);
 
-        validate(userid,password);
+        Roller roller = RollerFactory.getRoller(); 
+        WeblogManager weblogMgr = roller.getWeblogManager();
+        WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
 
-        Roller roller = RollerRequest.getRollerRequest().getRoller();
+        validate(entry.getWebsite().getHandle(), userid,password);
 
         Hashtable postcontent = struct;
         String description = (String)postcontent.get("description");
@@ -134,22 +139,27 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
 
         try
         {
-            WeblogManager weblogMgr = roller.getWeblogManager();
 
             Timestamp current =
                 new Timestamp(System.currentTimeMillis());
 
-            WeblogEntryData entry =
-                weblogMgr.retrieveWeblogEntry(postid);
-
             if ( !title.equals("") ) entry.setTitle(title);
             entry.setText(description);
             entry.setUpdateTime(current);
+            if (Boolean.valueOf(publish).booleanValue())
+            {
+                entry.setStatus(WeblogEntryData.PUBLISHED);
+            }
+            else
+            {
+                entry.setStatus(WeblogEntryData.DRAFT);
+            }
             if (dateCreated != null) 
             {
                 entry.setPubTime(new Timestamp(dateCreated.getTime()));
             }
-            entry.setPublishEntry(Boolean.valueOf(publish));
+
+
 
             if ( cat != null )
             {
@@ -161,7 +171,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
 
             entry.save();
             roller.commit();
-            flushPageCache(userid);
+            flushPageCache(entry.getWebsite());
 
             // TODO: Roller timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
@@ -199,7 +209,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         mLogger.info("     UserId: " + userid);
         mLogger.info("    Publish: " + publish);
 
-        WebsiteData website = validate(userid,password);
+        WebsiteData website = validate(blogid, userid, password);
 
         Hashtable postcontent = struct;
         String description = (String)postcontent.get("description");
@@ -225,9 +235,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
 
         try
         {
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             WeblogManager weblogMgr = roller.getWeblogManager();
-
+            UserData user = roller.getUserManager().getUser(userid);
             Timestamp current =
                 new Timestamp(System.currentTimeMillis());
 
@@ -237,7 +247,16 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
             entry.setPubTime(new Timestamp(dateCreated.getTime()));
             entry.setUpdateTime(current);
             entry.setWebsite(website);
-            entry.setPublishEntry(Boolean.valueOf(publish));
+            entry.setCreator(user);
+            if (Boolean.valueOf(publish).booleanValue())
+            {
+                entry.setStatus(WeblogEntryData.PUBLISHED);
+            }
+            else
+            {
+                entry.setStatus(WeblogEntryData.DRAFT);
+            }
+
 
             if ( cat != null )
             {
@@ -254,7 +273,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
 
             entry.save();
             roller.commit();
-            flushPageCache(userid);
+            flushPageCache(entry.getWebsite());
 
             // TODO: Roller timestamps need better than 1 second accuracy
             // Until then, we can't allow more than one post per second
@@ -287,14 +306,15 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         mLogger.info("     PostId: " + postid);
         mLogger.info("     UserId: " + userid);
 
-        validate(userid,password);
+        Roller roller = RollerFactory.getRoller(); 
+        WeblogManager weblogMgr = roller.getWeblogManager();
+        WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
+        
+        validate(entry.getWebsite().getHandle(), userid,password);
 
         try
         {
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
-            WeblogManager weblogMgr = roller.getWeblogManager();
-            WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
-            return createPostStruct(entry);
+            return createPostStruct(entry, userid);
         }
         catch (Exception e)
         {
@@ -320,7 +340,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("   Password: *********");
 
-        WebsiteData website = validate(userid, password);
+        WebsiteData website = validate(blogid, userid, password);
         try
         {
             String name = (String) struct.get("name");    
@@ -331,7 +351,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
             
             byte[] bits = (byte[]) struct.get("bits");
 
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             FileManager fmgr = roller.getFileManager();
             RollerMessages msgs = new RollerMessages();
             
@@ -348,7 +368,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
                 // TODO: build URL to uploaded file should be done in FileManager
                 String uploadPath = RollerContext.getUploadPath(
                         request.getSession(true).getServletContext());
-                uploadPath += "/" + website.getUser().getUserName() + "/" + name;
+                uploadPath += "/" + website.getHandle() + "/" + name;
                 String fileLink = RequestUtils.printableURL(
                         RequestUtils.absoluteURL(request, uploadPath));
                 
@@ -386,13 +406,13 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         mLogger.info("     UserId: " + userid);
         mLogger.info("     Number: " + numposts);
 
-        WebsiteData website = validate(userid,password);
+        WebsiteData website = validate(blogid, userid,password);
 
         try
         {
             Vector results = new Vector();
 
-            Roller roller = RollerRequest.getRollerRequest().getRoller();
+            Roller roller = RollerFactory.getRoller(); 
             WeblogManager weblogMgr = roller.getWeblogManager();
             if (website != null)
             {
@@ -401,7 +421,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
                                 null,                   // startDate
                                 new Date(),             // endDate
                                 null,                   // catName
-                                WeblogManager.ALL,      // status
+                                null,      // status
                                 new Integer(numposts)); // maxEntries 
                 
                 Iterator iter = entries.values().iterator();
@@ -412,7 +432,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
                     while (entryIter.hasNext())
                     {
                         WeblogEntryData entry = (WeblogEntryData)entryIter.next();
-                        results.addElement(createPostStruct(entry));
+                        results.addElement(createPostStruct(entry, userid));
                     }
                 }
             }
@@ -426,7 +446,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         }
     }
     
-    private Hashtable createPostStruct(WeblogEntryData entry)
+    private Hashtable createPostStruct(WeblogEntryData entry, String userid)
     {       
         RollerRequest rreq = RollerRequest.getRollerRequest();
         HttpServletRequest request = rreq.getRequest();
@@ -447,7 +467,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         struct.put("guid", Utilities.escapeHTML(permalink));
         struct.put("permaLink", Utilities.escapeHTML(permalink));
         struct.put("postid", entry.getId());                        
-        struct.put("userid", entry.getWebsite().getUser().getId());
+        struct.put("userid", userid);
 
         Vector catArray = new Vector();
         catArray.addElement(entry.getCategory().getPath());      
@@ -456,12 +476,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
         return struct;
     }
     
-    private Hashtable createCategoryStruct(WeblogCategoryData category)
+    private Hashtable createCategoryStruct(WeblogCategoryData category, String userid)
     {
         RollerRequest rreq = RollerRequest.getRollerRequest();
         HttpServletRequest req = rreq.getRequest();
         String contextUrl = RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
-        String userid = category.getWebsite().getUser().getId();
 
         Hashtable struct = new Hashtable();
         struct.put("description", category.getPath());

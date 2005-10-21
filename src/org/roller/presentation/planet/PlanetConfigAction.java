@@ -32,15 +32,16 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.roller.presentation.forms.PlanetConfigForm;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.PlanetManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.PlanetConfigData;
 import org.roller.pojos.PlanetGroupData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.planet.RefreshEntriesTask;
-import org.roller.presentation.planet.SyncWebsitesTask;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.forms.PlanetConfigForm;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
@@ -50,7 +51,7 @@ import org.roller.presentation.planet.SyncWebsitesTask;
  *                scope="request" parameter="method"
  * 
  * @struts.action-forward name="planetConfig.page" 
- *                        path="/planet/PlanetConfig.jsp"
+ *                        path=".PlanetConfig"
  */
 public final class PlanetConfigAction extends DispatchAction
 {
@@ -66,9 +67,12 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
-                Roller roller = rreq.getRoller();
+                BasePageModel pageModel = new BasePageModel(
+                    "planetConfig.pageTitle", request, response, mapping);
+                request.setAttribute("model",pageModel);                
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 PlanetConfigData config = planet.getConfiguration();
                 PlanetConfigForm form = (PlanetConfigForm)actionForm;
@@ -106,9 +110,12 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
-                Roller roller = rreq.getRoller();
+                BasePageModel pageModel = new BasePageModel(
+                    "planetConfig.pageTitle", request, response, mapping);
+                request.setAttribute("model",pageModel);                
+                Roller roller = RollerFactory.getRoller();
                 PlanetManager planet = roller.getPlanetManager();
                 PlanetConfigData config = planet.getConfiguration();
                 if (config == null)
@@ -160,9 +167,12 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
-                Roller roller = rreq.getRoller();
+                BasePageModel pageModel = new BasePageModel(
+                    "planetConfig.pageTitle", request, response, mapping);
+                request.setAttribute("model",pageModel);                
+                Roller roller = RollerFactory.getRoller();
                 RefreshEntriesTask task = new RefreshEntriesTask();
                 task.init(roller, "dummy");
                 roller.getThreadManager().executeInBackground(task);
@@ -194,9 +204,12 @@ public final class PlanetConfigAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if (rreq.isUserAuthorizedToEdit())
+            if (RollerSession.getRollerSession(request).isGlobalAdminUser())
             {
-                Roller roller = (Roller)rreq.getRoller();
+                BasePageModel pageModel = new BasePageModel(
+                    "planetConfig.pageTitle", request, response, mapping);
+                request.setAttribute("model",pageModel);                
+                Roller roller = (Roller)RollerFactory.getRoller();
                 SyncWebsitesTask task = new SyncWebsitesTask();
                 task.init(roller, "dummy");
                 roller.getThreadManager().executeInBackground(task);
@@ -222,24 +235,6 @@ public final class PlanetConfigAction extends DispatchAction
     public ActionErrors validate(PlanetConfigForm form)
     {
         ActionErrors errors = new ActionErrors();
-        if (form.getCacheDir()==null || form.getCacheDir().trim().length()==0)
-        {
-            errors.add(null, new ActionError("planetConfig.error.feedUrl"));
-        }
-        else
-        {
-            File file = new File(form.getCacheDir());
-            if (!file.isDirectory())
-            {
-                errors.add(null, new ActionError(
-                        "planetConfig.error.cacheDirNotFound"));
-            }
-            if (!file.canWrite())
-            {
-                errors.add(null, new ActionError(
-                        "planetConfig.error.cacheDirNotWritable"));
-            }
-        }
         if (form.getProxyHost()!=null && form.getProxyHost().trim().length()>0)
         {
             if (form.getProxyPort()<1)

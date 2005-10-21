@@ -59,7 +59,6 @@ public class ExportRss
         
         ctx = new VelocityContext();
         
-        user = website.getUser();
         RollerContext rollerCtx = RollerContext.getRollerContext(
                                       RollerContext.getServletContext());
         loadPageHelper();
@@ -184,7 +183,7 @@ public class ExportRss
         {
             // Add current time and last updated times to context
             Date updateTime = RollerFactory.getRoller().getWeblogManager()
-            .getWeblogLastPublishTime( user.getUserName(), null );                        
+                .getWeblogLastPublishTime(website, null);                        
             ctx.put("updateTime",   updateTime);
         }
         catch (RollerException e)

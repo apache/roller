@@ -1,44 +1,75 @@
-div#header {
-    border-top: 1px solid white; /* for some reason, this fixes safari */
-    background: white repeat-x url(images/header-grey.png);
-}
+/* ======================================================================
+layout.css: Base CSS layout for Roller's web UI (position and sizing only)
+====================================================================== */
 
-div#content {
-    margin: 0 0 0 136px;
-    padding: 10px;
-    padding-top: 0;
+#banner {
+    margin: 0px;
+    padding: 0px 0px 0px 0px;
 }
-
-div#left { 
-    position: absolute;
-    left: 0px;
-    width: 136px;
-    padding: 10px;
-}
-
-div#footer {
-    margin-top:40px;
-    border-top: 1px gray dotted;
+.bannerBox {
     width: 100%;
-    text-align: left;
 }
-
-div#separator {
-    background: transparent;
-    border-top: 1px solid #C0C0C0;
-    color: #666666;
-    font-size: 0.9em;
-    margin-top: 30px;
-    padding: 5px 0px 10px 5px;
-    text-align: left;
+.bannerStatusBox {
+    width: 100%;
 }
-
-div#loginTable {
-    margin: 20px;
-    border: 1px solid #C0C0C0;
-    color: inherit;
-    padding: 10px 5px 0px 5px;
-    width: 350px;
+.sidebarBodyHead {
+    height: 25px;
 }
+.searchSidebarHead {
+   height: 5px;
+}
+.searchSidebarBody {
+   margin: 0px 0px 0px 0px;
+}
+.searchSidebarBody input {
+   margin: 5px;
+}
+#menu {
+    padding: 0px 10px 0px 10px;
+}
+#content {
+}
+/*  
+    NOTE: these wrap divs are kinda lame, however they are necessary.
+    the problem is that when 2 divs are floated side-by-side then the
+    calculation of their widths does not include padding or margins.
 
+    so without the wrap divs then putting a margin or padding value in any
+    of the XXXcontent divs forces the width calculation to be > 100% and 
+    the divs don't fit next to each other anymore :(
+
+    to get around this we put a XXXcontent_wrap around the XXXcontent divs
+    to do the float and set the width.  margin, padding, borders, etc
+    should be applied directly to the XXXcontent div.
+*/
+#centercontent_wrap {
+    float: left;
+    display: inline;
+}
+#centercontent {
+    margin: 10px;
+}
+#rightcontent_wrap {
+    float: right;
+    display: inline;
+}
+#rightcontent {
+    margin: 10px;
+}
+#footer {
+    clear: both;
+    padding: 15px 0px 15px 0px;
+    font-size: smaller;
+    text-align: center;
+}
+.prop {
+    height: 300px;
+    float: right;
+    width: 1px;
+}
+.clear {
+    clear: both;
+    height: 1px;
+    overflow: hidden;
+}
 

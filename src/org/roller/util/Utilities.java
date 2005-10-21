@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -44,7 +45,7 @@ public class Utilities
     /** Pattern for matching HTML links */
     private static Pattern mLinkPattern = 
         Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);
-    
+
     /**
      * Utility methods for calling StringUtils since it cannot be 
      * instantiated and Utilties can.
@@ -973,6 +974,7 @@ public class Utilities
      */
     public static final String textToHTML(String text, boolean xml)
     {
+        if (text == null) return "null";
         final StringBuffer html = new StringBuffer();
 
         // Loop thru each characters of the text
@@ -1017,6 +1019,7 @@ public class Utilities
      */
     public static final String textToCDATA(String text)
     {
+        if (text == null) return "null";
         final StringBuffer html = new StringBuffer();
 
         // Loop thru each characters of the text

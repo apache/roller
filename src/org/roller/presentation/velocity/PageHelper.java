@@ -1,24 +1,4 @@
 package org.roller.presentation.velocity;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.struts.Globals;
-import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.context.Context;
-import org.roller.RollerException;
-import org.roller.pojos.UserData;
-import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.LanguageUtil;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.tags.calendar.CalendarModel;
-import org.roller.presentation.tags.calendar.CalendarTag;
-import org.roller.presentation.tags.menu.EditorNavigationBarTag;
-import org.roller.presentation.tags.menu.MenuTag;
-import org.roller.presentation.weblog.tags.BigWeblogCalendarModel;
-import org.roller.presentation.weblog.tags.WeblogCalendarModel;
-import org.roller.util.StringUtils;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,8 +11,29 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.Globals;
+import org.apache.struts.util.RequestUtils;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
+import org.roller.RollerException;
+import org.roller.pojos.WeblogEntryData;
+import org.roller.pojos.WebsiteData;
 import org.roller.pojos.wrapper.RefererDataWrapper;
 import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.roller.presentation.LanguageUtil;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.tags.calendar.CalendarModel;
+import org.roller.presentation.tags.calendar.CalendarTag;
+import org.roller.presentation.tags.menu.EditorNavigationBarTag;
+import org.roller.presentation.tags.menu.MenuTag;
+import org.roller.presentation.weblog.tags.BigWeblogCalendarModel;
+import org.roller.presentation.weblog.tags.WeblogCalendarModel;
+import org.roller.util.StringUtils;
 
 /**
  * Provides assistance to VelociMacros, filling in where Velocity falls.
@@ -50,9 +51,9 @@ public class PageHelper
     private PageContext          mPageContext = null;
     private HttpServletResponse  mResponse = null;     
     private RollerRequest        mRollerReq = null;
-    private String               mUsername = null;
     private Collection           mPagePlugins = new ArrayList();
     private boolean              mSkipFlag = false;
+    private WebsiteData          mWebsite = null;
     
     //------------------------------------------------------------------------
     
@@ -69,19 +70,14 @@ public class PageHelper
         if (rreq != null) 
         {
             mPageContext = rreq.getPageContext();
-            UserData user = null;
-            if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_USER) != null)
+            if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null)
             {
-                user = (UserData)
-                    rreq.getRequest().getAttribute(RollerRequest.OWNING_USER);
+                mWebsite = (WebsiteData)
+                    rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
             }
-            else if ( rreq.getUser() != null )
+            else if ( rreq.getWebsite() != null )
             {
-                user = rreq.getUser();
-            }
-            if ( user != null )
-            {       
-                mUsername = user.getUserName();       
+                mWebsite = rreq.getWebsite();
             }
         }
         
@@ -184,9 +180,9 @@ public class PageHelper
         Hashtable params = new Hashtable();
         params.put( RollerRequest.WEBLOGENTRYID_KEY, entry.getId());
         params.put( RollerRequest.ANCHOR_KEY,        entry.getAnchor());
-        if (mUsername != null)
+        if (mWebsite != null)
         {    
-            params.put( RollerRequest.USERNAME_KEY,  mUsername);
+            params.put( RollerRequest.USERNAME_KEY,  mWebsite.getHandle());
         }
         try
         {
@@ -208,11 +204,14 @@ public class PageHelper
         String link = null;
         try
         {
-            if ( mRollerReq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
+            if ( mRollerReq.getWebsite() != null 
+              && rollerSession.isUserAuthorizedToAdmin(mRollerReq.getWebsite()))
             {
                 Hashtable params = new Hashtable();
                 params.put( RollerRequest.REFERERID_KEY, referer.getId());
-                params.put( RollerRequest.USERNAME_KEY, mUsername);
+                params.put( RollerRequest.USERNAME_KEY, mWebsite.getHandle());
                 link = RequestUtils.computeURL( mPageContext,
                     "toggleLinkback", null, null, null, params,null,false);
                     
@@ -245,7 +244,13 @@ public class PageHelper
     {
         try
         {
-            return mRollerReq.isUserAuthorizedToEdit();
+            RollerSession rses = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
+            if ( rses.getAuthenticatedUser() != null 
+                    && mRollerReq.getWebsite() != null)
+            {
+                return rses.isUserAuthorizedToAdmin(mRollerReq.getWebsite());
+            }
         }
         catch (Exception e)
         {
@@ -342,12 +347,12 @@ public class PageHelper
             String pageLink = mRollerReq.getPageLink();
             if ( pageLink != null )
             {
-                selfUrl = 
-                    request.getContextPath()+"/page/"+mUsername+"/"+pageLink;
+                selfUrl = request.getContextPath() + "/page/" 
+                          + mWebsite.getHandle() + "/"+pageLink;
             }
             else
             {
-                selfUrl = request.getContextPath()+"/page/"+mUsername;
+                selfUrl = request.getContextPath()+"/page/" + mWebsite.getHandle();
             }
 
             // setup weblog calendar model
@@ -402,7 +407,7 @@ public class PageHelper
         String path, String val1, String val2)
     {
         Hashtable params = new Hashtable();
-        return strutsUrlHelper( useIds, isAction, path, val1, val2, params);
+        return strutsUrlHelper1( useIds, isAction, path, val1, val2, params);
     }
     
     //------------------------------------------------------------------------
@@ -417,7 +422,7 @@ public class PageHelper
      * @param val2
      * @return String
      */
-    public String strutsUrlHelper( boolean useIds, boolean isAction, 
+    public String strutsUrlHelper1( boolean useIds, boolean isAction, 
         String path, String val1, String val2, Hashtable params)
     {
         if (useIds)
@@ -427,17 +432,16 @@ public class PageHelper
                 params.put(RollerRequest.FOLDERID_KEY,
                 mRollerReq.getFolder().getId());
             } 
-            if (mUsername != null)
+            if (mWebsite != null)
             {
-                params.put(RollerRequest.USERNAME_KEY, mUsername);
+                params.put(RollerRequest.WEBLOG_KEY, mWebsite.getHandle());
             }
         }
         
         if (StringUtils.isNotEmpty(val1) && !val1.equals("null"))
         {
             params.clear();
-            params.put("rmk", val1);
-            params.put("rmik", val2);
+            params.put("weblog", val1);
         }
         
         String returnUrl = "";

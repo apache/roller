@@ -98,7 +98,7 @@
  *#
 #macro( showOpmlLink $folderName )
     #if ( $pageModel.getFolder( $folderName ) )
-        <a href="$ctxPath/flavor/$userName?flavor=opml&path=$folderName">
+        <a href="${ctxPath}/flavor/${website.handle}?flavor=opml&path=$folderName">
             <img src="$ctxPath/images/opml.png" 
                alt="OPML badge" title="OPML for $folderName" />
         </a>
@@ -106,4 +106,6 @@
         <span class="error">$text.get( "macro.bookmark.error", [$folderName])</span>
     #end
 #end
+
+#macro( showBlogroll )#showBookmarks("/" false false)#end
 

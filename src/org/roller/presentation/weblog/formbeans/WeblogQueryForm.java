@@ -3,13 +3,13 @@
  */
 package org.roller.presentation.weblog.formbeans;
 
-import org.apache.struts.action.ActionMapping;
-
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.ServletRequest;
+
+import org.apache.struts.action.ActionMapping;
 
 /**
  * Form allows user to set Weblog Entry query and export parameters.

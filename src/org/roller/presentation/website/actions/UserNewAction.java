@@ -1,6 +1,16 @@
 
 package org.roller.presentation.website.actions;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -11,24 +21,15 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.roller.RollerException;
+import org.roller.config.RollerRuntimeConfig;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
-import org.roller.presentation.MainPageAction;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.website.formbeans.UserFormEx;
 import org.roller.util.StringUtils;
-
-import java.io.IOException;
-import java.util.HashMap;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.roller.config.RollerRuntimeConfig;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
@@ -37,8 +38,8 @@ import org.roller.config.RollerRuntimeConfig;
  * @struts.action name="userFormEx" path="/user" 
  * 		scope="session" parameter="method"
  * 
- * @struts.action-forward name="registerUser.page" path="/website/UserNew.jsp"
- * @struts.action-forward name="welcome.page" path="/website/welcome.jsp"
+ * @struts.action-forward name="registerUser.page" path=".UserNew"
+ * @struts.action-forward name="welcome.page" path=".welcome"
  */
 public class UserNewAction extends UserBaseAction
 {
@@ -59,8 +60,18 @@ public class UserNewAction extends UserBaseAction
         return registerUser(mapping, actionForm, request, response);
     }
     
+    public ActionForward cancel(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        return mapping.findForward("main");
+    }
+    
     //------------------------------------------------------------------------
-    /** Process GET of user registration page (allows users to register themselves. */
+    /** Process GET of user registration page (allows users to register themselves). */
     public ActionForward registerUser(
         ActionMapping       mapping,
         ActionForm          actionForm,
@@ -74,12 +85,14 @@ public class UserNewAction extends UserBaseAction
         try
         {
             UserFormEx userForm = (UserFormEx)actionForm;
-            loadRequestObjects(request, rreq, null, userForm);
-            userForm.setLocale(request.getLocale().toString());
-                
-            // User must set new password twice
+            
+            userForm.setLocale(Locale.getDefault().toString());
+            userForm.setTimeZone(TimeZone.getDefault().getID());
+            
             userForm.setPasswordText(null);
-            userForm.setPasswordConfirm(null);           
+            userForm.setPasswordConfirm(null);            
+            request.setAttribute("model", new BasePageModel(
+                    "newUser.addNewUser", request, response, mapping));
         }
         catch (Exception e)
         {
@@ -121,33 +134,34 @@ public class UserNewAction extends UserBaseAction
         else try
         {
             // Add new user
-            UserManager mgr = rreq.getRoller().getUserManager(); 
+            UserManager mgr = RollerFactory.getRoller().getUserManager(); 
             
             // Need system user to add new user
-            rreq.getRoller().setUser(UserData.SYSTEM_USER);
+            RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
 
             UserData ud = new UserData();
             form.copyTo(ud, request.getLocale()); // doesn't copy password
             ud.setId(null);
             ud.setDateCreated(new java.util.Date());
+            ud.setEnabled(Boolean.TRUE);
 
             // If user set both password and passwordConfirm then reset password
             if (    !StringUtils.isEmpty(form.getPasswordText()) 
                  && !StringUtils.isEmpty(form.getPasswordConfirm()))
             {
-               ud.resetPassword(rreq.getRoller(), 
+               ud.resetPassword(RollerFactory.getRoller(), 
                   form.getPasswordText(), form.getPasswordConfirm());
             }
             
-            String theme = form.getTheme();
-            // this used to have theme pages before we had shared themes -- Allen G
-            HashMap pages = new HashMap();
-            mgr.addUser( ud, pages, theme, form.getLocale(), form.getTimezone() );
-            rreq.getRoller().commit();
+            //String theme = form.getTheme();
+            //HashMap pages = rollerContext.readThemeMacros(theme);
+            mgr.addUser(ud);
+            //mgr.createWebsite(ud, pages, theme, form.getLocale(), form.getTimezone());
+            RollerFactory.getRoller().commit();
 
 			// Flush cache so user will immediately appear on index page
-            PageCacheFilter.removeFromCache( request, ud );
-            MainPageAction.flushMainPageCache();
+            //PageCacheFilter.removeFromCache( request, ud );
+            //MainPageAction.flushMainPageCache();
 
             if (form.getAdminCreated()) 
             {

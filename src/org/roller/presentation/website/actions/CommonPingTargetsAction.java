@@ -8,24 +8,27 @@
 
 package org.roller.presentation.website.actions;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.model.PingTargetManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.PingTargetData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.forms.PingTargetForm;
 import org.roller.presentation.weblog.actions.BasePingTargetsAction;
-
-import java.util.List;
 
 /**
  * Administer common ping targets.
  *
  * @struts.action name="pingTargetForm" path="/admin/commonPingTargets" scope="request" parameter="method"
- * @struts.action-forward name="pingTargets.page" path="/website/CommonPingTargets.jsp"
- * @struts.action-forward name="pingTargetEdit.page" path="/website/CommonPingTargetEdit.jsp"
- * @struts.action-forward name="pingTargetDeleteOK.page" path="/website/CommonPingTargetDeleteOK.jsp"
+ * @struts.action-forward name="pingTargets.page" path=".CommonPingTargets"
+ * @struts.action-forward name="pingTargetEdit.page" path=".CommonPingTargetEdit"
+ * @struts.action-forward name="pingTargetDeleteOK.page" path=".CommonPingTargetDeleteOK"
  */
 public class CommonPingTargetsAction extends BasePingTargetsAction
 {
@@ -36,13 +39,26 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
         return mLogger;
     }
 
+    public String getPingTargetsTitle() 
+    {
+        return "commonPingTargets.commonPingTargets";    
+    }
+    public String getPingTargetEditTitle()
+    {
+        return "pingTarget.pingTarget";    
+    }
+    public String getPingTargetDeleteOKTitle() 
+    {
+        return "pingTarget.confirmRemoveTitle";    
+    }
+    
     /*
      * Get the ping targets for the view.  Here we return the common ping targets for the
      * entire site.
      */
     protected List getPingTargets(RollerRequest rreq) throws RollerException
     {
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         return pingTargetMgr.getCommonPingTargets();
     }
 
@@ -52,7 +68,7 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
     protected PingTargetData createPingTarget(RollerRequest rreq, PingTargetForm pingTargetForm)
         throws RollerException
     {
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         return pingTargetMgr.createCommonPingTarget(
             pingTargetForm.getName(), pingTargetForm.getPingUrl());
     }
@@ -61,9 +77,11 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
     /*
      * Check if request carries admin rights.
      */
-    protected boolean hasRequiredRights(RollerRequest rreq) throws RollerException
+    protected boolean hasRequiredRights(
+            RollerRequest rreq, WebsiteData website) throws RollerException
     {
-        // This mimics the check in other admin actions, but not sure why the latter is not sufficient.
-        return (rreq.isUserAuthorizedToEdit() && rreq.isAdminUser());
+        RollerSession rollerSession = 
+                RollerSession.getRollerSession(rreq.getRequest());
+        return rollerSession.isGlobalAdminUser();
     }
 }

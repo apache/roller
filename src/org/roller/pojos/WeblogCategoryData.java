@@ -426,11 +426,10 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         {
             WeblogCategoryData lTest = (WeblogCategoryData) pOther;
             boolean lEquals = true;
-            lEquals = PojoUtil.equals(lEquals, this.id, lTest.id);
-            lEquals = PojoUtil.equals(lEquals, this.mWebsite.getId(), lTest.mWebsite.getId());
-            lEquals = PojoUtil.equals(lEquals, this.name, lTest.name);
-            lEquals = PojoUtil.equals(lEquals, this.description, lTest.description);
-            lEquals = PojoUtil.equals(lEquals, this.image, lTest.image);
+            lEquals = PojoUtil.equals(lEquals, this.getId(), lTest.getId());
+            lEquals = PojoUtil.equals(lEquals, this.getName(), lTest.getName());
+            lEquals = PojoUtil.equals(lEquals, this.getDescription(), lTest.getDescription());
+            lEquals = PojoUtil.equals(lEquals, this.getImage(), lTest.getImage());
             return lEquals;
         }
         else
@@ -497,20 +496,6 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     public List getAncestorAssocs() throws RollerException
     {
         return RollerFactory.getRoller().getWeblogManager().getWeblogCategoryAncestorAssocs(this);
-    }
-
-    public boolean canSave() throws RollerException
-    {
-        Roller roller = RollerFactory.getRoller();
-        if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-        {
-            return true;
-        }
-        if (roller.getUser().equals(getWebsite().getUser()))
-        {
-            return true;
-        }
-        return false;
     }
 
 }

@@ -3,17 +3,6 @@
  */
 package org.roller.presentation.filters;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.roller.RollerException;
-import org.roller.model.Roller;
-import org.roller.model.WeblogManager;
-import org.roller.pojos.UserData;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
-import org.roller.util.LRUCache2;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,7 +15,19 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.RollerException;
 import org.roller.config.RollerConfig;
+import org.roller.model.Roller;
+import org.roller.model.UserManager;
+import org.roller.model.WeblogManager;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
+import org.roller.util.LRUCache2;
 
 /**
  * Entry point filter for Newsfeed Servlets, this filter 
@@ -172,18 +173,18 @@ public class IfModifiedFilter implements Filter
     public static Date getLastPublishedDate(HttpServletRequest request)
         throws RollerException
     {
-        // Get user name without using heavy RollerRequest URL parser
-        String userName = null;
+        // Get website handle without using heavy RollerRequest URL parser
+        String handle = null;
         String pathInfo = request.getPathInfo();
         pathInfo = pathInfo != null ? pathInfo : "";
         String[] pathInfoArray = StringUtils.split(pathInfo, "/");
         if (pathInfoArray.length == 1)
         {
-            userName = pathInfoArray[0];
+            handle = pathInfoArray[0];
         }
-        else if (pathInfoArray.length > 1) 
+        else if (handle == null || pathInfoArray.length > 1) 
         {
-            // request is for a specific date or anchor, can't return 304
+            // request for main page or specific date/anchor, can't return 304
             return null;
         }
     
@@ -194,7 +195,7 @@ public class IfModifiedFilter implements Filter
         // update times are cached to reduce database queries per request
         StringBuffer sb = new StringBuffer();
             sb.append("zzz_");
-        sb.append(userName);
+        sb.append(handle);
             sb.append("_zzz_");
         sb.append(catname);
         String key = sb.toString();
@@ -204,19 +205,22 @@ public class IfModifiedFilter implements Filter
         {
             mLogger.debug("Hitting database for update time: "+key);
             Roller roller = RollerContext.getRoller(request);
+            UserManager umgr = roller.getUserManager();
             WeblogManager wmgr = roller.getWeblogManager();
-            updateTime = wmgr.getWeblogLastPublishTime(userName, catname);  
+            
+            updateTime = wmgr.getWeblogLastPublishTime(
+                    umgr.getWebsiteByHandle(handle), catname);  
             getCache().put(key, updateTime);
         }
         return updateTime;
     }
     
-    public static void purgeDateCache(UserData user) 
+    public static void purgeDateCache(WebsiteData website) 
     {
-        String userName = (user != null) ? user.getUserName() : null;
+        String handle = (website != null) ? website.getHandle() : null;
         StringBuffer sb = new StringBuffer();
         sb.append("zzz_");
-        sb.append(userName);
+        sb.append(handle);
         sb.append("_zzz_");
         getCache().purge(new String[] {sb.toString()});
     }

@@ -25,8 +25,7 @@
                     #showRSSBadge()<br><br><br>
                     #showBasicNavBar(true)<br>
                     #showSearchForm()<br>
-                    #showBookmarks("Blogroll" true false)<br>
-                    #showBookmarks("News" true false)<br>
+                    #showBlogroll()<br>
                     #showEditorNavBar(true)<br>
                     #showReferers(30 20)
                 </td>

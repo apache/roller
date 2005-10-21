@@ -21,13 +21,13 @@ import org.roller.RollerException;
 import org.roller.business.search.operations.AddEntryOperation;
 import org.roller.business.search.operations.IndexOperation;
 import org.roller.business.search.operations.ReIndexEntryOperation;
-import org.roller.business.search.operations.RebuildUserIndexOperation;
+import org.roller.business.search.operations.RebuildWebsiteIndexOperation;
 import org.roller.business.search.operations.RemoveEntryOperation;
-import org.roller.business.search.operations.RemoveUserIndexOperation;
+import org.roller.business.search.operations.RemoveWebsiteIndexOperation;
 import org.roller.business.search.operations.WriteToIndexOperation;
 import org.roller.model.IndexManager;
-import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
+import org.roller.pojos.WebsiteData;
 
 import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
@@ -167,7 +167,7 @@ public class IndexManagerImpl implements IndexManager
                     "Index was inconsistent. Rebuilding index in the background...");
                 try 
                 {                    
-                    rebuildUserIndex();
+                    rebuildWebsiteIndex();
                 }
                 catch (RollerException e) 
                 {
@@ -180,16 +180,22 @@ public class IndexManagerImpl implements IndexManager
     //~ Methods
     // ================================================================
     
-    public void rebuildUserIndex() throws RollerException
+    public void rebuildWebsiteIndex() throws RollerException
     {
         scheduleIndexOperation( 
-                new RebuildUserIndexOperation(this, null));
+                new RebuildWebsiteIndexOperation(this, null));
     }
     
-    public void removeUserIndex(UserData user) throws RollerException
+    public void rebuildWebsiteIndex(WebsiteData website) throws RollerException
+    {
+        scheduleIndexOperation( 
+                new RebuildWebsiteIndexOperation(this, website));
+    }
+    
+    public void removeWebsiteIndex(WebsiteData website) throws RollerException
     {
         scheduleIndexOperation(
-                new RemoveUserIndexOperation(this, user));
+                new RemoveWebsiteIndexOperation(this, website));
     }
     
     public void addEntryIndexOperation(WeblogEntryData entry) throws RollerException

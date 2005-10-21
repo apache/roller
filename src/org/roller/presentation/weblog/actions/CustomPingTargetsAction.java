@@ -8,26 +8,35 @@
 
 package org.roller.presentation.weblog.actions;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.roller.RollerException;
-import org.roller.model.PingTargetManager;
-import org.roller.pojos.PingTargetData;
-import org.roller.presentation.RollerRequest;
-import org.roller.config.PingConfig;
-import org.roller.presentation.forms.PingTargetForm;
+import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Collections;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.roller.RollerException;
+import org.roller.config.PingConfig;
+import org.roller.model.PingTargetManager;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.PingTargetData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.forms.PingTargetForm;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+
 
 /**
  * Administer custom ping targets.
  *
  * @struts.action name="pingTargetForm" path="/editor/customPingTargets" scope="request" parameter="method"
- * @struts.action-forward name="pingTargets.page" path="/weblog/CustomPingTargets.jsp"
- * @struts.action-forward name="pingTargetEdit.page" path="/weblog/CustomPingTargetEdit.jsp"
- * @struts.action-forward name="pingTargetDeleteOK.page" path="/weblog/CustomPingTargetDeleteOK.jsp"
+ * @struts.action-forward name="pingTargets.page" path=".CustomPingTargets"
+ * @struts.action-forward name="pingTargetEdit.page" path=".CustomPingTargetEdit"
+ * @struts.action-forward name="pingTargetDeleteOK.page" path=".CustomPingTargetDeleteOK"
  */
 public class CustomPingTargetsAction
     extends BasePingTargetsAction
@@ -35,7 +44,19 @@ public class CustomPingTargetsAction
     private static Log mLogger =
         LogFactory.getFactory().getInstance(CustomPingTargetsAction.class);
 
-
+    public String getPingTargetsTitle() 
+    {
+        return "customPingTargets.customPingTargets";    
+    }
+    public String getPingTargetEditTitle()
+    {
+        return "pingTarget.pingTarget";    
+    }
+    public String getPingTargetDeleteOKTitle() 
+    {
+        return "pingTarget.confirmRemoveTitle";    
+    }
+    
     public CustomPingTargetsAction() {
         super();
     }
@@ -52,7 +73,7 @@ public class CustomPingTargetsAction
     protected List getPingTargets(RollerRequest rreq) throws RollerException
     {
         HttpServletRequest req = rreq.getRequest();
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
 
         Boolean allowCustomTargets = new Boolean(!PingConfig.getDisallowCustomTargets());
         req.setAttribute("allowCustomTargets", allowCustomTargets);
@@ -69,17 +90,31 @@ public class CustomPingTargetsAction
     protected PingTargetData createPingTarget(RollerRequest rreq, PingTargetForm pingTargetForm)
         throws RollerException
     {
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         return pingTargetMgr.createCustomPingTarget(
-            pingTargetForm.getName(), pingTargetForm.getPingUrl(), rreq.getWebsite());
+            pingTargetForm.getName(), pingTargetForm.getPingUrl(), 
+            rreq.getWebsite());
     }
 
 
     /*
      *  Check if the user has editing rights.
      */
-    protected boolean hasRequiredRights(RollerRequest rreq) throws RollerException
+    protected boolean hasRequiredRights(RollerRequest rreq, WebsiteData website) 
+        throws RollerException
     {
-        return (rreq.isUserAuthorizedToEdit() && !PingConfig.getDisallowCustomTargets());
+        RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
+        return (rses.isUserAuthorizedToAdmin(website)
+            && !PingConfig.getDisallowCustomTargets());
+    }
+
+    public ActionForward cancel(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception
+    {
+        return view(mapping, actionForm, request, response);
     }
 }

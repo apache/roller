@@ -3,13 +3,17 @@
  */
 package org.roller.presentation.weblog.actions;
 
+import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,17 +26,20 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
+import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.weblog.formbeans.CategoriesForm;
 
 /**
  * Actions that are initiated from the CategoriesForm.
  * 
  * @struts.action name="categoriesForm" path="/editor/categories" parameter="method"
- * @struts.action-forward name="CategoriesForm" path="/weblog/CategoriesForm.jsp"
+ * @struts.action-forward name="CategoriesForm" path=".CategoriesForm"
  * 
  * @author Dave Johnson
  */
@@ -57,10 +64,12 @@ public class CategoriesAction extends DispatchAction
         HttpServletResponse response)
         throws RollerException
     {
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        if (rreq.isUserAuthorizedToEdit())
+        CategoriesPageModel pageModel = new CategoriesPageModel(
+                request, response, mapping, (CategoriesForm)actionForm);
+        RollerSession rses = RollerSession.getRollerSession(request);
+        if (rses.isUserAuthorizedToAuthor(pageModel.getCategory().getWebsite()))
         {
-            addModelObjects(request, (CategoriesForm)actionForm);
+            request.setAttribute("model", pageModel);
             return mapping.findForward("CategoriesForm");
         }
         else
@@ -87,12 +96,17 @@ public class CategoriesAction extends DispatchAction
     {
         ActionMessages messages = new ActionMessages();
         ActionForward forward = mapping.findForward("CategoriesForm");
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        if (rreq.isUserAuthorizedToEdit())
+
+        CategoriesPageModel pageModel = new CategoriesPageModel(
+                request, response, mapping, (CategoriesForm)actionForm);
+        
+        RollerSession rses = RollerSession.getRollerSession(request);
+        if (rses.isUserAuthorizedToAuthor(pageModel.getCategory().getWebsite()))
         {
+            request.setAttribute("model", pageModel);
             try 
             {
-                WeblogManager wmgr = rreq.getRoller().getWeblogManager();
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 CategoriesForm form = (CategoriesForm)actionForm; 
     
                 mLogger.debug("Moving categories to category, id=" 
@@ -122,11 +136,8 @@ public class CategoriesAction extends DispatchAction
                                 "categoriesForm.warn.notMoving",cd.getName()));
                         }
                     }
-                }
-    
-                rreq.getRoller().commit();
-                
-                addModelObjects(request, (CategoriesForm)actionForm);
+                }    
+                RollerFactory.getRoller().commit();
                 saveMessages(request, messages);
             }
             catch (RollerException e)
@@ -143,81 +154,110 @@ public class CategoriesAction extends DispatchAction
         return forward;
     }
 
-    /**
-     * Load model objects for display in CategoriesForm.
-     * @param request
-     * @throws RollerException
-     */
-    private void addModelObjects(HttpServletRequest request, CategoriesForm form) 
-        throws RollerException
-    {
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = rreq.getWebsite();
-        WeblogManager wmgr = rreq.getRoller().getWeblogManager();
-        
-        TreeSet allCategories = new TreeSet(new CategoryPathComparator());
-        
-        // Find catid wherever it may be
-        String catId = (String)request.getAttribute(RollerRequest.WEBLOGCATEGORYID_KEY);
-        if (null == catId) 
-        {
-            catId = request.getParameter(RollerRequest.WEBLOGCATEGORYID_KEY);
-        }  
-        if (null == catId)
-        {
-            catId = form.getId();     
-        }
-       
-        WeblogCategoryData cat = null;
-        if (null == catId || catId.equals("null"))
-        {
-            cat = wmgr.getRootWeblogCategory(wd);
-        }
-        else 
-        {
-            cat = wmgr.retrieveWeblogCategory(catId);            
-        }
-        form.setId(cat.getId());
-        
-        request.setAttribute("category", cat);
-        request.setAttribute("categories", cat.getWeblogCategories());
-        
-        if (null != cat.getParent())
-        {
-            LinkedList catPath = new LinkedList();
-            catPath.add(0, cat);
-            WeblogCategoryData parent = cat.getParent();
-            while (parent != null) 
-            {
-                catPath.add(0, parent);
-                parent = parent.getParent();   
-            }
-            request.setAttribute("categoryPath", catPath);
-            
-            request.setAttribute(
-                RollerRequest.PARENTID_KEY, cat.getParent().getId());
-        }
-    
-        // Build collection of all Categories, except for current one, 
-        // sorted by path.
-        Iterator iter = wmgr.getWeblogCategories(wd).iterator();
-        while (iter.hasNext())
-        {
-            WeblogCategoryData cd = (WeblogCategoryData) iter.next();
-            if (!cd.getId().equals(catId))
-            {
-                allCategories.add(cd);
-            }
-        }
-        request.setAttribute("allCategories", allCategories);
-    }
-
     private static final class CategoryPathComparator implements Comparator
     {
         public int compare(Object o1, Object o2) {
             WeblogCategoryData f1 = (WeblogCategoryData)o1; 
             WeblogCategoryData f2 = (WeblogCategoryData)o2; 
             return f1.getPath().compareTo(f2.getPath());
+        }
+    }
+    
+    
+    public class CategoriesPageModel extends BasePageModel
+    {
+        private CategoriesForm form = null;
+        private WeblogCategoryData cat = null;
+        private TreeSet allCategories = null;
+        private List catPath = null;
+        
+        public WeblogCategoryData getCategory() { return cat; }
+        public Set getAllCategories() { return allCategories; }
+        public List getCategoryPath() { return catPath; }
+        
+        public CategoriesPageModel(
+                HttpServletRequest request,
+                HttpServletResponse response,
+                ActionMapping mapping,
+                CategoriesForm form) throws RollerException
+        {
+            super("dummy",  request, response, mapping);
+            this.form = form;
+            
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+
+            allCategories = new TreeSet(new CategoryPathComparator());
+
+            // Find catid wherever it may be
+            String catId = (String)
+                request.getAttribute(RollerRequest.WEBLOGCATEGORYID_KEY);
+            if (null == catId) 
+            {
+                catId = request.getParameter(RollerRequest.WEBLOGCATEGORYID_KEY);
+            }  
+            if (null == catId)
+            {
+                catId = form.getId();     
+            }
+
+            cat = null;
+            if (null == catId || catId.equals("null"))
+            {
+                cat = wmgr.getRootWeblogCategory(website);
+            }
+            else 
+            {
+                cat = wmgr.retrieveWeblogCategory(catId);  
+                website = cat.getWebsite();
+            }
+            form.setId(cat.getId());
+
+            //request.setAttribute("categories", cat.getWeblogCategories());
+
+            if (null != cat.getParent())
+            {
+                catPath = new LinkedList();
+                catPath.add(0, cat);
+                WeblogCategoryData parent = cat.getParent();
+                while (parent != null) 
+                {
+                    catPath.add(0, parent);
+                    parent = parent.getParent();   
+                }
+                //request.setAttribute("categoryPath", catPath);
+
+                request.setAttribute(
+                    RollerRequest.PARENTID_KEY, cat.getParent().getId());
+            }
+
+            // Build collection of all Categories, except for current one, 
+            // sorted by path.
+            Iterator iter = wmgr.getWeblogCategories(website).iterator();
+            while (iter.hasNext())
+            {
+                WeblogCategoryData cd = (WeblogCategoryData) iter.next();
+                if (!cd.getId().equals(catId))
+                {
+                    allCategories.add(cd);
+                }
+            }
+            // For Struts tags
+            request.setAttribute("allCategories", allCategories);
+            request.setAttribute("category", cat);
+        }        
+        public String getTitle()
+        {
+            if (catPath == null || catPath.isEmpty()) 
+            {
+                return bundle.getString("categoriesForm.rootTitle");
+            }
+            else 
+            {
+                return MessageFormat.format(
+                        bundle.getString("categoriesForm.parent"),
+                        new String[] {cat.getName()});
+            }
         }
     }
 }

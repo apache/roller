@@ -2,12 +2,12 @@
 package org.roller.presentation.velocity;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.roller.model.PlanetManager;
-import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.PlanetGroupData;
 import org.roller.pojos.PlanetSubscriptionData;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.PageModel;
 
 /**
  * Allow Roller page templates to get the main Planet aggregation (the 'all'
@@ -23,7 +23,7 @@ public class PlanetPageModel extends PageModel
         super.init(rreq);
         try 
         {
-            planetManager = rreq.getRoller().getPlanetManager();
+            planetManager = RollerFactory.getRoller().getPlanetManager();
         }
         catch (Exception e)
         {

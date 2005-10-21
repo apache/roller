@@ -1,11 +1,10 @@
 package org.roller.presentation.velocity;
+
 import java.io.IOException;
 import java.util.Date;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -13,6 +12,7 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.servlet.VelocityServlet;
 import org.roller.RollerException;
 import org.roller.model.PlanetManager;
+import org.roller.model.RollerFactory;
 import org.roller.presentation.RollerRequest;
 import org.roller.util.Utilities;
 
@@ -60,7 +60,7 @@ public class PlanetFeedServlet extends VelocityServlet
         {
             response.setContentType("application/rss+xml;charset=utf-8");
             PlanetManager planet = 
-                rreq.getRoller().getPlanetManager();
+                RollerFactory.getRoller().getPlanetManager();
             if (request.getParameter("group") != null) 
             {
                 context.put("group", 

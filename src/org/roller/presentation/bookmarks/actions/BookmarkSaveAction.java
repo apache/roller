@@ -12,11 +12,13 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.roller.RollerPermissionsException;
 import org.roller.model.BookmarkManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
+import org.roller.pojos.PermissionsData;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.bookmarks.formbeans.BookmarkFormEx;
 
 /**
@@ -36,35 +38,33 @@ public class BookmarkSaveAction extends Action
         throws Exception
     {
         ActionForward forward = mapping.findForward("Bookmarks");
-        try
+        BookmarkFormEx form = (BookmarkFormEx)actionForm;
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+
+        BookmarkData bd = null;
+        if (null != form.getId() && !form.getId().trim().equals("")) 
         {
-            BookmarkFormEx form = (BookmarkFormEx)actionForm;
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            BookmarkManager bmgr = rreq.getRoller().getBookmarkManager();
-            
-            BookmarkData bd = null;
-            if (null != form.getId() && !form.getId().trim().equals("")) 
-            {
-                bd = bmgr.retrieveBookmark(form.getId());
-                bd.save(); // should throw if save not permitted
-            }
-            else 
-            {
-                bd = bmgr.createBookmark();
-                
-                // Existing bookmarks already have folders, but this is a new one.
-                FolderData fd = bmgr.retrieveFolder(
-                    request.getParameter(RollerRequest.FOLDERID_KEY));
-                bd.setFolder(fd);
-            }
+            bd = bmgr.retrieveBookmark(form.getId());
+        }
+        else 
+        {
+            bd = bmgr.createBookmark();
+            FolderData fd = bmgr.retrieveFolder(
+                request.getParameter(RollerRequest.FOLDERID_KEY));
+            bd.setFolder(fd);
+        }
+        RollerSession rses = RollerSession.getRollerSession(request);
+        if (bd.getFolder().getWebsite().hasUserPermissions(
+                rses.getAuthenticatedUser(), PermissionsData.AUTHOR))
+        {
             form.copyTo(bd, request.getLocale());
             bd.save();
-            rreq.getRoller().commit();
-            
+            RollerFactory.getRoller().commit();            
             request.setAttribute(
-                RollerRequest.FOLDERID_KEY,bd.getFolder().getId());  
+                RollerRequest.FOLDERID_KEY, bd.getFolder().getId());
         }
-        catch (RollerPermissionsException e)
+        else 
         {
             ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError("error.permissions.deniedSave"));

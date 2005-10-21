@@ -1,8 +1,17 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <%-- Form allows deleting of referers --%>
-<h1><fmt:message key="referers.todaysReferers" /></h1>
+<p class="subtitle">
+    <fmt:message key="referers.subtitle" >
+        <fmt:param value="${model.website.handle}" />
+    </fmt:message>
+</p>  
+<p class="pagetip">
+    <fmt:message key="referers.tip" />
+</p>
+
 <html:form action="/editor/referers" method="post">
+<input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
 <input type="hidden" name="method" value="delete" />
 
 <%-- Table of referers, with check box for each --%>
@@ -31,12 +40,14 @@
 <input type="submit" value='<fmt:message key="referers.deleteSelected" />' /></input>
 </html:form>
 
+<br />
+
 <%-- Form allows reset of day hits --%>
-<h2><fmt:message key="referers.hitCounters" /></h2>
+<h1><fmt:message key="referers.hitCounters" /></h1>
 <p><fmt:message key="referers.hits" />: <c:out value="${pageHits}"/></p>
 <html:form action="/editor/referers" method="post">
+    <input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
     <input type="hidden" name="method" value="reset" />
     <input type="submit" value='<fmt:message key="referers.reset" />' /></input>
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>

@@ -1,18 +1,18 @@
 
 package org.roller.presentation.tags.menu;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionMapping;
 
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.util.RequestUtils;
-import org.roller.RollerException;
 import org.roller.presentation.RollerContext;
 
 
@@ -25,10 +25,9 @@ import org.roller.presentation.RollerContext;
 public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 {
 	private String mMenuId = null;
-	
-	/** Name of Struts forward */
-	String mForward = null;
-	
+    
+    //private Vector mMenuItems = new Vector();
+		
 	/** Is this the default menu? */
 	boolean mDefault = false;
 
@@ -39,8 +38,7 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 	/** Construct with name and Struts forward */
 	public MenuItemImpl(String n, String f) 
     { 
-        super(n); 
-        mForward = f; 
+        super(n, f); 
     }
 
 	/** Parent menu's ID */ 
@@ -49,86 +47,63 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
 	/** Parent menu's ID */
 	public String getMenuId() { return mMenuId; }
 
-	/** Struts forward */ 
-	public String getForward() { return mForward; }
-
-	/** Struts forward */ 
-	public void setForward( String forward ) { mForward = forward; }
-
-	/** Name of Struts forward menu item should link to */
-	public String getUrl( PageContext pctx ) 
-	{
-		String url = null;
-		try 
-		{
-			Hashtable params = RollerMenuModel.createParams(
-					(HttpServletRequest)pctx.getRequest());
-			params.put( RollerMenuModel.MENU_ITEM_KEY, getName() );
-
-			url = RequestUtils.computeURL( 
-				pctx, 
-				mForward, // forward
-				null,     // href
-				null,     // page
-				null,
-				params,   // params 
-				null,     // anchor
-				false );  // redirect
-		}
-		catch (Exception e)
-		{
-			pctx.getServletContext().log(
-				"ERROR in menu item creating URL",e);
-		}
-		return url;
-	}
-
 	/** Given a request, tells if menu item is selected */ 
 	public boolean isSelected( HttpServletRequest req )
 	{
 		boolean selected = false;
         HttpSession ses = req.getSession(false);
         
+        // first look for menu state in request params, then attributes
         String itemKey = req.getParameter(RollerMenuModel.MENU_ITEM_KEY );
         if (null == itemKey) 
         {
             itemKey = (String)req.getAttribute(RollerMenuModel.MENU_ITEM_KEY);
         }
-        if (null == itemKey) 
-        {
-            itemKey = (String)ses.getAttribute(mMenuId+"_"+RollerMenuModel.MENU_ITEM_KEY);
-        }
-
+        
         if (itemKey != null && itemKey.equals(mName)) 
         {
             selected = true;
         }
-		else
+		else if (mForward != null) 
 		{
-			// Is this item's forward the one being requested?
+			// next, can we use Struts forward name to find menu state
             ServletContext ctx = RollerContext.getServletContext();     
-			ModuleConfig mConfig = RequestUtils.getModuleConfig(req,ctx);
-			ForwardConfig fConfig = mConfig.findForwardConfig(mForward);						
-			if (fConfig != null)
+			ModuleConfig mConfig = RequestUtils.getModuleConfig(req, ctx);
+			ForwardConfig fconfig = mConfig.findForwardConfig(mForward);
+            ActionMapping amapping = 
+                    (ActionMapping)req.getAttribute(Globals.MAPPING_KEY);            
+			if (fconfig != null && amapping != null)
 			{
-				// Is the forward path in the request's URL?
-				String url = req.getRequestURL().toString();
-				
-				if ( url.indexOf( fConfig.getPath() ) != -1 )
-				{
-					//  Yes it is, so return true - this item is selected
-					selected = true;
-				}
-				
+                String reqPath = amapping.getPath();
+                String fwdPath = fconfig.getPath();
+                int end = fwdPath.indexOf(".do");
+                fwdPath = (end == -1) ? fwdPath : fwdPath.substring(0, end);
+                if  (fwdPath.equals(reqPath))
+                {
+                    selected = true;
+                }
 			}
 		}
+        
+        // still not found, look for menu state in session attributes
 		if (ses != null && selected)
 		{
 			ses.setAttribute(mMenuId+"_"+RollerMenuModel.MENU_ITEM_KEY, mName);
 		}
 		return selected;
 	}
+    
+    /*
+    public Vector getMenuItems() 
+    {
+        return mMenuItems;
+    }
 
+    public addMenuItem(MenuItem item)
+    {
+        mMenuItems.add(item);
+    }
+    */
 }
 
 

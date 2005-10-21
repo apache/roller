@@ -1,6 +1,7 @@
 
 package org.roller.pojos;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
@@ -23,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.util.DateUtil;
 import org.roller.util.Utilities;
@@ -37,30 +39,38 @@ import org.roller.util.Utilities;
  * @hibernate.class table="weblogentry"
  * hibernate.jcs-cache usage="read-write"
  */
-public class WeblogEntryData extends org.roller.pojos.PersistentObject
-    implements java.io.Serializable
+public class WeblogEntryData extends WebsiteObject implements Serializable
 {
-    private static Log mLogger = LogFactory.getFactory()
-                                           .getInstance(WeblogEntryData.class);
+    private static Log mLogger = 
+        LogFactory.getFactory().getInstance(WeblogEntryData.class);
                                            
     static final long serialVersionUID = 2341505386843044125L;
     
-    protected String id=null;
-    protected org.roller.pojos.WeblogCategoryData category=null;
-    protected String title=null;
-    protected String link=null;
-    protected String text=null;
-    protected String anchor=null;
-    protected Timestamp pubTime=null;
-    protected Timestamp updateTime=null;
-    protected Boolean publishEntry=null;
-    protected WebsiteData mWebsite=null;
-    protected String mPlugins;
-    protected Boolean allowComments = Boolean.TRUE;
-    protected Integer commentDays = new Integer(0);
-    protected Boolean rightToLeft = Boolean.FALSE;
-    protected Boolean pinnedToMain = Boolean.FALSE;
+    public static final String DRAFT = "DRAFT";
+    public static final String PENDING = "PENDING";
+    public static final String PUBLISHED = "PUBLISHED";
     
+    // Simple properies
+    protected String    id            = null;
+    protected String    title         = null;
+    protected String    link          = null;
+    protected String    text          = null;
+    protected String    anchor        = null;
+    protected Timestamp pubTime       = null;
+    protected Timestamp updateTime    = null;
+    protected String    plugins       = null;
+    protected Boolean   allowComments = Boolean.TRUE;
+    protected Integer   commentDays   = new Integer(7);
+    protected Boolean   rightToLeft   = Boolean.FALSE;
+    protected Boolean   pinnedToMain  = Boolean.FALSE;
+    protected String    status        = DRAFT;
+    
+    // Associated objects
+    protected UserData           creator  = null;
+    protected WebsiteData        website  = null;
+    protected WeblogCategoryData category = null;
+        
+    // Collection of name/value entry attributes
     private Map attMap = new HashMap();
     private Set attSet = new TreeSet();
     
@@ -72,26 +82,28 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
 
     public WeblogEntryData(
        java.lang.String id, 
-       org.roller.pojos.WeblogCategoryData category, 
+       WeblogCategoryData category, 
        WebsiteData website, 
-       java.lang.String title, 
-       java.lang.String link,
-       java.lang.String text, 
-       java.lang.String anchor, 
-       java.sql.Timestamp pubTime, 
-       java.sql.Timestamp updateTime, 
-       java.lang.Boolean publishEntry)
+       UserData creator,
+       String title, 
+       String link,
+       String text, 
+       String anchor, 
+       Timestamp pubTime, 
+       Timestamp updateTime, 
+       String status)
     {
         this.id = id;
         this.category = category;
-        this.mWebsite = website;
+        this.website = website;
+        this.creator = creator;
         this.title = title;
         this.link = link;
         this.text = text;
         this.anchor = anchor;
         this.pubTime = pubTime;
         this.updateTime = updateTime;
-        this.publishEntry = publishEntry;
+        this.status = status;
     }
 
     public WeblogEntryData(WeblogEntryData otherData)
@@ -109,15 +121,16 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         WeblogEntryData other = (WeblogEntryData)otherData;
         this.id = other.id;
         this.category = other.category;
-        this.mWebsite = other.mWebsite;
+        this.website = other.website;
+        this.creator = other.creator;
         this.title = other.title;
         this.link = other.link;
         this.text = other.text;
         this.anchor = other.anchor;
         this.pubTime = other.pubTime;
         this.updateTime = other.updateTime;
-        this.publishEntry = other.publishEntry;
-        this.mPlugins = other.mPlugins;
+        this.status = other.status;
+        this.plugins = other.plugins;
         this.allowComments = other.allowComments;
         this.commentDays = other.commentDays;
         this.rightToLeft = other.rightToLeft;
@@ -176,15 +189,31 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      */
     public WebsiteData getWebsite()
     {
-        return this.mWebsite;
+        return this.website;
     }
 
     /** @ejb:persistent-field */
     public void setWebsite(WebsiteData website)
     {
-        this.mWebsite = website;
+        this.website = website;
     }
 
+    /** 
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field 
+     * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
+     */
+    public UserData getCreator()
+    {
+        return this.creator;
+    }
+
+    /** @ejb:persistent-field */
+    public void setCreator(UserData creator)
+    {
+        this.creator = creator;
+    }
+    
     /** 
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
@@ -317,8 +346,9 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      * <p>Publish time is the time that an entry is to be (or was) made available
      * for viewing by newsfeed readers and visitors to the Roller site.</p> 
      * 
-     * <p>Roller stores time in universal time. When times are displayed in a 
-     * user's weblog they must be translated to the user's timezone.</p>
+     * <p>Roller stores time using the timeZone of the server itself. When
+     * times are displayed  in a user's weblog they must be translated 
+     * to the user's timeZone.</p>
      *
      * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on 
      * MySQL has only a one-second resolution.</p>
@@ -342,9 +372,9 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      * <p>Update time is the last time that an weblog entry was saved in the 
      * Roller weblog editor or via web services API (XML-RPC or Atom).</p> 
      *
-     * <p>Roller stores time using the timezone of the server itself. When
+     * <p>Roller stores time using the timeZone of the server itself. When
      * times are displayed  in a user's weblog they must be translated 
-     * to the user's timezone.</p>
+     * to the user's timeZone.</p>
      *
      * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on 
      * MySQL has only a one-second resolution.</p>
@@ -367,17 +397,17 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     /** 
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
-     * @hibernate.property column="publishentry" non-null="true" unique="false"
+     * @hibernate.property column="status" non-null="true" unique="false"
      */
-    public java.lang.Boolean getPublishEntry()
+    public String getStatus()
     {
-        return this.publishEntry;
+        return this.status;
     }
 
     /** @ejb:persistent-field */
-    public void setPublishEntry(java.lang.Boolean publishEntry)
+    public void setStatus(String status)
     {
-        this.publishEntry = publishEntry;
+        this.status = status;
     }
 
     /**
@@ -411,13 +441,13 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      */
     public java.lang.String getPlugins()
     {
-        return mPlugins;
+        return plugins;
     }
 
     /** @ejb:persistent-field */
     public void setPlugins(java.lang.String string)
     {
-        mPlugins = string;
+        plugins = string;
     }
 
     
@@ -511,11 +541,12 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         {
             setAnchor(createAnchor());
         }
-        if (getPublishEntry() != null && getPublishEntry().booleanValue()) {
+        super.save();
+        if (isPublished()) 
+        {
             // Queue applicable pings for this update.
             RollerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(this);
         }
-        super.save();
     }
     
     //------------------------------------------------------------------------
@@ -537,7 +568,8 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
     			}
     			else 
     			{
-    				Calendar expireCal = Calendar.getInstance(getWebsite().getLocaleInstance());
+    				Calendar expireCal = Calendar.getInstance(
+                            getWebsite().getLocaleInstance());
     				expireCal.setTime(getPubTime());
     				expireCal.add(Calendar.DATE, getCommentDays().intValue());
     				Date expireDay = expireCal.getTime();
@@ -717,7 +749,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         }
         
         WebsiteData website = this.getWebsite();
-        String plink = "/page/" + website.getUser().getUserName() + 
+        String plink = "/page/" + website.getHandle() + 
                 "?entry=" + lAnchor;
         
         return plink;
@@ -756,7 +788,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         {
             // go with the "no encoding" version
         }        
-        String clink = "/page/" + this.getWebsite().getUser().getUserName() + "?anchor=" + lAnchor;
+        String clink = "/page/" + this.getWebsite().getHandle() + "?anchor=" + lAnchor;
         return clink;
     }
     /** to please XDoclet */
@@ -791,8 +823,8 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
                     "anchor=" + anchor + " " + 
                     "pubTime=" + pubTime + " " + 
                     "updateTime=" + updateTime + " " + 
-                    "publishEntry=" + publishEntry + " " + 
-                    "plugins=" + mPlugins);
+                    "status=" + status + " " + 
+                    "plugins=" + plugins);
         str.append('}');
 
         return (str.toString());
@@ -825,13 +857,13 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
                 lEquals = lEquals && this.category.equals(lTest.category);
             }
 
-            if (this.mWebsite == null)
+            if (this.website == null)
             {
-                lEquals = lEquals && (lTest.mWebsite == null);
+                lEquals = lEquals && (lTest.website == null);
             }
             else
             {
-                lEquals = lEquals && this.mWebsite.equals(lTest.mWebsite);
+                lEquals = lEquals && this.website.equals(lTest.website);
             }
 
             if (this.title == null)
@@ -880,24 +912,24 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
                           this.updateTime.equals(lTest.updateTime);
             }
 
-            if (this.publishEntry == null)
+            if (this.status == null)
             {
-                lEquals = lEquals && (lTest.publishEntry == null);
+                lEquals = lEquals && (lTest.status == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.publishEntry.equals(lTest.publishEntry);
+                          this.status.equals(lTest.status);
             }
 
-            if (this.mPlugins == null)
+            if (this.plugins == null)
             {
-                lEquals = lEquals && (lTest.mPlugins == null);
+                lEquals = lEquals && (lTest.plugins == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.mPlugins.equals(lTest.mPlugins);
+                          this.plugins.equals(lTest.plugins);
             }
 
 
@@ -919,7 +951,7 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         result = (37 * result) + 
                  ((this.category != null) ? this.category.hashCode() : 0);
         result = (37 * result) + 
-                 ((this.mWebsite != null) ? this.mWebsite.hashCode() : 0);
+                 ((this.website != null) ? this.website.hashCode() : 0);
         result = (37 * result) + 
                  ((this.title != null) ? this.title.hashCode() : 0);
         result = (37 * result) + 
@@ -931,9 +963,9 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         result = (37 * result) + 
                  ((this.updateTime != null) ? this.updateTime.hashCode() : 0);
         result = (37 * result) + 
-                 ((this.publishEntry != null) ? this.publishEntry.hashCode() : 0);
+                 ((this.status != null) ? this.status.hashCode() : 0);
         result = (37 * result) + 
-                 ((this.mPlugins != null) ? this.mPlugins.hashCode() : 0);
+                 ((this.plugins != null) ? this.plugins.hashCode() : 0);
 
         return result;
     }
@@ -1049,13 +1081,53 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
      */
     public List getPluginsList()
     {
-        if (mPlugins != null)
+        if (plugins != null)
         {
-            return Arrays.asList( StringUtils.split(mPlugins, ",") );
+            return Arrays.asList( StringUtils.split(plugins, ",") );
         }
         return new ArrayList();
     }
 
+    /**
+     * Set creator by user id (for use in form's copyTo method)
+     * @param creatorId
+     */
+    public void setCreatorId(String creatorId) throws RollerException
+    {
+        UserManager umgr = RollerFactory.getRoller().getUserManager();
+        setCreator(umgr.retrieveUser(creatorId)); 
+    }
+
+    /** Convenience method for checking status */
+    public boolean isDraft() 
+    {
+        return status.equals(DRAFT);
+    }
+    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
+    public void setDraft(boolean value)
+    {
+    }
+    
+    /** Convenience method for checking status */
+    public boolean isPending() 
+    {
+        return status.equals(PENDING);
+    }
+    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
+    public void setPending(boolean value)
+    {
+    }
+    
+    /** Convenience method for checking status */
+    public boolean isPublished() 
+    {
+        return status.equals(PUBLISHED);
+    }
+    /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
+    public void setPublished(boolean value)
+    {
+    }
+    
     public boolean canSave() throws RollerException
     {
         Roller roller = RollerFactory.getRoller();
@@ -1063,7 +1135,11 @@ public class WeblogEntryData extends org.roller.pojos.PersistentObject
         {
             return true;
         }
-        if (roller.getUser().equals(getWebsite().getUser()))
+        boolean author = getWebsite().hasUserPermissions(
+                roller.getUser(), (short)(PermissionsData.AUTHOR));
+        boolean limited = getWebsite().hasUserPermissions(
+                roller.getUser(), (short)(PermissionsData.LIMITED));
+        if (author || (limited && isDraft()) || (limited && isPending()))
         {
             return true;
         }

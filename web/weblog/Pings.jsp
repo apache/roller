@@ -1,11 +1,17 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
+<%
+BasePageModel pageModel = (BasePageModel)request.getAttribute("model");
+String websiteHandle = pageModel.getWebsite().getHandle();
+%>
 
-<br />
-<h1><fmt:message key="pings.title" /></h1>
-
-<p/>
-<fmt:message key="pings.explanation"/>
+<p class="subtitle">
+   <fmt:message key="pings.subtitle" >
+       <fmt:param value="${model.website.handle}" />
+   </fmt:message>
+</p>  
+<p class="pagetip">
+    <fmt:message key="pings.explanation"/>
 <p/>
 
 <p/>
@@ -20,9 +26,9 @@
   <%-- Headings --%>
   <tr class="rollertable">
   <th class="rollertable" width="20%"><fmt:message key="pingTarget.name" /></th>
-  <th class="rollertable" width="50%"><fmt:message key="pingTarget.pingUrl" /></th>
+  <th class="rollertable" width="40%"><fmt:message key="pingTarget.pingUrl" /></th>
   <th class="rollertable" width="20%" colspan=2><fmt:message key="pingTarget.auto" /></th>
-  <th class="rollertable" width="10%"><fmt:message key="pingTarget.manual" /></th>
+  <th class="rollertable" width="20%"><fmt:message key="pingTarget.manual" /></th>
   </tr>
 
   <%-- Table of current common targets with actions --%>
@@ -58,6 +64,8 @@
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
                      <roller:linkparam
+                       id="weblog" value="<%= websiteHandle %>" />
+                     <roller:linkparam
                        id="method" value="disableSelected" />
                      <fmt:message key="pingTarget.disable"/>
                  </roller:link>
@@ -67,6 +75,8 @@
                      <roller:linkparam
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
+                     <roller:linkparam
+                       id="weblog" value="<%= websiteHandle %>" />
                      <roller:linkparam
                        id="method" value="enableSelected" />
                      <fmt:message key="pingTarget.enable"/>
@@ -81,6 +91,8 @@
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
                      <roller:linkparam
+                       id="weblog" value="<%= websiteHandle %>" />
+                     <roller:linkparam
                        id="method" value="pingSelectedNow" />
                     <fmt:message key="pingTarget.sendPingNow"/>
                  </roller:link>
@@ -90,18 +102,11 @@
   </c:forEach>
 </table>
 
-<p/>
-&nbsp;
-<p/>
-&nbsp;
-<p/>
+<br />
 
 <c:if test="${allowCustomTargets}">
-  <p/>
   <h2><fmt:message key="pings.customPingTargets"/></h2>
-  <p/>
-
-
+  
   <p/>
   <c:choose>
     <c:when test="${!empty customPingTargets}">
@@ -118,9 +123,9 @@
      <%-- Headings --%>
      <tr class="rollertable">
      <th class="rollertable" width="20%"><fmt:message key="pingTarget.name" /></th>
-     <th class="rollertable" width="50%"><fmt:message key="pingTarget.pingUrl" /></th>
+     <th class="rollertable" width="40%"><fmt:message key="pingTarget.pingUrl" /></th>
      <th class="rollertable" width="20%" colspan=2><fmt:message key="pingTarget.auto" /></th>
-     <th class="rollertable" width="10%"><fmt:message key="pingTarget.manual" /></th>
+     <th class="rollertable" width="20%"><fmt:message key="pingTarget.manual" /></th>
      </tr>
 
       <%-- Table of current custom targets with actions --%>
@@ -157,6 +162,8 @@
                              name="pingTarget" property="id" />
                            <roller:linkparam
                              id="method" value="disableSelected" />
+                           <roller:linkparam
+                             id="weblog" value="<%= websiteHandle %>" />
                            <fmt:message key="pingTarget.disable"/>
                        </roller:link>
                     </c:when>
@@ -167,6 +174,8 @@
                               name="pingTarget" property="id" />
                            <roller:linkparam
                              id="method" value="enableSelected" />
+                           <roller:linkparam
+                             id="weblog" value="<%= websiteHandle %>" />
                            <fmt:message key="pingTarget.enable"/>
                        </roller:link>
                     </c:otherwise>
@@ -180,6 +189,8 @@
                             name="pingTarget" property="id" />
                          <roller:linkparam
                             id="method" value="pingSelectedNow" />
+                           <roller:linkparam
+                             id="weblog" value="<%= websiteHandle %>" />
                          <fmt:message key="pingTarget.sendPingNow"/>
                      </roller:link>
                   </td>
@@ -190,4 +201,4 @@
   </c:if><!-- end if non-empty custom targets list -->
 </c:if><!-- end if custom ping targets are allowed -->
 
-<%@ include file="/theme/footer.jsp" %>
+

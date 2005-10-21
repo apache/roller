@@ -1,5 +1,5 @@
 <div class="date">
-    <a href="$baseURL/page/$userName/#formatDate($plainFormat $day )">
+    <a href="$baseURL/page/$website.handle/#formatDate($plainFormat $day )">
         <img
            class="daypermalink"
            src="#showThemeImagePath("movablemanila" "dateArrow.gif")"
@@ -15,6 +15,7 @@
    <span style="color:gray; font-size:10px;">
       $dateFormatter.applyPattern("MMMMM dd, yyyy hh:mm aa")
       #set( $fmtDate = $dateFormatter.format( $entry.pubTime ) )
+      $text.get("macro.weblog.postedby") $entry.creator.userName
       [$entry.category.name] ( $fmtDate )
       #showEntryPermalink( $entry )
       #if (($entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0) | #end

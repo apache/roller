@@ -1,12 +1,22 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <roller:StatusMessage/>
 
-<h1><fmt:message key="uploadFiles.title" /></h1>
+<p class="subtitle">
+    <fmt:message key="uploadFiles.subtitle" >
+        <fmt:param value="${model.website.handle}" />
+    </fmt:message>
+</p>  
+<p class="pagetip">
+    <fmt:message key="uploadFiles.tip" />
+</p>
+
 <roller:FileUpload />
 
-<h2><fmt:message key="uploadFiles.manageFiles" /></h2>
+<br />
 
+<h1><fmt:message key="uploadFiles.manageFiles" /></h1>
+    
 <html:form action="/editor/uploadFiles" method="post">
     <roller:FileManager />
     <table>
@@ -16,6 +26,7 @@
           </td>
        </tr>
     </table>
+    <input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
     <input type="hidden" name="method" value="delete"></input>
 </html:form>
 
@@ -30,5 +41,5 @@ a name reference and IE seems to only focus on file inputs via elements[0]?
 </script>
 
 
-<%@ include file="/theme/footer.jsp" %>
+
 

@@ -11,7 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.roller.RollerException;
+import org.roller.model.UserManager;
 import org.roller.pojos.FolderData;
+import org.roller.pojos.UserData;
 import org.roller.presentation.StrutsActionTestBase;
 import org.roller.presentation.bookmarks.actions.BookmarksAction;
 import org.roller.presentation.bookmarks.formbeans.BookmarksForm;
@@ -33,8 +36,20 @@ public class BookmarksActionTest extends StrutsActionTestBase
         MockHttpServletRequest request = getMockFactory().getMockRequest();
         request.setContextPath("/roller");
 
-        authenticateUser(mWebsite.getUser().getUserName(), "editor");
-        doFilters();
+        UserManager umgr = null;
+        UserData user = null; 
+        try
+        {
+            umgr = getRoller().getUserManager();
+            user = (UserData)umgr.getUsers(mWebsite, null).get(0);       
+            doFilters();
+            authenticateUser(user.getUserName(), "editor");
+        }
+        catch (RollerException e)
+        {
+            e.printStackTrace();
+            fail();
+        }
 
         // Setup form bean
         BookmarksForm form = (BookmarksForm)

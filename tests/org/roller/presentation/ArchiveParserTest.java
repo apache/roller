@@ -32,7 +32,7 @@ public class ArchiveParserTest extends RollerTestBase
     public void _testAtomParsing() throws RollerException 
     {
         File archiveFile = new File(FILE_LOCATION + 
-                                    mWebsite.getUser().getUserName() + 
+                                    mWebsite.getHandle() + 
                                     "/" + ATOM_ARCHIVE);
         parseFile(archiveFile);
     }
@@ -40,7 +40,7 @@ public class ArchiveParserTest extends RollerTestBase
     public void _testRssParsing() throws RollerException 
     {
         File archiveFile = new File(FILE_LOCATION + 
-                                    mWebsite.getUser().getUserName() + 
+                                    mWebsite.getHandle() + 
                                     "/" + RSS_ARCHIVE);
         parseFile(archiveFile);
     }

@@ -56,14 +56,9 @@
 #macro( showNavBar2 $vertical $delimiter $useCSS)
     #set( $container = "div" )
     #if ( $useCSS ) #set( $container = "ul" ) #end
-    #set( $rawUrl = "$ctxPath/page/$userName" )
+    #set( $rawUrl = "$ctxPath/page/$website.handle" )
     <$container class="rNavigationBar">
-    #if ($siteName=="Main")
-        #set( $mainUrl = "$ctxPath?rmk=tabbedmenu.main&amp;rmik=tabbedmenu.main" )
-        #printNavLink( $mainUrl $text.get("navigationBar.main") $useCSS $vertical "" )
-    #else
-        #printNavLink( "$ctxPath/" $siteName $useCSS $vertical "" )
-    #end
+    #printNavLink( "$ctxPath/" $siteShortName $useCSS $vertical "" )
     #if( $website )
         #foreach( $iPage in $pages )
             #set( $invisible = $iPage.Name.startsWith("_") )
@@ -86,21 +81,25 @@
     #end
 
     ## strutsUrlHelper( useIds, isAction, path, val1, val2)
-    #if( $model.isUserAuthorizedToEdit() )
-        #set( $editUrl = $rawUrl )
-        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "weblogCreate", "tabbedmenu.weblog", "tabbedmenu.weblog.newEntry") )
+    #if( $pageModel.isUserAuthorizedToEdit() )
+        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "weblogCreate", $website.handle, "") )
         #printNavLink( $editUrl $text.get("navigationBar.newEntry") $useCSS $vertical $delimiter )
 
-        #set( $editUrl = $rawUrl )
-        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "editWebsite", "tabbedmenu.website", "tabbedmenu.website.settings") )
-        #printNavLink( $editUrl $text.get("navigationBar.settings") $useCSS $vertical $delimiter )
+        #if( $pageModel.isUserAuthorizedToAdmin() )
+           #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "editWebsite", $website.handle, "") )
+           #printNavLink( $editUrl $text.get("navigationBar.settings") $useCSS $vertical $delimiter )
+        #end
 
-        #set( $editUrl = $rawUrl )
         #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "logout-redirect", "", "") )
         #printNavLink( $editUrl $text.get("navigationBar.logout") $useCSS $vertical $delimiter )
     #else
-        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "login-redirect", "", "") )
-        #printNavLink( $editUrl $text.get("navigationBar.login") $useCSS $vertical $delimiter )
+        #if( $pageModel.isUserAuthenticated() )
+           #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "logout-redirect", "", "") )
+           #printNavLink( $editUrl $text.get("navigationBar.logout") $useCSS $vertical $delimiter )
+        #else
+           #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "login-redirect", "", "") )
+           #printNavLink( $editUrl $text.get("navigationBar.login") $useCSS $vertical $delimiter )
+        #end
     #end
     </$container >
 #end

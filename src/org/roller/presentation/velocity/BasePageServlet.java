@@ -2,6 +2,7 @@ package org.roller.presentation.velocity;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
@@ -20,7 +21,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.servlet.VelocityServlet;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
-import org.roller.pojos.UserData;
+import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 
@@ -50,9 +51,12 @@ public abstract class BasePageServlet extends VelocityServlet {
     }
     
     
-    public Template handleRequest( HttpServletRequest request,
-            HttpServletResponse response,
-            Context ctx ) throws Exception {
+    /**
+     * Process a request for a Weblog page.
+     */
+    public Template handleRequest(HttpServletRequest request,
+                            HttpServletResponse response, Context ctx)
+        throws Exception {
         
         Template outty = null;
         Exception pageException = null;
@@ -66,22 +70,38 @@ public abstract class BasePageServlet extends VelocityServlet {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             
             WebsiteData website = null;
-            if (request.getAttribute(RollerRequest.OWNING_USER) != null) {
-                UserData user = (UserData)
-                    request.getAttribute(RollerRequest.OWNING_USER);
-                website = userMgr.getWebsite(user.getUserName());
+            if (request.getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
+                website = (WebsiteData)
+                    request.getAttribute(RollerRequest.OWNING_WEBSITE);
             } else {
                 website = rreq.getWebsite();
             }
             
             org.roller.pojos.Template page = null;
             
+            // If this is a popup request, then deal with it specially
+            if (request.getParameter("popup") != null) {
+                try {
+                    // Does user have a popupcomments page?
+                    page = website.getPageByName("_popupcomments");
+                } catch(Exception e ) {
+                    // ignored ... considered page not found
+                }
+                
+                // User doesn't have one so return the default
+                if (page == null) {
+                    page = new WeblogTemplate("/popupcomments.vm", website, 
+                            "Comments", "Comments", "dummy_link", 
+                            "dummy_template", new Date());
+                }
+                rreq.setPage(page);
+                
             // If request specified the page, then go with that
-            if (rreq.getPage() != null &&
-                    rreq.getRequest().getAttribute(RollerRequest.OWNING_USER) == null) {
+            } else if (rreq.getPage() != null &&
+                    rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) == null) {
                 page = rreq.getPage();
                 
-                // If page not available from request, then use website's default
+            // If page not available from request, then use website's default
             } else if (website != null) {
                 page = website.getDefaultPage();
                 rreq.setPage(page);

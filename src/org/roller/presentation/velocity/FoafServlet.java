@@ -7,7 +7,6 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.servlet.VelocityServlet;
 import org.roller.RollerException;
 import org.roller.model.UserManager;
-import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerContext;
@@ -19,12 +18,16 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
+import org.roller.presentation.RollerSession;
 
 
 //////////////////////////////////////////////////////////////////////////////
 
 /**
-  * <p>Responsible for rendering FOAF feed.  This servlet requires
+  * <p>ROLLER_2.0: FOAF is broken in Roller 2.0.
+  * Responsible for rendering FOAF feed.  This servlet requires
   * that the RequestFilter is in place for it, and should also
   * have the IfModifiedFilter configured.</p>
   * 
@@ -111,15 +114,18 @@ public class FoafServlet extends VelocityServlet
 	{
         HttpServletRequest request = rreq.getRequest();
         RollerContext rollerCtx = RollerContext.getRollerContext( request );
-        
-        UserData user = rreq.getUser();
-        ctx.put("fullName", user.getFullName()); // name for FlavorServlet compatibility
+        RollerSession rses = RollerSession.getRollerSession(request);
+        Roller roller = RollerFactory.getRoller();
+        // ROLLER_2.0 : figure out how to fix FOAF servlet (does anybody use it?)
+        // UserData user = 
+        //   roller.getUserManager().getUser(userName, Boolean.TRUE);
+        // ctx.put("fullName", user.getFullName()); // name for FlavorServlet compatibility
         
         // foaf:homepage to equal base URL for user
-        String homepage = Utilities.escapeHTML( 
-                rollerCtx.getAbsoluteContextUrl(request) + 
-                    "/page/" + rreq.getUser().getUserName() );
-        ctx.put("websiteURL", homepage); // name for FlavorServlet compatibility
+        //String homepage = Utilities.escapeHTML( 
+                //rollerCtx.getAbsoluteContextUrl(request) + 
+                    //"/page/" + user.getUserName() );
+        //ctx.put("websiteURL", homepage); // name for FlavorServlet compatibility
 
         // see if foaf:weblog is different Page
         WebsiteData website = rreq.getWebsite();
@@ -129,17 +135,17 @@ public class FoafServlet extends VelocityServlet
         // if weblog != homepage, add to context
         if (weblog != null && !website.getDefaultPageId().equals(weblog.getId()))
         {
-            String weblogUrl = Utilities.escapeHTML( 
-                    rollerCtx.getAbsoluteContextUrl(request) + 
-                        "/page/" + rreq.getUser().getUserName() + 
-                            "/" + weblog.getLink() );
-        	ctx.put("weblog", weblogUrl);
+            //String weblogUrl = Utilities.escapeHTML( 
+                    //rollerCtx.getAbsoluteContextUrl(request) + 
+                        //"/page/" + user.getUserName() + 
+                            //"/" + weblog.getLink() );
+        	//ctx.put("weblog", weblogUrl);
         }
         
         // use SHA1 encrypted email address, including mailto: prefix
-        String shaEmail = Utilities.encodePassword(
-                "mailto:" + user.getEmailAddress(), "SHA");
-        ctx.put("shaEmail", shaEmail);
+        //String shaEmail = Utilities.encodePassword(
+                //"mailto:" + user.getEmailAddress(), "SHA");
+        //ctx.put("shaEmail", shaEmail);
 	}
 
 	//------------------------------------------------------------------------

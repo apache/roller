@@ -60,12 +60,7 @@ your blog page, if you put them somwhere else, just adjust the paths for those f
 
     <h2>Bookmarks::Blogroll</h2>
     <div class="padded">
-    #showBookmarks("Blogroll" true false)
-    </div>
-
-    <h2>Bookmarks::News</h2>
-    <div class="padded">
-    #showBookmarks("News" true false)
+    #showBlogroll()
     </div>
 
     <h2>Blog::Referers</h2>

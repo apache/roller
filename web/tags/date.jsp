@@ -11,19 +11,17 @@ Boolean readOnly = (Boolean)request.getAttribute(prefix+"_readOnly");
 if (document.layers) { // Netscape 4 hack
     var cal<%= dateField %> = new CalendarPopup();
 } else {
-    var cal<%= dateField %> = new CalendarPopup("caldiv<%= dateField %>");
+    var cal<%= dateField %> = new CalendarPopup("datetagdiv");
     document.write(cal<%= dateField %>.getStyles());
 }
 // -->
 </script>
 <input size="12" type="text" name="<%= dateField %>" id="<%= dateField %>"
     value="<%= value %>" readonly="readonly" />      
-<div id="caldiv<%= dateField %>" class="calDiv"></div>
 <% if (!readOnly.booleanValue()) { %>
-   <a href="#" id="anchor<%= dateField %>" 
-       onclick="cal<%= dateField %>.select(document.<%= formName %>.<%= dateField %>,
-       this.id,'<%= dateFormat %>'); return false">
-   <img src='<c:url value="/images/cal.gif"/>' class="calIcon" alt="Calendar" /></a>
+   <a href="#" id="anchor<%= dateField %>" name="anchor<%= dateField %>"
+       onclick="cal<%= dateField %>.select(document.<%= formName %>.<%= dateField %>,'anchor<%= dateField %>','<%= dateFormat %>'); return false">
+   <img src='<c:url value="/images/cal.gif"/>' class="calIcon" alt="Calendar" /> </a>
 <% } 
 }
 %>

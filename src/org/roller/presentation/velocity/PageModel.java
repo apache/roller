@@ -23,7 +23,6 @@ import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.RefererData;
-import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
@@ -34,6 +33,7 @@ import org.roller.pojos.wrapper.TemplateWrapper;
 import org.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.util.StringUtils;
 
 /**
@@ -57,14 +57,11 @@ public class PageModel
     private Map                  mCategories = new HashMap();
     private HashMap              mPageMap = new HashMap();
     private RollerRequest        mRollerReq = null;
-    private String               mUsername = null;
-    private WebsiteData          mWebsite = null;
-    
+    private String               mHandle = null;
+    private WebsiteData          mWebsite = null;    
     private WeblogEntryDataWrapper      mNextEntry = null;
     private WeblogEntryDataWrapper      mPreviousEntry = null;
-
     private WeblogEntryDataWrapper      mLastEntry = null;
-
     private WeblogEntryDataWrapper      mFirstEntry = null;
         
     //------------------------------------------------------------------------
@@ -80,39 +77,33 @@ public class PageModel
     public void init(RollerRequest rreq)
     {
         mRollerReq = rreq;
-        UserData user = null;
-        if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_USER) != null)
+        if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null)
         {
-            user = (UserData)
-                rreq.getRequest().getAttribute(RollerRequest.OWNING_USER);
+            mWebsite = (WebsiteData)
+                rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
+            mHandle = mWebsite.getHandle();
         }
-        else if ( rreq.getUser() != null )
+        else if ( rreq.getWebsite() != null )
         {
-            user = rreq.getUser();
-        }
-        if ( user != null )
-        {
-            mUsername = user.getUserName();
+            mWebsite = rreq.getWebsite();
+            mHandle = mWebsite.getHandle();
         }
         
         try
         {
-            Roller mRoller = RollerFactory.getRoller();
-            mBookmarkMgr = mRoller.getBookmarkManager();
-            mRefererMgr  = mRoller.getRefererManager();
-            mUserMgr     = mRoller.getUserManager();
-            mWeblogMgr   = mRoller.getWeblogManager();
-            
-            /** 
-             * Preload what we can for encapsulation.  What we cannot preload we
-             * will use the Managers later to fetch.
-             */
-            if ( mUsername != null )
+            mBookmarkMgr = RollerFactory.getRoller().getBookmarkManager();
+            mRefererMgr  = RollerFactory.getRoller().getRefererManager();
+            mUserMgr     = RollerFactory.getRoller().getUserManager();
+            mWeblogMgr   = RollerFactory.getRoller().getWeblogManager();
+           
+            // Preload what we can for encapsulation.  What we cannot preload we
+            // will use the Managers later to fetch.
+
+            // Get the pages, put into context & load map
+            if (mWebsite != null)
             {
                 // if we have website from RollerRequest, use it
                 mWebsite = rreq.getWebsite();
-                if(mWebsite == null)
-                    mWebsite = mUserMgr.getWebsite(user.getUserName());
                 
                 // Get the pages, put into context & load map
                 List pages = mWebsite.getPages();
@@ -123,7 +114,6 @@ public class PageModel
                     mPageMap.put(page.getName(), TemplateWrapper.wrap(page));
                 }
             }
-            
         }
         catch (RollerException e)
         {
@@ -157,7 +147,8 @@ public class PageModel
         List tops = null;
         try
         {
-            Collection mTops = mBookmarkMgr.getRootFolder(mWebsite).getFolders();
+            Collection mTops = mBookmarkMgr.getRootFolder(
+                mUserMgr.getWebsiteByHandle(mHandle)).getFolders();
             
             // wrap pojos
             tops = new ArrayList(mTops.size());
@@ -241,7 +232,8 @@ public class PageModel
         try
         {
             return FolderDataWrapper.wrap(
-                    mBookmarkMgr.getFolder(mWebsite, folderPath));
+                    mBookmarkMgr.getFolder( 
+                        mUserMgr.getWebsiteByHandle(mHandle), folderPath));
         }
         catch (RollerException e)
         {
@@ -374,7 +366,7 @@ public class PageModel
                             null,                     // startDate
                             day,                 // endDate
                             catParam,                 // catName
-                            WeblogManager.PUB_ONLY,   // status
+                            WeblogEntryData.PUBLISHED,   // status
                             new Integer(maxEntries)); // maxEntries
             
             // need to wrap pojos
@@ -487,7 +479,7 @@ public class PageModel
                             null,                    // startDate
                             day,                      // endDate
                             catParam,                 // catName
-                            WeblogManager.PUB_ONLY,   // status
+                            WeblogEntryData.PUBLISHED,   // status
                             new Integer(maxEntries)); // maxEntries
             
             // wrap pojos
@@ -517,6 +509,8 @@ public class PageModel
         {
             List refs = 
                 mRefererMgr.getReferersToDate(mRollerReq.getWebsite(), date);
+            RollerSession rses = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
             
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
                 RefererData referer = (RefererData) rdItr.next();
@@ -526,7 +520,7 @@ public class PageModel
                     && StringUtils.isNotEmpty(excerpt) )
                 {
                     if (   referer.getVisible().booleanValue() 
-                        || this.mRollerReq.isUserAuthorizedToEdit() )
+                        || rses.isUserAuthorizedToAdmin(referer.getWebsite()) )
                     { 
                         referers.add(RefererDataWrapper.wrap(referer));
                     }
@@ -669,7 +663,7 @@ public class PageModel
     {
         WeblogEntryData entry = mRollerReq.getWeblogEntry();
         
-        if(entry != null)
+        if(entry != null && entry.getStatus().equals(WeblogEntryData.PUBLISHED))
             return WeblogEntryDataWrapper.wrap(entry);
         else
             return null;
@@ -752,13 +746,47 @@ public class PageModel
     {
         try
         {
-            return mRollerReq.isUserAuthorizedToEdit();
+            RollerSession rses = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
+            if (rses.getAuthenticatedUser() != null 
+                   && mRollerReq.getWebsite() != null)
+            {
+                return rses.isUserAuthorizedToAuthor(mRollerReq.getWebsite());
+            }
         }
         catch (Exception e)
         {
-            mLogger.warn("PageModel.isUserAuthorizedToEdit)", e);
+            mLogger.warn("PageModel.isUserAuthorizedToEdit()", e);
         }
         return false;
+    }
+    
+    //------------------------------------------------------------------------
+    
+    public boolean isUserAuthorizedToAdmin()
+    {
+        try
+        {
+            RollerSession rses = 
+                RollerSession.getRollerSession(mRollerReq.getRequest());
+            if (rses.getAuthenticatedUser() != null 
+                   && mRollerReq.getWebsite() != null)
+            {
+                return rses.isUserAuthorizedToAdmin(mRollerReq.getWebsite());
+            }
+        }
+        catch (Exception e)
+        {
+            mLogger.warn("PageModel.isUserAuthorizedToAdmin()", e);
+        }
+        return false;
+    }
+    
+    //------------------------------------------------------------------------
+    
+    public boolean isUserAuthenticated()
+    {
+        return (mRollerReq.getRequest().getUserPrincipal() != null);
     }
     
     //------------------------------------------------------------------------
@@ -775,7 +803,7 @@ public class PageModel
         try
         {
             FolderData folder = mBookmarkMgr.getFolderByPath(
-                mUserMgr.getWebsite(mUsername), null, path);
+                mWebsite, null, path);
             
             if(folder != null)
                 return FolderDataWrapper.wrap(folder);

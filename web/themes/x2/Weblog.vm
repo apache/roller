@@ -39,10 +39,7 @@
         #showWeblogCalendar()
     </div>
     <div class="item">
-        #showBookmarks("Blogroll" true false)
-    </div>
-    <div class="item">
-        #showBookmarks("News" true false)
+        #showBlogroll()
     </div>
     <div class="item">
         #showEditorNavBar(true)

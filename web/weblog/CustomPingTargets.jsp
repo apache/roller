@@ -1,15 +1,22 @@
 <%@ page import="org.roller.presentation.RollerRequest"%>
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
+<%
+BasePageModel pageModel = (BasePageModel)request.getAttribute("model");
+String websiteHandle = pageModel.getWebsite().getHandle();
+%>
 
-<br />
-<h1><fmt:message key="customPingTargets.customPingTargets" /></h1>
+<p class="subtitle">
+   <fmt:message key="customPingTargets.subtitle" >
+       <fmt:param value="${model.website.handle}" />
+   </fmt:message>
+</p>  
 
 <c:choose>
   <c:when test="${allowCustomTargets}">
     <!-- Only show the form if custom targets are allowed -->
-    <p/>
+    <p class="pagetip">
     <fmt:message key="customPingTargets.explanation"/>
-    <p/>
+    </p>
 
     <table class="rollertable">
     
@@ -39,6 +46,8 @@
                            id="<%= RollerRequest.PINGTARGETID_KEY %>"
                            name="pingTarget" property="id" />
                        <roller:linkparam
+                           id="weblog" value="<%= websiteHandle %>" />
+                       <roller:linkparam
     	                   id="method" value="editSelected" />
                        <img src='<c:url value="/images/Edit16.png"/>' border="0"
                             alt="<fmt:message key="pingTarget.edit" />" />
@@ -51,6 +60,8 @@
     	                   id="<%= RollerRequest.PINGTARGETID_KEY %>"
     	                   name="pingTarget" property="id" />
                        <roller:linkparam
+                           id="weblog" value="<%= websiteHandle %>" />
+                       <roller:linkparam
     	                   id="method" value="deleteSelected" />
                        <img src='<c:url value="/images/Remove16.gif"/>' border="0"
                             alt="<fmt:message key="pingTarget.remove" />" />
@@ -62,19 +73,24 @@
     
     </table>
     
-    <p/>
+    <br />
+    
     <html:form action="/editor/customPingTargets" method="post">
         <div class="control">
            <html:hidden property="method" value="addNew" />
+           <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />           
            <input type="submit" value='<fmt:message key="pingTarget.addNew"/>' />
         </div>
     </html:form>
-    <p/>
   </c:when>
+  
   <c:otherwise>
      <!--  Otherwise custom targets are not allowed; explain the situation to the user -->
-    <fmt:message key="customPingTargets.disAllowedExplanation"/>
+    <p class="pagetip">
+        <fmt:message key="customPingTargets.disAllowedExplanation"/>
+    </p>
   </c:otherwise>
+  
 </c:choose>
 
-<%@ include file="/theme/footer.jsp" %>
+
