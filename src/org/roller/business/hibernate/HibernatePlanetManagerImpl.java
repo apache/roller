@@ -212,50 +212,45 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
         try
         {
             String groupHandle = (group == null) ? NO_GROUP : group.getHandle();
-            ret = (List)aggregationsByGroup.get(groupHandle);
-            if (ret == null) 
+            long startTime = System.currentTimeMillis();
+            Session session = 
+                ((HibernateStrategy)strategy).getSession();
+            if (group != null)
             {
-                long startTime = System.currentTimeMillis();
-                Session session = 
-                    ((HibernateStrategy)strategy).getSession();
-                if (group != null)
-                {
-                    Query query = session.createQuery(
-                        "select entry from org.roller.pojos.PlanetEntryData entry "
-                        +"join entry.subscription.groupSubscriptionAssocs assoc "
-                        +"where assoc.group=:group order by entry.published desc");
-                    query.setEntity("group", group);
-                    query.setMaxResults(maxEntries);
-                    ret = query.list();
-                }
-                else
-                {
-                    Query query = session.createQuery(
-                       "select entry from org.roller.pojos.PlanetEntryData entry "
-                       +"join entry.subscription.groupSubscriptionAssocs assoc "
-                       +"where "
-                       +"assoc.group.handle='external' or assoc.group.handle='all'"
-                       +" order by entry.published desc");
-                    query.setMaxResults(maxEntries);
-                    ret = query.list();
-                }
-                Date retLastUpdated = null;
-                if (ret.size() > 0)
-                {
-                    PlanetEntryData entry = (PlanetEntryData)ret.get(0);
-                    retLastUpdated = entry.getPublished();
-                }
-                else 
-                {
-                    retLastUpdated = new Date();
-                }
-                aggregationsByGroup.put(groupHandle, ret);
-                lastUpdatedByGroup.put(groupHandle, retLastUpdated);
-
-                long endTime = System.currentTimeMillis();
-                logger.info("Generated aggregation in "
-                                    +((endTime-startTime)/1000.0)+" seconds");
+                Query query = session.createQuery(
+                    "select entry from org.roller.pojos.PlanetEntryData entry "
+                    +"join entry.subscription.groupSubscriptionAssocs assoc "
+                    +"where assoc.group=:group order by entry.published desc");
+                query.setEntity("group", group);
+                query.setMaxResults(maxEntries);
+                ret = query.list();
             }
+            else
+            {
+                Query query = session.createQuery(
+                   "select entry from org.roller.pojos.PlanetEntryData entry "
+                   +"join entry.subscription.groupSubscriptionAssocs assoc "
+                   +"where "
+                   +"assoc.group.handle='external' or assoc.group.handle='all'"
+                   +" order by entry.published desc");
+                query.setMaxResults(maxEntries);
+                ret = query.list();
+            }
+            Date retLastUpdated = null;
+            if (ret.size() > 0)
+            {
+                PlanetEntryData entry = (PlanetEntryData)ret.get(0);
+                retLastUpdated = entry.getPublished();
+            }
+            else 
+            {
+                retLastUpdated = new Date();
+            }
+            lastUpdatedByGroup.put(groupHandle, retLastUpdated);
+
+            long endTime = System.currentTimeMillis();
+            logger.info("Generated aggregation in "
+                                +((endTime-startTime)/1000.0)+" seconds");
         }
         catch (Throwable e)
         {
@@ -318,23 +313,19 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
     public synchronized List getTopSubscriptions(int max) throws RollerException
     {
         String groupHandle = NO_GROUP;
-        List ret = (List)topSubscriptionsByGroup.get(groupHandle);
-        if (ret == null)
+        List ret = null;
+        try
         {
-            try
-            {
-                Session session = ((HibernateStrategy)strategy).getSession();
-                Criteria criteria = 
-                        session.createCriteria(PlanetSubscriptionData.class);
-                criteria.setMaxResults(max);
-                criteria.addOrder(Order.desc("inboundblogs"));
-                ret = criteria.list();
-            }
-            catch (HibernateException e)
-            {
-                throw new RollerException(e);
-            }
-            topSubscriptionsByGroup.put(groupHandle, ret);
+            Session session = ((HibernateStrategy)strategy).getSession();
+            Criteria criteria = 
+                    session.createCriteria(PlanetSubscriptionData.class);
+            criteria.setMaxResults(max);
+            criteria.addOrder(Order.desc("inboundblogs"));
+            ret = criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
         }
         return ret;
     }
@@ -343,35 +334,29 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl
             PlanetGroupData group, int max) throws RollerException
     {
         String groupHandle = (group == null) ? NO_GROUP : group.getHandle();
-        List ret = (List)topSubscriptionsByGroup.get(groupHandle);
-        if (ret == null)
+        List ret = null;
+        try
         {
-            try
-            {
-                Session session = ((HibernateStrategy)strategy).getSession();
-                Query query = session.createQuery(
-                 "select sub from org.roller.pojos.PlanetSubscriptionData sub "
-                   +"join sub.groupSubscriptionAssocs assoc "
-                   +"where "
-                   +"assoc.group.handle=:groupHandle "
-                   +"order by sub.inboundblogs desc");
-                query.setString("groupHandle", group.getHandle());
-                query.setMaxResults(max);
-                ret = query.list();
-            }
-            catch (HibernateException e)
-            {
-                throw new RollerException(e);
-            }
-            topSubscriptionsByGroup.put(groupHandle, ret);
+            Session session = ((HibernateStrategy)strategy).getSession();
+            Query query = session.createQuery(
+             "select sub from org.roller.pojos.PlanetSubscriptionData sub "
+               +"join sub.groupSubscriptionAssocs assoc "
+               +"where "
+               +"assoc.group.handle=:groupHandle "
+               +"order by sub.inboundblogs desc");
+            query.setString("groupHandle", group.getHandle());
+            query.setMaxResults(max);
+            ret = query.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
         }
         return ret;
     }
     
     public synchronized void clearCachedAggregations() 
     {
-        aggregationsByGroup.purge();
-        topSubscriptionsByGroup.purge();
         lastUpdatedByGroup.clear();
     }
     

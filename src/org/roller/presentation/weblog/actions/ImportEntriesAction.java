@@ -88,8 +88,6 @@ public class ImportEntriesAction extends DispatchAction
 
                         // Flush the page cache
                         PageCacheFilter.removeFromCache(request, website);
-                        // refresh the front page cache
-                        MainPageAction.flushMainPageCache();
                     }
                     else
                     {

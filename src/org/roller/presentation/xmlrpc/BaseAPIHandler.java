@@ -202,6 +202,5 @@ public class BaseAPIHandler implements Serializable
     {
         RollerRequest rreq = RollerRequest.getRollerRequest();
         PageCacheFilter.removeFromCache( rreq.getRequest(), website);
-        MainPageAction.flushMainPageCache();
     }
 }

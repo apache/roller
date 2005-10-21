@@ -343,7 +343,6 @@ public final class WeblogEntryFormAction extends DispatchAction
                 mLogger.debug("Removing from cache");
                 RollerRequest rreq = RollerRequest.getRollerRequest(request);
                 PageCacheFilter.removeFromCache(request, entry.getWebsite());
-                MainPageAction.flushMainPageCache();
 
                 // Clean up session objects we used
                 HttpSession session = request.getSession(true);
@@ -635,7 +634,6 @@ public final class WeblogEntryFormAction extends DispatchAction
 
 				// flush caches
                 PageCacheFilter.removeFromCache(request, wd.getWebsite());
-                MainPageAction.flushMainPageCache();
                 
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(null, 
