@@ -37,7 +37,7 @@
       </property-def>
       <property-def  name="site.description"  key="configForm.siteDescription">
          <type>string</type>
-         <default-value>Roller Site</default-value>
+	     <default-value>A default install of the Roller Weblogger open source blog server</default-value>
       </property-def>
       <property-def  name="site.adminemail"  key="configForm.siteAdminEmail">
          <type>string</type>
