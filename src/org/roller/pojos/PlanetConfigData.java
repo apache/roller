@@ -66,7 +66,7 @@ public class PlanetConfigData extends PersistentObject implements Serializable
     protected String templateDir = null;
     
     /** Location for caching newsfeed data */
-    protected String cacheDir = null;
+    protected String cacheDir = "";
     
     
     //----------------------------------------------------------- persistent fields
@@ -228,15 +228,18 @@ public class PlanetConfigData extends PersistentObject implements Serializable
     }
 
     /** 
-     * @hibernate.property column="cache_dir" non-null="false" unique="false"
+     * Not longer stored in database, but we keep this field for compatibility 
+     * with standalone version of planet (which persists config in XML).
+     *
+     * @hibernate.property column="cache_dir" non-null="true" unique="false"
      */
     public String getCacheDir()
     {
         return cacheDir;
     }
-    public void setCacheDir(String cacheDir)
+    public void setCacheDir(String dir)
     {
-        this.cacheDir = cacheDir;
+        if (dir != null) cacheDir = dir;
     }
 
     //-------------------------------------------------------------- implementation

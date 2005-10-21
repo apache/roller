@@ -5,14 +5,14 @@ package org.roller.business.hibernate;
 
 import java.util.List;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.ObjectNotFoundException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.type.Type;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.type.Type;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.business.PersistenceStrategy;
@@ -106,7 +106,7 @@ public class HibernateStrategy implements PersistenceStrategy
                 Session hses = mSessionFactory.openSession();
                 ses = new HibernatePersistenceSession(user, hses);
             }
-            catch (Exception e)
+            catch (Throwable e)
             {
                 mLogger.error(Messages.getString(
                     "HibernateStrategy.exceptionOpeningSession"));
@@ -191,6 +191,7 @@ public class HibernateStrategy implements PersistenceStrategy
             if (obj.canSave()) 
             {
                 getSession().delete(obj);
+                getSession().flush();
             }
             else
             {
@@ -224,6 +225,7 @@ public class HibernateStrategy implements PersistenceStrategy
             if (po.getId() != null) // no need to delete transient object
             {
                 getSession().delete(po);
+                getSession().flush();
             }
         }
         catch (HibernateException e)
@@ -263,9 +265,9 @@ public class HibernateStrategy implements PersistenceStrategy
         Session ses = getSession();
         try
         {
-            obj = (PersistentObject)ses.load( clazz, id );
+            obj = (PersistentObject)ses.get( clazz, id );
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             if (mLogger.isDebugEnabled())
             {
@@ -375,9 +377,11 @@ public class HibernateStrategy implements PersistenceStrategy
               {
                   query = query.replaceAll("\\$\\d+", "\\?");
               }
-              return getSession().find(query,args,types);
+              Query q = getSession().createQuery(query);
+              q.setParameters(args,types);
+              return q.list();
           }
-          catch (Exception e)
+          catch (Throwable e)
           {
               String msg = Messages.getString("HibernateStrategy.duringQuery");
               mLogger.error(msg, e);
@@ -399,9 +403,10 @@ public class HibernateStrategy implements PersistenceStrategy
             {
                 query = query.replaceAll("\\$\\d+", "\\?");
             }
-            return getSession().find(query);
+            Query q = getSession().createQuery(query);
+            return q.list();
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             String msg = Messages.getString("HibernateStrategy.duringQuery");
             mLogger.error(msg, e);
@@ -429,7 +434,7 @@ public class HibernateStrategy implements PersistenceStrategy
                 }
             }
         }
-        catch (Exception he) // HibernateExeption or SQLException
+        catch (Throwable he) // HibernateExeption or SQLException
         {
             newSession();
             throw new RollerException(he);
@@ -450,7 +455,7 @@ public class HibernateStrategy implements PersistenceStrategy
                 getSession().connection().rollback();
             }
         }
-        catch (Exception he)
+        catch (Throwable he)
         {
             newSession();            
             if (mLogger.isDebugEnabled())

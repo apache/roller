@@ -1,15 +1,5 @@
 package org.roller.presentation.filters;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.struts.Globals;
-import org.roller.RollerException;
-import org.roller.model.Roller;
-import org.roller.model.UserManager;
-import org.roller.presentation.util.RequestUtil;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -25,6 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.core.Config;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.Globals;
+import org.roller.RollerException;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.util.RequestUtil;
 
 
 /**
@@ -78,24 +79,26 @@ public class RequestFilter implements Filter
                 {
                     session.removeAttribute(RollerRequest.LOGIN_COOKIE);
 
-                    UserManager mgr = rreq.getRoller().getUserManager();
-
+                    UserManager mgr = RollerFactory.getRoller().getUserManager();
                     String loginCookie = mgr.createLoginCookie(username);
-                    rreq.getRoller().commit();
+                    RollerFactory.getRoller().commit();
                     RequestUtil.setCookie(response, RollerRequest.LOGIN_COOKIE,
-                                          loginCookie, request.getContextPath());
+                                         loginCookie, request.getContextPath());
                 }
             }
-
+            
+          
         }
         catch (RollerException e)
         {
             // An error initializing the request is considered to be a 404
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(
+                    HttpServletResponse.SC_NOT_FOUND, 
+                    "Page not found or error parsing requested URL");
             return;
         }
 
-        if (session != null)
+        /*if (session != null)
         {
             // look for messages and errors in the request, and if they
             // exist, stuff them in the request - in Struts 1.2, you don't
@@ -112,7 +115,7 @@ public class RequestFilter implements Filter
                         session.getAttribute(Globals.ERROR_KEY));
                 session.removeAttribute(Globals.ERROR_KEY);
             }
-        }
+        }*/
 
         Date updateTime = null;
         try

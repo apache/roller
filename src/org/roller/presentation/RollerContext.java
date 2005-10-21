@@ -23,7 +23,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
 import org.roller.RollerException;
+import org.roller.config.PingConfig;
 import org.roller.config.RollerConfig;
+import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.RefererManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -31,17 +33,18 @@ import org.roller.model.RollerSpellCheck;
 import org.roller.model.ScheduledTask;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.pings.PingQueueTask;
 import org.roller.presentation.velocity.CommentAuthenticator;
 import org.roller.presentation.velocity.ContextLoader;
 import org.roller.presentation.velocity.DefaultCommentAuthenticator;
-import org.roller.presentation.pings.PingQueueTask;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
-
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
 import org.roller.business.utils.UpgradeDatabase;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.config.PingConfig;
+
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -462,6 +465,8 @@ public class RollerContext implements ServletContextListener
         return uploadurl;
     }
 
+    //-----------------------------------------------------------------------
+
     /**
      * RollerSpellCheck must be initialized with a dictionary file
      * so that it can return valid a SpellChecker.
@@ -498,12 +503,12 @@ public class RollerContext implements ServletContextListener
     /**
      * Returns the full url for the website of the specified username.
      */
-    public String getContextUrl(HttpServletRequest request, String username)
+    public String getContextUrl(HttpServletRequest request, WebsiteData website)
     {
         String url = this.getContextUrl(request);
-        if (username != null)
+        if (website != null)
         {
-            url = url + "/page/" + username;
+            url = url + "/page/" + website.getHandle();
         }
         return url;
     }
@@ -577,7 +582,6 @@ public class RollerContext implements ServletContextListener
             {
                 baseUrl = getContextUrl(request);
             }
-
             link = Utilities.escapeHTML(baseUrl + entry.getPermaLink());
         }
         catch (Exception e)

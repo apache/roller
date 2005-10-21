@@ -3,9 +3,9 @@
  */
 package org.roller.business.hibernate;
 
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.cfg.Configuration;
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
@@ -121,7 +121,7 @@ public class HibernateRollerImpl extends org.roller.business.RollerImpl
 		{
 			mStrategy.rollback();
 		}
-		catch (Exception e)
+		catch (Throwable e)
 		{
 			mLogger.error(e);
 		}
@@ -283,7 +283,7 @@ public class HibernateRollerImpl extends org.roller.business.RollerImpl
         {
             if (mStrategy != null) mStrategy.release(); 
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             mLogger.error(
             "Exception with mSupport.release() [" + e + "]", e);

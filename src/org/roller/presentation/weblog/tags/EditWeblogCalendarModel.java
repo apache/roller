@@ -1,15 +1,11 @@
 
 package org.roller.presentation.weblog.tags;
 
-import org.roller.model.WeblogManager;
+import javax.servlet.http.HttpServletResponse;
+
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.tags.menu.RollerMenuModel;
 import org.roller.util.DateUtil;
-
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.servlet.http.HttpServletResponse;
 
 /** 
  * Calendar model for calendar intended for use on edit-weblog page.

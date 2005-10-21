@@ -26,8 +26,7 @@
 
     <h2>Links</h2>
     <div class="sidebar">
-    #showBookmarks("Blogroll" true false)
-    #showBookmarks("News" true false)
+    #showBlogroll()
     </div>
 
     <h2>Navigation</h2>

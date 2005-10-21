@@ -3,9 +3,13 @@
  */
 package org.roller.presentation.xmlrpc;
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
+import org.roller.config.RollerConfig;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
@@ -14,9 +18,6 @@ import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.util.Utilities;
-
-import java.io.Serializable;
-import org.roller.config.RollerConfig;
 
 /**
  * Base API handler does user validation, provides exception types, etc.
@@ -70,20 +71,31 @@ public class BaseAPIHandler implements Serializable
     //
 
     //------------------------------------------------------------------------
-    protected WebsiteData validate(String username, String password) throws Exception
+    /**
+     * Returns website, but only if user authenticates and is authorized to edit.
+     * @param blogid   Blogid sent in request (used as website's hanldle)
+     * @param username Username sent in request
+     * @param password Password sent in requeset
+     */
+    protected WebsiteData validate(String blogid, String username, String password) 
+    throws Exception
     {
         boolean authenticated = false;
         boolean enabled = false;
         WebsiteData website = null;
+        UserData user = null;
         try
         {
             // Get Roller request object for current thread
             RollerRequest rreq = RollerRequest.getRollerRequest();
             
-            UserManager userMgr = rreq.getRoller().getUserManager();
-            website = userMgr.getWebsite(username);
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            website = userMgr.getWebsiteByHandle(blogid);
+            user = userMgr.getUser(username);
             
-            enabled = website.getEnableBloggerApi().booleanValue();
+            enabled = website.getEnableBloggerApi().booleanValue() 
+                   && website.getEnabled().booleanValue() 
+                      && user.getEnabled().booleanValue();
             if (enabled)
             {    
                 // are passwords encrypted?
@@ -98,10 +110,10 @@ public class BaseAPIHandler implements Serializable
                       RollerConfig.getProperty("passwds.encryption.algorithm"));
                 }
                 //System.out.println("is now [" + password + "]");
-    			authenticated= website.getUser().getPassword().equals(password);
+    			   authenticated= user.getPassword().equals(password);
                 if (authenticated)
                 {
-                    rreq.getRoller().setUser(website.getUser());
+                    RollerFactory.getRoller().setUser(user);
                 }
             }
         }
@@ -125,15 +137,70 @@ public class BaseAPIHandler implements Serializable
     }
 
     //------------------------------------------------------------------------
-    protected void flushPageCache(String user) throws Exception
+    /**
+     * Returns true if username/password are valid and user is not disabled.
+     * @param username Username sent in request
+     * @param password Password sent in requeset
+     */
+    protected boolean validateUser(String username, String password) 
+    throws Exception
     {
-        // Get Roller request object for current thread
+        boolean authenticated = false;
+        boolean enabled = false;
+        UserData user = null;
+        try
+        {
+            // Get Roller request object for current thread
+            RollerRequest rreq = RollerRequest.getRollerRequest();
+            
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            user = userMgr.getUser(username);
+            
+            enabled = user.getEnabled().booleanValue();
+            if (enabled)
+            {    
+                // are passwords encrypted?
+                RollerContext rollerContext = 
+                    RollerContext.getRollerContext(rreq.getRequest());
+                String encrypted = 
+                        RollerConfig.getProperty("passwds.encryption.enabled");
+                //System.out.print("password was [" + password + "] ");
+                if ("true".equalsIgnoreCase(encrypted)) 
+                {
+                    password = Utilities.encodePassword(password, 
+                      RollerConfig.getProperty("passwds.encryption.algorithm"));
+                }
+                //System.out.println("is now [" + password + "]");
+                authenticated = user.getPassword().equals(password);
+                if (authenticated)
+                {
+                    RollerFactory.getRoller().setUser(user);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            mLogger.error("ERROR internal error validating user", e);
+        }
+        
+        if ( !enabled )
+        {
+            throw new XmlRpcException(
+                BLOGGERAPI_DISABLED, BLOGGERAPI_DISABLED_MSG);
+        }
+        
+        if ( !authenticated )
+        {
+            throw new XmlRpcException(
+                AUTHORIZATION_EXCEPTION, AUTHORIZATION_EXCEPTION_MSG);
+        }
+        return authenticated;
+    }
+    
+    //------------------------------------------------------------------------
+    protected void flushPageCache(WebsiteData website) throws Exception
+    {
         RollerRequest rreq = RollerRequest.getRollerRequest();
-        
-        UserManager umgr = rreq.getRoller().getUserManager();
-        UserData ud = umgr.getUser(user);
-        
-        PageCacheFilter.removeFromCache( rreq.getRequest(), ud );
-        MainPageAction.flushMainPageCache();
+        PageCacheFilter.removeFromCache( rreq.getRequest(), website);
     }
 }

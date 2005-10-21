@@ -2,6 +2,8 @@
 package org.roller.presentation.website.actions;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -16,15 +18,15 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.roller.RollerException;
-import org.roller.business.search.operations.RebuildUserIndexOperation;
-import org.roller.business.search.operations.RemoveUserIndexOperation;
 import org.roller.model.IndexManager;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.website.formbeans.UserAdminForm;
 import org.roller.util.StringUtils;
 
@@ -36,7 +38,7 @@ import org.roller.util.StringUtils;
  * @struts.action name="userAdminForm" path="/admin/user"
  *  	scope="request" parameter="method"
  * 
- * @struts.action-forward name="adminUser.page" path="/website/UserAdmin.jsp"
+ * @struts.action-forward name="adminUser.page" path=".UserAdmin"
  */
 public final class UserAdminAction extends UserBaseAction
 {
@@ -45,8 +47,8 @@ public final class UserAdminAction extends UserBaseAction
 
     //-----------------------------------------------------------------------
     /** 
-     * Show query for user page or, if userName specified in request, show
-     * the admin user page for the specified user.
+     * Show query for user page or, if userName specified in request, 
+     * show the admin user page for the specified user.
      */
     public ActionForward edit(
         ActionMapping       mapping,
@@ -59,27 +61,22 @@ public final class UserAdminAction extends UserBaseAction
         ActionMessages msgs = new ActionMessages();
         try
         {
+            UserData user = null;
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if (rollerSession.isGlobalAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
-                UserManager mgr = rreq.getRoller().getUserManager();
-                
+                UserManager mgr = RollerFactory.getRoller().getUserManager();                
                 if (userForm != null && userForm.getUserName() != null)
                 {
-                    UserData user = mgr.getUser( userForm.getUserName(), false );                    
+                    user = mgr.getUser(userForm.getUserName(), null);                    
                     if (user != null)
                     {
-                        userForm.copyFrom(user, request.getLocale());
-                        
+                        userForm.copyFrom(user, request.getLocale());                        
                         // User must set new password twice
                         userForm.setPasswordText(null);
                         userForm.setPasswordConfirm(null);
-                        
-                        // Join in the website enabled field
-                        WebsiteData website = 
-                            mgr.getWebsite(userForm.getUserName(), false);
-                        userForm.setUserEnabled(website.getIsEnabled());
                     }
                     else
                     {
@@ -88,6 +85,8 @@ public final class UserAdminAction extends UserBaseAction
                         userForm.setUserName("");
                     }
                 }
+                request.setAttribute("model", new UserAdminPageModel(
+                        request, response, mapping, userForm, user));
             }
             else
             {
@@ -127,13 +126,14 @@ public final class UserAdminAction extends UserBaseAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() )
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            if (rollerSession.isGlobalAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
-                UserManager mgr = rreq.getRoller().getUserManager();
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
                 
                 // Need system user to update user
-                rreq.getRoller().setUser(UserData.SYSTEM_USER);
+                RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
 
 			   UserData user = mgr.retrieveUser(userForm.getId());
                 userForm.copyTo(user, request.getLocale()); // doesn't copy password
@@ -141,7 +141,6 @@ public final class UserAdminAction extends UserBaseAction
                 if (userForm.getDelete())
                 {
                     // TODO: ask are you sure before deleting user
-                    PageCacheFilter.removeFromCache( request, user );
                     user = deleteUser(mapping, request, rreq, userForm, mgr, user);
                     
                     msgs.add(ActionMessages.GLOBAL_MESSAGE,
@@ -156,7 +155,7 @@ public final class UserAdminAction extends UserBaseAction
                     {
                         try
                         {
-                            user.resetPassword(rreq.getRoller(), 
+                            user.resetPassword(RollerFactory.getRoller(), 
                                userForm.getPasswordText(), 
                                userForm.getPasswordConfirm());
                         }
@@ -169,11 +168,7 @@ public final class UserAdminAction extends UserBaseAction
                     
                     // Persist changes to user
                     mgr.storeUser( user );
-                    rreq.getRoller().commit(); 
-                    
-                    // Flush both main page and regular page caches
-                    refreshIndexCache(request, rreq, userForm);      
-                    PageCacheFilter.removeFromCache( request, user );
+                    RollerFactory.getRoller().commit(); 
                     
                     msgs.add(ActionMessages.GLOBAL_MESSAGE,
                         new ActionMessage("userSettings.saved"));
@@ -208,13 +203,13 @@ public final class UserAdminAction extends UserBaseAction
             UserData ud) throws RollerException
     {
         // remove user's Entries from Lucene index
-        IndexManager indexManager = rreq.getRoller().getIndexManager();
-        indexManager.removeUserIndex(ud); 
+        IndexManager indexManager = RollerFactory.getRoller().getIndexManager();
+        WebsiteData website = rreq.getWebsite();
+        indexManager.removeWebsiteIndex(website); 
         
         // delete user from database
         ud.remove();
-        rreq.getRoller().commit();
-        PageCacheFilter.removeFromCache( request, ud );
+        RollerFactory.getRoller().commit();
         ud = null;
 
         request.getSession().setAttribute(
@@ -223,11 +218,44 @@ public final class UserAdminAction extends UserBaseAction
 
         uaf.reset(mapping, request);
         
-        List users = mgr.getUsers(false);
+        List users = mgr.getUsers(null, null); 
         request.setAttribute("users", users);
         return ud;
     }
 
+    //-----------------------------------------------------------------------
+    /**
+	 * Cancel from edit user. 
+	 */
+	public ActionForward cancel(
+		ActionMapping       mapping,
+		ActionForm          actionForm,
+		HttpServletRequest  request,
+		HttpServletResponse response)
+		throws IOException, ServletException
+	{
+         UserAdminForm userForm = (UserAdminForm)actionForm;
+         userForm.setUserName(null);         
+         userForm.setNewUser(false);
+         return edit(mapping, actionForm, request, response);
+    }
+    
+    //-----------------------------------------------------------------------
+    /**
+	 * Create new user. 
+	 */
+	public ActionForward newUser(
+		ActionMapping       mapping,
+		ActionForm          actionForm,
+		HttpServletRequest  request,
+		HttpServletResponse response)
+		throws IOException, ServletException
+	{
+         UserAdminForm userForm = (UserAdminForm)actionForm;
+         userForm.setNewUser(true);
+         return edit(mapping, actionForm, request, response);
+    }
+    
     //-----------------------------------------------------------------------
     /**
 	 * Rebuild a user's search index.
@@ -242,17 +270,17 @@ public final class UserAdminAction extends UserBaseAction
 		try
 		{
 			RollerRequest rreq = RollerRequest.getRollerRequest(request);
-			if ( rreq.isUserAuthorizedToEdit() && rreq.isAdminUser() )
+             RollerSession rollerSession = RollerSession.getRollerSession(request);
+			if (rollerSession.isGlobalAdminUser() )
 			{
 				UserAdminForm uaf = (UserAdminForm)actionForm;
 				
 				// if admin requests an index be re-built, do it
-				IndexManager manager = rreq.getRoller().getIndexManager();								 
-				manager.rebuildUserIndex();
+				IndexManager manager = RollerFactory.getRoller().getIndexManager();								 
+				manager.rebuildWebsiteIndex();
  				request.getSession().setAttribute(
 					RollerSession.STATUS_MESSAGE,
-						"Successfully scheduled rebuild of index for '" 
-						+ uaf.getUserName() + "'");
+						"Successfully scheduled rebuild of index for");
 			}
 		}
 		catch (Exception e)
@@ -263,5 +291,45 @@ public final class UserAdminAction extends UserBaseAction
 		return edit(mapping, actionForm, request, response);
 	}
 
+    public class UserAdminPageModel extends BasePageModel 
+    {
+        private UserAdminForm userAdminForm = null;
+        private List permissions = new ArrayList();
+        
+        public UserAdminPageModel(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            ActionMapping mapping,
+            UserAdminForm form,
+            UserData user) throws RollerException
+        {
+            super("dummy", request, response, mapping);
+            userAdminForm = form;
+            
+            if (user != null)
+            {
+                Roller roller = RollerFactory.getRoller();
+                permissions = roller.getUserManager().getAllPermissions(user);
+            }
+        }
+        public String getTitle() 
+        {
+            if (StringUtils.isEmpty(userAdminForm.getUserName())) 
+            {
+                return bundle.getString("userAdmin.title.searchUser");
+            }
+            return MessageFormat.format(
+                    bundle.getString("userAdmin.title.editUser"), 
+                    new String[] { userAdminForm.getUserName() } );
+        }
+        public List getPermissions()
+        {
+            return permissions;
+        }
+        public void setPermissions(List permissions)
+        {
+            this.permissions = permissions;
+        }
+    }
 }
 

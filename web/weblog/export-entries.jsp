@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <%@ page import="org.roller.presentation.BasePageModel" %>
 <%
 BasePageModel model = (BasePageModel)request.getAttribute("model");
@@ -59,4 +59,3 @@ BasePageModel model = (BasePageModel)request.getAttribute("model");
     
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>

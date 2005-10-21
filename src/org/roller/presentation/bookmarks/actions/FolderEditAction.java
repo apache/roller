@@ -3,23 +3,23 @@
  */
 package org.roller.presentation.bookmarks.actions;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.roller.model.BookmarkManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.FolderData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 
-import java.util.LinkedList;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * @struts.action path="/editor/folderEdit" name="folderFormEx" validate="false"
- * @struts.action-forward name="FolderForm" path="/bookmarks/FolderForm.jsp"
+ * @struts.action-forward name="FolderForm" path=".FolderForm"
  * 
  * @author Dave Johnson
  */
@@ -33,7 +33,7 @@ public class FolderEditAction extends Action
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        BookmarkManager bmgr = rreq.getRoller().getBookmarkManager();
+        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         FolderFormEx form = (FolderFormEx)actionForm;
         
         FolderData parentFolder = null;
@@ -46,6 +46,11 @@ public class FolderEditAction extends Action
             FolderData fd = rreq.getFolder();
             form.copyFrom(fd, request.getLocale());
             parentFolder = fd.getParent();
+            
+            BasePageModel pageModel = new BasePageModel(
+                "folderForm.add.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         else if (null != request.getParameter("correct"))
         {
@@ -54,6 +59,11 @@ public class FolderEditAction extends Action
             
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
             parentFolder = bmgr.retrieveFolder(parentId);
+            
+            BasePageModel pageModel = new BasePageModel(
+                "folderForm.correct.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         else
         {
@@ -62,6 +72,11 @@ public class FolderEditAction extends Action
             
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
             parentFolder = bmgr.retrieveFolder(parentId);
+            
+            BasePageModel pageModel = new BasePageModel(
+                "folderForm.add.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         
         request.setAttribute(RollerRequest.PARENTID_KEY, parentFolder.getId());

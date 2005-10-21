@@ -6,23 +6,25 @@
 
 package org.roller.business;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
-import org.roller.model.PropertiesManager;
-import org.roller.model.Roller;
-import org.roller.model.RollerFactory;
-import org.roller.pojos.RollerConfigData;
-import org.roller.pojos.RollerPropertyData;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
+import org.roller.RollerPermissionsException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.config.runtime.ConfigDef;
 import org.roller.config.runtime.DisplayGroup;
 import org.roller.config.runtime.PropertyDef;
 import org.roller.config.runtime.RuntimeConfigDefs;
+import org.roller.model.PropertiesManager;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.RollerConfigData;
+import org.roller.pojos.RollerPropertyData;
+import org.roller.pojos.UserData;
 
 /**
  * Abstract PropertiesManager implementation.
@@ -88,12 +90,19 @@ public abstract class PropertiesManagerImpl implements PropertiesManager
      */
     public void store(Map properties) throws RollerException
     {
+        UserData user = this.mStrategy.getUser();
+        if (!user.hasRole("admin") && !user.equals(UserData.SYSTEM_USER)) 
+        {
+            throw new RollerPermissionsException(
+                    "Only global admin or system user can save properties");
+        }
+                
         // just go through the list and store each property
         Iterator props = properties.values().iterator();
         while (props.hasNext())
         {
             try
-            {
+            {  
                 this.mStrategy.store((RollerPropertyData) props.next());
             }
             catch (RollerException re)

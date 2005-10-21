@@ -41,13 +41,13 @@ public abstract class PlanetManagerImpl implements PlanetManager
     
     // Cache up to 20 aggregations, each for up to 30 minutes
     // TODO: make this aggregation cache configurable
-    protected LRUCache2 aggregationsByGroup = 
-        new LRUCache2(20, 30 * 60 * 1000);
+    //protected LRUCache2 aggregationsByGroup = 
+        //new LRUCache2(20, 30 * 60 * 1000);
     
     // Cache up to 20 aggregations, each for up to 30 minutes
     // TODO: make this top-subscriptions cache configurable
-    protected LRUCache2 topSubscriptionsByGroup = 
-        new LRUCache2(20, 30 * 60 * 1000);
+    //protected LRUCache2 topSubscriptionsByGroup = 
+        //new LRUCache2(20, 30 * 60 * 1000);
 
     private static Log logger =
         LogFactory.getFactory().getInstance(PlanetManagerImpl.class);
@@ -89,7 +89,7 @@ public abstract class PlanetManagerImpl implements PlanetManager
         FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
         //FeedFetcher feedFetcher = new HttpClientFeedFetcher(feedInfoCache);
         feedFetcher.setUsingDeltaEncoding(false);
-        feedFetcher.setUserAgent("Roller Planet 1.1-dev"); 
+        feedFetcher.setUserAgent("RollerPlanetAggregator"); 
         
         // Loop through all subscriptions in the system
         Iterator subs = getAllSubscriptions();

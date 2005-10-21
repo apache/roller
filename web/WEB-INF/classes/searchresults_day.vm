@@ -1,20 +1,20 @@
 #macro( showEntryPermalink $entry )
-<a href="$baseURL/page/$entry.website.user.userName/?entry=$entry.Anchor"
+<a href="$ctxPath$entry.permaLink"
     title="$text.get( "macro.searchresultsday.entrypermalink.title" )"
     class="entrypermalink">posted</a>
 #end
 
 ## you have to be so damn careful with whitespace in Velocity
 #macro( showUserPermalink $entry )
-<a href="$baseURL/page/$entry.website.user.userName/"
+<a href="${ctxPath}/page/${entry.website.handle}"
     title="$text.get( "macro.searchresultsday.userpermalink.title" )"
-    class="entrypermalink">$entry.website.user.userName</a>#if ($entry.category),
+    class="entrypermalink">$entry.website.creator.userName</a>#if ($entry.category),
 in #showCategoryPermalink($entry) #end
 #end
 
 ## you have to be so damn careful with whitespace in Velocity
 #macro( showCategoryPermalink $entry )
-<a href="$baseURL/page/$entry.website.user.userName/?catname=#$utilities.encode($entry.category.name)"
+<a href="${ctxPath}/page/${entry.website.handle}?catname=$utilities.encode($entry.category.name)"
     title="$text.get( "macro.searchresultsday.categorypermalink.title" )"
     class="entrypermalink">$entry.category.name</a>,
 #end
@@ -26,12 +26,18 @@ in #showCategoryPermalink($entry) #end
     </div>
     #foreach( $entry in $entries )
     <p>
-       <b>$entry.title</b> $entry.text
+       <b>$entry.title</b> 
+       #set($stripped = $utilities.removeHTML($entry.text, true))
+       $utilities.truncateText($stripped, 240, 260, "...")
+
+        #showEntryText($entry.text)
+
+       
        #showEntryPermalink( $entry )
        by #showUserPermalink( $entry )
        on #showTimestamp($entry.pubTime).
        <span style="font-size:x-small;">(<a
-         href="?q=${utilities.encode($term)}&${USERNAME_KEY}=$!{entry.website.user.userName}"
+         href="?q=${utilities.encode($searchResults.term)}&${USERNAME_KEY}=$!{entry.website.creator.userName}"
          >restrict search</a> to just this blog)</span>
     </p>
     #end

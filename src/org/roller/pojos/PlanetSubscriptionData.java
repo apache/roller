@@ -90,7 +90,7 @@ public class PlanetSubscriptionData extends PersistentObject
         this.id = id;
     }
     /** 
-     * @hibernate.bag lazy="true" inverse="true" cascade="all" 
+     * @hibernate.bag lazy="true" inverse="true" cascade="delete" 
      * @hibernate.collection-key column="subscription_id"
      * @hibernate.collection-one-to-many 
      *    class="org.roller.pojos.PlanetEntryData"

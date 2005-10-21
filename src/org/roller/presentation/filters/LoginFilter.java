@@ -17,10 +17,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.config.RollerConfig;
+import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
-import org.roller.presentation.util.RequestUtil;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.util.RequestUtil;
 import org.roller.util.Utilities;
 
 
@@ -55,8 +56,7 @@ public final class LoginFilter implements Filter
 
         try 
         {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            UserManager mgr = rreq.getRoller().getUserManager();
+            UserManager mgr = RollerFactory.getRoller().getUserManager();
                 
             // Check to see if the user is logging out, if so, remove all
             // login cookies
@@ -68,13 +68,13 @@ public final class LoginFilter implements Filter
                 }
     
                 mgr.removeLoginCookies(request.getRemoteUser());
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
                 RequestUtil.deleteCookie(response, c, request.getContextPath());
             } 
             else if (c != null && enabled) 
             {
                 String loginCookie = mgr.checkLoginCookie(c.getValue());
-                rreq.getRoller().commit();
+                RollerFactory.getRoller().commit();
 
                 if (loginCookie != null) 
                 {

@@ -10,7 +10,7 @@
         <property name="hibernate.connection.url">jdbc:hsqldb:hsql://localhost:3219</property>
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.password"></property>
-        <property name="hibernate.dialect">net.sf.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
 <!--
         <property name="hibernate.connection.driver_class">org.gjt.mm.mysql.Driver</property>
         <property name="hibernate.connection.url">
@@ -48,6 +48,8 @@
         <mapping resource="org/roller/pojos/PlanetEntryData.hbm.xml" />
         <mapping resource="org/roller/pojos/PlanetSubscriptionData.hbm.xml" />
         <mapping resource="org/roller/pojos/PlanetGroupSubscriptionAssoc.hbm.xml" />
+
+        <mapping resource="org/roller/pojos/PermissionsData.hbm.xml" />
 
     </session-factory>
 </hibernate-configuration>

@@ -29,7 +29,7 @@
             // Function to get input back from calendar popup
             function showDate(y,m,d) {
                 var day = y+LZ(m)+LZ(d);
-                location.href = "$ctxPath/page/$userName/" + day;
+                location.href = "$ctxPath/page/$website.handle/" + day;
             }
         </script>
         <link rel="stylesheet" type="text/css" media="print"
@@ -56,7 +56,7 @@
         src="#showThemeImagePath("sunsets" "capricorn.gif")"
         width="25" height="16" alt="Switch styles (Capricorn)." /></a>
 
-    <a href="$ctxPath/rss/$userName" accesskey="x" title="RSS Feed"><img
+    <a href="$ctxPath/rss/$website.handle" accesskey="x" title="RSS Feed"><img
         src="#showThemeImagePath("sunsets" "xml.gif")"
         width="25" height="16" alt="XML Feed" /></a>
 
@@ -70,7 +70,7 @@
 
 <div id="content">
     <div id="header">
-        <h1><a href="$ctxPath/page/$userName" title="Home">#showWebsiteTitle()</a></h1>
+        <h1><a href="$ctxPath/page/$website.handle" title="Home">#showWebsiteTitle()</a></h1>
         #showBasicNavBar( false )
     </div>
 
@@ -84,7 +84,7 @@
 
 
 <div id="footer">
-    <a href="$ctxPath/page/$userName" title="View most recent posts">Home</a>
+    <a href="$ctxPath/page/$website.handle" title="View most recent posts">Home</a>
     &middot; Sunsets Theme by <a href="http://raibledesigns.com">Matt Raible</a>
 </div>
 

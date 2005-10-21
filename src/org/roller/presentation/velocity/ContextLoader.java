@@ -30,7 +30,6 @@ import org.roller.model.RollerFactory;
 import org.roller.pojos.Template;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.RollerPropertyData;
-import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.pojos.wrapper.CommentDataWrapper;
@@ -99,16 +98,12 @@ public class ContextLoader
         pageHelper.initializePlugins(mPagePlugins);
         ctx.put("pageHelper", pageHelper );
 
-        // Add legacy macros too, so that old-school pages still work
-        Macros macros= new Macros(rreq.getPageContext(), pageHelper);
-        ctx.put("macros", macros);
-
         // Load standard Roller objects and values into the context 
-        String userName = loadWebsiteValues(ctx, rreq, rollerCtx );
-        loadWeblogValues( ctx, rreq, rollerCtx, userName );            
-        loadPathValues( ctx, rreq, rollerCtx, userName );                                         
-        loadRssValues( ctx, rreq, userName );                        
-        loadUtilityObjects( ctx, rreq, rollerCtx, userName ); 
+        String handle = loadWebsiteValues(ctx, rreq, rollerCtx );
+        loadWeblogValues( ctx, rreq, rollerCtx, handle );            
+        loadPathValues( ctx, rreq, rollerCtx, handle );                                         
+        loadRssValues( ctx, rreq, handle );                        
+        loadUtilityObjects( ctx, rreq, rollerCtx, handle ); 
         loadRequestParamKeys(ctx);
         loadStatusMessage( ctx, rreq );
         
@@ -162,14 +157,14 @@ public class ContextLoader
      * @param userName
      */
     private static void loadWeblogValues(
-       Context ctx, RollerRequest rreq, RollerContext rollerCtx, String userName)
+       Context ctx, RollerRequest rreq, RollerContext rollerCtx, String handle)
        throws RollerException
     {
         mLogger.debug("Loading weblog values");
         
         // if there is an "_entry" page, only load it once
-        WebsiteData website = RollerFactory.getRoller().getUserManager().getWebsite(userName);
-        //PageModel pageModel = (PageModel)ctx.get("pageModel");
+        WebsiteData website = 
+            RollerFactory.getRoller().getUserManager().getWebsiteByHandle(handle);
         if (website != null) 
         {
             /* alternative display pages - customization */
@@ -184,6 +179,13 @@ public class ContextLoader
                 ctx.put("descPage", TemplateWrapper.wrap(descPage));
             }
         }
+        
+        boolean commentsEnabled = 
+            RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
+        boolean trackbacksEnabled = 
+            RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
+        ctx.put("commentsEnabled", new Boolean(commentsEnabled) );
+        ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
     }
 
     private static String figureResourcePath( RollerRequest rreq )
@@ -194,21 +196,6 @@ public class ContextLoader
         } catch(Exception e) {}
         
         return uploadurl;
-    }
-
-    //------------------------------------------------------------------------
-    
-    public boolean isUserAuthorizedToEdit()
-    {
-        try
-        {
-            return mRollerReq.isUserAuthorizedToEdit();
-        }
-        catch (Exception e)
-        {
-            mLogger.warn("PageHelper.isUserAuthorizedToEdit)", e);
-        }
-        return false;
     }
     
     //------------------------------------------------------------------------
@@ -221,13 +208,15 @@ public class ContextLoader
         
         HttpServletRequest request = rreq.getRequest();
         
-        String escapeHtml = RollerRuntimeConfig.getProperty("users.comments.escapehtml");
-        String autoFormat = RollerRuntimeConfig.getProperty("users.comments.autoformat");
+        String escapeHtml = 
+            RollerRuntimeConfig.getProperty("users.comments.escapehtml");
+        String autoFormat = 
+            RollerRuntimeConfig.getProperty("users.comments.autoformat");
         
         // Add comments related values to context
         ctx.put("isCommentPage", Boolean.TRUE);
         ctx.put("escapeHtml", new Boolean(escapeHtml) );
-        ctx.put("autoformat", new Boolean(autoFormat) );
+        ctx.put("autoformat", new Boolean(autoFormat) );        
         
         // Make sure comment form object is available in context
         CommentFormEx commentForm = 
@@ -253,8 +242,11 @@ public class ContextLoader
             list.add(CommentDataWrapper.wrap(cd));
             ctx.put("previewComments",list);            
         }
+        
         WeblogEntryData entry = rreq.getWeblogEntry();
-        ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));            
+        if (entry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
+            ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));            
+        }
     }   
 
     //------------------------------------------------------------------------
@@ -322,7 +314,7 @@ public class ContextLoader
     //------------------------------------------------------------------------
     
     protected static void loadRssValues(
-       Context ctx, RollerRequest rreq, String userName) throws RollerException
+       Context ctx, RollerRequest rreq, String handle) throws RollerException
     {
         mLogger.debug("Loading rss values");
         
@@ -369,7 +361,7 @@ public class ContextLoader
     //------------------------------------------------------------------------
     
     protected static void loadUtilityObjects(
-        Context ctx, RollerRequest rreq, RollerContext rollerCtx, String username)
+        Context ctx, RollerRequest rreq, RollerContext rollerCtx, String handle)
         throws RollerException
     {
         mLogger.debug("Loading utility objects");
@@ -379,7 +371,7 @@ public class ContextLoader
         // in the macro's
         Locale viewLocale = (Locale) ctx.get("viewLocale");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", viewLocale);
-        WebsiteData website = RollerFactory.getRoller().getUserManager().getWebsite(username);
+        WebsiteData website = rreq.getWebsite();
         if (website != null)
         {
             sdf.setTimeZone(website.getTimeZoneInstance());
@@ -409,41 +401,37 @@ public class ContextLoader
         Context ctx, RollerRequest rreq, RollerContext rollerCtx )
         throws RollerException
     {
-        mLogger.debug("Loading website values");
-        
-        String userName = null;
-        UserData user = null;
+        String handle = null;
         WebsiteData website = null;
         
         Roller mRoller = RollerFactory.getRoller();
         Map props = mRoller.getPropertiesManager().getProperties();
         
-        if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_USER) != null)
+        if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null)
         {
-            user = (UserData)
-                rreq.getRequest().getAttribute(RollerRequest.OWNING_USER);
+            website = (WebsiteData)
+                rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
         }
-        else if ( rreq.getUser() != null )
+        else if ( rreq.getWebsite() != null )
         {
-            user = rreq.getUser();
+            website = rreq.getWebsite();
         }
         
-        if ( user != null )
+        if ( website != null )
         {
-            userName = user.getUserName();
-            website = RollerFactory.getRoller().getUserManager().getWebsite(userName);
-            ctx.put("userName",      user.getUserName() );
-            ctx.put("fullName",      user.getFullName() );
-            ctx.put("emailAddress",  user.getEmailAddress() );
-
-            ctx.put("encodedEmail",  RegexUtil.encode(user.getEmailAddress()));
-            ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(user.getEmailAddress()));
+            handle = website.getHandle();
+            ctx.put("userName",      handle);
+            ctx.put("fullName",      website.getName() );
+            ctx.put("emailAddress",  website.getEmailAddress() );
+            ctx.put("encodedEmail",  RegexUtil.encode(website.getEmailAddress()));
+            ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(website.getEmailAddress()));
             
             // setup Locale for future rendering
             ctx.put("locale", website.getLocaleInstance());
            
             // setup Timezone for future rendering
             ctx.put("timezone", website.getTimeZoneInstance());
+            ctx.put("timeZone", website.getTimeZoneInstance());
         }
         else
         {
@@ -451,13 +439,14 @@ public class ContextLoader
             website.setName(((RollerPropertyData)props.get("site.name")).getValue());
             website.setAllowComments(Boolean.FALSE);
             website.setDescription(((RollerPropertyData)props.get("site.description")).getValue());
-            userName = "zzz_none_zzz";
-            ctx.put("userName",userName );
+            handle = "zzz_none_zzz";
+            ctx.put("userName", handle );
             ctx.put("fullName","zzz_none_zzz");
             ctx.put("emailAddress",
                 ((RollerPropertyData)props.get("site.adminemail")).getValue());
             ctx.put("locale", Locale.getDefault());
             ctx.put("timezone", TimeZone.getDefault());
+            ctx.put("timeZone", TimeZone.getDefault());
         }
         ctx.put("website", WebsiteDataWrapper.wrap(website) );
 
@@ -465,13 +454,16 @@ public class ContextLoader
         if ("Roller-based Site".equals(siteName)) siteName = "Main";
         ctx.put("siteName", siteName);        
 
+        String siteShortName = ((RollerPropertyData)props.get("site.shortName")).getValue();
+        ctx.put("siteShortName", siteShortName);        
+
         // add language of the session (using locale of viewer set by Struts)
         ctx.put(
             "viewLocale",
             LanguageUtil.getViewLocale(rreq.getRequest()));
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
 
-        return userName;
+        return handle;
     }
     
     //------------------------------------------------------------------------

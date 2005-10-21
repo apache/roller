@@ -2,7 +2,7 @@
 <%@ include file="/taglibs.jsp" %>
 <%@ page import="org.roller.model.RollerSpellCheck,com.swabunga.spell.event.SpellCheckEvent" %>
 <%@ page import="org.apache.commons.lang.StringUtils,java.util.*" %>
-<%@ include file="/theme/header.jsp" %>
+
 <script type="text/javascript">
 <!--
     function postWeblogEntry(activeForm,publish)
@@ -83,4 +83,3 @@
 </html:form>
 
     
-<%@ include file="/theme/footer.jsp" %>

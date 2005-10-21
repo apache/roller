@@ -1,6 +1,14 @@
 
 package org.roller.presentation.bookmarks.actions;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
@@ -11,26 +19,20 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 import org.roller.model.BookmarkManager;
+import org.roller.model.RollerFactory;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.roller.presentation.RollerSession;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
  * @struts.action name="folderFormEx" path="/editor/importBookmarks" 
- *  scope="request" input="/bookmarks/import.jsp" validate="false"
+ *  scope="request" input=".import" validate="false"
  * 
- * @struts.action-forward name="importBookmarks.page" path="/bookmarks/import.jsp"
+ * @struts.action-forward name="importBookmarks.page" path=".import"
  * 
  * TODO Should import into folder with same name as imported file
  */
@@ -105,10 +107,13 @@ public final class ImportBookmarksFormAction extends Action
                         RollerRequest rreq = 
                             RollerRequest.getRollerRequest(request);
                         BookmarkManager bm = 
-                            rreq.getRoller().getBookmarkManager();    
-                        bm.importBookmarks(rreq.getWebsite(), folderName, data);
+                            RollerFactory.getRoller().getBookmarkManager();
+                        RollerSession rses = 
+                            RollerSession.getRollerSession(request);
+                        bm.importBookmarks(
+                            rreq.getWebsite(), folderName, data);
                         
-                        rreq.getRoller().commit();
+                        RollerFactory.getRoller().commit();
                     }
                     else 
                     {

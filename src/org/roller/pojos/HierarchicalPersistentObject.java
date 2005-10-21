@@ -18,7 +18,7 @@ import java.util.List;
  * 
  * @author David M Johnson
  */
-public abstract class HierarchicalPersistentObject extends PersistentObject
+public abstract class HierarchicalPersistentObject extends WebsiteObject
 {        
     protected HierarchicalPersistentObject mNewParent = null;   
     
@@ -99,18 +99,7 @@ public abstract class HierarchicalPersistentObject extends PersistentObject
             currentAssoc = currentAssoc.getAncestor().getParentAssoc();
             count++;
         }
-        
-        // all descendents must also reset their ancestor links
-//        Query childQuery = 
-//            pstrategy.getQueryFactory().createQuery(getAssocClass());
-//        childQuery.setWhere(
-//            pstrategy.getQueryFactory().createCondition(                
-//                pstrategy.getQueryFactory().createCondition(
-//                    getAncestorPropertyName(), Query.EQ, this),
-//                Query.AND,                        
-//                pstrategy.getQueryFactory().createCondition(
-//                    "relation", Query.EQ, Assoc.PARENT)));
-//        
+
         Iterator children = getChildAssocs().iterator();
         while (children.hasNext())
         {
@@ -122,7 +111,7 @@ public abstract class HierarchicalPersistentObject extends PersistentObject
             // recursively...
             assoc.getObject().save();    
         }
-        
+    
         // Clear new parent now that new parent has been saved
         mNewParent = null;
     }
@@ -136,10 +125,10 @@ public abstract class HierarchicalPersistentObject extends PersistentObject
 
         // loop to remove all of my descendents and associations
         List toRemove = new LinkedList();
-        Iterator catIter = this.getAllDescendentAssocs().iterator();
-        while (catIter.hasNext())
+        List assocs = this.getAllDescendentAssocs();
+        for (int i=assocs.size()-1; i>=0; i--)
         {
-            Assoc assoc = (Assoc)catIter.next();
+            Assoc assoc = (Assoc)assocs.get(i);
             HierarchicalPersistentObject hpo = assoc.getObject();
             
             // remove my descendent's parent and grandparent associations
@@ -151,7 +140,7 @@ public abstract class HierarchicalPersistentObject extends PersistentObject
             }
             
             // remove decendent association and descendents
-            assoc.remove();
+            //assoc.remove();
             toRemove.add(hpo);
         }
         Iterator removeIterator = toRemove.iterator();
@@ -187,91 +176,5 @@ public abstract class HierarchicalPersistentObject extends PersistentObject
     {
         return mNewParent;
     }
-    
-//    /** Query database to get parent association. */
-//    protected Assoc getParentAssoc() 
-//        throws RollerException
-//    {
-//        Class clazz = getAssocClass();
-//        String objectColName = getObjectPropertyName();
-//
-//        QueryFactory factory =
-//          RollerFactory.getRoller().getPersistenceStrategy().getQueryFactory();
-//        Query query = factory.createQuery(clazz);
-//        
-//        Condition catCond = 
-//            factory.createCondition(objectColName, Query.EQ, this);
-//        Condition parentCond =
-//            factory.createCondition("relation",Query.EQ,Assoc.PARENT);
-//        query.setWhere(factory.createCondition(catCond, Query.AND, parentCond));
-//        List parents = query.execute();
-//        
-//        if (parents.size() > 1)
-//        {
-//            throw new RollerException("ERROR: more than one parent");
-//        }
-//        else if (parents.size() == 1)
-//        {
-//            return (Assoc) parents.get(0);
-//        }
-//        else
-//        {
-//            return null;
-//        }
-//    }
-//
-//    /** Get child associations, those whose parent is this category. */
-//    protected List getChildAssocs() 
-//        throws RollerException
-//    {
-//        Class clazz = getAssocClass();
-//        String assocColName = getAncestorPropertyName();       
-//
-//        QueryFactory factory =
-//            RollerFactory
-//                .getRoller()
-//                .getPersistenceStrategy()
-//                .getQueryFactory();
-//        Query query = factory.createQuery(clazz);
-//               
-//        Condition catCond = 
-//            factory.createCondition(assocColName, Query.EQ, this);
-//        
-//        Condition parentCond =
-//            factory.createCondition("relation", Query.EQ, Assoc.PARENT);
-//        
-//        query.setWhere(factory.createCondition(catCond, Query.AND, parentCond));
-//        return query.execute();
-//    }
-//
-//    /** 
-//     * Get all descendent associations, those that have this category as an 
-//     * ancestor, public for testing purposes only.
-//     */
-//    public List getAllDescendentAssocs() 
-//        throws RollerException
-//    {
-//        Class clazz = getAssocClass();
-//        String assocColName = getAncestorPropertyName();       
-//        QueryFactory factory =
-//           RollerFactory.getRoller().getPersistenceStrategy().getQueryFactory();
-//        Query query = factory.createQuery(clazz);
-//        query.setWhere(factory.createCondition(assocColName, Query.EQ, this));
-//        return query.execute();
-//    }
-//    
-//    /** 
-//     * Get all ancestor associations, public for testing purposes only. 
-//     */
-//    public List getAncestorAssocs() 
-//        throws RollerException
-//    {
-//        Class clazz = getAssocClass();
-//        String objectColName = getObjectPropertyName();
-//        QueryFactory factory =
-//           RollerFactory.getRoller().getPersistenceStrategy().getQueryFactory();
-//        Query query = factory.createQuery(clazz);
-//        query.setWhere(factory.createCondition(objectColName, Query.EQ, this));
-//        return query.execute();
-//    }     
+       
 }

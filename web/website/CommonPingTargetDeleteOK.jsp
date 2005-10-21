@@ -1,7 +1,7 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <br />
-<h1><fmt:message key="pingTarget.confirmRemoveTitle" /></h1>
+<h1><fmt:message key="" /></h1>
 
 <p/>
 <fmt:message key="pingTarget.confirmCommonRemove" />
@@ -33,4 +33,4 @@
 </td>
 </tr>
 </table>
-<%@ include file="/theme/footer.jsp" %>
+

@@ -1,14 +1,7 @@
 
 package org.roller.presentation.weblog.tags;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.roller.RollerException;
-import org.roller.model.WeblogManager;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.tags.calendar.CalendarModel;
-import org.roller.util.DateUtil;
-
+import java.net.URLEncoder;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,6 +11,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.RollerException;
+import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
+import org.roller.pojos.WeblogEntryData;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.tags.calendar.CalendarModel;
+import org.roller.util.DateUtil;
 
 /** 
  * Calendar model for calendar intended for use on view-weblog page.
@@ -56,7 +59,15 @@ public class WeblogCalendarModel implements CalendarModel
         }
         if ( catToUse != null )
         {
-            mCatName = "?"+catKey+"="+catToUse;
+            try 
+            {
+                mCatName = "?"+catKey+"="+URLEncoder.encode(catToUse, "UTF-8");
+            }
+            catch (Throwable shouldNeverHappen)
+            {
+                mLogger.error(shouldNeverHappen);
+                mCatName = "?"+catKey+"="+catToUse;
+            }
         }
         else
         {
@@ -113,13 +124,13 @@ public class WeblogCalendarModel implements CalendarModel
     {
         try
         {
-            WeblogManager mgr = mRollerReq.getRoller().getWeblogManager();
+            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             mMonthMap = mgr.getWeblogEntryStringMap(
                             mRollerReq.getWebsite(), // userName
                             startDate,              // startDate
                             endDate,                // endDate
                             catName,                // catName
-                            WeblogManager.PUB_ONLY, // status
+                            WeblogEntryData.PUBLISHED, // status
                             null 
             );
         }
@@ -144,7 +155,7 @@ public class WeblogCalendarModel implements CalendarModel
 	
 	public String getSelfUrl() throws Exception
 	{
-        return mRes.encodeURL(mSelfUrl);
+        return mSelfUrl;
 	}
 
 	public String getTargetUrl() throws Exception
@@ -175,7 +186,7 @@ public class WeblogCalendarModel implements CalendarModel
         {
             if ( day == null )
             {
-                url = mRes.encodeURL(mSelfUrl + mCatName);
+                url = mSelfUrl + mCatName;
             }
             else
             {            
@@ -185,13 +196,13 @@ public class WeblogCalendarModel implements CalendarModel
                 if ( dateString != null )
                 {                
                     // append 8 char date string on end of selfurl
-                    url = mRes.encodeURL(mSelfUrl+"/"+dateString+mCatName);
+                    url = mSelfUrl+"/"+dateString+mCatName;
                 }
                 else if ( valid ) 
                 {
                     // Make the date yyyyMMdd and append it to URL
                     dateString = DateUtil.format8chars( day );
-                    url = mRes.encodeURL( mSelfUrl+"/"+dateString+mCatName);
+                    url = mSelfUrl+"/"+dateString+mCatName;
                 }
             }
         }

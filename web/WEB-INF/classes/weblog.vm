@@ -94,7 +94,7 @@
  * @param day Date object that specifies day (type java.util.Date).
  *#
 #macro( showDayPermalink $day )
-    <a href="$baseURL/page/$userName/#formatDate($plainFormat $day )"><img
+    <a href="${ctxPath}/page/${website.handle}/#formatDate($plainFormat $day )"><img
         class="daypermalink"
         src="$ctxPath/images/permalink.gif"
         title="$text.get( "macro.weblog.daypermalink.title" )"
@@ -144,100 +144,9 @@
  * @param entry WeblogEntry object.
  *#
 #macro( showTrackbackURL $entry )
-$absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
-
-#**
- * Display search form for searching a weblog.  This is only a form, no div
- * or anything around it.
- *#
-#macro( showSearchForm )
-    <form id="searchForm" method="get" action="$ctxPath/search/$userName"
-        style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
-        <p>
-          <input type="text" id="q" name="q" size="20"
-              maxlength="255" value="#if($term)$term#end" />
-          #set( $cats = $pageModel.getWeblogCategories("nil") )
-          <select name="c">
-          <option value="">- In Category -</option>
-          #foreach( $cat in $cats )
-              <option #if($cat.name == $req.getParameter('c'))selected="selected"#end>$cat.name</option>
-          #end
-          </select>
-          <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
-        </p>
-    </form>
-    <script type="text/javascript">
-        function validateSearch(form) {
-            if (form.q.value == "") {
-                alert("$text.get( "macro.weblog.searchalert" )");
-                form.q.focus();
-                return false;
-            }
-            return true;
-        }
-    </script>
+$absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anchor)
 #end
 
-#**
- * Display search again form
- *#
-#macro( showSearchAgainForm )
-    <div id="searchAgain">
-        $text.get( "macro.weblog.searchdictionary", [$term, $term, $term] )
-
-        $text.get( "macro.weblog.searchhits", [$hits])
-
-        <form method="get" action="$ctxPath/search/$userName"
-            style="margin: 5px">
-            <input type="text" id="q" name="q" size="31"
-                maxlength="255" value="$term"
-                style="padding-left: 1px" />
-            #set( $cats = $pageModel.getWeblogCategories("nil") )
-            <select name="c">
-            <option value="">- Restrict By Category -</option>
-            #foreach( $cat in $cats )
-              <option #if($cat.name == $req.getParameter('c'))selected="selected"#end>$cat.name</option>
-            #end
-            </select>
-            <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
-        </form>
-
-        $text.get( "macro.weblog.searchgoogle", [$term, $absBaseURL, $ctxPath, $userName] )
-    </div>
-    <script type="text/javascript"
-        src="$ctxPath/theme/scripts/searchhi.js"></script>
-#end
-
-#**
- * Displays header like "1 - 10 of 20 found.".
-**#
-#macro( showSearchSummary )
-    #set( $min = $offset + 1 )
-    #set( $max = $offset + $limit )
-    #if( $max > $hits )#set( $max = $hits )#end
-    <h3>
-        $min - $max of $hits found.
-    </h3>
-#end
-
-#**
- * Display list of search result pages (for pagination).
-**#
-#macro( showSearchPager )
-    <h3 style="text-align:center;">
-    #set( $numPages = $hits / $limit )
-    #set( $remainder = $hits % $limit )
-    #if( $remainder > 0 )#set( $numPages = $numPages + 1 )#end
-    #if( $numPages > 1 )
-        #foreach( $pageNum in [1..$numPages] )
-            #set( $i = $pageNum - 1 )
-            #set( $start = $limit * $i )
-            <a href="?q=${utilities.encode($term)}&${USERNAME_KEY}=$!{username}&n=${limit}&o=${start}"
-               >$pageNum</a>#if( $pageNum != $numPages) | #end
-        #end
-    #end
-    </h3>
-#end
 
 #**
  * Shows weblog entries from specified category 
@@ -262,11 +171,13 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
         #set( $day = $entry.pubTime )
         #set( $entries = [ $entry ] )
         #parse( $dayTemplateId )
-        <div class="trackbackUrl">
-           $text.get( "macro.weblog.trackback" ) #showTrackbackURL($entry)
-        </div>
+        #if($trackbacksEnabled && $website.allowComments && $entry.commentsStillAllowed)
+           <div class="trackbackUrl">
+              $text.get( "macro.weblog.trackback" ) #showTrackbackURL($entry)
+           </div>
+        #end
         #showComments($entry)
-        #if($website.allowComments && $entry.commentsStillAllowed)
+        #if($commentsEnabled && $website.allowComments && $entry.commentsStillAllowed)
             #showCommentForm($entry)
         #else
             $text.get("comments.disabled")
@@ -315,7 +226,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
    #foreach( $day in $xmap.keySet() )
        #set( $recentEntries = $xmap.get($day) )
        #foreach ($var in $recentEntries)
-           <li class="recentposts"><a href="$baseURL/page/$userName/?entry=$utilities.encode($var.anchor)">$var.title</a></li>
+           <li class="recentposts"><a href="${ctxPath}/page/${website.handle}?entry=$utilities.encode($var.anchor)">$var.title</a></li>
        #end
    #end
    </ul>
@@ -405,7 +316,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
         #showPrevEntryLink($npcat) |
     #end
     #if ( $pageModel.previousEntry || $pageModel.nextEntry)
-        <a href="$ctxPath/page/$userName/$page.link$catLink">$page.name</a>
+        <a href="${ctxPath}/page/${website.handle}$catLink">$page.name</a>
     #end
     #if ($pageModel.nextEntry)
         | #showNextEntryLink($npcat)
@@ -421,8 +332,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
     <span id="previousEntry">
     #if( $pageModel.previousEntry )
         #set( $prev = $pageModel.previousEntry )
-        #set( $prevURL = "$baseURL/page/${prev.website.user.userName}/#formatDate($plainFormat ${prev.pubTime})" )
-        #if ( $category != 'nil' ) #set( $prevURL = "$prevURL?catname=$category" )#end
+        #set( $prevURL = "${ctxPath}${prev.permaLink}" )
         <a href="$prevURL" title="Previous Entries"
             >&laquo; $utilities.truncateNicely($prev.title, 30, 30, "...")</a>
     #end
@@ -437,8 +347,7 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
     <span id="nextEntry">
     #if( $pageModel.nextEntry )
         #set( $next = $pageModel.nextEntry )
-        #set( $nextURL = "$baseURL/page/${next.website.user.userName}/#formatDate($plainFormat ${next.pubTime})" )
-        #if ( $category != 'nil' ) #set( $nextURL = "$nextURL?catname=$category" )#end 
+        #set( $nextURL = "${ctxPath}${next.permaLink}" )
         <a href="$nextURL" title="Next Entries"
             >$utilities.truncateNicely($next.title, 30, 30, "...") &raquo;</a>
     #end
@@ -467,8 +376,110 @@ $absBaseURL/trackback/$userName/$page.link/$utilities.encode($entry.anchor)#end
     dc:identifier="$absBaseURL$entry.permaLink"
     dc:subject="$entry.category.name"
     dc:description="$entry.title"
-    dc:creator="$entry.website.user.userName"
+    dc:creator="$entry.website.creator.userName"
     dc:date="$entry.pubTime" />
 </rdf:RDF>
 -->
 #end
+
+
+
+#** ------------------------------------------------------------------------ 
+Search results macros
+---------------------------------------------------------------------------- *#
+
+#**
+ * Display search form for searching a weblog.  This is only a form, no div
+ * or anything around it.
+ *#
+#macro( showSearchForm )
+    <form id="searchForm" method="get" action="${ctxPath}/search/${website.handle}"
+        style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
+        <p>
+          <input type="text" id="q" name="q" size="20"
+              maxlength="255" value="#if($term)$term#end" />
+          #set( $cats = $pageModel.getWeblogCategories("nil") )
+          <select name="c">
+          <option value="">- In Category -</option>
+          #foreach( $cat in $cats )
+              <option #if($cat.name == $req.getParameter('c'))selected="selected"#end>$cat.name</option>
+          #end
+          </select>
+          <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
+        </p>
+    </form>
+    <script type="text/javascript">
+        function validateSearch(form) {
+            if (form.q.value == "") {
+                alert("$text.get( "macro.weblog.searchalert" )");
+                form.q.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+#end
+
+#**
+ * Display search again form
+ *#
+#macro( showSearchAgainForm )
+    <div id="searchAgain">
+        $text.get( "macro.weblog.searchdictionary", [$searchResults.term, $searchResults.term, $searchResults.term] )
+
+        $text.get( "macro.weblog.searchhits", [$searchResults.hits])
+
+        <form method="get" action="${ctxPath}/search/${searchResults.website.handle}"
+            style="margin: 5px">
+            <input type="text" id="q" name="q" size="31"
+                maxlength="255" value="$searchResults.term"
+                style="padding-left: 1px" />
+            #set( $cats = $pageModel.getWeblogCategories("nil") )
+            <select name="c">
+            <option value="">- Restrict By Category -</option>
+            #foreach( $cat in $cats )
+              <option #if($cat.name == $req.getParameter('c'))selected="selected"#end>$cat.name</option>
+            #end
+            </select>
+            <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
+        </form>
+
+        $text.get( "macro.weblog.searchgoogle", [$searchResults.term, $absBaseURL, $ctxPath, ${searchResults.website.handle}] )
+    </div>
+    <script type="text/javascript"
+        src="$ctxPath/theme/scripts/searchhi.js"></script>
+#end
+
+#**
+ * Displays header like "1 - 10 of 20 found.".
+**#
+#macro( showSearchSummary )
+    #set( $min = $searchResults.offset + 1 )
+    #set( $max = $searchResults.offset + $searchResults.limit )
+    #if( $max > $searchResults.hits )#set( $max = $searchResults.hits )#end
+    <h3>
+        $min - $max of $searchResults.hits found.
+    </h3>
+#end
+
+#**
+ * Display list of search result pages (for pagination).
+**#
+#macro( showSearchPager )
+    <h3 style="text-align:center;">
+    #set( $numPages = $searchResults.hits / $searchResults.limit )
+    #set( $remainder = $searchResults.hits % $searchResults.limit )
+    #if( $remainder > 0 )#set( $numPages = $numPages + 1 )#end
+    #if( $numPages > 1 )
+        #foreach( $pageNum in [1..$numPages] )
+            #set( $i = $pageNum - 1 )
+            #set( $start = $searchResults.limit * $i )
+            <a href="?q=${utilities.encode($searchResults.term)}&${USERNAME_KEY}=$!{username}&n=${searchResults.limit}&o=${start}"
+               >$pageNum</a>#if( $pageNum != $numPages) | #end
+        #end
+    #end
+    </h3>
+#end
+
+
+

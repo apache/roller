@@ -1,18 +1,12 @@
 package org.roller.presentation.weblog.formbeans;
 
-import org.apache.commons.lang.StringUtils;
-import org.roller.RollerException;
-import org.roller.pojos.CommentData;
-import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.forms.WeblogEntryForm;
-import org.roller.util.DateUtil;
-
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,8 +15,20 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.RollerException;
+import org.roller.pojos.CommentData;
 import org.roller.pojos.EntryAttributeData;
+import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.forms.WeblogEntryForm;
+import org.roller.util.DateUtil;
+
 
 /**
  * Extends the WeblogEntryForm so that additional properties may be added.
@@ -31,7 +37,12 @@ import org.roller.pojos.WebsiteData;
  */
 public class WeblogEntryFormEx extends WeblogEntryForm
 {
+    private static Log mLogger =
+        LogFactory.getFactory().getInstance(WeblogEntryFormEx.class);
+    
     private String mCategoryId = null;
+    private String mCreatorId = null;
+    private String mWebsiteId = null;
     private Date mDate = new Date();    
     private String mDateString = null;        
     private Integer mHours = new Integer(0);
@@ -47,11 +58,13 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public WeblogEntryFormEx()
     {
         super();
+        mLogger.debug("default construction");
     }
 
     public WeblogEntryFormEx(WeblogEntryData entryData, java.util.Locale locale) 
         throws RollerException
     {
+        mLogger.debug("construction from existing entry");
         copyFrom(entryData, locale);
     }
     
@@ -61,16 +74,22 @@ public class WeblogEntryFormEx extends WeblogEntryForm
      */
     public void initNew(HttpServletRequest request, HttpServletResponse response) 
     {
+        mLogger.debug("init new called");
+        
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        RollerSession rses = RollerSession.getRollerSession(request); 
         if (rreq.getWebsite().getDefaultPlugins() != null)
         {
             setPluginsArray(StringUtils.split(
                     rreq.getWebsite().getDefaultPlugins(), ",") );
         }
+        status = WeblogEntryData.DRAFT;
         allowComments = Boolean.TRUE;
-        updateTime = new Timestamp(new Date().getTime());
-        pubTime = updateTime;
-        initPubTimeDateStrings(rreq.getWebsite(), request.getLocale());        
+        
+        // we want pubTime and updateTime to be empty for new entries -- AG
+        //updateTime = new Timestamp(new Date().getTime());
+        //pubTime = updateTime;
+        //initPubTimeDateStrings(rreq.getWebsite(), request.getLocale());        
     }
     
     /**
@@ -79,40 +98,55 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void copyTo(WeblogEntryData entry, Locale locale, Map paramMap) 
         throws RollerException
     {
+        mLogger.debug("copy to called");
+        
         super.copyTo(entry, locale);
         
-        // First parts the date string from the calendar 
-        final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
-        final Date newDate;
-        try
-        {
-            newDate = df.parse(getDateString());
+        // calculate date for pubtime
+        if(getDateString() != null && !"0/0/0".equals(getDateString())) {
+            Date pubtime = null;
+            
+            TimeZone timezone = entry.getWebsite().getTimeZoneInstance();
+            try {
+                DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+                Date newDate = df.parse(getDateString());
+                
+                // Now handle the time from the hour, minute and second combos
+                if(newDate != null) {
+                    Calendar cal = Calendar.getInstance(locale);
+                    cal.setTime(newDate);
+                    cal.setTimeZone(timezone);
+                    cal.set(Calendar.HOUR_OF_DAY, getHours().intValue());
+                    cal.set(Calendar.MINUTE, getMinutes().intValue());
+                    cal.set(Calendar.SECOND, getSeconds().intValue());
+                    entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
+                }
+                
+            } catch(Exception e) {
+                mLogger.error(e);
+            }
+
+            mLogger.debug("set pubtime to "+entry.getPubTime());
         }
-        catch (ParseException e)
-        {
-            throw new RollerException("ERROR parsing date.");
-        }
-        
-        // Now handle the time from the hour, minute and second combos
-        final Calendar cal = Calendar.getInstance(locale);
-        cal.setTime(newDate);
-        cal.setTimeZone(entry.getWebsite().getTimeZoneInstance());
-        cal.set(Calendar.HOUR_OF_DAY, getHours().intValue());
-        cal.set(Calendar.MINUTE, getMinutes().intValue());
-        cal.set(Calendar.SECOND, getSeconds().intValue());
-        entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
         
         entry.setPlugins( StringUtils.join(this.pluginsArray,",") );
         
-        // checkboxes don't send a value for unchecked
-        if (entry.getPublishEntry() == null)
-        {
-            entry.setPublishEntry(Boolean.FALSE);
-        }
         if (getCategoryId() != null) 
         {
             entry.setCategoryId(getCategoryId());
-        }       
+        }             
+        if (getAllowComments() == null)
+        {
+            entry.setAllowComments(Boolean.FALSE);
+        }
+        if (getRightToLeft() == null)
+        {
+            entry.setRightToLeft(Boolean.FALSE);
+        }
+        if (getPinnedToMain() == null)
+        {
+            entry.setPinnedToMain(Boolean.FALSE);
+        }        
         
         Iterator params = paramMap.keySet().iterator();
         while (params.hasNext())
@@ -139,8 +173,12 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void copyFrom(WeblogEntryData entry, Locale locale) 
         throws RollerException
     {
+        mLogger.debug("copy from called");
+        
         super.copyFrom(entry, locale);
         mCategoryId = entry.getCategory().getId();
+        mCreatorId = entry.getCreator().getId();       
+        mWebsiteId = entry.getWebsite().getId();
         
         initPubTimeDateStrings(entry.getWebsite(), locale);
         
@@ -189,16 +227,28 @@ public class WeblogEntryFormEx extends WeblogEntryForm
      */
     private void initPubTimeDateStrings(WebsiteData website, Locale locale)
     {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(getPubTime()); 
-        cal.setTimeZone(website.getTimeZoneInstance());
-        mHours = new Integer(cal.get(Calendar.HOUR_OF_DAY));
-        mMinutes = new Integer(cal.get(Calendar.MINUTE));
-        mSeconds = new Integer(cal.get(Calendar.SECOND));
+        mLogger.debug("init pub time date sting called");
         
-        DateFormat df = DateFormat.getDateInstance(
-           DateFormat.SHORT, locale);
-        mDateString = df.format(getPubTime());
+        if(getPubTime() != null) {
+            mLogger.debug("figuring pubtime values");
+            
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(getPubTime());
+            cal.setTimeZone(website.getTimeZoneInstance());
+            mHours = new Integer(cal.get(Calendar.HOUR_OF_DAY));
+            mMinutes = new Integer(cal.get(Calendar.MINUTE));
+            mSeconds = new Integer(cal.get(Calendar.SECOND));
+            
+            DateFormat df = DateFormat.getDateInstance(
+                    DateFormat.SHORT, locale);
+            df.setTimeZone(website.getTimeZoneInstance());
+            mDateString = df.format(getPubTime());
+            
+        } else {
+            mLogger.debug("pubtime is null, must be a draft");
+            
+            mDateString = "0/0/0";
+        }
     }
 
     /**
@@ -272,6 +322,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
      */
     public void setDateString(String dateString) throws ParseException
     {
+        mLogger.debug("somebody setting date string");
         mDateString = dateString;
     }
 
@@ -332,10 +383,12 @@ public class WeblogEntryFormEx extends WeblogEntryForm
             javax.servlet.ServletRequest request)
     {
         super.doReset(mapping, request);
+        mLogger.debug("reset called");
         
         pluginsArray = new String[0];
         
         // reset time fields to current time
+        /* we want the date fields to be empty by default now -- Allen G
         Calendar cal = Calendar.getInstance(request.getLocale());
         Date now = new Date();
         cal.setTime(now);        
@@ -344,6 +397,8 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         mSeconds = new Integer(cal.get(Calendar.SECOND));        
         DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, request.getLocale());
         mDateString = df.format(now);
+        */
+        mDateString = "0/0/0";
     }
 
     /**
@@ -387,6 +442,42 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     public void setTrackbackUrl(String trackbackUrl)
     {
         this.trackbackUrl = trackbackUrl;
+    }
+
+    public String getCreatorId()
+    {
+        return mCreatorId;
+    }
+    public void setCreatorId(String creatorId)
+    {
+        mCreatorId = creatorId;
+    }
+
+    public String getWebsiteId()
+    {
+        return mWebsiteId;
+    }
+    public void setWebsiteId(String websiteId)
+    {
+        mWebsiteId = websiteId;
+    }
+
+    /** Convenience method for checking status */
+    public boolean isDraft() 
+    {
+        return status.equals(WeblogEntryData.DRAFT);
+    }
+    
+    /** Convenience method for checking status */
+    public boolean isPending() 
+    {
+        return status.equals(WeblogEntryData.PENDING);
+    }
+    
+    /** Convenience method for checking status */
+    public boolean isPublished() 
+    {
+        return status.equals(WeblogEntryData.PUBLISHED);
     }
 }
 

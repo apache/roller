@@ -1,8 +1,8 @@
 
 package org.roller.presentation.tags.menu;
-import org.roller.RollerException;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.roller.RollerException;
 
 /** An individual menu which contains MenuItems */ 
 public interface Menu 

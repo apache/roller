@@ -3,22 +3,6 @@
  */
 package org.roller.presentation.weblog.actions;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
-import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.util.RequestUtils;
-import org.roller.RollerException;
-import org.roller.model.WeblogManager;
-import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.BasePageModel;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.ExportRss;
-import org.roller.presentation.weblog.formbeans.WeblogQueryForm;
-import org.roller.util.DateUtil;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.DateFormat;
@@ -39,11 +23,29 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.util.RequestUtils;
+import org.roller.RollerException;
+import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
+import org.roller.pojos.WeblogEntryData;
+import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.velocity.ExportRss;
+import org.roller.presentation.weblog.formbeans.WeblogQueryForm;
+import org.roller.util.DateUtil;
+
 /**
  * @struts.action path="/editor/exportEntries" name="weblogQueryForm" 
  *    scope="request" parameter="method"
  * 
- * @struts.action-forward name="exportEntries.page" path="/weblog/export-entries.jsp"
+ * @struts.action-forward name="exportEntries.page" path=".export-entries"
  * 
  * @author lance.lavandowska
  */
@@ -85,14 +87,17 @@ public class ExportEntriesAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( !rreq.isUserAuthorizedToEdit() )
+            RollerSession rses = 
+                    RollerSession.getRollerSession(rreq.getRequest());
+            if (     rreq.getWebsite() == null 
+                 || !rses.isUserAuthorizedToAdmin(rreq.getWebsite()))
             {
                 forward = mapping.findForward("access-denied");
             }
             else
             {
                 request.setAttribute("model",
-                    new BasePageModel(request, response, mapping));
+                    new BasePageModel("", request, response, mapping));
             }
         }
         catch (Exception e)
@@ -125,11 +130,13 @@ public class ExportEntriesAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
             WeblogQueryForm form = (WeblogQueryForm)actionForm;
-            if ( rreq.isUserAuthorizedToEdit() )
+            if ( rreq.getWebsite() != null 
+                    && rses.isUserAuthorizedToAdmin(rreq.getWebsite()) )
             {               
                 request.setAttribute("model",
-                                     new BasePageModel(request, response, mapping));
+                        new BasePageModel("", request, response, mapping));
                 
                 Locale locale = Locale.getDefault();//rreq.getWebsite().getLocaleInstance();
                 final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, locale);
@@ -149,7 +156,7 @@ public class ExportEntriesAction extends DispatchAction
                 {
                     // this work should go into a Thread!
                     WeblogManager weblogMgr =
-                        rreq.getRoller().getWeblogManager();
+                        RollerFactory.getRoller().getWeblogManager();
                     
                     //List entries = weblogMgr.getWeblogEntriesInDateRange(
                         //rreq.getUser().getUserName(), null, startDate, endDate, false);
@@ -160,7 +167,7 @@ public class ExportEntriesAction extends DispatchAction
                                     startDate,         // startDate
                                     endDate,           // endDate
                                     null,              // catName
-                                    WeblogManager.ALL,  // status
+                                    null,  // status
                                     null);              // maxEntries
 
                     ActionMessages messages = writeSuccessMessage(request, response, rreq, form);
@@ -271,7 +278,8 @@ public class ExportEntriesAction extends DispatchAction
             JspFactory.getDefaultFactory().getPageContext( 
                 this.getServlet(), request, response, "", true, 8192, true);
         Map params = new HashMap();
-        params.put( RollerRequest.USERNAME_KEY,  rreq.getUser().getUserName());
+        params.put( RollerRequest.WEBLOG_KEY,  
+            rreq.getWebsite().getHandle());
         params.put("rmik", "Files");
         String filesLink = RequestUtils.computeURL(
              pageContext, (String)null, (String)null, (String)null,

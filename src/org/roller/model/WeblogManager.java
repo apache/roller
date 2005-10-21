@@ -22,10 +22,6 @@ public interface WeblogManager extends Serializable
 {
     public static final String CATEGORY_ATT = "category.att";
     
-    public static final String ALL = "ALL";
-    public static final String DRAFT_ONLY = "DRAFT_ONLY";
-    public static final String PUB_ONLY = "PUB_ONLY";
-    
     /**
      * Release all resources associated with Roller session.
      */
@@ -218,7 +214,7 @@ public interface WeblogManager extends Serializable
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
-     * @param status     Status of ALL, DRAFT_ONLY, or PUB_ONLY.
+     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param offset     Index of first entry to include.
      * @param length     Max number of entries to include.
      * @return List of WeblogEntryData objects in reverse chrono order.
@@ -243,7 +239,7 @@ public interface WeblogManager extends Serializable
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
-     * @param status     Status of ALL, DRAFT_ONLY, or PUB_ONLY.
+     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param maxEntries Max entries or null for no limit.
      * @return Map of Lists, keyed by Date, and containing WeblogEntryData.
      * @throws RollerException
@@ -266,7 +262,7 @@ public interface WeblogManager extends Serializable
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
-     * @param status     Status of ALL, DRAFT_ONLY, or PUB_ONLY.
+     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
      * @param maxEntries Max entries or null for no limit.
      * @return Map of Lists, keyed by Date, and containing date strings.
      * @throws RollerException
@@ -343,7 +339,7 @@ public interface WeblogManager extends Serializable
         WebsiteData website, String anchor ) throws RollerException;
 
     /** Get time of last update for a weblog specified by username */
-    public Date getWeblogLastPublishTime( String userName )
+    public Date getWeblogLastPublishTime(WebsiteData website)
         throws RollerException;
 
     /**
@@ -353,7 +349,7 @@ public interface WeblogManager extends Serializable
      * @return         Date Of last publish time
      * @throws         RollerException
      */
-    public Date getWeblogLastPublishTime( String userName, String catName )
+    public Date getWeblogLastPublishTime(WebsiteData website, String catName )
         throws RollerException;
 
     /**
@@ -409,5 +405,5 @@ public interface WeblogManager extends Serializable
      * @return the url of the user's weblog
      * @throws RollerException
      */
-    public String getUrl(UserData user, String contextUrl) throws RollerException;
+    public String getUrl(WebsiteData website, String contextUrl) throws RollerException;
 }

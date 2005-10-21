@@ -2,7 +2,7 @@
 #if ($velocityCount == 1) 
   <div id="search" style="float: right; margin-top: -2px">
     #if ( !$searchResults )
-    <form id="searchForm" method="get" action="$ctxPath/search/$userName"
+    <form id="searchForm" method="get" action="$ctxPath/search/$website.handle"
         onsubmit="return search(this)" style="margin: 0; padding: 0">  
         <input type="text" id="q" name="q" size="20" 
             maxlength="255" value="search this site" 
@@ -46,6 +46,7 @@
         <a name="$utilities.encode($entry.anchor)" id="$utilities.encode($entry.anchor)"></a>
         <b>$entry.title</b> <br /><br />
         #showEntryText( $entry ) 
+        $text.get("macro.weblog.postedby") $entry.creator.userName
         <span class="dateStamp">#showTimestamp($entry.pubTime)</span>
         #showEntryPermalink( $entry )
     </p>

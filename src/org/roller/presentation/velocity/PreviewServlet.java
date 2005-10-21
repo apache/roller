@@ -1,6 +1,7 @@
-
 package org.roller.presentation.velocity;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.StringWriter;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
@@ -20,7 +21,6 @@ import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
-
 
 /**
  * Allow users to preview what their blog would look like in a given theme.
@@ -47,7 +47,7 @@ public class PreviewServlet extends BasePageServlet {
         
         // try getting the preview theme
         String themeName = request.getParameter("theme");
-        if(themeName != null) {
+        if (themeName != null) {
             try {
                 Roller roller = RollerFactory.getRoller();
                 ThemeManager themeMgr = roller.getThemeManager();
@@ -80,11 +80,13 @@ public class PreviewServlet extends BasePageServlet {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             
             WebsiteData website = null;
-            if (request.getAttribute(RollerRequest.OWNING_USER) != null) {
+            if (request.getAttribute(RollerRequest.OWNING_WEBSITE) != null) 
+            {
                 UserData user = (UserData)
-                    request.getAttribute(RollerRequest.OWNING_USER);
-                website = userMgr.getWebsite(user.getUserName());
-            } else {
+                    request.getAttribute(RollerRequest.OWNING_WEBSITE);
+            } 
+            else 
+            {
                 website = rreq.getWebsite();
             }
             

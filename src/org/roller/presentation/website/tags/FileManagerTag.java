@@ -1,12 +1,5 @@
 package org.roller.presentation.website.tags;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
-import org.roller.pojos.UserData;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
-
 import java.io.File;
 import java.text.Collator;
 import java.text.DecimalFormat;
@@ -18,6 +11,15 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.util.RequestUtils;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.website.actions.UploadFileFormAction;
+
 
 /**
  * @jsp.tag name="FileManager"
@@ -50,7 +52,7 @@ public class FileManagerTag extends TagSupport
             HttpServletRequest request =
                 (HttpServletRequest)pageContext.getRequest();
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            UserData user = rreq.getUser();
+            WebsiteData website = UploadFileFormAction.getWebsite(request);
 
             // for formatting the file size
             DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance();
@@ -67,7 +69,7 @@ public class FileManagerTag extends TagSupport
             // get the files
             String[] files = new String[0];
             int numFiles = 0;
-            File d = new File(dir + user.getUserName());
+            File d = new File(dir + website.getHandle());
             if (d.mkdirs() || d.exists())
             {
                 files = this.fileList(d);
@@ -86,7 +88,7 @@ public class FileManagerTag extends TagSupport
                     // to PRIMARY
                     java.text.Collator locCollator =
                         java.text.Collator.getInstance(
-                            rreq.getWebsite().getLocaleInstance());
+                            website.getLocaleInstance());
                     locCollator.setStrength(Collator.PRIMARY);
                     java.util.Arrays.sort(files, locCollator);
 
@@ -107,7 +109,7 @@ public class FileManagerTag extends TagSupport
                         fileLink = RequestUtils.printableURL(
                             RequestUtils.absoluteURL( request,
                                 RollerContext.getUploadPath( app ) +
-                                "/" + user.getUserName() + "/" + files[i] ) );
+                                "/" + website.getHandle() + "/" + files[i] ) );
                         pw.print("<td class=\"rollertable\"><a href=\"" +
                             fileLink + "\">" + files[i] + "</a></td>");
                         pw.print("<td class=\"rollertable\" align=\"right\">" +

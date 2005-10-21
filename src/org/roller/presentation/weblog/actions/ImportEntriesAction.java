@@ -20,10 +20,11 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.roller.pojos.UserData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.MainPageAction;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.weblog.formbeans.ImportEntriesForm;
 import org.roller.util.StringUtils;
@@ -33,7 +34,7 @@ import org.roller.util.StringUtils;
  * @struts.action name="importEntries" path="/editor/importEntries"
  *                scope="request" parameter="method"
  * 
- * @struts.action-forward name="importEntries.page" path="/weblog/import-entries.jsp"
+ * @struts.action-forward name="importEntries.page" path=".import-entries"
  *
  * @author lance.lavandowska
  */
@@ -50,27 +51,30 @@ public class ImportEntriesAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( !rreq.isUserAuthorizedToEdit() )
+            RollerSession rollerSession = RollerSession.getRollerSession(rreq.getRequest());
+            if ( rreq.getWebsite() == null 
+                  || !rollerSession.isUserAuthorizedToAdmin(rreq.getWebsite()))
             {
                 forward = mapping.findForward("access-denied");
             }
             else
             {
-				getXmlFiles(actionForm, rreq);
+			   getXmlFiles(actionForm, rreq);
                 ImportEntriesForm form = (ImportEntriesForm)actionForm;
                 if (StringUtils.isNotEmpty(form.getImportFileName()))
                 {
                     // "default" values
-                    UserData user = rreq.getUser();
+                    WebsiteData website = rreq.getWebsite();
 
                     // load selected file
-                    ServletContext app = this.getServlet().getServletConfig().getServletContext();
+                    ServletContext app =
+                            getServlet().getServletConfig().getServletContext();
                     String dir = RollerContext.getUploadDir( app );
-                    File f = new File(dir + user.getUserName() +
+                    File f = new File(dir + website.getHandle() +
                                       "/" + form.getImportFileName());
 
                     //ArchiveParser archiveParser =
-                        //new ArchiveParser(rreq.getRoller(), rreq.getWebsite(), f);
+                        //new ArchiveParser(RollerFactory.getRoller(), rreq.getWebsite(), f);
                     String parseMessages = null; // archiveParser.parse();
 
                     // buf will be non-zero if Entries were imported
@@ -83,9 +87,7 @@ public class ImportEntriesAction extends DispatchAction
                         saveMessages(request, notices);
 
                         // Flush the page cache
-                        PageCacheFilter.removeFromCache( request, user );
-                        // refresh the front page cache
-                        MainPageAction.flushMainPageCache();
+                        PageCacheFilter.removeFromCache(request, website);
                     }
                     else
                     {
@@ -126,7 +128,9 @@ public class ImportEntriesAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( !rreq.isUserAuthorizedToEdit() )
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if ( rreq.getWebsite() == null 
+                 || !rses.isUserAuthorizedToAdmin(rreq.getWebsite()) )
             {
                 forward = mapping.findForward("access-denied");
             }
@@ -147,7 +151,7 @@ public class ImportEntriesAction extends DispatchAction
     {
 		ServletContext app = this.getServlet().getServletConfig().getServletContext();
 		String dir = RollerContext.getUploadDir( app );
-		File d = new File(dir + rreq.getUser().getUserName());
+		File d = new File(dir + rreq.getWebsite().getHandle());
 		ArrayList xmlFiles = new ArrayList();
 		if (d.mkdirs() || d.exists())
 		{

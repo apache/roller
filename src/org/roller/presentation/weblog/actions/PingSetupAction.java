@@ -8,46 +8,49 @@
 
 package org.roller.presentation.weblog.actions;
 
-import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMessages;
-import org.apache.struts.action.ActionMessage;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.xmlrpc.XmlRpcException;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.pings.WeblogUpdatePinger;
-import org.roller.config.PingConfig;
-import org.roller.model.PingTargetManager;
-import org.roller.model.AutoPingManager;
-import org.roller.pojos.PingTargetData;
-import org.roller.pojos.WebsiteData;
-import org.roller.pojos.AutoPingData;
-import org.roller.RollerException;
-import org.roller.config.PingConfig;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Collections;
-import java.net.UnknownHostException;
-import java.net.SocketException;
-import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.actions.DispatchAction;
+import org.apache.xmlrpc.XmlRpcException;
+import org.roller.RollerException;
+import org.roller.config.PingConfig;
+import org.roller.model.AutoPingManager;
+import org.roller.model.PingTargetManager;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.AutoPingData;
+import org.roller.pojos.PingTargetData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.pings.WeblogUpdatePinger;
 
 
 /**
  * Actions for setting up automatic ping configuration for a weblog.
  *
  * @struts.action name="pingSetupForm" path="/editor/pingSetup" scope="request" parameter="method"
- * @struts.action-forward name="pingSetup.page" path="/weblog/Pings.jsp"
- * @struts.action-forward name="pingResult.page" path="/weblog/PingResult.jsp"
+ * @struts.action-forward name="pingSetup.page" path=".Pings"
+ * @struts.action-forward name="pingResult.page" path=".PingResult"
  */
 public class PingSetupAction extends DispatchAction
 {
@@ -55,7 +58,10 @@ public class PingSetupAction extends DispatchAction
         LogFactory.getFactory().getInstance(PingSetupAction.class);
 
     private static final String PING_SETUP_PAGE = "pingSetup.page";
-    private static final String PING_RESULT_PAGE = "pingResult.page";
+    
+    // Changing this to take your back to the pings setup page instead of
+    // ping result page, no need for extra page.
+    private static final String PING_RESULT_PAGE = "pingSetup.page"; // "pingResult.page";
 
     /* (non-Javadoc)
      * @see org.apache.struts.actions.DispatchAction#unspecified(
@@ -82,15 +88,19 @@ public class PingSetupAction extends DispatchAction
     {
         ActionForward forward = mapping.findForward(PING_SETUP_PAGE);
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         WebsiteData website = rreq.getWebsite();
         try
         {
-            if (!isAuthorized(rreq))
+            if (!isAuthorized(rreq, website))
             {
                 return mapping.findForward("access-denied");
             }
 
+            BasePageModel pageModel = 
+                    new BasePageModel("pings.title", req, res, mapping);
+            req.setAttribute("model",pageModel);
+        
             List commonPingTargets = pingTargetMgr.getCommonPingTargets();
             req.setAttribute("commonPingTargets", commonPingTargets);
 
@@ -121,7 +131,7 @@ public class PingSetupAction extends DispatchAction
     private Map buildIsEnabledMap(RollerRequest rreq, List commonPingTargets, List customPingTargets)
         throws RollerException
     {
-        AutoPingManager autoPingMgr = rreq.getRoller().getAutopingManager();
+        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
         WebsiteData website = rreq.getWebsite();
 
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
@@ -163,17 +173,18 @@ public class PingSetupAction extends DispatchAction
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
-        AutoPingManager autoPingMgr = rreq.getRoller().getAutopingManager();
+        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        PingTargetData pingTarget = select(rreq);
         try
         {
-            if (!isAuthorized(rreq))
+            if (!isAuthorized(rreq, rreq.getWebsite()))
             {
                 return mapping.findForward("access-denied");
             }
-            PingTargetData pingTarget = select(rreq);
-            AutoPingData autoPing = autoPingMgr.createAutoPing(pingTarget, rreq.getWebsite());
+            AutoPingData autoPing = autoPingMgr.createAutoPing(pingTarget, 
+                    rreq.getWebsite());
             autoPingMgr.storeAutoPing(autoPing);
-            rreq.getRoller().commit();
+            RollerFactory.getRoller().commit();
 
             return view(mapping, form, req, res);
         }
@@ -192,17 +203,17 @@ public class PingSetupAction extends DispatchAction
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
-        AutoPingManager autoPingMgr = rreq.getRoller().getAutopingManager();
+        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        PingTargetData pingTarget = select(rreq);
         try
         {
-            if (!isAuthorized(rreq))
+            if (!isAuthorized(rreq, rreq.getWebsite()))
             {
                 return mapping.findForward("access-denied");
             }
-            PingTargetData pingTarget = select(rreq);
             autoPingMgr.removeAutoPing(pingTarget, rreq.getWebsite());
-            rreq.getRoller().commit();
-
+            RollerFactory.getRoller().commit();
+        
             return view(mapping, form, req, res);
         }
         catch (Exception e)
@@ -227,7 +238,7 @@ public class PingSetupAction extends DispatchAction
             WebsiteData website = rreq.getWebsite();
             try
             {
-                if (!isAuthorized(rreq))
+                if (!isAuthorized(rreq, website))
                 {
                     return mapping.findForward("access-denied");
                 }
@@ -240,13 +251,24 @@ public class PingSetupAction extends DispatchAction
                 }
                 else
                 {
-                    WeblogUpdatePinger.PingResult pingResult = WeblogUpdatePinger.sendPing(absoluteUrl, pingTarget, website);
+                    WeblogUpdatePinger.PingResult pingResult = 
+                        WeblogUpdatePinger.sendPing(absoluteUrl, pingTarget, website);
                     if (pingResult.isError())
                     {
                         if (mLogger.isDebugEnabled()) mLogger.debug("Ping Result: " + pingResult);
                         ActionMessages errors = new ActionMessages();
-                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("ping.transmittedButErrorReturned"));
-                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(pingResult.getMessage()));
+                        if (pingResult.getMessage() != null && pingResult.getMessage().trim().length() > 0)
+                        {
+                            errors.add(ActionMessages.GLOBAL_MESSAGE, 
+                                new ActionMessage("ping.transmittedButError"));
+                            errors.add(ActionMessages.GLOBAL_MESSAGE, 
+                                new ActionMessage(pingResult.getMessage()));
+                        }
+                        else
+                        {
+                            errors.add(ActionMessages.GLOBAL_MESSAGE, 
+                                new ActionMessage("ping.transmissionFailed"));
+                        }
                         saveErrors(req, errors);
                     }
                     else
@@ -273,7 +295,7 @@ public class PingSetupAction extends DispatchAction
                 addSpecificMessages(ex, errors);
                 saveErrors(req, errors);
             }
-            return mapping.findForward(PING_RESULT_PAGE);
+            return view(mapping, form , req, res);
         }
         catch (Exception ex)
         {
@@ -287,7 +309,7 @@ public class PingSetupAction extends DispatchAction
     private PingTargetData select(RollerRequest rreq) throws RollerException
     {
         String pingTargetId = rreq.getRequest().getParameter(RollerRequest.PINGTARGETID_KEY);
-        PingTargetManager pingTargetMgr = rreq.getRoller().getPingTargetManager();
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         if (pingTargetId == null || pingTargetId.length() == 0)
         {
             throw new RollerException("Missing ping target id: " + pingTargetId);
@@ -313,8 +335,11 @@ public class PingSetupAction extends DispatchAction
         }
     }
 
-    private boolean isAuthorized(RollerRequest rreq) throws RollerException
+    private boolean isAuthorized(RollerRequest rreq, WebsiteData website) 
+        throws RollerException
     {
-        return rreq.isUserAuthorizedToEdit() && !PingConfig.getDisablePingUsage();
+        RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
+        return rses.isUserAuthorizedToAdmin(website) 
+            && !PingConfig.getDisablePingUsage();
     }
 }

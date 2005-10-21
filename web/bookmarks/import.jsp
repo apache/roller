@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <h1><fmt:message key="bookmarksImport.title" /></h1>
 <p><fmt:message key="bookmarksImport.prompt" /></p>
@@ -20,4 +20,4 @@ a name reference and IE seems to only focus on file inputs via elements[0]?
 // -->
 </script>
 
-<%@ include file="/theme/footer.jsp" %>
+

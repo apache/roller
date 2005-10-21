@@ -32,7 +32,7 @@ function postWeblogEntry(publish)
             -->
         </script>
 
-       <div style="float:right">
+       <table style="width:100%"><tr><td align="right">
           <script type="text/javascript">
             <!--
             function changeSize(e,num) {
@@ -46,5 +46,5 @@ function postWeblogEntry(publish)
           <!-- Add buttons to make this textarea taller or shorter -->
           <input type="button" name="taller" value=" &darr; " onclick="changeSize(this,5)" />
           <input type="button" name="shorter" value=" &uarr; " onclick="changeSize(this,-5)" />
-       </div>
+       </td></tr></table>
 

@@ -3,26 +3,32 @@
  */
 package org.roller.business.hibernate;
 
-import net.sf.hibernate.Criteria;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.expression.Expression;
-import net.sf.hibernate.expression.EqExpression;
-import net.sf.hibernate.expression.Order;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.business.PersistenceStrategy;
 import org.roller.business.UserManagerImpl;
+import org.roller.model.AutoPingManager;
 import org.roller.model.BookmarkManager;
+import org.roller.model.PingQueueManager;
+import org.roller.model.PingTargetManager;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
-import org.roller.model.AutoPingManager;
-import org.roller.model.PingTargetManager;
-import org.roller.model.PingQueueManager;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WeblogTemplate;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RefererData;
 import org.roller.pojos.RoleData;
 import org.roller.pojos.UserCookieData;
@@ -32,11 +38,6 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Hibernate queries.
@@ -58,11 +59,65 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         mLogger.debug("Instantiating User Manager");
     }
     
+    /**
+     * Get websites of a user
+     */
+    public List getWebsites(UserData user, Boolean enabled)  throws RollerException
+    {
+        try
+        {
+            Session session = ((HibernateStrategy)mStrategy).getSession();
+            Criteria criteria = session.createCriteria(WebsiteData.class);
+            if (user != null) 
+            {
+                criteria.createAlias("permissions","permissions");
+                criteria.add(Expression.eq("permissions.user", user));
+                criteria.add(Expression.eq("permissions.pending", Boolean.FALSE));
+            }
+            if (enabled != null)
+            {
+                criteria.add(Expression.eq("enabled", enabled));
+            }
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+    
+    /**
+     * Get users of a website
+     */
+    public List getUsers(WebsiteData website, Boolean enabled) 
+        throws RollerException
+    {
+        try
+        {
+            Session session = ((HibernateStrategy)mStrategy).getSession();
+            Criteria criteria = session.createCriteria(UserData.class);
+            if (website != null) 
+            {
+                criteria.createAlias("permissions","permissions");
+                criteria.add(Expression.eq("permissions.website", website));
+            }
+            if (enabled != null)
+            {
+                criteria.add(Expression.eq("enabled", enabled));
+            }
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+    
     /** 
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
     public WeblogTemplate getPageByLink(WebsiteData website, String pagelink)
-                    throws RollerException
+        throws RollerException
     {
         if (website == null)
             throw new RollerException("userName is null");
@@ -87,36 +142,32 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     }
     
     /** 
-     * Use Hibernate directly because Roller's Query API does too much allocation.
+     * Return website specified by handle.
      */
-    public WebsiteData getWebsite(String userName, boolean enabledOnly)
+    public WebsiteData getWebsiteByHandle(String handle, Boolean enabled)
                     throws RollerException
     {
-        if (userName==null )
-            throw new RollerException("userName is null");
+        if (handle==null )
+            throw new RollerException("Handle cannot be null");
 
         try
         {
             Session session = ((HibernateStrategy)mStrategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
-            criteria.createAlias("user","u");
-    
-            if (enabledOnly) 
+            if (enabled != null) 
             {
                 criteria.add(
                    Expression.conjunction()
-                       .add(new EqExpression("u.userName",userName,true))
-                       .add(Expression.eq("isEnabled",Boolean.TRUE)));
+                       .add(Expression.eq("handle", handle))
+                       .add(Expression.eq("enabled", enabled)));
             }
             else
             {
                 criteria.add(
                     Expression.conjunction()
-                       .add(new EqExpression("u.userName",userName,true)));
-            }
-        
-            List list = criteria.list();
-            return list.size()!=0 ? (WebsiteData)list.get(0) : null;
+                        .add(Expression.eq("handle", handle)));
+            }        
+            return (WebsiteData)criteria.uniqueResult();
         }
         catch (HibernateException e)
         {
@@ -124,6 +175,38 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         }
     }
     
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -     
+    public UserData getUser(String userName, Boolean enabled) 
+        throws RollerException
+    {
+        if (userName==null )
+            throw new RollerException("userName cannot be null");
+
+        try
+        {
+            Session session = ((HibernateStrategy)mStrategy).getSession();
+            Criteria criteria = session.createCriteria(UserData.class);
+            if (enabled != null) 
+            {
+                criteria.add(
+                   Expression.conjunction()
+                       .add(Expression.eq("userName", userName))
+                       .add(Expression.eq("enabled", enabled)));
+            }
+            else
+            {
+                criteria.add(
+                    Expression.conjunction()
+                        .add(Expression.eq("userName", userName)));
+            }        
+            return (UserData)criteria.uniqueResult();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+
     /**
      * @see org.roller.model.UserManager#removeLoginCookies(java.lang.String)
      */
@@ -275,59 +358,17 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         }
     }
 
-    public List getUsers(boolean enabledOnly) throws RollerException
+    public List getUsers(Boolean enabled) throws RollerException
     {
         Session session = ((HibernateStrategy)mStrategy).getSession();
-        if (enabledOnly)
+        Criteria criteria = session.createCriteria(UserData.class);            
+        if (enabled != null)
         {
-            Criteria criteria = session.createCriteria(WebsiteData.class);            
-            criteria.add(Expression.eq("isEnabled", Boolean.TRUE));
-            try
-            {
-                List users = new ArrayList();
-                Iterator websites = criteria.list().iterator();
-                while (websites.hasNext())
-                {
-                    WebsiteData website = (WebsiteData) websites.next();
-                    users.add(website.getUser());
-                }
-                return users;
-            }
-            catch (HibernateException e)
-            {
-                throw new RollerException(e);
-            }
+            criteria.add(Expression.eq("enabled", enabled));
         }
-        else
-        {
-            Criteria criteria = session.createCriteria(UserData.class);            
-            try
-            {
-                return criteria.list();
-            }
-            catch (HibernateException e)
-            {
-                throw new RollerException(e);
-            }
-        }
-    }
-
-    /** 
-     * @see org.roller.model.UserManager#removeUserWebsites(org.roller.pojos.UserData)
-     */
-    public void removeUserWebsites(UserData user) throws RollerException
-    {
-        Session session = ((HibernateStrategy)mStrategy).getSession();
-        Criteria criteria = session.createCriteria(WebsiteData.class);
-        criteria.add(Expression.eq("user", user));
         try
         {
-            List websites = criteria.list();
-            for (Iterator iter = websites.iterator(); iter.hasNext();) 
-            {
-                WebsiteData website = (WebsiteData)iter.next();
-                website.remove();
-            }            
+            return criteria.list();
         }
         catch (HibernateException e)
         {
@@ -348,24 +389,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             //UserManager umgr = RollerFactory.getRoller().getUserManager();
             BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            //PersistenceStrategy pstrat = RollerFactory.getRoller().getPersistenceStrategy();
-            //QueryFactory factory = pstrat.getQueryFactory();
             
-            // remove folders (takes bookmarks with it)
-            FolderData rootFolder = bmgr.getRootFolder(website);
-            if (null != rootFolder)
-            { 
-                rootFolder.remove();
-                // Still cannot get all Bookmarks cleared!                
-//                Iterator allFolders = bmgr.getAllFolders(website).iterator();
-//                while (allFolders.hasNext()) 
-//                {
-//                    FolderData aFolder = (FolderData)allFolders.next();
-//                    bmgr.deleteFolderContents(aFolder);
-//                    aFolder.remove();
-//                }
-            }
-                        
             // remove entries
             Criteria entryQuery = session.createCriteria(WeblogEntryData.class);
             entryQuery.add(Expression.eq("website", website));
@@ -373,9 +397,25 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             for (Iterator iter = entries.iterator(); iter.hasNext();) 
             {
                 WeblogEntryData entry = (WeblogEntryData) iter.next();
+                System.out.println("Removing entry: " + entry.getId());
                 entry.remove();
             }
             
+            // remove folders (takes bookmarks with it)
+            FolderData rootFolder = bmgr.getRootFolder(website);
+            if (null != rootFolder)
+            { 
+                rootFolder.remove();
+                // Still cannot get all Bookmarks cleared!                
+                Iterator allFolders = bmgr.getAllFolders(website).iterator();
+                while (allFolders.hasNext()) 
+                {
+                    FolderData aFolder = (FolderData)allFolders.next();
+                    bmgr.deleteFolderContents(aFolder);
+                    aFolder.remove();
+                }
+            }
+                        
             // remove associated pages
             Criteria pageQuery = session.createCriteria(WeblogTemplate.class);
             pageQuery.add(Expression.eq("website", website));
@@ -401,11 +441,11 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             if (null != rootCat)
             {
                 rootCat.remove();
-                Iterator it = wmgr.getWeblogCategories(website).iterator();
-                while (it.hasNext()) 
-                {
-                     ((WeblogCategoryData)it.next()).remove();
-                }
+//                Iterator it = wmgr.getWeblogCategories(website).iterator();
+//                while (it.hasNext()) 
+//                {
+//                     ((WeblogCategoryData)it.next()).remove();
+//                }
             }
 
             // Remove the website's ping queue entries
@@ -428,5 +468,141 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         }
     }
 
+    /**
+     * Return permissions for specified user in website
+     */
+    public PermissionsData getPermissions(
+            WebsiteData website, UserData user) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("website", website));
+        criteria.add(Expression.eq("user", user));
+        try
+        {
+            List list = criteria.list();
+            return list.size()!=0 ? (PermissionsData)list.get(0) : null;
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+    
+    /** 
+     * Get pending permissions for user
+     */
+    public List getPendingPermissions(UserData user) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("user", user));
+        criteria.add(Expression.eq("pending", Boolean.TRUE));
+        try
+        {
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+    
+    /** 
+     * Get pending permissions for website
+     */
+    public List getPendingPermissions(WebsiteData website) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("website", website));
+        criteria.add(Expression.eq("pending", Boolean.TRUE));
+        try
+        {
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+
+    /**
+     * Get all permissions of a website (pendings not including)
+     */
+    public List getAllPermissions(WebsiteData website) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("website", website));
+        criteria.add(Expression.eq("pending", Boolean.FALSE));
+        try
+        {
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+
+    /**
+     * Get all permissions of a user.
+     */
+    public List getAllPermissions(UserData user) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(PermissionsData.class);            
+        criteria.add(Expression.eq("user", user));
+        criteria.add(Expression.eq("pending", Boolean.FALSE));
+        try
+        {
+            return criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+    }
+
+    public List getUsersStartingWith(String startsWith, 
+            int offset, int length, Boolean enabled) throws RollerException
+    {
+        Session session = ((HibernateStrategy)mStrategy).getSession();
+        Criteria criteria = session.createCriteria(UserData.class);  
+        List rawresults = new ArrayList();
+        List results = new ArrayList();
+        if (enabled != null)
+        {
+            criteria.add(Expression.eq("enabled", enabled));
+        }
+        if (startsWith != null) 
+        {
+            criteria.add(Expression.disjunction()
+                .add(Expression.like("userName", startsWith, MatchMode.START))
+                .add(Expression.like("emailAddress", startsWith, MatchMode.START)));
+        }
+        try
+        {
+            rawresults = criteria.list();
+        }
+        catch (HibernateException e)
+        {
+            throw new RollerException(e);
+        }
+        int pos = 0;
+        int count = 0;
+        Iterator iter = rawresults.iterator();
+        while (iter.hasNext() && count < length)
+        {
+            UserData user = (UserData)iter.next();
+            if (pos++ >= offset) 
+            {
+                results.add(user);
+                count++;
+            }
+        }
+        return results;
+    }
 }
 

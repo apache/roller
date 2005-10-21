@@ -13,11 +13,11 @@
 <property name="build.velocidoc"     value="${ro.build}/velocidoc"/>
 <property name="build.jspc"          value="${ro.build}/jspc"/>
 <property name="build.reports"       value="${ro.build}/reports"/>
-<property name="tools.struts"    value="${ro.tools}/struts-1.2.4" />
-<property name="tools.hibernate" value="${ro.tools}/hibernate-2.1" />
-<property name="tools.jstl"      value="${ro.tools}/standard-1.0.3" />
-<property name="tools.xdoclet"   value="${ro.tools}/buildtime/xdoclet-1.2" />
-<property name="tools.tomcat"    value="${ro.tools}/buildtime/tomcat-4.1.24" />
+<property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
+<property name="tools.hibernate"     value="${ro.tools}/hibernate-3.0" />
+<property name="tools.jstl"          value="${ro.tools}/standard-1.0.3" />
+<property name="tools.xdoclet"    value="${ro.tools}/buildtime/xdoclet-1.2" />
+<property name="tools.tomcat"     value="${ro.tools}/buildtime/tomcat-5.0.28" />
 
 <!--
 If you would like Ant to copy all the jar files that Resin needs
@@ -40,31 +40,26 @@ in the "base.path" definition.
 <!-- **************************************************************** -->
 
 <fileset id="base.jars" dir="${ro.tools}/lib">
-    <include name="commons-cache.jar" />
-    <include name="concurrent-1.3.2.jar"/>
-    <include name="log4j-1.2.4.jar"/>
-    <include name="activation.jar"/>
-    <include name="mail.jar"/>
-    <include name="jazzy-core.jar" />
     <include name="commons-betwixt-1.0-beta-1.jar" />
-    <include name="rome-0.6.jar"/>
-    <include name="rome-fetcher-0.6.jar"/>
-    <include name="commons-httpclient-2.0.2.jar"/>
-    <include name="lucene-1.4.3.jar"/>
+    <include name="commons-cache.jar" />
     <include name="commons-codec-1.1.jar" />
+    <include name="concurrent-1.3.2.jar"/>
+    <include name="jazzy-core.jar" />
+    <include name="jdom.jar"/>
+    <include name="lucene-1.4.3.jar"/>
+    <include name="log4j-1.2.4.jar"/>
+    <include name="rome-0.7.jar"/>
+    <include name="rome-fetcher-0.7.jar"/>
     <include name="velocity-1.4.jar"/>
     <include name="velocity-dep-1.4.jar"/>
     <include name="velocity-tools-1.1.jar"/>
+    <include name="mail.jar"/>
+    <include name="activation.jar"/>        
 </fileset>
 
 <fileset id="presentation.jars" dir="${ro.tools}/lib">
     <include name="xmlrpc-1.2-b1.jar"/>
     <include name="taglibs-string.jar"/>
-</fileset>
-
-<fileset id="xml.jars" dir="${tools.hibernate}/lib">
-    <include name="jdom.jar"/>
-    <include name="dom4j-1.4.jar"/>
 </fileset>
 
 <fileset id="commons.jars" dir="${tools.struts}/lib">
@@ -77,25 +72,28 @@ in the "base.path" definition.
 
 <fileset id="servlet.jars" dir="${tools.tomcat}">
     <include name="servlet-api.jar"/>
+    <include name="jsp-api.jar"/>
+</fileset>
+
+<fileset id="mail.jars" dir="${ro.tools}/lib">
+    <include name="activation.jar"/>
+    <include name="mail.jar"/>
 </fileset>
 
 <fileset id="jstl.jars" dir="${ro.tools}/standard-1.0.3/lib">
     <include name="jstl.jar"/>
     <include name="standard.jar"/>
+    <include name="saxpath.jar"/>
     <include name="jaxen-full.jar"/>
 </fileset>
 
 <fileset id="hibernate.jar" dir="${tools.hibernate}">
-    <include name="hibernate2.jar"/>
+    <include name="hibernate3.jar"/>
 </fileset>
 
 <fileset id="hibernate.jars" dir="${tools.hibernate}/lib">
     <include name="*.jar"/>
 </fileset>
-
-<path id="xml.path">
-    <fileset refid="xml.jars" />
-</path>
 
 <!-- **************************************************************** -->
 <!-- Define path based on above filesets -->
@@ -103,8 +101,8 @@ in the "base.path" definition.
 
 <!-- Dependencies common to both presentation and business layers -->
 <path id="base.path">
-    <path refid="xml.path"/>
     <fileset refid="base.jars"/>
+    <fileset refid="mail.jars"/>
     <fileset refid="commons.jars"/>
 </path>
 
@@ -113,6 +111,7 @@ in the "base.path" definition.
     <fileset refid="presentation.jars"/>
     <fileset refid="struts.jars"/>
     <fileset refid="servlet.jars"/>
+    <fileset refid="mail.jars"/>
     <fileset refid="jstl.jars"/>
     <!--fileset refid="resin.jars" /-->
 </path>
@@ -157,14 +156,41 @@ in the "base.path" definition.
           <include name="*.jar"/>
        </fileset>
     </path>
+    <fileset refid="servlet.jars"/>
     <path location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
     <path location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
     <path location="${ro.tools}/buildtime/hsqldb.jar"/>
-    <path location="${ro.tools}/buildtime/tomcat-4.1.24/servlet-api.jar"/> 
-    <path location="${ro.tools}/buildtime/tomcat-4.1.24/jasper-runtime.jar"/> 
     <path location="${ro.tools}/lib/mm.mysql-2.0.14-bin.jar"/>
 </path>
 
+<path id="jasper.path">
+    <pathelement location="${java.home}/../lib/tools.jar"/> 
+    <fileset dir="${catalina.home}/bin"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/server/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/common/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+</path>
+<path id="jsp.compile.path">
+    <pathelement location="${java.home}/../lib/tools.jar"/> 
+    <fileset dir="${build.stage_web}/WEB-INF/lib"> 
+        <include name="*.jar"/> 
+    </fileset>     
+    <fileset dir="${catalina.home}/bin"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/server/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+    <fileset dir="${catalina.home}/common/lib"> 
+        <include name="*.jar"/> 
+    </fileset> 
+</path>
+   
 <path id="findbugs.path">
     <path refid="presentation.path"/>
     <path refid="business.path"/>

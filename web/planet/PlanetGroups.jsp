@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
 function cancelEditing()
@@ -15,13 +15,16 @@ function deleteGroup()
 </script>
 <c:if test="${!(model.unconfigured)}" >
 
-    <h2><fmt:message key="planetGroups.pageTitle" /></h2>
+    <p class="subtitle"><fmt:message key="planetGroups.subtitle" /></p>
+
+    <p>
     <c:if test="${empty planetSubscriptionForm.id}" >
-        <p><i><fmt:message key="planetGroups.prompt.add" /></i></p>
+        <fmt:message key="planetGroups.prompt.add" />
     </c:if>
     <c:if test="${!empty planetSubscriptionForm.id}" >
-        <p><i><fmt:message key="planetGroups.prompt.edit" /></i></p>
+        <fmt:message key="planetGroups.prompt.edit" />
     </c:if>
+    </p>
     
     <html:form action="/admin/planetGroups" method="post">
         <html:hidden property="method" value="saveGroup" />
@@ -122,6 +125,6 @@ function deleteGroup()
     <fmt:message key="planetGroups.unconfigured" />
 </c:if>
 
-<%@ include file="/theme/footer.jsp" %>
+
 
 

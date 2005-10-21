@@ -1,15 +1,14 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
 <h2><fmt:message key="welcome.title" /></h2>
 
 <p><fmt:message key="welcome.accountCreated" /></p>
 
-<p><b><fmt:message key="welcome.addressIs" />:</b> <c:out value="${weblogURL}"/></p>
-
-<p><b><fmt:message key="welcome.rssAddressIs" />:</b> <c:out value="${rssURL}"/></p>
-
-<p><a href='<c:out value="${contextURL}"/>/editor/weblog.do?method=create&amp;rmik=New%20Entry'><fmt:message key="welcome.clickHere" /></a> 
+<p><a href='<c:out value="${contextURL}"/>/login-redirect.jsp'><fmt:message key="welcome.clickHere" /></a> 
 <fmt:message key="welcome.toLoginAndPost" /></p>
+<br />
+<br />
+<br />
 
-<%@ include file="/theme/footer.jsp" %>
+
 

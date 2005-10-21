@@ -3,26 +3,7 @@
  */
 package org.roller.presentation.weblog.actions;
 
-import com.swabunga.spell.event.SpellCheckEvent;
-
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.roller.RollerException;
-import org.roller.model.WeblogManager;
-import org.roller.pojos.UserData;
-import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.BasePageModel;
-import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.tags.calendar.CalendarModel;
-import org.roller.presentation.velocity.ContextLoader;
-import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
-import org.roller.presentation.weblog.tags.EditWeblogCalendarModel;
-import org.roller.util.StringUtils;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +11,26 @@ import java.util.ListIterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.roller.RollerException;
+import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
+import org.roller.pojos.UserData;
+import org.roller.pojos.WeblogEntryData;
+import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerContext;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.tags.calendar.CalendarModel;
+import org.roller.presentation.velocity.ContextLoader;
+import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
+import org.roller.presentation.weblog.tags.EditWeblogCalendarModel;
+import org.roller.util.StringUtils;
+
+import com.swabunga.spell.event.SpellCheckEvent;
 
 /**
  * All data needed to render the edit-weblog page.
@@ -81,7 +82,7 @@ public class WeblogEntryPageModel extends BasePageModel
             WeblogEntryFormEx form,
             PageMode mode) throws RollerException
     {
-        super(request, response, mapping);
+        super("dummy", request, response, mapping);
         this.rollerRequest = RollerRequest.getRollerRequest(request);  
         this.form = form;
         this.mode = mode;
@@ -90,15 +91,19 @@ public class WeblogEntryPageModel extends BasePageModel
         
         if (null != form.getId()) 
         {
-            WeblogManager wmgr = rollerRequest.getRoller().getWeblogManager();
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             comments = wmgr.getComments(form.getId(), false);
         }
     }
-
-    public String getBaseURL()
+    
+    public String getTitle() 
     {
-		return getRequest().getContextPath();
-	}
+        if (StringUtils.isEmpty(form.getId()))
+        {
+            return bundle.getString("weblogEdit.title.newEntry");
+        }
+        return bundle.getString("weblogEdit.title.editEntry");
+    }
 
     /**
      * Get recent weblog entries using request parameters to determine
@@ -108,13 +113,14 @@ public class WeblogEntryPageModel extends BasePageModel
      */
     public List getRecentPublishedEntries() throws RollerException
     {
-        return rollerRequest.getRoller().getWeblogManager()
+        RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
+        return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
-                rollerRequest.getWebsite(), // userName
+                getWeblogEntry().getWebsite(), // userName
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
-                WeblogManager.PUB_ONLY, // status
+                WeblogEntryData.PUBLISHED, // status
                 new Integer(20));  // maxEntries
     }
 
@@ -126,16 +132,36 @@ public class WeblogEntryPageModel extends BasePageModel
      */
     public List getRecentDraftEntries() throws RollerException
     {
-        return rollerRequest.getRoller().getWeblogManager()
+        RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
+        return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
-                rollerRequest.getWebsite(), 
+                getWeblogEntry().getWebsite(), 
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
-                WeblogManager.DRAFT_ONLY, // status
+                WeblogEntryData.DRAFT, // status
                 new Integer(20));  // maxEntries
     }
-
+    
+    /**
+     * Get recent weblog entries using request parameters to determine
+     * username, date, and category name parameters.
+     * @return List of WeblogEntryData objects.
+     * @throws RollerException
+     */
+    public List getRecentPendingEntries() throws RollerException
+    {
+        RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
+        return RollerFactory.getRoller().getWeblogManager()
+            .getWeblogEntries(
+                getWeblogEntry().getWebsite(), 
+                null,              // startDate
+                null,              // endDate
+                null,              // catName
+                WeblogEntryData.PENDING, // status
+                new Integer(20));  // maxEntries
+    }
+ 
     public List getHoursList()
     {
         List ret = new LinkedList();
@@ -170,7 +196,8 @@ public class WeblogEntryPageModel extends BasePageModel
     {
         // Select editor page selected by user (simple text editor,
         // DHTML editor, Ekit Java applet, etc.
-        String editorPage = rollerRequest.getWebsite().getEditorPage();
+        RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
+        String editorPage = weblogEntry.getWebsite().getEditorPage();
         if (StringUtils.isEmpty( editorPage ))
         {
             editorPage = "editor-text.jsp";
@@ -192,13 +219,15 @@ public class WeblogEntryPageModel extends BasePageModel
 
     public UserData getUser()
     {
-        return rollerRequest.getUser();
+        RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
+        return rollerSession.getAuthenticatedUser();
     }
 
     public List getCategories() throws Exception
     {
-        return rollerRequest.getRoller().getWeblogManager()
-            .getWeblogCategories(rollerRequest.getWebsite(), false);
+        RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
+        return RollerFactory.getRoller().getWeblogManager()
+            .getWeblogCategories(weblogEntry.getWebsite(), false);
     }
 
     public List getComments() throws Exception
@@ -217,10 +246,10 @@ public class WeblogEntryPageModel extends BasePageModel
         if (weblogEntry == null) 
         {
             weblogEntry = new WeblogEntryData();
-            weblogEntry.setWebsite(rollerRequest.getWebsite());
+            weblogEntry.setWebsite(getWebsite());
             form.copyTo(weblogEntry, 
                     getRequest().getLocale(), getRequest().getParameterMap());
-            weblogEntry.setWebsite(rollerRequest.getWebsite());
+            weblogEntry.setWebsite(weblogEntry.getWebsite());
         }
         return weblogEntry;
     }
@@ -326,4 +355,16 @@ public class WeblogEntryPageModel extends BasePageModel
     public void setWords(ArrayList words) {
         this.words = words;
     }
+
+    public boolean getUserAuthorized() throws RollerException
+    {
+        return getRollerSession().isUserAuthorized(getWeblogEntry().getWebsite());
+    }
+    
+    public boolean getUserAuthorizedToAuthor() throws RollerException
+    {
+        return getRollerSession().isUserAuthorizedToAuthor(getWeblogEntry().getWebsite());
+    }
+    
+    
 }

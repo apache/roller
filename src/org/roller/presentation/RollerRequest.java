@@ -38,16 +38,16 @@ import org.roller.util.Utilities;
  * getter methods.
  * <br/><br/> 
  * 
- * These forms of pathinfo get special support:
+ * These forms of pathinfo get special support (where 'handle' indicates website):
  * <br/><br/>
  * 
  * <pre>
- * [username] - get default page for user for today's date 
- * [username]/[date] - get default page for user for specified date 
- * [username]/[pagelink] - get specified page for today's date 
- * [username]/[pagelink]/[date] - get specified page for specified date
- * [username]/[pagelink]/[anchor] - get specified page & entry (by anchor)
- * [username]/[pagelink]/[date]/[anchor] - get specified page & entry (by anchor)
+ * [handle] - get default page for user for today's date 
+ * [handle]/[date] - get default page for user for specified date 
+ * [handle]/[pagelink] - get specified page for today's date 
+ * [handle]/[pagelink]/[date] - get specified page for specified date
+ * [handle]/[pagelink]/[anchor] - get specified page & entry (by anchor)
+ * [handle]/[pagelink]/[date]/[anchor] - get specified page & entry (by anchor)
  * </pre>
  *  
  * @author David M Johnson
@@ -71,33 +71,37 @@ public class RollerRequest implements ParsedRequest
     private WebsiteData        mWebsite;
     private WeblogEntryData    mWeblogEntry;
     private WeblogCategoryData mWeblogCategory;
-    private boolean           mIsDateSpecified = false;
+    private boolean            mIsDateSpecified = false;
         
     private static ThreadLocal mRollerRequestTLS = new ThreadLocal();
     
+    public static final String WEBLOG_KEY             = "weblog";
     public static final String ANCHOR_KEY             = "entry";
     public static final String ANCHOR_KEY_OLD         = "anchor";
     public static final String USERNAME_KEY           = "username";
-    public static final String WEBSITEID_KEY          = "websiteid";
-    public static final String FOLDERID_KEY           = "folderid";
-    public static final String PARENTID_KEY           = "parentid";
-    public static final String NEWSFEEDID_KEY         = "feedid";
-    public static final String PAGEID_KEY             = "pageid";
+
     public static final String PAGELINK_KEY           = "pagelink";
-    public static final String PINGTARGETID_KEY       = "pingtargetid";
     public static final String EXCERPTS_KEY           = "excerpts";
-    public static final String BOOKMARKID_KEY         = "bookmarkid";
-    public static final String REFERERID_KEY          = "refid";
-    public static final String WEBLOGENTRYID_KEY      = "entryid";
     public static final String WEBLOGENTRY_COUNT      = "count";
     public static final String WEBLOGCATEGORYNAME_KEY = "catname";
-    public static final String WEBLOGCATEGORYID_KEY   = "catid";
     public static final String WEBLOGENTRIES_KEY      = "entries";
     public static final String WEBLOGDAY_KEY          = "day";
-    public static final String WEBLOGCOMMENTID_KEY    = "catid";
+    
+    public static final String WEBLOGENTRYID_KEY      = "entryid";
+    
+    public static final String WEBLOGCATEGORYID_KEY   = "categoryId";
+    public static final String PINGTARGETID_KEY       = "pingtargetId";
+    public static final String REFERERID_KEY          = "refId";
+    public static final String WEBLOGCOMMENTID_KEY    = "commentId";
+    public static final String WEBSITEID_KEY          = "websiteId";
+    public static final String BOOKMARKID_KEY         = "bookmarkId";
+    public static final String FOLDERID_KEY           = "folderId";
+    public static final String PARENTID_KEY           = "parentId";
+    public static final String NEWSFEEDID_KEY         = "feedId";
+    public static final String PAGEID_KEY             = "pageId";
     public static final String LOGIN_COOKIE           = "sessionId";
     
-    public static final String OWNING_USER            = "OWNING_USER";
+    public static final String OWNING_WEBSITE         = "OWNING_WEBSITE";
     
     private static final String ROLLER_REQUEST        = "roller_request";
     
@@ -114,7 +118,6 @@ public class RollerRequest implements ParsedRequest
         init();
     }
     
-    //------------------------------------------------------------------------
     /** Convenience */
     public RollerRequest( ServletRequest req, ServletContext ctx ) 
         throws RollerException
@@ -124,7 +127,6 @@ public class RollerRequest implements ParsedRequest
         init();
     }
     
-    //------------------------------------------------------------------------
     public RollerRequest( PageContext pCtx) throws RollerException
     {
         mRequest = (HttpServletRequest) pCtx.getRequest();
@@ -133,7 +135,6 @@ public class RollerRequest implements ParsedRequest
         init();
     }
 
-    //------------------------------------------------------------------------
     private void init() throws RollerException
     {
         mRollerRequestTLS.set(this);
@@ -148,9 +149,9 @@ public class RollerRequest implements ParsedRequest
         String userName = auth.getAuthenticatedUserName(mRequest);
         if (userName != null)
         {
-            UserManager userMgr = getRoller().getUserManager();
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
             UserData currentUser = userMgr.getUser(userName);
-            getRoller().setUser(currentUser);
+            RollerFactory.getRoller().setUser(currentUser);
         }
         
         // path info may be null, (e.g. on JSP error page)
@@ -172,6 +173,17 @@ public class RollerRequest implements ParsedRequest
         parseRequestParams();
     }
     
+    public String toString()
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append("[");
+        sb.append(getRequestURL());
+        sb.append(", ");
+        sb.append(getRefererURL());
+        sb.append("]");
+        return sb.toString();
+    }
+
     //------------------------------------------------------------------------
     /** 
      * Bind persistence session to specific user.
@@ -195,15 +207,14 @@ public class RollerRequest implements ParsedRequest
             //   /username/pagelink/datestring
             //   /username/pagelink/anchor (specific entry)
             //   /username/pagelink/datestring/anchor (specific entry)
-            UserManager userMgr = getRoller().getUserManager();
-            mWebsite = userMgr.getWebsite(pathInfo[0]);
+            Roller roller = RollerFactory.getRoller();
+            UserManager userMgr = roller.getUserManager();
+            mWebsite = userMgr.getWebsiteByHandle(pathInfo[0]);
             if (mWebsite != null)
             {
                 if ( pathInfo.length == 1 )
                 {
                     // we have the /username form of URL
-                    mDate = getDate(true);
-                    mDateString = DateUtil.format8chars(mDate);
                     mPage = mWebsite.getDefaultPage();
                 }
                 else if ( pathInfo.length == 2 )
@@ -212,8 +223,6 @@ public class RollerRequest implements ParsedRequest
                     if ( mDate == null ) // pre-jdk1.4 --> || mDate.getYear() <= 70 )
                     {
                         // we have the /username/pagelink form of URL
-                        mDate = getDate(true);
-                        mDateString = DateUtil.format8chars(mDate);
                         mPageLink = pathInfo[1];
                         mPage = mWebsite.getPageByLink(pathInfo[1]);
                     }
@@ -236,11 +245,9 @@ public class RollerRequest implements ParsedRequest
                         // we have the /username/pagelink/anchor form of URL
                         try
                         {
-                            WeblogManager weblogMgr = getRoller().getWeblogManager();
+                            WeblogManager weblogMgr = roller.getWeblogManager();
                             mWeblogEntry = weblogMgr.getWeblogEntryByAnchor(
                                 mWebsite, pathInfo[2]);
-                            mDate = mWeblogEntry.getPubTime();
-                            mDateString = DateUtil.format8chars(mDate);
                         }
                         catch (Exception damn)
                         {
@@ -266,10 +273,15 @@ public class RollerRequest implements ParsedRequest
                     mIsDateSpecified = true;
 
                     // we have the /username/pagelink/date/anchor form of URL
-                    WeblogManager weblogMgr = getRoller().getWeblogManager();
+                    WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
                     mWeblogEntry = weblogMgr.getWeblogEntryByAnchor(
                                     mWebsite, pathInfo[3]);
                 }                
+            }
+            if (mDate == null && mWeblogEntry != null)
+            {
+                mDate = mWeblogEntry.getPubTime();
+                mDateString = DateUtil.format8chars(mDate);
             }
         }
         catch ( Exception ignored )
@@ -277,7 +289,7 @@ public class RollerRequest implements ParsedRequest
             mLogger.debug("Exception parsing pathInfo",ignored);
         }
         
-        if ( mWebsite==null || mDate==null || mPage==null )
+        if ( mWebsite==null || mPage==null )
         {            
             String msg = "Invalid pathInfo: "+StringUtils.join(pathInfo,"|");
             mLogger.info(msg);                       
@@ -294,7 +306,7 @@ public class RollerRequest implements ParsedRequest
             // No path info means that we need to parse request params
             
             // First, look for user in the request params
-            UserManager userMgr = getRoller().getUserManager();            
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();            
             String userName = mRequest.getParameter(USERNAME_KEY);
             if ( userName == null )
             {
@@ -302,23 +314,22 @@ public class RollerRequest implements ParsedRequest
                 userName = mRequest.getRemoteUser(); 
             }
             
-            if ( userName != null )
+            String handle = mRequest.getParameter(RollerRequest.WEBLOG_KEY);
+            String websiteid = mRequest.getParameter(RollerRequest.WEBSITEID_KEY);
+            if (handle != null && mWebsite == null) 
             {
-                mWebsite = userMgr.getWebsite(userName);
+                mWebsite = userMgr.getWebsiteByHandle(handle); 
+            }
+            else if (websiteid != null && mWebsite == null )
+            {
+                mWebsite = userMgr.retrieveWebsite(websiteid); 
             }
             
             // Look for page ID in request params
             String pageId = mRequest.getParameter(RollerRequest.PAGEID_KEY);                    
             if ( pageId != null )
             {
-                mPage = userMgr.retrievePage(pageId);
-                /*
-                // We can use page to find the user, if we don't have one yet
-                if ( mWebsite == null )
-                {
-                    mWebsite = mPage.getWebsite();
-                }
-                 */                    
+                mPage = userMgr.retrievePage(pageId);                 
             }
             else if (mWebsite != null) 
             {
@@ -446,99 +457,15 @@ public class RollerRequest implements ParsedRequest
     {
         return mContext;
     }
-
-
-    public Roller getRoller()
-    {
-        return RollerFactory.getRoller();
-    }
     
-    
-    //------------------------------------------------------------------------
-    /** Is mRequest's user the admin user? */
-    public boolean isAdminUser() throws RollerException
-    {
-        UserData user = getUser();
-        if (user != null && user.hasRole("admin")) 
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    //------------------------------------------------------------------------
-    /** Is mRequest's user authorized to edit the mRequested resource */
-    public boolean isUserAuthorizedToEdit() throws RollerException
-    {
-        // Make sure authenticated user is the owner of this item
-        // Session's principal's name must match user name in mRequest
-        
-        RollerContext rctx = RollerContext.getRollerContext(mContext); 
-        Authenticator auth = rctx.getAuthenticator();
-        
-        String userName = auth.getAuthenticatedUserName(mRequest);
-            
-        // TODO: A hack to be replaced by Object.canEdit()
-        UserData owningUser = null;
-        if (mRequest.getAttribute(OWNING_USER) != null)
-        {
-            owningUser = (UserData)mRequest.getAttribute(OWNING_USER);
-        }
-        else
-        {
-            owningUser = getUser(); 
-        }
-        
-        if (    userName != null 
-             && owningUser != null
-             && userName.equalsIgnoreCase( owningUser.getUserName() )
-             && auth.isAuthenticatedUserInRole(mRequest,"editor"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    //------------------------------------------------------------------------
-    /**
-     * Get user by name.
-     */
-    public UserData getUser( String userName ) throws Exception
-    {
-        return getRoller().getUserManager().getUser(userName);
-    }
-
-    //------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
     
     public boolean isDateSpecified()
     {
         return mIsDateSpecified;
     }
-            
-    //------------------------------------------------------------------------
-    
-    public int getWeblogEntryCount()
-    {
-        // Get count of entries to return, or 20 if null
-        int count = 20;
-        if ( mRequest.getParameter("count") != null )
-        {
-            count= Utilities.stringToInt(mRequest.getParameter("count"));
-            if ( count==0 || count>50 )
-            {
-                count = 20;
-            } 
-        } 
-        return count; 
-    }         
-            
-    //------------------------------------------------------------------------
+                
+    //--------------------------------------------------- Date specified by request
     
     /**
      * Gets the date specified by the request, or null.
@@ -549,7 +476,6 @@ public class RollerRequest implements ParsedRequest
         return getDate(false);
     }
     
-    //------------------------------------------------------------------------
     /**
      * Gets the date specified by the request
      * @param orToday If no date specified, then use today's date.
@@ -586,7 +512,6 @@ public class RollerRequest implements ParsedRequest
         return todayCal.getTime(); 
     }
 
-    //------------------------------------------------------------------------
     /**
      * Gets the YYYYMMDD date string specified by the request, or null.
      * @return String
@@ -596,7 +521,6 @@ public class RollerRequest implements ParsedRequest
         return getDateString(false);
     }
 
-    //------------------------------------------------------------------------
     /**
      * Gets the date specified by the request
      * @param orToday If no date specified, then use today's date.
@@ -644,6 +568,21 @@ public class RollerRequest implements ParsedRequest
         return mPageLink;
     }
 
+    public int getWeblogEntryCount()
+    {
+        // Get count of entries to return, or 20 if null
+        int count = 20;
+        if ( mRequest.getParameter("count") != null )
+        {
+            count= Utilities.stringToInt(mRequest.getParameter("count"));
+            if ( count==0 || count>50 )
+            {
+                count = 20;
+            } 
+        } 
+        return count; 
+    }         
+            
     //------------------------------------------------------------------------
     /**
      * Gets the BookmarkData specified by the request, or null.
@@ -658,8 +597,8 @@ public class RollerRequest implements ParsedRequest
             {
                 try
                 {
-                    mBookmark = 
-                        getRoller().getBookmarkManager().retrieveBookmark(id);
+                    mBookmark = RollerFactory.getRoller()
+                        .getBookmarkManager().retrieveBookmark(id);
                 }
                 catch (RollerException e)
                 {
@@ -685,7 +624,8 @@ public class RollerRequest implements ParsedRequest
                 try
                 {
                     mWeblogCategory = 
-                        getRoller().getWeblogManager().retrieveWeblogCategory(id);
+                        RollerFactory.getRoller()
+                            .getWeblogManager().retrieveWeblogCategory(id);
                 }
                 catch (RollerException e)
                 {
@@ -697,8 +637,9 @@ public class RollerRequest implements ParsedRequest
                 try
                 {
                     mWeblogCategory = 
-                        getRoller().getWeblogManager().getWeblogCategoryByPath(
-                            getWebsite(), null, id);
+                        RollerFactory.getRoller()
+                            .getWeblogManager().getWeblogCategoryByPath(
+                                    getWebsite(), null, id);
                 }
                 catch (RollerException e)
                 {
@@ -724,8 +665,8 @@ public class RollerRequest implements ParsedRequest
             {
                 try
                 {
-                    folder = 
-                        getRoller().getBookmarkManager().retrieveFolder(id);
+                    folder = RollerFactory.getRoller()
+                        .getBookmarkManager().retrieveFolder(id);
                 }
                 catch (RollerException e)
                 {
@@ -750,7 +691,8 @@ public class RollerRequest implements ParsedRequest
             {
                 try
                 {
-                    mPage = getRoller().getUserManager().retrievePage(id);
+                    mPage = RollerFactory.getRoller()
+                        .getUserManager().retrievePage(id);
                 }
                 catch (RollerException e)
                 {
@@ -789,20 +731,12 @@ public class RollerRequest implements ParsedRequest
     {
         return mRequest.getHeader("referer");
     }
-    
+     
     /**
-     * Gets the UserData specified by the request, or null.
-     * @return UserData
-     */
-    public UserData getUser()
-    {
-        if (mWebsite != null) return mWebsite.getUser();
-        return null;
-    }
-
-    /**
-     * Gets the WebsiteData specified by the request, or null.
-     * @return WeblogCategory
+     * Gets the WebsiteData specified in the path info of the request URI, this is 
+     * NOT the same thing as the "current website" (i.e. the one that the session's 
+     * authenticated user is currently editing).
+     * @return WebsiteData object specified by request URI.
      */
     public WebsiteData getWebsite()
     {
@@ -812,7 +746,7 @@ public class RollerRequest implements ParsedRequest
     {
         mWebsite = wd;
     }
-
+    
     /**
      * Gets the WeblogEntryData specified by the request, or null.
      * 
@@ -842,7 +776,7 @@ public class RollerRequest implements ParsedRequest
             {
                 if ( entryid != null )
                 {
-                    WeblogManager weblogMgr = getRoller().getWeblogManager();
+                    WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
                     mWeblogEntry = weblogMgr.retrieveWeblogEntry(entryid);                
                 
                     // We can use entry to find the website, if we don't have one
@@ -853,7 +787,8 @@ public class RollerRequest implements ParsedRequest
                 } 
                 else if ( mWebsite != null && anchor != null )
                 {
-                    WeblogManager weblogMgr = getRoller().getWeblogManager();
+                    WeblogManager weblogMgr = 
+                        RollerFactory.getRoller().getWeblogManager();
                     mWeblogEntry = weblogMgr.getWeblogEntryByAnchor(
                         mWebsite,anchor);
                 }                             
@@ -861,15 +796,19 @@ public class RollerRequest implements ParsedRequest
             catch (RollerException e)
             {
                 mLogger.error("EXCEPTION getting weblog entry",e);
-                mLogger.error("user=" + mWebsite.getUser());
                 mLogger.error("anchor=" + anchor);
                 mLogger.error("entryid=" + entryid);
+            }
+            if (mDate == null && mWeblogEntry != null)
+            {
+                mDate = mWeblogEntry.getPubTime();
+                mDateString = DateUtil.format8chars(mDate);
             }
         }           
         return mWeblogEntry;
     }
 
-    //------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------
 
     /** Get attribute from mRequest, and if that fails try session */
     private String getFromRequest( String key )
@@ -885,8 +824,6 @@ public class RollerRequest implements ParsedRequest
         }
         return ret;
     }
-
-    //------------------------------------------------------------------------
 
     private Date parseDate( String dateString )
     {
@@ -908,21 +845,6 @@ public class RollerRequest implements ParsedRequest
         return ret;
     }
     
-    //------------------------------------------------------------------------
-
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append("[");
-        sb.append(getRequestURL());
-        sb.append(", ");
-        sb.append(getRefererURL());
-        sb.append("]");
-        return sb.toString();
-    }
-
-    //------------------------------------------------------------------------
-
     /** 
      * @see org.roller.pojos.ParsedRequest#isLinkbackEnabled()
      */
@@ -930,5 +852,6 @@ public class RollerRequest implements ParsedRequest
     {
         return RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
     }
+
 }
 

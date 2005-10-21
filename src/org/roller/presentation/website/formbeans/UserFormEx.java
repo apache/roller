@@ -16,9 +16,6 @@ import java.util.Locale;
  */ 
 public class UserFormEx extends UserForm
 {
-	private String mTheme = null;
-    private String mLocale = null;
-    private String mTimezone = null;
     private String mPasswordText = null;
     private String mPasswordConfirm = null;
     private boolean adminCreated = false;
@@ -31,35 +28,6 @@ public class UserFormEx extends UserForm
 	public UserFormEx( UserData userData, java.util.Locale locale ) throws RollerException
 	{
 		super(userData, locale);
-	}
-
-	public String getTheme()
-	{
-		return mTheme; 
-	}
-
-	public void setTheme( String theme )
-	{
-		mTheme = theme;
-	}
-	public String getLocale() 
-	{
-		return mLocale;
-	}
-
-	public void setLocale(String locale) 
-	{
-		mLocale = locale;
-	}
-
-	public String getTimezone() 
-	{
-		return mTimezone;
-	}
-
-	public void setTimezone(String timezone) 
-	{
-		mTimezone = timezone;
 	}
     
     /**

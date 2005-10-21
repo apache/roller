@@ -1,10 +1,11 @@
-<%@ 
-page import="org.roller.presentation.MainPageAction" %><%@ 
-page import="java.util.Locale" %><%@ 
-include file="/taglibs.jsp" %><%@ 
-include file="/theme/header.jsp" %>
-<table>
-<tr><%
+<%@ page import="org.roller.presentation.MainPageAction" %>
+<%@ page import="java.util.Locale" %>
+<%@ include file="/taglibs.jsp" %>
+<% 
+boolean planetEnabled = 
+    RollerConfig.getBooleanProperty("planet.aggregator.enabled");
+request.setAttribute("planetEnabled", new Boolean(planetEnabled));
+
 request.setAttribute("pinnedPosts",
 	((MainPageAction.MainPageData)request.getAttribute("data")).getWeblogEntriesPinnedToMain(5));
 request.setAttribute("recentPosts",
@@ -12,17 +13,17 @@ request.setAttribute("recentPosts",
 request.setAttribute("popularWebsites",
 	((MainPageAction.MainPageData)request.getAttribute("data")).getPopularWebsites(65));
 %>
-<td width="70%" valign="top">
 
-    <div class="bannerBox">
-    <%@ include file="local-banner.jspf" %>
-    </div>
-
-  <c:if test="${!empty pinnedPosts}">
-
+<c:if test="${!planetEnabled}">
     <div class="entryTitleBox">
-       <fmt:message key="mainPage.pinnedEntries" />
+       <fmt:message key="mainPage.recentEntries" />
     </div>
+</c:if>
+
+<div class="entriesBox">
+<div class="entriesBoxInner">
+
+<c:if test="${!empty pinnedPosts}">
 
     <c:forEach var="post" items="${pinnedPosts}">
         <div class="entryBoxPinned">
@@ -31,119 +32,76 @@ request.setAttribute("popularWebsites",
                 <str:truncateNicely upper="90" >
                    <c:out value="${post.displayTitle}" />
                 </str:truncateNicely></a>
-            </a><br />
+            </a>
+            <br /> 
 
             <span class="entryDetails">
 
-                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.user.userName}" />' class="entryDetails">
+                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.handle}" />' class="entryDetails">
+                
                 <str:truncateNicely upper="50" >
                    <c:out value="${post.website.name}" />
                 </str:truncateNicely></a> |
-                <c:out value="${post.category.path}" /> |
-                <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" />
+                <c:out value="${post.category.name}" /> |
+                <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" /> |
+                <fmt:message key="mainPage.postedBy" />&nbsp;
+                <c:out value="${post.creator.userName}" />
                 <c:if test="${!empty post.link}">
                    | <a href='<c:out value="${post.link}" />' class="entryDetails"><fmt:message key="mainPage.link" /></a>
                 </c:if>
                 <br />
 
             </span>
-
-            <roller:ApplyPlugins name="post" scope="page" maxLength="250" skipFlag="true" />
-
-         </div>
-    </c:forEach>
-    <br />
-  </c:if>
-
-    <div class="entryTitleBox">
-       <a href='<c:url value="/rss"/>' title='<fmt:message key="mainPage.rss.tip" />'>
-          <img src='<c:url value="/images/rssbadge.gif"/>' align="right"  border="0"
-             alt='<fmt:message key="mainPage.rss.tip" />' /></a>
-       <fmt:message key="mainPage.recentEntries" />
-    </div>
-
-    <c:forEach var="post" items="${recentPosts}">
-        <div class="entryBox">
-
-            <a href='<c:out value="${baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
-                <str:truncateNicely upper="90" >
-                   <c:out value="${post.displayTitle}" />
-                </str:truncateNicely></a>
-            </a><br />
-
-            <span class="entryDetails">
-
-                <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.user.userName}" />' class="entryDetails">
-                <str:truncateNicely upper="50" >
-                   <c:out value="${post.website.name}" />
-                </str:truncateNicely></a> |
-                <c:out value="${post.category.path}" /> |
-                <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" />
-                <c:if test="${!empty post.link}">
-                   | <a href='<c:out value="${post.link}" />' class="entryDetails"><fmt:message key="mainPage.link" /></a>
-                </c:if>
-                <br />
-
-            </span>
-
-            <roller:ApplyPlugins name="post" scope="page" stripHtml="true" maxLength="60" skipFlag="true" />
+            <roller:ApplyPlugins name="post" scope="page" skipFlag="false" />
 
          </div>
     </c:forEach>
+</c:if>
 
-</td>
-<td width="30%" valign="top">
-
-    <div class="entryTitleBox"><fmt:message key="mainPage.searchWeblogs" /></div>
-
+<c:forEach var="post" items="${recentPosts}">
+    <c:if test="${!post.pinnedToMain}">
     <div class="entryBox">
-        <form id="searchForm" method="get"
-            action="<c:out value="${baseURL}" />/search"
-            style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
-            <input type="text" id="q" name="q" size="20"
-                maxlength="255" value="<c:out value="${param.q}" />" />
-            <input type="submit" value="<fmt:message key="mainPage.searchButton" />" />
-        </form>
-        <script type="text/javascript">
-            function validateSearch(form) {
-                if (form.q.value == "") {
-                    alert("Please enter a search term to continue.");
-                    form.q.focus();
-                    return false;
-                }
-                return true;
-            }
-    </script>
+
+        <a href='<c:out value="${baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
+            <str:truncateNicely upper="90" >
+               <c:out value="${post.displayTitle}" />
+            </str:truncateNicely></a>
+        </a><br />
+
+        <span class="entryDetails">
+            <a href='<c:out value="${baseURL}" />/page/<c:out value="${post.website.handle}" />'>
+            <str:truncateNicely upper="50" >
+               <c:out value="${post.website.name}" />
+            </str:truncateNicely></a> |
+            <c:out value="${post.category.name}" /> |
+            <fmt:formatDate value="${post.pubTime}" type="both" dateStyle="medium" timeStyle="medium" /> |
+            <fmt:message key="mainPage.postedBy" />
+            <c:out value="${post.creator.userName}" />
+            <c:if test="${!empty post.link}">
+               | <a href='<c:out value="${post.link}" />' class="entryDetails"><fmt:message key="mainPage.link" /></a>
+            </c:if>
+            <br />
+        </span>
+        
+        <span class="entryDescription">
+        <roller:ApplyPlugins name="post" scope="page" stripHtml="true" maxLength="120" skipFlag="true" />
+        </span>
+        
     </div>
+    </c:if>
+</c:forEach>
 
-    <div class="entryTitleBox"><fmt:message key="mainPage.hotWeblogs" /></div>
-
-    <div class="entryBox">
-      <span class="hotBlogs">
-      <c:if test="${not empty popularWebsites}"> <%-- to prevent invalid XHTML --%>
-        <ul style="list-style-type:none; padding-left:2px; margin: 0px">
-        <c:forEach var="site" items="${popularWebsites}">
-           <li style="list-style-type:none; padding-left:2px; margin: 0px">
-               <a href='<c:out value="${baseURL}" />/page/<c:out value="${site.userName}" />'
-                  title='<c:out value="${site.userName}" />' >
-                  <str:truncateNicely lower="45" 
-				  	upper="45" ><c:out 
-					value="${site.websiteName}" /></str:truncateNicely></a>:
-               <c:out value="${site.hits}" /> <fmt:message key="mainPage.hits" />
-           </li>
-        </c:forEach>
-        </ul>
-      </c:if>
-      </span>
-    </div>
-
-</td>
-
-</tr>
-</table>
+</div> <!-- entriesBoxInner -->
+</div> <!-- entriesBox -->
 
 <br />
 
-<%@ include file="/theme/footer.jsp" %>
+<a href='<c:url value="/rss"/>' title='<fmt:message key="mainPage.rss.tip" />'>
+    <img src='<c:url value="/images/rssbadge.gif"/>' border="0"
+        alt='<fmt:message key="mainPage.rss.tip" />' />
+</a>
+<fmt:message key="mainPage.rss.instructions" />
+
+
 
 

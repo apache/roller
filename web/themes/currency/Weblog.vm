@@ -143,8 +143,7 @@
                     <tr>
                        <td class="links">
 
-                       #showBookmarks("Blogroll" true false)<br>
-                       #showBookmarks("News" true false)<br>
+                       #showBlogroll()<br>
                        #showBasicNavBar(true)<br>
                        #showEditorNavBar(true)<br>
 

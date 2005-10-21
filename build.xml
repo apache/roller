@@ -138,6 +138,20 @@ Key Targets:
         <hibernate validatexml="true" version="2.0"/>
     </hibernatedoclet>
 
+    <replace dir="${build.compile_beans}/org/roller/pojos"
+        token="Hibernate Mapping DTD 2.0//EN" 
+        value="Hibernate Mapping DTD 3.0//EN"/>
+    <replace dir="${build.compile_beans}/org/roller/pojos"
+        token="hibernate-mapping-2.0.dtd" 
+        value="hibernate-mapping-3.0.dtd"/>
+        
+    <replace dir="${build.compile_beans}/org/roller/business"
+        token="Hibernate Mapping DTD 2.0//EN" 
+        value="Hibernate Mapping DTD 3.0//EN"/>
+    <replace dir="${build.compile_beans}/org/roller/business"
+        token="hibernate-mapping-2.0.dtd" 
+        value="hibernate-mapping-3.0.dtd"/>
+        
 </target>
 
 <!-- ============================================== -->
@@ -390,13 +404,11 @@ ro.buildUser=${user.name}
         <fileset dir="${build.compile_web}" excludes="**/tomcat/**"/>
     </jar>
 
-    <!-- Copy web contents to staging, plus README files. -->
-    <antcall target="copy-web" />
-
     <!-- Copy database configs to classpath in staging -->
     <copy todir="${build.stage_web}/WEB-INF/classes">
         <fileset dir="./metadata/database/hibernate" includes="hibernate.cfg.xml"/>
         <fileset dir="${ro.tools}/lib" includes="oscache.properties"/>
+        <!-- <fileset dir="${build.compile_web}" excludes="**/tomcat/**"/> -->
     </copy>
 
     <!-- Copy WEB-INF contents to staging -->
@@ -416,7 +428,6 @@ ro.buildUser=${user.name}
         <fileset refid="commons.jars" />
         <fileset refid="struts.jars" />
         <fileset refid="jstl.jars" />
-        <fileset refid="xml.jars" />
         &custom-jars;
         <fileset dir="${ro.tools}/lib">
             <include name="mm.mysql-2.0.14-bin.jar" if="resinServer"/>
@@ -426,12 +437,17 @@ ro.buildUser=${user.name}
             <include name="xmlParserAPIs-2.3.0.jar" if="resinServer"/>
         </fileset>
     </copy>
-    <!-- Copy DTDs and TLDs  -->
+
+	<!-- Copy DTDs and TLDs  -->
     <copy todir="${build.stage_web}/WEB-INF/tlds">
         <fileset dir="${ro.tools}/lib" includes="*.tld"/>
     </copy>
-    <!-- copy database related files -->
+
+	<!-- copy database related files -->
     <antcall target="stage-dbscripts" />
+
+    <!-- Copy web contents to staging, plus README files. -->
+    <antcall target="copy-web" />
 
     <ant inheritAll="false" dir="contrib" />
 
@@ -490,7 +506,33 @@ ro.buildUser=${user.name}
       </filterset>
       <mapper type="glob" from="*-raw.sql" to="*.sql" />
     </copy>
+	
+    <!-- DB2 -->
+    <copy toDir="${dbscripts}/db2">
+  	  &custom-dbscripts;
+      <fileset dir="./metadata/database">
+        <include name="*.sql" />
+        <exclude name="droptables.sql" />
+      </fileset>
+      <filterset>
+        <filtersfile file="./metadata/database/db_db2.properties"/>
+      </filterset>
+      <mapper type="glob" from="*-raw.sql" to="*.sql" />
+    </copy>	
 
+    <!-- Apache Derby -->
+    <copy toDir="${dbscripts}/derby">
+  	  &custom-dbscripts;
+      <fileset dir="./metadata/database">
+        <include name="*.sql" />
+        <exclude name="droptables.sql" />
+      </fileset>
+      <filterset>
+        <filtersfile file="./metadata/database/db_derby.properties"/>
+      </filterset>
+      <mapper type="glob" from="*-raw.sql" to="*.sql" />
+    </copy>	
+	
 </target>
 
 <!-- ********************************************************************* -->
@@ -672,6 +714,7 @@ ro.buildUser=${user.name}
 
     <mkdir dir="${build.tests}" />
     <mkdir dir="${build.tests}/logs" />
+    <mkdir dir="${build.tests}/planet-cache" />
     <mkdir dir="${build.tests}/WEB-INF/classes" />
     <mkdir dir="${build.tests}/WEB-INF/classes/themes" />
     
@@ -696,8 +739,11 @@ ro.buildUser=${user.name}
     testing without interfering with the "real" build in ${build.stage_web}
     -->
 	
-	<copy file="${basedir}/personal/testing/roller.properties"
+	<copy file="${basedir}/web/WEB-INF/classes/roller.properties"
         todir="${build.tests}/WEB-INF/classes/"/>
+
+	<copy file="${basedir}/personal/testing/roller-custom.properties"
+        todir="${build.tests}"/>
 
     <copy file="${basedir}/personal/testing/hibernate.cfg.xml"
         tofile="${build.tests}/WEB-INF/classes/hibernate.cfg.xml" />
@@ -821,6 +867,7 @@ ro.buildUser=${user.name}
         <jvmarg value="-DrollerImpl=hibernate"/>
         <jvmarg value="-Dro.build=${ro.build}"/>
         <jvmarg value="-Dcatalina.base=${build.tests}"/> <!-- needed to satisfy ref in log4j.properties -->
+        <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
         <formatter type="xml"/>
         <classpath>
             <path refid="junit.path"/>
@@ -951,31 +998,19 @@ Use -Dverbose=1 to get verbose output.
 </target>
 
 <target name="compile-jsps" depends="stage-web">
-   <path id="jasper.path">
-     <path location="${build.stage_web}/WEB-INF/classes" />
-     <fileset dir="${build.stage_web}/WEB-INF/lib">
-       <include name="**/*.jar"/>
-     </fileset>
-     <fileset dir="${ro.tools}/tomcat-4.1.24">
-       <include name="*.jar"/>
-     </fileset>
-     <fileset dir="${ro.tools}/lib">
-       <include name="servlet-*.jar"/>
-       <include name="ant-*.jar"/>
-     </fileset>
-   </path>
-     <mkdir dir="${ro.build}/jspc"/>
-  <jspc srcdir="${build.stage_web}" destdir="${ro.build}/jspc"
-        package="test" verbose="9">
-      <include name="**/*.jsp" />
-        <classpath refid="jasper.path"/>
-  </jspc>
-     <mkdir dir="${ro.build}/jspc.classes"/>
-    <javac source="1.4" debug="true" srcdir="${ro.build}/jspc"
-        destdir="${ro.build}/jspc.classes" fork="true">
-        <classpath refid="jasper.path"/>
-  </javac>
-
+   <mkdir dir="${ro.build}/jspc"/>	
+    <taskdef classname="org.apache.jasper.JspC" name="jasper2" > 
+    	   <classpath refid="jasper.path"/> 
+    </taskdef> 
+    <jasper2 validateXml="false" 
+        uriroot="${build.stage_web}" 
+        webXmlFragment="${build.stage_web}/WEB-INF/generated_web.xml" 
+        outputDir="${ro.build}/jspc" /> 		
+    <mkdir dir="${ro.build}/jspc.classes"/>
+    <javac source="1.4" debug="true" srcdir="${ro.build}/jspc" excludes="**/header_jsp.*"
+       destdir="${ro.build}/jspc.classes" fork="true">
+       <classpath refid="jsp.compile.path"/>
+    </javac>
 </target>
 	    
 <!-- ********************************************************************* -->

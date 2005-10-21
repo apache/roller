@@ -1,5 +1,9 @@
 package org.roller.presentation.velocity;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,10 +14,6 @@ import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.presentation.RollerContext;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * This is a simple template file loader that loads templates

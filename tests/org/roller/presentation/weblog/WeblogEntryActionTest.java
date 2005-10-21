@@ -5,6 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.roller.RollerException;
+import org.roller.model.UserManager;
+import org.roller.pojos.UserData;
 import org.roller.presentation.StrutsActionTestBase;
 import org.roller.presentation.weblog.actions.WeblogEntryFormAction;
 import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
@@ -19,13 +22,24 @@ public class WeblogEntryActionTest extends StrutsActionTestBase
 {
     public void testCreateWeblogEntry() 
     {
-        authenticateUser(mWebsite.getUser().getUserName(), "editor");
-        
         MockHttpServletRequest mockRequest = getMockFactory().getMockRequest();
-        mockRequest.setContextPath("/dummy");
-        
+        mockRequest.setContextPath("/dummy");        
         doFilters();
-
+        
+        UserManager umgr = null;
+        UserData user = null; 
+        try
+        {
+            umgr = getRoller().getUserManager();
+            user = (UserData)umgr.getUsers(mWebsite, null).get(0);       
+            authenticateUser(user.getUserName(), "editor");
+        }
+        catch (RollerException e)
+        {
+            e.printStackTrace();
+            fail();
+        }
+        
         // Setup mapping and request parameters
         MockActionMapping mapping = strutsModule.getMockActionMapping();
         mapping.setupForwards(new String[] {

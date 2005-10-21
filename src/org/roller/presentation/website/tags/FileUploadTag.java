@@ -1,11 +1,5 @@
 package org.roller.presentation.website.tags;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
-import org.roller.pojos.UserData;
-import org.roller.presentation.RollerRequest;
-
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
@@ -18,11 +12,18 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.util.RequestUtils;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.FileManager;
 import org.roller.model.PropertiesManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.website.actions.UploadFileFormAction;
 
 /**
  * @jsp.tag name="FileUpload"
@@ -58,7 +59,7 @@ public class FileUploadTag extends TagSupport
             HttpServletRequest request =
                 (HttpServletRequest)pageContext.getRequest();
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            UserData user = rreq.getUser();
+            WebsiteData website = UploadFileFormAction.getWebsite(request);
             
             String maxDir = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
             String maxFile = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
@@ -67,9 +68,9 @@ public class FileUploadTag extends TagSupport
             
             int maxDirBytes = (int)(1024000 * maxDirMB.doubleValue());
 
-            // determine the number of bytes in user's directory
+            // determine the number of bytes in website's directory
             int userDirSize = 0;
-            File d = new File(dir + user.getUserName());
+            File d = new File(dir + website.getHandle());
             if (d.mkdirs() || d.exists())
             {
                 File[] files = d.listFiles();
@@ -117,6 +118,8 @@ public class FileUploadTag extends TagSupport
                 pw.println("<input type=\"submit\" value=\""
                     +bundle.getString("uploadFiles.upload")+"\" />");
                 pw.println("<input type=\"hidden\" name=\"method\" value=\"upload\" /><br /><br />");
+                pw.println("<input type=\"hidden\" name=\"weblog\" value=\"" 
+                        + website.getHandle() + "\" /><br /><br />");
                 pw.println(MessageFormat.format(
                     bundle.getString("uploadFiles.quotaNote"),
                     new String[] {maxFileMB.toString(), maxDirMB.toString()}));

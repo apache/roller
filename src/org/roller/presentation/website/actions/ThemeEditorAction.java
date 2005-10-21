@@ -28,6 +28,8 @@ import org.roller.model.ThemeManager;
 import org.roller.model.UserManager;
 import org.roller.pojos.Theme;
 import org.roller.pojos.ThemeTemplate;
+import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
 
 
@@ -39,7 +41,7 @@ import org.roller.presentation.pagecache.PageCacheFilter;
  * @struts.action name="themeEditorForm" path="/editor/themeEditor"
  *    scope="session" parameter="method"
  *
- * @struts.action-forward name="editTheme.page" path="/website/theme-editor.jsp"
+ * @struts.action-forward name="editTheme.page" path=".theme-editor"
  */
 public class ThemeEditorAction extends DispatchAction {
     
@@ -77,21 +79,34 @@ public class ThemeEditorAction extends DispatchAction {
         ActionErrors errors = new ActionErrors();
         ActionForward forward = mapping.findForward("editTheme.page");
         try {
-            
+            RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() ) {
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) ) {
                 
+                BasePageModel pageModel = new BasePageModel(
+                        "themeEditor.title", request, response, mapping);
+                request.setAttribute("model",pageModel);          
+                    
                 // get users current theme and our themes list
                 Roller roller = RollerFactory.getRoller();
                 ThemeManager themeMgr = roller.getThemeManager();
                 
-                String username = rreq.getUser().getUserName();
-                WebsiteData website = roller.getUserManager().getWebsite(username);
+                String username = rses.getAuthenticatedUser().getUserName();
                 String currentTheme = website.getEditorTheme();
                 List themes = themeMgr.getEnabledThemesList();
                 
+                // this checks if the website has a default page template
+                // if not then we don't allow for a custom theme
+                boolean allowCustomTheme = true;
+                if(website.getDefaultPageId() == null
+                        || website.getDefaultPageId().equals("dummy")
+                        || website.getDefaultPageId().trim().equals(""))
+                    allowCustomTheme = false;
+                
                 // if we allow custom themes then add it to the end of the list
-                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed"))
+                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")
+                        && allowCustomTheme)
                     themes.add(Theme.CUSTOM);
                 
                 // on the first pass just show a preview of the current theme
@@ -130,21 +145,35 @@ public class ThemeEditorAction extends DispatchAction {
         ActionErrors errors = new ActionErrors();
         ActionForward forward = mapping.findForward("editTheme.page");
         try {
-            
+            RollerSession rses = RollerSession.getRollerSession(request);            
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() ) {
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website)) {
 
                 // get users current theme
                 Roller roller = RollerFactory.getRoller();
                 ThemeManager themeMgr = roller.getThemeManager();
                 
-                String username = rreq.getUser().getUserName();
-                WebsiteData website = roller.getUserManager().getWebsite(username);
+                    
+                BasePageModel pageModel = new BasePageModel(
+                        "themeEditor.title", request, response, mapping);
+                request.setAttribute("model",pageModel);          
+                    
+                String username = rses.getAuthenticatedUser().getUserName();
                 String currentTheme = website.getEditorTheme();
                 List themes = themeMgr.getEnabledThemesList();
                 
+                // this checks if the website has a default page template
+                // if not then we don't allow for a custom theme
+                boolean allowCustomTheme = true;
+                if(website.getDefaultPageId() == null
+                        || website.getDefaultPageId().equals("dummy")
+                        || website.getDefaultPageId().trim().equals(""))
+                    allowCustomTheme = false;
+                
                 // if we allow custom themes then add it to the end of the list
-                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed"))
+                if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")
+                        && allowCustomTheme)
                     themes.add(Theme.CUSTOM);
                 
                 // set the current theme in the request
@@ -209,10 +238,15 @@ public class ThemeEditorAction extends DispatchAction {
         ActionErrors errors = new ActionErrors();
         ActionForward forward = mapping.findForward("editTheme.page");
         try {
-            
+            RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() ) {
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) ) {
                 
+                BasePageModel pageModel = new BasePageModel(
+                        "themeEditor.title", request, response, mapping);
+                request.setAttribute("model",pageModel);          
+                    
                 String newTheme = null;
                 
                 // lookup what theme the user wants first
@@ -245,8 +279,7 @@ public class ThemeEditorAction extends DispatchAction {
                 if(newTheme != null) {
                     try {
                         Roller roller = RollerFactory.getRoller();
-                        String username = rreq.getUser().getUserName();
-                        WebsiteData website = roller.getUserManager().getWebsite(username);
+                        String username = rses.getAuthenticatedUser().getUserName();
                         website.setEditorTheme(newTheme);
                         website.save();
                         
@@ -254,7 +287,7 @@ public class ThemeEditorAction extends DispatchAction {
                                 " for "+username);
                         
                         // make sure to flush the page cache so ppl can see the change
-                        PageCacheFilter.removeFromCache(request, rreq.getUser());
+                        PageCacheFilter.removeFromCache(request, website);
                 
                         // update complete ... now just send them back to edit
                         return this.edit(mapping, form, request, response);
@@ -299,16 +332,20 @@ public class ThemeEditorAction extends DispatchAction {
         ActionErrors errors = new ActionErrors();
         ActionForward forward = mapping.findForward("editTheme.page");
         try {
-            
+            RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            if ( rreq.isUserAuthorizedToEdit() ) {
+            WebsiteData website = rreq.getWebsite();
+            if ( rses.isUserAuthorizedToAdmin(website) ) {
                 
+                BasePageModel pageModel = new BasePageModel(
+                        "themeEditor.title", request, response, mapping);
+                request.setAttribute("model",pageModel);          
+                    
                 // copy down current theme to weblog templates
                 Roller roller = RollerFactory.getRoller();
                 ThemeManager themeMgr = roller.getThemeManager();
                 
-                String username = rreq.getUser().getUserName();
-                WebsiteData website = roller.getUserManager().getWebsite(username);
+                String username = rses.getAuthenticatedUser().getUserName();
                 
                 try {
                     Theme usersTheme = themeMgr.getTheme(website.getEditorTheme());
@@ -324,7 +361,7 @@ public class ThemeEditorAction extends DispatchAction {
                         }
                         
                         // make sure to flush the page cache so ppl can see the change
-                        PageCacheFilter.removeFromCache(request, rreq.getUser());
+                        PageCacheFilter.removeFromCache(request, website);
                     }
                     
                 } catch(ThemeNotFoundException tnfe) {
@@ -404,6 +441,7 @@ public class ThemeEditorAction extends DispatchAction {
             // if this is the first time someone is customizing a theme then
             // we need to set a default page
             if(website.getDefaultPageId() == null ||
+                    website.getDefaultPageId().trim().equals("") ||
                     website.getDefaultPageId().equals("dummy")) {
                 // we have to go back to the db to figure out the id
                 WeblogTemplate template = userMgr.getPageByName(website, "Weblog");

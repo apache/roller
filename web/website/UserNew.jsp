@@ -1,4 +1,4 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <%
 String ctxPath = request.getContextPath();
 boolean allowNewUsers = RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
@@ -8,85 +8,88 @@ if (!allowNewUsers && !request.isUserInRole("admin"))
 <% }
 else
 { %>
-<script>
-    function previewImage(theme)
-    {
-        document.preview.src="<%= ctxPath %>/images/preview/sm-theme-" + theme + ".png";
-    }
+<script type="text/javascript">
+<!--
+function cancel() {
+    document.userFormEx.method.value="cancel"; 
+    document.userFormEx.submit();
+}
+-->
 </script>
 
-<br />
-<h1><fmt:message key="newUser.addNewUser" /></h1>
+<p><fmt:message key="userRegister.prompt" /></p>
 
-<br />
 <html:form action="/user" method="post" focus="userName">
     <html:hidden property="method" name="method" value="add"/></input>
     <html:hidden property="id" /></input>
     <html:hidden property="adminCreated" /></input>
+    <html:hidden property="enabled" /></input>
 
-    <div class="formrow">
-       <label for="fullName" class="formrow" /><fmt:message key="userSettings.fullname" /></label>
-       <html:text property="fullName" size="30" maxlength="30" />
-    </div>
+<table class="formtable">
 
-    <div class="formrow">
-       <label for="userName" class="formrow" /><fmt:message key="userSettings.username" /></label>
-       <html:text property="userName" size="30" maxlength="30" />
-    </div>
+<tr>
+    <td class="label"><label for="fullName" /><fmt:message key="userSettings.fullname" /></label></td>
+    <td class="field"><html:text property="fullName" size="30" maxlength="30" /></td>
+    <td class="description"><fmt:message key="userRegister.tip.fullName" /></td>
+</tr>
 
-    <div class="formrow">
-       <label for="password" class="formrow" /><fmt:message key="userSettings.password" /></label>
+<tr>
+    <td class="label"><label for="userName" /><fmt:message key="userSettings.username" /></label></td>
+    <td class="field"><html:text property="userName" size="30" maxlength="30" /></td>
+    <td class="description"><fmt:message key="userRegister.tip.userName" /></td>
+</tr>
+
+<tr>
+    <td class="label"><label for="passwordText" /><fmt:message key="userSettings.password" /></label></td>
+    <td class="field">
        <html:password property="passwordText" size="20" maxlength="20" />
        <html:hidden property="password" />
-    </div>
-    
-    <div class="formrow">
-       <label for="passwordConfirm" class="formrow" /><fmt:message key="userSettings.passwordConfirm" /></label>
-       <html:password property="passwordConfirm" size="20" maxlength="20" />
-    </div>
+   </td>
+    <td class="description"><fmt:message key="userRegister.tip.password" /></td>
+</tr>
 
-    <div class="formrow">
-       <label for="" class="formrow" /><fmt:message key="userSettings.email" /></label>
-       <html:text property="emailAddress" size="40" maxlength="40" />
-    </div>
+<tr>
+    <td class="label"><label for="passwordConfirm" /><fmt:message key="userSettings.passwordConfirm" /></label></td>
+    <td class="field"><html:password property="passwordConfirm" size="20" maxlength="20" /></td>
+    <td class="description"><fmt:message key="userRegister.tip.passwordConfirm" /></td>
+</tr>
 
-    <div class="formrow">
-       <label for="locale" class="formrow" /><fmt:message key="userSettings.locale" /></label>
+<tr>
+    <td class="label"><label for="emailAddress" /><fmt:message key="userSettings.email" /></label></td>
+    <td class="field"><html:text property="emailAddress" size="40" maxlength="40" /></td>
+    <td class="description"><fmt:message key="userRegister.tip.email" /></td>
+</tr>
+
+<tr>
+    <td class="label"><label for="locale" /><fmt:message key="userSettings.locale" /></label></td>
+    <td class="field">
        <html:select property="locale" size="1" >
-          <html:options collection="roller.locales" property="value" labelProperty="label"/>
+          <html:options collection="locales" property="value" labelProperty="label"/>
        </html:select>
-    </div>
+    </td>
+    <td class="description"><fmt:message key="userRegister.tip.locale" /></td>
+</tr>
+    
+<tr>
+    <td class="label"><label for="timeZone" /><fmt:message key="userSettings.timeZone" /></label></td>
+    <td class="field">
+       <html:select property="timeZone" size="1" >
+           <html:options collection="timeZones" property="value" labelProperty="label"/>
+       </html:select>
+    </td>
+    <td class="description"><fmt:message key="userRegister.tip.timeZone" /></td>
+</tr>
+    
+</table>
+<br />
 
-    <div class="formrow">
-       <label for="timezone" class="formrow" /><fmt:message key="userSettings.timezone" /></label>
-       <html:select property="timezone" size="1" >
-           <html:options collection="roller.timezones" property="value" labelProperty="label"/>
-       </html:select>
-    </div>
-
-    <br />
-    
-    <div class="formrow">
-       <label for="theme" class="formrow" /><fmt:message key="newuser.theme" /></label>
-       <html:select property="theme" size="1" onchange="previewImage(this[selectedIndex].value)">
-           <html:options name="themes"/>
-       </html:select>
-    </div>
-    
-    <div class="formrow">
-       <label for="preview" class="formrow" />&nbsp;</label>
-       <img name="preview" 
-          src="<%= ctxPath %>/images/preview/sm-theme-basic.png" height="268" width="322" />
-    </div>
-    
-    <div class="control">
-       <html:submit /></input>
-    </div>
+<input type="submit" value='<fmt:message key="userRegister.button.save" />'></input>
+<input type="button" value='<fmt:message key="userSettings.button.cancel" />' onclick="cancel()"></input>
     
 </html:form>
+
 <%
 } // end allowNewUsers check
 %>
 
-<%@ include file="/theme/footer.jsp"%>
 

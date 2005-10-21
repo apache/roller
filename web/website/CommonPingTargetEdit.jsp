@@ -1,9 +1,10 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
 
-<br />
-<h1><fmt:message key="pingTarget.pingTarget" /></h1>
 
-<br />
+<p class="subtitle">
+<fmt:message key="commonPingTarget.subtitle"/>
+</p>
+
 <html:form action="/admin/commonPingTargets" method="post" focus="name">
     <html:hidden property="method" value="save" />
     <html:hidden property="id" />
@@ -26,4 +27,4 @@
 
 </html:form>
 
-<%@ include file="/theme/footer.jsp" %>
+

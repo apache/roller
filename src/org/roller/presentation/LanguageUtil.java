@@ -126,13 +126,17 @@ public class LanguageUtil
 		mLogger.debug("getViewLocale()");
 		Locale viewLocale = null;
 
-		// if user is logged in and the user looking at his own website, take website-locale
-		if (isWebsiteOfPrincipal(request)) 
-        {
-			viewLocale = getDefaultLocale(request);
-			mLogger.debug("websiteLocale = "+viewLocale);
-		} 
-        else if (request.getSession(false) != null) 
+	    // if user is logged in and the user looking at his own website, 
+        // take website-locale user's don;t have locales, websites do and a user
+        // can belong to multiple websites, each with a different locale.
+        // So this check no longer makes sense.
+		//if (isWebsiteOfPrincipal(request)) 
+        //{
+			//viewLocale = getDefaultLocale(request);
+			//mLogger.debug("websiteLocale = "+viewLocale);
+		//} 
+        
+        if (request.getSession(false) != null) 
         {
 			// check session for existing Locale
 			viewLocale = (Locale) request.getSession().getAttribute(Globals.LOCALE_KEY);
@@ -209,18 +213,18 @@ public class LanguageUtil
 	 * @param request
 	 * @return
 	 */
-	public static boolean isWebsiteOfPrincipal(HttpServletRequest request) {
-		boolean result = false;
-		RollerRequest rreq = RollerRequest.getRollerRequest(request);
-		if (rreq != null) {            
-            WebsiteData website = rreq.getWebsite();
-            Principal principal = request.getUserPrincipal(); 
-            if (website != null && principal != null) {
-                return website.getUser().getUserName().equals(principal.getName());
-            }
-        }
-        return result;
-	}
+//	public static boolean isWebsiteOfPrincipal(HttpServletRequest request) {
+//		boolean result = false;
+//		RollerRequest rreq = RollerRequest.getRollerRequest(request);
+//		if (rreq != null) {            
+//            WebsiteData website = rreq.getWebsite();
+//            Principal principal = request.getUserPrincipal(); 
+//            if (website != null && principal != null) {
+//                return website.getUser().getUserName().equals(principal.getName());
+//            }
+//        }
+//        return result;
+//	}
 	
 	/**
 	 * Helper method to convert a language string to a <code>Locale</code> object.

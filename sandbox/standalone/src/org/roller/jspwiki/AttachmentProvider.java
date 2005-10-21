@@ -5,11 +5,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
 
 public class AttachmentProvider extends BasicAttachmentProvider {
 	
-	public void initialize(Properties properties)
+	public void initialize(WikiEngine engine, Properties properties)
 			throws NoRequiredPropertyException, IOException {
 		
 		String rollerStorageDir = System.getProperty("rollerStorageDir");
@@ -19,6 +20,6 @@ public class AttachmentProvider extends BasicAttachmentProvider {
 			properties.put(PROP_STORAGEDIR, rollerStorageDir);
 		}
 		
-		super.initialize(properties);
+		super.initialize(engine, properties);
 	}
 }

@@ -2,8 +2,13 @@ package org.roller.presentation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpSession;
 
+import org.roller.RollerException;
 import org.roller.RollerTestBase;
+import org.roller.model.UserManager;
+import org.roller.pojos.UserData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.filters.PersistenceSessionFilter;
 import org.roller.presentation.filters.RequestFilter;
 
@@ -42,12 +47,20 @@ public class StrutsActionTestBase extends RollerTestBase
         rollerContext = new MockRollerContext();
         rollerContext.init(ctx);
     }
-    protected void authenticateUser(String username, String role)
+    protected void authenticateUser(String username, String role) 
+        throws RollerException
     {
         MockHttpServletRequest mockRequest = getMockFactory().getMockRequest();
         mockRequest.setRemoteUser(username);
         mockRequest.setUserPrincipal(new MockPrincipal(username));
         mockRequest.setUserInRole(role, true);
+        
+        HttpSession session = mockRequest.getSession(true);        
+        RollerSession rollerSession = new RollerSession();
+        UserManager umgr = getRoller().getUserManager();
+        UserData user = umgr.getUser(username);
+        WebsiteData website = (WebsiteData)umgr.getWebsites(user, null).get(0); 
+        session.setAttribute(RollerSession.ROLLER_SESSION, rollerSession);
     }
     
     protected void doFilters()

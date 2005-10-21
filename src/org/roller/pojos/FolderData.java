@@ -521,17 +521,4 @@ public class FolderData extends HierarchicalPersistentObject
         pstrategy.remove(po);
     }
 
-    public boolean canSave() throws RollerException
-    {
-        Roller roller = RollerFactory.getRoller();
-        if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-        {
-            return true;
-        }
-        if (roller.getUser().equals(getWebsite().getUser()))
-        {
-            return true;
-        }
-        return false;
-    }
 }

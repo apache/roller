@@ -3,10 +3,16 @@
  */
 package org.roller.presentation.website.formbeans;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.roller.RollerException;
+import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
+import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.forms.WebsiteForm;
+import org.roller.util.DateUtil;
 
 /**
  * @struts.form name="websiteFormEx"
@@ -86,13 +92,80 @@ public class WebsiteFormEx extends WebsiteForm
         }
     }
 
+    /**
+     * Utility to convert from String to Date.
+     */
+    public void setDateCreatedAsString(String value)
+    {
+        if ( value == null || value.trim().length() == 0 )
+        {
+            this.setDateCreated(null);   
+        }
+        else
+        {
+            try
+            {
+                Date pubDate = DateUtil.parse(
+                        value, DateUtil.friendlyTimestampFormat());
+                this.setDateCreated(new Timestamp(pubDate.getTime()));
+            }
+            catch (java.text.ParseException pe)
+            {
+                // wasn't proper format, try others
+                Date pubDate = DateUtil.parseFromFormats(value);
+                this.setDateCreated( new Timestamp(pubDate.getTime()) );
+            }
+        }
+    }
+
+    /**
+     * Returns a formatted pubTime string.
+     */
+    public String getDateCreatedAsString()
+    {
+        return DateUtil.friendlyTimestamp(this.getDateCreated());
+    }
+
     /** 
      * @see org.roller.presentation.forms.WebsiteForm#copyTo(org.roller.pojos.WebsiteData)
      */
     public void copyTo(WebsiteData dataHolder, java.util.Locale locale) throws RollerException
     {
+        Date dateCreated = dataHolder.getDateCreated();
+        
         super.copyTo(dataHolder, locale);
+        
+        dataHolder.setDateCreated(dateCreated);        
         dataHolder.setDefaultPlugins( StringUtils.join(this.defaultPluginsArray,",") );
+                
+        // checkboxes return no value when not checked
+        if (getAllowComments() == null)
+        {
+            dataHolder.setAllowComments(Boolean.FALSE);
+        }
+        if (getEmailComments() == null)
+        {
+            dataHolder.setEmailComments(Boolean.FALSE);
+        }
+        if (getEnableBloggerApi() == null)
+        {
+            dataHolder.setEnableBloggerApi(Boolean.FALSE);
+        }
+        
+        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        if (getDefaultCategoryId() != null) 
+        {
+            WeblogCategoryData defaultCat = 
+                wmgr.retrieveWeblogCategory(getDefaultCategoryId());
+            dataHolder.setDefaultCategory(defaultCat);
+        }
+
+        if (getBloggerCategoryId() != null) 
+        {
+            WeblogCategoryData bloggerCat = 
+                wmgr.retrieveWeblogCategory(getBloggerCategoryId());
+            dataHolder.setBloggerCategory(bloggerCat);
+        }
     }
     
     public void reset(

@@ -101,7 +101,7 @@ public class FileManagerImpl implements FileManager
         BigDecimal maxDirMB = new BigDecimal(
                 ((RollerPropertyData)config.get("uploads.dir.maxsize")).getValue());
         int maxDirBytes = (int)(1024000 * maxDirMB.doubleValue());
-        int userDirSize = getUserDirSize(site.getUser().getUserName(), this.upload_dir);
+        int userDirSize = getWebsiteDirSize(site.getHandle(), this.upload_dir);
         if (userDirSize + size > maxDirBytes) {
             messages.addError("error.upload.dirmax", maxDirMB.toString());
             return false;
@@ -127,7 +127,7 @@ public class FileManagerImpl implements FileManager
      */
     public File[] getFiles(WebsiteData site) throws RollerException
     {
-        String dir = this.upload_dir + site.getUser().getUserName();
+        String dir = this.upload_dir + site.getHandle();
         File uploadDir = new File(dir);
         return uploadDir.listFiles();
     }
@@ -138,7 +138,7 @@ public class FileManagerImpl implements FileManager
     public void deleteFile(WebsiteData site, String name)
             throws RollerException
     {
-        String dir = this.upload_dir + site.getUser().getUserName();
+        String dir = this.upload_dir + site.getHandle();
         File f = new File(dir + File.separator + name);
         f.delete();
     }
@@ -161,9 +161,9 @@ public class FileManagerImpl implements FileManager
         byte[] buffer = new byte[8192];
         int bytesRead = 0;
         String dir = this.upload_dir;
-        String userName = site.getUser().getUserName();
+        String handle = site.getHandle();
 
-        File dirPath = new File(dir + File.separator + userName);
+        File dirPath = new File(dir + File.separator + handle);
         if (!dirPath.exists())
         {
             dirPath.mkdirs();
@@ -193,7 +193,7 @@ public class FileManagerImpl implements FileManager
         }
         if (mLogger.isDebugEnabled())
         {
-            mLogger.debug("The file has been written to \"" + dir + userName + "\"");
+            mLogger.debug("The file has been written to \"" + dir + handle + "\"");
         }
     }
 
@@ -230,7 +230,7 @@ public class FileManagerImpl implements FileManager
      * @param dir      Upload directory
      * @return Size of user's uploaded files in bytes.
      */
-    private int getUserDirSize(String username, String dir)
+    private int getWebsiteDirSize(String username, String dir)
     {
         int userDirSize = 0;
         File d = new File(dir + File.separator + username);

@@ -3,26 +3,28 @@
  */
 package org.roller.presentation.bookmarks.actions;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.roller.model.BookmarkManager;
-import org.roller.pojos.BookmarkData;
-import org.roller.pojos.FolderData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.bookmarks.formbeans.BookmarkFormEx;
-import org.roller.presentation.forms.BookmarkForm;
-
 import java.util.LinkedList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.roller.model.BookmarkManager;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.BookmarkData;
+import org.roller.pojos.FolderData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
+import org.roller.presentation.bookmarks.formbeans.BookmarkFormEx;
+
 /**
  * @struts.action path="/editor/bookmarkEdit" name="bookmarkFormEx" validate="false"
- * @struts.action-forward name="BookmarkForm" path="/bookmarks/BookmarkForm.jsp"
+ * @struts.action-forward name="BookmarkForm" path=".BookmarkForm"
  * 
  * @author Dave Johnson
  */
@@ -36,8 +38,8 @@ public class BookmarkEditAction extends Action
         throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData wd = rreq.getWebsite();
-        BookmarkManager bmgr = rreq.getRoller().getBookmarkManager();
+        RollerSession rses = RollerSession.getRollerSession(request);
+        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         BookmarkFormEx form = (BookmarkFormEx)actionForm;
         
         FolderData parentFolder = null;
@@ -51,6 +53,9 @@ public class BookmarkEditAction extends Action
                 
             // Pass bookmark's Folder on as attribute.                 
             parentFolder = bd.getFolder();
+
+            request.setAttribute("model", new BasePageModel(
+                "bookmarkForm.edit.title", request, response, mapping));
         }
         else if (null != request.getParameter("correct"))
         {
@@ -59,6 +64,9 @@ public class BookmarkEditAction extends Action
                 
             // Folder is specified by request param, pass it on as attribute.                 
             parentFolder = bmgr.retrieveFolder(rreq.getFolder().getId());        
+            
+            request.setAttribute("model", new BasePageModel(
+                "bookmarkForm.correct.title", request, response, mapping));
         }
         else
         {
@@ -66,7 +74,10 @@ public class BookmarkEditAction extends Action
             request.setAttribute("state","add");
             
             // Folder is specified by request param, pass it on as attribute.                 
-            parentFolder = bmgr.retrieveFolder(rreq.getFolder().getId());        
+            parentFolder = bmgr.retrieveFolder(rreq.getFolder().getId()); 
+            
+            request.setAttribute("model", new BasePageModel(
+                "bookmarkForm.add.title", request, response, mapping));
         }
         
         // Build folder path for display on page
@@ -85,8 +96,7 @@ public class BookmarkEditAction extends Action
             }
             request.setAttribute("parentFolder", parentFolder);
             request.setAttribute("folderPath", folderPath);
-        }
-
+        }        
         return mapping.findForward("BookmarkForm");
     }
     

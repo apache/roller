@@ -40,8 +40,7 @@
     #showRSSBadge()<br>
     #showRSSLinks()
     <h2>Links</h2>
-    #showBookmarks("Blogroll" true true)<br>
-    #showBookmarks("News" true false)
+    #showBlogroll()
     <h2>Navigation</h2>
     #showBasicNavBar(true)<br>
     #showEditorNavBar(true)<br>

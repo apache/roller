@@ -3,15 +3,17 @@
  */
 package org.roller.presentation;
 
-import org.apache.struts.action.ActionMapping;
-import org.roller.RollerException;
-import org.roller.pojos.UserData;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.ActionMapping;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.util.StrutsUtil;
 
 /**
  * Re-usable base for page models.
@@ -19,11 +21,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BasePageModel
 {
-    private HttpServletRequest request = null;
-    private HttpServletResponse response = null;
-    private ActionMapping mapping = null;
+    protected static ResourceBundle bundle = 
+        ResourceBundle.getBundle("ApplicationResources");  
+    
+    protected String titleKey = null;
+    protected HttpServletRequest request = null;
+    protected HttpServletResponse response = null;
+    protected ActionMapping mapping = null;
+    protected WebsiteData website = null;
     
     public BasePageModel(
+            String titleKey,
             HttpServletRequest request,
             HttpServletResponse response,
             ActionMapping mapping)
@@ -31,11 +39,32 @@ public class BasePageModel
         this.request = request;
         this.response = response;
         this.mapping = mapping;
+        this.titleKey = titleKey;
+        request.setAttribute("locales", StrutsUtil.getLocaleBeans());        
+        request.setAttribute("timeZones", StrutsUtil.getTimeZoneBeans());        
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        website = rreq.getWebsite();
     }
 
+    public WebsiteData getWebsite() 
+    {
+        return website;
+    }
+    
+    public void setWebsite(WebsiteData website) 
+    {
+        this.website = website;
+    }
+    
+    public String getTitle() 
+    {
+        return bundle.getString(titleKey);
+    }
+    
     public String getBaseURL()
     {
-		return request.getContextPath();
+        RollerContext rctx = RollerContext.getRollerContext(request);
+		return rctx.getAbsoluteContextUrl(request);
 	}
 
     public String getShortDateFormat()
@@ -60,11 +89,6 @@ public class BasePageModel
         return "MMM dd, yyyy";
     }
 
-    public UserData getUser()
-    {
-        return RollerRequest.getRollerRequest(request).getUser();
-    }
-    
     /**
      * @return Returns the mapping.
      */
@@ -89,8 +113,19 @@ public class BasePageModel
         return response;
     }
     
-    public boolean getIsAdmin() throws RollerException
+    public RollerSession getRollerSession()
     {
-        return RollerRequest.getRollerRequest(request).isAdminUser(); 
+        return RollerSession.getRollerSession(request);
     }
+
+    public List getLocales()
+    {
+        return StrutsUtil.getLocaleBeans();
+    }
+
+    public List getTimeZones()
+    {
+        return StrutsUtil.getTimeZoneBeans();
+    }
+
 }

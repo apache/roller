@@ -1,10 +1,25 @@
-<%@ include file="/taglibs.jsp" %><%@ include file="/theme/header.jsp" %>
+<%@ include file="/taglibs.jsp" %>
+<script type="text/javascript">
+<!--
+function previewImage(theme) {
+    <% String ctxPath = request.getContextPath(); %>
+    document.preview.src="<%= ctxPath %>/images/preview/sm-theme-" + theme + ".png";
+}
+function cancel() {
+    document.weblogTemplateForm.method.value="cancel"; 
+    document.weblogTemplateForm.submit();
+}
+-->
+</script>
 
 <roller:StatusMessage/>
 
 <html:form action="/editor/page" method="post">
 
-	<h1><fmt:message key="pageForm.editPage" />:<bean:write name="weblogTemplateForm" property="name" /></h1>
+	<p class="subtitle">
+        <fmt:message key="pageForm.editPage" />:
+        <bean:write name="weblogTemplateForm" property="name" />
+	</p>
 	
     <table>
         <tr>
@@ -22,10 +37,6 @@
             <html:textarea property="description" rows="3" cols="50"/>
             </td>
         </tr>
-        <tr>
-
-            </td>
-        </tr>
     </table>
     
     <fmt:message key="pageForm.template" /><br />
@@ -33,10 +44,12 @@
             
     <html:hidden property="id"/>
     <html:hidden property="name"/>
+    <input type="hidden" name="method" value="update" />
+    <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
 
     <br />
     <input type="submit" value='<fmt:message key="pageForm.save" />' /></input>
-    <html:hidden property="method" value="update"/>
+    <input type="button" value='<fmt:message key="application.done" />' onclick="cancel()" /></input>
 
 </html:form>
 
@@ -50,6 +63,5 @@ doesn't seem to work for forms with duplicate named elements.
 // -->
 </script>
 
-<%@ include file="/theme/footer.jsp" %>
 
 
