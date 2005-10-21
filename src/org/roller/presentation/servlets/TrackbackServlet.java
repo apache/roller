@@ -122,8 +122,9 @@ public class TrackbackServlet extends HttpServlet {
             } else {
                 RollerRequest rreq = RollerRequest.getRollerRequest(req);
                 WeblogEntryData entry = rreq.getWeblogEntry();
-                
-                if (entry!=null && entry.getCommentsStillAllowed()) {
+                boolean siteAllows = 
+                    entry.getWebsite().getAllowComments().booleanValue();
+                if (entry!=null && siteAllows && entry.getCommentsStillAllowed()) {
                     String modTitle = blogName + ": "  + title;
                     if (modTitle.length() >= 250) {
                         modTitle = modTitle.substring(0, 257);
