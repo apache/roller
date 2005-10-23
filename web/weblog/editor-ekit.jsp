@@ -20,7 +20,7 @@ function postWeblogEntry(publish)
 <%-- Use the Ekit applet --%>
 <APPLET CODEBASE="../" CODE="com.hexidec.ekit.EkitApplet.class"
     ARCHIVE="ekitappletspell.jar" NAME="Ekit" WIDTH="95%" HEIGHT="550">
-<PARAM NAME="codebase" VALUE="../">
+<PARAM NAME="codebase" VALUE="../editor">
 <PARAM NAME="code" VALUE="com.hexidec.ekit.EkitApplet.class">
 <PARAM NAME="archive" VALUE="ekitappletspell.jar">
 <PARAM NAME="type" VALUE="application/x-java-applet;version=1.3">
