@@ -2,6 +2,18 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 1.3 - Bug fix release
+
+    Bug fixes
+    * [ROL-760] - multi language search string corrupted in resin2.1.x and tomcat4.x
+    * [ROL-766] - Internationalization broken in #showNewsfeed() macro
+    * [ROL-782] - Weblog Editor plug-ins broken or won't load altogether
+
+    Improvements
+    * [ROL-613] - Support other system property expansion in file paths in Roller configuration
+    * [ROL-775] - Updated ApplicationResources for DE locale
+
+------------------------------------------------------------------------------
 Roller 1.2 - New feature release
 
 Also, changed license to Apache License v2.0
