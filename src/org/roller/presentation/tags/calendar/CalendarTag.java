@@ -208,21 +208,24 @@ public class CalendarTag extends HybridTag
                     String url = model.computeUrl( tddate, false );
                     String content = model.getContent( tddate );
 
-                    if // day is today then use today style
-                        ((          cal.get(Calendar.DAY_OF_MONTH)
-                            == todayCal.get(Calendar.DAY_OF_MONTH))
-                        && (        cal.get(Calendar.MONTH)
-                            == todayCal.get(Calendar.MONTH))
-                        && (        cal.get(Calendar.YEAR)
-                            == todayCal.get(Calendar.YEAR)))
-                    {
-                        printToday(pw, cal, url, content);
-                    }
-                    else if // day is in calendar month
+                    if // day is in calendar month
                        ((cal.get(Calendar.MONTH) == dayCal.get(Calendar.MONTH))
                      && (cal.get(Calendar.YEAR) == dayCal.get(Calendar.YEAR)))
                     {
-                        printDayInThisMonth(pw, cal, url, content);
+                        if // day is today then use today style
+                            ((          cal.get(Calendar.DAY_OF_MONTH)
+                                == todayCal.get(Calendar.DAY_OF_MONTH))
+                            && (        cal.get(Calendar.MONTH)
+                                == todayCal.get(Calendar.MONTH))
+                            && (        cal.get(Calendar.YEAR)
+                                == todayCal.get(Calendar.YEAR)))
+                        {
+                            printToday(pw, cal, url, content);
+                        }
+                        else
+                        {
+                            printDayInThisMonth(pw, cal, url, content);
+                        }
                     }
                     else // apply day-not-in-month style ;-)
                     {
