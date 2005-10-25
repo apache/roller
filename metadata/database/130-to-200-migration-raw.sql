@@ -51,11 +51,13 @@ create table roller_audit_log (
 
 -- -----------------------------------------------------
 
--- update weblogentry.pubtime to be a "datetime" field instead of "timestamp"
--- "timestamp" doesn't work anymore because we want the value to be null until
--- the weblogentry is published, and "timestamps" are set automatically
+-- make "pubtime" use NULL for default values.  this allows us to leave
+-- the "pubtime" for an entry unset until the entry is actually published.
+-- 
+-- sadly this needs to be done in a specific manner for each db, so check
+-- the db_*.properties file for each db to see how it's done.
 
-alter table weblogentry modify pubtime datetime NULL;
+@ALTER_PUBTIME_ALLOW_NULL@;
 
 
 -- -----------------------------------------------------

@@ -173,7 +173,7 @@ create table weblogentry (
     anchor          varchar(255)  not null,
     title           varchar(255)  not null,
     text            @TEXT_SQL_TYPE@ not null,
-    pubtime         datetime     not null,
+    pubtime         @TIMESTAMP_SQL_TYPE_NULL@,
     updatetime      timestamp     not null,
     websiteid       varchar(48)  not null,
     categoryid      varchar(48)  not null,
