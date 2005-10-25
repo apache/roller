@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
@@ -81,6 +82,11 @@ public class InviteMemberAction extends DispatchAction
         HttpServletResponse response)
         throws IOException, ServletException
     {
+        // if group blogging is disabled then you can't change permissions
+        if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
+            return mapping.findForward("access-denied");
+        }
+        
         ActionForward forward = mapping.findForward("inviteMember.page"); 
         
         BasePageModel pageModel = new BasePageModel(
@@ -99,6 +105,11 @@ public class InviteMemberAction extends DispatchAction
             HttpServletResponse response)
             throws Exception
     {
+        // if group blogging is disabled then you can't change permissions
+        if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
+            return mapping.findForward("access-denied");
+        }
+        
         ActionForward forward = mapping.findForward("inviteMember.page");
         ActionMessages msgs = new ActionMessages();
         ActionMessages errors = new ActionErrors();
