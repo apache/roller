@@ -91,12 +91,13 @@ public class CreateWebsiteAction extends DispatchAction
             if (permissions.size() > 0) {
                 // sneaky user trying to get around 1 blog limit that applies
                 // only when group blogging is disabled
-                forward = mapping.findForward("access-denied");
+                return mapping.findForward("access-denied");
             }           
-        } else {
-            request.setAttribute("model", 
-                new CreateWebsitePageModel(request, response, mapping, null));
         }
+        
+        request.setAttribute("model", 
+                new CreateWebsitePageModel(request, response, mapping, null));
+        
         return forward;
     }
     
@@ -131,31 +132,31 @@ public class CreateWebsiteAction extends DispatchAction
                 if (permissions.size() > 0) {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled
-                    forward = mapping.findForward("access-denied");
+                    return mapping.findForward("access-denied");
                 }
-            } else {                   
-                // Need system user to create website
-                roller.setUser(UserData.SYSTEM_USER);
-                HashMap pages = null; //rollerContext.readThemeMacros(form.getTheme());
-                website = mgr.createWebsite(
-                   user, 
-                   pages, 
-                   form.getHandle(), 
-                   form.getName(), 
-                   form.getDescription(), 
-                   form.getEmailAddress(),
-                   form.getTheme(), 
-                   form.getLocale(), 
-                   form.getTimeZone());
-                roller.commit();
-
-                request.setAttribute("model", 
-                   new CreateWebsitePageModel(request, response, mapping, website));  
-
-                msgs.add(ActionMessages.GLOBAL_MESSAGE, 
-                   new ActionMessage("createWebsite.created", form.getHandle()));
-                saveMessages(request, msgs);  
             }
+            
+            // Need system user to create website
+            roller.setUser(UserData.SYSTEM_USER);
+            HashMap pages = null; //rollerContext.readThemeMacros(form.getTheme());
+            website = mgr.createWebsite(
+                    user,
+                    pages,
+                    form.getHandle(),
+                    form.getName(),
+                    form.getDescription(),
+                    form.getEmailAddress(),
+                    form.getTheme(),
+                    form.getLocale(),
+                    form.getTimeZone());
+            roller.commit();
+            
+            request.setAttribute("model",
+                    new CreateWebsitePageModel(request, response, mapping, website));
+            
+            msgs.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("createWebsite.created", form.getHandle()));
+            saveMessages(request, msgs);
         }
         catch (RollerException e)
         {
@@ -164,8 +165,10 @@ public class CreateWebsiteAction extends DispatchAction
             saveErrors(request, errors);          
             mLogger.error("ERROR in createWebsite", e);
         }
+        
         request.setAttribute("model", 
             new CreateWebsitePageModel(request, response, mapping, website));  
+        
         return forward; 
     }
         
