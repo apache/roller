@@ -132,16 +132,10 @@ function cancel() {
         </td>
         <td class="description"><fmt:message key="userAdmin.tip.userAdmin" /></td>
     </tr>
-    
-    <tr>
-        <td class="label"><label for="delete" /><fmt:message key="userAdmin.delete" /></label></td>
-        <td class="field">
-           <html:checkbox property="delete" />
-        </td>
-        <td class="description"><span class="warning"><fmt:message key="userAdmin.warning" /></span></td>
-    </tr>
 
     </table>
+    
+    <html:hidden property="delete" />
     <br />
     
     <h3><fmt:message key="userAdmin.userWeblogs" /></h3>

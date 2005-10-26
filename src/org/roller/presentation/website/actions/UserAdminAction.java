@@ -138,17 +138,17 @@ public final class UserAdminAction extends UserBaseAction
 			   UserData user = mgr.retrieveUser(userForm.getId());
                 userForm.copyTo(user, request.getLocale()); // doesn't copy password
 
-                if (userForm.getDelete())
-                {
-                    // TODO: ask are you sure before deleting user
-                    user = deleteUser(mapping, request, rreq, userForm, mgr, user);
-                    
-                    msgs.add(ActionMessages.GLOBAL_MESSAGE,
-                            new ActionMessage("userSettings.deleted"));
-                    saveMessages(request, msgs);
-                }
-                else
-                {
+//                if (userForm.getDelete())
+//                {
+//                    // TODO: ask are you sure before deleting user
+//                    user = deleteUser(mapping, request, rreq, userForm, mgr, user);
+//                    
+//                    msgs.add(ActionMessages.GLOBAL_MESSAGE,
+//                            new ActionMessage("userSettings.deleted"));
+//                    saveMessages(request, msgs);
+//                }
+//                else
+//                {
                     // If user set both password and passwordConfirm then reset 
                     if (    !StringUtils.isEmpty(userForm.getPasswordText()) 
                          && !StringUtils.isEmpty(userForm.getPasswordConfirm()))
@@ -173,7 +173,7 @@ public final class UserAdminAction extends UserBaseAction
                     msgs.add(ActionMessages.GLOBAL_MESSAGE,
                         new ActionMessage("userSettings.saved"));
                     saveMessages(request, msgs);
-                }
+//                }
                 
                 // Operation complete, return to edit action
                 userForm.setUserName(null); 
@@ -194,34 +194,34 @@ public final class UserAdminAction extends UserBaseAction
 
     //-----------------------------------------------------------------------
 	/** Delete specified user and remove associated entries from the cache. */
-    private UserData deleteUser(
-            ActionMapping mapping, 
-            HttpServletRequest request, 
-            RollerRequest rreq, 
-            UserAdminForm uaf, 
-            UserManager mgr, 
-            UserData ud) throws RollerException
-    {
-        // remove user's Entries from Lucene index
-        IndexManager indexManager = RollerFactory.getRoller().getIndexManager();
-        WebsiteData website = rreq.getWebsite();
-        indexManager.removeWebsiteIndex(website); 
-        
-        // delete user from database
-        ud.remove();
-        RollerFactory.getRoller().commit();
-        ud = null;
-
-        request.getSession().setAttribute(
-            RollerSession.STATUS_MESSAGE,
-                uaf.getUserName() + " has been deleted");
-
-        uaf.reset(mapping, request);
-        
-        List users = mgr.getUsers(null, null); 
-        request.setAttribute("users", users);
-        return ud;
-    }
+//    private UserData deleteUser(
+//            ActionMapping mapping, 
+//            HttpServletRequest request, 
+//            RollerRequest rreq, 
+//            UserAdminForm uaf, 
+//            UserManager mgr, 
+//            UserData ud) throws RollerException
+//    {
+//        // remove user's Entries from Lucene index
+//        IndexManager indexManager = RollerFactory.getRoller().getIndexManager();
+//        WebsiteData website = rreq.getWebsite();
+//        indexManager.removeWebsiteIndex(website); 
+//        
+//        // delete user from database
+//        ud.remove();
+//        RollerFactory.getRoller().commit();
+//        ud = null;
+//
+//        request.getSession().setAttribute(
+//            RollerSession.STATUS_MESSAGE,
+//                uaf.getUserName() + " has been deleted");
+//
+//        uaf.reset(mapping, request);
+//        
+//        List users = mgr.getUsers(null, null); 
+//        request.setAttribute("users", users);
+//        return ud;
+//    }
 
     //-----------------------------------------------------------------------
     /**
