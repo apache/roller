@@ -2,6 +2,52 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 2.0 release: major new release adds group blogging and streamlined UI
+
+  New Features
+    * [ROL-598] - Group blog support
+    * [ROL-599] - Group blog simple workflow support
+    * [ROL-467] - Multiple Authors of a Blog
+    * [ROL-600] - Admins are superusers
+    * [ROL-809] - Support for Apache Derby
+    * [ROL-810] - IBM DB2 support
+  Improvements
+    * [ROL-767] - Turn on MathCommentAuthenticator by default
+    * [ROL-789] - Allow trackbacks to be enable/disabled independently of comments
+    * [ROL-793] - planet configs cache dir should be in roller.properties not UI
+    * [ROL-812] - Remove the old $macros support
+    * [ROL-815] - Upgrade to Hibernate 3.0.5
+    * [ROL-839] - Allow configuration of list of allowable trackbacks (for internal corporate blogs)
+  Bugs fixed
+    * [ROL-683] - Calendar may show extra day
+    * [ROL-751] - If did not input anything, the new blog entry will also be saved.
+    * [ROL-754] - Database creation failes under MySQL 5.0.x (fix included)
+    * [ROL-760] - multi language search string corrupted in resin2.1.x and tomcat4.x
+    * [ROL-766] - Internationalization broken in #showNewsfeed() macro
+    * [ROL-780] - Next / Prev links on weblog pages broken
+    * [ROL-781] - Atom 1.0 feed broken
+    * [ROL-799] - New Editor theme has whitespace around Roller logo in Safari
+    * [ROL-803] - E-Mail address for weblog is not persisted when weblog created
+    * [ROL-804] - Add new theme text box is too wide
+    * [ROL-806] - Deleting a template with no content fails
+    * [ROL-807] - Clicking the "Customize" button on the Theme page returns a result page with no CSS
+    * [ROL-811] - Unnecessary JSESSIONIDs in URLs
+    * [ROL-814] - Edit links not appearing on blog pages, despite logged-in state
+    * [ROL-816] - Draft entries available in blog via permalink
+    * [ROL-817] - Search results page not updated for 2.0 UI
+    * [ROL-820] - Registration page should not default to Albanian
+    * [ROL-822] - Posting/previewing of comment broken
+    * [ROL-834] - Planet not refreshing
+    * [ROL-835] - User can't create blog when group blogging disabled
+    * [ROL-836] - Disabled users should not show up in list of possible invitees
+    * [ROL-837] - Calendar doesn't reflect date on entry page
+    * [ROL-838] - Comment form shown when comments disabled sitewide
+    * [ROL-843] - Intermittent planet page errors
+    * [ROL-844] - Posting a blog entry breaks the blog page
+    * [ROL-861] - After deleting a user, the main.do page no longer loads
+
+
+-------------------------------------------------------------------------------
 Roller 1.3 - Bug fix release
 
     Bug fixes
