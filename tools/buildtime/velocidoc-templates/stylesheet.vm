@@ -15,21 +15,21 @@ body {
 }
 a:link
 {
-	color: #6600ff;
+	color: #ad3537;
 	font-weight: bold;
 	text-decoration: none;
 }
 
 a:visited
 {
-	color: #3300aa;
+	color: #a03030;
 	font-weight: bold;
 	text-decoration: none;
 }
 
 /* Table colors */
-.TableHeadingColor     { background: #ccc } 
-.TableSubHeadingColor  { background: #EEEEFF } /* Light mauve */
+.TableHeadingColor     { background: #c6ab74 } 
+.TableSubHeadingColor  { background: #c6ab74 } /* Light brown */
 .TableRowColor         { background: #FFFFFF } /* White */
 
 /* Font used in left-hand frame lists */
