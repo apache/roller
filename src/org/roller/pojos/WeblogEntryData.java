@@ -559,6 +559,9 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
      */
     public boolean getCommentsStillAllowed() 
     {
+        if(DRAFT.equals(this.status) || PENDING.equals(this.status))
+            return false;
+        
     		boolean ret = false;
     		if (getAllowComments() == null || getAllowComments().booleanValue()) 
     		{
