@@ -1,5 +1,7 @@
 <%@ include file="/taglibs.jsp" %>
 
+<% try { %>
+
 <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
 <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />
 <c:set var="type"        value="${requestScope['javax.servlet.error.type']}" />
@@ -27,20 +29,28 @@
 </table>
 
 <c:if test="${!empty exception}">
-    <form>
-        <textarea rows="30" style="font-size:8pt;width:80%">
-        <% 
-        java.io.StringWriter sw = new java.io.StringWriter();
-        Throwable t = (Throwable)request.getAttribute("exception");
+    <% 
+    java.io.StringWriter sw = new java.io.StringWriter();
+    Throwable t = (Throwable)pageContext.getAttribute("exception");
+    if (t != null) {
         t.printStackTrace(new java.io.PrintWriter(sw));
+        String stackTrace = sw.toString();
+        if (stackTrace.trim().length() > 0) {
         %>
-        <%= sw.toString() %>
-        </textarea>
-    </form>
+        <p>Stack Trace:</p>
+        <form>
+            <textarea rows="30" style="font-size:8pt;width:80%">
+            <%=  stackTrace %>
+            </textarea>
+        </form>
+    <%  } 
+    } %>
 </c:if>
 
 <br />
 <br />
+
+<% } catch (Throwable t) { t.printStackTrace(); } %>
 
 
 
