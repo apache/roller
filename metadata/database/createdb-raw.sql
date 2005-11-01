@@ -89,7 +89,7 @@ create table website (
     handle            varchar(255) not null,
     description       varchar(255) not null,
     userid            varchar(48) not null,
-    defaultpageid     varchar(48) default '' not null,
+    defaultpageid     varchar(48) default '',
     weblogdayid       varchar(48) not null,
     ignorewords       @TEXT_SQL_TYPE@,
     enablebloggerapi  @BOOLEAN_SQL_TYPE_FALSE@ not null,
