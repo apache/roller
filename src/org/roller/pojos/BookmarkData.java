@@ -17,8 +17,7 @@ import java.io.Serializable;
  * @struts.form include-all="true"
  *    extends="org.apache.struts.validator.ValidatorForm"
  * 
- * @hibernate.class table="bookmark"
- * hibernate.jcs-cache usage="read-write" 
+ * @hibernate.class lazy="false" table="bookmark"
  */
 public class BookmarkData extends WebsiteObject
     implements Serializable, Comparable
@@ -78,7 +77,7 @@ public class BookmarkData extends WebsiteObject
      *
      * @ejb:persistent-field 
      * 
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *     generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()

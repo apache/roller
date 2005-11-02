@@ -18,8 +18,7 @@ import org.roller.model.RollerFactory;
  * 
  * @ejb:bean name="WeblogTemplate"
  * @struts.form include-all="true"
- * @hibernate.class table="webpage" 
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="webpage" hibernate.jcs-cache usage="read-write"
  */
 public class WeblogTemplate extends PersistentObject
    implements Serializable, Template
@@ -71,7 +70,7 @@ public class WeblogTemplate extends PersistentObject
 
    /** 
     * @ejb:persistent-field 
-    * @hibernate.id column="id" type="string"
+    * @hibernate.id column="id"
     *  generator-class="uuid.hex" unsaved-value="null"
     */
    public java.lang.String getId()

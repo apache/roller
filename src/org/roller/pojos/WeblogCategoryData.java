@@ -16,8 +16,7 @@ import org.roller.util.PojoUtil;
  *
  * @ejb:bean name="WeblogCategoryData"
  * @struts.form include-all="true"
- * @hibernate.class table="weblogcategory" 
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="weblogcategory" 
  */
 public class WeblogCategoryData extends HierarchicalPersistentObject
 {
@@ -148,7 +147,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()

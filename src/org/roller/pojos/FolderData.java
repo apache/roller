@@ -23,7 +23,7 @@ import org.roller.model.RollerFactory;
  *    extends="org.apache.struts.validator.ValidatorForm"
  * @ejb:bean name="FolderData"
  * 
- * @hibernate.class table="folder"
+ * @hibernate.class lazy="false" table="folder"
  * hibernate.jcs-cache usage="read-write"
  */
 public class FolderData extends HierarchicalPersistentObject
@@ -137,7 +137,7 @@ public class FolderData extends HierarchicalPersistentObject
      * 
      * @ejb:persistent-field 
      * 
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *     generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()

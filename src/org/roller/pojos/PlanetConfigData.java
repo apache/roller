@@ -21,7 +21,7 @@ import org.roller.pojos.PersistentObject;
 
 /**
  * @struts.form include-all="true"
- * @hibernate.class table="rag_config"
+ * @hibernate.class lazy="false" table="rag_config"
  * @author Dave Johnson
  */
 public class PlanetConfigData extends PersistentObject implements Serializable
@@ -71,7 +71,7 @@ public class PlanetConfigData extends PersistentObject implements Serializable
     
     //----------------------------------------------------------- persistent fields
     /** 
-     * @hibernate.id column="id" type="string" 
+     * @hibernate.id column="id" 
      *     generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()

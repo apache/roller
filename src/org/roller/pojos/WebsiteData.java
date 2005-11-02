@@ -29,9 +29,7 @@ import org.roller.model.UserManager;
  *
  * @ejb:bean name="WebsiteData"
  * @struts.form include-all="true"
- * @hibernate.class table="website"
- * 
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false"  table="website"
  */
 public class WebsiteData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
@@ -353,7 +351,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      *
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()

@@ -2,7 +2,7 @@ package org.roller.pojos;
 /**
  * @author David M Johnson
  * @ejb:bean name="EntryAttribute"
- * @hibernate.class table="entryattribute" 
+ * @hibernate.class lazy="false" table="entryattribute" 
  */
 public class EntryAttributeData extends PersistentObject implements java.lang.Comparable
 {
@@ -38,7 +38,7 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
-     * @hibernate.id column="id" type="string" 
+     * @hibernate.id column="id" 
      *    generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()

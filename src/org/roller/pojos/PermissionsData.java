@@ -21,7 +21,7 @@ package org.roller.pojos;
  *
  * @ejb:bean name="PermissionsData"
  * @struts.form include-all="true"
- * @hibernate.class table="roller_user_permissions"  
+ * @hibernate.class lazy="false" table="roller_user_permissions"  
  *
  * @author Dave Johnson
  */
@@ -50,7 +50,7 @@ public class PermissionsData extends PersistentObject
     }
     /**
      * @ejb:persistent-field
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *     generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId() 

@@ -18,7 +18,7 @@ import java.io.Serializable;
  *
  * @author Anil Gangolli anil@busybuddha.org
  * @ejb:bean name="PingQueueEntryData"
- * @hibernate.class table="pingqueueentry"
+ * @hibernate.class lazy="false" table="pingqueueentry"
  */
 public class PingQueueEntryData extends PersistentObject implements Serializable
 {
@@ -73,7 +73,7 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
      *
      * @return the unique id of this object.
      * @ejb:persistent-field
-     * @hibernate.id column="id" type="string" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()
     {

@@ -13,8 +13,7 @@ package org.roller.pojos;
  * @author Allen Gilliland
  *
  * @ejb:bean name="RollerPropertyData"
- * @hibernate.class table="roller_properties"
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="roller_properties"
  */
 public class RollerPropertyData 
     extends org.roller.pojos.PersistentObject
@@ -66,7 +65,7 @@ public class RollerPropertyData
      *
      * @return Value of property name.
      * @ejb:persistent-field
-     * @hibernate.id column="name" type="string" generator-class="assigned"
+     * @hibernate.id column="name" generator-class="assigned"
      */
     public String getName() {
 

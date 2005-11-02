@@ -5,8 +5,7 @@ package org.roller.pojos;
  * @author David M Johnson
  *
  * @ejb:bean name="FolderAssoc"
- * @hibernate.class table="folderassoc" 
- *     hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="folderassoc" 
  */
 public class FolderAssoc extends PersistentObject
     implements Assoc
@@ -46,7 +45,7 @@ public class FolderAssoc extends PersistentObject
 
     /**
      * @ejb:persistent-field 
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()

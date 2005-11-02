@@ -23,8 +23,7 @@ import org.roller.util.Utilities;
  *
  * @ejb:bean name="UserData"
  * @struts.form include-all="true"
- * @hibernate.class table="rolleruser"  
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="rolleruser"  
  */
 public class UserData
    extends org.roller.pojos.PersistentObject
@@ -121,7 +120,7 @@ public class UserData
      * 
      * @struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field 
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
    public String getId()
