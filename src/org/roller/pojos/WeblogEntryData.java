@@ -36,8 +36,7 @@ import org.roller.util.Utilities;
  *
  * @ejb:bean name="WeblogEntryData"
  * @struts.form include-all="true"
- * @hibernate.class table="weblogentry"
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="weblogentry" 
  */
 public class WeblogEntryData extends WebsiteObject implements Serializable
 {
@@ -142,8 +141,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     /** 
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
-     * @hibernate.id column="id" type="string"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()
     {

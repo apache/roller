@@ -22,7 +22,7 @@ import java.util.Date;
  * Records change that a user has made to an object.
  * @ejb:bean name="ObjectAuditData"
  * @struts.form include-all="true"
- * @hibernate.class table="roller_audit_log"  
+ * @hibernate.class lazy="false" table="roller_audit_log"  
  *
  * @author Dave Johnson
  */
@@ -41,7 +41,7 @@ public class ObjectAuditData extends PersistentObject
 
     /**
      * @ejb:persistent-field
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *     generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()

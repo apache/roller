@@ -21,12 +21,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-
-
 /**
  * @struts.form include-all="true"
  * @ejb:bean name="PlanetSubscriptionData"
- * @hibernate.class table="rag_subscription"
+ * @hibernate.class lazy="false" table="rag_subscription"
  */
 public class PlanetSubscriptionData extends PersistentObject 
     implements Serializable, Comparable
@@ -78,7 +76,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
 
     /** 
-     * @hibernate.id column="id" type="string" 
+     * @hibernate.id column="id" 
      *     generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()

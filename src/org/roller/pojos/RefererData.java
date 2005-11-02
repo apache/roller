@@ -12,8 +12,7 @@ import org.roller.util.Utilities;
  *
  * @ejb:bean name="RefererData"
  * @struts.form include-all="true"
- * @hibernate.class table="referer" 
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="referer" 
  */
 public class RefererData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
@@ -85,7 +84,7 @@ public class RefererData extends org.roller.pojos.PersistentObject
      * Unique ID and primary key of this Referer.
      *
      * @roller.wrapPojoMethod type="simple"
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()

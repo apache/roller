@@ -34,7 +34,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
  * A syndication feed entry intended for use in an in-memory or database cache to 
  * speed the creation of aggregations in Planet Roller implementations. 
  * 
- * @hibernate.class table="rag_entry"
+ * @hibernate.class lazy="false" table="rag_entry"
  * @author Dave Johnson
  */
 public class PlanetEntryData extends PersistentObject 
@@ -144,7 +144,7 @@ public class PlanetEntryData extends PersistentObject
     //----------------------------------------------------------- persistent fields
 
     /** 
-     * @hibernate.id column="id" type="string" 
+     * @hibernate.id column="id" 
      *     generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()

@@ -21,8 +21,7 @@ import org.roller.model.RollerFactory;
  * @author David M Johnson
  *
  * @ejb:bean name="WeblogCategoryAssoc"
- * @hibernate.class table="weblogcategoryassoc" 
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="weblogcategoryassoc" 
  */
 public class WeblogCategoryAssoc extends PersistentObject
     implements Assoc
@@ -60,7 +59,7 @@ public class WeblogCategoryAssoc extends PersistentObject
 
     /**
      * @ejb:persistent-field 
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()

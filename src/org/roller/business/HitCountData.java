@@ -5,7 +5,7 @@ package org.roller.business;
  * @author David M Johnson
  *
  * @castor:class name="HitCount" table="referer" id="id" key-generator="UUID"
- * @hibernate.class table="referer"
+ * @hibernate.class lazy="false" table="referer"
  */
 public class HitCountData
    extends org.roller.pojos.PersistentObject
@@ -40,8 +40,7 @@ public class HitCountData
    /** @castor:field set-method="setId"
      * @castor:field-sql name="id" sql-dirty="check" dirty="check"
      * @castor:field-xml node="attribute"
-     * @hibernate.id column="id" type="string"
-     *  generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
    public java.lang.String getId()
    {

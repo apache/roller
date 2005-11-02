@@ -22,8 +22,7 @@ import org.roller.util.PojoUtil;
  *
  * @ejb:bean name="RollerConfigData"
  * @struts.form include-all="true"
- * @hibernate.class table="rollerconfig"
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="rollerconfig"
  */
 public class RollerConfigData
     extends org.roller.pojos.PersistentObject
@@ -187,7 +186,7 @@ public class RollerConfigData
      *
      * @struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId() {

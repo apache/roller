@@ -20,7 +20,7 @@ import java.io.Serializable;
 import org.roller.pojos.PersistentObject;
 
 /**
- * @hibernate.class table="rag_group_subscription"
+ * @hibernate.class lazy="false" table="rag_group_subscription"
  * @author Dave Johnson
  */
 public class PlanetGroupSubscriptionAssoc extends PersistentObject 
@@ -34,7 +34,7 @@ public class PlanetGroupSubscriptionAssoc extends PersistentObject
 
     //----------------------------------------------------------- persistent fields
     /** 
-     * @hibernate.id column="id" type="string" 
+     * @hibernate.id column="id" 
      *     generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()

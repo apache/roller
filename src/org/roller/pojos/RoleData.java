@@ -8,8 +8,7 @@ package org.roller.pojos;
  *
  * @ejb:bean name="RoleData"
  * @struts.form include-all="true"
- * @hibernate.class table="userrole"  
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="userrole"  
  */
 public class RoleData
    extends org.roller.pojos.PersistentObject
@@ -46,7 +45,7 @@ public class RoleData
    /** 
     * @ejb:pk-field
     * @ejb:persistent-field 
-    * @hibernate.id column="id" type="string"
+    * @hibernate.id column="id"
     *  generator-class="uuid.hex" unsaved-value="null"
     */
    public java.lang.String getId()

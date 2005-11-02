@@ -28,7 +28,7 @@ import java.util.TreeSet;
 /**
  * @struts.form include-all="true"
  * @ejb:bean name="PlanetGroupData"
- * @hibernate.class table="rag_group"
+ * @hibernate.class lazy="false" table="rag_group"
  */
 public class PlanetGroupData extends PersistentObject implements Serializable
 {
@@ -62,7 +62,7 @@ public class PlanetGroupData extends PersistentObject implements Serializable
 
     /** 
      * @ejb:persistent-field 
-     * @hibernate.id column="id" type="string" 
+     * @hibernate.id column="id" 
      *     generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()

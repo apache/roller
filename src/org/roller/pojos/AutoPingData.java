@@ -17,7 +17,7 @@ import java.io.Serializable;
  *
  * @author Anil Gangolli anil@busybuddha.org
  * @ejb:bean name="AutoPingData"
- * @hibernate.class table="autoping"
+ * @hibernate.class lazy="false" table="autoping"
  */
 public class AutoPingData extends PersistentObject implements Serializable
 {
@@ -64,7 +64,7 @@ public class AutoPingData extends PersistentObject implements Serializable
      *
      * @return the unique id of this object. -- struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field
-     * @hibernate.id column="id" type="string" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()
     {

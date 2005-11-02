@@ -25,7 +25,7 @@ import java.sql.Timestamp;
  * @author Anil Gangolli anil@busybuddha.org
  * @ejb:bean name="PingTargetData"
  * @struts.form include-all="true"
- * @hibernate.class table="pingtarget"
+ * @hibernate.class lazy="false" table="pingtarget"
  */
 public class PingTargetData extends PersistentObject implements Serializable
 {
@@ -88,7 +88,7 @@ public class PingTargetData extends PersistentObject implements Serializable
      * @return the unique id of this ping target.
      * @struts.validator type="required" msgkey="errors.required"
      * @ejb:persistent-field
-     * @hibernate.id column="id" type="string" generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()
     {

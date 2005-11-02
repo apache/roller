@@ -11,7 +11,7 @@ import java.util.Date;
  * @author Matt Raible
  * @version $Revision: 1.2 $ $Date: 2005/01/21 19:01:10 $
  *
- * @hibernate.class table="usercookie"
+ * @hibernate.class lazy="false" table="usercookie"
  */
 public class UserCookieData extends PersistentObject implements Serializable
 {
@@ -47,7 +47,7 @@ public class UserCookieData extends PersistentObject implements Serializable
 
     /**
      * @ejb:persistent-field
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()

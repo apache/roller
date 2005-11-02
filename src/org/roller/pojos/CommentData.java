@@ -9,8 +9,7 @@ import org.roller.util.PojoUtil;
  * @ejb:bean name="CommentData"
  * @struts.form include-all="true"
  * 
- * @hibernate.class table="comment"  
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="comment"  
  */
 public class CommentData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
@@ -67,7 +66,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     /** 
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
-     * @hibernate.id column="id" type="string"
+     * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId()
