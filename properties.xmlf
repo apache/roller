@@ -16,7 +16,7 @@
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.0" />
 <property name="tools.jstl"          value="${ro.tools}/standard-1.0.3" />
-<property name="tools.xdoclet"    value="${ro.tools}/buildtime/xdoclet-1.2" />
+<property name="tools.xdoclet"    value="${ro.tools}/buildtime/xdoclet-1.2.3" />
 <property name="tools.tomcat"     value="${ro.tools}/buildtime/tomcat-5.0.28" />
 
 <!--

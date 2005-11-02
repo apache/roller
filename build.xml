@@ -595,6 +595,7 @@ ro.buildUser=${user.name}
             <include name="navbar.vm" />
             <include name="referer.vm" />
             <include name="roller.vm" />
+            <include name="atommacros.vm" />
             <include name="rssmacros.vm" />
             <include name="user.vm" />
             <include name="weblog.vm" />
