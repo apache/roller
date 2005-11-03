@@ -32,7 +32,7 @@ public class WeblogTemplate extends PersistentObject
    private java.lang.String contents;
    private java.util.Date lastModified;
 
-   protected WebsiteData mWebsite = null;
+   private WebsiteData mWebsite = null;
 
    public WeblogTemplate()
    {

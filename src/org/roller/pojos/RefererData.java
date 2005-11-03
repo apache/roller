@@ -18,19 +18,19 @@ public class RefererData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
 {
     static final long serialVersionUID = -1817992900602131316L;
-    protected java.lang.String id = null;
-    protected org.roller.pojos.WebsiteData website = null;
-    protected org.roller.pojos.WeblogEntryData weblogEntry = null;
-    protected java.lang.String dateString = null;
-    protected java.lang.String refererUrl = null;
-    protected java.lang.String refererPermalink = null;
-    protected java.lang.String requestUrl = null;
-    protected java.lang.String title = null;
-    protected java.lang.String excerpt = null;
-    protected java.lang.Boolean visible = null;
-    protected java.lang.Boolean duplicate = null;
-    protected java.lang.Integer dayHits = null;
-    protected java.lang.Integer totalHits = null;
+    private java.lang.String id = null;
+    private org.roller.pojos.WebsiteData website = null;
+    private org.roller.pojos.WeblogEntryData weblogEntry = null;
+    private java.lang.String dateString = null;
+    private java.lang.String refererUrl = null;
+    private java.lang.String refererPermalink = null;
+    private java.lang.String requestUrl = null;
+    private java.lang.String title = null;
+    private java.lang.String excerpt = null;
+    private java.lang.Boolean visible = null;
+    private java.lang.Boolean duplicate = null;
+    private java.lang.Integer dayHits = null;
+    private java.lang.Integer totalHits = null;
 
     public RefererData()
     {

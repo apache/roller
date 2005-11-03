@@ -16,10 +16,10 @@ public class RoleData
 {
    static final long serialVersionUID = -4254083071697970972L;
 
-   protected java.lang.String id;
-   protected java.lang.String userName;
-   protected UserData user;
-   protected java.lang.String role;
+   private java.lang.String id;
+   private java.lang.String userName;
+   private UserData user;
+   private java.lang.String role;
 
    public RoleData()
    {

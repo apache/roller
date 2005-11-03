@@ -24,18 +24,18 @@ public class BookmarkData extends WebsiteObject
 {
     static final long serialVersionUID = 2315131256728236003L;
     
-    protected FolderData folder;
+    private FolderData folder;
 
-    protected String id = null;
-    protected String name;
-    protected String description;
-    protected String url;
-    protected Integer weight;
-    protected Integer priority;
-    protected String image;
-    protected String feedUrl;  
+    private String id = null;
+    private String name;
+    private String description;
+    private String url;
+    private Integer weight;
+    private Integer priority;
+    private String image;
+    private String feedUrl;  
     
-    protected BookmarkManager bookmarkManager = null;
+    private BookmarkManager bookmarkManager = null;
 
     //----------------------------------------------------------- Constructors
     
