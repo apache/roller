@@ -399,39 +399,39 @@ public class FolderData extends HierarchicalPersistentObject
 
             if (this.id == null)
             {
-                lEquals = lEquals && (lTest.id == null);
+                lEquals = lEquals && (lTest.getId() == null);
             }
             else
             {
-                lEquals = lEquals && this.id.equals(lTest.id);
+                lEquals = lEquals && this.id.equals(lTest.getId());
             }
 
             if (this.name == null)
             {
-                lEquals = lEquals && (lTest.name == null);
+                lEquals = lEquals && (lTest.getName() == null);
             }
             else
             {
-                lEquals = lEquals && this.name.equals(lTest.name);
+                lEquals = lEquals && this.name.equals(lTest.getName());
             }
 
             if (this.description == null)
             {
-                lEquals = lEquals && (lTest.description == null);
+                lEquals = lEquals && (lTest.getDescription() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.description.equals(lTest.description);
+                          this.description.equals(lTest.getDescription());
             }
 
             if (this.website == null)
             {
-                lEquals = lEquals && (lTest.website == null);
+                lEquals = lEquals && (lTest.getWebsite() == null);
             }
             else
             {
-                lEquals = lEquals && this.website.equals(lTest.website);
+                lEquals = lEquals && this.website.equals(lTest.getWebsite());
             }
 
             return lEquals;

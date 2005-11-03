@@ -189,59 +189,59 @@ public class WeblogTemplate extends PersistentObject
 
          if( this.id == null )
          {
-            lEquals = lEquals && ( lTest.id == null );
+            lEquals = lEquals && ( lTest.getId() == null );
          }
          else
          {
-            lEquals = lEquals && this.id.equals( lTest.id );
+            lEquals = lEquals && this.id.equals( lTest.getId() );
          }
          if( this.mWebsite == null )
          {
-            lEquals = lEquals && ( lTest.mWebsite == null );
+            lEquals = lEquals && ( lTest.getWebsite() == null );
          }
          else
          {
-            lEquals = lEquals && this.mWebsite.equals( lTest.mWebsite );
+            lEquals = lEquals && this.mWebsite.equals( lTest.getWebsite() );
          }
          if( this.name == null )
          {
-            lEquals = lEquals && ( lTest.name == null );
+            lEquals = lEquals && ( lTest.getName() == null );
          }
          else
          {
-            lEquals = lEquals && this.name.equals( lTest.name );
+            lEquals = lEquals && this.name.equals( lTest.getName() );
          }
          if( this.description == null )
          {
-            lEquals = lEquals && ( lTest.description == null );
+            lEquals = lEquals && ( lTest.getDescription() == null );
          }
          else
          {
-            lEquals = lEquals && this.description.equals( lTest.description );
+            lEquals = lEquals && this.description.equals( lTest.getDescription() );
          }
          if( this.link == null )
          {
-            lEquals = lEquals && ( lTest.link == null );
+            lEquals = lEquals && ( lTest.getLink() == null );
          }
          else
          {
-            lEquals = lEquals && this.link.equals( lTest.link );
+            lEquals = lEquals && this.link.equals( lTest.getLink() );
          }
          if( this.contents == null )
          {
-            lEquals = lEquals && ( lTest.contents == null );
+            lEquals = lEquals && ( lTest.getContents() == null );
          }
          else
          {
-            lEquals = lEquals && this.contents.equals( lTest.contents );
+            lEquals = lEquals && this.contents.equals( lTest.getContents() );
          }
          if( this.lastModified == null )
          {
-            lEquals = lEquals && ( lTest.lastModified == null );
+            lEquals = lEquals && ( lTest.getLastModified() == null );
          }
          else
          {
-            lEquals = lEquals && this.lastModified.equals( lTest.lastModified );
+            lEquals = lEquals && this.lastModified.equals( lTest.getLastModified() );
          }
 
          return lEquals;

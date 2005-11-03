@@ -115,35 +115,35 @@ public class RoleData
 
          if( this.id == null )
          {
-            lEquals = lEquals && ( lTest.id == null );
+            lEquals = lEquals && ( lTest.getId() == null );
          }
          else
          {
-            lEquals = lEquals && this.id.equals( lTest.id );
+            lEquals = lEquals && this.id.equals( lTest.getId() );
          }
          if( this.userName == null )
          {
-            lEquals = lEquals && ( lTest.userName == null );
+            lEquals = lEquals && ( lTest.getUserName() == null );
          }
          else
          {
-            lEquals = lEquals && this.userName.equals( lTest.userName );
+            lEquals = lEquals && this.userName.equals( lTest.getUserName() );
          }
          if( this.user == null )
          {
-            lEquals = lEquals && ( lTest.user == null );
+            lEquals = lEquals && ( lTest.getUser() == null );
          }
          else
          {
-            lEquals = lEquals && this.user.equals( lTest.user );
+            lEquals = lEquals && this.user.equals( lTest.getUser() );
          }
          if( this.role == null )
          {
-            lEquals = lEquals && ( lTest.role == null );
+            lEquals = lEquals && ( lTest.getRole() == null );
          }
          else
          {
-            lEquals = lEquals && this.role.equals( lTest.role );
+            lEquals = lEquals && this.role.equals( lTest.getRole() );
          }
 
          return lEquals;

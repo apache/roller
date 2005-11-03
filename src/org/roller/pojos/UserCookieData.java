@@ -153,19 +153,19 @@ public class UserCookieData extends PersistentObject implements Serializable
         }
         final UserCookieData userCookieData = (UserCookieData)o;
 
-        if (cookieId != null ? !cookieId.equals(userCookieData.cookieId) : userCookieData.cookieId != null)
+        if (cookieId != null ? !cookieId.equals(userCookieData.getCookieId()) : userCookieData.getCookieId() != null)
         {
             return false;
         }
-        if (dateCreated != null ? !dateCreated.equals(userCookieData.dateCreated) : userCookieData.dateCreated != null)
+        if (dateCreated != null ? !dateCreated.equals(userCookieData.getDateCreated()) : userCookieData.getDateCreated() != null)
         {
             return false;
         }
-        if (id != null ? !id.equals(userCookieData.id) : userCookieData.id != null)
+        if (id != null ? !id.equals(userCookieData.getId()) : userCookieData.getId() != null)
         {
             return false;
         }
-        if (username != null ? !username.equals(userCookieData.username) : userCookieData.username != null)
+        if (username != null ? !username.equals(userCookieData.getUsername()) : userCookieData.getUsername() != null)
         {
             return false;
         }
