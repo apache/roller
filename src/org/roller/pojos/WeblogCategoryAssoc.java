@@ -28,10 +28,10 @@ public class WeblogCategoryAssoc extends PersistentObject
 {
     static final long serialVersionUID = 674856287447472015L;
     
-    protected String id;
-    protected WeblogCategoryData category;
-    protected WeblogCategoryData ancestor;
-    protected java.lang.String relation;
+    private String id;
+    private WeblogCategoryData category;
+    private WeblogCategoryData ancestor;
+    private java.lang.String relation;
     
     public WeblogCategoryAssoc()
     {

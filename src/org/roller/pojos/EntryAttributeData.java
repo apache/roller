@@ -6,10 +6,10 @@ package org.roller.pojos;
  */
 public class EntryAttributeData extends PersistentObject implements java.lang.Comparable
 {
-    protected String id;
-    protected WeblogEntryData entry;
-    protected String name;
-    protected String value;
+    private String id;
+    private WeblogEntryData entry;
+    private String name;
+    private String value;
     
     public EntryAttributeData()
     {

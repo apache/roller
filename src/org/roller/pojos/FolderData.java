@@ -31,14 +31,14 @@ public class FolderData extends HierarchicalPersistentObject
 {
     static final long serialVersionUID = -6272468884763861944L;
     
-    protected Set bookmarks = new TreeSet();
-    protected List folders = null;
-    protected WebsiteData website;
+    private Set bookmarks = new TreeSet();
+    private List folders = null;
+    private WebsiteData website;
     
-    protected String id;
-    protected String name;
-    protected String description;
-    protected String path;
+    private String id;
+    private String name;
+    private String description;
+    private String path;
     
     //----------------------------------------------------------- Constructors
     

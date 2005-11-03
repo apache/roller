@@ -39,15 +39,15 @@ public class UserData
    
    static final long serialVersionUID = -6354583200913127874L;
 
-   protected String  id;
-   protected String  userName;
-   protected String  password;
-   protected String  fullName;
-   protected String  emailAddress;
-   protected Date    dateCreated;
-   protected String  locale;
-   protected String  timeZone;
-   protected Boolean enabled = Boolean.TRUE;
+   private String  id;
+   private String  userName;
+   private String  password;
+   private String  fullName;
+   private String  emailAddress;
+   private Date    dateCreated;
+   private String  locale;
+   private String  timeZone;
+   private Boolean enabled = Boolean.TRUE;
    
    private Set roles = new TreeSet();
    private List permissions = new ArrayList();

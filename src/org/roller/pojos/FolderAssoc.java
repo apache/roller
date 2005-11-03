@@ -14,10 +14,10 @@ public class FolderAssoc extends PersistentObject
     public static final String PARENT = "PARENT";
     public static final String GRANDPARENT = "GRANDPARENT";
 
-    protected String id;
-    protected FolderData folder;
-    protected FolderData ancestor;
-    protected java.lang.String relation;
+    private String id;
+    private FolderData folder;
+    private FolderData ancestor;
+    private java.lang.String relation;
     
     public FolderAssoc()
     {

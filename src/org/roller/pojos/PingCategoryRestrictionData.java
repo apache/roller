@@ -23,9 +23,9 @@ import java.io.Serializable;
  */
 public class PingCategoryRestrictionData extends PersistentObject implements Serializable
 {
-    protected String id;
-    protected AutoPingData autoPing;
-    protected WeblogCategoryData weblogCategory;
+    private String id;
+    private AutoPingData autoPing;
+    private WeblogCategoryData weblogCategory;
 
     static final long serialVersionUID = 2261280579491859418L;
 
