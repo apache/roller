@@ -140,9 +140,9 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
 
         final PingCategoryRestrictionData pingCategoryRestrictionData = (PingCategoryRestrictionData)o;
 
-        if (id != null ? !id.equals(pingCategoryRestrictionData.id) : pingCategoryRestrictionData.id != null) return false;
-        if (autoPing != null ? !autoPing.equals(pingCategoryRestrictionData.autoPing) : pingCategoryRestrictionData.autoPing != null) return false;
-        if (weblogCategory != null ? !weblogCategory.equals(pingCategoryRestrictionData.weblogCategory) : pingCategoryRestrictionData.weblogCategory != null) return false;
+        if (id != null ? !id.equals(pingCategoryRestrictionData.getId()) : pingCategoryRestrictionData.getId() != null) return false;
+        if (autoPing != null ? !autoPing.equals(pingCategoryRestrictionData.getAutoping()) : pingCategoryRestrictionData.getAutoping() != null) return false;
+        if (weblogCategory != null ? !weblogCategory.equals(pingCategoryRestrictionData.getWeblogCategory()) : pingCategoryRestrictionData.getWeblogCategory() != null) return false;
 
         return true;
     }

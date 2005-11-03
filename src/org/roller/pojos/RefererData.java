@@ -392,124 +392,124 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
             if (this.id == null)
             {
-                lEquals = lEquals && (lTest.id == null);
+                lEquals = lEquals && (lTest.getId() == null);
             }
             else
             {
-                lEquals = lEquals && this.id.equals(lTest.id);
+                lEquals = lEquals && this.id.equals(lTest.getId());
             }
 
             if (this.website == null)
             {
-                lEquals = lEquals && (lTest.website == null);
+                lEquals = lEquals && (lTest.getWebsite() == null);
             }
             else
             {
-                lEquals = lEquals && this.website.equals(lTest.website);
+                lEquals = lEquals && this.website.equals(lTest.getWebsite());
             }
 
             if (this.weblogEntry == null)
             {
-                lEquals = lEquals && (lTest.weblogEntry == null);
+                lEquals = lEquals && (lTest.getWeblogEntry() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.weblogEntry.equals(lTest.weblogEntry);
+                          this.weblogEntry.equals(lTest.getWeblogEntry());
             }
 
             if (this.dateString == null)
             {
-                lEquals = lEquals && (lTest.dateString == null);
+                lEquals = lEquals && (lTest.getDateString() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.dateString.equals(lTest.dateString);
+                          this.dateString.equals(lTest.getDateString());
             }
 
             if (this.refererUrl == null)
             {
-                lEquals = lEquals && (lTest.refererUrl == null);
+                lEquals = lEquals && (lTest.getRefererUrl() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.refererUrl.equals(lTest.refererUrl);
+                          this.refererUrl.equals(lTest.getRefererUrl());
             }
 
             if (this.refererPermalink == null)
             {
-                lEquals = lEquals && (lTest.refererPermalink == null);
+                lEquals = lEquals && (lTest.getRefererPermalink() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.refererPermalink.equals(lTest.refererPermalink);
+                          this.refererPermalink.equals(lTest.getRefererPermalink());
             }
 
             if (this.requestUrl == null)
             {
-                lEquals = lEquals && (lTest.requestUrl == null);
+                lEquals = lEquals && (lTest.getRequestUrl() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.requestUrl.equals(lTest.requestUrl);
+                          this.requestUrl.equals(lTest.getRequestUrl());
             }
 
             if (this.title == null)
             {
-                lEquals = lEquals && (lTest.title == null);
+                lEquals = lEquals && (lTest.getTitle() == null);
             }
             else
             {
-                lEquals = lEquals && this.title.equals(lTest.title);
+                lEquals = lEquals && this.title.equals(lTest.getTitle());
             }
 
             if (this.excerpt == null)
             {
-                lEquals = lEquals && (lTest.excerpt == null);
+                lEquals = lEquals && (lTest.getExcerpt() == null);
             }
             else
             {
-                lEquals = lEquals && this.excerpt.equals(lTest.excerpt);
+                lEquals = lEquals && this.excerpt.equals(lTest.getExcerpt());
             }
 
             if (this.visible == null)
             {
-                lEquals = lEquals && (lTest.visible == null);
+                lEquals = lEquals && (lTest.getVisible() == null);
             }
             else
             {
-                lEquals = lEquals && this.visible.equals(lTest.visible);
+                lEquals = lEquals && this.visible.equals(lTest.getVisible());
             }
 
             if (this.duplicate == null)
             {
-                lEquals = lEquals && (lTest.duplicate == null);
+                lEquals = lEquals && (lTest.getDuplicate() == null);
             }
             else
             {
-                lEquals = lEquals && this.duplicate.equals(lTest.duplicate);
+                lEquals = lEquals && this.duplicate.equals(lTest.getDuplicate());
             }
 
             if (this.dayHits == null)
             {
-                lEquals = lEquals && (lTest.dayHits == null);
+                lEquals = lEquals && (lTest.getDayHits() == null);
             }
             else
             {
-                lEquals = lEquals && this.dayHits.equals(lTest.dayHits);
+                lEquals = lEquals && this.dayHits.equals(lTest.getDayHits());
             }
 
             if (this.totalHits == null)
             {
-                lEquals = lEquals && (lTest.totalHits == null);
+                lEquals = lEquals && (lTest.getTotalHits() == null);
             }
             else
             {
-                lEquals = lEquals && this.totalHits.equals(lTest.totalHits);
+                lEquals = lEquals && this.totalHits.equals(lTest.getTotalHits());
             }
 
             return lEquals;

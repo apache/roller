@@ -281,57 +281,57 @@ public class BookmarkData extends WebsiteObject
 
             if (this.id == null)
             {
-                lEquals = lEquals && (lTest.id == null);
+                lEquals = lEquals && (lTest.getId() == null);
             }
             else
             {
-                lEquals = lEquals && this.id.equals(lTest.id);
+                lEquals = lEquals && this.id.equals(lTest.getId());
             }
 
             if (this.name == null)
             {
-                lEquals = lEquals && (lTest.name == null);
+                lEquals = lEquals && (lTest.getName() == null);
             }
             else
             {
-                lEquals = lEquals && this.name.equals(lTest.name);
+                lEquals = lEquals && this.name.equals(lTest.getName());
             }
 
             if (this.description == null)
             {
-                lEquals = lEquals && (lTest.description == null);
+                lEquals = lEquals && (lTest.getDescription() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.description.equals(lTest.description);
+                          this.description.equals(lTest.getDescription());
             }
 
             if (this.url == null)
             {
-                lEquals = lEquals && (lTest.url == null);
+                lEquals = lEquals && (lTest.getUrl() == null);
             }
             else
             {
-                lEquals = lEquals && this.url.equals(lTest.url);
+                lEquals = lEquals && this.url.equals(lTest.getUrl());
             }
 
             if (this.weight == null)
             {
-                lEquals = lEquals && (lTest.weight == null);
+                lEquals = lEquals && (lTest.getWeight() == null);
             }
             else
             {
-                lEquals = lEquals && this.weight.equals(lTest.weight);
+                lEquals = lEquals && this.weight.equals(lTest.getWeight());
             }
 
             if (this.priority == null)
             {
-                lEquals = lEquals && (lTest.priority == null);
+                lEquals = lEquals && (lTest.getPriority() == null);
             }
             else
             {
-                lEquals = lEquals && this.priority.equals(lTest.priority);
+                lEquals = lEquals && this.priority.equals(lTest.getPriority());
             }
 
 //            if (this.mFolder == null)
@@ -345,20 +345,20 @@ public class BookmarkData extends WebsiteObject
 //
             if (this.image == null)
             {
-                lEquals = lEquals && (lTest.image == null);
+                lEquals = lEquals && (lTest.getImage() == null);
             }
             else
             {
-                lEquals = lEquals && this.image.equals(lTest.image);
+                lEquals = lEquals && this.image.equals(lTest.getImage());
             }
 
             if (this.feedUrl == null)
             {
-                lEquals = lEquals && (lTest.feedUrl == null);
+                lEquals = lEquals && (lTest.getFeedUrl() == null);
             }
             else
             {
-                lEquals = lEquals && this.feedUrl.equals(lTest.feedUrl);
+                lEquals = lEquals && this.feedUrl.equals(lTest.getFeedUrl());
             }
 
             return lEquals;
