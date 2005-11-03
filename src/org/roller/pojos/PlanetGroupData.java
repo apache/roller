@@ -35,28 +35,28 @@ public class PlanetGroupData extends PersistentObject implements Serializable
     transient private String[] catArray = null;
 
     /** Database ID */
-    protected String id;
+    private String id = null;
     
     /** Unique handle by which group may be fetched */
-    protected String handle;
+    private String handle = null;
     
     /** Title of this group */
-    protected String title;
+    private String title = null;
     
     /** Description of this group */
-    protected String description;
+    private String description = null;
     
     /** Restrict group by this list of comma separated category names */
-    protected String categoryRestriction;
+    private String categoryRestriction = null;
     
     /** Max number of entries to show in HTML representation of this group */
-    protected int maxPageEntries = 45;
+    private int maxPageEntries = 45;
     
     /** Max number of entries to show in feed representation of this group */
-    protected int maxFeedEntries = 45;
+    private int maxFeedEntries = 45;
     
     /** Subscriptions in this group */
-    protected List subscriptionAssocs = new ArrayList();
+    private List subscriptionAssocs = new ArrayList();
 
     //------------------------------------------------------- persistent fields
 

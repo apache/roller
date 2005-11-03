@@ -29,18 +29,18 @@ import java.sql.Timestamp;
  */
 public class PingTargetData extends PersistentObject implements Serializable
 {
-    protected String id;
-    protected String name;
-    protected String pingUrl;
-    protected WebsiteData website;
-    protected int conditionCode;
-    protected Timestamp lastSuccess;
+    private String id = null;
+    private String name = null;
+    private String pingUrl = null;
+    private WebsiteData website = null;
+    private int conditionCode = -1;
+    private Timestamp lastSuccess = null;
 
     public static final int CONDITION_OK = 0;           // last use (after possible retrials) was successful
     public static final int CONDITION_FAILING = 1;      // last use failed after retrials
     public static final int CONDITION_DISABLED = 2;     // disabled by failure policy after failures - editing resets
 
-    static final long serialVersionUID = -6354583200913127874L;
+    public static final long serialVersionUID = -6354583200913127874L;
 
     /**
      * Default empty constructor.
@@ -73,12 +73,13 @@ public class PingTargetData extends PersistentObject implements Serializable
     public void setData(PersistentObject vo)
     {
         PingTargetData other = (PingTargetData) vo;
-        id = other.id;
-        name = other.name;
-        pingUrl = other.pingUrl;
-        website = other.website;
-        conditionCode = other.conditionCode;
-        lastSuccess = other.lastSuccess;
+        
+        id = other.getId();
+        name = other.getName();
+        pingUrl = other.getPingUrl();
+        website = other.getWebsite();
+        conditionCode = other.getConditionCode();
+        lastSuccess = other.getLastSuccess();
     }
 
 
@@ -246,12 +247,12 @@ public class PingTargetData extends PersistentObject implements Serializable
 
         final PingTargetData pingTargetData = (PingTargetData) o;
 
-        if (conditionCode != pingTargetData.conditionCode) return false;
-        if (id != null ? !id.equals(pingTargetData.id) : pingTargetData.id != null) return false;
-        if (lastSuccess != null ? !lastSuccess.equals(pingTargetData.lastSuccess) : pingTargetData.lastSuccess != null) return false;
-        if (name != null ? !name.equals(pingTargetData.name) : pingTargetData.name != null) return false;
-        if (pingUrl != null ? !pingUrl.equals(pingTargetData.pingUrl) : pingTargetData.pingUrl != null) return false;
-        if (website != null ? !website.equals(pingTargetData.website) : pingTargetData.website != null) return false;
+        if (conditionCode != pingTargetData.getConditionCode()) return false;
+        if (id != null ? !id.equals(pingTargetData.getId()) : pingTargetData.getId() != null) return false;
+        if (lastSuccess != null ? !lastSuccess.equals(pingTargetData.getLastSuccess()) : pingTargetData.getLastSuccess() != null) return false;
+        if (name != null ? !name.equals(pingTargetData.getName()) : pingTargetData.getName() != null) return false;
+        if (pingUrl != null ? !pingUrl.equals(pingTargetData.getPingUrl()) : pingTargetData.getPingUrl() != null) return false;
+        if (website != null ? !website.equals(pingTargetData.getWebsite()) : pingTargetData.getWebsite() != null) return false;
 
         return true;
     }

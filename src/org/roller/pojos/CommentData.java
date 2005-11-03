@@ -1,5 +1,6 @@
 package org.roller.pojos;
 
+import java.sql.Timestamp;
 import org.roller.util.PojoUtil;
 
 /**
@@ -14,18 +15,21 @@ import org.roller.util.PojoUtil;
 public class CommentData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
 {
-    static final long serialVersionUID = -6668122596726478462L;
-    protected java.lang.String id;
-    protected java.lang.String name;
-    protected java.lang.String email;
-    protected java.lang.String url;
-    protected java.lang.String content;
-    protected java.sql.Timestamp postTime;
-    protected WeblogEntryData mWeblogEntry;
-    protected Boolean spam;
-    protected Boolean notify;
-	protected String remoteHost;
+    public static final long serialVersionUID = -6668122596726478462L;
+    
+    private String id = null;
+    private String name = null;
+    private String email = null;
+    private String url = null;
+    private String content = null;
+    private Timestamp postTime = null;
+    private Boolean spam = Boolean.FALSE;
+    private Boolean notify = Boolean.FALSE;
+    private String remoteHost = null;
+    
+    private WeblogEntryData weblogEntry = null;
 
+    
     public CommentData()
     {
         spam = Boolean.FALSE;
@@ -46,21 +50,12 @@ public class CommentData extends org.roller.pojos.PersistentObject
         this.spam = spam;
         this.notify = notify;
 
-        mWeblogEntry = entry;
+        weblogEntry = entry;
     }
 
     public CommentData(CommentData otherData)
     {
-        this.id = otherData.id;
-        this.name = otherData.name;
-        this.email = otherData.email;
-        this.url = otherData.url;
-        this.content = otherData.content;
-        this.postTime = otherData.postTime;
-        this.spam = otherData.spam;
-        this.notify = otherData.notify;
-        
-        mWeblogEntry = otherData.mWeblogEntry;
+        this.setData(otherData);
     }
 
     /** 
@@ -87,13 +82,13 @@ public class CommentData extends org.roller.pojos.PersistentObject
      */
     public WeblogEntryData getWeblogEntry()
     {
-        return mWeblogEntry;
+        return weblogEntry;
     }
 
     /** @ejb:persistent-field */
     public void setWeblogEntry(WeblogEntryData entry)
     {
-        mWeblogEntry = entry;
+        weblogEntry = entry;
     }
 
     /** 
@@ -250,15 +245,15 @@ public class CommentData extends org.roller.pojos.PersistentObject
             CommentData lTest = (CommentData) pOther;
             boolean lEquals = true;
 
-            lEquals = PojoUtil.equals(lEquals, this.id, lTest.id);
-            lEquals = PojoUtil.equals(lEquals, this.mWeblogEntry, lTest.mWeblogEntry);
-            lEquals = PojoUtil.equals(lEquals, this.name, lTest.name);
-            lEquals = PojoUtil.equals(lEquals, this.email, lTest.email);
-            lEquals = PojoUtil.equals(lEquals, this.url, lTest.url);
-            lEquals = PojoUtil.equals(lEquals, this.content, lTest.content);
-            lEquals = PojoUtil.equals(lEquals, this.postTime, lTest.postTime);
-            lEquals = PojoUtil.equals(lEquals, this.spam, lTest.spam);
-            lEquals = PojoUtil.equals(lEquals, this.notify, lTest.notify);
+            lEquals = PojoUtil.equals(lEquals, this.id, lTest.getId());
+            lEquals = PojoUtil.equals(lEquals, this.weblogEntry, lTest.getWeblogEntry());
+            lEquals = PojoUtil.equals(lEquals, this.name, lTest.getName());
+            lEquals = PojoUtil.equals(lEquals, this.email, lTest.getEmail());
+            lEquals = PojoUtil.equals(lEquals, this.url, lTest.getUrl());
+            lEquals = PojoUtil.equals(lEquals, this.content, lTest.getContent());
+            lEquals = PojoUtil.equals(lEquals, this.postTime, lTest.getPostTime());
+            lEquals = PojoUtil.equals(lEquals, this.spam, lTest.getSpam());
+            lEquals = PojoUtil.equals(lEquals, this.notify, lTest.getNotify());
 
             return lEquals;
         }
@@ -272,7 +267,7 @@ public class CommentData extends org.roller.pojos.PersistentObject
     {
         int result = 17;
         result = PojoUtil.addHashCode(result, this.id);
-        result = PojoUtil.addHashCode(result, this.mWeblogEntry);
+        result = PojoUtil.addHashCode(result, this.weblogEntry);
         result = PojoUtil.addHashCode(result, this.name);
         result = PojoUtil.addHashCode(result, this.email);
         result = PojoUtil.addHashCode(result, this.url);
@@ -290,15 +285,16 @@ public class CommentData extends org.roller.pojos.PersistentObject
     public void setData(org.roller.pojos.PersistentObject otherData)
     {
         CommentData otherComment = (CommentData) otherData;
-        this.id = otherComment.id;
-        this.mWeblogEntry = otherComment.mWeblogEntry;
-        this.name = otherComment.name;
-        this.email = otherComment.email;
-        this.url = otherComment.url;
-        this.content = otherComment.content;
-        this.postTime = otherComment.postTime;
-        this.spam = otherComment.spam;
-        this.notify = otherComment.notify;
+        
+        this.id = otherComment.getId();
+        this.weblogEntry = otherComment.getWeblogEntry();
+        this.name = otherComment.getName();
+        this.email = otherComment.getEmail();
+        this.url = otherComment.getUrl();
+        this.content = otherComment.getContent();
+        this.postTime = otherComment.getPostTime();
+        this.spam = otherComment.getSpam();
+        this.notify = otherComment.getNotify();
     }
 
 }

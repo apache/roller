@@ -1,5 +1,7 @@
 package org.roller.business;
 
+import org.roller.pojos.WebsiteData;
+
 /**
  * Hit count bean.
  * @author David M Johnson
@@ -11,12 +13,12 @@ public class HitCountData
    extends org.roller.pojos.PersistentObject
    implements java.io.Serializable
 {
-   static final long serialVersionUID = -7998453141931097201L;
+   public static final long serialVersionUID = -7998453141931097201L;
 
-   protected java.lang.String id;
-   protected java.lang.Integer dayHitCount;
-   protected java.lang.Integer totalHitCount;
-   protected org.roller.pojos.WebsiteData website;
+   private String id = null;
+   private Integer dayHitCount = null;
+   private Integer totalHitCount = null;
+   private WebsiteData website = null;
 
    public HitCountData()
    {
@@ -32,9 +34,7 @@ public class HitCountData
 
    public HitCountData( HitCountData otherData )
    {
-      this.id = otherData.id;
-      this.totalHitCount = otherData.totalHitCount;
-      this.dayHitCount = otherData.dayHitCount;
+      this.setData(otherData);
    }
 
    /** @castor:field set-method="setId"
@@ -111,27 +111,27 @@ public class HitCountData
 
          if( this.id == null )
          {
-            lEquals = lEquals && ( lTest.id == null );
+            lEquals = lEquals && ( lTest.getId() == null );
          }
          else
          {
-            lEquals = lEquals && this.id.equals( lTest.id );
+            lEquals = lEquals && this.id.equals( lTest.getId());
          }
          if( this.dayHitCount == null )
          {
-            lEquals = lEquals && ( lTest.dayHitCount == null );
+            lEquals = lEquals && ( lTest.getDayHitCount() == null );
          }
          else
          {
-            lEquals = lEquals && this.dayHitCount.equals( lTest.dayHitCount );
+            lEquals = lEquals && this.dayHitCount.equals( lTest.getDayHitCount());
          }
          if( this.totalHitCount == null )
          {
-            lEquals = lEquals && ( lTest.totalHitCount == null );
+            lEquals = lEquals && ( lTest.getTotalHitCount() == null );
          }
          else
          {
-            lEquals= lEquals && this.totalHitCount.equals(lTest.totalHitCount);
+            lEquals= lEquals && this.totalHitCount.equals(lTest.getTotalHitCount());
          }
 
          return lEquals;
@@ -156,11 +156,11 @@ public class HitCountData
     */
    public void setData( org.roller.pojos.PersistentObject otherData )
    {
-
-      this.id = ((HitCountData)otherData).id;
-
-      this.dayHitCount = ((HitCountData)otherData).dayHitCount;
-      this.totalHitCount = ((HitCountData)otherData).totalHitCount;
+       HitCountData other = (HitCountData)otherData;
+       
+       this.id = other.getId();
+       this.dayHitCount = other.getDayHitCount();
+       this.totalHitCount = other.getTotalHitCount();
    }
 
 }

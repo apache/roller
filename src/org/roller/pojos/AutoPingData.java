@@ -21,11 +21,11 @@ import java.io.Serializable;
  */
 public class AutoPingData extends PersistentObject implements Serializable
 {
-    protected String id;
-    protected PingTargetData pingTarget;
-    protected WebsiteData website;
+    private String id = null;
+    private PingTargetData pingTarget = null;
+    private WebsiteData website = null;
 
-    static final long serialVersionUID = -9105985454111986435L;
+    public static final long serialVersionUID = -9105985454111986435L;
     
     /**
      * Default constructor.  Leaves all fields null.  Required for bean compliance.
@@ -54,9 +54,10 @@ public class AutoPingData extends PersistentObject implements Serializable
     public void setData(PersistentObject vo)
     {
         AutoPingData other = (AutoPingData)vo;
-        id = other.id;
-        website = other.website;
-        pingTarget = other.pingTarget;
+        
+        id = other.getId();
+        website = other.getWebsite();
+        pingTarget = other.getPingTarget();
     }
 
     /**
@@ -140,9 +141,9 @@ public class AutoPingData extends PersistentObject implements Serializable
 
         final AutoPingData autoPingData = (AutoPingData)o;
 
-        if (id != null ? !id.equals(autoPingData.id) : autoPingData.id != null) return false;
-        if (pingTarget != null ? !pingTarget.equals(autoPingData.pingTarget) : autoPingData.pingTarget != null) return false;
-        if (website != null ? !website.equals(autoPingData.website) : autoPingData.website != null) return false;
+        if (id != null ? !id.equals(autoPingData.getId()) : autoPingData.getId() != null) return false;
+        if (pingTarget != null ? !pingTarget.equals(autoPingData.getPingTarget()) : autoPingData.getPingTarget() != null) return false;
+        if (website != null ? !website.equals(autoPingData.getWebsite()) : autoPingData.getWebsite() != null) return false;
 
         return true;
     }

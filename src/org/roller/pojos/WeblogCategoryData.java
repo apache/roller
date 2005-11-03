@@ -20,17 +20,18 @@ import org.roller.util.PojoUtil;
  */
 public class WeblogCategoryData extends HierarchicalPersistentObject
 {
-    static final long serialVersionUID = 1435782148712018954L;
+    public static final long serialVersionUID = 1435782148712018954L;
 
-    protected java.lang.String id = null;
-    protected java.lang.String name;
-    protected java.lang.String description;
-    protected java.lang.String image;
+    private String id = null;
+    private String name = null;
+    private String description = null;
+    private String image = null;
     
-    protected String cachedPath = null;
+    private String cachedPath = null;
 
-    protected WebsiteData mWebsite;
-    protected List mWeblogCategories;
+    private WebsiteData website = null;
+    private List weblogCategories = null;
+    
 
     public WeblogCategoryData()
     {
@@ -45,7 +46,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         java.lang.String image)
     {
         this.id = id;
-        this.mWebsite = website;
+        this.website = website;
         this.mNewParent = parent;
         this.name = name;
         this.description = description;
@@ -54,23 +55,25 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
 
     public WeblogCategoryData(WeblogCategoryData otherData)
     {
-        this.id = otherData.id;
-        this.mWebsite = otherData.mWebsite;
-        this.mNewParent = otherData.mNewParent;
-        this.name = otherData.name;
-        this.description = otherData.description;
-        this.image = otherData.image;
+        this.setData(otherData);
     }
 
     /** Setter is needed in RollerImpl.storePersistentObject(). */
     public void setData(org.roller.pojos.PersistentObject otherData)
     {
-        this.id = ((WeblogCategoryData) otherData).id;
-        this.mWebsite = ((WeblogCategoryData) otherData).mWebsite;
-        this.mNewParent = ((WeblogCategoryData) otherData).mNewParent;
-        this.name = ((WeblogCategoryData) otherData).name;
-        this.description = ((WeblogCategoryData) otherData).description;
-        this.image = ((WeblogCategoryData) otherData).image;
+        WeblogCategoryData other = (WeblogCategoryData) otherData;
+        
+        this.id = other.getId();
+        this.website = other.getWebsite();
+        this.name = other.getName();
+        this.description = other.getDescription();
+        this.image = other.getImage();
+        
+        try {
+            this.mNewParent = other.getParent();
+        } catch(RollerException re) {
+            // why does this throw an exception?
+        }
     }
 
     public void save() throws RollerException
@@ -238,28 +241,14 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
      */
     public WebsiteData getWebsite()
     {
-        return mWebsite;
+        return website;
     }
     /** @ejb:persistent-field */
     public void setWebsite(WebsiteData website)
     {
-        mWebsite = website;
+        this.website = website;
     }
 
-//    /** 
-//     * @ejb:persistent-field
-//     *  
-//     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
-//     */
-//    public WeblogCategoryAssoc getWeblogCategoryAssoc()
-//    {
-//        return mWeblogCategoryAssoc;
-//    }
-//    /** @ejb:persistent-field */
-//    public void setWeblogCategoryAssoc(WebsiteData website)
-//    {
-//        WeblogCategoryAssoc = weblogCategoryAssoc;
-//    }
 
     /** 
      * Return parent category, or null if category is root of hierarchy.
@@ -297,19 +286,19 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
      */
     public List getWeblogCategories() throws RollerException
     {
-        if (mWeblogCategories == null)
+        if (weblogCategories == null)
         {
-            mWeblogCategories = new LinkedList();
+            weblogCategories = new LinkedList();
             List childAssocs = getChildAssocs();
             Iterator childIter = childAssocs.iterator();
             while (childIter.hasNext())
             {
                 WeblogCategoryAssoc assoc =
                     (WeblogCategoryAssoc) childIter.next();
-                mWeblogCategories.add(assoc.getCategory());
+                weblogCategories.add(assoc.getCategory());
             }
         }
-        return mWeblogCategories;
+        return weblogCategories;
     }
 
     /**
@@ -443,7 +432,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         result = 37 * result + ((this.id != null) ? this.id.hashCode() : 0);
         result =
             37 * result
-                + ((this.mWebsite != null) ? this.mWebsite.hashCode() : 0);
+                + ((this.website != null) ? this.website.hashCode() : 0);
         result = 37 * result + ((this.name != null) ? this.name.hashCode() : 0);
         result =
             37 * result
