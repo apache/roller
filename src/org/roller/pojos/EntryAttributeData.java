@@ -29,10 +29,7 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
 
     public EntryAttributeData(EntryAttributeData otherData)
     {
-        this.id = otherData.id;
-        this.entry = otherData.entry;
-        this.name = otherData.name;
-        this.value = otherData.value;
+        setData(otherData);
     }
 
     /**
@@ -57,9 +54,9 @@ public class EntryAttributeData extends PersistentObject implements java.lang.Co
     public void setData(org.roller.pojos.PersistentObject otherData)
     {
         this.id = otherData.getId();
-        this.entry = ((EntryAttributeData) otherData).entry;
-        this.name = ((EntryAttributeData) otherData).name;
-        this.value = ((EntryAttributeData) otherData).value;
+        this.entry = ((EntryAttributeData) otherData).getEntry();
+        this.name = ((EntryAttributeData) otherData).getName();
+        this.value = ((EntryAttributeData) otherData).getValue();
     }
 
     /** 

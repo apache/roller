@@ -76,13 +76,7 @@ public class UserData
 
 	public UserData( UserData otherData )
 	{
-		this.id = otherData.id;
-		this.userName = otherData.userName;
-		this.password = otherData.password;
-		this.fullName = otherData.fullName;
-		this.emailAddress = otherData.emailAddress;
-		this.dateCreated = (Date)otherData.dateCreated.clone();
-
+		setData(otherData);
 	}
 
     /** 
@@ -393,14 +387,15 @@ public class UserData
     */
    public void setData( org.roller.pojos.PersistentObject otherData )
    {
-      this.id = ((UserData)otherData).id;
-      this.userName = ((UserData)otherData).userName;
-      this.password = ((UserData)otherData).password;
-      this.fullName = ((UserData)otherData).fullName;
-      this.emailAddress = ((UserData)otherData).emailAddress;
-      this.locale = ((UserData)otherData).locale;
-      this.timeZone = ((UserData)otherData).timeZone;
-      this.dateCreated = ((UserData)otherData).dateCreated;
+      UserData other = (UserData)otherData;
+      this.id =       other.getId();
+      this.userName = other.getUserName();
+      this.password = other.getPassword();
+      this.fullName = other.getFullName();
+      this.emailAddress = other.getEmailAddress();
+      this.locale = other.getLocale();
+      this.timeZone = other.getTimeZone();
+      this.dateCreated = other.getDateCreated()!=null ? (Date)other.getDateCreated().clone() : null;
    }
 
     /** 

@@ -58,14 +58,7 @@ public class WeblogTemplate extends PersistentObject
 
    public WeblogTemplate( WeblogTemplate otherData )
    {
-      this.id = otherData.id;
-      this.mWebsite = otherData.mWebsite;
-      this.name = otherData.name;
-      this.description = otherData.description;
-      this.link = otherData.link;
-      this.contents = otherData.contents;
-      this.lastModified = otherData.lastModified;
-
+       setData(otherData);
    }
 
    /** 
@@ -277,20 +270,14 @@ public class WeblogTemplate extends PersistentObject
     */
    public void setData( org.roller.pojos.PersistentObject otherData )
    {
-
-      this.id = ((WeblogTemplate) otherData).id;
-
-      this.mWebsite = ((WeblogTemplate) otherData).mWebsite;
-
-      this.name = ((WeblogTemplate) otherData).name;
-
-      this.description = ((WeblogTemplate) otherData).description;
-
-      this.link = ((WeblogTemplate) otherData).link;
-
-      this.contents = ((WeblogTemplate) otherData).contents;
-
-      this.lastModified = ((WeblogTemplate) otherData).lastModified;
+       WeblogTemplate other = (WeblogTemplate)otherData;
+      this.mWebsite =     other.getWebsite();
+      this.id =           other.getId();
+      this.name =         other.getName();
+      this.description =  other.getDescription();
+      this.link =         other.getLink();
+      this.contents =     other.getContents();
+      this.lastModified = other.getLastModified()!=null ? (Date)other.getLastModified().clone() : null;
    }
 
    public boolean canSave() throws RollerException

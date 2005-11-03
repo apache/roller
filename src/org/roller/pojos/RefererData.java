@@ -63,19 +63,7 @@ public class RefererData extends org.roller.pojos.PersistentObject
 
     public RefererData(RefererData otherData)
     {
-        this.id = otherData.id;
-        this.website = otherData.website;
-        this.weblogEntry = otherData.weblogEntry;
-        this.dateString = otherData.dateString;
-        this.refererUrl = otherData.refererUrl;
-        this.refererPermalink = otherData.refererPermalink;
-        this.requestUrl = otherData.requestUrl;
-        this.title = otherData.title;
-        this.excerpt = otherData.excerpt;
-        this.visible = otherData.visible;
-        this.duplicate = otherData.duplicate;
-        this.dayHits = otherData.dayHits;
-        this.totalHits = otherData.totalHits;
+        setData(otherData);
     }
 
     //------------------------------------------------------- Simple properties
@@ -571,19 +559,19 @@ public class RefererData extends org.roller.pojos.PersistentObject
      */
     public void setData(org.roller.pojos.PersistentObject otherData)
     {
-        this.id = ((RefererData) otherData).id;
-        this.website = ((RefererData) otherData).website;
-        this.weblogEntry = ((RefererData) otherData).weblogEntry;
-        this.dateString = ((RefererData) otherData).dateString;
-        this.refererUrl = ((RefererData) otherData).refererUrl;
-        this.refererPermalink = ((RefererData) otherData).refererPermalink;
-        this.requestUrl = ((RefererData) otherData).requestUrl;
-        this.title = ((RefererData) otherData).title;
-        this.excerpt = ((RefererData) otherData).excerpt;
-        this.visible = ((RefererData) otherData).visible;
-        this.duplicate = ((RefererData) otherData).duplicate;
-        this.dayHits = ((RefererData) otherData).dayHits;
-        this.totalHits = ((RefererData) otherData).totalHits;
+        this.id = ((RefererData) otherData).getId();
+        this.website = ((RefererData) otherData).getWebsite();
+        this.weblogEntry = ((RefererData) otherData).getWeblogEntry();
+        this.dateString = ((RefererData) otherData).getDateString();
+        this.refererUrl = ((RefererData) otherData).getRefererUrl();
+        this.refererPermalink = ((RefererData) otherData).getRefererPermalink();
+        this.requestUrl = ((RefererData) otherData).getRequestUrl();
+        this.title = ((RefererData) otherData).getTitle();
+        this.excerpt = ((RefererData) otherData).getExcerpt();
+        this.visible = ((RefererData) otherData).getVisible();
+        this.duplicate = ((RefererData) otherData).getDuplicate();
+        this.dayHits = ((RefererData) otherData).getDayHits();
+        this.totalHits = ((RefererData) otherData).getTotalHits();
     }
 
     /**

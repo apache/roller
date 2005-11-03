@@ -51,10 +51,7 @@ public class WeblogCategoryAssoc extends PersistentObject
 
     public WeblogCategoryAssoc(WeblogCategoryAssoc otherData)
     {
-        this.id = otherData.id;
-        this.category = otherData.category;
-        this.ancestor = otherData.ancestor;
-        this.relation = otherData.relation;
+        setData(otherData);
     }
 
     /**

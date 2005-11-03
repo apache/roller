@@ -37,10 +37,7 @@ public class FolderAssoc extends PersistentObject
 
     public FolderAssoc(FolderAssoc otherData)
     {
-        this.id = otherData.id;
-        this.folder = otherData.folder;
-        this.ancestor = otherData.ancestor;
-        this.relation = otherData.relation;
+        setData(otherData);
     }
 
     /**

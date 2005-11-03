@@ -56,9 +56,9 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
     public void setData(PersistentObject vo)
     {
         PingCategoryRestrictionData other = (PingCategoryRestrictionData)vo;
-        id = other.id;
-        autoPing = other.autoPing;
-        weblogCategory = other.weblogCategory;
+        id = other.getId();
+        autoPing = other.getAutoping();
+        weblogCategory = other.getWeblogCategory();
     }
 
     /**

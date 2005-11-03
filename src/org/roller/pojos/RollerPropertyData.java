@@ -45,11 +45,11 @@ public class RollerPropertyData
     
     public void setData(PersistentObject object)
     {
-	if (object instanceof RollerPropertyData)
+        if (object instanceof RollerPropertyData)
         {
             RollerPropertyData prop = (RollerPropertyData) object;
-            this.name = prop.name;
-            this.value = prop.value;
+            this.name = prop.getName();
+            this.value = prop.getValue();
         }
     }
     
