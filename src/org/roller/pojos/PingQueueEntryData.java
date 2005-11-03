@@ -22,13 +22,13 @@ import java.io.Serializable;
  */
 public class PingQueueEntryData extends PersistentObject implements Serializable
 {
-    String id;
-    Timestamp entryTime;
-    PingTargetData pingTarget;
-    WebsiteData website;
-    int attempts;
+    private String id = null;
+    private Timestamp entryTime = null;
+    private PingTargetData pingTarget = null;
+    private WebsiteData website = null;
+    private int attempts = 0;
 
-    static final long serialVersionUID = -1468021030819538243L;
+    public static final long serialVersionUID = -1468021030819538243L;
 
     /**
      * Default constructor.  Leaves all fields at Java-specified default values.
@@ -61,11 +61,12 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
     public void setData(PersistentObject vo)
     {
         PingQueueEntryData other = (PingQueueEntryData) vo;
-        id = other.id;
-        entryTime = other.entryTime;
-        pingTarget = other.pingTarget;
-        website = other.website;
-        attempts = other.attempts;
+        
+        id = other.getId();
+        entryTime = other.getEntryTime();
+        pingTarget = other.getPingTarget();
+        website = other.getWebsite();
+        attempts = other.getAttempts();
     }
 
     /**
@@ -203,11 +204,11 @@ public class PingQueueEntryData extends PersistentObject implements Serializable
 
         final PingQueueEntryData pingQueueEntryData = (PingQueueEntryData) o;
 
-        if (attempts != pingQueueEntryData.attempts) return false;
-        if (entryTime != null ? !entryTime.equals(pingQueueEntryData.entryTime) : pingQueueEntryData.entryTime != null) return false;
-        if (id != null ? !id.equals(pingQueueEntryData.id) : pingQueueEntryData.id != null) return false;
-        if (pingTarget != null ? !pingTarget.equals(pingQueueEntryData.pingTarget) : pingQueueEntryData.pingTarget != null) return false;
-        if (website != null ? !website.equals(pingQueueEntryData.website) : pingQueueEntryData.website != null) return false;
+        if (attempts != pingQueueEntryData.getAttempts()) return false;
+        if (entryTime != null ? !entryTime.equals(pingQueueEntryData.getEntryTime()) : pingQueueEntryData.getEntryTime() != null) return false;
+        if (id != null ? !id.equals(pingQueueEntryData.getId()) : pingQueueEntryData.getId() != null) return false;
+        if (pingTarget != null ? !pingTarget.equals(pingQueueEntryData.getPingTarget()) : pingQueueEntryData.getPingTarget() != null) return false;
+        if (website != null ? !website.equals(pingQueueEntryData.getWebsite()) : pingQueueEntryData.getWebsite() != null) return false;
 
         return true;
     }

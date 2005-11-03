@@ -34,37 +34,37 @@ import org.roller.model.UserManager;
 public class WebsiteData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
 {
-    static final long serialVersionUID = 206437645033737127L;
+    public static final long serialVersionUID = 206437645033737127L;
     
     private static Log mLogger = 
         LogFactory.getFactory().getInstance(WebsiteData.class);
     
     // Simple properties
-    protected String  id;
-    protected String  handle;
-    protected String  name;
-    protected String  description;
-    protected String  defaultPageId;
-    protected String  weblogDayPageId;
-    protected Boolean enableBloggerApi;
-    protected String  editorPage;
-    protected String  ignoreWords;
-    protected Boolean allowComments;
-    protected Boolean emailComments;
-    protected String  emailFromAddress;
-    protected String  emailAddress;
-    protected String  editorTheme;
-    protected String  locale;
-    protected String  timeZone;
-    protected String  mDefaultPlugins;
-    protected Boolean enabled;
-    protected Date dateCreated;
+    private String  id = null;
+    private String  handle = null;
+    private String  name = null;
+    private String  description = null;
+    private String  defaultPageId = null;
+    private String  weblogDayPageId = null;
+    private Boolean enableBloggerApi = Boolean.TRUE;
+    private String  editorPage = null;
+    private String  ignoreWords = null;
+    private Boolean allowComments = Boolean.TRUE;
+    private Boolean emailComments = Boolean.FALSE;
+    private String  emailFromAddress = null;
+    private String  emailAddress = null;
+    private String  editorTheme = null;
+    private String  locale = null;
+    private String  timeZone = null;
+    private String  defaultPlugins = null;
+    private Boolean enabled = Boolean.TRUE;
+    private Date dateCreated = null;
        
     // Associated objects
-    protected UserData mUser = null; // TODO: decide if website.user is needed
-    protected List     permissions = new ArrayList();    
-    protected WeblogCategoryData bloggerCategory;
-    protected WeblogCategoryData defaultCategory;
+    private UserData creator = null; // TODO: decide if website.user is needed
+    private List     permissions = new ArrayList();    
+    private WeblogCategoryData bloggerCategory = null;
+    private WeblogCategoryData defaultCategory = null;
 
 
     public WebsiteData()
@@ -94,7 +94,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.name = name;
         this.handle = handle;
         this.description = description;
-        this.mUser = user;
+        this.creator = user;
         this.defaultPageId = defaultPageId;
         this.weblogDayPageId = weblogDayPageId;
         this.enableBloggerApi = enableBloggerApi;
@@ -427,13 +427,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      */
     public org.roller.pojos.UserData getCreator()
     {
-        return mUser;
+        return creator;
     }
 
     /** @ejb:persistent-field */
     public void setCreator( org.roller.pojos.UserData ud )
     {
-        mUser = ud;
+        creator = ud;
     }
 
     /**
@@ -713,13 +713,13 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      */
     public String getDefaultPlugins()
     {
-        return mDefaultPlugins;
+        return defaultPlugins;
     }
 
     /** @ejb:persistent-field */
     public void setDefaultPlugins(String string)
     {
-        mDefaultPlugins = string;
+        defaultPlugins = string;
     }
 
     /**
@@ -758,7 +758,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                    "editorTheme=" + editorTheme + " " +
                    "locale=" + locale + " " +
                    "timeZone=" + timeZone + " " +
-                   "defaultPlugins=" + mDefaultPlugins);
+                   "defaultPlugins=" + defaultPlugins);
         str.append('}');
 
         return (str.toString());
@@ -856,7 +856,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         result = PojoUtil.addHashCode(result, this.id);
         result = PojoUtil.addHashCode(result, this.name);
         result = PojoUtil.addHashCode(result, this.description);
-        result = PojoUtil.addHashCode(result, this.mUser);
+        result = PojoUtil.addHashCode(result, this.creator);
         result = PojoUtil.addHashCode(result, this.defaultPageId);
         result = PojoUtil.addHashCode(result, this.weblogDayPageId);
         result = PojoUtil.addHashCode(result, this.enableBloggerApi);
@@ -871,7 +871,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         result = PojoUtil.addHashCode(result, this.editorTheme);
         result = PojoUtil.addHashCode(result, this.locale);
         result = PojoUtil.addHashCode(result, this.timeZone);
-        result = PojoUtil.addHashCode(result, this.mDefaultPlugins);
+        result = PojoUtil.addHashCode(result, this.defaultPlugins);
 
         return result;
     }
@@ -883,28 +883,28 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     {
         WebsiteData other = (WebsiteData)otherData;
 
-        this.id = other.id;
-        this.name = other.name;
-        this.handle = other.handle;
-        this.description = other.description;
-        this.mUser = other.mUser;
-        this.defaultPageId = other.defaultPageId;
-        this.weblogDayPageId = other.weblogDayPageId;
-        this.enableBloggerApi = other.enableBloggerApi;
-        this.bloggerCategory = other.bloggerCategory;
-        this.defaultCategory = other.defaultCategory;
-        this.editorPage = other.editorPage;
-        this.ignoreWords = other.ignoreWords;
-        this.allowComments = other.allowComments;
-        this.emailComments = other.emailComments;
-        this.emailAddress = other.emailAddress;
-        this.emailFromAddress = other.emailFromAddress;
-        this.editorTheme = other.editorTheme;
-        this.locale = other.locale;
-        this.timeZone = other.timeZone;
-        this.mDefaultPlugins = other.mDefaultPlugins;
-        this.enabled = other.enabled;
-        this.dateCreated = dateCreated;
+        this.id = other.getId();
+        this.name = other.getName();
+        this.handle = other.getHandle();
+        this.description = other.getDescription();
+        this.creator = other.getCreator();
+        this.defaultPageId = other.getDefaultPageId();
+        this.weblogDayPageId = other.getWeblogDayPageId();
+        this.enableBloggerApi = other.getEnableBloggerApi();
+        this.bloggerCategory = other.getBloggerCategory();
+        this.defaultCategory = other.getDefaultCategory();
+        this.editorPage = other.getEditorPage();
+        this.ignoreWords = other.getIgnoreWords();
+        this.allowComments = other.getAllowComments();
+        this.emailComments = other.getEmailComments();
+        this.emailAddress = other.getEmailAddress();
+        this.emailFromAddress = other.getEmailFromAddress();
+        this.editorTheme = other.getEditorTheme();
+        this.locale = other.getLocale();
+        this.timeZone = other.getTimeZone();
+        this.defaultPlugins = other.getDefaultPlugins();
+        this.enabled = other.getEnabled();
+        this.dateCreated = getDateCreated();
     }
     
     /**

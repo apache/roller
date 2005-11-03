@@ -27,10 +27,10 @@ public class PlanetGroupSubscriptionAssoc extends PersistentObject
         implements Serializable
 {
     /** Database ID */
-    protected String id;
+    private String id = null;
     
-    protected PlanetGroupData group;
-    protected PlanetSubscriptionData subscription;
+    private PlanetGroupData group = null;
+    private PlanetSubscriptionData subscription = null;
 
     //----------------------------------------------------------- persistent fields
     /** 

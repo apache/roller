@@ -43,31 +43,31 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     private static Log mLogger = 
         LogFactory.getFactory().getInstance(WeblogEntryData.class);
                                            
-    static final long serialVersionUID = 2341505386843044125L;
+    public static final long serialVersionUID = 2341505386843044125L;
     
     public static final String DRAFT = "DRAFT";
     public static final String PENDING = "PENDING";
     public static final String PUBLISHED = "PUBLISHED";
     
     // Simple properies
-    protected String    id            = null;
-    protected String    title         = null;
-    protected String    link          = null;
-    protected String    text          = null;
-    protected String    anchor        = null;
-    protected Timestamp pubTime       = null;
-    protected Timestamp updateTime    = null;
-    protected String    plugins       = null;
-    protected Boolean   allowComments = Boolean.TRUE;
-    protected Integer   commentDays   = new Integer(7);
-    protected Boolean   rightToLeft   = Boolean.FALSE;
-    protected Boolean   pinnedToMain  = Boolean.FALSE;
-    protected String    status        = DRAFT;
+    private String    id            = null;
+    private String    title         = null;
+    private String    link          = null;
+    private String    text          = null;
+    private String    anchor        = null;
+    private Timestamp pubTime       = null;
+    private Timestamp updateTime    = null;
+    private String    plugins       = null;
+    private Boolean   allowComments = Boolean.TRUE;
+    private Integer   commentDays   = new Integer(7);
+    private Boolean   rightToLeft   = Boolean.FALSE;
+    private Boolean   pinnedToMain  = Boolean.FALSE;
+    private String    status        = DRAFT;
     
     // Associated objects
-    protected UserData           creator  = null;
-    protected WebsiteData        website  = null;
-    protected WeblogCategoryData category = null;
+    private UserData           creator  = null;
+    private WebsiteData        website  = null;
+    private WeblogCategoryData category = null;
         
     // Collection of name/value entry attributes
     private Map attMap = new HashMap();
@@ -107,7 +107,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
 
     public WeblogEntryData(WeblogEntryData otherData)
     {
-        setData(otherData);
+        this.setData(otherData);
     }
 
     //---------------------------------------------------------- Initializaion
@@ -118,22 +118,23 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     public void setData(org.roller.pojos.PersistentObject otherData)
     {
         WeblogEntryData other = (WeblogEntryData)otherData;
-        this.id = other.id;
-        this.category = other.category;
-        this.website = other.website;
-        this.creator = other.creator;
-        this.title = other.title;
-        this.link = other.link;
-        this.text = other.text;
-        this.anchor = other.anchor;
-        this.pubTime = other.pubTime;
-        this.updateTime = other.updateTime;
-        this.status = other.status;
-        this.plugins = other.plugins;
-        this.allowComments = other.allowComments;
-        this.commentDays = other.commentDays;
-        this.rightToLeft = other.rightToLeft;
-        this.pinnedToMain = other.pinnedToMain;
+        
+        this.id = other.getId();
+        this.category = other.getCategory();
+        this.website = other.getWebsite();
+        this.creator = other.getCreator();
+        this.title = other.getTitle();
+        this.link = other.getLink();
+        this.text = other.getText();
+        this.anchor = other.getAnchor();
+        this.pubTime = other.getPubTime();
+        this.updateTime = other.getUpdateTime();
+        this.status = other.getStatus();
+        this.plugins = other.getPlugins();
+        this.allowComments = other.getAllowComments();
+        this.commentDays = other.getCommentDays();
+        this.rightToLeft = other.getRightToLeft();
+        this.pinnedToMain = other.getPinnedToMain();
     }
 
     //------------------------------------------------------ Simple properties
@@ -842,95 +843,95 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
 
             if (this.id == null)
             {
-                lEquals = lEquals && (lTest.id == null);
+                lEquals = lEquals && (lTest.getId() == null);
             }
             else
             {
-                lEquals = lEquals && this.id.equals(lTest.id);
+                lEquals = lEquals && this.id.equals(lTest.getId());
             }
 
             if (this.category == null)
             {
-                lEquals = lEquals && (lTest.category == null);
+                lEquals = lEquals && (lTest.getCategory() == null);
             }
             else
             {
-                lEquals = lEquals && this.category.equals(lTest.category);
+                lEquals = lEquals && this.category.equals(lTest.getCategory());
             }
 
             if (this.website == null)
             {
-                lEquals = lEquals && (lTest.website == null);
+                lEquals = lEquals && (lTest.getWebsite() == null);
             }
             else
             {
-                lEquals = lEquals && this.website.equals(lTest.website);
+                lEquals = lEquals && this.website.equals(lTest.getWebsite());
             }
 
             if (this.title == null)
             {
-                lEquals = lEquals && (lTest.title == null);
+                lEquals = lEquals && (lTest.getTitle() == null);
             }
             else
             {
-                lEquals = lEquals && this.title.equals(lTest.title);
+                lEquals = lEquals && this.title.equals(lTest.getTitle());
             }
 
             if (this.text == null)
             {
-                lEquals = lEquals && (lTest.text == null);
+                lEquals = lEquals && (lTest.getText() == null);
             }
             else
             {
-                lEquals = lEquals && this.text.equals(lTest.text);
+                lEquals = lEquals && this.text.equals(lTest.getText());
             }
 
             if (this.anchor == null)
             {
-                lEquals = lEquals && (lTest.anchor == null);
+                lEquals = lEquals && (lTest.getAnchor() == null);
             }
             else
             {
-                lEquals = lEquals && this.anchor.equals(lTest.anchor);
+                lEquals = lEquals && this.anchor.equals(lTest.getAnchor());
             }
 
             if (this.pubTime == null)
             {
-                lEquals = lEquals && (lTest.pubTime == null);
+                lEquals = lEquals && (lTest.getPubTime() == null);
             }
             else
             {
-                lEquals = lEquals && this.pubTime.equals(lTest.pubTime);
+                lEquals = lEquals && this.pubTime.equals(lTest.getPubTime());
             }
 
             if (this.updateTime == null)
             {
-                lEquals = lEquals && (lTest.updateTime == null);
+                lEquals = lEquals && (lTest.getUpdateTime() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.updateTime.equals(lTest.updateTime);
+                          this.updateTime.equals(lTest.getUpdateTime());
             }
 
             if (this.status == null)
             {
-                lEquals = lEquals && (lTest.status == null);
+                lEquals = lEquals && (lTest.getStatus() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.status.equals(lTest.status);
+                          this.status.equals(lTest.getStatus());
             }
 
             if (this.plugins == null)
             {
-                lEquals = lEquals && (lTest.plugins == null);
+                lEquals = lEquals && (lTest.getPlugins() == null);
             }
             else
             {
                 lEquals = lEquals && 
-                          this.plugins.equals(lTest.plugins);
+                          this.plugins.equals(lTest.getPlugins());
             }
 
 
