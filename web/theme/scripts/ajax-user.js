@@ -37,7 +37,7 @@ function onUserSelected() {
     userName.value = user.value;
 }
 function sendUserRequest(url) {
-    if (isBusy) http.abort();
+    if (isBusy) return;
     isBusy = true;
     http.open('get', url);
     http.onreadystatechange = handleUserResponse;
@@ -51,7 +51,6 @@ function handleUserResponse() {
         }   
         //userList.onchange = null;
         data = http.responseText;  
-        //alert(data);
         if (data.indexOf("\n") != -1) {
             lines = data.split('\n');
             for (i = 0; i < lines.length; i++) {
@@ -62,6 +61,7 @@ function handleUserResponse() {
                 }
             }
         }  
-        isBusy = false;
+
     }
+    isBusy = false;
 }
