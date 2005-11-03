@@ -38,10 +38,7 @@ public class UserCookieData extends PersistentObject implements Serializable
 
     public UserCookieData( UserCookieData otherData )
     {
-        this.id = otherData.id;
-        this.username = otherData.username;
-        this.cookieId = otherData.cookieId;
-        this.dateCreated = (Date)otherData.dateCreated.clone();
+        setData(otherData);
     }
 
 
@@ -136,7 +133,7 @@ public class UserCookieData extends PersistentObject implements Serializable
         this.id = newData.getId();
         this.username = newData.getUsername();
         this.cookieId = newData.getCookieId();
-        this.dateCreated = newData.getDateCreated();
+        this.dateCreated = newData.getDateCreated()!=null ? (Date)newData.getDateCreated().clone() : null;
 	}
 
     /**

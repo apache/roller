@@ -399,15 +399,16 @@ public class BookmarkData extends WebsiteObject
      */
     public void setData(org.roller.pojos.PersistentObject otherData)
     {
-        this.id = ((BookmarkData) otherData).id;
-        this.name = ((BookmarkData) otherData).name;
-        this.description = ((BookmarkData) otherData).description;
-        this.url = ((BookmarkData) otherData).url;
-        this.weight = ((BookmarkData) otherData).weight;
-        this.priority = ((BookmarkData) otherData).priority;
-        this.folder = ((BookmarkData) otherData).folder;
-        this.image = ((BookmarkData) otherData).image;
-        this.feedUrl = ((BookmarkData) otherData).feedUrl;
+        BookmarkData other = (BookmarkData)otherData;
+        this.id = other.getId();
+        this.name = other.getName();
+        this.description = other.getDescription();
+        this.url = other.getUrl();
+        this.weight = other.getWeight();
+        this.priority = other.getPriority();
+        this.folder = other.getFolder();
+        this.image = other.getImage();
+        this.feedUrl = other.getUrl();
     }
 
     /** 

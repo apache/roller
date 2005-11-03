@@ -61,12 +61,12 @@ public class FolderData extends HierarchicalPersistentObject
 
     public void setData(org.roller.pojos.PersistentObject otherData)
     {
-        mNewParent = ((FolderData) otherData).mNewParent;
-        this.bookmarks = ((FolderData) otherData).bookmarks;
-        this.id = ((FolderData) otherData).id;
-        this.name = ((FolderData) otherData).name;
-        this.description = ((FolderData) otherData).description;
-        this.website = ((FolderData) otherData).website;
+        mNewParent =       ((FolderData) otherData).mNewParent;
+        this.bookmarks =   ((FolderData) otherData).getBookmarks();
+        this.id =          ((FolderData) otherData).getId();
+        this.name =        ((FolderData) otherData).getName();
+        this.description = ((FolderData) otherData).getDescription();
+        this.website =     ((FolderData) otherData).getWebsite();
     }
 
     public void save() throws RollerException

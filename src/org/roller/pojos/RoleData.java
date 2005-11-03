@@ -35,11 +35,7 @@ public class RoleData
 
    public RoleData( RoleData otherData )
    {
-      this.id = otherData.id;
-      this.userName = otherData.userName;
-      this.user = otherData.user;
-      this.role = otherData.role;
-
+       setData(otherData);
    }
 
    /** 
@@ -174,13 +170,10 @@ public class RoleData
    public void setData( org.roller.pojos.PersistentObject otherData )
    {
 
-      this.id = ((RoleData)otherData).id;
-
-      this.userName = ((RoleData)otherData).userName;
-
-      this.user = ((RoleData)otherData).user;
-
-      this.role = ((RoleData)otherData).role;
+      this.id = ((RoleData)otherData).getId();
+      this.userName = ((RoleData)otherData).getUserName();
+      this.user = ((RoleData)otherData).getUser();
+      this.role = ((RoleData)otherData).getRole();
    }
 
 }
