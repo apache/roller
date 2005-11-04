@@ -16,9 +16,6 @@ alter table website add column datecreated  timestamp @ALTER_TABLE_NOT_NULL@;
 alter table website add column emailaddress varchar(255) @ALTER_TABLE_NOT_NULL@;
 create index website_handle_index on website(handle);
 
--- when using a shared theme, website need not track defauld page id
-alter table website alter column defaultpageid drop not null;
-
 -- this constraint won't work for upgrades until the handle column is
 -- populated with data, otherwise all columns are '' which will not
 -- satisfy the 'unique' condition
