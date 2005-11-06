@@ -74,10 +74,6 @@
     <filter-name>RefererFilter</filter-name>
     <url-pattern>/page/*</url-pattern>
 </filter-mapping>
-<filter-mapping>
-    <filter-name>RefererFilter</filter-name>
-    <url-pattern>/comments/*</url-pattern>
-</filter-mapping>
 
 <!-- RememberMe Filter -->
 <filter-mapping>
