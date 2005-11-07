@@ -19,13 +19,11 @@ import java.io.InputStream;
 import java.util.Date;
 
 import com.sun.syndication.feed.atom.Entry;
+import com.sun.syndication.feed.atom.Feed;
 
 /**
  * Interface to be supported by an Atom server, expected lifetime: one request.
  * AtomServlet calls this generic interface instead of Roller specific APIs. 
- * Does not impose any specific set of collections, just three collection types: 
- * entries, resources and categories. Implementations determine what collections 
- * of each type exist and what URIs are used to get and edit them.
  * <p />
  * Designed to be Roller independent.
  * 
@@ -43,20 +41,9 @@ public interface AtomHandler
     
     /**
      * Return collection
-     * @param pathInfo Used to determine which collection
+     * @param pathInfo Used to determine which collection and range
      */   
-    public AtomCollection getCollection(String[] pathInfo) throws Exception;
-    
-    /**
-     * Return collection restricted by date range
-     * @param pathInfo Used to determine which collection
-     * @param start    Start date or null if none
-     * @param end      End date or null of none
-     * @param offset   Offset into query results (or -1 if none)
-     */
-    public AtomCollection getCollection(
-            String[] pathInfo, Date start, Date end, int offset) 
-        throws Exception; 
+    public Feed getCollection(String[] pathInfo) throws Exception;
     
     /**
      * Create a new entry specified by pathInfo and posted entry.
@@ -88,37 +75,35 @@ public interface AtomHandler
      * @param contentType MIME type of uploaded content
      * @param data Binary data representing uploaded content
      */
-    public String postResource(String[] pathInfo, String name, String contentType, 
+    public String postMedia(String[] pathInfo, String name, String contentType, 
             InputStream is) throws Exception;
 
     /**
      * Update a resource.
      * @param pathInfo Path info portion of URL
      */
-    public void putResource(String[] pathInfo, String contentType, 
+    public void putMedia(String[] pathInfo, String contentType, 
             InputStream is) throws Exception;
     
     /**
      * Delete resource specified by pathInfo.
      * @param pathInfo Path info portion of URL
      */
-    public void deleteResource(String[] pathInfo) throws Exception;
+    public void deleteMedia(String[] pathInfo) throws Exception;
     
     /**
      * Get resource file path (so Servlet can determine MIME type).
      * @param pathInfo Path info portion of URL
      */
-    public String getResourceFilePath(String[] pathInfo) throws Exception;
+    public String getMediaFilePath(String[] pathInfo) throws Exception;
     
     public boolean isIntrospectionURI(String [] pathInfo);  
  
     public boolean isCollectionURI(String [] pathInfo);   
     public boolean isEntryCollectionURI(String [] pathInfo);   
-    public boolean isResourceCollectionURI(String [] pathInfo);   
-    public boolean isCategoryCollectionURI(String [] pathInfo);  
+    public boolean isMediaCollectionURI(String [] pathInfo);   
     
     public boolean isEntryURI(String[] pathInfo);
-    public boolean isResourceURI(String[] pathInfo);
-    public boolean isCategoryURI(String[] pathInfo);
+    public boolean isMediaURI(String[] pathInfo);
 }
 

@@ -51,24 +51,22 @@ import java.io.StringWriter;
 /**
  * Atom Servlet implements Atom by calling a Roller independent handler.
  * @web.servlet name="AtomServlet"
- * @web.servlet-mapping url-pattern="/app05/*"
+ * @web.servlet-mapping url-pattern="/app/*"
  * @author David M Johnson
  */
-public class AtomServlet extends HttpServlet
-{
-    public static final String FEED_TYPE = "atom_1.0"; 
+public class AtomServlet extends HttpServlet {
+    public static final String FEED_TYPE = "atom_1.0";
     
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(AtomServlet.class);
-
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(AtomServlet.class);
+    
     //-----------------------------------------------------------------------------
     /**
      * Create an Atom request handler.
      * TODO: make AtomRequestHandler implementation configurable.
      */
-    private AtomHandler createAtomRequestHandler(HttpServletRequest request)
-    {
-        return new RollerAtomHandler(request);   
+    private AtomHandler createAtomRequestHandler(HttpServletRequest request) {
+        return new RollerAtomHandler(request);
     }
     
     //-----------------------------------------------------------------------------
@@ -76,19 +74,15 @@ public class AtomServlet extends HttpServlet
      * Handles an Atom GET by calling handler and writing results to response.
      */
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException
-    {
+    throws ServletException, IOException {
         AtomHandler handler = createAtomRequestHandler(req);
         String userName = handler.getAuthenticatedUsername();
-        if (userName != null) 
-        {
+        if (userName != null) {
             String[] pathInfo = getPathInfo(req);
-            try
-            {
-                if (handler.isIntrospectionURI(pathInfo)) 
-                {
+            try {
+                if (handler.isIntrospectionURI(pathInfo)) {
                     // return an Atom Service document
-                    AtomService service = handler.getIntrospection(pathInfo);                   
+                    AtomService service = handler.getIntrospection(pathInfo);
                     Document doc = AtomService.serviceToDocument(service);
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
@@ -96,100 +90,65 @@ public class AtomServlet extends HttpServlet
                     outputter.output(doc, writer);
                     writer.close();
                     res.setStatus(HttpServletResponse.SC_OK);
-                }
-                else if (handler.isCollectionURI(pathInfo))
-                {
+                } else if (handler.isCollectionURI(pathInfo)) {
                     // return a collection
-                    String ranges = req.getHeader("Range");
-                    if (ranges == null) req.getParameter("Range");
-                    AtomCollection col = null;
-                    if (ranges != null) 
-                    {
-                        /* // return a range of collection members
-                        AtomCollection.Range range = 
-                            AtomCollection.parseRange(req.getHeader("Range"));
-                        int offset = 0;
-                        String offsetString = req.getParameter("offset");
-                        if (offsetString != null) 
-                        {
-                            offset = Integer.parseInt(offsetString);
-                        }
-                        col= handler.getCollection(
-                            pathInfo, range.start, range.end, offset); */
-                    }
-                    else 
-                    {
-                        col= handler.getCollection(pathInfo);
-                    }
-                    // serialize collection to XML and write it out
-                    Document doc = AtomCollection.collectionToDocument(col);
+                    Feed col = handler.getCollection(pathInfo);
+                    col.setFeedType(FEED_TYPE);
+                    WireFeedOutput wireFeedOutput = new WireFeedOutput();
+                    Document feedDoc = wireFeedOutput.outputJDom(col);
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
                     outputter.setFormat(Format.getPrettyFormat());
-                    outputter.output(doc, writer);
+                    outputter.output(feedDoc, writer);
                     writer.close();
                     res.setStatus(HttpServletResponse.SC_OK);
-                }
-                else if (handler.isEntryURI(pathInfo)) 
-                {
+                } else if (handler.isEntryURI(pathInfo)) {
                     // return an entry
-                    Entry entry = handler.getEntry(pathInfo);                    
-                    Writer writer = res.getWriter(); 
-                    serializeEntry(entry, writer);                    
+                    Entry entry = handler.getEntry(pathInfo);
+                    Writer writer = res.getWriter();
+                    serializeEntry(entry, writer);
                     writer.close();
-                }
-                else if (handler.isResourceURI(pathInfo))
-                {
+                } else if (handler.isMediaURI(pathInfo)) {
                     // return a resource
-                    String absPath = handler.getResourceFilePath(pathInfo);
+                    String absPath = handler.getMediaFilePath(pathInfo);
                     String type = getServletContext().getMimeType(absPath);
                     res.setContentType(type);
                     Utilities.copyInputToOutput(
                         new FileInputStream(absPath), res.getOutputStream());
-                }
-                else
-                {
+                } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            }
-            catch (Exception e)
-            {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (Exception e) {
+                //res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 e.printStackTrace(res.getWriter());
                 mLogger.error(e);
             }
-        }
-        else 
-        {
+        } else {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
     
-    //-----------------------------------------------------------------------------  
+    //-----------------------------------------------------------------------------
     /**
      * Handles an Atom POST by calling handler to identify URI, reading/parsing
      * data, calling handler and writing results to response.
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException
-    {
+    throws ServletException, IOException {
         AtomHandler handler = createAtomRequestHandler(req);
         String userName = handler.getAuthenticatedUsername();
-        if (userName != null) 
-        {
+        if (userName != null) {
             String[] pathInfo = getPathInfo(req);
-            try
-            {
-                if (handler.isEntryCollectionURI(pathInfo)) 
-                {
-                    /* // parse incoming entry                    
+            try {
+                if (handler.isEntryCollectionURI(pathInfo)) {
+                    // parse incoming entry
                     Entry unsavedEntry = parseEntry(
                         new InputStreamReader(req.getInputStream()));
-                    
+                     
                     // call handler to post it
                     Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
-                    Iterator links = savedEntry.getLinks().iterator();
-                    
+                    Iterator links = savedEntry.getAlternateLinks().iterator();
+                     
                     // return alternate link as Location header
                     while (links.hasNext()) {
                         Link link = (Link) links.next();
@@ -197,157 +156,123 @@ public class AtomServlet extends HttpServlet
                             res.addHeader("Location", link.getHref());
                             break;
                         }
-                    }                  
+                    }
                     // write entry back out to response
                     res.setStatus(HttpServletResponse.SC_CREATED);
-                    Writer writer = res.getWriter(); 
-                    serializeEntry(savedEntry, writer);                    
-                    writer.close(); */
-                }
-                else if (handler.isResourceCollectionURI(pathInfo)) 
-                {
+                    Writer writer = res.getWriter();
+                    serializeEntry(savedEntry, writer);
+                    writer.close(); 
+                } else if (handler.isMediaCollectionURI(pathInfo)) {
                     // get incoming file name from HTTP header
                     String name = req.getHeader("Name");
                     
                     // hand input stream of to hander to post file
-                    String location = handler.postResource(
-                       pathInfo, name, req.getContentType(), req.getInputStream());
+                    String location = handler.postMedia(
+                            pathInfo, name, req.getContentType(), req.getInputStream());
                     res.setStatus(HttpServletResponse.SC_CREATED);
                     res.setHeader("Location", location);
-                }
-                else
-                {
+                } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 e.printStackTrace(res.getWriter());
                 mLogger.error(e);
             }
-        }
-        else 
-        {
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
-    }
-
-    //-----------------------------------------------------------------------------    
-    /**
-     * Handles an Atom PUT by calling handler to identify URI, reading/parsing
-     * data, calling handler and writing results to response.
-     */
-    protected void doPut(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException
-    {
-        AtomHandler handler = createAtomRequestHandler(req);
-        String userName = handler.getAuthenticatedUsername();
-        if (userName != null) 
-        {
-            String[] pathInfo = getPathInfo(req);
-            try
-            {
-                if (handler.isEntryURI(pathInfo)) 
-                {
-                    // parse incoming entry
-                    Entry unsavedEntry = parseEntry(
-                        new InputStreamReader(req.getInputStream()));
-                    
-                    // call handler to put entry
-                    Entry updatedEntry = handler.putEntry(pathInfo, unsavedEntry);
-                    
-                    // write entry back out to response
-                    Writer writer = res.getWriter(); 
-                    serializeEntry(updatedEntry, writer);                    
-                    res.setStatus(HttpServletResponse.SC_OK);
-                    writer.close();
-                }
-                else if (handler.isResourceCollectionURI(pathInfo)) 
-                {
-                    // handle input stream to handler
-                    handler.putResource(
-                        pathInfo, req.getContentType(), req.getInputStream());
-                    res.setStatus(HttpServletResponse.SC_OK);
-                }
-                else
-                {
-                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
-            }
-            catch (Exception e)
-            {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                e.printStackTrace(res.getWriter());
-                mLogger.error(e);
-            }
-        }
-        else 
-        {
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
-    }
-
-    //-----------------------------------------------------------------------------
-    /**
-     * Handle Atom DELETE by calling appropriate handler.
-     */
-    protected void doDelete(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException
-    {
-        AtomHandler handler = createAtomRequestHandler(req);
-        String userName = handler.getAuthenticatedUsername();
-        if (userName != null) 
-        {
-            String[] pathInfo = getPathInfo(req);
-            try
-            {
-                if (handler.isEntryURI(pathInfo)) 
-                {
-                    handler.deleteEntry(pathInfo); 
-                    res.setStatus(HttpServletResponse.SC_OK);
-                }
-                else if (handler.isResourceURI(pathInfo)) 
-                {
-                    handler.deleteResource(pathInfo); 
-                    res.setStatus(HttpServletResponse.SC_OK);
-                }
-                else
-                {
-                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
-            }
-            catch (Exception e)
-            {
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                e.printStackTrace(res.getWriter());
-                mLogger.error(e);
-            }
-        }
-        else 
-        {
+        } else {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
     
     //-----------------------------------------------------------------------------
     /**
-     * Convenience method to return the PathInfo from the request.  
+     * Handles an Atom PUT by calling handler to identify URI, reading/parsing
+     * data, calling handler and writing results to response.
      */
-    protected String[] getPathInfo(HttpServletRequest request)
-    {
+    protected void doPut(HttpServletRequest req, HttpServletResponse res)
+    throws ServletException, IOException {
+        AtomHandler handler = createAtomRequestHandler(req);
+        String userName = handler.getAuthenticatedUsername();
+        if (userName != null) {
+            String[] pathInfo = getPathInfo(req);
+            try {
+                if (handler.isEntryURI(pathInfo)) {
+                    // parse incoming entry
+                    Entry unsavedEntry = parseEntry(
+                            new InputStreamReader(req.getInputStream()));
+                    
+                    // call handler to put entry
+                    Entry updatedEntry = handler.putEntry(pathInfo, unsavedEntry);
+                    
+                    // write entry back out to response
+                    Writer writer = res.getWriter();
+                    serializeEntry(updatedEntry, writer);
+                    res.setStatus(HttpServletResponse.SC_OK);
+                    writer.close();
+                } else if (handler.isMediaCollectionURI(pathInfo)) {
+                    // handle input stream to handler
+                    handler.putMedia(
+                            pathInfo, req.getContentType(), req.getInputStream());
+                    res.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Exception e) {
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                e.printStackTrace(res.getWriter());
+                mLogger.error(e);
+            }
+        } else {
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+    }
+    
+    //-----------------------------------------------------------------------------
+    /**
+     * Handle Atom DELETE by calling appropriate handler.
+     */
+    protected void doDelete(HttpServletRequest req, HttpServletResponse res)
+    throws ServletException, IOException {
+        AtomHandler handler = createAtomRequestHandler(req);
+        String userName = handler.getAuthenticatedUsername();
+        if (userName != null) {
+            String[] pathInfo = getPathInfo(req);
+            try {
+                if (handler.isEntryURI(pathInfo)) {
+                    handler.deleteEntry(pathInfo);
+                    res.setStatus(HttpServletResponse.SC_OK);
+                } else if (handler.isMediaURI(pathInfo)) {
+                    handler.deleteMedia(pathInfo);
+                    res.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                }
+            } catch (Exception e) {
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                e.printStackTrace(res.getWriter());
+                mLogger.error(e);
+            }
+        } else {
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+    }
+    
+    //-----------------------------------------------------------------------------
+    /**
+     * Convenience method to return the PathInfo from the request.
+     */
+    protected String[] getPathInfo(HttpServletRequest request) {
         String mPathInfo = request.getPathInfo();
         mPathInfo = (mPathInfo!=null) ? mPathInfo : "";
-        return StringUtils.split(mPathInfo,"/");   
+        return StringUtils.split(mPathInfo,"/");
     }
-
-    /** 
+    
+    /**
      * Utility method to make up for a Rome shortcoming:
      * Rome can only serialize entire feeds, not individual elements
      */
-    public static void serializeEntry(Entry entry, Writer writer) 
-        throws IllegalArgumentException, FeedException, IOException
-    {
+    public static void serializeEntry(Entry entry, Writer writer)
+    throws IllegalArgumentException, FeedException, IOException {
         // Build a feed containing only the entry
         List entries = new ArrayList();
         entries.add(entry);
@@ -366,20 +291,19 @@ public class AtomServlet extends HttpServlet
         
         StringWriter sw = new StringWriter();  // DEBUG
         outputter.output(entryElement, sw);    // DEBUG
-        System.out.println(sw.toString());     // DEBUG    
+        System.out.println(sw.toString());     // DEBUG
         writer.write(sw.toString());           // DEBUG
         
         //outputter.output(entryElement, writer);
     }
     
-    /** 
+    /**
      * Utility method to make up for a Rome shortcoming:
      * Rome can only parse Atom data with XML document root 'feed'
      */
-    public static Entry parseEntry(Reader rd) 
-        throws JDOMException, IOException, IllegalArgumentException, FeedException 
-    {
-        // Parse entry into JDOM tree        
+    public static Entry parseEntry(Reader rd)
+    throws JDOMException, IOException, IllegalArgumentException, FeedException {
+        // Parse entry into JDOM tree
         SAXBuilder builder = new SAXBuilder();
         Document entryDoc = builder.build(rd);
         Element fetchedEntryElement = entryDoc.getRootElement();
@@ -389,7 +313,7 @@ public class AtomServlet extends HttpServlet
         Feed feed = new Feed();
         feed.setFeedType(FEED_TYPE);
         WireFeedOutput wireFeedOutput = new WireFeedOutput();
-        Document feedDoc = wireFeedOutput.outputJDom(feed); 
+        Document feedDoc = wireFeedOutput.outputJDom(feed);
         feedDoc.getRootElement().addContent(fetchedEntryElement);
         
         WireFeedInput input = new WireFeedInput();
