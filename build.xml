@@ -326,7 +326,7 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.compile_web}"/>
     <antcall target="prepare.resin" />
     <javac debug="${build.debug}" destdir="${build.compile_web}"
-        includes="org/roller/presentation/**" >
+        includes="org/roller/presentation/**, org/roller/util/rome/**" >
         <src path="./src"  />
         <src path="${build.generated}/src.presentation"/>
         &custom-src-web;
