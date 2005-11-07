@@ -26,249 +26,243 @@ import org.jdom.filter.Filter;
 
 /**
  * This class models an Atom workspace.
- * 
  * @author Dave Johnson
  */
-/*
- * Based on: draft-ietf-atompub-protocol-04.txt 
+/* Based on: draft-ietf-atompub-protocol-06.txt
  * 
- * appService = 
- *    element app:service { 
- *       (appWorkspace* & anyElement* ) 
+ * appService =
+ *    element app:service {
+ *       appCommonAttributes,
+ *       ( appWorkspace+ 
+ *         & extensionElement* )
  *    }
- * 
+ *
  * Here is an example Atom workspace:
  * 
- * <?xml version="1.0" encoding='utf-8'?> 
- * <service
- *    xmlns="http://purl.org/atom/app#"> 
- *    <workspace title="Main Site" > 
- *       <collection
- *          contents="entries" title="My Blog Entries"
- *          href="http://example.org/reilly/feed" /> 
- *       <collection contents="generic"
- *          title="Documents" href="http://example.org/reilly/pic" /> 
- *    </workspace>
- *    <workspace title="Side Bar Blog"> 
- *       <collection contents="entries"
- *          title="Entries" href="http://example.org/reilly/feed" /> 
- *       <collection
- *          contents="http://example.net/booklist" title="Books"
- *          href="http://example.org/reilly/books" /> 
- *    </workspace> 
+ * <?xml version="1.0" encoding='utf-8'?>
+ * <service xmlns="http://purl.org/atom/app#">
+ *   <workspace title="Main Site" >
+ *     <collection
+ *       title="My Blog Entries"
+ *       href="http://example.org/reilly/main" >
+ *       <member-type>entry</member-type>
+ *       <list-template>http://example.org/{index}</list-template>
+ *     </collection>
+ *     <collection
+ *       title="Pictures"
+ *       href="http://example.org/reilly/pic" >
+ *       <member-type>media</member-type>
+ *       <list-template>http://example.org/p/{index}</list-template>
+ *     </collection>
+ *   </workspace>
  * </service>
  */
-public class AtomService
-{
-    public static final Namespace ns = 
-        Namespace.getNamespace("http://purl.org/atom/app#");
+public class AtomService {
+    public static final Namespace ns =
+            Namespace.getNamespace("http://purl.org/atom/app#");
     
     private List workspaces = new ArrayList();
-
-    public AtomService()
-    {
+    
+    public AtomService() {
     }
-
-    public void addWorkspace(AtomService.Workspace workspace)
-    {
+    
+    public void addWorkspace(AtomService.Workspace workspace) {
         workspaces.add(workspace);
     }
-
-    public List getWorkspaces()
-    {
+    
+    public List getWorkspaces() {
         return workspaces;
     }
-
-    public void setWorkspaces(List workspaces)
-    {
+    
+    public void setWorkspaces(List workspaces) {
         this.workspaces = workspaces;
     }
-
+    
     /**
      * This class models an Atom workspace.
-     * 
+     *
      * @author Dave Johnson
      */
     /*
      * appWorkspace = element app:workspace { attribute title { text }, (
      * appCollection* & anyElement* ) }
      */
-    public static class Workspace
-    {
+    public static class Workspace {
         private String title       = null;
         private List   collections = new ArrayList();
-
-        public Workspace()
-        {
+        
+        public Workspace() {
         }
-
-        public List getCollections()
-        {
+        
+        public List getCollections() {
             return collections;
         }
-
-        public void setCollections(List collections)
-        {
+        
+        public void setCollections(List collections) {
             this.collections = collections;
         }
-
-        public void addCollection(AtomService.Collection col)
-        {
+        
+        public void addCollection(AtomService.Collection col) {
             collections.add(col);
         }
-
+        
         /** Workspace must have a human readable title */
-        public String getTitle()
-        {
+        public String getTitle() {
             return title;
         }
-
-        public void setTitle(String title)
-        {
+        
+        public void setTitle(String title) {
             this.title = title;
         }
     }
-
+    
     /**
-     * This class models an Atom workspace collection.
-     * 
+     * This class models an Atom workspace collection.    
      * @author Dave Johnson
      */
-    /*
-     * appCollection = element app:collection { attribute title { text },
-     * attribute contents { text }, attribute href { text }, anyElement* }
+    /* appCollection =
+     *       element app:collection {
+     *          appCommonAttributes,
+     *          attribute title { text },
+     *          attribute href { text },
+     *          ( appMemberType
+     *            & appListTemplate
+     *            & extensionElement* )
+     *       }
      */
-    public static class Collection
-    {
-        private String title;
-        private String contents = "generic";
-        private String href;
-
-        public Collection()
-        {
+    public static class Collection {
+        private String title = null;
+        private String memberType = "entry"; // or "media"
+        private String listTemplate = null;
+        private String href = null;
+        
+        public Collection() {
         }
-
+        
         /**
-         * Contents attribute conveys the nature of a collection's member
-         * resources. May be "entry" or "generic" and defaults to "generic"
+         * Member type May be "entry" or "media".
          */
-        public String getContents()
-        {
-            return contents;
+        public String getMemberType() {
+            return memberType;
         }
-
-        public void setContents(String contents)
-        {
-            this.contents = contents;
+        
+        public void setMemberType(String memberType) {
+            this.memberType = memberType;
         }
-
-                /** The URI of the collection */
-        public String getHref()
-        {
+        
+        /**
+         * Template for forming list URIs
+         */
+        public String getListTemplate() {
+            return listTemplate;
+        }
+        
+        public void setListTemplate(String listTemplate) {
+            this.listTemplate = listTemplate;
+        }
+        
+        /** The URI of the collection */
+        public String getHref() {
             return href;
         }
-
-        public void setHref(String href)
-        {
+        
+        public void setHref(String href) {
             this.href = href;
         }
-
-                /** Must have human readable title */
-        public String getTitle()
-        {
+        
+        /** Must have human readable title */
+        public String getTitle() {
             return title;
         }
-
-        public void setTitle(String title)
-        {
+        
+        public void setTitle(String title) {
             this.title = title;
         }
     }
-
+    
     /** Deserialize an Atom service XML document into an object */
-    public static AtomService documentToService(Document document)
-    {
+    public static AtomService documentToService(Document document) {
         AtomService service = new AtomService();
         Element root = document.getRootElement();
         List spaces = root.getChildren("workspace", ns);
         Iterator iter = spaces.iterator();
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             Element e = (Element) iter.next();
             service.addWorkspace(AtomService.elementToWorkspace(e));
         }
         return service;
     }
-
+    
     /** Serialize an AtomService object into an XML document */
-    public static Document serviceToDocument(AtomService service)
-    {
+    public static Document serviceToDocument(AtomService service) {
         Document doc = new Document();
         Element root = new Element("service", ns);
         doc.setRootElement(root);
         Iterator iter = service.getWorkspaces().iterator();
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             AtomService.Workspace space = (AtomService.Workspace) iter.next();
             root.addContent(AtomService.workspaceToElement(space));
         }
         return doc;
     }
-
+    
     /** Deserialize a Atom workspace XML element into an object */
-    public static AtomService.Workspace elementToWorkspace(Element element)
-    {
+    public static AtomService.Workspace elementToWorkspace(Element element) {
         AtomService.Workspace space = new AtomService.Workspace();
         space.setTitle(element.getAttribute("title").getValue());
         List collections = element.getChildren("collection", ns);
         Iterator iter = collections.iterator();
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             Element e = (Element) iter.next();
             space.addCollection(AtomService.elementToCollection(e));
         }
         return space;
     }
-
+    
     /** Serialize an AtomService.Workspace object into an XML element */
-    public static Element workspaceToElement(Workspace space)
-    {
+    public static Element workspaceToElement(Workspace space) {
         Namespace ns = Namespace.getNamespace("http://purl.org/atom/app#");
         Element element = new Element("workspace", ns);
         element.setAttribute("title", space.getTitle());
         Iterator iter = space.getCollections().iterator();
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             AtomService.Collection col = (AtomService.Collection) iter.next();
             element.addContent(collectionToElement(col));
         }
         return element;
     }
-
+    
     /** Deserialize an Atom service collection XML element into an object */
-    public static AtomService.Collection elementToCollection(Element element)
-    {
+    public static AtomService.Collection elementToCollection(Element element) {
         AtomService.Collection collection = new AtomService.Collection();
         collection.setTitle(element.getAttribute("title").getValue());
         collection.setHref(element.getAttribute("href").getValue());
-        if (element.getAttribute("href") != null)
-        {
-            collection.setContents(element.getAttribute("contents").getValue());
+        Element memberType = element.getChild("member-type",  ns);
+        if (memberType != null) {
+            collection.setMemberType(memberType.getText());
+        }
+        Element listTemplate = element.getChild("list-template",  ns);
+        if (listTemplate != null) {
+            collection.setListTemplate(listTemplate.getText());
         }
         return collection;
     }
-
+    
     /** Serialize an AtomService.Collection object into an XML element */
-    public static Element collectionToElement(AtomService.Collection collection)
-    {
+    public static Element collectionToElement(AtomService.Collection collection) {
         Namespace ns = Namespace.getNamespace("http://purl.org/atom/app#");
         Element element = new Element("collection", ns);
-        element.setAttribute("title", collection.getTitle()); 
+        element.setAttribute("title", collection.getTitle());
         element.setAttribute("href", collection.getHref());
-        if (collection.getContents() != null)
-        {
-            element.setAttribute("contents", collection.getContents());
-        }
+        
+        Element memberType = new Element("member-type", ns);
+        memberType.setText(collection.getMemberType());
+        element.addContent(memberType);
+        
+        Element listTemplate = new Element("list-template", ns);
+        listTemplate.setText(collection.getListTemplate());
+        element.addContent(listTemplate);
+        
         return element;
     }
 }
