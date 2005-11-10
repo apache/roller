@@ -260,3 +260,10 @@ alter table pingcategory add constraint pc_autopingid_fk
 
 alter table pingcategory add constraint pc_categoryid_fk
     foreign key (categoryid) references weblogcategory(id) @ADDL_FK_PARAMS@ ;
+    
+-- Oracle compatability DDL
+alter table comment rename to roller_comment;
+alter table roller_audit_log add column comment_text varchar(255);
+update roller_audit_log set comment_text = comment;
+alter table roller_audit_log modify comment_text varchar(255) not null;
+alter table roller_audit_log drop column comment;

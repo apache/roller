@@ -68,7 +68,7 @@ public class ObjectAuditData extends PersistentObject
     }
     /**
      * @ejb:persistent-field
-     * @hibernate.property column="comment" non-null="true" unique="false"
+     * @hibernate.property column="comment_text" non-null="true" unique="false"
      */
     public String getComment()
     {

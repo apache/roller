@@ -10,13 +10,20 @@
         <property name="connection.datasource">java:comp/env/jdbc/rollerdb</property>
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         <!--
-        If you want to use HSQLDB, PostgreSQL, DB2 or Derby, then use the right dialect   
+        If you want to use HSQLDB, PostgreSQL, DB2 or Derby, Oracle then use the right dialect   
         <property name="dialect">org.hibernate.dialect.HQLDBDialect</property> 
         <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="dialect">org.hibernate.dialect.DB2Dialect</property>
         <property name="dialect">org.hibernate.dialect.DerbyDialect</property>
+        <property name="dialect">org.hibernate.dialect.Oracle9Dialect</property>
         -->
 
+        <!--
+        Turning this on gets rid of ANTLR dependency; 
+        See http://forum.hibernate.org/viewtopic.php?t=939468
+        <property name="hibernate.query.factory_class">org.hibernate.hql.classic.ClassicQueryTranslatorFactory</property>
+        -->
+		
         <!--
         Examples for configuring Hibernate to use the JDBC Driver Manager
         <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>

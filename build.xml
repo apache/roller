@@ -533,6 +533,19 @@ ro.buildUser=${user.name}
       <mapper type="glob" from="*-raw.sql" to="*.sql" />
     </copy>	
 	
+	<!-- Oracle -->
+	<copy toDir="${dbscripts}/oracle">
+      &custom-dbscripts;
+      <fileset dir="./metadata/database">
+        <include name="*.sql" />
+        <exclude name="droptables.sql" />
+      </fileset>
+      <filterset>
+        <filtersfile file="./metadata/database/db_oracle.properties"/>
+      </filterset>
+      <mapper type="glob" from="*-raw.sql" to="*.sql" />
+    </copy>
+	
 </target>
 
 <!-- ********************************************************************* -->
