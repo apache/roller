@@ -47,7 +47,7 @@ in the "base.path" definition.
     <include name="jazzy-core.jar" />
     <include name="jdom.jar"/>
     <include name="lucene-1.4.3.jar"/>
-    <include name="log4j-1.2.4.jar"/>
+    <include name="log4j-1.2.11.jar"/>
     <include name="rome-0.7.jar"/>
     <include name="rome-fetcher-0.7.jar"/>
     <include name="velocity-1.4.jar"/>
