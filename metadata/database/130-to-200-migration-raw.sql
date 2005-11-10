@@ -44,7 +44,7 @@ create table roller_audit_log (
     user_id         varchar(48) not null,  
     object_id       varchar(48),           
     object_class    varchar(255),          
-    comment         varchar(255) not null, 
+    comment_text    varchar(255) not null, 
     change_time     timestamp              
 );
 
@@ -263,7 +263,3 @@ alter table pingcategory add constraint pc_categoryid_fk
     
 -- Oracle compatability DDL
 alter table comment rename to roller_comment;
-alter table roller_audit_log add column comment_text varchar(255);
-update roller_audit_log set comment_text = comment;
-alter table roller_audit_log modify comment_text varchar(255) not null;
-alter table roller_audit_log drop column comment;
