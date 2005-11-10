@@ -5,6 +5,7 @@
 -- * For MySQL run the script createdb.sql found in the mysql directory.
 -- * For PostgreSQL run the script createdb.sql found in the postgresql directory.
 -- * For HSQLDB run the script createdb.sql found in the hsqldb directory.
+-- * For Oracle run the script createdb.sql found in the oracle directory.
 -- 
 -- For those who grabbed Roller source from CVS, don't try to run the script 
 -- named createdb-raw.sql, it is the source from which the above scripts are 
@@ -57,7 +58,7 @@ create table roller_audit_log (
     user_id         varchar(48) not null,  
     object_id       varchar(48),           
     object_class    varchar(255),          
-    comment         varchar(255) not null, 
+    comment_text    varchar(255) not null, 
     change_time     timestamp              
 );
 
@@ -204,7 +205,7 @@ create table newsfeed (
 create index nf_websiteid_idx on newsfeed( websiteid );
 
 
-create table comment (
+create table roller_comment (
     id      varchar(48) not null primary key,
     entryid varchar(48) not null,
     name    varchar(255),
@@ -216,7 +217,7 @@ create table comment (
     notify  @BOOLEAN_SQL_TYPE_FALSE@ not null,
     remotehost varchar(128)
 );
-create index co_entryid_idx on comment( entryid );
+create index co_entryid_idx on roller_comment( entryid );
 
 -- Ping Feature Tables
 -- name: short descriptive name of the ping target
@@ -434,7 +435,7 @@ alter table weblogentry add constraint wc_categoryid_fk
 alter table weblogcategory add constraint wc_websiteid_fk
     foreign key ( websiteid ) references website( id ) @ADDL_FK_PARAMS@ ;
 
-alter table comment add constraint co_entryid_fk
+alter table roller_comment add constraint co_entryid_fk
     foreign key ( entryid ) references weblogentry( id ) @ADDL_FK_PARAMS@ ;
 
 alter table entryattribute add constraint att_entryid_fk

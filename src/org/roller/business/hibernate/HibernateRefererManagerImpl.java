@@ -204,6 +204,14 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
                         "group by u.username,w.name,w.id order by s desc fetch first " +
                         Integer.toString(max) + " rows only");
                 stmt.setBoolean(1, true);
+            } else if (con.getMetaData().getDriverName().startsWith("Oracle")) {
+				String sql = "select u.username,w.name,w.handle,sum(r.dayhits) as s "+
+                "from rolleruser u, website w, referer r "+
+                "where r.websiteid=w.id and w.userid=u.id and w.isenabled= ? and rownum <= ? " +
+                "group by u.username,w.name,w.handle order by s desc";
+				stmt = con.prepareStatement(sql);
+				stmt.setBoolean(1, true);
+				stmt.setInt(2, max );				
             } else {
                 stmt = con.prepareStatement(
                         "select w.id,w.name,w.handle,sum(r.dayhits) as s "+

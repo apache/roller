@@ -366,6 +366,10 @@ public abstract class RefererManagerImpl implements RefererManager
     private boolean checkForSpam(String refererUrl, WebsiteData website) throws RollerException
     {
         String spamwords = RollerRuntimeConfig.getProperty("spam.referers.ignorewords");
+        if (spamwords == null) {
+        		// Oracle returns nulls instead of empty string so next line would throw NPE.
+        		spamwords = "";
+        }
         LinkedList spamWords = new LinkedList(Arrays.asList(
                 StringUtils.split(StringUtils.deleteWhitespace(spamwords), ",")));
     

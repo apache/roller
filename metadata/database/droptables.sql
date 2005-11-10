@@ -6,7 +6,7 @@ drop table referer;
 drop table newsfeed;
 drop table weblogcategoryassoc;
 drop table bookmark;
-drop table comment;
+drop table blogcomment;
 drop table entryattribute;
 drop table weblogentry;
 drop table weblogcategory;

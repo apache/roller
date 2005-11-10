@@ -10,7 +10,7 @@ import org.roller.util.PojoUtil;
  * @ejb:bean name="CommentData"
  * @struts.form include-all="true"
  * 
- * @hibernate.class lazy="false" table="comment"  
+ * @hibernate.class lazy="false" table="roller_comment"  
  */
 public class CommentData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
