@@ -667,27 +667,26 @@ ro.buildUser=${user.name}
     <!-- <antcall target="rebuild"/> -->
     <!-- Tar and GZip the sources -->
     <tar tarfile="${ro.build}/roller-src-${ro.version}.tar">
-        <tarfileset dir="./src/../..">
-            <include name="roller/metadata/**" />
-            <include name="roller/personal/eclipse/**" />
-            <include name="roller/personal/sample.build.xml" />
-            <include name="roller/custom/**" />
-            <include name="roller/contrib/**" />
-            <include name="roller/src/**" />
-            <include name="roller/tests/**" />
-            <include name="roller/web/**" />
-            <include name="roller/docs/**" />
-            <exclude name="roller/docs/installguide/old/**"/>
-            <exclude name="roller/docs/userguide/old/**"/>
-            <include name="roller/ant.properties" />
-            <include name="roller/build.bat" />
-            <include name="roller/build.sh" />
-            <include name="roller/build.xml" />
-            <include name="roller/properties.xmlf" />
-            <include name="roller/CHANGES.txt" />
-            <include name="roller/LICENSE.txt" />
-            <include name="roller/README.txt" />
+        <tarfileset dir=".">
+            <include name="metadata/**" />
+            <include name="personal/**" />
+            <include name="custom/**" />
+            <include name="contrib/**" />
+            <include name="src/**" />
+            <include name="tests/**" />
+            <include name="web/**" />
+            <include name="docs/**" />
+            <include name="ant.properties" />
+            <include name="build.bat" />
+            <include name="build.sh" />
+            <include name="build.xml" />
+            <include name="properties.xmlf" />
+            <include name="CHANGES.txt" />
+            <include name="LICENSE.txt" />
+            <include name="README.txt" />
             <exclude name="**/codewright*/**"/>
+            <exclude name="docs/installguide/old/**"/>
+            <exclude name="docs/userguide/old/**"/>
             <exclude name="**/CVS/**"/>
             <exclude name="**/*.bak"/>
             <exclude name="**/*-hide"/>
@@ -701,11 +700,10 @@ ro.buildUser=${user.name}
     </tar>
     <gzip zipfile="${ro.build}/roller-src-${ro.version}.tar.gz"
               src="${ro.build}/roller-src-${ro.version}.tar" />
+
     <!-- Tar and GZip the tools -->
     <tar tarfile="${ro.build}/roller-tools-${ro.version}.tar"
-        basedir="./src/../.."
-        includes="roller/tools/**"
-        excludes="**/*.bak,**/*~" />
+        basedir="." includes="tools/**" excludes="**/*.bak,**/*~" />
     <gzip zipfile="${ro.build}/roller-tools-${ro.version}.tar.gz"
               src="${ro.build}/roller-tools-${ro.version}.tar" />
     <delete>
