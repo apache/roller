@@ -377,11 +377,11 @@ public class PlanetManagerTest extends TestCase
                 PlanetGroupData group = planet.getGroup("test_handle");
                 assertNotNull(group);
     
-                List bigag = planet.getAggregation(group, 1000);
-                assertEquals(bigag.size(), count);
+                List bigag = planet.getAggregation(group, 30);
+                assertEquals(30, bigag.size());
                       
                 List littleag = planet.getAggregation(group, 10);
-                assertEquals(littleag.size(), count);
+                assertEquals(10, littleag.size());
                                   
                 planet.deleteGroup(group);
                 planet.deleteSubscription(sub1);

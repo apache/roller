@@ -236,7 +236,7 @@ public class WeblogManagerTest extends RollerTestBase
     {
         getRoller().begin(UserData.SYSTEM_USER);
         WeblogManager wmgr = getRoller().getWeblogManager();
-        assertEquals(11, wmgr.getWeblogCategories(mWebsite).size());
+        assertEquals(10, wmgr.getWeblogCategories(mWebsite).size());
         getRoller().rollback();
     }    
     
