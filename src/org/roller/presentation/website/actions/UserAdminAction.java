@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -23,7 +25,6 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
-import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
@@ -58,7 +59,6 @@ public final class UserAdminAction extends UserBaseAction
         throws IOException, ServletException
     {
         ActionForward forward = mapping.findForward("adminUser.page");
-        ActionMessages msgs = new ActionMessages();
         try
         {
             UserData user = null;
@@ -67,9 +67,12 @@ public final class UserAdminAction extends UserBaseAction
             if (rollerSession.isGlobalAdminUser() )
             {
                 UserAdminForm userForm = (UserAdminForm)actionForm;
-                UserManager mgr = RollerFactory.getRoller().getUserManager();                
-                if (userForm != null && userForm.getUserName() != null)
+                UserManager mgr = RollerFactory.getRoller().getUserManager(); 
+                if (userForm!=null 
+                      && userForm.getUserName()!=null && !userForm.isNewUser())
                 {
+                    ActionMessages msgs = getErrors(request);
+                    msgs = (msgs == null) ? new ActionMessages() : msgs;
                     user = mgr.getUser(userForm.getUserName(), null);                    
                     if (user != null)
                     {
@@ -80,13 +83,21 @@ public final class UserAdminAction extends UserBaseAction
                     }
                     else
                     {
-                        msgs.add(ActionMessages.GLOBAL_MESSAGE,
+                        msgs.add(ActionErrors.GLOBAL_ERROR,
                             new ActionMessage("userAdmin.invalidNewUserName"));
                         userForm.setUserName("");
                     }
+                    if (request.getSession().getAttribute("cookieLogin")!=null) 
+                    {
+                        // TODO: make it possible to change passwords 
+                        // regardless of remember me
+                        msgs.add(ActionErrors.GLOBAL_ERROR, 
+                                new ActionMessage("userAdmin.cookieLogin"));
+                    }
+                    saveErrors(request, msgs);
                 }
                 request.setAttribute("model", new UserAdminPageModel(
-                        request, response, mapping, userForm, user));
+                    request, response, mapping, userForm, user));
             }
             else
             {
@@ -98,16 +109,7 @@ public final class UserAdminAction extends UserBaseAction
             mLogger.error("ERROR in action",e);
             throw new ServletException(e);
         }
-        
-        if (request.getSession().getAttribute("cookieLogin") != null) 
-        {
-            // TODO: make it possible to change passwords regardless of remember me
-            msgs.add(ActionMessages.GLOBAL_MESSAGE, 
-                    new ActionMessage("userAdmin.cookieLogin"));
-        }
-        
-         saveMessages(request, msgs);
-         return forward;
+        return forward;
     }
 
     //-----------------------------------------------------------------------
@@ -126,58 +128,119 @@ public final class UserAdminAction extends UserBaseAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            RollerSession rollerSession = 
+                RollerSession.getRollerSession(request);
             if (rollerSession.isGlobalAdminUser() )
             {
-                UserAdminForm userForm = (UserAdminForm)actionForm;
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
-                
                 // Need system user to update user
                 RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
+                UserManager mgr= RollerFactory.getRoller().getUserManager();
+                UserAdminForm userForm = (UserAdminForm)actionForm;
+                
+                if (userForm.isNewUser()) {
+                    UserData user = new UserData();
+                    userForm.copyTo(user, request.getLocale()); 
+                    user.setId(null);
+                    user.setDateCreated(new java.util.Date());
+                    user.setEnabled(Boolean.TRUE);
+                    
+                    // Check username and email addresses
+                    msgs = validate(userForm, msgs);
 
-			   UserData user = mgr.retrieveUser(userForm.getId());
-                userForm.copyTo(user, request.getLocale()); // doesn't copy password
-
-//                if (userForm.getDelete())
-//                {
-//                    // TODO: ask are you sure before deleting user
-//                    user = deleteUser(mapping, request, rreq, userForm, mgr, user);
-//                    
-//                    msgs.add(ActionMessages.GLOBAL_MESSAGE,
-//                            new ActionMessage("userSettings.deleted"));
-//                    saveMessages(request, msgs);
-//                }
-//                else
-//                {
+                    // Must have matching passwords and confirm passwords
+                    if (    !StringUtils.isEmpty(userForm.getPasswordText()) 
+                         && !StringUtils.isEmpty(userForm.getPasswordConfirm()))
+                    {
+                        try {
+                            user.resetPassword(RollerFactory.getRoller(), 
+                               userForm.getPasswordText(), 
+                               userForm.getPasswordConfirm());
+                        } catch (RollerException e) {
+                            msgs.add(ActionErrors.GLOBAL_ERROR, 
+                            new ActionError("userSettings.passwordResetError"));
+                        }
+                    } else {
+                        msgs.add(ActionErrors.GLOBAL_ERROR, 
+                            new ActionError("userSettings.needPasswordTwice"));
+                    }
+                    // If no error messages, then add user
+                    if (msgs.isEmpty()) {
+                        try {
+                            // Save new user to database
+                            mgr.addUser(user);                            
+                            RollerFactory.getRoller().commit();
+                            msgs.add(ActionMessages.GLOBAL_MESSAGE, 
+                                new ActionMessage("userSettings.saved"));
+                            saveMessages(request, msgs);
+                            
+                            // Operation complete, return to edit action
+                            userForm.setUserName(null); 
+                            userForm.setNewUser((false));
+                            
+                        } catch (RollerException e) {
+                            // Add and commit failed, so show nice error message
+                            msgs.add(ActionErrors.GLOBAL_ERROR, 
+                                new ActionError(e.getMessage())); 
+                            saveErrors(request, msgs);
+                        }
+                    } else {
+                        saveErrors(request, msgs);
+                    } 
+                    return edit(mapping, actionForm, request, response);  
+                    
+                } else {
+                    
+                    UserData user = mgr.retrieveUser(userForm.getId());
+                    userForm.copyTo(user, request.getLocale()); 
+                
+                    // Check username and email addresses
+                    msgs = validate(userForm, msgs);
+                    
                     // If user set both password and passwordConfirm then reset 
                     if (    !StringUtils.isEmpty(userForm.getPasswordText()) 
                          && !StringUtils.isEmpty(userForm.getPasswordConfirm()))
                     {
-                        try
-                        {
+                        try {
                             user.resetPassword(RollerFactory.getRoller(), 
                                userForm.getPasswordText(), 
                                userForm.getPasswordConfirm());
+                        } catch (RollerException e) {
+                            msgs.add(ActionErrors.GLOBAL_ERROR, 
+                                new ActionMessage(
+                                    "userSettings.passwordResetError"));
                         }
-                        catch (RollerException e)
-                        {
-                            msgs.add(ActionMessages.GLOBAL_MESSAGE, 
-                              new ActionMessage("userSettings.passwordResetError"));
-                        }
+                    } else if (!StringUtils.isEmpty(userForm.getPasswordText())
+                            || !StringUtils.isEmpty(userForm.getPasswordConfirm())) {
+                        // But it's an error to specify only one of the two
+                        msgs.add(ActionErrors.GLOBAL_ERROR, 
+                            new ActionMessage(
+                                "userSettings.needPasswordTwice"));
                     }
                     
-                    // Persist changes to user
-                    mgr.storeUser( user );
-                    RollerFactory.getRoller().commit(); 
-                    
-                    msgs.add(ActionMessages.GLOBAL_MESSAGE,
-                        new ActionMessage("userSettings.saved"));
-                    saveMessages(request, msgs);
-//                }
+                    if (msgs.isEmpty()) {
+                        try {
+                           // Persist changes to user
+                            mgr.storeUser( user );
+                            RollerFactory.getRoller().commit(); 
+
+                            msgs.add(ActionMessages.GLOBAL_MESSAGE,
+                                new ActionMessage("userSettings.saved"));
+                            saveMessages(request, msgs);
+
+                            // Operation complete, return to edit action
+                            userForm.setUserName(null);  
+                            
+                        } catch (RollerException e) {
+                            msgs.add(ActionErrors.GLOBAL_ERROR, 
+                                new ActionMessage(e.getMessage()));
+                            saveErrors(request, msgs);
+                        }
+                    } else {
+                        saveErrors(request, msgs);
+                    } 
+                }
                 
-                // Operation complete, return to edit action
-                userForm.setUserName(null); 
-                return edit(mapping, actionForm, request, response);
+                return edit(mapping, actionForm, request, response);                
             }
             else
             {
@@ -191,37 +254,6 @@ public final class UserAdminAction extends UserBaseAction
         }
         return forward;
     }
-
-    //-----------------------------------------------------------------------
-	/** Delete specified user and remove associated entries from the cache. */
-//    private UserData deleteUser(
-//            ActionMapping mapping, 
-//            HttpServletRequest request, 
-//            RollerRequest rreq, 
-//            UserAdminForm uaf, 
-//            UserManager mgr, 
-//            UserData ud) throws RollerException
-//    {
-//        // remove user's Entries from Lucene index
-//        IndexManager indexManager = RollerFactory.getRoller().getIndexManager();
-//        WebsiteData website = rreq.getWebsite();
-//        indexManager.removeWebsiteIndex(website); 
-//        
-//        // delete user from database
-//        ud.remove();
-//        RollerFactory.getRoller().commit();
-//        ud = null;
-//
-//        request.getSession().setAttribute(
-//            RollerSession.STATUS_MESSAGE,
-//                uaf.getUserName() + " has been deleted");
-//
-//        uaf.reset(mapping, request);
-//        
-//        List users = mgr.getUsers(null, null); 
-//        request.setAttribute("users", users);
-//        return ud;
-//    }
 
     //-----------------------------------------------------------------------
     /**
@@ -253,6 +285,7 @@ public final class UserAdminAction extends UserBaseAction
 	{
          UserAdminForm userForm = (UserAdminForm)actionForm;
          userForm.setNewUser(true);
+         userForm.setEnabled(Boolean.TRUE);
          return edit(mapping, actionForm, request, response);
     }
     
