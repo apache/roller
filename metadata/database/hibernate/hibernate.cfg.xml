@@ -19,12 +19,6 @@
         -->
 
         <!--
-        Turning this on gets rid of ANTLR dependency; 
-        See http://forum.hibernate.org/viewtopic.php?t=939468
-        <property name="hibernate.query.factory_class">org.hibernate.hql.classic.ClassicQueryTranslatorFactory</property>
-        -->
-		
-        <!--
         Examples for configuring Hibernate to use the JDBC Driver Manager
         <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
         <property name="hibernate.connection.url">jdbc:hsqldb:hsql://localhost:3219</property>
