@@ -1,3 +1,18 @@
+Index: .cvsignore
+===================================================================
+RCS file: /cvs/rome/.cvsignore,v
+retrieving revision 1.1
+diff -u -r1.1 .cvsignore
+--- .cvsignore	2 Aug 2004 00:28:21 -0000	1.1
++++ .cvsignore	12 Nov 2005 02:22:16 -0000
+@@ -1 +1,7 @@
+ target
++nbproject
++classes.eclipse
++bin
++.settings
++.classpath
++.project
 Index: src/java/com/sun/syndication/feed/atom/Category.java
 ===================================================================
 RCS file: src/java/com/sun/syndication/feed/atom/Category.java
@@ -521,13 +536,248 @@ diff -N src/java/com/sun/syndication/feed/synd/SyndLinkImpl.java
 +        _length = length;
 +    }
 +}
+Index: src/java/com/sun/syndication/feed/synd/SyndPerson.java
+===================================================================
+RCS file: src/java/com/sun/syndication/feed/synd/SyndPerson.java
+diff -N src/java/com/sun/syndication/feed/synd/SyndPerson.java
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ src/java/com/sun/syndication/feed/synd/SyndPerson.java	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,70 @@
++/*
++ * Copyright 2004 Sun Microsystems, Inc.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++package com.sun.syndication.feed.synd;
++
++
++
++
++/**
++ * Bean interface for authors and contributors of SyndFeedImpl feeds and entries.
++ * <p>
++ * @author Dave Johnson
++ *
++ */
++public interface SyndPerson extends Cloneable {
++
++    /**
++     * Returns  name of person
++     */
++    public String getName();
++    
++    /**
++     * Sets name of person.
++     */
++    public void setName(String name);
++    
++    /**
++     * Returns URI of person.
++     */
++    public String getUri();
++    
++    /** 
++     * Sets URI of person.
++     */
++    public void setUri(String uri);
++    
++    /** 
++     * Returns email of person.
++     */
++    public String getEmail();
++    
++    /**
++     * Sets email of person.
++     */
++    public void setEmail(String email);
++    
++    
++    /**
++     * Creates a deep clone of the object.
++     * <p>
++     * @return a clone of the object.
++     * @throws CloneNotSupportedException thrown if an element of the object cannot be cloned.
++     *
++     */
++    public Object clone() throws CloneNotSupportedException;
++
++}
+Index: src/java/com/sun/syndication/feed/synd/SyndPersonImpl.java
+===================================================================
+RCS file: src/java/com/sun/syndication/feed/synd/SyndPersonImpl.java
+diff -N src/java/com/sun/syndication/feed/synd/SyndPersonImpl.java
+--- /dev/null	1 Jan 1970 00:00:00 -0000
++++ src/java/com/sun/syndication/feed/synd/SyndPersonImpl.java	1 Jan 1970 00:00:00 -0000
+@@ -0,0 +1,151 @@
++/*
++ * Copyright 2004 Sun Microsystems, Inc.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++package com.sun.syndication.feed.synd;
++
++import com.sun.syndication.feed.impl.ObjectBean;
++import com.sun.syndication.feed.module.DCSubjectImpl;
++import com.sun.syndication.feed.module.DCSubject;
++
++import java.util.AbstractList;
++import java.util.List;
++import java.util.ArrayList;
++import java.io.Serializable;
++
++/**
++ * Bean for authors and contributors of SyndFeedImpl feeds and entries.
++ * <p>
++ * @author Dave Johnson
++ *
++ */
++public class SyndPersonImpl implements Serializable, SyndPerson {
++    private ObjectBean _objBean;
++    private String _name;
++    private String _uri;
++    private String _email;
++
++    /**
++     * For implementations extending SyndContentImpl to be able to use the ObjectBean functionality
++     * with extended interfaces.
++     */
++    public SyndPersonImpl() {
++        _objBean = new ObjectBean(SyndPerson.class,this);
++    }
++
++    /**
++     * Creates a deep 'bean' clone of the object.
++     * <p>
++     * @return a clone of the object.
++     * @throws CloneNotSupportedException thrown if an element of the object cannot be cloned.
++     *
++     */
++    public Object clone() throws CloneNotSupportedException {
++        return _objBean.clone();
++    }
++
++    /**
++     * Indicates whether some other object is "equal to" this one as defined by the Object equals() method.
++     * <p>
++     * @param other he reference object with which to compare.
++     * @return <b>true</b> if 'this' object is equal to the 'other' object.
++     *
++     */
++    public boolean equals(Object other) {
++        return _objBean.equals(other);
++    }
++
++    /**
++     * Returns a hashcode value for the object.
++     * <p>
++     * It follows the contract defined by the Object hashCode() method.
++     * <p>
++     * @return the hashcode of the bean object.
++     *
++     */
++    public int hashCode() {
++        return _objBean.hashCode();
++    }
++
++    /**
++     * Returns the String representation for the object.
++     * <p>
++     * @return String representation for the object.
++     *
++     */
++    public String toString() {
++        return _objBean.toString();
++    }
++
++    /**
++     * Returns the person name.
++     * <p>
++     * @return the person name, <b>null</b> if none.
++     *
++     */
++    public String getName() {
++        return _name;
++    }
++
++    /**
++     * Sets the category name.
++     * <p>
++     * @param name the category name to set, <b>null</b> if none.
++     *
++     */
++    public void setName(String name) {
++        _name = name;
++    }
++
++    /**
++     * Returns the person's e-mail address.
++     * <p>
++     * @return the person's e-mail address, <b>null</b> if none.
++     *
++     */
++    public String getEmail() {
++        return _email;
++    }
++
++    /**
++     * Sets the person's e-mail address.
++     * <p>
++     * @param email The person's e-mail address to set, <b>null</b> if none.
++     *
++     */
++    public void setEmail(String email) {
++        _email = email;
++    }
++    
++    /**
++     * Returns the person's URI.
++     * <p>
++     * @return the person's URI, <b>null</b> if none.
++     *
++     */
++    public String getUri() {
++        return _uri;
++    }
++
++    /**
++     * Sets the person's URI.
++     * <p>
++     * @param uri the peron's URI to set, <b>null</b> if none.
++     *
++     */
++    public void setUri(String uri) {
++        _uri = uri;
++    }
++}
 Index: src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 ===================================================================
 RCS file: src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 --- /dev/null	1 Jan 1970 00:00:00 -0000
 +++ src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java	1 Jan 1970 00:00:00 -0000
-@@ -0,0 +1,374 @@
+@@ -0,0 +1,404 @@
 +/*
 + * Copyright 2004 Sun Microsystems, Inc.
 + *
@@ -587,7 +837,7 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +        return _type;
 +    }
 +
-+    public void copyInto(WireFeed feed,SyndFeed syndFeed) {
++    public void copyInto(WireFeed feed, SyndFeed syndFeed) {
 +        Feed aFeed = (Feed) feed;
 +
 +        syndFeed.setModules(ModuleUtils.cloneModules(aFeed.getModules()));
@@ -598,17 +848,28 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +
 +        syndFeed.setTitle(aFeed.getTitle());
 +
-+        String linkHref = null;
-+        if (aFeed.getLinks().size() > 0) {
-+            linkHref = ((Link) aFeed.getLinks().get(0)).getHref();
-+        }
-+        syndFeed.setLink(linkHref);
-+
-+        String aSubtitle = aFeed.getSubtitle();
++        Content aSubtitle = aFeed.getSubtitle();
 +        if (aSubtitle!=null) {
-+            syndFeed.setDescription(aSubtitle);
++            syndFeed.setDescription(aSubtitle.getValue());
 +        }
 +
++        // if there is exactly one alternate link, use that as THE link
++        if (aFeed.getAlternateLinks() != null 
++                && aFeed.getAlternateLinks().size() == 1) {
++            Link theLink = (Link)aFeed.getAlternateLinks().get(0);
++            syndFeed.setLink(theLink.getHref());
++        }
++        // lump alternate and other links together
++        List syndLinks = new ArrayList();
++        if (aFeed.getAlternateLinks() != null 
++                && aFeed.getAlternateLinks().size() > 0) {
++            syndLinks.add(createSyndLinks(aFeed.getAlternateLinks()));
++        }
++        if (aFeed.getOtherLinks() != null 
++                && aFeed.getOtherLinks().size() > 0) {
++            syndLinks.add(createSyndLinks(aFeed.getOtherLinks()));
++        }
++            
 +        List aEntries = aFeed.getEntries();
 +        if (aEntries!=null) {
 +            syndFeed.setEntries(createSyndEntries(aFeed, aEntries));
@@ -617,9 +878,9 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +        // Core Atom language/author/copyright/modified elements have precedence
 +        // over DC equivalent info.
 +
-+        Person author = aFeed.getAuthor();
-+        if (author!=null && author.getName()!=null) {
-+            syndFeed.setAuthor(author.getName());
++        List authors = aFeed.getAuthors();
++        if (authors!=null && authors.size() > 0) {
++            syndFeed.setAuthors(ConverterForAtom03.createSyndPersons(authors));
 +        }
 +
 +        String rights = aFeed.getRights();
@@ -633,6 +894,20 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +        }
 +    }
 +
++    protected List createSyndLinks(List aLinks) {
++        ArrayList sLinks = new ArrayList();
++        for (Iterator iter = aLinks.iterator(); iter.hasNext();) {
++            Link link = (Link)iter.next();
++            SyndLink sLink = new SyndLinkImpl();
++            sLink.setHref(     link.getHref());
++            sLink.setType(     link.getType());
++            sLink.setLength(   link.getLength());
++            sLink.setHreflang( link.getHref());
++            sLinks.add(sLink);
++        }
++        return sLinks;
++    }
++    
 +    protected List createSyndEntries(Feed feed, List atomEntries) {
 +        List syndEntries = new ArrayList();
 +        for (int i=0;i<atomEntries.size();i++) {
@@ -655,25 +930,24 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +            syndEntry.setUri(syndEntry.getLink());
 +        }
 +
-+        Content content = entry.getContent();
-+        if (content!=null) {
-+            SyndContent sContent = new SyndContentImpl();
-+            sContent.setType(content.getType());
-+            sContent.setValue(content.getValue());
-+            syndEntry.setDescription(sContent);
++        List contents = entry.getContents();
++        if (contents != null && contents.size() > 0) {
++            List sContents = new ArrayList();
++            for (Iterator iter=contents.iterator(); iter.hasNext();) {
++                Content content = (Content)iter.next();
++                sContents.add(createSyndContent(content));
++            }
++            syndEntry.setContents(sContents);
 +        }
 +
 +        Content summary = entry.getSummary();
 +        if (summary!=null) {
-+            SyndContent sSummary = new SyndContentImpl();
-+            sSummary.setType(summary.getType());
-+            sSummary.setValue(summary.getValue());
-+            syndEntry.setSummary(sSummary);
++            syndEntry.setDescription(createSyndContent(entry.getSummary()));
 +        }
 +
-+        Person author = entry.getAuthor();
-+        if (author!=null && author.getName()!=null) {
-+            syndEntry.setAuthor(author.getName());
++        List authors = entry.getAuthors();
++        if (authors!=null && authors.size() > 0) {
++            syndEntry.setAuthors(ConverterForAtom03.createSyndPersons(authors));
 +        }
 +
 +        Date date = entry.getPublished();
@@ -700,47 +974,39 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +            }
 +            syndEntry.setCategories(syndCategories);
 +        }
-+        
-+        List links = entry.getLinks();
-+        if (links != null) {
-+            List syndLinks = new ArrayList();
-+            for (Iterator iter=links.iterator(); iter.hasNext();) {
-+                Link link = (Link)iter.next();
-+                SyndLink syndLink = new SyndLinkImpl(); 
-+                syndLink.setRel(link.getRel());
-+                syndLink.setType(link.getType());
-+                syndLink.setHref(resolveLink(feed, entry, link.getHref()));
-+                syndLink.setHreflang(link.getHreflang());
-+                syndLink.setLength(link.getLength());
-+                syndLinks.add(syndLink);                
-+                // use first alt link found as entry link
-+                if (syndEntry.getLink() == null && 
-+                      (link.getRel() == null || link.getRel().equals("alternate"))) {
-+                   syndEntry.setLink(resolveLink(feed, entry, link.getHref()));
-+                }
-+            }
-+            syndEntry.setLinks(syndLinks);
++                
++        // if there is exactly one alternate link, use that as THE link
++        if (entry.getAlternateLinks() != null 
++                && entry.getAlternateLinks().size() == 1) {
++            Link theLink = (Link)entry.getAlternateLinks().get(0);
++            syndEntry.setLink(theLink.getHref());
 +        }
++
++        // lump alternate and other links together
++        List syndLinks = new ArrayList();
++        if (entry.getAlternateLinks() != null 
++                && entry.getAlternateLinks().size() > 0) {
++            syndLinks.add(createSyndLinks(entry.getAlternateLinks()));
++        }
++        if (entry.getOtherLinks() != null 
++                && entry.getOtherLinks().size() > 0) {
++            syndLinks.add(createSyndLinks(entry.getOtherLinks()));
++        }
++        syndEntry.setLinks(syndLinks);
 +
 +        return syndEntry;
 +    }
 +    
-+    /** Use xml:base attributes at feed and entry level to resolve relative links */
-+    private String resolveLink(Feed feed, Entry entry, String link) {
-+        if (link.startsWith("http://") || link.startsWith("https://")) return link;       
-+        StringBuffer sb = new StringBuffer();
-+        if (feed != null && feed.getXmlBase() != null) {
-+            sb.append(feed.getXmlBase());
-+            if (!feed.getXmlBase().endsWith("/")) sb.append("/");
-+        }
-+        if (entry != null && entry.getXmlBase() != null) {
-+            sb.append(entry.getXmlBase());
-+            if (!entry.getXmlBase().endsWith("/")) sb.append("/");
-+        }
-+        sb.append(link);
-+        return sb.toString();
++    public SyndLink createSyndLink(Feed feed, Entry entry, Link link) {
++        SyndLink syndLink = new SyndLinkImpl(); 
++        syndLink.setRel(link.getRel());
++        syndLink.setType(link.getType());
++        syndLink.setHref(link.getHref());
++        syndLink.setHreflang(link.getHreflang());
++        syndLink.setLength(link.getLength());
++        return syndLink;
 +    }
-+
++    
 +    public WireFeed createRealFeed(SyndFeed syndFeed) {
 +        Feed aFeed = new Feed(getType());
 +        aFeed.setModules(ModuleUtils.cloneModules(syndFeed.getModules()));
@@ -751,31 +1017,35 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +
 +        aFeed.setTitle(syndFeed.getTitle());
 +
-+        List aLinks = new ArrayList();
++        // separate SyndEntry's links collection into alternate and other links
++        List alternateLinks = new ArrayList();
++        List otherLinks = new ArrayList();
 +        String sLink = syndFeed.getLink();
-+        if (sLink != null) {
-+            Link link = new Link();
-+            link.setRel("alternate");
-+            link.setHref(sLink);
-+            aLinks.add(link);
-+        }
 +        List slinks = syndFeed.getLinks();
 +        if (slinks != null) {
 +            for (Iterator iter=slinks.iterator(); iter.hasNext();) {       
-+                SyndLink syndLink = (SyndLink)iter.next();
-+                String rel = syndLink.getRel();
-+                if (sLink != null && (rel==null || rel.equals("alternate"))) {
-+                    continue; // don't add more than one alterate link
-+                }
++                SyndLink syndLink = (SyndLink)iter.next();                
 +                Link link = new Link();
 +                link.setRel(syndLink.getRel());
 +                link.setHref(syndLink.getHref());
 +                link.setHreflang(syndLink.getHreflang());
-+                link.setLength(syndLink.getLength());
-+                aLinks.add(link);
++                link.setLength(syndLink.getLength());                
++                if ("alternate".equals(syndLink.getRel())) {
++                    alternateLinks.add(link);
++                } else {
++                    otherLinks.add(link);
++                }
 +            }
 +        }
-+        if (aLinks.size() > 0) aFeed.setLinks(aLinks);
++        // no alternate link? then use THE link if there is one
++        if (alternateLinks.size() == 0 && syndFeed.getLink() != null) {
++            Link link = new Link();
++            link.setRel("alternate");
++            link.setHref(syndFeed.getLink());
++            alternateLinks.add(link);
++        }
++        if (alternateLinks.size() > 0) aFeed.setAlternateLinks(alternateLinks);
++        if (otherLinks.size() > 0) aFeed.setOtherLinks(otherLinks);
 +        
 +        List sCats = syndFeed.getCategories();
 +        List aCats = new ArrayList();
@@ -792,15 +1062,16 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +        if (aCats.size() > 0) aFeed.setCategories(aCats);
 +
 +        String sDesc = syndFeed.getDescription();
-+        if (sDesc!=null) {
-+            aFeed.setSubtitle(sDesc);
++        if (sDesc != null) {
++            Content subtitle = new Content();
++            subtitle.setType(Content.TEXT); // TODO: need content type in SyndFeed 
++            subtitle.setValue(sDesc);
++            aFeed.setSubtitle(subtitle);
 +        }
 +
-+        String sAuthor = syndFeed.getAuthor();
-+        if (sAuthor!=null) {
-+            Person person = new Person();
-+            person.setName(sAuthor);
-+            aFeed.setAuthor(person);
++        List authors = syndFeed.getAuthors();
++        if (authors!=null && authors.size() > 0) {
++            aFeed.setAuthors(ConverterForAtom03.createAtomPersons(authors));
 +        }
 +
 +        aFeed.setRights(syndFeed.getCopyright());
@@ -815,6 +1086,12 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +        return aFeed;
 +    }
 +
++    protected SyndContent createSyndContent(Content content) {
++        SyndContent sContent = new SyndContentImpl();
++        sContent.setType(content.getType());
++        sContent.setValue(content.getValue());
++        return sContent;
++    }
 +
 +    protected List createAtomEntries(List syndEntries) {
 +        List atomEntries = new ArrayList();
@@ -832,32 +1109,35 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +
 +        aEntry.setTitle(sEntry.getTitle());
 +
-+        List aLinks = new ArrayList();
-+        String sLink = sEntry.getLink();
-+        if (sLink != null) {
-+            Link link = new Link();
-+            link.setRel("alternate");
-+            link.setHref(sLink);
-+            aLinks.add(link);
-+        }
++        // separate SyndEntry's links collection into alternate and other links
++        List alternateLinks = new ArrayList();
++        List otherLinks = new ArrayList();
 +        List slinks = sEntry.getLinks();
 +        if (slinks != null) {
 +            for (Iterator iter=slinks.iterator(); iter.hasNext();) {       
-+                SyndLink syndLink = (SyndLink)iter.next();
-+                String rel = syndLink.getRel();
-+                if (sLink != null && (rel==null || rel.equals("alternate"))) {
-+                    continue; // don't add more than one alterate link
-+                }
++                SyndLink syndLink = (SyndLink)iter.next();                
 +                Link link = new Link();
 +                link.setRel(syndLink.getRel());
 +                link.setHref(syndLink.getHref());
 +                link.setHreflang(syndLink.getHreflang());
-+                link.setLength(syndLink.getLength());
-+                aLinks.add(link);
++                link.setLength(syndLink.getLength());                
++                if ("alternate".equals(syndLink.getRel())) {
++                    alternateLinks.add(link);
++                } else {
++                    otherLinks.add(link);
++                }
 +            }
 +        }
-+        if (aLinks.size() > 0) aEntry.setLinks(aLinks);
-+        
++        // no alternate link? then use THE link if there is one
++        if (alternateLinks.size() == 0 && sEntry.getLink() != null) {
++            Link link = new Link();
++            link.setRel("alternate");
++            link.setHref(sEntry.getLink());
++            alternateLinks.add(link);
++        }
++        if (alternateLinks.size() > 0) aEntry.setAlternateLinks(alternateLinks);
++        if (otherLinks.size() > 0) aEntry.setOtherLinks(otherLinks);
++       
 +        List sCats = sEntry.getCategories();
 +        List aCats = new ArrayList();
 +        if (sCats != null) {
@@ -874,25 +1154,25 @@ diff -N src/java/com/sun/syndication/feed/synd/impl/ConverterForAtom10.java
 +        
 +        SyndContent sDescription = sEntry.getDescription();
 +        if (sDescription!=null) {
-+            Content content = new Content();
-+            content.setType(sDescription.getType());
-+            content.setValue(sDescription.getValue());
-+            aEntry.setContent(content);
-+        }
-+
-+        SyndContent sSummary = sEntry.getSummary();
-+        if (sSummary!=null) {
 +            Content summary = new Content();
-+            summary.setType(sSummary.getType());
-+            summary.setValue(sSummary.getValue());
++            summary.setType(sDescription.getType());
++            summary.setValue(sDescription.getValue());
 +            aEntry.setSummary(summary);
 +        }
 +
-+        String sAuthor = sEntry.getAuthor();
-+        if (sAuthor!=null) {
-+            Person person = new Person();
-+            person.setName(sAuthor);
-+            aEntry.setAuthor(person);
++        // take first item in contents collection as the content 
++        List syndContents = sEntry.getContents();
++        if (syndContents != null && syndContents.size() > 0) {
++            SyndContent syndContent = (SyndContent)syndContents.get(0);
++            Content content = new Content();
++            content.setType(syndContent.getType());
++            content.setValue(syndContent.getValue());
++            aEntry.setSummary(content);
++        }
++
++        List authors = sEntry.getAuthors();
++        if (authors!=null && authors.size() > 0) {
++            aEntry.setAuthors(ConverterForAtom03.createAtomPersons(authors));
 +        }
 +
 +        aEntry.setPublished(sEntry.getPublishedDate());
@@ -908,7 +1188,7 @@ RCS file: src/java/com/sun/syndication/io/impl/Atom10Generator.java
 diff -N src/java/com/sun/syndication/io/impl/Atom10Generator.java
 --- /dev/null	1 Jan 1970 00:00:00 -0000
 +++ src/java/com/sun/syndication/io/impl/Atom10Generator.java	1 Jan 1970 00:00:00 -0000
-@@ -0,0 +1,378 @@
+@@ -0,0 +1,397 @@
 +/*
 + * Copyright 2004 Sun Microsystems, Inc.
 + *
@@ -957,8 +1237,8 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Generator.java
 + */
 +
 +public class Atom10Generator extends BaseWireFeedGenerator {
-+    private static final String ATOM_URI = "http://www.w3.org/2005/Atom";
-+    private static final Namespace ATOM_NS = Namespace.getNamespace(ATOM_URI);
++    private static final String ATOM_10_URI = "http://www.w3.org/2005/Atom";
++    private static final Namespace ATOM_NS = Namespace.getNamespace(ATOM_10_URI);
 +
 +    private String _version;
 +
@@ -1038,7 +1318,11 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Generator.java
 +            eFeed.addContent(generateSimpleElement("title", feed.getTitle()));
 +        }
 +
-+        List links = feed.getLinks();
++        List links = feed.getAlternateLinks();
++        if (links != null) for (int i = 0; i < links.size(); i++) {
++            eFeed.addContent(generateLinkElement((Link)links.get(i)));
++        }
++        links = feed.getOtherLinks();
 +        if (links != null) for (int i = 0; i < links.size(); i++) {
 +            eFeed.addContent(generateLinkElement((Link)links.get(i)));
 +        }
@@ -1048,10 +1332,12 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Generator.java
 +            eFeed.addContent(generateCategoryElement((Category)iter.next()));
 +        }
 +        
-+        if (feed.getAuthor() != null) {
-+            Element authorElement = new Element("author", getFeedNamespace());
-+            fillPersonElement(authorElement, feed.getAuthor());
-+            eFeed.addContent(authorElement);
++        if (feed.getAuthors()!=null && feed.getAuthors().size() > 0) {
++            for (Iterator iter = feed.getAuthors().iterator(); iter.hasNext(); ) {
++                Element authorElement = new Element("author", getFeedNamespace());
++                fillPersonElement(authorElement, (Person)feed.getAuthors().get(0));
++                eFeed.addContent(authorElement);
++            }
 +        }
 +
 +        List contributors = feed.getContributors();
@@ -1062,7 +1348,8 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Generator.java
 +        }
 +
 +        if (feed.getSubtitle() != null) {
-+            eFeed.addContent(generateSimpleElement("subtitle", feed.getSubtitle()));
++            eFeed.addContent(
++                generateSimpleElement("subtitle", feed.getSubtitle().getValue()));
 +        }
 +
 +        if (feed.getId() != null) {
@@ -1088,7 +1375,11 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Generator.java
 +        if (entry.getTitle() != null) {
 +            eEntry.addContent(generateSimpleElement("title", entry.getTitle()));
 +        }
-+        List links = entry.getLinks();
++        List links = entry.getAlternateLinks();
++        if (links != null) for (int i = 0; i < links.size(); i++) {
++            eEntry.addContent(generateLinkElement((Link)links.get(i)));
++        }
++        links = entry.getOtherLinks();
 +        if (links != null) for (int i = 0; i < links.size(); i++) {
 +            eEntry.addContent(generateLinkElement((Link)links.get(i)));
 +        }
@@ -1098,10 +1389,12 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Generator.java
 +            eEntry.addContent(generateCategoryElement((Category)iter.next()));
 +        }
 +        
-+        if (entry.getAuthor() != null) {
-+            Element authorElement = new Element("author", getFeedNamespace());
-+            fillPersonElement(authorElement, entry.getAuthor());
-+            eEntry.addContent(authorElement);
++        if (entry.getAuthors()!=null && entry.getAuthors().size() > 0) {
++            for (Iterator iter = entry.getAuthors().iterator(); iter.hasNext(); ) {
++                Element authorElement = new Element("author", getFeedNamespace());
++                fillPersonElement(authorElement, (Person)entry.getAuthors().get(0));
++                eEntry.addContent(authorElement);            
++            }
 +        }
 +
 +        List contributors = entry.getContributors();
@@ -1126,9 +1419,10 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Generator.java
 +            eEntry.addContent(publishedElement);
 +        }
 +
-+        if (entry.getContent() != null) {
++        if (entry.getContents() != null && entry.getContents().size() > 0) {
 +            Element contentElement = new Element("content", getFeedNamespace());
-+            fillContentElement(contentElement, entry.getContent());
++            Content content = (Content)entry.getContents().get(0);
++            fillContentElement(contentElement, content);
 +            eEntry.addContent(contentElement);
 +        }
 +
@@ -1227,8 +1521,13 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Generator.java
 +
 +        String type = content.getType();
 +        if (type != null) {
-+            Attribute modeAttribute = new Attribute("type", content.getType().toString());
-+            contentElement.setAttribute(modeAttribute);
++            Attribute typeAttribute = new Attribute("type", type);
++            contentElement.setAttribute(typeAttribute);
++        }
++        String href = content.getSrc();
++        if (href != null) {
++            Attribute srcAttribute = new Attribute("src", href);
++            contentElement.setAttribute(srcAttribute);
 +        }
 +
 +        if (content.getValue() != null) {
@@ -1293,7 +1592,7 @@ RCS file: src/java/com/sun/syndication/io/impl/Atom10Parser.java
 diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 --- /dev/null	1 Jan 1970 00:00:00 -0000
 +++ src/java/com/sun/syndication/io/impl/Atom10Parser.java	1 Jan 1970 00:00:00 -0000
-@@ -0,0 +1,352 @@
+@@ -0,0 +1,447 @@
 +/*
 + * Copyright 2004 Sun Microsystems, Inc.
 + *
@@ -1312,21 +1611,35 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 + */
 +package com.sun.syndication.io.impl;
 +
-+import com.sun.syndication.feed.WireFeed;
-+import com.sun.syndication.feed.atom.*;
-+import com.sun.syndication.io.FeedException;
++import java.util.ArrayList;
++import java.util.Iterator;
++import java.util.List;
++
 +import org.jdom.Document;
 +import org.jdom.Element;
 +import org.jdom.Namespace;
 +import org.jdom.output.XMLOutputter;
 +
-+import java.util.*;
++import com.sun.syndication.feed.WireFeed;
++import com.sun.syndication.feed.atom.Category;
++import com.sun.syndication.feed.atom.Content;
++import com.sun.syndication.feed.atom.Entry;
++import com.sun.syndication.feed.atom.Feed;
++import com.sun.syndication.feed.atom.Generator;
++import com.sun.syndication.feed.atom.Link;
++import com.sun.syndication.feed.atom.Person;
++import com.sun.syndication.io.FeedException;
++import java.net.MalformedURLException;
++import java.net.URL;
++import org.jdom.Attribute;
++import org.jdom.Parent;
 +
 +/**
 + * @author Dave Johnson (updated for Atom 1.0)
 + */
 +public class Atom10Parser extends BaseWireFeedParser {
-+    private static final String ATOM_URI = "http://www.w3.org/2005/Atom";
++    private static final String ATOM_10_URI = "http://www.w3.org/2005/Atom";
++    Namespace ns = Namespace.getNamespace("http://www.w3.org/2005/Atom");
 +
 +    public Atom10Parser() {
 +        this("atom_1.0");
@@ -1337,7 +1650,7 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +    }
 +
 +    protected Namespace getAtomNamespace() {
-+        return Namespace.getNamespace(ATOM_URI);
++        return Namespace.getNamespace(ATOM_10_URI);
 +    }
 +
 +    public boolean isMyType(Document document) {
@@ -1346,7 +1659,8 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        return (defaultNS!=null) && defaultNS.equals(getAtomNamespace());
 +    }
 +
-+    public WireFeed parse(Document document, boolean validate) throws IllegalArgumentException,FeedException {
++    public WireFeed parse(Document document, boolean validate) 
++        throws IllegalArgumentException,FeedException {
 +        if (validate) {
 +            validateFeed(document);
 +        }
@@ -1365,7 +1679,10 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +
 +    protected WireFeed parseFeed(Element eFeed) {
 +
-+        com.sun.syndication.feed.atom.Feed feed = new com.sun.syndication.feed.atom.Feed(getType());
++        com.sun.syndication.feed.atom.Feed feed = 
++            new com.sun.syndication.feed.atom.Feed(getType());
++        
++        URL baseURI = findBaseURI(eFeed);
 +
 +        String xmlBase = eFeed.getAttributeValue("base", Namespace.XML_NAMESPACE);
 +        if (xmlBase != null) {
@@ -1378,24 +1695,28 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        }
 +
 +        List eList = eFeed.getChildren("link",getAtomNamespace());
-+        feed.setLinks(parseLinks(eList));
++        feed.setAlternateLinks(parseAlternateLinks(feed, null, baseURI, eList));
++        feed.setAlternateLinks(parseOtherLinks(feed, null, baseURI, eList));
 +
 +        List cList = eFeed.getChildren("category",getAtomNamespace());
-+        feed.setCategories(parseCategories(cList));
++        feed.setCategories(parseCategories(baseURI, cList));
 +
-+        e = eFeed.getChild("author",getAtomNamespace());
-+        if (e!=null) {
-+            feed.setAuthor(parsePerson(e));
++        eList = eFeed.getChildren("author", getAtomNamespace());
++        if (eList.size()>0) {
++            feed.setAuthors(parsePersons(baseURI, eList));
 +        }
 +
 +        eList = eFeed.getChildren("contributor",getAtomNamespace());
 +        if (eList.size()>0) {
-+            feed.setContributors(parsePersons(eList));
++            feed.setContributors(parsePersons(baseURI, eList));
 +        }
 +
 +        e = eFeed.getChild("subtitle",getAtomNamespace());
 +        if (e!=null) {
-+            feed.setSubtitle(e.getText());
++            Content subtitle = new Content();
++            subtitle.setType(Content.TEXT); // TODO: need content type of SyndFeed level
++            subtitle.setValue(e.getText());
++            feed.setSubtitle(subtitle);
 +        }
 +
 +        e = eFeed.getChild("id",getAtomNamespace());
@@ -1440,7 +1761,7 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +
 +        eList = eFeed.getChildren("entry",getAtomNamespace());
 +        if (eList.size()>0) {
-+            feed.setEntries(parseEntries(eList));
++            feed.setEntries(parseEntries(feed, baseURI, eList));
 +        }
 +
 +        feed.setModules(parseFeedModules(eFeed));
@@ -1448,7 +1769,7 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        return feed;
 +    }
 +
-+    private Link parseLink(Element eLink) {
++    private Link parseLink(Feed feedbaseURI , Entry entry, URL baseURI, Element eLink) {
 +        Link link = new Link();
 +        String att = eLink.getAttributeValue("rel");//getAtomNamespace()); DONT KNOW WHY DOESN'T WORK
 +        if (att!=null) {
@@ -1460,7 +1781,7 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        }
 +        att = eLink.getAttributeValue("href");//getAtomNamespace()); DONT KNOW WHY DOESN'T WORK
 +        if (att!=null) {
-+            link.setHref(att);
++            link.setHref(resolveURI(baseURI, eLink, att));
 +        }
 +        att = eLink.getAttributeValue("hreflang");//getAtomNamespace()); DONT KNOW WHY DOESN'T WORK
 +        if (att!=null) {
@@ -1474,16 +1795,33 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +    }
 +
 +    // List(Elements) -> List(Link)
-+    private List parseLinks(List eLinks) {
++    private List parseAlternateLinks(Feed feed, Entry entry, URL baseURI, List eLinks) {
 +        List links = new ArrayList();
 +        for (int i=0;i<eLinks.size();i++) {
 +            Element eLink = (Element) eLinks.get(i);
-+            links.add(parseLink(eLink));
++            Link link = parseLink(feed, entry, baseURI, eLink);
++            if (link.getRel() == null 
++                    || "".equals(link.getRel().trim()) 
++                    || "alternate".equals(link.getRel())) {
++                links.add(link);
++            }
 +        }
 +        return (links.size()>0) ? links : null;
 +    }
 +
-+    private Person parsePerson(Element ePerson) {
++    private List parseOtherLinks(Feed feed, Entry entry, URL baseURI, List eLinks) {
++        List links = new ArrayList();
++        for (int i=0;i<eLinks.size();i++) {
++            Element eLink = (Element) eLinks.get(i);
++            Link link = parseLink(feed, entry, baseURI, eLink);
++            if (!"alternate".equals(link.getRel())) {
++                links.add(link);
++            }
++        }
++        return (links.size()>0) ? links : null;
++    }
++
++    private Person parsePerson(URL baseURI, Element ePerson) {
 +        Person person = new Person();
 +        Element e = ePerson.getChild("name",getAtomNamespace());
 +        if (e!=null) {
@@ -1491,7 +1829,7 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        }
 +        e = ePerson.getChild("uri",getAtomNamespace());
 +        if (e!=null) {
-+            person.setUri(e.getText());
++            person.setUri(resolveURI(baseURI, ePerson, e.getText()));
 +        }
 +        e = ePerson.getChild("email",getAtomNamespace());
 +        if (e!=null) {
@@ -1501,10 +1839,10 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +    }
 +
 +    // List(Elements) -> List(Persons)
-+    private List parsePersons(List ePersons) {
++    private List parsePersons(URL baseURI, List ePersons) {
 +        List persons = new ArrayList();
 +        for (int i=0;i<ePersons.size();i++) {
-+            persons.add(parsePerson((Element)ePersons.get(i)));
++            persons.add(parsePerson(baseURI, (Element)ePersons.get(i)));
 +        }
 +        return (persons.size()>0) ? persons : null;
 +    }
@@ -1545,15 +1883,15 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +    }
 +
 +    // List(Elements) -> List(Entries)
-+    private List parseEntries(List eEntries) {
++    private List parseEntries(Feed feed, URL baseURI, List eEntries) {
 +        List entries = new ArrayList();
 +        for (int i=0;i<eEntries.size();i++) {
-+            entries.add(parseEntry((Element)eEntries.get(i)));
++            entries.add(parseEntry(feed, (Element)eEntries.get(i), baseURI));
 +        }
 +        return (entries.size()>0) ? entries : null;
 +    }
 +
-+    private Entry parseEntry(Element eEntry) {
++    private Entry parseEntry(Feed feed, Element eEntry, URL baseURI) {
 +        Entry entry = new Entry();
 +
 +        String xmlBase = eEntry.getAttributeValue("base", Namespace.XML_NAMESPACE);
@@ -1567,16 +1905,17 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        }
 +
 +        List eList = eEntry.getChildren("link",getAtomNamespace());
-+        entry.setLinks(parseLinks(eList));
++        entry.setAlternateLinks(parseAlternateLinks(feed, entry, baseURI, eList));
++        entry.setOtherLinks(parseOtherLinks(feed, entry, baseURI, eList));
 +
-+        e = eEntry.getChild("author",getAtomNamespace());
-+        if (e!=null) {
-+            entry.setAuthor(parsePerson(e));
++        eList = eEntry.getChildren("author", getAtomNamespace());
++        if (eList.size()>0) {
++            entry.setAuthors(parsePersons(baseURI, eList));
 +        }
 +
 +        eList = eEntry.getChildren("contributor",getAtomNamespace());
 +        if (eList.size()>0) {
-+            entry.setContributors(parsePersons(eList));
++            entry.setContributors(parsePersons(baseURI, eList));
 +        }
 +
 +        e = eEntry.getChild("id",getAtomNamespace());
@@ -1601,7 +1940,9 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +
 +        e = eEntry.getChild("content",getAtomNamespace());
 +        if (e!=null) {
-+            entry.setContent(parseContent(e));
++            List contents = new ArrayList();
++            contents.add(parseContent(e));
++            entry.setContents(contents);
 +        }
 +
 +        e = eEntry.getChild("rights",getAtomNamespace());
@@ -1610,7 +1951,7 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        }
 +
 +        List cList = eEntry.getChildren("category",getAtomNamespace());
-+        entry.setCategories(parseCategories(cList));
++        entry.setCategories(parseCategories(baseURI, cList));
 +
 +        // TODO: SHOULD handle Atom entry source element
 +        
@@ -1619,16 +1960,16 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        return entry;
 +    }
 +
-+    private List parseCategories(List eCategories) {
++    private List parseCategories(URL baseURI, List eCategories) {
 +        List cats = new ArrayList();
 +        for (int i=0;i<eCategories.size();i++) {
 +            Element eCategory = (Element) eCategories.get(i);
-+            cats.add(parseCategory(eCategory));
++            cats.add(parseCategory(baseURI, eCategory));
 +        }
 +        return (cats.size()>0) ? cats : null;
 +    }
 +    
-+    private Category parseCategory(Element eCategory) {
++    private Category parseCategory(URL baseURI, Element eCategory) {
 +        Category category = new Category();
 +        String att = eCategory.getAttributeValue("term");//getAtomNamespace()); DONT KNOW WHY DOESN'T WORK
 +        if (att!=null) {
@@ -1636,7 +1977,7 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        }
 +        att = eCategory.getAttributeValue("scheme");//getAtomNamespace()); DONT KNOW WHY DOESN'T WORK
 +        if (att!=null) {
-+            category.setScheme(att);
++            category.setScheme(resolveURI(baseURI, eCategory, att));
 +        }
 +        att = eCategory.getAttributeValue("label");//getAtomNamespace()); DONT KNOW WHY DOESN'T WORK
 +        if (att!=null) {
@@ -1645,6 +1986,59 @@ diff -N src/java/com/sun/syndication/io/impl/Atom10Parser.java
 +        return category;
 +
 +    }
++
++    /** Use xml:base attributes at feed and entry level to resolve relative links */
++    private String resolveURI(URL baseURI, Parent parent, String url) {
++        url = (url.equals(".") || url.equals("./")) ? "" : url;
++        if (isRelativeURI(url) && parent != null && parent instanceof Element) {
++            Attribute baseAtt = ((Element)parent).getAttribute("base", Namespace.XML_NAMESPACE);
++            String xmlBase = (baseAtt == null) ? "" : baseAtt.getValue();
++            if (!isRelativeURI(xmlBase) && !xmlBase.endsWith("/")) {
++                xmlBase = xmlBase.substring(0, xmlBase.lastIndexOf("/")+1);
++            }
++            return resolveURI(baseURI, parent.getParent(), xmlBase + url);
++        } else if (isRelativeURI(url) && parent == null) {
++            return baseURI + url;
++        } else if (baseURI != null && url.startsWith("/")) {
++            String hostURI = baseURI.getProtocol() + "://" + baseURI.getHost();
++            if (baseURI.getPort() != baseURI.getDefaultPort()) {
++                hostURI = hostURI + ":" + baseURI.getPort();
++            }
++            return hostURI + url;
++        }
++        return url;
++    }
++    private boolean isRelativeURI(String uri) {
++        if (  uri.startsWith("http://")
++           || uri.startsWith("https://")
++           || uri.startsWith("/")) {
++            return false;
++        }
++        return true;
++    }
++    /** Use feed links and/or xml:base attribute to determine baseURI of feed */
++    private URL findBaseURI(Element root) {
++        URL baseURI = null;
++        List linksList = root.getChildren("link", ns);
++        if (linksList != null) {
++            for (Iterator links = linksList.iterator(); links.hasNext(); ) {
++                Element link = (Element)links.next();
++                if (!root.equals(link.getParent())) break;
++                String href = link.getAttribute("href").getValue();
++                if (   link.getAttribute("rel", ns) == null
++                    || link.getAttribute("rel", ns).getValue().equals("alternate")) {
++                    href = resolveURI(null, link, href);
++                    try {
++                        baseURI = new URL(href);
++                        break;
++                    } catch (MalformedURLException e) {
++                        System.err.println("Base URI is malformed: " + href);
++                    }
++                }
++            }
++        }
++        return baseURI;
++    } 
 +}
 Index: src/test/com/sun/syndication/unittest/TestOpsAtom10.java
 ===================================================================
