@@ -23,6 +23,7 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
+import org.roller.presentation.pagecache.PageCacheFilter;
 
 /**
  * Display today's referers.
@@ -32,10 +33,10 @@ import org.roller.presentation.RollerSession;
  * @struts.action-forward name="referers.page" path=".referers"
  */
 public class ReferersAction extends DispatchAction
-{    
-    private static Log mLogger = 
+{
+    private static Log mLogger =
         LogFactory.getFactory().getInstance(ReferersAction.class);
-        
+
     public ActionForward unspecified(
         ActionMapping       mapping,
         ActionForm          actionForm,
@@ -45,7 +46,7 @@ public class ReferersAction extends DispatchAction
     {
         return view(mapping, actionForm, request, response);
     }
-    
+
     /**
      * execute
      */
@@ -60,20 +61,20 @@ public class ReferersAction extends DispatchAction
         RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
         try
         {
-            if (rreq.getWebsite() != null 
+            if (rreq.getWebsite() != null
                  && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
-            {   
+            {
                 BasePageModel pageModel = new BasePageModel(
                         "referers.todaysReferers", req, res, mapping);
                 req.setAttribute("model", pageModel);
                 req.setAttribute("pageHits",
                     new Integer(refmgr.getDayHits(rreq.getWebsite())));
-                    
+
                 req.setAttribute("totalHits",
                     new Integer(refmgr.getTotalHits(rreq.getWebsite())));
-                    
+
                 List refs = refmgr.getTodaysReferers(rreq.getWebsite());
-                req.setAttribute("referers",refs);        
+                req.setAttribute("referers",refs);
             }
         }
         catch (Exception e)
@@ -81,10 +82,10 @@ public class ReferersAction extends DispatchAction
             mLogger.error("ERROR in action",e);
             throw new ServletException(e);
         }
-        
+
         return forward;
     }
-    
+
     public ActionForward reset(
         ActionMapping mapping, ActionForm form,
         HttpServletRequest req, HttpServletResponse res)
@@ -95,13 +96,14 @@ public class ReferersAction extends DispatchAction
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if (rreq.getWebsite() != null 
+            if (rreq.getWebsite() != null
                   && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
             {
                 RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
                 WebsiteData website = rreq.getWebsite();
                 refmgr.forceTurnover(website.getId());
                 RollerFactory.getRoller().commit();
+                PageCacheFilter.removeFromCache(req,website);
             }
             this.servlet.log("ReferersAction.reset(): don't have permission");
         }
@@ -112,7 +114,7 @@ public class ReferersAction extends DispatchAction
         }
         return view(mapping, form, req, res);
     }
-    
+
     public ActionForward delete(
             ActionMapping mapping, ActionForm form,
             HttpServletRequest req, HttpServletResponse res)
@@ -123,7 +125,7 @@ public class ReferersAction extends DispatchAction
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
         {
-            if (rreq.getWebsite() != null 
+            if (rreq.getWebsite() != null
                  && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
             {
                 RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
@@ -137,11 +139,12 @@ public class ReferersAction extends DispatchAction
                         refmgr.removeReferer(deleteIds[i]);
                     }
                     RollerFactory.getRoller().commit();
+                    PageCacheFilter.removeFromCache(req,website);
                     ActionMessages messages = new ActionMessages();
                     messages.add(null, new ActionMessage("referers.deletedReferers"));
                     saveMessages(req, messages);
                 }
-                else 
+                else
                 {
                     ActionErrors errors = new ActionErrors();
                     errors.add(null, new ActionError("referers.noReferersSpecified"));
@@ -158,4 +161,3 @@ public class ReferersAction extends DispatchAction
         return view(mapping, form, req, res);
     }
 }
-

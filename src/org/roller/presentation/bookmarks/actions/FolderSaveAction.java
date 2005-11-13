@@ -19,6 +19,7 @@ import org.roller.pojos.PermissionsData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
+import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 
 /**
@@ -67,6 +68,7 @@ public class FolderSaveAction extends Action
             form.copyTo(fd, request.getLocale());
             fd.save();
             RollerFactory.getRoller().commit();
+            PageCacheFilter.removeFromCache(request,website);
         }
         else
         {
