@@ -26,6 +26,7 @@ import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.roller.presentation.RollerSession;
+import org.roller.presentation.pagecache.PageCacheFilter;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
@@ -114,6 +115,7 @@ public final class ImportBookmarksFormAction extends Action
                             rreq.getWebsite(), folderName, data);
                         
                         RollerFactory.getRoller().commit();
+                        PageCacheFilter.removeFromCache(request,rreq.getWebsite());
                     }
                     else 
                     {

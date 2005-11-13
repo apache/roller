@@ -30,9 +30,11 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
+import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.bookmarks.formbeans.BookmarksForm;
 
 /**
@@ -97,8 +99,8 @@ public class BookmarksAction extends DispatchAction
         Roller roller = RollerFactory.getRoller();
         BookmarksPageModel pageModel = new BookmarksPageModel(
             request, response, mapping, (BookmarksForm)actionForm);
-        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor(
-            pageModel.getFolder().getWebsite()))
+        WebsiteData website = pageModel.getFolder().getWebsite();
+        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor(website))
         {
             BookmarkManager bmgr = roller.getBookmarkManager();
             BookmarksForm form = (BookmarksForm)actionForm;
@@ -124,6 +126,7 @@ public class BookmarksAction extends DispatchAction
                 }
             }
             roller.commit();
+            PageCacheFilter.removeFromCache(request,website);
 
             // recreate model now that folder  is deleted
             pageModel = new BookmarksPageModel(
@@ -159,8 +162,9 @@ public class BookmarksAction extends DispatchAction
         BookmarksPageModel pageModel = new BookmarksPageModel(
             request, response, mapping, (BookmarksForm)actionForm);
         request.setAttribute("model", pageModel);
-        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor(
-            pageModel.getFolder().getWebsite()))
+        WebsiteData website = pageModel.getFolder().getWebsite();
+
+        if (RollerSession.getRollerSession(request).isUserAuthorizedToAuthor(website))
         {
             try 
             {
@@ -206,6 +210,7 @@ public class BookmarksAction extends DispatchAction
                     }
                 }
                 roller.commit();
+                PageCacheFilter.removeFromCache(request,website);
                 saveMessages(request, messages);
             }
             catch (RollerException e)
