@@ -167,6 +167,9 @@
 <definition name=".Pings" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/Pings.jsp" />
 </definition>
+<definition name=".Maintenance" extends=".tiles-editorpage" >
+    <put name="content" value="/website/Maintenance.jsp" />
+</definition>
 
 <definition name=".WebsiteRemove" extends=".tiles-simplepage" >
     <put name="content" value="/website/WebsiteRemove.jsp" />

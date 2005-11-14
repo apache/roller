@@ -24,6 +24,7 @@ import org.roller.RollerException;
 import org.roller.model.IndexManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
@@ -32,7 +33,8 @@ import org.roller.presentation.pagecache.PageCacheFilter;
  * Allows user to perform Website maintenence operations such as flushing
  * the website page cache or re-indexing the website search index.
  * 
- * @struts.action path="/editor/maintenance" name="maintenanceForm" scope="request" parameter="method"
+ * @struts.action path="/editor/maintenance" name="maintenanceForm" 
+ *     scope="request" parameter="method"
  * 
  * @struts.action-forward name="maintenance.page" path=".Maintenance"
  */
@@ -56,6 +58,8 @@ public class MaintenanceAction extends DispatchAction
 			HttpServletResponse response)
 			throws ServletException
 	{
+        request.setAttribute("model", new BasePageModel(
+           "maintenance.title", request, response, mapping));
 		return mapping.findForward("maintenance.page");
 	}
 
@@ -85,7 +89,9 @@ public class MaintenanceAction extends DispatchAction
                 messages.add(null, new ActionMessage("maintenance.message.indexed"));
                 saveMessages(request, messages);
 			}
-		}
+            request.setAttribute("model", new BasePageModel(
+                "maintenance.title", request, response, mapping));
+        }
 		catch (RollerException re)
 		{
 			mLogger.error("Unexpected exception",re.getRootCause());
@@ -122,7 +128,10 @@ public class MaintenanceAction extends DispatchAction
                  ActionMessages messages = new ActionMessages();
                  messages.add(null, new ActionMessage("maintenance.message.flushed"));
                  saveMessages(request, messages);
+
             }
+            request.setAttribute("model", new BasePageModel(
+                "maintenance.title", request, response, mapping));
         }
         catch (Exception e)
         {

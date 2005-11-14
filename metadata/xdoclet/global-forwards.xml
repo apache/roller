@@ -42,6 +42,7 @@
 <forward name="inviteMember"           path="/editor/inviteMember.do" />
 <forward name="pingSetup"              path="/editor/pingSetup.do" />
 <forward name="customPingTargets"      path="/editor/customPingTargets.do" />
+<forward name="maintenance"            path="/editor/maintenance.do" />
 
 <forward name="trackback"              path="/editor/trackback.do?method=send"/>
 <forward name="toggleLinkback"         path="/editor/toggleLinkback.do"/>

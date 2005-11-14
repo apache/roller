@@ -48,6 +48,8 @@ Each menu or menu item is governed by four attrbibutes:
                                                perms="admin" />
         <menu-item forward="customPingTargets" name="tabbedmenu.weblog.customPingTargets" 
                                                disabledProperty="pings.disallowCustomTargets" 
+                                               perms="admin" />        
+        <menu-item forward="maintenance"       name="tabbedmenu.website.maintenance" 
                                                perms="admin" />
     </menu>
 
