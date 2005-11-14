@@ -43,7 +43,7 @@
         <http-method>GET</http-method>
     </web-resource-collection>   
     <auth-constraint>
-        <description>Editors and Adminstrators only</description>
+        <description>Editors and Administrators only</description>
         <role-name>admin</role-name>
         <role-name>editor</role-name>
     </auth-constraint>
