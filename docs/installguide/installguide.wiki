@@ -225,7 +225,7 @@ __NOTES:__
 
 !!Specify the Administrative user
 
-Before you start Roller, you need to specify the username of the user (or users) who will be the adminstrator of the Roller site. This adminstrator will be the only one who can access the Admin and Config pages in the Roller Editor UI. 
+Before you start Roller, you need to specify the username of the user (or users) who will be the administrator of the Roller site. This administrator will be the only one who can access the Admin and Config pages in the Roller Editor UI. 
 
 Do this by editing the file roller/WEB-INF/roller-config.xml, an XML file. Look for the lines shown below and when you have found then, carefully change the string adminUser to the name of the username that you will use as your Roller administrator, or to a comma-sepatared list of users who will be your Roller administrators.
 

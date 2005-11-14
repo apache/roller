@@ -695,7 +695,7 @@ Next, answer ''Yes'' to the ''Do you want to create this account?'' message-box 
 \\
 !!![#9] Configuration and Administration of Roller 
 
-If your friendly Roller adminstrator has added your username to the list of admin users in roller-config.xml, then you will have access to the Roller adminstration menus __Website:Admin__ and __Website:Config__. Let's discuss what you can do with those menus.
+If your friendly Roller administrator has added your username to the list of admin users in roller-config.xml, then you will have access to the Roller adminstration menus __Website:Admin__ and __Website:Config__. Let's discuss what you can do with those menus.
 
 
 
