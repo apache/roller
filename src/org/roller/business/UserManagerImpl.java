@@ -303,16 +303,18 @@ public abstract class UserManagerImpl implements UserManager
             for (int i=0; i<splitroll.length; i++)
             {
                 String[] rollitems = splitroll[i].split("\\|");
-                BookmarkData b = bmgr.createBookmark(
-                    root,                // parent
-                    rollitems[0],        // name
-                    "",                  // description
-                    rollitems[1].trim(), // url
-                    null,                // feedurl
-                    zero,                // weight
-                    zero,                // priority
-                    null);               // image
-                b.save();                    
+                if (rollitems != null && rollitems.length > 1) {
+                    BookmarkData b = bmgr.createBookmark(
+                        root,                // parent
+                        rollitems[0],        // name
+                        "",                  // description
+                        rollitems[1].trim(), // url
+                        null,                // feedurl
+                        zero,                // weight
+                        zero,                // priority
+                        null);               // image
+                    b.save();  
+                }
             }
         }
         
