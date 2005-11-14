@@ -74,7 +74,7 @@
                        </tr>
                        <tr>
                            <td class="mm_subtable_label"><fmt:message key='yourWebsites.description' /></td>   
-                           <td><c:out value="${perms.website.description}" /></td>
+                           <td><c:out value="${perms.website.description}" escapeXml="false" /></td>
                        </tr>
                    </table>
 
