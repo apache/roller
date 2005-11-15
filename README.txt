@@ -10,6 +10,7 @@ README.txt
    http://rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide
 
           
+
 LICENSING TERMS
   
    Roller itself is licensed under the Apache Licence Version 2.0, please 
@@ -39,10 +40,10 @@ THIRD PARTY COMPONENTS
    * Roller includes software developed by the Apache Software Foundation
      Copyright (c) The Apache Software Foundation. All rights reserved.
 
-   * Roller includes code from Blojsom
+   * Roller includes code from Blojsom, BSD License
         Copyright (c) David A. Czarnecki & Mark Lussier. All rights reserved
         
-   * Roller includes JDOM
+   * Roller includes JDOM, JDOM license (BSD style)
         Copyright (c) Brett McLaughlin & Jason Hunter. All rights reserved.
 
    * Roller includes the Hibernate persistence library, LGPL license
@@ -55,4 +56,6 @@ THIRD PARTY COMPONENTS
 
    * Roller includes the Radeox Wiki Engine, LGPL license
 
-   * Roller includes Jython, Copyright (c) Jython Developers
+   * Roller includes Jython, Jython Software License (BSD style)
+         Copyright (c) Jython Developers
+
