@@ -451,6 +451,13 @@ public class ThemeEditorAction extends DispatchAction {
                 }
             }
             
+            // we also want to set the weblogdayid
+            WeblogTemplate dayTemplate = userMgr.getPageByName(website, "_day");
+            if(dayTemplate != null) {
+                mLogger.debug("Setting default day page to "+dayTemplate.getId());
+                website.setWeblogDayPageId(dayTemplate.getId());
+            }
+            
             // save our updated website
             userMgr.storeWebsite(website);
             
