@@ -988,27 +988,6 @@ Use -Dverbose=1 to get verbose output.
     </java>
 </target>
 	
-<target name="findbugs" depends="build">
-    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" 
-    	    classpathref="findbugs.path" />
-
-    <property name="findbugs.home" value="${ro.tools}/buildtime/findbugs" />
-    <findbugs home="${findbugs.home}"
-              output="xml"
-              outputFile="${findbugs.home}/roller-fb.xml"
-              projectFile="${basedir}/tools/buildtime/findbugs/roller.fb" >
-      <!--
-      <auxClasspath refid="findbugs.path" />
-      <sourcePath path="${basedir}/src/" />
-      <sourcePath path="${basedir}/contrib/plugins/src/" />
-      <sourcePath path="${basedir}/tests/" />
-      <class location="${build.stage_web}/WEB-INF/lib/rollerbeans.jar" />
-      <class location="${build.stage_web}/WEB-INF/lib/rollerweb.jar" />
-      <class location="${build.stage_web}/WEB-INF/lib/rollercontrib.jar" />
-      -->
-    </findbugs>
-</target>
-
 <target name="compile-jsps" depends="stage-web">
    <mkdir dir="${ro.build}/jspc"/>	
     <taskdef classname="org.apache.jasper.JspC" name="jasper2" > 
