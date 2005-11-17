@@ -31,6 +31,10 @@ import org.roller.presentation.weblog.tags.EditWeblogCalendarModel;
 import org.roller.util.StringUtils;
 
 import com.swabunga.spell.event.SpellCheckEvent;
+import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.roller.presentation.velocity.PagePlugin;
 
 /**
  * All data needed to render the edit-weblog page.
@@ -38,6 +42,9 @@ import com.swabunga.spell.event.SpellCheckEvent;
  */
 public class WeblogEntryPageModel extends BasePageModel
 {
+    private static Log logger = 
+       LogFactory.getFactory().getInstance(WeblogEntryPageModel.class);
+        
     private RollerRequest rollerRequest = null;
     private PageMode mode = null;
     private ArrayList words = null;
@@ -190,6 +197,31 @@ public class WeblogEntryPageModel extends BasePageModel
     public boolean getHasPagePlugins()
     {
         return ContextLoader.hasPlugins();
+    }
+    
+    public List getPagePlugins() 
+    {
+        List list = new ArrayList();
+        if (getHasPagePlugins()) 
+        {
+            Map pluginClasses = ContextLoader.getPagePluginClasses();
+            Iterator it = pluginClasses.values().iterator();
+            while (it.hasNext()) 
+            {
+                try
+                {
+                    Class pluginClass = (Class)it.next();
+                    PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
+                    // no need to init plugins, we're not gonna run them
+                    list.add(plugin);
+                }
+                catch (Exception e)
+                {
+                    logger.warn("Unable to create a PagePlugin: ", e);
+                }
+            }  
+        }
+        return list;
     }
 
     public String getEditorPage()
