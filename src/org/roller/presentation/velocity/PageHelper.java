@@ -1,11 +1,12 @@
 package org.roller.presentation.velocity;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,8 +51,8 @@ public class PageHelper
     private Context              mVelocityContext = null;
     private PageContext          mPageContext = null;
     private HttpServletResponse  mResponse = null;     
-    private RollerRequest        mRollerReq = null;
-    private Collection           mPagePlugins = new ArrayList();
+    private RollerRequest        mRollerReq = null;  
+    private Map                  mPagePlugins = new HashMap();  // Plugins keyed by name   
     private boolean              mSkipFlag = false;
     private WebsiteData          mWebsite = null;
     
@@ -96,7 +97,8 @@ public class PageHelper
 
     //------------------------------------------------------------------------
     /**
-     * Return a PageHelper with a new VelocityContext.
+     * Return a PageHelper with a new VelocityContext, 
+     * added to support the ApplyPlugins JSP tag.
      */
     public static PageHelper createPageHelper(
         HttpServletRequest request, HttpServletResponse response)
@@ -104,7 +106,7 @@ public class PageHelper
         Context ctx = (Context)(new VelocityContext());
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         PageHelper pageHelper = new PageHelper(rreq, response, ctx);
-        pageHelper.initializePlugins(ContextLoader.getPagePlugins());
+        pageHelper.initializePlugins(ContextLoader.getPagePluginClasses());
 
         return pageHelper;
     }
@@ -113,18 +115,19 @@ public class PageHelper
     /**
      * Create individual instances of the PagePlugins for use by this PageHelper.
      */
-    protected void initializePlugins(Collection pluginClasses) 
+    protected void initializePlugins(Map pluginClasses) 
     {
-        Iterator it = pluginClasses.iterator();
+        Iterator it = pluginClasses.values().iterator();
         while (it.hasNext()) 
         {
             try
             {
-                PagePlugin plugin = (PagePlugin)it.next();
+                Class pluginClass = (Class)it.next();
+                PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
                 plugin.init(mRollerReq, mVelocityContext);
-                mPagePlugins.add(plugin);
+                mPagePlugins.put(plugin.getName(), plugin);
             }
-            catch (RollerException e)
+            catch (Exception e)
             {
                 mLogger.warn("Unable to init() PagePlugin: ", e    );
             }
@@ -465,34 +468,7 @@ public class PageHelper
         }
         return returnUrl;
     }
-    
-    /**
-     * Pass the String through any PagePlugins that have been
-     * assigned to the PageHelper.
-     * 
-     * @param str
-     * @return
-     */
-    public String renderPlugins(String str)
-    {
-        mLogger.debug("Rendering page plugins on String");
         
-        if (mPagePlugins != null)
-        {
-            Iterator iter = mPagePlugins.iterator();
-            PagePlugin plugin = null;
-            while (iter.hasNext())
-            {
-                plugin = (PagePlugin) iter.next();
-                
-                mLogger.debug("applying plugin - ");
-                str = plugin.render(str);
-            }
-        }
-        
-        return str;
-    }
-    
     /**
      * Pass the String through any PagePlugins that have been
      * assigned to the PageHelper, as selected by the Entry.
@@ -525,13 +501,13 @@ public class PageHelper
                 // now loop over mPagePlugins, matching
                 // against Entry plugins (by name):
                 // where a match is found render Plugin.
-                Iterator iter = mPagePlugins.iterator();
-                PagePlugin pagePlugin = null;
+                Iterator iter = mPagePlugins.keySet().iterator();
                 while (iter.hasNext())
                 {
-                    pagePlugin = (PagePlugin)iter.next();
-                    if (entryPlugins.contains(pagePlugin.getName()))
+                    String key = (String)iter.next();
+                    if (entryPlugins.contains(key))
                     {
+                        PagePlugin pagePlugin = (PagePlugin)mPagePlugins.get(key);
                         copy.setText((pagePlugin).render(copy, mSkipFlag));
                     }
                 }

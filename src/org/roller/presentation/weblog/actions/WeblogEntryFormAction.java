@@ -297,7 +297,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                 mLogger.debug("setting update time now");
                 form.setUpdateTime(new Timestamp(new Date().getTime()));
                 
-                if("PUBLISHED".equals(form.getStatus()) &&
+                if ("PUBLISHED".equals(form.getStatus()) &&
                         "0/0/0".equals(form.getDateString())) {
                     mLogger.debug("setting pubtime now");
                     

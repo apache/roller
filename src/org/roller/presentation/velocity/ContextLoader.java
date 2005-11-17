@@ -5,7 +5,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -56,8 +56,8 @@ public class ContextLoader
 {   
     private RollerRequest mRollerReq = null;
     
-    // List of PagePlugins for "transforming" WeblogEntries
-    static List mPagePlugins = new ArrayList();
+    // Plugin classes keyed by plugin name
+    static Map mPagePlugins = new HashMap();
     
     private static Log mLogger = 
        LogFactory.getFactory().getInstance(ContextLoader.class);
@@ -469,12 +469,10 @@ public class ContextLoader
     //------------------------------------------------------------------------
 
     /**
-     * Initialize PagePlugins declared in web.xml.  By using the full class
-     * name we also allow for the implementation of "external" Plugins
-     * (maybe even packaged seperately).  These classes are then later 
-     * instantiated by PageHelper.
-     * 
-     * @param mContext
+     * Initialize PagePlugins declared in web.xml, called once by RollerContext.
+     * By using the full class name we also allow for the implementation of 
+     * "external" Plugins (maybe even packaged seperately). These classes are 
+     * then later instantiated by PageHelper.
      */
     public static void initializePagePlugins(ServletContext mContext)
     {
@@ -494,7 +492,8 @@ public class ContextLoader
                     Class pluginClass = Class.forName(plugins[i]);
                     if (isPagePlugin(pluginClass))
                     {
-                        mPagePlugins.add(pluginClass.newInstance());
+                        PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
+                        mPagePlugins.put(plugin.getName(), pluginClass);
                     }
                     else
                     {
@@ -537,7 +536,7 @@ public class ContextLoader
         return (mPagePlugins != null && mPagePlugins.size() > 0);
     }
     
-    public static List getPagePlugins()
+    public static Map getPagePluginClasses()
     {
         return mPagePlugins;
     }

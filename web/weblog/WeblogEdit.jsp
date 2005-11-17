@@ -263,7 +263,7 @@ function publish() {
       </div>
       <div id="pluginControl" class="miscControl" style="display:none">
         <logic:iterate id="plugin" type="org.roller.presentation.velocity.PagePlugin"
-            collection="<%= org.roller.presentation.velocity.ContextLoader.getPagePlugins() %>">
+            collection="<%= model.getPagePlugins() %>">
             <html:multibox property="pluginsArray"
                  title="<%= plugin.getName() %>" value="<%= plugin.getName() %>"
                  styleId="<%= plugin.getName() %>"/></input>
