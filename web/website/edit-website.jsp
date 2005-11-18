@@ -1,5 +1,9 @@
 <%@ include file="/taglibs.jsp" %>
-
+<%@ page import="org.roller.presentation.website.actions.WebsiteFormAction" %>
+<%
+WebsiteFormAction.WebsitePageModel model = 
+    (WebsiteFormAction.WebsitePageModel)request.getAttribute("model");
+%>
 <p class="subtitle">
    <fmt:message key="websiteSettings.subtitle" >
        <fmt:param value="${model.website.handle}" />
@@ -134,26 +138,28 @@ if (emailComments) { %>
         <td colspan="3"><h2><fmt:message key="websiteSettings.formatting" /></h2></td>
     </tr>
 
-
-<% if (org.roller.presentation.velocity.ContextLoader.hasPlugins()) { %>
-    <tr>
-        <td class="label">Default Entry Formatters <br />(applied in the listed order)</td>
-        <td class="field">
-        <logic:iterate id="plugin" type="org.roller.presentation.velocity.PagePlugin"
-            collection="<%= org.roller.presentation.velocity.ContextLoader.getPagePlugins() %>">
-            <html:multibox property="defaultPluginsArray"
-                title="<%= plugin.getName() %>" value="<%= plugin.getName() %>" /></input>
-            <label for="<%= plugin.getName() %>"><%= plugin.getName() %></label>
-            <a href="javascript:void(0);" onmouseout="return nd();"
-            onmouseover="return overlib('<%= plugin.getDescription() %>', STICKY, MOUSEOFF, TIMEOUT, 3000);">?</a>
-            <br />
-        </logic:iterate>
-        </td>
-        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
-    </tr>
-<% } else { %>
-    <html:hidden property="defaultPlugins" />
-<% } %>
+<c:choose>
+    <c:when test="${model.hasPagePlugins}">
+        <tr>
+            <td class="label">Default Entry Formatters <br />(applied in the listed order)</td>
+            <td class="field">
+            <logic:iterate id="plugin" type="org.roller.presentation.velocity.PagePlugin"
+                collection="<%= model.getPagePlugins() %>">
+                <html:multibox property="defaultPluginsArray"
+                    title="<%= plugin.getName() %>" value="<%= plugin.getName() %>" /></input>
+                <label for="<%= plugin.getName() %>"><%= plugin.getName() %></label>
+                <a href="javascript:void(0);" onmouseout="return nd();"
+                onmouseover="return overlib('<%= plugin.getDescription() %>', STICKY, MOUSEOFF, TIMEOUT, 3000);">?</a>
+                <br />
+            </logic:iterate>
+            </td>
+            <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+        </tr>
+    </c:when>
+    <c:otherwise>
+        <html:hidden property="defaultPlugins" />
+    </c:otherwise>
+</c:choose>
 
 
     <%-- ***** Spam prevention settings ***** --%>
