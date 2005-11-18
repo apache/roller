@@ -4,7 +4,9 @@ package org.roller.presentation.website.actions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -36,6 +38,8 @@ import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.velocity.ContextLoader;
+import org.roller.presentation.velocity.PagePlugin;
 import org.roller.presentation.website.formbeans.WebsiteFormEx;
 
 
@@ -328,6 +332,27 @@ public final class WebsiteFormAction extends DispatchAction
         }
         public void setGroupBloggingEnabled(boolean groupBloggingEnabled) {
             this.groupBloggingEnabled = groupBloggingEnabled;
+        }
+        public boolean getHasPagePlugins() {
+            return ContextLoader.hasPlugins();
+        }
+        public List getPagePlugins() {
+            List list = new ArrayList();
+            if (getHasPagePlugins()) {
+                Map pluginClasses = ContextLoader.getPagePluginClasses();
+                Iterator it = pluginClasses.values().iterator();
+                while (it.hasNext()) {
+                    try {
+                        Class pluginClass = (Class)it.next();
+                        PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
+                        // no need to init plugins, we're not gonna run them
+                        list.add(plugin);
+                    } catch (Exception e) {
+                        mLogger.warn("Unable to create a PagePlugin: ", e);
+                    }
+                }
+            }
+            return list;
         }
     }
 }
