@@ -193,7 +193,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
 				        "select u.username,w.name,w.name,sum(r.dayhits) as s "+
 				    "from rolleruser as u, website as w, referer as r "+
 				    "where r.websiteid=w.id and w.userid=u.id and w.isenabled=? " +
-				    "group by u.username,w.name,w.id order by s desc");
+				    "group by u.username,w.handle,w.id order by s desc");
 				stmt.setBoolean(1, true);
             } else if(con.getMetaData().getDriverName().startsWith("IBM DB2")) {
            // special handling for IBM DB2
@@ -201,7 +201,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
                         "select u.username,w.name,w.name,sum(r.dayhits) as s "+
                         "from rolleruser as u, website as w, referer as r "+
                         "where r.websiteid=w.id and w.userid=u.id and w.isenabled= ? " +
-                        "group by u.username,w.name,w.id order by s desc fetch first " +
+                        "group by u.username,w.handle,w.id order by s desc fetch first " +
                         Integer.toString(max) + " rows only");
                 stmt.setBoolean(1, true);
             } else if (con.getMetaData().getDriverName().startsWith("Oracle")) {
