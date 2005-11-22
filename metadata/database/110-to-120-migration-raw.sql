@@ -2,6 +2,7 @@ create table roller_properties (
     name     varchar(255) not null primary key,
     value    @TEXT_SQL_TYPE@
 );
+insert into roller_properties (name,value) values ("roller.database.version","120");
 
 create table rag_group_subscription (
     id               varchar(48) not null primary key,
