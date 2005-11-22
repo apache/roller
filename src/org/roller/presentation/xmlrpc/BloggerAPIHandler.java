@@ -426,6 +426,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
             entry.setText(content);
             entry.setPubTime(current);
             entry.setUpdateTime(current);
+            entry.setCreator(roller.getUser());
             entry.setWebsite(website);
             entry.setCategory(website.getBloggerCategory());
             if (Boolean.valueOf(publish).booleanValue())
