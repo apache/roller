@@ -1,7 +1,7 @@
 <% response.setContentType("text/html; charset=UTF-8"); %><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ include file="/taglibs.jsp" %><html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><%= RollerRuntimeConfig.getProperty("site.shortName") %></title>
+<title><%= RollerRuntimeConfig.getProperty("site.shortName") %>: <c:out value="${model.title}" /></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <tiles:insert attribute="head" />     
 <style type="text/css">
