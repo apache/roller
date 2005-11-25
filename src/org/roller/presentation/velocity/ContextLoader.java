@@ -5,7 +5,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -57,7 +57,7 @@ public class ContextLoader
     private RollerRequest mRollerReq = null;
     
     // Plugin classes keyed by plugin name
-    static Map mPagePlugins = new HashMap();
+    static Map mPagePlugins = new LinkedHashMap();
     
     private static Log mLogger = 
        LogFactory.getFactory().getInstance(ContextLoader.class);
@@ -330,7 +330,7 @@ public class ContextLoader
         
         int entryCount = 15;
         String sCount = request.getParameter("count");
-        if ( sCount!=null && sExcerpts.trim().equals(""))
+        if ( sCount!=null && sExcerpts!=null && sExcerpts.trim().equals(""))
         {
             try
             {
