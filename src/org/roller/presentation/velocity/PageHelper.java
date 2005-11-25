@@ -1,9 +1,8 @@
 package org.roller.presentation.velocity;
 import java.net.MalformedURLException;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -19,7 +18,6 @@ import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
-import org.roller.RollerException;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.pojos.wrapper.RefererDataWrapper;
@@ -52,7 +50,7 @@ public class PageHelper
     private PageContext          mPageContext = null;
     private HttpServletResponse  mResponse = null;     
     private RollerRequest        mRollerReq = null;  
-    private Map                  mPagePlugins = new HashMap();  // Plugins keyed by name   
+    private Map                  mPagePlugins = new LinkedHashMap();  // Plugins keyed by name   
     private boolean              mSkipFlag = false;
     private WebsiteData          mWebsite = null;
     
