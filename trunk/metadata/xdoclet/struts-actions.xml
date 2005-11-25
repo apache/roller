@@ -1,0 +1,4 @@
+<!-- 
+<action path="/jcaptcha"
+type="com.octo.captcha.module.struts.image.RenderImageCaptchaAction" />
+-->

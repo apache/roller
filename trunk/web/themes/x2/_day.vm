@@ -1,0 +1,47 @@
+<div class="entry">
+#if ($velocityCount == 1) 
+  <div id="search" style="float: right; margin-top: -2px">
+    #if ( !$searchResults )
+    <form id="searchForm" method="get" action="$ctxPath/search/$website.handle"
+        onsubmit="return search(this)" style="margin: 0; padding: 0">  
+        <input type="text" id="q" name="q" size="20" 
+            maxlength="255" value="search this site" 
+            style="font-size: 11px; border: 1px inset silver; font-weight: normal; padding-left: 2px"
+            onclick="this.value=''" /> 
+    </form>
+    #end
+  <script type="text/javascript">
+    function search(form) {
+        if (form.q.value == "search this site" || form.q.value == "") {
+            alert("Please enter a search term to continue.");
+            form.q.focus();
+            return false;
+        }
+    }
+    title = "$entries.get(0).title";
+    if (title != "") {
+        document.title=title;
+    }
+    #if ($searchResults) 
+    document.title="Search Results for '$term'";
+    #end
+  </script>
+  </div>
+#end
+   #showDayPermalink( $day )
+   #showEntryDate( $day )
+</div>
+
+#foreach( $entry in $entries )
+    <p>
+        <a name="$utilities.encode($entry.anchor)" id="$utilities.encode($entry.anchor)" class="entryTitle">
+        <b>$entry.title</b></a> <br /><br />
+        #showEntryText( $entry ) 
+        $text.get("macro.weblog.postedby") $entry.creator.userName
+        <span class="dateStamp">#showTimestamp($entry.pubTime)</span>
+        #showEntryPermalink( $entry )
+    </p>
+    #showCommentsDiv ( $entry )
+#end
+    
+#showLinkbacks( $day )

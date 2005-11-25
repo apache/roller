@@ -1,0 +1,245 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    #showContentLanguage($locale.language)
+    <title>#showWebsiteTitle()</title>
+    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
+    <link rel="stylesheet" type="text/css" href="#showThemePath("berkley")/theme.css" />
+    <style>
+    #includePage("_css")
+    </style>
+    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js">
+    </script>
+</head>
+
+<noscript>You need to have Javascript enabled to view this page</noscript>
+<script>
+var bikky = document.cookie;
+var strControls = "";
+
+//check DOM compliance
+bNS   = (document.layers) ? true:false;                     // netscape 4
+bIE   = (document.all) ? true:false;                        // ie4+
+bDOM  = ((document.getElementById)&&(!bIE))?true:false;     // ns6 etc.
+
+
+function initPage() {
+    window.defaultStatus="Welcome to #showWebsiteTitle()";
+}
+
+function exitPage() {
+    if (strControls.length == 0) deleteCookie("Controls")
+    else setCookie("Controls",strControls);
+}
+
+function go(url) {
+    window.location.href=url;
+}
+
+function getObj(id) {
+    if (bDOM) return document.getElementById(id);
+    if (bIE) return document.all[id];
+}
+
+function show(id) {
+    if (strControls.indexOf(id) != -1) return;
+    getObj("Controls").innerHTML += "<DIV class='box1'>"+getObj(id).innerHTML+"</DIV>";
+    strControls+=id+";";
+}
+
+function hide(id) {
+    index = strControls.indexOf(id);
+    if (index == -1) return;
+
+    pre = strControls.substring(0, index);
+    post = strControls.substring(index+id.length+1);
+
+    // rebuild the list of controls
+    showControls(pre+post);
+
+}
+
+function showControls(newControls) {
+    getObj("Controls").innerHTML = "";
+    strControls = "";
+
+    var split = newControls.split(";");
+    for (i=0; i<split.length; i++) {
+        show(split[i]);
+    }
+}
+
+function getCookie(name) {
+    var index = bikky.indexOf(name + "=");
+    if (index == -1) return "";
+    index = bikky.indexOf("=", index) + 1;
+    var endstr = bikky.indexOf(";", index);
+    if (endstr == -1) endstr = bikky.length;
+    return unescape(bikky.substring(index, endstr));
+}
+
+function setCookie(name, value) {
+    if (value != "") {
+        document.cookie=name + "=" + escape(value) + ";path=/" ;
+        bikky= document.cookie; // update bikky
+    }
+}
+
+function deleteCookie (name) {
+
+    if (getCookie(name)) {
+        document.cookie = name + "=" + ";path=/; expires=Thu, 01-Jan-70 00:00:01 GMT";
+    }
+}
+
+
+</script>
+
+<BODY onload="initPage()" onunload="exitPage()">
+<table width="574">
+    <tr>
+        <td class="Banner">
+            <img src="#showThemePath("berkley")/images/banner_palms.jpg" border="0">
+            <TABLE cellspacing="0" cellpadding="0">
+                <TR>
+                    <TD align="left" width="533" bgcolor="#ffffff" >
+                        <DIV align="center" id="menu_controls" style="visibility: hidden;">
+                            <FONT face="Verdana, Arial, Helvetica, sans-serif" color="#000000" size="1">
+                                <A href="javascript:show('calendar')">Calendar</A> |
+                                <A href="javascript:show('menu')">Controls</A> |
+                                <A href="javascript:show('blogs')">Blogs</A> |
+                                <A href="javascript:show('referrers')">Referrers</A> |
+                                <A href="javascript:show('cat')">Categories</A> |
+                                <A href="javascript:show('about')">About</A> |
+                                <A href="javascript:show('search')">Search</A> |
+                                <A href="$ctxPath/rss/$userName">RSS</A>
+                            </FONT>
+                        </DIV>
+                    </TD>
+                </TR>
+            </TABLE>
+        </td>
+    </tr>
+</table>
+#showNextPreviousLinks()
+#showWeblogEntries("_day" 15)
+
+<div id="Controls" class="controls"></div>
+
+<div class="hidden" id="search">
+    <table cellspacing="0" cellpadding="0" width="140">
+        <tr>
+            <td class="ctrl_title"><a href="javascript:hide('search')">
+            <img src="#showThemePath('berkley')/images/ctrl_close.gif" border="0" align="left"></a>Search</td>
+            <td><img src="#showThemePath('berkley')/images/ctrl_title_t.gif"></td>
+        </tr>
+        <tr>
+            <td class="ctrl_content">
+            #showSearchForm()
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+
+<div class="hidden" id="referrers">
+    <table cellspacing="0" cellpadding="0" width="140">
+        <tr>
+            <td class="ctrl_title"><a href="javascript:hide('referrers')">
+            <img src="#showThemePath('berkley')/images/ctrl_close.gif" border="0" align="left"></a>Referrers</td>
+            <td><img src="#showThemePath('berkley')/images/ctrl_title_t.gif"></td>
+        </tr>
+        <tr>
+            <td class="ctrl_content">
+            #showReferers(20 30)
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+
+
+<div class="hidden" id="menu">
+    <table cellspacing="0" cellpadding="0" width="140">
+        <tr>
+            <td class="ctrl_title"><a href="javascript:hide('menu')">
+            <img src="#showThemePath('berkley')/images/ctrl_close.gif" border="0" align="left"></a>Menu</td>
+            <td><img src="#showThemePath('berkley')/images/ctrl_title_t.gif"></td>
+        </tr>
+        <tr>
+            <td class="ctrl_content">
+                #showBasicNavBar(true)
+                #showEditorNavBar(true)
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+
+<div class="hidden" id="blogs">
+    <table cellspacing="0" cellpadding="0" width="140">
+        <tr>
+            <td class="ctrl_title"><a href="javascript:hide('blogs')">
+            <img src="#showThemePath('berkley')/images/ctrl_close.gif" border="0" align="left"></a>Blogs</td>
+            <td><img src="#showThemePath('berkley')/images/ctrl_title_t.gif"></td>
+        </tr>
+        <tr>
+            <td class="ctrl_content">
+                #showBlogroll()
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+
+<div class="hidden" id="cat">
+    <table cellspacing="0" cellpadding="0" width="140">
+        <tr>
+            <td class="ctrl_title" width="140" nowrap><a href="javascript:hide('cat')">
+            <img src="#showThemePath('berkley')/images/ctrl_close.gif" border="0" align="left"></a>Categories</td>
+            <td><img src="#showThemePath('berkley')/images/ctrl_title_t.gif"></td>
+        </tr>
+        <tr>
+            <td class="ctrl_content">#showWeblogCategoryChooser()</td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+
+<div class="hidden" id="about">
+    <table cellspacing="0" cellpadding="0" width="140">
+        <tr>
+            <td class="ctrl_title"><a href="javascript:hide('about')">
+            <img src="#showThemePath('berkley')/images/ctrl_close.gif" border="0" align="left"></a>About</td>
+            <td><img src="#showThemePath('berkley')/images/ctrl_title_t.gif"></td>
+        </tr>
+        <tr>
+            <td class="ctrl_content">Contact:
+            <a href="mailto:$encodedEmail">$fullName</a>
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+
+<div class="hidden" id="calendar">
+    <table cellspacing="0" cellpadding="0" width="140">
+        <tr>
+            <td class="ctrl_title"><a href="javascript:hide('calendar')">
+            <img src="#showThemePath('berkley')/images/ctrl_close.gif" border="0" align="left">
+            </a>Calendar</td><td><img src="#showThemePath('berkley')/images/ctrl_title_t.gif"></td>
+        </tr>
+        <tr>
+            <td class="ctrl_content">#showWeblogCalendar()</td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+
+
+</BODY>
+</HTML>
+<script>
+    showControls(getCookie("Controls"));
+        getObj("menu_controls").style.visibility="visible";
+</script>

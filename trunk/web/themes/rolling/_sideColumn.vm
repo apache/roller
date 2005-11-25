@@ -1,0 +1,38 @@
+<div id="SideBar">
+
+<div class="box">
+<h2 class="box">calendar</h2>
+<center>#showWeblogCalendar()</center>
+</div>
+
+<div class="box"><h2 class="box">search</h2>
+#showSearchForm()
+</div>
+
+<div class="box"><h2 class="box">navigation</h2>
+#showBasicNavBar(true)
+<br/>
+<br/>
+#showEditorNavBar(true)
+</div>
+
+<div class="box"><h2 class="box">links</h2>
+<br/>
+#showBlogroll()
+<br/>
+</div>
+
+<div class="box"><h2 class="box">rss feeds</h2>
+#showRSSBadge()<br/>
+#showRSSLinks()<br/>
+</div>
+
+<div class="box"><h2 class="box">referers</h2>
+Today's top referers<br/>
+#showReferers(20 25)
+</div>
+
+<br/>
+<br/>
+
+</div>

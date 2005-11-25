@@ -1,0 +1,29 @@
+<div id="menu">
+#foreach( $menu in $menuModel.getMenus() )
+    #if( $menu.isPermitted( $req ) )
+	    #if( $menu.isSelected( $req ) )
+	  	<dl class="menuSelected">
+	    #else
+	  	<dl class="menuUnselected">
+	    #end
+	       <dt onmouseover="javascript:showMenu('smenu${velocityCount}');">
+	          <a href="$menu.getUrl( $ctx )">$text.get($menu.getName())</a>
+	       </dt>
+	       <dd id="smenu${velocityCount}">
+	          <ul>
+	          #foreach( $item in $menu.getMenuItems() )
+                 #if ( $item.isSelected( $req ) )
+                 <a class="itemSelected" href="$item.getUrl($ctx)">$text.get( $item.getName() )</a> 
+    	             #else
+                 <a class="itemUnselected" href="$item.getUrl($ctx)">$text.get( $item.getName() )</a> 
+                 #end
+	          #end
+	          </ul>
+	       </dd>
+        </dl>
+    #end
+#end
+</menu>
+
+
+

@@ -1,0 +1,75 @@
+/* ======================================================================
+menu.css: CSS layout and styles for Roller tabbed menu
+====================================================================== */
+
+/* rounded corners */
+
+div.menu-tl {
+    margin: 0px; 
+    height: 100%;
+    background: url("images/menutab-tl.gif") no-repeat left top;    
+    background-repeat: no-repeat;
+}
+div.menu-tr {
+    margin: 0px; 
+    height: 100%;
+    background: url("images/menutab-tr.gif") no-repeat right top;    
+    background-repeat: no-repeat;
+}
+
+td.menuTabSelected a, td.menuTabUnselected a {
+    vertical-align: middle;
+    text-align: middle;
+}
+
+/* ----------------------------------------------------------------------
+Menu tab table (the tabs)
+---------------------------------------------------------------------- */
+
+.menuTabTable {
+    height: 21px;
+}
+td.menuTabSeparator {
+    width: 4px;
+}  
+td.menuTabSelected {
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
+    padding-TOP: 0px;
+    font-weight: bold;
+}
+td.menuTabUnselected {
+    padding: 0px 0px 0px 0px; 
+    margin: 0px 0px 0px 0px;
+}
+
+/* ----------------------------------------------------------------------
+Menu item table (the bar below the tabs)
+---------------------------------------------------------------------- */
+
+.menuItemTable {
+    padding-right: 0px;
+    padding-bottom: 0px;
+    width: 100%;
+    padding-top: 0px;
+    height: 25px;
+}
+.menuItemSelected {
+    padding-right: 1px;
+    padding-left: 1px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    font-weight: bold;
+}
+.menuItemUnselected {
+    padding: 0px 1px 0px 1px; /* TRBL */
+}
+
+
+
+
+
+
+
