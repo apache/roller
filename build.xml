@@ -135,23 +135,8 @@ Key Targets:
         <fileset dir="./src" includes="org/roller/pojos/*Assoc.java" />
         <fileset dir="./src" includes="org/roller/business/*Data.java" />
         &custom-gen-beans;
-        <hibernate validatexml="true" version="2.0"/>
+        <hibernate validatexml="true" version="3.0"/>
     </hibernatedoclet>
-
-    <replace dir="${build.compile_beans}/org/roller/pojos"
-        token="Hibernate Mapping DTD 2.0//EN" 
-        value="Hibernate Mapping DTD 3.0//EN"/>
-    <replace dir="${build.compile_beans}/org/roller/pojos"
-        token="hibernate-mapping-2.0.dtd" 
-        value="hibernate-mapping-3.0.dtd"/>
-        
-    <replace dir="${build.compile_beans}/org/roller/business"
-        token="Hibernate Mapping DTD 2.0//EN" 
-        value="Hibernate Mapping DTD 3.0//EN"/>
-    <replace dir="${build.compile_beans}/org/roller/business"
-        token="hibernate-mapping-2.0.dtd" 
-        value="hibernate-mapping-3.0.dtd"/>
-        
 </target>
 
 <!-- ============================================== -->
@@ -427,6 +412,7 @@ ro.buildUser=${user.name}
         <fileset refid="hibernate.jars" />
         <fileset refid="commons.jars" />
         <fileset refid="struts.jars" />
+        <fileset refid="spring.jars" /> 
         <fileset refid="jstl.jars" />
         &custom-jars;
         <fileset dir="${ro.tools}/lib">

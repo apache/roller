@@ -15,6 +15,7 @@
 <property name="build.reports"       value="${ro.build}/reports"/>
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.0" />
+<property name="tools.spring"        value="${ro.tools}/spring-1.2" />
 <property name="tools.jstl"          value="${ro.tools}/standard-1.0.3" />
 <property name="tools.xdoclet"    value="${ro.tools}/buildtime/xdoclet-1.2.3" />
 <property name="tools.tomcat"     value="${ro.tools}/buildtime/tomcat-5.0.28" />
@@ -42,7 +43,7 @@ in the "base.path" definition.
 <fileset id="base.jars" dir="${ro.tools}/lib">
     <include name="commons-betwixt-1.0-beta-1.jar" />
     <include name="commons-cache.jar" />
-    <include name="commons-codec-1.1.jar" />
+    <include name="commons-codec-1.3.jar" />
     <include name="concurrent-1.3.2.jar"/>
     <include name="jazzy-core.jar" />
     <include name="jdom.jar"/>
@@ -95,6 +96,10 @@ in the "base.path" definition.
     <include name="*.jar"/>
 </fileset>
 
+<fileset id="spring.jars" dir="${tools.spring}">
+    <include name="*.jar"/>
+</fileset>
+
 <!-- **************************************************************** -->
 <!-- Define path based on above filesets -->
 <!-- **************************************************************** -->
@@ -113,6 +118,7 @@ in the "base.path" definition.
     <fileset refid="servlet.jars"/>
     <fileset refid="mail.jars"/>
     <fileset refid="jstl.jars"/>
+    <fileset refid="spring.jars"/>
     <!--fileset refid="resin.jars" /-->
 </path>
 

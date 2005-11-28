@@ -17,6 +17,14 @@
 </filter-mapping>
 -->
 
+<!-- Acegi Security filters - controls secure access to different parts of Roller -->
+<filter-mapping>
+    <filter-name>securityFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+
 <!-- Ensures character encoding set to UTF-8 and JSTL and Struts locales are in sync.
      Note: Any filters preceding this one MUST not cause request parsing. -->
 <filter-mapping>
@@ -73,18 +81,6 @@
 <filter-mapping>
     <filter-name>RefererFilter</filter-name>
     <url-pattern>/page/*</url-pattern>
-</filter-mapping>
-
-<!-- RememberMe Filter -->
-<filter-mapping>
-    <filter-name>loginFilter</filter-name>
-    <url-pattern>/login.jsp</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>FORWARD</dispatcher>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>loginFilter</filter-name>
-    <url-pattern>/logout-redirect.jsp</url-pattern>
 </filter-mapping>
 
 <!--

@@ -3,7 +3,6 @@
  */
 package org.roller.business;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -23,11 +22,9 @@ import org.roller.pojos.FolderData;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RoleData;
-import org.roller.pojos.UserCookieData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.util.RandomGUID;
 import org.roller.util.Utilities;
 
 /**
@@ -327,41 +324,6 @@ public abstract class UserManagerImpl implements UserManager
         perms.save();
 
         return website;
-    }
-
-    /**
-     * @see org.roller.model.UserManager#createLoginCookie(java.lang.String)
-     */
-    public String createLoginCookie(String username) throws RollerException 
-    {
-        UserCookieData cookie = new UserCookieData();
-        cookie.setUsername(username);
-
-        return saveLoginCookie(cookie);
-    }
-
-    /**
-     * Convenience method to set a unique cookie id and save to database
-     * 
-     * @param cookie
-     * @return
-     * @throws Exception
-     */
-    protected String saveLoginCookie(UserCookieData cookie) throws RollerException 
-    {
-        cookie.setCookieId(new RandomGUID().toString());
-        cookie.save();
-
-        String cookieString = null;
-        try {
-            cookieString = Utilities.encodeString(cookie.getUsername() + "|" +
-            		       cookie.getCookieId());
-        } catch (IOException io) {
-        	mLogger.warn("Failed to encode rememberMe cookieString");
-            mLogger.warn(io.getMessage());  
-            cookieString = cookie.getUsername() + "|" + cookie.getCookieId();
-        }
-        return cookieString;
     }
 
     /**
