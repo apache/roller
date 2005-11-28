@@ -2,6 +2,9 @@
 package org.roller.presentation.website.actions;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -28,12 +31,10 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.forms.WeblogTemplateForm;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
-
-
 /////////////////////////////////////////////////////////////////////////////
 /**
  * Page form action.
@@ -86,7 +87,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 saveMessages(request, uiMessages);
                 
                 UserData user = rses.getAuthenticatedUser();
-                PageCacheFilter.removeFromCache( request, website );
+                //PageCacheFilter.removeFromCache( request, website );
+                //CacheManager.invalidate(data);
                     
                 actionForm.reset(mapping,request);                
                 
@@ -131,7 +133,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
 
-                PageCacheFilter.removeFromCache( request, pd.getWebsite() );
+                //PageCacheFilter.removeFromCache( request, pd.getWebsite() );
+                //CacheManager.invalidate(pd);
                 
                 addModelObjects(request, response, mapping, pd.getWebsite());
             }
@@ -215,7 +218,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 RollerFactory.getRoller().commit();
 
                 UserData user = rses.getAuthenticatedUser();
-                PageCacheFilter.removeFromCache(request, template.getWebsite());
+                //PageCacheFilter.removeFromCache(request, template.getWebsite());
+                CacheManager.invalidate(template);
                     
                 addModelObjects(
                         request, response, mapping, template.getWebsite());
@@ -323,7 +327,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 saveMessages(request, uiMessages);
 
                 UserData user = rses.getAuthenticatedUser();
-                PageCacheFilter.removeFromCache(request, data.getWebsite());
+                //PageCacheFilter.removeFromCache(request, data.getWebsite());
+                CacheManager.invalidate(data);
                 
                 BasePageModel pageModel = new BasePageModel(
                     "pageForm.title", request, response, mapping);
