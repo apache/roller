@@ -2,7 +2,7 @@
  * Copyright (c) 2002-2003 by OpenSymphony
  * All rights reserved.
  */
-package org.roller.presentation.pagecache.rollercache;
+package org.roller.presentation.util;
 
 import java.io.*;
 
