@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <!-- ======================== FILTER CHAIN ======================= -->
+    <bean id="filterChainProxy" class="net.sf.acegisecurity.util.FilterChainProxy">
+        <property name="filterInvocationDefinitionSource">
+            <value>
+                CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+                PATTERN_TYPE_APACHE_ANT
+                /**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,remoteUserFilter,anonymousProcessingFilter,securityEnforcementFilter
+            </value>
+            <!-- Put channelProcessingFilter before remoteUserFilter to turn on SSL switching, it's off by default -->
+        </property>
+    </bean>
+
+    <!-- ======================== AUTHENTICATION ======================= -->
+    
+    <!-- Note the order that entries are placed against the objectDefinitionSource is critical.
+         The FilterSecurityInterceptor will work from the top of the list down to the FIRST pattern that matches the request URL.
+         Accordingly, you should place MOST SPECIFIC (ie a/b/c/d.*) expressions first, with LEAST SPECIFIC (ie a/.*) expressions last -->
+    <bean id="filterInvocationInterceptor" class="net.sf.acegisecurity.intercept.web.FilterSecurityInterceptor">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager" ref="accessDecisionManager"/>
+         <property name="objectDefinitionSource">
+            <value>
+                PATTERN_TYPE_APACHE_ANT
+                /editor/**=admin,editor
+                /admin/**=admin
+                /rewrite-status*=admin
+            </value>
+        </property>
+    </bean>
+
+    <bean id="authenticationManager" class="net.sf.acegisecurity.providers.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref local="daoAuthenticationProvider"/>
+                <ref local="anonymousAuthenticationProvider"/>
+                <!-- rememberMeAuthenticationProvider added programmatically -->
+            </list>
+        </property>
+    </bean>
+  
+    <!-- Log failed authentication attempts to commons-logging -->
+    <bean id="loggerListener" class="net.sf.acegisecurity.event.authentication.LoggerListener"/> 
+    
+    <bean id="daoAuthenticationProvider" class="net.sf.acegisecurity.providers.dao.DaoAuthenticationProvider">
+         <property name="authenticationDao" ref="jdbcAuthenticationDao"/>
+         <property name="userCache" ref="userCache"/>
+    </bean>
+
+    <!-- Read users from database -->
+    <bean id="jdbcAuthenticationDao" class="net.sf.acegisecurity.providers.dao.jdbc.JdbcDaoImpl">
+        <property name="dataSource">
+            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
+                <property name="jndiName" value="java:comp/env/jdbc/rollerdb"/>
+            </bean>
+        </property>
+        <property name="usersByUsernameQuery">
+            <value>SELECT username,passphrase,isenabled FROM rolleruser WHERE username = ?</value>
+        </property>
+        <property name="authoritiesByUsernameQuery">
+            <value>SELECT username,rolename FROM userrole WHERE username = ?</value>
+        </property>
+    </bean>
+
+    <bean id="userCache" class="net.sf.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
+        <property name="cache">
+            <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+                <property name="cacheManager">
+                    <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+                </property>
+                <property name="cacheName" value="userCache"/>
+            </bean>
+        </property>
+    </bean>
+   
+    <bean id="anonymousAuthenticationProvider" class="net.sf.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
+        <property name="key" value="anonymous"/>
+    </bean>
+    
+    <bean id="roleVoter" class="net.sf.acegisecurity.vote.RoleVoter">
+        <property name="rolePrefix" value=""/>
+    </bean>
+
+    <bean id="accessDecisionManager" class="net.sf.acegisecurity.vote.AffirmativeBased">
+        <property name="allowIfAllAbstainDecisions" value="false"/>
+        <property name="decisionVoters">
+            <list>
+                <ref local="roleVoter"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- ===================== HTTP REQUEST SECURITY ==================== -->
+    <bean id="httpSessionContextIntegrationFilter" class="net.sf.acegisecurity.context.HttpSessionContextIntegrationFilter"/>
+    
+    <bean id="authenticationProcessingFilter" class="net.sf.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authenticationFailureUrl" value="/loginerror.jsp"/>
+        <property name="defaultTargetUrl" value="/"/>
+        <property name="filterProcessesUrl" value="/j_security_check"/>
+        <property name="rememberMeServices" ref="rememberMeServices"/>
+    </bean>
+    
+    <bean id="anonymousProcessingFilter" class="net.sf.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
+        <property name="key" value="anonymous"/>
+        <property name="userAttribute" value="anonymous,ROLE_ANONYMOUS"/>
+    </bean>
+    
+    <bean id="securityEnforcementFilter" class="net.sf.acegisecurity.intercept.web.SecurityEnforcementFilter">
+        <property name="filterSecurityInterceptor" ref="filterInvocationInterceptor"/>
+        <property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint"/>
+    </bean>
+    
+    <bean id="remoteUserFilter" class="net.sf.acegisecurity.wrapper.SecurityContextHolderAwareRequestFilter"/>
+
+    <bean id="authenticationProcessingFilterEntryPoint" class="net.sf.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+        <property name="loginFormUrl" value="/login.jsp"/>
+        <property name="forceHttps" value="false"/>
+    </bean>
+
+    <!-- ===================== REMEMBER ME ==================== -->
+    <bean id="rememberMeProcessingFilter" class="net.sf.acegisecurity.ui.rememberme.RememberMeProcessingFilter"> 
+        <property name="rememberMeServices" ref="rememberMeServices"/>
+    </bean>
+ 
+    <bean id="rememberMeServices" class="net.sf.acegisecurity.ui.rememberme.TokenBasedRememberMeServices"> 
+        <property name="authenticationDao" ref="jdbcAuthenticationDao"/>
+        <property name="key" value="rollerlovesacegi"/> 
+        <property name="parameter" value="rememberMe"/>
+    </bean> 
+  
+    <bean id="rememberMeAuthenticationProvider" class="net.sf.acegisecurity.providers.rememberme.RememberMeAuthenticationProvider"> 
+        <property name="key" value="rollerlovesacegi"/>
+    </bean>
+    
+    <!-- ===================== SSL SWITCHING ==================== -->
+    <bean id="channelProcessingFilter" class="net.sf.acegisecurity.securechannel.ChannelProcessingFilter">
+        <property name="channelDecisionManager" ref="channelDecisionManager"/>
+        <property name="filterInvocationDefinitionSource">
+            <value>
+                CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+                PATTERN_TYPE_APACHE_ANT
+                /admin/**=REQUIRES_SECURE_CHANNEL
+                /editor/**=REQUIRES_SECURE_CHANNEL
+                /login*=REQUIRES_SECURE_CHANNEL
+                /j_security_check*=REQUIRES_SECURE_CHANNEL
+                /**=REQUIRES_INSECURE_CHANNEL
+            </value>
+        </property>
+    </bean>
+
+    <bean id="channelDecisionManager" class="net.sf.acegisecurity.securechannel.ChannelDecisionManagerImpl">
+        <property name="channelProcessors">
+            <list>
+                <bean class="net.sf.acegisecurity.securechannel.SecureChannelProcessor"/>
+                <bean class="net.sf.acegisecurity.securechannel.InsecureChannelProcessor"/>
+            </list>
+        </property>
+    </bean>
+</beans>
