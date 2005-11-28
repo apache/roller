@@ -16,7 +16,7 @@ import org.roller.pojos.RefererData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.cache.CacheManager;
 
 
 /**
@@ -57,7 +57,8 @@ public class ToggleLinkbackDisplayAction extends Action
                     
                     RollerFactory.getRoller().commit();
                     
-                    PageCacheFilter.removeFromCache( req, rreq.getWebsite() );
+                    //PageCacheFilter.removeFromCache( req, rreq.getWebsite() );
+                    CacheManager.invalidate(rreq.getWebsite());
                 }                
             }
         }

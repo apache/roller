@@ -13,10 +13,9 @@ import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.MainPageAction;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
-import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.cache.CacheManager;
 import org.roller.util.Utilities;
 
 /**
@@ -201,6 +200,7 @@ public class BaseAPIHandler implements Serializable
     protected void flushPageCache(WebsiteData website) throws Exception
     {
         RollerRequest rreq = RollerRequest.getRollerRequest();
-        PageCacheFilter.removeFromCache( rreq.getRequest(), website);
+        //PageCacheFilter.removeFromCache( rreq.getRequest(), website);
+        CacheManager.invalidate(website);
     }
 }

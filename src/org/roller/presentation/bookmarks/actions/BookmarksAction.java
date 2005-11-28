@@ -34,8 +34,8 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.bookmarks.formbeans.BookmarksForm;
+import org.roller.presentation.cache.CacheManager;
 
 /**
  * Actions that are initiated from the BookmarksForm.
@@ -126,7 +126,8 @@ public class BookmarksAction extends DispatchAction
                 }
             }
             roller.commit();
-            PageCacheFilter.removeFromCache(request,website);
+                
+            CacheManager.invalidate(website);
 
             // recreate model now that folder  is deleted
             pageModel = new BookmarksPageModel(
@@ -210,7 +211,9 @@ public class BookmarksAction extends DispatchAction
                     }
                 }
                 roller.commit();
-                PageCacheFilter.removeFromCache(request,website);
+
+                CacheManager.invalidate(website);
+                
                 saveMessages(request, messages);
             }
             catch (RollerException e)

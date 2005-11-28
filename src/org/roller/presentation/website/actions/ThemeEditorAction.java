@@ -30,7 +30,7 @@ import org.roller.pojos.Theme;
 import org.roller.pojos.ThemeTemplate;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.cache.CacheManager;
 
 
 /**
@@ -287,8 +287,9 @@ public class ThemeEditorAction extends DispatchAction {
                                 " for "+username);
                         
                         // make sure to flush the page cache so ppl can see the change
-                        PageCacheFilter.removeFromCache(request, website);
-                
+                        //PageCacheFilter.removeFromCache(request, website);
+                        CacheManager.invalidate(website);
+                        
                         // update complete ... now just send them back to edit
                         return this.edit(mapping, form, request, response);
                         
@@ -361,7 +362,8 @@ public class ThemeEditorAction extends DispatchAction {
                         }
                         
                         // make sure to flush the page cache so ppl can see the change
-                        PageCacheFilter.removeFromCache(request, website);
+                        //PageCacheFilter.removeFromCache(request, website);
+                        CacheManager.invalidate(website);
                     }
                     
                 } catch(ThemeNotFoundException tnfe) {

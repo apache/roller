@@ -27,7 +27,7 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.cache.CacheManager;
 
 /**
  * Allows user to perform Website maintenence operations such as flushing
@@ -123,7 +123,8 @@ public class MaintenanceAction extends DispatchAction
             RollerSession rses = RollerSession.getRollerSession(request);
 			if ( rses.isUserAuthorizedToAdmin(website) )
 			{
-	            PageCacheFilter.removeFromCache(request, website);
+	            //PageCacheFilter.removeFromCache(request, website);
+                CacheManager.invalidate(website);
 
                  ActionMessages messages = new ActionMessages();
                  messages.add(null, new ActionMessage("maintenance.message.flushed"));

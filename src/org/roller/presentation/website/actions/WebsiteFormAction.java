@@ -37,7 +37,7 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.velocity.ContextLoader;
 import org.roller.presentation.velocity.PagePlugin;
 import org.roller.presentation.website.formbeans.WebsiteFormEx;
@@ -175,7 +175,8 @@ public final class WebsiteFormAction extends DispatchAction
                         RollerRequest.WEBSITEID_KEY, form.getId());
 
                     // clear the page cache for this user
-                    PageCacheFilter.removeFromCache(request, wd);
+                    //PageCacheFilter.removeFromCache(request, wd);
+                    CacheManager.invalidate(wd);
 
                     // set the Editor Page list
                     ServletContext ctx = request.getSession().getServletContext();
@@ -284,7 +285,9 @@ public final class WebsiteFormAction extends DispatchAction
                 website.remove();
                 RollerFactory.getRoller().commit();
 
-                PageCacheFilter.removeFromCache(request, website);                    
+                //PageCacheFilter.removeFromCache(request, website);
+                CacheManager.invalidate(website);
+                
                 actionForm.reset(mapping, request);
             }
             else

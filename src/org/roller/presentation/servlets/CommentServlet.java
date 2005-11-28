@@ -32,13 +32,13 @@ import org.roller.pojos.CommentData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.velocity.CommentAuthenticator;
 import org.roller.presentation.weblog.formbeans.CommentFormEx;
 import org.roller.util.CommentSpamChecker;
 import org.roller.util.MailUtil;
 import org.roller.util.StringUtils;
 import org.roller.presentation.*;
+import org.roller.presentation.cache.CacheManager;
 
 
 /**
@@ -171,7 +171,8 @@ public class CommentServlet extends HttpServlet {
                     reindexEntry(entry);
                     
                     // Refresh user's entries in page cache
-                    PageCacheFilter.removeFromCache(request, website);
+                    //PageCacheFilter.removeFromCache(request, website);
+                    CacheManager.invalidate(comment);
                     
                     // Send email notifications
                     sendEmailNotification(request, rreq, entry, comment);
