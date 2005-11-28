@@ -1,4 +1,4 @@
-package org.roller.presentation.pagecache.rollercache;
+package org.roller.presentation.util;
 
 import java.io.PrintWriter;
 import java.io.Writer;
