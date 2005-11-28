@@ -19,8 +19,8 @@ import org.roller.pojos.FolderData;
 import org.roller.pojos.PermissionsData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.bookmarks.formbeans.BookmarkFormEx;
+import org.roller.presentation.cache.CacheManager;
 
 /**
  * @struts.action path="/editor/bookmarkSave" name="bookmarkFormEx"
@@ -62,7 +62,9 @@ public class BookmarkSaveAction extends Action
             form.copyTo(bd, request.getLocale());
             bd.save();
             RollerFactory.getRoller().commit();
-            PageCacheFilter.removeFromCache(request,bd.getWebsite());
+            
+            CacheManager.invalidate(bd);
+            
             request.setAttribute(
                 RollerRequest.FOLDERID_KEY, bd.getFolder().getId());
         }

@@ -17,9 +17,9 @@ import org.apache.struts.action.ActionMapping;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
-import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
+import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.weblog.formbeans.CategoryDeleteForm;
 
 /**
@@ -103,6 +103,9 @@ public class CategoryDeleteAction extends Action
                 catToDelete.remove(destCat);
                 
                 RollerFactory.getRoller().commit();
+                
+                // notify caches of invalidated object
+                CacheManager.invalidate(catToDelete);
                 
                 if (null != returnId) 
                 {

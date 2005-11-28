@@ -48,7 +48,6 @@ import org.roller.RollerPermissionsException;
 import org.roller.config.RollerConfig;
 import org.roller.model.IndexManager;
 import org.roller.model.Roller;
-import org.roller.model.RollerFactory;
 import org.roller.model.RollerSpellCheck;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
@@ -58,11 +57,9 @@ import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
-import org.roller.presentation.MainPageAction;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
 import org.roller.presentation.velocity.PageHelper;
 import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
 import org.roller.util.MailUtil;
@@ -70,6 +67,7 @@ import org.roller.util.Utilities;
 
 import com.swabunga.spell.event.SpellCheckEvent;
 import org.roller.model.RollerFactory;
+import org.roller.presentation.cache.CacheManager;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -339,8 +337,9 @@ public final class WeblogEntryFormAction extends DispatchAction
                 reindexEntry(RollerFactory.getRoller(), entry);
                 mLogger.debug("Removing from cache");
                 RollerRequest rreq = RollerRequest.getRollerRequest(request);
-                PageCacheFilter.removeFromCache(request, entry.getWebsite());
-
+                //PageCacheFilter.removeFromCache(request, entry.getWebsite());
+                CacheManager.invalidate(entry);
+                
                 // Clean up session objects we used
                 HttpSession session = request.getSession(true);
                 session.removeAttribute("spellCheckEvents");
@@ -631,7 +630,8 @@ public final class WeblogEntryFormAction extends DispatchAction
                  || (rses.isUserAuthorized(wd.getWebsite()) && wd.isDraft()) )
             {
                 // Flush the page cache
-                PageCacheFilter.removeFromCache(request, wd.getWebsite());
+                //PageCacheFilter.removeFromCache(request, wd.getWebsite());
+                //CacheManager.invalidate(wd);
                 
 				// remove the index for it
                 wd.setStatus(WeblogEntryData.DRAFT);
@@ -642,7 +642,8 @@ public final class WeblogEntryFormAction extends DispatchAction
                 RollerFactory.getRoller().commit();
 
 				// flush caches
-                PageCacheFilter.removeFromCache(request, wd.getWebsite());
+                //PageCacheFilter.removeFromCache(request, wd.getWebsite());
+                CacheManager.invalidate(wd);
                 
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(null, 
@@ -846,6 +847,9 @@ public final class WeblogEntryFormAction extends DispatchAction
                     }
 
                     RollerFactory.getRoller().commit();
+                    
+                    // notify cache manager
+                    CacheManager.invalidate(wd);
 
                     reindexEntry(RollerFactory.getRoller(), wd);
 
