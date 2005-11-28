@@ -18,6 +18,7 @@ import org.roller.pojos.PermissionsData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
+import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.weblog.formbeans.WeblogCategoryFormEx;
 
 /**
@@ -61,6 +62,9 @@ public class CategorySaveAction extends Action
             form.copyTo(cd, request.getLocale());
             cd.save();
             RollerFactory.getRoller().commit();
+            
+            // notify caches of object invalidation
+            CacheManager.invalidate(cd);
         }
         else
         {

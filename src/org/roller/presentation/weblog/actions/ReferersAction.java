@@ -23,7 +23,7 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.cache.CacheManager;
 
 /**
  * Display today's referers.
@@ -103,7 +103,8 @@ public class ReferersAction extends DispatchAction
                 WebsiteData website = rreq.getWebsite();
                 refmgr.forceTurnover(website.getId());
                 RollerFactory.getRoller().commit();
-                PageCacheFilter.removeFromCache(req,website);
+                
+                CacheManager.invalidate(website);
             }
             this.servlet.log("ReferersAction.reset(): don't have permission");
         }
@@ -139,7 +140,9 @@ public class ReferersAction extends DispatchAction
                         refmgr.removeReferer(deleteIds[i]);
                     }
                     RollerFactory.getRoller().commit();
-                    PageCacheFilter.removeFromCache(req,website);
+                    
+                    CacheManager.invalidate(website);
+                    
                     ActionMessages messages = new ActionMessages();
                     messages.add(null, new ActionMessage("referers.deletedReferers"));
                     saveMessages(req, messages);
