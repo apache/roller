@@ -48,56 +48,10 @@
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
-<!-- Use RequestFilter on all requests except for Newsfeed requests -->
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/comments/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/preview/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/foaf/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/xmlrpc/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>*.do</url-pattern>
-</filter-mapping>
 
 <filter-mapping>
     <filter-name>RefererFilter</filter-name>
     <url-pattern>/page/*</url-pattern>
-</filter-mapping>
-
-<!--
-Currently we only support If-Modified-Since using weblog last pub
-time, so the only place we should us it is on the RSS feed.
--->
-<filter-mapping>
-    <filter-name>IfModifiedFilter</filter-name>
-    <url-pattern>/atom/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>IfModifiedFilter</filter-name>
-    <url-pattern>/rss/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>IfModifiedFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
 </filter-mapping>
 
 <filter-mapping>
@@ -105,6 +59,8 @@ time, so the only place we should us it is on the RSS feed.
     <url-pattern>*.do</url-pattern>
 </filter-mapping>
 
+
+<!-- Compression Filters -->
 <filter-mapping>
     <filter-name>PageGzipFilter</filter-name>
     <url-pattern>/page/*</url-pattern>
@@ -135,47 +91,79 @@ time, so the only place we should us it is on the RSS feed.
     <url-pattern>/foaf/*</url-pattern>
 </filter-mapping>
 
-<!-- Cache filters should be last in line -->
 
+<!-- cache lastModified dates for feeds -->
 <filter-mapping>
-    <filter-name>RssCacheFilter</filter-name>
-    <url-pattern>/rss</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RssCacheFilter</filter-name>
+    <filter-name>IfModifiedFeedCacheFilter</filter-name>
     <url-pattern>/rss/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
-    <filter-name>RssCacheFilter</filter-name>
+    <filter-name>IfModifiedFeedCacheFilter</filter-name>
     <url-pattern>/atom/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
-    <filter-name>RssCacheFilter</filter-name>
+    <filter-name>IfModifiedFeedCacheFilter</filter-name>
+    <url-pattern>/flavor/*</url-pattern>
+</filter-mapping>
+
+
+<!-- Feed Caching (rss, atom, etc) -->
+<filter-mapping>
+    <filter-name>FeedCacheFilter</filter-name>
+    <url-pattern>/rss/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>FeedCacheFilter</filter-name>
+    <url-pattern>/atom/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>FeedCacheFilter</filter-name>
+    <url-pattern>/flavor/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>FeedCacheFilter</filter-name>
     <url-pattern>/planetrss</url-pattern>
 </filter-mapping>
+
+
+<!-- Page Caching -->
 <filter-mapping>
-    <filter-name>RssCacheFilter</filter-name>
-    <url-pattern>/flavor</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RssCacheFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RssCacheFilter</filter-name>
-    <url-pattern>/foaf/*</url-pattern>
+	<filter-name>WeblogPageCacheFilter</filter-name>
+	<url-pattern>/page/*</url-pattern>
 </filter-mapping>
 
 <filter-mapping>
-    <filter-name>PageCacheFilter</filter-name>
+	<filter-name>MainPageCacheFilter</filter-name>
+	<url-pattern>/main.do</url-pattern>
+	<dispatcher>REQUEST</dispatcher>
+	<dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+<filter-mapping>
+	<filter-name>MainPageCacheFilter</filter-name>
+	<url-pattern>/planet.do</url-pattern>
+	<dispatcher>REQUEST</dispatcher>
+	<dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+
+
+<!-- Do we still need the RequestFilter? -->
+<!--
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
     <url-pattern>/page/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
-    <filter-name>PageCacheFilter</filter-name>
-    <url-pattern>/main.do</url-pattern>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>/preview/*</url-pattern>
+</filter-mapping>
+-->
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>/xmlrpc/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
-    <filter-name>PageCacheFilter</filter-name>
-    <url-pattern>/planet.do</url-pattern>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
-
