@@ -13,7 +13,7 @@
 
 <form method="post" 
       id="loginForm" 
-      action="<c:url value="/auth/"/>"
+      action="<c:url value="/j_security_check"/>"
       onsubmit="saveUsername(this)">
       
     <table>
@@ -29,8 +29,6 @@
             <th><fmt:message key="loginPage.password" />:</th>
             <td>
                 <input type="password" name="j_password" id="j_password" size="20" />
-                <!-- for Resin -->
-                <input type="hidden" name="j_uri" id="j_uri" value="" />
             </td>
         </tr>
         

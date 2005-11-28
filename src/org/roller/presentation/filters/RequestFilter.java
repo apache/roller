@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
@@ -66,28 +67,7 @@ public class RequestFilter implements Filter
         try 
         {
             rreq = RollerRequest.getRollerRequest(
-                request, mFilterConfig.getServletContext());
-
-            // if user wants to be remembered, create a remember me cookie
-            // TODO: Figure out a better place to put this - so it will
-            // only be called when the user initially logs in
-            String username = request.getRemoteUser();
-
-            if (username != null)
-            {
-                if (session.getAttribute(RollerRequest.LOGIN_COOKIE) != null)
-                {
-                    session.removeAttribute(RollerRequest.LOGIN_COOKIE);
-
-                    UserManager mgr = RollerFactory.getRoller().getUserManager();
-                    String loginCookie = mgr.createLoginCookie(username);
-                    RollerFactory.getRoller().commit();
-                    RequestUtil.setCookie(response, RollerRequest.LOGIN_COOKIE,
-                                         loginCookie, request.getContextPath());
-                }
-            }
-            
-          
+                request, mFilterConfig.getServletContext());          
         }
         catch (RollerException e)
         {
@@ -97,25 +77,6 @@ public class RequestFilter implements Filter
                     "Page not found or error parsing requested URL");
             return;
         }
-
-        /*if (session != null)
-        {
-            // look for messages and errors in the request, and if they
-            // exist, stuff them in the request - in Struts 1.2, you don't
-            // need to do this
-            if (session.getAttribute(Globals.MESSAGE_KEY) != null)
-            {
-                request.setAttribute(Globals.MESSAGE_KEY,
-                        session.getAttribute(Globals.MESSAGE_KEY));
-                session.removeAttribute(Globals.MESSAGE_KEY);
-            }
-            if (session.getAttribute(Globals.ERROR_KEY) != null)
-            {
-                request.setAttribute(Globals.ERROR_KEY,
-                        session.getAttribute(Globals.ERROR_KEY));
-                session.removeAttribute(Globals.ERROR_KEY);
-            }
-        }*/
 
         Date updateTime = null;
         try

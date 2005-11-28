@@ -19,10 +19,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
 
+import net.sf.acegisecurity.providers.ProviderManager;
+import net.sf.acegisecurity.providers.dao.DaoAuthenticationProvider;
+import net.sf.acegisecurity.providers.encoding.Md5PasswordEncoder;
+import net.sf.acegisecurity.providers.encoding.PasswordEncoder;
+import net.sf.acegisecurity.providers.encoding.ShaPasswordEncoder;
+import net.sf.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
 import org.roller.RollerException;
+import org.roller.business.utils.UpgradeDatabase;
 import org.roller.config.PingConfig;
 import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
@@ -40,10 +48,11 @@ import org.roller.presentation.velocity.ContextLoader;
 import org.roller.presentation.velocity.DefaultCommentAuthenticator;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
-import org.roller.business.utils.UpgradeDatabase;
-import org.roller.config.RollerRuntimeConfig;
-import org.roller.config.PingConfig;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -51,7 +60,7 @@ import org.roller.config.PingConfig;
  * Responds to app init/destroy events and holds Roller instance.
  * @web.listener
  */
-public class RollerContext implements ServletContextListener
+public class RollerContext extends ContextLoaderListener implements ServletContextListener
 {
     private static Log mLogger =
         LogFactory.getFactory().getInstance(RollerContext.class);
@@ -189,6 +198,14 @@ public class RollerContext implements ServletContextListener
             setupPingQueueTask(roller);
             setupScheduledTasks(mContext, roller);
             
+            // call Spring's context ContextLoaderListener to initialize
+            // all the context files specified in web.xml. This is necessary
+            // because listeners don't initialize in the order specified in 
+            // 2.3 containers
+            super.contextInitialized(sce);
+        
+            initializeSecurityFeatures(mContext);
+            
             roller.commit();
             roller.release();
             
@@ -292,6 +309,52 @@ public class RollerContext implements ServletContextListener
         // Schedule it at the appropriate interval, delay start for one interval.
         mLogger.info("Scheduling ping queue task to run at " + intervalMins + " minute intervals.");
         roller.getThreadManager().scheduleFixedRateTimerTask(pingQueueTask, intervalMins, intervalMins);
+    }
+    
+    protected void initializeSecurityFeatures(ServletContext context) {
+        ApplicationContext ctx =
+            WebApplicationContextUtils.getRequiredWebApplicationContext(context);
+
+        String rememberMe = RollerConfig.getProperty("rememberme.enabled");
+        boolean rememberMeEnabled = Boolean.valueOf(rememberMe).booleanValue();
+
+        mLogger.info("Remember Me enabled: " + rememberMeEnabled);
+
+        context.setAttribute("rememberMeEnabled", rememberMe);
+        
+        if (rememberMeEnabled) {
+            ProviderManager provider = (ProviderManager) ctx.getBean("authenticationManager");
+            provider.getProviders().add(ctx.getBean("rememberMeAuthenticationProvider"));
+        }
+        
+        String encryptPasswords = RollerConfig.getProperty("passwds.encryption.enabled");
+        boolean doEncrypt = Boolean.valueOf(encryptPasswords).booleanValue();
+
+        if (doEncrypt) {
+            DaoAuthenticationProvider provider = 
+                (DaoAuthenticationProvider) ctx.getBean("daoAuthenticationProvider");
+            String algorithm = RollerConfig.getProperty("passwds.encryption.algorithm");
+            PasswordEncoder encoder = null;
+            if (algorithm.equalsIgnoreCase("SHA")) {
+                encoder = new ShaPasswordEncoder();
+            } else if (algorithm.equalsIgnoreCase("MD5")) {
+                encoder = new Md5PasswordEncoder();
+            } else {
+                mLogger.error("Encryption algorithm '" + algorithm + 
+                        "' not supported, disabling encryption.");
+            }
+            if (encoder != null) {
+                provider.setPasswordEncoder(encoder);
+                mLogger.info("Password Encryption Algorithm set to '" + algorithm + "'");
+            } 
+        }
+        
+        String secureLogin = RollerConfig.getProperty("securelogin.enabled");
+        if (secureLogin != null && "true".equalsIgnoreCase(secureLogin)) {
+            AuthenticationProcessingFilterEntryPoint entryPoint = 
+                (AuthenticationProcessingFilterEntryPoint) ctx.getBean("authenticationProcessingFilterEntryPoint");
+            entryPoint.setForceHttps(true);
+        }
     }
 
     protected void upgradeDatabaseIfNeeded() throws RollerException

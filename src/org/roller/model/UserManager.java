@@ -247,32 +247,6 @@ public interface UserManager extends Serializable
 	 * Retrieve the Page in read-only mode (does hibernate support this?).
 	 */
 	public WeblogTemplate retrievePageReadOnly(String id) throws RollerException;
-    
-    /**
-     * Validates a user based on a cookie value.  If successful, it returns
-     * a new cookie String.  If not, then it returns null.
-     * 
-     * @param value (in format username|guid)
-     * @return indicator that this is a valid login
-     * @throws Exception
-     */
-    public String checkLoginCookie(String value) throws RollerException;
- 
-    /**
-     * Creates a cookie string using a username - designed for use when
-     * a user logs in and wants to be remembered.
-     * 
-     * @param username
-     * @return String to put in a cookie for remembering user
-     * @throws Exception
-     */
-    public String createLoginCookie(String username) throws RollerException;
-    
-    /**
-     * Deletes all cookies for user.
-     * @param username
-     */
-    public void removeLoginCookies(String username) throws RollerException;
 
     /**
      * Remove contents of website.

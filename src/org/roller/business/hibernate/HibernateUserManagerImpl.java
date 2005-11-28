@@ -31,13 +31,10 @@ import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.RefererData;
 import org.roller.pojos.RoleData;
-import org.roller.pojos.UserCookieData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.util.StringUtils;
-import org.roller.util.Utilities;
 
 /**
  * Hibernate queries.
@@ -204,87 +201,6 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         catch (HibernateException e)
         {
             throw new RollerException(e);
-        }
-    }
-
-    /**
-     * @see org.roller.model.UserManager#removeLoginCookies(java.lang.String)
-     */
-    public void removeLoginCookies(String username) throws RollerException
-    {
-        Session session = ((HibernateStrategy)mStrategy).getSession();
-        Criteria criteria = session.createCriteria(UserCookieData.class); 
-        criteria.add(Expression.eq("username", username));        
-        List list;
-        try
-        {
-            list = criteria.list();
-        }
-        catch (HibernateException e)
-        {
-            throw new RollerException(e);
-        }
-        for (Iterator it = list.iterator(); it.hasNext();)
-        {
-            String id = ((UserCookieData) it.next()).getId();
-            mStrategy.remove(id, UserCookieData.class);
-        }        
-    }
-    
-    /**
-     * @see org.roller.model.UserManager#checkLoginCookie(java.lang.String)
-     */
-    public String checkLoginCookie(String value) throws RollerException 
-    {
-        try 
-        {
-            value = Utilities.decodeString(value);
-        } 
-        catch (IOException io) 
-        {
-            mLogger.warn("Failed to decode rememberMe cookieString");
-            return null;
-        }
-        
-        String[] values = StringUtils.split(value, "|");
-
-        if (mLogger.isDebugEnabled()) 
-        {
-            mLogger.debug("looking up cookieId: " + values[1]);
-        }
-
-        Session session = ((HibernateStrategy)mStrategy).getSession();
-        Criteria criteria = session.createCriteria(UserCookieData.class); 
-        criteria.add(Expression.eq("username", values[0]));
-        criteria.add(Expression.eq("cookieId", values[1])); 
-               
-        List list;
-        try
-        {
-            list = criteria.list();
-        }
-        catch (HibernateException e)
-        {
-            throw new RollerException(e);
-        }
-        UserCookieData cookie = (list.size() > 0) ? (UserCookieData)list.get(0) : null;
-
-        if (cookie != null) 
-        {
-            if (mLogger.isDebugEnabled()) 
-            {
-                mLogger.debug("cookieId lookup succeeded, generating new cookieId");
-            }
-            return saveLoginCookie(cookie);
-        } 
-        else 
-        {
-            if (mLogger.isDebugEnabled()) 
-            {
-                mLogger.debug("cookieId lookup failed, returning null");
-            }
-
-            return null;
         }
     }
     

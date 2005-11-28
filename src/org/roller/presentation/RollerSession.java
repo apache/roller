@@ -54,7 +54,7 @@ public class RollerSession
             if (rollerSession == null) 
             {
                 // HttpSession with no RollerSession? 
-                // Must be a session that was de-serialzied from a previous run.
+                // Must be a session that was de-serialized from a previous run.
                 rollerSession = new RollerSession();
                 session.setAttribute(ROLLER_SESSION, rollerSession);
             }
