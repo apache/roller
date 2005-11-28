@@ -9,11 +9,16 @@ import org.apache.velocity.servlet.VelocityServlet;
 import org.roller.RollerException;
 import org.roller.presentation.RollerRequest;
 import java.io.IOException;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
+import org.roller.model.WeblogManager;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
@@ -44,8 +49,8 @@ public class FlavorServlet extends VelocityServlet
 {
     static final long serialVersionUID = -2720532269434186051L;
     
-    private static Log mLogger = LogFactory.getFactory()
-                                           .getInstance(RollerRequest.class);
+    private static Log mLogger = LogFactory.getLog(FlavorServlet.class);
+    
     public Template handleRequest(HttpServletRequest request,
                                   HttpServletResponse response, Context ctx)
     {
@@ -90,6 +95,23 @@ public class FlavorServlet extends VelocityServlet
                 JspFactory.getDefaultFactory().getPageContext(
                 this, request,  response, "", true, 8192, true);
             rreq.setPageContext(pageContext);
+            
+            // get update time before loading context
+            // TODO: this should really be handled elsewhere
+            if(rreq.getWebsite() != null) {
+                String catname =
+                        request.getParameter(RollerRequest.WEBLOGCATEGORYNAME_KEY);
+                
+                Roller roller = RollerFactory.getRoller();
+                UserManager umgr = roller.getUserManager();
+                WeblogManager wmgr = roller.getWeblogManager();
+                
+                Date updateTime = wmgr.getWeblogLastPublishTime(
+                        umgr.getWebsiteByHandle(rreq.getWebsite().getHandle()), catname);
+                
+                request.setAttribute("updateTime", updateTime);
+            }
+            
             ContextLoader.setupContext(ctx, rreq, response);
 
             final String useTemplate;

@@ -21,11 +21,10 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.MainPageAction;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.pagecache.PageCacheFilter;
+import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.weblog.formbeans.ImportEntriesForm;
 import org.roller.util.StringUtils;
 
@@ -87,7 +86,8 @@ public class ImportEntriesAction extends DispatchAction
                         saveMessages(request, notices);
 
                         // Flush the page cache
-                        PageCacheFilter.removeFromCache(request, website);
+                        //PageCacheFilter.removeFromCache(request, website);
+                        CacheManager.invalidate(website);
                     }
                     else
                     {
