@@ -25,6 +25,8 @@ public class WeblogTemplate extends PersistentObject
 {
    static final long serialVersionUID = -613737191638263428L;
 
+    public static final String DEFAULT_PAGE = "Weblog";
+    
    private java.lang.String id;
    private java.lang.String name;
    private java.lang.String description;
