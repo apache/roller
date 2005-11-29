@@ -19,43 +19,85 @@ function setChecked(val, name) {
 -->
 </script>
 
-<p class="subtitle">
-    <c:choose>
-        <%-- Managing comments for one specific weblog entry --%>
-        <c:when test="${!empty model.weblogEntry}">
+
+<%-- ===================================================================== --%>
+<%-- Subtitle --%>
+<%-- ===================================================================== --%>
+
+<c:choose>
+    <%-- Managing comments for one specific weblog entry --%>
+    <c:when test="${!empty model.weblogEntry}">
+        <p class="subtitle">
             <fmt:message key="commentManagement.entry.subtitle" >
                 <fmt:param value="${model.weblogEntry.title}" />
             </fmt:message>
-            <p>
-            <a href='<c:out value="${model.baseURL}" /><c:out value="${model.weblogEntry.permaLink}" />'
-                class="entrypermalink" title="entry permalink">Return to entry</a>
-            </p>
-        </c:when>        
-        <%-- Managing comments for one specific weblog --%>
-        <c:when test="${!empty model.website}">
+        </p>
+        <p>           
+            <c:url value="/editor/weblog.do" var="entryLink">
+               <c:param name="method" value="edit" />
+               <c:param name="weblog" value="${model.website.handle}" />
+               <c:param name="entryid" value="${model.weblogEntry.id}" />
+            </c:url>
+            <a href='<c:out value="${entryLink}" />'>
+                <fmt:message key="commentManagement.returnToEntry"/>
+            </a>
+        </p>
+    </c:when>        
+    <%-- Managing comments for one specific weblog --%>
+    <c:when test="${!empty model.website}">
+        <p class="subtitle">
             <fmt:message key="commentManagement.website.subtitle" >
                 <fmt:param value="${model.website.handle}" />
             </fmt:message>
-        </c:when>
-        <c:otherwise>
+        </p>
+    </c:when>
+    <c:otherwise>
+        <p class="subtitle">
             <fmt:message key="commentManagement.subtitle" />
-        </c:otherwise>
-    </c:choose>
-</p>
+        </p>
+    </c:otherwise>
+</c:choose>
 
-<p class="pagetip"><fmt:message key="commentManagement.tip" /></p>
+
+<%-- ===================================================================== --%>
+<%-- Tip --%>
+<%-- ===================================================================== --%>
+
+<c:choose>
+    <c:when test="${model.pendingCommentCount == 0}">
+        <p class="pagetip"><fmt:message key="commentManagement.tip" /></p>    
+    </c:when>
+    <c:otherwise>
+        <p class="pagetip"><fmt:message key="commentManagement.pendingTip" /></p>    
+    </c:otherwise>
+</c:choose>
 
 <c:choose>
     <c:when test="${!empty model.comments}">
-    
-        <p class="pagetip"><center>
-        <fmt:message key="commentManagement.nowShowing">
-            <fmt:param value="${model.commentCount}" />
-            <fmt:param value="${model.earliestDate}" />
-            <fmt:param value="${model.latestDate}" />
-        </fmt:message>
-        </center></p>
-
+   
+        <%-- ============================================================= --%>
+        <%-- Number of comments and date message --%>
+        <%-- ============================================================= --%>
+        
+        <div style="float:left;">
+            <fmt:message key="commentManagement.nowShowing">
+                <fmt:param value="${model.commentCount}" />
+            </fmt:message>
+        </div>
+        <div style="float:right;">
+            <fmt:formatDate value="${model.latestDate}" type="both" 
+                dateStyle="short" timeStyle="short" />
+            --- 
+            <fmt:formatDate value="${model.earliestDate}" type="both" 
+                dateStyle="short" timeStyle="short" />
+        </div>
+        <br />
+        
+        
+        <%-- ============================================================= --%>
+        <%-- Next / previous links --%>
+        <%-- ============================================================= --%>
+        
         <c:choose>
             <c:when test="${!empty model.prevLink && !empty model.nextLink}">
                 <br /><center>
@@ -88,6 +130,11 @@ function setChecked(val, name) {
             <c:otherwise><br /></c:otherwise>
         </c:choose>
 
+        
+        <%-- ============================================================= --%>
+        <%-- Comment table / form with checkboxes --%>
+        <%-- ============================================================= --%>
+        
         <html:form action="/editor/commentManagement" method="post">
             <input type="hidden" name="method" value="update"/>
             <html:hidden property="weblog" />
@@ -102,7 +149,10 @@ function setChecked(val, name) {
 
         <table class="rollertable" width="100%">
             
-            <tr>
+           <%-- ======================================================== --%>
+           <%-- Comment table header --%>
+           
+           <tr>
                 <th class="rollertable" width="5%" style="font-size:80%">
                     <fmt:message key="commentManagement.columnApproved" />
                 </th>
@@ -117,6 +167,9 @@ function setChecked(val, name) {
                 </th>
             </tr>
             
+           <%-- ======================================================== --%>
+           <%-- Select ALL and NONE buttons --%>
+           
             <c:if test="${model.commentCount > 1}">
                 <tr class="actionrow">
                     <td align="center">
@@ -140,12 +193,20 @@ function setChecked(val, name) {
                         <a href="#" onclick='setChecked(0,"deleteComments")'>
                             <fmt:message key="commentManagement.none" /></a>
                     </td>
-                    <td>
-                        &nbsp;
+                    <td align="right">
+                        <br />
+                        <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <fmt:message key="commentManagement.pending" />&nbsp;&nbsp;
+                        <span class="spamCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span> 
+                        <fmt:message key="commentManagement.spam" />&nbsp;&nbsp;
                     </td>
                 </tr>
             </c:if>
             
+            <%-- ========================================================= --%>
+            <%-- Loop through comments --%>
+            <%-- ========================================================= --%>
+
             <c:forEach var="comment" items="${model.comments}">
             <tr>
                 <td>
@@ -164,19 +225,24 @@ function setChecked(val, name) {
                     </html:multibox>
                 </td>
                 
-                <%-- <td> with style if comment is pending --%>
+                <%-- ======================================================== --%>
+                <%-- Display comment details and text --%>
+           
+                <%-- <td> with style if comment is spam or pending --%>               
                 <c:choose>
+                    <c:when test="${comment.spam}">
+                        <td class="spamcomment"> 
+                    </c:when>
                     <c:when test="${comment.pending}">
-                        <td class="pendingcomment" style="background:#fffcc"> 
+                        <td class="pendingcomment"> 
                     </c:when>
                     <c:otherwise>
                         <td>
                     </c:otherwise>
                 </c:choose>
                                     
-                    <%-- start comment details table in table --%>
-                    <table style="border:none; padding:0px; margin:0px"> 
-                        
+                    <%-- comment details table in table --%>
+                    <table style="border:none; padding:0px; margin:0px">                         
                     <tr>
                         <td style="border: none; padding:0px;">
                             <fmt:message key="commentManagement.entryTitled" /></td>
@@ -221,33 +287,45 @@ function setChecked(val, name) {
                                 <c:out value="${comment.url}" /></a>
                             </c:if>
                         </td>
-                    </tr>            
-                    
+                    </tr>                                
                     <tr>
                         <td style="border: none; padding:0px;">
                             <fmt:message key="commentManagement.postTime" /></td>
                         <td class="details" style="border: none; padding:0px;">
                             <c:out value="${comment.postTime}" /></td>
-                    </tr>
-                                       
+                    </tr>                                       
                     </table> <%-- end comment details table in table --%>
                 
+                    <%-- comment content --%>
                     <br />
                     <span class="details">
                        <c:out value="${comment.content}" escapeXml="false" />
                     </span>
+                    
                 </td>
             </tr>
             </c:forEach>
         </table>
         <br />
 
+        <%-- ========================================================= --%>
+        <%-- Save changes and  cancel buttons --%>
+        <%-- ========================================================= --%>
+            
         <input type="submit" name="submit" 
             value='<fmt:message key="commentManagement.update" />' />
         &nbsp;
-        <input type="button" name="Cancel" 
-            value='Cancel' 
-            onclick="window.location.href='<c:out value="${model.link}" />'" />
+        
+        <c:choose>
+            <c:when test="${!empty model.weblogEntry}">
+                <input type="button" name="Cancel" value='Cancel' 
+                    onclick="window.location.href='<c:out value="${entryLink}" />'" />
+            </c:when>
+            <c:otherwise>
+                <input type="button" name="Cancel" value='Cancel' 
+                    onclick="window.location.href='<c:out value="${model.link}" />'" />
+            </c:otherwise>
+        </c:choose>  
 
         </html:form>
 

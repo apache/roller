@@ -17,11 +17,12 @@ CommentManagementAction.CommentManagementPageModel model =
 <p><fmt:message key="commentManagement.sidebarDescription" /></p>
     
 <html:form action="/editor/commentQuery" method="post">
-    <html:hidden property="weblog" />
-    <html:hidden property="entryid" />
-    <html:hidden property="ids" />
-    <html:hidden property="offset" />
-    <html:hidden property="count" />
+    <c:if test="${!empty model.website}">
+        <input name="weblog" type="hidden" value='<c:out value="${model.website.handle}" />' />
+    </c:if>
+    <c:if test="${!empty model.weblogEntry}">
+        <input name="entryid" type="hidden" value='<c:out value="${model.weblogEntry.id}" />' />
+    </c:if>
         
     <div class="sideformrow">
         <label for="searchString" class="sideformrow">
