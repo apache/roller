@@ -78,6 +78,7 @@ public class RequestFilter implements Filter
             return;
         }
 
+        /*
         Date updateTime = null;
         try
         {
@@ -91,7 +92,8 @@ public class RequestFilter implements Filter
         {
             request.setAttribute("updateTime", updateTime);
         }
-
+        */
+        
         chain.doFilter(req, res);
     }
 
