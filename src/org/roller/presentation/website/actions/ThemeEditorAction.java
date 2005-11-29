@@ -415,10 +415,22 @@ public class ThemeEditorAction extends DispatchAction {
             ThemeTemplate theme_template = null;
             while ( iter.hasNext() ) {
                 theme_template = (ThemeTemplate) iter.next();
-                //String pageContent = (String) templates.get( pageName );
                 
-                WeblogTemplate template = 
-                        userMgr.getPageByName(website, theme_template.getName());
+                WeblogTemplate template = null;
+                
+                if(theme_template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
+                    // this is the main Weblog template
+                    try {
+                        template = userMgr.retrievePage(website.getDefaultPageId());
+                    } catch(Exception e) {
+                        // user may not have a default page yet
+                    }
+                } else {
+                    // any other template
+                    template = userMgr.getPageByName(website, theme_template.getName());
+                }
+                
+                
                 if (template != null) {
                     // User already has page by that name, so overwrite it.
                     template.setContents(theme_template.getContents());

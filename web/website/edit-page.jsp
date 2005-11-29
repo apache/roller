@@ -24,17 +24,38 @@ function cancel() {
     <table>
         <tr>
             <td><fmt:message key="pageForm.name" /><br />
-            <html:text property="name" size="50"/>
+                <c:choose>
+                    <c:when test="${page.required}">
+                        <html:text style="background: #e5e5e5" property="name" size="50" readonly="true"/>
+                    </c:when>
+                    <c:otherwise>
+                        <html:text property="name" size="50"/>
+                    </c:otherwise>
+                </c:choose>
             </td>
         </tr>
         <tr>
             <td><fmt:message key="pageForm.link" /><br />
-            <html:text property="link" size="50"/>
+                <c:choose>
+                    <c:when test="${page.required}">
+                        <html:text style="background: #e5e5e5" property="link" size="50" readonly="true"/>
+                    </c:when>
+                    <c:otherwise>
+                        <html:text property="link" size="50"/>
+                    </c:otherwise>
+                </c:choose>
             </td>
         </tr>
         <tr>
             <td><fmt:message key="pageForm.description" /><br />
-            <html:textarea property="description" rows="3" cols="50"/>
+                <c:choose>
+                    <c:when test="${page.required}">
+                        <html:textarea style="background: #e5e5e5" property="description" rows="3" cols="50" readonly="true"/>
+                    </c:when>
+                    <c:otherwise>
+                        <html:textarea property="description" rows="3" cols="50"/>
+                    </c:otherwise>
+                </c:choose>
             </td>
         </tr>
     </table>
