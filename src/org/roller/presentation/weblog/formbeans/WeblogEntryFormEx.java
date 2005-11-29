@@ -194,8 +194,6 @@ public class WeblogEntryFormEx extends WeblogEntryForm
             EntryAttributeData att = (EntryAttributeData)atts.next();
             attributes.put(att.getName(), att.getValue());
         }
-      
-        populateSpamComments(entry);
     }
     
     public Map getAttributes()
@@ -203,24 +201,6 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         return attributes;
     }
     
-    /**
-     * Populate the spamComments array for this entry.
-     * @param entry
-     */
-    private void populateSpamComments(WeblogEntryData entry)
-    {
-        ArrayList spamList = new ArrayList();
-        Iterator it = entry.getComments(false).iterator();
-        while (it.hasNext()) {
-            CommentData comment = (CommentData)it.next();
-            if (comment.getSpam().booleanValue())
-            {
-                spamList.add(comment.getId());
-            }
-        }
-        spamComments = (String[])spamList.toArray(new String[spamList.size()]);
-    }
-
     /**
      * Localize the PubTime date string.
      * @param locale

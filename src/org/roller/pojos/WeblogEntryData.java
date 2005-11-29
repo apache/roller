@@ -647,22 +647,29 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.CommentData"
      */
-    public List getComments()
-    {
-        return getComments(true);
+    public List getComments() {
+        return getComments(true, true);
     }
     
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.CommentData"
      */
-    public List getComments(boolean ignoreSpam)
-    {
+    public List getComments(boolean ignoreSpam, boolean approvedOnly) {
         List list = new ArrayList();
-        try
-        {
-            return RollerFactory.getRoller().getWeblogManager().getComments(getId(), ignoreSpam);
-        }
-        catch (RollerException alreadyLogged) {}
+        try {
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            return wmgr.getComments(
+                    getWebsite(),
+                    this,
+                    null,  // search String
+                    null,  // startDate
+                    null,  // endDate
+                    null,  // pending
+                    approvedOnly ? Boolean.TRUE : null, // approved
+                    ignoreSpam ? Boolean.FALSE : null,  // spam
+                     0,    // offset
+                    -1);   // no limit
+        } catch (RollerException alreadyLogged) {}
         return list;
     }
 

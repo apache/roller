@@ -15,7 +15,6 @@ import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.BookmarkManager;
 import org.roller.model.RefererManager;
-import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.Template;
 import org.roller.model.UserManager;
@@ -168,42 +167,35 @@ public class PageModel
     
     //------------------------------------------------------------------------
     
-    /** Encapsulates WeblogManager.getComments().size() */
-    public int getCommentCount(String entryId)
-    {
-        try
-        {
-            return mWeblogMgr.getComments( entryId ).size();
-        }
-        catch (RollerException e)
-        {
-            mLogger.error("PageModel getCommentCount()", e);
-        }
+    /** Get number of approved non-spam comments for entry */
+    public int getCommentCount(String entryId) {
+        return getCommentCount(entryId, true, true);
+    }
+    
+    /** Get number of approved non-spam comments for entry */
+    public int getCommentCount(String entryId, boolean noSpam, boolean approvedOnly) {
+        try {
+            WeblogEntryData entry = mWeblogMgr.retrieveWeblogEntry(entryId);
+            return entry.getComments(noSpam, approvedOnly).size();
+        } catch (RollerException alreadyLogged) {}
         return 0;
     }
     
     //------------------------------------------------------------------------
-    
+     
     /** Get comments for weblog entry specified by request */
-    public List getComments( WeblogEntryData entry )
-    {
+    public List getComments(WeblogEntryData entry) {
+        return getComments(entry, true, true);
+    }
+        
+    /** Get comments for weblog entry specified by request */
+    public List getComments(WeblogEntryData entry, boolean noSpam, boolean approvedOnly) {
         List comments = new ArrayList();
-        try
-        {
-            Collection mComments = mWeblogMgr.getComments( entry.getId() );
-            
-            // wrap pojos
-            comments = new ArrayList(mComments.size());
-            Iterator it = mComments.iterator();
-            int i=0;
-            while(it.hasNext()) {
-                comments.add(i, CommentDataWrapper.wrap((CommentData) it.next()));
-                i++;
-            }
-        }
-        catch (RollerException e)
-        {
-            mLogger.error("PageModel getComments()", e);
+        List unwrappped = entry.getComments(noSpam, approvedOnly);
+        comments = new ArrayList(unwrappped.size());
+        Iterator it = unwrappped.iterator();
+        while(it.hasNext()) {
+            comments.add(CommentDataWrapper.wrap((CommentData)it.next()));
         }
         return comments;
     }
@@ -822,24 +814,29 @@ public class PageModel
      * for this website, limited to maxCount.  
      * @return List of Comments.
      */
-    public List getRecentComments(int maxCount)
-    {
+    public List getRecentComments(int maxCount) {
         List recentComments = new ArrayList();
-        try
-        {
-            List recent = mWeblogMgr.getRecentComments(mRollerReq.getWebsite(), maxCount);
+        try {
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            List recent = wmgr.getComments(
+                    mWebsite,
+                    null,  // weblog entry
+                    null,  // search String
+                    null,  // startDate
+                    null,  // endDate
+                    null,  // pending
+                    Boolean.TRUE,  // approved only
+                    Boolean.FALSE, // no spam
+                    0,             // offset
+                    maxCount);     // no limit
             
             // wrap pojos
             recentComments = new ArrayList(recent.size());
             Iterator it = recent.iterator();
-            int i=0;
             while(it.hasNext()) {
-                recentComments.add(i, CommentDataWrapper.wrap((CommentData) it.next()));
-                i++;
+                recentComments.add(CommentDataWrapper.wrap((CommentData) it.next()));
             }
-        }
-        catch (RollerException e)
-        {
+        } catch (RollerException e) {
             mLogger.error(e);
         }
         return recentComments;
