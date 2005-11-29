@@ -73,7 +73,32 @@ public class CommentManagementForm
         cal.set(Calendar.DAY_OF_MONTH, 1);
         setStartDateString(df.format(cal.getTime()));
     }    
-    
+
+    public void loadCheckboxes(List comments) {
+        ArrayList all = new ArrayList();
+        ArrayList approvedList = new ArrayList();
+        ArrayList spamList = new ArrayList();
+        Iterator it = comments.iterator();
+        while (it.hasNext()) {
+            CommentData comment = (CommentData)it.next();
+            all.add(comment.getId());
+            if (comment.getApproved().booleanValue()) {
+                approvedList.add(comment.getId());
+            }            
+            if (comment.getSpam().booleanValue()) {
+                spamList.add(comment.getId());
+            }
+        }
+        String[] idArray = (String[])all.toArray(
+            new String[all.size()]);
+        ids = Utilities.stringArrayToString(idArray,",");
+        
+        approvedComments = (String[])approvedList.toArray(
+            new String[approvedList.size()]);
+        spamComments = (String[])spamList.toArray(
+            new String[spamList.size()]);
+    }
+        
     public Date getStartDate(Locale locale) {
         Date startDate = null;
         final DateFormat df =
@@ -231,30 +256,6 @@ public class CommentManagementForm
     
     public void setApprovedComments(String[] approvedComments) {
         this.approvedComments = approvedComments;
-    }
-
-    public void loadCheckboxes(List comments) {
-        ArrayList all = new ArrayList();
-        ArrayList approvedList = new ArrayList();
-        ArrayList spamList = new ArrayList();
-        Iterator it = comments.iterator();
-        while (it.hasNext()) {
-            CommentData comment = (CommentData)it.next();
-            if (comment.getApproved().booleanValue()) {
-                approvedList.add(comment.getId());
-            }            
-            if (comment.getSpam().booleanValue()) {
-                spamList.add(comment.getId());
-            }
-        }
-        String[] idArray = (String[])approvedList.toArray(
-            new String[approvedList.size()]);
-        ids = Utilities.stringArrayToString(idArray,",");
-        
-        approvedComments = (String[])approvedList.toArray(
-            new String[approvedList.size()]);
-        spamComments = (String[])spamList.toArray(
-            new String[spamList.size()]);
     }
 
 }

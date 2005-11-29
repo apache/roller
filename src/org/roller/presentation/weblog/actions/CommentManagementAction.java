@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,17 +28,16 @@ import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.weblog.formbeans.CommentManagementForm;
-import org.roller.presentation.weblog.formbeans.CommentQueryForm;
 import org.roller.util.Utilities;
 
 /**
  * Action for quering, approving, marking as spam and deleting comments.
  *
  * @struts.action path="/editor/commentManagement" name="commentManagementForm" 
- *     scope="session" parameter="method"
+ *     scope="request" parameter="method"
  *
  * @struts.action path="/editor/commentQuery" name="commentQueryForm" 
- *     scope="session" parameter="method"
+ *     scope="request" parameter="method"
  *
  * @struts.action-forward name="commentManagement.page" path=".CommentManagement"
  */
@@ -77,15 +77,25 @@ public final class CommentManagementAction extends DispatchAction {
         
         CommentManagementForm queryForm = (CommentManagementForm)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        if (rreq.getWeblogEntry() != null) {
+            queryForm.setEntryid(rreq.getWeblogEntry().getId());
+            queryForm.setWeblog(rreq.getWeblogEntry().getWebsite().getHandle());
+        }        
+        else if (rreq.getWebsite() != null) {
+            queryForm.setWeblog(rreq.getWebsite().getHandle());
+        }    
         RollerSession rollerSession = RollerSession.getRollerSession(request);
         try {
             if (rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite())) { 
                 WeblogManager mgr= RollerFactory.getRoller().getWeblogManager();
+                
+                // delete all comments with delete box checked
                 String[] deleteIds = queryForm.getDeleteComments();
                 List deletedList = Arrays.asList(deleteIds); 
                 if (deleteIds != null && deleteIds.length > 0) {
                     mgr.removeComments(deleteIds);
-                }                
+                }    
+                // loop through all comments displayed on page
                 String[] ids = Utilities.stringToStringArray(queryForm.getIds(),",");
                 for (int i=0; i<ids.length; i++) { 
                     if (deletedList.contains(ids[i])) continue;
@@ -97,11 +107,8 @@ public final class CommentManagementAction extends DispatchAction {
                     } else {
                         comment.setSpam(Boolean.FALSE);
                     }
-                    if (approvedIds.contains(ids[i])) {
-                        comment.setPending(Boolean.FALSE);
-                    } else {
-                        comment.setPending(Boolean.TRUE);
-                    }
+                    // all comments have been reviewed, so they're no longer pending
+                    comment.setPending(Boolean.FALSE);
                     comment.save();
                 }               
                 RollerFactory.getRoller().commit();
@@ -176,6 +183,15 @@ public final class CommentManagementAction extends DispatchAction {
         public int getCommentCount() {
             int ret = comments.size();            
             return ret > queryForm.getCount() ? queryForm.getCount() : ret;
+        }
+        
+        public int getPendingCommentCount() {
+            int count = 0;
+            for (Iterator iter = comments.iterator(); iter.hasNext();) {
+                CommentData cd = (CommentData)iter.next();
+                if (cd.getPending().booleanValue()) count++;
+            }
+            return count;
         }
         
         public Date getEarliestDate() {

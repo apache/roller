@@ -146,6 +146,7 @@ public class CommentServlet extends HttpServlet {
             
             if (preview) {
                 message = "This is a comment preview only";
+                error = bundle.getString("commentServlet.previewMarkedAsSpam");
                 request.setAttribute("previewComments", "dummy");
                 mLogger.debug("Comment is a preview");
                 
@@ -158,7 +159,7 @@ public class CommentServlet extends HttpServlet {
                     // If comment contains blacklisted text, mark as spam
                     SpamChecker checker = new SpamChecker();
                     if (checker.checkComment(comment)) {
-                       error = bundle.getString("commentServlet.markedAsSpam");
+                       error = bundle.getString("commentServlet.commentMarkedAsSpam");
                        mLogger.debug("Comment marked as spam"); 
                     }
                      
@@ -166,6 +167,7 @@ public class CommentServlet extends HttpServlet {
                     if (website.getModerateComments().booleanValue()) {
                         comment.setPending(Boolean.TRUE);   
                         comment.setApproved(Boolean.FALSE);
+                        message = bundle.getString("commentServlet.submittedToModerator");
                     } else { 
                         comment.setPending(Boolean.FALSE);   
                         comment.setApproved(Boolean.TRUE);
@@ -195,9 +197,9 @@ public class CommentServlet extends HttpServlet {
         }
         
         // the work has been done, now send the user back to the entry page
-        if(error != null)
+        if (error != null)
             session.setAttribute(RollerSession.ERROR_MESSAGE, error);
-        else if(message != null)
+        if (message != null)
             session.setAttribute(RollerSession.STATUS_MESSAGE, message);
         
         if(error == null && message == null && !preview) {

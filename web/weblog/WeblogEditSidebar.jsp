@@ -11,19 +11,31 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
         
 <div class="sidebarInner">
 
-<c:if test="${model.commentCount > 0}">
-    <h3><fmt:message key="weblogEdit.comments" /></h3>
+<h3><fmt:message key="weblogEdit.comments" /></h3>
+
+<c:choose>
+<c:when test="${model.commentCount > 0}">
     <c:url value="/editor/commentManagement.do" var="commentManagement">
        <c:param name="method" value="query" />
        <c:param name="weblog" value="${model.website.handle}" />
        <c:param name="entryid" value="${model.weblogEntry.id}" />
     </c:url>
-    <img src='<c:url value="/images/Edit16.png"/>' />
-    <a href='<c:out value="${commentManagement}" />'>
-       <fmt:message key="weblogEdit.comments" /></a> 
-    <br />
-</c:if>
+    <span class="entryEditSidebarLink">
+        <a href='<c:out value="${commentManagement}" />'>
+           <img src='<c:url value="/images/Edit16.png"/>' 
+                align="absmiddle" border="0" alt="icon" title="Comments" />
+           <fmt:message key="weblogEdit.hasComments">
+                <fmt:param value="${model.commentCount}" />
+           </fmt:message>
+        </a> 
+    </span><br />
+</c:when>
+<c:otherwise>
+   <span><fmt:message key="application.none" /></span>
+</c:otherwise>
+</c:choose>
 
+<hr size="1" noshade="noshade" />  
 <h3><fmt:message key="weblogEdit.pendingEntries" /></h3>
 
 <c:if test="${empty model.recentPendingEntries}">
@@ -40,8 +52,8 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
            <str:truncateNicely lower="50">
               <c:out value="${post.title}" />
            </str:truncateNicely>
-    </roller:link></span>
-    <br />
+        </roller:link>
+    </span><br />
 </c:forEach>
     
          
