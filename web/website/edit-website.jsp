@@ -93,6 +93,12 @@ WebsiteFormAction.WebsitePageModel model =
         <td class="field"><html:checkbox property="allowComments" /></input></td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.moderateComments" /></td>
+        <td class="field"><html:checkbox property="moderateComments" /></input></td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
 <%
 boolean emailComments = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
 if (emailComments) { %>
@@ -108,6 +114,17 @@ if (emailComments) { %>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
 <% } %>
+
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.defaultAllowComments" /></td>
+        <td class="field"><html:checkbox property="defaultAllowComments" /></input></td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
+     <tr>
+        <td class="label"><fmt:message key="websiteSettings.defaultCommentDays" /></td>
+        <td class="field"><html:checkbox property="defaultCommentDays" /></input></td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
 
     <%-- ***** Blogger API setting settings ***** --%>
     
@@ -143,7 +160,7 @@ if (emailComments) { %>
         <tr>
             <td class="label">Default Entry Formatters <br />(applied in the listed order)</td>
             <td class="field">
-            <logic:iterate id="plugin" type="org.roller.presentation.velocity.PagePlugin"
+            <logic:iterate id="plugin" type="org.roller.model.PagePlugin"
                 collection="<%= model.getPagePlugins() %>">
                 <html:multibox property="defaultPluginsArray"
                     title="<%= plugin.getName() %>" value="<%= plugin.getName() %>" /></input>

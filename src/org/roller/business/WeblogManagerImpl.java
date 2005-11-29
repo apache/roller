@@ -219,25 +219,29 @@ public abstract class WeblogManagerImpl implements WeblogManager
         }
     }
 
-    public void removeCommentsForEntry(String entryId) throws RollerException
-    {
-		List comments = getComments(entryId, false); // get all Comments
-        for (int i=comments.size()-1; i>=0; i--)
-        {
+    public void removeCommentsForEntry(String entryId) throws RollerException {
+        WeblogEntryData entry = retrieveWeblogEntry(entryId);
+        List comments = getComments(
+                null,  // website
+                entry,
+                null,  // search String
+                null,  // startDate
+                null,  // endDate
+                null,  // pending
+                null,  // approved
+                null,  // spam
+                0,     // offset
+                -1);   // no limit
+        for (int i=comments.size()-1; i>=0; i--) {
             ((CommentData)comments.get(i)).remove();
         }
-	}
+    }
 
     //---------------------------------------------------- CommentData Queries
     
     public CommentData retrieveComment(String id) throws RollerException
     {
         return (CommentData) mStrategy.load(id, CommentData.class);        
-    }
-
-    public List getComments(String entryId) throws RollerException
-    {
-        return getComments(entryId, true);
     }
 
     //--------------------------------------------------- WeblogEntryData CRUD
@@ -334,7 +338,7 @@ public abstract class WeblogManagerImpl implements WeblogManager
                     null);
         if (entries.size() < offset) 
         {
-            return filtered;
+            return entries;
         }
         for (int i=offset; i<entries.size(); i++)
         {

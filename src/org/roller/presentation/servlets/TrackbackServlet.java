@@ -13,9 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.Date;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.pojos.CommentData;
-import org.roller.util.CommentSpamChecker;
+import org.roller.util.SpamChecker;
 
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WeblogEntryData;
@@ -33,7 +35,11 @@ import org.roller.presentation.cache.CacheManager;
  *
  * @author David M Johnson
  */
-public class TrackbackServlet extends HttpServlet {
+public class TrackbackServlet extends HttpServlet { 
+    
+    private static Log logger = 
+        LogFactory.getFactory().getInstance(TrackbackServlet.class);
+        
     /** Request parameter to indicate a trackback "tb" */
     //private static final String TRACKBACK_PARAM = "tb";
     
@@ -140,30 +146,38 @@ public class TrackbackServlet extends HttpServlet {
                     comment.setNotify(Boolean.FALSE);
                     comment.setPostTime(new Timestamp(new Date().getTime()));
                     
-                    // check if this is spam
-                    CommentSpamChecker checker = new CommentSpamChecker();
-                    checker.testComment(comment);
-                    if (comment.getSpam().booleanValue()) {
-                        error = "Trackback spam!";
-                        
-                    } else {
-                        // save, commit, send response
-                        comment.save();
-                        RollerFactory.getRoller().commit();
-                        
-                        // Refresh user's entries in page cache
-                        //PageCacheFilter.removeFromCache(req, entry.getWebsite());
-                        CacheManager.invalidate(comment);
-                    
-                        // Send email notifications
-                        CommentServlet.sendEmailNotification(req, rreq, entry, comment);
-                        
-                        pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
-                        pw.println("<response>");
-                        pw.println("<error>0</error>");
-                        pw.println("</response>");
-                        pw.flush();
+                    // If comment contains blacklisted text, mark as spam
+                    SpamChecker checker = new SpamChecker();
+                    if (checker.checkTrackback(comment)) {
+                       logger.debug("Trackback marked as spam"); 
                     }
+                        
+                    // If comment moderation is on, set comment as pending
+                    if (comment.getWeblogEntry().getWebsite().getModerateComments().booleanValue()) {
+                        comment.setPending(Boolean.TRUE);   
+                        comment.setApproved(Boolean.FALSE);
+                    } else { 
+                        comment.setPending(Boolean.FALSE);   
+                        comment.setApproved(Boolean.TRUE);
+                    } 
+                                        
+                    // save, commit, send response
+                    comment.save();
+                    RollerFactory.getRoller().commit();
+
+                    // Refresh user's entries in page cache
+                    // PageCacheFilter.removeFromCache(req, entry.getWebsite());
+                    CacheManager.invalidate(comment);
+
+                    // Send email notifications
+                    CommentServlet.sendEmailNotification(req, rreq, entry, comment);
+
+                    pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
+                    pw.println("<response>");
+                    pw.println("<error>0</error>");
+                    pw.println("</response>");
+                    pw.flush();
+                    
                 } else if (entry!=null) {
                     error = "Comments and Trackbacks are disabled for the entry you specified.";
                 } else {

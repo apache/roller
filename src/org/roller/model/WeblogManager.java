@@ -16,7 +16,7 @@ import java.util.Map;
 
 
 /**
- * Interface to Weblog Management.
+ * Interface to weblog entry, category and comment management.
  */
 public interface WeblogManager extends Serializable
 {
@@ -125,28 +125,9 @@ public interface WeblogManager extends Serializable
         throws RollerException;
 
     /**
-     * Get comments by entry ID
-     * @param entryId 
-     * @throws org.roller.RollerException 
-     * @return 
-     */
-    public abstract List getComments( String entryId )
-        throws RollerException;
-
-    /**
-     * Get comments by entry ID, optionally excluding spam
-     * @param entryId 
-     * @param nospam 
-     * @throws org.roller.RollerException 
-     * @return 
-     */
-    public abstract List getComments( String entryId, boolean nospam )
-        throws RollerException;
-
-    /**
      * Remove comment by ID
      */
-    public void removeComment( String id )
+    public void removeComment(String id)
         throws RollerException;
 
     /**
@@ -154,7 +135,7 @@ public interface WeblogManager extends Serializable
      * @param ids 
      * @throws org.roller.RollerException 
      */
-    public void removeComments( String[] ids )
+    public void removeComments(String[] ids)
         throws RollerException;
 
     /**
@@ -162,12 +143,31 @@ public interface WeblogManager extends Serializable
      */
     public void removeCommentsForEntry(String entryId)
     	throws RollerException;
-    
+        
     /**
-     * Get most recent X comments in website.
+     * Generic comments query method
+     * @param website    Website or null for all comments on site
+     * @param entry      Entry or null to include all comments
+     * @param startDate  Start date or null for no restriction 
+     * @param endDate    End date or null for no restriction 
+     * @param pending    Pending flag value or null for no restriction 
+     * @param pending    Approved flag value or null for no restriction 
+     * @param spam       Spam flag value or null for no restriction 
+     * @param offset     Offset into results for paging
+     * @param length     Max comments to return (or -1 for no limit)
      */
-    public List getRecentComments(WebsiteData website, int maxCount) 
-        throws RollerException;
+    public List getComments(
+        WebsiteData     website, 
+        WeblogEntryData entry, 
+        String          searchString, 
+        Date            startDate, 
+        Date            endDate, 
+        Boolean         pending,
+        Boolean         approved,
+        Boolean         spam,
+        int             offset,
+        int             length
+        ) throws RollerException;
 
     //------------------------------------------------------- WeblogEntry CRUD
 
@@ -187,7 +187,6 @@ public interface WeblogManager extends Serializable
 
     /**
      * Get WeblogEntries as a list in reverse chronological order.
-     * 
      * @param userName   User name or null to get for all users.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
@@ -209,7 +208,6 @@ public interface WeblogManager extends Serializable
     /**
      * Get WeblogEntries in range as list in reverse chronological order.
      * The range offset and list arguments enable paging through query results.
-     * 
      * @param userName   User name or null to get for all users.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
@@ -234,7 +232,6 @@ public interface WeblogManager extends Serializable
      * Get Weblog Entries grouped by day. This method returns a Map that 
      * contains Lists, each List contains WeblogEntryData objects, and the 
      * Lists are keyed by Date objects.
-     * 
      * @param userName   User name or null to get for all users.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
@@ -257,7 +254,6 @@ public interface WeblogManager extends Serializable
      * Get Weblog Entry date strings grouped by day. This method returns a Map 
      * that contains Lists, each List contains YYYYMMDD date strings objects, 
      * and the Lists are keyed by Date objects.
-     * 
      * @param userName   User name or null to get for all users.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
@@ -341,13 +337,13 @@ public interface WeblogManager extends Serializable
     /** Get time of last update for a weblog specified by username */
     public Date getWeblogLastPublishTime(WebsiteData website)
         throws RollerException;
-
+    
     /**
-     * Gets the Date of the latest Entry publish time.
-     * @param userName User name of weblog or null for all users
-     * @param catName  Top-level category name of posts or null for all categories.
+     * Gets returns most recent pubTime, optionally restricted by category.
+     * @param handle   Handle of website or null for all users
+     * @param catName  Category name of posts or null for all categories
      * @return         Date Of last publish time
-     * @throws         RollerException
+     * @throws RollerException
      */
     public Date getWeblogLastPublishTime(WebsiteData website, String catName )
         throws RollerException;
@@ -383,27 +379,20 @@ public interface WeblogManager extends Serializable
         WeblogCategoryData child, WeblogCategoryData ancestor) throws RollerException;
 
     /**
-     */
-    public Assoc getWeblogCategoryParentAssoc(WeblogCategoryData data) throws RollerException;
-
-    /**
-     */
-    public List getWeblogCategoryChildAssocs(WeblogCategoryData data) throws RollerException;
-
-    /**
-     */
-    public List getAllWeblogCategoryDecscendentAssocs(WeblogCategoryData data) throws RollerException;
-
-    /**
-     */
-    public List getWeblogCategoryAncestorAssocs(WeblogCategoryData data) throws RollerException;
-
-    /**
-     * Get the url of a user's weblog.
-     * @param user               the user
-     * @param contextUrl         the context url, this is prepended and can be absolute or relative depending on what is desired.
-     * @return the url of the user's weblog
-     * @throws RollerException
+     * Get the URL of a website.
+     * @param website    The website
+     * @param contextUrl The context url, this is prepended and can be absolute 
+     *                   or relative depending on what is desired.
+     * @return The url of the user's weblog
      */
     public String getUrl(WebsiteData website, String contextUrl) throws RollerException;
+    
+    
+    public Assoc getWeblogCategoryParentAssoc(WeblogCategoryData data) throws RollerException;
+
+    public List getWeblogCategoryChildAssocs(WeblogCategoryData data) throws RollerException;
+
+    public List getAllWeblogCategoryDecscendentAssocs(WeblogCategoryData data) throws RollerException;
+
+    public List getWeblogCategoryAncestorAssocs(WeblogCategoryData data) throws RollerException;
 }

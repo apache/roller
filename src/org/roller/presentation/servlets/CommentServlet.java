@@ -34,12 +34,11 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.velocity.CommentAuthenticator;
 import org.roller.presentation.weblog.formbeans.CommentFormEx;
-import org.roller.util.CommentSpamChecker;
+import org.roller.util.SpamChecker;
 import org.roller.util.MailUtil;
 import org.roller.util.StringUtils;
 import org.roller.presentation.*;
 import org.roller.presentation.cache.CacheManager;
-
 
 /**
  * The CommentServlet handles all incoming weblog entry comment posts.
@@ -61,17 +60,12 @@ import org.roller.presentation.cache.CacheManager;
 public class CommentServlet extends HttpServlet {
     
     private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
-    
-    private static final String COMMENT_SPAM_MSG =
-            "Your comment has been recognized as "
-            + "<a href='http://www.jayallen.org/projects/mt-blacklist/'>"
-            + "Comment Spam</a> and rejected.";
-    
+        
     private transient ResourceBundle bundle =
-            ResourceBundle.getBundle("ApplicationResources");
+        ResourceBundle.getBundle("ApplicationResources");
     
     private static Log mLogger = 
-            LogFactory.getFactory().getInstance(CommentServlet.class);
+        LogFactory.getFactory().getInstance(CommentServlet.class);
     
     
     /**
@@ -150,21 +144,32 @@ public class CommentServlet extends HttpServlet {
             request.setAttribute("commentForm", cf);
             request.setAttribute("blogEntry", entry);
             
-            if(preview) {
+            if (preview) {
                 message = "This is a comment preview only";
                 request.setAttribute("previewComments", "dummy");
-                
                 mLogger.debug("Comment is a preview");
                 
-            } else if(!commentSpam(comment)) {
-                
-                // this is a real comment posting.
-                // lets authenticate it then save
+            } else {                
                 CommentAuthenticator commentAuth = 
                         RollerContext.getCommentAuthenticator();
                 if (commentAuth.authenticate(comment, request)) {
+                    mLogger.debug("Comment passed authentication");
                     
-                    mLogger.debug("Comment is valid ... saving it");
+                    // If comment contains blacklisted text, mark as spam
+                    SpamChecker checker = new SpamChecker();
+                    if (checker.checkComment(comment)) {
+                       error = bundle.getString("commentServlet.markedAsSpam");
+                       mLogger.debug("Comment marked as spam"); 
+                    }
+                     
+                    // If comment moderation is on, set comment as pending
+                    if (website.getModerateComments().booleanValue()) {
+                        comment.setPending(Boolean.TRUE);   
+                        comment.setApproved(Boolean.FALSE);
+                    } else { 
+                        comment.setPending(Boolean.FALSE);   
+                        comment.setApproved(Boolean.TRUE);
+                    }
                     
                     comment.save();
                     RollerFactory.getRoller().commit();
@@ -181,12 +186,7 @@ public class CommentServlet extends HttpServlet {
                     error = bundle.getString("error.commentAuthFailed");
                     mLogger.debug("Comment failed authentication");
                 }
-                
-            } else {
-                error = COMMENT_SPAM_MSG;
-                mLogger.debug("Comment marked as spam");
             }
-            
         } catch (RollerException re) {
             mLogger.error("ERROR posting comment", re);
             error = re.getMessage();
@@ -230,22 +230,7 @@ public class CommentServlet extends HttpServlet {
             manager.addEntryIndexOperation(entry);
         }
     }
-    
-
-    /**
-     * Test CommentData to see if it is spam.
-     */
-    private boolean commentSpam(CommentData cd) {
         
-        CommentSpamChecker checker = new CommentSpamChecker();
-        checker.testComment(cd);
-        if (cd.getSpam().booleanValue())
-            return true;
-        
-        return false;
-    }
-    
-    
     /**
      * Send email notification of comment.
      *
@@ -290,7 +275,8 @@ public class CommentServlet extends HttpServlet {
             List comments = null;
             try {
                 WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
-                comments = wMgr.getComments(entry.getId());
+                // get only approved, non spam comments
+                comments = entry.getComments(true, true); 
             } catch(RollerException re) {
                 // should never happen
                 comments = new ArrayList();
@@ -371,7 +357,7 @@ public class CommentServlet extends HttpServlet {
             ownermsg.append((escapeHtml) ? "\n" : "<br />");
             
             StringBuffer deleteURL = new StringBuffer(rootURL);
-            deleteURL.append("/editor/weblog.do?method=edit&entryid="+entry.getId());
+            deleteURL.append("/editor/commentManagement.do?method=query&entryid=" + entry.getId());
             
             if (escapeHtml) {
                 ownermsg.append(deleteURL.toString());

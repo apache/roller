@@ -11,6 +11,19 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
         
 <div class="sidebarInner">
 
+<c:if test="${model.commentCount > 0}">
+    <h3><fmt:message key="weblogEdit.comments" /></h3>
+    <c:url value="/editor/commentManagement.do" var="commentManagement">
+       <c:param name="method" value="query" />
+       <c:param name="weblog" value="${model.website.handle}" />
+       <c:param name="entryid" value="${model.weblogEntry.id}" />
+    </c:url>
+    <img src='<c:url value="/images/Edit16.png"/>' />
+    <a href='<c:out value="${commentManagement}" />'>
+       <fmt:message key="weblogEdit.comments" /></a> 
+    <br />
+</c:if>
+
 <h3><fmt:message key="weblogEdit.pendingEntries" /></h3>
 
 <c:if test="${empty model.recentPendingEntries}">

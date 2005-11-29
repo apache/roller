@@ -23,6 +23,7 @@
 <forward name="weblogEdit"             path="/editor/weblog.do?method=edit"/>
 <forward name="weblogCreate"           path="/editor/weblog.do?method=create"/>
 <forward name="weblogQuery"            path="/editor/weblogQuery.do?method=query"/>
+<forward name="commentManagement"      path="/editor/commentManagement.do?method=query"/>
 <forward name="categories"             path="/editor/categories.do?method=selectCategory"/>
 <forward name="bookmarks"              path="/editor/bookmarks.do?method=selectFolder"/>
 <forward name="importBookmarks"        path="/editor/importBookmarks.do"/>
@@ -49,10 +50,11 @@
 
 <!-- global admin actions -->
 
-<forward name="rollerConfig"           path="/admin/rollerConfig.do?method=edit"/>
-<forward name="adminUser"              path="/admin/user.do?method=edit"/>
-<forward name="addUser"                path="/admin/user.do?method=add"/>
-<forward name="commonPingTargets"      path="/admin/commonPingTargets.do"/>
+<forward name="rollerConfig"            path="/admin/rollerConfig.do?method=edit"/>
+<forward name="adminUser"               path="/admin/user.do?method=edit"/>
+<forward name="commentManagementGlobal" path="/admin/commentManagement.do?method=query"/>
+<forward name="addUser"                 path="/admin/user.do?method=add"/>
+<forward name="commonPingTargets"       path="/admin/commonPingTargets.do"/>
 
 <!-- planet admin actions -->
 

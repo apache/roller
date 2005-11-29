@@ -104,6 +104,11 @@
     <put name="sidebar" value="/weblog/WeblogQuerySidebar.jsp" />
     <put name="styles" value="/theme/css-sidebar.jsp" />
 </definition>
+<definition name=".CommentManagement" extends=".tiles-editorpage" >
+    <put name="content" value="/weblog/CommentManagement.jsp" />
+    <put name="sidebar" value="/weblog/CommentManagementSidebar.jsp" />
+    <put name="styles" value="/theme/css-sidebar.jsp" />
+</definition>
 <definition name=".CategoriesForm" extends=".tiles-editorpage" >
     <put name="content" value="/weblog/CategoriesForm.jsp" />
     <put name="sidebar" value="/weblog/CategoriesSidebar.jsp" />

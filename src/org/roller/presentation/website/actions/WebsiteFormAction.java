@@ -24,10 +24,12 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.velocity.VelocityContext;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
+import org.roller.model.PagePluginManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
@@ -35,11 +37,10 @@ import org.roller.model.WeblogManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.cache.CacheManager;
-import org.roller.presentation.velocity.ContextLoader;
-import org.roller.presentation.velocity.PagePlugin;
 import org.roller.presentation.website.formbeans.WebsiteFormEx;
 
 
@@ -336,24 +337,38 @@ public final class WebsiteFormAction extends DispatchAction
         public void setGroupBloggingEnabled(boolean groupBloggingEnabled) {
             this.groupBloggingEnabled = groupBloggingEnabled;
         }
-        public boolean getHasPagePlugins() {
-            return ContextLoader.hasPlugins();
+
+        public boolean getHasPagePlugins()
+        {
+            boolean ret = false;
+            try {
+                Roller roller = RollerFactory.getRoller();
+                PagePluginManager ppmgr = roller.getPagePluginManager();
+                ret = ppmgr.hasPagePlugins();
+            } catch (RollerException e) {
+                mLogger.error(e);
+            }
+            return ret;
         }
-        public List getPagePlugins() {
+
+        public List getPagePlugins() 
+        {
             List list = new ArrayList();
-            if (getHasPagePlugins()) {
-                Map pluginClasses = ContextLoader.getPagePluginClasses();
-                Iterator it = pluginClasses.values().iterator();
-                while (it.hasNext()) {
-                    try {
-                        Class pluginClass = (Class)it.next();
-                        PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
-                        // no need to init plugins, we're not gonna run them
-                        list.add(plugin);
-                    } catch (Exception e) {
-                        mLogger.warn("Unable to create a PagePlugin: ", e);
-                    }
+            try {
+                if (getHasPagePlugins()) 
+                {
+                    Roller roller = RollerFactory.getRoller();
+                    PagePluginManager ppmgr = roller.getPagePluginManager();
+                    Map plugins = ppmgr.createAndInitPagePlugins(
+                        getWebsite(),
+                        RollerContext.getRollerContext(request).getServletContext(),
+                        RollerContext.getRollerContext(request).getAbsoluteContextUrl(),
+                        new VelocityContext());
+                    Iterator it = plugins.values().iterator();
+                    while (it.hasNext()) list.add(it.next());
                 }
+            } catch (Exception e) {
+                mLogger.error(e);
             }
             return list;
         }

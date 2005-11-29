@@ -26,6 +26,8 @@ public class CommentData extends org.roller.pojos.PersistentObject
     private Boolean spam = Boolean.FALSE;
     private Boolean notify = Boolean.FALSE;
     private String remoteHost = null;
+    private Boolean pending = null;
+    private Boolean approved = null;
     
     private WeblogEntryData weblogEntry = null;
 
@@ -39,7 +41,8 @@ public class CommentData extends org.roller.pojos.PersistentObject
                        java.lang.String name, java.lang.String email, 
                        java.lang.String url, java.lang.String content, 
                        java.sql.Timestamp postTime, 
-                       Boolean spam, Boolean notify)
+                       Boolean spam, Boolean notify, 
+                       Boolean pending, Boolean approved)
     {
         this.id = id;
         this.name = name;
@@ -49,6 +52,8 @@ public class CommentData extends org.roller.pojos.PersistentObject
         this.postTime = postTime;
         this.spam = spam;
         this.notify = notify;
+        this.pending = pending;
+        this.approved = approved;
 
         weblogEntry = entry;
     }
@@ -205,6 +210,38 @@ public class CommentData extends org.roller.pojos.PersistentObject
         this.notify = notify;
     }
 
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="pending" non-null="false" unique="false"
+     */
+    public Boolean getPending()
+    {
+        return this.pending;
+    }
+
+    /** @ejb:persistent-field */
+    public void setPending(Boolean pending)
+    {
+        this.pending = pending;
+    }
+
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="approved" non-null="false" unique="false"
+     */
+    public Boolean getApproved()
+    {
+        return this.approved;
+    }
+
+    /** @ejb:persistent-field */
+    public void setApproved(Boolean approved)
+    {
+        this.approved = approved;
+    }
+
 	/**
      * @ejb:persistent-field 
 	 */
@@ -232,7 +269,9 @@ public class CommentData extends org.roller.pojos.PersistentObject
                    "content=" + content + " " + 
                    "postTime=" + postTime + " " + 
                    "spam=" + spam +
-                   "notify=" + notify);
+                   "notify=" + notify +
+                   "pending" + pending +
+                   "approved" + approved);
         str.append('}');
 
         return (str.toString());
@@ -254,7 +293,8 @@ public class CommentData extends org.roller.pojos.PersistentObject
             lEquals = PojoUtil.equals(lEquals, this.postTime, lTest.getPostTime());
             lEquals = PojoUtil.equals(lEquals, this.spam, lTest.getSpam());
             lEquals = PojoUtil.equals(lEquals, this.notify, lTest.getNotify());
-
+            lEquals = PojoUtil.equals(lEquals, this.pending, lTest.getPending());
+            lEquals = PojoUtil.equals(lEquals, this.approved, lTest.getApproved());
             return lEquals;
         }
         else
@@ -274,7 +314,9 @@ public class CommentData extends org.roller.pojos.PersistentObject
         result = PojoUtil.addHashCode(result, this.content);
         result = PojoUtil.addHashCode(result, this.postTime);
         result = PojoUtil.addHashCode(result, this.spam);
-        result = PojoUtil.addHashCode(result, this.notify);
+        result = PojoUtil.addHashCode(result, this.notify);        
+        result = PojoUtil.addHashCode(result, this.pending);        
+        result = PojoUtil.addHashCode(result, this.approved);
 
         return result;
     }
@@ -295,6 +337,8 @@ public class CommentData extends org.roller.pojos.PersistentObject
         this.postTime = otherComment.getPostTime();
         this.spam = otherComment.getSpam();
         this.notify = otherComment.getNotify();
+        this.pending = otherComment.getPending();
+        this.approved = otherComment.getApproved();
     }
 
 }
