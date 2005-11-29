@@ -238,8 +238,8 @@ public class CommentManagementForm
         return deleteComments;
     }
     
-    public void setDeleteComments(String[] selectedComments) {
-        this.deleteComments = selectedComments;
+    public void setDeleteComments(String[] deleteComments) {
+        this.deleteComments = deleteComments;
     }
     
     public String[] getSpamComments() {
