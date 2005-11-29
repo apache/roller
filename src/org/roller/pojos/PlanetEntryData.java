@@ -33,7 +33,8 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
 // this will be needed for ROME v0.8
-import com.sun.syndication.feed.synd.SyndPerson;
+//import com.sun.syndication.feed.synd.SyndPerson;
+
 import java.util.Map;
 import org.roller.RollerException;
 import org.roller.model.PagePluginManager;
@@ -97,13 +98,13 @@ public class PlanetEntryData extends PersistentObject
      */
     private void initFromRomeEntry(SyndFeed romeFeed, SyndEntry romeEntry)
     {
-        //setAuthor(romeEntry.getAuthor());
+        setAuthor(romeEntry.getAuthor());
         // this will be needed (instead of the previous line) for ROME v0.8
-        List authors = romeEntry.getAuthors();
-        if (authors!=null && authors.size() > 0) {
-            SyndPerson person = (SyndPerson)authors.get(0);
-            setAuthor(person.getName());
-        }
+        //List authors = romeEntry.getAuthors();
+        //if (authors!=null && authors.size() > 0) {
+            //SyndPerson person = (SyndPerson)authors.get(0);
+            //setAuthor(person.getName());
+        //}
         setTitle(romeEntry.getTitle());
         setPermalink(romeEntry.getLink());
         
