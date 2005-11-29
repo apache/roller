@@ -105,6 +105,8 @@ public final class WeblogEntryFormAction extends DispatchAction
                 form.initNew(request, response);
                 form.setCreatorId(rses.getAuthenticatedUser().getId());
                 form.setWebsiteId(rreq.getWebsite().getId()); 
+                form.setAllowComments(rreq.getWebsite().getDefaultAllowComments());
+                form.setCommentDays(new Integer(rreq.getWebsite().getDefaultCommentDays()));
                 
                 request.setAttribute("model",
                         new WeblogEntryPageModel(request, response, mapping,
