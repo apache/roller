@@ -122,7 +122,22 @@ if (emailComments) { %>
     </tr>
      <tr>
         <td class="label"><fmt:message key="websiteSettings.defaultCommentDays" /></td>
-        <td class="field"><html:checkbox property="defaultCommentDays" /></input></td>
+        <td class="field">
+         <html:select property="defaultCommentDays">
+             <html:option key="weblogEdit.unlimitedCommentDays" value="0"  />
+             <html:option key="weblogEdit.days1" value="1"  />
+             <html:option key="weblogEdit.days2" value="2"  />
+             <html:option key="weblogEdit.days3" value="3"  />
+             <html:option key="weblogEdit.days4" value="4"  />
+             <html:option key="weblogEdit.days5" value="5"  />
+             <html:option key="weblogEdit.days7" value="7"  />
+             <html:option key="weblogEdit.days10" value="10"  />
+             <html:option key="weblogEdit.days20" value="20"  />
+             <html:option key="weblogEdit.days30" value="30"  />
+             <html:option key="weblogEdit.days60" value="60"  />
+             <html:option key="weblogEdit.days90" value="90"  />
+         </html:select>
+        </td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
 
