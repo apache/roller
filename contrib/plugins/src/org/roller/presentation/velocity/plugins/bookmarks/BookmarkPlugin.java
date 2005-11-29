@@ -14,13 +14,13 @@ import org.roller.model.RollerFactory;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.PagePlugin;
+import org.roller.model.PagePlugin;
 import java.util.regex.PatternSyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Collection;
 import java.util.Iterator;
+import org.roller.pojos.WebsiteData;
 
 /**
  * @author lance
@@ -46,7 +46,11 @@ public class BookmarkPlugin implements PagePlugin
     /* (non-Javadoc)
      * @see org.roller.presentation.velocity.PagePlugin#init(org.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
      */
-    public void init(RollerRequest rreq, Context ctx) throws RollerException
+    public void init(
+            WebsiteData website,
+            Object config,
+            String baseURL,
+            Context ctx) throws RollerException
     {
     }
 

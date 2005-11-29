@@ -1,27 +1,24 @@
-     /*
- * Created on Feb 27, 2004
- */
+/* Created on Feb 27, 2004 */
 package org.roller.presentation.weblog.tags;
-
-import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import java.util.Map;
+import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
-import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.velocity.PageHelper;
-import org.roller.util.Utilities;
-import java.io.IOException;
+import org.apache.velocity.VelocityContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import org.roller.model.Roller;
+import org.roller.model.PagePluginManager;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.WeblogEntryData;
+import org.roller.presentation.RollerContext;
+import org.roller.util.Utilities;
 import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 /**
@@ -29,14 +26,11 @@ import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
  * @jsp.tag name="ApplyPlugins"
  * @author David M Johnson
  */
-public class ApplyPluginsTag extends TagSupport
-{
+public class ApplyPluginsTag extends TagSupport {
     static final long serialVersionUID = 3166731504235428544L;
-    
-    private static final String HELPER_KEY = "roller.pageHelper";
     private static Log mLogger =
-        LogFactory.getFactory().getInstance(ApplyPluginsTag.class);
-
+            LogFactory.getFactory().getInstance(ApplyPluginsTag.class);
+    
     private String name = null;
     private String property = null;
     private String scope = "request";
@@ -44,42 +38,45 @@ public class ApplyPluginsTag extends TagSupport
     private boolean stripHtml = false;
     private int maxLength = -1;
     private boolean skipFlag = false;
-
+    
     /**
      * @see javax.servlet.jsp.tagext.Tag#doStartTag()
      */
-    public int doStartTag() throws JspException
-    {
-        WeblogEntryData entry = 
-            (WeblogEntryData)RequestUtils.lookup(pageContext, name, property, scope);
+    public int doStartTag() throws JspException {
+        Roller roller = RollerFactory.getRoller();
+        WeblogEntryData entry =
+                (WeblogEntryData)RequestUtils.lookup(pageContext, name, property, scope);
         
         String xformed = null;
-
-        if (entry.getPlugins() != null)
-        {
-            // check to see if a PageHelper has already been created this request
-            PageHelper helper = (PageHelper)pageContext.getRequest().getAttribute(HELPER_KEY);
-            if (helper == null)
-            {
-                helper = loadNewPageHelper();
+        
+        if (entry.getPlugins() != null) {
+            RollerContext rctx = 
+                RollerContext.getRollerContext(
+                    (HttpServletRequest)pageContext.getRequest());
+            try {
+                PagePluginManager ppmgr = roller.getPagePluginManager();
+                Map plugins = ppmgr.createAndInitPagePlugins(
+                        entry.getWebsite(),
+                        rctx.getServletContext(),
+                        rctx.getAbsoluteContextUrl(),
+                        new VelocityContext());
+                WeblogEntryData applied =
+                        ppmgr.applyPagePlugins(entry, plugins, skipFlag);
+                xformed = applied.getText();
+                
+            } catch (Exception e) {
+                mLogger.error(e);
             }
-            helper.setSkipFlag(skipFlag);
-    
-            xformed = helper.renderPlugins(WeblogEntryDataWrapper.wrap(entry));
-        }
-        else
-        {
+        } else {
             xformed = entry.getText();
         }
         
-        if (stripHtml)
-        {
+        if (stripHtml) {
             // don't escape ampersands
             xformed = Utilities.escapeHTML( Utilities.removeHTML(xformed), false );
         }
         
-        if (maxLength != -1)
-        {
+        if (maxLength != -1) {
             xformed = Utilities.truncateNicely(xformed, maxLength, maxLength, "...");
         }
         
@@ -87,70 +84,48 @@ public class ApplyPluginsTag extends TagSupport
         // but I cannot seem to track it down
         xformed = Utilities.stringReplace(xformed, "&amp#", "&#");
         
-        try
-        {
+        try {
             pageContext.getOut().println(xformed);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new JspException("ERROR applying plugin to entry", e);
         }
         return TagSupport.SKIP_BODY;
     }
-
-    /**
-     * PagePlugins need to be loaded and properly initialized for use.
-     * Also, store the PageHelper in the Request as it will likely be
-     * used more than once and this way we can skip a fair amount of overhead.
-     */
-    private PageHelper loadNewPageHelper()
-    {
-        PageHelper pageHelper = PageHelper.createPageHelper(
-            (HttpServletRequest)pageContext.getRequest(), 
-            (HttpServletResponse)pageContext.getResponse());
-
-        pageContext.getRequest().setAttribute(HELPER_KEY, pageHelper);
-        return pageHelper;
-    }
-
+    
     /**
      * Maximum length of text displayed, only applies if stripHtml is true.
      * @jsp.attribute required="false"
      * @return Returns the maxLength.
      */
-    public int getMaxLength()
-    {
+    public int getMaxLength() {
         return maxLength;
     }
-
+    
     /**
      * Maximum length of text displayed, only applies if stripHtml is true.
      * @param maxLength The maxLength to set.
      */
-    public void setMaxLength(int maxLength)
-    {
+    public void setMaxLength(int maxLength) {
         this.maxLength = maxLength;
     }
-
+    
     /**
      * Set to true to strip all HTML markup from output.
      * @jsp.attribute required="false"
      * @return Returns the stripHtml.
      */
-    public boolean getStripHtml()
-    {
+    public boolean getStripHtml() {
         return stripHtml;
     }
-
+    
     /**
      * Set to true to strip all HTML markup from output.
      * @param stripHtml The stripHtml to set.
      */
-    public void setStripHtml(boolean stripHtml)
-    {
+    public void setStripHtml(boolean stripHtml) {
         this.stripHtml = stripHtml;
     }
-
+    
     /**
      * Set to true to inform PagePlugins if they
      * should "skip" themselves.
@@ -158,21 +133,19 @@ public class ApplyPluginsTag extends TagSupport
      * @jsp.attribute required="false"
      * @return Returns the skipFlag.
      */
-    public boolean getSkipFlag()
-    {
+    public boolean getSkipFlag() {
         return skipFlag;
     }
-
+    
     /**
      * Set to true to inform PagePlugins if they
      * should "skip" themselves.
      * @param skipFlag The skipFlag to set.
      */
-    public void setSkipFlag(boolean skipFlag)
-    {
+    public void setSkipFlag(boolean skipFlag) {
         this.skipFlag = skipFlag;
     }
-
+    
     /**
      * @return Returns the name.
      */

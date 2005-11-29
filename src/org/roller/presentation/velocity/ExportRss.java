@@ -220,7 +220,7 @@ public class ExportRss
      * and has no PagePlugins either.  We want the exported
      * Entry.text to be the raw values.
      */
-    private void loadPageHelper()
+    private void loadPageHelper() throws RollerException
     {
         // Add Velocity page helper to context
         PageHelper pageHelper = new PageHelper(null, null, ctx);

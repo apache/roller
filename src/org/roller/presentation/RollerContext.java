@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServletRequest;
@@ -180,7 +181,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             //
             //       this is really not a best practice and we should try to
             //       remove these dependencies on the webapp context if possible
-            RollerConfig.setContextPath(mContext.getRealPath("/"));
+            RollerConfig.setContextRealPath(mContext.getRealPath("/"));
             
             // always upgrade database first
             upgradeDatabaseIfNeeded();
@@ -191,7 +192,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             setupRollerProperties();
             roller.getThemeManager();
             setupSpellChecker();
-            setupPagePlugins();
             setupIndexManager(roller);
             setupRefererManager(roller);
             initializePingFeatures(roller);
@@ -225,7 +225,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             mLogger.fatal("RollerContext initialization failed", t);
         }
     }
-
     
     private void setupRollerProperties() throws RollerException
     {
@@ -378,19 +377,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
 
     //------------------------------------------------------------------------
-    /**
-     * Initialize the configured PagePlugins
-     * @param mContext
-     */
-    private void setupPagePlugins()
-    {
-        if (mLogger.isDebugEnabled())
-        {
-            mLogger.debug("Initialize PagePlugins");
-        }
-        ContextLoader.initializePagePlugins(mContext);
-
-    }
 
     /**
      * Add TurnoverReferersTask to run on a schedule.

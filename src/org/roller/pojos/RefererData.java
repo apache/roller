@@ -14,7 +14,7 @@ import org.roller.util.Utilities;
  * @struts.form include-all="true"
  * @hibernate.class lazy="false" table="referer" 
  */
-public class RefererData extends org.roller.pojos.PersistentObject
+public class RefererData extends PersistentObject
     implements java.io.Serializable
 {
     static final long serialVersionUID = -1817992900602131316L;

@@ -1,6 +1,7 @@
 
 package org.roller.presentation.weblog.actions;
 
+import com.swabunga.spell.event.SpellCheckEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,10 +19,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.naming.InitialContext;
@@ -30,8 +31,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -43,11 +42,14 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
+import org.apache.velocity.VelocityContext;
 import org.roller.RollerException;
 import org.roller.RollerPermissionsException;
 import org.roller.config.RollerConfig;
 import org.roller.model.IndexManager;
+import org.roller.model.PagePluginManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.model.RollerSpellCheck;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
@@ -56,19 +58,14 @@ import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
-import org.roller.presentation.velocity.PageHelper;
+import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
 import org.roller.util.MailUtil;
+import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
-
-import com.swabunga.spell.event.SpellCheckEvent;
-import org.roller.model.RollerFactory;
-import org.roller.presentation.cache.CacheManager;
-
 
 /////////////////////////////////////////////////////////////////////////////
 /**
@@ -782,102 +779,6 @@ public final class WeblogEntryFormAction extends DispatchAction
         return forward;
     }
 
-    //-----------------------------------------------------------------------
-    /**
-     * Update selected comments: delete and/or mark as spam.
-     */
-    public ActionForward updateComments(
-        ActionMapping       mapping,
-        ActionForm          actionForm,
-        HttpServletRequest  request,
-        HttpServletResponse response)
-        throws IOException, ServletException
-    {
-        ActionForward forward = mapping.findForward("weblogEdit.page");
-        ActionErrors errors = new ActionErrors();
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        RollerSession rollerSession = RollerSession.getRollerSession(request);
-        try
-        {
-            WeblogEntryData wd = rreq.getWeblogEntry();
-            if ( rollerSession.isUserAuthorizedToAuthor(wd.getWebsite()))
-            {
-                if (wd == null || wd.getId() == null)
-                {
-                    ResourceBundle resources = ResourceBundle.getBundle(
-                        "ApplicationResources", request.getLocale());
-                    request.setAttribute("javax.servlet.error.message", 
-                        resources.getString("weblogEntry.notFound"));  
-                    forward = mapping.findForward("error");                    
-                }
-                else 
-                {
-                    WeblogEntryFormEx form = (WeblogEntryFormEx)actionForm;
-
-                    // If form indicates that comments should be deleted, delete
-                    WeblogManager mgr= RollerFactory.getRoller().getWeblogManager();
-                    String[] deleteIds = form.getDeleteComments();
-                    if (deleteIds != null && deleteIds.length > 0)
-                    {
-                        mgr.removeComments( deleteIds );
-                    }
-
-                    List comments = mgr.getComments(wd.getId(), false); // spam too
-                    if (form.getSpamComments() != null)
-                    {
-                        // comments marked as spam
-                        List spamIds = Arrays.asList(form.getSpamComments());
-
-                        // iterate over all comments, check each to see if
-                        // is in the spamIds list.  If so, mark it as spam.
-                        Iterator it = comments.iterator();
-                        while (it.hasNext())
-                        {
-                            CommentData comment = (CommentData)it.next();
-                            if (spamIds.contains(comment.getId()))
-                            {
-                                comment.setSpam(Boolean.TRUE);                            
-                            }
-                            else 
-                            {
-                                comment.setSpam(Boolean.FALSE);
-                            }
-                            comment.save();
-                        }
-                    }
-
-                    RollerFactory.getRoller().commit();
-                    
-                    // notify cache manager
-                    CacheManager.invalidate(wd);
-
-                    reindexEntry(RollerFactory.getRoller(), wd);
-
-                    request.setAttribute("model",
-                            new WeblogEntryPageModel(request, response, mapping, 
-                                    (WeblogEntryFormEx)actionForm,
-                                    WeblogEntryPageModel.EDIT_MODE));
-                }
-            }
-            else
-            {
-                forward = mapping.findForward("access-denied");
-            }
-        }
-        catch (Exception e)
-        {
-            forward = mapping.findForward("error");
-
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                new ActionError("error.edit.comment", e.toString()));
-            saveErrors(request,errors);
-
-            mLogger.error(getResources(request).getMessage("error.edit.comment")
-                + e.toString(),e);
-        }
-        return forward;
-    }
-
     /**
     *
     */
@@ -899,27 +800,30 @@ public final class WeblogEntryFormAction extends DispatchAction
                entryid = 
                    request.getParameter(RollerRequest.WEBLOGENTRYID_KEY);
            }
-
+           Roller roller = RollerFactory.getRoller();
            RollerContext rctx= RollerContext.getRollerContext(request);
-           WeblogManager wmgr= RollerFactory.getRoller().getWeblogManager();
+           WeblogManager wmgr= roller.getWeblogManager();
            entry = wmgr.retrieveWeblogEntry(entryid);
 
            RollerSession rses = RollerSession.getRollerSession(request);
            if (rses.isUserAuthorizedToAuthor(entry.getWebsite()))
            {
-               String title = entry.getTitle();
-
                // Run entry through registered PagePlugins
-               PageHelper pageHelper = 
-                   PageHelper.createPageHelper(request, response);
-               pageHelper.setSkipFlag(true); // don't process ReadMorePlugin
-               // we have to wrap the entry for rendering because the
-               // page helper requires wrapped objects
-               String excerpt = pageHelper.renderPlugins(WeblogEntryDataWrapper.wrap(entry));
+               PagePluginManager ppmgr = roller.getPagePluginManager();
+               Map plugins = ppmgr.createAndInitPagePlugins( 
+                   entry.getWebsite(),
+                   RollerContext.getRollerContext(request).getServletContext(),
+                   RollerContext.getRollerContext(request).getAbsoluteContextUrl(),
+                   new VelocityContext());
+               
+               WeblogEntryData applied = 
+                   ppmgr.applyPagePlugins(entry, plugins, true);
+               String title = applied.getTitle();
+               String excerpt = applied.getText();
                excerpt = StringUtils.left( Utilities.removeHTML(excerpt),255 );
 
-               String url = rctx.createEntryPermalink(entry, request, true);
-               String blog_name = entry.getWebsite().getName();
+               String url = rctx.createEntryPermalink(applied, request, true);
+               String blog_name = applied.getWebsite().getName();
 
                if (form.getTrackbackUrl() != null)
                {

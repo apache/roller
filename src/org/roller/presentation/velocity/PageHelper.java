@@ -2,7 +2,6 @@ package org.roller.presentation.velocity;
 import java.net.MalformedURLException;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -18,6 +17,11 @@ import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.roller.RollerException;
+import org.roller.model.PagePlugin;
+import org.roller.model.PagePluginManager;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.pojos.wrapper.RefererDataWrapper;
@@ -50,7 +54,7 @@ public class PageHelper
     private PageContext          mPageContext = null;
     private HttpServletResponse  mResponse = null;     
     private RollerRequest        mRollerReq = null;  
-    private Map                  mPagePlugins = new LinkedHashMap();  // Plugins keyed by name   
+    private Map                  mPagePlugins = null;  // Plugins keyed by name   
     private boolean              mSkipFlag = false;
     private WebsiteData          mWebsite = null;
     
@@ -60,78 +64,37 @@ public class PageHelper
      * Initialize VelocityHelper, setting the variables it will be hiding from
      * the Velocimacros.
      */
-    public PageHelper(
-            RollerRequest rreq, HttpServletResponse response, Context ctx)
+    public PageHelper( 
+            HttpServletRequest request, 
+            HttpServletResponse response, 
+            Context ctx) throws RollerException
     {
         mVelocityContext = ctx;
-        mRollerReq = rreq;
+        mRollerReq = RollerRequest.getRollerRequest(request);
         mResponse = response;
-        if (rreq != null) 
+        if (mRollerReq != null) 
         {
-            mPageContext = rreq.getPageContext();
-            if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null)
+            mPageContext = mRollerReq.getPageContext();
+            if (request.getAttribute(RollerRequest.OWNING_WEBSITE) != null)
             {
                 mWebsite = (WebsiteData)
-                    rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
+                    request.getAttribute(RollerRequest.OWNING_WEBSITE);
             }
-            else if ( rreq.getWebsite() != null )
+            else if (mRollerReq.getWebsite() != null )
             {
-                mWebsite = rreq.getWebsite();
+                mWebsite = mRollerReq.getWebsite();
             }
         }
-        
         if (mVelocityContext == null) mVelocityContext = new VelocityContext();
+        Roller roller = RollerFactory.getRoller(); 
+        PagePluginManager ppmgr = roller.getPagePluginManager();
+        mPagePlugins = ppmgr.createAndInitPagePlugins(
+                mWebsite, 
+                RollerContext.getRollerContext(request).getServletContext(),
+                RollerContext.getRollerContext(request).getAbsoluteContextUrl(),
+                mVelocityContext);
     }
-    
-    //------------------------------------------------------------------------
-    
-    /**
-     * Initialized VelocityHelper without a Velocity Context.
-     */
-    public PageHelper(RollerRequest rreq, HttpServletResponse response)
-    {
-        this(rreq, response, null);
-    }
-
-    //------------------------------------------------------------------------
-    /**
-     * Return a PageHelper with a new VelocityContext, 
-     * added to support the ApplyPlugins JSP tag.
-     */
-    public static PageHelper createPageHelper(
-        HttpServletRequest request, HttpServletResponse response)
-    {
-        Context ctx = (Context)(new VelocityContext());
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        PageHelper pageHelper = new PageHelper(rreq, response, ctx);
-        pageHelper.initializePlugins(ContextLoader.getPagePluginClasses());
-
-        return pageHelper;
-    }
-
-    //------------------------------------------------------------------------
-    /**
-     * Create individual instances of the PagePlugins for use by this PageHelper.
-     */
-    protected void initializePlugins(Map pluginClasses) 
-    {
-        Iterator it = pluginClasses.values().iterator();
-        while (it.hasNext()) 
-        {
-            try
-            {
-                Class pluginClass = (Class)it.next();
-                PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
-                plugin.init(mRollerReq, mVelocityContext);
-                mPagePlugins.put(plugin.getName(), plugin);
-            }
-            catch (Exception e)
-            {
-                mLogger.warn("Unable to init() PagePlugin: ", e    );
-            }
-        }
-    }
-
+   
     //------------------------------------------------------------------------
     /**
      * This is a quasi-hack: there are places we don't want to render the

@@ -112,12 +112,14 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask
                             sub.setTitle(website.getName());
                             sub.setFeedUrl(feedUrl);
                             sub.setSiteUrl(siteUrl);
+                            sub.setAuthor(website.getHandle());
                             planet.saveSubscription(sub);
                             group.addSubscription(sub);
                         }
                         else
                         {
                             sub.setTitle(website.getName());
+                            sub.setAuthor(website.getHandle());
                             planet.saveSubscription(sub);
                         }
                     }

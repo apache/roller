@@ -15,8 +15,7 @@ import org.roller.model.UserManager;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.PagePlugin;
+import org.roller.model.PagePlugin;
 
 import java.util.Iterator;
 import java.util.Properties;
@@ -61,10 +60,14 @@ public class AcronymsPlugin implements PagePlugin
 	/**
 	 * @see org.roller.presentation.velocity.PagePlugin#init(org.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
 	 */
-	public void init(RollerRequest rreq, Context ctx) throws RollerException
+	public void init(
+            WebsiteData website,
+            Object config,
+            String baseURL,
+            Context ctx) throws RollerException
 	{
 		if (mLogger.isDebugEnabled()) {
-			mLogger.debug("init( rreq = "+rreq+", ctx = "+ctx+" )");
+			mLogger.debug("init(ctx = "+ctx+" )");
 		}
 	}
     

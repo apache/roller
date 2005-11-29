@@ -56,9 +56,6 @@ public class ContextLoader
 {   
     private RollerRequest mRollerReq = null;
     
-    // Plugin classes keyed by plugin name
-    static Map mPagePlugins = new LinkedHashMap();
-    
     private static Log mLogger = 
        LogFactory.getFactory().getInstance(ContextLoader.class);
 
@@ -94,9 +91,9 @@ public class ContextLoader
         }
         
         // Add Velocity page helper to context
-        PageHelper pageHelper = new PageHelper(rreq, response, ctx);
-        pageHelper.initializePlugins(mPagePlugins);
-        ctx.put("pageHelper", pageHelper );
+        PageHelper pageHelper = new PageHelper(request, response, ctx);
+        Roller roller = RollerFactory.getRoller();
+        ctx.put("pageHelper", pageHelper);
 
         // Load standard Roller objects and values into the context 
         String handle = loadWebsiteValues(ctx, rreq, rollerCtx );
@@ -467,80 +464,6 @@ public class ContextLoader
     }
     
     //------------------------------------------------------------------------
-
-    /**
-     * Initialize PagePlugins declared in web.xml, called once by RollerContext.
-     * By using the full class name we also allow for the implementation of 
-     * "external" Plugins (maybe even packaged seperately). These classes are 
-     * then later instantiated by PageHelper.
-     */
-    public static void initializePagePlugins(ServletContext mContext)
-    {
-        mLogger.debug("Initializing page plugins");
-        
-        String pluginStr = RollerConfig.getProperty("plugins.page");
-        if (mLogger.isDebugEnabled()) mLogger.debug(pluginStr);
-        if (pluginStr != null)
-        {
-            String[] plugins = StringUtils.stripAll(
-                                   StringUtils.split(pluginStr, ",") );
-            for (int i=0; i<plugins.length; i++)
-            {
-                if (mLogger.isDebugEnabled()) mLogger.debug("try " + plugins[i]);
-                try
-                {
-                    Class pluginClass = Class.forName(plugins[i]);
-                    if (isPagePlugin(pluginClass))
-                    {
-                        PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
-                        mPagePlugins.put(plugin.getName(), pluginClass);
-                    }
-                    else
-                    {
-                        mLogger.warn(pluginClass + " is not a PagePlugin");
-                    }
-                } 
-                catch (ClassNotFoundException e)
-                {
-                    mLogger.error("ClassNotFoundException for " + plugins[i]);
-                }
-                catch (InstantiationException e)
-                {
-                    mLogger.error("InstantiationException for " + plugins[i]);
-                }
-                catch (IllegalAccessException e)
-                {
-                    mLogger.error("IllegalAccessException for " + plugins[i]);
-                }
-            }
-        }
-    }
-    
-    /**
-     * @param pluginClass
-     * @return
-     */
-    private static boolean isPagePlugin(Class pluginClass)
-    {
-        Class[] interfaces = pluginClass.getInterfaces();
-        for (int i=0; i<interfaces.length; i++)
-        {
-            if (interfaces[i].equals(PagePlugin.class)) return true;
-        }
-        return false;
-    }
-
-    public static boolean hasPlugins()
-    {
-        mLogger.debug("mPluginClasses.size(): " + mPagePlugins.size());
-        return (mPagePlugins != null && mPagePlugins.size() > 0);
-    }
-    
-    public static Map getPagePluginClasses()
-    {
-        return mPagePlugins;
-    }
-
 
     private static final String TOOLBOX_KEY = 
         "org.roller.presentation.velocity.toolbox";

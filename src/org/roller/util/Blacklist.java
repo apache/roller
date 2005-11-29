@@ -1,13 +1,10 @@
-/*
- * Created on Nov 11, 2003
- */
+/* Created on Nov 11, 2003 */
 package org.roller.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,97 +14,87 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.roller.config.RollerConfig;
 
-
 /**
- * Based on the list provided by Jay Allen for MT-Blacklist:
- *  http://www.jayallen.org/projects/mt-blacklist/
+ * Loads MT-Blacklist style blacklist from disk and allows callers to test
+ * strings against the blacklist and (optionally) addition blacklists.
+ * <br />
+ * First looks for blacklist.txt in uploads directory, than in classpath 
+ * as /blacklist.txt. Download from web feature disabed.
+ * <br />
+ * Blacklist is formatted one entry per line. 
+ * Any line that begins with # is considered to be a comment. 
+ * Any line that begins with ( is considered to be a regex expression. 
+ * <br />
+ * For more information on the (discontinued) MT-Blacklist service:
+ * http://www.jayallen.org/projects/mt-blacklist. 
  *
- * Will provide response whether submitted string
- * contains an item listed in the supplied blacklist.
- * This implementation does not do everything
- * MT-Blacklist does, such as the "Search &amp; De-spam mode".
- *
- * @author lance
+ * @author Lance Lavandowska
  * @author Allen Gilliland
  */
 public class Blacklist {
     
     private static Log mLogger = LogFactory.getLog(Blacklist.class);
     
+    private static Blacklist blacklist;
     private static final String blacklistFile = "blacklist.txt";
-    private static final String blacklistURL = 
-            "http://www.jayallen.org/comment_spam/blacklist.txt";
     private static final String lastUpdateStr = "Last update:";
 
-    private static Blacklist blacklist;
-    
-    // Non-Static attributes
+    /** We no longer have a blacklist update URL */
+    private static final String blacklistURL = null; 
+
     private String uploadDir = null;
     private Date lastModified = null;
     private List blacklistStr = new LinkedList();
     private List blacklistRegex = new LinkedList();
     
-    
     // setup our singleton at class loading time
     static {
         mLogger.info("Initializing MT Blacklist");
-        
         blacklist = new Blacklist();
         blacklist.loadBlacklistFromFile();
     }
-
     
-    /**
-     * Hide constructor
-     */
+    /** Hide constructor */
     private Blacklist() {
         this.uploadDir = RollerConfig.getProperty("uploads.dir");
     }
-    
-    
-    /**
-     * Singleton factory method.
-     */
+      
+    /** Singleton factory method. */
     public static Blacklist getBlacklist() {
         return blacklist;
     }
     
-    
-    /**
-     * Updated MT blacklist if necessary.
-     */
+    /** Updated MT blacklist if necessary. */
     public static void checkForUpdate() {
         getBlacklist().update();
     }
     
-    
-    /**
-     * Non-Static update method.
-     */
+    /** Non-Static update method. */
     public void update() {
-        boolean blacklist_updated = this.downloadBlacklist();
-        
-        if(blacklist_updated)
-            this.loadBlacklistFromFile();
+        if (this.blacklistURL != null) {
+            boolean blacklist_updated = this.downloadBlacklist();
+            if (blacklist_updated) {
+                this.loadBlacklistFromFile();
+            }
+        }
     }
-    
-    
-    /**
-     * Download the MT blacklist from the web to our uploads directory.
-     */
+        
+    /** Download the MT blacklist from the web to our uploads directory. */
     private boolean downloadBlacklist() {
         
         boolean blacklist_updated = false;
         try {
-            mLogger.debug("attempting to download MT blacklist");
+            mLogger.debug("Attempting to download MT blacklist");
             
             URL url = new URL(blacklistURL);
             HttpURLConnection connection = 
@@ -176,11 +163,9 @@ public class Blacklist {
         
         return blacklist_updated;
     }
-    
-    
+        
     /**
      * Load the MT blacklist from the file system.
-     *
      * We look for a previously downloaded version of the blacklist first and
      * if it's not found then we load the default blacklist packed with Roller.
      */
@@ -193,34 +178,32 @@ public class Blacklist {
             
             // check our lastModified date to see if we need to re-read the file
             if(this.lastModified != null &&
-                    this.lastModified.getTime() >= blacklistFile.lastModified()) {
-                
+                    this.lastModified.getTime() >= blacklistFile.lastModified()) {               
                 mLogger.debug("Blacklist is current, no need to load again");
                 return;
             } else {
                 this.lastModified = new Date(blacklistFile.lastModified());
-            }
+            }           
+            txtStream = new FileInputStream(blacklistFile);           
+            mLogger.info("Loading blacklist from "+path);
             
-            txtStream = new FileInputStream(blacklistFile);
-            
-            mLogger.debug("Loading blacklist from "+path);
         } catch (Exception e) {
             // Roller keeps a copy in the webapp just in case
-            txtStream = getClass().getResourceAsStream("/"+blacklistFile);
-            
-            mLogger.debug("Couldn't find downloaded blacklist, "+
-                    "loading from classpath instead");
+            txtStream = getClass().getResourceAsStream("/"+blacklistFile);           
+            mLogger.warn("Couldn't find downloaded blacklist, " 
+                        + "loading from classpath instead");
         }
         
         if (txtStream != null) {
             readFromStream(txtStream, false);
         } else {
-            mLogger.error("couldn't load a blacklist file from anywhere, "+
-                    "this means blacklist checking is disabled for now.");
+            mLogger.error("Couldn't load a blacklist file from anywhere, "
+                        + "this means blacklist checking is disabled for now.");
         }
+        mLogger.info("Number of blacklist string rules: "+blacklistStr.size());
+        mLogger.info("Number of blacklist regex rules: "+blacklistRegex.size());
     }
-    
-    
+       
     /**
      * Read in the InputStream for rules.
      * @param txtStream
@@ -253,10 +236,6 @@ public class Blacklist {
         return buf.toString();
     }
     
-    
-    /**
-     * @param str
-     */
     private void readRule(String str) {
         if (StringUtils.isEmpty(str)) return; // bad condition
         
@@ -276,12 +255,8 @@ public class Blacklist {
             blacklistStr.add(rule);
         }
     }
-    
-    
-    /**
-     * Try to parse out "Last update" value: 2004/03/08 23:17:30.
-     * @param str
-     */
+        
+    /** Read comment and try to parse out "Last update" value */
     private void readComment(String str) {
         int lastUpdatePos = str.indexOf(lastUpdateStr);
         if (lastUpdatePos > -1) {
@@ -295,15 +270,23 @@ public class Blacklist {
             }
         }
     }
-    
-    
-    /**
-     * Does the String argument match any of the rules in the blacklist?
-     *
-     * @param str
-     * @return
+       
+    /** 
+     * Does the String argument match any of the rules in the built-in blacklist? 
      */
     public boolean isBlacklisted(String str) {
+        return isBlacklisted(str, null, null);
+    }
+    
+    /** 
+     * Does the String argument match any of the rules in the built-in blacklist
+     * plus additional blacklists provided by caller?
+     * @param str             String to be checked against blacklist
+     * @param moreStringRules Additional string rules to consider
+     * @param moreRegexRules  Additional regex rules to consider 
+     */
+    public boolean isBlacklisted(
+         String str, List moreStringRules, List moreRegexRules) {
         if (str == null || StringUtils.isEmpty(str)) return false;
         
         // First iterate over blacklist, doing indexOf.
@@ -311,32 +294,50 @@ public class Blacklist {
         // As soon as there is a hit in either case return true
         
         // test plain String.indexOf
-        if( testStringRules(str) ) return true;
+        List stringRules = blacklistStr;
+        if (moreStringRules != null && moreStringRules.size() > 0) {
+            stringRules = new ArrayList();
+            stringRules.addAll(blacklistStr);
+            stringRules.addAll(moreStringRules);
+        }
+        if (testStringRules(str, stringRules)) return true;
         
         // test regex blacklisted
-        return testRegExRules(str);
-    }
-    
-    
-    /**
-     * Test String against the RegularExpression rules.
-     *
-     * @param str
-     * @return
+        List regexRules = blacklistRegex;
+        if (moreRegexRules != null && moreRegexRules.size() > 0) {
+            regexRules = new ArrayList();
+            regexRules.addAll(blacklistRegex);
+            regexRules.addAll(moreRegexRules);
+        }
+        return testRegExRules(str, regexRules);
+    }      
+
+    /** 
+     * Test string only against rules provided by caller.
+     * @param str             String to be checked against rules
+     * @param moreStringRules String rules to consider
+     * @param moreRegexRules  Regex rules to consider 
      */
-    private boolean testRegExRules(String str) {
+    public static boolean matches(
+        String str, List stringRules, List regexRules) {
+        if (testStringRules(str, stringRules)) return true;
+        return testRegExRules(str, regexRules);  
+    }
+        
+    /** Test String against the RegularExpression rules. */
+    private static boolean testRegExRules(String str, List regexRules) {
         boolean hit = false;
         Pattern testPattern = null;
-        Iterator iter = blacklistRegex.iterator();
+        Iterator iter = regexRules.iterator();
         while (iter.hasNext()) {
             testPattern = (Pattern)iter.next();
             
-            // want to see what it is matching on
-            // if we are in "debug mode"
+            // want to see what it is matching on, but only in debug mode
             if (mLogger.isDebugEnabled()) {
                 Matcher matcher = testPattern.matcher(str);
                 if (matcher.find()) {
-                    mLogger.debug(matcher.group() + " matched by " + testPattern.pattern());
+                    mLogger.debug(matcher.group() 
+                         + " matched by " + testPattern.pattern());
                     hit = true;
                     break;
                 }
@@ -348,25 +349,17 @@ public class Blacklist {
             }
         }
         return hit;
-    }
+    }    
     
-    
-    /**
-     * Test the String against the String rules,
-     * using simple indexOf.
-     *
-     * @param str
-     * @return
-     */
-    private boolean testStringRules(String str) {
+    /** Test the String against the String rules, using simple indexOf. */
+    private static boolean testStringRules(String str, List stringRules) {
         String test;
-        Iterator iter = blacklistStr.iterator();
+        Iterator iter = stringRules.iterator();
         boolean hit = false;
         while (iter.hasNext()) {
             test = (String)iter.next();
-            //System.out.println("check against |" + test + "|");
             if (str.indexOf(test) > -1) {
-                // want to see what it is matching on
+                // want to see what it is matching on, but only in debug mode
                 if (mLogger.isDebugEnabled()) {
                     mLogger.debug("matched:" + test + ":");
                 }
@@ -375,12 +368,9 @@ public class Blacklist {
             }
         }
         return hit;
-    }
+    }   
     
-    
-    /**
-     * Return pretty list of String and RegEx rules.
-     */
+    /** Return pretty list of String and RegEx rules. */
     public String toString() {
         StringBuffer buf = new StringBuffer("blacklist ");
         buf.append(blacklistStr).append("\n");

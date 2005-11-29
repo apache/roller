@@ -6,13 +6,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.context.Context;
 import org.roller.RollerException;
 import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.PagePlugin;
+import org.roller.model.PagePlugin;
 
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.roller.pojos.WebsiteData;
 
 /**
  * Converts ascii emoticons into HTML image tags.
@@ -79,16 +79,15 @@ public class SmileysPlugin implements PagePlugin
      * 
      * @see org.roller.presentation.velocity.PagePlugin#init(org.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
      */
-    public synchronized void init(RollerRequest rreq, Context ctx) throws RollerException
+    public synchronized void init(
+            WebsiteData website,
+            Object servletContext,
+            String baseURL,
+            Context ctx) throws RollerException
     {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1)
         {
-            String contextPath = "";
-            if (rreq != null && rreq.getRequest() != null) 
-            {
-                contextPath = rreq.getRequest().getContextPath();
-            }
             Pattern[] tempP = new Pattern[SmileysPlugin.smileyDefs.size()];
             String[] tempS = new String[SmileysPlugin.smileyDefs.size()];
             //System.out.println("# smileys: " + smileyDefs.size());
@@ -100,7 +99,7 @@ public class SmileysPlugin implements PagePlugin
                 String smileyAlt = htmlEscape(smiley);
                 tempP[count] = Pattern.compile(regexEscape(smiley));
                 tempS[count] = "<img src=\"" + 
-                               contextPath + "/images/smileys/" + 
+                               baseURL + "images/smileys/" + 
                                smileyDefs.getProperty(smiley, "smile.gif") +
                                "\" class=\"smiley\"" + 
                                " alt=\"" + smileyAlt + "\"" +

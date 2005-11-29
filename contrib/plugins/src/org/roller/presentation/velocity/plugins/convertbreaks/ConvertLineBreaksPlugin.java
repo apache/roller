@@ -1,8 +1,4 @@
-/*
- * ConvertLineBreaksPlugin.java
- *
- * Created on July 10, 2005, 3:17 PM
- */
+/* Created on July 10, 2005, 3:17 PM */
 
 package org.roller.presentation.velocity.plugins.convertbreaks;
 
@@ -13,8 +9,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.context.Context;
 import org.roller.RollerException;
 import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.PagePlugin;
+import org.roller.pojos.WebsiteData;
+import org.roller.model.PagePlugin;
 
 /**
  * Simple page plugin that converts paragraphs of plain text into html paragraphs.
@@ -54,7 +50,11 @@ public class ConvertLineBreaksPlugin implements PagePlugin {
         return description;
     }
     
-    public void init(RollerRequest rreq, Context ctx) throws RollerException {
+    public void init(
+            WebsiteData website,
+            Object config,
+            String baseURL,
+            Context ctx) throws RollerException {
         // we don't need to do any init.
         mLogger.debug("initing");
     }

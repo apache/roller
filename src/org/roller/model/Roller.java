@@ -95,6 +95,11 @@ public interface Roller extends Serializable
      */
     public ThemeManager getThemeManager() throws RollerException;
     
+    /**
+     * Get PagePluginManager associated with this Roller instance.
+     */
+    public PagePluginManager getPagePluginManager() throws RollerException;
+    
     /** Begin transaction for a thread.
      */ 
     public void begin() throws RollerException;

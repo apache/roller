@@ -17,17 +17,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.business.BookmarkManagerTest;
 import org.roller.config.RollerConfig;
+import org.roller.model.PlanetManager;
+import org.roller.model.PropertiesManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
-import org.roller.pojos.PermissionsData;
-import org.roller.pojos.Theme;
+import org.roller.pojos.PlanetConfigData;
+import org.roller.pojos.PlanetGroupData;
+import org.roller.pojos.RollerPropertyData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
-import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 
 /**
@@ -117,7 +119,32 @@ public abstract class RollerTestBase extends TestCase
         mWebsite = (WebsiteData)umgr.getWebsites(mUser, null).get(0);
         getRoller().commit();
         
-        RollerConfig.setContextPath("./build/roller");
+        RollerConfig.setContextRealPath("./build/roller");
+        
+        getRoller().begin(UserData.SYSTEM_USER);
+        PropertiesManager propmgr = getRoller().getPropertiesManager();
+        Map props = propmgr.getProperties();
+        RollerPropertyData prop = 
+            (RollerPropertyData)props.get("site.absoluteurl");
+        prop.setValue("http://localhost:8080/roller");
+        propmgr.store(props);
+        getRoller().commit();
+        
+        getRoller().begin(UserData.SYSTEM_USER);
+        PlanetManager planet = getRoller().getPlanetManager();
+        PlanetConfigData config = config = new PlanetConfigData();
+        config.setCacheDir("");
+        config.setTitle("Test");
+        config.setAdminEmail("admin@example.com");
+        planet.saveConfiguration(config);
+        getRoller().commit();
+        
+        getRoller().begin(UserData.SYSTEM_USER);
+        PlanetGroupData group = new PlanetGroupData();
+        group.setHandle("external");
+        group.setTitle("external");
+        planet.saveGroup(group);
+        getRoller().commit();        
     }
 
     //-----------------------------------------------------------------------
