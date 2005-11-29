@@ -255,7 +255,10 @@ public abstract class UserManagerImpl implements UserManager
             "",                  // emailFromAddress
             Boolean.TRUE,        // isEnabled
             email,               // emailAddress
-            new Date());
+            new Date(),          // dateCreated
+            Boolean.TRUE,        // defaultAllowComments
+            0,                   // defaultCommentDays
+            Boolean.FALSE);      // moderateComments
         website.setEditorTheme(theme);
         website.setLocale(locale);
         website.setTimeZone(timeZone);

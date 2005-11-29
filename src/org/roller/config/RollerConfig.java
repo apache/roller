@@ -187,9 +187,9 @@ public class RollerConfig {
      *
      * This property is *not* persisted in any way.
      */
-    public static void setContextPath(String path) {
+    public static void setContextRealPath(String path) {
 
         mConfig.setProperty("context.realpath", path);
     }
-
+    
 }

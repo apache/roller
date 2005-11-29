@@ -9,8 +9,8 @@ import org.radeox.EngineManager;
 import org.radeox.engine.context.BaseRenderContext;
 import org.radeox.engine.context.RenderContext;
 import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.PagePlugin;
+import org.roller.model.PagePlugin;
+import org.roller.pojos.WebsiteData;
 
 /**
  * @author David M Johnson
@@ -34,7 +34,11 @@ public class WikiPlugin implements PagePlugin
     /** 
      * Put plugin into the page context so templates may access it.
      */
-    public void init(RollerRequest rreq, Context ctx)
+    public void init(
+            WebsiteData website,
+            Object config,
+            String baseURL,
+            Context ctx)
     {
         ctx.put("wikiRenderer",this);
     }

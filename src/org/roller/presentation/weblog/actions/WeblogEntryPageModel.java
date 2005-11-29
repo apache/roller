@@ -1,6 +1,4 @@
-/*
- * Created on Mar 10, 2004
- */
+/* Created on Mar 10, 2004 */
 package org.roller.presentation.weblog.actions;
 
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.roller.RollerException;
 import org.roller.model.RollerFactory;
-import org.roller.model.WeblogManager;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.presentation.BasePageModel;
@@ -25,7 +22,7 @@ import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.tags.calendar.CalendarModel;
-import org.roller.presentation.velocity.ContextLoader;
+import org.roller.presentation.weblog.actions.WeblogEntryPageModel.PageMode;
 import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
 import org.roller.presentation.weblog.tags.EditWeblogCalendarModel;
 import org.roller.util.StringUtils;
@@ -34,7 +31,9 @@ import com.swabunga.spell.event.SpellCheckEvent;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.roller.presentation.velocity.PagePlugin;
+import org.apache.velocity.VelocityContext;
+import org.roller.model.PagePluginManager;
+import org.roller.model.Roller;
 
 /**
  * All data needed to render the edit-weblog page.
@@ -49,7 +48,6 @@ public class WeblogEntryPageModel extends BasePageModel
     private PageMode mode = null;
     private ArrayList words = null;
     private WeblogEntryFormEx form;
-    private List comments = null;
     private WeblogEntryData weblogEntry;
         
     public static class PageMode {
@@ -92,15 +90,8 @@ public class WeblogEntryPageModel extends BasePageModel
         super("dummy", request, response, mapping);
         this.rollerRequest = RollerRequest.getRollerRequest(request);  
         this.form = form;
-        this.mode = mode;
-        
+        this.mode = mode;       
         getRequest().setAttribute("leftPage","/weblog/WeblogEditSidebar.jsp");
-        
-        if (null != form.getId()) 
-        {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            comments = wmgr.getComments(form.getId(), false);
-        }
     }
     
     public String getTitle() 
@@ -196,30 +187,35 @@ public class WeblogEntryPageModel extends BasePageModel
 
     public boolean getHasPagePlugins()
     {
-        return ContextLoader.hasPlugins();
+        boolean ret = false;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            PagePluginManager ppmgr = roller.getPagePluginManager();
+            ret = ppmgr.hasPagePlugins();
+        } catch (RollerException e) {
+            logger.error(e);
+        }
+        return ret;
     }
     
     public List getPagePlugins() 
     {
         List list = new ArrayList();
-        if (getHasPagePlugins()) 
-        {
-            Map pluginClasses = ContextLoader.getPagePluginClasses();
-            Iterator it = pluginClasses.values().iterator();
-            while (it.hasNext()) 
+        try {
+            if (getHasPagePlugins()) 
             {
-                try
-                {
-                    Class pluginClass = (Class)it.next();
-                    PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
-                    // no need to init plugins, we're not gonna run them
-                    list.add(plugin);
-                }
-                catch (Exception e)
-                {
-                    logger.warn("Unable to create a PagePlugin: ", e);
-                }
-            }  
+                Roller roller = RollerFactory.getRoller();
+                PagePluginManager ppmgr = roller.getPagePluginManager();
+                Map plugins = ppmgr.createAndInitPagePlugins(
+                    getWebsite(),
+                    RollerContext.getRollerContext(request).getServletContext(),
+                    RollerContext.getRollerContext(request).getAbsoluteContextUrl(),
+                    new VelocityContext());
+                Iterator it = plugins.values().iterator();
+                while (it.hasNext()) list.add(it.next());
+            }
+        } catch (Exception e) {
+            logger.error(e);
         }
         return list;
     }
@@ -260,11 +256,6 @@ public class WeblogEntryPageModel extends BasePageModel
         RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogCategories(weblogEntry.getWebsite(), false);
-    }
-
-    public List getComments() throws Exception
-    {
-        return comments;
     }
     
     public WeblogEntryFormEx getWeblogEntryForm() throws RollerException
@@ -397,6 +388,13 @@ public class WeblogEntryPageModel extends BasePageModel
     {
         return getRollerSession().isUserAuthorizedToAuthor(getWeblogEntry().getWebsite());
     }
+
+    public PageMode getEDIT_MODE() {
+        return EDIT_MODE;
+    }
     
-    
+    public int getCommentCount() {
+        List comments = weblogEntry.getComments(false, false);
+        return comments != null ? comments.size() : 0;
+    }
 }

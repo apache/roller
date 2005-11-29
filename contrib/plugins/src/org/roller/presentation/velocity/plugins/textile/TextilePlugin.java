@@ -1,13 +1,14 @@
 
 package org.roller.presentation.velocity.plugins.textile;
 
+import javax.servlet.ServletConfig;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.context.Context;
 import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.PagePlugin;
+import org.roller.pojos.WebsiteData;
+import org.roller.model.PagePlugin;
 
 /**
  * @author David M Johnson
@@ -33,7 +34,11 @@ public class TextilePlugin implements PagePlugin
     /** 
      * Put plugin into the page context so templates may access it.
      */
-    public void init(RollerRequest rreq, Context ctx)
+    public void init(
+            WebsiteData website,
+            Object config,
+            String baseURL,
+            Context ctx)
     {
         ctx.put("textileRenderer",this);
     }

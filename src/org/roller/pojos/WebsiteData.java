@@ -59,6 +59,9 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     private String  defaultPlugins = null;
     private Boolean enabled = Boolean.TRUE;
     private Date dateCreated = null;
+    private Boolean defaultAllowComments = Boolean.TRUE;
+    private int defaultCommentDays = 0;
+    private Boolean moderateComments = Boolean.FALSE;
        
     // Associated objects
     private UserData creator = null; // TODO: decide if website.user is needed
@@ -88,7 +91,11 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                        final String   emailFromAddress,
                        final Boolean  enabled,
                        final String   emailAddress,
-                       final Date     dateCreated)
+                       final Date     dateCreated,
+                       final Boolean  defaultAllowComments,
+                       final int      defaultCommentDays,
+                       final Boolean  moderateComments
+                       )
     {
         this.id = id;
         this.name = name;
@@ -107,7 +114,9 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.emailFromAddress = emailFromAddress;
         this.enabled = enabled;
         this.emailAddress = emailAddress;
-        this.dateCreated = dateCreated;
+        this.defaultAllowComments = defaultAllowComments;
+        this.defaultCommentDays = defaultCommentDays;
+        this.moderateComments = moderateComments;
     }
 
     public WebsiteData(WebsiteData otherData)
@@ -572,6 +581,48 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     public void setAllowComments(Boolean allowComments)
     {
         this.allowComments = allowComments;
+    }
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="defaultallowcomments" non-null="true" unique="false"
+     */
+    public Boolean getDefaultAllowComments() {
+        return defaultAllowComments;
+    }
+
+    /** @ejb:persistent-field */
+    public void setDefaultAllowComments(Boolean defaultAllowComments) {
+        this.defaultAllowComments = defaultAllowComments;
+    }
+
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="defaultcommentdays" non-null="true" unique="false"
+     */
+    public int getDefaultCommentDays() {
+        return defaultCommentDays;
+    }
+
+    /** @ejb:persistent-field */
+    public void setDefaultCommentDays(int defaultCommentDays) {
+        this.defaultCommentDays = defaultCommentDays;
+    }
+
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="commentmod" non-null="true" unique="false"
+     */
+    public Boolean getModerateComments() {
+        return moderateComments;
+    }
+
+    /** @ejb:persistent-field */
+    public void setModerateComments(Boolean moderateComments) {
+        this.moderateComments = moderateComments;
     }
 
     /**
@@ -1053,5 +1104,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     {
         // no-op
     }
+
+
 }
 

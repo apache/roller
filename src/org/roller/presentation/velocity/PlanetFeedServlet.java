@@ -11,6 +11,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.servlet.VelocityServlet;
 import org.roller.RollerException;
+import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.PlanetManager;
 import org.roller.model.RollerFactory;
 import org.roller.presentation.RollerRequest;
@@ -69,6 +70,27 @@ public class PlanetFeedServlet extends VelocityServlet
             context.put("planet", planet);
             context.put("date", new Date());
             context.put("utilities", new Utilities());
+            
+            int entryCount = 
+                RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+            int maxEntries = 
+                RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
+            String sCount = request.getParameter("count");
+            if (sCount!=null)
+            {
+                try
+                {
+                    entryCount = Integer.parseInt(sCount);
+                }
+                catch (NumberFormatException e)
+                {
+                    mLogger.warn("Improperly formatted count parameter");
+                }
+                if ( entryCount > maxEntries ) entryCount = maxEntries;
+                if ( entryCount < 0 ) entryCount = 0;
+            }
+            context.put("entryCount", new Integer(entryCount));            
+            
             return getTemplate("planetrss.vm");
         }
         catch (Exception e)

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import org.roller.config.RollerRuntimeConfig;
 import org.roller.util.rome.ContentModule;
 
 import org.roller.util.Utilities;
@@ -31,7 +33,12 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
 // this will be needed for ROME v0.8
-//import com.sun.syndication.feed.synd.SyndPerson;
+import com.sun.syndication.feed.synd.SyndPerson;
+import java.util.Map;
+import org.roller.RollerException;
+import org.roller.model.PagePluginManager;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 
 /**
  * A syndication feed entry intended for use in an in-memory or database cache to 
@@ -73,18 +80,30 @@ public class PlanetEntryData extends PersistentObject
         initFromRomeEntry(romeFeed, romeEntry);
     }
     
+    /**
+     * Create entry from Rome entry.
+     */
+    public PlanetEntryData(
+            WeblogEntryData rollerEntry, 
+            PlanetSubscriptionData sub, 
+            Map pagePlugins) throws RollerException
+    {
+        setSubscription(sub);
+        initFromRollerEntry(rollerEntry, pagePlugins);
+    }
+    
     /** 
      * Init entry from Rome entry 
      */
     private void initFromRomeEntry(SyndFeed romeFeed, SyndEntry romeEntry)
     {
-        setAuthor(romeEntry.getAuthor());
+        //setAuthor(romeEntry.getAuthor());
         // this will be needed (instead of the previous line) for ROME v0.8
-        //List authors = romeEntry.getAuthors();
-        //if (authors!=null && authors.size() > 0) {
-            //SyndPerson person = (SyndPerson)authors.get(0);
-            //setAuthor(person.getName());
-        //}
+        List authors = romeEntry.getAuthors();
+        if (authors!=null && authors.size() > 0) {
+            SyndPerson person = (SyndPerson)authors.get(0);
+            setAuthor(person.getName());
+        }
         setTitle(romeEntry.getTitle());
         setPermalink(romeEntry.getLink());
         
@@ -99,18 +118,6 @@ public class PlanetEntryData extends PersistentObject
         {
             setPublished(entrydc.getDate()); // use <dc:date>
         }       
-        // Commented out: preserve knowledge that entry has no date
-        //if (getPublished() == null) // Still no published date?
-        //{
-            //if (romeFeed.getPublishedDate() != null)
-            //{
-                //setPublished(romeFeed.getPublishedDate()); // try feed's <pubDate>
-            //}
-            //else if (feeddc != null)
-            //{
-                //setPublished(feeddc.getDate()); // try feed's <dc:date>
-            //}
-        //}
         
         // get content and unescape if it is 'text/plain' 
         if (romeEntry.getContents().size() > 0)
@@ -148,6 +155,31 @@ public class PlanetEntryData extends PersistentObject
             }
             setCategories(list);
         }
+    }
+    
+    /** 
+     * Init entry from Roller entry 
+     */
+    private void initFromRollerEntry(WeblogEntryData rollerEntry, Map pagePlugins) 
+        throws RollerException
+    {
+        Roller roller = RollerFactory.getRoller();
+        PagePluginManager ppmgr = roller.getPagePluginManager();
+        WeblogEntryData processedEntry = 
+            ppmgr.applyPagePlugins(rollerEntry, pagePlugins, true);
+        
+        setAuthor(    processedEntry.getCreator().getFullName());
+        setTitle(     processedEntry.getTitle());
+        setPermalink( processedEntry.getLink());
+        setPublished( processedEntry.getPubTime());         
+        setContent(   processedEntry.getText());
+        
+        setPermalink(RollerRuntimeConfig.getProperty("site.absoluteurl") 
+                    + processedEntry.getPermaLink());
+        
+        List cats = new ArrayList();
+        cats.add(processedEntry.getCategory().getPath());
+        setCategories(cats);   
     }
     
     //----------------------------------------------------------- persistent fields

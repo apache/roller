@@ -17,8 +17,7 @@ import org.roller.model.RollerFactory;
 import org.roller.pojos.BookmarkData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.PagePlugin;
+import org.roller.model.PagePlugin;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -31,6 +30,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.servlet.ServletConfig;
 
 /**
  * Provides an easy way to write topic tag links for Technorati (or similar services).
@@ -121,19 +121,22 @@ public class TopicTagPlugin implements PagePlugin
      * @param ctx  Plugins may place objects into the Velocity Context.
      * @see PagePlugin#init(org.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
      */
-    public void init(RollerRequest rreq, Context ctx) throws RollerException
+    public void init(
+            WebsiteData website,
+            Object config,
+            String baseURL,
+            Context ctx) throws RollerException
     {
         if (mLogger.isDebugEnabled())
         {
             mLogger.debug("TopicTagPlugin v. " + version);
         }
 
-
         // Initialize property settings
         initializeProperties();
 
         // Build map of the user's bookmarks
-        userBookmarks = buildBookmarkMap(rreq.getWebsite());
+        userBookmarks = buildBookmarkMap(website);
 
         // Determine default topic site from bookmark if present
         BookmarkData defaultTopicBookmark = (BookmarkData) userBookmarks.get(defaultTopicBookmarkName);

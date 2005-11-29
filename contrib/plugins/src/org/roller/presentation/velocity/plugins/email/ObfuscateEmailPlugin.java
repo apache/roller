@@ -9,8 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.context.Context;
 import org.roller.pojos.WeblogEntryData;
-import org.roller.presentation.RollerRequest;
-import org.roller.presentation.velocity.PagePlugin;
+import org.roller.model.PagePlugin;
+import org.roller.pojos.WebsiteData;
 import org.roller.util.RegexUtil;
 
 /**
@@ -36,7 +36,11 @@ public class ObfuscateEmailPlugin implements PagePlugin
 	/* (non-Javadoc)
 	 * @see org.roller.presentation.velocity.PagePlugin#init(org.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
 	 */
-	public void init(RollerRequest rreq, Context ctx)
+	public void init(
+            WebsiteData website,
+            Object config,
+            String baseURL,
+            Context ctx)
 	{
 	}
 
