@@ -293,6 +293,12 @@ table.edit th {
     text-align: right;
     padding-right: 5px;
 }
+tr.actionrow {
+    background: #e5e5e5;
+}
+tr.pendingcomment {
+    background: #ffcccc;
+}
 
 /* ----------------------------------------------------------------------
 Calendar styles

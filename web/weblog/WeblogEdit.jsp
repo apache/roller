@@ -32,10 +32,6 @@ function deleteWeblogEntry() {
     document.weblogEntryFormEx.method.value = "removeOk";
     postWeblogEntry();
 }
-function updateComments() {
-    document.weblogEntryFormEx.method.value = "updateComments";
-    postWeblogEntry();
-}
 function sendTrackback() {
     document.weblogEntryFormEx.method.value = "sendTrackback";
     postWeblogEntry();
@@ -108,13 +104,11 @@ function publish() {
         </html:select>
     </td></tr>
     
-    <tr><td class="entryEditFormLabel">
-        <label for="link"><fmt:message key="weblogEdit.pubTime" /></label>
-        
-        <c:if test="${model.editMode && !empty model.comments}" >
-        <a href="#comments" style="float:right"><fmt:message key="weblogEdit.comments" /></a>
-        </c:if>
-        </td><td>
+    <tr>
+        <td class="entryEditFormLabel">
+            <label for="link"><fmt:message key="weblogEdit.pubTime" /></label>
+        </td>
+        <td>
         <div>
            <html:select property="hours">
                <html:options name="model" property="hoursList" />
@@ -262,7 +256,7 @@ function publish() {
          <fmt:message key="weblogEdit.pluginsToApply" /></a>
       </div>
       <div id="pluginControl" class="miscControl" style="display:none">
-        <logic:iterate id="plugin" type="org.roller.presentation.velocity.PagePlugin"
+        <logic:iterate id="plugin" type="org.roller.model.PagePlugin"
             collection="<%= model.getPagePlugins() %>">
             <html:multibox property="pluginsArray"
                  title="<%= plugin.getName() %>" value="<%= plugin.getName() %>"
@@ -425,61 +419,6 @@ function publish() {
 
     </c:if>
 
-    <%-- ================================================================== --%>
-    <%-- Comments of this weblog entry --%>
-
-    <c:if test="${model.editMode && !empty model.comments && model.userAuthorizedToAuthor}" >
-        <br />
-        <br />
-        <a name="comments"></a>
-        <h1><fmt:message key="weblogEdit.comments" /></h1>
-        <br />
-        <table class="rollertable">
-            <tr>
-                <th class="rollertable"><fmt:message key="weblogEdit.commentDelete" /></th>
-                <th class="rollertable"><fmt:message key="weblogEdit.commentSpam" /></th>
-                <th class="rollertable"><fmt:message key="weblogEdit.comment" /></th>
-            <tr>
-            <c:forEach var="comment" items="${model.comments}">
-                <tr>
-
-                    <td class="rollertable_entry" >
-                        <html:multibox property="deleteComments">
-                            <c:out value="${comment.id}" />
-                        </html:multibox>
-                    </td>
-
-                    <td class="rollertable_entry" >
-                        <html:multibox property="spamComments">
-                            <c:out value="${comment.id}" />
-                        </html:multibox>
-                    </td>
-
-                    <td class="rollertable_entry" valign="top" >
-                        <span class="entryDetails">
-                           <fmt:message key="weblogEdit.commenterName" />
-                               [<c:out value="${comment.name}" />] |
-                           <fmt:formatDate value="${comment.postTime}" type="both"
-                               dateStyle="medium" timeStyle="medium" /><br />
-                           <fmt:message key="weblogEdit.commenterEmail" />:
-                               <c:out value="${comment.email}" /><br />
-                           <fmt:message key="weblogEdit.commenterUrl" />:
-                               <c:out value="${comment.url}" /><br />
-                        </span>
-                        <br />
-                        <c:out value="${comment.content}" />
-                    </td>
-
-                </tr>
-            </c:forEach>
-         </table>
-
-         <br />
-         <input type="button" name="post"
-               value='<fmt:message key="weblogEdit.updateComments" />'
-             onclick="updateComments(true)" />
-    </c:if>
-
 </html:form>
 
 <%--
@@ -487,7 +426,6 @@ Add this back in once it has been properly internationalized
 <iframe id="keepalive" width="100%" height="25" style="border: none;"
         src="<%= request.getContextPath() %>/keepalive.jsp" ></iframe>
 --%>
-
 
 <script type="text/javascript">
 <!--

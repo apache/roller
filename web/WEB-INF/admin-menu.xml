@@ -7,12 +7,14 @@ See comments in editor-menu.xml for info about attributes.
 <menu-bar>
 
     <menu name="tabbedmenu.admin" roles="admin" perms="any">
-        <menu-item forward="rollerConfig"      name="tabbedmenu.admin.config" 
-                                               roles="admin" perms="any"/>
-        <menu-item forward="adminUser"         name="tabbedmenu.admin.userAdmin" 
-                                               roles="admin" perms="any"/>
-        <menu-item forward="commonPingTargets" name="tabbedmenu.admin.pingTargets"
-                                               roles="admin" perms="any"/>
+        <menu-item forward="rollerConfig"       name="tabbedmenu.admin.config" 
+                                                roles="admin" perms="any"/>
+        <menu-item forward="adminUser"          name="tabbedmenu.admin.userAdmin" 
+                                                roles="admin" perms="any"/>
+        <menu-item forward="commentManagementGlobal" name="tabbedmenu.admin.commentManagement" 
+                                                roles="admin" perms="any"/>
+        <menu-item forward="commonPingTargets"  name="tabbedmenu.admin.pingTargets"
+                                                roles="admin" perms="any"/>
     </menu>
 
     <menu name="tabbedmenu.planet" roles="admin" perms="any"

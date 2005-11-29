@@ -12,9 +12,9 @@
   <lastBuildDate>$utilities.formatRfc822Date($planet.lastUpdated)</lastBuildDate>
   <generator>Roller</generator>
   #if($group)
-     #set($entries = $planet.getAggregation($group, 50))
+     #set($entries = $planet.getAggregation($group, $entryCount))
   #else
-     #set($entries = $planet.getAggregation(50))
+     #set($entries = $planet.getAggregation($entryCount))
   #end
   #foreach( $entry in $entries )
   <item>

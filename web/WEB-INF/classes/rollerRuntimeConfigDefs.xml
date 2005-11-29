@@ -77,6 +77,18 @@
 
    </display-group >
    
+   <!-- Newsfeed Settings Group -->
+   <display-group name="newsfeedSettings" key="configForm.newsfeedSettings" >
+      <property-def  name="site.newsfeeds.defaultEntries"  key="configForm.defaultEntries">
+         <type>string</type>
+         <default-value>50</default-value>
+      </property-def>      
+      <property-def  name="site.newsfeeds.maxEntries"  key="configForm.newsfeedMaxEntries">
+         <type>string</type>
+         <default-value>50</default-value>
+      </property-def>
+   </display-group>
+   
    <!-- Comment Settings Group -->
    <display-group name="commentSettings" key="configForm.commentSettings" >
    

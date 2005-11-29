@@ -27,6 +27,8 @@ Each menu or menu item is governed by four attrbibutes:
                                           perms="admin,author,limited" />
         <menu-item forward="weblogQuery"  name="tabbedmenu.weblog.archives" 
                                           perms="admin,author,limited" />
+        <menu-item forward="commentManagement" name="tabbedmenu.admin.commentManagement" 
+                                          perms="admin"/>
         <menu-item forward="categories"   name="tabbedmenu.weblog.categories" />
         <menu-item forward="bookmarks"    name="tabbedmenu.bookmarks.allFolders" />
         <menu-item forward="uploadFiles"  name="tabbedmenu.website.files" />
