@@ -111,6 +111,10 @@ public class UpgradeDatabase {
             UpgradeDatabase.upgradeTo200(con);
             dbversion = 200;
         }
+        if(dbversion < 210) {
+            UpgradeDatabase.upgradeTo210(con);
+            dbversion = 210;
+        }
         
         // make sure the database version is the exact version
         // we are upgrading too.
@@ -234,6 +238,80 @@ public class UpgradeDatabase {
     }
 
 
+    /**
+     * Upgrade database for Roller 1.3.0
+     */
+    private static void upgradeTo210(Connection con) throws RollerException {
+        try {
+            /*
+             * For Roller 2.1.0 we are going to standardize some of the
+             * weblog templates and make them less editable.  To do this
+             * we need to do a little surgery.
+             *
+             * The goal for this upgrade is to ensure that ALL weblogs now have
+             * the required "Weblog" template as their default template.
+             */
+            
+            mLogger.info("Doing upgrade to 210 ...");
+            mLogger.info("Ensuring that all weblogs use the 'Weblog' template as their default page");
+            
+            // this query will give us all websites that have modified their
+            // default page to link to something other than "Weblog"
+            PreparedStatement selectUpdateWeblogs = con.prepareStatement(
+                    "select website.id,template from website,webpage "+
+                    "where webpage.id = website.defaultpageid "+
+                    "and webpage.link != 'Weblog'");
+            
+            // insert a new template for a website
+            PreparedStatement insertWeblogTemplate = con.prepareStatement(
+                    "insert into webpage"+
+                    "(id, name, description, link, websiteid, template) "+
+                    "values(?,?,?,?,?,?)");
+            
+            // update the default page for a website
+            PreparedStatement updateDefaultPage = con.prepareStatement(
+                    "update website set defaultpageid = ? "+
+                    "where id = ?");
+            
+            String description = "This template is used to render the main "+
+                    "page of your weblog.";
+            ResultSet websiteSet = selectUpdateWeblogs.executeQuery();
+            while (websiteSet.next()) {
+                String websiteid = websiteSet.getString(1);
+                String template = websiteSet.getString(2);
+                mLogger.info("Processing website: " + websiteid);
+                
+                // insert new Weblog template
+                insertWeblogTemplate.clearParameters();
+                insertWeblogTemplate.setString( 1, websiteid+"q");
+                insertWeblogTemplate.setString( 2, "Weblog");
+                insertWeblogTemplate.setString( 3, description);
+                insertWeblogTemplate.setString( 4, "Weblog");
+                insertWeblogTemplate.setString( 5, websiteid);
+                insertWeblogTemplate.setString( 6, template);
+                insertWeblogTemplate.executeUpdate();
+                
+                // update defaultpageid value
+                updateDefaultPage.clearParameters();
+                updateDefaultPage.setString( 1, websiteid+"q");
+                updateDefaultPage.setString( 2, websiteid);
+                updateDefaultPage.executeUpdate();
+            }
+            
+            
+            if (!con.getAutoCommit()) con.commit();
+            
+            mLogger.info("Upgrade to 210 complete.");
+            
+        } catch (SQLException e) {
+            mLogger.error("Problem upgrading database to version 210", e);
+            throw new RollerException("Problem upgrading database to version 210", e);
+        }
+        
+        UpgradeDatabase.updateDatabaseVersion(con, 210);
+    }
+    
+    
     /**
      * Insert a new database.version property.
      *

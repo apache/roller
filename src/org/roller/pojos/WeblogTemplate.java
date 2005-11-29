@@ -2,6 +2,8 @@ package org.roller.pojos;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -23,10 +25,20 @@ import org.roller.model.RollerFactory;
 public class WeblogTemplate extends PersistentObject
    implements Serializable, Template
 {
-   static final long serialVersionUID = -613737191638263428L;
+   public static final long serialVersionUID = -613737191638263428L;
 
-    public static final String DEFAULT_PAGE = "Weblog";
-    
+   public static final String DEFAULT_PAGE = "Weblog";
+   
+   private static Set requiredTemplates = null;
+   
+   static {
+       requiredTemplates = new HashSet();
+       requiredTemplates.add("Weblog");
+       requiredTemplates.add("_day");
+       requiredTemplates.add("_css");
+       requiredTemplates.add("_decorator");
+   }
+   
    private java.lang.String id;
    private java.lang.String name;
    private java.lang.String description;
@@ -62,7 +74,32 @@ public class WeblogTemplate extends PersistentObject
    {
        setData(otherData);
    }
+   
+   
+   /**
+    * Determine if this WeblogTemplate is required or not.
+    */
+   public boolean isRequired() {
+       /* 
+        * this is kind of hacky right now, but it's like that so we can be
+        * reasonably flexible while we migrate old blogs which may have some
+        * pretty strange customizations.
+        *
+        * my main goal starting now is to prevent further deviations from the
+        * standardized templates as we move forward.
+        *
+        * eventually, the required flag should probably be stored in the db
+        * and possibly applicable to any template.
+        */
+       return (requiredTemplates.contains(this.name) || "Weblog".equals(this.link));
+   }
 
+   
+   public void setRequired(boolean req) {
+       // this is an absurd workaround for our struts formbean generation stuff
+   }
+   
+   
    /** 
     * @ejb:persistent-field 
     * @hibernate.id column="id"

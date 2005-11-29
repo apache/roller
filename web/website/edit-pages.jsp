@@ -43,7 +43,7 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
 
             <td class="center">
                <c:choose>
-                 <c:when test="${p.id != website.defaultPageId}">
+                 <c:when test="${!p.required}">
                    <roller:link forward="removePage.ok">
                       <roller:linkparam id="username" name="user" property="userName" />
                       <roller:linkparam id="pageId" name="p" property="id" />

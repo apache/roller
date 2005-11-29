@@ -14,6 +14,7 @@ WebsiteFormAction.WebsitePageModel model =
     <html:hidden property="method" value="update"/></input>
 
     <html:hidden property="id"/></input>
+    <html:hidden property="defaultPageId" /></input>
     <html:hidden property="weblogDayPageId" /></input>
     <html:hidden property="handle"/></input>
     <html:hidden property="editorTheme"/></input>
@@ -55,17 +56,6 @@ WebsiteFormAction.WebsitePageModel model =
         <td class="field">
             <html:select property="timeZone" size="1" >
                 <html:options collection="timeZones" property="value" labelProperty="label"/>
-            </html:select>
-        </td>
-        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
-    </tr>
-
-    <tr>
-        <td class="label"><fmt:message key="websiteSettings.homePage" /></td>
-        <td class="field">
-            <html:select property="defaultPageId" size="1">
-                <html:options collection="pages"
-                    property="id" labelProperty="name" />
             </html:select>
         </td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
