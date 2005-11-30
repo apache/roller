@@ -297,8 +297,8 @@ public class Blacklist {
         List stringRules = blacklistStr;
         if (moreStringRules != null && moreStringRules.size() > 0) {
             stringRules = new ArrayList();
-            stringRules.addAll(blacklistStr);
             stringRules.addAll(moreStringRules);
+            stringRules.addAll(blacklistStr);
         }
         if (testStringRules(str, stringRules)) return true;
         
@@ -306,19 +306,19 @@ public class Blacklist {
         List regexRules = blacklistRegex;
         if (moreRegexRules != null && moreRegexRules.size() > 0) {
             regexRules = new ArrayList();
-            regexRules.addAll(blacklistRegex);
             regexRules.addAll(moreRegexRules);
+            regexRules.addAll(blacklistRegex);
         }
         return testRegExRules(str, regexRules);
     }      
 
     /** 
-     * Test string only against rules provided by caller.
+     * Test string only against rules provided by caller, NOT against built-in blacklist.
      * @param str             String to be checked against rules
      * @param moreStringRules String rules to consider
      * @param moreRegexRules  Regex rules to consider 
      */
-    public static boolean matches(
+    public static boolean matchesRulesOnly(
         String str, List stringRules, List regexRules) {
         if (testStringRules(str, stringRules)) return true;
         return testRegExRules(str, regexRules);  
@@ -338,13 +338,11 @@ public class Blacklist {
                 if (matcher.find()) {
                     mLogger.debug(matcher.group() 
                          + " matched by " + testPattern.pattern());
-                    hit = true;
-                    break;
+                    return true;
                 }
             } else {
                 if (testPattern.matcher(str).find()) {
-                    hit = true;
-                    break;
+                    return true;
                 }
             }
         }
@@ -363,8 +361,7 @@ public class Blacklist {
                 if (mLogger.isDebugEnabled()) {
                     mLogger.debug("matched:" + test + ":");
                 }
-                hit = true;
-                break;
+                return true;
             }
         }
         return hit;

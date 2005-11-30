@@ -61,13 +61,13 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             Session session = ((HibernateStrategy)mStrategy).getSession();
             Criteria criteria = session.createCriteria(RefererData.class);
             
-            String spamwords = RollerRuntimeConfig.getProperty("spam.referers.ignorewords");
+            String spamwords = RollerRuntimeConfig.getProperty("spam.blacklist");
             
-            String[] ignoreWords = StringUtils.split(
+            String[] blacklist = StringUtils.split(
                     StringUtils.deleteWhitespace(spamwords),",");
             Junction or = Expression.disjunction();
-            for (int i=0; i<ignoreWords.length; i++) {
-                String ignoreWord = ignoreWords[i].trim();
+            for (int i=0; i<blacklist.length; i++) {
+                String ignoreWord = blacklist[i].trim();
                 or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
             }
             criteria.add(Expression.conjunction()
@@ -90,19 +90,19 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
      */
     public void applyRefererFilters(WebsiteData website) throws RollerException {
         if (null == website) throw new RollerException("website is null");
-        if (null == website.getIgnoreWords()) return;
+        if (null == website.getBlacklist()) return;
         
         try {
             Session session = ((HibernateStrategy)mStrategy).getSession();
             Criteria criteria = session.createCriteria(RefererData.class);
             
-            String[] ignoreWords = StringUtils.split(
-                    StringUtils.deleteWhitespace(website.getIgnoreWords()),",");
-            if (ignoreWords.length == 0) return;
+            String[] blacklist = StringUtils.split(
+                    StringUtils.deleteWhitespace(website.getBlacklist()),",");
+            if (blacklist.length == 0) return;
             
             Junction or = Expression.disjunction();
-            for (int i=0; i<ignoreWords.length; i++) {
-                String ignoreWord = ignoreWords[i].trim();
+            for (int i=0; i<blacklist.length; i++) {
+                String ignoreWord = blacklist[i].trim();
                 or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
             }
             criteria.add(Expression.conjunction()

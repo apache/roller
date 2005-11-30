@@ -169,7 +169,7 @@
    <!-- Spam Prevention Settings Group -->
    <display-group name="spamSettings" key="websiteSettings.spamPrevention" >
    
-      <property-def  name="spam.referers.ignorewords"  key="websiteSettings.ignoreUrls">
+      <property-def  name="spam.blacklist"  key="websiteSettings.ignoreUrls">
          <type>text</type>
          <default-value></default-value>
          <rows>7</rows>

@@ -249,7 +249,7 @@ public abstract class UserManagerImpl implements UserManager
             null,                // bloggerCategory
             null,                // defaultCategory
             "editor-text.jsp",   // editorPage
-            "",                  // ignoreWords
+            "",                  // blacklist
             Boolean.TRUE,        // allowComments  
             Boolean.FALSE,       // emailComments
             "",                  // emailFromAddress

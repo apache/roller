@@ -187,8 +187,8 @@ public abstract class PropertiesManagerImpl implements PropertiesManager
             props.put("debug.memory.enabled",
                 new RollerPropertyData("debug.memory.enabled", rollerConfig.getMemDebug().toString()));
             */
-            props.put("spam.referers.ignorewords",
-                new RollerPropertyData("spam.referers.ignorewords", rollerConfig.getRefererSpamWords()));
+            props.put("spam.blacklist",
+                new RollerPropertyData("spam.blacklist", rollerConfig.getRefererSpamWords()));
         }
         else
         {

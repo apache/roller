@@ -218,7 +218,7 @@ public abstract class RefererManagerImpl implements RefererManager
                     }
                     else
                     {
-                        // If referer URL contains spamWords or ignoreWords then don't log it.
+                        // If referer URL is blacklisted, don't log it
                         boolean isRefererSpam = checkForSpam(refererUrl, website);
                         if (isRefererSpam) return true;
                     }
@@ -356,7 +356,7 @@ public abstract class RefererManagerImpl implements RefererManager
     
     /**
      * Check the Referer URL against the Site-wide RefererSpamWords list
-     * and against the user's own IgnoreWords list.  If the Referer contains
+     * and against the user's own blacklist list.  If the Referer contains
      * any of the words from either list consider it Spam.
      * 
      * @param refererUrl
@@ -365,7 +365,7 @@ public abstract class RefererManagerImpl implements RefererManager
      */
     private boolean checkForSpam(String refererUrl, WebsiteData website) throws RollerException
     {
-        String spamwords = RollerRuntimeConfig.getProperty("spam.referers.ignorewords");
+        String spamwords = RollerRuntimeConfig.getProperty("spam.blacklist");
         if (spamwords == null) {
         		// Oracle returns nulls instead of empty string so next line would throw NPE.
         		spamwords = "";
@@ -373,12 +373,12 @@ public abstract class RefererManagerImpl implements RefererManager
         LinkedList spamWords = new LinkedList(Arrays.asList(
                 StringUtils.split(StringUtils.deleteWhitespace(spamwords), ",")));
     
-        if ( website.getIgnoreWords() != null )
+        if ( website.getBlacklist() != null )
         {
             spamWords.addAll( 
                 Arrays.asList(StringUtils.split(
                     StringUtils.deleteWhitespace(
-                        website.getIgnoreWords()),",")));
+                        website.getBlacklist()),",")));
         }
         for( Iterator i = spamWords.iterator(); i.hasNext(); )
         {

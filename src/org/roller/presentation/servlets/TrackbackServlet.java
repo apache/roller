@@ -149,6 +149,7 @@ public class TrackbackServlet extends HttpServlet {
                     // If comment contains blacklisted text, mark as spam
                     SpamChecker checker = new SpamChecker();
                     if (checker.checkTrackback(comment)) {
+                       comment.setSpam(Boolean.TRUE);
                        logger.debug("Trackback marked as spam"); 
                     }
                         
@@ -165,8 +166,7 @@ public class TrackbackServlet extends HttpServlet {
                     comment.save();
                     RollerFactory.getRoller().commit();
 
-                    // Refresh user's entries in page cache
-                    // PageCacheFilter.removeFromCache(req, entry.getWebsite());
+                    // Clear all caches associated with comment
                     CacheManager.invalidate(comment);
 
                     // Send email notifications

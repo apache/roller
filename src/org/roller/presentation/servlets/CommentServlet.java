@@ -88,7 +88,9 @@ public class CommentServlet extends HttpServlet {
      * Here we handle incoming comment postings.  We will collect the data,
      * validate it, and save it.
      */
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(
+            HttpServletRequest request, 
+            HttpServletResponse response)
         throws IOException, ServletException {
         
         boolean preview = false;
@@ -146,7 +148,13 @@ public class CommentServlet extends HttpServlet {
             
             if (preview) {
                 message = "This is a comment preview only";
-                error = bundle.getString("commentServlet.previewMarkedAsSpam");
+                
+                // If comment contains blacklisted text, warn commenter
+                SpamChecker checker = new SpamChecker();
+                if (checker.checkComment(comment)) {
+                   error = bundle.getString("commentServlet.previewMarkedAsSpam");
+                   mLogger.debug("Comment marked as spam"); 
+                }
                 request.setAttribute("previewComments", "dummy");
                 mLogger.debug("Comment is a preview");
                 
@@ -159,6 +167,7 @@ public class CommentServlet extends HttpServlet {
                     // If comment contains blacklisted text, mark as spam
                     SpamChecker checker = new SpamChecker();
                     if (checker.checkComment(comment)) {
+                       comment.setSpam(Boolean.TRUE);
                        error = bundle.getString("commentServlet.commentMarkedAsSpam");
                        mLogger.debug("Comment marked as spam"); 
                     }
@@ -177,8 +186,7 @@ public class CommentServlet extends HttpServlet {
                     RollerFactory.getRoller().commit();
                     reindexEntry(entry);
                     
-                    // Refresh user's entries in page cache
-                    //PageCacheFilter.removeFromCache(request, website);
+                    // Clear all caches associated with comment
                     CacheManager.invalidate(comment);
                     
                     // Send email notifications
@@ -202,9 +210,8 @@ public class CommentServlet extends HttpServlet {
         if (message != null)
             session.setAttribute(RollerSession.STATUS_MESSAGE, message);
         
-        if(error == null && message == null && !preview) {
-            entry_permalink = request.getContextPath()+entry_permalink;
-            
+        if(error == null && !preview) {
+            entry_permalink = request.getContextPath()+entry_permalink;            
             mLogger.debug("comment complete, redirecting to "+entry_permalink);
             response.sendRedirect(entry_permalink);
         } else {

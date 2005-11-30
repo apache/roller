@@ -192,7 +192,7 @@ if (emailComments) { %>
 
     <tr>
         <td class="label"><fmt:message key="websiteSettings.ignoreUrls" /></td>
-        <td class="field"><html:textarea property="ignoreWords" rows="7" cols="40"/></td>
+        <td class="field"><html:textarea property="blacklist" rows="7" cols="40"/></td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
 
