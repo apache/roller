@@ -7,7 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.roller.RollerException;
 import org.roller.model.Roller;
@@ -48,7 +50,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     private String  weblogDayPageId = null;
     private Boolean enableBloggerApi = Boolean.TRUE;
     private String  editorPage = null;
-    private String  ignoreWords = null;
+    private String  blacklist = null;
     private Boolean allowComments = Boolean.TRUE;
     private Boolean emailComments = Boolean.FALSE;
     private String  emailFromAddress = null;
@@ -85,7 +87,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                        final WeblogCategoryData bloggerCategory,
                        final WeblogCategoryData defaultCategory,
                        final String   editorPage,
-                       final String   ignoreWords,
+                       final String   blacklist,
                        final Boolean  allowComments,
                        final Boolean  emailComments,
                        final String   emailFromAddress,
@@ -108,7 +110,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.bloggerCategory = bloggerCategory;
         this.defaultCategory = defaultCategory;
         this.editorPage = editorPage;
-        this.ignoreWords = ignoreWords;
+        this.blacklist = blacklist;
         this.allowComments = allowComments;
         this.emailComments = emailComments;
         this.emailFromAddress = emailFromAddress;
@@ -554,17 +556,17 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * @hibernate.property column="ignorewords" non-null="true" unique="false"
+     * @hibernate.property column="blacklist" non-null="true" unique="false"
      */
-    public String getIgnoreWords()
+    public String getBlacklist()
     {
-        return this.ignoreWords;
+        return this.blacklist;
     }
 
     /** @ejb:persistent-field */
-    public void setIgnoreWords(String ignoreWords)
+    public void setBlacklist(String blacklist)
     {
-        this.ignoreWords = ignoreWords;
+        this.blacklist = blacklist;
     }
 
     /**
@@ -801,7 +803,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
                    "bloggerCategory=" + bloggerCategory + " " +
                    "defaultCategory=" + defaultCategory + " " +
                    "editorPage=" + editorPage + " " +
-                   "ignoreWords=" + ignoreWords + " " +
+                   "blacklist=" + blacklist + " " +
                    "allowComments=" + allowComments + " " +
                    "emailAddress=" + emailAddress + " " + 
                    "emailComments=" + emailComments + " " + 
@@ -831,7 +833,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
             lEquals = PojoUtil.equals(lEquals, this.getBloggerCategory(), lTest.getBloggerCategory());
             lEquals = PojoUtil.equals(lEquals, this.getDefaultCategory(), lTest.getDefaultCategory());
             lEquals = PojoUtil.equals(lEquals, this.getEditorPage(), lTest.getEditorPage());
-            lEquals = PojoUtil.equals(lEquals, this.getIgnoreWords(), lTest.getIgnoreWords());
+            lEquals = PojoUtil.equals(lEquals, this.getBlacklist(), lTest.getBlacklist());
             lEquals = PojoUtil.equals(lEquals, this.getAllowComments(), lTest.getAllowComments());           
             lEquals = PojoUtil.equals(lEquals, this.getEmailComments(), lTest.getEmailComments());
             lEquals = PojoUtil.equals(lEquals, this.getEmailAddress(), lTest.getEmailAddress());            
@@ -848,59 +850,6 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         }
     }
         
-    /*public boolean equals(Object pOther)
-    {
-        if (pOther instanceof WebsiteData)
-        {
-            WebsiteData lTest = (WebsiteData) pOther;
-            boolean lEquals = true;
-
-            lEquals = PojoUtil.equals(lEquals, this.id, lTest.id);
-
-            lEquals = PojoUtil.equals(lEquals, this.name, lTest.name);
-
-            lEquals = PojoUtil.equals(lEquals, this.description, lTest.description);
-
-            lEquals = PojoUtil.equals(lEquals, this.mUser, lTest.mUser);
-
-            lEquals = PojoUtil.equals(lEquals, this.defaultPageId, lTest.defaultPageId);
-
-            lEquals = PojoUtil.equals(lEquals, this.weblogDayPageId, lTest.weblogDayPageId);
-
-            lEquals = PojoUtil.equals(lEquals, this.enableBloggerApi, lTest.enableBloggerApi);
-
-            lEquals = PojoUtil.equals(lEquals, this.bloggerCategory.getId(), lTest.bloggerCategory.getId());
-
-            lEquals = PojoUtil.equals(lEquals, this.defaultCategory.getId(), lTest.defaultCategory.getId());
-
-            lEquals = PojoUtil.equals(lEquals, this.editorPage, lTest.editorPage);
-
-            lEquals = PojoUtil.equals(lEquals, this.ignoreWords, lTest.ignoreWords);
-
-            lEquals = PojoUtil.equals(lEquals, this.allowComments, lTest.allowComments);
-            
-            lEquals = PojoUtil.equals(lEquals, this.emailComments, lTest.emailComments);
-            
-            lEquals = PojoUtil.equals(lEquals, this.emailAddress, lTest.emailAddress);
-            
-            lEquals = PojoUtil.equals(lEquals, this.emailFromAddress, lTest.emailFromAddress);
-
-            lEquals = PojoUtil.equals(lEquals, this.editorTheme, lTest.editorTheme);
-
-            lEquals = PojoUtil.equals(lEquals, this.locale, lTest.locale);
-
-            lEquals = PojoUtil.equals(lEquals, this.timeZone, lTest.timeZone);
-
-            lEquals = PojoUtil.equals(lEquals, this.mDefaultPlugins, lTest.mDefaultPlugins);
-            
-            return lEquals;
-        }
-        else
-        {
-            return false;
-        }
-    }*/
-
     public int hashCode()
     {
         int result = 17;
@@ -914,7 +863,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         //result = PojoUtil.addHashCode(result, this.bloggerCategory);
         //result = PojoUtil.addHashCode(result, this.defaultCategory);
         result = PojoUtil.addHashCode(result, this.editorPage);
-        result = PojoUtil.addHashCode(result, this.ignoreWords);
+        result = PojoUtil.addHashCode(result, this.blacklist);
         result = PojoUtil.addHashCode(result, this.allowComments);
         result = PojoUtil.addHashCode(result, this.emailComments);
         result = PojoUtil.addHashCode(result, this.emailAddress);
@@ -945,7 +894,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.bloggerCategory = other.getBloggerCategory();
         this.defaultCategory = other.getDefaultCategory();
         this.editorPage = other.getEditorPage();
-        this.ignoreWords = other.getIgnoreWords();
+        this.blacklist = other.getBlacklist();
         this.allowComments = other.getAllowComments();
         this.emailComments = other.getEmailComments();
         this.emailAddress = other.getEmailAddress();
@@ -1104,7 +1053,6 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     {
         // no-op
     }
-
-
+    
 }
 

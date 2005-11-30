@@ -107,7 +107,11 @@ create table website (
     defaultplugins    varchar(255),
     pinnedtomain      @BOOLEAN_SQL_TYPE_FALSE@ not null,
     isenabled         @BOOLEAN_SQL_TYPE_TRUE@ not null,
-    datecreated     timestamp not null
+    datecreated      timestamp not null,
+    blacklist               @TEXT_SQL_TYPE@,
+    defaultallowcomments    @BOOLEAN_SQL_TYPE_TRUE@ not null,
+    defaultallowcommentdays integer default 7 not null,
+    commentmod              @BOOLEAN_SQL_TYPE_FALSE@ not null    
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
@@ -215,9 +219,13 @@ create table roller_comment (
     posttime timestamp   not null,
     spam    @BOOLEAN_SQL_TYPE_FALSE@ not null,
     notify  @BOOLEAN_SQL_TYPE_FALSE@ not null,
-    remotehost varchar(128)
+    remotehost varchar(128),
+    pending  @BOOLEAN_SQL_TYPE_TRUE@ not null,
+    approved  @BOOLEAN_SQL_TYPE_FALSE@ not null
 );
 create index co_entryid_idx on roller_comment( entryid );
+create index co_pending_idx on roller_comment( pending );
+create index co_approved_idx on roller_comment( approved );
 
 -- Ping Feature Tables
 -- name: short descriptive name of the ping target

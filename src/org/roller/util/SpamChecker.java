@@ -10,6 +10,7 @@ import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.RefererData;
+import org.roller.pojos.WebsiteData;
 
 /**
  * Checks comment, trackbacks and referrers for spam.
@@ -35,67 +36,56 @@ public class SpamChecker {
         }
         return false;
     }
-    
-    /** Test comment against built in blacklist + ignoreWords */
-    private boolean testComment(CommentData c) {
-        boolean ret = false;
-        
-        String weblogWords = c.getWeblogEntry().getWebsite().getIgnoreWords();
-        weblogWords = (weblogWords == null) ? "" : weblogWords;
-        String siteWords = 
-                RollerRuntimeConfig.getProperty("spam.referers.ignorewords");
-        siteWords = (siteWords == null) ? "" : siteWords;
-        
+
+    /** Test comment against built blacklist only */
+    public boolean checkReferrer(RefererData referrer) {
+        boolean ret = false;        
         List stringRules = new ArrayList();
         List regexRules = new ArrayList();
+        WebsiteData website = referrer.getWebsite();
+        populateSpamRules(
+            website.getBlacklist(), stringRules, regexRules, 
+            RollerRuntimeConfig.getProperty("spam.blacklist")); 
+        // the blacklist.matches() (doesn't use the built-in blacklist)
+        if (Blacklist.matchesRulesOnly(referrer.getRefererUrl(), stringRules, regexRules)) {
+            ret = true;
+        }
+        return ret;
+    }
+
+    /** Test comment against built in blacklist + blacklist */
+    private boolean testComment(CommentData c) {
+        boolean ret = false;
+        List stringRules = new ArrayList();
+        List regexRules = new ArrayList();
+        WebsiteData website = c.getWeblogEntry().getWebsite();
+        populateSpamRules(
+            website.getBlacklist(), stringRules, regexRules, 
+            RollerRuntimeConfig.getProperty("spam.blacklist"));
+        if (   blacklist.isBlacklisted(c.getUrl(),     stringRules, regexRules)
+            || blacklist.isBlacklisted(c.getEmail(),   stringRules, regexRules)
+            || blacklist.isBlacklisted(c.getName(),    stringRules, regexRules)
+            || blacklist.isBlacklisted(c.getContent(), stringRules, regexRules)) {
+            ret = true;
+        }
+        return ret;
+    }
+        
+    public static void populateSpamRules(
+        String blacklist, List stringRules, List regexRules, String addendum) {
+        String weblogWords = blacklist;
+        weblogWords = (weblogWords == null) ? "" : weblogWords;
+        String siteWords = (addendum != null) ? addendum : "";
         StringTokenizer toker = new StringTokenizer(siteWords + weblogWords,"\n");
         while (toker.hasMoreTokens()) {
-            String token = toker.nextToken();
+            String token = toker.nextToken().trim();
             if (token.startsWith("#")) continue;
             if (token.startsWith("(")) {
                 regexRules.add(Pattern.compile(token));
             } else {
                 stringRules.add(token);
             }
-        }
-        if (   blacklist.isBlacklisted(c.getUrl(),     stringRules, regexRules)
-            || blacklist.isBlacklisted(c.getEmail(),   stringRules, regexRules)
-            || blacklist.isBlacklisted(c.getContent(), stringRules, regexRules)) {
-            c.setSpam(Boolean.TRUE);
-            ret = true;
-        }
-        return ret;
-    }
-        
-    /** Test comment against built ignoreWords only */
-    public boolean testReferrer(RefererData referrer) {
-        boolean ret = false;
-        
-        String weblogWords = referrer.getWebsite().getIgnoreWords();
-        weblogWords = (weblogWords == null) ? "" : weblogWords;
-        String siteWords = 
-                RollerRuntimeConfig.getProperty("spam.referers.ignorewords");
-        siteWords = (siteWords == null) ? "" : siteWords;
-        
-        List stringRules = new ArrayList();
-        List regexRules = new ArrayList();
-        StringTokenizer toker = 
-            new StringTokenizer(siteWords + weblogWords,"\n");
-        while (toker.hasMoreTokens()) {
-            String token = toker.nextToken();
-            if (token.startsWith("#")) continue;
-            if (token.startsWith("(")) {
-                regexRules.add(token);
-            } else {
-                stringRules.add(token);
-            }
-        }   
-        // the blacklist.matches() doesn't use the built-in blacklist
-        if (Blacklist.matches(
-                referrer.getRefererUrl(), stringRules, regexRules)) {
-            ret = true;
-        }
-        return ret;
+        }        
     }
 }
 
