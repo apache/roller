@@ -108,10 +108,10 @@ create table website (
     pinnedtomain      @BOOLEAN_SQL_TYPE_FALSE@ not null,
     isenabled         @BOOLEAN_SQL_TYPE_TRUE@ not null,
     datecreated      timestamp not null,
-    blacklist               @TEXT_SQL_TYPE@,
-    defaultallowcomments    @BOOLEAN_SQL_TYPE_TRUE@ not null,
-    defaultallowcommentdays integer default 7 not null,
-    commentmod              @BOOLEAN_SQL_TYPE_FALSE@ not null    
+    blacklist            @TEXT_SQL_TYPE@,
+    defaultallowcomments @BOOLEAN_SQL_TYPE_TRUE@ not null,
+    defaultcommentdays   integer default 7 not null,
+    commentmod           @BOOLEAN_SQL_TYPE_FALSE@ not null    
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
