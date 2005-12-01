@@ -62,10 +62,15 @@ public class TurnoverReferersTask extends TimerTask implements ScheduledTask {
      * Main method so that this task may be run from outside the webapp.
      */
     public static void main(String[] args) throws Exception {
-        
-        TurnoverReferersTask task = new TurnoverReferersTask();
-        task.init(null, null);
-        task.run();
+        try {            
+            TurnoverReferersTask task = new TurnoverReferersTask();
+            task.init(null, null);
+            task.run();
+            System.exit(0);
+        } catch (RollerException ex) {
+            ex.printStackTrace();
+            System.exit(-1);
+        }
     }
     
 }
