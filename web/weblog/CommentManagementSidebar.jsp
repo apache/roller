@@ -16,7 +16,10 @@ CommentManagementAction.CommentManagementPageModel model =
 
 <p><fmt:message key="commentManagement.sidebarDescription" /></p>
     
-<html:form action="/editor/commentQuery" method="post">
+ <% String path = model.getWebsite()==null 
+    ? "/admin/commentQuery" : "/editor/commentQuery"; %>
+ <html:form action="<%= path %>" method="post">
+ 
     <c:if test="${!empty model.website}">
         <input name="weblog" type="hidden" value='<c:out value="${model.website.handle}" />' />
     </c:if>

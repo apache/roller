@@ -12,7 +12,8 @@ See comments in editor-menu.xml for info about attributes.
         <menu-item forward="adminUser"          name="tabbedmenu.admin.userAdmin" 
                                                 roles="admin" perms="any"/>
         <menu-item forward="commentManagementGlobal" name="tabbedmenu.admin.commentManagement" 
-                                                roles="admin" perms="any"/>
+                                                roles="admin" perms="any" 
+                                                subforwards="commentQueryGlobal" />
         <menu-item forward="commonPingTargets"  name="tabbedmenu.admin.pingTargets"
                                                 roles="admin" perms="any"/>
     </menu>

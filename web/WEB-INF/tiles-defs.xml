@@ -158,6 +158,11 @@
     <put name="sidebar" value="/website/edit-pages-sidebar.jsp" />
     <put name="styles" value="/theme/css-sidebar.jsp" />
 </definition>
+<definition name=".CommentManagementGlobal" extends=".tiles-adminpage" >
+    <put name="content" value="/weblog/CommentManagement.jsp" />
+    <put name="sidebar" value="/weblog/CommentManagementSidebar.jsp" />
+    <put name="styles" value="/theme/css-sidebar.jsp" />
+</definition>
 <definition name=".MemberPermissions" extends=".tiles-editorpage" >
     <put name="content" value="/website/MemberPermissions.jsp" />
     <put name="sidebar" value="/website/MemberPermissionsSidebar.jsp" />
