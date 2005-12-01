@@ -239,7 +239,7 @@ public class UpgradeDatabase {
 
 
     /**
-     * Upgrade database for Roller 1.3.0
+     * Upgrade database for Roller 2.1.0
      */
     private static void upgradeTo210(Connection con) throws RollerException {
         try {
