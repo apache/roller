@@ -286,6 +286,40 @@ public class CacheManager {
 
     
     /**
+     * Flush the entire cache system.
+     */
+    public static void clear() {
+        
+        // loop through all handlers and trigger a clear
+        CacheHandler handler = null;
+        Iterator handlers = cacheHandlers.iterator();
+        while(handlers.hasNext()) {
+            handler = (CacheHandler) handlers.next();
+            
+            handler.clear();
+        }
+    }
+    
+    
+    /**
+     * Flush a single cache handler.
+     */
+    public static void clear(String handlerClass) {
+        
+        // loop through all handlers to find the one we want
+        CacheHandler handler = null;
+        Iterator handlers = cacheHandlers.iterator();
+        while(handlers.hasNext()) {
+            handler = (CacheHandler) handlers.next();
+            
+            if(handler.getClass().getName().equals(handlerClass)) {
+                handler.clear();
+            }
+        }
+    }
+    
+    
+    /**
      * Compile stats from all registered handlers.
      *
      * This is basically a hacky version of instrumentation which is being

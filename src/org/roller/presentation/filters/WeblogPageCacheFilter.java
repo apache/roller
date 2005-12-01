@@ -58,6 +58,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
     private double hits = 0;
     private double misses = 0;
     private double purges = 0;
+    private double skips = 0;
     private Date startTime = new Date();
     
     
@@ -112,6 +113,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
                         this.mPageCache.put(key, rc);
                     } else {
                         mLogger.debug("SKIPPED "+key);
+                        this.skips++;
                     }
                 } else {
                     mLogger.error("Display exception "+key);
@@ -327,13 +329,29 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
     }
     
     
+    /**
+     * Clear the entire cache.
+     */
+    public void clear() {
+        mLogger.info("Clearing cache");
+        this.mPageCache.clear();
+        this.startTime = new Date();
+        this.hits = 0;
+        this.misses = 0;
+        this.purges = 0;
+        this.skips = 0;
+    }
+    
+    
     public Map getStats() {
         
         Map stats = new HashMap();
+        stats.put("cacheType", this.mPageCache.getClass().getName());
         stats.put("startTime", this.startTime);
         stats.put("hits", new Double(this.hits));
         stats.put("misses", new Double(this.misses));
         stats.put("purges", new Double(this.purges));
+        stats.put("skips", new Double(this.skips));
         
         // calculate efficiency
         if((misses - purges) > 0) {
