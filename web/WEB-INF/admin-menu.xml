@@ -16,6 +16,8 @@ See comments in editor-menu.xml for info about attributes.
                                                 subforwards="commentQueryGlobal" />
         <menu-item forward="commonPingTargets"  name="tabbedmenu.admin.pingTargets"
                                                 roles="admin" perms="any"/>
+        <menu-item forward="cacheInfo"          name="tabbedmenu.admin.cacheInfo"
+                                                roles="admin" perms="any"/>
     </menu>
 
     <menu name="tabbedmenu.planet" roles="admin" perms="any"

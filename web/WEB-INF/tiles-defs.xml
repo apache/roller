@@ -215,6 +215,9 @@
 <definition name=".CommonPingTargets" extends=".tiles-adminpage" >
     <put name="content" value="/website/CommonPingTargets.jsp" />
 </definition>
+<definition name=".cacheInfo" extends=".tiles-adminpage" >
+    <put name="content" value="/website/cacheInfo.jsp" />
+</definition>
 
 <definition name=".CommonPingTargetDeleteOK" extends=".tiles-simplepage" >
     <put name="content" value="/website/CommonPingTargetDeleteOK.jsp" />
