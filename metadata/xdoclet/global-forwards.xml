@@ -56,6 +56,7 @@
 <forward name="commentQueryGlobal"      path="/admin/commentQuery.do?method=query"/>
 <forward name="addUser"                 path="/admin/user.do?method=add"/>
 <forward name="commonPingTargets"       path="/admin/commonPingTargets.do"/>
+<forward name="cacheInfo"		path="/admin/cacheInfo.do"/>
 
 <!-- planet admin actions -->
 
