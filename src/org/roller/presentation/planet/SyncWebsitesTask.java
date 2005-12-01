@@ -1,5 +1,6 @@
 package org.roller.presentation.planet;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,71 +25,65 @@ import org.roller.pojos.WebsiteData;
 import org.roller.util.Technorati;
 
 /**
- * Ensure that every user is represented by a subscription in Planet Roller 
- * database. Also "ranks" each subscription by populating Technorati inbound 
+ * Ensure that every user is represented by a subscription in Planet Roller
+ * database. Also "ranks" each subscription by populating Technorati inbound
  * blogs and links counts.
  * @author Dave Johnson
  */
-public class SyncWebsitesTask extends TimerTask implements ScheduledTask
-{
-    private static Log logger = 
-        LogFactory.getFactory().getInstance(SyncWebsitesTask.class);
+public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
+    private static Log logger =
+            LogFactory.getFactory().getInstance(SyncWebsitesTask.class);
     private Roller roller = null;
- 
+    
     /** Task may be run from the command line */
-    public static void main(String[] args) throws Exception 
-    {
-        RollerFactory.setRoller(
-            "org.roller.business.hibernate.HibernateRollerImpl");
-        SyncWebsitesTask task = new SyncWebsitesTask();
-        task.init(RollerFactory.getRoller(), "dummy");
-        task.run();
+    public static void main(String[] args) {
+        try {
+            RollerFactory.setRoller(
+                    "org.roller.business.hibernate.HibernateRollerImpl");
+            SyncWebsitesTask task = new SyncWebsitesTask();
+            task.init(RollerFactory.getRoller(), "dummy");
+            task.run();
+            System.exit(0);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            System.exit(-1);
+        }
     }
-    public void init(Roller roller, String realPath) throws RollerException
-    {
+    public void init(Roller roller, String realPath) throws RollerException {
         this.roller = roller;
     }
-    public void run()
-    {
+    public void run() {
         syncWebsites();
         rankSubscriptions();
     }
-    /** 
+    /**
      * Ensure there's a subscription in the "all" group for every Roller user.
      */
-    private void syncWebsites()
-    {       
-        try
-        {
+    private void syncWebsites() {
+        try {
             roller.begin(UserData.SYSTEM_USER);
-            List liveUserFeeds = new ArrayList();            
+            List liveUserFeeds = new ArrayList();
             String baseURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
-            if (baseURL == null || baseURL.trim().length()==0)
-            {
+            if (baseURL == null || baseURL.trim().length()==0) {
                 logger.error("ERROR: cannot sync websites with Planet Roller - "
-                            +"absolute URL not specified in Roller Config");
-            }
-            else
-            {
+                        +"absolute URL not specified in Roller Config");
+            } else {
                 PlanetManager planet = roller.getPlanetManager();
                 UserManager userManager = roller.getUserManager();
                 PlanetGroupData group = planet.getGroup("all");
-                if (group == null)
-                {
+                if (group == null) {
                     group = new PlanetGroupData();
                     group.setHandle("all");
                     group.setTitle("all");
                     planet.saveGroup(group);
                     roller.commit();
                 }
-                try 
-                {
+                try {
                     String baseFeedURL = baseURL + "/rss/";
                     String baseSiteURL = baseURL + "/page/";
-                    Iterator websites = 
-                        roller.getUserManager().getWebsites(null, null).iterator();
-                    while (websites.hasNext())
-                    {
+                    Iterator websites =
+                            roller.getUserManager().getWebsites(null, null).iterator();
+                    while (websites.hasNext()) {
                         WebsiteData website = (WebsiteData)websites.next();
                         
                         StringBuffer sitesb = new StringBuffer();
@@ -103,10 +98,9 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask
                         
                         liveUserFeeds.add(feedUrl);
                         
-                        PlanetSubscriptionData sub = 
+                        PlanetSubscriptionData sub =
                                 planet.getSubscription(feedUrl);
-                        if (sub == null)
-                        {
+                        if (sub == null) {
                             logger.info("ADDING feed: "+feedUrl);
                             sub = new PlanetSubscriptionData();
                             sub.setTitle(website.getName());
@@ -115,9 +109,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask
                             sub.setAuthor(website.getHandle());
                             planet.saveSubscription(sub);
                             group.addSubscription(sub);
-                        }
-                        else
-                        {
+                        } else {
                             sub.setTitle(website.getName());
                             sub.setAuthor(website.getHandle());
                             planet.saveSubscription(sub);
@@ -130,56 +122,55 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask
                     roller.begin();
                     group = group = planet.getGroup("all");
                     Iterator subs = group.getSubscriptions().iterator();
-                    while (subs.hasNext())
-                    {
-                        PlanetSubscriptionData sub = 
+                    while (subs.hasNext()) {
+                        PlanetSubscriptionData sub =
                                 (PlanetSubscriptionData)subs.next();
-                        if (!liveUserFeeds.contains(sub.getFeedUrl()))
-                        {
+                        if (!liveUserFeeds.contains(sub.getFeedUrl())) {
                             logger.info("DELETING feed: "+sub.getFeedUrl());
                             planet.deleteSubscription(sub);
                         }
                     }
-                    roller.commit();                   
-                }
-                finally
-                {
+                    roller.commit();
+                } finally {
                     roller.release();
                 }
             }
-        }
-        catch (RollerException e)
-        {
+        } catch (RollerException e) {
             logger.error("ERROR refreshing entries", e);
         }
     }
     
-    /** 
-     * Loop through all subscriptions get get Technorati rankings for each 
+    /**
+     * Loop through all subscriptions get get Technorati rankings for each
      */
-    private void rankSubscriptions()
-    {       
+    private void rankSubscriptions() {
         int count = 0;
         int errorCount = 0;
-        try
-        {
+        try {
             roller.begin(UserData.SYSTEM_USER);
             PlanetManager planet = roller.getPlanetManager();
             PlanetConfigData config = planet.getConfiguration();
             Technorati technorati = null;
-            if (config.getProxyHost()!=null && config.getProxyPort() != -1)
-            {
-                technorati = new Technorati(
-                        config.getProxyHost(), config.getProxyPort());
+            try {
+                if (config.getProxyHost()!=null && config.getProxyPort() != -1) {
+                    technorati = new Technorati(
+                            config.getProxyHost(), config.getProxyPort());
+                } else {
+                    technorati = new Technorati();
+                }
+            } catch (IOException e) {
+                logger.error("Aborting collection of Technorati rankings.\n"
+                +"technorati.license not found at root of classpath.\n"
+                +"Get license at http://technorati.com/developers/apikey.html\n"
+                +"Put the license string in a file called technorati.license.\n"
+                +"And place that file at the root of Roller's classpath.\n"
+                +"For example, in the /WEB-INF/classes directory.");
+                return;
             }
-            else 
-            {
-                technorati = new Technorati();
-            }                
             UserManager userManager = roller.getUserManager();
-            try 
-            {
+            try {
                 // Technorati API allows only 500 queries per-day
+                // TODO: make this configurable
                 int limit = 500;
                 int userCount = planet.getSubscriptionCount();
                 int mod = (userCount / limit) + 1;
@@ -190,49 +181,40 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask
                 
                 int start = (day % mod) * limit;
                 int end = start + limit;
-                end = end > userCount ? userCount : end; 
+                end = end > userCount ? userCount : end;
                 logger.info("Updating subscriptions ["+start+":"+end+"]");
                 
                 Iterator subs = planet.getAllSubscriptions();
-                while (subs.hasNext())
-                {
-                    PlanetSubscriptionData sub = 
+                while (subs.hasNext()) {
+                    PlanetSubscriptionData sub =
                             (PlanetSubscriptionData)subs.next();
-                    if (count >= start && count < end)
-                    {
-                        try
-                        {
-                            Technorati.Result result = 
+                    if (count >= start && count < end) {
+                        try {
+                            Technorati.Result result =
                                     technorati.getBloginfo(sub.getSiteUrl());
-                            if (result != null && result.getWeblog() != null)
-                            {
-                              sub.setInboundblogs(
-                                      result.getWeblog().getInboundblogs());
-                              sub.setInboundlinks(
-                                      result.getWeblog().getInboundlinks());
-                              logger.debug("Adding rank for "
-                                      +sub.getFeedUrl()+" ["+count+"|"
-                                      +sub.getInboundblogs()+"|"
-                                      +sub.getInboundlinks()+"]");
-                            }
-                            else 
-                            {
-                              logger.debug(
-                                "No ranking available for "
-                                      +sub.getFeedUrl()+" ["+count+"]");
-                              sub.setInboundlinks(0);
-                              sub.setInboundblogs(0);
+                            if (result != null && result.getWeblog() != null) {
+                                sub.setInboundblogs(
+                                        result.getWeblog().getInboundblogs());
+                                sub.setInboundlinks(
+                                        result.getWeblog().getInboundlinks());
+                                logger.debug("Adding rank for "
+                                        +sub.getFeedUrl()+" ["+count+"|"
+                                        +sub.getInboundblogs()+"|"
+                                        +sub.getInboundlinks()+"]");
+                            } else {
+                                logger.debug(
+                                        "No ranking available for "
+                                        +sub.getFeedUrl()+" ["+count+"]");
+                                sub.setInboundlinks(0);
+                                sub.setInboundblogs(0);
                             }
                             planet.saveSubscription(sub);
-                        }
-                        catch (Exception e) 
-                        {
+                        } catch (Exception e) {
                             logger.warn("WARN ranking subscription ["
-                                        + count + "]: " + e.getMessage());
-                            if (errorCount++ > 5)
-                            {
+                                    + count + "]: " + e.getMessage());
+                            if (errorCount++ > 5) {
                                 logger.warn(
-                                    "   Stopping ranking, too many errors");
+                                        "   Stopping ranking, too many errors");
                                 break;
                             }
                         }
@@ -240,14 +222,10 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask
                     count++;
                 }
                 roller.commit();
-            }
-            finally
-            {
+            } finally {
                 roller.release();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             logger.error("ERROR ranking subscriptions", e);
         }
     }

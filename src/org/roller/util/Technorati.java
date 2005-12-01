@@ -50,7 +50,7 @@ public class Technorati {
     }
 
     /** Looks for key in classpath using "/technorati.license" */
-    public Technorati() throws Exception {
+    public Technorati() throws IOException {
         InputStream is = getClass().getResourceAsStream("/technorati.license");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         mKey = br.readLine();       

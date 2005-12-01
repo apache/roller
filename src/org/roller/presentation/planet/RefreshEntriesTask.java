@@ -14,36 +14,35 @@ import org.roller.pojos.UserData;
  * Run the Planet Roller refresh-entries method to fetch and parse newsfeeds.
  * @author Dave Johnson
  */
-public class RefreshEntriesTask extends TimerTask implements ScheduledTask
-{
-    private static Log logger = 
-        LogFactory.getFactory().getInstance(RefreshEntriesTask.class);
+public class RefreshEntriesTask extends TimerTask implements ScheduledTask {
+    private static Log logger =
+            LogFactory.getFactory().getInstance(RefreshEntriesTask.class);
     private Roller roller = null;
     
     /** Task may be run from the command line */
-    public static void main(String[] args) throws Exception
-    {
-        RollerFactory.setRoller(
-            "org.roller.business.hibernate.HibernateRollerImpl");
-        RefreshEntriesTask task = new RefreshEntriesTask();
-        task.init(RollerFactory.getRoller(), "dummy");
-        task.run();
+    public static void main(String[] args) {
+        try {
+            RollerFactory.setRoller(
+                    "org.roller.business.hibernate.HibernateRollerImpl");
+            RefreshEntriesTask task = new RefreshEntriesTask();
+            task.init(RollerFactory.getRoller(), "dummy");
+            task.run();
+            System.exit(0);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            System.exit(-1);
+        }
     }
-    public void init(Roller roller, String realPath) throws RollerException
-    {
+    public void init(Roller roller, String realPath) throws RollerException {
         this.roller = (Roller)roller;
     }
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             roller.begin(UserData.SYSTEM_USER);
             roller.getPlanetManager().refreshEntries();
             roller.commit();
             roller.release();
-        }
-        catch (RollerException e)
-        {
+        } catch (RollerException e) {
             logger.error("ERROR refreshing entries", e);
         }
     }
