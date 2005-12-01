@@ -21,8 +21,11 @@ import org.roller.util.SpamChecker;
 
 import org.roller.model.RollerFactory;
 import org.roller.pojos.WeblogEntryData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.cache.CacheManager;
+import org.roller.util.LinkbackExtractor;
 
 
 /**
@@ -57,12 +60,12 @@ public class TrackbackServlet extends HttpServlet {
     
     /** Key under which the trackback return code will be placed
      * (example: on the request for the JSPDispatcher) */
-    public static final String BLOJSOM_TRACKBACK_RETURN_CODE =
+    public static final String TRACKBACK_RETURN_CODE =
             "BLOJSOM_TRACKBACK_RETURN_CODE";
     
     /** Key under which the trackback error message will be placed
      * (example: on the request for the JSPDispatcher) */
-    public static final String BLOJSOM_TRACKBACK_MESSAGE =
+    public static final String TRACKBACK_MESSAGE =
             "BLOJSOM_TRACKBACK_MESSAGE";
     
     /** Trackback success page */
@@ -122,20 +125,17 @@ public class TrackbackServlet extends HttpServlet {
         try {
             if(!RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
                 error = "Trackbacks are disabled for this site";
-            } else if ( title==null || url==null || 
-                    excerpt==null || blogName==null ) {
+            } 
+            else if (title==null || url==null || excerpt==null || blogName==null) {
                 error = "title, url, excerpt, and blog_name not specified.";
-            } else {
+            } 
+            else {                
                 RollerRequest rreq = RollerRequest.getRollerRequest(req);
                 WeblogEntryData entry = rreq.getWeblogEntry();
-                boolean siteAllows = 
-                    entry.getWebsite().getAllowComments().booleanValue();
+                WebsiteData website = entry.getWebsite();
+                boolean siteAllows = website.getAllowComments().booleanValue();
+                
                 if (entry!=null && siteAllows && entry.getCommentsStillAllowed()) {
-                    String modTitle = blogName + ": "  + title;
-                    if (modTitle.length() >= 250) {
-                        modTitle = modTitle.substring(0, 257);
-                        modTitle += "...";
-                    }
                     
                     // Track trackbacks as comments
                     CommentData comment = new CommentData();
@@ -150,33 +150,52 @@ public class TrackbackServlet extends HttpServlet {
                     SpamChecker checker = new SpamChecker();
                     if (checker.checkTrackback(comment)) {
                        comment.setSpam(Boolean.TRUE);
-                       logger.debug("Trackback marked as spam"); 
+                       logger.debug("Trackback blacklisted: "+comment.getUrl()); 
+                       error = "REJECTED: trackback contains spam words";
                     }
+                    // Else, if trackback verification is on...
+                    else if (RollerRuntimeConfig.getBooleanProperty(
+                           "site.trackbackVerification.enabled")) {
                         
-                    // If comment moderation is on, set comment as pending
-                    if (comment.getWeblogEntry().getWebsite().getModerateComments().booleanValue()) {
-                        comment.setPending(Boolean.TRUE);   
-                        comment.setApproved(Boolean.FALSE);
-                    } else { 
-                        comment.setPending(Boolean.FALSE);   
-                        comment.setApproved(Boolean.TRUE);
-                    } 
-                                        
-                    // save, commit, send response
-                    comment.save();
-                    RollerFactory.getRoller().commit();
+                        // ...ensure trackbacker actually links to us
+                        RollerContext rctx= RollerContext.getRollerContext(req);
+                        String absurl = rctx.getAbsoluteContextUrl();
+                        LinkbackExtractor linkback = new LinkbackExtractor(
+                            comment.getUrl(), absurl + entry.getPermaLink());
+                        if (linkback.getExcerpt() == null) {
+                           comment.setSpam(Boolean.TRUE);
+                           logger.debug("Trackback invalid: "+comment.getUrl());
+                           error = "REJECTED: your blog does not link to: " 
+                                   + absurl + entry.getPermaLink();
+                        }
+                    }
+                    
+                    if (error == null) {
+                        // If comment moderation is on, set comment as pending
+                        if (website.getModerateComments().booleanValue()) {
+                            comment.setPending(Boolean.TRUE);   
+                            comment.setApproved(Boolean.FALSE);
+                        } else { 
+                            comment.setPending(Boolean.FALSE);   
+                            comment.setApproved(Boolean.TRUE);
+                        } 
 
-                    // Clear all caches associated with comment
-                    CacheManager.invalidate(comment);
+                        // save, commit, send response
+                        comment.save();
+                        RollerFactory.getRoller().commit();
 
-                    // Send email notifications
-                    CommentServlet.sendEmailNotification(req, rreq, entry, comment);
+                        // Clear all caches associated with comment
+                        CacheManager.invalidate(comment);
 
-                    pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
-                    pw.println("<response>");
-                    pw.println("<error>0</error>");
-                    pw.println("</response>");
-                    pw.flush();
+                        // Send email notifications
+                        CommentServlet.sendEmailNotification(req, rreq, entry, comment);
+
+                        pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
+                        pw.println("<response>");
+                        pw.println("<error>0</error>");
+                        pw.println("</response>");
+                        pw.flush();
+                    }
                     
                 } else if (entry!=null) {
                     error = "Comments and Trackbacks are disabled for the entry you specified.";

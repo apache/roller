@@ -2,17 +2,12 @@ package org.roller.business;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
-import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.ParsedRequest;
 import org.roller.model.RefererManager;
 import org.roller.model.Roller;
@@ -22,6 +17,7 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.util.DateUtil;
 import org.roller.util.LinkbackExtractor;
+import org.roller.util.SpamChecker;
 import org.roller.util.Utilities;
 
 
@@ -218,8 +214,9 @@ public abstract class RefererManagerImpl implements RefererManager
                     }
                     else
                     {
-                        // If referer URL is blacklisted, don't log it
-                        boolean isRefererSpam = checkForSpam(refererUrl, website);
+                        // If referer URL is blacklisted, throw it out
+                        boolean isRefererSpam = 
+                                SpamChecker.checkReferrer(website, refererUrl);
                         if (isRefererSpam) return true;
                     }
                 }
@@ -354,49 +351,6 @@ public abstract class RefererManagerImpl implements RefererManager
         return false;
     }
     
-    /**
-     * Check the Referer URL against the Site-wide RefererSpamWords list
-     * and against the user's own blacklist list.  If the Referer contains
-     * any of the words from either list consider it Spam.
-     * 
-     * @param refererUrl
-     * @return
-     * @throws RollerException
-     */
-    private boolean checkForSpam(String refererUrl, WebsiteData website) throws RollerException
-    {
-        String spamwords = RollerRuntimeConfig.getProperty("spam.blacklist");
-        if (spamwords == null) {
-        		// Oracle returns nulls instead of empty string so next line would throw NPE.
-        		spamwords = "";
-        }
-        LinkedList spamWords = new LinkedList(Arrays.asList(
-                StringUtils.split(StringUtils.deleteWhitespace(spamwords), ",")));
-    
-        if ( website.getBlacklist() != null )
-        {
-            spamWords.addAll( 
-                Arrays.asList(StringUtils.split(
-                    StringUtils.deleteWhitespace(
-                        website.getBlacklist()),",")));
-        }
-        for( Iterator i = spamWords.iterator(); i.hasNext(); )
-        {
-            String word = (String)i.next();
-            if (refererUrl.indexOf(word) != -1)
-            {
-                if (mLogger.isDebugEnabled())
-                {
-                    mLogger.debug("Flagged a Spam because '" + word + 
-                                  "' was found in '" + refererUrl + "'");
-                }
-                refererUrl = null;
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * Use LinkbackExtractor to parse title and excerpt from referer
      */

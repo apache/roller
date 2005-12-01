@@ -367,6 +367,24 @@ public class Blacklist {
         return hit;
     }   
     
+    /** Utility method to populate lists based a blacklist in string form */
+    public static void populateSpamRules(
+        String blacklist, List stringRules, List regexRules, String addendum) {
+        String weblogWords = blacklist;
+        weblogWords = (weblogWords == null) ? "" : weblogWords;
+        String siteWords = (addendum != null) ? addendum : "";
+        StringTokenizer toker = new StringTokenizer(siteWords + weblogWords,"\n");
+        while (toker.hasMoreTokens()) {
+            String token = toker.nextToken().trim();
+            if (token.startsWith("#")) continue;
+            if (token.startsWith("(")) {
+                regexRules.add(Pattern.compile(token));
+            } else {
+                stringRules.add(token);
+            }
+        }        
+    }
+        
     /** Return pretty list of String and RegEx rules. */
     public String toString() {
         StringBuffer buf = new StringBuffer("blacklist ");
