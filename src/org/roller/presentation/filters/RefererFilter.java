@@ -18,114 +18,94 @@ import org.roller.model.RollerFactory;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 
-
-
 /**
  * Keep track of referers.
- * 
+ *
  * @web.filter name="RefererFilter"
- * *web.filter-mapping url-pattern="/page/*"
- * 
+ *
  * @author David M. Johnson
  */
-public class RefererFilter implements Filter
-{
+public class RefererFilter implements Filter {
     private FilterConfig   mFilterConfig = null;
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(RefererFilter.class);
-   
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(RefererFilter.class);
+    
     /**
      * destroy
      */
-    public void destroy()
-    {
+    public void destroy() {
     }
-
+    
     /**
      * doFilter
      */
     public void doFilter(
-        ServletRequest req, ServletResponse res, FilterChain chain)
-        throws IOException, ServletException
-    {
+            ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest)req;
-        boolean isRefSpammer = false;       
-        try
-        {
+        boolean isRefSpammer = false;
+        try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerContext rctx = RollerContext.getRollerContext(
-                mFilterConfig.getServletContext());
+                    mFilterConfig.getServletContext());
             
-            if ( rreq.getWebsite() != null )
-            {
-                String handle = rreq.getWebsite().getHandle();                
+            if (rreq!=null && rreq.getWebsite() != null) {
+                String handle = rreq.getWebsite().getHandle();
                 
                 // Base page URLs, with and without www.
-                String basePageUrlWWW = 
-                    rctx.getAbsoluteContextUrl(request)+"/page/"+handle;                        
-                String basePageUrl = basePageUrlWWW;          
-                if ( basePageUrlWWW.startsWith("http://www.") )
-                {
+                String basePageUrlWWW =
+                        rctx.getAbsoluteContextUrl(request)+"/page/"+handle;
+                String basePageUrl = basePageUrlWWW;
+                if ( basePageUrlWWW.startsWith("http://www.") ) {
                     // chop off the http://www.
                     basePageUrl = "http://"+basePageUrlWWW.substring(11);
                 }
-                                 
-                // Base comment URLs, with and without www.  
-                String baseCommentsUrlWWW = 
-                    rctx.getAbsoluteContextUrl(request)+"/comments/"+handle;   
-                String baseCommentsUrl = baseCommentsUrlWWW;          
-                if ( baseCommentsUrlWWW.startsWith("http://www.") )
-                {
+                
+                // Base comment URLs, with and without www.
+                String baseCommentsUrlWWW =
+                        rctx.getAbsoluteContextUrl(request)+"/comments/"+handle;
+                String baseCommentsUrl = baseCommentsUrlWWW;
+                if ( baseCommentsUrlWWW.startsWith("http://www.") ) {
                     // chop off the http://www.
                     baseCommentsUrl= "http://"+baseCommentsUrlWWW.substring(11);
                 }
                 
                 // Don't process hits from same user's blogs as referers by
-                // ignoring Don't process referer from pages that start with base URLs. 
-                String referer = request.getHeader("Referer");               
+                // ignoring Don't process referer from pages that start with base URLs.
+                String referer = request.getHeader("Referer");
                 if (  referer==null ||
-                      ( 
-                         !referer.startsWith( basePageUrl ) 
-                      && !referer.startsWith( basePageUrlWWW )
-                      && !referer.startsWith( baseCommentsUrl )
-                      && !referer.startsWith( baseCommentsUrlWWW )
-                      )
-                   )
-                {
-                    RefererManager refMgr = 
-                        RollerFactory.getRoller().getRefererManager();
+                        (
+                        !referer.startsWith( basePageUrl )
+                        && !referer.startsWith( basePageUrlWWW )
+                        && !referer.startsWith( baseCommentsUrl )
+                        && !referer.startsWith( baseCommentsUrlWWW )
+                        )
+                        ) {
+                    RefererManager refMgr =
+                            RollerFactory.getRoller().getRefererManager();
                     isRefSpammer = refMgr.processRequest(rreq);
-                }
-                else
-                {
-                    if (mLogger.isDebugEnabled())
-                    {
+                } else {
+                    if (mLogger.isDebugEnabled()) {
                         mLogger.debug("Ignoring referer="+referer);
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mLogger.error("Processing referer",e);
         }
         
-        if (isRefSpammer)
-        {
+        if (isRefSpammer) {
             HttpServletResponse response = (HttpServletResponse)res;
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);            
-        }
-        else
-        {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        } else {
             chain.doFilter(req, res);
         }
     }
-
+    
     /**
      * init
      */
-    public void init(FilterConfig filterConfig) throws ServletException
-    {
+    public void init(FilterConfig filterConfig) throws ServletException {
         mFilterConfig = filterConfig;
     }
 }
