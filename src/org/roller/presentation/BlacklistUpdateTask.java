@@ -47,12 +47,17 @@ public class BlacklistUpdateTask extends TimerTask implements ScheduledTask {
      * Main method so that this task may be run from outside the webapp.
      */
     public static void main(String[] args) throws Exception {
-        
-        // NOTE: if this task is run externally from the Roller webapp then
-        // all it will really be doing is downloading the MT blacklist file
-        BlacklistUpdateTask task = new BlacklistUpdateTask();
-        task.init(null, null);
-        task.run();
+        try {            
+            // NOTE: if this task is run externally from the Roller webapp then
+            // all it will really be doing is downloading the MT blacklist file
+            BlacklistUpdateTask task = new BlacklistUpdateTask();
+            task.init(null, null);
+            task.run();
+            System.exit(0);
+        } catch (RollerException ex) {
+            ex.printStackTrace();
+            System.exit(-1);
+        }
     }
     
 }
