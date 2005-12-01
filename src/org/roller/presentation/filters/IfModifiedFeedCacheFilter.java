@@ -291,6 +291,15 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
     }
     
     
+    /**
+     * Clear the entire cache.
+     */
+    public void clear() {
+        mLogger.info("Clearing cache");
+        this.mCache.clear();
+    }
+    
+    
     public Map getStats() {
         
         Map stats = new HashMap();

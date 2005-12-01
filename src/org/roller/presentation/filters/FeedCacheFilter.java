@@ -273,6 +273,19 @@ public class FeedCacheFilter implements Filter, CacheHandler {
     
     
     /**
+     * Clear the entire cache.
+     */
+    public void clear() {
+        mLogger.info("Clearing cache");
+        this.mFeedCache.clear();
+        this.startTime = new Date();
+        this.hits = 0;
+        this.misses = 0;
+        this.purges = 0;
+    }
+    
+    
+    /**
      * A weblog template has changed.
      */
     public void invalidate(WeblogTemplate template) {
@@ -283,6 +296,7 @@ public class FeedCacheFilter implements Filter, CacheHandler {
     public Map getStats() {
         
         Map stats = new HashMap();
+        stats.put("cacheType", this.mFeedCache.getClass().getName());
         stats.put("startTime", this.startTime);
         stats.put("hits", new Double(this.hits));
         stats.put("misses", new Double(this.misses));

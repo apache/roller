@@ -48,6 +48,8 @@ public interface CacheHandler {
 
     public void invalidate(WeblogTemplate template);
     
+    public void clear();
+    
     public Map getStats();
     
 }
