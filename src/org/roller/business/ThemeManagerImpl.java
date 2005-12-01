@@ -7,8 +7,10 @@
 package org.roller.business;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -195,23 +197,26 @@ public class ThemeManagerImpl implements ThemeManager {
         // now go through each theme and read all it's templates
         Theme theme = null;
         for(int i=0; i < themenames.length; i++) {
-            theme = this.loadThemeFromDisk(themenames[i], 
-                        themespath + File.separator + themenames[i]);
-            
-            themes.put(theme.getName(), theme);
+            try {
+                theme = this.loadThemeFromDisk(themenames[i], 
+                            themespath + File.separator + themenames[i]);            
+                themes.put(theme.getName(), theme);
+            } catch (Throwable unexpected) {
+                // shouldn't happen, so let's learn why it did
+                mLogger.error("Problem reading theme " + themenames[i], unexpected);
+            }
         }
         
         return themes;
     }
-    
-    
+        
     /**
      * Another convenience method which knows how to load a single theme
      * off the filesystem and return a Theme object
      */
     private Theme loadThemeFromDisk(String theme_name, String themepath) {
         
-        mLogger.debug("Loading theme "+theme_name+" from "+themepath);
+        mLogger.info("Loading theme "+theme_name+" from "+themepath);  
         
         Theme theme = new Theme();
         theme.setName(theme_name);
@@ -235,35 +240,37 @@ public class ThemeManagerImpl implements ThemeManager {
         ThemeTemplate theme_template = null;
         for (int i=0; i < templates.length; i++) {
             // strip off the .vm part
-            template_name = templates[i].substring(0, templates[i].length() - 3);
+            template_name = templates[i].substring(0, templates[i].length() - 3);            
+            File template_file = new File(themepath + File.separator + templates[i]);
             
-            try {
-                File template_file = new File(themepath + File.separator + templates[i]);
-                
-                if(!template_file.exists() && !template_file.canRead()) {
-                    mLogger.warn("Couldn't read theme template file ["+template_file.getPath()+"]");
-                    continue;
-                }
-                
-                FileReader reader = new FileReader(template_file);
-                char[] chars = new char[(int) template_file.length()];
-                reader.read(chars);
-                
-                // construct ThemeTemplate representing this file
-                theme_template = new ThemeTemplate(
-                        theme_name+":"+template_name,
-                        template_name,
-                        template_name,
-                        new String(chars),
-                        template_name,
-                        new Date(template_file.lastModified()));
-                
-                // add it to the theme
-                theme.setTemplate(template_name, theme_template);
-                
-            } catch (Exception e) {
-                // warn?
+            // Continue reading theme even if problem encountered with one file
+            String msg = "read theme template file ["+template_file+"]";
+            if(!template_file.exists() && !template_file.canRead()) {
+                mLogger.error("Couldn't " + msg);
+                continue;
             }
+            char[] chars = null;
+            try {
+                FileReader reader = new FileReader(template_file);
+                chars = new char[(int) template_file.length()];
+                reader.read(chars);            
+            } catch (Exception noprob) {
+                mLogger.error("Exception while attempting to " + msg);
+                if (mLogger.isDebugEnabled()) mLogger.debug(noprob);
+                continue;
+            }
+
+            // construct ThemeTemplate representing this file
+            theme_template = new ThemeTemplate(
+                    theme_name+":"+template_name,
+                    template_name,
+                    template_name,
+                    new String(chars),
+                    template_name,
+                    new Date(template_file.lastModified()));
+
+            // add it to the theme
+            theme.setTemplate(template_name, theme_template);
         }
         
         // use the last mod date of the last template file

@@ -324,7 +324,7 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl {
         Set newEntries = new TreeSet();
         try {
             // for local feeds, sub.author = website.handle
-            if (sub.getFeedUrl().endsWith(sub.getAuthor())) {
+            if (sub.getAuthor()!=null && sub.getFeedUrl().endsWith(sub.getAuthor())) {
                 
                 logger.debug("Getting LOCAL feed "+sub.getFeedUrl());
             
@@ -335,12 +335,16 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl {
                 // figure website last update time
                 WeblogManager blogmgr = roller.getWeblogManager();
                 
-                // ISSUE: is this too expensive; can we use cached dates instead?
                 Date siteUpdated = blogmgr.getWeblogLastPublishTime(website);
+                if (siteUpdated == null) { // Site never updated, skip it
+                    logger.warn("Last-publish time null, skipping local feed ["
+                                 + website.getHandle() + "]");
+                    return newEntries; 
+                }
                 
                 // if website last update time > subsciption last update time
                 List entries = new ArrayList();
-                if (sub.getLastUpdated() == null || siteUpdated.after(sub.getLastUpdated())) {
+                if (sub.getLastUpdated()==null || siteUpdated.after(sub.getLastUpdated())) {
                     int entryCount = RollerRuntimeConfig.getIntProperty(
                         "site.newsfeeds.defaultEntries");    
                      entries = blogmgr.getWeblogEntries(
