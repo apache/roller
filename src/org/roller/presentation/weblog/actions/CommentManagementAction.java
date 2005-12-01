@@ -290,11 +290,14 @@ public final class CommentManagementAction extends DispatchAction {
         private String getQueryLink() {
             StringBuffer sb = new StringBuffer();
             sb.append(request.getContextPath());
-            sb.append("/editor/commentManagement.do"); // TODO: get path from Struts
-            sb.append("?method=query");
             if (getWebsite() != null) {
+                sb.append("/editor/commentManagement.do"); // TODO: get path from Struts
+                sb.append("?method=query");
                 sb.append("&weblog=");
                 sb.append(getWebsite().getHandle());
+            } else {
+                sb.append("/admin/commentManagement.do"); // TODO: get path from Struts
+                sb.append("?method=query");
             }
             sb.append("&count=");
             sb.append(queryForm.getCount());
