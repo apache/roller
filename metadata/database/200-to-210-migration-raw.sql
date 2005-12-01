@@ -23,7 +23,7 @@ alter table website add column defaultcommentdays integer;
 
 alter table website add column blacklist @TEXT_SQL_TYPE@;
 
-update website set commentmod=0, defaultallowcomments=1, defaultcommentdays=0, blacklist='' datecreated=datecreated;
+update website set commentmod=0, defaultallowcomments=1, defaultcommentdays=0, blacklist='', datecreated=datecreated;
 
 
 
