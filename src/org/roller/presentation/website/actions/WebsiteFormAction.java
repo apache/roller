@@ -42,7 +42,7 @@ import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.website.formbeans.WebsiteFormEx;
-import org.roller.util.SpamChecker;
+import org.roller.util.Blacklist;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -205,7 +205,7 @@ public final class WebsiteFormAction extends DispatchAction {
         List stringRules = new ArrayList();
         try {
             // just for testing/counting, this does not persist rules in any way
-            SpamChecker.populateSpamRules(blacklist, stringRules, regexRules, null);
+            Blacklist.populateSpamRules(blacklist, stringRules, regexRules, null);
             messages.add(null, new ActionMessage(
                 "websiteSettings.acceptedBlacklist",
                 new Integer(stringRules.size()), new Integer(regexRules.size())));
