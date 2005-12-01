@@ -128,11 +128,13 @@ public abstract class BasePageServlet extends VelocityServlet {
             
         } catch( Exception e ) {
             pageException = e;
-            response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         
         if (pageException != null) {
-            mLogger.error("EXCEPTION: in RollerServlet", pageException);
+            mLogger.error(pageException.getClass() 
+                + " processing URL: " + request.getRequestURL());
+            mLogger.debug(pageException);
             request.setAttribute("DisplayException", pageException);
         }
         
