@@ -1,12 +1,13 @@
 
 package org.roller.presentation.tags.menu;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.PageContext;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMapping;
 
@@ -66,23 +67,28 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
         }
 		else if (mForward != null) 
 		{
-			// next, can we use Struts forward name to find menu state
             ServletContext ctx = RollerContext.getServletContext();     
 			ModuleConfig mConfig = RequestUtils.getModuleConfig(req, ctx);
-			ForwardConfig fconfig = mConfig.findForwardConfig(mForward);
-            ActionMapping amapping = 
-                    (ActionMapping)req.getAttribute(Globals.MAPPING_KEY);            
-			if (fconfig != null && amapping != null)
-			{
-                String reqPath = amapping.getPath();
+            ActionMapping amapping = (ActionMapping)req.getAttribute(Globals.MAPPING_KEY);
+            List fconfigs = new ArrayList();
+			fconfigs.add(mConfig.findForwardConfig(mForward));
+            if (mSubforwards != null) {
+                String[] subforwards = mSubforwards.split(",");
+                for (int i=0; i<subforwards.length; i++) {
+                    fconfigs.add(mConfig.findForwardConfig(subforwards[i]));
+                }
+            }
+            for (Iterator iter = fconfigs.iterator(); iter.hasNext();) {
+                ForwardConfig fconfig = (ForwardConfig)iter.next();
                 String fwdPath = fconfig.getPath();
                 int end = fwdPath.indexOf(".do");
                 fwdPath = (end == -1) ? fwdPath : fwdPath.substring(0, end);
-                if  (fwdPath.equals(reqPath))
+                if  (fwdPath.equals(amapping.getPath()))
                 {
                     selected = true;
-                }
-			}
+                    break;
+                } 
+            }
 		}
         
         // still not found, look for menu state in session attributes

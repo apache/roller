@@ -216,7 +216,7 @@ public class ThemeManagerImpl implements ThemeManager {
      */
     private Theme loadThemeFromDisk(String theme_name, String themepath) {
         
-        mLogger.info("Loading theme "+theme_name+" from "+themepath);  
+        mLogger.info("Loading theme "+theme_name);  
         
         Theme theme = new Theme();
         theme.setName(theme_name);

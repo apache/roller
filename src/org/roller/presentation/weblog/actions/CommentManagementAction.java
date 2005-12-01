@@ -39,7 +39,14 @@ import org.roller.util.Utilities;
  * @struts.action path="/editor/commentQuery" name="commentQueryForm" 
  *     scope="request" parameter="method"
  *
+ * @struts.action path="/admin/commentManagement" name="commentManagementForm" 
+ *     scope="request" parameter="method"
+ *
+ * @struts.action path="/admin/commentQuery" name="commentQueryForm" 
+ *     scope="request" parameter="method"
+ *
  * @struts.action-forward name="commentManagement.page" path=".CommentManagement"
+ * @struts.action-forward name="commentManagementGlobal.page" path=".CommentManagementGlobal"
  */
 public final class CommentManagementAction extends DispatchAction {
     
@@ -64,8 +71,15 @@ public final class CommentManagementAction extends DispatchAction {
             queryForm.setWeblog(rreq.getWebsite().getHandle());
         }        
         request.setAttribute("model", new CommentManagementPageModel(
-           "commentManagement.title", request, response, mapping, queryForm)); 
-        return mapping.findForward("commentManagement.page");
+           "commentManagement.title", request, response, mapping, queryForm));
+        if (request.getAttribute("commentManagementForm") == null) {
+            request.setAttribute("commentManagementForm", actionForm);
+        }
+        
+        if (rreq.getWebsite() != null) {
+            return mapping.findForward("commentManagement.page");
+        }
+        return mapping.findForward("commentManagementGlobal.page");
     }
 
     public ActionForward update(
@@ -84,9 +98,10 @@ public final class CommentManagementAction extends DispatchAction {
         else if (rreq.getWebsite() != null) {
             queryForm.setWeblog(rreq.getWebsite().getHandle());
         }    
-        RollerSession rollerSession = RollerSession.getRollerSession(request);
+        RollerSession rses = RollerSession.getRollerSession(request);
         try {
-            if (rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite())) { 
+            if (rses.isGlobalAdminUser() 
+                || (rreq.getWebsite()!=null && rses.isUserAuthorizedToAuthor(rreq.getWebsite())) ) { 
                 WeblogManager mgr= RollerFactory.getRoller().getWeblogManager();
                 
                 // delete all comments with delete box checked
@@ -107,8 +122,13 @@ public final class CommentManagementAction extends DispatchAction {
                     } else {
                         comment.setSpam(Boolean.FALSE);
                     }
-                    // all comments have been reviewed, so they're no longer pending
-                    comment.setPending(Boolean.FALSE);
+                    
+                    // Only change pending status in website specific view, because
+                    // we don't want global admins changing pending status of posts.
+                    if (rreq.getWebsite() != null) {
+                        // all comments reviewed, so they're no longer pending
+                        comment.setPending(Boolean.FALSE);
+                    }
                     comment.save();
                 }               
                 RollerFactory.getRoller().commit();
@@ -127,7 +147,14 @@ public final class CommentManagementAction extends DispatchAction {
         CommentManagementPageModel model = new CommentManagementPageModel(
            "commentManagement.title", request, response, mapping, queryForm);
         request.setAttribute("model", model); 
-        return mapping.findForward("commentManagement.page");
+        if (request.getAttribute("commentManagementForm") == null) {
+            request.setAttribute("commentManagementForm", actionForm);
+        }
+        
+        if (rreq.getWebsite() != null) {
+            return mapping.findForward("commentManagement.page");
+        }
+        return mapping.findForward("commentManagementGlobal.page");
     }
     
     public class CommentManagementPageModel extends BasePageModel {
@@ -185,11 +212,18 @@ public final class CommentManagementAction extends DispatchAction {
             return ret > queryForm.getCount() ? queryForm.getCount() : ret;
         }
         
+        /**
+         * Number of pending entries on current page of results.
+         * Returns zero when managing comments across entire site, because 
+         * we don't want global admins to change pending status of posts.
+         */        
         public int getPendingCommentCount() {
             int count = 0;
-            for (Iterator iter = comments.iterator(); iter.hasNext();) {
-                CommentData cd = (CommentData)iter.next();
-                if (cd.getPending().booleanValue()) count++;
+            if (getWebsite() != null) { 
+                for (Iterator iter = comments.iterator(); iter.hasNext();) {
+                    CommentData cd = (CommentData)iter.next();
+                    if (cd.getPending().booleanValue()) count++;
+                }
             }
             return count;
         }

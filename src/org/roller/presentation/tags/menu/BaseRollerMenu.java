@@ -29,6 +29,7 @@ public abstract class BaseRollerMenu
 {
     protected String mName = null;
 	protected String mForward = null;
+	protected String mSubforwards = null;
     protected String mEnabledProperty = null;
     protected String mDisabledProperty = null;
     protected List mRoles = new ArrayList();
@@ -69,6 +70,12 @@ public abstract class BaseRollerMenu
 
 	/** Struts forward */ 
 	public void setForward( String forward ) { mForward = forward; }
+
+    /** Subforward: other forwards grouped under this menu */ 
+	public String getSubforwards() { return mSubforwards; }
+
+	/** Subforwards: other forwards grouped under this menu */ 
+	public void setSubforwards( String subforwards ) { mSubforwards = subforwards; }
 
     /** Roles allowed to view menu, comma separated */ 
     public void setRoles( String roles ) 

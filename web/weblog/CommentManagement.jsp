@@ -2,8 +2,8 @@
 <%@ page import="org.roller.presentation.weblog.actions.CommentManagementAction" %>
 <%@ page import="org.roller.presentation.RollerRequest" %>
 <%
-//CommentManagementAction.CommentManagementPageModel model = 
-    //(CommentManagementAction.CommentManagementPageModel)request.getAttribute("model");
+CommentManagementAction.CommentManagementPageModel model = 
+    (CommentManagementAction.CommentManagementPageModel)request.getAttribute("model");
 %>
 <script type="text/javascript">
 <!-- 
@@ -64,11 +64,14 @@ function setChecked(val, name) {
 <%-- ===================================================================== --%>
 
 <c:choose>
-    <c:when test="${model.pendingCommentCount == 0}">
+    <c:when test="${model.pendingCommentCount > 0}">
+        <p class="pagetip"><fmt:message key="commentManagement.pendingTip" /></p>    
+    </c:when>
+    <c:when test="${!empty model.website}">
         <p class="pagetip"><fmt:message key="commentManagement.tip" /></p>    
     </c:when>
     <c:otherwise>
-        <p class="pagetip"><fmt:message key="commentManagement.pendingTip" /></p>    
+        <p class="pagetip"><fmt:message key="commentManagement.globalTip" /></p>    
     </c:otherwise>
 </c:choose>
 
@@ -135,7 +138,10 @@ function setChecked(val, name) {
         <%-- Comment table / form with checkboxes --%>
         <%-- ============================================================= --%>
         
-        <html:form action="/editor/commentManagement" method="post">
+        <% String path = model.getWebsite()==null 
+                ? "/admin/commentManagement" : "/editor/commentManagement"; %>
+        <html:form action="<%= path %>" method="post">
+        
             <input type="hidden" name="method" value="update"/>
             <c:if test="${!empty model.website}">
                 <input name="weblog" type="hidden" value='<c:out value="${model.website.handle}" />' />
@@ -157,9 +163,11 @@ function setChecked(val, name) {
            <%-- Comment table header --%>
            
            <tr>
-                <th class="rollertable" width="5%" style="font-size:80%">
-                    <fmt:message key="commentManagement.columnApproved" />
-                </th>
+                <c:if test="${!empty model.website}">
+                    <th class="rollertable" width="5%" style="font-size:80%">
+                        <fmt:message key="commentManagement.columnApproved" />
+                    </th>
+                </c:if>
                 <th class="rollertable" width="5%" style="font-size:80%">
                     <fmt:message key="commentManagement.columnSpam" />
                 </th>
@@ -176,13 +184,15 @@ function setChecked(val, name) {
            
             <c:if test="${model.commentCount > 1}">
                 <tr class="actionrow">
-                    <td align="center">
-                        <fmt:message key="commentManagement.select" /><br/>
-                        <a href="#" onclick='setChecked(1,"approvedComments")'>
-                            <fmt:message key="commentManagement.all" /></a><br /> 
-                        <a href="#" onclick='setChecked(0,"approvedComments")'>
-                            <fmt:message key="commentManagement.none" /></a>
-                    </td>
+                    <c:if test="${!empty model.website}">
+                        <td align="center">
+                            <fmt:message key="commentManagement.select" /><br/>
+                            <a href="#" onclick='setChecked(1,"approvedComments")'>
+                                <fmt:message key="commentManagement.all" /></a><br /> 
+                            <a href="#" onclick='setChecked(0,"approvedComments")'>
+                                <fmt:message key="commentManagement.none" /></a>
+                        </td>
+                    </c:if>
                     <td align="center">
                         <fmt:message key="commentManagement.select" /><br/>
                         <a href="#" onclick='setChecked(1,"spamComments")'>
@@ -213,11 +223,18 @@ function setChecked(val, name) {
 
             <c:forEach var="comment" items="${model.comments}">
             <tr>
-                <td>
-                    <html:multibox property="approvedComments">
-                        <c:out value="${comment.id}" />
-                    </html:multibox>
-                </td>
+                <c:choose>
+                    <c:when test="${!empty model.website}">
+                        <td>
+                            <html:multibox property="approvedComments">
+                                <c:out value="${comment.id}" />
+                            </html:multibox>
+                        </td>
+                    </c:when>
+                    <c:otherwise>
+                        <html:hidden property="approvedComments"/>
+                    </c:otherwise>
+                </c:choose>
                 <td>
                     <html:multibox property="spamComments">
                         <c:out value="${comment.id}" />
