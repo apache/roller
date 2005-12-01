@@ -82,6 +82,8 @@ function setChecked(val, name) {
         <%-- Number of comments and date message --%>
         <%-- ============================================================= --%>
         
+        <div class="tablenav">
+            
         <div style="float:left;">
             <fmt:message key="commentManagement.nowShowing">
                 <fmt:param value="${model.commentCount}" />
@@ -125,13 +127,15 @@ function setChecked(val, name) {
                 <br /><center>
                     &laquo;
                     <fmt:message key="commentManagement.prev" />
-                    | <a href='<c:out value="${model.nextLink}" />'>
+                    | <a class="" href='<c:out value="${model.nextLink}" />'>
                         <fmt:message key="commentManagement.next" /></a>
                     &raquo;
                 </center><br />
             </c:when>
             <c:otherwise><br /></c:otherwise>
         </c:choose>
+        
+        </div> <%-- class="tablenav" --%>
 
         
         <%-- ============================================================= --%>
@@ -144,10 +148,12 @@ function setChecked(val, name) {
         
             <input type="hidden" name="method" value="update"/>
             <c:if test="${!empty model.website}">
-                <input name="weblog" type="hidden" value='<c:out value="${model.website.handle}" />' />
+                <input name="weblog" type="hidden" 
+                    value='<c:out value="${model.website.handle}" />' />
             </c:if>
             <c:if test="${!empty model.weblogEntry}">
-                <input name="entryid" type="hidden" value='<c:out value="${model.weblogEntry.id}" />' />
+                <input name="entryid" type="hidden" 
+                    value='<c:out value="${model.weblogEntry.id}" />' />
             </c:if>
             <html:hidden property="ids" />
             <html:hidden property="offset" />
@@ -164,17 +170,17 @@ function setChecked(val, name) {
            
            <tr>
                 <c:if test="${!empty model.website}">
-                    <th class="rollertable" width="5%" style="font-size:80%">
+                    <th class="rollertable" width="5%">
                         <fmt:message key="commentManagement.columnApproved" />
                     </th>
                 </c:if>
-                <th class="rollertable" width="5%" style="font-size:80%">
+                <th class="rollertable" width="5%">
                     <fmt:message key="commentManagement.columnSpam" />
                 </th>
-                <th class="rollertable" width="5%" style="font-size:80%">
+                <th class="rollertable" width="5%" >
                     <fmt:message key="commentManagement.columnDelete" />
                 </th>
-                <th class="rollertable" width="85%">
+                <th class="rollertable">
                     <fmt:message key="commentManagement.columnComment" />
                 </th>
             </tr>

@@ -248,12 +248,18 @@ div.yourWeblogBox {
 Table styles 
 ---------------------------------------------------------------------- */
 
+div.tablenav {
+   font-size: 110%
+}
+
 table.rollertable {
     border-collapse: collapse; 
     width: 100%;
 }
-table.rollertable th, table.rollertable th {
+table.rollertable th {
     border: 1px solid #ccc;
+    font-size: 110%;
+    padding: 3px;
 }
 table.rollertable th {
     color: white;

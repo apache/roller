@@ -110,24 +110,37 @@ public final class CommentManagementAction extends DispatchAction {
                 if (deleteIds != null && deleteIds.length > 0) {
                     mgr.removeComments(deleteIds);
                 }    
-                // loop through all comments displayed on page
+                // loop through IDs of all comments displayed on page
                 String[] ids = Utilities.stringToStringArray(queryForm.getIds(),",");
-                for (int i=0; i<ids.length; i++) { 
-                    if (deletedList.contains(ids[i])) continue;
+                for (int i=0; i<ids.length; i++) {                    
+                    if (deletedList.contains(ids[i])) continue;                    
                     CommentData comment = mgr.retrieveComment(ids[i]);
+                    
+                    // apply spam checkbox 
                     List spamIds = Arrays.asList(queryForm.getSpamComments());
-                    List approvedIds = Arrays.asList(queryForm.getApprovedComments());
                     if (spamIds.contains(ids[i])) {
                         comment.setSpam(Boolean.TRUE);
                     } else {
                         comment.setSpam(Boolean.FALSE);
                     }
                     
-                    // Only change pending status in website specific view, because
-                    // we don't want global admins changing pending status of posts.
+                    // Only participate in comment review workflow if we're
+                    // working within one specfic weblog. Global admins should
+                    // be able to mark-as-spam and delete comments without 
+                    // interfering with moderation by bloggers.
                     if (rreq.getWebsite() != null) {
+                        
                         // all comments reviewed, so they're no longer pending
                         comment.setPending(Boolean.FALSE);
+                        
+                        // apply pending checkbox
+                        List approvedIds = 
+                            Arrays.asList(queryForm.getApprovedComments());
+                        if (approvedIds.contains(ids[i])) {
+                            comment.setApproved(Boolean.TRUE);
+                        } else {
+                            comment.setApproved(Boolean.FALSE);
+                        }
                     }
                     comment.save();
                 }               
@@ -140,7 +153,7 @@ public final class CommentManagementAction extends DispatchAction {
         } catch (Exception e) {
             ActionMessages errors = new ActionMessages();
             errors.add(ActionErrors.GLOBAL_MESSAGE,
-                new ActionMessage("commentManagement.updateError", e.toString()));
+                new ActionMessage("commentManagement.updateError",e.toString()));
             saveErrors(request, errors);
             logger.error("ERROR updating comments", e);       
         }
