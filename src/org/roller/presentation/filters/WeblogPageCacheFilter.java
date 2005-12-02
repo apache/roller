@@ -121,9 +121,11 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
                 
             } catch (java.net.SocketException se) {
                 // ignored
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (Exception e) {
                 // something unexpected and bad happened
                 mLogger.error("Error rendering page "+key, e);
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             
         } else {
