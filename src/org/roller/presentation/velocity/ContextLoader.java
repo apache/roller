@@ -242,7 +242,7 @@ public class ContextLoader
         
         WeblogEntryData entry = rreq.getWeblogEntry();
         if (entry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
-            ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));            
+            ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));
         }
     }   
 

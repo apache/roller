@@ -31,6 +31,7 @@ import org.roller.pojos.wrapper.RefererDataWrapper;
 import org.roller.pojos.wrapper.TemplateWrapper;
 import org.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.util.StringUtils;
@@ -184,12 +185,13 @@ public class PageModel
     //------------------------------------------------------------------------
      
     /** Get comments for weblog entry specified by request */
-    public List getComments(WeblogEntryData entry) {
+    public List getComments(WeblogEntryDataWrapper entry) {
         return getComments(entry, true, true);
     }
         
     /** Get comments for weblog entry specified by request */
-    public List getComments(WeblogEntryData entry, boolean noSpam, boolean approvedOnly) {
+    public List getComments(WeblogEntryDataWrapper wrapper, boolean noSpam, boolean approvedOnly) {
+        WeblogEntryData entry = wrapper.getPojo();
         List comments = new ArrayList();
         List unwrappped = entry.getComments(noSpam, approvedOnly);
         comments = new ArrayList(unwrappped.size());
@@ -237,8 +239,9 @@ public class PageModel
     //------------------------------------------------------------------------
     
     /** Encapsulates UserManager.getPageByName() */
-    public TemplateWrapper getUsersPageByName(WebsiteData website, String pageName)
+    public TemplateWrapper getUsersPageByName(WebsiteDataWrapper wrapper, String pageName)
     {
+        WebsiteData website = wrapper.getPojo();
         TemplateWrapper page = null;
         try
         {
