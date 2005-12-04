@@ -27,6 +27,7 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
+import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.weblog.formbeans.CommentManagementForm;
 import org.roller.util.Utilities;
 
@@ -112,6 +113,7 @@ public final class CommentManagementAction extends DispatchAction {
                 }    
                 // loop through IDs of all comments displayed on page
                 String[] ids = Utilities.stringToStringArray(queryForm.getIds(),",");
+                List flushList = new ArrayList();
                 for (int i=0; i<ids.length; i++) {                    
                     if (deletedList.contains(ids[i])) continue;                    
                     CommentData comment = mgr.retrieveComment(ids[i]);
@@ -143,8 +145,12 @@ public final class CommentManagementAction extends DispatchAction {
                         }
                     }
                     comment.save();
+                    flushList.add(comment);
                 }               
                 RollerFactory.getRoller().commit();
+                for (Iterator comments=flushList.iterator(); comments.hasNext();) {
+                    CacheManager.invalidate((CommentData)comments.next());
+                }
                 ActionMessages msgs = new ActionMessages();
                 msgs.add(ActionMessages.GLOBAL_MESSAGE, 
                     new ActionMessage("commentManagement.updateSuccess"));

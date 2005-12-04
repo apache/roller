@@ -723,7 +723,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
             criteria.addOrder(Order.desc("postTime"));
 
             List comments = criteria.list();
-            if (comments.size() < offset) {
+            if (offset==0 || comments.size() < offset) {
                 return comments;
             }
             List range = new ArrayList();

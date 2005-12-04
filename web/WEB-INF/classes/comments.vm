@@ -97,10 +97,13 @@
         <div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
     #else
         <div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
-        #set($comments = $pageModel.getComments($entry, true))
+        #set($comments = $pageModel.getComments($entry))
+        $comments
+        $comments.size()
     #end
     <br/>
     #foreach( $comment in $comments )
+        <!-- comment: $comment.id -->
         #if( $comment.approved )
             #set($content = $utilities.encodeEmail($comment.content))
             #if($escapeHtml)
