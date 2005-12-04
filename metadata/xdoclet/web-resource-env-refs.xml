@@ -1,4 +1,4 @@
-<!-- TOMCAT RESOURCE REF -->
+<!-- Web app resource refs. -->
     <resource-ref>
             <res-ref-name>jdbc/rollerdb</res-ref-name>
             <res-type>javax.sql.DataSource</res-type>
