@@ -61,15 +61,15 @@ public class MenuItemImpl extends BaseRollerMenu implements MenuItem
             itemKey = (String)req.getAttribute(RollerMenuModel.MENU_ITEM_KEY);
         }
         
+        ActionMapping amapping = (ActionMapping)req.getAttribute(Globals.MAPPING_KEY);
         if (itemKey != null && itemKey.equals(mName)) 
         {
             selected = true;
         }
-		else if (mForward != null) 
+		else if (mForward != null && amapping != null) 
 		{
             ServletContext ctx = RollerContext.getServletContext();     
 			ModuleConfig mConfig = RequestUtils.getModuleConfig(req, ctx);
-            ActionMapping amapping = (ActionMapping)req.getAttribute(Globals.MAPPING_KEY);
             List fconfigs = new ArrayList();
 			fconfigs.add(mConfig.findForwardConfig(mForward));
             if (mSubforwards != null) {
