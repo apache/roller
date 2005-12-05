@@ -1,0 +1,25 @@
+README.txt
+
+Database creation scripts for MySQL.
+See Roller installation guide for instructions.
+
+#set( $templates = ["createdb", "200-to-210-migration"]) 
+
+#set( $DBTYPE = "MYSQL")
+#set( $BOOLEAN_SQL_TYPE_TRUE = "bit 1") 
+#set( $TEXT_SQL_TYPE = "text")
+#set( $BOOLEAN_SQL_TYPE_FALSE = "bit default 0")
+#set( $BOOLEAN_SQL_TYPE_TRUE = "bit default 1")
+#set( $BOOLEAN_SQL_TYPE = "bit")
+#set( $BOOLEAN_FALSE = "0")
+#set( $BOOLEAN_TRUE = "1")
+#set( $INDEXSIZE = "(40)")
+#set( $INDEXSIZE_LARGE = "(100)")
+#set( $ADDL_FK_PARAMS = "")
+#set( $TIMESTAMP_SQL_TYPE_NULL = "datetime NULL")
+
+#foreach ($template in $templates) 
+    #set($in = "${template}.vm")
+    #set($out = "${template}.sql")
+    $generator.parse($in, $out) 
+#end
