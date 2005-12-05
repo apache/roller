@@ -60,6 +60,26 @@
 </filter-mapping>
 
 
+<!-- cache lastModified dates used for HTTP 304 responses -->
+<filter-mapping>
+    <filter-name>IfModifiedFeedCacheFilter</filter-name>
+    <url-pattern>/rss/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>IfModifiedFeedCacheFilter</filter-name>
+    <url-pattern>/atom/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>IfModifiedFeedCacheFilter</filter-name>
+    <url-pattern>/flavor/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
+    <filter-name>IfPlanetModifiedFilter</filter-name>
+    <url-pattern>/planetrss/*</url-pattern>
+</filter-mapping>
+
+
 <!-- Compression Filters -->
 <filter-mapping>
     <filter-name>PageGzipFilter</filter-name>
@@ -89,21 +109,6 @@
 <filter-mapping>
     <filter-name>RssGzipFilter</filter-name>
     <url-pattern>/foaf/*</url-pattern>
-</filter-mapping>
-
-
-<!-- cache lastModified dates for feeds -->
-<filter-mapping>
-    <filter-name>IfModifiedFeedCacheFilter</filter-name>
-    <url-pattern>/rss/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>IfModifiedFeedCacheFilter</filter-name>
-    <url-pattern>/atom/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>IfModifiedFeedCacheFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
 </filter-mapping>
 
 
@@ -147,7 +152,6 @@
 
 
 <!-- Do we still need the RequestFilter? -->
-<!--
 <filter-mapping>
     <filter-name>RequestFilter</filter-name>
     <url-pattern>/page/*</url-pattern>
@@ -156,7 +160,10 @@
     <filter-name>RequestFilter</filter-name>
     <url-pattern>/preview/*</url-pattern>
 </filter-mapping>
--->
+<filter-mapping>
+    <filter-name>RequestFilter</filter-name>
+    <url-pattern>/flavor/*</url-pattern>
+</filter-mapping>
 <filter-mapping>
     <filter-name>RequestFilter</filter-name>
     <url-pattern>/xmlrpc/*</url-pattern>
