@@ -101,7 +101,7 @@ public class ReferersAction extends DispatchAction
             {
                 RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
                 WebsiteData website = rreq.getWebsite();
-                refmgr.forceTurnover(website.getId());
+                refmgr.clearReferrers(website);
                 RollerFactory.getRoller().commit();
                 
                 CacheManager.invalidate(website);
