@@ -674,6 +674,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
         Boolean         pending,
         Boolean         approved,
         Boolean         spam,
+        boolean         reverseChrono,
         int             offset,
         int             length
         ) throws RollerException {
@@ -720,7 +721,11 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
                 criteria.setMaxResults(offset + length);               
             }
             
-            criteria.addOrder(Order.desc("postTime"));
+            if (reverseChrono) {
+                criteria.addOrder(Order.desc("postTime"));
+            } else {
+                criteria.addOrder(Order.asc("postTime"));
+            }
 
             List comments = criteria.list();
             if (offset==0 || comments.size() < offset) {
