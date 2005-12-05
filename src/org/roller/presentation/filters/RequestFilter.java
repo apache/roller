@@ -75,6 +75,11 @@ public class RequestFilter implements Filter
             response.sendError(
                     HttpServletResponse.SC_NOT_FOUND, 
                     "Page not found or error parsing requested URL");
+            
+            // make sure any filters earlier in the chain know that we had
+            // an exception happen
+            request.setAttribute("DisplayException", e);
+            
             return;
         }
 

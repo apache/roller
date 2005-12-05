@@ -27,7 +27,7 @@ import org.roller.presentation.RollerRequest;
  * modified since. Also, sets Last-Modified on outgoing response.
  *
  * @web.filter name="IfPlanetModifiedFilter"
- * @web.filter-mapping url-pattern="/planetrss/*"
+ * web.filter-mapping url-pattern="/planetrss/*"
  * 
  * @author David M Johnson
  */
