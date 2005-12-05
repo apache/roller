@@ -1,0 +1,6 @@
+<XDtConfig:ifConfigParamNotEquals paramName="Displayname" value="">
+<display-name><XDtConfig:configParameterValue paramName="Displayname"/></display-name>
+</XDtConfig:ifConfigParamNotEquals>
+
+<!-- RESIN_LOGGER -->
+

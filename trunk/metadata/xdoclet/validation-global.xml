@@ -1,0 +1,7 @@
+   <global>
+      <constant>
+        <!-- noslashes: no '/' slash characters. -->
+        <constant-name>noslashes</constant-name>
+        <constant-value>^[^/]*$</constant-value>
+      </constant>
+   </global>

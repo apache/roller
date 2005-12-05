@@ -1,0 +1,79 @@
+
+<!-- Additional Ant tasks to include in build script -->
+
+    <!-- Netbeans debug single file 
+    --> 
+    <target name="debug-selected-files" if="netbeans.home" depends="build-test" 
+       description="Debug a Single File">
+       <fail unless="classname">Must set property 'classname'</fail>
+       <nbjpdastart name="${classname}" addressproperty="jpda.address" transport="dt_socket">
+          <classpath>
+            <path refid="junit.path"/>
+          </classpath>
+       </nbjpdastart>
+       <java classname="${classname}" fork="true" dir="${build.tests}">
+          <jvmarg value="-Xdebug"/>
+          <jvmarg value="-Xnoagent"/>
+          <jvmarg value="-Djava.compiler=none"/>
+          <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+          <classpath>
+              <path refid="junit.path"/>
+          </classpath>
+       </java>
+    </target>
+
+    <!-- Netbeans debug.single target 
+    -->
+    <target name="test-selected-files" if="netbeans.home" depends="build-test" 
+       description="Test/debug a Single File">
+       <fail unless="classname">Must set property 'classname'</fail>
+       <nbjpdastart name="junit.textui.TestRunner" addressproperty="jpda.address" transport="dt_socket">
+          <classpath>
+            <path refid="junit.path"/>
+          </classpath>
+       </nbjpdastart>
+       <java classname="junit.textui.TestRunner" fork="true" dir="${build.tests}">
+          <arg value="${classname}" />
+          <jvmarg value="-Xdebug"/>
+          <jvmarg value="-Xnoagent"/>
+          <jvmarg value="-Djava.compiler=none"/>
+          <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+          <classpath>
+              <path refid="junit.path"/>
+          </classpath>
+       </java>
+    </target>
+
+    <!-- Extend the init-hsqldb target to include custom tables
+    <target name="init-hsqldb-ex" depends="init-hsqldb" >
+        <sql driver="org.hsqldb.jdbcDriver"
+             url="jdbc:hsqldb:hsql://localhost:3219"
+             userid="sa" password=""  onerror="continue"
+             src="./build/roller/WEB-INF/dbscripts/hsql/droptables-planet.sql"
+             classpath="${ro.tools}/buildtime/hsqldb.jar" />    
+        <sql driver="org.hsqldb.jdbcDriver"
+             url="jdbc:hsqldb:hsql://localhost:3219"
+             userid="sa" password=""
+             src="./build/roller/WEB-INF/dbscripts/hsql/createdb-planet.sql"
+             classpath="${ro.tools}/buildtime/hsqldb.jar" />    
+    </target>
+    -->
+    
+<!--
+  <target name="deploy" depends="compile" description="Deploy application to servlet container">
+     <deploy url="${manager.url}"
+	     username="${manager.username}"
+	     password="${manager.password}"
+		 path="${app.path}"
+	     localWar="file://${build.home}"/>
+  </target>
+
+    <target name="debug" depends="compile, deploy" if="netbeans.home" description="Debug Project">
+       <nbjpdaconnect name="${app.name}" host="${jpda.host}" address="${jpda.address}" transport="dt_socket">
+	  <classpath refid="${run.classpath}"/>
+	  <sourcepath refid="${debug.sourcepath}"/>
+       </nbjpdaconnect>
+       <nbbrowse url="${client.url}"/>
+    </target>
+-->
+

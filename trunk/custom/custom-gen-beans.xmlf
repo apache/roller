@@ -1,0 +1,8 @@
+
+<!--  Custom classes to include in Hibernate mapping file generation 
+<fileset dir="${basedir}/custom/src" includes="**/*Data.java" /> 
+
+<fileset dir="${basedir}/sandbox/planetroller/src" 
+    includes="**/*Data.java,**/*Assoc.java" />
+-->
+    
