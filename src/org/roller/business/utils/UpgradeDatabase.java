@@ -172,7 +172,7 @@ public class UpgradeDatabase {
             mLogger.info("Populating roller_user_permissions table");
             
             PreparedStatement websitesQuery = con.prepareStatement(
-                "select w.id, u.id, u.username from "
+                "select w.id as wid, u.id as uid, u.username as uname from "
               + "website as w, rolleruser as u where u.id=w.userid");
             PreparedStatement websiteUpdate = con.prepareStatement(
                 "update website set handle=? where id=?");         
@@ -181,16 +181,16 @@ public class UpgradeDatabase {
               + "pubtime=pubtime, updatetime=updatetime "
               + "where publishentry=? and websiteid=?");            
             PreparedStatement permsInsert = con.prepareStatement(
-                "insert roller_user_permissions "
+                "insert into roller_user_permissions "
               + "(id, website_id, user_id, permission_mask, pending) "
               + "values (?,?,?,?,?)");
              
             // loop through websites, each has a user
             ResultSet websiteSet = websitesQuery.executeQuery();
             while (websiteSet.next()) {
-                String websiteid = websiteSet.getString("w.id");
-                String userid = websiteSet.getString("u.id");
-                String handle = websiteSet.getString("u.username");
+                String websiteid = websiteSet.getString("wid");
+                String userid = websiteSet.getString("uid");
+                String handle = websiteSet.getString("uname");
                 mLogger.info("Processing website: " + handle);
                        
                 // use website user's username as website handle
