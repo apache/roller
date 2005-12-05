@@ -193,7 +193,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             roller.getThemeManager();
             setupSpellChecker();
             setupIndexManager(roller);
-            setupRefererManager(roller);
             initializePingFeatures(roller);
             setupPingQueueTask(roller);
             setupScheduledTasks(mContext, roller);
@@ -373,30 +372,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         catch (SQLException e)
         {
             mLogger.warn(e);
-        }
-    }
-
-    //------------------------------------------------------------------------
-
-    /**
-     * Add TurnoverReferersTask to run on a schedule.
-     */
-    private void setupRefererManager(Roller roller)
-    {
-        try
-        {
-            // Check for turnover when we first start
-            final RefererManager refManager = roller.getRefererManager();
-            refManager.checkForTurnover(false, null);
-
-            // Schedule a check every day, starting at end of today
-            //TurnoverReferersTask task = new TurnoverReferersTask();
-            //task.init(roller, mContext.getRealPath("/"));
-            //roller.getThreadManager().scheduleDailyTimerTask(task);
-        }
-        catch (RollerException e)
-        {
-            mLogger.warn("Couldn't schedule referer turnover task", e);
         }
     }
 

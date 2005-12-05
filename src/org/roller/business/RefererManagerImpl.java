@@ -76,13 +76,6 @@ public abstract class RefererManagerImpl implements RefererManager
     {
     }
 
-    //-----------------------------------------------------------------------
-    public synchronized void forceTurnover(String websiteId) throws RollerException
-    {
-        mLogger.debug("forceTurnover");
-        checkForTurnover(true, websiteId);
-    }
-
     //--------------------------------------------------------- Get hit counts
 
     public int getDayHits(WebsiteData website) throws RollerException

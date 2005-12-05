@@ -483,57 +483,45 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
     }
     
     /**
-     * Purge referers at midnight. Zero out all dayHits and remove all
-     * referers that do not have excerpts.
+     * Clear referrer dayhits and remove referrers without excerpts.
      */
-    public void checkForTurnover( boolean forceTurnover, String websiteId )
-    throws RollerException {
-        // Note, this method doesn't need to be synchronized anymore since
-        // it's called from the timer task now, and will never be executed
-        // by two threads simultaneously.
+    public void clearReferrers() throws RollerException {
+
         if (mLogger.isDebugEnabled()) {
-            mLogger.debug("checkForTurnover");
+            mLogger.debug("clearReferrers");
+        }       
+        try {
+            Session session = ((HibernateStrategy)mStrategy).getSession();
+            String reset = "update RefererData set dayHits=0";
+            session.createQuery(reset).executeUpdate();
+            String delete = "delete RefererData where excerpt is null";
+            session.createQuery(delete).executeUpdate();
+        } catch (Exception e) {
+            mLogger.error("EXCEPTION resetting referers",e);
         }
-        
-        Date now = new Date();
-        
-        if (forceTurnover ||
-                !mDateFormat.format(now).equals(mDateFormat.format(mRefDate))) {
-            try {
-                if (websiteId == null) mRefDate = now;
-                
-                List refs;
-                try {
-                    Session session = ((HibernateStrategy)mStrategy).getSession();
-                    Criteria criteria = session.createCriteria(RefererData.class);
-                    criteria.add(Expression.gt("dayHits", new Integer(0)));
-                    if (websiteId != null) {
-                        criteria.add(Expression.eq("website.id", websiteId));
-                    }
-                    refs = criteria.list();
-                } catch (HibernateException e1) {
-                    throw new RollerException(e1);
-                }
-                
-                Integer zero = new Integer(0);
-                for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
-                    RefererData referer = (RefererData) rdItr.next();
-                    
-                    if (   (referer.getExcerpt() != null) &&
-                            (referer.getExcerpt().trim().length() > 0)) {
-                        // Zero out dayHits of referers with excerpts
-                        referer.setDayHits(zero);
-                        storeReferer(referer);
-                    } else {
-                        // Throw away referers without excerpts
-                        removeReferer(referer.getId());
-                    }
-                }
-            } catch (RollerException e) {
-                mLogger.error("EXCEPTION resetting referers",e);
-            }
+    }  
+    
+    /**
+     * Clear referrer dayhits and remove referrers without excerpts.
+     */
+    public void clearReferrers(WebsiteData website) throws RollerException {
+
+        if (mLogger.isDebugEnabled()) {
+            mLogger.debug("clearReferrers");
+        }       
+        try {
+            Session session = ((HibernateStrategy)mStrategy).getSession();
+            String reset = "update RefererData set dayHits=0 where website=:site";
+            session.createQuery(reset)
+                .setParameter("site",website).executeUpdate();
+            String delete = "delete RefererData where website=:site and excerpt is null";
+            session.createQuery(delete)
+                .setParameter("site",website).executeUpdate();
+        } catch (Exception e) {
+            mLogger.error("EXCEPTION resetting referers",e);
         }
-    }
-    
-    
+    }  
 }
+
+
+
