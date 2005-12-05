@@ -1,0 +1,36 @@
+
+#macro( addColumn $table $column $type $default $notnull)
+alter table $table add column $column $type;  
+    #if( $DBTYPE == "MYSQL" || $DBTYPE == "ORACLE")
+alter table $table modify $column $type default $default;
+        #if ($notnull == true)
+alter table $table modify $column $type not null;
+       #end
+    #else
+alter table $table alter $column set default $default;
+        #if ($notnull == true)
+alter table $table alter $column set not null;
+        #end
+    #end
+#end
+
+-- Add to roller_comment table: approved and pending fields
+
+#addColumn("roller_comment" "approved" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE true)
+#addColumn("roller_comment" "pending" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE true)
+
+update roller_comment set approved=$BOOLEAN_TRUE, pending=$BOOLEAN_FALSE, posttime=posttime;
+
+
+-- Add to website table: commentmod, blacklist, defaultallowcomments and defaultcommentdays 
+
+#addColumn("website" "commentmod" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE true)
+#addColumn("website" "defaultallowcomments" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE true)
+#addColumn("website" "defaultcommentdays" "integer" "7" true)
+#addColumn("website" "blacklist" $TEXT_SQL_TYPE "''" false)
+
+update website set commentmod=$BOOLEAN_FALSE, defaultallowcomments=$BOOLEAN_TRUE, defaultcommentdays=$BOOLEAN_FALSE, blacklist='', datecreated=datecreated;
+
+
+
+

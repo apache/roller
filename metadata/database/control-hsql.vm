@@ -1,0 +1,25 @@
+README.txt
+
+Database creation scripts for HSQL.
+See Roller installation guide for instructions.
+
+#set( $templates = ["createdb", "200-to-210-migration"]) 
+
+#set( $DBTYPE = "HSQL")
+#set( $BOOLEAN_SQL_TYPE_TRUE = "bit 1") 
+#set( $TEXT_SQL_TYPE = "longvarchar")
+#set( $BOOLEAN_SQL_TYPE_FALSE = "bit default 0")
+#set( $BOOLEAN_SQL_TYPE_TRUE = "bit default 1")
+#set( $BOOLEAN_SQL_TYPE = "bit")
+#set( $BOOLEAN_FALSE = "0")
+#set( $BOOLEAN_TRUE = "1")
+#set( $INDEXSIZE = "")
+#set( $INDEXSIZE_LARGE = "")
+#set( $ADDL_FK_PARAMS = "")
+#set( $TIMESTAMP_SQL_TYPE_NULL = "timestamp null")
+
+#foreach ($template in $templates) 
+    #set($in = "${template}.vm")
+    #set($out = "${template}.sql")
+    $generator.parse($in, $out) 
+#end
