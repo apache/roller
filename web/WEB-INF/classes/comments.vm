@@ -98,8 +98,6 @@
     #else
         <div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
         #set($comments = $pageModel.getComments($entry))
-        $comments
-        $comments.size()
     #end
     <br/>
     #foreach( $comment in $comments )
