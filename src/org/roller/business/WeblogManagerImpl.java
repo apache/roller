@@ -230,6 +230,7 @@ public abstract class WeblogManagerImpl implements WeblogManager
                 null,  // pending
                 null,  // approved
                 null,  // spam
+                true,  // reverse chrono order (not that it matters)
                 0,     // offset
                 -1);   // no limit
         for (int i=comments.size()-1; i>=0; i--) {

@@ -830,6 +830,7 @@ public class PageModel
                     null,  // pending
                     Boolean.TRUE,  // approved only
                     Boolean.FALSE, // no spam
+                    false,         // we want chrono order
                     0,             // offset
                     maxCount);     // no limit
             

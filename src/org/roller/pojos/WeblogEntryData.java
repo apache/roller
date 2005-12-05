@@ -667,6 +667,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
                     null,  // pending
                     approvedOnly ? Boolean.TRUE : null, // approved
                     ignoreSpam ? Boolean.FALSE : null,  // spam
+                    false, // we want chrono order
                      0,    // offset
                     -1);   // no limit
         } catch (RollerException alreadyLogged) {}

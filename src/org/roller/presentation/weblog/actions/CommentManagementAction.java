@@ -213,6 +213,7 @@ public final class CommentManagementAction extends DispatchAction {
                 queryForm.getPending(),
                 queryForm.getApproved(),
                 queryForm.getSpam(),
+                true, // reverse  chrono order
                 queryForm.getOffset(), 
                 queryForm.getCount() + 1); 
             if (comments.size() > queryForm.getCount()) {

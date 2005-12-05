@@ -152,6 +152,7 @@ public interface WeblogManager extends Serializable
      * @param endDate    End date or null for no restriction 
      * @param pending    Pending flag value or null for no restriction 
      * @param pending    Approved flag value or null for no restriction 
+     * @param reverseChrono True for results in reverse chrono order
      * @param spam       Spam flag value or null for no restriction 
      * @param offset     Offset into results for paging
      * @param length     Max comments to return (or -1 for no limit)
@@ -165,6 +166,7 @@ public interface WeblogManager extends Serializable
         Boolean         pending,
         Boolean         approved,
         Boolean         spam,
+        boolean         reverseChrono,
         int             offset,
         int             length
         ) throws RollerException;
