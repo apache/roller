@@ -17,8 +17,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.servlet.VelocityServlet;
+import org.roller.RollerException;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.pojos.WeblogTemplate;
@@ -55,11 +57,10 @@ public abstract class BasePageServlet extends VelocityServlet {
      * Process a request for a Weblog page.
      */
     public Template handleRequest(HttpServletRequest request,
-                            HttpServletResponse response, Context ctx)
-        throws Exception {
+                                HttpServletResponse response, 
+                                Context ctx) {
         
         Template outty = null;
-        Exception pageException = null;
         
         try {
             PageContext pageContext =
@@ -126,16 +127,19 @@ public abstract class BasePageServlet extends VelocityServlet {
                 outty = findDecorator(website, (String) ctx.get("decorator"));
             }
             
-        } catch( Exception e ) {
-            pageException = e;
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-        
-        if (pageException != null) {
-            mLogger.error(pageException.getClass() 
+        } catch(ResourceNotFoundException rnfe ) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            request.setAttribute("DisplayException", rnfe);
+            
+            mLogger.error(rnfe.getClass().getName() 
                 + " processing URL: " + request.getRequestURL());
-            mLogger.debug(pageException);
-            request.setAttribute("DisplayException", pageException);
+            mLogger.debug(rnfe);
+            
+        } catch(Exception e) {
+            
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            request.setAttribute("DisplayException", e);
+            mLogger.error("EXCEPTION: in RollerServlet", e);
         }
         
         return outty;
@@ -147,9 +151,11 @@ public abstract class BasePageServlet extends VelocityServlet {
      * and populating velocity context.
      */
     protected Template prepareForPageExecution(Context ctx,
-            RollerRequest rreq,
-            HttpServletResponse response,
-            org.roller.pojos.Template page) throws Exception {
+                                            RollerRequest rreq,
+                                            HttpServletResponse response,
+                                            org.roller.pojos.Template page) 
+            
+            throws ResourceNotFoundException, RollerException {
         
         Template outty = null;
         
@@ -164,7 +170,17 @@ public abstract class BasePageServlet extends VelocityServlet {
         // Made it this far, populate the Context
         ContextLoader.setupContext( ctx, rreq, response );
         
-        return getTemplate( page.getId(), "UTF-8" );
+        try {
+            outty = getTemplate( page.getId(), "UTF-8" );
+        } catch (ResourceNotFoundException ex) {
+            // just rethrow
+            throw ex;
+        } catch (Exception ex) {
+            // wrap this as a roller exception
+            throw new RollerException("Error getting velocity template", ex);
+        }
+        
+        return outty;
     }
     
     
@@ -173,7 +189,7 @@ public abstract class BasePageServlet extends VelocityServlet {
      * decorator then the default decorator is applied.
      */
     protected Template findDecorator(WebsiteData website, String decorator_name)
-        throws Exception {
+            throws ResourceNotFoundException, RollerException {
         
         Template decorator = null;
         org.roller.pojos.Template decorator_template = null;
@@ -199,7 +215,15 @@ public abstract class BasePageServlet extends VelocityServlet {
         
         // couldn't find Template, load default "no-op" decorator
         if (decorator == null) {
-            decorator = getTemplate("/themes/noop_decorator.vm", "UTF-8");
+            try {
+                decorator = getTemplate("/themes/noop_decorator.vm", "UTF-8");
+            } catch (ResourceNotFoundException ex) {
+                // just rethrow
+                throw ex;
+            } catch (Exception ex) {
+                // wrap as a RollerException
+                throw new RollerException("error getting no-op decorator", ex);
+            }
         }
         
         return decorator;
