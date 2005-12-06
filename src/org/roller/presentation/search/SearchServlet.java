@@ -55,51 +55,59 @@ public class SearchServlet extends BasePageServlet {
     private boolean searchEnabled = true;
     
     public Template handleRequest(HttpServletRequest request,
-        HttpServletResponse response, Context ctx) throws Exception {
+        HttpServletResponse response, Context ctx) {
         
-        // Note: Removed request character encoding here; was too late; 
-        // it is now set uniformly in CharEncodingFilter. See ROL-760.
-        
-        String enabled = RollerConfig.getProperty("search.enabled");
-        if("false".equalsIgnoreCase(enabled))
-            this.searchEnabled = false;
-        
-        if(! this.searchEnabled) {
-            Template outty = null;
-            Exception pageException = null;
-            try {
-                ContextLoader.setupContext(
-                    ctx, RollerRequest.getRollerRequest(request), response );
-                outty = getTemplate( "searchdisabled.vm", "UTF-8" );
-            } catch (Exception e) {
-               pageException = e;
-               response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        Template outty = null;
+        try {
+            // Note: Removed request character encoding here; was too late; 
+            // it is now set uniformly in CharEncodingFilter. See ROL-760.
+
+            String enabled = RollerConfig.getProperty("search.enabled");
+            if("false".equalsIgnoreCase(enabled))
+                this.searchEnabled = false;
+
+            if(! this.searchEnabled) {
+                Exception pageException = null;
+                try {
+                    ContextLoader.setupContext(
+                        ctx, RollerRequest.getRollerRequest(request), response );
+                    outty = getTemplate( "searchdisabled.vm", "UTF-8" );
+                } catch (Exception e) {
+                   pageException = e;
+                   response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+
+                if (pageException != null) {
+                    mLogger.error("EXCEPTION: in RollerServlet", pageException);
+                    request.setAttribute("DisplayException", pageException);
+                }
+                return outty;
             }
+
+            // do no work if query term is empty
+            if (StringUtils.isEmpty(request.getParameter("q"))) {
+                return generalSearchResults(request, response, ctx);
+            }
+
+            // search model executes search, makes results available to page
+            SearchResultsPageModel model = 
+                    new SearchResultsPageModel("", request, response, null);
+            ctx.put("searchResults", model);
+
+            // load standard Velocity stff
+            ContextLoader.setupContext(
+                ctx, RollerRequest.getRollerRequest(request), response );
+
+            request.setAttribute("zzz_VelocityContext_zzz", ctx); // for testing
             
-            if (pageException != null) {
-                mLogger.error("EXCEPTION: in RollerServlet", pageException);
-                request.setAttribute("DisplayException", pageException);
-            }
-            return outty;
-        }
+            outty = getTemplate( "searchresults.vm", "UTF-8" );
         
-        // do no work if query term is empty
-        if (StringUtils.isEmpty(request.getParameter("q"))) {
-            return generalSearchResults(request, response, ctx);
-        }
-        
-        // search model executes search, makes results available to page
-        SearchResultsPageModel model = 
-                new SearchResultsPageModel("", request, response, null);
-        ctx.put("searchResults", model);
-        
-        // load standard Velocity stff
-        ContextLoader.setupContext(
-            ctx, RollerRequest.getRollerRequest(request), response );
-        
-        request.setAttribute("zzz_VelocityContext_zzz", ctx); // for testing
-        
-        return getTemplate( "searchresults.vm", "UTF-8" );
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            request.setAttribute("DisplayException", e);
+            mLogger.error("EXCEPTION: in SearchServlet", e);
+        }      
+        return outty;
     }
     
     /**
