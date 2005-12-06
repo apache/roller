@@ -131,12 +131,10 @@ public abstract class BasePageServlet extends VelocityServlet {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             request.setAttribute("DisplayException", rnfe);
             
-            mLogger.error(rnfe.getClass().getName() 
-                + " processing URL: " + request.getRequestURL());
+            mLogger.error("ResourceNotFound: "+ request.getRequestURL());
             mLogger.debug(rnfe);
             
         } catch(Exception e) {
-            
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             request.setAttribute("DisplayException", e);
             mLogger.error("EXCEPTION: in RollerServlet", e);
