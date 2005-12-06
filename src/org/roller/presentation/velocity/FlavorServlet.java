@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
@@ -54,6 +55,7 @@ public class FlavorServlet extends VelocityServlet {
             HttpServletResponse response, Context ctx) {
         
         RollerRequest rreq = null;
+        Template outty = null;
         
         try {
             rreq = RollerRequest.getRollerRequest(request,getServletContext());
@@ -105,7 +107,7 @@ public class FlavorServlet extends VelocityServlet {
             
             ContextLoader.setupContext(ctx, rreq, response);
             
-            final String useTemplate;
+            String useTemplate;
             PageModel pageModel = (PageModel)ctx.get("pageModel");
             if (request.getServletPath().endsWith("rss")) {
                 if (pageModel.getPageByName("_rss") != null)
@@ -130,12 +132,21 @@ public class FlavorServlet extends VelocityServlet {
                 useTemplate = "/flavors/rss.vm";
             }
             
-            return getTemplate(useTemplate);
-        } catch (Exception e) {
-            mLogger.error("ERROR in RssServlet", e);
+            outty = getTemplate(useTemplate);
+        } catch(ResourceNotFoundException rnfe) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            request.setAttribute("DisplayException", rnfe);
+            
+            mLogger.error("ResourceNotFound: "+ request.getRequestURL());
+            mLogger.debug(rnfe);
+            
+        } catch(Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            request.setAttribute("DisplayException", e);
+            mLogger.error(e);
         }
         
-        return null;
+        return outty;
     }
     
     //------------------------------------------------------------------------
