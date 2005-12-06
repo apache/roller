@@ -69,16 +69,9 @@ public class FlavorServlet extends VelocityServlet {
             }
         } catch (RollerException e) {
             // An error initializing the request is considered to be a 404
-            if (mLogger.isDebugEnabled()) {
-                mLogger.debug("RollerRequest threw Exception", e);
-            }
-            try {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            } catch (IOException e1) {
-                if (mLogger.isDebugEnabled()) {
-                    mLogger.debug("IOException sending error", e);
-                }
-            }
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            request.setAttribute("DisplayException", e);
+            
             return null;
         }
         
