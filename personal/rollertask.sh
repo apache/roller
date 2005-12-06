@@ -26,6 +26,7 @@ ${ROLLER_HOME}/WEB-INF/lib/asm-attrs.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/asm.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/cglib-2.1.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/commons-collections.jar:\
+${ROLLER_HOME}/WEB-INF/lib/commons-codec-1.3.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/commons-lang-2.0.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/commons-logging.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/commons-logging.jar:\

@@ -331,6 +331,7 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl {
                 // get corresponding website object
                 UserManager usermgr = roller.getUserManager();
                 WebsiteData website = usermgr.getWebsiteByHandle(sub.getAuthor());
+                if (website == null) return newEntries;
                 
                 // figure website last update time
                 WeblogManager blogmgr = roller.getWeblogManager();
