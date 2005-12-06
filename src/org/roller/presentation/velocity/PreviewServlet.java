@@ -1,7 +1,4 @@
 package org.roller.presentation.velocity;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.StringWriter;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
@@ -11,6 +8,8 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.roller.RollerException;
 import org.roller.ThemeNotFoundException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -18,10 +17,8 @@ import org.roller.model.ThemeManager;
 import org.roller.model.UserManager;
 import org.roller.pojos.Theme;
 import org.roller.pojos.UserData;
-import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
-
 /**
  * Allow users to preview what their blog would look like in a given theme.
  *
@@ -40,8 +37,8 @@ public class PreviewServlet extends BasePageServlet {
      * modify the users theme for this request.
      */
     public Template handleRequest( HttpServletRequest request,
-            HttpServletResponse response,
-            Context ctx ) throws Exception {
+                                HttpServletResponse response,
+                                Context ctx ) {
         
         Theme previewTheme = null;
         
@@ -56,6 +53,11 @@ public class PreviewServlet extends BasePageServlet {
             } catch(ThemeNotFoundException tnfe) {
                 // bogus theme specified ... don't worry about it
                 // possibly "custom", but we'll handle that below
+            } catch(RollerException re) {
+                
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                request.setAttribute("DisplayException", re);
+                mLogger.error("EXCEPTION: in RollerServlet", re);
             }
         }
         
@@ -69,7 +71,6 @@ public class PreviewServlet extends BasePageServlet {
         }
         
         Template outty = null;
-        Exception pageException = null;
         
         try {
             PageContext pageContext =
@@ -129,14 +130,19 @@ public class PreviewServlet extends BasePageServlet {
                 outty = findDecorator(tmpWebsite, (String) ctx.get("decorator"));
             }
             
-        } catch( Exception e ) {
-            pageException = e;
-            response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-        
-        if (pageException != null) {
-            mLogger.error("EXCEPTION: in RollerServlet", pageException);
-            request.setAttribute("DisplayException", pageException);
+        } catch(ResourceNotFoundException rnfe ) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            request.setAttribute("DisplayException", rnfe);
+            
+            mLogger.error(rnfe.getClass().getName() 
+                + " processing URL: " + request.getRequestURL());
+            mLogger.debug(rnfe);
+            
+        } catch(Exception e) {
+            
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            request.setAttribute("DisplayException", e);
+            mLogger.error("EXCEPTION: in RollerServlet", e);
         }
         
         return outty;

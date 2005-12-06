@@ -74,7 +74,7 @@ public class LanguageServlet extends BasePageServlet
 	public Template handleRequest(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		Context ctx) throws Exception
+		Context ctx)
 	{
 		mLogger.debug("Processing language change...");
         ServletContext servletContext = RollerContext.getServletContext();
