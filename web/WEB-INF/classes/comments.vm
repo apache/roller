@@ -102,7 +102,7 @@
     <br/>
     #foreach( $comment in $comments )
         <!-- comment: $comment.id -->
-        #if( $comment.approved )
+        #if($comment.approved || $previewComments)
             #set($content = $utilities.encodeEmail($comment.content))
             #if($escapeHtml)
                 #set($content = $utilities.escapeHTML($content))
