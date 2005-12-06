@@ -100,6 +100,15 @@
                            <fmt:message key="yourWebsites.editEntries" /></a> 
                        <br />
 
+                       <c:url value="/editor/commentManagement.do" var="manageComments">
+                           <c:param name="method" value="query" />
+                           <c:param name="weblog" value="${perms.website.handle}" />
+                       </c:url>
+                       <img src='<c:url value="/images/Edit16.png"/>' />
+                       <a href='<c:out value="${manageComments}" />'>
+                           <fmt:message key="yourWebsites.manageComments" /></a> 
+                       <br />
+
                        <c:if test="${perms.permissionMask == 3}">
                            <c:url value="/editor/website.do" var="manageWeblog">
                                <c:param name="method" value="edit" />

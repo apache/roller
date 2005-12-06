@@ -319,6 +319,20 @@ td.pendingcomment {
     background: #ffcccc;
     border: 1px grey solid;
 }
+td.pendingentry {
+    background: #ffcccc;
+}
+td.draftentry {
+    background: #ffffcc;
+}
+.draftEntryBox {
+    background: #ffffcc;
+    border: 1px grey solid;
+}
+.pendingEntryBox {
+    background: #ffcccc;
+    border: 1px grey solid;
+}
 
 /* ----------------------------------------------------------------------
 Calendar styles
