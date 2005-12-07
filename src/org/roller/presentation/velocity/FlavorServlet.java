@@ -47,9 +47,11 @@ import org.roller.model.WeblogManager;
  * @web.servlet-mapping url-pattern="/flavor/*"
  */
 public class FlavorServlet extends VelocityServlet {
+    
     static final long serialVersionUID = -2720532269434186051L;
     
     private static Log mLogger = LogFactory.getLog(FlavorServlet.class);
+    
     
     public Template handleRequest(HttpServletRequest request,
                                 HttpServletResponse response, 

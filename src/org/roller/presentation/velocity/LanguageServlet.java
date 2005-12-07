@@ -5,6 +5,7 @@
  */
 package org.roller.presentation.velocity;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import javax.servlet.ServletConfig;
@@ -65,13 +66,14 @@ public class LanguageServlet extends BasePageServlet {
         }
     }
     
+    
     /**
      * @see org.roller.presentation.velocity.BasePageServlet#handleRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.velocity.context.Context)
      */
-    public Template handleRequest(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Context ctx) {
+    public Template handleRequest(HttpServletRequest request,
+                                HttpServletResponse response,
+                                Context ctx) 
+            throws IOException {
         
         mLogger.debug("Processing language change...");
         ServletContext servletContext = RollerContext.getServletContext();
