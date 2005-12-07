@@ -52,13 +52,19 @@ public class FlavorServlet extends VelocityServlet {
     private static Log mLogger = LogFactory.getLog(FlavorServlet.class);
     
     public Template handleRequest(HttpServletRequest request,
-            HttpServletResponse response, Context ctx) {
+                                HttpServletResponse response, 
+                                Context ctx) 
+            throws IOException {
         
         RollerRequest rreq = null;
         Template outty = null;
         
+        // first off lets parse the incoming request and validate it
         try {
-            rreq = RollerRequest.getRollerRequest(request,getServletContext());
+            PageContext pageContext =
+                    JspFactory.getDefaultFactory().getPageContext(
+                    this, request,  response, "", true, 8192, true);
+            rreq = RollerRequest.getRollerRequest(pageContext);
             
             // This is an ugly hack to fix the following bug:
             // ROL-547: "Site wide RSS feed is your own if you are logged in"
@@ -68,20 +74,17 @@ public class FlavorServlet extends VelocityServlet {
                 rreq.setWebsite(null);
             }
         } catch (RollerException e) {
+            
             // An error initializing the request is considered to be a 404
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             request.setAttribute("DisplayException", e);
             
             return null;
         }
         
+        
+        // request appears to be valid, lets render
         try {
-            // Needed to init request attributes, etc.
-            PageContext pageContext =
-                    JspFactory.getDefaultFactory().getPageContext(
-                    this, request,  response, "", true, 8192, true);
-            rreq.setPageContext(pageContext);
-            
             // get update time before loading context
             // TODO: this should really be handled elsewhere
             if(rreq.getWebsite() != null) {
@@ -126,17 +129,18 @@ public class FlavorServlet extends VelocityServlet {
             }
             
             outty = getTemplate(useTemplate);
+            
         } catch(ResourceNotFoundException rnfe) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             request.setAttribute("DisplayException", rnfe);
-            
-            mLogger.error("ResourceNotFound: "+ request.getRequestURL());
+            mLogger.warn("ResourceNotFound: "+ request.getRequestURL());
             mLogger.debug(rnfe);
-            
         } catch(Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             request.setAttribute("DisplayException", e);
-            mLogger.error(e);
+            mLogger.error("Unexpected exception", e);
         }
         
         return outty;
