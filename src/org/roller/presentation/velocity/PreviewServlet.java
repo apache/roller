@@ -1,4 +1,6 @@
 package org.roller.presentation.velocity;
+
+import java.io.IOException;
 import java.io.StringWriter;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
@@ -19,6 +21,8 @@ import org.roller.pojos.Theme;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
+
+
 /**
  * Allow users to preview what their blog would look like in a given theme.
  *
@@ -28,8 +32,7 @@ import org.roller.presentation.RollerRequest;
  */
 public class PreviewServlet extends BasePageServlet {
     
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(PreviewServlet.class);
+    private static Log mLogger = LogFactory.getLog(PreviewServlet.class);
     
     
     /**
@@ -38,7 +41,8 @@ public class PreviewServlet extends BasePageServlet {
      */
     public Template handleRequest( HttpServletRequest request,
                                 HttpServletResponse response,
-                                Context ctx ) {
+                                Context ctx ) 
+            throws IOException {
         
         Theme previewTheme = null;
         
@@ -55,7 +59,7 @@ public class PreviewServlet extends BasePageServlet {
                 // possibly "custom", but we'll handle that below
             } catch(RollerException re) {
                 
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 request.setAttribute("DisplayException", re);
                 mLogger.error("EXCEPTION: in RollerServlet", re);
             }
@@ -71,13 +75,26 @@ public class PreviewServlet extends BasePageServlet {
         }
         
         Template outty = null;
+        RollerRequest rreq = null;
         
+        // first off lets parse the incoming request and validate it
         try {
             PageContext pageContext =
                     JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
-            // Needed to init request attributes, etc.
-            RollerRequest rreq = RollerRequest.getRollerRequest(pageContext);
+            rreq = RollerRequest.getRollerRequest(pageContext);
+        } catch (RollerException e) {
+            
+            // An error initializing the request is considered to be a 404
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            request.setAttribute("DisplayException", e);
+            
+            return null;
+        }
+        
+        
+        // request appears to be valid, lets render
+        try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             
             WebsiteData website = null;
@@ -108,7 +125,7 @@ public class PreviewServlet extends BasePageServlet {
             // trying to preview a "custom" theme
             if ( page == null ) {
                 // lets just call it a 404 and return
-                response.sendError(404);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return null;
             }
             
@@ -131,16 +148,16 @@ public class PreviewServlet extends BasePageServlet {
             }
             
         } catch(ResourceNotFoundException rnfe ) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             request.setAttribute("DisplayException", rnfe);
-            
-            mLogger.error("ResourceNotFound: "+ request.getRequestURL());
+            mLogger.warn("ResourceNotFound: "+ request.getRequestURL());
             mLogger.debug(rnfe);
-            
         } catch(Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             request.setAttribute("DisplayException", e);
-            mLogger.error("EXCEPTION: in RollerServlet", e);
+            mLogger.error("Unexpected exception", e);
         }
         
         return outty;

@@ -58,16 +58,30 @@ public abstract class BasePageServlet extends VelocityServlet {
      */
     public Template handleRequest(HttpServletRequest request,
                                 HttpServletResponse response, 
-                                Context ctx) {
+                                Context ctx) 
+            throws IOException {
         
         Template outty = null;
+        RollerRequest rreq = null;
         
+        // first off lets parse the incoming request and validate it
         try {
             PageContext pageContext =
                     JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
-            // Needed to init request attributes, etc.
-            RollerRequest rreq = RollerRequest.getRollerRequest(pageContext);
+            rreq = RollerRequest.getRollerRequest(pageContext);
+        } catch (RollerException e) {
+            
+            // An error initializing the request is considered to be a 404
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            request.setAttribute("DisplayException", e);
+            
+            return null;
+        }
+        
+        
+        // request appears to be valid, lets render
+        try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             
             WebsiteData website = null;
@@ -128,16 +142,16 @@ public abstract class BasePageServlet extends VelocityServlet {
             }
             
         } catch(ResourceNotFoundException rnfe ) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             request.setAttribute("DisplayException", rnfe);
-            
-            mLogger.error("ResourceNotFound: "+ request.getRequestURL());
+            mLogger.warn("ResourceNotFound: "+ request.getRequestURL());
             mLogger.debug(rnfe);
-            
         } catch(Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             request.setAttribute("DisplayException", e);
-            mLogger.error("EXCEPTION: in RollerServlet", e);
+            mLogger.error("Unexpected exception", e);
         }
         
         return outty;
