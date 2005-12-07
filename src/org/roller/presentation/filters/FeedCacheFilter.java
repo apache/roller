@@ -108,7 +108,9 @@ public class FeedCacheFilter implements Filter, CacheHandler {
                     
                     this.mFeedCache.put(key, rc);
                 } else {
-                    mLogger.error("Display exception "+key);
+                    // it is expected that whoever caught this display exception
+                    // is the one who reported it to the logs
+                    mLogger.debug("Display exception "+key);
                 }
                 
             } catch (java.net.SocketException se) {
