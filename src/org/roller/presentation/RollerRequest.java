@@ -415,20 +415,14 @@ public class RollerRequest implements ParsedRequest
      * RollerRequest if one not found in mRequest.
      */
     public static RollerRequest getRollerRequest( PageContext p )
-    {
+            throws RollerException {
+        
         HttpServletRequest r = (HttpServletRequest)p.getRequest();
         RollerRequest ret = (RollerRequest)r.getAttribute(ROLLER_REQUEST);
         if (ret == null)
         {
-            try
-            {
                 ret = new RollerRequest( p );
                 r.setAttribute( ROLLER_REQUEST, ret );
-            }
-            catch (Exception e)
-            {
-                mLogger.debug("Unable to create a RollerRequest", e);
-            }
         }
         else
         {
