@@ -121,6 +121,7 @@ public class TrackbackServlet extends HttpServlet {
         }
         
         String error = null;
+        boolean verified = true;
         PrintWriter pw = new PrintWriter(res.getOutputStream());
         try {
             if(!RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
@@ -163,19 +164,19 @@ public class TrackbackServlet extends HttpServlet {
                         LinkbackExtractor linkback = new LinkbackExtractor(
                             comment.getUrl(), absurl + entry.getPermaLink());
                         if (linkback.getExcerpt() == null) {
-                           comment.setSpam(Boolean.TRUE);
-                           logger.debug("Trackback invalid: "+comment.getUrl());
-                           error = "REJECTED: your blog does not link to: " 
-                                   + absurl + entry.getPermaLink();
+                           comment.setPending(Boolean.TRUE);
+                           comment.setApproved(Boolean.FALSE);
+                           verified = false;
+                           logger.debug("Trackback failed verification: "+comment.getUrl());
                         }
                     }
                     
                     if (error == null) {
                         // If comment moderation is on, set comment as pending
-                        if (website.getModerateComments().booleanValue()) {
+                        if (verified && website.getModerateComments().booleanValue()) {
                             comment.setPending(Boolean.TRUE);   
                             comment.setApproved(Boolean.FALSE);
-                        } else { 
+                        } else if (verified) { 
                             comment.setPending(Boolean.FALSE);   
                             comment.setApproved(Boolean.TRUE);
                         } 
@@ -193,6 +194,11 @@ public class TrackbackServlet extends HttpServlet {
                         pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
                         pw.println("<response>");
                         pw.println("<error>0</error>");
+                        if (comment.getPending().booleanValue()) {
+                            pw.println("<message>Trackback sumitted to moderation</message>");
+                        } else {
+                            pw.println("<message>Trackback accepted</message>");
+                        }
                         pw.println("</response>");
                         pw.flush();
                     }
