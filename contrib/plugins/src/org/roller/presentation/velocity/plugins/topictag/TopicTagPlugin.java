@@ -306,12 +306,16 @@ public class TopicTagPlugin implements PagePlugin
 
     /**
      * Build the bookmark map.
-     *
+     * If ignoreBookmarks property is set, an empty map is returned.
      * @return map of the user's bookmarks (type BookmarkData), keyed by name (type String).
      */
     protected Map buildBookmarkMap(WebsiteData website) throws RollerException
     {
         Map bookmarkMap = new HashMap();
+        if (RollerConfig.getBooleanProperty(
+            "org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.ignoreBookmarks")) {
+            return bookmarkMap;
+        }
         if (website == null)
         {
             mLogger.debug("Init called without website.  Skipping bookmark initialization.");
