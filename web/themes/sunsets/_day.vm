@@ -48,9 +48,9 @@
         #showEntryText( $entry ) 
         $text.get("macro.weblog.postedby") $entry.creator.userName
         <span class="dateStamp">#showTimestamp($entry.pubTime)</span>
-        #showEntryPermalink( $entry )
+        #showEntryPermalink( $entry ) #showCommentsPageLink($entry)
     </p>
-    #showCommentsDiv ( $entry )
+    <!-- showCommentsDiv($entry) -->
 #end
     
 #showLinkbacks( $day )
