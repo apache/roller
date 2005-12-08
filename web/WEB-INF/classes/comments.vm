@@ -274,17 +274,17 @@
     var url = getCookie("commentUrl");
     // check each field - IE will render "null"
     if (author) {
-        theForm.name.value = author;
+        document.form.name.value = author;
     }
     if (email) {
-        theForm.email.value = email;
+        document.form.email.value = email;
     }
     if (url) {
-        theForm.url.value = url;
+        document.form.url.value = url;
     }
 
     if (author || email || url) {
-        theForm.rememberInfo.checked = true;
+        document.form.rememberInfo.checked = true;
     }
 
     function fixURL(theForm) {
