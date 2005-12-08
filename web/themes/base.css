@@ -345,7 +345,6 @@ tr.hCalendarNextPrev {
 }
 td.hCalendarDayNotInMonth {
     font-size : x-small;
-    background-color: white;
     color: gray;
 }
 td.hCalendarDayCurrent {
