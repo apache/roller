@@ -57,13 +57,13 @@
 
 <definition name=".main" extends=".tiles-frontpage" >
     <put name="content" value="/main.jsp" />
-    <put name="head"    value="/head-main.jsp" />
+    <put name="head"    value="/theme/head-main.jsp" />
     <put name="sidebar" value="/main-sidebar.jsp" />
 </definition>
 
 <definition name=".planet" extends=".tiles-frontpage" >
     <put name="content" value="/planet/planet.jsp" />
-    <put name="head"    value="/head-planet.jsp" />
+    <put name="head"    value="/planet/head-planet.jsp" />
     <put name="sidebar" value="/planet/planet-sidebar.jsp" />
 </definition>
 
