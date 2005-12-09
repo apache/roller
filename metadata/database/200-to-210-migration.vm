@@ -29,7 +29,7 @@ update roller_comment set approved=$BOOLEAN_TRUE, pending=$BOOLEAN_FALSE, postti
 #addColumn("website" "defaultcommentdays" "integer" "7" true)
 #addColumn("website" "blacklist" $TEXT_SQL_TYPE "''" false)
 
-update website set commentmod=$BOOLEAN_FALSE, defaultallowcomments=$BOOLEAN_TRUE, defaultcommentdays=$BOOLEAN_FALSE, blacklist='', datecreated=datecreated;
+update website set commentmod=$BOOLEAN_FALSE, defaultallowcomments=$BOOLEAN_TRUE, defaultcommentdays=7, blacklist='', datecreated=datecreated;
 
 
 
