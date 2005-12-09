@@ -1,5 +1,5 @@
 <div class="entries">
-    <h1>#showPageDescription()</h1>
+    <h1>#showWebsiteDescription()</h1>
 
     #showWeblogCategoryChooser()
 
