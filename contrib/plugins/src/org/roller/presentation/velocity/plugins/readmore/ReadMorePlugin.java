@@ -99,10 +99,7 @@ public class ReadMorePlugin implements PagePlugin
         if (result.length() < entry.getText().length())
         {            
             String link = "<div class=\"readMore\"><a href=\"" + 
-                baseURL + "comments/" + 
-                entry.getWebsite().getHandle() + 
-                "/" + pageLink + "/" + Utilities.encode(entry.getAnchor()) +
-                "\">Read More</a></div>";
+                baseURL + entry.getPermaLink() + "\">Read More</a></div>";
             
             result += link;
         }
