@@ -39,6 +39,7 @@ import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.util.CacheHttpServletResponseWrapper;
 import org.roller.presentation.util.ResponseContent;
 
+
 /**
  * A filter used for caching fully rendered weblog pages ... /page/*
  *
@@ -85,17 +86,17 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         
         String key = "pageCache:"+this.generateKey(pageRequest);
         
-        ResponseContent respContent = null;
-        if(!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
-            respContent = (ResponseContent) this.mPageCache.get(key);
-        }
-        
-        if (respContent == null) {
+        try {
+            ResponseContent respContent = null;
+            if(!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
+                respContent = (ResponseContent) this.mPageCache.get(key);
+            }
             
-            mLogger.debug("MISS "+key);
-            this.misses++;
-            
-            try {
+            if (respContent == null) {
+                
+                mLogger.debug("MISS "+key);
+                this.misses++;
+                
                 CacheHttpServletResponseWrapper cacheResponse =
                         new CacheHttpServletResponseWrapper(response);
                 
@@ -121,28 +122,30 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
                     mLogger.debug("Display exception "+key);
                 }
                 
-            } catch (java.net.SocketException se) {
-                // ignored
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } catch (Exception e) {
-                // something unexpected and bad happened
-                mLogger.error("Error rendering page "+key, e);
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-            
-        } else {
-            
-            mLogger.debug("HIT "+key);
-            this.hits++;
-            
-            try {
+            } else {
+                
+                mLogger.debug("HIT "+key);
+                this.hits++;
+                
                 respContent.writeTo(response);
-            } catch (java.net.SocketException se) {
-                // ignored
-            } catch (Exception e) {
-                mLogger.error("Error with cached response "+key, e);
             }
             
+        } catch(Exception ex) {
+            
+            if(ex.getMessage().indexOf("ClientAbort") != -1) {
+                // ClientAbortException ... ignored
+                mLogger.debug(ex.getMessage());
+                
+            } else if(ex.getMessage().indexOf("SocketException") != -1) {
+                // SocketException ... ignored
+                mLogger.debug(ex.getMessage());
+                
+            } else {
+                mLogger.error("Unexpected exception rendering page "+key, ex);
+            }
+            
+            // gotta send something to the client
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         
         mLogger.debug("exiting");
@@ -244,6 +247,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         }
         
         this.mPageCache.remove(removeSet);
+        this.purges += removeSet.size();
     }
     
     
@@ -272,6 +276,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         }
         
         this.mPageCache.remove(removeSet);
+        this.purges += removeSet.size();
     }
     
     

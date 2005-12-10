@@ -56,7 +56,6 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
     // for metrics
     private double hits = 0;
     private double misses = 0;
-    private double purges = 0;
     private double skips = 0;
     private Date startTime = new Date();
     
@@ -106,17 +105,17 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
         }
         
         
-        ResponseContent respContent = null;
-        if(!this.excludeOwnerPages || prince == null) {
-            respContent = (ResponseContent) this.mPageCache.get(key);
-        }
-        
-        if (respContent == null) {
+        try {
+            ResponseContent respContent = null;
+            if(!this.excludeOwnerPages || prince == null) {
+                respContent = (ResponseContent) this.mPageCache.get(key);
+            }
             
-            mLogger.debug("MISS "+key);
-            this.misses++;
-            
-            try {
+            if(respContent == null) {
+
+                mLogger.debug("MISS "+key);
+                this.misses++;
+                
                 CacheHttpServletResponseWrapper cacheResponse =
                         new CacheHttpServletResponseWrapper(response);
                 
@@ -141,28 +140,30 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
                     mLogger.debug("Display exception "+key);
                 }
                 
-            } catch (java.net.SocketException se) {
-                // ignored
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } catch (Exception e) {
-                // something unexpected and bad happened
-                mLogger.error("Error rendering page "+key, e);
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-            
-        } else {
-            
-            mLogger.debug("HIT "+key);
-            this.hits++;
-            
-            try {
+            } else {
+                
+                mLogger.debug("HIT "+key);
+                this.hits++;
+                
                 respContent.writeTo(response);
-            } catch (java.net.SocketException se) {
-                // ignored
-            } catch (Exception e) {
-                mLogger.error("Error with cached response "+key, e);
             }
             
+        } catch(Exception ex) {
+            
+            if(ex.getMessage().indexOf("ClientAbort") != -1) {
+                // ClientAbortException ... ignored
+                mLogger.debug(ex.getMessage());
+                
+            } else if(ex.getMessage().indexOf("SocketException") != -1) {
+                // SocketException ... ignored
+                mLogger.debug(ex.getMessage());
+                
+            } else {
+                mLogger.error("Unexpected exception rendering page "+key, ex);
+            }
+            
+            // gotta send something to the client
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         
         mLogger.debug("exiting");
@@ -250,7 +251,6 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
         this.startTime = new Date();
         this.hits = 0;
         this.misses = 0;
-        this.purges = 0;
         this.skips = 0;
     }
     
@@ -262,11 +262,10 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
         stats.put("startTime", this.startTime);
         stats.put("hits", new Double(this.hits));
         stats.put("misses", new Double(this.misses));
-        stats.put("purges", new Double(this.purges));
         stats.put("skips", new Double(this.skips));
         
         // calculate efficiency
-        if((misses - purges) > 0) {
+        if(misses > 0) {
             double efficiency = hits / (misses + hits);
             stats.put("efficiency", new Double(efficiency * 100));
         }
