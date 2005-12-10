@@ -119,6 +119,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.defaultAllowComments = defaultAllowComments;
         this.defaultCommentDays = defaultCommentDays;
         this.moderateComments = moderateComments;
+        this.dateCreated = dateCreated;
     }
 
     public WebsiteData(WebsiteData otherData)
