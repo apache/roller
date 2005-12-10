@@ -292,7 +292,6 @@ public class RollerRequest implements ParsedRequest
         if ( mWebsite==null || mPage==null )
         {            
             String msg = "Invalid pathInfo: "+StringUtils.join(pathInfo,"|");
-            mLogger.info(msg);                       
             throw new RollerException(msg);
         }
     }       
