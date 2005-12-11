@@ -1,8 +1,0 @@
-#set( $theme = "basic" )
-#parse("/WEB-INF/classes/themes/css.vm")
-
-<style type="text/css" media="print">
-    .rWeblogCategoryChooser{ visibility: hidden; }
-    .entries{ width: 100%; float: none; }
-    .rightbar{ visibility: hidden; }
-</style>

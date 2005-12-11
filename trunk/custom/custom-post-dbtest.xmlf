@@ -1,9 +1,0 @@
-
-<!-- add post-test tasks to test-hibernate target of build.xml
-    <sql driver="org.hsqldb.jdbcDriver"
-         url="jdbc:hsqldb:hsql://localhost:3219"
-         userid="sa" password=""
-         src="./build/roller/WEB-INF/dbscripts/droptables-planet.sql"
-         classpath="${ro.tools}/buildtime/hsqldb.jar" />
--->
-

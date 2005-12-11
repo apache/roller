@@ -1,5 +1,0 @@
-<property name="rollerjars.dir" value="./lib" />
-<property name="planetjars.dir" value="./lib" />
-<property name="planet.version" value="1.1-custom" />
-
-

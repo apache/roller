@@ -1,6 +1,0 @@
-
-<!-- Custom classes to include in back-end compilation (rollerbeans.jar)
-Your classes must not be under the package org.roller.presentation.
-<src path="${basedir}/sandbox/planetroller/src" />
--->
-
