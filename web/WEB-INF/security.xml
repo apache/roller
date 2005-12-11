@@ -30,6 +30,7 @@
                 /editor/**=admin,editor
                 /admin/**=admin
                 /rewrite-status*=admin
+                /login-redirect.jsp=admin,editor
             </value>
         </property>
     </bean>
