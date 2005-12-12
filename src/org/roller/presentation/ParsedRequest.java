@@ -40,7 +40,7 @@ public abstract class ParsedRequest {
      * This abstract version of the constructor gathers info likely to be
      * relevant to all requests to Roller.
      */
-    public ParsedRequest(HttpServletRequest request) throws Exception {
+    public ParsedRequest(HttpServletRequest request) throws InvalidRequestException {
         
         // keep a reference to the original request
         this.request = request;
