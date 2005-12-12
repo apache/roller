@@ -19,7 +19,7 @@ import org.roller.pojos.WeblogTemplate;
 /**
  * Represents a request for a Roller weblog feed.
  * 
- * any of /rss/*, /atom/*, /flavor/*, or /planetrss
+ * any of /rss/*, /atom/*, /flavor/*
  *
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
@@ -44,14 +44,13 @@ public class WeblogFeedRequest extends ParsedRequest {
         feedServlets.add("rss");
         feedServlets.add("flavor");
         feedServlets.add("atom");
-        feedServlets.add("planetrss");
     }
     
     
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
      */
-    public WeblogFeedRequest(HttpServletRequest request) throws Exception {
+    public WeblogFeedRequest(HttpServletRequest request) throws InvalidRequestException {
         
         super(request);
         
@@ -71,8 +70,10 @@ public class WeblogFeedRequest extends ParsedRequest {
                 this.flavor = servlet;
             } else {
                 // not a request to a feed servlet
-                throw new RollerException("not a weblog feed request, "+request.getRequestURL());
+                throw new InvalidRequestException("not a weblog feed request, "+request.getRequestURL());
             }
+        } else {
+            throw new InvalidRequestException("not a weblog feed request, "+request.getRequestURL());
         }
         
         // parse the path info
@@ -90,17 +91,10 @@ public class WeblogFeedRequest extends ParsedRequest {
             // no path info means this was a non-weblog request
             // we handle a few exceptions for this which include
             //   /rss - main rss feed
-            //   /planetrss - main planet rss feed
             //   /atom - main atom feed
             //   /flavor - main flavor feed
-            if(servlet.equals("rss") || servlet.equals("atom") || 
-                    servlet.equals("flavor")) {
-                
-                this.context = "main";
-            } else if(servlet.equals("planetrss")) {
-                
-                this.context = "planet";
-            }
+            
+            this.context = "main";
         }
         
         /* 

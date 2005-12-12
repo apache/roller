@@ -50,7 +50,7 @@ public class WeblogPageRequest extends ParsedRequest {
     /**
      * Construct the WeblogPageRequest by parsing the incoming url
      */
-    public WeblogPageRequest(HttpServletRequest request) throws Exception {
+    public WeblogPageRequest(HttpServletRequest request) throws InvalidRequestException {
         
         // let our parent take care of their business first
         super(request);
@@ -70,9 +70,12 @@ public class WeblogPageRequest extends ParsedRequest {
                 this.context = "weblog";
             } else {
                 // not a request to the page servlet
-                throw new RollerException("not a weblog page request, "+request.getRequestURL());
+                throw new InvalidRequestException("not a weblog page request, "+request.getRequestURL());
             }
+        } else {
+            throw new InvalidRequestException("not a weblog page request, "+request.getRequestURL());
         }
+        
         
         /*
          * parse path info
@@ -138,7 +141,7 @@ public class WeblogPageRequest extends ParsedRequest {
             
         } else {
             // invalid request ... path info is empty
-            throw new RollerException("not a weblog page request, "+request.getRequestURL());
+            throw new InvalidRequestException("not a weblog page request, "+request.getRequestURL());
         }
         
         
