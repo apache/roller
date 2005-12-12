@@ -77,8 +77,6 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
         String servlet = request.getServletPath();
         if(servlet.equals("/main.do")) {
             key = "main/page";
-        } else if(servlet.equals("/planet.do")) {
-            key = "planet/page";
         } else {
             // not a main page request
             mLogger.warn("not a main page "+servlet);

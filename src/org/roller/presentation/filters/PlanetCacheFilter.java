@@ -1,18 +1,17 @@
 /*
- * RssCacheFilter.java
+ * PlanetCacheFilter.java
  *
- * Created on November 5, 2005, 6:32 PM
+ * Created on December 12, 2005, 10:03 AM
  */
 
 package org.roller.presentation.filters;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -33,7 +32,8 @@ import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.WeblogFeedRequest;
+import org.roller.presentation.LanguageUtil;
+import org.roller.presentation.PlanetRequest;
 import org.roller.presentation.cache.Cache;
 import org.roller.presentation.cache.CacheHandler;
 import org.roller.presentation.cache.CacheManager;
@@ -42,33 +42,30 @@ import org.roller.presentation.util.ResponseContent;
 
 
 /**
- * A filter used for caching fully rendered xml feeds.
+ * A cache filter for Planet Roller items ... /planet.do, /planetrss
  *
- * This filter should only be applied to /rss/*, /atom/*, /flavor/*
+ * @web.filter name="PlanetCacheFilter"
  *
- * @web.filter name="FeedCacheFilter"
- *
- * @author  Allen Gilliland
+ * @author Allen Gilliland
  */
-public class FeedCacheFilter implements Filter, CacheHandler {
+public class PlanetCacheFilter implements Filter, CacheHandler {
     
-    private static Log mLogger = LogFactory.getLog(FeedCacheFilter.class);
+    private static Log mLogger = LogFactory.getLog(PlanetCacheFilter.class);
     
-    private Cache mFeedCache = null;
+    private boolean excludeOwnerPages = false;
+    private Cache mCache = null;
     
     // for metrics
     private double hits = 0;
     private double misses = 0;
-    private double purges = 0;
+    private double skips = 0;
     private Date startTime = new Date();
     
     
     /**
      * Process filter.
      */
-    public void doFilter(ServletRequest req,
-                        ServletResponse res,
-                        FilterChain chain)
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         
         mLogger.debug("entering");
@@ -76,22 +73,26 @@ public class FeedCacheFilter implements Filter, CacheHandler {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         
-        WeblogFeedRequest feedRequest = null;
+        PlanetRequest planetRequest = null;
         try {
-            feedRequest = new WeblogFeedRequest(request);
+            planetRequest = new PlanetRequest(request);
         } catch(Exception e) {
             // some kind of error parsing the request
-            mLogger.error("error creating weblog feed request", e);
+            mLogger.error("error creating planet request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         
-        String key = "feedCache:"+this.generateKey(feedRequest);
+        String key = "planetCache:"+this.generateKey(planetRequest);
         
         try {
-            ResponseContent respContent = (ResponseContent) this.mFeedCache.get(key);
-            if (respContent == null) {
-                
+            ResponseContent respContent = null;
+            if(!this.excludeOwnerPages || !planetRequest.isLoggedIn()) {
+                respContent = (ResponseContent) this.mCache.get(key);
+            }
+            
+            if(respContent == null) {
+
                 mLogger.debug("MISS "+key);
                 this.misses++;
                 
@@ -102,11 +103,17 @@ public class FeedCacheFilter implements Filter, CacheHandler {
                 
                 cacheResponse.flushBuffer();
                 
-                // only cache if there wasn't an exception
+                // only cache if we didn't get an exception
                 if (request.getAttribute("DisplayException") == null) {
                     ResponseContent rc = cacheResponse.getContent();
                     
-                    this.mFeedCache.put(key, rc);
+                    // only cache if this is not a logged in user?
+                    if(!this.excludeOwnerPages || !planetRequest.isLoggedIn()) {
+                        this.mCache.put(key, rc);
+                    } else {
+                        mLogger.debug("SKIPPED "+key);
+                        this.skips++;
+                    }
                 } else {
                     // it is expected that whoever caught this display exception
                     // is the one who reported it to the logs
@@ -132,7 +139,7 @@ public class FeedCacheFilter implements Filter, CacheHandler {
                 mLogger.debug(ex.getMessage());
                 
             } else {
-                mLogger.error("Unexpected exception rendering feed "+key, ex);
+                mLogger.error("Unexpected exception rendering page "+key, ex);
             }
             
             // gotta send something to the client
@@ -144,43 +151,44 @@ public class FeedCacheFilter implements Filter, CacheHandler {
     
     
     /**
-     * Generate a cache key from a parsed weblog feed request.
+     * Generate a cache key from a parsed planet request.
      * This generates a key of the form ...
      *
-     * <context>[/handle]/<flavor>[/category]/<language>[/excerpts]
+     * <context>/<type>/<language>[/user]
+     *   or
+     * <context>/<type>[/flavor]/<language>[/excerpts]
+     *
      *
      * examples ...
      *
-     * main/rss/en
-     * weblog/foo/rss/MyCategory/en
-     * weblog/foo/atom/en/excerpts
+     * planet/page/en
+     * planet/feed/rss/en/excerpts
      *
      */
-    private String generateKey(WeblogFeedRequest feedRequest) {
+    private String generateKey(PlanetRequest planetRequest) {
         
         StringBuffer key = new StringBuffer();
-        key.append(feedRequest.getContext());
+        key.append(planetRequest.getContext());
+        key.append("/");
+        key.append(planetRequest.getType());
         
-        if(feedRequest.getContext().equals("weblog")) {
-            key.append("/").append(feedRequest.getWeblogHandle());
-            key.append("/").append(feedRequest.getFlavor());
-            
-            if(feedRequest.getWeblogCategory() != null) {
-                String cat = feedRequest.getWeblogCategory();
-                if(cat.startsWith("/"))
-                    cat = cat.substring(1).replaceAll("/","_");
-                
-                key.append("/").append(cat);
-            }
-        } else {
-            key.append("/").append(feedRequest.getFlavor());
+        if(planetRequest.getFlavor() != null) {
+            key.append("/").append(planetRequest.getFlavor());
         }
         
         // add language
-        key.append("/").append(feedRequest.getLanguage());
+        key.append("/").append(planetRequest.getLanguage());
         
-        if(feedRequest.isExcerpts()) {
-            key.append("/excerpts");
+        if(planetRequest.getFlavor() != null) {
+            // add excerpts
+            if(planetRequest.isExcerpts()) {
+                key.append("/excerpts");
+            }
+        } else {
+            // add login state
+            if(planetRequest.getAuthenticUser() != null) {
+                key.append("/user=").append(planetRequest.getAuthenticUser());
+            }
         }
         
         return key.toString();
@@ -191,7 +199,7 @@ public class FeedCacheFilter implements Filter, CacheHandler {
      * A weblog entry has changed.
      */
     public void invalidate(WeblogEntryData entry) {
-        this.invalidate(entry.getWebsite());
+        // ignored
     }
     
     
@@ -199,34 +207,7 @@ public class FeedCacheFilter implements Filter, CacheHandler {
      * A weblog has changed.
      */
     public void invalidate(WebsiteData website) {
-        
-        mLogger.debug("invalidating website = "+website.getHandle());
-        
-        // we need to remove the following cached items if they exist
-        //   - the main feed
-        //   - the planet feed
-        //   - all weblog feeds
-        
-        Set removeSet = new HashSet();
-        
-        // TODO: it would be nice to be able to do this without iterating 
-        //       over the entire cache key set
-        String key = null;
-        Iterator allKeys = this.mFeedCache.keySet().iterator();
-        while(allKeys.hasNext()) {
-            key = (String) allKeys.next();
-            
-            if(key.startsWith("feedCache:main")) {
-                removeSet.add(key);
-            } else if(key.startsWith("feedCache:planet")) {
-                removeSet.add(key);
-            } else if(key.startsWith("feedCache:weblog/"+website.getHandle())) {
-                removeSet.add(key);
-            }
-        }
-        
-        this.mFeedCache.remove(removeSet);
-        this.purges += removeSet.size();
+        // ignored
     }
     
     
@@ -274,20 +255,7 @@ public class FeedCacheFilter implements Filter, CacheHandler {
      * A category has changed.
      */
     public void invalidate(WeblogCategoryData category) {
-        this.invalidate(category.getWebsite());
-    }
-    
-    
-    /**
-     * Clear the entire cache.
-     */
-    public void clear() {
-        mLogger.info("Clearing cache");
-        this.mFeedCache.clear();
-        this.startTime = new Date();
-        this.hits = 0;
-        this.misses = 0;
-        this.purges = 0;
+        // ignored
     }
     
     
@@ -299,17 +267,30 @@ public class FeedCacheFilter implements Filter, CacheHandler {
     }
     
     
+    /**
+     * Clear the entire cache.
+     */
+    public void clear() {
+        mLogger.info("Clearing cache");
+        this.mCache.clear();
+        this.startTime = new Date();
+        this.hits = 0;
+        this.misses = 0;
+        this.skips = 0;
+    }
+    
+    
     public Map getStats() {
         
         Map stats = new HashMap();
-        stats.put("cacheType", this.mFeedCache.getClass().getName());
+        stats.put("cacheType", this.mCache.getClass().getName());
         stats.put("startTime", this.startTime);
         stats.put("hits", new Double(this.hits));
         stats.put("misses", new Double(this.misses));
-        stats.put("purges", new Double(this.purges));
+        stats.put("skips", new Double(this.skips));
         
         // calculate efficiency
-        if((misses - purges) > 0) {
+        if(misses > 0) {
             double efficiency = hits / (misses + hits);
             stats.put("efficiency", new Double(efficiency * 100));
         }
@@ -330,13 +311,15 @@ public class FeedCacheFilter implements Filter, CacheHandler {
      */
     public void init(FilterConfig filterConfig) {
         
-        mLogger.info("Initializing feed cache");
+        mLogger.info("Initializing planet cache");
         
-        String factory = RollerConfig.getProperty("cache.feed.factory");
-        String size = RollerConfig.getProperty("cache.feed.size");
-        String timeout = RollerConfig.getProperty("cache.feed.timeout");
+        String factory = RollerConfig.getProperty("cache.planet.factory");
+        String size = RollerConfig.getProperty("cache.planet.size");
+        String timeout = RollerConfig.getProperty("cache.planet.timeout");
+        this.excludeOwnerPages = 
+                RollerConfig.getBooleanProperty("cache.planet.excludeOwnerEditPages");
         
-        int cacheSize = 100;
+        int cacheSize = 20;
         try {
             cacheSize = Integer.parseInt(size);
         } catch (Exception e) {
@@ -361,7 +344,7 @@ public class FeedCacheFilter implements Filter, CacheHandler {
         
         mLogger.info(props);
         
-        mFeedCache = CacheManager.constructCache(this, props);
+        mCache = CacheManager.constructCache(this, props);
     }
     
 }
