@@ -174,7 +174,6 @@ public class BaseAPIHandler implements Serializable
      * @param username Username sent in request
      * @param password Password sent in requeset
      */
-    /*
     protected boolean validateUser(String username, String password) 
     throws Exception
     {
@@ -228,7 +227,7 @@ public class BaseAPIHandler implements Serializable
                 AUTHORIZATION_EXCEPTION, AUTHORIZATION_EXCEPTION_MSG);
         }
         return authenticated;
-    }*/
+    }
     
     //------------------------------------------------------------------------
     protected void flushPageCache(WebsiteData website) throws Exception
