@@ -125,29 +125,34 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
     <filter-name>FeedCacheFilter</filter-name>
     <url-pattern>/flavor/*</url-pattern>
 </filter-mapping>
-<filter-mapping>
-    <filter-name>FeedCacheFilter</filter-name>
-    <url-pattern>/planetrss</url-pattern>
-</filter-mapping>
 
 
-<!-- Page Caching -->
+<!-- Weblog Page Caching -->
 <filter-mapping>
 	<filter-name>WeblogPageCacheFilter</filter-name>
 	<url-pattern>/page/*</url-pattern>
 </filter-mapping>
 
+
+<!-- Main Page Caching -->
 <filter-mapping>
 	<filter-name>MainPageCacheFilter</filter-name>
 	<url-pattern>/main.do</url-pattern>
 	<dispatcher>REQUEST</dispatcher>
 	<dispatcher>FORWARD</dispatcher>
 </filter-mapping>
+
+
+<!-- Planet Roller Caching -->
 <filter-mapping>
-	<filter-name>MainPageCacheFilter</filter-name>
+	<filter-name>PlanetCacheFilter</filter-name>
 	<url-pattern>/planet.do</url-pattern>
 	<dispatcher>REQUEST</dispatcher>
 	<dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>PlanetCacheFilter</filter-name>
+    <url-pattern>/planetrss</url-pattern>
 </filter-mapping>
 
 
