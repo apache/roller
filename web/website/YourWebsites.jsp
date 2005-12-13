@@ -100,6 +100,7 @@
                            <fmt:message key="yourWebsites.editEntries" /></a> 
                        <br />
 
+                       <%-- // I'm not sure this link needs to be here
                        <c:url value="/editor/commentManagement.do" var="manageComments">
                            <c:param name="method" value="query" />
                            <c:param name="weblog" value="${perms.website.handle}" />
@@ -108,7 +109,8 @@
                        <a href='<c:out value="${manageComments}" />'>
                            <fmt:message key="yourWebsites.manageComments" /></a> 
                        <br />
-
+                       --%>
+                       
                        <c:if test="${perms.permissionMask == 3}">
                            <c:url value="/editor/website.do" var="manageWeblog">
                                <c:param name="method" value="edit" />
