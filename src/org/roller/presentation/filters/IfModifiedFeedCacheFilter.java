@@ -218,16 +218,19 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
         // TODO: it would be nice to be able to do this without iterating 
         //       over the entire cache key set
         String key = null;
-        Iterator allKeys = this.mCache.keySet().iterator();
-        while(allKeys.hasNext()) {
-            key = (String) allKeys.next();
-            
-            if(key.startsWith("ifmod:main")) {
-                removeSet.add(key);
-            } else if(key.startsWith("ifmod:planet")) {
-                removeSet.add(key);
-            } else if(key.startsWith("ifmod:weblog/"+website.getHandle())) {
-                removeSet.add(key);
+        
+        synchronized(mCache) {
+            Iterator allKeys = this.mCache.keySet().iterator();
+            while(allKeys.hasNext()) {
+                key = (String) allKeys.next();
+                
+                if(key.startsWith("ifmod:main")) {
+                    removeSet.add(key);
+                } else if(key.startsWith("ifmod:planet")) {
+                    removeSet.add(key);
+                } else if(key.startsWith("ifmod:weblog/"+website.getHandle())) {
+                    removeSet.add(key);
+                }
             }
         }
         
