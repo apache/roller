@@ -16,7 +16,7 @@ See Roller installation guide for instructions.
 #set( $INDEXSIZE = "")
 #set( $INDEXSIZE_LARGE = "")
 #set( $ADDL_FK_PARAMS = "")
-#set( $TIMESTAMP_SQL_TYPE_NULL = "timestamp null")
+#set( $TIMESTAMP_SQL_TYPE_NULL = "timestamp")
 
 #foreach ($template in $templates) 
     #set($in = "${template}.vm")
