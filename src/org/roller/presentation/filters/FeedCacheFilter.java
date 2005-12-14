@@ -212,16 +212,19 @@ public class FeedCacheFilter implements Filter, CacheHandler {
         // TODO: it would be nice to be able to do this without iterating 
         //       over the entire cache key set
         String key = null;
-        Iterator allKeys = this.mFeedCache.keySet().iterator();
-        while(allKeys.hasNext()) {
-            key = (String) allKeys.next();
-            
-            if(key.startsWith("feedCache:main")) {
-                removeSet.add(key);
-            } else if(key.startsWith("feedCache:planet")) {
-                removeSet.add(key);
-            } else if(key.startsWith("feedCache:weblog/"+website.getHandle())) {
-                removeSet.add(key);
+        
+        synchronized(mFeedCache) {
+            Iterator allKeys = this.mFeedCache.keySet().iterator();
+            while(allKeys.hasNext()) {
+                key = (String) allKeys.next();
+                
+                if(key.startsWith("feedCache:main")) {
+                    removeSet.add(key);
+                } else if(key.startsWith("feedCache:planet")) {
+                    removeSet.add(key);
+                } else if(key.startsWith("feedCache:weblog/"+website.getHandle())) {
+                    removeSet.add(key);
+                }
             }
         }
         

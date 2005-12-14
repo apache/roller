@@ -5,6 +5,7 @@
  */
 package org.roller.presentation.cache;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -28,13 +29,13 @@ public class LRUCacheImpl implements Cache {
     
     protected LRUCacheImpl() {
         
-        this.cache = new LRULinkedHashMap(100);
+        this.cache = Collections.synchronizedMap(new LRULinkedHashMap(100));
     }
     
     
     protected LRUCacheImpl(int maxsize) {
         
-        this.cache = new LRULinkedHashMap(maxsize);
+        this.cache = Collections.synchronizedMap(new LRULinkedHashMap(maxsize));
     }
     
     
