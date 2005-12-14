@@ -232,20 +232,23 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         // TODO: it would be nice to be able to do this without iterating 
         //       over the entire cache key set
         String key = null;
-        Iterator allKeys = this.mPageCache.keySet().iterator();
-        while(allKeys.hasNext()) {
-            key = (String) allKeys.next();
-            if(key.startsWith(keyBase+"/main")) {
-                removeSet.add(key);
-            } else if(key.startsWith(keyBase+"/archive")) {
-                // at some point it would be cool to actually calculate what
-                // archive pages to remove in specific, rather than all of 'em
-                removeSet.add(key);
-            } else if(key.startsWith(keyBase+"/permalink/"+entry.getAnchor())) {
-                removeSet.add(key);
+        
+        synchronized(mPageCache) {
+            Iterator allKeys = this.mPageCache.keySet().iterator();
+            while(allKeys.hasNext()) {
+                key = (String) allKeys.next();
+                if(key.startsWith(keyBase+"/main")) {
+                    removeSet.add(key);
+                } else if(key.startsWith(keyBase+"/archive")) {
+                    // at some point it would be cool to actually calculate what
+                    // archive pages to remove in specific, rather than all of 'em
+                    removeSet.add(key);
+                } else if(key.startsWith(keyBase+"/permalink/"+entry.getAnchor())) {
+                    removeSet.add(key);
+                }
             }
         }
-        
+
         this.mPageCache.remove(removeSet);
         this.purges += removeSet.size();
     }
@@ -266,12 +269,15 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         // TODO: it would be nice to be able to do this without iterating 
         //       over the entire cache key set
         String key = null;
-        Iterator allKeys = this.mPageCache.keySet().iterator();
-        while(allKeys.hasNext()) {
-            key = (String) allKeys.next();
-            
-            if(key.startsWith("pageCache:weblog/"+website.getHandle())) {
-                removeSet.add(key);
+        
+        synchronized(mPageCache) {
+            Iterator allKeys = this.mPageCache.keySet().iterator();
+            while(allKeys.hasNext()) {
+                key = (String) allKeys.next();
+                
+                if(key.startsWith("pageCache:weblog/"+website.getHandle())) {
+                    removeSet.add(key);
+                }
             }
         }
         
