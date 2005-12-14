@@ -50,7 +50,7 @@ public class LRUCacheImpl implements Cache {
     /**
      * Retrieve an entry from the cache.
      */
-    public Object get(String key) {
+    public synchronized Object get(String key) {
         
         return this.cache.get(key);
     }
