@@ -76,7 +76,7 @@ public class LRUCacheImpl implements Cache {
     }
     
     
-    public Set keySet() {
+    public synchronized Set keySet() {
         return this.cache.keySet();
     }
     
