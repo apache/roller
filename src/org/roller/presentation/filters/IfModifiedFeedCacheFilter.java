@@ -204,7 +204,7 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
     /**
      * A weblog has changed.
      */
-    public void invalidate(WebsiteData website) {
+    public synchronized void invalidate(WebsiteData website) {
         
         mLogger.debug("invalidating website = "+website.getHandle());
         

@@ -215,7 +215,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
     /**
      * A weblog entry has changed.
      */
-    public void invalidate(WeblogEntryData entry) {
+    public synchronized void invalidate(WeblogEntryData entry) {
         
         mLogger.debug("invalidating entry = "+entry.getAnchor());
         
@@ -254,7 +254,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
     /**
      * A weblog has changed.
      */
-    public void invalidate(WebsiteData website) {
+    public synchronized void invalidate(WebsiteData website) {
         
         mLogger.debug("invalidating website = "+website.getHandle());
         
