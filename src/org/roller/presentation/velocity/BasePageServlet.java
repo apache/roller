@@ -2,6 +2,7 @@ package org.roller.presentation.velocity;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.SocketException;
 import java.util.Date;
 import java.util.Map;
 
@@ -17,7 +18,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.servlet.VelocityServlet;
 import org.roller.RollerException;
@@ -26,7 +26,6 @@ import org.roller.model.UserManager;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
-
 /**
  * Base Servlet for Servlets that render user page templates. Loads the
  * Velocity context using the ContextLoader and runs the page template
@@ -247,7 +246,13 @@ public abstract class BasePageServlet extends VelocityServlet {
      */
     protected void error( HttpServletRequest req, HttpServletResponse res,
             Exception e) throws ServletException, IOException {
-        mLogger.warn("ERROR in VelocityServlet",e);
+        
+        if(e instanceof SocketException) {
+            // ignore socket exceptions
+            mLogger.debug("Some kind of SocketException", e);
+        } else {
+            mLogger.warn("ERROR in VelocityServlet",e);
+        }
     }
     
     /**
