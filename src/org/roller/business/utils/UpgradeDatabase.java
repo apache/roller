@@ -258,9 +258,15 @@ public class UpgradeDatabase {
             // this query will give us all websites that have modified their
             // default page to link to something other than "Weblog"
             PreparedStatement selectUpdateWeblogs = con.prepareStatement(
-                    "select website.id,template from website,webpage "+
+                    "select website.id,template,website.handle from website,webpage "+
                     "where webpage.id = website.defaultpageid "+
                     "and webpage.link != 'Weblog'");
+            
+            PreparedStatement selectWeblogTemplate = con.prepareStatement(
+                    "select id from webpage where websiteid = ? and link = 'Weblog'");
+            
+            PreparedStatement updateWeblogTemplate = con.prepareStatement(
+                    "update webpage set template = ? where id = ?");
             
             // insert a new template for a website
             PreparedStatement insertWeblogTemplate = con.prepareStatement(
@@ -279,21 +285,45 @@ public class UpgradeDatabase {
             while (websiteSet.next()) {
                 String websiteid = websiteSet.getString(1);
                 String template = websiteSet.getString(2);
-                mLogger.info("Processing website: " + websiteid);
+                String handle = websiteSet.getString(3);
+                mLogger.info("Processing website: " + handle);
                 
-                // insert new Weblog template
-                insertWeblogTemplate.clearParameters();
-                insertWeblogTemplate.setString( 1, websiteid+"q");
-                insertWeblogTemplate.setString( 2, "Weblog");
-                insertWeblogTemplate.setString( 3, description);
-                insertWeblogTemplate.setString( 4, "Weblog");
-                insertWeblogTemplate.setString( 5, websiteid);
-                insertWeblogTemplate.setString( 6, template);
-                insertWeblogTemplate.executeUpdate();
+                String defaultpageid = null;
+                
+                // it's possible that this weblog has a "Weblog" template, but just
+                // isn't using it as their default.  if so we need to fix that.
+                selectWeblogTemplate.clearParameters();
+                selectWeblogTemplate.setString(1, websiteid);
+                ResultSet weblogPageSet = selectWeblogTemplate.executeQuery();
+                if(weblogPageSet.next()) {
+                    // this person already has a "Weblog" template, so update it
+                    String id = weblogPageSet.getString(1);
+                    
+                    updateWeblogTemplate.clearParameters();
+                    updateWeblogTemplate.setString(1, template);
+                    updateWeblogTemplate.setString(2, id);
+                    updateWeblogTemplate.executeUpdate();
+                    
+                    // make sure and adjust what default page id we want to use
+                    defaultpageid = id;
+                } else {
+                    // no "Weblog" template, so insert a new one
+                    insertWeblogTemplate.clearParameters();
+                    insertWeblogTemplate.setString( 1, websiteid+"q");
+                    insertWeblogTemplate.setString( 2, "Weblog");
+                    insertWeblogTemplate.setString( 3, description);
+                    insertWeblogTemplate.setString( 4, "Weblog");
+                    insertWeblogTemplate.setString( 5, websiteid);
+                    insertWeblogTemplate.setString( 6, template);
+                    insertWeblogTemplate.executeUpdate();
+                    
+                    // set the new default page id
+                    defaultpageid = websiteid+"q";
+                }
                 
                 // update defaultpageid value
                 updateDefaultPage.clearParameters();
-                updateDefaultPage.setString( 1, websiteid+"q");
+                updateDefaultPage.setString( 1, defaultpageid);
                 updateDefaultPage.setString( 2, websiteid);
                 updateDefaultPage.executeUpdate();
             }
