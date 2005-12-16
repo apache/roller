@@ -5,18 +5,15 @@
 
 package org.roller.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.util.PropertyExpander;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Properties;
 
 
 /**
@@ -139,19 +136,24 @@ public class RollerConfig {
 
 
     /**
-     * Retrieve a property as a boolean ... defaults to false if there is an error
+     * Retrieve a property as a boolean ... defaults to false if not present.
      **/
     public static boolean getBooleanProperty(String name) {
+        return getBooleanProperty(name,false);
+    }
 
+    /**
+     * Retrieve a property as a boolean ... with specified default if not present.
+     */
+    public static boolean getBooleanProperty(String name, boolean defaultValue) {
         // get the value first, then convert
         String value = RollerConfig.getProperty(name);
 
         if(value == null)
-            return false;
+            return defaultValue;
 
         return (new Boolean(value)).booleanValue();
     }
-
 
     /**
      * Retrieve all property keys
