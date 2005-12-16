@@ -20,6 +20,7 @@ import org.roller.pojos.CommentData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.util.Utilities;
+import org.roller.config.RollerConfig;
 
 /**
  * @author aim4min
@@ -51,28 +52,41 @@ public abstract class IndexOperation implements Runnable {
     // ================================================================
 
     protected Document getDocument(WeblogEntryData data) {
-        StringBuffer commentEmail = new StringBuffer();
-        StringBuffer commentContent = new StringBuffer();
-        StringBuffer commentName = new StringBuffer();
 
-        List comments = data.getComments();
-        if (comments != null) {
-            for (Iterator cItr = comments.iterator(); cItr.hasNext();) {
-                CommentData comment = (CommentData) cItr.next();
-                if (comment.getSpam() == null || !comment.getSpam().booleanValue()) {
-                    if (comment.getContent() != null) {
-                        commentContent.append(comment.getContent());
-                        commentContent.append(",");
-                    }
-                    if (comment.getEmail() != null) {
-                        commentEmail.append(comment.getEmail());
-                        commentEmail.append(",");
-                    }
-                    if (comment.getName() != null) {
-                        commentName.append(comment.getName());
-                        commentName.append(",");
+        // Actual comment content is indexed only if search.index.comments
+        // is true or absent from the (static) configuration properties.
+        // If false in the configuration, comments are treated as if empty.
+        boolean indexComments = RollerConfig.getBooleanProperty("search.index.comments", true);
+
+        String commentContent = "";
+        String commentEmail = "";
+        String commentName = "";
+        if (indexComments) {
+            List comments = data.getComments();
+            if (comments != null) {
+                StringBuffer commentEmailBuf = new StringBuffer();
+                StringBuffer commentContentBuf = new StringBuffer();
+                StringBuffer commentNameBuf = new StringBuffer();
+                for (Iterator cItr = comments.iterator(); cItr.hasNext();) {
+                    CommentData comment = (CommentData) cItr.next();
+                    if (comment.getSpam() == null || !comment.getSpam().booleanValue()) {
+                        if (comment.getContent() != null) {
+                            commentContentBuf.append(comment.getContent());
+                            commentContentBuf.append(",");
+                        }
+                        if (comment.getEmail() != null) {
+                            commentEmailBuf.append(comment.getEmail());
+                            commentEmailBuf.append(",");
+                        }
+                        if (comment.getName() != null) {
+                            commentNameBuf.append(comment.getName());
+                            commentNameBuf.append(",");
+                        }
                     }
                 }
+                commentEmail = commentEmailBuf.toString();
+                commentContent = commentContentBuf.toString();
+                commentName = commentNameBuf.toString();
             }
         }
 
@@ -99,12 +113,9 @@ public abstract class IndexOperation implements Runnable {
                 .toString()));
 
         // index Comments
-        doc.add(Field.UnStored(FieldConstants.C_CONTENT, commentContent
-                .toString()));
-        doc
-                .add(Field.UnStored(FieldConstants.C_EMAIL, commentEmail
-                        .toString()));
-        doc.add(Field.UnStored(FieldConstants.C_NAME, commentName.toString()));
+        doc.add(Field.UnStored(FieldConstants.C_CONTENT, commentContent));
+        doc.add(Field.UnStored(FieldConstants.C_EMAIL, commentEmail));
+        doc.add(Field.UnStored(FieldConstants.C_NAME, commentName));
 
         doc.add(Field.UnStored(FieldConstants.CONSTANT, FieldConstants.CONSTANT_V));
 
