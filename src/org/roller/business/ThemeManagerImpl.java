@@ -24,9 +24,13 @@ import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.ThemeNotFoundException;
 import org.roller.config.RollerConfig;
+import org.roller.model.RollerFactory;
 import org.roller.model.ThemeManager;
+import org.roller.model.UserManager;
 import org.roller.pojos.Theme;
 import org.roller.pojos.ThemeTemplate;
+import org.roller.pojos.WeblogTemplate;
+import org.roller.pojos.WebsiteData;
 
 
 /**
@@ -280,4 +284,90 @@ public class ThemeManagerImpl implements ThemeManager {
         return theme;
     }
 
+    /**
+     * Helper method that copies down the pages from a given theme into a
+     * users weblog templates.
+     *
+     * @param rreq Request wrapper.
+     * @param theme Name of theme to save.
+     * @throws RollerException
+     */
+    public void saveThemePages(WebsiteData website, Theme theme)
+        throws RollerException {
+        
+        mLogger.debug("Setting custom templates for website: "+website.getName());
+        
+        try {
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            
+            Collection templates = theme.getTemplates();
+            Iterator iter = templates.iterator();
+            ThemeTemplate theme_template = null;
+            while ( iter.hasNext() ) {
+                theme_template = (ThemeTemplate) iter.next();
+                
+                WeblogTemplate template = null;
+                
+                if(theme_template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
+                    // this is the main Weblog template
+                    try {
+                        template = userMgr.retrievePage(website.getDefaultPageId());
+                    } catch(Exception e) {
+                        // user may not have a default page yet
+                    }
+                } else {
+                    // any other template
+                    template = userMgr.getPageByName(website, theme_template.getName());
+                }
+                
+                
+                if (template != null) {
+                    // User already has page by that name, so overwrite it.
+                    template.setContents(theme_template.getContents());
+                    
+                } else {
+                    // User does not have page by that name, so create new page.
+                    template = new WeblogTemplate( null,
+                            website,                            // website
+                            theme_template.getName(),           // name
+                            theme_template.getDescription(),    // description
+                            theme_template.getName(),           // link
+                            theme_template.getContents(),       // contents
+                            new Date()                          // last mod
+                            );
+                    userMgr.storePage( template );
+                }
+            }
+            
+            // now update this website's theme to custom
+            website.setEditorTheme(Theme.CUSTOM);
+            
+            // if this is the first time someone is customizing a theme then
+            // we need to set a default page
+            if(website.getDefaultPageId() == null ||
+                    website.getDefaultPageId().trim().equals("") ||
+                    website.getDefaultPageId().equals("dummy")) {
+                // we have to go back to the db to figure out the id
+                WeblogTemplate template = userMgr.getPageByName(website, "Weblog");
+                if(template != null) {
+                    mLogger.debug("Setting default page to "+template.getId());
+                    website.setDefaultPageId(template.getId());
+                }
+            }
+            
+            // we also want to set the weblogdayid
+            WeblogTemplate dayTemplate = userMgr.getPageByName(website, "_day");
+            if(dayTemplate != null) {
+                mLogger.debug("Setting default day page to "+dayTemplate.getId());
+                website.setWeblogDayPageId(dayTemplate.getId());
+            }
+            
+            // save our updated website
+            userMgr.storeWebsite(website);
+            
+        } catch (Exception e) {
+            mLogger.error("ERROR in action",e);
+            throw new RollerException( e );
+        }       
+    }
 }

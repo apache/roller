@@ -111,6 +111,11 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
                     
                     // only cache if this is not a logged in user?
                     if(!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
+                        if (rc.getSize() < 100) {
+                            mLogger.debug(
+                                "Page size < 100 bytes: " + key 
+                                + ": " + request.getRequestURL());
+                        }
                         this.mPageCache.put(key, rc);
                     } else {
                         mLogger.debug("SKIPPED "+key);
