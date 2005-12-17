@@ -4,8 +4,8 @@
 <%@ include file="/taglibs.jsp" %>
 
 <html:hidden property="text" />
-
 <script type="text/javascript" src="richtext.js" ></script>
+<script type="text/javascript" src="html2xhtml.js" ></script>
 <script type="text/javascript">
 <!--
     function postWeblogEntry(publish)
@@ -15,8 +15,8 @@
         if (publish) document.weblogEntryFormEx.publishEntry.value = "true";
         document.weblogEntryFormEx.submit();
     }
-   // Usage: initRTE(imagesPath, includesPath, cssFile)
-   initRTE("images/", "<%= request.getContextPath() %>/editor/", "");
+   //Usage: initRTE(imagesPath, includesPath, cssFile, genXHTML)
+   initRTE("images/", "<%= request.getContextPath() %>/editor/", "", true);
 //-->
 </script>
 <noscript><p><b>Javascript must be enabled to use this form.</b></p></noscript>

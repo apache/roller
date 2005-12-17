@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
 <html>
 <head>
@@ -14,7 +14,7 @@
 			var x = document.getElementsByTagName('TD');
 		else if (document.all)
 			var x = document.all.tags('TD');
-		for (var i=0;i<x.length;i++) {
+		for (var i=0; i < x.length; i++) {
 			x[i].onmouseover = over;
 			x[i].onmouseout = out;
 			x[i].onclick = click;
@@ -22,11 +22,11 @@
 	}
 	
 	function over() {
-		this.style.border='1px dotted white';
+		this.style.border = '1px dotted white';
 	}
 	
 	function out() {
-		this.style.border='1px solid gray';
+		this.style.border = '1px solid gray';
 	}
 	
 	function click() {
