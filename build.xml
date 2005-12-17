@@ -28,12 +28,28 @@
 <target name="usage" description="Print usage for key targets">
 <echo>
 Key Targets:
-             all - Build all: gen code, compile code, stage web directory
-           build - Same as 'all' but no code gen
-         javadoc - Run javadoc against (generated) code
-           clean - Blow away all generated code and all byte code
-         rebuild - Clean and build all
-           usage - Print this help text...
+                all - Build all: gen code, compile code, stage web directory
+              build - Same as 'all' but no code gen
+          stage-web - Build all Java code, stage webapp
+       full-release - Build binary and source release files
+              clean - Blow away all generated code and all byte code
+            rebuild - Clean and build all
+
+              tests - Build and run all JUnit tests
+        build-tests - Build all JUnit tests
+     tests-business - Start DB, run business layer tests, stop DB 
+ tests-presentation - Run presentation layer tests 
+        tests-utils - Run utility tests 
+
+           start-db - Start test DB
+            init-db - Initialize a running test DB
+            stop-db - Stop test DB
+
+               docs - Build all docs 
+            javadoc - Build javadocs 
+         velocidocs - Build velocidocs 
+
+              usage - Print this help text...
 </echo>
 </target>
 
@@ -93,7 +109,7 @@ Key Targets:
 
         <!-- We are not actually generating data objects, but using the
              dataobject subtask allows the strutsform subtask to add nice
-             Adds nice constructors and setData methods to Struts forms -->
+             constructors and setData methods to Struts forms -->
         <dataobject destdir="${ro.build}/junk" pattern="{0}" />
 
     </ejbdoclet>
@@ -656,13 +672,10 @@ ro.buildUser=${user.name}
 <!-- TEST targets -->
 <!-- ********************************************************************* -->
 	
-<target name="tests" depends="build-test" description="All unit tests" >
-    <antcall target="test-hibernate"/>
-    <antcall target="test-servlets"/>
-    <antcall target="test-utils"/>
+<target name="tests" depends="build-tests,test-business,test-presentation,test-utils" description="All unit tests" >
 </target>
 
-<target name="build-test" depends="build" description="Build unit tests" >
+<target name="build-tests" depends="build" description="Build unit tests" >
 
     <mkdir dir="${build.tests}" />
     <mkdir dir="${build.tests}/logs" />
@@ -743,10 +756,13 @@ ro.buildUser=${user.name}
   <delete dir="${ro.build}/build/reports"/>
 </target>
 
-<target name="test-hibernate" depends="build-test" description="Back-end tests">
+<!-- ===================================== -->
+<!-- test business -->
+	
+<target name="test-business" depends="build-tests" description="Back-end tests">
 
-    <mkdir dir="${build.reports}/hibernate/xml"/>
-    <mkdir dir="${build.reports}/hibernate/html"/>
+    <mkdir dir="${build.reports}/business/xml"/>
+    <mkdir dir="${build.reports}/business/html"/>
 
     <startdb database="${build.tests}/testdb" port="3219" />
     
@@ -758,24 +774,26 @@ ro.buildUser=${user.name}
 	
     &custom-pre-dbtest;
 
-    <junit fork="true" dir="${build.tests}">
+    <junit fork="true" dir="${build.tests}" printsummary="on">
         <classpath>
             <path refid="junit.path"/>
         </classpath>
+        <!-- needed to satisfy ref in log4j.properties -->
+        <jvmarg value="-Dcatalina.base=${build.tests}"/> 
         <jvmarg value="-Dro.build=${ro.build}"/>
-        <jvmarg value="-Dcatalina.base=${build.tests}"/> <!-- needed to satisfy ref in log4j.properties -->
+        <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
         <formatter type="xml"/>
-        <batchtest toDir="${build.reports}/hibernate/xml">
+        <batchtest toDir="${build.reports}/business/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
-               <include name="org/roller/business/*Test.class"/>             	
+               <include name="org/roller/business/*Test.class"/> 
             </fileset>
         </batchtest>
     </junit>
-    <junitreport todir="${build.reports}/hibernate/xml">
-        <fileset dir="${build.reports}/hibernate/xml">
+    <junitreport todir="${build.reports}/business/xml">
+        <fileset dir="${build.reports}/business/xml">
             <include name="TEST-*.xml"/>
         </fileset>
-        <report format="noframes" toDir="${build.reports}/hibernate/html"/>
+        <report format="noframes" toDir="${build.reports}/business/html"/>
     </junitreport>
 	
     &custom-post-dbtest;
@@ -783,7 +801,7 @@ ro.buildUser=${user.name}
     <sql driver="org.hsqldb.jdbcDriver"
         url="jdbc:hsqldb:hsql://localhost:3219"
         userid="sa" password=""
-        src="./build/roller/WEB-INF/dbscripts/droptables.sql"
+        src="${ro.build}/roller/WEB-INF/dbscripts/droptables.sql"
         classpath="${ro.tools}/buildtime/hsqldb.jar" />
 
     <stopdb port="3219"/>
@@ -791,9 +809,12 @@ ro.buildUser=${user.name}
     <echo>Suggested: Run "ant consistency-check".</echo>
 </target>
 
-<target name="test-servlets" depends="build-test">
-    <mkdir dir="${build.reports}/servlets/xml"/>
-    <mkdir dir="${build.reports}/servlets/html"/>
+<!-- ===================================== -->
+<!-- test presentation -->
+		
+<target name="test-presentation" depends="build-tests">
+    <mkdir dir="${build.reports}/presentation/xml"/>
+    <mkdir dir="${build.reports}/presentation/html"/>
     
     <startdb database="${build.tests}/testdb" port="3219" />
     
@@ -804,7 +825,7 @@ ro.buildUser=${user.name}
         classpath="${ro.tools}/buildtime/hsqldb.jar" />
 
     <junit fork="true" dir="${build.tests}">
-        <batchtest toDir="${build.reports}/servlets/xml">
+        <batchtest toDir="${build.reports}/presentation/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
                 <include name="org/roller/presentation/**/*Test.class"/> 
 	            <exclude name="**/ApplicationResourcesTest.class"/>
@@ -816,7 +837,6 @@ ro.buildUser=${user.name}
             </fileset>
         </batchtest>
         <!--arg value="org.roller.presentation.velocity.ExportRssTest"/-->
-        <jvmarg value="-DrollerImpl=hibernate"/>
         <jvmarg value="-Dro.build=${ro.build}"/>
         <jvmarg value="-Dcatalina.base=${build.tests}"/> <!-- needed to satisfy ref in log4j.properties -->
         <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
@@ -826,11 +846,11 @@ ro.buildUser=${user.name}
         </classpath>
     </junit>
     
-    <junitreport todir="${build.reports}/servlets/xml">
-       <fileset dir="${build.reports}/servlets/xml">
+    <junitreport todir="${build.reports}/presentation/xml">
+       <fileset dir="${build.reports}/presentation/xml">
           <include name="TEST-*.xml"/>
        </fileset>
-    <report format="noframes" toDir="${build.reports}/servlets/html"/>
+    <report format="noframes" toDir="${build.reports}/presentation/html"/>
     </junitreport>
     
     <sql driver="org.hsqldb.jdbcDriver"
@@ -842,7 +862,10 @@ ro.buildUser=${user.name}
     <stopdb port="3219" />
 </target>
 
-<target name="test-utils" depends="build-test" >
+<!-- ===================================== -->
+<!-- test utils -->
+
+<target name="test-utils" depends="build-tests" >
     <mkdir dir="${build.reports}/utils/xml"/>
     <mkdir dir="${build.reports}/utils/html"/>
     
@@ -852,8 +875,8 @@ ro.buildUser=${user.name}
                 <include name="org/roller/util/*Test.class"/>
             </fileset>
         </batchtest>
-        <jvmarg value="-DrollerImpl=hibernate"/>
-        <jvmarg value="-Dcatalina.base=."/> <!-- needed to satisfy ref in log4j.properties -->
+		<!-- needed to satisfy ref in log4j.properties -->
+        <jvmarg value="-Dcatalina.base=."/> 
         <formatter type="xml"/>
         <classpath>
             <path refid="junit.path"/>
@@ -871,7 +894,7 @@ ro.buildUser=${user.name}
 
 <!-- You can specify testClass using -DtestClass=foo -->
 <property name="testClass" value="org.roller.presentation.velocity.plugins.smileys.SmileysTest"/>
-<target name="test-one" depends="build-test">
+<target name="test-one" depends="build-tests">
     <java classname="junit.textui.TestRunner" fork="yes" failonerror="false">
         <arg value="${testClass}"/>
         <classpath>
@@ -948,8 +971,8 @@ Use -Dverbose=1 to get verbose output.
 <!-- HSQLDB start, init and stop targets -->
 <!-- ********************************************************************* -->
 
-<target name="init-hsqldb" description=
-    "Initializes HSQLDB on port 3219 by running Roller's droptable and createdb scripts">
+<target name="init-db" description=
+    "Initializes built-in database by running drop table and create table">
     &custom-post-dbtest;
     <sql driver="org.hsqldb.jdbcDriver"
          url="jdbc:hsqldb:hsql://localhost:3219"
@@ -964,7 +987,7 @@ Use -Dverbose=1 to get verbose output.
     &custom-pre-dbtest;
 </target>
 
-<target name="start-hsqldb" description="Starts HSQLDB database on port 3219">  
+<target name="start-db" description="Starts built-in database">  
     <java classname="org.hsqldb.Server" fork="yes" classpath="./tools/buildtime/hsqldb.jar">
         <arg value="-database"/>
         <arg value="${build.tests}/testdb"/>
@@ -973,7 +996,7 @@ Use -Dverbose=1 to get verbose output.
     </java>
 </target>
         
-<target name="stop-hsqldb" description="Drop tables and stops the HSQLDB database on port 3219">
+<target name="stop-db" description="Drop tables and stops the built-in database">
     <sql driver="org.hsqldb.jdbcDriver"
          url="jdbc:hsqldb:hsql://localhost:3219"
          userid="sa" password=""

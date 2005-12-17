@@ -170,32 +170,27 @@ public class UserManagerTest  extends RollerTestBase
             new java.util.Date(), Boolean.TRUE);
         umgr.storeUser(user);
         
-        stored = new WebsiteData(
-            null,          // id
-            "testsite3",    // name
-            "testsite3",    // handle 
-            "Testsite3",    // description
-            user,          // creating user
-            "dpid",        // default page ID
-            "wpid",        // default day page ID
-            Boolean.FALSE, // enable blogger API
-            null,          // blogger category
-            null,          // default category
-            "edit-weblog.jsp", // editor page
-            "ignore",      // ignore words
-            Boolean.TRUE,  // allow comments
-            Boolean.FALSE, // email comments
-            null,          // email from address
-            Boolean.TRUE,  // enabled
-            "",            // email address
-            new Date());   // date created
+        stored = new WebsiteData();
+        stored.setName("testsite3");
+        stored.setHandle("testsite3");
+        stored.setDescription("Testsite3");
+        stored.setCreator(user);
+        stored.setDefaultPageId("dpid");
+        stored.setWeblogDayPageId("ddid");
+        stored.setEnableBloggerApi(Boolean.FALSE);
+        stored.setEditorPage("edit-weblog.jsp");
+        stored.setAllowComments(Boolean.TRUE);
+        stored.setEmailComments(Boolean.FALSE);
+        stored.setEmailAddress("test@test.com");
+        stored.setEnabled(Boolean.TRUE);
         stored.setEditorTheme("theme");
+        stored.setDateCreated(new Date());
+        stored.setBlacklist("ignore");
+        stored.setDefaultAllowComments(Boolean.TRUE);
+        stored.setDefaultCommentDays(7);
+        stored.setModerateComments(Boolean.FALSE);
         umgr.storeWebsite(stored);
         
-        FolderData rootFolder = getRoller().getBookmarkManager()
-            .createFolder(null, "root", "root", stored);
-        rootFolder.save();
-
         WeblogCategoryData rootCategory = getRoller().getWeblogManager()
             .createWeblogCategory(stored, null, "root", "root", "");
         rootCategory.save();
@@ -203,6 +198,10 @@ public class UserManagerTest  extends RollerTestBase
         stored.setBloggerCategory(rootCategory);
         stored.setDefaultCategory(rootCategory);
         
+        FolderData rootFolder = getRoller().getBookmarkManager()
+            .createFolder(null, "root", "root", stored);
+        rootFolder.save();
+
         getRoller().commit();
 
         getRoller().begin(UserData.SYSTEM_USER);

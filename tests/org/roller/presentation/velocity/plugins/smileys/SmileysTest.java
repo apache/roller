@@ -28,7 +28,7 @@ public class SmileysTest extends VelocityServletTestBase
         doFilters();
 
         SmileysPlugin plugin = new SmileysPlugin();
-        plugin.init(new MockRollerRequest(request, ctx), null);
+        plugin.init(mWebsite, ctx, null, null);
         assertTrue( SmileysPlugin.smileyPatterns.length > 0 );
 
         String test = "put on a happy :-) face";

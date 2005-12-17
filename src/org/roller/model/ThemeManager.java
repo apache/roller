@@ -11,6 +11,7 @@ import org.roller.RollerException;
 import org.roller.ThemeNotFoundException;
 import org.roller.pojos.Theme;
 import org.roller.pojos.ThemeTemplate;
+import org.roller.pojos.WebsiteData;
 
 
 /**
@@ -95,5 +96,6 @@ public interface ThemeManager {
      */
     public ThemeTemplate getTemplateByLink(String theme_name, String template_link)
         throws ThemeNotFoundException, RollerException;
-    
+   
+    public void saveThemePages(WebsiteData website, Theme theme) throws RollerException;
 }

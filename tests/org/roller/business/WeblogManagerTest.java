@@ -463,21 +463,32 @@ public class WeblogManagerTest extends RollerTestBase
         entry1 = getRoller().getWeblogManager().retrieveWeblogEntry(
             entry1.getId());
         
-        CommentData comment = new CommentData(
-            null, 
-            entry1, 
-            "TestCommentUser", 
-            "test@test.com", 
-            "", 
-            "This is a test", 
-            new Timestamp(new Date().getTime()), 
-            Boolean.FALSE,   // spam
-            Boolean.FALSE);  // notify
-            
+        CommentData comment = new CommentData();
+        comment.setWeblogEntry(entry1);
+        comment.setName("TestCommentUser");
+        comment.setEmail("test@test.com");
+        comment.setContent("");
+        comment.setPostTime(new java.sql.Timestamp(new Date().getTime()));
+        comment.setSpam(Boolean.FALSE);
+        comment.setNotify(Boolean.FALSE);
+        comment.setNotify(Boolean.FALSE);
+        comment.setApproved(Boolean.TRUE);
+        comment.setPending(Boolean.FALSE);
         comment.save();
         getRoller().commit();
         
-        List comments = wmgr.getComments(entry1.getId());
+        List comments = wmgr.getComments(
+                null,   // website
+                entry1, // weblogEntry
+                null,   // search
+                null,   // start
+                null,   // end
+                null,   // approved
+                null,   // pending
+                null,   // spam
+                true,   // reverseChrono
+                0,      // offset
+                -1);    // length
         assertTrue(comments.size() > mCommentCount);
         
         getRoller().begin(UserData.SYSTEM_USER);
@@ -636,7 +647,18 @@ public class WeblogManagerTest extends RollerTestBase
         getRoller().begin(UserData.SYSTEM_USER);
         WeblogEntryData entry0 = (WeblogEntryData)mEntriesCreated.get(0);
         WeblogManager wmgr = getRoller().getWeblogManager();
-        assertEquals(mCommentCount, wmgr.getComments(entry0.getId()).size());
+        assertEquals(mCommentCount, wmgr.getComments(
+                null,   // website
+                entry0, // weblogEntry
+                null,   // search
+                null,   // start
+                null,   // end
+                null,   // approved
+                null,   // pending
+                null,   // spam
+                true,   // reverseChrono
+                0, -1     // offset, size
+                ).size());        
         getRoller().commit();
     }
     
@@ -700,7 +722,17 @@ public class WeblogManagerTest extends RollerTestBase
         
         WebsiteData website = (WebsiteData)mWebsitesCreated.get(0);
         website = umgr.retrieveWebsite(website.getId());
-        List comments = wmgr.getRecentComments(website, 2);
+        List comments = wmgr.getComments(
+                website, // website
+                null,    // weblogEntry
+                null,    // search
+                null,    // start
+                null,    // end
+                null,    // approved
+                null,    // pending
+                null,    // spam
+                true,    // reverseChrono
+                0, 2);   // offset, size
         assertTrue(comments.size() > 1);
         // Comment 0 should be named 'name1' and Comment 1 'name0'
         /*

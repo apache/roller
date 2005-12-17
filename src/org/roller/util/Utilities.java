@@ -901,7 +901,7 @@ public class Utilities
     
     public static String encodeEmail(String str)
     {
-        return RegexUtil.encodeEmail(str);
+        return str!=null ? RegexUtil.encodeEmail(str) : null;
     }
 
     /**
