@@ -219,7 +219,7 @@ div.row {
    padding: 2px; 
 }
 div.formrow {
-   float: left:
+   float: left;
    width: 80%;
 }
 label.formrow {
@@ -229,7 +229,7 @@ label.formrow {
    padding-right: 1em;
 }
 div.sideformrow {
-   float: left:
+   float: left;
    width: 100%;
 }
 label.sideformrow {
