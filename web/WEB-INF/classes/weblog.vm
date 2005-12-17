@@ -84,7 +84,7 @@
       #else
         #set( $entryText = $stringUtils.left( $entryText, $entryLength ) )
         #set( $entryText = $utilities.textToXML($utilities.removeHTML($entryText)) )
-        $entryText... [$entryText.length() characters]
+        $entryText... [$entry.text.length() characters]
       #end
    #end
 #end
