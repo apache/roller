@@ -3,7 +3,10 @@
  */
 package org.roller;
 
+import java.io.File;
+
 import org.roller.business.FileManagerTest;
+import org.roller.config.RollerConfig;
 import org.roller.util.Blacklist;
 
 import junit.framework.Test;
@@ -39,7 +42,19 @@ public class BlacklistTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
+        
+        String buildDir = System.getProperty("ro.build");       
+        assertNotNull("ro.build not null", buildDir);
+        assertTrue("ro.build not zero length", buildDir.trim().length() > 0);
+        
+        if (!buildDir.startsWith("/")) buildDir = "..";
+        File file = new File(buildDir);      
+        assertTrue("buildDir exists", file.exists());
+        assertTrue("buildDir is directory", file.isDirectory());        
+        
         blacklist = Blacklist.getBlacklist();
+        blacklist.loadBlacklistFromFile(
+                buildDir + "/tests/WEB-INF/classes/blacklist.txt");
     }
 
     /**

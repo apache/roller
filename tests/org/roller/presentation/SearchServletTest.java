@@ -26,7 +26,7 @@ public class SearchServletTest extends VelocityServletTestBase
         MockHttpServletRequest mockRequest = getMockFactory().getMockRequest();
 
         mockRequest.setContextPath("/search");
-        mockRequest.setQueryString("q=test");
+        mockRequest.setupAddParameter("q","test");
  
         servletModule.createFilter(PersistenceSessionFilter.class);
         servletModule.createFilter(RequestFilter.class);

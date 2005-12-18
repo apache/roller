@@ -16,6 +16,7 @@
 
 package org.roller.util.rome;
 
+import java.io.File;
 import java.net.URL;
 
 import junit.framework.Test;
@@ -42,7 +43,17 @@ public class DiskFeedInfoCacheTest extends TestCase
         SyndFeedInfo info = new SyndFeedInfo();
         info.setUrl(url);
         
-        DiskFeedInfoCache cache = new DiskFeedInfoCache("./cache");
+        String buildDir = System.getProperty("ro.build");
+        assertNotNull("ro.build not null", buildDir);
+        assertTrue("ro.build not zero length", buildDir.trim().length() > 0);
+        if (!buildDir.startsWith("/")) buildDir = "..";
+        File file = new File(buildDir);
+        
+        assertTrue("buildDir exists", file.exists());
+        assertTrue("buildDir is directory", file.isDirectory());        
+        
+        DiskFeedInfoCache cache = 
+            new DiskFeedInfoCache(buildDir + "/tests/planet-cache");
         cache.setFeedInfo(info.getUrl(), info);
         
         SyndFeedInfo info2 = cache.getFeedInfo(url);

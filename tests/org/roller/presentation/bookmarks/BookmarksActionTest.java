@@ -15,6 +15,8 @@ import org.roller.RollerException;
 import org.roller.model.UserManager;
 import org.roller.pojos.FolderData;
 import org.roller.pojos.UserData;
+import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerRequest;
 import org.roller.presentation.StrutsActionTestBase;
 import org.roller.presentation.bookmarks.actions.BookmarksAction;
 import org.roller.presentation.bookmarks.formbeans.BookmarksForm;
@@ -59,10 +61,18 @@ public class BookmarksActionTest extends StrutsActionTestBase
         MockActionMapping mapping = strutsModule.getMockActionMapping();
         mapping.setupForwards(new String[] {"access-denied","BookmarksForm"});
         mapping.setParameter("method");        
+        strutsModule.addRequestParameter("weblog",mWebsite.getHandle()); 
         strutsModule.addRequestParameter("method","selectFolder"); 
-        
-        strutsModule.actionPerform(BookmarksAction.class, form);        
-        
+                
+        try {
+            RollerRequest rreq = new RollerRequest(strutsModule.getMockPageContext());
+            rreq.setWebsite(mWebsite);
+            strutsModule.setRequestAttribute(RollerRequest.ROLLER_REQUEST, rreq);
+            strutsModule.actionPerform(BookmarksAction.class, form);        
+        } catch (Throwable e) {
+            e.printStackTrace();
+            fail();
+        }
         // Test for success
         strutsModule.verifyNoActionMessages();
         strutsModule.verifyForward("BookmarksForm");
@@ -76,8 +86,7 @@ public class BookmarksActionTest extends StrutsActionTestBase
         HttpServletRequest req = (HttpServletRequest)
         servletModule.getFilteredRequest();
         assertTrue(req.getAttribute("folder") instanceof FolderData);
-        assertTrue(req.getAttribute("folders") instanceof List);
-        assertTrue(req.getAttribute("bookmarks") instanceof Set);
+        assertTrue(req.getAttribute("model") instanceof BasePageModel);
     }
 
     public static Test suite() 
