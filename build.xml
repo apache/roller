@@ -707,6 +707,9 @@ ro.buildUser=${user.name}
 	<copy file="${basedir}/web/WEB-INF/classes/roller.properties"
         todir="${build.tests}/WEB-INF/classes/"/>
 
+	<copy file="${basedir}/web/WEB-INF/classes/blacklist.txt"
+        todir="${build.tests}/WEB-INF/classes/"/>
+
 	<copy file="${basedir}/personal/testing/roller-custom.properties"
         todir="${build.tests}"/>
 
@@ -716,9 +719,6 @@ ro.buildUser=${user.name}
     <copy file="${basedir}/personal/testing/log4j.properties"
         tofile="${build.tests}/WEB-INF/classes/log4j.properties" />
         
-    <copy file="${basedir}/personal/testing/bookmarks.opml"
-        tofile="${build.tests}/WEB-INF/classes/bookmarks.opml" />
-
     <copy file="${basedir}/web/images/rssbadge.gif"
         tofile="${build.tests}/rssbadge.gif" />
 
@@ -733,6 +733,9 @@ ro.buildUser=${user.name}
             <include name="**/*.vm"/>
         </fileset>
     </copy>
+
+    <copy file="${ro.build}/roller/WEB-INF/web.xml"
+	    todir="${build.tests}/WEB-INF/"/>
 
     <copy file="${basedir}/web/WEB-INF/classes/rollerRuntimeConfigDefs.xml"
 	    todir="${build.tests}/WEB-INF/classes/"/>
