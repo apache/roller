@@ -99,7 +99,7 @@ public class SmileysPlugin implements PagePlugin
                 String smileyAlt = htmlEscape(smiley);
                 tempP[count] = Pattern.compile(regexEscape(smiley));
                 tempS[count] = "<img src=\"" + 
-                               baseURL + "images/smileys/" + 
+                               baseURL + "/images/smileys/" + 
                                smileyDefs.getProperty(smiley, "smile.gif") +
                                "\" class=\"smiley\"" + 
                                " alt=\"" + smileyAlt + "\"" +

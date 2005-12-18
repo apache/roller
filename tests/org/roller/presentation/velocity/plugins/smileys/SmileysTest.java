@@ -20,7 +20,7 @@ public class SmileysTest extends VelocityServletTestBase
     public void testSmileEmoticon() throws Exception
     {
         MockServletContext ctx = getMockFactory().getMockServletContext();
-        ctx.setServletContextName("/roller"); 
+        ctx.setServletContextName("/roller");      
         
         MockHttpServletRequest request = getMockFactory().getMockRequest();
         request.setContextPath("/roller");
@@ -28,7 +28,7 @@ public class SmileysTest extends VelocityServletTestBase
         doFilters();
 
         SmileysPlugin plugin = new SmileysPlugin();
-        plugin.init(mWebsite, ctx, null, null);
+        plugin.init(mWebsite, ctx, "/roller", null);
         assertTrue( SmileysPlugin.smileyPatterns.length > 0 );
 
         String test = "put on a happy :-) face";

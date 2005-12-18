@@ -8,6 +8,7 @@ import junit.framework.TestSuite;
 import org.roller.RollerException;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
+import org.roller.presentation.RollerRequest;
 import org.roller.presentation.StrutsActionTestBase;
 import org.roller.presentation.weblog.actions.WeblogEntryFormAction;
 import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
@@ -44,7 +45,8 @@ public class WeblogEntryActionTest extends StrutsActionTestBase
         MockActionMapping mapping = strutsModule.getMockActionMapping();
         mapping.setupForwards(new String[] {
             "access-denied","weblogEdit.page","weblogEntryRemove.page"});
-        mapping.setParameter("method");        
+        mapping.setParameter("method");  
+        strutsModule.addRequestParameter("weblog",mWebsite.getHandle()); 
         strutsModule.addRequestParameter("method","create"); 
         
         // Setup form bean
@@ -53,8 +55,15 @@ public class WeblogEntryActionTest extends StrutsActionTestBase
         form.setTitle("test_title");
         form.setText("Test blog text");
 
-        strutsModule.actionPerform(WeblogEntryFormAction.class, form);        
-        
+        try {
+            RollerRequest rreq = new RollerRequest(strutsModule.getMockPageContext());
+            rreq.setWebsite(mWebsite);
+            strutsModule.setRequestAttribute(RollerRequest.ROLLER_REQUEST, rreq);
+            strutsModule.actionPerform(WeblogEntryFormAction.class, form);        
+        } catch (Throwable t) {
+            t.printStackTrace();
+            fail();
+        }
         // Test for success
         strutsModule.verifyNoActionMessages();
         strutsModule.verifyForward("weblogEdit.page");

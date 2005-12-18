@@ -114,9 +114,9 @@ public abstract class RollerTestBase extends TestCase {
         assertTrue("ro.build not zero length", buildDir.trim().length() > 0);
         if (!buildDir.startsWith("/")) buildDir = "..";
         File file = new File(buildDir);
-        assertTrue("buildDir exists", file.exists());
-        assertTrue("buildDir is directory", file.isDirectory());
         
+        assertTrue("buildDir exists", file.exists());
+        assertTrue("buildDir is directory", file.isDirectory());        
         assertTrue(new File(buildDir + "/roller/themes/basic").exists());
         
         RollerConfig.setContextRealPath(buildDir + "/roller");

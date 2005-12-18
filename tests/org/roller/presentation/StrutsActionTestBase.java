@@ -56,10 +56,11 @@ public class StrutsActionTestBase extends RollerTestBase
         mockRequest.setUserInRole(role, true);
         
         HttpSession session = mockRequest.getSession(true);        
-        RollerSession rollerSession = new RollerSession();
         UserManager umgr = getRoller().getUserManager();
         UserData user = umgr.getUser(username);
-        WebsiteData website = (WebsiteData)umgr.getWebsites(user, null).get(0); 
+
+        RollerSession rollerSession = new RollerSession();
+        rollerSession.setAuthenticatedUser(user);
         session.setAttribute(RollerSession.ROLLER_SESSION, rollerSession);
     }
     
