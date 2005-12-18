@@ -707,9 +707,6 @@ ro.buildUser=${user.name}
 	<copy file="${basedir}/web/WEB-INF/classes/roller.properties"
         todir="${build.tests}/WEB-INF/classes/"/>
 
-	<copy file="${basedir}/web/WEB-INF/classes/blacklist.txt"
-        todir="${build.tests}/WEB-INF/classes/"/>
-
 	<copy file="${basedir}/personal/testing/roller-custom.properties"
         todir="${build.tests}"/>
 
