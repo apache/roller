@@ -103,7 +103,7 @@ public class RollerRequest implements ParsedRequest
     
     public static final String OWNING_WEBSITE         = "OWNING_WEBSITE";
     
-    private static final String ROLLER_REQUEST        = "roller_request";
+    public static final String ROLLER_REQUEST        = "roller_request";
     
     private SimpleDateFormat mFmt = DateUtil.get8charDateFormat();
 
