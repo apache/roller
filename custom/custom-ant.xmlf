@@ -3,7 +3,7 @@
 
     <!-- Netbeans debug single file 
     --> 
-    <target name="debug-selected-files" if="netbeans.home" depends="build-test" 
+    <target name="debug-selected-files" if="netbeans.home" depends="build-tests" 
        description="Debug a Single File">
        <fail unless="classname">Must set property 'classname'</fail>
        <nbjpdastart name="${classname}" addressproperty="jpda.address" transport="dt_socket">
@@ -24,7 +24,7 @@
 
     <!-- Netbeans debug.single target 
     -->
-    <target name="test-selected-files" if="netbeans.home" depends="build-test" 
+    <target name="test-selected-files" if="netbeans.home" depends="build-tests" 
        description="Test/debug a Single File">
        <fail unless="classname">Must set property 'classname'</fail>
        <nbjpdastart name="junit.textui.TestRunner" addressproperty="jpda.address" transport="dt_socket">

@@ -36,7 +36,7 @@ public class PlanetManagerLocalTest extends RollerTestBase {
         junit.textui.TestRunner.run(PlanetManagerLocalTest.class);
     }
     
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         super.setUpTestWeblogs();
     }

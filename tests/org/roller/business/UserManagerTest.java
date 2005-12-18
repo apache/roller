@@ -64,7 +64,7 @@ public class UserManagerTest  extends RollerTestBase
     /**
      * @see junit.framework.TestCase#setUp()
      */
-    protected void setUp() throws Exception
+    public void setUp() throws Exception
     {
         super.setUp();
 
