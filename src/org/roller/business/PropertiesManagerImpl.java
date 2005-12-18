@@ -66,7 +66,10 @@ public abstract class PropertiesManagerImpl implements PropertiesManager
             }
             
             // save our changes
+            UserData user = mStrategy.getUser();
+            mStrategy.setUser(UserData.SYSTEM_USER);
             this.store(props);
+            mStrategy.setUser(user);
         }
         catch (Exception e)
         {

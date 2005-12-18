@@ -28,25 +28,27 @@ public class TestAll extends TestCase
     {
         TestSuite suite = new TestSuite();
         suite.addTest(BookmarksActionTest.suite());
-//        suite.addTest(WeblogEntryActionTest.suite());
-//        suite.addTest(BlacklistTest.suite());
-//        suite.addTest(DateTest.suite());
-//        suite.addTest(RequestFilterTest.suite());
-//        suite.addTest(SearchServletTest.suite());
-//        suite.addTest(SmileysTest.suite());
-//        suite.addTest(TextileTest.suite());
-//        suite.addTest(RollerXmlRpcServerTest.suite());
-//        suite.addTest(LinkbackExtractorTest.suite());
-//        suite.addTest(LRUCache2Test.suite());
-//        suite.addTest(RegexUtilTest.suite());
-//        suite.addTest(DiskFeedInfoCacheTest.suite());
-//        suite.addTest(UtilitiesTest.suite());   
+        suite.addTest(WeblogEntryActionTest.suite());
+        suite.addTest(BlacklistTest.suite());
+        suite.addTest(DateTest.suite());
+        suite.addTest(RequestFilterTest.suite());
+        suite.addTest(SearchServletTest.suite());
+        suite.addTest(SmileysTest.suite());
+        suite.addTest(TextileTest.suite());
+        suite.addTest(RollerXmlRpcServerTest.suite());
+        suite.addTest(LinkbackExtractorTest.suite());
+        suite.addTest(LRUCache2Test.suite());
+        suite.addTest(RegexUtilTest.suite());
+        suite.addTest(DiskFeedInfoCacheTest.suite());
+        suite.addTest(UtilitiesTest.suite());  
+        
         // TODO: suite.addTest(ApplicationResourcesTest.suite());
         // TODO: suite.addTest(ArchiveParserTest.suite());
         // TODO: suite.addTest(AtomCollectionTest.suite());
         // TODO: suite.addTest(AtomServletTest.suite());
         // TODO: suite.addTest(ExportRssTest.suite());
-        //suite.addTest(LanguageUtilTest.suite());
+        // TODO: suite.addTest(LanguageUtilTest.suite());
+        
         return suite;
     }
     public TestAll(String testName)
