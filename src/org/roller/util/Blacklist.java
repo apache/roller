@@ -52,7 +52,6 @@ public class Blacklist {
     /** We no longer have a blacklist update URL */
     private static final String blacklistURL = null; 
 
-    private String uploadDir = null;
     private Date lastModified = null;
     private List blacklistStr = new LinkedList();
     private List blacklistRegex = new LinkedList();
@@ -61,12 +60,11 @@ public class Blacklist {
     static {
         mLogger.info("Initializing MT Blacklist");
         blacklist = new Blacklist();
-        blacklist.loadBlacklistFromFile();
+        blacklist.loadBlacklistFromFile(null);
     }
     
     /** Hide constructor */
     private Blacklist() {
-        this.uploadDir = RollerConfig.getProperty("uploads.dir");
     }
       
     /** Singleton factory method. */
@@ -84,7 +82,7 @@ public class Blacklist {
         if (this.blacklistURL != null) {
             boolean blacklist_updated = this.downloadBlacklist();
             if (blacklist_updated) {
-                this.loadBlacklistFromFile();
+                this.loadBlacklistFromFile(null);
             }
         }
     }
@@ -135,7 +133,8 @@ public class Blacklist {
                 // save the new blacklist
                 InputStream instream = connection.getInputStream();
                 
-                String path = this.uploadDir + File.separator + blacklistFile;
+                String uploadDir = RollerConfig.getProperty("uploads.dir");
+                String path = uploadDir + File.separator + blacklistFile;
                 FileOutputStream outstream = new FileOutputStream(path);
                 
                 mLogger.debug("writing updated MT blacklist to "+path);
@@ -168,16 +167,21 @@ public class Blacklist {
      * Load the MT blacklist from the file system.
      * We look for a previously downloaded version of the blacklist first and
      * if it's not found then we load the default blacklist packed with Roller.
+     * Only public for purposes of unit testing.
      */
-    private void loadBlacklistFromFile() {
+    public void loadBlacklistFromFile(String blacklistFilePath) {
         
         InputStream txtStream = null;
         try {
-            String path = this.uploadDir + File.separator + blacklistFile;
+            String path = blacklistFilePath;
+            if (path == null) {
+                String uploadDir = RollerConfig.getProperty("uploads.dir");
+                path = uploadDir + File.separator + blacklistFile;
+            }
             File blacklistFile = new File(path);
             
             // check our lastModified date to see if we need to re-read the file
-            if(this.lastModified != null &&
+            if (this.lastModified != null &&
                     this.lastModified.getTime() >= blacklistFile.lastModified()) {               
                 mLogger.debug("Blacklist is current, no need to load again");
                 return;
