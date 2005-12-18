@@ -2,7 +2,6 @@ package org.roller.presentation.filters;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
