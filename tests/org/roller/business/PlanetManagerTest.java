@@ -15,6 +15,7 @@
  */
 package org.roller.business;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.model.PlanetManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -34,6 +36,7 @@ import org.roller.pojos.PlanetEntryData;
 import org.roller.pojos.PlanetGroupData;
 import org.roller.pojos.PlanetSubscriptionData;
 import org.roller.pojos.UserData;
+import org.roller.util.Blacklist;
 
 /**
  * Test database implementation of PlanetManager.
@@ -48,6 +51,18 @@ public class PlanetManagerTest extends TestCase
         junit.textui.TestRunner.run(PlanetManagerTest.class);
     }
 
+    /**
+     * @see TestCase#setUp()
+     */
+    protected void setUp() throws Exception
+    {
+        super.setUp();        
+        RollerConfig.setPlanetCachePath(
+            System.getProperty("ro.build") 
+            + File.separator + "tests" 
+            + File.separator + "planet-cache");
+    }
+    
     public void testConfigurationStorage() throws Exception
     {
         Roller roller = getRoller();
@@ -59,7 +74,7 @@ public class PlanetManagerTest extends TestCase
             roller.begin();
             
             PlanetConfigData config = new PlanetConfigData();
-            config.setCacheDir("test_cache_dir");
+            //config.setCacheDir(cacheDir);
             config.setTitle("test_title");
             config.setAdminEmail("test_admin_email");
 
@@ -270,7 +285,7 @@ public class PlanetManagerTest extends TestCase
             {   
                 roller.begin();
                 PlanetConfigData config = new PlanetConfigData();
-                config.setCacheDir("/tmp"); // TODO use real temp dir
+                //config.setCacheDir(cacheDir); 
                 config.setTitle("test_title");
                 config.setAdminEmail("test_admin_email");
                 planet.saveConfiguration(config);
@@ -297,7 +312,7 @@ public class PlanetManagerTest extends TestCase
                 
                 roller.begin();
                 PlanetSubscriptionData sub = planet.getSubscription(feed_url1);
-                assertTrue(sub.getEntries().size() > 0);
+                int entriesSize = sub.getEntries().size();
           
                 PlanetGroupData group = planet.getGroup("test_handle");
                 assertNotNull(group);
@@ -308,6 +323,8 @@ public class PlanetManagerTest extends TestCase
                 PlanetConfigData config = planet.getConfiguration();
                 config.remove();
                 roller.commit();
+
+                assertTrue(entriesSize > 0);
             }
         }
         catch (Exception e) 
@@ -329,7 +346,7 @@ public class PlanetManagerTest extends TestCase
             {   
                 roller.begin();
                 PlanetConfigData config = new PlanetConfigData();
-                config.setCacheDir("/tmp"); // TODO use real temp dir
+                //config.setCacheDir(cacheDir); 
                 config.setTitle("test_title");
                 config.setAdminEmail("test_admin_email");
                 planet.saveConfiguration(config);
