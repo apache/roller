@@ -37,7 +37,6 @@ import org.roller.pojos.PermissionsData;
 import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.servlets.LoginServlet;
 import org.roller.presentation.RollerContext;
 import org.roller.util.RollerMessages;
 import org.roller.util.Utilities;
@@ -58,15 +57,14 @@ import org.roller.util.rome.PubControlModuleImpl;
  * <pre>
  * Here are the URIs suppored:
  *
- *    URI type             URI form                          Handled by
- *    --------             --------                          ----------
- *    Introspection URI    /                                 getIntrosection()
- *    Collection URI       /blog-name/<collection-name>      getCollection()
- *    Collection-next URI  /blog-name/<collection-name>/id   getCollection()
- *    Member URI           /blog-name/<object-name>          post<object-name>()
- *    Member URI           /blog-name/<object-name>/id       get<object-name>()
- *    Member URI           /blog-name/<object-name>/id       put<object-name>()
- *    Member URI           /blog-name/<object-name>/id       delete<object-name>()
+ *    URI type             URI form                        Handled by
+ *    --------             --------                        ----------
+ *    Introspection URI    /                               getIntrosection()
+ *    Collection URI       /blog-name/<collection-name>    getCollection()
+ *    Member URI           /blog-name/<object-name>        post<object-name>()
+ *    Member URI           /blog-name/<object-name>/id     get<object-name>()
+ *    Member URI           /blog-name/<object-name>/id     put<object-name>()
+ *    Member URI           /blog-name/<object-name>/id     delete<object-name>()
  *
  *    Until group blogging is supported weblogHandle == blogname.
  *
@@ -74,10 +72,6 @@ import org.roller.util.rome.PubControlModuleImpl;
  *    ----------------   ------------
  *       entries           entry
  *       resources         resource
- *       categories        categories (not yet)
- * soon:
- *       users             user
- *       templates         template
  * </pre>
  *
  * @author David M Johnson
@@ -240,7 +234,7 @@ public class RollerAtomHandler implements AtomHandler {
                     null,   // catName
                     null,   // status
                     start, // offset (for range paging)
-                    end);  // maxEntries
+                    end - start + 1);  // maxEntries
             Feed feed = new Feed();
             List atomEntries = new ArrayList();
             for (Iterator iter = entries.iterator(); iter.hasNext();) {
@@ -737,8 +731,7 @@ public class RollerAtomHandler implements AtomHandler {
                         if (p != -1) {
                             userID = userPass.substring(0, p);
                             UserData user = mRoller.getUserManager().getUser(userID);
-                            String realpassword = LoginServlet.getEncryptedPassword(
-                                    request, user.getUserName(), user.getPassword());
+                            String realpassword = user.getPassword();
                             password = userPass.substring(p+1);
                             if (    (userID.trim().equals(user.getUserName()))
                             && (password.trim().equals(realpassword))) {
@@ -770,7 +763,9 @@ public class RollerAtomHandler implements AtomHandler {
         List contents = new ArrayList();
         contents.add(content);
         
-        atomEntry.setId(        entry.getId());
+        String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
+        
+        atomEntry.setId(        absUrl + entry.getPermaLink());
         atomEntry.setTitle(     entry.getTitle());
         atomEntry.setContents(  contents);
         atomEntry.setPublished( entry.getPubTime());
@@ -789,7 +784,6 @@ public class RollerAtomHandler implements AtomHandler {
         altlinks.add(altlink);
         atomEntry.setAlternateLinks(altlinks);
         
-        String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
         Link editlink = new Link();
         editlink.setRel("edit");
         editlink.setHref(absUrl + "/app/"
