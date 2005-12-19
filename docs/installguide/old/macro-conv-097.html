@@ -1,0 +1,244 @@
+<p>
+<i>Unless you have been using Roller 0.9.7, you can ignore this document</i>
+</p>
+
+<h3>Migrating from Roller 0.9.7 $macros to Roller 1.0 Velocimacros</h3>
+
+<div>Because Velocity does not support macro overloading (more than one
+macro with the same name, but different parameters) it was necessary to
+come up with names to differentiate the velocimacros from each other 
+where Macros.java was able to use overloading.  The following is a 
+mapping of the Macros methods to Velocimacros that perform the same
+function.  Other than changing the "method" where necessary, simply 
+replace "$macros." with "#".  In addition, you can "override" a velocimacro
+in your template by defining a new macro with the same name and parameters.
+To this end, some macros are listed which do not have $macros equivalents.
+More information on the Velocimacros
+can be found in the <a href="../velocimacros/index.html">Velocimacro API</a> </div>
+<div><b>Note: It is vital that you remove the commas (,) from the old $macros
+when moving to the new Velocimacros!! If you do not, Velocity will not parse your
+page correctly!</b></div>
+
+<table cellspacing="0" cellpadding="0">
+<tr>
+    <td></td>
+    <td></td>
+</tr>
+<tr>
+    <th>Macros.java</th>
+    <th>Velocimacro</th>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>includePage(String pageName)</td>
+    <td>includePage( $pageName )</td>
+</tr>
+<tr>
+    <td>showAllNewsfeeds(boolean desc, int max, boolean expandingFolder)</td>
+    <td>showNewsfeeds($showDescription $maxItems $expandingFolders)</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showAllNewsfeeds(boolean desc, int max)</td>
+    <td></td>
+</tr>
+<tr>
+    <td>showNewsfeed(String name, boolean desc, int max, boolean expandingFolder)</td>
+    <td>showNewsfeed($name $showDescription $maxItems $expandingFolders)</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showNewsfeed(String name, boolean desc, int max)</td>
+    <td></td>
+</tr>
+<tr>
+    <td>showBigWeblogCalendar()</td>
+    <td>showBigWeblogCalendar()</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showBookmarks(String folderName, boolean showFolderName, boolean expandingFolder)</td>
+    <td>showBookmarks($folderName $showFolderName $expandingFolder )</td>
+</tr>
+<tr>
+    <td>showBookmarks(String folderName, boolean showFolderName)</td>
+    <td></td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showBookmarks(String folderName, String title)</td>
+    <td></td>
+</tr>
+<tr>
+    <td>showEditorNavBar(boolean vertical)</td>
+    <td>showEditorNavBar($vertical )</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showNavBar(boolean vertical) </td>
+    <td>showBasicNavBar($vertical )</td>
+</tr>
+<tr>
+    <td>showNavBar(boolean vertical, String delimiter)</td>
+    <td>showNavBar($vertical $delimiter )</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showPageDescription()</td>
+    <td>showPageDescription()</td>
+</tr>
+<tr>
+    <td>showPageName()</td>
+    <td>showPageName()</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showPageUpdateTime()</td>
+    <td>showPageUpdateTime()</td>
+</tr>
+<tr>
+    <td>showReferers(int max, int maxWidth)</td>
+    <td>showReferers($max $maxWidth)</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showReferers()</td>
+    <td></td>
+</tr>
+<tr>
+    <td>showReferers(int max)</td>
+    <td></td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showResourceImage(String fileName, String linkUrl, String alt, int border, String halign, String valign)</td>
+    <td>showResourceImage($fileName $linkUrl $alt $border $halign $valign)</td>
+</tr>
+<tr>
+    <td>showResourcePath()</td>
+    <td>showResourcePath()</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showRSSAutodiscoveryLink()</td>
+    <td>showRSSAutodiscoveryLink()</td>
+</tr>
+<tr>
+    <td>showRSSBadge()</td>
+    <td>showRSSBadge()</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showRSSLinks()</td>
+    <td>showRSSLinks()</td>
+</tr>
+<tr>
+    <td>showThemeImage(String theme, String imageName)</td>
+    <td>showThemeImage($theme $imageName)</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showThemeImagePath(String theme, String imageName)</td>
+    <td>showThemeImagePath($theme $imageName)</td>
+</tr>
+<tr>
+    <td>showThemePath(String theme)</td>
+    <td>showThemePath($theme)</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showThemeScript(String theme, String scriptFile)</td>
+    <td>showThemeScript($theme $scriptFile)</td>
+</tr>
+<tr>
+    <td>showThemeScriptPath(String theme, String scriptFile)</td>
+    <td>showThemeScriptPath($theme $scriptFile)</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showThemeStyle(String theme, String stylesheet, boolean useImport)</td>
+    <td>showThemeStyle($theme $stylesheet $useImport)</td>
+</tr>
+<tr>
+    <td>showThemeStyleImport(String theme, String stylesheet) </td>
+    <td>showThemeStyleImport($theme $stylesheet)</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showThemeStylePath(String theme, String stylesheet)</td>
+    <td>showThemeStylePath($theme $stylesheet)</td>
+</tr>
+<tr>
+    <td>showVersion()</td>
+    <td>showVersion()</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showWeblogCalendar()</td>
+    <td>showWeblogCalendar()</td>
+</tr>
+<tr>
+    <td>showWeblogCategoryChooser()</td>
+    <td>showWeblogCategoryChooser()</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showWeblogEntries(String dayTemplate, int maxEntries)</td>
+    <td>showWeblogEntries( $pageName $maxEntries )</td>
+</tr>
+<tr>
+    <td>showWeblogEntries(String dayTemplate)</td>
+    <td></td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showWeblogEntries(int maxEntries)</td>
+    <td></td>
+</tr>
+<tr>
+    <td>showWeblogEntries()</td>
+    <td></td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td>showWebsiteDescription()</td>
+    <td>showWebsiteDescription()</td>
+</tr>
+<tr>
+    <td>showWebsiteTitle()</td>
+    <td>showWebsiteTitle()</td>
+</tr>
+<tr bgcolor="#eaeaea">
+	<td align="center" colspan="2">
+	<b>New Velocimacros</b>
+	</td>
+</tr>
+<tr>
+    <td></td>
+    <td>formatDate($dateFormat $date )</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td></td>
+    <td>refererDisplayUrl($ref $maxWidth $includeHits)</td>
+</tr>
+<tr>
+    <td></td>
+    <td>showComments( $entry )</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td></td>
+    <td>showCommentForm $entry )</td>
+</tr>
+<tr>
+    <td></td>
+    <td>showCommentsLink($entry)</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td></td>
+    <td>showCommentsPageLink($entry)</td>
+</tr>
+<tr>
+    <td></td>
+    <td>showDayPermalink( $day )</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td></td>
+    <td>showEntryDate( $day )</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td></td>
+    <td>showEntryPermalink( $entry )</td>
+</tr>
+<tr>
+    <td></td>
+    <td>showLinkbacks( $day )</td>
+</tr>
+<tr bgcolor="#eaeaea">
+    <td></td>
+    <td>showPageUpdateTime()</td>
+</tr>
+<tr>
+	<td></td>
+	<td>showTrackbackURL( $entry )</td>
+</tr>
+</table>
