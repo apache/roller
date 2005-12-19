@@ -22,6 +22,8 @@ import junit.framework.TestSuite;
 
 import org.roller.RollerTestBase;
 import org.roller.model.PlanetManager;
+import org.roller.pojos.PlanetGroupData;
+import org.roller.pojos.UserData;
 import org.roller.presentation.planet.RefreshEntriesTask;
 import org.roller.presentation.planet.SyncWebsitesTask;
 

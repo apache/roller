@@ -41,20 +41,11 @@ public class BlacklistTest extends TestCase
      */
     protected void setUp() throws Exception
     {
-        super.setUp();
-        
-        String buildDir = System.getProperty("ro.build");       
-        assertNotNull("ro.build not null", buildDir);
-        assertTrue("ro.build not zero length", buildDir.trim().length() > 0);
-        
-        if (!buildDir.startsWith("/")) buildDir = "..";
-        File file = new File(buildDir);      
-        assertTrue("buildDir exists", file.exists());
-        assertTrue("buildDir is directory", file.isDirectory());        
-        
+        super.setUp();   
         blacklist = Blacklist.getBlacklist();
+        String FS = File.separator;              
         blacklist.loadBlacklistFromFile(
-                buildDir + "/tests/WEB-INF/classes/blacklist.txt");
+            ".." + FS + "WEB-INF" + FS + "classes" + FS + "blacklist.txt");
     }
 
     /**

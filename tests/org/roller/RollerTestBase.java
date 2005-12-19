@@ -108,20 +108,9 @@ public abstract class RollerTestBase extends TestCase {
      */
     public void setUp() throws Exception {
         super.setUp();
-
-        String buildDir = System.getProperty("ro.build");
-        assertNotNull("ro.build not null", buildDir);
-        assertTrue("ro.build not zero length", buildDir.trim().length() > 0);
-        if (!buildDir.startsWith("/")) buildDir = "..";
-        File file = new File(buildDir);
-        
-        assertTrue("buildDir exists", file.exists());
-        assertTrue("buildDir is directory", file.isDirectory());        
-        assertTrue(new File(buildDir + "/roller/themes/basic").exists());
-        
-        RollerConfig.setContextRealPath(buildDir + "/roller");
-        RollerConfig.setUploadsDir(buildDir + "/tests/roller_data/uploads");
-        
+        String FS = File.separator;
+        RollerConfig.setContextRealPath(".." + FS + "roller");
+        RollerConfig.setUploadsDir("." + FS + "roller_dat" + FS + "uploads");       
         getRoller().begin(UserData.SYSTEM_USER);
         mUser = createUser(
                 testUsername,

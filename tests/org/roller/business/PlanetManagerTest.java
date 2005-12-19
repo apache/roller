@@ -57,10 +57,7 @@ public class PlanetManagerTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();        
-        RollerConfig.setPlanetCachePath(
-            System.getProperty("ro.build") 
-            + File.separator + "tests" 
-            + File.separator + "planet-cache");
+        RollerConfig.setPlanetCachePath("." + File.separator + "planet-cache");
     }
     
     public void testConfigurationStorage() throws Exception
@@ -104,7 +101,7 @@ public class PlanetManagerTest extends TestCase
         {   // remove config
             roller.begin();
             PlanetConfigData config = planet.getConfiguration();
-            config.remove();
+            config.remove();            
             roller.commit();
         }
         {
@@ -138,7 +135,7 @@ public class PlanetManagerTest extends TestCase
             PlanetGroupData group = planet.getGroup("test_handle");
             assertEquals("test_group_desc",group.getDescription());
             assertEquals("test_title",group.getTitle());
-            assertEquals(1, planet.getGroupHandles().size());
+            assertTrue(planet.getGroupHandles().size() > 0);
             roller.rollback();
         }
         {   // remove group
