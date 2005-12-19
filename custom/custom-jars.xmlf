@@ -1,9 +1,11 @@
+<!-- 
+Custom jars to be added to both rollerbeans and rollerweb compiles 
+-->
 
-<!-- Include hacked ROME jars needed for experimental Atom Protocol impl.
+<!--Uncomment to include experimental Atom protocol support
 <fileset dir="${basedir}/sandbox/atomprotocol/lib" includes="*.jar" />
 -->
 
-<!-- Custom jars to be added to both rollerbeans and rollerweb compiles -->
-<!-- <fileset dir="${basedir}/custom/lib" includes="*.java" />
-<fileset dir="${basedir}/sandbox/planetroller/web/WEB-INF/lib" includes="*.jar" />
--->
+<!-- Uncomment this to compile experimental JDO backend
+<fileset dir="${basedir}/sandbox/jdobackend/lib" includes="*.jar" />
+ -->
