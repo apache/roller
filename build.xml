@@ -698,57 +698,36 @@ ro.buildUser=${user.name}
         classpath="${basedir}/tools/buildtime/hsqldb.jar;${build.tests}/WEB-INF/classes" />
     <taskdef name="stopdb" classname="org.roller.ant.StopHsqldbTask" 
         classpath="${basedir}/tools/buildtime/hsqldb.jar;${build.tests}/WEB-INF/classes" />
-        
+    
+    <!-- Copy custom testing files -->
+    <copy todir="${build.tests}">
+        <fileset dir="${basedir}/testdata">
+            <include name="**/**"/>
+        </fileset>
+    </copy>
+
     <!-- 
     Copy required files to ${build.tests} to make them available for 
     testing without interfering with the "real" build in ${build.stage_web}
     -->
-	
-    <copy file="${basedir}/personal/testing/roller-custom.properties"
-        todir="${build.tests}"/>
-
-    <copy file="${basedir}/personal/testing/hibernate.cfg.xml"
-        tofile="${build.tests}/WEB-INF/classes/hibernate.cfg.xml" />
-    
-    <copy file="${basedir}/personal/testing/log4j.properties"
-        tofile="${build.tests}/WEB-INF/classes/log4j.properties" />
-        
-    <copy file="${basedir}/personal/testing/bookmarks.opml"
-        todir="${build.tests}/WEB-INF/classes" />
-        
-    <copy file="${basedir}/web/images/rssbadge.gif"
-        tofile="${build.tests}/rssbadge.gif" />
-
     <copy todir="${build.tests}/WEB-INF/classes">
         <fileset dir="${basedir}/web/WEB-INF/classes">
             <include name="App*.properties"/>
-        </fileset>
-    </copy>
-	
-	<copy todir="${build.tests}/WEB-INF/classes">
-        <fileset dir="${basedir}/web/WEB-INF/classes">
             <include name="**/*.vm"/>
         </fileset>
     </copy>
-
     <copy file="${basedir}/web/WEB-INF/classes/roller.properties"
         todir="${build.tests}/WEB-INF/classes/"/>
-
     <copy file="${ro.build}/roller/WEB-INF/web.xml"
         todir="${build.tests}/WEB-INF/"/>
-
     <copy file="${basedir}/web/WEB-INF/classes/rollerRuntimeConfigDefs.xml"
         todir="${build.tests}/WEB-INF/classes/"/>
-
     <copy file="${basedir}/web/WEB-INF/velocity.properties"
         tofile="${build.tests}/WEB-INF/velocity.properties" />
-        
     <copy file="${basedir}/web/WEB-INF/classes/rome.properties"
         tofile="${build.tests}/WEB-INF/classes/rome.properties" />
-
     <copy file="${basedir}/web/WEB-INF/toolbox.xml"
         tofile="${build.tests}/WEB-INF/toolbox.xml" />
-	    
     <copy file="${basedir}/web/WEB-INF/classes/blacklist.txt"
         tofile="${build.tests}/WEB-INF/classes/blacklist.txt" />
         	
