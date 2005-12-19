@@ -1,7 +1,4 @@
-/*
- * RollerConfig.java
- *
- */
+/* RollerConfig.java */
 
 package org.roller.config;
 
@@ -17,9 +14,7 @@ import java.util.Properties;
 
 
 /**
- * This is the single entry point for accessing configuration properties
- * in Roller.
- *
+ * This is the single entry point for accessing configuration properties in Roller.
  * @author Allen Gilliland
  */
 public class RollerConfig {
@@ -168,30 +163,40 @@ public class RollerConfig {
     /**
      * Set the "uploads.dir" property at runtime.
      *
-     * Properties are meant to be read-only, but we make this one exception
-     * for now because we know that some people are still writing their
-     * uploads to the webapp context and we can only get that path at runtime.
+     * Properties are meant to be read-only, but we make this exception because we 
+     * know that some people are still writing their uploads to the webapp context 
+     * and we can only get that path at runtime (and for unit testing).
+     * 
+     * This property is *not* persisted in any way.
      */
     public static void setUploadsDir(String path) {
-
         // only do this if the user wants to use the webapp context
         if("${webapp.context}".equals(mConfig.getProperty("uploads.dir")))
             mConfig.setProperty("uploads.dir", path);
     }
 
-
     /**
      * Set the "context.realpath" property at runtime.
      *
-     * Properties are meant to be read-only, but we make this one exception
-     * for now because there are some classes which rely on having filesystem
-     * access to files in the roller webapp context.
+     * Properties are meant to be read-only, but we make this  exception because 
+     * there are some classes which rely on having filesystem access to files in the 
+     * roller webapp context (and for unit testing).
      *
      * This property is *not* persisted in any way.
      */
     public static void setContextRealPath(String path) {
-
         mConfig.setProperty("context.realpath", path);
     }
     
+    /**
+     * Set the "context.realpath" property at runtime.
+     *
+     * Properties are meant to be read-only, but we make this exception to make it
+     * possible for unit tests to control the cache directory.
+     *
+     * This property is *not* persisted in any way.
+     */
+    public static void setPlanetCachePath(String path) {
+        mConfig.setProperty("planet.aggregator.cache.dir", path);
+    }
 }

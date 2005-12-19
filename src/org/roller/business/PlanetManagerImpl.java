@@ -1,16 +1,18 @@
 package org.roller.business;
 
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
-import java.text.MessageFormat;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
+import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.PlanetManager;
 import org.roller.model.Roller;
 import org.roller.pojos.PlanetConfigData;
@@ -24,7 +26,6 @@ import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
-import org.roller.config.RollerRuntimeConfig;
 
 /**
  * Base class for PlanetManager implementations.
@@ -82,7 +83,7 @@ public abstract class PlanetManagerImpl implements PlanetManager {
             Set newEntries = null;
             int count = 0;
             PlanetSubscriptionData sub = (PlanetSubscriptionData)subs.next();
-            if (sub.getFeedUrl().startsWith(localURL)) {
+            if (!StringUtils.isEmpty(localURL) && sub.getFeedUrl().startsWith(localURL)) {
                 newEntries = getNewEntriesLocal(sub, feedFetcher, feedInfoCache);
             } else {
                 newEntries = getNewEntriesRemote(sub, feedFetcher, feedInfoCache);
