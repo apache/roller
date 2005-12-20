@@ -1,34 +1,33 @@
 
-#macro( addColumn $table $column $type $default $notnull)
-alter table $table add column $column $type;  
-    #if( $DBTYPE == "MYSQL" || $DBTYPE == "ORACLE")
-alter table $table modify $column $type default $default;
-        #if ($notnull == true)
-alter table $table modify $column $type not null;
-       #end
-    #else
+#macro(addColumnNotNull $table $column $type $default)
+#if($DBTYPE == "MYSQL" || $DBTYPE=="HSQDB")
+alter table $table add column $column $type default '$default' not null;  
+#elseif ($DBTYPE == "POSTGRESQL")
+alter table $table add column $column $type;
 alter table $table alter $column set default $default;
-        #if ($notnull == true)
+update $table set $column='$default';
 alter table $table alter $column set not null;
-        #end
-    #end
+#elseif ($DBTYPE == "HSQLDB")
+alter table $table add column $column $type default '$default' not null; 
+#elseif ($DBTYPE == "DERBY" || $DBTYPE == "DB2")
+alter table $table add column $column $type with default '$default' not null;
+#elseif ($DBTYPE == "ORACLE")
+alter table $table add column $column $type default $default not null;  
+#end
 #end
 
 -- Add to roller_comment table: approved and pending fields
 
-#addColumn("roller_comment" "approved" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE true)
-#addColumn("roller_comment" "pending" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE true)
-
+#addColumnNotNull("roller_comment" "approved" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
+#addColumnNotNull("roller_comment" "pending" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
 update roller_comment set approved=$BOOLEAN_TRUE, pending=$BOOLEAN_FALSE, posttime=posttime;
-
 
 -- Add to website table: commentmod, blacklist, defaultallowcomments and defaultcommentdays 
 
-#addColumn("website" "commentmod" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE true)
-#addColumn("website" "defaultallowcomments" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE true)
-#addColumn("website" "defaultcommentdays" "integer" "7" true)
-#addColumn("website" "blacklist" $TEXT_SQL_TYPE "''" false)
-
+#addColumnNotNull("website" "commentmod" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
+#addColumnNotNull("website" "defaultallowcomments" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
+#addColumnNotNull("website" "defaultcommentdays" "integer" "7")
+alter table website add column blacklist $TEXT_SQL_TYPE;
 update website set commentmod=$BOOLEAN_FALSE, defaultallowcomments=$BOOLEAN_TRUE, defaultcommentdays=7, blacklist='', datecreated=datecreated;
 
 
