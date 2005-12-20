@@ -90,6 +90,9 @@ properties below point to the downloaded files.
    <copy todir="./build/roller-demo" overwrite="true">
        <fileset dir="./tomcat" includes="**/**" />
    </copy>
+   <copy todir="./build/roller-demo" overwrite="true" failonerror="false">
+       <fileset dir="./custom" includes="**/**" />
+   </copy>
         
    <!-- Copy copy-over files for JSPWiki -->
    <copy todir="./build/roller-demo/webapps/wiki" overwrite="true">
