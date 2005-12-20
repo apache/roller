@@ -190,13 +190,14 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             } else if(con.getMetaData().getDriverName().startsWith("Apache Derby")) {
 	           // special handling for Derby
 				stmt = con.prepareStatement(
-				        "select u.username,w.name,w.name,sum(r.dayhits) as s "+
-				    "from rolleruser as u, website as w, referer as r "+
-				    "where r.websiteid=w.id and w.userid=u.id and w.isenabled=? " +
-				    "group by u.username,w.handle,w.id order by s desc");
+				    "select w.name, w.handle, w.id, sum(r.dayhits) as s "+
+				    "from website as w, referer as r "+
+				    "where r.websiteid=w.id and w.isenabled=? " +
+				    "group by w.name, w.handle, w.id order by s desc");                      
 				stmt.setBoolean(1, true);
+                stmt.setMaxRows(max);
             } else if(con.getMetaData().getDriverName().startsWith("IBM DB2")) {
-           // special handling for IBM DB2
+                // special handling for IBM DB2
                 stmt = con.prepareStatement(
                         "select u.username,w.name,w.name,sum(r.dayhits) as s "+
                         "from rolleruser as u, website as w, referer as r "+
