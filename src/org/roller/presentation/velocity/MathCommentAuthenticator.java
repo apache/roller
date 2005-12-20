@@ -22,13 +22,14 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
     
     private static Log mLogger = LogFactory.getLog(MathCommentAuthenticator.class);
     
+    
     public String getHtml(Context context, 
                     HttpServletRequest request, 
                     HttpServletResponse response) {
 
         String answer = "";
         
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(true);
         if (session.getAttribute("mathAnswer") == null) {
             // starting a new test
             int value1 = (int)(Math.random()*10.0);
@@ -63,28 +64,34 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         return sb.toString();
     }
     
+    
     public boolean authenticate(CommentData comment, HttpServletRequest request) {
         
-        boolean ret = false;
+        boolean authentic = false;
         
+        HttpSession session = request.getSession(false);
         String answerString = request.getParameter("answer");
-        if (answerString != null || answerString.trim().length()==0) {
+        
+        if (answerString != null && session != null) {
             try {
                 int answer = Integer.parseInt(answerString);
-                Integer sum =
-                        (Integer)request.getSession().getAttribute("mathAnswer");
+                Integer sum = (Integer) session.getAttribute("mathAnswer");
+                
                 if (answer == sum.intValue()) {
-                    ret = true;
-                    request.getSession().removeAttribute("mathAnswer");
-                    request.getSession().removeAttribute("mathValue1");
-                    request.getSession().removeAttribute("mathValue2");
+                    authentic = true;
+                    session.removeAttribute("mathAnswer");
+                    session.removeAttribute("mathValue1");
+                    session.removeAttribute("mathValue2");
                 }
-            } catch (NumberFormatException ignored) {} catch (Exception e) {
+            } catch (NumberFormatException ignored) {
+                // ignored ... someone is just really bad at math
+            } catch (Exception e) {
+                // unexpected
                 mLogger.error(e);
             }
         }
         
-        return ret;
+        return authentic;
     }
     
 }
