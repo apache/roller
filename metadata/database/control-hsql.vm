@@ -5,7 +5,7 @@ See Roller installation guide for instructions.
 
 #set( $templates = ["createdb", "200-to-210-migration"]) 
 
-#set( $DBTYPE = "HSQL")
+#set( $DBTYPE = "HSQLDB")
 #set( $BOOLEAN_SQL_TYPE_TRUE = "bit 1") 
 #set( $TEXT_SQL_TYPE = "longvarchar")
 #set( $BOOLEAN_SQL_TYPE_FALSE = "bit default 0")
