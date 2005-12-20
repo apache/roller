@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="sandbox/jdobackend/src"/>
 	<classpathentry kind="src" path="sandbox/atomprotocol/src"/>
 	<classpathentry kind="src" path="sandbox/standalone/src"/>
 	<classpathentry kind="src" path="contrib/plugins/src"/>
@@ -29,10 +30,8 @@
 	<classpathentry kind="lib" path="tools/lib/velocity-dep-1.4.jar"/>
 	<classpathentry kind="lib" path="tools/lib/velocity-1.4.jar"/>
 	<classpathentry kind="lib" path="tools/lib/taglibs-string.jar"/>
-	<classpathentry kind="lib" path="tools/lib/mm.mysql-2.0.14-bin.jar"/>
 	<classpathentry kind="lib" path="tools/lib/mail.jar"/>
 	<classpathentry kind="lib" path="tools/lib/lucene-1.4.3.jar"/>
-	<classpathentry kind="lib" path="tools/lib/log4j-1.2.4.jar"/>
 	<classpathentry kind="lib" path="tools/lib/jazzy-core.jar"/>
 	<classpathentry kind="lib" path="tools/lib/ekitapplet.jar"/>
 	<classpathentry kind="lib" path="tools/lib/concurrent-1.3.2.jar"/>
@@ -70,5 +69,10 @@
 	<classpathentry kind="lib" path="sandbox/atomprotocol/lib/rome-fetcher-0.8.jar"/>
 	<classpathentry kind="lib" path="sandbox/atomprotocol/lib/rome-0.8.jar"/>
 	<classpathentry kind="lib" path="sandbox/standalone/lib/catalina.jar"/>
+	<classpathentry kind="lib" path="tools/lib/log4j-1.2.11.jar"/>
+	<classpathentry kind="lib" path="tools/lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="tools/lib/rome-fetcher-0.7.jar"/>
+	<classpathentry kind="lib" path="tools/spring-1.2/spring.jar"/>
+	<classpathentry kind="lib" path="tools/spring-1.2/acegi-security-0.9.0.jar"/>
 	<classpathentry kind="output" path="classes.eclipse"/>
 </classpath>
