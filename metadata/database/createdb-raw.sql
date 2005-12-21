@@ -194,6 +194,7 @@ create index we_pubtime_idx on weblogentry( pubtime,publishentry,websiteid );
 create index we_pinnedtom_idx on weblogentry(pinnedtomain);
 create index we_pubentry_idx on weblogentry(publishentry);
 create index we_userid_idx on weblogentry(userid);
+create index we_status_idx on weblogentry(status);
 
 create table newsfeed (
     id              varchar(48) not null primary key,

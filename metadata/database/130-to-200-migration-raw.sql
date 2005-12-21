@@ -45,6 +45,7 @@ alter table weblogentry add column status varchar(20);
 update weblogentry set status='';
 @ALTER_TABLE_WEBLOGENTRY_STATUS_NOT_NULL@;
 
+create index we_status_idx on weblogentry(status);
 create index weblogentry_userid_index on weblogentry(userid);
 
 alter table rolleruser add column isenabled @BOOLEAN_SQL_TYPE@;
