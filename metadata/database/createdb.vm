@@ -1,15 +1,10 @@
+#** 
+createdb.vm: Velocity template that generates vendor-specific database scripts 
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
 
 -- Run this script to create the Roller database tables in your database.
--- Make sure you run the correct version of this script.
---
--- * For MySQL run the script createdb.sql found in the mysql directory.
--- * For PostgreSQL run the script createdb.sql found in the postgresql directory.
--- * For HSQLDB run the script createdb.sql found in the hsqldb directory.
--- * For Oracle run the script createdb.sql found in the oracle directory.
--- 
--- For those who grabbed Roller source from CVS, don't try to run the script 
--- named createdb-raw.sql, it is the source from which the above scripts are 
--- created.
 
 -- *****************************************************
 -- Create the tables and indices
@@ -418,6 +413,7 @@ create table rag_entry (
     updated          timestamp    
 );
 create index rage_sid_idx on rag_entry(subscription_id$INDEXSIZE); 
+
 
 -- *****************************************************
 -- Now add the foreign key relationships

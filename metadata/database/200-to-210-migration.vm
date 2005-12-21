@@ -1,20 +1,8 @@
+#** 
+200-to-210-migration.vm: Velocity template that generates vendor-specific database scripts 
 
-#macro(addColumnNotNull $table $column $type $default)
-#if($DBTYPE == "MYSQL" || $DBTYPE=="HSQDB")
-alter table $table add column $column $type default '$default' not null;  
-#elseif ($DBTYPE == "POSTGRESQL")
-alter table $table add column $column $type;
-alter table $table alter $column set default $default;
-update $table set $column='$default';
-alter table $table alter $column set not null;
-#elseif ($DBTYPE == "HSQLDB")
-alter table $table add column $column $type default '$default' not null; 
-#elseif ($DBTYPE == "DERBY" || $DBTYPE == "DB2")
-alter table $table add column $column $type with default '$default' not null;
-#elseif ($DBTYPE == "ORACLE")
-alter table $table add column $column $type default $default not null;  
-#end
-#end
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
 
 -- Add to roller_comment table: approved and pending fields
 
