@@ -473,32 +473,38 @@ ro.buildUser=${user.name}
      <taskdef name="texen" classname="org.apache.velocity.texen.ant.TexenTask"
          classpath="${basedir}/tools/lib/velocity-dep-1.4.jar" />
      <texen 
-         controlTemplate="control-mysql.vm" 
+         controlTemplate="control.vm" 
+         contextProperties="${basedir}/metadata/database/mysql.properties"
          templatePath="${basedir}/metadata/database/" 
          outputDirectory="build/roller/WEB-INF/dbscripts/mysql/" 
          outputFile="README.txt" />
      <texen 
-         controlTemplate="control-postgresql.vm" 
+         controlTemplate="control.vm" 
+         contextProperties="${basedir}/metadata/database/postgresql.properties"
          templatePath="${basedir}/metadata/database/" 
          outputDirectory="build/roller/WEB-INF/dbscripts/postgresql/" 
          outputFile="README.txt" />
      <texen 
-         controlTemplate="control-hsql.vm" 
+         controlTemplate="control.vm" 
+         contextProperties="${basedir}/metadata/database/hsqldb.properties"
          templatePath="${basedir}/metadata/database/" 
-         outputDirectory="build/roller/WEB-INF/dbscripts/hsql/" 
+         outputDirectory="build/roller/WEB-INF/dbscripts/hsqldb/" 
          outputFile="README.txt" />
      <texen 
-         controlTemplate="control-derby.vm" 
+         controlTemplate="control.vm" 
+         contextProperties="${basedir}/metadata/database/derby.properties"
          templatePath="${basedir}/metadata/database/" 
          outputDirectory="build/roller/WEB-INF/dbscripts/derby/" 
          outputFile="README.txt" />
      <texen 
-         controlTemplate="control-db2.vm" 
+         controlTemplate="control.vm" 
+         contextProperties="${basedir}/metadata/database/db2.properties"
          templatePath="${basedir}/metadata/database/" 
          outputDirectory="build/roller/WEB-INF/dbscripts/db2/" 
          outputFile="README.txt" />
      <texen 
-         controlTemplate="control-oracle.vm" 
+         controlTemplate="control.vm" 
+         contextProperties="${basedir}/metadata/database/oracle.properties"
          templatePath="${basedir}/metadata/database/" 
          outputDirectory="build/roller/WEB-INF/dbscripts/oracle/" 
          outputFile="README.txt" />
