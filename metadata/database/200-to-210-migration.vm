@@ -5,19 +5,16 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
 -- Add to roller_comment table: approved and pending fields
-
 #addColumnNotNull("roller_comment" "approved" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
 #addColumnNotNull("roller_comment" "pending" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
 update roller_comment set approved=$BOOLEAN_TRUE, pending=$BOOLEAN_FALSE, posttime=posttime;
 
 -- Add to website table: commentmod, blacklist, defaultallowcomments and defaultcommentdays 
-
 #addColumnNotNull("website" "commentmod" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
 #addColumnNotNull("website" "defaultallowcomments" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
 #addColumnNotNull("website" "defaultcommentdays" "integer" "7")
 alter table website add column blacklist $TEXT_SQL_TYPE;
 update website set commentmod=$BOOLEAN_FALSE, defaultallowcomments=$BOOLEAN_TRUE, defaultcommentdays=7, blacklist='', datecreated=datecreated;
 
-
-
-
+-- If you don't already have this, you need it:
+create index we_status_idx on weblogentry(status);
