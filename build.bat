@@ -18,7 +18,7 @@ set rocp=%rocp%;.\tools\buildtime\ant-1.6.2\jakarta-oro-2.0.8.jar
 set rocp=%rocp%;.\tools\buildtime\junit-3.8.1.jar
 
 echo %rocp%
-java -classpath %rocp% org.apache.tools.ant.Main %1 %2 %3 %4 %5
+java -classpath "%rocp%" org.apache.tools.ant.Main %1 %2 %3 %4 %5
 
 
 
