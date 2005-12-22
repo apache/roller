@@ -8,6 +8,7 @@ package org.roller.presentation.filters;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -50,8 +51,12 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
     
     private static Log mLogger = LogFactory.getLog(MainPageCacheFilter.class);
     
+    // a unique identifier for this cache, this is used as the prefix for
+    // roller config properties that apply to this cache
+    private static final String CACHE_ID = "cache.mainpage";
+    
     private boolean excludeOwnerPages = false;
-    private Cache mPageCache = null;
+    private Cache mCache = null;
     
     // for metrics
     private double hits = 0;
@@ -106,7 +111,7 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
         try {
             ResponseContent respContent = null;
             if(!this.excludeOwnerPages || prince == null) {
-                respContent = (ResponseContent) this.mPageCache.get(key);
+                respContent = (ResponseContent) this.mCache.get(key);
             }
             
             if(respContent == null) {
@@ -127,7 +132,7 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
                     
                     // only cache if this is not a logged in user?
                     if(!this.excludeOwnerPages || prince == null) {
-                        this.mPageCache.put(key, rc);
+                        this.mCache.put(key, rc);
                     } else {
                         mLogger.debug("SKIPPED "+key);
                         this.skips++;
@@ -172,7 +177,7 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
      * A weblog entry has changed.
      */
     public void invalidate(WeblogEntryData entry) {
-        this.mPageCache.clear();
+        this.mCache.clear();
     }
     
     
@@ -180,7 +185,7 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
      * A weblog has changed.
      */
     public void invalidate(WebsiteData website) {
-        this.mPageCache.clear();
+        this.mCache.clear();
     }
     
     
@@ -245,7 +250,7 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
      */
     public void clear() {
         mLogger.info("Clearing cache");
-        this.mPageCache.clear();
+        this.mCache.clear();
         this.startTime = new Date();
         this.hits = 0;
         this.misses = 0;
@@ -256,7 +261,7 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
     public Map getStats() {
         
         Map stats = new HashMap();
-        stats.put("cacheType", this.mPageCache.getClass().getName());
+        stats.put("cacheType", this.mCache.getClass().getName());
         stats.put("startTime", this.startTime);
         stats.put("hits", new Double(this.hits));
         stats.put("misses", new Double(this.misses));
@@ -285,39 +290,26 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
     public void init(FilterConfig filterConfig) {
         
         mLogger.info("Initializing main page cache");
-        
-        String factory = RollerConfig.getProperty("cache.mainpage.factory");
-        String size = RollerConfig.getProperty("cache.mainpage.size");
-        String timeout = RollerConfig.getProperty("cache.mainpage.timeout");
+
         this.excludeOwnerPages = 
                 RollerConfig.getBooleanProperty("cache.mainpage.excludeOwnerEditPages");
         
-        int cacheSize = 20;
-        try {
-            cacheSize = Integer.parseInt(size);
-        } catch (Exception e) {
-            mLogger.warn("Invalid cache size ["+size+"], using default");
+        Map cacheProps = new HashMap();
+        Enumeration allProps = RollerConfig.keys();
+        String prop = null;
+        while(allProps.hasMoreElements()) {
+            prop = (String) allProps.nextElement();
+            
+            // we are only interested in props for this cache
+            if(prop.startsWith(CACHE_ID+".")) {
+                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
+                        RollerConfig.getProperty(prop));
+            }
         }
         
-        long cacheTimeout = 30 * 60;
-        try {
-            cacheTimeout = Long.parseLong(timeout);
-        } catch (Exception e) {
-            mLogger.warn("Invalid cache timeout ["+timeout+
-                    "], using default");
-        }
+        mLogger.info(cacheProps);
         
-        
-        Map props = new HashMap();
-        props.put("timeout", ""+cacheTimeout);
-        props.put("size", ""+cacheSize);
-        
-        if(factory != null && factory.trim().length() > 0)
-            props.put("cache.factory", factory);
-        
-        mLogger.info(props);
-        
-        mPageCache = CacheManager.constructCache(this, props);
+        mCache = CacheManager.constructCache(this, cacheProps);
     }
     
 }

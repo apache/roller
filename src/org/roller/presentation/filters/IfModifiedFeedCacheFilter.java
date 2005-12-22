@@ -9,6 +9,7 @@ package org.roller.presentation.filters;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,6 +59,10 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
     
     private static Log mLogger = 
             LogFactory.getLog(IfModifiedFeedCacheFilter.class);
+    
+    // a unique identifier for this cache, this is used as the prefix for
+    // roller config properties that apply to this cache
+    private static final String CACHE_ID = "cache.ifmodified.feed";
     
     private Cache mCache = null;
     
@@ -323,37 +328,24 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
      */
     public void init(FilterConfig filterConfig) {
         
-        mLogger.info("Initializing if-modified cache");
+        mLogger.info("Initializing if-modified feed cache");
         
-        String factory = RollerConfig.getProperty("cache.feed.ifmodified.factory");
-        String size = RollerConfig.getProperty("cache.feed.ifmodified.size");
-        String timeout = RollerConfig.getProperty("cache.feed.ifmodified.timeout");
-        
-        int cacheSize = 100;
-        try {
-            cacheSize = Integer.parseInt(size);
-        } catch (Exception e) {
-            mLogger.warn("Invalid cache size ["+size+"], using default");
+        Map cacheProps = new HashMap();
+        Enumeration allProps = RollerConfig.keys();
+        String prop = null;
+        while(allProps.hasMoreElements()) {
+            prop = (String) allProps.nextElement();
+            
+            // we are only interested in props for this cache
+            if(prop.startsWith(CACHE_ID+".")) {
+                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
+                        RollerConfig.getProperty(prop));
+            }
         }
         
-        long cacheTimeout = 30 * 60;
-        try {
-            cacheTimeout = Long.parseLong(timeout);
-        } catch (Exception e) {
-            mLogger.warn("Invalid cache timeout ["+timeout+"], using default");
-        }
+        mLogger.info(cacheProps);
         
-        
-        Map props = new HashMap();
-        props.put("timeout", ""+cacheTimeout);
-        props.put("size", ""+cacheSize);
-        
-        if(factory != null && factory.trim().length() > 0)
-            props.put("cache.factory", factory);
-        
-        mLogger.info(props);
-        
-        mCache = CacheManager.constructCache(this, props);
+        mCache = CacheManager.constructCache(this, cacheProps);
     }
     
 }

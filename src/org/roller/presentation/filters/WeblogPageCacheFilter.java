@@ -7,6 +7,7 @@ package org.roller.presentation.filters;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,8 +53,12 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(WeblogPageCacheFilter.class);
     
+    // a unique identifier for this cache, this is used as the prefix for
+    // roller config properties that apply to this cache
+    private static final String CACHE_ID = "cache.weblogpage";
+    
     private boolean excludeOwnerPages = false;
-    private Cache mPageCache = null;
+    private Cache mCache = null;
     
     // for metrics
     private double hits = 0;
@@ -89,7 +94,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         try {
             ResponseContent respContent = null;
             if(!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
-                respContent = (ResponseContent) this.mPageCache.get(key);
+                respContent = (ResponseContent) this.mCache.get(key);
             }
             
             if (respContent == null) {
@@ -116,7 +121,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
                                 "Page size < 100 bytes: " + key 
                                 + ": " + request.getRequestURL());
                         }
-                        this.mPageCache.put(key, rc);
+                        this.mCache.put(key, rc);
                     } else {
                         mLogger.debug("SKIPPED "+key);
                         this.skips++;
@@ -238,8 +243,8 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         //       over the entire cache key set
         String key = null;
         
-        synchronized(mPageCache) {
-            Iterator allKeys = this.mPageCache.keySet().iterator();
+        synchronized(mCache) {
+            Iterator allKeys = this.mCache.keySet().iterator();
             while(allKeys.hasNext()) {
                 key = (String) allKeys.next();
                 if(key.startsWith(keyBase+"/main")) {
@@ -254,7 +259,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
             }
         }
 
-        this.mPageCache.remove(removeSet);
+        this.mCache.remove(removeSet);
         this.purges += removeSet.size();
     }
     
@@ -275,8 +280,8 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         //       over the entire cache key set
         String key = null;
         
-        synchronized(mPageCache) {
-            Iterator allKeys = this.mPageCache.keySet().iterator();
+        synchronized(mCache) {
+            Iterator allKeys = this.mCache.keySet().iterator();
             while(allKeys.hasNext()) {
                 key = (String) allKeys.next();
                 
@@ -286,7 +291,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
             }
         }
         
-        this.mPageCache.remove(removeSet);
+        this.mCache.remove(removeSet);
         this.purges += removeSet.size();
     }
     
@@ -354,7 +359,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
      */
     public void clear() {
         mLogger.info("Clearing cache");
-        this.mPageCache.clear();
+        this.mCache.clear();
         this.startTime = new Date();
         this.hits = 0;
         this.misses = 0;
@@ -366,7 +371,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
     public Map getStats() {
         
         Map stats = new HashMap();
-        stats.put("cacheType", this.mPageCache.getClass().getName());
+        stats.put("cacheType", this.mCache.getClass().getName());
         stats.put("startTime", this.startTime);
         stats.put("hits", new Double(this.hits));
         stats.put("misses", new Double(this.misses));
@@ -396,39 +401,26 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
     public void init(FilterConfig filterConfig) {
         
         mLogger.info("Initializing weblog page cache");
-        
-        String factory = RollerConfig.getProperty("cache.weblogpage.factory");
-        String size = RollerConfig.getProperty("cache.weblogpage.size");
-        String timeout = RollerConfig.getProperty("cache.weblogpage.timeout");
+
         this.excludeOwnerPages = 
                 RollerConfig.getBooleanProperty("cache.weblogpage.excludeOwnerEditPages");
         
-        int cacheSize = 100;
-        try {
-            cacheSize = Integer.parseInt(size);
-        } catch (Exception e) {
-            mLogger.warn("Invalid page cache size ["+size+"], using default");
+        Map cacheProps = new HashMap();
+        Enumeration allProps = RollerConfig.keys();
+        String prop = null;
+        while(allProps.hasMoreElements()) {
+            prop = (String) allProps.nextElement();
+            
+            // we are only interested in props for this cache
+            if(prop.startsWith(CACHE_ID+".")) {
+                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
+                        RollerConfig.getProperty(prop));
+            }
         }
         
-        long cacheTimeout = 30 * 60;
-        try {
-            cacheTimeout = Long.parseLong(timeout);
-        } catch (Exception e) {
-            mLogger.warn("Invalid page cache timeout ["+timeout+
-                    "], using default");
-        }
+        mLogger.info(cacheProps);
         
-        
-        Map props = new HashMap();
-        props.put("timeout", ""+cacheTimeout);
-        props.put("size", ""+cacheSize);
-        
-        if(factory != null && factory.trim().length() > 0)
-            props.put("cache.factory", factory);
-        
-        mLogger.info(props);
-        
-        mPageCache = CacheManager.constructCache(this, props);
+        mCache = CacheManager.constructCache(this, cacheProps);
     }
     
 }
