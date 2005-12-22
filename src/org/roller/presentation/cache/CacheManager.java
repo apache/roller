@@ -56,7 +56,7 @@ public class CacheManager {
     
     static {
         // lookup what cache factory we want to use
-        String classname = RollerConfig.getProperty("cache.factory.classname");
+        String classname = RollerConfig.getProperty("cache.defaultFactory");
         
         // use reflection to instantiate our factory class
         try {
@@ -135,9 +135,9 @@ public class CacheManager {
         
         Cache cache = null;
         
-        if(properties != null && properties.containsKey("cache.factory")) {
+        if(properties != null && properties.containsKey("factory")) {
             // someone wants a custom cache instance
-            String classname = (String) properties.get("cache.factory");
+            String classname = (String) properties.get("factory");
             
             try {
                 // use reflection to instantiate the factory class

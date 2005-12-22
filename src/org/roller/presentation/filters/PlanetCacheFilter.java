@@ -7,10 +7,9 @@
 package org.roller.presentation.filters;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,14 +31,12 @@ import org.roller.pojos.WeblogCategoryData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.LanguageUtil;
 import org.roller.presentation.PlanetRequest;
 import org.roller.presentation.cache.Cache;
 import org.roller.presentation.cache.CacheHandler;
 import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.util.CacheHttpServletResponseWrapper;
 import org.roller.presentation.util.ResponseContent;
-
 
 /**
  * A cache filter for Planet Roller items ... /planet.do, /planetrss
@@ -51,6 +48,10 @@ import org.roller.presentation.util.ResponseContent;
 public class PlanetCacheFilter implements Filter, CacheHandler {
     
     private static Log mLogger = LogFactory.getLog(PlanetCacheFilter.class);
+    
+    // a unique identifier for this cache, this is used as the prefix for
+    // roller config properties that apply to this cache
+    private static final String CACHE_ID = "cache.planet";
     
     private boolean excludeOwnerPages = false;
     private Cache mCache = null;
@@ -313,38 +314,25 @@ public class PlanetCacheFilter implements Filter, CacheHandler {
         
         mLogger.info("Initializing planet cache");
         
-        String factory = RollerConfig.getProperty("cache.planet.factory");
-        String size = RollerConfig.getProperty("cache.planet.size");
-        String timeout = RollerConfig.getProperty("cache.planet.timeout");
         this.excludeOwnerPages = 
                 RollerConfig.getBooleanProperty("cache.planet.excludeOwnerEditPages");
         
-        int cacheSize = 20;
-        try {
-            cacheSize = Integer.parseInt(size);
-        } catch (Exception e) {
-            mLogger.warn("Invalid cache size ["+size+"], using default");
+        Map cacheProps = new HashMap();
+        Enumeration allProps = RollerConfig.keys();
+        String prop = null;
+        while(allProps.hasMoreElements()) {
+            prop = (String) allProps.nextElement();
+            
+            // we are only interested in props for this cache
+            if(prop.startsWith(CACHE_ID+".")) {
+                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
+                        RollerConfig.getProperty(prop));
+            }
         }
         
-        long cacheTimeout = 30 * 60;
-        try {
-            cacheTimeout = Long.parseLong(timeout);
-        } catch (Exception e) {
-            mLogger.warn("Invalid cache timeout ["+timeout+
-                    "], using default");
-        }
+        mLogger.info(cacheProps);
         
-        
-        Map props = new HashMap();
-        props.put("timeout", ""+cacheTimeout);
-        props.put("size", ""+cacheSize);
-        
-        if(factory != null && factory.trim().length() > 0)
-            props.put("cache.factory", factory);
-        
-        mLogger.info(props);
-        
-        mCache = CacheManager.constructCache(this, props);
+        mCache = CacheManager.constructCache(this, cacheProps);
     }
     
 }
