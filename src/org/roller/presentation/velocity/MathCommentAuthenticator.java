@@ -77,7 +77,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
                 int answer = Integer.parseInt(answerString);
                 Integer sum = (Integer) session.getAttribute("mathAnswer");
                 
-                if (answer == sum.intValue()) {
+                if (sum != null && answer == sum.intValue()) {
                     authentic = true;
                     session.removeAttribute("mathAnswer");
                     session.removeAttribute("mathValue1");
