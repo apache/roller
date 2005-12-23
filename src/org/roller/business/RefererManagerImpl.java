@@ -273,6 +273,16 @@ public abstract class RefererManagerImpl implements RefererManager
             }
             else if (matchRef.size() == 0)
             {
+            	/* TODO: change "" for excerpt column back to null
+            	 * I changed to an empty string to avoid the bug in Derby found
+            	 * http://issues.apache.org/jira/browse/DERBY-628
+            	 * 
+            	 * We need to either wait for the fix to change it back, 
+            	 * or leave it as is if it doesn't affect anything else.
+            	 * 
+            	 * Elias
+            	 */
+            	
                 // Referer was not found in database, so new Referer object
                 Integer one = new Integer(1);
                 RefererData ref =
@@ -285,7 +295,7 @@ public abstract class RefererManagerImpl implements RefererManager
                         null,
                         requestUrl,
                         null,
-                        null,
+                        "", // Read comment above regarding Derby bug
                         Boolean.FALSE,
                         Boolean.FALSE,
                         one,
