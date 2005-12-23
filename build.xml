@@ -757,7 +757,7 @@ ro.buildUser=${user.name}
     <sql driver="org.hsqldb.jdbcDriver"
         url="jdbc:hsqldb:hsql://localhost:3219"
         userid="sa" password=""
-        src="${ro.build}/roller/WEB-INF/dbscripts/hsql/createdb.sql"
+        src="${ro.build}/roller/WEB-INF/dbscripts/hsqldb/createdb.sql"
         classpath="${ro.tools}/buildtime/hsqldb.jar" />
 	
     &custom-pre-dbtest;
@@ -809,7 +809,7 @@ ro.buildUser=${user.name}
     <sql driver="org.hsqldb.jdbcDriver"
         url="jdbc:hsqldb:hsql://localhost:3219"
         userid="sa" password=""
-        src="./build/roller/WEB-INF/dbscripts/hsql/createdb.sql"
+        src="./build/roller/WEB-INF/dbscripts/hsqldb/createdb.sql"
         classpath="${ro.tools}/buildtime/hsqldb.jar" />
 
     <junit fork="true" dir="${build.tests}">
