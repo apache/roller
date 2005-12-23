@@ -19,8 +19,10 @@ your blog page, if you put them somwhere else, just adjust the paths for those f
 -->
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    #showContentType("text/html; charset=utf-8")
     #showContentLanguage($locale.language)
+    #showRSSAutodiscoveryLink()
+    #showRSDLink()
     <title>#showWebsiteTitle()</title>
     <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
     <link rel="stylesheet" type="text/css" href="#showThemePath("moonshine")/theme.css" />

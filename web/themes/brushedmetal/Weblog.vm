@@ -5,6 +5,7 @@
    #showContentType("text/html; charset=utf-8")
    #showContentLanguage($locale.language)
    #showRSSAutodiscoveryLink()
+   #showRSDLink()
    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js"></script>
    <title>#showWebsiteTitle() : #showPageName()</title><title>Brushed Metal: It Worked!</title>
    <style type="text/css">

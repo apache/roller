@@ -6,6 +6,7 @@
     #showContentLanguage($locale.language)
     #includePage("_css")
     #showRSSAutodiscoveryLink()
+    #showRSDLink()
     <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js">
     </script>
     <title>#showWebsiteTitle() : #showPageName()</title>

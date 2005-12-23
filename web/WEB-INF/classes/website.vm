@@ -131,4 +131,10 @@ $pageHelper.setContentType($ctype)## comment here kills trailing whitespace
     #displayWeblogCalendar( true 'nil' )
 #end
 
-
+#**
+ * Show RSD (Really Simple Discovery) link for your weblog.
+ *#
+#macro( showRSDLink )
+    <link rel="EditURI" type="application/rsd+xml"
+        title="RSD" href="$absBaseURL/rsd/${website.handle}"/>
+#end

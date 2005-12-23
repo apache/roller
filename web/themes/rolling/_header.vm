@@ -4,8 +4,10 @@
 <head>
     <title>#showWebsiteTitle()</title>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    #showContentType("text/html; charset=utf-8")
     #showContentLanguage($locale.language)
+    #showRSSAutodiscoveryLink()
+    #showRSDLink()
 
     <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js"></script>
     #showThemeScript("x2" "global.js")

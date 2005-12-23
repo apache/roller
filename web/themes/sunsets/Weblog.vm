@@ -8,6 +8,7 @@
         <title>#showWebsiteTitle()</title>
         <base href="$absBaseURL" />
         #showRSSAutodiscoveryLink()
+        #showRSDLink()
         <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
         <link rel="stylesheet" type="text/css" media="all"
             href="#showThemeStylePath("sunsets" "cherryeve.css")" />

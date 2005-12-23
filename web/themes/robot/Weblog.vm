@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="#showThemePath("robot")/theme.css" />
     <style type="text/css">#includePage("_css")</style>
     #showRSSAutodiscoveryLink()
+    #showRSDLink()
 
     <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js">
     </script>
