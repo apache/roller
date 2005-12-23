@@ -20,7 +20,7 @@ create table rolleruser (
     timezone        varchar(50),    
     isenabled       $BOOLEAN_SQL_TYPE_TRUE not null
 );
-alter table rolleruser add constraint ru_username_uq unique ( username$INDEXSIZE );
+alter table rolleruser add constraint ru_username_uq unique ( username$!INDEXSIZE );
 
 create table userrole (
     id               varchar(48) not null primary key,
@@ -29,7 +29,7 @@ create table userrole (
     userid           varchar(48) not null
 );
 create index ur_userid_idx on userrole( userid );
-create index ur_username_idx on userrole( username$INDEXSIZE );
+create index ur_username_idx on userrole( username$!INDEXSIZE );
 
 -- User permissions within a website
 -- permission_mask: bitmask 000 limited, 001 author, 011 admin
@@ -63,8 +63,8 @@ create table usercookie (
     cookieid        varchar(100) not null,
     datecreated     timestamp not null
 );
-create index uc_username_idx on usercookie( username$INDEXSIZE );
-create index uc_cookieid_idx on usercookie( cookieid$INDEXSIZE );
+create index uc_username_idx on usercookie( username$!INDEXSIZE );
+create index uc_cookieid_idx on usercookie( cookieid$!INDEXSIZE );
 
 create table webpage (
     id              varchar(48)  not null primary key,
@@ -75,8 +75,8 @@ create table webpage (
     template        $TEXT_SQL_TYPE not null,
     updatetime      timestamp     not null
 );
-create index wp_name_idx on webpage( name$INDEXSIZE );
-create index wp_link_idx on webpage( link$INDEXSIZE );
+create index wp_name_idx on webpage( name$!INDEXSIZE );
+create index wp_link_idx on webpage( link$!INDEXSIZE );
 create index wp_id_idx on webpage( websiteid );
 
 create table website (
@@ -110,7 +110,7 @@ create table website (
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
-alter table website add constraint ws_handle_uq unique (handle$INDEXSIZE);
+alter table website add constraint ws_handle_uq unique (handle$!INDEXSIZE);
 
 -- This index is not necessary because of handle is already a primary key.
 -- create index ws_handle_idx    on website(handle);
@@ -295,10 +295,10 @@ create table referer (
 );
 create index ref_websiteid_idx on referer( websiteid );
 create index ref_entryid_idx on referer( entryid );
-create index ref_refurl_idx on referer( refurl$INDEXSIZE );
-create index ref_requrl_idx on referer( requrl$INDEXSIZE );
+create index ref_refurl_idx on referer( refurl$!INDEXSIZE );
+create index ref_requrl_idx on referer( requrl$!INDEXSIZE );
 create index ref_datestr_idx on referer( datestr );
-create index ref_refpermlnk_idx on referer( refpermalink$INDEXSIZE );
+create index ref_refpermlnk_idx on referer( refpermalink$!INDEXSIZE );
 create index ref_duplicate_idx on referer( duplicate );
 
 -- Configuration options for Roller, should only ever be one row
@@ -348,15 +348,15 @@ create table entryattribute (
     value    $TEXT_SQL_TYPE not null
 );
 create index ea_entryid_idx on entryattribute( entryid );
-alter table entryattribute add constraint ea_name_uq unique ( entryid, name$INDEXSIZE );
+alter table entryattribute add constraint ea_name_uq unique ( entryid, name$!INDEXSIZE );
 
 create table rag_group_subscription (
     id               varchar(48) not null primary key,
     group_id         varchar(48) not null,
     subscription_id  varchar(48) not null
 );
-create index raggs_gid_idx on rag_group_subscription(group_id$INDEXSIZE); 
-create index raggs_sid_idx on rag_group_subscription(subscription_id$INDEXSIZE); 
+create index raggs_gid_idx on rag_group_subscription(group_id$!INDEXSIZE); 
+create index raggs_sid_idx on rag_group_subscription(subscription_id$!INDEXSIZE); 
 
 create table rag_config (
     id               varchar(48) not null primary key,
@@ -385,7 +385,7 @@ create table rag_group (
     max_page_entries integer default 30,
     max_feed_entries integer default 30
 );
-alter table rag_group add constraint ragg_handle_uq unique ( handle$INDEXSIZE );
+alter table rag_group add constraint ragg_handle_uq unique ( handle$!INDEXSIZE );
 
 create table rag_subscription (
     id               varchar(48) not null primary key,
@@ -397,7 +397,7 @@ create table rag_subscription (
     inbound_links    integer default -1,
     inbound_blogs    integer default -1
 );
-alter table rag_subscription add constraint rags_feed_url_uq unique ( feed_url$INDEXSIZE_LARGE );
+alter table rag_subscription add constraint rags_feed_url_uq unique ( feed_url$!INDEXSIZE_LARGE );
 
 create table rag_entry (
     id               varchar(48) not null primary key,
@@ -412,7 +412,7 @@ create table rag_entry (
     published        timestamp not null,
     updated          timestamp    
 );
-create index rage_sid_idx on rag_entry(subscription_id$INDEXSIZE); 
+create index rage_sid_idx on rag_entry(subscription_id$!INDEXSIZE); 
 
 
 -- *****************************************************
@@ -421,71 +421,71 @@ create index rage_sid_idx on rag_entry(subscription_id$INDEXSIZE);
 -- user, role and website
 
 alter table website add constraint ws_userid_fk
-    foreign key ( userid ) references rolleruser ( id ) $ADDL_FK_PARAMS ;
+    foreign key ( userid ) references rolleruser ( id ) $!ADDL_FK_PARAMS ;
 
 alter table userrole add constraint ur_userid_fk
-    foreign key ( userid ) references rolleruser( id ) $ADDL_FK_PARAMS ;
+    foreign key ( userid ) references rolleruser( id ) $!ADDL_FK_PARAMS ;
 
 -- page, entry, category, comment
 
 alter table webpage add constraint wp_websiteid_fk
-    foreign key ( websiteid ) references website( id ) $ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references website( id ) $!ADDL_FK_PARAMS ;
 
 alter table weblogentry add constraint we_websiteid_fk
-    foreign key ( websiteid ) references website( id ) $ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references website( id ) $!ADDL_FK_PARAMS ;
 
 alter table weblogentry add constraint wc_categoryid_fk
-    foreign key ( categoryid ) references weblogcategory( id ) $ADDL_FK_PARAMS ;
+    foreign key ( categoryid ) references weblogcategory( id ) $!ADDL_FK_PARAMS ;
 
 alter table weblogcategory add constraint wc_websiteid_fk
-    foreign key ( websiteid ) references website( id ) $ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references website( id ) $!ADDL_FK_PARAMS ;
 
 alter table roller_comment add constraint co_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) $ADDL_FK_PARAMS ;
+    foreign key ( entryid ) references weblogentry( id ) $!ADDL_FK_PARAMS ;
 
 alter table entryattribute add constraint att_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) $ADDL_FK_PARAMS ;
+    foreign key ( entryid ) references weblogentry( id ) $!ADDL_FK_PARAMS ;
 
 -- referer
 
 alter table referer add constraint ref_entryid_fk
-    foreign key ( entryid ) references weblogentry( id ) $ADDL_FK_PARAMS ;
+    foreign key ( entryid ) references weblogentry( id ) $!ADDL_FK_PARAMS ;
 
 alter table referer add constraint ref_websiteid_fk
-    foreign key ( websiteid ) references website( id ) $ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references website( id ) $!ADDL_FK_PARAMS ;
 
 -- folder and bookmark
 
 alter table folder add constraint fo_websiteid_fk
-    foreign key ( websiteid ) references website( id ) $ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references website( id ) $!ADDL_FK_PARAMS ;
 
 -- alter table folder add constraint fo_parentid_fk
 --     foreign key ( parentid ) references folder( id );
 
 alter table bookmark add constraint bm_folderid_fk
-    foreign key ( folderid ) references folder( id ) $ADDL_FK_PARAMS ;
+    foreign key ( folderid ) references folder( id ) $!ADDL_FK_PARAMS ;
 
 -- newsfeed
 
 alter table newsfeed add constraint nf_websiteid_fk
-    foreign key ( websiteid ) references website( id ) $ADDL_FK_PARAMS ;
+    foreign key ( websiteid ) references website( id ) $!ADDL_FK_PARAMS ;
 
 -- pingtarget, autoping, pingcategory
 
 alter table pingtarget add constraint pt_websiteid_fk
-    foreign key (websiteid) references website(id) $ADDL_FK_PARAMS ;
+    foreign key (websiteid) references website(id) $!ADDL_FK_PARAMS ;
 
 alter table autoping add constraint ap_websiteid_fk
-    foreign key (websiteid) references website(id) $ADDL_FK_PARAMS ;
+    foreign key (websiteid) references website(id) $!ADDL_FK_PARAMS ;
 
 alter table autoping add constraint ap_pingtargetid_fk
-    foreign key (pingtargetid) references pingtarget(id) $ADDL_FK_PARAMS ;
+    foreign key (pingtargetid) references pingtarget(id) $!ADDL_FK_PARAMS ;
 
 alter table pingcategory add constraint pc_autopingid_fk
-    foreign key (autopingid) references autoping(id) $ADDL_FK_PARAMS ;
+    foreign key (autopingid) references autoping(id) $!ADDL_FK_PARAMS ;
 
 alter table pingcategory add constraint pc_categoryid_fk
-    foreign key (categoryid) references weblogcategory(id) $ADDL_FK_PARAMS ;
+    foreign key (categoryid) references weblogcategory(id) $!ADDL_FK_PARAMS ;
 
 
 -- THE FOLLOWING CONSTRAINTS CAN NOT BE SUPPORTED FOR IMPORTING new-user.xml
