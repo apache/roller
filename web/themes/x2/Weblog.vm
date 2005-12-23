@@ -7,6 +7,7 @@
     #showContentLanguage($locale.language)
     <base href="$absBaseURL" />
     #showRSSAutodiscoveryLink()
+    #showRSDLink()
     #showThemeScript("x2" "global.js")
     #showThemeScript("x2" "xmlextras.js")
     #showThemeScript("x2" "comments.js")

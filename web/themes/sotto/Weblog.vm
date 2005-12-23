@@ -11,6 +11,7 @@
         <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
         #showThemeStyle("sotto" "default.css" false)
         #showRSSAutodiscoveryLink()
+        #showRSDLink()
     </head>
 <body>
 
