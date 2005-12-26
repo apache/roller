@@ -115,13 +115,12 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
                     ResponseContent rc = cacheResponse.getContent();
                     
                     // only cache if this is not a logged in user?
-                    if(!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
-                        if (rc.getSize() < 100) {
-                            mLogger.debug(
-                                "Page size < 100 bytes: " + key 
-                                + ": " + request.getRequestURL());
+                    if (!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
+                        if (rc != null && rc.getSize() > 0) {
+                            this.mCache.put(key, rc);
+                        } else if (mLogger.isDebugEnabled()) {
+                            mLogger.debug("Not caching zero length content for key: " + key);
                         }
-                        this.mCache.put(key, rc);
                     } else {
                         mLogger.debug("SKIPPED "+key);
                         this.skips++;
