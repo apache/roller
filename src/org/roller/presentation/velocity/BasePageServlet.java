@@ -69,16 +69,14 @@ public abstract class BasePageServlet extends VelocityServlet {
                     JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
             rreq = RollerRequest.getRollerRequest(pageContext);
-        } catch (RollerException e) {
-            
+        } catch (Throwable e) {
             // An error initializing the request is considered to be a 404
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             request.setAttribute("DisplayException", e);
-            
+            mLogger.debug("ERROR initializing RollerRequest",e);
             return null;
         }
-        
-        
+               
         // request appears to be valid, lets render
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
@@ -140,17 +138,16 @@ public abstract class BasePageServlet extends VelocityServlet {
                 outty = findDecorator(website, (String) ctx.get("decorator"));
             }
             
-        } catch(ResourceNotFoundException rnfe ) {
-            
+        } catch (ResourceNotFoundException rnfe ) {            
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             request.setAttribute("DisplayException", rnfe);
             mLogger.warn("ResourceNotFound: "+ request.getRequestURL());
             mLogger.debug(rnfe);
-        } catch(Exception e) {
             
+        } catch (Throwable e) {            
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             request.setAttribute("DisplayException", e);
-            mLogger.error("Unexpected exception", e);
+            mLogger.error("ERROR preparing for page execution", e);
         }
         
         return outty;
