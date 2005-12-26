@@ -30,50 +30,44 @@ import org.roller.presentation.util.RequestUtil;
 
 
 /**
- * Entry point filter for Weblog page and Editor UI, this filter 
+ * Entry point filter for Weblog page and Editor UI, this filter
  * creates a RollerRequest object to parse pathinfo and request parameters.
- * 
+ *
  * @web.filter name="RequestFilter"
- * 
+ *
  * @author David M. Johnson, Matt Raible
  */
-public class RequestFilter implements Filter
-{
+public class RequestFilter implements Filter {
     private FilterConfig mFilterConfig = null;
     private static Log mLogger =
-        LogFactory.getFactory().getInstance(RequestFilter.class);
-
+            LogFactory.getFactory().getInstance(RequestFilter.class);
+    
     /**
      * destroy
      */
-    public void destroy()
-    {
+    public void destroy() {
     }
-
+    
     /**
      * Request filter.
      */
     public void doFilter(
-        ServletRequest req, ServletResponse res, FilterChain chain)
-        throws IOException, ServletException
-    {
-        // NOTE: Setting character encoding and JSTL/Struts locale sync has been moved to
-        // CharEncodingFilter, which is mapped for all URIs in the context.
+            ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+        // NOTE: Setting character encoding and JSTL/Struts locale sync has been
+        // moved to CharEncodingFilter, which is mapped for all URIs in the context.
         HttpSession session = ((HttpServletRequest)req).getSession();
         HttpServletRequest request = (HttpServletRequest)req;
         HttpServletResponse response = (HttpServletResponse)res;
         Roller roller = RollerContext.getRoller( request );
         RollerRequest rreq = null;
-        try 
-        {
+        try {
             rreq = RollerRequest.getRollerRequest(
-                request, mFilterConfig.getServletContext());          
-        }
-        catch (RollerException e)
-        {
+                    request, mFilterConfig.getServletContext());
+        } catch (Throwable e) {
             // An error initializing the request is considered to be a 404
             response.sendError(
-                    HttpServletResponse.SC_NOT_FOUND, 
+                    HttpServletResponse.SC_NOT_FOUND,
                     "Page not found or error parsing requested URL");
             
             // make sure any filters earlier in the chain know that we had
@@ -82,31 +76,13 @@ public class RequestFilter implements Filter
             
             return;
         }
-
-        /*
-        Date updateTime = null;
-        try
-        {
-            updateTime = IfModifiedFilter.getLastPublishedDate(request);
-        }
-        catch (RollerException e1)
-        {
-            mLogger.debug("Getting lastUpdateTime", e1);
-        }
-        if (updateTime != null)
-        {
-            request.setAttribute("updateTime", updateTime);
-        }
-        */
-        
         chain.doFilter(req, res);
     }
-
+    
     /**
      * init
      */
-    public void init(FilterConfig filterConfig) throws ServletException
-    {
+    public void init(FilterConfig filterConfig) throws ServletException {
         mFilterConfig = filterConfig;
     }
 }
