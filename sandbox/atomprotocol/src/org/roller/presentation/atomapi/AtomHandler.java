@@ -75,14 +75,14 @@ public interface AtomHandler
      * @param contentType MIME type of uploaded content
      * @param data Binary data representing uploaded content
      */
-    public String postMedia(String[] pathInfo, String name, String contentType, 
+    public Entry postMedia(String[] pathInfo, String name, String contentType, 
             InputStream is) throws Exception;
 
     /**
      * Update a resource.
      * @param pathInfo Path info portion of URL
      */
-    public void putMedia(String[] pathInfo, String contentType, 
+    public Entry putMedia(String[] pathInfo, String contentType, 
             InputStream is) throws Exception;
     
     /**
@@ -92,11 +92,11 @@ public interface AtomHandler
     public void deleteMedia(String[] pathInfo) throws Exception;
     
     /**
-     * Get resource file path (so Servlet can determine MIME type).
+     * Get resrouce entry.
      * @param pathInfo Path info portion of URL
      */
-    public String getMediaFilePath(String[] pathInfo) throws Exception;
-    
+    public Entry getMedia(String[] pathInfo) throws Exception;
+        
     public boolean isIntrospectionURI(String [] pathInfo);  
  
     public boolean isCollectionURI(String [] pathInfo);   

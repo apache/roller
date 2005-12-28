@@ -105,21 +105,28 @@ public class AtomServlet extends HttpServlet {
                 } else if (handler.isEntryURI(pathInfo)) {
                     // return an entry
                     Entry entry = handler.getEntry(pathInfo);
-                    Writer writer = res.getWriter();
-                    serializeEntry(entry, writer);
-                    writer.close();
+                    if (entry != null) {
+                        Writer writer = res.getWriter();
+                        serializeEntry(entry, writer);
+                        writer.close();
+                    } else {
+                        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    }
                 } else if (handler.isMediaURI(pathInfo)) {
-                    // return a resource
-                    String absPath = handler.getMediaFilePath(pathInfo);
-                    String type = getServletContext().getMimeType(absPath);
-                    res.setContentType(type);
-                    Utilities.copyInputToOutput(
-                        new FileInputStream(absPath), res.getOutputStream());
+                    // return a resource entry
+                    Entry entry = handler.getMedia(pathInfo);
+                    if (entry != null) {
+                        Writer writer = res.getWriter();
+                        serializeEntry(entry, writer);
+                        writer.close();
+                    } else {
+                        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    }
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } catch (Exception e) {
-                //res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 e.printStackTrace(res.getWriter());
                 mLogger.error(e);
             }
@@ -167,10 +174,15 @@ public class AtomServlet extends HttpServlet {
                     String name = req.getHeader("Name");
                     
                     // hand input stream of to hander to post file
-                    String location = handler.postMedia(
-                            pathInfo, name, req.getContentType(), req.getInputStream());
+                    Entry resource = handler.postMedia(
+                        pathInfo, name, req.getContentType(), req.getInputStream());
                     res.setStatus(HttpServletResponse.SC_CREATED);
-                    res.setHeader("Location", location);
+                    com.sun.syndication.feed.atom.Content content = 
+                        (com.sun.syndication.feed.atom.Content)resource.getContents().get(0);
+                    res.setHeader("Location", content.getSrc());
+                    Writer writer = res.getWriter();
+                    serializeEntry(resource, writer);
+                    writer.close(); 
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
@@ -209,10 +221,15 @@ public class AtomServlet extends HttpServlet {
                     serializeEntry(updatedEntry, writer);
                     res.setStatus(HttpServletResponse.SC_OK);
                     writer.close();
-                } else if (handler.isMediaCollectionURI(pathInfo)) {
-                    // handle input stream to handler
-                    handler.putMedia(
-                            pathInfo, req.getContentType(), req.getInputStream());
+                } else if (handler.isMediaURI(pathInfo)) {
+                    // hand input stream to handler
+                    Entry updatedEntry = handler.putMedia(
+                        pathInfo, req.getContentType(), req.getInputStream());
+                                        
+                    // write entry back out to response
+                    Writer writer = res.getWriter();
+                    serializeEntry(updatedEntry, writer);
+                    writer.close();
                     res.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
