@@ -49,6 +49,7 @@ import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.io.impl.Base64;
 import javax.activation.FileTypeMap;
 import org.roller.RollerException;
+import org.roller.presentation.cache.CacheManager;
 import org.roller.util.rome.PubControlModule;
 import org.roller.util.rome.PubControlModuleImpl;
 
@@ -257,41 +258,13 @@ public class RollerAtomHandler implements AtomHandler {
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         FileManager fmgr = mRoller.getFileManager();
         File[] files = fmgr.getFiles(website);
-        if (canView(website)) {
-            
+        if (canView(website)) {            
             Feed feed = new Feed();
             List atomEntries = new ArrayList();
             if (files != null && start < files.length) {
                 end = (end > files.length) ? files.length : end;
-                for (int i=start; i<end; i++) {
-                    
-                    Entry entry = new Entry();
-                    entry.setTitle(files[i].getName());
-                    entry.setUpdated(new Date(files[i].lastModified()));
-                    
-                    String href = absUrl
-                            + "/app/" + website.getHandle()
-                            + "/resource/" + files[i].getName();
-                    
-                    FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
-                    String contentType = map.getContentType(files[i]);
-                    
-                    Link editlink = new Link();
-                    editlink.setRel("edit");
-                    editlink.setHref(absUrl 
-                        + "/resource/" + website.getHandle() 
-                        + "/" + files[i].getName());
-                    List otherlinks = new ArrayList();
-                    otherlinks.add(editlink);
-                    entry.setOtherLinks(otherlinks);
-                    
-                    Content content = new Content();
-                    content.setSrc(href);
-                    content.setType(contentType);
-                    List contents = new ArrayList();
-                    contents.add(content);
-                    entry.setContents(contents);
-                    
+                for (int i=start; i<end; i++) {                   
+                    Entry entry = createAtomResourceEntry(website, files[i]);
                     atomEntries.add(entry);
                 }
             }
@@ -299,45 +272,7 @@ public class RollerAtomHandler implements AtomHandler {
             return feed;
         }
         throw new Exception("ERROR: not authorized");
-    }
-    
-    /* public Feed getCollectionOfCategories(
-            String[] pathInfo, int start, int end) throws Exception {
-        String handle = pathInfo[0];
-        String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
-        WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
-        WeblogManager wmgr = mRoller.getWeblogManager();
-        List items = wmgr.getWeblogCategories(website);
-        if (canView(website)) {
-            Feed feed = new Feed();
-            List atomEntries = new ArrayList();
-            Iterator iter = items.iterator();
-            Date now = new Date();
-            while (iter.hasNext()) {
-                WeblogCategoryData item = (WeblogCategoryData)iter.next();
-                Entry entry = new Entry();
-                String name = item.getPath();
-                if (name.equals("/")) continue;
-                entry.setTitle(name);
-                entry.setUpdated(now);
-     
-                String href = absUrl
-                    + "/atom/" + website.getHandle()
-                    + "/category/" + item.getId();
-     
-                Content content = new Content();
-                content.setValue(name);
-                List contents = new ArrayList();
-                contents.add(content);
-                entry.setContents(contents);
-     
-                atomEntries.add(entry);
-            }
-            feed.setEntries(atomEntries);
-            return col;
-        }
-        throw new Exception("ERROR: not authorized");
-    }*/
+    }   
     
     //--------------------------------------------------------------------- entries
     
@@ -360,10 +295,10 @@ public class RollerAtomHandler implements AtomHandler {
             // (MySQL timestamp has 1 sec resolution, damnit)
             Thread.sleep(1000);
             
-            // TODO: ping the appropriate ping
-            // TODO: flush the cache on Atom post
-            //flushPageCache(mRequest);
-            
+            CacheManager.invalidate(website);
+            if (rollerEntry.isPublished()) {
+                mRoller.getIndexManager().addEntryReIndexOperation(rollerEntry);
+            }            
             return createAtomEntry(rollerEntry);
         }
         throw new Exception("ERROR not authorized to edit website");
@@ -376,13 +311,13 @@ public class RollerAtomHandler implements AtomHandler {
         if (pathInfo.length == 3) // URI is /blogname/entries/entryid
         {
             WeblogEntryData entry =
-                    mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
-            if (!canView(entry)) {
+                mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
+            if (entry != null && !canView(entry)) {
                 throw new Exception("ERROR not authorized to view entry");
             } else if (entry != null) {
                 return createAtomEntry(entry);
             }
-            throw new Exception("ERROR: entry not found");
+            return null;
         }
         throw new Exception("ERROR: bad URI");
     }
@@ -396,41 +331,20 @@ public class RollerAtomHandler implements AtomHandler {
             WeblogEntryData rollerEntry =
                     mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
             if (canEdit(rollerEntry)) {
-                rollerEntry.setTitle(entry.getTitle());
-                
-                // TODO: don't assume type is HTML or TEXT
-                List contents = entry.getContents();
-                if (contents != null && contents.size() > 0) {
-                    Content romeContent = (Content)contents.get(0);
-                    rollerEntry.setText(romeContent.getValue());
-                }
-                
-                PubControlModule control = (PubControlModule)
-                    entry.getModule("http://purl.org/atom/app#");
-                if (control!=null && control.getDraft()!=null) {
-                    if (control.getDraft().booleanValue()) {
-                        rollerEntry.setStatus(WeblogEntryData.DRAFT);
-                    } else {
-                        rollerEntry.setStatus(WeblogEntryData.PUBLISHED);
-                    }
-                }    
-                rollerEntry.setUpdateTime(new Timestamp(new Date().getTime()));
-                if (entry.getPublished() != null) {
-                    rollerEntry.setPubTime(
-                            new Timestamp(entry.getPublished().getTime()));
-                }
-                if (entry.getCategories() != null
-                        && entry.getCategories().size() > 0) {
-                    Category atomCat = (Category)entry.getCategories().get(0);
-                    WeblogCategoryData cat =
-                            mRoller.getWeblogManager().getWeblogCategoryByPath(
-                            rollerEntry.getWebsite(), atomCat.getTerm());
-                    if (cat != null) {
-                        rollerEntry.setCategory(cat);
-                    }
-                }
+                String id = rollerEntry.getId();
+                UserData creator = rollerEntry.getCreator();
+                WeblogEntryData updated = 
+                    createRollerEntry(rollerEntry.getWebsite(), entry);
+                rollerEntry.setData(updated);
+                rollerEntry.setId(id);
+                rollerEntry.setCreator(creator);
                 rollerEntry.save();
                 mRoller.commit();
+                
+                CacheManager.invalidate(rollerEntry.getWebsite());
+                if (rollerEntry.isPublished()) {
+                    mRoller.getIndexManager().addEntryReIndexOperation(rollerEntry);
+                }   
                 return createAtomEntry(rollerEntry);
             }
             throw new Exception("ERROR not authorized to put entry");
@@ -464,23 +378,22 @@ public class RollerAtomHandler implements AtomHandler {
      * TODO: do we need to handle mutli-part MIME uploads?
      * TODO: use Jakarta Commons File-upload?
      */
-    public String postMedia(String[] pathInfo,
+    public Entry postMedia(String[] pathInfo, 
             String name, String contentType, InputStream is)
             throws Exception {
         // authenticated client posted a weblog entry
+        File tempFile = null;
+        RollerMessages msgs = new RollerMessages();
         String handle = pathInfo[0];
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         if (canEdit(website) && pathInfo.length > 1) {
+            // save to temp file
+            if (name == null) {
+                throw new Exception("ERROR[postResource]: No 'name' present in HTTP headers");
+            }
             try {
                 FileManager fmgr = mRoller.getFileManager();
-                RollerMessages msgs = new RollerMessages();
-                
-                // save to temp file
-                if (name == null) {
-                    throw new Exception(
-                            "ERROR[postResource]: No 'name' present in HTTP headers");
-                }
-                File tempFile = File.createTempFile(name,"tmp");
+                tempFile = File.createTempFile(name,"tmp");
                 FileOutputStream fos = new FileOutputStream(tempFile);
                 Utilities.copyInputToOutput(is, fos);
                 fos.close();
@@ -492,43 +405,42 @@ public class RollerAtomHandler implements AtomHandler {
                     fmgr.saveFile(website, name, tempFile.length(), fis);
                     fis.close();
                     
-                    // TODO: build URL to uploaded file should be done in FileManager
-                    String uploadPath = RollerContext.getUploadPath(
-                            mRequest.getSession(true).getServletContext());
-                    uploadPath += "/" + website.getHandle() + "/" + name;
-                    return RequestUtils.printableURL(
-                            RequestUtils.absoluteURL(mRequest, uploadPath));
+                    File resource = new File(fmgr.getUploadDir() + File.separator + name);
+                    return createAtomResourceEntry(website, resource);
                 }
-                tempFile.delete();
-                throw new Exception("File upload denied because:" + msgs.toString());
+
             } catch (Exception e) {
                 String msg = "ERROR in atom.postResource";
                 mLogger.error(msg,e);
                 throw new Exception(msg);
+            } finally {
+                if (tempFile != null) tempFile.delete();
             }
         }
-        throw new Exception("ERROR not authorized to edit website");
+        throw new Exception("File upload denied because:" + msgs.toString());
     }
     
     /**
      * Get absolute path to resource specified by path info.
      */
-    public String getMediaFilePath(String[] pathInfo) throws Exception {
-        // ==> /<blogname>/resources/<filename>
+    public Entry getMedia(String[] pathInfo) throws Exception {
+        String handle = pathInfo[0];
+        WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         String uploadPath = RollerContext.getUploadPath(
                 mRequest.getSession(true).getServletContext());
-        return uploadPath + File.separator + pathInfo[2];
+        File resource = new File(uploadPath + File.separator + pathInfo[2]);
+        return createAtomResourceEntry(website, resource);
     }
     
     /**
      * Update resource specified by pathInfo using data from input stream.
      * Expects pathInfo of form /blog-name/resources/name
      */
-    public void putMedia(String[] pathInfo,
+    public Entry putMedia(String[] pathInfo,
             String contentType, InputStream is) throws Exception {
         if (pathInfo.length > 2) {
             String name = pathInfo[2];
-            postMedia(pathInfo, name, contentType, is);
+            return postMedia(pathInfo, name, contentType, is);
         }
         throw new Exception("ERROR: bad pathInfo");
     }
@@ -802,6 +714,38 @@ public class RollerAtomHandler implements AtomHandler {
         return atomEntry;
     }
     
+    private Entry createAtomResourceEntry(WebsiteData website, File file) { 
+        String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
+        String editURI = absUrl
+                + "/app/" + website.getHandle()
+                + "/resource/" + file.getName();
+        String viewURI = absUrl
+                + "/resources/" + website.getHandle()
+                + "/" + file.getName();
+        FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
+        String contentType = map.getContentType(file);
+
+        Entry entry = new Entry();
+        entry.setTitle(file.getName());
+        entry.setUpdated(new Date(file.lastModified()));
+
+        Link editlink = new Link();
+        editlink.setRel("edit");
+        editlink.setHref(editURI);
+        List otherlinks = new ArrayList();
+        otherlinks.add(editlink);
+        entry.setOtherLinks(otherlinks);
+
+        Content content = new Content();
+        content.setSrc(viewURI);
+        content.setType(contentType);
+        List contents = new ArrayList();
+        contents.add(content);
+        entry.setContents(contents);
+        
+        return entry;
+    }
+    
     /**
      * Create a Roller weblog entry based on a Rome Atom entry object
      */
@@ -837,14 +781,20 @@ public class RollerAtomHandler implements AtomHandler {
             rollerEntry.setStatus(WeblogEntryData.DRAFT);
         }
         
+        // Atom supports multiple cats, Roller supports one/entry
+        // so here we take accept the first category that exists
         List categories = entry.getCategories();
         if (categories != null && categories.size() > 0) {
-            Category cat = (Category)categories.get(0);
-            System.out.println(cat.getTerm());
-            WeblogCategoryData rollerCat =
+            for (int i=0; i<categories.size(); i++) {
+                Category cat = (Category)categories.get(i);
+                WeblogCategoryData rollerCat =
                     mRoller.getWeblogManager().getWeblogCategoryByPath(
                     website, cat.getTerm());
-            rollerEntry.setCategory(rollerCat);
+                if (rollerCat != null) {
+                    rollerEntry.setCategory(rollerCat);
+                    break;
+                }
+            }
         } else {
             rollerEntry.setCategory(website.getBloggerCategory());
         }
