@@ -15,7 +15,6 @@
  */
 package org.roller.presentation.atomapi;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -38,7 +37,6 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.roller.util.Utilities;
 
 import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Feed;
@@ -84,6 +82,7 @@ public class AtomServlet extends HttpServlet {
                     // return an Atom Service document
                     AtomService service = handler.getIntrospection(pathInfo);
                     Document doc = AtomService.serviceToDocument(service);
+                    res.setContentType("application/xml; charset=utf8");
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
                     outputter.setFormat(Format.getPrettyFormat());
@@ -96,6 +95,7 @@ public class AtomServlet extends HttpServlet {
                     col.setFeedType(FEED_TYPE);
                     WireFeedOutput wireFeedOutput = new WireFeedOutput();
                     Document feedDoc = wireFeedOutput.outputJDom(col);
+                    res.setContentType("application/atom+xml; charset=utf8");
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
                     outputter.setFormat(Format.getPrettyFormat());
@@ -107,6 +107,7 @@ public class AtomServlet extends HttpServlet {
                     Entry entry = handler.getEntry(pathInfo);
                     if (entry != null) {
                         Writer writer = res.getWriter();
+                        res.setContentType("application/atom+xml; charset=utf8");
                         serializeEntry(entry, writer);
                         writer.close();
                     } else {
@@ -117,6 +118,7 @@ public class AtomServlet extends HttpServlet {
                     Entry entry = handler.getMedia(pathInfo);
                     if (entry != null) {
                         Writer writer = res.getWriter();
+                        res.setContentType("application/atom+xml; charset=utf8");
                         serializeEntry(entry, writer);
                         writer.close();
                     } else {
@@ -148,6 +150,7 @@ public class AtomServlet extends HttpServlet {
             String[] pathInfo = getPathInfo(req);
             try {
                 if (handler.isEntryCollectionURI(pathInfo)) {
+                            
                     // parse incoming entry
                     Entry unsavedEntry = parseEntry(
                         new InputStreamReader(req.getInputStream()));
@@ -166,6 +169,7 @@ public class AtomServlet extends HttpServlet {
                     }
                     // write entry back out to response
                     res.setStatus(HttpServletResponse.SC_CREATED);
+                    res.setContentType("application/atom+xml; charset=utf8");
                     Writer writer = res.getWriter();
                     serializeEntry(savedEntry, writer);
                     writer.close(); 
@@ -217,6 +221,7 @@ public class AtomServlet extends HttpServlet {
                     Entry updatedEntry = handler.putEntry(pathInfo, unsavedEntry);
                     
                     // write entry back out to response
+                    res.setContentType("application/atom+xml; charset=utf8");
                     Writer writer = res.getWriter();
                     serializeEntry(updatedEntry, writer);
                     res.setStatus(HttpServletResponse.SC_OK);
@@ -227,6 +232,7 @@ public class AtomServlet extends HttpServlet {
                         pathInfo, req.getContentType(), req.getInputStream());
                                         
                     // write entry back out to response
+                    res.setContentType("application/atom+xml; charset=utf8");
                     Writer writer = res.getWriter();
                     serializeEntry(updatedEntry, writer);
                     writer.close();

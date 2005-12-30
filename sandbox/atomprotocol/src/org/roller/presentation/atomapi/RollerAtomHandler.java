@@ -463,7 +463,7 @@ public class RollerAtomHandler implements AtomHandler {
                 throw new Exception(msg);
             }
         }
-        throw new Exception("ERROR not authorized to edit website");
+        else throw new Exception("ERROR not authorized to edit website");
     }
     
     //------------------------------------------------------------------ URI testers
@@ -770,15 +770,13 @@ public class RollerAtomHandler implements AtomHandler {
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
         rollerEntry.setWebsite(website);
-        
+               
         PubControlModule control = 
             (PubControlModule)entry.getModule("http://purl.org/atom/app#");
-        if (control != null && control.getDraft() != null) {
-            if (!control.getDraft().booleanValue()) {
-                rollerEntry.setStatus(WeblogEntryData.PUBLISHED);
-            }
-        } else {
+        if (control!=null && control.getDraft()!=null && control.getDraft().booleanValue()) {
             rollerEntry.setStatus(WeblogEntryData.DRAFT);
+        } else {
+            rollerEntry.setStatus(WeblogEntryData.PUBLISHED);
         }
         
         // Atom supports multiple cats, Roller supports one/entry
