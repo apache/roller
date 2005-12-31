@@ -331,13 +331,13 @@ public class RollerAtomHandler implements AtomHandler {
             WeblogEntryData rollerEntry =
                     mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
             if (canEdit(rollerEntry)) {
-                String id = rollerEntry.getId();
-                UserData creator = rollerEntry.getCreator();
-                WeblogEntryData updated = 
-                    createRollerEntry(rollerEntry.getWebsite(), entry);
-                rollerEntry.setData(updated);
-                rollerEntry.setId(id);
-                rollerEntry.setCreator(creator);
+                WeblogEntryData rawUpdate = createRollerEntry(rollerEntry.getWebsite(), entry);
+                rollerEntry.setPubTime(rawUpdate.getPubTime());
+                rollerEntry.setUpdateTime(rawUpdate.getUpdateTime());
+                rollerEntry.setText(rawUpdate.getText());
+                rollerEntry.setStatus(rawUpdate.getStatus());
+                rollerEntry.setCategory(rawUpdate.getCategory());
+                rollerEntry.setTitle(rawUpdate.getTitle());
                 rollerEntry.save();
                 mRoller.commit();
                 
@@ -691,7 +691,7 @@ public class RollerAtomHandler implements AtomHandler {
         
         Link altlink = new Link();
         altlink.setRel("alternate");
-        altlink.setHref(entry.getPermaLink());
+        altlink.setHref(absUrl + entry.getPermaLink());
         List altlinks = new ArrayList();
         altlinks.add(altlink);
         atomEntry.setAlternateLinks(altlinks);
@@ -699,7 +699,7 @@ public class RollerAtomHandler implements AtomHandler {
         Link editlink = new Link();
         editlink.setRel("edit");
         editlink.setHref(absUrl + "/app/"
-                + entry.getWebsite().getHandle() + "/entry/" + entry.getId());
+            + entry.getWebsite().getHandle() + "/entry/" + entry.getId());
         List otherlinks = new ArrayList();
         otherlinks.add(editlink);
         atomEntry.setOtherLinks(otherlinks);
