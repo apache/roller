@@ -379,7 +379,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction
             {
                 return MessageFormat.format(
                     bundle.getString("planetSubscriptions.titleGroup"), 
-                    new String[] {form.getGroupHandle()});
+                    new Object[] {form.getGroupHandle()});
             }
             else 
             {

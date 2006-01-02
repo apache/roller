@@ -256,7 +256,7 @@ public class CategoriesAction extends DispatchAction
             {
                 return MessageFormat.format(
                         bundle.getString("categoriesForm.parent"),
-                        new String[] {cat.getName()});
+                        new Object[] {cat.getName()});
             }
         }
     }
