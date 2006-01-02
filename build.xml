@@ -626,10 +626,9 @@ ro.buildUser=${user.name}
 <!-- ********************************************************************* -->
 	
 <target name="source-release" depends="contrib">
-    <!-- <antcall target="rebuild"/> -->
-    <!-- Tar and GZip the sources -->
-    <tar tarfile="${ro.build}/roller-src-${ro.version}.tar">
-        <tarfileset dir=".">
+
+    <copy todir="${ro.build}/roller-src">
+        <fileset dir="${basedir}">
             <include name="metadata/**" />
             <include name="personal/**" />
             <include name="custom/**" />
@@ -658,19 +657,37 @@ ro.buildUser=${user.name}
             <exclude name="**/*.#*"/>
             <exclude name="**/WS_FTP.LOG"/>
             <exclude name="**/.nbattrs"/>
-         </tarfileset>
-    </tar>
+        </fileset>
+    </copy>
+
+    <!-- Tar and GZip the sources -->
+    <tar tarfile="${ro.build}/roller-src-${ro.version}.tar" basedir="${ro.build}" includes="roller-src/**" />
     <gzip zipfile="${ro.build}/roller-src-${ro.version}.tar.gz"
-              src="${ro.build}/roller-src-${ro.version}.tar" />
+        src="${ro.build}/roller-src-${ro.version}.tar" />
+   
+    <!-- Clear the source release dir, we're making the tools release next --> 
+    <delete dir="${ro.build}/roller-src" />
 
     <!-- Tar and GZip the tools -->
+    <copy todir="${ro.build}/roller-src/tools">
+        <fileset dir="${basedir}">
+            <include name="LICENSE.txt" />
+        </fileset>
+        <fileset dir="${basedir}/tools">
+            <include name="**" />
+            <exclude name="**/*.bak" />
+            <exclude name="**/*~" />
+        </fileset>
+    </copy>
     <tar tarfile="${ro.build}/roller-tools-${ro.version}.tar"
-        basedir="." includes="tools/**" excludes="**/*.bak,**/*~" />
+        basedir="${ro.build}" includes="roller-src/**" />
     <gzip zipfile="${ro.build}/roller-tools-${ro.version}.tar.gz"
               src="${ro.build}/roller-tools-${ro.version}.tar" />
+
     <delete>
         <fileset dir="${ro.build}" includes="*.tar"/>
     </delete>
+    <delete dir="${ro.build}/roller-src" /> 
 
 </target>
 
