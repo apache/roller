@@ -84,7 +84,7 @@ public abstract class RollerFactory
             
             // do the invocation
             rollerInstance = (Roller)
-                instanceMethod.invoke(rollerClass, (Class[])null);
+                instanceMethod.invoke(rollerClass, (Object[])null);
             
             mLogger.info("Using Roller Impl: " + roller_classname);
         }
@@ -105,7 +105,7 @@ public abstract class RollerFactory
                     
                     // do the invocation
                     rollerInstance = (Roller) 
-                        instanceMethod.invoke(rollerClass, (Class[])null);
+                        instanceMethod.invoke(rollerClass, (Object[])null);
                 }
                 else
                 {

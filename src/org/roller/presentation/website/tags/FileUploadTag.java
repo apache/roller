@@ -122,7 +122,7 @@ public class FileUploadTag extends TagSupport
                         + website.getHandle() + "\" /><br /><br />");
                 pw.println(MessageFormat.format(
                     bundle.getString("uploadFiles.quotaNote"),
-                    new String[] {maxFileMB.toString(), maxDirMB.toString()}));
+                    new Object[] {maxFileMB.toString(), maxDirMB.toString()}));
                 pw.println("</form>");
             }
         }

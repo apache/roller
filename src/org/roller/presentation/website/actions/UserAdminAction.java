@@ -353,7 +353,7 @@ public final class UserAdminAction extends UserBaseAction
             }
             return MessageFormat.format(
                     bundle.getString("userAdmin.title.editUser"), 
-                    new String[] { userAdminForm.getUserName() } );
+                    new Object[] { userAdminForm.getUserName() } );
         }
         public List getPermissions()
         {

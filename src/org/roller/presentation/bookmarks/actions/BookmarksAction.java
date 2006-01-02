@@ -335,7 +335,7 @@ public class BookmarksAction extends DispatchAction
             {
                 return MessageFormat.format(
                     bundle.getString("bookmarksForm.folderTitle"),
-                    new String[] {folder.getName()});
+                    new Object[] {folder.getName()});
             }
         }
         public List getFolderPath() 
