@@ -725,7 +725,7 @@ ro.buildUser=${user.name}
     <delete>
         <fileset dir="${ro.build}" includes="*.tar"/>
     </delete>
-    <!-- <delete dir="${ro.build}/roller-src" /> -->
+    <delete dir="${ro.build}/roller-src" /> 
 </target>
 
 <!-- ********************************************************************* -->
