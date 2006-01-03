@@ -148,20 +148,12 @@ public class RollerAtomHandler implements AtomHandler {
                     entryCol.setTitle("Collection: Weblog Entries for " + handle);
                     entryCol.setMemberType("entry");
                     entryCol.setHref(absUrl + "/app/"+handle+"/entries");
-                    entryCol.setListTemplate(absUrl + "/app/"+handle+"/entries/{index}");
                     workspace.addCollection(entryCol);
-                    
-                    /*AtomService.Collection catCol = new AtomService.Collection();
-                    catCol.setTitle("Collection: Categories for " + handle);
-                    catCol.setMemberType("entry");
-                    catCol.setHref(absUrl + "/app/"+handle+"/categories");
-                    workspace.addCollection(catCol);*/
-                    
+                                        
                     AtomService.Collection uploadCol = new AtomService.Collection();
                     uploadCol.setTitle("Collection: Resources for " + handle);
                     uploadCol.setMemberType("media");
                     uploadCol.setHref(absUrl + "/app/"+handle+"/resources");
-                    uploadCol.setListTemplate(absUrl + "/app/"+handle+"/resources/{index}");
                     workspace.addCollection(uploadCol);
                 }
             }
@@ -223,10 +215,9 @@ public class RollerAtomHandler implements AtomHandler {
             Feed feed = new Feed();
             List atomEntries = new ArrayList();
             int count = 0;
-            for (Iterator iter = entries.iterator(); iter.hasNext();) {
+            for (Iterator iter = entries.iterator(); iter.hasNext() && count < mMaxEntries; count++) {
                 WeblogEntryData rollerEntry = (WeblogEntryData)iter.next();
                 atomEntries.add(createAtomEntry(rollerEntry));
-                count++;
             }
             if (count > start - end) { // add next link
                 int nextOffset = start + mMaxEntries; 
@@ -276,7 +267,7 @@ public class RollerAtomHandler implements AtomHandler {
                     count++;
                 }
             }
-            if (start + count > files.length) { // add next link
+            if (start + count < files.length) { // add next link
                 int nextOffset = start + mMaxEntries; 
                 String url = absUrl + "/app/" + website.getHandle() + "/resources/" + nextOffset;
                 Link nextLink = new Link();
