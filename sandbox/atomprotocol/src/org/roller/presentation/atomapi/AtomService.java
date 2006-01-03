@@ -46,13 +46,11 @@ import org.jdom.filter.Filter;
  *       title="My Blog Entries"
  *       href="http://example.org/reilly/main" >
  *       <member-type>entry</member-type>
- *       <list-template>http://example.org/{index}</list-template>
  *     </collection>
  *     <collection
  *       title="Pictures"
  *       href="http://example.org/reilly/pic" >
  *       <member-type>media</member-type>
- *       <list-template>http://example.org/p/{index}</list-template>
  *     </collection>
  *   </workspace>
  * </service>
@@ -150,17 +148,6 @@ public class AtomService {
             this.memberType = memberType;
         }
         
-        /**
-         * Template for forming list URIs
-         */
-        public String getListTemplate() {
-            return listTemplate;
-        }
-        
-        public void setListTemplate(String listTemplate) {
-            this.listTemplate = listTemplate;
-        }
-        
         /** The URI of the collection */
         public String getHref() {
             return href;
@@ -241,10 +228,6 @@ public class AtomService {
         if (memberType != null) {
             collection.setMemberType(memberType.getText());
         }
-        Element listTemplate = element.getChild("list-template",  ns);
-        if (listTemplate != null) {
-            collection.setListTemplate(listTemplate.getText());
-        }
         return collection;
     }
     
@@ -258,10 +241,6 @@ public class AtomService {
         Element memberType = new Element("member-type", ns);
         memberType.setText(collection.getMemberType());
         element.addContent(memberType);
-        
-        Element listTemplate = new Element("list-template", ns);
-        listTemplate.setText(collection.getListTemplate());
-        element.addContent(listTemplate);
         
         return element;
     }

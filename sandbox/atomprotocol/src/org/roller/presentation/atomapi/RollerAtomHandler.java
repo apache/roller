@@ -50,8 +50,9 @@ import com.sun.syndication.io.impl.Base64;
 import javax.activation.FileTypeMap;
 import org.roller.RollerException;
 import org.roller.presentation.cache.CacheManager;
-import org.roller.util.rome.PubControlModule;
-import org.roller.util.rome.PubControlModuleImpl;
+import org.roller.presentation.atomapi.PubControlModule;
+import org.roller.presentation.atomapi.PubControlModuleImpl;
+import org.roller.util.WSSEUtilities;
 
 /**
  * Roller's Atom Protocol implementation.
@@ -172,38 +173,23 @@ public class RollerAtomHandler implements AtomHandler {
     //----------------------------------------------------------------- collections
     
     /**
-     * Returns collection specified by pathInfo, constrained by a date range and
-     * starting at an offset within the collection.Returns 20 items at a time.
+     * Return collection specified by pathinfo.
      * <pre>
-     * Supports these three collection URI forms:
-     *    /<blog-name>/entries/{index}
-     *    /<blog-name>/resources/{index}
-     *    /<blog-name>/categories/{index}
+     * Supports these URI forms:
+     *    /<blog-name>/entries
+     *    /<blog-name>/entries/offset
+     *    /<blog-name>/resources
+     *    /<blog-name>/resources/offset
      * </pre>
-     * @param pathInfo Path info from URI
-     * @param start    Don't include members updated before this date (null allowed)
-     * @param end      Don't include members updated after this date (null allowed)
-     * @param offset   Offset within collection (for paging)
      */
     public Feed getCollection(String[] pathInfo) throws Exception {
         int start = 0;
         int end = mMaxEntries;
         if (pathInfo.length > 2) {
-            try { // parse int range in form M-N, either M or N may be omitted
+            try { 
                 String s = pathInfo[2].trim();
-                start = 0;
-                end = Integer.MAX_VALUE;
-                String[] range = s.split("-");
-                if (s.startsWith("-")) end = Integer.parseInt(range[1]);
-                else if (s.endsWith("-")) start = Integer.parseInt(range[0]);
-                else {
-                    start = Integer.parseInt(range[0]);
-                    end = Integer.parseInt(range[1]);
-                }
-                // never return more than mMaxEntries
-                if (end - start > mMaxEntries) {
-                    end = start + mMaxEntries;
-                }
+                start = Integer.parseInt(s);
+                if (start > 0) end = start + mMaxEntries;
             } catch (Throwable t) {
                 mLogger.warn("Unparsable range: " + pathInfo[2]);
             }
@@ -212,9 +198,7 @@ public class RollerAtomHandler implements AtomHandler {
             return getCollectionOfEntries(pathInfo, start, end);
         } else if (pathInfo.length > 0 && pathInfo[1].equals("resources")) {
             return getCollectionOfResources(pathInfo, start, end);
-        } /* else if (pathInfo.length > 0 && pathInfo[1].equals("categories")) {
-            return getCollectionOfCategories(pathInfo, start, end);
-        }*/
+        }
         throw new Exception("ERROR: bad URL in getCollection()");
     }
     
@@ -235,12 +219,34 @@ public class RollerAtomHandler implements AtomHandler {
                     null,   // catName
                     null,   // status
                     start, // offset (for range paging)
-                    end - start + 1);  // maxEntries
+                    end - start + 2);  // maxEntries
             Feed feed = new Feed();
             List atomEntries = new ArrayList();
+            int count = 0;
             for (Iterator iter = entries.iterator(); iter.hasNext();) {
                 WeblogEntryData rollerEntry = (WeblogEntryData)iter.next();
                 atomEntries.add(createAtomEntry(rollerEntry));
+                count++;
+            }
+            if (count > start - end) { // add next link
+                int nextOffset = start + mMaxEntries; 
+                String url = absUrl + "/app/" + website.getHandle() + "/entries/" + nextOffset;
+                Link nextLink = new Link();
+                nextLink.setRel("next");
+                nextLink.setHref(url);
+                List next = new ArrayList();
+                next.add(nextLink);
+                feed.setOtherLinks(next);
+            }
+            if (start > 0) { // add previous link
+                int prevOffset = start > mMaxEntries ? start - mMaxEntries : 0;
+                String url = absUrl + "/app/" +website.getHandle() + "/entries/" + prevOffset;
+                Link prevLink = new Link();
+                prevLink.setRel("previous");
+                prevLink.setHref(url);
+                List prev = new ArrayList();
+                prev.add(prevLink);
+                feed.setOtherLinks(prev);
             }
             feed.setEntries(atomEntries);
             return feed;
@@ -261,12 +267,34 @@ public class RollerAtomHandler implements AtomHandler {
         if (canView(website)) {            
             Feed feed = new Feed();
             List atomEntries = new ArrayList();
+            int count = 0;
             if (files != null && start < files.length) {
                 end = (end > files.length) ? files.length : end;
                 for (int i=start; i<end; i++) {                   
                     Entry entry = createAtomResourceEntry(website, files[i]);
                     atomEntries.add(entry);
+                    count++;
                 }
+            }
+            if (start + count > files.length) { // add next link
+                int nextOffset = start + mMaxEntries; 
+                String url = absUrl + "/app/" + website.getHandle() + "/resources/" + nextOffset;
+                Link nextLink = new Link();
+                nextLink.setRel("next");
+                nextLink.setHref(url);
+                List next = new ArrayList();
+                next.add(nextLink);
+                feed.setOtherLinks(next);
+            }
+            if (start > 0) { // add previous link
+                int prevOffset = start > mMaxEntries ? start - mMaxEntries : 0;
+                String url = absUrl + "/app/" +website.getHandle() + "/resources/" + prevOffset;
+                Link prevLink = new Link();
+                prevLink.setRel("previous");
+                prevLink.setHref(url);
+                List prev = new ArrayList();
+                prev.add(prevLink);
+                feed.setOtherLinks(prev);
             }
             feed.setEntries(atomEntries);
             return feed;
