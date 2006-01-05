@@ -5,15 +5,16 @@ package org.roller.business.jdo;
 
 import java.sql.Connection;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManagerFactory;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.SessionFactory;
 import org.roller.RollerException;
 import org.roller.business.PersistenceStrategy;
 import org.roller.business.utils.UpgradeDatabase;
 import org.roller.model.AutoPingManager;
 import org.roller.model.BookmarkManager;
-import org.roller.model.ConfigManager;
 import org.roller.model.PingQueueManager;
 import org.roller.model.PingTargetManager;
 import org.roller.model.PlanetManager;
@@ -31,27 +32,16 @@ import org.roller.pojos.UserData;
  * @author Dave Johnson
  */
 public class JDORollerImpl extends org.roller.business.RollerImpl {
-    private static Log              mLogger        = LogFactory
-                                                           .getFactory()
-                                                           .getInstance(
-                                                                   JDORollerImpl.class);
+    private static Log mLogger = LogFactory.getFactory()
+            .getInstance(JDORollerImpl.class);
 
-    protected BookmarkManager       mBookmarkManager;
-    protected ConfigManager         mConfigManager = null;
-    protected PropertiesManager     mPropsManager  = null;
-    protected PlanetManager         planetManager  = null;
-    protected RefererManager        mRefererManager;
-    protected UserManager           mUserManager;
-    protected WeblogManager         mWeblogManager;
-    protected PingQueueManager      mPingQueueManager;
-    protected AutoPingManager       mAutoPingManager;
-    protected PingTargetManager     mPingTargetManager;
     protected static JDORollerImpl  me;
     protected PersistenceStrategy   mStrategy      = null;
-    protected static SessionFactory mSessionFactory;
 
     protected JDORollerImpl() throws RollerException {
-        mStrategy = new JDOStrategy();
+        PersistenceManagerFactory pmf = 
+                JDOHelper.getPersistenceManagerFactory("JDOPMF.properties");
+        mStrategy = new JDOStrategy(pmf);
     }
 
     public static Roller instantiate() throws RollerException {
@@ -62,133 +52,50 @@ public class JDORollerImpl extends org.roller.business.RollerImpl {
         return me;
     }
 
-    public void begin() throws RollerException {
-        mStrategy.begin(UserData.ANONYMOUS_USER);
+
+    /** */
+    protected UserManager createUserManager() {
+        return new JDOUserManagerImpl(mStrategy);
     }
 
-    public void begin(UserData user) throws RollerException {
-        mStrategy.begin(user);
+    /** */
+    protected BookmarkManager createBookmarkManager() {
+        return new JDOBookmarkManagerImpl(mStrategy);
     }
 
-    public UserData getUser() throws RollerException {
-        return mStrategy.getUser();
+    /** */
+    protected WeblogManager createWeblogManager() {
+        return new JDOWeblogManagerImpl(mStrategy);
     }
 
-    public void setUser(UserData user) throws RollerException {
-        mStrategy.setUser(user);
+    /** */
+    protected RefererManager createRefererManager() {
+        return new JDORefererManagerImpl();
     }
 
-    public void commit() throws RollerException {
-        mStrategy.commit();
+    /** */
+    protected PropertiesManager createPropertiesManager() {
+        return new JDOPropertiesManagerImpl(mStrategy);
     }
 
-    public void rollback() {
-        try {
-            mStrategy.rollback();
-        }
-        catch (Throwable e) {
-            mLogger.error(e);
-        }
+    /** */
+    protected PingQueueManager createPingQueueManager() {
+        return new JDOPingQueueManagerImpl(mStrategy);
     }
 
-    /**
-     * @see org.roller.model.Roller#getUserManager()
-     */
-    public UserManager getUserManager() throws RollerException {
-        if (mUserManager == null) {
-            mUserManager = new JDOUserManagerImpl(mStrategy);
-        }
-        return mUserManager;
+    /** */
+    protected PlanetManager createPlanetManager() {
+        return new JDOPlanetManagerImpl(mStrategy, this);
     }
 
-    /**
-     * @see org.roller.model.Roller#getBookmarkManager()
-     */
-    public BookmarkManager getBookmarkManager() throws RollerException {
-        if (mBookmarkManager == null) {
-            mBookmarkManager = new JDOBookmarkManagerImpl(mStrategy);
-        }
-        return mBookmarkManager;
+    /** */
+    protected  AutoPingManager createAutoPingManager() {
+        return new JDOAutoPingManagerImpl(mStrategy);
     }
 
-    /**
-     * @see org.roller.model.Roller#getWeblogManager()
-     */
-    public WeblogManager getWeblogManager() throws RollerException {
-        if (mWeblogManager == null) {
-            mWeblogManager = new JDOWeblogManagerImpl(mStrategy);
-        }
-        return mWeblogManager;
-    }
-
-    /**
-     * @see org.roller.model.Roller#getRefererManager()
-     */
-    public RefererManager getRefererManager() throws RollerException {
-        if (mRefererManager == null) {
-            mRefererManager = new JDORefererManagerImpl();
-        }
-        return mRefererManager;
-    }
-
-    /**
-     * @see org.roller.model.Roller#getConfigManager()
-     */
-    public ConfigManager getConfigManager() throws RollerException {
-        if (mConfigManager == null) {
-            mConfigManager = new JDOConfigManagerImpl(mStrategy);
-        }
-        return mConfigManager;
-    }
-
-    /**
-     * @see org.roller.model.Roller#getPropertiesManager()
-     */
-    public PropertiesManager getPropertiesManager() throws RollerException {
-        if (mPropsManager == null) {
-            mPropsManager = new JDOPropertiesManagerImpl(mStrategy);
-        }
-        return mPropsManager;
-    }
-
-    /**
-     * @see org.roller.model.Roller#getPingTargetManager()
-     */
-    public PingQueueManager getPingQueueManager() throws RollerException {
-        if (mPingQueueManager == null) {
-            mPingQueueManager = new JDOPingQueueManagerImpl(mStrategy);
-        }
-        return mPingQueueManager;
-    }
-
-    /**
-     * @see org.roller.model.Roller#getPlanetManager()
-     */
-    public PlanetManager getPlanetManager() throws RollerException {
-        if (planetManager == null) {
-            planetManager = new JDOPlanetManagerImpl(mStrategy, this);
-        }
-        return planetManager;
-    }
-
-    /**
-     * @see org.roller.model.Roller#getPingTargetManager()
-     */
-    public AutoPingManager getAutopingManager() throws RollerException {
-        if (mAutoPingManager == null) {
-            mAutoPingManager = new JDOAutoPingManagerImpl(mStrategy);
-        }
-        return mAutoPingManager;
-    }
-
-    /**
-     * @see org.roller.model.Roller#getPingTargetManager()
-     */
-    public PingTargetManager getPingTargetManager() throws RollerException {
-        if (mPingTargetManager == null) {
-            mPingTargetManager = new JDOPingTargetManagerImpl(mStrategy);
-        }
-        return mPingTargetManager;
+    /** */
+    protected PingTargetManager createPingTargetManager() {
+        return new JDOPingTargetManagerImpl(mStrategy);
     }
 
     /**
@@ -198,40 +105,9 @@ public class JDORollerImpl extends org.roller.business.RollerImpl {
         return mStrategy;
     }
 
-    /**
-     * @see org.roller.model.Roller#upgradeDatabase(java.sql.Connection)
-     */
-    public void upgradeDatabase(Connection con) throws RollerException {
-        UpgradeDatabase.upgradeDatabase(con);
-    }
-
     public void release() {
         super.release();
-
-        if (mBookmarkManager != null)
-            mBookmarkManager.release();
-        if (mConfigManager != null)
-            mConfigManager.release();
-        if (mRefererManager != null)
-            mRefererManager.release();
-        if (mUserManager != null)
-            mUserManager.release();
-        if (mWeblogManager != null)
-            mWeblogManager.release();
-        if (mPingTargetManager != null)
-            mPingTargetManager.release();
-        if (mPingQueueManager != null)
-            mPingQueueManager.release();
-        if (mAutoPingManager != null)
-            mAutoPingManager.release();
-
-        try {
-            if (mStrategy != null)
-                mStrategy.release();
-        }
-        catch (Throwable e) {
-            mLogger.error("Exception with mSupport.release() [" + e + "]", e);
-        }
+        // nothing else to do for now
     }
 
     public void shutdown() {
@@ -241,7 +117,7 @@ public class JDORollerImpl extends org.roller.business.RollerImpl {
             release();
         }
         catch (Exception e) {
-            mLogger.error("Unable to close SessionFactory", e);
+            mLogger.error("Unable to close PersistenceManagerFactory", e);
         }
     }
 }

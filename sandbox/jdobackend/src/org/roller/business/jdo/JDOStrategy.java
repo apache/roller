@@ -5,6 +5,9 @@ package org.roller.business.jdo;
 
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
@@ -19,17 +22,16 @@ import org.roller.pojos.UserData;
  */
 public class JDOStrategy implements PersistenceStrategy {
     private static final ThreadLocal mSessionTLS = new ThreadLocal();
-
-    private static Log               mLogger     = LogFactory
-                                                         .getFactory()
-                                                         .getInstance(
-                                                                 JDOStrategy.class);
+    private PersistenceManagerFactory mPMF = null;
+    private static Log mLogger = LogFactory
+            .getFactory().getInstance(JDOStrategy.class);
 
     //-------------------------------------------------------------------------
     /**
-     * Construct using Hibernate Session Factory.
+     * Construct using JDO PersistenceManagerFactory.
      */
-    public JDOStrategy() throws RollerException {
+    public JDOStrategy(PersistenceManagerFactory pmf) throws RollerException {
+        this.mPMF = pmf;
     }
 
     //-------------------------------------------------------------------------
@@ -76,7 +78,34 @@ public class JDOStrategy implements PersistenceStrategy {
      */
     public PersistenceSession getPersistenceSession(UserData user,
             boolean createNew) throws RollerException {
-        return null;
+        PersistenceSession ses = (PersistenceSession)mSessionTLS.get();
+        if (createNew && ses != null)
+        {
+            mLogger.warn("TLS not empty at beginnng of request");
+            release();
+            ses = null;
+        }
+        if (ses == null && user != null)
+        {
+            try
+            {
+                PersistenceManager pm = mPMF.getPersistenceManager();
+                ses = new JDOPersistenceSession(user, pm);
+            }
+            catch (Throwable e)
+            {
+                mLogger.error(
+                    "JDOStrategy.exceptionGetPersistenceManager");
+                throw new RuntimeException();
+            }
+            mSessionTLS.set(ses);
+        }
+        else if (ses == null)
+        {
+            throw new RollerException(
+                "MUST specify user for new persistence session");
+        }
+        return ses;
     }
 
     //-------------------------------------------------------------------------
