@@ -205,4 +205,3 @@ in the "base.path" definition.
     <fileset dir="${ro.tools}/buildtime/findbugs/lib" includes="*.jar"/>
 </path>
 
-
