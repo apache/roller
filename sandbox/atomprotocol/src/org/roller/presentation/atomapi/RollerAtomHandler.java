@@ -52,7 +52,6 @@ import org.roller.RollerException;
 import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.atomapi.PubControlModule;
 import org.roller.presentation.atomapi.PubControlModuleImpl;
-import org.roller.util.WSSEUtilities;
 
 /**
  * Roller's Atom Protocol implementation.
