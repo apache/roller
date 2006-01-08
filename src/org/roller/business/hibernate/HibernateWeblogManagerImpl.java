@@ -89,7 +89,7 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
         {
             Session session = ((HibernateStrategy)mStrategy).getSession();
             Criteria criteria = session.createCriteria(WeblogEntryData.class);
-            criteria.addOrder(Order.desc("pubTime"));
+            criteria.addOrder(next ? Order.asc("pubTime") : Order.desc("pubTime"));
             criteria.add(conjunction);
             criteria.setMaxResults(maxEntries);
             List results = criteria.list();

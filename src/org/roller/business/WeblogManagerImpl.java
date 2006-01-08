@@ -477,7 +477,7 @@ public abstract class WeblogManagerImpl implements WeblogManager
         List entryList = getNextEntries(current, catName, 1);
         if (entryList != null && entryList.size() > 0)
         {
-            entry = (WeblogEntryData)entryList.get(entryList.size()-1);
+            entry = (WeblogEntryData)entryList.get(0);
         }
         return entry;
     }
