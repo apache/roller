@@ -100,7 +100,6 @@ create table website (
     locale            varchar(20), 
     timezone          varchar(50),  
     defaultplugins    varchar(255),
-    pinnedtomain      $BOOLEAN_SQL_TYPE_FALSE not null,
     isenabled         $BOOLEAN_SQL_TYPE_TRUE not null,
     datecreated      timestamp not null,
     blacklist            $TEXT_SQL_TYPE,
