@@ -151,6 +151,14 @@ public class WebsiteFormEx extends WebsiteForm
         {
             dataHolder.setEnableBloggerApi(Boolean.FALSE);
         }
+        if (getDefaultAllowComments() == null)
+        {
+            dataHolder.setDefaultAllowComments(Boolean.FALSE);
+        }
+        if (getModerateComments() == null)
+        {
+            dataHolder.setModerateComments(Boolean.FALSE);
+        }
         
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         if (getDefaultCategoryId() != null) 
