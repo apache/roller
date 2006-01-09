@@ -115,16 +115,18 @@ public class PageModel {
     
     /** Encapsulates folder.getBookmarks() & sorting */
     public Collection getBookmarks(FolderDataWrapper folder) {
-        mLogger.debug("Getting bookmarks for folder : "+folder.getName());
-        
-        // since we already have a wrapped pojo we know the output
-        // will be wrapped as well :)
-        Collection bookmarks = folder.getBookmarks();
-        
-        // TODO: need to setup new BookmarkWrapperComparator
-        //List mBookmarks = new ArrayList(bookmarks);
-        //Collections.sort( mBookmarks, new BookmarkComparator() );
-        
+        Collection bookmarks = null;
+        if (folder != null) {
+            mLogger.debug("Getting bookmarks for folder : "+folder.getName());
+
+            // since we already have a wrapped pojo we know the output
+            // will be wrapped as well :)
+            bookmarks = folder.getBookmarks();
+
+            // TODO: need to setup new BookmarkWrapperComparator
+            //List mBookmarks = new ArrayList(bookmarks);
+            //Collections.sort( mBookmarks, new BookmarkComparator() );
+        }
         return bookmarks;
     }
     
@@ -742,9 +744,13 @@ public class PageModel {
     }
     
     public boolean getEmailComments() {
-        WebsiteData website = mRollerReq.getWebsite();
-        boolean emailComments = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-        
-        return (website.getEmailComments().booleanValue() && emailComments);
+        if (mRollerReq != null) {
+            WebsiteData website = mRollerReq.getWebsite();
+            if (website != null) {
+                boolean emailComments = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");        
+                return (website.getEmailComments().booleanValue() && emailComments);
+            }
+        }
+        return false;
     }
 }

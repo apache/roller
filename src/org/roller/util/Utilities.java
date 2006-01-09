@@ -1057,17 +1057,20 @@ public class Utilities
         }
     }
     
-    public static final String encode(String s) 
+    public static final String encode(String s)
     {
-        try 
-        {
-            return URLEncoder.encode(s, "utf-8");
-        } 
-        catch (UnsupportedEncodingException e) 
-        {
-            return s;
-        }
-    }
+       try
+       {
+           if (s != null)
+               return URLEncoder.encode(s, "utf-8");
+           else
+               return s;
+       }
+       catch (UnsupportedEncodingException e)
+       {
+           return s;
+       }
+   }
 
     /**
      * @param string
