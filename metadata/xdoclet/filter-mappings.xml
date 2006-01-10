@@ -34,11 +34,6 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
-<filter-mapping>
-    <filter-name>SchemeEnforcementFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-</filter-mapping>
-
 <!-- Map everything to the PersistenceSessionFilter.
      NOTE: Any filters preceding this one MUST NOT use persistence sessions.-->
 <filter-mapping>

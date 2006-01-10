@@ -6,10 +6,6 @@ page import="org.roller.pojos.*" %><%@
 page import="org.roller.config.RollerConfig" %><%@
 page import="org.roller.presentation.RollerSession" %><%@
 page import="java.util.List" %>
-<% request.setAttribute("secure_login", RollerConfig.getProperty("securelogin.enabled")); %>
-<c:if test='${secure_login == "true"}' >
-  <roller:secure mode="unsecured" />
-</c:if>
 <%
 Roller roller = RollerFactory.getRoller();
 RollerSession rollerSession = RollerSession.getRollerSession(request);
