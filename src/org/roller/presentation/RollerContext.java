@@ -13,7 +13,6 @@ import java.util.TimerTask;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ import net.sf.acegisecurity.providers.dao.DaoAuthenticationProvider;
 import net.sf.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import net.sf.acegisecurity.providers.encoding.PasswordEncoder;
 import net.sf.acegisecurity.providers.encoding.ShaPasswordEncoder;
-import net.sf.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
+import net.sf.acegisecurity.securechannel.ChannelProcessingFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +34,6 @@ import org.roller.business.utils.UpgradeDatabase;
 import org.roller.config.PingConfig;
 import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
-import org.roller.model.RefererManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.RollerSpellCheck;
@@ -45,7 +43,6 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.pings.PingQueueTask;
 import org.roller.presentation.velocity.CommentAuthenticator;
-import org.roller.presentation.velocity.ContextLoader;
 import org.roller.presentation.velocity.DefaultCommentAuthenticator;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
@@ -54,6 +51,10 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
+import net.sf.acegisecurity.ConfigAttributeDefinition;
+import net.sf.acegisecurity.SecurityConfig;
+import net.sf.acegisecurity.intercept.web.PathBasedFilterInvocationDefinitionMap;
+import net.sf.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -347,11 +348,33 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             } 
         }
         
-        String secureLogin = RollerConfig.getProperty("securelogin.enabled");
-        if (secureLogin != null && "true".equalsIgnoreCase(secureLogin)) {
+        if (RollerConfig.getBooleanProperty("securelogin.enabled")) {
             AuthenticationProcessingFilterEntryPoint entryPoint = 
-                (AuthenticationProcessingFilterEntryPoint) ctx.getBean("authenticationProcessingFilterEntryPoint");
+                (AuthenticationProcessingFilterEntryPoint)ctx.getBean("authenticationProcessingFilterEntryPoint");
             entryPoint.setForceHttps(true);
+        }
+        
+        if (RollerConfig.getBooleanProperty("schemeenforcement.enabled")) {
+            
+            ChannelProcessingFilter procfilter = 
+                (ChannelProcessingFilter)ctx.getBean("channelProcessingFilter");           
+            ConfigAttributeDefinition secureDef = new ConfigAttributeDefinition();
+            secureDef.addConfigAttribute(new SecurityConfig("REQUIRES_SECURE_CHANNEL"));
+            ConfigAttributeDefinition insecureDef = new ConfigAttributeDefinition();
+            insecureDef.addConfigAttribute(new SecurityConfig("REQUIRES_INSECURE_CHANNEL"));            
+            PathBasedFilterInvocationDefinitionMap defmap = 
+                (PathBasedFilterInvocationDefinitionMap)procfilter.getFilterInvocationDefinitionSource();
+            
+            // add HTTPS URL path patterns to Acegi config
+            String httpsUrlsProp = RollerConfig.getProperty("schemeenforcement.https.urls");
+            if (httpsUrlsProp != null) {
+                String[] httpsUrls = StringUtils.stripAll(StringUtils.split(httpsUrlsProp, ",") );
+                for (int i=0; i<httpsUrls.length; i++) {
+                    defmap.addSecureUrl(httpsUrls[i], secureDef);   
+                }
+            }
+            // all other action URLs are non-HTTPS
+            defmap.addSecureUrl("/**/*.do*", insecureDef);
         }
     }
 

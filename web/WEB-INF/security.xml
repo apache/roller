@@ -10,9 +10,9 @@
             <value>
                 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
-                /**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,remoteUserFilter,anonymousProcessingFilter,securityEnforcementFilter
+                /**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,channelProcessingFilter,remoteUserFilter,anonymousProcessingFilter,securityEnforcementFilter
             </value>
-            <!-- Put channelProcessingFilter before remoteUserFilter to turn on SSL switching, it's off by default -->
+            <!-- Note that channelProcessingFilter before remoteUserFilter to turn on SSL switching, it's off by default -->
         </property>
     </bean>
 
@@ -144,17 +144,11 @@
         <property name="channelDecisionManager" ref="channelDecisionManager"/>
         <property name="filterInvocationDefinitionSource">
             <value>
-                CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
-                /admin/**=REQUIRES_SECURE_CHANNEL
-                /editor/**=REQUIRES_SECURE_CHANNEL
-                /login*=REQUIRES_SECURE_CHANNEL
-                /j_security_check*=REQUIRES_SECURE_CHANNEL
-                /**=REQUIRES_INSECURE_CHANNEL
             </value>
         </property>
     </bean>
-
+                
     <bean id="channelDecisionManager" class="net.sf.acegisecurity.securechannel.ChannelDecisionManagerImpl">
         <property name="channelProcessors">
             <list>

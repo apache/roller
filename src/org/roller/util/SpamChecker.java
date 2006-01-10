@@ -36,19 +36,23 @@ public class SpamChecker {
         return false;
     }
 
-    /** Test referrer URL, applying website blacklist only, if configured */
+    /** Test referrer URL, applying blacklist and website blacklist only if configured */
     public static boolean checkReferrer(WebsiteData website, String referrerURL) {
         if (RollerConfig.getBooleanProperty("site.blacklist.enable.referrers")) {
             List stringRules = new ArrayList();
             List regexRules = new ArrayList();
             Blacklist.populateSpamRules(
                 website.getBlacklist(), stringRules, regexRules, null);
+            if (RollerRuntimeConfig.getProperty("spam.blacklist") != null) {
+                Blacklist.populateSpamRules(
+                    RollerRuntimeConfig.getProperty("spam.blacklist"), stringRules, regexRules, null);
+            }
             return Blacklist.matchesRulesOnly(referrerURL, stringRules, regexRules);
         }
         return false;
     }
 
-    /** Test comment against built in blacklist + blacklist */
+    /** Test comment against built in blacklist, site blacklist and website blacklist */
     private static boolean testComment(CommentData c) {
         boolean ret = false;
         List stringRules = new ArrayList();
