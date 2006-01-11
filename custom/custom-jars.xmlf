@@ -2,10 +2,6 @@
 Custom jars to be added to both rollerbeans and rollerweb compiles 
 -->
 
-<!--Uncomment to include experimental Atom protocol support
-<fileset dir="${basedir}/sandbox/atomprotocol/lib" includes="*.jar" />
--->
-
 <!-- Uncomment this to compile experimental JDO backend
 <fileset dir="${basedir}/sandbox/jdobackend/lib" includes="*.jar" />
  -->
