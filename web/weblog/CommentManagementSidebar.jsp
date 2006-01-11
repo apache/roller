@@ -84,7 +84,7 @@ CommentManagementAction.CommentManagementPageModel model =
         <label for="startDateString" class="sideformrow">
            <fmt:message key="commentManagement.startDate" />:
         </label>
-        <roller:Date property="startDateString" 
+        <roller:Date property="startDateString" formName="commentQueryForm"
             dateFormat='<%= model.getShortDateFormat() %>' />
     </div>
         
@@ -92,7 +92,7 @@ CommentManagementAction.CommentManagementPageModel model =
         <label for="endDateString" class="sideformrow">
            <fmt:message key="commentManagement.endDate" />:
         </label>
-        <roller:Date property="endDateString" 
+        <roller:Date property="endDateString" formName="commentQueryForm"
             dateFormat='<%= model.getShortDateFormat() %>' />
     </div>
     <br />
