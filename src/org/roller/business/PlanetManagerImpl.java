@@ -33,7 +33,8 @@ import com.sun.syndication.fetcher.impl.SyndFeedInfo;
  */
 public abstract class PlanetManagerImpl implements PlanetManager {
     protected Roller roller = null;
-    protected PersistenceStrategy strategy;
+    protected PersistenceStrategy strategy = null;
+    protected String localURL = null;
     
     private static Log logger =
             LogFactory.getFactory().getInstance(PlanetManagerImpl.class);
@@ -44,6 +45,7 @@ public abstract class PlanetManagerImpl implements PlanetManager {
     public PlanetManagerImpl(PersistenceStrategy strategy, Roller roller) {
         this.strategy = strategy;
         this.roller = roller;
+        localURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
     }
     
     public void refreshEntries() throws RollerException {
@@ -71,9 +73,7 @@ public abstract class PlanetManagerImpl implements PlanetManager {
         //FeedFetcher feedFetcher = new HttpClientFeedFetcher(feedInfoCache);
         feedFetcher.setUsingDeltaEncoding(false);
         feedFetcher.setUserAgent("RollerPlanetAggregator");
-        
-        String localURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
-        
+                
         // Loop through all subscriptions in the system
         Iterator subs = getAllSubscriptions();
         while (subs.hasNext()) {
