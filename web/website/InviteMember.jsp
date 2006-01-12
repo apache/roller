@@ -33,7 +33,7 @@ function cancel() {
        </div>
     </div>    
     
-     <div class="permissionsMask">
+    <div style="clear:left">
        <label for="userName" class="formrow" />
            <fmt:message key="inviteMember.permissions" /></label>
        <input type="radio" name="permissionsMask" value="3"  />
@@ -42,8 +42,8 @@ function cancel() {
        <fmt:message key="inviteMember.author" />
        <input type="radio" name="permissionsMask" value="0" />
        <fmt:message key="inviteMember.limited" />
-    </div>
-                  
+    </div>  
+         
     <br />      
     <input type="submit" value='<fmt:message key="inviteMember.button.save" />'></input>
     <input type="button" value='<fmt:message key="application.cancel" />' onclick="cancel()"></input>

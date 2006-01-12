@@ -35,6 +35,7 @@ import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
+import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.InviteMemberForm;
 import org.roller.util.MailUtil;
 
@@ -80,22 +81,27 @@ public class InviteMemberAction extends DispatchAction
         ActionForm          actionForm,
         HttpServletRequest  request,
         HttpServletResponse response)
-        throws IOException, ServletException
+        throws Exception
     {
         // if group blogging is disabled then you can't change permissions
         if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
             return mapping.findForward("access-denied");
         }
-        
-        ActionForward forward = mapping.findForward("inviteMember.page"); 
-        
+            
         BasePageModel pageModel = new BasePageModel(
-            "inviteMember.title", request, response, mapping);
-        request.setAttribute("model", pageModel);
+            "inviteMember.title", request, response, mapping);        
+        RollerSession rses = RollerSession.getRollerSession(request);
         
-        InviteMemberForm form = (InviteMemberForm)actionForm;
-        form.setWebsiteId(pageModel.getWebsite().getId());
-        return forward; 
+        // Ensure use has admin perms for this weblog
+        if (pageModel.getWebsite() != null && rses.isUserAuthorizedToAdmin(pageModel.getWebsite())) {                
+            request.setAttribute("model", pageModel);        
+            InviteMemberForm form = (InviteMemberForm)actionForm;
+            form.setWebsiteId(pageModel.getWebsite().getId());
+            ActionForward forward = mapping.findForward("inviteMember.page");
+            return forward; 
+        } else {
+            return mapping.findForward("access-denied");
+        }
     }
     
     public ActionForward send(
@@ -117,55 +123,66 @@ public class InviteMemberAction extends DispatchAction
         UserManager umgr = RollerFactory.getRoller().getUserManager();
         UserData user = umgr.getUser(form.getUserName());
         
-        if (user == null)
-        {
-            errors.add(ActionErrors.GLOBAL_ERROR, 
-                new ActionError("inviteMember.error.userNotFound"));
-        }
-        else 
-        {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WebsiteData website = rreq.getWebsite();
-            PermissionsData perms = umgr.getPermissions(website, user);
-            if (perms != null && perms.isPending())
+        BasePageModel pageModel = new BasePageModel(
+            "inviteMember.title", request, response, mapping);              
+        RollerSession rses = RollerSession.getRollerSession(request);
+        
+        // Ensure use has admin perms for this weblog
+        if (pageModel.getWebsite() != null && rses.isUserAuthorizedToAdmin(pageModel.getWebsite())) {
+                       
+            if (user == null)
             {
                 errors.add(ActionErrors.GLOBAL_ERROR, 
-                    new ActionError("inviteMember.error.userAlreadyInvited"));
-                request.setAttribute("model", new BasePageModel(
-                    "inviteMember.title", request, response, mapping));
+                    new ActionError("inviteMember.error.userNotFound"));
             }
-            else if (perms != null)
+            else 
             {
-                errors.add(ActionErrors.GLOBAL_ERROR, 
-                    new ActionError("inviteMember.error.userAlreadyMember"));
-                request.setAttribute("model", new BasePageModel(
-                    "inviteMember.title", request, response, mapping));
-            }
-            else
-            {
-                String mask = request.getParameter("permissionsMask");
-                umgr.inviteUser(website, user, Short.parseShort(mask));
-                request.setAttribute("user", user);
-                try 
-                {
-                    notifyInvitee(request, website, user);
-                }
-                catch (RollerException e)
+                RollerRequest rreq = RollerRequest.getRollerRequest(request);
+                WebsiteData website = rreq.getWebsite();
+                PermissionsData perms = umgr.getPermissions(website, user);
+                if (perms != null && perms.isPending())
                 {
                     errors.add(ActionErrors.GLOBAL_ERROR, 
-                        new ActionError("error.untranslated", e.getMessage()));                
-                }               
-                msgs.add(ActionMessages.GLOBAL_MESSAGE, 
-                    new ActionMessage("inviteMember.userInvited"));
-                
-                request.setAttribute("model", new BasePageModel(
-                    "inviteMemberDone.title", request, response, mapping));
-                
-                forward = mapping.findForward("memberPermissions");                
+                        new ActionError("inviteMember.error.userAlreadyInvited"));
+                    request.setAttribute("model", new BasePageModel(
+                        "inviteMember.title", request, response, mapping));
+                }
+                else if (perms != null)
+                {
+                    errors.add(ActionErrors.GLOBAL_ERROR, 
+                        new ActionError("inviteMember.error.userAlreadyMember"));
+                    request.setAttribute("model", new BasePageModel(
+                        "inviteMember.title", request, response, mapping));
+                }
+                else
+                {
+                    String mask = request.getParameter("permissionsMask");
+                    umgr.inviteUser(website, user, Short.parseShort(mask));
+                    request.setAttribute("user", user);
+                    try 
+                    {
+                        notifyInvitee(request, website, user);
+                    }
+                    catch (RollerException e)
+                    {
+                        errors.add(ActionErrors.GLOBAL_ERROR, 
+                            new ActionError("error.untranslated", e.getMessage()));                
+                    }               
+                    msgs.add(ActionMessages.GLOBAL_MESSAGE, 
+                        new ActionMessage("inviteMember.userInvited"));
+
+                    request.setAttribute("model", new BasePageModel(
+                        "inviteMemberDone.title", request, response, mapping));
+
+                    forward = mapping.findForward("memberPermissions");                
+                }
             }
+            saveErrors(request, errors);
+            saveMessages(request, msgs);
+            
+        } else {
+            return mapping.findForward("access-denied");
         }
-        saveErrors(request, errors);
-        saveMessages(request, msgs);
         return forward; 
     }
     

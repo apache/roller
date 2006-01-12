@@ -14,6 +14,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
+import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.weblog.formbeans.WeblogQueryForm;
@@ -44,22 +45,28 @@ public final class WeblogQueryAction extends DispatchAction
         throws IOException, ServletException, RollerException
     {
         WeblogQueryForm form = (WeblogQueryForm)actionForm;
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+        RollerRequest   rreq = RollerRequest.getRollerRequest(request);
+        WeblogManager   wmgr = RollerFactory.getRoller().getWeblogManager();           
+        RollerSession   rses = RollerSession.getRollerSession(request);
         
-        String status= form.getStatus().equals("ALL") ? null : form.getStatus();
-        
-        request.setAttribute("model", new WeblogQueryPageModel(
-           request, 
-           response, 
-           mapping,
-           rreq.getWebsite(),
-           form.getCategoryId(),
-           form.getStartDateString(),
-           form.getEndDateString(),
-           status,
-           form.getMaxEntries())); 
-        
+        // ensure that weblog is specfied and user has permission to work there
+        if (rreq.getWebsite() != null && rses.isUserAuthorized(rreq.getWebsite())) {
+            String status= form.getStatus().equals("ALL") ? null : form.getStatus();        
+            request.setAttribute("model", new WeblogQueryPageModel(
+               request, 
+               response, 
+               mapping,
+               rreq.getWebsite(),
+               form.getCategoryId(),
+               form.getStartDateString(),
+               form.getEndDateString(),
+               status,
+               form.getMaxEntries())); 
+        } 
+        else 
+        {
+            return mapping.findForward("access-denied");
+        }
         return mapping.findForward("weblogQuery.page");
     }
 }

@@ -63,7 +63,8 @@ public final class CommentManagementAction extends DispatchAction {
         
         CommentManagementForm queryForm = (CommentManagementForm)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-
+        RollerSession rses = RollerSession.getRollerSession(request);
+        
         if (rreq.getWeblogEntry() != null) {
             queryForm.setEntryid(rreq.getWeblogEntry().getId());
             queryForm.setWeblog(rreq.getWeblogEntry().getWebsite().getHandle());
@@ -77,10 +78,17 @@ public final class CommentManagementAction extends DispatchAction {
             request.setAttribute("commentManagementForm", actionForm);
         }
         
-        if (rreq.getWebsite() != null) {
+        // Ensure user is authorized to view comments in weblog
+        if (rreq.getWebsite() != null && rses.isUserAuthorized(rreq.getWebsite())) {
             return mapping.findForward("commentManagement.page");
         }
-        return mapping.findForward("commentManagementGlobal.page");
+        // And ensure only global admins can see all comments
+        else if (rses.isGlobalAdminUser()) {
+            return mapping.findForward("commentManagementGlobal.page");
+        } 
+        else {
+            return mapping.findForward("access-denied");
+        }
     }
 
     public ActionForward update(
