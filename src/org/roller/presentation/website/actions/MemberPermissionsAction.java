@@ -85,11 +85,17 @@ public class MemberPermissionsAction extends DispatchAction
         MemberPermissionsPageModel pageModel = 
            new MemberPermissionsPageModel(request, response, mapping);
         request.setAttribute("model", pageModel);
+        RollerSession rses = RollerSession.getRollerSession(request);
         
-        MemberPermissionsForm form = (MemberPermissionsForm)actionForm;
-        form.setWebsiteId(pageModel.getWebsite().getId());
-        ActionForward forward = mapping.findForward("memberPermissions.page");
-        return forward;
+        // Ensure use has admin perms for this weblog
+        if (pageModel.getWebsite() != null && rses.isUserAuthorizedToAdmin(pageModel.getWebsite())) {
+            MemberPermissionsForm form = (MemberPermissionsForm)actionForm;
+            form.setWebsiteId(pageModel.getWebsite().getId());
+            ActionForward forward = mapping.findForward("memberPermissions.page");
+            return forward;
+        } else {
+            return mapping.findForward("access-denied");
+        }
     }
     
     public ActionForward save(
@@ -101,64 +107,70 @@ public class MemberPermissionsAction extends DispatchAction
     {
         ActionErrors errors = new ActionErrors();
         ActionMessages msgs = new ActionMessages();
-        
+        RollerSession rses = RollerSession.getRollerSession(request);
         MemberPermissionsPageModel model = 
             new MemberPermissionsPageModel(request, response, mapping);
         
-        Iterator iter = model.getPermissions().iterator();
-        int removed = 0;
-        int changed = 0;
-        while (iter.hasNext())
-        {
-            PermissionsData perms = (PermissionsData)iter.next();
-            String sval = request.getParameter("perm-" + perms.getId());
-            if (sval != null)
+        // Ensure use has admin perms for this weblog
+        if (model.getWebsite() != null && rses.isUserAuthorizedToAdmin(model.getWebsite())) {
+
+            Iterator iter = model.getPermissions().iterator();
+            int removed = 0;
+            int changed = 0;
+            while (iter.hasNext())
             {
-                short val = Short.parseShort(sval);
-                RollerSession rses = RollerSession.getRollerSession(request);
-                UserData user = rses.getAuthenticatedUser();
-                if (perms.getUser().getId().equals(user.getId()) 
-                        && val < perms.getPermissionMask())
+                PermissionsData perms = (PermissionsData)iter.next();
+                String sval = request.getParameter("perm-" + perms.getId());
+                if (sval != null)
                 {
-                    errors.add(null,new ActionError(
-                        "memberPermissions.noSelfDemotions"));
-                }
-                else if (val != perms.getPermissionMask()) 
-                {
-                    if (val == -1) 
+                    short val = Short.parseShort(sval);
+                    UserData user = rses.getAuthenticatedUser();
+                    if (perms.getUser().getId().equals(user.getId()) 
+                            && val < perms.getPermissionMask())
                     {
-                        perms.remove();
-                        removed++;
+                        errors.add(null,new ActionError(
+                            "memberPermissions.noSelfDemotions"));
                     }
-                    else
+                    else if (val != perms.getPermissionMask()) 
                     {
-                        perms.setPermissionMask(val);
-                        changed++;
+                        if (val == -1) 
+                        {
+                            perms.remove();
+                            removed++;
+                        }
+                        else
+                        {
+                            perms.setPermissionMask(val);
+                            changed++;
+                        }
                     }
                 }
             }
+            if (removed > 0 || changed > 0)
+            {
+                RollerFactory.getRoller().commit();  
+            }
+            if (removed > 0) 
+            {
+                msgs.add(null,new ActionMessage(
+                    "memberPermissions.membersRemoved", new Integer(removed)));
+            }
+            if (changed > 0)
+            {
+                msgs.add(null,new ActionMessage(
+                    "memberPermissions.membersChanged", new Integer(changed)));
+            }
+            saveErrors(request, errors);
+            saveMessages(request, msgs);
+            MemberPermissionsPageModel updatedModel = 
+                new MemberPermissionsPageModel(request, response, mapping);
+            request.setAttribute("model", updatedModel);
+            ActionForward forward = mapping.findForward("memberPermissions.page");
+            return forward;
+            
+        } else {
+            return mapping.findForward("access-denied");
         }
-        if (removed > 0 || changed > 0)
-        {
-            RollerFactory.getRoller().commit();  
-        }
-        if (removed > 0) 
-        {
-            msgs.add(null,new ActionMessage(
-                "memberPermissions.membersRemoved", new Integer(removed)));
-        }
-        if (changed > 0)
-        {
-            msgs.add(null,new ActionMessage(
-                "memberPermissions.membersChanged", new Integer(changed)));
-        }
-        saveErrors(request, errors);
-        saveMessages(request, msgs);
-        MemberPermissionsPageModel updatedModel = 
-            new MemberPermissionsPageModel(request, response, mapping);
-        request.setAttribute("model", updatedModel);
-        ActionForward forward = mapping.findForward("memberPermissions.page");
-        return forward;
     }
     
     public static class MemberPermissionsPageModel extends BasePageModel

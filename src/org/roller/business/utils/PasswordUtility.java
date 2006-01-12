@@ -144,6 +144,7 @@ public class PasswordUtility
             userUpdate.setString(1, Utilities.encodePassword(passphrase, algorithm));
             userUpdate.setString(2, username);
             userUpdate.executeUpdate();
+            System.out.println("Encrypted password for user: " + username);
         }
         
         configUpdate.setBoolean(1, true);
