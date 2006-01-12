@@ -4,9 +4,6 @@
 
 <html:form action="/editor/yourProfile" method="post" focus="fullName">
     <input type="hidden" name="method" value="save"></input> 
-    <html:hidden property="id" /></input>  
-    <html:hidden property="password" /></input>  
-    <html:hidden property="enabled" /></input>
            
 <table class="formtable">
 

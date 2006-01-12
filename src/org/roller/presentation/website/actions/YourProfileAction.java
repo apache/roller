@@ -119,14 +119,18 @@ public class YourProfileAction extends UserBaseAction
             ActionMessages errors = validate(form, new ActionErrors());
             if (errors.size() == 0)
             {
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
-                UserData data = mgr.getUser( form.getUserName() );
+                // We ONLY modify the user currently logged in
+                RollerSession rollerSession = RollerSession.getRollerSession(request);
+                UserData data = rollerSession.getAuthenticatedUser();
                 
                 // Need system user to update user
                 RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
                 
-                // Copy data from form to object (won't copy over password)
-                form.copyTo(data, request.getLocale());
+                // We want to be VERY selective about what data gets updated
+                data.setFullName(form.getFullName());
+                data.setEmailAddress(form.getEmailAddress());
+                data.setLocale(form.getLocale());
+                data.setTimeZone(form.getTimeZone());
                 
                 // If user set both password and passwordConfirm then reset password
                 if (    !StringUtils.isEmpty(form.getPasswordText()) 
@@ -144,16 +148,16 @@ public class YourProfileAction extends UserBaseAction
                             new ActionMessage("yourProfile.passwordResetError"));
                     }
                 } 
-                RollerSession rses = RollerSession.getRollerSession(request);
-                rses.setAuthenticatedUser(data);
-                mgr.storeUser( data );
+                
+                // save the updated profile
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                mgr.storeUser(data);
                 
                 RollerFactory.getRoller().commit();
 
                 request.setAttribute("model", new BasePageModel(
                         "yourProfile.title", request, response, mapping));
                 
-                //msgs.add(null, new ActionMessage("yourProfile.saved"));
                 saveMessages(request, msgs);
             }
             else 
