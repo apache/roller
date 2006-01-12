@@ -1,42 +1,19 @@
 package org.roller.presentation.search;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.search.Hits;
-import org.apache.struts.action.ActionMapping;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
-import org.roller.RollerException;
-import org.roller.business.search.FieldConstants;
-import org.roller.business.search.operations.SearchOperation;
+import org.apache.velocity.servlet.VelocityServlet;
 import org.roller.config.RollerConfig;
-import org.roller.model.IndexManager;
-import org.roller.model.Roller;
-import org.roller.model.RollerFactory;
-import org.roller.model.UserManager;
-import org.roller.model.WeblogManager;
-import org.roller.pojos.WeblogEntryComparator;
-import org.roller.pojos.WeblogEntryData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
-import org.roller.util.DateUtil;
+import org.roller.presentation.velocity.ContextLoader;
 import org.roller.util.StringUtils;
-import org.roller.presentation.velocity.*;
+
 
 /**
  * This servlet retrieves (and displays) search results.
@@ -45,27 +22,29 @@ import org.roller.presentation.velocity.*;
  * @web.servlet-init-param name="properties" value="/WEB-INF/velocity.properties"
  * @web.servlet-mapping url-pattern="/search/*"
  */
-public class SearchServlet extends BasePageServlet {
+public class SearchServlet extends VelocityServlet {
     
     static final long serialVersionUID = -2150090108300585670L;
     
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(SearchServlet.class);
+    private static Log mLogger = LogFactory.getLog(SearchServlet.class);
     
     private boolean searchEnabled = true;
     
-    public Template handleRequest(HttpServletRequest request,
-        HttpServletResponse response, Context ctx) {
+    
+    public void init(ServletConfig config) throws ServletException {
         
+        super.init(config);
+        
+        // lookup if search is enabled
+        this.searchEnabled = RollerConfig.getBooleanProperty("search.enabled");
+    }
+    
+    
+    public Template handleRequest(HttpServletRequest request,
+            HttpServletResponse response, Context ctx) {
+
         Template outty = null;
         try {
-            // Note: Removed request character encoding here; was too late; 
-            // it is now set uniformly in CharEncodingFilter. See ROL-760.
-
-            String enabled = RollerConfig.getProperty("search.enabled");
-            if("false".equalsIgnoreCase(enabled))
-                this.searchEnabled = false;
-
             if(! this.searchEnabled) {
                 Exception pageException = null;
                 try {
@@ -110,6 +89,7 @@ public class SearchServlet extends BasePageServlet {
         return outty;
     }
     
+    
     /**
      * If this is not a user-specific search, we need to display the
      * "generic" search results list.
@@ -134,6 +114,7 @@ public class SearchServlet extends BasePageServlet {
         }
         return outty;
     }
+    
 }
 
 
