@@ -1,13 +1,19 @@
 <%@ include file="/taglibs.jsp" %>
 
-<% try { %>
+<%
+boolean debug = org.roller.config.RollerRuntimeConfig.getBooleanProperty("site.debugMode");
+request.setAttribute("debug", new Boolean(debug));
+%>
 
+<h2 class="error"><fmt:message key="errorPage.title" /></h2>
+
+<c:choose>
+<c:when test="${debug}">
+    
 <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
 <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />
 <c:set var="type"        value="${requestScope['javax.servlet.error.type']}" />
 <c:set var="exception"   value="${requestScope['javax.servlet.error.exception']}" />
-    
-<h2 class="error"><fmt:message key="errorPage.title" /></h2>
 
 <table width="80%" border="1px" style="border-collapse: collapse;">
 <tr>
@@ -50,10 +56,13 @@
 <br />
 <br />
 
-<% } catch (Throwable t) { t.printStackTrace(); } %>
+</c:when>
 
+<c:otherwise>
+    <p><fmt:message key="errorPage.message" /></p>
+</c:otherwise>
 
-
+</c:choose>
 
 
 
