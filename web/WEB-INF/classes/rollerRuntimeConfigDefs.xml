@@ -51,6 +51,10 @@
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
+      <property-def name="site.debugMode" key="configForm.debugMode">
+         <type>boolean</type>
+         <default-value>false</default-value>
+      </property-def>
    </display-group >
 
    <!-- User Settings Group -->
