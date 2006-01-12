@@ -30,7 +30,7 @@ import org.roller.presentation.RollerRequest;
  * @web.servlet-init-param name="properties" value="/WEB-INF/velocity.properties"
  * @web.servlet-mapping url-pattern="/preview/*"
  */
-public class PreviewServlet extends BasePageServlet {
+public class PreviewServlet extends PageServlet {
     
     private static Log mLogger = LogFactory.getLog(PreviewServlet.class);
     
