@@ -248,7 +248,7 @@ public abstract class BasePageServlet extends VelocityServlet {
             // ignore socket exceptions
             mLogger.debug("Some kind of SocketException", e);
         } else {
-            mLogger.warn("ERROR in VelocityServlet",e);
+            mLogger.warn("ERROR in VelocityServlet " + e.getClass().getName());
         }
     }
     
