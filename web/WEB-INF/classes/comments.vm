@@ -188,6 +188,9 @@
 #macro( showCommentForm $entry )
     <div class="comments-form">
     <div class="comments-head">$text.get("macro.weblog.postcommentHeader")</div><br/>
+
+    #showStatusMessage()
+
     <form method="post" action="$ctxPath/comment" focus="name"
         name="form" onsubmit="fixURL(this); return validateComments(this)">
         
@@ -247,10 +250,8 @@
         </tr>
         </table>
         
-        #showStatusMessage()
-        <p class="commentAuthenticator">
-        $pageHelper.commentAuthenticatorHtml
-        </p>
+        <script type="text/javascript" src="$ctxPath/theme/scripts/clientSideInclude.js"></script>
+        <div id="commentAuthenticator"></div>
  
         <table cellspacing="0" cellpadding="1" border="0" width="95%">
         <tr>
@@ -269,6 +270,8 @@
 
     <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js"></script>
     <script type="text/javascript">
+    clientSideInclude('commentAuthenticator', '$ctxPath/CommentAuthenticatorServlet');
+
     var author = getCookie("commentAuthor");
     var email = getCookie("commentEmail");
     var url = getCookie("commentUrl");
