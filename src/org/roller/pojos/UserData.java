@@ -23,7 +23,8 @@ import org.roller.util.Utilities;
  *
  * @ejb:bean name="UserData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="rolleruser"  
+ * @hibernate.class lazy="false" table="rolleruser"
+ * @hibernate.cache usage="read-write"
  */
 public class UserData
    extends org.roller.pojos.PersistentObject
