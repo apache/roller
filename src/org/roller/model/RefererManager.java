@@ -96,6 +96,10 @@ public interface RefererManager extends Serializable
 
     //--------------------------------------------- Referer processing methods
 
+    public void processReferrer(String requestUrl, String referrerUrl,
+                                String weblogHandle, String weblogAnchor,
+                                String weblogDateString);
+    
     /**
      * Process request for incoming referers.
      * @param request Request to be processed.
