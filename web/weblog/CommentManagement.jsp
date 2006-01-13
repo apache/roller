@@ -288,6 +288,7 @@ function setChecked(val, name) {
                                     <fmt:message key="commentManagement.commentByBoth" >
                                         <fmt:param value="${comment.name}" />
                                         <fmt:param value="${comment.email}" />
+                                        <fmt:param value="mailto" />
                                         <fmt:param value="${comment.remoteHost}" />
                                      </fmt:message>
                                 </c:when>
@@ -311,7 +312,7 @@ function setChecked(val, name) {
                             </c:choose>
                             <c:if test="${!empty comment.url}">
                                 <br /><a href='<c:out value="${comment.url}" />'>
-                                <c:out value="${comment.url}" /></a>
+                                <str:truncateNicely upper="60" appendToEnd="..."><c:out value="${comment.url}" /></str:truncateNicely></a>
                             </c:if>
                         </td>
                     </tr>                                
@@ -326,7 +327,7 @@ function setChecked(val, name) {
                     <%-- comment content --%>
                     <br />
                     <span class="details">
-                       <c:out value="${comment.content}" escapeXml="false" />
+                       <pre><str:wordWrap><c:out value="${comment.content}" escapeXml="true" /></str:wordWrap></pre>
                     </span>
                     
                 </td>
