@@ -14,6 +14,7 @@ package org.roller.pojos;
  *
  * @ejb:bean name="RollerPropertyData"
  * @hibernate.class lazy="false" table="roller_properties"
+ * @hibernate.cache usage="read-write"
  */
 public class RollerPropertyData 
     extends org.roller.pojos.PersistentObject

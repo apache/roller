@@ -32,6 +32,7 @@ import org.roller.model.UserManager;
  * @ejb:bean name="WebsiteData"
  * @struts.form include-all="true"
  * @hibernate.class lazy="false"  table="website"
+ * @hibernate.cache usage="read-write"
  */
 public class WebsiteData extends org.roller.pojos.PersistentObject
     implements java.io.Serializable
