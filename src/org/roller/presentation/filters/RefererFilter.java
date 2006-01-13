@@ -34,8 +34,10 @@ public class RefererFilter implements Filter {
     private static Log mLogger = LogFactory.getLog(RefererFilter.class);
     private static final String ROBOT_PATTERN_PROP_NAME = "referrer.robotCheck.userAgentPattern";
     
-    private FilterConfig mFilterConfig = null;
     private static Pattern robotPattern = null;
+    
+    private FilterConfig mFilterConfig = null;
+    private boolean processingEnabled = true;
     
     
     /**
@@ -43,6 +45,12 @@ public class RefererFilter implements Filter {
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) 
             throws IOException, ServletException {
+        
+        // if referrer processing is disabled then we are done
+        if(!this.processingEnabled) {
+            chain.doFilter(req, res);
+            return;
+        }
         
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
@@ -167,8 +175,16 @@ public class RefererFilter implements Filter {
      * init
      */
     public void init(FilterConfig filterConfig) throws ServletException {
-        mFilterConfig = filterConfig;
         
+        this.mFilterConfig = filterConfig;
+        
+        // see if built-in referrer processing is enabled
+        this.processingEnabled = 
+                RollerConfig.getBooleanProperty("referrers.processing.enabled");
+        
+        mLogger.info("Referrer processing enabled = "+this.processingEnabled);
+        
+        // check for possible robot pattern
         String robotPatternStr = RollerConfig.getProperty(ROBOT_PATTERN_PROP_NAME);
         if (robotPatternStr != null && robotPatternStr.length() >0) {
             // Parse the pattern, and store the compiled form.
