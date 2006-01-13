@@ -530,9 +530,13 @@ public class PageHelper
     
     public String getCommentAuthenticatorHtml()
     {
+        /* no longer used -- Allen G
         RollerContext rctx = 
             RollerContext.getRollerContext(mRollerReq.getRequest());
         return rctx.getCommentAuthenticator().getHtml(
             mVelocityContext, mRollerReq.getRequest(), mResponse);
+         */
+        
+        return "";
     }
 }

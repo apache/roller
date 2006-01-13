@@ -673,7 +673,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
 
     //-----------------------------------------------------------------------
-
+    /*
     public static CommentAuthenticator getCommentAuthenticator() 
     {
         if (mCommentAuthenticator == null) 
@@ -692,4 +692,5 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         }        
         return mCommentAuthenticator;
     }
+    */
 }

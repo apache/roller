@@ -13,6 +13,7 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +40,7 @@ import org.roller.util.MailUtil;
 import org.roller.util.StringUtils;
 import org.roller.presentation.*;
 import org.roller.presentation.cache.CacheManager;
+import org.roller.presentation.velocity.DefaultCommentAuthenticator;
 
 /**
  * The CommentServlet handles all incoming weblog entry comment posts.
@@ -59,13 +61,35 @@ import org.roller.presentation.cache.CacheManager;
  */
 public class CommentServlet extends HttpServlet {
     
+    private static Log mLogger = LogFactory.getLog(CommentServlet.class);
+    
     private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
-        
-    private transient ResourceBundle bundle =
+    
+    private ResourceBundle bundle =
         ResourceBundle.getBundle("ApplicationResources");
     
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(CommentServlet.class);
+    private CommentAuthenticator authenticator = null;
+    
+    
+    /** 
+     * Initialization.
+     */
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        
+        // lookup the authenticator we are going to use and instantiate it
+        try {
+            String name = RollerConfig.getProperty("comment.authenticator.classname");
+            
+            Class clazz = Class.forName(name);
+            this.authenticator = (CommentAuthenticator) clazz.newInstance();
+            
+        } catch(Exception e) {
+            mLogger.error(e);
+            this.authenticator = new DefaultCommentAuthenticator();
+        }
+
+    }
     
     
     /**
@@ -158,10 +182,8 @@ public class CommentServlet extends HttpServlet {
                 request.setAttribute("previewComments", "dummy");
                 mLogger.debug("Comment is a preview");
                 
-            } else {                
-                CommentAuthenticator commentAuth = 
-                        RollerContext.getCommentAuthenticator();
-                if (commentAuth.authenticate(comment, request)) {
+            } else {
+                if (this.authenticator.authenticate(comment, request)) {
                     mLogger.debug("Comment passed authentication");
                     
                     // If comment contains blacklisted text, mark as spam
