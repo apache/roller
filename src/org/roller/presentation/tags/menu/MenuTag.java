@@ -65,17 +65,7 @@ public class MenuTag extends VelocityTag
 		ctx.put("req", req );
 		ctx.put("res", res );
 		
-		RollerRequest rreq = RollerRequest.getRollerRequest(req);
-		rreq.setPageContext(pageContext);
-		try
-		{
-			ContextLoader.setupContext( ctx, rreq, res );
-		}
-		catch (RollerException e)
-		{
-			// superclass says I can't throw an exception
-			mLogger.error(e);
-		}
+                ContextLoader.loadToolboxContext(req, res, ctx);
 	}
 
 }
