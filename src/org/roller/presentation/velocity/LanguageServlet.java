@@ -39,7 +39,7 @@ import org.roller.presentation.RollerContext;
  * @author <a href="mailto:molen@mail.com">Jaap van der Molen</a>
  * @version $Revision: 1.8 $
  */
-public class LanguageServlet extends BasePageServlet {
+public class LanguageServlet extends PageServlet {
     
     static final long serialVersionUID = -6548723098429557183L;
     
