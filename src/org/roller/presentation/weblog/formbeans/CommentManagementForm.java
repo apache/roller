@@ -120,7 +120,7 @@ public class CommentManagementForm
             DateFormat.getDateInstance(DateFormat.SHORT, locale);
         if (null != getEndDateString() && getEndDateString().trim().length() > 0) {
             try {
-                endDate = DateUtil.getStartOfDay(df.parse(getEndDateString()));
+                endDate = DateUtil.getEndOfDay(df.parse(getEndDateString()));
             } catch (ParseException e) {
                 // what!?! calendar widget handed us a bad date?
                 logger.debug("Parsing endDate", e);
