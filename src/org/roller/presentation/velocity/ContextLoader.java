@@ -471,7 +471,7 @@ public class ContextLoader
     private static final String TOOLBOX_MANAGER_KEY = 
         "org.roller.presentation.velocity.toolboxManager";
 
-    private static ToolboxContext loadToolboxContext(
+    public static ToolboxContext loadToolboxContext(
                     HttpServletRequest request, HttpServletResponse response, Context ctx) 
     {
         mLogger.debug("Loading toolbox context");
