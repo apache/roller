@@ -11,6 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.roller.RollerException;
+import org.roller.business.referrers.ReferrerQueueManager;
+import org.roller.business.referrers.ReferrerQueueManagerImpl;
 
 import org.roller.business.utils.UpgradeDatabase;
 
@@ -104,6 +106,10 @@ public abstract class RollerImpl implements Roller {
             mThemeManager = new ThemeManagerImpl();
         }
         return mThemeManager;
+    }
+    
+    public ReferrerQueueManager getReferrerQueueManager() {
+        return ReferrerQueueManagerImpl.getInstance();
     }
     
     /**
@@ -320,6 +326,7 @@ public abstract class RollerImpl implements Roller {
 
      public void shutdown() {
         try {
+            if(getReferrerQueueManager() != null) getReferrerQueueManager().shutdown();
             if (mIndexManager != null) mIndexManager.shutdown();
             if (mThreadManager != null) mThreadManager.shutdown();
         } catch(Exception e) {

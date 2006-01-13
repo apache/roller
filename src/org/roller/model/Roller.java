@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import org.roller.RollerException;
 import org.roller.business.PersistenceStrategy;
+import org.roller.business.referrers.ReferrerQueueManager;
 import org.roller.pojos.UserData;
 
 
@@ -46,6 +47,11 @@ public interface Roller extends Serializable {
      * @throws RollerException If unable to create or return RefererManager.
      */
     public RefererManager getRefererManager() throws RollerException;
+    
+    /**
+     * Get ReferrerQueueManager.
+     */
+    public ReferrerQueueManager getReferrerQueueManager();
     
     /** 
      * Get RefererManager associated with this Roller instance.

@@ -2,7 +2,6 @@ package org.roller.presentation.filters;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -11,14 +10,18 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.roller.model.RefererManager;
+import org.roller.business.referrers.IncomingReferrer;
+import org.roller.business.referrers.ReferrerQueueManager;
 import org.roller.model.RollerFactory;
 import org.roller.presentation.RollerContext;
-import org.roller.presentation.RollerRequest;
 import org.roller.config.RollerConfig;
+import org.roller.model.UserManager;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.WeblogPageRequest;
+import org.roller.util.SpamChecker;
+
 
 /**
  * Keep track of referers.
@@ -27,88 +30,145 @@ import org.roller.config.RollerConfig;
  * @web.filter name="RefererFilter"
  */
 public class RefererFilter implements Filter {
-    private FilterConfig mFilterConfig = null;
-    private static Log mLogger = LogFactory.getFactory().getInstance(RefererFilter.class);
-    private static Pattern robotPattern = null;
+    
+    private static Log mLogger = LogFactory.getLog(RefererFilter.class);
     private static final String ROBOT_PATTERN_PROP_NAME = "referrer.robotCheck.userAgentPattern";
-
-    /**
-     * destroy
-     */
-    public void destroy() {
-    }
-
+    
+    private FilterConfig mFilterConfig = null;
+    private static Pattern robotPattern = null;
+    
+    
     /**
      * doFilter
      */
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) 
+            throws IOException, ServletException {
+        
         HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
+        boolean ignoreReferrer = false;
         boolean isRefSpammer = false;
         boolean isRobot = false;
-
+        String referrerUrl = request.getHeader("Referer");
+        String requestUrl = request.getRequestURL().toString();
+        
+        // parse the incoming request and make sure it's a valid page request
+        WeblogPageRequest pageRequest = null;
         try {
-            if (robotPattern != null) {
-                // If the pattern is present, we check for whether the User-Agent matches,
-                // and set isRobot if so.  Currently, all referral processing, including
-                // spam check, is skipped for robots identified in this way.
-                String userAgent = request.getHeader("User-Agent");
-                isRobot = (userAgent != null && userAgent.length() > 0 && robotPattern.matcher(userAgent).matches());
+            pageRequest = new WeblogPageRequest(request);
+        } catch(Exception e) {
+            // illegal page request
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            mLogger.warn("Illegal page request: "+request.getRequestURL());
+            return;
+        }
+        
+        // determine if this request came from a robot
+        if (robotPattern != null) {
+            // If the pattern is present, we check for whether the User-Agent matches,
+            // and set isRobot if so.  Currently, all referral processing, including
+            // spam check, is skipped for robots identified in this way.
+            String userAgent = request.getHeader("User-Agent");
+            isRobot = (userAgent != null && userAgent.length() > 0 && robotPattern.matcher(userAgent).matches());
+        }
+        
+        // validate the referrer
+        if (pageRequest != null && pageRequest.getWeblogHandle() != null && !isRobot) {
+            String handle = pageRequest.getWeblogHandle();
+            
+            RollerContext rctx =
+                    RollerContext.getRollerContext(mFilterConfig.getServletContext());
+            
+            // Base page URLs, with and without www.
+            String basePageUrlWWW =
+                    rctx.getAbsoluteContextUrl(request)+"/page/"+handle;
+            String basePageUrl = basePageUrlWWW;
+            if ( basePageUrlWWW.startsWith("http://www.") ) {
+                // chop off the http://www.
+                basePageUrl = "http://"+basePageUrlWWW.substring(11);
             }
-
-            if (!isRobot) {
-                RollerRequest rreq = RollerRequest.getRollerRequest(request);
-                RollerContext rctx = RollerContext.getRollerContext(mFilterConfig.getServletContext());
-
-                if (rreq != null && rreq.getWebsite() != null) {
-                    String handle = rreq.getWebsite().getHandle();
-
-                    // Base page URLs, with and without www.
-                    String basePageUrlWWW = rctx.getAbsoluteContextUrl(request) + "/page/" + handle;
-                    String basePageUrl = basePageUrlWWW;
-                    if (basePageUrlWWW.startsWith("http://www.")) {
-                        // chop off the http://www.
-                        basePageUrl = "http://" + basePageUrlWWW.substring(11);
-                    }
-
-                    // Base comment URLs, with and without www.
-                    String baseCommentsUrlWWW = rctx.getAbsoluteContextUrl(request) + "/comments/" + handle;
-                    String baseCommentsUrl = baseCommentsUrlWWW;
-                    if (baseCommentsUrlWWW.startsWith("http://www.")) {
-                        // chop off the http://www.
-                        baseCommentsUrl = "http://" + baseCommentsUrlWWW.substring(11);
-                    }
-
-                    // Don't process hits from same user's blogs as referers by
-                    // ignoring Don't process referer from pages that start with base URLs.
-                    String referer = request.getHeader("Referer");
-                    if (referer == null || (!referer.startsWith(basePageUrl) && !referer.startsWith(basePageUrlWWW) && !referer.startsWith(baseCommentsUrl) && !referer.startsWith(baseCommentsUrlWWW)))
-                    {
-                        RefererManager refMgr = RollerFactory.getRoller().getRefererManager();
-                        isRefSpammer = refMgr.processRequest(rreq);
+            
+            // ignore referres coming from users own blog
+            if (referrerUrl == null ||
+                    (!referrerUrl.startsWith(basePageUrl) &&
+                    !referrerUrl.startsWith(basePageUrlWWW))) {
+                
+                String selfSiteFragment = "/page/"+handle;
+                WebsiteData weblog = null;
+                
+                // lookup the weblog now
+                try {
+                    UserManager userMgr = RollerFactory.getRoller().getUserManager();
+                    weblog = userMgr.getWebsiteByHandle(handle);
+                } catch(Exception e) {
+                    // if we can't get the WebsiteData object we can't continue
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    mLogger.error("Error retrieving weblog: "+handle, e);
+                    return;
+                }
+                
+                // validate the referrer
+                if ( referrerUrl != null ) {
+                    // ignore a Referrer from the persons own blog
+                    if (referrerUrl.indexOf(selfSiteFragment) != -1) {
+                        referrerUrl = null;
+                        ignoreReferrer = true;
                     } else {
-                        if (mLogger.isDebugEnabled()) {
-                            mLogger.debug("Ignoring referer=" + referer);
+                        // treat editor referral as direct
+                        int lastSlash = requestUrl.indexOf("/", 8);
+                        if (lastSlash == -1) lastSlash = requestUrl.length();
+                        String requestSite = requestUrl.substring(0, lastSlash);
+                        
+                        if (referrerUrl.matches(requestSite + ".*\\.do.*")) {
+                            referrerUrl = null;
+                        } else {
+                            // If referer URL is blacklisted, throw it out
+                            isRefSpammer = SpamChecker.checkReferrer(weblog, referrerUrl);
                         }
                     }
                 }
+                
+            } else {
+                mLogger.debug("Ignoring referer = "+referrerUrl);
+                ignoreReferrer = true;
             }
-        } catch (Exception e) {
-            mLogger.error("Processing referer", e);
         }
-
+        
+        // pre-processing complete, let's finish the job
         if (isRefSpammer) {
-            HttpServletResponse response = (HttpServletResponse) res;
+            // spammers get a 403 Access Denied
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
-        } else {
-            chain.doFilter(req, res);
+            return;
+            
+        } else if(!isRobot && !ignoreReferrer) {
+            // referrer is valid, lets record it
+            try {
+                IncomingReferrer referrer = new IncomingReferrer();
+                referrer.setReferrerUrl(referrerUrl);
+                referrer.setRequestUrl(requestUrl);
+                referrer.setWeblogHandle(pageRequest.getWeblogHandle());
+                referrer.setWeblogAnchor(pageRequest.getWeblogAnchor());
+                referrer.setWeblogDateString(pageRequest.getWeblogDate());
+                
+                ReferrerQueueManager refQueue =
+                        RollerFactory.getRoller().getReferrerQueueManager();
+                refQueue.processReferrer(referrer);
+            } catch(Exception e) {
+                mLogger.error("Error processing referrer", e);
+            }
         }
+        
+        // referrer processed, continue with request
+        chain.doFilter(req, res);
     }
-
+    
+    
     /**
      * init
      */
     public void init(FilterConfig filterConfig) throws ServletException {
         mFilterConfig = filterConfig;
+        
         String robotPatternStr = RollerConfig.getProperty(ROBOT_PATTERN_PROP_NAME);
         if (robotPatternStr != null && robotPatternStr.length() >0) {
             // Parse the pattern, and store the compiled form.
@@ -121,4 +181,11 @@ public class RefererFilter implements Filter {
             }
         }
     }
+    
+    
+    /**
+     * destroy
+     */
+    public void destroy() {}
+    
 }
