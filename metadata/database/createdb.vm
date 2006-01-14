@@ -105,7 +105,8 @@ create table website (
     blacklist            $TEXT_SQL_TYPE,
     defaultallowcomments $BOOLEAN_SQL_TYPE_TRUE not null,
     defaultcommentdays   integer default 7 not null,
-    commentmod           $BOOLEAN_SQL_TYPE_FALSE not null    
+    commentmod           $BOOLEAN_SQL_TYPE_FALSE not null,
+    displaycnt        integer default 15 not null
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);

@@ -70,6 +70,12 @@ WebsiteFormAction.WebsitePageModel model =
        </td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.entryDisplayCount" /></td>
+        <td class="field"><html:text property="entryDisplayCount" size="4"/></input></td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
 
     
     <%-- ***** Comment settings ***** --%>

@@ -39,8 +39,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
 {
     public static final long serialVersionUID = 206437645033737127L;
     
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(WebsiteData.class);
+    private static Log mLogger = LogFactory.getLog(WebsiteData.class);
     
     // Simple properties
     private String  id = null;
@@ -65,6 +64,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     private Boolean defaultAllowComments = Boolean.TRUE;
     private int defaultCommentDays = 0;
     private Boolean moderateComments = Boolean.FALSE;
+    private int entryDisplayCount = 15;
        
     // Associated objects
     private UserData creator = null; // TODO: decide if website.user is needed
@@ -906,7 +906,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         this.timeZone = other.getTimeZone();
         this.defaultPlugins = other.getDefaultPlugins();
         this.enabled = other.getEnabled();
-        this.dateCreated = getDateCreated();
+        this.dateCreated = other.getDateCreated();
+        this.entryDisplayCount = other.getEntryDisplayCount();
     }
     
     /**
@@ -1054,6 +1055,23 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     public void setAdminUserCount(int adminUserCount) 
     {
         // no-op
+    }
+
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="displaycnt" not-null="true"
+     */
+    public int getEntryDisplayCount() {
+        return entryDisplayCount;
+    }
+
+    /**
+     * @ejb:persistent-field
+     */
+    public void setEntryDisplayCount(int entryDisplayCount) {
+        this.entryDisplayCount = entryDisplayCount;
     }
     
 }
