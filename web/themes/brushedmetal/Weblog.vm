@@ -38,7 +38,7 @@
       </div> <!-- sidebar-a -->
 
       <div id="content">
-         #showWeblogEntries("_day" 15 )<br/>
+         #displayWeblogEntries()<br/>
          #showNextPreviousLinks()
          <div id="footer">
              Theme Design by <a href="http://www.bryanbell.com">Bryan Bell</a>

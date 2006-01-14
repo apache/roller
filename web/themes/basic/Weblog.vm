@@ -5,7 +5,7 @@
 
     #showNextPreviousLinks()
 
-    #showWeblogEntries("_day" 15)
+    #displayWeblogEntries()
 </div>
 <div class="rightbar">
     <h2>Calendar</h2>

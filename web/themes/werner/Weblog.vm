@@ -20,7 +20,7 @@
        #showWeblogCategoryChooser()
    </div>
    #showNextPreviousLinks()
-   #showWeblogEntries("_day" 10)<br/>
+   #displayWeblogEntries()<br/>
 </div>
 
 <div id="SideBar">

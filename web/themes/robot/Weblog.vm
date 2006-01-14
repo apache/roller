@@ -28,7 +28,7 @@
       #showWeblogCategoryChooser()<br>
     </center>
     #showNextPreviousLinks()
-    #showWeblogEntries("_day" 15)
+    #displayWeblogEntries()
     <hr />
     #showReferers( 40 25 )
 </div>

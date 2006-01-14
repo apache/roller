@@ -124,7 +124,7 @@ function deleteCookie (name) {
     </tr>
 </table>
 #showNextPreviousLinks()
-#showWeblogEntries("_day" 15)
+#displayWeblogEntries()
 
 <div id="Controls" class="controls"></div>
 

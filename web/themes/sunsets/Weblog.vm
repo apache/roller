@@ -79,7 +79,7 @@
 
     #showNextPreviousLinks()
     <div id="entries">
-    #showWeblogEntries("_day" 10 )
+    #displayWeblogEntries()
     </div>
 </div>
 

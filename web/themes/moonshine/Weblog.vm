@@ -109,7 +109,7 @@ your blog page, if you put them somwhere else, just adjust the paths for those f
 
     #showNextPreviousLinks()
 
-    #showWeblogEntries("_day" 5)
+    #displayWeblogEntries()
 </div>
 
 <div id="copyrightnotice">
