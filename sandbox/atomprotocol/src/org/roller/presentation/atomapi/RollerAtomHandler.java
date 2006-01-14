@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
 import org.roller.model.FileManager;
 import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.UserData;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.WeblogCategoryData;
@@ -98,7 +99,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public RollerAtomHandler(HttpServletRequest request) {
         mRequest = request;
-        mRoller = RollerContext.getRoller(request);
+        mRoller = RollerFactory.getRoller();
         mRollerContext = RollerContext.getRollerContext(request);
         
         // TODO: decide what to do about authentication, is WSSE going to fly?

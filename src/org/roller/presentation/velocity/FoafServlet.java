@@ -114,7 +114,7 @@ public class FoafServlet extends VelocityServlet {
         
         // see if foaf:weblog is different Page
         WebsiteData website = rreq.getWebsite();
-        UserManager usrMgr = RollerContext.getRoller(request).getUserManager();
+        UserManager usrMgr = RollerFactory.getRoller().getUserManager();
         org.roller.pojos.Template weblog = website.getPageByName("Weblog");
         
         // if weblog != homepage, add to context

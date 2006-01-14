@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.model.Roller;
-import org.roller.presentation.RollerContext;
+import org.roller.model.RollerFactory;
 
 
 /**
@@ -38,7 +38,7 @@ public class PersistenceSessionFilter implements Filter {
         
         mLogger.debug("Entered PersistenceSessionFilter");
         
-        Roller roller = RollerContext.getRoller((HttpServletRequest)request);
+        Roller roller = RollerFactory.getRoller();
         try {
             chain.doFilter(request, response);
         } finally {

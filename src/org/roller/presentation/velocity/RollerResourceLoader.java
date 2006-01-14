@@ -10,9 +10,8 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.roller.RollerException;
-import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.WeblogTemplate;
-import org.roller.presentation.RollerContext;
 
 
 /**
@@ -28,23 +27,13 @@ public class RollerResourceLoader extends ResourceLoader {
     
     private static Log mLogger = LogFactory.getLog(RollerResourceLoader.class);
     
+    
     public void init(ExtendedProperties configuration) {
         if (mLogger.isDebugEnabled()) {
             mLogger.debug(configuration);
         }
     }
     
-    /**
-     * The web-app startup timing may be tricky.  In the case that roller is
-     * null (which means that RollerContext may not have had a chance to call
-     * RollerFactory yet) ask RollerContext for Roller because it has the
-     * information necessary for RollerFactory to do its job.
-     *
-     * @return Roller
-     */
-    private Roller getRoller() {
-        return RollerContext.getRoller( null );
-    }
     
     public boolean isSourceModified(Resource resource) {
         return (resource.getLastModified() !=
@@ -71,7 +60,9 @@ public class RollerResourceLoader extends ResourceLoader {
         }
         
         try {
-            WeblogTemplate page = getPage( name );
+            WeblogTemplate page = 
+                    RollerFactory.getRoller().getUserManager().retrievePage(name);
+            
             if (page == null) {
                 throw new ResourceNotFoundException(
                         "RollerResourceLoader: page \"" +
@@ -107,7 +98,8 @@ public class RollerResourceLoader extends ResourceLoader {
          */
         String name = resource.getName();
         try {
-            WeblogTemplate page = getPage( name );
+            WeblogTemplate page = 
+                    RollerFactory.getRoller().getUserManager().retrievePage(name);
             
             if (mLogger.isDebugEnabled()) {
                 mLogger.debug(name + ": resource=" + resource.getLastModified() +
@@ -118,13 +110,6 @@ public class RollerResourceLoader extends ResourceLoader {
             mLogger.error( "Error " + i_operation, re );
         }
         return 0;
-    }
-    
-    
-    public WeblogTemplate getPage(String id) throws RollerException {
-        if (getRoller() == null) throw new RollerException(
-                "RollerResourceLoader.getRoller() returned NULL");
-        return getRoller().getUserManager().retrievePage(id); //retrievePageReadOnly( id );
     }
     
 }

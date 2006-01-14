@@ -64,35 +64,16 @@ import net.sf.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
  */
 public class RollerContext extends ContextLoaderListener implements ServletContextListener
 {
-    private static Log mLogger =
-        LogFactory.getFactory().getInstance(RollerContext.class);
+    private static Log mLogger = LogFactory.getLog(RollerContext.class);
 
     private String mVersion = null;
     private String mBuildTime = null;
     private String mBuildUser = null;
 
-    public static final String ROLLER_KEY = "session.roller";
     public static final String ROLLER_CONTEXT = "roller.context";
-    public static final String USER_RESOURCES = "/resources";
-    public static final String VERSION_KEY = "org.roller.version";
-    public static final String MEMDEBUG_KEY = "org.roller.memdebug";
-    public static final String INDEX_MGR_KEY = "org.roller.indexMgr";
-    public static final String HTTP_PORT = "http_port";
-    public static final String HTTPS_PORT = "https_port";
-    public static final String HTTPS_HEADER_NAME = "https_header_name";
-    public static final String HTTPS_HEADER_VALUE = "https_header_value";
-    private static final String HOURLY_TASK_KEY = "roller.hourly.tasks";
-    private static final String DAILY_TASK_KEY = "roller.daily.tasks";
-    
-    private static final String ROLLER_IMPL_KEY 
-        = "org.roller.persistence";
-    
-    private static final String ROLLER_COMMENT_AUTH_KEY 
-        = "org.roller.commentAuthenticatorClass";
 
     private static ServletContext mContext = null;
     private static Authenticator mAuthenticator = null;
-    private static CommentAuthenticator mCommentAuthenticator = null;
     private final SynchronizedInt mSessionCount = new SynchronizedInt(0);
     private boolean mMemDebug = false;
 
@@ -147,10 +128,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
      */
     public void contextInitialized(ServletContextEvent sce)
     {
-        if (mLogger.isDebugEnabled())
-        {
-            mLogger.debug("RollerContext initializing");
-        }
+        mLogger.debug("RollerContext initializing");
 
         // Save context in self and self in context
         mContext = sce.getServletContext();
@@ -215,10 +193,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
                 mMemDebug = true;
             }
 
-            if (mLogger.isDebugEnabled())
-            {
-                mLogger.debug("RollerContext initialization complete");
-            }
+            mLogger.debug("RollerContext initialization complete");
         }
         catch (Throwable t)
         {
@@ -437,16 +412,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         }
     }
 
-    //------------------------------------------------------------------------
-
-    /**
-     * Get an instance of Roller from the RollerFactory.
-     * If one does not exist, tell Factory to create new one.
-     */
-    public static Roller getRoller(HttpServletRequest req)
-    {
-        return RollerFactory.getRoller();
-    }
 
     //------------------------------------------------------------------------
 

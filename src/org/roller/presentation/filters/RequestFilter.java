@@ -59,7 +59,7 @@ public class RequestFilter implements Filter {
         HttpSession session = ((HttpServletRequest)req).getSession();
         HttpServletRequest request = (HttpServletRequest)req;
         HttpServletResponse response = (HttpServletResponse)res;
-        Roller roller = RollerContext.getRoller( request );
+        Roller roller = RollerFactory.getRoller();
         RollerRequest rreq = null;
         try {
             rreq = RollerRequest.getRollerRequest(
