@@ -83,7 +83,7 @@
 
                   #showWeblogCategoryChooser()<br>
                   #showNextPreviousLinks()
-                  #showWeblogEntries("_day" 15 )
+                  #displayWeblogEntries()
                   <br>
 
                </td>

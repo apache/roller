@@ -63,7 +63,7 @@
 
               #showNextPreviousLinks()
 
-              #showWeblogEntries("_day" 15)
+              #displayWeblogEntries()
 
               <hr size="1">
            </td>

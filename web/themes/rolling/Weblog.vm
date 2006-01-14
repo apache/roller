@@ -6,7 +6,7 @@
        #showWeblogCategoryChooser()
    </div>
     #showNextPreviousLinks()
-    #showWeblogEntries("_day" 15 )<br/>
+    #displayWeblogEntries()<br/>
    #includePage("_badges")
 </div>
 

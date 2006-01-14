@@ -20,7 +20,7 @@
                     <h3>#showWebsiteDescription()</h3>
                     #showWeblogCategoryChooser()<br>
                     #showNextPreviousLinks()
-                    #showWeblogEntries("_day" 5)
+                    #displayWeblogEntries()
                 </td>
                 <td valign="top" bgcolor="#ffffff" width="20%">
                     <br>#showWeblogCalendar()<br><br>

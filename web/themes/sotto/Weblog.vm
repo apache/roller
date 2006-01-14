@@ -65,7 +65,7 @@
     <div id="midColumn">
         <div class="standardSpacer">&nbsp;</div>
         #showNextPreviousLinks()
-        #showWeblogEntries("_day" 15)
+        #displayWeblogEntries()
     </div>
 
     <div id="leftColumn">
