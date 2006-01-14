@@ -30,10 +30,21 @@
 <%@ page import="org.roller.presentation.LanguageUtil" %>
 
 <%   
-// fmt:setLocale doesn't accept an expression, hence this hack
-Config.set(pageContext, Config.FMT_LOCALE, 
-        LanguageUtil.getViewLocale(request), pageContext.PAGE_SCOPE); 
+// see if we have an authenticated user so we can set the display locale
+RollerSession rSession = RollerSession.getRollerSession(request);
+UserData mUser = null;
+if(rSession != null) {
+    mUser = rSession.getAuthenticatedUser();
+}
+
+if(mUser != null) {
+    request.setAttribute("mLocale", mUser.getLocale());
+} else {
+    request.setAttribute("mLocale", 
+            LanguageUtil.getViewLocale(request).getDisplayName());
+}
 %>
+<fmt:setLocale value="${mLocale}" />
 <fmt:setBundle basename="ApplicationResources" />
 
 <%-- Set Struts tags to use XHTML --%>
