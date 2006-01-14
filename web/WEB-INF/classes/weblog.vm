@@ -160,6 +160,7 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
  * @param category   Only display weblog entries from this category.
  *#
 #macro( showWeblogEntriesInCategory $pageName $maxEntries $category )
+    #set( $maxEntries = $website.entryDisplayCount )
     #if ( $pageModel.getWeblogEntry() )
         #set( $entry = $pageModel.getWeblogEntry() )
     #end
@@ -212,6 +213,15 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
  *#
 #macro( showWeblogEntries $pageName $maxEntries )
 #showWeblogEntriesInCategory($pageName $maxEntries 'nil')
+#end
+
+#**
+ * Shows weblog entries using the standard "_day" template for
+ * the display of each day. The number of entries to display is controlled
+ * by the entryDisplayCount property under weblog settings.
+ *#
+#macro( displayWeblogEntries )
+#showWeblogEntriesInCategory("_day" 15 'nil')
 #end
 
 #**

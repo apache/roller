@@ -18,3 +18,7 @@ update website set commentmod=$BOOLEAN_FALSE, defaultallowcomments=$BOOLEAN_TRUE
 
 -- If you don't already have this, you need it:
 create index we_status_idx on weblogentry(status);
+
+
+-- Add weblog displaydays column
+#addColumnNotNull("website" "displaycnt" "integer" "15")
