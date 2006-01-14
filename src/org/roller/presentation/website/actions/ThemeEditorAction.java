@@ -279,6 +279,7 @@ public class ThemeEditorAction extends DispatchAction {
                         String username = rses.getAuthenticatedUser().getUserName();
                         website.setEditorTheme(newTheme);
                         website.save();
+                        roller.commit();
                         
                         mLogger.debug("Saved theme "+newTheme+
                                 " for "+username);
