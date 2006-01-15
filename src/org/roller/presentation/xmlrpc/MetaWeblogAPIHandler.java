@@ -450,7 +450,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
     {       
         RollerRequest rreq = RollerRequest.getRollerRequest();
         HttpServletRequest request = rreq.getRequest();
-        RollerContext rollerCtx = RollerContext.getRollerContext(request);
+        RollerContext rollerCtx = RollerContext.getRollerContext();
         String permalink = 
             rollerCtx.getAbsoluteContextUrl(request) + entry.getPermaLink();
         
@@ -480,7 +480,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
     {
         RollerRequest rreq = RollerRequest.getRollerRequest();
         HttpServletRequest req = rreq.getRequest();
-        String contextUrl = RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
+        String contextUrl = RollerContext.getRollerContext().getAbsoluteContextUrl(req);
 
         Hashtable struct = new Hashtable();
         struct.put("description", category.getPath());

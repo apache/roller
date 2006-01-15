@@ -90,8 +90,8 @@ public class PageHelper
         PagePluginManager ppmgr = roller.getPagePluginManager();
         mPagePlugins = ppmgr.createAndInitPagePlugins(
                 mWebsite, 
-                RollerContext.getRollerContext(request).getServletContext(),
-                RollerContext.getRollerContext(request).getAbsoluteContextUrl(),
+                RollerContext.getRollerContext().getServletContext(),
+                RollerContext.getRollerContext().getAbsoluteContextUrl(),
                 mVelocityContext);
     }
    

@@ -233,7 +233,7 @@ public class PingSetupAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(req);
-            String absoluteUrl = RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
+            String absoluteUrl = RollerContext.getRollerContext().getAbsoluteContextUrl(req);
             PingTargetData pingTarget = select(rreq);
             WebsiteData website = rreq.getWebsite();
             try

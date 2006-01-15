@@ -212,7 +212,7 @@ public class InviteMemberAction extends DispatchAction
                 String content;
                 
                 // Figure URL to entry edit page
-                RollerContext rc = RollerContext.getRollerContext(request);
+                RollerContext rc = RollerContext.getRollerContext();
                 String rootURL = rc.getAbsoluteContextUrl(request);
                 if (rootURL == null || rootURL.trim().length()==0)
                 {
