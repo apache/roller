@@ -445,8 +445,7 @@ public class RollerAtomHandler implements AtomHandler {
     public Entry getMedia(String[] pathInfo) throws Exception {
         String handle = pathInfo[0];
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
-        String uploadPath = RollerContext.getUploadPath(
-                mRequest.getSession(true).getServletContext());
+        String uploadPath = RollerFactory.getRoller().getFileManager().getUploadUrl();
         File resource = new File(uploadPath + File.separator + pathInfo[2]);
         return createAtomResourceEntry(website, resource);
     }

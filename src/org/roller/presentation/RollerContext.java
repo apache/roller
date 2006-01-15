@@ -394,34 +394,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     
     
     /**
-     *  Gets the hard-drive location of the upload directory.
-     */
-    public static String getUploadDir(ServletContext app) {
-        // ACK ... this really isn't the right place for this lookup!!
-        String uploaddir = null;
-        try {
-            uploaddir = RollerFactory.getRoller().getFileManager().getUploadDir();
-        } catch(Exception e) {}
-        
-        return uploaddir;
-    }
-    
-    
-    /**
-     * Gets the base url for the upload directory.
-     */
-    public static String getUploadPath(ServletContext app) {
-        // ACK ... why do this here??
-        String uploadurl = null;
-        try {
-            uploadurl = RollerFactory.getRoller().getFileManager().getUploadUrl();
-        } catch(Exception e) {}
-        
-        return uploadurl;
-    }
-    
-    
-    /**
      * RollerSpellCheck must be initialized with a dictionary file
      * so that it can return valid a SpellChecker.
      */

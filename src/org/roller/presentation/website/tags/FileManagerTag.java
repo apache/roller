@@ -15,6 +15,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
@@ -44,11 +45,10 @@ public class FileManagerTag extends TagSupport
         JspWriter pw = pageContext.getOut();
         try
         {
-            ServletContext app = pageContext.getServletContext();
-
             // get the root of the /resource directory
-            String dir = RollerContext.getUploadDir( app );
-
+            String uploadDir = RollerFactory.getRoller().getFileManager().getUploadDir();
+            String uploadPath = RollerFactory.getRoller().getFileManager().getUploadUrl();
+            
             HttpServletRequest request =
                 (HttpServletRequest)pageContext.getRequest();
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
@@ -69,7 +69,7 @@ public class FileManagerTag extends TagSupport
             // get the files
             String[] files = new String[0];
             int numFiles = 0;
-            File d = new File(dir + website.getHandle());
+            File d = new File(uploadDir + website.getHandle());
             if (d.mkdirs() || d.exists())
             {
                 files = this.fileList(d);
@@ -108,7 +108,7 @@ public class FileManagerTag extends TagSupport
 
                         fileLink = RequestUtils.printableURL(
                             RequestUtils.absoluteURL( request,
-                                RollerContext.getUploadPath( app ) +
+                                uploadPath +
                                 "/" + website.getHandle() + "/" + files[i] ) );
                         pw.print("<td class=\"rollertable\"><a href=\"" +
                             fileLink + "\">" + files[i] + "</a></td>");
