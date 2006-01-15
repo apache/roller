@@ -366,8 +366,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
                 HttpServletRequest request = rreq.getRequest();
                 
                 // TODO: build URL to uploaded file should be done in FileManager
-                String uploadPath = RollerContext.getUploadPath(
-                        request.getSession(true).getServletContext());
+                String uploadPath = RollerFactory.getRoller().getFileManager().getUploadUrl();
                 uploadPath += "/" + website.getHandle() + "/" + name;
                 String fileLink = RequestUtils.printableURL(
                         RequestUtils.absoluteURL(request, uploadPath));

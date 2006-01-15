@@ -6,8 +6,6 @@ package org.roller.presentation.weblog.actions;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,14 +18,14 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
+import org.roller.RollerException;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.weblog.formbeans.ImportEntriesForm;
 import org.roller.util.StringUtils;
-
 /**
  * TODO: revisit this class once Atom 1.0 support comes to Rome
  * @struts.action name="importEntries" path="/editor/importEntries"
@@ -66,9 +64,7 @@ public class ImportEntriesAction extends DispatchAction
                     WebsiteData website = rreq.getWebsite();
 
                     // load selected file
-                    ServletContext app =
-                            getServlet().getServletConfig().getServletContext();
-                    String dir = RollerContext.getUploadDir( app );
+                    String dir = RollerFactory.getRoller().getFileManager().getUploadDir();
                     File f = new File(dir + website.getHandle() +
                                       "/" + form.getImportFileName());
 
@@ -149,8 +145,13 @@ public class ImportEntriesAction extends DispatchAction
 
     private void getXmlFiles(ActionForm actionForm, RollerRequest rreq)
     {
-		ServletContext app = this.getServlet().getServletConfig().getServletContext();
-		String dir = RollerContext.getUploadDir( app );
+		String dir = null;
+                try {
+                    RollerFactory.getRoller().getFileManager().getUploadDir();
+                } catch(RollerException re) {
+                    // shouldn't happen
+                }
+                
 		File d = new File(dir + rreq.getWebsite().getHandle());
 		ArrayList xmlFiles = new ArrayList();
 		if (d.mkdirs() || d.exists())
