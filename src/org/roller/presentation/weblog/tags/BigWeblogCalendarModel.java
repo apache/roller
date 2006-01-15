@@ -129,8 +129,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel
         try 
         {
 			RollerRequest rreq = RollerRequest.getRollerRequest(mReq);
-			RollerContext rctx = 
-				RollerContext.getRollerContext(rreq.getServletContext());
+			RollerContext rctx = RollerContext.getRollerContext();
             StringBuffer sb = new StringBuffer();
             
             // get the 8 char YYYYMMDD datestring for day, returns null 

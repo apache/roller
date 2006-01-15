@@ -144,7 +144,7 @@ public class RollerRequest implements ParsedRequest
         }
         
         // Bind persistence session to authenticated user, if we have one
-        RollerContext rctx = RollerContext.getRollerContext(mContext); 
+        RollerContext rctx = RollerContext.getRollerContext(); 
         Authenticator auth = rctx.getAuthenticator();
         String userName = auth.getAuthenticatedUserName(mRequest);
         if (userName != null)

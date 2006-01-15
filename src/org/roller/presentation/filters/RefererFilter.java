@@ -84,8 +84,7 @@ public class RefererFilter implements Filter {
         if (pageRequest != null && pageRequest.getWeblogHandle() != null && !isRobot) {
             String handle = pageRequest.getWeblogHandle();
             
-            RollerContext rctx =
-                    RollerContext.getRollerContext(mFilterConfig.getServletContext());
+            RollerContext rctx = RollerContext.getRollerContext();
             
             // Base page URLs, with and without www.
             String basePageUrlWWW =

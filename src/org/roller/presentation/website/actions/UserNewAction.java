@@ -115,7 +115,7 @@ public class UserNewAction extends UserBaseAction
         UserFormEx form = (UserFormEx)actionForm;
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         ServletContext ctx = rreq.getServletContext();
-        RollerContext rollerContext = RollerContext.getRollerContext(ctx);
+        RollerContext rollerContext = RollerContext.getRollerContext();
 
         boolean reg_allowed = 
                 RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
