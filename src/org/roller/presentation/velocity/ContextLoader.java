@@ -74,7 +74,7 @@ public class ContextLoader {
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
         HttpServletRequest request = rreq.getRequest();
-        RollerContext rollerCtx = RollerContext.getRollerContext( request );
+        RollerContext rollerCtx = RollerContext.getRollerContext( );
         
         try {
             // Add page model object to context

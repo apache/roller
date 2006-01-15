@@ -243,7 +243,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
             RollerRequest rreq = RollerRequest.getRollerRequest();
             HttpServletRequest req = rreq.getRequest();
             String contextUrl =
-                RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
+                RollerContext.getRollerContext().getAbsoluteContextUrl(req);
             
             // populates user information to return as a result
             Hashtable result = new Hashtable();
@@ -290,7 +290,7 @@ public class BloggerAPIHandler extends BaseAPIHandler
                 RollerRequest rreq = RollerRequest.getRollerRequest();
                 HttpServletRequest req = rreq.getRequest();
                 String contextUrl =
-                    RollerContext.getRollerContext(req).getAbsoluteContextUrl(req);
+                    RollerContext.getRollerContext().getAbsoluteContextUrl(req);
                 
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
                 UserData user = umgr.getUser(userid);

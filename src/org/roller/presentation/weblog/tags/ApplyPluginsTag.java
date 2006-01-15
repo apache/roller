@@ -52,7 +52,7 @@ public class ApplyPluginsTag extends TagSupport {
         if (entry.getPlugins() != null) {
             RollerContext rctx = 
                 RollerContext.getRollerContext(
-                    (HttpServletRequest)pageContext.getRequest());
+);
             try {
                 PagePluginManager ppmgr = roller.getPagePluginManager();
                 Map plugins = ppmgr.createAndInitPagePlugins(

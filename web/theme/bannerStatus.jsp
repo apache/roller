@@ -1,6 +1,6 @@
 <%@ include file="/taglibs.jsp" %>
 <%
-RollerContext rctx = RollerContext.getRollerContext(request);
+RollerContext rctx = RollerContext.getRollerContext();
 RollerSession rollerSession = RollerSession.getRollerSession(request);
 RollerRequest rreq = RollerRequest.getRollerRequest(request);
 UserData user = rollerSession.getAuthenticatedUser();

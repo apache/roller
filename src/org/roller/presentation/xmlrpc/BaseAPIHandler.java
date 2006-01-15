@@ -118,7 +118,7 @@ public class BaseAPIHandler implements Serializable
             {    
                 // are passwords encrypted?
                 RollerContext rollerContext = 
-                    RollerContext.getRollerContext(rreq.getRequest());
+                    RollerContext.getRollerContext();
                 String encrypted = 
                         RollerConfig.getProperty("passwds.encryption.enabled");
                 //System.out.print("password was [" + password + "] ");
@@ -193,7 +193,7 @@ public class BaseAPIHandler implements Serializable
             {    
                 // are passwords encrypted?
                 RollerContext rollerContext = 
-                    RollerContext.getRollerContext(rreq.getRequest());
+                    RollerContext.getRollerContext();
                 String encrypted = 
                         RollerConfig.getProperty("passwds.encryption.enabled");
                 //System.out.print("password was [" + password + "] ");

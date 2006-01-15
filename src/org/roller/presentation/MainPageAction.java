@@ -37,7 +37,7 @@ public class MainPageAction extends Action {
             ActionMapping mapping, ActionForm form,
             HttpServletRequest req, HttpServletResponse res)
             throws Exception {
-        RollerContext rctx = RollerContext.getRollerContext(req);
+        RollerContext rctx = RollerContext.getRollerContext();
         
         req.setAttribute("version",rctx.getRollerVersion());
         req.setAttribute("buildTime",rctx.getRollerBuildTime());

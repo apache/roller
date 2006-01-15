@@ -98,7 +98,7 @@ public class FoafServlet extends VelocityServlet {
     private void setupContext(Context ctx, RollerRequest rreq) throws RollerException {
         
         HttpServletRequest request = rreq.getRequest();
-        RollerContext rollerCtx = RollerContext.getRollerContext( request );
+        RollerContext rollerCtx = RollerContext.getRollerContext( );
         RollerSession rses = RollerSession.getRollerSession(request);
         Roller roller = RollerFactory.getRoller();
         // ROLLER_2.0 : figure out how to fix FOAF servlet (does anybody use it?)

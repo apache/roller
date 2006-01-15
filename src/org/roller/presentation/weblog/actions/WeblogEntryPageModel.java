@@ -208,8 +208,8 @@ public class WeblogEntryPageModel extends BasePageModel
                 PagePluginManager ppmgr = roller.getPagePluginManager();
                 Map plugins = ppmgr.createAndInitPagePlugins(
                     getWebsite(),
-                    RollerContext.getRollerContext(request).getServletContext(),
-                    RollerContext.getRollerContext(request).getAbsoluteContextUrl(),
+                    RollerContext.getRollerContext().getServletContext(),
+                    RollerContext.getRollerContext().getAbsoluteContextUrl(),
                     new VelocityContext());
                 Iterator it = plugins.values().iterator();
                 while (it.hasNext()) list.add(it.next());
@@ -280,7 +280,7 @@ public class WeblogEntryPageModel extends BasePageModel
     public String getPermaLink() throws RollerException
     {
         String context = RollerContext
-            .getRollerContext(rollerRequest.getRequest())
+            .getRollerContext()
             .getAbsoluteContextUrl(rollerRequest.getRequest());
         return context + getWeblogEntry().getPermaLink();
     }

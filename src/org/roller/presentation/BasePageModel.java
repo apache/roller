@@ -63,7 +63,7 @@ public class BasePageModel
     
     public String getBaseURL()
     {
-        RollerContext rctx = RollerContext.getRollerContext(request);
+        RollerContext rctx = RollerContext.getRollerContext();
 		return rctx.getAbsoluteContextUrl(request);
 	}
 

@@ -100,7 +100,7 @@ public class RollerAtomHandler implements AtomHandler {
     public RollerAtomHandler(HttpServletRequest request) {
         mRequest = request;
         mRoller = RollerFactory.getRoller();
-        mRollerContext = RollerContext.getRollerContext(request);
+        mRollerContext = RollerContext.getRollerContext();
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         //mUsername = authenticateWSSE(request);

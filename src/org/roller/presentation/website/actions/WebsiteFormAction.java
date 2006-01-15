@@ -326,8 +326,8 @@ public final class WebsiteFormAction extends DispatchAction {
                     PagePluginManager ppmgr = roller.getPagePluginManager();
                     Map plugins = ppmgr.createAndInitPagePlugins(
                             getWebsite(),
-                            RollerContext.getRollerContext(request).getServletContext(),
-                            RollerContext.getRollerContext(request).getAbsoluteContextUrl(),
+                            RollerContext.getRollerContext().getServletContext(),
+                            RollerContext.getRollerContext().getAbsoluteContextUrl(),
                             new VelocityContext());
                     Iterator it = plugins.values().iterator();
                     while (it.hasNext()) list.add(it.next());

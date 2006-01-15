@@ -122,7 +122,7 @@ public class CreateWebsiteAction extends DispatchAction
         }
         else try
         {
-            RollerContext rollerContext = RollerContext.getRollerContext(request);
+            RollerContext rollerContext = RollerContext.getRollerContext();
             UserData user = 
                 RollerSession.getRollerSession(request).getAuthenticatedUser();
             UserManager mgr = roller.getUserManager(); 
@@ -218,7 +218,7 @@ public class CreateWebsiteAction extends DispatchAction
             throws RollerException
         {
             super("createWebsite.title", request, response, mapping);
-            RollerContext rollerContext = RollerContext.getRollerContext(request);
+            RollerContext rollerContext = RollerContext.getRollerContext();
             Roller roller = RollerFactory.getRoller();
             ThemeManager themeMgr = roller.getThemeManager();
             themes = themeMgr.getEnabledThemesList();

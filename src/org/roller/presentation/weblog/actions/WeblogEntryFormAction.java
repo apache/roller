@@ -431,7 +431,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                 to = (String[])reviewers.toArray(new String[reviewers.size()]);
                 
                 // Figure URL to entry edit page
-                RollerContext rc = RollerContext.getRollerContext(request);
+                RollerContext rc = RollerContext.getRollerContext();
                 String rootURL = rc.getAbsoluteContextUrl(request);
                 if (rootURL == null || rootURL.trim().length()==0)
                 {
@@ -803,7 +803,7 @@ public final class WeblogEntryFormAction extends DispatchAction
                    request.getParameter(RollerRequest.WEBLOGENTRYID_KEY);
            }
            Roller roller = RollerFactory.getRoller();
-           RollerContext rctx= RollerContext.getRollerContext(request);
+           RollerContext rctx= RollerContext.getRollerContext();
            WeblogManager wmgr= roller.getWeblogManager();
            entry = wmgr.retrieveWeblogEntry(entryid);
 
@@ -814,8 +814,8 @@ public final class WeblogEntryFormAction extends DispatchAction
                PagePluginManager ppmgr = roller.getPagePluginManager();
                Map plugins = ppmgr.createAndInitPagePlugins( 
                    entry.getWebsite(),
-                   RollerContext.getRollerContext(request).getServletContext(),
-                   RollerContext.getRollerContext(request).getAbsoluteContextUrl(),
+                   RollerContext.getRollerContext().getServletContext(),
+                   RollerContext.getRollerContext().getAbsoluteContextUrl(),
                    new VelocityContext());
                
                WeblogEntryData applied = 

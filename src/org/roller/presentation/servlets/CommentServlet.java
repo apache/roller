@@ -273,7 +273,7 @@ public class CommentServlet extends HttpServlet {
                         CommentData cd) 
             throws MalformedURLException {
         
-        RollerContext rc = RollerContext.getRollerContext(request);
+        RollerContext rc = RollerContext.getRollerContext();
         ResourceBundle resources = ResourceBundle.getBundle(
                 "ApplicationResources",LanguageUtil.getViewLocale(request));
 
