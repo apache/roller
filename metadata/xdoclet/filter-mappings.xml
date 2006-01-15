@@ -77,32 +77,32 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
 
 <!-- Compression Filters -->
 <filter-mapping>
-    <filter-name>PageGzipFilter</filter-name>
+    <filter-name>CompressionFilter</filter-name>
     <url-pattern>/page/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
-    <filter-name>PageGzipFilter</filter-name>
+    <filter-name>CompressionFilter</filter-name>
     <url-pattern>/planet.do</url-pattern>
 </filter-mapping>
 <filter-mapping>
-    <filter-name>PageGzipFilter</filter-name>
+    <filter-name>CompressionFilter</filter-name>
     <url-pattern>/main.do</url-pattern>
 </filter-mapping>
 
 <filter-mapping>
-    <filter-name>RssGzipFilter</filter-name>
+    <filter-name>CompressionFilter</filter-name>
     <url-pattern>/atom/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
-    <filter-name>RssGzipFilter</filter-name>
+    <filter-name>CompressionFilter</filter-name>
     <url-pattern>/rss/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
-    <filter-name>RssGzipFilter</filter-name>
+    <filter-name>CompressionFilter</filter-name>
     <url-pattern>/flavor/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
-    <filter-name>RssGzipFilter</filter-name>
+    <filter-name>CompressionFilter</filter-name>
     <url-pattern>/foaf/*</url-pattern>
 </filter-mapping>
 

@@ -22,21 +22,20 @@ import org.apache.commons.logging.LogFactory;
  * Sun Microsystems Press, http://www.moreservlets.com/.
  * &copy; 2002 Marty Hall; may be freely used or adapted.
  *
- * @web.filter name="PageGzipFilter"
+ * @web.filter name="CompressionFilter"
  */
 
 public class CompressionFilter implements Filter {
     
     private static Log mLogger = LogFactory.getLog(CompressionFilter.class);
     
+    
     /** 
-     * If browser does not support gzip, invoke resource
-     * normally. If browser <I>does</I> support gzip,
-     * set the Content-Encoding response header and
-     * invoke resource with a wrapped response that
-     * collects all the output. Extract the output
-     * and write it into a gzipped byte array. Finally,
-     * write that array to the client's output stream.
+     * If browser does not support gzip, invoke resource normally. If browser 
+     * does support gzip, set the Content-Encoding response header and invoke 
+     * resource with a wrapped response that collects all the output. Extract 
+     * the output and write it into a gzipped byte array. Finally, write that 
+     * array to the client's output stream.
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
@@ -60,9 +59,7 @@ public class CompressionFilter implements Filter {
             ByteArrayOutputStream outputStream = responseWrapper.getByteArrayOutputStream();
             
             // Get character array representing output.
-            if (mLogger.isDebugEnabled()) {
-                mLogger.debug("Pre-zip size:" + outputStream.size());
-            }
+            mLogger.debug("Pre-zip size:" + outputStream.size());
             
             // Make a writer that compresses data and puts
             // it into a byte array.
@@ -75,9 +72,7 @@ public class CompressionFilter implements Filter {
             // Gzip streams must be explicitly closed.
             zipOut.close();
             
-            if (mLogger.isDebugEnabled()) {
-                mLogger.debug("Gzip size:" + byteStream.size());
-            }
+            mLogger.debug("Gzip size:" + byteStream.size());
             
             // Update the Content-Length header.
             res.setContentLength(byteStream.size());
