@@ -71,7 +71,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     private static ServletContext mContext = null;
     private static Authenticator mAuthenticator = null;
     private final SynchronizedInt mSessionCount = new SynchronizedInt(0);
-    private boolean mMemDebug = false;
     
     
     /**
@@ -119,33 +118,33 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         mContext = sce.getServletContext();
         mContext.setAttribute(ROLLER_CONTEXT, this);
         
+        // get the *real* path to <context>/resources
+        String ctxPath = mContext.getRealPath("/");
+        if(!ctxPath.endsWith(File.separator))
+            ctxPath += File.separator + "resources";
+        else
+            ctxPath += "resources";
+        
+        // try setting the uploads path to <context>/resources
+        // NOTE: this should go away at some point
+        // we leave it here for now to allow users to keep writing
+        // uploads into their webapp context, but this is a bad idea
+        //
+        // also, the RollerConfig.setUploadsDir() method is smart
+        // enough to disregard this call unless the uploads.path
+        // is set to ${webapp.context}
+        RollerConfig.setUploadsDir(ctxPath);
+        
+        // set the roller context real path in RollerConfig
+        // NOTE: it seems that a few backend classes do actually need
+        //       to know what the real path to the roller context is,
+        //       so we set this property to give them the info they need.
+        //
+        //       this is really not a best practice and we should try to
+        //       remove these dependencies on the webapp context if possible
+        RollerConfig.setContextRealPath(mContext.getRealPath("/"));
+        
         try {
-            // get the *real* path to <context>/resources
-            String ctxPath = mContext.getRealPath("/");
-            if(!ctxPath.endsWith(File.separator))
-                ctxPath += File.separator + "resources";
-            else
-                ctxPath += "resources";
-            
-            // try setting the uploads path to <context>/resources
-            // NOTE: this should go away at some point
-            // we leave it here for now to allow users to keep writing
-            // uploads into their webapp context, but this is a bad idea
-            //
-            // also, the RollerConfig.setUploadsDir() method is smart
-            // enough to disregard this call unless the uploads.path
-            // is set to ${webapp.context}
-            RollerConfig.setUploadsDir(ctxPath);
-            
-            // set the roller context real path in RollerConfig
-            // NOTE: it seems that a few backend classes do actually need
-            //       to know what the real path to the roller context is,
-            //       so we set this property to give them the info they need.
-            //
-            //       this is really not a best practice and we should try to
-            //       remove these dependencies on the webapp context if possible
-            RollerConfig.setContextRealPath(mContext.getRealPath("/"));
-            
             // always upgrade database first
             upgradeDatabaseIfNeeded();
             
@@ -171,15 +170,11 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             roller.commit();
             roller.release();
             
-            String flag = RollerConfig.getProperty("debug.memory.enabled");
-            if (flag != null && !flag.equalsIgnoreCase("false")) {
-                mMemDebug = true;
-            }
-            
-            mLogger.debug("RollerContext initialization complete");
         } catch (Throwable t) {
             mLogger.fatal("RollerContext initialization failed", t);
         }
+        
+        mLogger.debug("RollerContext initialization complete");
     }
     
     
@@ -358,30 +353,20 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     
     
     public void sessionCreated(HttpSessionEvent se) {
-        if (mMemDebug) {
-            mSessionCount.increment();
-            mContext.log(
-                    "Roller:SESSION_CREATED:count="
-                    + mSessionCount
-                    + ":freemem="
-                    + Runtime.getRuntime().freeMemory()
-                    + ":totmem="
-                    + Runtime.getRuntime().totalMemory());
-        }
+        mSessionCount.increment();
+        
+        mLogger.debug("sessions="+ mSessionCount
+                    + ":freemem=" + Runtime.getRuntime().freeMemory()
+                    + ":totmem=" + Runtime.getRuntime().totalMemory());
     }
     
     
     public void sessionDestroyed(HttpSessionEvent se) {
-        if (mMemDebug) {
-            mSessionCount.decrement();
-            mContext.log(
-                    "Roller:SESSION_DESTROY:count="
-                    + mSessionCount
-                    + ":freemem="
-                    + Runtime.getRuntime().freeMemory()
-                    + ":totalmem="
-                    + Runtime.getRuntime().totalMemory());
-        }
+        mSessionCount.decrement();
+        
+        mLogger.debug("sessions=" + mSessionCount
+                    + ":freemem=" + Runtime.getRuntime().freeMemory()
+                    + ":totalmem=" + Runtime.getRuntime().totalMemory());
     }
     
     
