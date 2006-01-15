@@ -59,8 +59,8 @@ public class ExportRss
         
         ctx = new VelocityContext();
         
-        RollerContext rollerCtx = RollerContext.getRollerContext(
-                                      RollerContext.getServletContext());
+        RollerContext rollerCtx = RollerContext.getRollerContext();
+        
         loadPageHelper();
         
         loadDates(website);

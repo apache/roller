@@ -87,15 +87,13 @@ public class RollerSession
     {
         RollerSession rollerSession = new RollerSession();
         se.getSession().setAttribute(ROLLER_SESSION, rollerSession);
-        RollerContext rctx = 
-            RollerContext.getRollerContext(se.getSession().getServletContext());           
+        RollerContext rctx = RollerContext.getRollerContext();
         rctx.sessionCreated(se);           
     }    
 
     public void sessionDestroyed(HttpSessionEvent se)
     {
-        RollerContext rctx = 
-            RollerContext.getRollerContext(se.getSession().getServletContext());
+        RollerContext rctx = RollerContext.getRollerContext();
         rctx.sessionDestroyed(se);                 
         clearSession(se);        
     }

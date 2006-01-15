@@ -94,14 +94,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     
     
     /* Returns Roller instance for specified app */
-    public static RollerContext getRollerContext(ServletContext scc) {
-        // get roller from servlet context
-        ServletContext sc = RollerContext.getServletContext();
-        return (RollerContext) sc.getAttribute(ROLLER_CONTEXT);
-    }
-    
-    
-    /* Returns Roller instance for specified app */
     public static RollerContext getRollerContext() {
         // get roller from servlet context
         ServletContext sc = RollerContext.getServletContext();

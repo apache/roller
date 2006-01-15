@@ -72,8 +72,7 @@ public class ToggleLinkbackDisplayAction extends Action
 		String url = null;
 		try
 		{
-			RollerContext rctx = RollerContext.getRollerContext(
-				rreq.getServletContext());
+			RollerContext rctx = RollerContext.getRollerContext();
 			url = rctx.getContextUrl( req, rreq.getWebsite());
 			res.sendRedirect(url);
 		}
