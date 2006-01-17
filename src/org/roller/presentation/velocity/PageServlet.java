@@ -19,10 +19,9 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.servlet.VelocityServlet;
 import org.roller.RollerException;
-import org.roller.model.RollerFactory;
-import org.roller.model.UserManager;
 import org.roller.pojos.WeblogTemplate;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.InvalidRequestException;
 import org.roller.presentation.RollerRequest;
 
 
@@ -68,6 +67,7 @@ public class PageServlet extends VelocityServlet {
         
         Template outty = null;
         RollerRequest rreq = null;
+        WebsiteData website = null;
         
         // first off lets parse the incoming request and validate it
         try {
@@ -75,6 +75,11 @@ public class PageServlet extends VelocityServlet {
                     JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
             rreq = RollerRequest.getRollerRequest(pageContext);
+            
+            // make sure the website is valid
+            website = rreq.getWebsite();
+            if(website == null)
+                throw new InvalidRequestException("invalid weblog");
         } catch (Throwable e) {
             // An error initializing the request is considered to be a 404
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -85,20 +90,10 @@ public class PageServlet extends VelocityServlet {
                
         // request appears to be valid, lets render
         try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            
-            WebsiteData website = null;
-            if (request.getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
-                website = (WebsiteData)
-                    request.getAttribute(RollerRequest.OWNING_WEBSITE);
-            } else {
-                website = rreq.getWebsite();
-            }
-            
             org.roller.pojos.Template page = null;
             
             // If this is a popup request, then deal with it specially
-            if (request.getParameter("popup") != null) {
+            if(request.getParameter("popup") != null) {
                 try {
                     // Does user have a popupcomments page?
                     page = website.getPageByName("_popupcomments");
@@ -107,20 +102,20 @@ public class PageServlet extends VelocityServlet {
                 }
                 
                 // User doesn't have one so return the default
-                if (page == null) {
+                if(page == null) {
                     page = new WeblogTemplate("/popupcomments.vm", website, 
                             "Comments", "Comments", "dummy_link", 
                             "dummy_template", new Date());
                 }
+                
                 rreq.setPage(page);
                 
             // If request specified the page, then go with that
-            } else if (rreq.getPage() != null &&
-                    rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) == null) {
+            } else if (rreq.getPage() != null) {
                 page = rreq.getPage();
                 
             // If page not available from request, then use website's default
-            } else if (website != null) {
+            } else {
                 page = website.getDefaultPage();
                 rreq.setPage(page);
             }
@@ -185,11 +180,11 @@ public class PageServlet extends VelocityServlet {
         ContextLoader.setupContext( ctx, rreq, response );
         
         try {
-            outty = getTemplate( page.getId(), "UTF-8" );
-        } catch (ResourceNotFoundException ex) {
+            outty = getTemplate(page.getId(), "UTF-8");
+        } catch(ResourceNotFoundException ex) {
             // just rethrow
             throw ex;
-        } catch (Exception ex) {
+        } catch(Exception ex) {
             // wrap this as a roller exception
             throw new RollerException("Error getting velocity template", ex);
         }
