@@ -6,8 +6,10 @@
 
 package org.roller.presentation.cache;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +52,9 @@ public class CacheManager {
     // a reference to the cache factory in use
     private static CacheFactory mCacheFactory = null;
     
+    // maintain a cache of the last expired time for each weblog
+    private static Hashtable lastExpiredCache = null;
+    
     // a list of all cache handlers who have obtained a cache
     private static Set cacheHandlers = new HashSet();
     
@@ -81,6 +86,9 @@ public class CacheManager {
         
         mLogger.info("Cache Manager Initialized.");
         mLogger.info("Default cache factory = "+mCacheFactory.getClass().getName());
+        
+        // setup our cache for expiration dates
+        lastExpiredCache = new Hashtable();
         
         // finally, add custom handlers
         String customHandlers = RollerConfig.getProperty("cache.customHandlers");
@@ -190,6 +198,8 @@ public class CacheManager {
         
         mLogger.debug("invalidating entry = "+entry.getAnchor());
         
+        lastExpiredCache.put(entry.getWebsite().getHandle(), new Date());
+        
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(entry);
@@ -200,6 +210,8 @@ public class CacheManager {
     public static void invalidate(WebsiteData website) {
         
         mLogger.debug("invalidating website = "+website.getHandle());
+        
+        lastExpiredCache.put(website.getHandle(), new Date());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -212,6 +224,8 @@ public class CacheManager {
         
         mLogger.debug("invalidating bookmark = "+bookmark.getId());
         
+        lastExpiredCache.put(bookmark.getWebsite().getHandle(), new Date());
+        
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(bookmark);
@@ -222,6 +236,8 @@ public class CacheManager {
     public static void invalidate(FolderData folder) {
         
         mLogger.debug("invalidating folder = "+folder.getId());
+        
+        lastExpiredCache.put(folder.getWebsite().getHandle(), new Date());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -234,6 +250,8 @@ public class CacheManager {
         
         mLogger.debug("invalidating comment = "+comment.getId());
         
+        lastExpiredCache.put(comment.getWeblogEntry().getWebsite().getHandle(), new Date());
+        
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(comment);
@@ -244,6 +262,8 @@ public class CacheManager {
     public static void invalidate(RefererData referer) {
         
         mLogger.debug("invalidating referer = "+referer.getId());
+        
+        lastExpiredCache.put(referer.getWebsite().getHandle(), new Date());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -267,6 +287,8 @@ public class CacheManager {
         
         mLogger.debug("invalidating category = "+category.getId());
         
+        lastExpiredCache.put(category.getWebsite().getHandle(), new Date());
+        
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
             ((CacheHandler) handlers.next()).invalidate(category);
@@ -277,6 +299,8 @@ public class CacheManager {
     public static void invalidate(WeblogTemplate template) {
         
         mLogger.debug("invalidating template = "+template.getId());
+        
+        lastExpiredCache.put(template.getWebsite().getHandle(), new Date());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -289,6 +313,14 @@ public class CacheManager {
      * Flush the entire cache system.
      */
     public static void clear() {
+        
+        // update all expired dates
+        Iterator it = lastExpiredCache.keySet().iterator();
+        String key = null;
+        while(it.hasNext()) {
+            key = (String) it.next();
+            lastExpiredCache.put(key, new Date());
+        }
         
         // loop through all handlers and trigger a clear
         CacheHandler handler = null;
@@ -306,6 +338,14 @@ public class CacheManager {
      */
     public static void clear(String handlerClass) {
         
+        // update all expired dates
+        Iterator it = lastExpiredCache.keySet().iterator();
+        String key = null;
+        while(it.hasNext()) {
+            key = (String) it.next();
+            lastExpiredCache.put(key, new Date());
+        }
+        
         // loop through all handlers to find the one we want
         CacheHandler handler = null;
         Iterator handlers = cacheHandlers.iterator();
@@ -316,6 +356,14 @@ public class CacheManager {
                 handler.clear();
             }
         }
+    }
+    
+    
+    /**
+     * Get the date of the last time the specified weblog was invalidated.
+     */
+    public static Date getLastExpiredDate(String weblogHandle) {
+        return (Date) lastExpiredCache.get(weblogHandle);
     }
     
     

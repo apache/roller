@@ -38,6 +38,7 @@ import org.roller.presentation.WeblogFeedRequest;
 import org.roller.presentation.cache.Cache;
 import org.roller.presentation.cache.CacheHandler;
 import org.roller.presentation.cache.CacheManager;
+import org.roller.presentation.cache.LazyExpiringCacheEntry;
 import org.roller.presentation.util.CacheHttpServletResponseWrapper;
 import org.roller.presentation.util.ResponseContent;
 
@@ -91,10 +92,27 @@ public class FeedCacheFilter implements Filter, CacheHandler {
             return;
         }
         
-        String key = "feedCache:"+this.generateKey(feedRequest);
+        String key = this.CACHE_ID+":"+this.generateKey(feedRequest);
         
         try {
-            ResponseContent respContent = (ResponseContent) this.mCache.get(key);
+            ResponseContent respContent = null;
+            
+            // we need the last expiration time for the given weblog
+            long lastExpiration = 0;
+            Date lastExpirationDate =
+                    (Date) CacheManager.getLastExpiredDate(feedRequest.getWeblogHandle());
+            if(lastExpirationDate != null)
+                lastExpiration = lastExpirationDate.getTime();
+            
+            LazyExpiringCacheEntry entry =
+                    (LazyExpiringCacheEntry) this.mCache.get(key);
+            if(entry != null) {
+                respContent = (ResponseContent) entry.getValue(lastExpiration);
+                
+                if(respContent == null)
+                    mLogger.debug("HIT-INVALID "+key);
+            }
+                
             if (respContent == null) {
                 
                 mLogger.debug("MISS "+key);
@@ -111,7 +129,7 @@ public class FeedCacheFilter implements Filter, CacheHandler {
                 if (request.getAttribute("DisplayException") == null) {
                     ResponseContent rc = cacheResponse.getContent();
                     
-                    this.mCache.put(key, rc);
+                    this.mCache.put(key, new LazyExpiringCacheEntry(rc));
                 } else {
                     // it is expected that whoever caught this display exception
                     // is the one who reported it to the logs
@@ -212,6 +230,7 @@ public class FeedCacheFilter implements Filter, CacheHandler {
         //   - the planet feed
         //   - all weblog feeds
         
+        /*
         Set removeSet = new HashSet();
         
         // TODO: it would be nice to be able to do this without iterating 
@@ -235,6 +254,7 @@ public class FeedCacheFilter implements Filter, CacheHandler {
         
         this.mCache.remove(removeSet);
         this.purges += removeSet.size();
+        */
     }
     
     
