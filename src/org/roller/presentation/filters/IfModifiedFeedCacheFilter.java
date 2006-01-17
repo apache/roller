@@ -44,12 +44,13 @@ import org.roller.presentation.WeblogFeedRequest;
 import org.roller.presentation.cache.Cache;
 import org.roller.presentation.cache.CacheHandler;
 import org.roller.presentation.cache.CacheManager;
+import org.roller.presentation.cache.LazyExpiringCacheEntry;
 
 
 /**
  * A filter used for caching last modified dates.
  *
- * This may be applied to /rss/*, /atom/*, /flavor/*, and /planetrss
+ * This may be applied to /rss/*, /atom/*, /flavor/*
  * 
  * @web.filter name="IfModifiedFeedCacheFilter"
  *
@@ -92,11 +93,25 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
             return;
         }
         
-        String key = "ifmod:"+this.generateKey(feedRequest);
+        String key = this.CACHE_ID+":"+this.generateKey(feedRequest);
         
         Date updateTime = null;
         try {
-            updateTime = (Date) this.mCache.get(key);
+            // we need the last expiration time for the given weblog
+            long lastExpiration = 0;
+            Date lastExpirationDate =
+                    (Date) CacheManager.getLastExpiredDate(feedRequest.getWeblogHandle());
+            if(lastExpirationDate != null)
+                lastExpiration = lastExpirationDate.getTime();
+            
+            LazyExpiringCacheEntry entry =
+                    (LazyExpiringCacheEntry) this.mCache.get(key);
+            if(entry != null) {
+                updateTime = (Date) entry.getValue(lastExpiration);
+                
+                if(updateTime == null)
+                    mLogger.debug("HIT-INVALID "+key);
+            }
             
             if (updateTime == null) {
                 mLogger.debug("MISS "+key);
@@ -110,7 +125,7 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
                             umgr.getWebsiteByHandle(feedRequest.getWeblogHandle()),
                             feedRequest.getWeblogCategory());
                     
-                    this.mCache.put(key, updateTime);
+                    this.mCache.put(key, new LazyExpiringCacheEntry(updateTime));
                 }
                 
             } else {
@@ -218,6 +233,7 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
         //   - the planet feed
         //   - all weblog feeds
         
+        /*
         Set removeSet = new HashSet();
         
         // TODO: it would be nice to be able to do this without iterating 
@@ -240,6 +256,7 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
         }
         
         this.mCache.remove(removeSet);
+        */
     }
     
     

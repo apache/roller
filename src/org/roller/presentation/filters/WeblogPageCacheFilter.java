@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -37,6 +34,7 @@ import org.roller.presentation.WeblogPageRequest;
 import org.roller.presentation.cache.Cache;
 import org.roller.presentation.cache.CacheHandler;
 import org.roller.presentation.cache.CacheManager;
+import org.roller.presentation.cache.LazyExpiringCacheEntry;
 import org.roller.presentation.util.CacheHttpServletResponseWrapper;
 import org.roller.presentation.util.ResponseContent;
 
@@ -50,8 +48,7 @@ import org.roller.presentation.util.ResponseContent;
  */
 public class WeblogPageCacheFilter implements Filter, CacheHandler {
     
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(WeblogPageCacheFilter.class);
+    private static Log mLogger = LogFactory.getLog(WeblogPageCacheFilter.class);
     
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
@@ -89,12 +86,26 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
             return;
         }
         
-        String key = "pageCache:"+this.generateKey(pageRequest);
+        String key = this.CACHE_ID+":"+this.generateKey(pageRequest);
         
         try {
             ResponseContent respContent = null;
             if(!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
-                respContent = (ResponseContent) this.mCache.get(key);
+                // we need the last expiration time for the given weblog
+                long lastExpiration = 0;
+                Date lastExpirationDate = 
+                        (Date) CacheManager.getLastExpiredDate(pageRequest.getWeblogHandle());
+                if(lastExpirationDate != null)
+                    lastExpiration = lastExpirationDate.getTime();
+                
+                LazyExpiringCacheEntry entry = 
+                        (LazyExpiringCacheEntry) this.mCache.get(key);
+                if(entry != null) {
+                    respContent = (ResponseContent) entry.getValue(lastExpiration);
+                    
+                    if(respContent == null)
+                        mLogger.debug("HIT-INVALID "+key);
+                }
             }
             
             if (respContent == null) {
@@ -117,8 +128,8 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
                     // only cache if this is not a logged in user?
                     if (!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
                         if (rc != null && rc.getSize() > 0) {
-                            this.mCache.put(key, rc);
-                        } else if (mLogger.isDebugEnabled()) {
+                            this.mCache.put(key, new LazyExpiringCacheEntry(rc));
+                        } else {
                             mLogger.debug("Not caching zero length content for key: " + key);
                         }
                     } else {
@@ -233,6 +244,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         //   - the weblog entry permalink page
         //   - the weblog archive pages
         
+        /*
         String handle = entry.getWebsite().getHandle();
         String keyBase = "pageCache:weblog/"+handle+"/page";
         
@@ -260,6 +272,9 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
 
         this.mCache.remove(removeSet);
         this.purges += removeSet.size();
+        */
+        
+        this.invalidate(entry.getWebsite());
     }
     
     
@@ -270,6 +285,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         
         mLogger.debug("invalidating website = "+website.getHandle());
         
+        /*
         // we need to remove the following cached items if they exist
         //   - all pages for this weblog
         
@@ -292,6 +308,7 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         
         this.mCache.remove(removeSet);
         this.purges += removeSet.size();
+        */
     }
     
     
