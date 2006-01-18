@@ -6,7 +6,8 @@
 
 package org.roller.presentation.cache;
 
-import java.util.Date;
+import java.io.Serializable;
+
 
 /**
  * A cache entry that is meant to expire in a lazy fashion.
@@ -31,7 +32,7 @@ import java.util.Date;
  *
  * @author Allen Gilliland
  */
-public class LazyExpiringCacheEntry {
+public class LazyExpiringCacheEntry implements Serializable {
     
     private Object value = null;
     private long timeCached = -1;
