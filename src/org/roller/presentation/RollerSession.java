@@ -73,7 +73,7 @@ public class RollerSession
                 }
                 catch (RollerException e)
                 {
-                    mLogger.error("ERROR: getting user object");
+                    mLogger.error("ERROR: getting user object",e);
                 }
             }
         }
