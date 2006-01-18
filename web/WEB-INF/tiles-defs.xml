@@ -125,7 +125,7 @@
     <put name="styles" value="/theme/css-sidebar.jsp" />
 </definition>
 <definition name=".upload-file" extends=".tiles-editorpage" >
-    <put name="content" value="/website/upload-file.jsp" />
+    <put name="content" value="/website/UploadFile.jsp" />
 </definition>
 
 <definition name=".WeblogEntryRemove" extends=".tiles-simplepage" >
