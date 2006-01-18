@@ -6,6 +6,9 @@
 
 package org.roller.presentation.cache;
 
+import java.io.Serializable;
+
+
 /**
  * A cache entry that expires.
  *
@@ -14,7 +17,7 @@ package org.roller.presentation.cache;
  *
  * @author Allen Gilliland
  */
-public class ExpiringCacheEntry {
+public class ExpiringCacheEntry implements Serializable {
     
     private Object value;
     private long timeCached = -1;
