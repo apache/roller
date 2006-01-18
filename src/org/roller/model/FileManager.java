@@ -22,21 +22,24 @@ public interface FileManager extends Serializable
 {
     /** Determine if file can be saved in website's file space. */
     public boolean canSave(
-        WebsiteData site, String name, long size, RollerMessages msgs) 
+        String weblogHandle, String name, long size, RollerMessages msgs) 
         throws RollerException;
     
     /** Get website's files */
-    public File[] getFiles(WebsiteData site) 
+    public File[] getFiles(String weblogHandle) 
         throws RollerException;
     
     /** Delete specified file from website's file space. */
-    public void deleteFile(WebsiteData site, String name) 
+    public void deleteFile(String weblogHandle, String name) 
         throws RollerException;
 
     /** Save file in website's file space or throw exception if rules violated. */
-    public void saveFile(WebsiteData site, String name, long size, InputStream is) 
+    public void saveFile(String weblogHandle, String name, long size, InputStream is) 
         throws RollerException;
 
+    /** Return true if weblog is over the file-upload limit */
+    public boolean overQuota(String weblogHandle) throws RollerException; 
+            
     /**
      * Get directory in which uploaded files are stored
      */
