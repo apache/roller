@@ -123,14 +123,14 @@ public class CacheManager {
      * Ask the CacheManager to construct a cache.
      *
      * Normally the CacheManager will use whatever CacheFactory has been
-     * chosen for the system via the cache.factory.classname property.
+     * chosen for the system via the cache.defaultFactory property.
      * However, it is possible to override the use of the default factory by
-     * supplying a cache.factory property to this method.  The value should
+     * supplying a "factory" property to this method.  The value should
      * be the full classname for the factory you want to use for constructing
      * the cache.
      *
      * example:
-     *   cache.factory -> org.roller.presentation.cache.LRUCacheFactoryImpl
+     *   factory -> org.roller.presentation.cache.LRUCacheFactoryImpl
      *
      * This allows Roller admins the ability to choose a caching strategy to
      * use for the whole system, but override it in certain places where they
@@ -371,7 +371,7 @@ public class CacheManager {
      * Compile stats from all registered handlers.
      *
      * This is basically a hacky version of instrumentation which is being
-     * thrown in because we don't have a fully instrumentation strategy yet.
+     * thrown in because we don't have a full instrumentation strategy yet.
      * This is here with the full expectation that it will be replaced by
      * something a bit more elaborate, like JMX.
      */
