@@ -22,14 +22,14 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
     private long timeout = 0;
     
     
-    public ExpiringLRUCacheImpl() {
+    protected ExpiringLRUCacheImpl() {
         
         super();
         this.timeout = 60 * 60 * 1000;
     }
     
     
-    public ExpiringLRUCacheImpl(int maxsize, long timeout) {
+    protected ExpiringLRUCacheImpl(int maxsize, long timeout) {
         
         super(maxsize);
         
