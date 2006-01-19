@@ -151,6 +151,13 @@ function toggleControl(toggleId, targetId) {
     }
 }
 
+function isblank(s) {
+   for (var i=0; i<s.length; s++) {
+      var c = s.charAt(i);
+      if ((c!=' ') && (c!='\n') && (c!='')) return false;
+   }
+    return true;
+}
 
 // Show the document's title on the status bar
 window.defaultStatus=document.title;
