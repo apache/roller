@@ -14,19 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
-import org.roller.model.Roller;
+import org.roller.config.RollerConfig;
 import org.roller.model.RollerFactory;
-import org.roller.presentation.RollerRequest;
+import org.roller.presentation.PlanetRequest;
+import org.roller.presentation.cache.ExpiringCacheEntry;
 
 
 /**
- * Entry point filter for Newsfeed Servlets, this filter
- * Handles If-Modified-Since header using per-user and per-category
- * last weblog pub time. Returns 304 if requested weblog has not been
- * modified since. Also, sets Last-Modified on outgoing response.
+ * Handles if-modified-since checking for planet resources.
  *
  * @web.filter name="IfPlanetModifiedFilter"
- * web.filter-mapping url-pattern="/planetrss/*"
  *
  * @author David M Johnson
  */
@@ -34,19 +31,17 @@ public class IfPlanetModifiedFilter implements Filter {
     
     private static Log mLogger = LogFactory.getLog(IfPlanetModifiedFilter.class);
     
+    private long timeout = 15 * 60 * 1000;
+    private ExpiringCacheEntry lastUpdateTime = null;
+    
     SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy");
     
     
-    public IfPlanetModifiedFilter() {
-        super();
-    }
-    
-    
     /**
-     * @see javax.servlet.Filter#doFilter(
-     * javax.servlet.ServletRequest,
-     * javax.servlet.ServletResponse,
-     * javax.servlet.FilterChain)
+     * Filter processing.
+     *
+     * We check the incoming request for an "if-modified-since" header and
+     * repond with a 304 NOT MODIFIED when appropriate.
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
@@ -54,9 +49,33 @@ public class IfPlanetModifiedFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         
+        PlanetRequest planetRequest = null;
+        try {
+            planetRequest = new PlanetRequest(request);
+        } catch(Exception e) {
+            mLogger.error("error creating planet request", e);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        
         Date updateTime = null;
         try {
-            updateTime = getLastPublishedDate(request);
+            // first try our cached version
+            if(this.lastUpdateTime != null) {
+                updateTime = (Date) this.lastUpdateTime.getValue();
+            }
+            
+            // we need to get a fresh value
+            if(updateTime == null) {
+                
+                updateTime = RollerFactory.getRoller().getPlanetManager().getLastUpdated();
+                if (updateTime == null) {
+                    updateTime = new Date();
+                    mLogger.warn("Can't get lastUpdate time, using current time instead");
+                }
+                
+                this.lastUpdateTime = new ExpiringCacheEntry(updateTime, this.timeout);
+            }
             
             // RSS context loader needs updateTime, so stash it
             request.setAttribute("updateTime", updateTime);
@@ -76,12 +95,13 @@ public class IfPlanetModifiedFilter implements Filter {
                     return;
                 }
             }
-            mLogger.debug("Not returning 304 for: "+request.getRequestURI());
-        } catch (RollerException e) {
-            // Thrown by getLastPublishedDate if there is a db-type error
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            
+        } catch(RollerException re) {
+            // problem talking to db?
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            request.setAttribute("DisplayException", re);
             return;
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             // Thrown by getDateHeader if not in valid format. This can be
             // safely ignored, the only consequence is that the NOT MODIFIED
             // response is not set.
@@ -96,22 +116,22 @@ public class IfPlanetModifiedFilter implements Filter {
     }
     
     
-    public static Date getLastPublishedDate(HttpServletRequest request)
-            throws RollerException {
+    /**
+     * Init method for this filter
+     */
+    public void init(FilterConfig filterConfig) {
         
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        Roller roller = RollerFactory.getRoller();
-        Date lastUpdated = roller.getPlanetManager().getLastUpdated();
-        if (lastUpdated == null) {
-            lastUpdated = new Date();
-            mLogger.warn("Can't get lastUpdate time, using current time instead");
+        mLogger.info("Initializing if-modified planet filter");
+        
+        // lookup our timeout value
+        String timeoutString = RollerConfig.getProperty("cache.planet.timeout");
+        try {
+            long timeoutSecs = Long.parseLong(timeoutString);
+            this.timeout = timeoutSecs * 1000;
+        } catch(Exception e) {
+            // ignored ... illegal value
         }
-        
-        return lastUpdated;
     }
-    
-
-    public void init(FilterConfig filterConfig) throws ServletException {}
     
     
     public void destroy() {}
