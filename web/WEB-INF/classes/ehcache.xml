@@ -4,7 +4,7 @@
     
     <!-- default cache expires items after 30 mins -->
     <defaultCache
-        maxElementsInMemory="10000"
+        maxElementsInMemory="1000"
         eternal="false"
         timeToIdleSeconds="1200"
         timeToLiveSeconds="1200"
