@@ -8,7 +8,7 @@
 
             <h3><fmt:message key="mainPage.actions" /></h3>
             <hr size="1" noshade="noshade" />
-            <img src='<c:url value="/images/ComposeMail16.gif"/>' alt="mail-icon" align="bottom" />
+            <img src='<c:url value="/images/email_edit.png"/>' alt="mail-icon" align="bottom" />
             <c:url value="/editor/inviteMember.do" var="inviteUrl">
                <c:param name="weblog" value="${model.website.handle}" />
             </c:url>

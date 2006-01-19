@@ -37,7 +37,7 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
                <roller:link forward="editPage">
                   <roller:linkparam id="username" name="user" property="userName" />
                   <roller:linkparam id="pageId" name="p" property="id" />
-                  <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" />
+                  <img src='<c:url value="/images/page_edit.png"/>' border="0" alt="icon" />
                </roller:link>
             </td>
 
@@ -47,7 +47,7 @@ request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
                    <roller:link forward="removePage.ok">
                       <roller:linkparam id="username" name="user" property="userName" />
                       <roller:linkparam id="pageId" name="p" property="id" />
-                      <img src='<c:url value="/images/Remove16.gif"/>' border="0" alt="icon" />
+                      <img src='<c:url value="/images/delete.png"/>' border="0" alt="icon" />
                    </roller:link>
                  </c:when>
                  <c:otherwise>

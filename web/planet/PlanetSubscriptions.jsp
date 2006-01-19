@@ -52,7 +52,7 @@ function deleteSubscription()
             <label for="title" class="formrow" />
                 <fmt:message key="planetSubscription.title" /></label>
             <html:text property="title" size="40" maxlength="255" />
-            <img src="../images/help.jpeg" alt="help" 
+            <img src="../images/help.png" alt="help" 
                 title='<fmt:message key="planetSubscription.tip.title" />' />
         </div>
         
@@ -60,7 +60,7 @@ function deleteSubscription()
             <label for="feedUrl" class="formrow" />
                 <fmt:message key="planetSubscription.feedUrl" /></label>
             <html:text property="feedUrl" size="40" maxlength="255" />
-            <img src="../images/help.jpeg" alt="help" 
+            <img src="../images/help.png" alt="help" 
                 title='<fmt:message key="planetSubscription.tip.feedUrl" />' />
         </div>
         
@@ -68,7 +68,7 @@ function deleteSubscription()
             <label for="siteUrl" class="formrow" />
                 <fmt:message key="planetSubscription.siteUrl" /></label>
             <html:text property="siteUrl" size="40" maxlength="255" />
-            <img src="../images/help.jpeg" alt="help" 
+            <img src="../images/help.png" alt="help" 
                 title='<fmt:message key="planetSubscription.tip.siteUrl" />' />
         </div>
 
@@ -134,7 +134,7 @@ function deleteSubscription()
                                 property="groupHandle" />                   
                             <roller:linkparam 
                                 id="feedUrl" name="subscription" property="feedUrl" />                   
-                            <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" 
+                            <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
                                 title="<fmt:message key='planetSubscription.edit.tip' />" />
                         </roller:link>
                     </td>       

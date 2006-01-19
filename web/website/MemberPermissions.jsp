@@ -48,6 +48,7 @@ function save() {
         <c:forEach var="permission" items="${model.permissions}">
             <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">                       
                 <td class="rollertable">
+                    <img src='<c:url value="/images/user.png"/>' border="0" alt="icon" />
 	                <c:out value="${permission.user.userName}" />
                 </td>               
                 <td class="rollertable">

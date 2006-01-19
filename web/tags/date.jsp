@@ -21,7 +21,7 @@ if (document.layers) { // Netscape 4 hack
 <% if (!readOnly.booleanValue()) { %>
    <a href="#" id="anchor<%= dateField %>" name="anchor<%= dateField %>"
        onclick="cal<%= dateField %>.select(document.<%= formName %>.<%= dateField %>,'anchor<%= dateField %>','<%= dateFormat %>'); return false">
-   <img src='<c:url value="/images/cal.gif"/>' class="calIcon" alt="Calendar" /> </a>
+   <img src='<c:url value="/images/calendar.png"/>' class="calIcon" alt="Calendar" /> </a>
 <% } 
 }
 %>

@@ -22,7 +22,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
     </c:url>
     <span class="entryEditSidebarLink">
         <a href='<c:out value="${commentManagement}" />'>
-           <img src='<c:url value="/images/Edit16.png"/>' 
+           <img src='<c:url value="/images/comment.png"/>' 
                 align="absmiddle" border="0" alt="icon" title="Comments" />
            <fmt:message key="weblogEdit.hasComments">
                 <fmt:param value="${model.commentCount}" />
@@ -47,7 +47,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />
            <roller:linkparam id="method" value="edit" />
-           <img src='<c:url value="/images/Edit16.png"/>' 
+           <img src='<c:url value="/images/table_error.png"/>' 
                 align="absmiddle" border="0" alt="icon" title="Edit" />
            <str:truncateNicely lower="50">
               <c:out value="${post.title}" />
@@ -69,7 +69,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />
            <roller:linkparam id="method" value="edit" />
-           <img src='<c:url value="/images/Edit16.png"/>' 
+           <img src='<c:url value="/images/table_gear.png"/>' 
                 align="absmiddle" border="0" alt="icon" title="Edit" />
            <str:truncateNicely lower="50">
               <c:out value="${post.title}" />
@@ -93,7 +93,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />
            <roller:linkparam id="method" value="edit" />
-           <img src='<c:url value="/images/Edit16.png"/>' 
+           <img src='<c:url value="/images/table_edit.png"/>' 
                 align="absmiddle" border="0" alt="icon" title="Edit" />
            <str:truncateNicely lower="50">
               <c:out value="${post.title}" />

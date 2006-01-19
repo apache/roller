@@ -109,7 +109,7 @@ function onMove()
             </td>
 
 
-            <td class="rollertable" align="center"><img src='<c:url value="/images/Folder16.png"/>' alt="icon" /></td>
+            <td class="rollertable" align="center"><img src='<c:url value="/images/folder.png"/>' alt="icon" /></td>
             
             <td class="rollertable">
                <roller:link page="/editor/categories.do">
@@ -130,7 +130,7 @@ function onMove()
                    <roller:linkparam 
                        id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
                        name="loopcategory" property="id" />
-                   <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" />
+                   <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" />
                </roller:link>
             </td>
 
@@ -141,7 +141,7 @@ function onMove()
 	                   name="loopcategory" property="id" />
                    <roller:linkparam 
 	                   id="method" value="deleteSelected" />
-                   <img src='<c:url value="/images/Remove16.gif"/>' border="0" alt="icon" />
+                   <img src='<c:url value="/images/delete.png"/>' border="0" alt="icon" />
                </roller:link>
             </td>
 

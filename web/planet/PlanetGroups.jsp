@@ -34,7 +34,7 @@ function deleteGroup()
             <label for="title" class="formrow" />
                 <fmt:message key="planetGroups.title" /></label>
             <html:text property="title" size="40" maxlength="255" />
-            <img src="../images/help.jpeg" alt="help" 
+            <img src="../images/help.png" alt="help" 
                 title='<fmt:message key="planetGroups.tip.title" />' />
         </div>
         
@@ -42,7 +42,7 @@ function deleteGroup()
             <label for="handle" class="formrow" />
                 <fmt:message key="planetGroups.handle" /></label>
             <html:text property="handle" size="40" maxlength="255" />
-            <img src="../images/help.jpeg" alt="help" 
+            <img src="../images/help.png" alt="help" 
                 title='<fmt:message key="planetGroups.tip.handle" />' />
         </div>
         
@@ -101,7 +101,7 @@ function deleteGroup()
                             id="method" value="getGroups" />                   
                         <roller:linkparam 
                             id="groupHandle" name="group" property="handle" />                   
-                        <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" 
+                        <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
                             title="<fmt:message key='planetGroups.edit.tip' />" />
                     </roller:link>
                 </td>       
@@ -112,7 +112,7 @@ function deleteGroup()
                             id="method" value="getSubscriptions" />                   
                         <roller:linkparam 
                             id="groupHandle" name="group" property="handle" />                   
-                        <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" 
+                        <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
                             title="<fmt:message key='planetGroups.subscriptions.tip' />" />
                     </roller:link>
                 </td>       
