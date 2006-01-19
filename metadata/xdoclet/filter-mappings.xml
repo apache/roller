@@ -57,6 +57,11 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
 
 <!-- cache lastModified dates used for HTTP 304 responses -->
 <filter-mapping>
+    <filter-name>IfModifiedWeblogPageCacheFilter</filter-name>
+    <url-pattern>/page/*</url-pattern>
+</filter-mapping>
+
+<filter-mapping>
     <filter-name>IfModifiedFeedCacheFilter</filter-name>
     <url-pattern>/rss/*</url-pattern>
 </filter-mapping>
