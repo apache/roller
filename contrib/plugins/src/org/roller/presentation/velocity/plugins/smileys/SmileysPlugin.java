@@ -103,7 +103,7 @@ public class SmileysPlugin implements PagePlugin
                                smileyDefs.getProperty(smiley, "smile.gif") +
                                "\" class=\"smiley\"" + 
                                " alt=\"" + smileyAlt + "\"" +
-                               " title=\"" + smileyAlt +"\">";
+                               " title=\"" + smileyAlt +"\" />";
                 //System.out.println(smiley + "=" + tempS[count]);
                 count++;
             }
