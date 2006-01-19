@@ -9,7 +9,6 @@ README.txt
    To use Roller, follow the instructions in the Users Guide:
    http://rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide
           
-
 LICENSING TERMS
   
    Roller itself is licensed under the Apache Licence Version 2.0, please 
@@ -18,7 +17,6 @@ LICENSING TERMS
    PLEASE NOTE: Although Roller itself is under the Apache license, Roller 
    depends on and contains some components that are licensed under the more 
    restrictive terms of the LGPL licence.
-
 
 CREDITS AND COPYRIGHT NOTICES
 
@@ -32,7 +30,6 @@ CREDITS AND COPYRIGHT NOTICES
        Past members:  	 
            Mindaguas Idzelis 
            Jaap Van Der Molen 
-
 
 THIRD PARTY COMPONENTS
 
@@ -57,4 +54,8 @@ THIRD PARTY COMPONENTS
 
    * Roller includes Jython, Jython Software License (BSD style)
          Copyright (c) Jython Developers
+
+   * Roller include icons by Mark James (http://www.famfamfam.com/lab/icons)
+         License is http://creativecommons.org/licenses/by/2.5/
+
 

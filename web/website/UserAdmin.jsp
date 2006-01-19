@@ -169,7 +169,7 @@ function cancel() {
                                <c:param name="method" value="create" />
                                <c:param name="weblog" value="${perms.website.handle}" />
                            </c:url>
-                           <img src='<c:url value="/images/New16.gif"/>' />
+                           <img src='<c:url value="/images/page_white_edit.gif"/>' />
                            <a href='<c:out value="${newEntry}" />'>
                                <fmt:message key="userAdmin.newEntry" /></a>
                        </td>
@@ -178,7 +178,7 @@ function cancel() {
                                <c:param name="method" value="query" />
                                <c:param name="weblog" value="${perms.website.handle}" />
                            </c:url>
-                           <img src='<c:url value="/images/Edit16.png"/>' />
+                           <img src='<c:url value="/images/page_white_edit.png"/>' />
                            <a href='<c:out value="${editEntries}" />'>
                                <fmt:message key="userAdmin.editEntries" /></a> 
                        </td>
@@ -187,7 +187,7 @@ function cancel() {
                                <c:param name="method" value="edit" />
                                <c:param name="weblog" value="${perms.website.handle}" />
                            </c:url>
-                           <img src='<c:url value="/images/Edit16.png"/>' />
+                           <img src='<c:url value="/images/page_white_edit.png"/>' />
                            <a href='<c:out value="${manageWeblog}" />'>
                                <fmt:message key="userAdmin.manage" /></a>
                        </td>

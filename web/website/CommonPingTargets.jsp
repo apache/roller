@@ -36,7 +36,7 @@
                        name="pingTarget" property="id" />
                    <roller:linkparam
 	                   id="method" value="editSelected" />
-                   <img src='<c:url value="/images/Edit16.png"/>' border="0"
+                   <img src='<c:url value="/images/page_white_edit.png"/>' border="0"
                         alt="<fmt:message key="pingTarget.edit" />" />
                </roller:link>
             </td>
@@ -48,7 +48,7 @@
 	                   name="pingTarget" property="id" />
                    <roller:linkparam
 	                   id="method" value="deleteSelected" />
-                   <img src='<c:url value="/images/Remove16.gif"/>' border="0"
+                   <img src='<c:url value="/images/delete.png"/>' border="0"
                         alt="<fmt:message key="pingTarget.remove" />" />
                </roller:link>
             </td>

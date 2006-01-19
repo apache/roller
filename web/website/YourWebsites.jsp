@@ -53,7 +53,7 @@
 
         <div class="yourWeblogBox">  
 
-            <span class="mm_weblog_name"><img src='<c:url value="/images/Folder16.png"/>' />&nbsp;<c:out value="${perms.website.name}" /></span>
+            <span class="mm_weblog_name"><img src='<c:url value="/images/folder.png"/>' />&nbsp;<c:out value="${perms.website.name}" /></span>
                 
             <table class="mm_table" width="100%" cellpadding="0" cellspacing="0">
                <tr>
@@ -86,7 +86,7 @@
                            <c:param name="method" value="create" />
                            <c:param name="weblog" value="${perms.website.handle}" />
                        </c:url>
-                       <img src='<c:url value="/images/New16.gif"/>' />
+                       <img src='<c:url value="/images/table_edit.png"/>' />
                        <a href='<c:out value="${newEntry}" />'>
                            <fmt:message key="yourWebsites.newEntry" /></a>
                        <br />
@@ -95,7 +95,7 @@
                            <c:param name="method" value="query" />
                            <c:param name="weblog" value="${perms.website.handle}" />
                        </c:url>
-                       <img src='<c:url value="/images/Edit16.png"/>' />
+                       <img src='<c:url value="/images/table_multiple.png"/>' />
                        <a href='<c:out value="${editEntries}" />'>
                            <fmt:message key="yourWebsites.editEntries" /></a> 
                        <br />
@@ -105,7 +105,7 @@
                            <c:param name="method" value="query" />
                            <c:param name="weblog" value="${perms.website.handle}" />
                        </c:url>
-                       <img src='<c:url value="/images/Edit16.png"/>' />
+                       <img src='<c:url value="/images/page_white_edit.png"/>' />
                        <a href='<c:out value="${manageComments}" />'>
                            <fmt:message key="yourWebsites.manageComments" /></a> 
                        <br />
@@ -116,7 +116,7 @@
                                <c:param name="method" value="edit" />
                                <c:param name="weblog" value="${perms.website.handle}" />
                            </c:url>
-                           <img src='<c:url value="/images/Edit16.png"/>' />
+                           <img src='<c:url value="/images/cog.png"/>' />
                            <a href='<c:out value="${manageWeblog}" />'>
                                <fmt:message key="yourWebsites.manage" /></a> 
                            <br />
@@ -124,7 +124,7 @@
 
                        <%-- authors and limited bloggers can resign, but admin cannot resign if he/she is the last admin in the blog --%>
                        <c:if test="${perms.permissionMask == 0 || perms.permissionMask == 1 || perms.website.adminUserCount > 1 }">
-                          <img src='<c:url value="/images/Remove16.gif"/>' />
+                          <img src='<c:url value="/images/delete.png"/>' />
                           <c:url value="/editor/yourWebsites.do" var="resignWeblog">
                                <c:param name="method" value="resign" />
                                <c:param name="weblog" value="${perms.website.handle}" />

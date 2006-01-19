@@ -10,7 +10,7 @@
             
 			<%-- Add Category link --%>
 			<p>
-            <img src='<c:url value="/images/FolderNew16.png"/>' border="0"alt="icon" />
+            <img src='<c:url value="/images/folder_add.png"/>' border="0"alt="icon" />
 			<roller:link page="/editor/categoryEdit.do">
 			    <roller:linkparam id="<%= RollerRequest.PARENTID_KEY %>"
 			         name="category" property="id" />

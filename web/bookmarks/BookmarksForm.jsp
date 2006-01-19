@@ -115,7 +115,7 @@ function onMove()
             </td>
 
 
-            <td class="rollertable" align="center"><img src='<c:url value="/images/Folder16.png"/>' alt="icon" /></td>
+            <td class="rollertable" align="center"><img src='<c:url value="/images/folder.png"/>' alt="icon" /></td>
             
             <td class="rollertable">
                <roller:link page="/editor/bookmarks.do">
@@ -136,7 +136,7 @@ function onMove()
                    <roller:linkparam 
                        id="<%= RollerRequest.FOLDERID_KEY %>" 
                        name="loopfolder" property="id" />
-                   <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" />
+                   <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" />
                </roller:link>
             </td>
 
@@ -155,7 +155,7 @@ function onMove()
                 </html:multibox>
             </td>
 
-            <td class="rollertable" align="center"><img src='<c:url value="/images/Bookmark16.png"/>' alt="icon" /></td>
+            <td class="rollertable" align="center"><img src='<c:url value="/images/link.png"/>' alt="icon" /></td>
             
             <td class="rollertable">
                 <str:truncateNicely lower="15" upper="20" ><c:out value="${loopbookmark.name}" /></str:truncateNicely>
@@ -170,7 +170,7 @@ function onMove()
                    <roller:linkparam 
                        id="<%= RollerRequest.BOOKMARKID_KEY %>" 
                        name="loopbookmark" property="id" />                   
-                   <img src='<c:url value="/images/Edit16.png"/>' border="0" alt="icon" 
+                   <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
                        title="<fmt:message key='bookmarksForm.edit.tip' />" />
                </roller:link>
             </td>
@@ -178,7 +178,7 @@ function onMove()
             <td class="rollertable" align="center">
                 <c:if test="${!empty loopbookmark.url}" >
                    <a href="<c:out value='${loopbookmark.url}'/>">
-                       <img src='<c:url value="/images/WebVisit16.png"/>' border="0" alt="icon" 
+                       <img src='<c:url value="/images/world_go.png"/>' border="0" alt="icon" 
                            title="<fmt:message key='bookmarksForm.visitLink.tip' />" />
                    </a>
                 </c:if>
