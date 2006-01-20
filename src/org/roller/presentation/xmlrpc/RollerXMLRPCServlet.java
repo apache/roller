@@ -4,7 +4,11 @@
 
 package org.roller.presentation.xmlrpc;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.StringBufferInputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -63,11 +67,30 @@ public class RollerXMLRPCServlet extends HttpServlet
                                   HttpServletResponse response)
         throws ServletException, java.io.IOException
     {
-        byte[] result = mXmlRpcServer.execute(request.getInputStream());
+        InputStream is = request.getInputStream();
+        
+        if (mLogger.isDebugEnabled()) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String line = null;
+            StringBuffer sb = new StringBuffer();
+            while ((line = br.readLine()) != null) {
+                sb.append(line); 
+                sb.append("\n");
+            }
+            mLogger.debug(sb.toString());
+            is = new StringBufferInputStream(sb.toString());
+        }
+        
+        // execute XML-RPC request
+        byte[] result = mXmlRpcServer.execute(is);
+        
+        if (mLogger.isDebugEnabled()) {
+            String output = new String(result);
+            mLogger.debug(output);
+        }
 
         response.setContentType("text/xml");
         response.setContentLength(result.length);
-
         OutputStream output = response.getOutputStream();
         output.write(result);
         output.flush();
