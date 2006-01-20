@@ -4,6 +4,8 @@ package org.roller.presentation.website.actions;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -295,6 +297,7 @@ public final class UploadFileFormAction extends DispatchAction {
                 files.add(new FileBean(rawFiles[i]));
                 totalSize += rawFiles[i].length();
             }
+            Collections.sort(files, new FileBeanNameComparator());
         }
         public boolean isUploadEnabled() {
             return uploadEnabled;
@@ -333,6 +336,19 @@ public final class UploadFileFormAction extends DispatchAction {
         }
         public String getName() { return file.getName(); }
         public long getLength() { return file.length(); }
+    }
+    
+    public class FileBeanNameComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
+            FileBean fb1 = (FileBean)o1;
+            FileBean fb2 = (FileBean)o2;
+            return fb1.getName().compareTo(fb2.getName());
+        }
+        public boolean equals(Object o1, Object o2) {
+            FileBean fb1 = (FileBean)o1;
+            FileBean fb2 = (FileBean)o2;
+            return fb1.getName().equals(fb2.getName());
+        }
     }
 }
 
