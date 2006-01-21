@@ -60,7 +60,11 @@ public class FeedCacheFilter implements Filter, CacheHandler {
     // roller config properties that apply to this cache
     private static final String CACHE_ID = "cache.feed";
     
+    // our cache of rendered feeds
     private Cache mCache = null;
+    
+    // the last time the main feeds were expired
+    private Date mainLastExpiredDate = new Date();
     
     // for metrics
     private double hits = 0;
@@ -96,13 +100,20 @@ public class FeedCacheFilter implements Filter, CacheHandler {
         
         try {
             ResponseContent respContent = null;
-            
-            // we need the last expiration time for the given weblog
             long lastExpiration = 0;
-            Date lastExpirationDate =
-                    (Date) CacheManager.getLastExpiredDate(feedRequest.getWeblogHandle());
-            if(lastExpirationDate != null)
-                lastExpiration = lastExpirationDate.getTime();
+            
+            // first, we need to determine the last time the specified feed was expired.
+            // if this is a weblog specific feed then ask the CacheManager for
+            // the last expired time of the weblog.  otherwise this is a main feed and we
+            // keep that last expired time ourselves
+            if(feedRequest.getWeblogHandle() != null) {
+                Date lastExpirationDate =
+                        (Date) CacheManager.getLastExpiredDate(feedRequest.getWeblogHandle());
+                if(lastExpirationDate != null)
+                    lastExpiration = lastExpirationDate.getTime();
+            } else {
+                lastExpiration = this.mainLastExpiredDate.getTime();
+            }
             
             LazyExpiringCacheEntry entry =
                     (LazyExpiringCacheEntry) this.mCache.get(key);
@@ -225,36 +236,10 @@ public class FeedCacheFilter implements Filter, CacheHandler {
         
         mLogger.debug("invalidating website = "+website.getHandle());
         
-        // we need to remove the following cached items if they exist
-        //   - the main feed
-        //   - the planet feed
-        //   - all weblog feeds
-        
-        /*
-        Set removeSet = new HashSet();
-        
-        // TODO: it would be nice to be able to do this without iterating 
-        //       over the entire cache key set
-        String key = null;
-        
-        synchronized(mCache) {
-            Iterator allKeys = this.mCache.keySet().iterator();
-            while(allKeys.hasNext()) {
-                key = (String) allKeys.next();
-                
-                if(key.startsWith("feedCache:main")) {
-                    removeSet.add(key);
-                } else if(key.startsWith("feedCache:planet")) {
-                    removeSet.add(key);
-                } else if(key.startsWith("feedCache:weblog/"+website.getHandle())) {
-                    removeSet.add(key);
-                }
-            }
+        // update our main feed last expiration date
+        synchronized(this) {
+            this.mainLastExpiredDate = new Date();
         }
-        
-        this.mCache.remove(removeSet);
-        this.purges += removeSet.size();
-        */
     }
     
     
