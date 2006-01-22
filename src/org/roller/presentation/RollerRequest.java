@@ -16,7 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
-import org.roller.model.ParsedRequest;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.Template;
@@ -52,7 +51,7 @@ import org.roller.util.Utilities;
  *  
  * @author David M Johnson
  */
-public class RollerRequest implements ParsedRequest
+public class RollerRequest
 {
     //----------------------------------------------------------------- Fields
     

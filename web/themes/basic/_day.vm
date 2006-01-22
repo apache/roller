@@ -15,7 +15,5 @@
    #showCommentsPageLink( $entry )
 </p>
 #end
-    
-#showLinkbacks( $day )
 
 </div>

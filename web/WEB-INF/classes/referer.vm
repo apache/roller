@@ -53,6 +53,7 @@
     </ul>
 #end
 
+
 #**
  * Display the Linkbacks that have been extracted for a specified day.
  * @param day Date object that specifies day (type java.util.Date).
@@ -77,3 +78,24 @@
     #end
 #end
 
+#**
+ * Display entry linkbacks with divs appropriate for use on webloog entry page
+ *#
+#macro( showEntryLinkbacks $entry )
+    #if ($linkbacksEnabled)
+        <div class="linkbacks" id="linkbacks">
+            <div class="linkbacks-head">$text.get("macro.weblog.linkbacks"):</div>
+        #set( $refs = $pageModel.getEntryReferers($entry))
+        #if ( $refs.size() > 0)
+           <ul class="linkbacks">
+           #foreach( $ref in $refs )
+              #set( $url = $utilities.escapeHTML( $ref.getUrl() ) )
+              <li class="linkbacks"> $pageHelper.getToggleLinkbackDisplayHTML($ref)
+                 <a class="linkback" href="$url">$ref.getTitle()</a> : $utilities.removeHTML( $ref.getExcerpt() )
+              </li>
+           #end
+           </ul>
+        #end
+        </div>
+    #end
+#end

@@ -172,8 +172,11 @@ public class ContextLoader {
                 RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
         boolean trackbacksEnabled =
                 RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
+        boolean linkbacksEnabled =
+                RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
         ctx.put("commentsEnabled", new Boolean(commentsEnabled) );
         ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
+        ctx.put("linkbacksEnabled", new Boolean(linkbacksEnabled) );
     }
     
     

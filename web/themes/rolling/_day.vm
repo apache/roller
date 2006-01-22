@@ -16,7 +16,5 @@
   <br/>
   <br/>
 #end
-    
-#showLinkbacks( $day )
 
 </div>

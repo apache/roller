@@ -1,12 +1,12 @@
 
 package org.roller.model;
 import org.roller.RollerException;
-import org.roller.business.ThreadManagerImpl;
 import org.roller.pojos.RefererData;
 import org.roller.pojos.WebsiteData;
 
 import java.io.Serializable;
 import java.util.List;
+import org.roller.pojos.WeblogEntryData;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -19,13 +19,12 @@ public interface RefererManager extends Serializable
     //------------------------------------------ Access to Referer information
 
     /**
-     * Get all referers for specified user.
-     * @param userName
+     * Get all referers for specified weblog.
+     * @param weblog 
      * @return List of type RefererData
      * @throws RollerException
      */
-    public List getReferers(WebsiteData website)
-		throws RollerException;
+    public List getReferers(WebsiteData weblog) throws RollerException;
 
     /**
      * Get all referers for specified user that were made today.
@@ -33,8 +32,7 @@ public interface RefererManager extends Serializable
      * @return List of type RefererData
      * @throws RollerException
      */
-    public List getTodaysReferers(WebsiteData website)
-        throws RollerException;
+    public List getTodaysReferers(WebsiteData website) throws RollerException;
 
     /**
      * Get referers for a specified date.
@@ -43,8 +41,7 @@ public interface RefererManager extends Serializable
      * @return List of type RefererData.
      * @throws RollerException
      */
-    public List getReferersToDate(WebsiteData website, String date)
-        throws RollerException;
+    public List getReferersToDate(WebsiteData website, String date) throws RollerException;
 
     /**
      * Get most popular websites based on referer day hits.
@@ -96,17 +93,14 @@ public interface RefererManager extends Serializable
 
     //--------------------------------------------- Referer processing methods
 
-    public void processReferrer(String requestUrl, String referrerUrl,
-                                String weblogHandle, String weblogAnchor,
-                                String weblogDateString);
+    public void processReferrer(
+            String requestUrl, 
+            String queryString,
+            String referrerUrl,
+            String weblogHandle, 
+            String weblogAnchor,                                
+            String weblogDateString);
     
-    /**
-     * Process request for incoming referers.
-     * @param request Request to be processed.
-     * @return boolean True if the referer header contains an ignore/spam word.
-     */
-    public boolean processRequest(ParsedRequest request);
-
     //---------------------------------------------- Referer tracking turnover
 
     /**
@@ -124,14 +118,12 @@ public interface RefererManager extends Serializable
     /**
      * Retrieve referer specifie by ID.
      */
-    public RefererData retrieveReferer(String id)
-        throws RollerException;
+    public RefererData retrieveReferer(String id) throws RollerException;
 
     /**
      * Remove referer specified by ID.
      */
-    public void removeReferer( String id )
-        throws RollerException;
+    public void removeReferer( String id ) throws RollerException;
 
     /**
      * Release all resources associated with Roller session.
