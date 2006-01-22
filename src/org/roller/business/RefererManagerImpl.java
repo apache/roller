@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
 import org.roller.config.RollerRuntimeConfig;
-import org.roller.model.ParsedRequest;
 import org.roller.model.RefererManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -151,14 +150,18 @@ public abstract class RefererManagerImpl implements RefererManager
 
     //------------------------------------------------------------------------
 
-    public void processReferrer(String requestUrl, String referrerUrl,
-                                    String weblogHandle, String entryAnchor, 
-                                    String dateString) {
+    public void processReferrer(
+            String requestUrl, 
+            String queryString, 
+            String referrerUrl,
+            String weblogHandle, 
+            String entryAnchor, 
+            String dateString) {
         
         mLogger.debug("processing referrer ["+referrerUrl+
                 "] accessing ["+requestUrl+"]");
         
-        if(weblogHandle == null)
+        if (weblogHandle == null)
             return;
         
         String selfSiteFragment = "/page/"+weblogHandle;
@@ -168,17 +171,15 @@ public abstract class RefererManagerImpl implements RefererManager
         // lookup the weblog now
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            weblog = userMgr.getWebsiteByHandle(weblogHandle);
-            
-            if(weblog == null)
-                return;
+            weblog = userMgr.getWebsiteByHandle(weblogHandle);            
+            if (weblog == null) return;
             
             // now lookup weblog entry if possible
-            if(entryAnchor != null) {
+            if (entryAnchor != null) {
                 WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
                 entry = weblogMgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             }
-        } catch(RollerException re) {
+        } catch (RollerException re) {
             // problem looking up website, gotta bail
             mLogger.error("Error looking up website object", re);
             return;
@@ -228,20 +229,15 @@ public abstract class RefererManagerImpl implements RefererManager
                 mStrategy.commit();
                 
             } else if (matchRef.size() == 0) {
-                /* TODO: change "" for excerpt column back to null
-                 * I changed to an empty string to avoid the bug in Derby found
-                 * http://issues.apache.org/jira/browse/DERBY-628
-                 *
-                 * We need to either wait for the fix to change it back,
-                 * or leave it as is if it doesn't affect anything else.
-                 *
-                 * Elias
-                 */
                 
                 // Referer was not found in database, so new Referer object
+                String requrl = requestUrl;
+                if (queryString != null && queryString.length() > 0) {
+                    requestUrl = requestUrl + "?" + queryString;
+                }
                 Integer one = new Integer(1);
                 RefererData ref =
-                        new RefererData(
+                    new RefererData(
                         null,
                         weblog,
                         entry,
@@ -264,13 +260,13 @@ public abstract class RefererManagerImpl implements RefererManager
                 
                 // If not a direct or search engine then search for linkback
                 if (doLinkbackExtraction
-                && dateString != null
+                && entry != null
                 && !refurl.equals("direct")
                 && !refurl.startsWith("http://google")
                 && !refurl.startsWith("http://www.google")
                 && !refurl.startsWith("http://search.netscape")
                 && !refurl.startsWith("http://www.blinkpro")
-                && !refurl.startsWith("http://auto.search.msn")
+                && !refurl.startsWith("http://search.msn")
                 && !refurl.startsWith("http://search.yahoo")
                 && !refurl.startsWith("http://uk.search.yahoo")
                 && !refurl.startsWith("http://www.javablogs.com")
@@ -281,7 +277,7 @@ public abstract class RefererManagerImpl implements RefererManager
                     try {
                         Roller mRoller = RollerFactory.getRoller();
                         mRoller.getThreadManager().executeInBackground(
-                                new LinkbackExtractorRunnable(ref) );
+                            new LinkbackExtractorRunnable(ref));
                     } catch (InterruptedException e) {
                         mLogger.warn("Interrupted during linkback extraction",e);
                     }
@@ -296,218 +292,7 @@ public abstract class RefererManagerImpl implements RefererManager
             mLogger.error(npe);
         }
     }
-    
-    
-    /**
-     * Process incoming request for referer information.
-     *
-     * <p>If there is no referer, treat it as a direct request.</p>
-     *
-     * <p>If there is a referer and there is no record for that referer, then
-     * parse the refering page for title and excerpt surround the refering link.
-     * If the excerpt cannot be found, then ignore the referer because it is
-     * fake - probably a referer spam.
-     * </p>
-     *
-     * @return boolean True if the referer header contains an ignore/spam word.
-     * @see org.roller.pojos.RefererManager#processRequest(ParsedRequest)
-     */
-    public boolean processRequest( ParsedRequest request )
-    {
-        String msg = "processRequest";
-        if ( request.getWebsite() == null ) return false;
-
-        try
-        {
-            List matchRef = null;
-
-            String requestUrl     = request.getRequestURL();
-            String refererUrl     = request.getRefererURL();
-            WebsiteData website   = request.getWebsite();
-            WeblogEntryData entry = request.getWeblogEntry();
-            String selfSiteFragment = "/page/" + website.getHandle();
-
-            String dateString = null;
-            if ( request.getDateString()!=null && request.isDateSpecified())
-            {
-                dateString = request.getDateString();
-            }
-
-            if (mLogger.isDebugEnabled())
-            {
-                mLogger.debug( msg+": refurl="+refererUrl );
-            }
-
-            /* Check Referer URL against selfSiteFragment (treat as direct),
-             * against a regex for an self-site editor page (direct),
-             * and against the Spam lists.
-             */
-            if ( refererUrl != null )
-            {                
-                // treat own URL as direct
-                if (refererUrl.indexOf(selfSiteFragment) != -1)
-                {
-                    refererUrl = null;
-                }
-                else                
-                {
-                    // treat editor referral as direct
-                    int lastSlash = requestUrl.indexOf("/", 8);
-                    if (lastSlash == -1) lastSlash = requestUrl.length();
-                    String requestSite = requestUrl.substring(0, lastSlash);
-                    if (refererUrl.matches(requestSite + ".*\\.do.*")) 
-                    {
-                        refererUrl = null;
-                    }
-                    else
-                    {
-                        // If referer URL is blacklisted, throw it out
-                        boolean isRefererSpam = 
-                                SpamChecker.checkReferrer(website, refererUrl);
-                        if (isRefererSpam) return true;
-                    }
-                }
-            }
-
-            // try to find existing RefererData for refererUrl
-            if (refererUrl == null || refererUrl.trim().length() < 8)
-            {
-                refererUrl = "direct";
-
-                // Get referer specified by referer URL of direct
-                matchRef = getReferersToWebsite(website, refererUrl);
-            }
-            else
-            {
-                refererUrl = Utilities.stripJsessionId(refererUrl);
-
-                // Query for referer with same referer and request URLs
-                matchRef = getMatchingReferers(website, requestUrl, refererUrl);
-
-                // If referer was not found, try adding or leaving off 'www'
-                if ( matchRef.size() == 0 )
-                {
-                    String secondTryUrl = null;
-                    if ( refererUrl.startsWith("http://www") )
-                    {
-                        secondTryUrl = "http://"+refererUrl.substring(11);
-                    }
-                    else
-                    {
-                        secondTryUrl = "http://www"+refererUrl.substring(7);
-                    }
-
-                    matchRef = getMatchingReferers(
-                        website, requestUrl, secondTryUrl);
-                    if ( matchRef.size() == 1 )
-                    {
-                        refererUrl = secondTryUrl;
-                    }
-                }
-            }
-
-            if (matchRef.size() == 1)
-            {
-                // Referer was found in database, so bump up hit count
-                RefererData ref = (RefererData)matchRef.get(0);
-
-                ref.setDayHits(
-                    new Integer(ref.getDayHits().intValue() + 1));
-                ref.setTotalHits(
-                    new Integer(ref.getTotalHits().intValue() + 1));
-
-                if (mLogger.isDebugEnabled())
-                {
-                    mLogger.debug(
-                        "Incrementing hit count on existing referer: "+refererUrl);
-                }
-
-                storeReferer(ref);
-                mStrategy.commit();
-            }
-            else if (matchRef.size() == 0)
-            {
-            	/* TODO: change "" for excerpt column back to null
-            	 * I changed to an empty string to avoid the bug in Derby found
-            	 * http://issues.apache.org/jira/browse/DERBY-628
-            	 * 
-            	 * We need to either wait for the fix to change it back, 
-            	 * or leave it as is if it doesn't affect anything else.
-            	 * 
-            	 * Elias
-            	 */
-            	
-                // Referer was not found in database, so new Referer object
-                Integer one = new Integer(1);
-                RefererData ref =
-                    new RefererData(
-                        null,
-                        website,
-                        entry,
-                        dateString,
-                        refererUrl,
-                        null,
-                        requestUrl,
-                        null,
-                        "", // Read comment above regarding Derby bug
-                        Boolean.FALSE,
-                        Boolean.FALSE,
-                        one,
-                        one);
-
-                 if (mLogger.isDebugEnabled())
-                 {
-                    mLogger.debug("newReferer="+ref.getRefererUrl());
-                 }
-
-                 String refurl = ref.getRefererUrl();
-
-                 // If not a direct or search engine then search for linkback
-                 if (    request.isEnableLinkback()
-                      && request.isDateSpecified()
-                      && !refurl.equals("direct")
-                      && !refurl.startsWith("http://google")
-                      && !refurl.startsWith("http://www.google")
-                      && !refurl.startsWith("http://search.netscape")
-                      && !refurl.startsWith("http://www.blinkpro")
-                      && !refurl.startsWith("http://auto.search.msn")
-                      && !refurl.startsWith("http://search.yahoo")
-                      && !refurl.startsWith("http://uk.search.yahoo")
-                      && !refurl.startsWith("http://www.javablogs.com")
-                      && !refurl.startsWith("http://www.teoma")
-                    )
-                 {
-                     // Launch thread to extract referer linkback
-
-                    try
-                    {
-                        Roller mRoller = RollerFactory.getRoller();
-                       mRoller.getThreadManager().executeInBackground( 
-                          new LinkbackExtractorRunnable(ref) );
-                    } 
-                    catch (InterruptedException e) {
-                        mLogger.warn("Interrupted during linkback extraction",e);
-                    }
-                 }
-                 else
-                 {
-                     storeReferer(ref);
-                     mStrategy.commit();
-                 }
-            }
-        }
-        catch (RollerException pe)
-        {
-            mLogger.error(msg, pe);
-        }
-        catch (NullPointerException npe)
-        {
-            mLogger.error(msg, npe);
-        }
         
-        return false;
-    }
-    
     /**
      * Use LinkbackExtractor to parse title and excerpt from referer
      */

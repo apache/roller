@@ -95,7 +95,7 @@ public class RefererFilter implements Filter {
                 basePageUrl = "http://"+basePageUrlWWW.substring(11);
             }
             
-            // ignore referres coming from users own blog
+            // ignore referrers coming from users own blog
             if (referrerUrl == null ||
                     (!referrerUrl.startsWith(basePageUrl) &&
                     !referrerUrl.startsWith(basePageUrlWWW))) {
@@ -152,13 +152,14 @@ public class RefererFilter implements Filter {
             try {
                 IncomingReferrer referrer = new IncomingReferrer();
                 referrer.setReferrerUrl(referrerUrl);
+                referrer.setQueryString(request.getQueryString());
                 referrer.setRequestUrl(requestUrl);
                 referrer.setWeblogHandle(pageRequest.getWeblogHandle());
                 referrer.setWeblogAnchor(pageRequest.getWeblogAnchor());
                 referrer.setWeblogDateString(pageRequest.getWeblogDate());
                 
                 ReferrerQueueManager refQueue =
-                        RollerFactory.getRoller().getReferrerQueueManager();
+                    RollerFactory.getRoller().getReferrerQueueManager();
                 refQueue.processReferrer(referrer);
             } catch(Exception e) {
                 mLogger.error("Error processing referrer", e);

@@ -43,7 +43,6 @@
         </div>
 	</div>
 #end
-  <div class="linkbacks">#showLinkbacks( $day )</div>
   <div class="floatSpacer">&nbsp;</div>
   <div class="floatSpacer">&nbsp;</div>
 </div>

@@ -18,5 +18,4 @@
     </p>
 </div>
 #end
-<p>#showLinkbacks( $day )</p>
 

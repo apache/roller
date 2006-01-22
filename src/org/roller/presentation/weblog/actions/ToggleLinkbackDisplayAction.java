@@ -13,15 +13,15 @@ import org.apache.struts.action.ActionMapping;
 import org.roller.model.RefererManager;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.RefererData;
+import org.roller.pojos.WeblogEntryData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.cache.CacheManager;
 
-
 /**
  * Toggle display of a linkback.
- * @struts.action name="toggleLinkback" path="/editor/toggleLinkback" scope="session"
+ * @struts.action path="/editor/toggleLinkback" name="toggleLinkback"
  */
 public class ToggleLinkbackDisplayAction extends Action
 {
@@ -36,7 +36,7 @@ public class ToggleLinkbackDisplayAction extends Action
 		HttpServletRequest req, HttpServletResponse res)
 		throws Exception
 	{
-         
+        WeblogEntryData entry = null;
         RollerRequest rreq = RollerRequest.getRollerRequest(req);
         RollerSession rollerSession = RollerSession.getRollerSession(req);
         try
@@ -50,6 +50,7 @@ public class ToggleLinkbackDisplayAction extends Action
                     RefererManager refmgr = 
                         RollerFactory.getRoller().getRefererManager();                        
                     RefererData ref = refmgr.retrieveReferer(refid); 
+                    entry = ref.getWeblogEntry();
                     boolean was = ref.getVisible()==null ? 
                                   false : ref.getVisible().booleanValue(); 
                     ref.setVisible(Boolean.valueOf( !was )); // what up, dog?                     
@@ -68,13 +69,17 @@ public class ToggleLinkbackDisplayAction extends Action
             throw new ServletException(e);
         }
         
-        // forward to user's website URL
+        // forward back to entry or to blog if we have no entry
 		String url = null;
 		try
 		{
 			RollerContext rctx = RollerContext.getRollerContext();
-			url = rctx.getContextUrl( req, rreq.getWebsite());
-			res.sendRedirect(url);
+            if (entry != null) {
+                url = rctx.createEntryPermalink(entry, req, true);
+            } else {
+    			url = rctx.getContextUrl(req, rreq.getWebsite());
+            }
+            res.sendRedirect(url);
 		}
 		catch (Exception e)
 		{

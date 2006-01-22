@@ -175,7 +175,7 @@ public class PageHelper
             {
                 Hashtable params = new Hashtable();
                 params.put( RollerRequest.REFERERID_KEY, referer.getId());
-                params.put( RollerRequest.USERNAME_KEY, mWebsite.getHandle());
+                params.put( RollerRequest.WEBLOG_KEY, mWebsite.getHandle());
                 link = RequestUtils.computeURL( mPageContext,
                     "toggleLinkback", null, null, null, params,null,false);
                     

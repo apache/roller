@@ -52,5 +52,4 @@
     </p>
     <!-- showCommentsDiv($entry) -->
 #end
-    
-#showLinkbacks( $day )
+

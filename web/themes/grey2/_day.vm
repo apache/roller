@@ -16,4 +16,3 @@
 </p>
 #end
     
-#showLinkbacks( $day )

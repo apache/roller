@@ -474,6 +474,34 @@ public class PageModel {
         return referers;
     }
     
+    /** Encapsulates RefererManager **/
+    public List getEntryReferers(WeblogEntryDataWrapper entry) {
+        ArrayList referers = new ArrayList();
+        try {
+            List refs = mRefererMgr.getReferersToEntry(entry.getId());
+            RollerSession rses =
+               RollerSession.getRollerSession(mRollerReq.getRequest());
+            
+            for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
+                RefererData referer = (RefererData) rdItr.next();
+                String title =referer.getTitle();
+                String excerpt = referer.getExcerpt();
+                if (   StringUtils.isNotEmpty(title)
+                && StringUtils.isNotEmpty(excerpt) ) {
+                    if (referer.getVisible().booleanValue()
+                    || rses.isUserAuthorizedToAdmin(referer.getWebsite()) ) {
+                        referers.add(RefererDataWrapper.wrap(referer));
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            mLogger.error("PageModel getReferersToDate() fails with URL"
+                    + mRollerReq.getRequestURL(), e);
+        }
+        return referers;
+    }
+    
     //------------------------------------------------------------------------
     
     /** Encapsulates RefererManager */

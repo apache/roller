@@ -177,6 +177,7 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
               $text.get( "macro.weblog.trackback" ) #showTrackbackURL($entry)
            </div>
         #end
+        #showEntryLinkbacks($entry)
         #showComments($entry)
         #if($commentsEnabled && $website.allowComments && $entry.commentsStillAllowed)
             #showCommentForm($entry)

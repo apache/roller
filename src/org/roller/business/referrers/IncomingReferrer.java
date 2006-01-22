@@ -15,6 +15,7 @@ public class IncomingReferrer {
     
     private String referrerUrl = null;
     private String requestUrl = null;
+    private String queryString = null;
     private String weblogHandle = null;
     private String weblogAnchor = null;
     private String weblogDateString = null;
@@ -32,6 +33,14 @@ public class IncomingReferrer {
 
     public String getRequestUrl() {
         return requestUrl;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
     }
 
     public void setRequestUrl(String requestUrl) {

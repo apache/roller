@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,6 +28,7 @@ import org.roller.business.RefererManagerImpl;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.RefererManager;
 import org.roller.pojos.RefererData;
+import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.pojos.WebsiteDisplayData;
 
@@ -250,21 +250,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
         } catch (Throwable pe) {
             mLogger.error(msg, pe);
             throw new RollerException(msg, pe);
-        }
-        
-// Don't close connection, Hibernate is holding it
-//        finally
-//        {
-//            try
-//            {
-//                if (con != null) con.close();
-//            }
-//            catch (Throwable t)
-//            {
-//                mLogger.error("Closing connection",t);
-//            }
-//        }
-        
+        }        
     }
     
     //-----------------------------------------------------------------------
@@ -329,7 +315,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             throw new RollerException(e);
         }
     }
-    
+        
     //-----------------------------------------------------------------------
     
     /**
@@ -495,7 +481,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             Session session = ((HibernateStrategy)mStrategy).getSession();
             String reset = "update RefererData set dayHits=0";
             session.createQuery(reset).executeUpdate();
-            String delete = "delete RefererData where excerpt is null";
+            String delete = "delete RefererData where excerpt is null or excerpt=''";
             session.createQuery(delete).executeUpdate();
         } catch (Exception e) {
             mLogger.error("EXCEPTION resetting referers",e);
@@ -515,7 +501,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             String reset = "update RefererData set dayHits=0 where website=:site";
             session.createQuery(reset)
                 .setParameter("site",website).executeUpdate();
-            String delete = "delete RefererData where website=:site and excerpt is null";
+            String delete = "delete RefererData where website=:site and (excerpt is null or excerpt='')";
             session.createQuery(delete)
                 .setParameter("site",website).executeUpdate();
         } catch (Exception e) {
