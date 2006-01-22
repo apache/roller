@@ -106,6 +106,12 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
      * @return
      */
     public boolean editPost(String postid, String userid, String password,
+                            Hashtable struct, int publish)
+                     throws Exception {
+        return editPost(postid, userid, password, struct, publish > 0);
+    }
+
+    public boolean editPost(String postid, String userid, String password,
                             Hashtable struct, boolean publish)
                      throws Exception
     {
@@ -159,8 +165,6 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
                 entry.setPubTime(new Timestamp(dateCreated.getTime()));
             }
 
-
-
             if ( cat != null )
             {
                 // Use first category specified by request
@@ -200,6 +204,12 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler
      * @throws org.apache.xmlrpc.XmlRpcException
      * @return
      */
+    public String newPost(
+        String blogid, String userid, String password, Hashtable struct, int publish)
+        throws Exception {
+        return newPost(blogid, userid, password, struct, publish > 0);
+    }
+    
     public String newPost(
         String blogid, String userid, String password, Hashtable struct, boolean publish)
         throws Exception
