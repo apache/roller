@@ -167,6 +167,8 @@ public class TrackbackServlet extends HttpServlet {
                            comment.setPending(Boolean.TRUE);
                            comment.setApproved(Boolean.FALSE);
                            verified = false;
+                           // if we can't verify trackback, then reject it
+                           error = "REJECTED: trackback failed verification";
                            logger.debug("Trackback failed verification: "+comment.getUrl());
                         }
                     }
