@@ -319,7 +319,6 @@ public abstract class RefererManagerImpl implements RefererManager
                     mReferer.setTitle(lb.getTitle());
                     mReferer.setExcerpt(lb.getExcerpt());
 
-
                     if ( lb.getPermalink() != null )
                     {
                         // The presence of a permalink indicates that this
@@ -349,6 +348,8 @@ public abstract class RefererManagerImpl implements RefererManager
                         }
 
                         storeReferer(mReferer);
+                        mStrategy.commit();
+
                     }
 
                     else
@@ -414,6 +415,7 @@ public abstract class RefererManagerImpl implements RefererManager
                                 referer.setVisible(visible);
                             }
                             storeReferer(referer);
+                            mStrategy.commit();
                         }
 
 
@@ -423,6 +425,7 @@ public abstract class RefererManagerImpl implements RefererManager
                 {
                     // It is not a linkback, but store it anyway
                     storeReferer(mReferer);
+                    mStrategy.commit();
 
                     mLogger.info("No excerpt found at refering URL "
                         + mReferer.getRefererUrl());
