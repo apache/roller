@@ -27,9 +27,9 @@ import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
 import org.roller.model.FileManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -47,12 +47,10 @@ import com.sun.syndication.feed.atom.Category;
 import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Link;
-import com.sun.syndication.io.impl.Base64;
 import javax.activation.FileTypeMap;
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.presentation.cache.CacheManager;
-import org.roller.presentation.atomapi.PubControlModule;
-import org.roller.presentation.atomapi.PubControlModuleImpl;
 
 /**
  * Roller's Atom Protocol implementation.
@@ -656,16 +654,27 @@ public class RollerAtomHandler implements AtomHandler {
                     String basic = st.nextToken();
                     if (basic.equalsIgnoreCase("Basic")) {
                         String credentials = st.nextToken();
-                        String userPass = new String(Base64.decode(credentials));
+                        String userPass = new String(Base64.decodeBase64(credentials.getBytes()));
                         int p = userPass.indexOf(":");
                         if (p != -1) {
                             userID = userPass.substring(0, p);
-                            UserData user = mRoller.getUserManager().getUser(userID);
-                            String realpassword = user.getPassword();
-                            password = userPass.substring(p+1);
-                            if (    (userID.trim().equals(user.getUserName()))
-                            && (password.trim().equals(realpassword))) {
-                                valid = true;
+                            UserData user = mRoller.getUserManager().getUser(userID);                                                        
+                            boolean enabled = user.getEnabled().booleanValue();
+                            if (enabled) {    
+                                // are passwords encrypted?
+                                RollerContext rollerContext = 
+                                    RollerContext.getRollerContext();
+                                String encrypted = 
+                                    RollerConfig.getProperty("passwds.encryption.enabled");
+                                password = userPass.substring(p+1);
+                                if ("true".equalsIgnoreCase(encrypted)) {
+                                    password = Utilities.encodePassword(password, 
+                                        RollerConfig.getProperty("passwds.encryption.algorithm"));
+                                }
+                                valid = user.getPassword().equals(password);
+                                if (valid) {
+                                    RollerFactory.getRoller().setUser(user);
+                                }
                             }
                         }
                     }
