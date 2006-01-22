@@ -254,7 +254,7 @@ public class RollerAtomHandler implements AtomHandler {
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         FileManager fmgr = mRoller.getFileManager();
-        File[] files = fmgr.getFiles(website);
+        File[] files = fmgr.getFiles(website.getHandle());
         if (canView(website)) {            
             Feed feed = new Feed();
             List atomEntries = new ArrayList();
@@ -418,10 +418,10 @@ public class RollerAtomHandler implements AtomHandler {
                 fos.close();
                 
                 // If save is allowed by Roller system-wide policies
-                if (fmgr.canSave(website, name, tempFile.length(), msgs)) {
+                if (fmgr.canSave(website.getHandle(), name, tempFile.length(), msgs)) {
                     // Then save the file
                     FileInputStream fis = new FileInputStream(tempFile);
-                    fmgr.saveFile(website, name, tempFile.length(), fis);
+                    fmgr.saveFile(website.getHandle(), name, tempFile.length(), fis);
                     fis.close();
                     
                     File resource = new File(fmgr.getUploadDir() + File.separator + name);
@@ -474,7 +474,7 @@ public class RollerAtomHandler implements AtomHandler {
         if (canEdit(website) && pathInfo.length > 1) {
             try {
                 FileManager fmgr = mRoller.getFileManager();
-                fmgr.deleteFile(website, pathInfo[2]);
+                fmgr.deleteFile(website.getHandle(), pathInfo[2]);
             } catch (Exception e) {
                 String msg = "ERROR in atom.deleteResource";
                 mLogger.error(msg,e);
