@@ -52,8 +52,10 @@ THIRD PARTY COMPONENTS
 
    * Roller includes the Radeox Wiki Engine, LGPL license
 
-   * Roller includes Jython, Jython Software License (BSD style)
-         Copyright (c) Jython Developers
+   * Roller includes Jython, Copyright (c) Jython Developers
+            Combined license { Jython Software License (BSD style)
+                               Apache Software License
+                               JPython 1.1 License }
 
    * Roller include icons by Mark James (http://www.famfamfam.com/lab/icons)
          License is http://creativecommons.org/licenses/by/2.5/
