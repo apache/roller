@@ -60,4 +60,6 @@ THIRD PARTY COMPONENTS
    * Roller include icons by Mark James (http://www.famfamfam.com/lab/icons)
          License is http://creativecommons.org/licenses/by/2.5/
 
-
+   * Roller includes Acegi Security, ASL 2.0 License:
+     "This product includes software developed by the Acegi Security
+      System for Spring Project (http://acegisecurity.org)."
