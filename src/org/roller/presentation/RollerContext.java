@@ -306,7 +306,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
                     (AuthenticationProcessingFilterEntryPoint)ctx.getBean("authenticationProcessingFilterEntryPoint");
             entryPoint.setForceHttps(true);
         }
-        
+        /*
         if (RollerConfig.getBooleanProperty("schemeenforcement.enabled")) {
             
             ChannelProcessingFilter procfilter =
@@ -327,8 +327,9 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
                 }
             }
             // all other action URLs are non-HTTPS
-            defmap.addSecureUrl("/**/*.do*", insecureDef);
+            defmap.addSecureUrl("/**<!-- need to remove this when uncommenting -->/*.do*", insecureDef);
         }
+        */
     }
     
     
