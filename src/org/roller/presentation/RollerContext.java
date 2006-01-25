@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.TimerTask;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
@@ -17,12 +18,17 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
-import net.sf.acegisecurity.providers.ProviderManager;
-import net.sf.acegisecurity.providers.dao.DaoAuthenticationProvider;
-import net.sf.acegisecurity.providers.encoding.Md5PasswordEncoder;
-import net.sf.acegisecurity.providers.encoding.PasswordEncoder;
-import net.sf.acegisecurity.providers.encoding.ShaPasswordEncoder;
-import net.sf.acegisecurity.securechannel.ChannelProcessingFilter;
+
+import org.acegisecurity.ConfigAttributeDefinition;
+import org.acegisecurity.SecurityConfig;
+import org.acegisecurity.intercept.web.PathBasedFilterInvocationDefinitionMap;
+import org.acegisecurity.providers.ProviderManager;
+import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
+import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
+import org.acegisecurity.providers.encoding.PasswordEncoder;
+import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
+import org.acegisecurity.securechannel.ChannelProcessingFilter;
+import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
@@ -39,18 +45,13 @@ import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.pings.PingQueueTask;
-import org.roller.presentation.velocity.CommentAuthenticator;
-import org.roller.presentation.velocity.DefaultCommentAuthenticator;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
-import net.sf.acegisecurity.ConfigAttributeDefinition;
-import net.sf.acegisecurity.SecurityConfig;
-import net.sf.acegisecurity.intercept.web.PathBasedFilterInvocationDefinitionMap;
-import net.sf.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 
 
 /**

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.roller.presentation.RollerSession" %>
 <%@ page import="javax.servlet.http.Cookie" %>
-<%@ page import="net.sf.acegisecurity.ui.rememberme.TokenBasedRememberMeServices" %>
+<%@ page import="org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices" %>
 
 <%
 request.getSession().removeAttribute(RollerSession.ROLLER_SESSION);
