@@ -26,6 +26,12 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
+<!-- Scheme enforcement.  Only here until we get Acegi scheme enforcement working -->
+<filter-mapping>
+    <filter-name>SchemeEnforcementFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
 <!-- Acegi Security filters - controls secure access to different parts of Roller -->
 <filter-mapping>
     <filter-name>securityFilter</filter-name>
