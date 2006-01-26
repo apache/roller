@@ -53,7 +53,7 @@ public class IfModifiedWeblogPageCacheFilter implements Filter, CacheHandler {
     
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
-    private static final String CACHE_ID = "cache.ifmodified.page";
+    private static final String CACHE_ID = "cache.ifmodified.weblogpage";
     
     private Cache mCache = null;
     
@@ -188,7 +188,8 @@ public class IfModifiedWeblogPageCacheFilter implements Filter, CacheHandler {
                     cat = cat.substring(1);
                 }
 
-                key.append("/").append(cat);
+                // categories may contain spaces, which is not desired
+                key.append("/").append(org.apache.commons.lang.StringUtils.deleteWhitespace(cat));
             }
         }
         
