@@ -149,6 +149,10 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
      */
     public void enqueue(IncomingReferrer referrer) {
         this.referrerQueue.add(referrer);
+        
+        if(this.referrerQueue.size() > 250) {
+            mLogger.warn("Referrer queue is rather full. queued="+this.referrerQueue.size());
+        }
     }
     
     
