@@ -211,7 +211,8 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
                 if(cat.startsWith("/"))
                     cat = cat.substring(1).replaceAll("/","_");
                 
-                key.append("/").append(cat);
+                // categories may contain spaces, which is not desired
+                key.append("/").append(org.apache.commons.lang.StringUtils.deleteWhitespace(cat));
             }
         } else {
             key.append("/").append(feedRequest.getFlavor());

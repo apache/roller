@@ -213,7 +213,8 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
                     cat = cat.substring(1);
                 }
 
-                key.append("/").append(cat);
+                // categories may contain spaces, which is not desired
+                key.append("/").append(org.apache.commons.lang.StringUtils.deleteWhitespace(cat));
             }
         }
         
