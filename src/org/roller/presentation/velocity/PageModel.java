@@ -254,7 +254,9 @@ public class PageModel {
         
         try {
             Template pd = mWebsite.getPageByName(pageName);
-            template_id = pd.getId();
+            if(pd != null) {
+                template_id = pd.getId();
+            }
         } catch(Exception e) {
             mLogger.error(e);
         }
