@@ -154,7 +154,13 @@ public class FlavorServlet extends VelocityServlet {
      */
     protected void error( HttpServletRequest req, HttpServletResponse res,
             Exception e) throws ServletException, IOException {
-        mLogger.warn("ERROR in FlavorServlet",e);
+        
+        // this means there was an exception outside of the handleRequest()
+        // method which seems to always be some variant of SocketException
+        // so we just ignore it
+        
+        // make sure anyone downstream knows about the exception
+        req.setAttribute("DisplayException", e);
     }
 }
 
