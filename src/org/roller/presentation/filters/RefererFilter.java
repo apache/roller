@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.roller.RollerException;
 import org.roller.business.referrers.IncomingReferrer;
 import org.roller.business.referrers.ReferrerQueueManager;
 import org.roller.model.RollerFactory;
@@ -107,6 +108,10 @@ public class RefererFilter implements Filter {
                 try {
                     UserManager userMgr = RollerFactory.getRoller().getUserManager();
                     weblog = userMgr.getWebsiteByHandle(handle);
+                    
+                    if(weblog == null) {
+                        throw new RollerException("invalid website: "+handle);
+                    }
                 } catch(Exception e) {
                     // if we can't get the WebsiteData object we can't continue
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
