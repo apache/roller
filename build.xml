@@ -399,6 +399,7 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.stage_web}/resources"/>
     <mkdir dir="${build.stage_web}/WEB-INF/lib"/>
     <mkdir dir="${build.stage_web}/WEB-INF/tlds"/>
+    <mkdir dir="${build.stage_web}/docs"/>
 
     <!-- Jar up web classes -->
     <jar jarfile="${build.stage_web}/WEB-INF/lib/rollerweb.jar">
@@ -407,7 +408,7 @@ ro.buildUser=${user.name}
 
     <!-- Copy database configs to classpath in staging -->
     <copy todir="${build.stage_web}/WEB-INF/classes">
-        <fileset dir="./metadata/database/hibernate" includes="hibernate.cfg.xml"/>
+        <fileset dir="${basedir}/metadata/database/hibernate" includes="hibernate.cfg.xml"/>
         <fileset dir="${ro.tools}/lib" includes="oscache.properties"/>
         <!-- <fileset dir="${build.compile_web}" excludes="**/tomcat/**"/> -->
     </copy>
@@ -416,6 +417,15 @@ ro.buildUser=${user.name}
     <copy todir="${build.stage_web}/WEB-INF">
         <fileset dir="${build.generated}" includes="mapping.xml"/>
         <fileset dir="${tools.struts}/lib" includes="validator-rules.xml"/>
+    </copy>
+
+    <!-- Copy docs to staging -->
+    <copy todir="${build.stage_web}/docs">
+        <fileset dir="${basedir}/docs">
+            <include name="installguide/**" />
+            <include name="userguide/**" />
+            <exclude name="**/old/**" />
+        </fileset>
     </copy>
 
     	<!-- Copy other jars -->
