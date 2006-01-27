@@ -19,6 +19,9 @@
 <!-- ********************************************************************* -->
 <project name="roller" default="usage">
 
+<!-- Because we don't want to allow release builds to be done with Java 1.5 (yet) -->
+<available classname="java.lang.ProcessBuilder" property="java15.present" />
+
 <!-- Bring in properties.xml -->
 &properties;
 
@@ -602,10 +605,14 @@ ro.buildUser=${user.name}
 <!-- Create Binary Release -->
 <!-- ********************************************************************* -->
 
-<target name="full-release" depends="binary-release">
+<target name="full-release" depends="version-check,binary-release" >
 </target>
 
-<target name="binary-release" depends="source-release">
+<target name="version-check" if="java15.present" >
+    <fail message="ERROR: DON'T BUILD RELEASES WITH JAVA 1.5 (yet)" />
+</target>
+
+<target name="binary-release" depends="source-release" >
     <!-- Substitute in resource ref for deployment for standard container -->
     <replace file="${build.stage_web}/WEB-INF/web.xml"
             token="&lt;!-- TOMCAT_RESOURCE_REF --&gt;">
