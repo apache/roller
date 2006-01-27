@@ -8,6 +8,8 @@ package org.roller.business.runnable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.roller.model.Roller;
+import org.roller.model.RollerFactory;
 
 
 /**
@@ -58,6 +60,10 @@ public class WorkerThread extends Thread {
                         "Worker = "+this.id+", "+
                         "Job = "+this.job.getClass().getName(), t);
             }
+            
+            // since this is a thread we have to make sure that we tidy up ourselves
+            Roller roller = RollerFactory.getRoller();
+            roller.release();
         }
         
     }
