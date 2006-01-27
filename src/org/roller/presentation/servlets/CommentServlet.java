@@ -112,10 +112,8 @@ public class CommentServlet extends HttpServlet {
      * Here we handle incoming comment postings.  We will collect the data,
      * validate it, and save it.
      */
-    public void doPost(
-            HttpServletRequest request, 
-            HttpServletResponse response)
-        throws IOException, ServletException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         
         boolean preview = false;
         String error = null;
@@ -128,16 +126,21 @@ public class CommentServlet extends HttpServlet {
         else if (method.equals("preview"))
             preview = true;
         
+        // parse request and validate
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         HttpSession session = request.getSession();
-        try {
-            // Get weblog entry object
-            WeblogEntryData entry = rreq.getWeblogEntry();
-            if (entry == null || entry.getId() == null) {
-                throw new RollerException("Unable to find WeblogEntry for "+ 
-                        request.getParameter(RollerRequest.WEBLOGENTRYID_KEY));
-            }
+        
+        // make sure we know the entry this comment is going to
+        WeblogEntryData entry = rreq.getWeblogEntry();
+        if (entry == null || entry.getId() == null) {
+            session.setAttribute(RollerSession.ERROR_MESSAGE, "Cannot post comment to null entry");
+            RequestDispatcher dispatcher = 
+                request.getRequestDispatcher(entry_permalink);
+            dispatcher.forward(request, response);
+            return;
+        }
             
+        try {
             // we know what our weblog entry is, so setup our permalink url
             entry_permalink = entry.getPermaLink();
             
