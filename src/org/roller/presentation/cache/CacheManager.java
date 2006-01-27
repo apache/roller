@@ -263,7 +263,9 @@ public class CacheManager {
         
         mLogger.debug("invalidating referer = "+referer.getId());
         
-        lastExpiredCache.put(referer.getWebsite().getHandle(), new Date());
+        // NOTE: Invalidating an entire website for each referer is not
+        //       good for our caching.  This may need reevaluation later.
+        //lastExpiredCache.put(referer.getWebsite().getHandle(), new Date());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
