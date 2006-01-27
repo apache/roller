@@ -89,19 +89,10 @@ public class FlavorServlet extends VelocityServlet {
         try {
             // get update time before loading context
             // TODO: this should really be handled elsewhere
-            if(rreq.getWebsite() != null) {
-                String catname =
-                        request.getParameter(RollerRequest.WEBLOGCATEGORYNAME_KEY);
-                
-                Roller roller = RollerFactory.getRoller();
-                UserManager umgr = roller.getUserManager();
-                WeblogManager wmgr = roller.getWeblogManager();
-                
-                Date updateTime = wmgr.getWeblogLastPublishTime(
-                        umgr.getWebsiteByHandle(rreq.getWebsite().getHandle()), catname);
-                
-                request.setAttribute("updateTime", updateTime);
-            }
+            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+            String catname = request.getParameter(RollerRequest.WEBLOGCATEGORYNAME_KEY);
+            Date updateTime = wmgr.getWeblogLastPublishTime(rreq.getWebsite(), catname);
+            request.setAttribute("updateTime", updateTime);
             
             ContextLoader.setupContext(ctx, rreq, response);
             
