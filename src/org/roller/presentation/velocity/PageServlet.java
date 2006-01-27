@@ -245,13 +245,14 @@ public class PageServlet extends VelocityServlet {
     protected void error( HttpServletRequest req, HttpServletResponse res,
             Exception e) throws ServletException, IOException {
         
-        if(e instanceof SocketException) {
-            // ignore socket exceptions
-            mLogger.debug("Some kind of SocketException", e);
-        } else {
-            mLogger.warn("ERROR in VelocityServlet " + e.getClass().getName());
-        }
+        // this means there was an exception outside of the handleRequest()
+        // method which seems to always be some variant of SocketException
+        // so we just ignore it
+        
+        // make sure anyone downstream knows about the exception
+        req.setAttribute("DisplayException", e);
     }
+    
     
     /**
      * Override to prevent Velocity from putting "req" and "res" into the context.
