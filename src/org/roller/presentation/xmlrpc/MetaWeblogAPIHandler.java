@@ -60,9 +60,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     public Object getCategories(String blogid, String userid, String password)
             throws Exception {
         
-        mLogger.info("getCategories() Called =====[ SUPPORTED ]=====");
-        mLogger.info("     BlogId: " + blogid);
-        mLogger.info("     UserId: " + userid);
+        mLogger.debug("getCategories() Called =====[ SUPPORTED ]=====");
+        mLogger.debug("     BlogId: " + blogid);
+        mLogger.debug("     UserId: " + userid);
         
         WebsiteData website = validate(blogid, userid,password);
         RollerRequest rreq = RollerRequest.getRollerRequest();
@@ -106,10 +106,10 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     public boolean editPost(String postid, String userid, String password,
             Hashtable struct, boolean publish) throws Exception {
         
-        mLogger.info("editPost() Called ========[ SUPPORTED ]=====");
-        mLogger.info("     PostId: " + postid);
-        mLogger.info("     UserId: " + userid);
-        mLogger.info("    Publish: " + publish);
+        mLogger.debug("editPost() Called ========[ SUPPORTED ]=====");
+        mLogger.debug("     PostId: " + postid);
+        mLogger.debug("     UserId: " + userid);
+        mLogger.debug("    Publish: " + publish);
         
         Roller roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
@@ -130,8 +130,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Vector cats = (Vector)postcontent.get("categories");
             cat = (String)cats.elementAt(0);
         }
-        mLogger.info("      Title: " + title);
-        mLogger.info("   Category: " + cat);
+        mLogger.debug("      Title: " + title);
+        mLogger.debug("   Category: " + cat);
         
         try {
             
@@ -195,10 +195,10 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     public String newPost(String blogid, String userid, String password, 
                             Hashtable struct, boolean publish) throws Exception {
         
-        mLogger.info("newPost() Called ===========[ SUPPORTED ]=====");
-        mLogger.info("     BlogId: " + blogid);
-        mLogger.info("     UserId: " + userid);
-        mLogger.info("    Publish: " + publish);
+        mLogger.debug("newPost() Called ===========[ SUPPORTED ]=====");
+        mLogger.debug("     BlogId: " + blogid);
+        mLogger.debug("     UserId: " + userid);
+        mLogger.debug("    Publish: " + publish);
         
         WebsiteData website = validate(blogid, userid, password);
         
@@ -219,8 +219,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                 cat = (String)cats.elementAt(0);
             }
         }
-        mLogger.info("      Title: " + title);
-        mLogger.info("   Category: " + cat);
+        mLogger.debug("      Title: " + title);
+        mLogger.debug("   Category: " + cat);
         
         try {
             Roller roller = RollerFactory.getRoller();
@@ -281,9 +281,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     public Object getPost(String postid, String userid, String password)
             throws Exception {
         
-        mLogger.info("getPost() Called =========[ SUPPORTED ]=====");
-        mLogger.info("     PostId: " + postid);
-        mLogger.info("     UserId: " + userid);
+        mLogger.debug("getPost() Called =========[ SUPPORTED ]=====");
+        mLogger.debug("     PostId: " + postid);
+        mLogger.debug("     UserId: " + userid);
         
         Roller roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
@@ -370,10 +370,10 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     public Object getRecentPosts(String blogid, String userid, String password, 
                                     int numposts) throws Exception {
         
-        mLogger.info("getRecentPosts() Called ===========[ SUPPORTED ]=====");
-        mLogger.info("     BlogId: " + blogid);
-        mLogger.info("     UserId: " + userid);
-        mLogger.info("     Number: " + numposts);
+        mLogger.debug("getRecentPosts() Called ===========[ SUPPORTED ]=====");
+        mLogger.debug("     BlogId: " + blogid);
+        mLogger.debug("     UserId: " + userid);
+        mLogger.debug("     Number: " + numposts);
         
         WebsiteData website = validate(blogid, userid,password);
         

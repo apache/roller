@@ -61,10 +61,10 @@ public class BloggerAPIHandler extends BaseAPIHandler {
     public boolean deletePost(String appkey, String postid, String userid,
                             String password, boolean publish) throws Exception {
         
-        mLogger.info("deletePost() Called =====[ SUPPORTED ]=====");
-        mLogger.info("     Appkey: " + appkey);
-        mLogger.info("     PostId: " + postid);
-        mLogger.info("     UserId: " + userid);
+        mLogger.debug("deletePost() Called =====[ SUPPORTED ]=====");
+        mLogger.debug("     Appkey: " + appkey);
+        mLogger.debug("     PostId: " + postid);
+        mLogger.debug("     UserId: " + userid);
         
         Roller roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
@@ -103,12 +103,12 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                                 String password, String templateData,
                                 String templateType) throws Exception {
         
-        mLogger.info("setTemplate() Called =====[ SUPPORTED ]=====");
-        mLogger.info("     Appkey: " + appkey);
-        mLogger.info("     BlogId: " + blogid);
-        mLogger.info("     UserId: " + userid);
-        mLogger.info("   Template: " + templateData);
-        mLogger.info("       Type: " + templateType);
+        mLogger.debug("setTemplate() Called =====[ SUPPORTED ]=====");
+        mLogger.debug("     Appkey: " + appkey);
+        mLogger.debug("     BlogId: " + blogid);
+        mLogger.debug("     UserId: " + userid);
+        mLogger.debug("   Template: " + templateData);
+        mLogger.debug("       Type: " + templateType);
         
         validate(blogid, userid, password);
         
@@ -150,11 +150,11 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                                 String password, String templateType)
             throws Exception {
         
-        mLogger.info("getTemplate() Called =====[ SUPPORTED ]=====");
-        mLogger.info("     Appkey: " + appkey);
-        mLogger.info("     BlogId: " + blogid);
-        mLogger.info("     UserId: " + userid);
-        mLogger.info("       Type: " + templateType);
+        mLogger.debug("getTemplate() Called =====[ SUPPORTED ]=====");
+        mLogger.debug("     Appkey: " + appkey);
+        mLogger.debug("     BlogId: " + blogid);
+        mLogger.debug("     UserId: " + userid);
+        mLogger.debug("       Type: " + templateType);
         
         validate(blogid, userid,password);
         
@@ -188,9 +188,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
     public Object getUserInfo(String appkey, String userid, String password)
             throws Exception {
         
-        mLogger.info("getUserInfo() Called =====[ SUPPORTED ]=====");
-        mLogger.info("     Appkey: " + appkey);
-        mLogger.info("     UserId: " + userid);
+        mLogger.debug("getUserInfo() Called =====[ SUPPORTED ]=====");
+        mLogger.debug("     Appkey: " + appkey);
+        mLogger.debug("     UserId: " + userid);
         
         validateUser(userid, password);
         
@@ -249,9 +249,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
     public Object getUsersBlogs(String appkey, String userid, String password)
             throws Exception {
         
-        mLogger.info("getUsersBlogs() Called ===[ SUPPORTED ]=======");
-        mLogger.info("     Appkey: " + appkey);
-        mLogger.info("     UserId: " + userid);
+        mLogger.debug("getUsersBlogs() Called ===[ SUPPORTED ]=======");
+        mLogger.debug("     Appkey: " + appkey);
+        mLogger.debug("     UserId: " + userid);
         
         Vector result = new Vector();
         if (validateUser(userid, password)) {
@@ -299,12 +299,12 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                             String password, String content, boolean publish)
             throws Exception {
         
-        mLogger.info("editPost() Called ========[ SUPPORTED ]=====");
-        mLogger.info("     Appkey: " + appkey);
-        mLogger.info("     PostId: " + postid);
-        mLogger.info("     UserId: " + userid);
-        mLogger.info("    Publish: " + publish);
-        mLogger.info("     Content:\n " + content);
+        mLogger.debug("editPost() Called ========[ SUPPORTED ]=====");
+        mLogger.debug("     Appkey: " + appkey);
+        mLogger.debug("     PostId: " + postid);
+        mLogger.debug("     UserId: " + userid);
+        mLogger.debug("    Publish: " + publish);
+        mLogger.debug("     Content:\n " + content);
         
         if (validateUser(userid, password)) {
             try {
@@ -351,12 +351,12 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                             String password, String content, boolean publish)
             throws Exception {
         
-        mLogger.info("newPost() Called ===========[ SUPPORTED ]=====");
-        mLogger.info("     Appkey: " + appkey);
-        mLogger.info("     BlogId: " + blogid);
-        mLogger.info("     UserId: " + userid);
-        mLogger.info("    Publish: " + publish);
-        mLogger.info("    Content:\n " + content);
+        mLogger.debug("newPost() Called ===========[ SUPPORTED ]=====");
+        mLogger.debug("     Appkey: " + appkey);
+        mLogger.debug("     BlogId: " + blogid);
+        mLogger.debug("     UserId: " + userid);
+        mLogger.debug("    Publish: " + publish);
+        mLogger.debug("    Content:\n " + content);
         
         WebsiteData website = validate(blogid, userid,password);
         
@@ -426,11 +426,11 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                                     String password, int numposts)
             throws Exception {
         
-        mLogger.info("getRecentPosts() Called ===========[ SUPPORTED ]=====");
-        mLogger.info("     Appkey: " + appkey);
-        mLogger.info("     BlogId: " + blogid);
-        mLogger.info("     UserId: " + userid);
-        mLogger.info("     Number: " + numposts);
+        mLogger.debug("getRecentPosts() Called ===========[ SUPPORTED ]=====");
+        mLogger.debug("     Appkey: " + appkey);
+        mLogger.debug("     BlogId: " + blogid);
+        mLogger.debug("     UserId: " + userid);
+        mLogger.debug("     Number: " + numposts);
         
         WebsiteData website = validate(blogid, userid,password);
         
