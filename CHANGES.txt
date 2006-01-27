@@ -2,6 +2,59 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 2.1 release: new feature release adds comment management and performance fixes
+
+New Features
+    * [ROL-492] - Comment moderation
+    * [ROL-930] - Add support for Really Simple Discovery (RSD)
+Improvements
+    * [ROL-332] - Move Remember Me flag to rollerconfig
+    * [ROL-562] - Per-entry comment setting defaults should be website setting
+    * [ROL-788] - Better comment/trackback management and spam protection
+    * [ROL-853] - Planet should hit database for local blogs
+    * [ROL-858] - Multi-file upload
+    * [ROL-879] - Add newsfeed auto-discovery links on the main pages
+    * [ROL-911] - Referrer/hit-count reset is very slow on large systems
+    * [ROL-914] - Rewrite caching system
+    * [ROL-915] - Trackback verification
+    * [ROL-917] - Use Velocity to generate database creation/upgrade scripts
+    * [ROL-919] - Option to turn off Topic Tag bookmark query
+    * [ROL-934] - Filter spiders from dayhits
+    * [ROL-945] - Support RSD for blog clients
+    * [ROL-960] - Performance: Referrer processing rewrite. Asynchronous
+    * [ROL-961] - Performance: If-Modified Weblog Page Filter
+    * [ROL-963] - Performance: Update IfPlanetModified to cache update times
+    * [ROL-964] - Performance: Memcached based cache
+    * [ROL-965] - Performance: Caching for roller runtime props.
+    * [ROL-966] - Display days controlled in website settings
+    * [ROL-967] - Comments moderation preview layout issue
+    * [ROL-989] - User profile and user admin pages send passwords in the clear
+    * [ROL-992] - Support for Atom 1.0 format in planet aggregator
+    * [ROL-1002] - Trackback reports NPE rather than HTTP status code
+    * [ROL-1004] - Document Acegi security keys
+    * [ROL-1005] - Switch to nice looking FamFamFam icons instead of Swing ones
+    * [ROL-1008] - Be lenient about MetaWeblog newPost/editPost publish flag
+Bug fixes
+    * [ROL-559] - Do comments in x2 and Sunset themes work?
+    * [ROL-571] - White blotches in areas of calendar
+    * [ROL-646] - Flush Cache not working correctly
+    * [ROL-784] - "Redirect limit exceeded" on Mac OSX w/ Safari 2.0
+    * [ROL-824] - MetaWeblog API treating passwords as unencrypted
+    * [ROL-874] - German trans. contains specific welcome.title
+    * [ROL-876] - Javascript error in comments.vm
+    * [ROL-900] - Missing delete user UI control
+    * [ROL-923] - Tooltip help links on plugins broken
+    * [ROL-935] - Comment authenticator failing
+    * [ROL-956] - Emoticons broken in Roller 2.0
+    * [ROL-957] - Smiley's plugin does not produce XHTML valid <img> tag
+    * [ROL-968] - Referrer spam still getting past the site black list
+    * [ROL-969] - Fix date filter in comments moderation
+    * [ROL-988] - bug in showNextPreviousLinks()
+    * [ROL-990] - Referrers not filtered against site-wide blacklist
+    * [ROL-1007] - Main RSS feed: <lastBuildDate> is empty
+
+-------------------------------------------------------------------------------
+
 Roller 2.0 release: major new release adds group blogging and streamlined UI
 
   New Features

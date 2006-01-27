@@ -20,13 +20,15 @@ LICENSING TERMS
 
 CREDITS AND COPYRIGHT NOTICES
 
-   Roller is Copyright (c) 2002-2005 by the Roller project members: 
+   Roller is Copyright (c) 2002-2006 by the Roller project members: 
            David M Johnson
            Lance Lanvandowska 
            Matt Raible 
            Anil Gangolli
            Henri Yandell
            Allen Gilliland
+           Elias Torres
+           Matt Schmidt
        Past members:  	 
            Mindaguas Idzelis 
            Jaap Van Der Molen 
