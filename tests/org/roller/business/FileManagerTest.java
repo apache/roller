@@ -61,7 +61,7 @@ public class FileManagerTest extends TestCase
             
             FileManager fmgr = new FileManagerImpl();
             RollerMessages msgs = new RollerMessages();
-            assertFalse(fmgr.canSave(mWebsite, "test.gif", 2500000, msgs));
+            assertFalse(fmgr.canSave(mWebsite.getHandle(), "test.gif", 2500000, msgs));
             //assertEquals(4, msgs.getErrorCount());
         }
         catch (Exception e)
@@ -97,13 +97,13 @@ public class FileManagerTest extends TestCase
             FileManager fmgr = new FileManagerImpl();
             RollerMessages msgs = new RollerMessages();
             InputStream is = getClass().getResourceAsStream("/bookmarks.opml");
-            fmgr.saveFile(mWebsite, "bookmarks.opml", 1545, is);
+            fmgr.saveFile(mWebsite.getHandle(), "bookmarks.opml", 1545, is);
             
-            assertEquals(1, fmgr.getFiles(mWebsite).length);
+            assertEquals(1, fmgr.getFiles(mWebsite.getHandle()).length);
             
-            fmgr.deleteFile(mWebsite, "bookmarks.opml");
+            fmgr.deleteFile(mWebsite.getHandle(), "bookmarks.opml");
             Thread.sleep(2000);
-            assertEquals(0, fmgr.getFiles(mWebsite).length);
+            assertEquals(0, fmgr.getFiles(mWebsite.getHandle()).length);
         }
         catch (Exception e)
         {
