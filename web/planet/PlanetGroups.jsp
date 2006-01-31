@@ -64,7 +64,8 @@ function deleteGroup()
         </div>
 
     </html:form>
-    <br />
+
+    <br style="clear:left" />
     
     <h2><fmt:message key="planetGroups.existingTitle" /></h2>
     <p><i><fmt:message key="planetGroups.existingPrompt" /></i></p>
