@@ -89,7 +89,7 @@ function deleteSubscription()
             </c:if>
         </div>
 
-        <br />
+        <br style="clear:left" />
 
         <h2>
             <fmt:message key="planetSubscriptions.existingTitle" />
