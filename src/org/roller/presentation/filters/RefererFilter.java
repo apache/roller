@@ -68,7 +68,7 @@ public class RefererFilter implements Filter {
         } catch(Exception e) {
             // illegal page request
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            mLogger.warn("Illegal page request: "+request.getRequestURL());
+            mLogger.debug("Illegal page request: "+request.getRequestURL());
             return;
         }
         
@@ -115,7 +115,7 @@ public class RefererFilter implements Filter {
                 } catch(Exception e) {
                     // if we can't get the WebsiteData object we can't continue
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                    mLogger.error("Error retrieving weblog: "+handle, e);
+                    mLogger.error("Unable to retrieve weblog: "+handle);
                     return;
                 }
                 
