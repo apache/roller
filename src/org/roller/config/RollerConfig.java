@@ -151,6 +151,26 @@ public class RollerConfig {
     }
 
     /**
+     * Retrieve a property as an int ... defaults to 0 if not present.
+     **/
+    public static int getIntProperty(String name) {
+        return getIntProperty(name, 0);
+    }
+
+    /**
+     * Retrieve a property as a int ... with specified default if not present.
+     */
+    public static int getIntProperty(String name, int defaultValue) {
+        // get the value first, then convert
+        String value = RollerConfig.getProperty(name);
+
+        if (value == null)
+            return defaultValue;
+
+        return (new Integer(value)).intValue();
+    }
+
+    /**
      * Retrieve all property keys
      *
      * @return Enumeration A list of all keys

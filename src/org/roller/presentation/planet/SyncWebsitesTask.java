@@ -11,6 +11,7 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.PlanetManager;
 import org.roller.model.Roller;
@@ -169,9 +170,8 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
             }
             UserManager userManager = roller.getUserManager();
             try {
-                // Technorati API allows only 500 queries per-day
-                // TODO: make this configurable
-                int limit = 500;
+                int limit = RollerConfig.getIntProperty(
+                    "planet.aggregator.technorati.limit", 500);
                 int userCount = planet.getSubscriptionCount();
                 int mod = (userCount / limit) + 1;
                 
