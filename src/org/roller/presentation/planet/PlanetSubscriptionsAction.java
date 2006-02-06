@@ -182,7 +182,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         return forward;
     }
     
-    /** Save subscription, add to "external" group */
+    /** Save subscription, add to current group */
     public ActionForward saveSubscription(ActionMapping mapping,
             ActionForm actionForm, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException {
@@ -203,13 +203,24 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                 PlanetSubscriptionData sub = null;
                 ActionErrors errors = validate(planet, form);
                 if (errors.isEmpty()) {
-                    if (form.getId() == null || form.getId().trim().length() == 0) {
-                        sub = new PlanetSubscriptionData();
+                    if (form.getId() == null || form.getId().trim().length() == 0) {                        
+                        // User adding new subscription to group.                        
+                        // Does form specify a subscription that already exists?
+                        if (form.getFeedUrl() != null) {
+                            sub = planet.getSubscription(form.getFeedUrl());                           
+                        }
+                        // If not, then create a new one
+                        if (sub == null) {
+                            sub = new PlanetSubscriptionData();   
+                        }
+                        // And add it to the group
                         targetGroup.addSubscription(sub);
+                        
                     } else {
+                        // User editing an existing subscription within a group
                         sub = planet.getSubscriptionById(form.getId());
-                    }
-                    form.copyTo(sub, request.getLocale());
+                        form.copyTo(sub, request.getLocale());                        
+                    }                    
                     form.setGroupHandle(groupHandle);
                     planet.saveSubscription(sub);
                     planet.saveGroup(targetGroup);
