@@ -425,6 +425,7 @@ ro.buildUser=${user.name}
     <!-- Copy docs to staging -->
     <copy todir="${build.stage_web}/docs">
         <fileset dir="${basedir}/docs">
+            <include name="examples/**" />
             <include name="installguide/**" />
             <include name="userguide/**" />
             <exclude name="**/old/**" />
