@@ -33,9 +33,25 @@ CommentManagementAction.CommentManagementPageModel model =
         <html:text property="searchString" /></input>
     </div>
     <br />
-
-   <%-- ========================================================= --%>
-   <%-- filter by date --%>
+    <br />
+    
+    <div class="sideformrow">
+        <label for="startDateString" class="sideformrow">
+           <fmt:message key="commentManagement.startDate" />:
+        </label>
+        <roller:Date property="startDateString" formName="commentQueryForm"
+            dateFormat='<%= model.getShortDateFormat() %>' />
+    </div>
+        
+    <div class="sideformrow">
+        <label for="endDateString" class="sideformrow">
+           <fmt:message key="commentManagement.endDate" />:
+        </label>
+        <roller:Date property="endDateString" formName="commentQueryForm"
+            dateFormat='<%= model.getShortDateFormat() %>' />
+    </div>
+    <br />
+    <br />
   
     <div class="sideformrow">
         <label for="pendingString" class="sideformrow">
@@ -76,24 +92,6 @@ CommentManagementAction.CommentManagementPageModel model =
             <html:radio property="spamString" value="ONLY_SPAM" >
                 <fmt:message key="commentManagement.onlySpam" /></html:radio><br />
         </div>
-    </div>
-    <br />
-    
-    <br />
-    <div class="sideformrow">
-        <label for="startDateString" class="sideformrow">
-           <fmt:message key="commentManagement.startDate" />:
-        </label>
-        <roller:Date property="startDateString" formName="commentQueryForm"
-            dateFormat='<%= model.getShortDateFormat() %>' />
-    </div>
-        
-    <div class="sideformrow">
-        <label for="endDateString" class="sideformrow">
-           <fmt:message key="commentManagement.endDate" />:
-        </label>
-        <roller:Date property="endDateString" formName="commentQueryForm"
-            dateFormat='<%= model.getShortDateFormat() %>' />
     </div>
     <br />
     

@@ -130,12 +130,12 @@ File upload form, but only if it's enabled and weblog is under quota
                
             <div id="lessToggle" style="display:none; float:left;">
                 <a onclick="javascript:toggleLess('fileControl')">
-                   <img src='<c:url value="/images/delete.png"/>' style="padding:4px" title="Add file to upload list" />
+                   <img src='<c:url value="/images/delete.png"/>' style="padding:4px" title="Remove last from upload list" />
                 </a>
             </div>
             <div id="moreToggle" style="display:inline; float:left">
                 <a onclick="javascript:toggleMore('fileControl')">
-                    <img src='<c:url value="/images/add.png"/>' style="padding:4px" title="Remove last from upload list" />
+                    <img src='<c:url value="/images/add.png"/>' style="padding:4px" title="Add file to upload list" />
                 </a>
             </div>
          

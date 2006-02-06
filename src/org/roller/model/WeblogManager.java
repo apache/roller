@@ -186,35 +186,16 @@ public interface WeblogManager extends Serializable
         throws RollerException;
 
     //------------------------------------------------ WeblogEntryData Queries
-
-    /**
-     * Get WeblogEntries as a list in reverse chronological order.
-     * @param userName   User name or null to get for all users.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category path or null for all categories.
-     * @param status     Status of ALL, DRAFT_ONLY, or PUB_ONLY.
-     * @param maxEntries Max entries or null for no limit.
-     * @return List of WeblogEntryData objects in reverse chrono order.
-     * @throws RollerException
-     */
-    public List getWeblogEntries(
-                    WebsiteData website, 
-                    Date    startDate, 
-                    Date    endDate, 
-                    String  catName, 
-                    String  status,
-                    Integer maxEntries)
-                    throws RollerException;
     
     /**
-     * Get WeblogEntries in range as list in reverse chronological order.
+     * Get WeblogEntries by offset/length as list in reverse chronological order.
      * The range offset and list arguments enable paging through query results.
      * @param userName   User name or null to get for all users.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
+     * @param sortby     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
      * @param offset     Index of first entry to include.
      * @param length     Max number of entries to include.
      * @return List of WeblogEntryData objects in reverse chrono order.
@@ -226,8 +207,32 @@ public interface WeblogManager extends Serializable
                     Date    endDate, 
                     String  catName, 
                     String  status,
-                    int     offset,
-                    int     length)
+                    String  sortBy,
+                    int offset,
+                    int range)  
+                    throws RollerException;
+    /**
+     * Get WeblogEntries up to limit as list in reverse chronological order.
+     * The range offset and list arguments enable paging through query results.
+     * @param userName   User name or null to get for all users.
+     * @param startDate  Start date or null for no start date.
+     * @param endDate    End date or null for no end date.
+     * @param catName    Category path or null for all categories.
+     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
+     * @param sortby     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
+     * @param offset     Index of first entry to include.
+     * @param maxEntries     Max number of entries to include.
+     * @return List of WeblogEntryData objects in reverse chrono order.
+     * @throws RollerException
+     */
+    public List getWeblogEntries(
+                    WebsiteData website, 
+                    Date    startDate, 
+                    Date    endDate, 
+                    String  catName, 
+                    String  status,
+                    String  sortBy,
+                    Integer maxEntries)  
                     throws RollerException;
     
     /**

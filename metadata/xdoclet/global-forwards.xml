@@ -22,7 +22,7 @@
 
 <forward name="weblogEdit"             path="/editor/weblog.do?method=edit"/>
 <forward name="weblogCreate"           path="/editor/weblog.do?method=create"/>
-<forward name="weblogQuery"            path="/editor/weblogQuery.do?method=query"/>
+<forward name="weblogEntryManagement"  path="/editor/weblogEntryManagement.do?method=query"/>
 <forward name="commentManagement"      path="/editor/commentManagement.do?method=query"/>
 <forward name="commentQuery"           path="/editor/commentQuery.do?method=query"/>
 <forward name="categories"             path="/editor/categories.do?method=selectCategory"/>

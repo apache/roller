@@ -183,8 +183,8 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
                     Date    endDate, 
                     String  catName, 
                     String  status, 
-                    Integer maxEntries,
-                    Boolean pinned) throws RollerException
+                    String  sortby,
+                    Integer maxEntries) throws RollerException
     {
         WeblogCategoryData cat = null;        
         if (StringUtils.isNotEmpty(catName) && website != null)
@@ -233,17 +233,40 @@ public class HibernateWeblogManagerImpl extends WeblogManagerImpl
             {
                 criteria.add(Expression.eq("status", status));
             }        
-
-            if (pinned != null)
+                    
+            if (sortby != null && sortby.equals("updateTime"))
             {
-                criteria.add(Expression.eq("pinnedToMain", pinned));
+                criteria.addOrder(Order.desc("updateTime"));
             }
-                            
-            criteria.addOrder(Order.desc("pubTime"));
+            else
+            {
+                criteria.addOrder(Order.desc("pubTime"));
+            }
             
             if (maxEntries != null) 
             {
                 criteria.setMaxResults(maxEntries.intValue());
+            }            
+            return criteria.list();                                             
+        }
+        catch (HibernateException e)
+        {
+            mLogger.error(e);
+            throw new RollerException(e);
+        }
+    }
+    
+    public List getWeblogEntriesPinnedToMain(Integer max) throws RollerException 
+    {
+        try
+        {
+            Session session = ((HibernateStrategy)mStrategy).getSession();
+            Criteria criteria = session.createCriteria(WeblogEntryData.class);
+            criteria.add(Expression.eq("pinnedToMain", Boolean.TRUE));                            
+            criteria.addOrder(Order.desc("pubTime"));            
+            if (max != null) 
+            {
+                criteria.setMaxResults(max.intValue());
             }            
             return criteria.list();
         }

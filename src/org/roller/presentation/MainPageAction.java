@@ -104,7 +104,8 @@ public class MainPageAction extends Action {
                         new Date(),             // endDate
                         null,                   // catName
                         WeblogEntryData.PUBLISHED, // status
-                        new Integer(num));       // maxEntries
+                        null,                   // sortby (null for pubTime)
+                        new Integer(num));      // maxEntries
             } catch (Exception e) {
                 mLogger.error(e);
             }

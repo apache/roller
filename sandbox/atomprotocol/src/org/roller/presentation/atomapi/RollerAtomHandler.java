@@ -203,12 +203,13 @@ public class RollerAtomHandler implements AtomHandler {
         List entries = null;
         if (canView(website)) {
             entries = mRoller.getWeblogManager().getWeblogEntries(
-                    website,  // website
-                    null,   // startDate
-                    null,   // endDate
-                    null,   // catName
-                    null,   // status
-                    start, // offset (for range paging)
+                    website,           // website
+                    null,              // startDate
+                    null,              // endDate
+                    null,              // catName
+                    null,              // status
+                    "updateTime",      // sortby
+                    start,             // offset (for range paging)
                     end - start + 2);  // maxEntries
             Feed feed = new Feed();
             List atomEntries = new ArrayList();

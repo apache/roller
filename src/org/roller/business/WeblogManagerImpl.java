@@ -43,26 +43,8 @@ public abstract class WeblogManagerImpl implements WeblogManager
     
     /* inline creation of reverse comparator, anonymous inner class */
     private Comparator reverseComparator = new ReverseComparator();
-    /*
-    new Comparator()
-    {
-        public int compare(Object o1, Object o2)
-        {
-            return -1 * ((Date) o1).compareTo((Date)o2);
-        }
-    };
-    */
     
     private SimpleDateFormat formatter = DateUtil.get8charDateFormat();
-
-    public abstract List getWeblogEntries(
-                    WebsiteData website, 
-                    Date    startDate, 
-                    Date    endDate, 
-                    String  catName, 
-                    String  status, 
-                    Integer maxEntries,
-                    Boolean pinned) throws RollerException;
 
     public abstract List getNextPrevEntries(
                     WeblogEntryData current, 
@@ -81,19 +63,11 @@ public abstract class WeblogManagerImpl implements WeblogManager
 
     //------------------------------------------------ WeblogCategoryData CRUD
 
-    /**
-     * @see org.roller.model.WeblogManager#createWeblogCategory()
-     */
     public WeblogCategoryData createWeblogCategory()
     {
         return new WeblogCategoryData();
     }
 
-    /**
-     * @see org.roller.model.WeblogManager#createWeblogCategory(
-     * org.roller.pojos.WebsiteData, org.roller.pojos.WeblogCategoryData,
-     * java.lang.String, java.lang.String, java.lang.String)
-     */
     public WeblogCategoryData createWeblogCategory(
         WebsiteData website,
         WeblogCategoryData parent,
@@ -261,83 +235,27 @@ public abstract class WeblogManagerImpl implements WeblogManager
 		removeCommentsForEntry( id );
         mStrategy.remove(id, WeblogEntryData.class);
     }
-
-    //------------------------------------------------ WeblogEntryData Queries
-
-    /**
-     * Gets the Date of the latest Entry publish time, before the end of today,
-     * for all WeblogEntries
-     *
-     * @param userName
-     * @return Date
-     * @throws RollerException
-     */
-    public Date getWeblogLastPublishTime(WebsiteData website)
-        throws RollerException
-    {
-        return getWeblogLastPublishTime(website, null);
-    }
-
-    //--------------------------------------------------------- Implementation
-
-    /** 
-     * Get weblog entries.
-     * @see org.roller.model.WeblogManager#getWeblogEntries(
-     *   java.lang.String, 
-     *   java.util.Date, 
-     *   java.util.Date, 
-     *   java.lang.String, 
-     *   java.lang.String, 
-     *   java.lang.Integer)
-     */
+    
     public List getWeblogEntries(
-                    WebsiteData website, 
-                    Date    startDate, 
-                    Date    endDate, 
-                    String  catName, 
-                    String  status, 
-                    Integer maxEntries) throws RollerException
-    {
-        return getWeblogEntries(
-                    website, 
-                    startDate, 
-                    endDate, 
-                    catName, 
-                    status, 
-                    maxEntries, 
-                    null);
-    }
-
-    /** 
-     * Get webloog entries in range specified by offset and length.
-     * @see org.roller.model.WeblogManager#getWeblogEntries(
-     *   java.lang.String, 
-     *   java.util.Date, 
-     *   java.util.Date, 
-     *   java.lang.String, 
-     *   java.lang.String, 
-     *   int offset,
-     *   int length)
-     */
-    public List getWeblogEntries(
-                    WebsiteData website, 
-                    Date    startDate, 
-                    Date    endDate, 
-                    String  catName, 
-                    String  status, 
-                    int offset,
-                    int range) throws RollerException
+                    WebsiteData website,
+                    Date    startDate,
+                    Date    endDate,
+                    String  catName,
+                    String  status,
+                    String  sortby,
+                    int     offset,
+                    int     range) throws RollerException
     {
         List filtered = new ArrayList();
         List entries = getWeblogEntries(
-                    website, 
-                    startDate, 
-                    endDate, 
-                    catName, 
-                    status, 
-                    new Integer(offset + range), 
-                    null);
-        if (entries.size() < offset) 
+                    website,
+                    startDate,
+                    endDate,
+                    catName,
+                    status,
+                    sortby,
+                    new Integer(offset + range));
+        if (entries.size() < offset)
         {
             return entries;
         }
@@ -348,15 +266,16 @@ public abstract class WeblogManagerImpl implements WeblogManager
         return filtered;
     }
 
-    /** 
-     * @see org.roller.model.WeblogManager#getWeblogEntryDayMap(
-     * java.lang.String, 
-     * java.util.Date, 
-     * java.util.Date, 
-     * java.lang.String, 
-     * java.lang.String, 
-     * java.lang.Integer)
+    /**
+     * Gets the Date of the latest Entry publish time, before the end of today,
+     * for all WeblogEntries
      */
+    public Date getWeblogLastPublishTime(WebsiteData website)
+        throws RollerException
+    {
+        return getWeblogLastPublishTime(website, null);
+    }
+
     public Map getWeblogEntryObjectMap(
                     WebsiteData website, 
                     Date    startDate, 
@@ -375,15 +294,6 @@ public abstract class WeblogManagerImpl implements WeblogManager
                         false);
     }
     
-    /** 
-     * @see org.roller.model.WeblogManager#getWeblogEntryDayMap(
-     * java.lang.String, 
-     * java.util.Date, 
-     * java.util.Date, 
-     * java.lang.String, 
-     * java.lang.String, 
-     * java.lang.Integer)
-     */
     public Map getWeblogEntryStringMap(
                     WebsiteData website, 
                     Date    startDate, 
@@ -419,6 +329,7 @@ public abstract class WeblogManagerImpl implements WeblogManager
                         endDate,
                         catName,
                         status,
+                        null,
                         maxEntries);
         
         Calendar cal = Calendar.getInstance();
@@ -450,9 +361,6 @@ public abstract class WeblogManagerImpl implements WeblogManager
         return map;
     }
     
-    /* 
-     * @see org.roller.model.WeblogManager#getNextEntry(org.roller.pojos.WeblogEntryData)
-     */
     public List getNextEntries(
             WeblogEntryData current, String catName, int maxEntries)
         throws RollerException
@@ -460,9 +368,6 @@ public abstract class WeblogManagerImpl implements WeblogManager
         return getNextPrevEntries(current, catName, maxEntries, true);
     }
 
-    /* 
-     * @see org.roller.model.WeblogManager#getPreviousEntry(org.roller.pojos.WeblogEntryData)
-     */
     public List getPreviousEntries(
             WeblogEntryData current, String catName, int maxEntries)
         throws RollerException
@@ -494,15 +399,6 @@ public abstract class WeblogManagerImpl implements WeblogManager
         return entry;
     }
     
-    /** 
-     * @see org.roller.model.WeblogManager#getWeblogEntriesPinnedToMain(int)
-     */
-    public List getWeblogEntriesPinnedToMain(Integer max) throws RollerException
-    {
-        return getWeblogEntries(
-            null, null, new Date(), null, null, max, Boolean.TRUE);
-    }
-
     /**
      * Get absolute URL to this website.
      * @return Absolute URL to this website.

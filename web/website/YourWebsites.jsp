@@ -91,7 +91,7 @@
                            <fmt:message key="yourWebsites.newEntry" /></a>
                        <br />
 
-                       <c:url value="/editor/weblogQuery.do" var="editEntries">
+                       <c:url value="/editor/weblogEntryManagement.do" var="editEntries">
                            <c:param name="method" value="query" />
                            <c:param name="weblog" value="${perms.website.handle}" />
                        </c:url>
