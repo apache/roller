@@ -383,25 +383,23 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Roller roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             if (website != null) {
-                Map entries = weblogMgr.getWeblogEntryObjectMap(
-                        website,                // userName
-                        null,                   // startDate
-                        new Date(),             // endDate
-                        null,                   // catName
-                        null,      // status
-                        new Integer(numposts)); // maxEntries
+                List entries = weblogMgr.getWeblogEntries(
+                    website,           // website
+                    null,              // startDate
+                    null,              // endDate
+                    null,              // catName
+                    null,              // status
+                    "updateTime",      // sortby
+                    new Integer(numposts));  // maxEntries
                 
-                Iterator iter = entries.values().iterator();
+                Iterator iter = entries.iterator();
                 while (iter.hasNext()) {
-                    ArrayList list = (ArrayList) iter.next();
-                    Iterator entryIter = list.iterator();
-                    while (entryIter.hasNext()) {
-                        WeblogEntryData entry = (WeblogEntryData)entryIter.next();
-                        results.addElement(createPostStruct(entry, userid));
-                    }
+                     WeblogEntryData entry = (WeblogEntryData)iter.next();
+                     results.addElement(createPostStruct(entry, userid));
                 }
             }
             return results;
+            
         } catch (Exception e) {
             String msg = "ERROR in BlooggerAPIHander.getRecentPosts";
             mLogger.error(msg,e);
