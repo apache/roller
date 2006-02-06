@@ -101,9 +101,9 @@
     <put name="sidebar" value="/weblog/WeblogEditSidebar.jsp" />
     <put name="styles" value="/theme/css-sidebar.jsp" />
 </definition>
-<definition name=".WeblogQuery" extends=".tiles-editorpage" >
-    <put name="content" value="/weblog/WeblogQuery.jsp" />
-    <put name="sidebar" value="/weblog/WeblogQuerySidebar.jsp" />
+<definition name=".WeblogEntryManagement" extends=".tiles-editorpage" >
+    <put name="content" value="/weblog/WeblogEntryManagement.jsp" />
+    <put name="sidebar" value="/weblog/WeblogEntryManagementSidebar.jsp" />
     <put name="styles" value="/theme/css-sidebar.jsp" />
 </definition>
 <definition name=".CommentManagement" extends=".tiles-editorpage" >

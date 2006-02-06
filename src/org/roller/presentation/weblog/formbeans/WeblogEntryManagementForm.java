@@ -1,5 +1,5 @@
 /*
- * Created on Mar 25, 2004
+ * Created on Feb 3, 2006
  */
 package org.roller.presentation.weblog.formbeans;
 
@@ -14,10 +14,10 @@ import org.apache.struts.action.ActionMapping;
 /**
  * Form allows user to set Weblog Entry query and export parameters.
  * 
- * @struts.form name="weblogQueryForm"
- * @author lance.lavandowska
+ * @struts.form name="weblogEntryManagementForm"
+ * @author Dave Johnson
  */
-public class WeblogQueryForm
+public class WeblogEntryManagementForm
     extends    org.apache.struts.action.ActionForm
     implements java.io.Serializable
 {    
@@ -26,8 +26,14 @@ public class WeblogQueryForm
     private String mFileBy = "month";
     private String mExportFormat = "rss";
     private String mCategoryId = null;
-    private Integer mMaxEntries = new Integer(20);
     private String mStatus = "ALL";
+    private String mSortby = "pubTime";
+    
+    /** max entries displayed per page */
+    private int count = 30; 
+    
+     /** offset into current query results */
+    private int offset = 0;
     
     // TODO : Implement option for RSS2 or Atom
 
@@ -122,20 +128,6 @@ public class WeblogQueryForm
         mCategoryId = category;
     }
     /**
-     * @return Returns the maxEntries.
-     */
-    public Integer getMaxEntries()
-    {
-        return mMaxEntries;
-    }
-    /**
-     * @param maxEntries The maxEntries to set.
-     */
-    public void setMaxEntries(Integer maxEntries)
-    {
-        mMaxEntries = maxEntries;
-    }
-    /**
      * @return Returns the status.
      */
     public String getStatus()
@@ -148,5 +140,29 @@ public class WeblogQueryForm
     public void setStatus(String status)
     {
         mStatus = status;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    } 
+    
+    public String getSortby() {
+        return mSortby;
+    }
+    
+    public void setSortby(String sortby) {
+        mSortby = sortby;
     }
 }

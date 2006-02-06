@@ -424,11 +424,12 @@ public class PageModel {
             
             List mEntries = mgr.getWeblogEntries(
                     mRollerReq.getWebsite(),
-                    null,                    // startDate
-                    day,                      // endDate
-                    catParam,                 // catName
+                    null,                        // startDate
+                    day,                         // endDate
+                    catParam,                    // catName
                     WeblogEntryData.PUBLISHED,   // status
-                    new Integer(maxEntries)); // maxEntries
+                    null,                        // sortby (null for pubTime)
+                    new Integer(maxEntries));    // maxEntries
             
             // wrap pojos
             ret = new ArrayList(mEntries.size());
@@ -757,7 +758,7 @@ public class PageModel {
                     null,  // pending
                     Boolean.TRUE,  // approved only
                     Boolean.FALSE, // no spam
-                    false,         // we want chrono order
+                    true,          // we want reverse chrono order
                     0,             // offset
                     maxCount);     // no limit
             

@@ -38,7 +38,7 @@ import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.velocity.ExportRss;
-import org.roller.presentation.weblog.formbeans.WeblogQueryForm;
+import org.roller.presentation.weblog.formbeans.WeblogEntryManagementForm;
 import org.roller.util.DateUtil;
 
 /**
@@ -131,7 +131,7 @@ public class ExportEntriesAction extends DispatchAction
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(rreq.getRequest());
-            WeblogQueryForm form = (WeblogQueryForm)actionForm;
+            WeblogEntryManagementForm form = (WeblogEntryManagementForm)actionForm;
             if ( rreq.getWebsite() != null 
                     && rses.isUserAuthorizedToAdmin(rreq.getWebsite()) )
             {               
@@ -167,8 +167,9 @@ public class ExportEntriesAction extends DispatchAction
                                     startDate,         // startDate
                                     endDate,           // endDate
                                     null,              // catName
-                                    null,  // status
-                                    null);              // maxEntries
+                                    null,              // status
+                                    null,              // sortby (null for pubtime)
+                                    null);             // maxEntries
 
                     ActionMessages messages = writeSuccessMessage(request, response, rreq, form);
 
@@ -272,7 +273,7 @@ public class ExportEntriesAction extends DispatchAction
                     HttpServletRequest request, 
                     HttpServletResponse response, 
                     RollerRequest rreq, 
-                    WeblogQueryForm form) throws MalformedURLException
+                    WeblogEntryManagementForm form) throws MalformedURLException
     {
         PageContext pageContext =
             JspFactory.getDefaultFactory().getPageContext( 

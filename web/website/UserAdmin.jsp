@@ -174,7 +174,7 @@ function cancel() {
                                <fmt:message key="userAdmin.newEntry" /></a>
                        </td>
                        <td width="%15">
-                           <c:url value="/editor/weblogQuery.do" var="editEntries">
+                           <c:url value="/editor/weblogEntryManagement.do" var="editEntries">
                                <c:param name="method" value="query" />
                                <c:param name="weblog" value="${perms.website.handle}" />
                            </c:url>

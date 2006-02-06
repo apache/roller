@@ -354,6 +354,7 @@ public class HibernatePlanetManagerImpl extends PlanetManagerImpl {
                         new Date(),                  // endDate
                         null,                        // catName
                         WeblogEntryData.PUBLISHED,   // status
+                        null,                        // sortby (null means pubTime)
                         new Integer(entryCount));    // maxEntries
                     
                     sub.setLastUpdated(siteUpdated);

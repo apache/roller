@@ -1,8 +1,9 @@
 <%@ include file="/taglibs.jsp" %>
 
-<%@ page import="org.roller.presentation.weblog.actions.WeblogQueryPageModel" %>
+<%@ page import="org.roller.presentation.weblog.actions.WeblogEntryManagementAction" %>
 <%
-WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model");
+WeblogEntryManagementAction.PageModel model = 
+    (WeblogEntryManagementAction.PageModel)request.getAttribute("model");
 %>
 
 <div class="sidebarFade">
@@ -16,7 +17,11 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
 
 <p><fmt:message key="weblogEntryQuery.sidebarDescription" /></p>
 
-<html:form action="/editor/weblogQuery" method="post" focus="title">
+<html:form action="/editor/weblogEntryManagement" method="post" focus="title">
+    <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
+    <html:hidden name="method" property="method" value="query"/>
+    <html:hidden property="count" />
+    <html:hidden property="offset" />
 
   <%-- ========================================================= --%>
   <%-- filter by category --%>
@@ -29,7 +34,9 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
             <html:optionsCollection name="model" property="categories" value="id" label="path"  />
         </html:select>
     </div>
-  
+    <br />
+    <br />
+
   <%-- ========================================================= --%>
   <%-- filter by date --%>
   
@@ -46,21 +53,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
         </label>
         <roller:Date property="endDateString" dateFormat='<%= model.getShortDateFormat() %>' />
     </div>
-
-  <%-- ========================================================= --%>
-  <%-- limit number of results --%>
-  
-    <div class="sideformrow">
-        <label for="maxEntries" class="sideformrow">
-            <fmt:message key="weblogEntryQuery.label.maxEntries" />
-        </label>
-        <html:select property="maxEntries" size="1" tabindex="4">
-            <html:option value="25" />
-            <html:option value="50" />
-            <html:option value="75" />
-            <html:option value="100" />
-        </html:select>
-    </div>
+    <br />
     <br />
     
   <%-- ========================================================= --%>
@@ -92,6 +85,24 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
     </div>
 
   <%-- ========================================================= --%>
+  <%-- sort by --%>
+
+    <div class="sideformrow">
+        <label for="status" class="sideformrow">
+            <fmt:message key="weblogEntryQuery.label.sortby" />:
+            <br />
+            <br />
+        </label> 
+        <div>
+        <html:radio property="sortby" value="pubTime">
+            <fmt:message key="weblogEntryQuery.label.pubTime" /></html:radio> 
+        <br />
+        <html:radio property="sortby" value="updateTime">
+            <fmt:message key="weblogEntryQuery.label.updateTime" /></html:radio>
+        </div>
+    </div>
+
+  <%-- ========================================================= --%>
   <%-- search button --%>
   
     <br />
@@ -99,9 +110,7 @@ WeblogQueryPageModel model = (WeblogQueryPageModel)request.getAttribute("model")
         value='<fmt:message key="weblogEntryQuery.button.query" />' 
         onclick="submit()">
     </input>
-    <html:hidden name="method" property="method" value="query"/>
-    <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
-
+    
 </html:form>
 
 <br />
