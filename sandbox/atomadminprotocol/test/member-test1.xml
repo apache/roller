@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<members xmlns="http://purl.org/atom/aapp#">
+	<member>
+		<name>test1</name>
+		<handle>test2</handle>
+		<permission>AUTHOR</permission>
+	</member>
+</members>

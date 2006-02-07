@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<users xmlns="http://purl.org/atom/aapp#">
+	<user>
+		<name>test2</name>
+		<full-name>Test Two</full-name>
+		<password>test2</password>
+		<locale>en</locale>
+		<timezone>US/Pacific</timezone>
+		<email-address>test2@test.com</email-address>
+	</user>
+</users>

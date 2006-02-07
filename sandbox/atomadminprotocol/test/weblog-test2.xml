@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogs xmlns="http://purl.org/atom/aapp#">
+	<weblog>
+		<handle>test2</handle>
+		<name>Test 2</name>
+		<description>Test 2</description>
+		<locale>en</locale>
+		<timezone>US/Pacific</timezone>
+		<creating-user>test2</creating-user>
+		<email-address>test2@test.com</email-address>
+	</weblog>
+</weblogs>
