@@ -90,6 +90,7 @@ public class MailUtil extends Object {
 		}	        
         message.setSubject((subject == null) ? "(no subject)" : subject);
         message.setContent(content, mimeType);
+        message.setSentDate(new java.util.Date()); 
 
 		// First collect all the addresses together.
         Address[] remainingAddresses = message.getAllRecipients();
