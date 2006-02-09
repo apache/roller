@@ -77,7 +77,6 @@
 
     #showWeblogCategoryChooser()
 
-    #showNextPreviousLinks()
     <div id="entries">
     #displayWeblogEntries()
     </div>

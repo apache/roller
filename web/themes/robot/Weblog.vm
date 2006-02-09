@@ -27,7 +27,6 @@
       <p class="descrip">#showWebsiteDescription()</p>
       #showWeblogCategoryChooser()<br>
     </center>
-    #showNextPreviousLinks()
     #displayWeblogEntries()
     <hr />
     #showReferers( 40 25 )

@@ -5,7 +5,6 @@
        <h2>#showWebsiteTitle()</h2>
        #showWeblogCategoryChooser()
    </div>
-    #showNextPreviousLinks()
     #displayWeblogEntries()<br/>
    #includePage("_badges")
 </div>

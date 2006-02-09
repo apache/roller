@@ -4,6 +4,7 @@
 <head>
     #showContentType("text/html; charset=utf-8")
     #showContentLanguage($locale.language)
+    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
     #includePage("_css")
     #showRSSAutodiscoveryLink()
     #showRSDLink()

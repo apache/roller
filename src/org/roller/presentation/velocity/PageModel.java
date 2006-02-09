@@ -34,6 +34,7 @@ import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
+import org.roller.util.DateUtil;
 import org.roller.util.StringUtils;
 
 /**
@@ -303,8 +304,7 @@ public class PageModel {
         if (VELOCITY_NULL.equals(categoryName)) categoryName = null;
         Map ret = new HashMap();
         try {
-            Date day = mRollerReq.getDate();
-            if (day == null) day = new Date();
+
             
             // If request specifies a category, then use that
             String catParam = null;
@@ -321,13 +321,25 @@ public class PageModel {
                 }
             }
             
+            Integer limit = new Integer(maxEntries);
+            Date startDate = null;
+            Date endDate = mRollerReq.getDate();
+            if (endDate == null) endDate = new Date();
+            if (mRollerReq.isDateSpecified()) { 
+                // URL specified a specific day
+                // so get entries for that day
+                endDate = DateUtil.getEndOfDay(endDate);
+                startDate = DateUtil.getStartOfDay(endDate); 
+                // and get them ALL, no limit
+                limit = null;                  
+            }
             Map mRet = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
                     mRollerReq.getWebsite(),
-                    null,                     // startDate
-                    day,                 // endDate
-                    catParam,                 // catName
-                    WeblogEntryData.PUBLISHED,   // status
-                    new Integer(maxEntries)); // maxEntries
+                    startDate,                    // startDate
+                    endDate,                      // endDate
+                    catParam,                     // catName
+                    WeblogEntryData.PUBLISHED,    // status
+                    limit);     // maxEntries
             
             // need to wrap pojos
             java.util.Date key = null;

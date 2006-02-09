@@ -64,7 +64,6 @@
 
     <div id="midColumn">
         <div class="standardSpacer">&nbsp;</div>
-        #showNextPreviousLinks()
         #displayWeblogEntries()
     </div>
 

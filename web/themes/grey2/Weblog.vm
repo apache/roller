@@ -110,7 +110,6 @@
 
          <p><font style="font-size: 8pt;" face="Verdana" color="#404f64">
          #showWeblogCategoryChooser()<br>
-         #showNextPreviousLinks()
          #displayWeblogEntries()
          </font></p>
 

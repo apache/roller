@@ -1,6 +1,6 @@
-/**************/
+
 /* Common CSS */
-/**************/
+
 a {
     font-weight: normal;
     text-decoration: underline;
@@ -12,18 +12,6 @@ a:hover {}
 body {
     font-family: verdana, sans-serif;
     font-size: small;
-    color: black;
-    background-color: white;
-}
-h1 {
-    margin:10px 10px 10px 10px;
-    font-weight: bold;
-    text-align: center;
-}
-h2 {
-    margin:10px 10px 10px 10px;
-    font-weight: bolder;
-    text-align: center;
 }
 p {
     margin:10px 10px 10px 10px;
@@ -34,9 +22,6 @@ pre {
     overflow: auto;
 }
 .code {
-    background: #ffffcc;
-    color: #000000;
-    border: 1px solid #999999;
     margin:10px 10px 10px 20px;
     padding: 3px 3px;
 }
@@ -50,9 +35,8 @@ img {
     margin: 0px; 
 }
 
-/***************/
 /* bookmark.vm */
-/***************/
+
 .rFolder {
     font-size: small;
     font-weight: bold;
@@ -77,10 +61,8 @@ img.smrssbadge {
     border: 0;
 }
 
-
-/*************/
 /* navbar.vm */
-/*************/
+
 .rNavigationBar {
     margin-left: 0;
     padding-left: 0;
@@ -102,12 +84,8 @@ li.rMenuItem {
     font-weight: normal;
 }
 
-/* navbar-horizontal.vm: no styling */
-/* navbar-vertical.vm: no styling */
-
-/***************/
 /* newsfeed.vm */
-/***************/
+
 div.rNewsfeedTitle {
     font-weight: 600;
 }
@@ -124,9 +102,8 @@ span.rNewsfeedDesc {
     font-weight: normal;
 }
 
-/**************/
 /* referer.vm */
-/**************/
+
 ul.rReferersList {
     list-style: none;
     margin-left: 0;
@@ -140,17 +117,8 @@ a.linkback {
     border-style: double;
 }
 
-/*************/
-/* roller.vm */
-/*************/
-
-/***********/
-/* user.vm */
-/***********/
-
-/*************/
 /* comments.vm */
-/*************/
+
 a.entrycommentslink {
     background: transparent;
 }
@@ -160,35 +128,27 @@ a.entrycommentslink {
 }
 /* Preview / Comments Header */
 div.comments-head {
-  color: #999; 
   font-weight:bold;
   margin-top:10px;
   text-transform:uppercase;
-  border-bottom:1px dotted #666;
 }
 /* actual comment content */
 .comment {
-    margin: 5px 10px 10px 5px;
-    border: 1px solid #ddd;
-    background:#eee;    
+    margin: 5px 10px 10px 5px; 
 }
 /* commenter info */
 p.comment-details {
     background: transparent;
-    color: #333333;
     font-size: .95em;
     margin: 10px 0px 10px 10px !important;
 }
 div.comments-form {
-  color:#999;
   font-weight:normal;
-  background:#FFF;  
   margin: 15px 15px 15px 15px;
 }
 span.comments-syntax-indicator {
     display: block;
 }
-
 ul.commentsList {
     list-style: none;
     margin-left: 0;
@@ -209,7 +169,6 @@ form.commentFormBox {
     margin-top: 10px;
 }
 tr.commentFormRow {
-    color: #808080;
     font-size: 12px;
     padding-bottom: 6px;
 }
@@ -228,11 +187,9 @@ div.commentByline {}
 div.commentAuthor {
     border: none;
 }
-/* End Hidden Comment Form */
 
-/*************/
 /* weblog.vm */
-/*************/
+
 a.daypermalink {
     border-style : none;
 }
@@ -282,6 +239,7 @@ li.linkblog {
 }
 .next-previous {
     text-align: center;
+    padding: 1em 0 1em 0;
 }
 .error {
     display: block;
@@ -306,9 +264,8 @@ li.linkblog {
     width: 95%;
 }
 
-/**************/
 /* website.vm */
-/**************/
+
 div.rWeblogCategoryChooser {
     background: transparent;
     margin-bottom: 10px;
@@ -322,9 +279,8 @@ span.rChosenCategory {
     font-weight: bolder;
 }
 
-/********************/
 /* CalendarTag.java */
-/********************/
+
 table.hCalendarTable {
     text-align : center;
 }
@@ -366,9 +322,8 @@ td.hCalendarDay {
     font-size : x-small;
 }
 
-/**************************/
 /* BigWeblogCalendarModel */ 
-/**************************/
+
 div.hCalendarDayTitleBig {
   position: relative;
   left: 0;

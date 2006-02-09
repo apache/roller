@@ -123,7 +123,7 @@ function deleteCookie (name) {
         </td>
     </tr>
 </table>
-#showNextPreviousLinks()
+
 #displayWeblogEntries()
 
 <div id="Controls" class="controls"></div>

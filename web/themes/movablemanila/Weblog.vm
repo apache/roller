@@ -6,6 +6,7 @@
    #showContentLanguage($locale.language)
    #showRSSAutodiscoveryLink()
    #showRSDLink()
+    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js"></script>
    <title>#showWebsiteTitle() : #showPageName()</title><title>Brushed Metal: It Worked!</title>
    <style type="text/css">
@@ -19,7 +20,6 @@
 <div id="content">
    <p><center>#showWeblogCategoryChooser()</center></p>
    #displayWeblogEntries()
-   #showNextPreviousLinks()
       <br />
       <br />
       <br />

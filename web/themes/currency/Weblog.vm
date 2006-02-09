@@ -61,8 +61,6 @@
            <td valign="top" width="555" class="body">
               #showWeblogCategoryChooser()<br />
 
-              #showNextPreviousLinks()
-
               #displayWeblogEntries()
 
               <hr size="1">
