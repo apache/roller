@@ -13,13 +13,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Hits;
-import org.apache.struts.action.ActionMapping;
 import org.roller.RollerException;
 import org.roller.business.search.FieldConstants;
 import org.roller.business.search.operations.SearchOperation;
@@ -28,20 +26,22 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
-import org.roller.pojos.WeblogEntryComparator;
 import org.roller.pojos.WeblogEntryData;
+import org.roller.pojos.WeblogEntryWrapperComparator;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.BasePageModel;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.roller.presentation.RollerRequest;
 import org.roller.util.DateUtil;
 import org.roller.util.StringUtils;
+
+
 
 /**
  * Encapsulate seach result in page model so it can be used from Velocity or JSP.
  * @author Min (original code)
  * @author Dave Johnson (encapsulation)
  */
-public class SearchResultsPageModel extends BasePageModel {
+public class SearchResultsPageModel {
     
     private String   term = "";
     private Integer  hits = new Integer(0);
@@ -63,53 +63,54 @@ public class SearchResultsPageModel extends BasePageModel {
     private static ResourceBundle bundle = 
         ResourceBundle.getBundle("ApplicationResources");          
 
-    public SearchResultsPageModel(
-        String titleKey,
-        HttpServletRequest request,
-        HttpServletResponse response,
-        ActionMapping mapping) throws RollerException, IOException {
-        
-        super(titleKey, request, response, mapping);
+    public SearchResultsPageModel(HttpServletRequest request) {        
+        try {            
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            setWebsiteSpecificSearch(checkForWebsite(request));
+            
+            SearchOperation search =
+                new SearchOperation(RollerFactory.getRoller().getIndexManager());
+            search.setTerm(request.getParameter("q"));
+            setTerm(request.getParameter("q"));
 
-        setWebsiteSpecificSearch(checkForWebsite(request));
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        
-        SearchOperation search =
-            new SearchOperation(RollerFactory.getRoller().getIndexManager());
-        search.setTerm(request.getParameter("q"));
-        setTerm(request.getParameter("q"));
+            WebsiteData website = null;
+            if (isWebsiteSpecificSearch()) {
+                website = rreq.getWebsite();
+                search.setWebsiteHandle(rreq.getWebsite().getHandle());
+            }
 
-        WebsiteData website = null;
-        if (isWebsiteSpecificSearch()) {
-            website = rreq.getWebsite();
-            search.setWebsiteHandle(rreq.getWebsite().getHandle());
-        }
+            if (StringUtils.isNotEmpty(request.getParameter("c"))) {
+                search.setCategory(request.getParameter("c"));
+            }
 
-        if (StringUtils.isNotEmpty(request.getParameter("c"))) {
-            search.setCategory(request.getParameter("c"));
-        }
+            // execute search
+            executeSearch(RollerFactory.getRoller(), search);
 
-        // execute search
-        executeSearch(RollerFactory.getRoller(), search);
-
-        if (search.getResultsCount() == -1) {
-            // this means there has been a parsing (or IO) error
-            setErrorMessage(bundle.getString("error.searchProblem"));
-        } else {
-            // Convert the Hits into WeblogEntryData instances.
-            Hits hits = search.getResults();
-            setResults(convertHitsToEntries(rreq, website, hits));
-            setOffset((Integer)request.getAttribute("offset"));
-            setLimit((Integer)request.getAttribute("limit"));
-            if (request.getAttribute("categories") != null) {
-                Set cats = (Set)request.getAttribute("categories");
-                if (cats.size() > 0) {
-                    setCategories(cats);
+            if (search.getResultsCount() == -1) {
+                // this means there has been a parsing (or IO) error
+                setErrorMessage(bundle.getString("error.searchProblem"));
+            } else {
+                // Convert the Hits into WeblogEntryData instances.
+                Hits hits = search.getResults();
+                setResults(convertHitsToEntries(rreq, website, hits));
+                setOffset((Integer)request.getAttribute("offset"));
+                setLimit((Integer)request.getAttribute("limit"));
+                if (request.getAttribute("categories") != null) {
+                    Set cats = (Set)request.getAttribute("categories");
+                    if (cats.size() > 0) {
+                        setCategories(cats);
+                    }
                 }
             }
+            setHits(new Integer(search.getResultsCount()));
+            
+        } catch (IOException ex) {
+            mLogger.error("ERROR: initializing search page model");
+        } catch (RollerException ex) {
+            mLogger.error("ERROR: initializing search page model");
         }
-        setHits(new Integer(search.getResultsCount()));
     }
+    
     private void executeSearch(Roller roller, SearchOperation search)
         throws RollerException {
         IndexManager indexMgr = roller.getIndexManager();
@@ -118,6 +119,7 @@ public class SearchResultsPageModel extends BasePageModel {
             mLogger.debug("numresults = " + search.getResultsCount());
         }
     }
+    
     /** Look in PathInfo so req.getRemoteUser() doesn't interfere. */
     private boolean checkForWebsite(HttpServletRequest request) {
         if (StringUtils.isNotEmpty(
@@ -133,7 +135,8 @@ public class SearchResultsPageModel extends BasePageModel {
         }
         return false;
     }
-   /**
+  
+    /**
      * Iterate over Hits and build sets of WeblogEntryData
      * objects, placed into Date buckets (in reverse order).
      * @param rreq
@@ -191,14 +194,15 @@ public class SearchResultsPageModel extends BasePageModel {
             // maybe null if search result returned inactive user
             // or entry's user is not the requested user.
             if (entry != null) {
-                addToSearchResults(searchResults, entry);
+                addToSearchResults(searchResults, WeblogEntryDataWrapper.wrap(entry));
             }
         }
         rreq.getRequest().setAttribute("categories", categories);
         return searchResults;
     }
+    
     private void addToSearchResults(
-            TreeMap searchResults, WeblogEntryData entry) {
+            TreeMap searchResults, WeblogEntryDataWrapper entry) {
         // convert entry's each date to midnight (00m 00h 00s)
         Date midnight = DateUtil.getStartOfDay( entry.getPubTime() );
         
@@ -207,11 +211,12 @@ public class SearchResultsPageModel extends BasePageModel {
         TreeSet set = (TreeSet) searchResults.get(midnight);
         if (set == null) {
             // date is not mapped yet, so we need a new Set
-            set = new TreeSet( new WeblogEntryComparator() );
+            set = new TreeSet( new WeblogEntryWrapperComparator() );
             searchResults.put(midnight, set);
         }
         set.add(entry);
     }
+    
     private int useOffset(HttpServletRequest request) {
         int offset = OFFSET;
         if (request.getParameter("o") != null) {
@@ -223,6 +228,7 @@ public class SearchResultsPageModel extends BasePageModel {
         }
         return offset;
     }
+    
     private int useLimit(HttpServletRequest request) {
         int limit = LIMIT;
         if (request.getParameter("n") != null) {

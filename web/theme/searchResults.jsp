@@ -1,15 +1,18 @@
 <%@ include file="/taglibs.jsp" %>
 
 <%
+org.roller.presentation.search.SearchAction.PageModel pageModel =
+   (org.roller.presentation.search.SearchAction.PageModel)
+      request.getAttribute("model");       
 org.roller.presentation.search.SearchResultsPageModel searchResults =
-   (org.roller.presentation.search.SearchResultsPageModel)
-      request.getAttribute("searchResults");       
+    pageModel.getSearchModel();
+request.setAttribute("searchResults", searchResults);
 %>
 
 <%-- Display the search pager --%>
     
 <c:choose>
-   <c:when test="${empty searchResults.website}">
+   <c:when test="${empty pageModel.website}">
       <c:set var="siteText" value="this site" />
    </c:when>
    <c:otherwise>
@@ -39,12 +42,12 @@ org.roller.presentation.search.SearchResultsPageModel searchResults =
        <fmt:param value="${searchResults.hits}" />
     </fmt:message>    
     <c:url var="googleUrl" 
-         value="http://google.com/search?q=${searchResults.term}%20site:${searchResults.baseURL}" />    
+         value="http://google.com/search?q=${searchResults.term}%20site:${pageModel.baseURL}" />    
     <a href='<c:out value="${googleUrl}" />'
         class="google"><fmt:message key="macro.searchresults.hits_2" /></a>
 
     <%-- Form to search again --%>
-    <form method="get" action='<c:out value="${searchResults.baseURL}" />/sitesearch.do'
+    <form method="get" action='<c:out value="${pageModel.baseURL}" />/sitesearch.do'
         style="margin: 5px">
         <input type="text" id="q" name="q" size="31"
             maxlength="255" value='<c:out value="${searchResults.term}" />'
@@ -102,14 +105,14 @@ org.roller.presentation.search.SearchResultsPageModel searchResults =
         <div class="daybox" style="margin: 0px 5px 0px 10px">
         <c:forEach var="post" items="${dayMap}">
 
-            <a href='<c:out value="${searchResults.baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
+            <a href='<c:out value="${pageModel.baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
                 <str:truncateNicely upper="90" >
                    <c:out value="${post.displayTitle}" />
                 </str:truncateNicely></a>
             </a><br />
 
             <span class="entryDetails">
-                <a href='<c:out value="${searchResults.baseURL}" />/page/<c:out value="${post.website.handle}" />'>
+                <a href='<c:out value="${pageModel.baseURL}" />/page/<c:out value="${post.website.handle}" />'>
                 <str:truncateNicely upper="50" >
                    <c:out value="${post.website.name}" />
                 </str:truncateNicely></a> |
