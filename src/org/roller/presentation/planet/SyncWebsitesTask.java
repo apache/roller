@@ -82,8 +82,9 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                 try {
                     String baseFeedURL = baseURL + "/rss/";
                     String baseSiteURL = baseURL + "/page/";
+                    // get list of all enabled and active weblogs
                     Iterator websites =
-                            roller.getUserManager().getWebsites(null, null).iterator();
+                        roller.getUserManager().getWebsites(null, Boolean.TRUE, Boolean.TRUE).iterator();
                     while (websites.hasNext()) {
                         WebsiteData website = (WebsiteData)websites.next();
                         

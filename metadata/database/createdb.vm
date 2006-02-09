@@ -101,6 +101,7 @@ create table website (
     timezone          varchar(50),  
     defaultplugins    varchar(255),
     isenabled         $BOOLEAN_SQL_TYPE_TRUE not null,
+    isactive          $BOOLEAN_SQL_TYPE_TRUE not null,
     datecreated      timestamp not null,
     blacklist            $TEXT_SQL_TYPE,
     defaultallowcomments $BOOLEAN_SQL_TYPE_TRUE not null,

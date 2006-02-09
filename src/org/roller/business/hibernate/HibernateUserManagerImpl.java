@@ -59,7 +59,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     /**
      * Get websites of a user
      */
-    public List getWebsites(UserData user, Boolean enabled)  throws RollerException
+    public List getWebsites(UserData user, Boolean enabled, Boolean active)  throws RollerException
     {
         try
         {
@@ -74,6 +74,10 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             if (enabled != null)
             {
                 criteria.add(Expression.eq("enabled", enabled));
+            }
+            if (active != null)
+            {
+                criteria.add(Expression.eq("active", active));
             }
             return criteria.list();
         }
