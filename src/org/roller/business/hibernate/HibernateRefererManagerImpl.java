@@ -183,48 +183,53 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
                 stmt = con.prepareStatement(
                         "select top ? w.id,w.name,w.handle,sum(r.dayhits) as s "+
                         "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled=? " +
+                        "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
                         "group by w.name,w.handle,w.id order by s desc");
                 stmt.setInt(1, max);
                 stmt.setBoolean(2, true);
+                stmt.setBoolean(3, true);
             } else if(con.getMetaData().getDriverName().startsWith("Apache Derby")) {
 	           // special handling for Derby
 				stmt = con.prepareStatement(
 				    "select w.name, w.handle, w.id, sum(r.dayhits) as s "+
 				    "from website as w, referer as r "+
-				    "where r.websiteid=w.id and w.isenabled=? " +
+				    "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
 				    "group by w.name, w.handle, w.id order by s desc");                      
-				stmt.setBoolean(1, true);
+				stmt.setBoolean(1, true);				
+                stmt.setBoolean(2, true);
                 stmt.setMaxRows(max);
             } else if(con.getMetaData().getDriverName().startsWith("IBM DB2")) {
                 // special handling for IBM DB2
                 stmt = con.prepareStatement(
                         "select u.username,w.name,w.name,sum(r.dayhits) as s "+
                         "from rolleruser as u, website as w, referer as r "+
-                        "where r.websiteid=w.id and w.userid=u.id and w.isenabled= ? " +
+                        "where r.websiteid=w.id and w.userid=u.id and w.isenabled=? and w.isactive=? " +
                         "group by u.username,w.handle,w.id order by s desc fetch first " +
                         Integer.toString(max) + " rows only");
                 stmt.setBoolean(1, true);
+                stmt.setBoolean(2, true);
             } else if (con.getMetaData().getDriverName().startsWith("Oracle")) {
 				String sql = "select u.username,w.name,w.handle,sum(r.dayhits) as s "+
                 "from rolleruser u, website w, referer r "+
-                "where r.websiteid=w.id and w.userid=u.id and w.isenabled= ? and rownum <= ? " +
+                "where r.websiteid=w.id and w.userid=u.id and w.isenabled=? and w.isactive=? and rownum <= ? " +
                 "group by u.username,w.name,w.handle order by s desc";
 				stmt = con.prepareStatement(sql);
 				stmt.setBoolean(1, true);
-				stmt.setInt(2, max );				
+				stmt.setBoolean(2, true);
+				stmt.setInt(3, max );				
             } else {
                 stmt = con.prepareStatement(
                         "select w.id,w.name,w.handle,sum(r.dayhits) as s "+
                         "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled= ? " +
+                        "where r.websiteid=w.id and w.isenabled= ? and w.isactive=? " +
                         // Ben Walding (a Postgres SQL user): Basically, you have
                         // to have all non-aggregated columns that exist in your
                         // 'SELECT' section, in the 'GROUP BY' section as well:
                         "group by w.name,w.handle,w.id order by s desc limit ?");
                 // and not this: "group by w.id order by s desc");
                 stmt.setBoolean(1, true);
-                stmt.setInt(2, max);
+                stmt.setBoolean(2, true);
+                stmt.setInt(3, max);
             }
             ResultSet rs = stmt.executeQuery();
             if ( rs.next() ) {

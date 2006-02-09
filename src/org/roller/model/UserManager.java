@@ -41,9 +41,10 @@ public interface UserManager extends Serializable
      * Get all websites of which user is a member
      * @param user    Get all websites for this user (or null for all)
      * @param enabled Get all with this enabled state (or null or all)
+     * @param active  Get all with this active state (or null or all)
      * @returns List of WebsiteData objects.
      */
-    public List getWebsites(UserData user, Boolean enabled)
+    public List getWebsites(UserData user, Boolean enabled, Boolean active)
         throws RollerException;
 
     /** 

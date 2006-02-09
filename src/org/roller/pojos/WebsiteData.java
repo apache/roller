@@ -59,7 +59,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     private String  locale = null;
     private String  timeZone = null;
     private String  defaultPlugins = null;
-    private Boolean enabled = Boolean.TRUE;
+    private Boolean enabled = Boolean.TRUE;  
+    private Boolean active = Boolean.TRUE;
     private Date dateCreated = null;
     private Boolean defaultAllowComments = Boolean.TRUE;
     private int defaultCommentDays = 0;
@@ -777,22 +778,6 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         defaultPlugins = string;
     }
 
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
-     * @hibernate.property column="isenabled" non-null="true" unique="false"
-     */
-    public Boolean getEnabled()
-    {
-        return this.enabled;
-    }
-    
-    /** @ejb:persistent-field */ 
-    public void setEnabled(Boolean enabled)
-    {
-        this.enabled = enabled;
-    }
-
     public String toString()
     {
         StringBuffer str = new StringBuffer("{");
@@ -1072,6 +1057,40 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      */
     public void setEntryDisplayCount(int entryDisplayCount) {
         this.entryDisplayCount = entryDisplayCount;
+    }
+
+    /**
+     * Set to FALSE to completely disable and hide this weblog from public view.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="isenabled" non-null="true" unique="false"
+     */
+    public Boolean getEnabled()
+    {
+        return this.enabled;
+    }
+    
+    /** @ejb:persistent-field */ 
+    public void setEnabled(Boolean enabled)
+    {
+        this.enabled = enabled;
+    }
+    
+    /**
+     * Set to FALSE to exclude this weblog from community areas such as the 
+     * front page and the planet page.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="isactive" not-null="true"
+     */
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
     
 }

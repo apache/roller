@@ -263,7 +263,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
                 UserData user = umgr.getUser(userid);
-                List websites = umgr.getWebsites(user, Boolean.TRUE);
+                // get list of user's enabled websites
+                List websites = umgr.getWebsites(user, Boolean.TRUE, null);
                 Iterator iter = websites.iterator();
                 while (iter.hasNext()) {
                     WebsiteData website = (WebsiteData)iter.next();
