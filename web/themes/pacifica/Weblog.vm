@@ -82,7 +82,6 @@
                   bordercolor="99ccff" bgcolor="#99ccff">
 
                   #showWeblogCategoryChooser()<br>
-                  #showNextPreviousLinks()
                   #displayWeblogEntries()
                   <br>
 

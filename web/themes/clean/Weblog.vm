@@ -19,7 +19,6 @@
                     <h2>#showWebsiteTitle()</h2>
                     <h3>#showWebsiteDescription()</h3>
                     #showWeblogCategoryChooser()<br>
-                    #showNextPreviousLinks()
                     #displayWeblogEntries()
                 </td>
                 <td valign="top" bgcolor="#ffffff" width="20%">

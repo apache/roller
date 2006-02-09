@@ -107,8 +107,6 @@ your blog page, if you put them somwhere else, just adjust the paths for those f
     #showWeblogCategoryChooser()
     </div>
 
-    #showNextPreviousLinks()
-
     #displayWeblogEntries()
 </div>
 
