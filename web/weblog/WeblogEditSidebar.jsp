@@ -69,7 +69,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />
            <roller:linkparam id="method" value="edit" />
-           <img src='<c:url value="/images/table_gear.png"/>' 
+           <img src='<c:url value="/images/table_edit.png"/>' 
                 align="absmiddle" border="0" alt="icon" title="Edit" />
            <str:truncateNicely lower="50">
               <c:out value="${post.title}" />
