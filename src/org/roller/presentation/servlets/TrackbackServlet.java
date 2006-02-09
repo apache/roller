@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.util.RequestUtils;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.pojos.CommentData;
 import org.roller.util.SpamChecker;
@@ -191,7 +192,12 @@ public class TrackbackServlet extends HttpServlet {
                         CacheManager.invalidate(comment);
 
                         // Send email notifications
-                        CommentServlet.sendEmailNotification(req, rreq, entry, comment);
+                        RollerContext rc = RollerContext.getRollerContext();                                
+                        String rootURL = rc.getAbsoluteContextUrl(req);
+                        if (rootURL == null || rootURL.trim().length()==0) {
+                            rootURL = RequestUtils.serverURL(req) + req.getContextPath();
+                        } 
+                        CommentServlet.sendEmailNotification(comment, rootURL);
 
                         pw.println("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
                         pw.println("<response>");

@@ -215,7 +215,12 @@ public class CommentServlet extends HttpServlet {
                     CacheManager.invalidate(comment);
                     
                     // Send email notifications
-                    sendEmailNotification(request, rreq, entry, comment);
+                    RollerContext rc = RollerContext.getRollerContext();                                
+                    String rootURL = rc.getAbsoluteContextUrl(request);
+                    if (rootURL == null || rootURL.trim().length()==0) {
+                        rootURL = RequestUtils.serverURL(request) + request.getContextPath();
+                    }            
+                    sendEmailNotification(comment, rootURL);
                     
                 } else {
                     error = bundle.getString("error.commentAuthFailed");
@@ -270,16 +275,12 @@ public class CommentServlet extends HttpServlet {
      *
      * TODO: Make the addressing options configurable on a per-website basis.
      */
-    static void sendEmailNotification(HttpServletRequest request,
-                        RollerRequest rreq,
-                        WeblogEntryData entry,
-                        CommentData cd) 
-            throws MalformedURLException {
+    public static void sendEmailNotification(CommentData cd, String rootURL) {
         
-        RollerContext rc = RollerContext.getRollerContext();
-        ResourceBundle resources = ResourceBundle.getBundle(
-                "ApplicationResources",LanguageUtil.getViewLocale(request));
+        // Send commment notifications in locale of server
+        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
 
+        WeblogEntryData entry = cd.getWeblogEntry();
         WebsiteData site = entry.getWebsite();
         UserData user = entry.getCreator();
         
@@ -365,12 +366,7 @@ public class CommentServlet extends HttpServlet {
                     : "<br /><br /><hr /><span style=\"font-size: 11px\">");
             msg.append(resources.getString("email.comment.respond") + ": ");
             msg.append((escapeHtml) ? "\n" : "<br />");
-            
-            String rootURL = rc.getAbsoluteContextUrl(request);
-            if (rootURL == null || rootURL.trim().length()==0) {
-                rootURL = RequestUtils.serverURL(request) + request.getContextPath();
-            }
-            
+
             // Build link back to comment
             StringBuffer commentURL = new StringBuffer(rootURL);
             commentURL.append(entry.getPermaLink());
@@ -436,6 +432,78 @@ public class CommentServlet extends HttpServlet {
                     sendMessage(session, from, new String[]{user.getEmailAddress()}, cc, bcc, subject,
                             ownermsg.toString(), isHtml);
                 }
+            } catch (javax.naming.NamingException ne) {
+                mLogger.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
+            } catch (Exception e) {
+                mLogger.warn("Exception sending comment mail: " + e.getMessage());
+                // This will log the stack trace if debug is enabled
+                if (mLogger.isDebugEnabled()) {
+                    mLogger.debug(e);
+                }
+            }
+            
+            mLogger.debug("Done sending email message");
+            
+        } // if email enabled
+    }
+    
+    /**
+     * Send message to author of approved comment
+     *
+     * TODO: Make the addressing options configurable on a per-website basis.
+     */
+    public static void sendEmailApprovalNotification(CommentData cd, String rootURL) {
+        
+        // Send commment notifications in locale of server
+        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
+        
+        WeblogEntryData entry = cd.getWeblogEntry();
+        WebsiteData site = entry.getWebsite();
+        UserData user = entry.getCreator();
+            
+        // Only send email if email notificaiton is enabled
+        boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+        if (notify && site.getEmailComments().booleanValue()) {
+            mLogger.debug("Comment notification enabled ... preparing email");
+            
+
+                                
+            //------------------------------------------
+            // --- Determine the "from" address
+            // --- Use either the site configured from address or the user's address
+            
+            String from =
+                    (StringUtils.isEmpty(site.getEmailFromAddress()))
+                    ? user.getEmailAddress()
+                    : site.getEmailFromAddress();
+                        
+            //------------------------------------------
+            // --- Form the message to be sent -
+            
+            String subject = resources.getString("email.comment.commentApproved");
+            
+            StringBuffer msg = new StringBuffer();
+            msg.append(resources.getString("email.comment.commentApproved"));
+
+            // Build link back to comment
+            StringBuffer commentURL = new StringBuffer(rootURL);
+            commentURL.append(entry.getPermaLink());
+            commentURL.append("#comments");
+            msg.append(commentURL.toString());
+            
+            //------------------------------------------
+            // --- Send message to author of approved comment
+            try {
+                javax.naming.Context ctx = (javax.naming.Context)
+                new InitialContext().lookup("java:comp/env");
+                Session session = (Session)ctx.lookup("mail/Session");
+                String[] cc = null;
+                String[] bcc = null;
+                sendMessage(session, from, 
+                    new String[] {cd.getEmail()}, 
+                    null, // cc
+                    null, // bcc
+                    subject, msg.toString(), false);
             } catch (javax.naming.NamingException ne) {
                 mLogger.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
             } catch (Exception e) {

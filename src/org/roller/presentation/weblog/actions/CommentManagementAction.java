@@ -1,6 +1,7 @@
 package org.roller.presentation.weblog.actions;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,6 +19,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.util.RequestUtils;
 import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
@@ -25,9 +27,11 @@ import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.presentation.BasePageModel;
+import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.cache.CacheManager;
+import org.roller.presentation.servlets.CommentServlet;
 import org.roller.presentation.weblog.formbeans.CommentManagementForm;
 import org.roller.util.Utilities;
 
@@ -118,7 +122,12 @@ public final class CommentManagementAction extends DispatchAction {
                 List deletedList = Arrays.asList(deleteIds); 
                 if (deleteIds != null && deleteIds.length > 0) {
                     mgr.removeComments(deleteIds);
-                }    
+                }
+                
+                // Collect comments approved for first time, so we can send
+                // out comment approved notifications later
+                List approvedComments = new ArrayList();
+                
                 // loop through IDs of all comments displayed on page
                 String[] ids = Utilities.stringToStringArray(queryForm.getIds(),",");
                 List flushList = new ArrayList();
@@ -141,13 +150,17 @@ public final class CommentManagementAction extends DispatchAction {
                     if (rreq.getWebsite() != null) {
                         
                         // all comments reviewed, so they're no longer pending
-                        comment.setPending(Boolean.FALSE);
+                        if (comment.getPending() != null && comment.getPending().booleanValue()) {
+                            comment.setPending(Boolean.FALSE);
+                            approvedComments.add(comment);
+                        }
                         
                         // apply pending checkbox
                         List approvedIds = 
                             Arrays.asList(queryForm.getApprovedComments());
                         if (approvedIds.contains(ids[i])) {
                             comment.setApproved(Boolean.TRUE);
+                            
                         } else {
                             comment.setApproved(Boolean.FALSE);
                         }
@@ -159,6 +172,9 @@ public final class CommentManagementAction extends DispatchAction {
                 for (Iterator comments=flushList.iterator(); comments.hasNext();) {
                     CacheManager.invalidate((CommentData)comments.next());
                 }
+                
+                sendCommentNotifications(request, approvedComments);
+                
                 ActionMessages msgs = new ActionMessages();
                 msgs.add(ActionMessages.GLOBAL_MESSAGE, 
                     new ActionMessage("commentManagement.updateSuccess"));
@@ -182,6 +198,32 @@ public final class CommentManagementAction extends DispatchAction {
             return mapping.findForward("commentManagement.page");
         }
         return mapping.findForward("commentManagementGlobal.page");
+    }
+    
+    private void sendCommentNotifications(
+        HttpServletRequest req, List comments) throws RollerException {
+        
+        RollerContext rc = RollerContext.getRollerContext();                             
+        String rootURL = rc.getAbsoluteContextUrl(req);
+        try {
+            if (rootURL == null || rootURL.trim().length()==0) {
+                rootURL = RequestUtils.serverURL(req) + req.getContextPath();
+            } 
+        } catch (MalformedURLException e) {
+            logger.error("ERROR: determining URL of site");
+            return;
+        }
+
+        Iterator iter = comments.iterator();
+        while (iter.hasNext()) {
+            CommentData comment = (CommentData)iter.next();
+            
+            // Send email notifications because a new comment has been approved
+            CommentServlet.sendEmailNotification(comment, rootURL);
+            
+            // Send approval notification to author of approved comment
+            CommentServlet.sendEmailApprovalNotification(comment, rootURL);
+        }
     }
     
     public class CommentManagementPageModel extends BasePageModel {
