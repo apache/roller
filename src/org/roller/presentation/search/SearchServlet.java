@@ -8,12 +8,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.servlet.VelocityServlet;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.roller.RollerException;
 import org.roller.config.RollerConfig;
 import org.roller.presentation.RollerRequest;
 import org.roller.presentation.velocity.ContextLoader;
-import org.roller.util.StringUtils;
-
+import org.roller.presentation.velocity.PageServlet;
 
 /**
  * This servlet retrieves (and displays) search results.
@@ -22,7 +22,7 @@ import org.roller.util.StringUtils;
  * @web.servlet-init-param name="properties" value="/WEB-INF/velocity.properties"
  * @web.servlet-mapping url-pattern="/search/*"
  */
-public class SearchServlet extends VelocityServlet {
+public class SearchServlet extends PageServlet {
     
     static final long serialVersionUID = -2150090108300585670L;
     
@@ -39,57 +39,24 @@ public class SearchServlet extends VelocityServlet {
         this.searchEnabled = RollerConfig.getBooleanProperty("search.enabled");
     }
     
-    
-    public Template handleRequest(HttpServletRequest request,
-            HttpServletResponse response, Context ctx) {
-
-        Template outty = null;
-        try {
-            if(! this.searchEnabled) {
-                Exception pageException = null;
-                try {
-                    ContextLoader.setupContext(
-                        ctx, RollerRequest.getRollerRequest(request), response );
-                    outty = getTemplate( "searchdisabled.vm", "UTF-8" );
-                } catch (Exception e) {
-                   pageException = e;
-                   response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                }
-
-                if (pageException != null) {
-                    mLogger.error("EXCEPTION: in RollerServlet", pageException);
-                    request.setAttribute("DisplayException", pageException);
-                }
-                return outty;
-            }
-
-            // do no work if query term is empty
-            if (StringUtils.isEmpty(request.getParameter("q"))) {
-                return generalSearchResults(request, response, ctx);
-            }
-
-            // search model executes search, makes results available to page
-            SearchResultsPageModel model = 
-                    new SearchResultsPageModel("", request, response, null);
-            ctx.put("searchResults", model);
-
-            // load standard Velocity stff
-            ContextLoader.setupContext(
-                ctx, RollerRequest.getRollerRequest(request), response );
-
-            request.setAttribute("zzz_VelocityContext_zzz", ctx); // for testing
-            
-            outty = getTemplate( "searchresults.vm", "UTF-8" );
+    /**
+     * Prepare the requested page for execution by setting content type
+     * and populating velocity context.
+     */
+    protected Template prepareForPageExecution(
+            Context ctx,
+            RollerRequest rreq,
+            HttpServletResponse response,
+            org.roller.pojos.Template page)             
+        throws ResourceNotFoundException, RollerException {
         
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            request.setAttribute("DisplayException", e);
-            mLogger.error("EXCEPTION: in SearchServlet", e);
-        }      
-        return outty;
+        // search model executes search, makes results available to page
+        SearchResultsPageModel model = 
+            new SearchResultsPageModel(rreq.getRequest());
+        ctx.put("searchResults", model);
+        return super.prepareForPageExecution(ctx, rreq, response, page);
     }
-    
-    
+        
     /**
      * If this is not a user-specific search, we need to display the
      * "generic" search results list.
