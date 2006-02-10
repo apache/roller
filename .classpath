@@ -73,6 +73,6 @@
 	<classpathentry kind="lib" path="tools/lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="tools/lib/rome-fetcher-0.7.jar"/>
 	<classpathentry kind="lib" path="tools/spring-1.2/spring.jar"/>
-	<classpathentry kind="lib" path="tools/spring-1.2/acegi-security-1.0.0-RC1.jar"/>
+	<classpathentry kind="lib" path="tools/spring-1.2/acegi-security-1.0.0-RC2.jar"/>
 	<classpathentry kind="output" path="classes.eclipse"/>
 </classpath>
