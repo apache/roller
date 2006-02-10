@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 import org.roller.pojos.PermissionsData;
 
 
@@ -271,8 +272,8 @@ public class UpgradeDatabase {
             // insert a new template for a website
             PreparedStatement insertWeblogTemplate = con.prepareStatement(
                     "insert into webpage"+
-                    "(id, name, description, link, websiteid, template) "+
-                    "values(?,?,?,?,?,?)");
+                    "(id, name, description, link, websiteid, template, updatetime) "+
+                    "values(?,?,?,?,?,?,?)");
             
             // update the default page for a website
             PreparedStatement updateDefaultPage = con.prepareStatement(
@@ -282,6 +283,7 @@ public class UpgradeDatabase {
             String description = "This template is used to render the main "+
                     "page of your weblog.";
             ResultSet websiteSet = selectUpdateWeblogs.executeQuery();
+            Date now = new Date();
             while (websiteSet.next()) {
                 String websiteid = websiteSet.getString(1);
                 String template = websiteSet.getString(2);
@@ -315,6 +317,7 @@ public class UpgradeDatabase {
                     insertWeblogTemplate.setString( 4, "Weblog");
                     insertWeblogTemplate.setString( 5, websiteid);
                     insertWeblogTemplate.setString( 6, template);
+                    insertWeblogTemplate.setDate(   7, new java.sql.Date(now.getTime()));
                     insertWeblogTemplate.executeUpdate();
                     
                     // set the new default page id
@@ -380,3 +383,4 @@ public class UpgradeDatabase {
         }
     }
 }
+
