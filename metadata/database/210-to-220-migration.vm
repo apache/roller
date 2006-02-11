@@ -4,5 +4,6 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
-#addColumnNotNull("website" "isactive" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
+#addColumnNotNull("website" "isactive" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
+update website set isactive=$BOOLEAN_TRUE, datecreated=datecreated;
 
