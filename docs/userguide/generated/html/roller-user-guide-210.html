@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20051209;11500200">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060201;11355800">
+	<META NAME="CHANGED" CONTENT="20060211;9310400">
 	<META NAME="SDFOOTNOTE" CONTENT=";;;;P">
 	<META NAME="SDENDNOTE" CONTENT="ARABIC">
 	<STYLE>
@@ -563,6 +563,21 @@
 		creating a new weblog and finding your way around let's start
 		blogging. 
 		</P>
+		<H2>2.5 Changing the Language of the editor interface</H2>
+		<P>The Roller editor interface uses the locale (language and
+		country) User Profile setting to select the text to display in the
+		editor navbar and in each editor page.  You can select your
+		preferred locale when registering or, if you have already
+		registered, on the Your Profile page.  If a translation for your
+		preferred language is available on your Roller installation, the
+		editor interface will use this language for all the editor pages. 
+		If you have selected your preferred language and the pages are
+		still displayed in English (or the default language of your Roller
+		installation?) there may not be a translation available for your
+		language.  (If you or the person(s) responsible for your Roller
+		installation would like to translate Roller to an additional
+		language, please visit the Roller project website...) 
+		(Translations are currently available for...)</P>
 		<H1 CLASS="western" STYLE="page-break-before: always">3 - Creating
 		and editing your weblog</H1>
 		<P>First, you login to Roller. What happens next depends on the
@@ -1212,7 +1227,8 @@
 		<H2 STYLE="page-break-before: always">4.1 - Weblog settings</H2>
 		<P>The <B>Preferences:Settings</B> page allows you to set the
 		configuration parameters for your weblog. You can see all of the
-		settings on the screen-shot below: 
+		settings on the screen-shot below (which needs to be updated to
+		Roller 2.1): 
 		</P>
 		<P><SPAN ID="Frame14" DIR="LTR" STYLE="float: left; width: 6.78in; height: 8.03in; border: none; padding: 0in; background: #ffffff">
 			<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide-210_html_m3c68c547.png" NAME="graphics2" ALIGN=LEFT WIDTH=640 HEIGHT=728 BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
@@ -1241,26 +1257,32 @@
 			</P>
 		</UL>
 		<UL>
-			<LI><P><B>Email address of owner</B>: Enter the email address that
-			you would like people to use to contact the person in charge of
-			your blog; usually that's you. 
+			<LI><P><B>Email address of weblog owner</B>: Enter the email
+			address that you would like people to use to contact the person in
+			charge of your blog; usually that's you. 
 			</P>
+			<LI><P><B>Locale</B>: Choose the language and country for this
+			weblog.  (Which is used how?)  (See section x.x for setting the
+			locale for your user account.)</P>
+			<LI><P><B>Timezone</B>: Choose  the timezone for this weblog. 
+			(Which is used when displaying entries?)</P>
 		</UL>
 		<UL>
 			<LI><P><B>Default from address</B>: Enter the email address that
 			should be used as the <I>from address</I> for emails sent by
-			Roller. 
-			</P>
+			Roller.  (Removed from Roller 2.1?)</P>
 		</UL>
 		<UL>
 			<LI><P><B>Page to be used as the homepage</B> - Choose a page
-			template to be used as the main page of your weblog. 
+			template to be used as the main page of your weblog.  (Removed
+			from Roller 2.1?)</P>
+		</UL>
+		<UL>
+			<LI><P><B>Weblog editor page to be used</B> - Choose a weblog
+			editor page, some are rich-text editors: 
 			</P>
 		</UL>
 		<UL>
-			<LI><P STYLE="margin-bottom: 0in"><B>Weblog editor page to be used</B>
-			- Choose a weblog editor page, some are rich-text editors: 
-			</P>
 			<UL>
 				<LI><P STYLE="margin-bottom: 0in">editor-text.jsp: 	simple text
 				editor 
@@ -1274,16 +1296,30 @@
 				<LI><P STYLE="margin-bottom: 0in">editor-rte.jsp: 		rich text
 				editor (works in most browsers) 
 				</P>
-				<LI><P>editor-text-js.jsp: 	enhanced simple text editor 
+				<LI><P>editor-text-js.jsp: 	enhanced simple text editor</P>
+				<LI><P>editor-wiki-js.jsp: 	wiki style editor (?) 
 				</P>
 			</UL>
+			<LI><P><B>Number of entries to display on weblog</B>: Enter the
+			(maximum?) number of entries to be displayed on the (main?) weblog
+			page.</P>
 		</UL>
 		<P><B>Comments</B> 
 		</P>
 		<UL>
-			<LI><P><B>Allow commments for your weblog</B> - Set this to true
-			to allow visitors to leave comments on your weblog. 
+			<LI><P><B>Allow commments for your weblog</B> &ndash; Check this
+			box to allow visitors to leave comments on your weblog. 
 			</P>
+			<LI><P>Moderate comments &ndash; Check this box to enable comment
+			moderation</P>
+			<LI><P>By default, allow comments for new entries &ndash; Check
+			this box to enable comments on new blog entries by default.  You
+			can override this setting when creating a new blog entry by using
+			the Comment Settings section of the New Entry page.</P>
+			<LI><P>Default time to allow comments for new entries &ndash;
+			Choose the default amount of time to allow comments for new blog
+			entries.  This setting may also be overriden using the Comment
+			Settings section of the New Entry page.</P>
 		</UL>
 		<P><B>Weblog client API</B> 
 		</P>
