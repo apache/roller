@@ -47,7 +47,6 @@ import org.roller.util.Utilities;
 
 /**
  * Load Velocity Context with Roller objects, values, and custom plugins.
- *
  * @author llavandowska
  * @author David M Johnson
  */
@@ -68,7 +67,10 @@ public class ContextLoader {
      * Setup the a Velocity context by loading it with objects, values, and
      * RollerPagePlugins needed for Roller page execution.
      */
-    public static void setupContext(Context ctx, RollerRequest rreq, HttpServletResponse response )
+    public static void setupContext(
+            Context ctx, 
+            RollerRequest rreq, 
+            HttpServletResponse response )
             throws RollerException {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
@@ -79,7 +81,7 @@ public class ContextLoader {
         try {
             // Add page model object to context
             String pageModelClassName =
-                    RollerConfig.getProperty("velocity.pagemodel.classname");
+                RollerConfig.getProperty("velocity.pagemodel.classname");
             Class pageModelClass = Class.forName(pageModelClassName);
             PageModel pageModel = (PageModel)pageModelClass.newInstance();
             pageModel.init(rreq);
@@ -93,15 +95,16 @@ public class ContextLoader {
         PageHelper pageHelper = new PageHelper(request, response, ctx);
         Roller roller = RollerFactory.getRoller();
         ctx.put("pageHelper", pageHelper);
-        
+                
         // Load standard Roller objects and values into the context
-        String handle = loadWebsiteValues(ctx, rreq, rollerCtx );
-        loadWeblogValues( ctx, rreq, rollerCtx, handle );
-        loadPathValues( ctx, rreq, rollerCtx, handle );
-        loadRssValues( ctx, rreq, handle );
-        loadUtilityObjects( ctx, rreq, rollerCtx, handle );
-        loadRequestParamKeys(ctx);
-        loadStatusMessage( ctx, rreq );
+        WebsiteData website = 
+            loadWebsiteValues(ctx, rreq, rollerCtx );
+        loadWeblogValues(     ctx, rreq, rollerCtx, website );
+        loadPathValues(       ctx, rreq, rollerCtx, website );
+        loadRssValues(        ctx, rreq, website );
+        loadUtilityObjects(   ctx, rreq, rollerCtx, website );
+        loadRequestParamKeys( ctx);
+        loadStatusMessage(    ctx, rreq );
         
         // If single entry is specified, load comments too
         if ( rreq.getWeblogEntry() != null ) {
@@ -111,53 +114,90 @@ public class ContextLoader {
         // add Velocity Toolbox tools to context
         loadToolboxContext(request, response, ctx);
     }
-    
-    
+        
     /**
-     * If there is an ERROR or STATUS message in the session,
-     * place it into the Context for rendering later.
-     *
-     * @param rreq
+     * Load website object and related objects.
      */
-    private static void loadStatusMessage(Context ctx, RollerRequest rreq) {
+    protected static WebsiteData loadWebsiteValues(
+            Context ctx, 
+            RollerRequest rreq, 
+            RollerContext rollerCtx )
+            throws RollerException {
+                
+        Roller mRoller = RollerFactory.getRoller();
+        Map props = mRoller.getPropertiesManager().getProperties();
         
-        mLogger.debug("Loading status message");
-        
-        HttpSession session = rreq.getRequest().getSession(false);
-        String msg = null;
-        if (session != null)
-            msg = (String)session.getAttribute(RollerSession.ERROR_MESSAGE);
-        if (msg != null) {
-            ctx.put("errorMessage", msg);
-            session.removeAttribute(RollerSession.ERROR_MESSAGE);
+        WebsiteData website = rreq.getWebsite();            
+        if (website == null && rreq.getRequest().getParameter("entry") != null) {
+            String handle = rreq.getRequest().getParameter("entry");
+            website = RollerFactory.getRoller().getUserManager().getWebsiteByHandle(handle);
         }
+        if (website == null && rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
+            website = (WebsiteData)rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
+        } 
         
-        if (session != null)
-            msg = (String)session.getAttribute(RollerSession.STATUS_MESSAGE);
-        if (msg != null) {
-            ctx.put("statusMessage", msg);
-            session.removeAttribute(RollerSession.STATUS_MESSAGE);
+        if (website != null) {
+            ctx.put("userName",         website.getHandle());
+            ctx.put("fullName",         website.getName() );
+            ctx.put("emailAddress",     website.getEmailAddress() );
+            ctx.put("encodedEmail",     RegexUtil.encode(website.getEmailAddress()));
+            ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(website.getEmailAddress()));
+            
+            // setup Locale for future rendering
+            ctx.put("locale", website.getLocaleInstance());
+            
+            // setup Timezone for future rendering
+            ctx.put("timezone", website.getTimeZoneInstance());
+            ctx.put("timeZone", website.getTimeZoneInstance());
+        } else {
+            website = new WebsiteData();
+            website.setAllowComments(Boolean.FALSE);
+            website.setHandle("zzz_none_zzz");
+            website.setName(
+                ((RollerPropertyData)props.get("site.name")).getValue());
+            website.setDescription(
+                ((RollerPropertyData)props.get("site.description")).getValue());
+            ctx.put("handle",   website.getHandle() );
+            ctx.put("userName", website.getHandle() );
+            ctx.put("fullName", website.getHandle());
+            ctx.put("locale",   Locale.getDefault());
+            ctx.put("timezone", TimeZone.getDefault());
+            ctx.put("timeZone", TimeZone.getDefault());
+            ctx.put("emailAddress",
+                ((RollerPropertyData)props.get("site.adminemail")).getValue());
         }
+        ctx.put("website", WebsiteDataWrapper.wrap(website) );
+        
+        String siteName = ((RollerPropertyData)props.get("site.name")).getValue();
+        if ("Roller-based Site".equals(siteName)) siteName = "Main";
+        ctx.put("siteName", siteName);
+        
+        String siteShortName = ((RollerPropertyData)props.get("site.shortName")).getValue();
+        ctx.put("siteShortName", siteShortName);
+        
+        // add language of the session (using locale of viewer set by Struts)
+        ctx.put("viewLocale",
+                LanguageUtil.getViewLocale(rreq.getRequest()));
+        mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
+        
+        return website;
     }
     
-    
     /**
-     * @param ctx
-     * @param rreq
-     * @param rollerCtx
-     * @param userName
+     * Load other values associated with one weblog
      */
-    private static void loadWeblogValues(Context ctx, RollerRequest rreq, 
-                                        RollerContext rollerCtx, String handle)
+    private static void loadWeblogValues(
+            Context ctx, 
+            RollerRequest rreq, 
+            RollerContext 
+            rollerCtx, WebsiteData website)
             throws RollerException {
         
         mLogger.debug("Loading weblog values");
         
         // if there is an "_entry" page, only load it once
-        WebsiteData website =
-                RollerFactory.getRoller().getUserManager().getWebsiteByHandle(handle);
         if (website != null) {
-            /* alternative display pages - customization */
+            // alternative display pages - customization
             Template entryPage = website.getPageByName("_entry");
             if (entryPage != null) {
                 ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
@@ -169,29 +209,23 @@ public class ContextLoader {
         }
         
         boolean commentsEnabled =
-                RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
+            RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
         boolean trackbacksEnabled =
-                RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
+            RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
         boolean linkbacksEnabled =
-                RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
+            RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
         ctx.put("commentsEnabled", new Boolean(commentsEnabled) );
         ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
         ctx.put("linkbacksEnabled", new Boolean(linkbacksEnabled) );
     }
-    
-    
-    private static String figureResourcePath(RollerRequest rreq) {
         
-        String uploadurl = null;
-        try {
-            uploadurl = RollerFactory.getRoller().getFileManager().getUploadUrl();
-        } catch(Exception e) {}
-        
-        return uploadurl;
-    }
-    
-    
-    protected static void loadCommentValues(Context ctx, RollerRequest rreq, RollerContext rollerCtx )
+    /**
+     * Load comments for one weblog entry and related objects.
+     */
+    protected static void loadCommentValues(
+            Context       ctx, 
+            RollerRequest rreq, 
+            RollerContext rollerCtx )
             throws RollerException {
         
         mLogger.debug("Loading comment values");
@@ -199,9 +233,9 @@ public class ContextLoader {
         HttpServletRequest request = rreq.getRequest();
         
         String escapeHtml =
-                RollerRuntimeConfig.getProperty("users.comments.escapehtml");
+            RollerRuntimeConfig.getProperty("users.comments.escapehtml");
         String autoFormat =
-                RollerRuntimeConfig.getProperty("users.comments.autoformat");
+            RollerRuntimeConfig.getProperty("users.comments.autoformat");
         
         // Add comments related values to context
         ctx.put("isCommentPage", Boolean.TRUE);
@@ -237,18 +271,105 @@ public class ContextLoader {
         }
     }
     
+    /**
+     * Load objects needed for RSS and Atom newsfeed generation.
+     */
+    protected static void loadRssValues(
+            Context ctx, 
+            RollerRequest rreq, 
+            WebsiteData website) 
+            throws RollerException {
+        
+        mLogger.debug("Loading rss values");
+        
+        HttpServletRequest request = rreq.getRequest();
+        
+        int entryLength = -1;
+        String sExcerpts = request.getParameter("excerpts");
+        if ( sExcerpts!=null && sExcerpts.equalsIgnoreCase("true")) {
+            entryLength = 150;
+        }
+        ctx.put("entryLength",  new Integer(entryLength));
+        
+        // Display same number of entries in feed as displayed on page
+        int entryCount = website.getEntryDisplayCount();
+        
+        // But don't exceed installation-wide maxEntries settings
+        int maxEntries = 
+            RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
+        int defaultEntries = 
+            RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+        if (entryCount < 1) entryCount = defaultEntries;
+        if (entryCount > maxEntries) entryCount = maxEntries;
+        ctx.put("entryCount",  new Integer(entryCount));
+        
+        String catname = null;
+        String catPath = null;
+        if ( rreq.getWeblogCategory() != null ) {
+            catname = rreq.getWeblogCategory().getName();
+            catPath = rreq.getWeblogCategory().getPath();
+        }
+        ctx.put("catname", (catname!=null) ? catname : "");
+        ctx.put("catPath", (catPath != null) ? catPath : "");
+        ctx.put("updateTime", request.getAttribute("updateTime"));
+        ctx.put("now", new Date());
+    }
     
-    protected static void loadPathValues(Context ctx, RollerRequest rreq, 
-                                        RollerContext rollerCtx, String userName)
+    /**
+     * Load useful utility objects for string and date formatting.
+     */
+    protected static void loadUtilityObjects(
+            Context ctx, 
+            RollerRequest rreq,                                             
+            RollerContext rollerCtx, 
+            WebsiteData website)
+            throws RollerException {
+        
+        mLogger.debug("Loading utility objects");
+        
+        // date formatter for macro's set this up with the Locale to make 
+        // sure we can reuse it with other patterns in the macro's
+        Locale viewLocale = (Locale) ctx.get("viewLocale");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", viewLocale);
+        if (website != null) {
+            sdf.setTimeZone(website.getTimeZoneInstance());
+        }
+        // add formatter to context
+        ctx.put("dateFormatter", sdf );
+        
+        // Note: in the macro's, the formats are taken from the ResourceBundles.
+        // Only the plainFormat is specified here, because it is used to render
+        // the Entry Day link.
+        ctx.put("plainFormat", "yyyyMMdd");
+        
+        ctx.put("page",            TemplateWrapper.wrap(rreq.getPage()));
+        ctx.put("utilities",       new Utilities() );
+        ctx.put("stringUtils",     new StringUtils() );
+        ctx.put("rollerVersion",   rollerCtx.getRollerVersion() );
+        ctx.put("rollerBuildTime", rollerCtx.getRollerBuildTime() );
+        ctx.put("rollerBuildUser", rollerCtx.getRollerBuildUser() );
+        ctx.put("newsfeedCache",   NewsfeedCache.getInstance() );
+        
+        ctx.put("requestParameters", rreq.getRequest().getParameterMap());
+    }
+        
+    /**
+     * Load URL paths useful in page templates.
+     */
+    protected static void loadPathValues(
+            Context ctx,  RollerRequest rreq, 
+            RollerContext rollerCtx, 
+            WebsiteData   website)
             throws RollerException {
         
         mLogger.debug("Loading path values");
         
         HttpServletRequest request = rreq.getRequest();
         String url = null;
-        if ( userName != null && !userName.equals("zzz_none_zzz")) {
+        if (website != null) {
             url = Utilities.escapeHTML(
-                    rollerCtx.getAbsoluteContextUrl(request)+"/page/"+userName);
+                      rollerCtx.getAbsoluteContextUrl(request) 
+                          + "/page/" + website.getHandle());
         } else {
             url= Utilities.escapeHTML(rollerCtx.getAbsoluteContextUrl(request));
         }
@@ -265,8 +386,45 @@ public class ContextLoader {
             throw new RollerException(e);
         }
     }
+      
+    /**
+     * Determine URL path to Roller upload directory.
+     */
+    private static String figureResourcePath(RollerRequest rreq) {
+        
+        String uploadurl = null;
+        try {
+            uploadurl = RollerFactory.getRoller().getFileManager().getUploadUrl();
+        } catch(Exception e) {}
+        
+        return uploadurl;
+    }
     
-    
+    /**
+     * If there is an ERROR or STATUS message in the session,
+     * place it into the Context for rendering later.
+     */
+    private static void loadStatusMessage(Context ctx, RollerRequest rreq) {
+        
+        mLogger.debug("Loading status message");
+        
+        HttpSession session = rreq.getRequest().getSession(false);
+        String msg = null;
+        if (session != null)
+            msg = (String)session.getAttribute(RollerSession.ERROR_MESSAGE);
+        if (msg != null) {
+            ctx.put("errorMessage", msg);
+            session.removeAttribute(RollerSession.ERROR_MESSAGE);
+        }
+        
+        if (session != null)
+            msg = (String)session.getAttribute(RollerSession.STATUS_MESSAGE);
+        if (msg != null) {
+            ctx.put("statusMessage", msg);
+            session.removeAttribute(RollerSession.STATUS_MESSAGE);
+        }
+    }
+        
     protected static void loadRequestParamKeys(Context ctx) {
         
         mLogger.debug("Loading request param keys");
@@ -291,148 +449,10 @@ public class ContextLoader {
         ctx.put("WEBLOGCOMMENTID_KEY",    RollerRequest.WEBLOGCOMMENTID_KEY);
     }
     
-    
-    protected static void loadRssValues(Context ctx, RollerRequest rreq, String handle) 
-            throws RollerException {
-        
-        mLogger.debug("Loading rss values");
-        
-        HttpServletRequest request = rreq.getRequest();
-        
-        int entryLength = -1;
-        String sExcerpts = request.getParameter("excerpts");
-        if ( sExcerpts!=null && sExcerpts.equalsIgnoreCase("true")) {
-            entryLength = 150;
-        }
-        ctx.put("entryLength",  new Integer(entryLength));
-        
-        int entryCount = 15;
-        String sCount = request.getParameter("count");
-        if ( sCount!=null && sExcerpts!=null && sExcerpts.trim().equals("")) {
-            try {
-                entryCount = Integer.parseInt(sCount);
-            } catch (NumberFormatException e) {
-                mLogger.warn("Improperly formatted count parameter");
-            }
-            if ( entryCount > 50 ) entryCount = 50;
-            if ( entryCount < 0 ) entryCount = 15;
-        }
-        ctx.put("entryCount",  new Integer(entryCount));
-        
-        String catname = null;
-        String catPath = null;
-        if ( rreq.getWeblogCategory() != null ) {
-            catname = rreq.getWeblogCategory().getName();
-            catPath = rreq.getWeblogCategory().getPath();
-        }
-        ctx.put("catname", (catname!=null) ? catname : "");
-        ctx.put("catPath", (catPath != null) ? catPath : "");
-        ctx.put("updateTime", request.getAttribute("updateTime"));
-        ctx.put("now", new Date());
-    }
-    
-    
-    protected static void loadUtilityObjects(Context ctx, RollerRequest rreq, 
-                                            RollerContext rollerCtx, String handle)
-            throws RollerException {
-        
-        mLogger.debug("Loading utility objects");
-        
-        // date formatter for macro's
-        // set this up with the Locale to make sure we can reuse it with other patterns
-        // in the macro's
-        Locale viewLocale = (Locale) ctx.get("viewLocale");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", viewLocale);
-        WebsiteData website = rreq.getWebsite();
-        if (website != null) {
-            sdf.setTimeZone(website.getTimeZoneInstance());
-        }
-        // add formatter to context
-        ctx.put("dateFormatter", sdf );
-        
-        // Note: in the macro's, the formats are taken from the ResourceBundles.
-        // Only the plainFormat is specified here, because it is used to render
-        // the Entry Day link.
-        ctx.put("plainFormat", "yyyyMMdd");
-        
-        ctx.put("page",            TemplateWrapper.wrap(rreq.getPage()));
-        ctx.put("utilities",       new Utilities() );
-        ctx.put("stringUtils",     new StringUtils() );
-        ctx.put("rollerVersion",   rollerCtx.getRollerVersion() );
-        ctx.put("rollerBuildTime", rollerCtx.getRollerBuildTime() );
-        ctx.put("rollerBuildUser", rollerCtx.getRollerBuildUser() );
-        ctx.put("newsfeedCache",   NewsfeedCache.getInstance() );
-        
-        ctx.put("requestParameters", rreq.getRequest().getParameterMap());
-    }
-    
-    
-    protected static String loadWebsiteValues(Context ctx, RollerRequest rreq, RollerContext rollerCtx )
-            throws RollerException {
-        
-        String handle = null;
-        WebsiteData website = null;
-        
-        Roller mRoller = RollerFactory.getRoller();
-        Map props = mRoller.getPropertiesManager().getProperties();
-        
-        if ( rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
-            website = (WebsiteData)
-            rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
-        } else if ( rreq.getWebsite() != null ) {
-            website = rreq.getWebsite();
-        }
-        
-        if ( website != null ) {
-            handle = website.getHandle();
-            ctx.put("userName",      handle);
-            ctx.put("fullName",      website.getName() );
-            ctx.put("emailAddress",  website.getEmailAddress() );
-            ctx.put("encodedEmail",  RegexUtil.encode(website.getEmailAddress()));
-            ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(website.getEmailAddress()));
-            
-            // setup Locale for future rendering
-            ctx.put("locale", website.getLocaleInstance());
-            
-            // setup Timezone for future rendering
-            ctx.put("timezone", website.getTimeZoneInstance());
-            ctx.put("timeZone", website.getTimeZoneInstance());
-        } else {
-            website = new WebsiteData();
-            website.setName(((RollerPropertyData)props.get("site.name")).getValue());
-            website.setAllowComments(Boolean.FALSE);
-            website.setDescription(((RollerPropertyData)props.get("site.description")).getValue());
-            handle = "zzz_none_zzz";
-            ctx.put("userName", handle );
-            ctx.put("fullName","zzz_none_zzz");
-            ctx.put("emailAddress",
-                    ((RollerPropertyData)props.get("site.adminemail")).getValue());
-            ctx.put("locale", Locale.getDefault());
-            ctx.put("timezone", TimeZone.getDefault());
-            ctx.put("timeZone", TimeZone.getDefault());
-        }
-        ctx.put("website", WebsiteDataWrapper.wrap(website) );
-        
-        String siteName = ((RollerPropertyData)props.get("site.name")).getValue();
-        if ("Roller-based Site".equals(siteName)) siteName = "Main";
-        ctx.put("siteName", siteName);
-        
-        String siteShortName = ((RollerPropertyData)props.get("site.shortName")).getValue();
-        ctx.put("siteShortName", siteShortName);
-        
-        // add language of the session (using locale of viewer set by Struts)
-        ctx.put(
-                "viewLocale",
-                LanguageUtil.getViewLocale(rreq.getRequest()));
-        mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
-        
-        return handle;
-    }
-    
-    
-    public static ToolboxContext loadToolboxContext(HttpServletRequest request, 
-                                                    HttpServletResponse response, 
-                                                    Context ctx) {
+    public static ToolboxContext loadToolboxContext(
+            HttpServletRequest request,                                                     
+            HttpServletResponse response,                                                    
+            Context ctx) {
         
         mLogger.debug("Loading toolbox context");
         
