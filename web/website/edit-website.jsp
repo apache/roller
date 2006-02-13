@@ -77,6 +77,12 @@ WebsiteFormAction.WebsitePageModel model =
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
 
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.active" /></td>
+        <td class="field"><html:checkbox property="active" /></input></td>
+        <td class="description"></td>
+    </tr>
+
     
     <%-- ***** Comment settings ***** --%>
     
