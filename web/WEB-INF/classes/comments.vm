@@ -106,6 +106,8 @@
             #set($content = $utilities.encodeEmail($comment.content))
             #if($escapeHtml)
                 #set($content = $utilities.escapeHTML($content))
+            #else 
+                #set($content = $utilities.transformToHTMLSubset($utilities.escapeHTML($content)))
             #end
             #if($autoformat)
                 #set($content = $utilities.autoformat($content))
