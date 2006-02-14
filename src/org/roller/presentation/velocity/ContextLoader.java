@@ -98,8 +98,7 @@ public class ContextLoader {
                 
         // Load standard Roller objects and values into the context
         WebsiteData website = 
-            loadWebsiteValues(ctx, rreq, rollerCtx );
-        loadWeblogValues(     ctx, rreq, rollerCtx, website );
+            loadWeblogValues(ctx, rreq, rollerCtx );
         loadPathValues(       ctx, rreq, rollerCtx, website );
         loadRssValues(        ctx, rreq, website );
         loadUtilityObjects(   ctx, rreq, rollerCtx, website );
@@ -118,7 +117,7 @@ public class ContextLoader {
     /**
      * Load website object and related objects.
      */
-    protected static WebsiteData loadWebsiteValues(
+    protected static WebsiteData loadWeblogValues(
             Context ctx, 
             RollerRequest rreq, 
             RollerContext rollerCtx )
@@ -127,46 +126,47 @@ public class ContextLoader {
         Roller mRoller = RollerFactory.getRoller();
         Map props = mRoller.getPropertiesManager().getProperties();
         
-        WebsiteData website = rreq.getWebsite();            
-        if (website == null && rreq.getRequest().getParameter("entry") != null) {
+        WebsiteData weblog = rreq.getWebsite();            
+        if (weblog == null && rreq.getRequest().getParameter("entry") != null) {
             String handle = rreq.getRequest().getParameter("entry");
-            website = RollerFactory.getRoller().getUserManager().getWebsiteByHandle(handle);
+            weblog = RollerFactory.getRoller().getUserManager().getWebsiteByHandle(handle);
         }
-        if (website == null && rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
-            website = (WebsiteData)rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
+        if (weblog == null && rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
+            weblog = (WebsiteData)rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
         } 
         
-        if (website != null) {
-            ctx.put("userName",         website.getHandle());
-            ctx.put("fullName",         website.getName() );
-            ctx.put("emailAddress",     website.getEmailAddress() );
-            ctx.put("encodedEmail",     RegexUtil.encode(website.getEmailAddress()));
-            ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(website.getEmailAddress()));
+        if (weblog != null) {
+            ctx.put("userName",         weblog.getHandle());
+            ctx.put("fullName",         weblog.getName() );
+            ctx.put("emailAddress",     weblog.getEmailAddress() );
+            ctx.put("encodedEmail",     RegexUtil.encode(weblog.getEmailAddress()));
+            ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(weblog.getEmailAddress()));
             
             // setup Locale for future rendering
-            ctx.put("locale", website.getLocaleInstance());
+            ctx.put("locale", weblog.getLocaleInstance());
             
             // setup Timezone for future rendering
-            ctx.put("timezone", website.getTimeZoneInstance());
-            ctx.put("timeZone", website.getTimeZoneInstance());
+            ctx.put("timezone", weblog.getTimeZoneInstance());
+            ctx.put("timeZone", weblog.getTimeZoneInstance());
         } else {
-            website = new WebsiteData();
-            website.setAllowComments(Boolean.FALSE);
-            website.setHandle("zzz_none_zzz");
-            website.setName(
+            // create dummy website for use in site-wide feeds
+            weblog = new WebsiteData();
+            weblog.setAllowComments(Boolean.FALSE);
+            weblog.setHandle("zzz_none_zzz");
+            weblog.setName(
                 ((RollerPropertyData)props.get("site.name")).getValue());
-            website.setDescription(
+            weblog.setDescription(
                 ((RollerPropertyData)props.get("site.description")).getValue());
-            ctx.put("handle",   website.getHandle() );
-            ctx.put("userName", website.getHandle() );
-            ctx.put("fullName", website.getHandle());
+            ctx.put("handle",   weblog.getHandle() );
+            ctx.put("userName", weblog.getHandle() );
+            ctx.put("fullName", weblog.getHandle());
             ctx.put("locale",   Locale.getDefault());
             ctx.put("timezone", TimeZone.getDefault());
             ctx.put("timeZone", TimeZone.getDefault());
             ctx.put("emailAddress",
                 ((RollerPropertyData)props.get("site.adminemail")).getValue());
         }
-        ctx.put("website", WebsiteDataWrapper.wrap(website) );
+        ctx.put("website", WebsiteDataWrapper.wrap(weblog) );
         
         String siteName = ((RollerPropertyData)props.get("site.name")).getValue();
         if ("Roller-based Site".equals(siteName)) siteName = "Main";
@@ -179,46 +179,35 @@ public class ContextLoader {
         ctx.put("viewLocale",
                 LanguageUtil.getViewLocale(rreq.getRequest()));
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
-        
-        return website;
-    }
-    
-    /**
-     * Load other values associated with one weblog
-     */
-    private static void loadWeblogValues(
-            Context ctx, 
-            RollerRequest rreq, 
-            RollerContext 
-            rollerCtx, WebsiteData website)
-            throws RollerException {
-        
-        mLogger.debug("Loading weblog values");
-        
+               
         // if there is an "_entry" page, only load it once
-        if (website != null) {
+        // but don't do it for dummy website
+        if (weblog != null && !"zzz_none_zzz".equals(weblog.getHandle())) {
             // alternative display pages - customization
-            Template entryPage = website.getPageByName("_entry");
+            Template entryPage = weblog.getPageByName("_entry");
             if (entryPage != null) {
                 ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
             }
-            Template descPage = website.getPageByName("_desc");
+            Template descPage = weblog.getPageByName("_desc");
             if (descPage != null) {
                 ctx.put("descPage", TemplateWrapper.wrap(descPage));
             }
         }
-        
+
         boolean commentsEnabled =
             RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
         boolean trackbacksEnabled =
             RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
         boolean linkbacksEnabled =
             RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
-        ctx.put("commentsEnabled", new Boolean(commentsEnabled) );
-        ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
-        ctx.put("linkbacksEnabled", new Boolean(linkbacksEnabled) );
-    }
         
+        ctx.put("commentsEnabled",   new Boolean(commentsEnabled) );
+        ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
+        ctx.put("linkbacksEnabled",  new Boolean(linkbacksEnabled) );
+        
+        return weblog;
+    }
+            
     /**
      * Load comments for one weblog entry and related objects.
      */
@@ -236,11 +225,9 @@ public class ContextLoader {
             RollerRuntimeConfig.getProperty("users.comments.escapehtml");
         String autoFormat =
             RollerRuntimeConfig.getProperty("users.comments.autoformat");
-        
-        // Add comments related values to context
-        ctx.put("isCommentPage", Boolean.TRUE);
-        ctx.put("escapeHtml", new Boolean(escapeHtml) );
-        ctx.put("autoformat", new Boolean(autoFormat) );
+        ctx.put("isCommentPage",     Boolean.TRUE);
+        ctx.put("escapeHtml",        new Boolean(escapeHtml) );
+        ctx.put("autoformat",        new Boolean(autoFormat) );                
         
         // Make sure comment form object is available in context
         CommentFormEx commentForm =
