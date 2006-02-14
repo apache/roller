@@ -63,28 +63,28 @@ public class PageServlet extends VelocityServlet {
     public Template handleRequest(HttpServletRequest request,
                                 HttpServletResponse response, 
                                 Context ctx) 
-            throws IOException {
+        throws Exception {
         
         Template outty = null;
         RollerRequest rreq = null;
         WebsiteData website = null;
         
+        PageContext pageContext =
+            JspFactory.getDefaultFactory().getPageContext(
+            this, request, response,"", true, 8192, true);
+
         // first off lets parse the incoming request and validate it
         try {
-            PageContext pageContext =
-                    JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", true, 8192, true);
             rreq = RollerRequest.getRollerRequest(pageContext);
-            
-            // make sure the website is valid
-            website = rreq.getWebsite();
-            if(website == null)
-                throw new InvalidRequestException("invalid weblog");
-        } catch (Throwable e) {
-            // An error initializing the request is considered to be a 404
+        } catch (Throwable t) {
+            // NOTE: indicates real problem, not just a "not found" error
+            throw new Exception("ERROR: creating RollerRequest");
+        }
+
+        // All pages exist within website, so website MUST be specified
+        website = rreq.getWebsite();
+        if (website == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            request.setAttribute("DisplayException", e);
-            mLogger.debug("ERROR initializing RollerRequest",e);
             return null;
         }
                
@@ -164,7 +164,7 @@ public class PageServlet extends VelocityServlet {
                                             HttpServletResponse response,
                                             org.roller.pojos.Template page) 
             
-            throws ResourceNotFoundException, RollerException {
+         throws ResourceNotFoundException, RollerException {
         
         Template outty = null;
         

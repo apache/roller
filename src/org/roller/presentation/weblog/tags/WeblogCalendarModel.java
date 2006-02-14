@@ -254,19 +254,23 @@ public class WeblogCalendarModel implements CalendarModel
         Calendar nextCal = getCalendar();
         nextCal.setTime( mDay );
         nextCal.add( Calendar.MONTH, 1 );
-        Date nextMonth = getLastDayOfMonth(nextCal).getTime();
-        String nextMonthUrl = computeUrl(nextMonth, true);            
-        return nextMonthUrl;
+        String nextMonth = computeUrl(nextCal.getTime(), true);            
+        
+        // and strip off last two digits to get a month URL
+        return nextMonth.substring(0, nextMonth.length() - 2);
     }
 
     public String computePrevMonthUrl()
     {
+        // Create yyyyMMdd dates for prev month, prev month and today 
         Calendar prevCal = getCalendar();
         prevCal.setTime( mDay );
         prevCal.add( Calendar.MONTH, -1 );
-        getLastDayOfMonth( prevCal );
+        //getLastDayOfMonth( prevCal );
         String prevMonth = computeUrl(prevCal.getTime(),true);
-        return prevMonth;
+        
+        // and strip off last two digits to get a month URL
+        return prevMonth.substring(0, prevMonth.length() - 2);
     }
 
     public String computeTodayMonthUrl()

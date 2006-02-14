@@ -41,7 +41,7 @@ public class PreviewServlet extends PageServlet {
     public Template handleRequest( HttpServletRequest request,
                                 HttpServletResponse response,
                                 Context ctx ) 
-            throws IOException {
+            throws Exception {
         
         Theme previewTheme = null;
         
