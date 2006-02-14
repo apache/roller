@@ -36,13 +36,32 @@ CREDITS AND COPYRIGHT NOTICES
 THIRD PARTY COMPONENTS
 
    * Roller includes software developed by the Apache Software Foundation
-     Copyright (c) The Apache Software Foundation. All rights reserved.
+        Copyright (c) The Apache Software Foundation. All rights reserved.
 
-   * Roller includes code from Blojsom, BSD License
-        Copyright (c) David A. Czarnecki & Mark Lussier. All rights reserved
-        
+   * Roller includes software developed by the ROME project, Apache license
+        Copyright (c) ROME development team. All rights reserved.
+
    * Roller includes JDOM, JDOM license (BSD style)
         Copyright (c) Brett McLaughlin & Jason Hunter. All rights reserved.
+
+   * Roller includes code from the Blojsom blog server, BSD License
+        Copyright (c) David A. Czarnecki & Mark Lussier. All rights reserved
+
+   * Roller includes code from the Pebble blog server, BSD license
+        Copyright (c) 2003-2005, Simon Brown, All rights reserved.
+        
+   * Roller includes Acegi Security, ASL 2.0 License:
+         "This product includes software developed by the Acegi Security
+         System for Spring Project (http://acegisecurity.org)."
+
+   * Roller includes Jython, Copyright (c) Jython Developers
+        Combined license { Jython Software License (BSD style)
+        Apache Software License JPython 1.1 License }
+
+   * Roller include icons by Mark James (http://www.famfamfam.com/lab/icons)
+         License is http://creativecommons.org/licenses/by/2.5/
+
+THIRD PARTY LGPL COMPONENTS
 
    * Roller includes the Hibernate persistence library, LGPL license
 
@@ -54,14 +73,3 @@ THIRD PARTY COMPONENTS
 
    * Roller includes the Radeox Wiki Engine, LGPL license
 
-   * Roller includes Jython, Copyright (c) Jython Developers
-            Combined license { Jython Software License (BSD style)
-                               Apache Software License
-                               JPython 1.1 License }
-
-   * Roller include icons by Mark James (http://www.famfamfam.com/lab/icons)
-         License is http://creativecommons.org/licenses/by/2.5/
-
-   * Roller includes Acegi Security, ASL 2.0 License:
-     "This product includes software developed by the Acegi Security
-      System for Spring Project (http://acegisecurity.org)."
