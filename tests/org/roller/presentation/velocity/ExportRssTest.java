@@ -45,8 +45,9 @@ public class ExportRssTest extends StrutsActionTestBase
                         null,               // startDate
                         new Date(),         // endDate
                         null,               // catName
-                        null,  // status
-                        new Integer(5));   // maxEntries
+                        null,               // status
+                        null,               // sortby
+                        new Integer(5));    // maxEntries
         
         try
         {
