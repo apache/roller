@@ -12,7 +12,9 @@
 
 #**
  * Shows weblog entries from specified category using specified page as a "day 
- * template" for the display of each day. 
+ * template" for the display of each day. The maxEntries argument is ignored
+ * because now the number of entries to display is controlled by the 
+ * entryDisplayCount property on the Preferences:Settings page.
  * 
  * If a specific weblog entry is specified by the current request (using the 
  * entry parameter), this macro will display only that entry and the comments 
@@ -35,19 +37,15 @@
  *#
 #macro( showWeblogEntriesInCategory $pageName $maxEntries $category)
     #set($maxEntries = $website.entryDisplayCount)
-    #if ($pageModel.getWeblogEntry())
-        #set($entry = $pageModel.getWeblogEntry())
-    #end
     #set($dayTemplateId = $pageModel.getPageIdByName($pageName))
     #if(!$dayTemplateId ) ## if no page name, try Preview space
         #set($dayTemplateId = $pageName)
     #end
-    #if ($entry)
-        <div class="top-next-prev">#showNextPreviousLinks()</div>
-        #set($day = $entry.pubTime)
-        #set($entries = [$entry])
-        #parse($dayTemplateId )
+    #if ($pageModel.weblogEntry)
         <div class="top-next-prev">#showNextPreviousControl()</div>
+        #set($day = $entry.pubTime)
+        #set($entries = [$pageModel.weblogEntry])
+        #parse($dayTemplateId )
         #if($trackbacksEnabled && $website.allowComments && $entry.commentsStillAllowed)
            <div class="trackbackUrl">
            $text.get("macro.weblog.trackback") #showTrackbackURL($entry)
@@ -73,10 +71,13 @@
             #showSearchPager()
         #else
             #set($map = $pageModel.getRecentWeblogEntries($maxEntries, $category))
-            <div class="top-next-prev">#showNextPreviousControl()</div>
-            #foreach($day in $map.keySet())
-                #set($entries = $map.get($day))
-                #parse($dayTemplateId)
+            #if($map.size() == 0)
+               $text.get("macro.weblog.noEntriesForDate")
+            #else               
+               #foreach($day in $map.keySet())
+                   #set($entries = $map.get($day))
+                   #parse($dayTemplateId)
+               #end
             #end
             <div class="bottom-next-prev">#showNextPreviousControl()</div>
         #end
@@ -84,23 +85,8 @@
 #end
 
 #**
- * Shows weblog entries using specified page as a "day template" for the 
- * display of each day. The maxEntries argument is ignored because now, the 
- * number of entries to display is controlled by the entryDisplayCount property 
- * under Preferences:Settings.
- *
- * @param pageName   Page name of page to serve as day template.
- * @param maxEntries (ignored)
- *#
-#macro( showWeblogEntries $pageName $maxEntries )
-#showWeblogEntriesInCategory($pageName $maxEntries 'nil')
-#end
-
-
-#**
- * Shows weblog entries using the standard "_day" template for the display of 
- * each day. The number of entries to display is controlled by the 
- * entryDisplayCount property under Preferences:Settings.
+ * Shows weblog entries by calling showWeblogEntriesInCategory() and passing
+ * 'nil' to indicate that all categories are to be included.
  *#
 #macro( displayWeblogEntries )
 #showWeblogEntriesInCategory("_day" 15 'nil')
@@ -109,7 +95,6 @@
 
 #**
  * Shows list of links to recent weblog entries in one category.
- *
  * @param entryCount Maximum number of entry links to display
 **#
 #macro( showRecentEntriesInCategory $entryCount $catPath )
@@ -164,13 +149,6 @@
     </div>
 #end
 
-#macro( showNextPreviousLinks )
-   <!-- 
-   showNextPreviousLinks() is no longer needed as next/prev links are 
-   built-into the #showRecentEntries() macro.
-   -->
-#end
-
 #**
  * Display link to chronologically previous entry or day in the
  * same category (if specified).
@@ -179,13 +157,15 @@
     <span class="previousEntry">
     #if( $pageModel.previousEntry )
         #set( $prev = $pageModel.previousEntry )
-        #if( $entry )
+        #if( $pageModel.weblogEntry )
             #set( $prevURL = "${ctxPath}${prev.permaLink}" )
+            <a href="$prevURL" title="Previous Entry"
+                >$utilities.truncateNicely($prev.title, 20, 20, "...") &raquo;</a>
         #else
             #set( $prevURL = "${ctxPath}/page/${website.handle}/#formatDate($plainFormat ${prev.pubTime})" )
+            <a href="$prevURL" title="Previous Entries"
+                >#showEntryDate(${prev.pubTime}) &raquo;</a>
         #end
-        <a href="$prevURL" title="Previous Entries"
-            > $utilities.truncateNicely($prev.title, 20, 20, "...") &raquo;</a>
     #end
     </span>
 #end
@@ -198,25 +178,18 @@
     <span class="nextEntry">
     #if( $pageModel.nextEntry )
         #set( $next = $pageModel.nextEntry )        
-        #if( $entry )
+        #if( $pageModel.weblogEntry )
             #set( $nextURL = "${ctxPath}${next.permaLink}" )
+            <a href="$nextURL" title="Next Entry"
+                >&laquo; $utilities.truncateNicely($next.title, 20, 20, "...")</a>
         #else
             #set( $nextURL = "${ctxPath}/page/${website.handle}/#formatDate($plainFormat ${next.pubTime})" )
+            <a href="$nextURL" title="Next Entries"
+                >&laquo; #showEntryDate(${next.pubTime})</a>
         #end
-        <a href="$nextURL" title="Next Entries"
-            >&laquo; $utilities.truncateNicely($next.title, 20, 20, "...")</a>
+
     #end
     </span>
-#end
-
-
-#**
- * Show the last $maxEntries number of weblogentry titles, as links to
- * entry links.  Names of fields must be different than in showWeblogEntries
- * (those values take precedence for some reason).
-**#
-#macro( showRecentEntryLinks $numEntries )
-#showRecentEntryLinksInCategory($numEntries "nil")
 #end
 
 
@@ -546,8 +519,9 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
 
 
 #**
- * Shows list of links for recent weblog entries in one category.
- * DEPRECATED: use showRecentWelobEntries() instead.
+ * (DEPRECATED) Shows list of links for recent weblog entries in one category
+ * using the link field (which is no longer exposed in the editor UI).
+ * You should use showRecentEntriesInCategory() instead.
  *
  * @param numEntries Maximum number of entries to display
  * @param cat        Category to be displayed 
@@ -573,4 +547,38 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
    </ul>
 #end
 
+
+#**
+ * (DEPRECATED) Shows list of links for recent weblog entries in all categories
+ * using the link field (which is no longer exposed in the editor UI). 
+ * You should use showRecentEntries() instead.
+**#
+#macro( showRecentEntryLinks $numEntries )
+#showRecentEntryLinksInCategory($numEntries "nil")
+#end
+
+
+#**
+ * (DEPRECATED) Shows weblog entries by calling showWeblogEntriesInCategory(), 
+ * but passes category of 'nil' to indicate that all categories are to be 
+ * included. You should use displayWeblogEntries() instead.
+ * 
+ * @param pageName   Page name of page to serve as day template.
+ * @param maxEntries (ignored)
+ *#
+#macro( showWeblogEntries $pageName $maxEntries )
+#showWeblogEntriesInCategory($pageName $maxEntries 'nil')
+#end
+
+
+#**
+ * (DEPRECATED) This macro does nothing because now, next/prev links are 
+ * built-into the showWeblogEntries() macro. 
+ *#
+#macro( showNextPreviousLinks )
+   <!-- 
+   showNextPreviousLinks() is no longer needed as next/prev links are 
+   built-into the #showRecentEntries() macro.
+   -->
+#end
 

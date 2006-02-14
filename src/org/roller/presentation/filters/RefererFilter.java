@@ -62,13 +62,23 @@ public class RefererFilter implements Filter {
         String requestUrl = request.getRequestURL().toString();
         
         // parse the incoming request and make sure it's a valid page request
+        WebsiteData weblog = null;
         WeblogPageRequest pageRequest = null;
         try {
             pageRequest = new WeblogPageRequest(request);
+            String handle = pageRequest.getWeblogHandle();
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            weblog = userMgr.getWebsiteByHandle(handle);
+      
         } catch(Exception e) {
-            // illegal page request
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            mLogger.debug("Illegal page request: "+request.getRequestURL());
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            mLogger.warn("ERROR processing request: "+request.getRequestURL());
+            return;
+        }
+        
+        // ReferrerManager only cares about weblog referrers
+        if (weblog == null) {             
+            chain.doFilter(req, res);
             return;
         }
         
@@ -83,13 +93,12 @@ public class RefererFilter implements Filter {
         
         // validate the referrer
         if (pageRequest != null && pageRequest.getWeblogHandle() != null && !isRobot) {
-            String handle = pageRequest.getWeblogHandle();
             
             RollerContext rctx = RollerContext.getRollerContext();
             
             // Base page URLs, with and without www.
             String basePageUrlWWW =
-                    rctx.getAbsoluteContextUrl(request)+"/page/"+handle;
+                    rctx.getAbsoluteContextUrl(request)+"/page/"+weblog.getHandle();
             String basePageUrl = basePageUrlWWW;
             if ( basePageUrlWWW.startsWith("http://www.") ) {
                 // chop off the http://www.
@@ -101,24 +110,8 @@ public class RefererFilter implements Filter {
                     (!referrerUrl.startsWith(basePageUrl) &&
                     !referrerUrl.startsWith(basePageUrlWWW))) {
                 
-                String selfSiteFragment = "/page/"+handle;
-                WebsiteData weblog = null;
-                
-                // lookup the weblog now
-                try {
-                    UserManager userMgr = RollerFactory.getRoller().getUserManager();
-                    weblog = userMgr.getWebsiteByHandle(handle);
-                    
-                    if(weblog == null) {
-                        throw new RollerException("invalid website: "+handle);
-                    }
-                } catch(Exception e) {
-                    // if we can't get the WebsiteData object we can't continue
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                    mLogger.error("Unable to retrieve weblog: "+handle);
-                    return;
-                }
-                
+                String selfSiteFragment = "/page/"+weblog.getHandle();
+
                 // validate the referrer
                 if ( referrerUrl != null ) {
                     // ignore a Referrer from the persons own blog

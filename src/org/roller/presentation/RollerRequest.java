@@ -70,7 +70,9 @@ public class RollerRequest
     private WebsiteData        mWebsite;
     private WeblogEntryData    mWeblogEntry;
     private WeblogCategoryData mWeblogCategory;
-    private boolean            mIsDateSpecified = false;
+    
+    private boolean            mIsDaySpecified = false;
+    private boolean            mIsMonthSpecified = false;
         
     private static ThreadLocal mRollerRequestTLS = new ThreadLocal();
     
@@ -104,7 +106,8 @@ public class RollerRequest
     
     public static final String ROLLER_REQUEST        = "roller_request";
     
-    private SimpleDateFormat mFmt = DateUtil.get8charDateFormat();
+    private SimpleDateFormat m8charDateFormat = DateUtil.get8charDateFormat();
+    private SimpleDateFormat m6charDateFormat = DateUtil.get6charDateFormat();
 
     //----------------------------------------------------------- Constructors
 
@@ -230,7 +233,11 @@ public class RollerRequest
                         // we have the /username/datestring form of URL
                         mDateString = pathInfo[1];
                         mPage = mWebsite.getDefaultPage();
-                        mIsDateSpecified = true;
+                        if (pathInfo[1].length() == 8) {
+                            mIsDaySpecified = true;
+                        } else {
+                            mIsMonthSpecified = true;
+                        }
                     }               
                 }
                 else if ( pathInfo.length == 3 )
@@ -248,17 +255,20 @@ public class RollerRequest
                             mWeblogEntry = weblogMgr.getWeblogEntryByAnchor(
                                 mWebsite, pathInfo[2]);
                         }
-                        catch (Exception damn)
+                        catch (Exception e)
                         {
-                            // doesn't really matter, we've got the Page anyway
-                            mLogger.debug("Damn", damn);
+                            mLogger.debug("Can't find entry by anchor", e);
                         }
                     }
                     else
                     {
                         // we have the /username/pagelink/datestring form of URL
                         mDateString = pathInfo[2];
-                        mIsDateSpecified = true;
+                        if (pathInfo[1].length() == 8) {
+                            mIsDaySpecified = true;
+                        } else {
+                            mIsMonthSpecified = true;
+                        }
                     }
                 }
                 else if ( pathInfo.length == 4 )
@@ -269,7 +279,11 @@ public class RollerRequest
                     
                     mDate = parseDate(pathInfo[2]);
                     mDateString = pathInfo[2];
-                    mIsDateSpecified = true;
+                    if (pathInfo[1].length() == 8) {
+                        mIsDaySpecified = true;
+                    } else {
+                        mIsMonthSpecified = true;
+                    }
 
                     // we have the /username/pagelink/date/anchor form of URL
                     WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
@@ -280,7 +294,7 @@ public class RollerRequest
             if (mDate == null && mWeblogEntry != null)
             {
                 mDate = mWeblogEntry.getPubTime();
-                mDateString = DateUtil.format8chars(mDate);
+                //mDateString = DateUtil.format8chars(mDate);
             }
         }
         catch ( Exception ignored )
@@ -288,11 +302,12 @@ public class RollerRequest
             mLogger.debug("Exception parsing pathInfo",ignored);
         }
         
-        if ( mWebsite==null || mPage==null )
-        {            
-            String msg = "Invalid pathInfo: "+StringUtils.join(pathInfo,"|");
-            throw new RollerException(msg);
-        }
+        // NOTE: let the caller handle missing website/page instead
+        //if ( mWebsite==null || mPage==null )
+        //{            
+            //String msg = "Invalid pathInfo: "+StringUtils.join(pathInfo,"|");
+            //throw new RollerException(msg);
+        //}
     }       
     
     //------------------------------------------------------------------------
@@ -343,7 +358,7 @@ public class RollerRequest
                 {
                     // we have the /username/datestring form of URL
                     mDateString = daystr;
-                    mIsDateSpecified = true;
+                    mIsDaySpecified = true;
                 }               
             }                  
         }
@@ -452,9 +467,14 @@ public class RollerRequest
     
     //-----------------------------------------------------------------------------
     
-    public boolean isDateSpecified()
+    public boolean isDaySpecified()
     {
-        return mIsDateSpecified;
+        return mIsDaySpecified;
+    }    
+    
+    public boolean isMonthSpecified()
+    {
+        return mIsMonthSpecified;
     }
                 
     //--------------------------------------------------- Date specified by request
@@ -504,20 +524,19 @@ public class RollerRequest
         return todayCal.getTime(); 
     }
 
-    /**
-     * Gets the YYYYMMDD date string specified by the request, or null.
+    /*
+     * Gets the YYYYMMDD or YYYYMM date string specified by the request, or null.
      * @return String
      */
-    public String getDateString()
+    public String getDateString1()
     {
-        return getDateString(false);
+        return mDateString;
     }
 
     /**
      * Gets the date specified by the request
      * @param orToday If no date specified, then use today's date.
-     * @return Date
-     */
+     * @return Date    
     public String getDateString( boolean orToday )
     {
         String ret = null;
@@ -535,10 +554,10 @@ public class RollerRequest
                         this.getWebsite().getLocaleInstance());
             }
             todayCal.setTime( new Date() );
-            ret = mFmt.format(todayCal.getTime());            
+            ret = m8DigitDateFormat.format(todayCal.getTime());            
         }
         return ret;
-    }
+    }*/
     
     //------------------------------------------------------------------------
     /**
@@ -825,7 +844,7 @@ public class RollerRequest
             && StringUtils.isNumeric(dateString) )
         {
             ParsePosition pos = new ParsePosition(0);
-            ret = mFmt.parse( dateString, pos );
+            ret = m8charDateFormat.parse( dateString, pos );
             
             // make sure the requested date is not in the future
             Date today = getToday();
@@ -833,6 +852,20 @@ public class RollerRequest
             
             // since a specific date was requested set time to end of day
             ret = DateUtil.getEndOfDay(ret);
+        } 
+        if (   dateString!=null 
+            && dateString.length()==6
+            && StringUtils.isNumeric(dateString) )
+        {
+            ParsePosition pos = new ParsePosition(0);
+            ret = m6charDateFormat.parse( dateString, pos );
+            
+            // make sure the requested date is not in the future
+            Date today = getToday();
+            if (ret.after(today)) ret = today;
+            
+            // since a specific date was requested set time to end of day
+            ret = DateUtil.getEndOfMonth(ret); 
         }
         return ret;
     }

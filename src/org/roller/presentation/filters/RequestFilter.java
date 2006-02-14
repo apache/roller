@@ -40,22 +40,15 @@ import org.roller.presentation.util.RequestUtil;
 public class RequestFilter implements Filter {
     private FilterConfig mFilterConfig = null;
     private static Log mLogger =
-            LogFactory.getFactory().getInstance(RequestFilter.class);
+        LogFactory.getFactory().getInstance(RequestFilter.class);
     
-    /**
-     * destroy
-     */
-    public void destroy() {
-    }
-    
-    /**
-     * Request filter.
-     */
     public void doFilter(
             ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
+        
         // NOTE: Setting character encoding and JSTL/Struts locale sync has been
         // moved to CharEncodingFilter, which is mapped for all URIs in the context.
+        
         HttpSession session = ((HttpServletRequest)req).getSession();
         HttpServletRequest request = (HttpServletRequest)req;
         HttpServletResponse response = (HttpServletResponse)res;
@@ -63,27 +56,21 @@ public class RequestFilter implements Filter {
         RollerRequest rreq = null;
         try {
             rreq = RollerRequest.getRollerRequest(
-                    request, mFilterConfig.getServletContext());
-        } catch (Throwable e) {
-            // An error initializing the request is considered to be a 404
-            response.sendError(
-                    HttpServletResponse.SC_NOT_FOUND,
-                    "Page not found or error parsing requested URL");
-            
-            // make sure any filters earlier in the chain know that we had
-            // an exception happen
-            request.setAttribute("DisplayException", e);
-            
+                       request, mFilterConfig.getServletContext());
+        } catch (Throwable e) {            
+            // NOTE: this is not a page-not-found problem
+            request.setAttribute("DisplayException", e);            
+            mLogger.error(e);
             return;
         }
         chain.doFilter(req, res);
     }
     
-    /**
-     * init
-     */
     public void init(FilterConfig filterConfig) throws ServletException {
         mFilterConfig = filterConfig;
+    }
+    
+    public void destroy() {
     }
 }
 

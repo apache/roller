@@ -73,7 +73,7 @@ public class LanguageServlet extends PageServlet {
     public Template handleRequest(HttpServletRequest request,
                                 HttpServletResponse response,
                                 Context ctx) 
-            throws IOException {
+            throws Exception {
         
         mLogger.debug("Processing language change...");
         ServletContext servletContext = RollerContext.getServletContext();

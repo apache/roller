@@ -295,24 +295,24 @@ public class PageModel {
      * <li></li>
      * </ul>
      *
-     * @param maxEntries Maximum number of entries to be returned.
-     * @param categoryName Only return entries from this category and it's
-     *         subcategories. If null, returns all categories of entry.
-     * @return Map of Lists of WeblogEntryData, keyed by 8-char date strings.
+     * @param maxEntries Maximum number of entries to be returned (only applies 
+     *                   if specific day not specified).
+     * @param catName    Only return entries from this category and it's
+     *                   subcategories. If null, returns all categories of entry
+     * @return           Map of Lists of WeblogEntryData, keyed by 8-char date 
+     *                   strings.
      */
-    public Map getRecentWeblogEntries(int maxEntries, String categoryName) {
-        if (VELOCITY_NULL.equals(categoryName)) categoryName = null;
+    public Map getRecentWeblogEntries(int maxEntries, String catName) {
+        if (VELOCITY_NULL.equals(catName)) catName = null;
         Map ret = new HashMap();
-        try {
-
-            
+        try {            
             // If request specifies a category, then use that
             String catParam = null;
             if (mRollerReq.getWeblogCategory() != null) {
                 catParam = mRollerReq.getWeblogCategory().getPath();
-            } else if (categoryName != null) {
+            } else if (catName != null) {
                 // use category argument instead
-                catParam = categoryName;
+                catParam = catName;
             } else if (mRollerReq.getWebsite() != null) // MAIN
             {
                 catParam = mRollerReq.getWebsite().getDefaultCategory().getPath();
@@ -325,13 +325,15 @@ public class PageModel {
             Date startDate = null;
             Date endDate = mRollerReq.getDate();
             if (endDate == null) endDate = new Date();
-            if (mRollerReq.isDateSpecified()) { 
+            if (mRollerReq.isDaySpecified()) { 
                 // URL specified a specific day
                 // so get entries for that day
                 endDate = DateUtil.getEndOfDay(endDate);
                 startDate = DateUtil.getStartOfDay(endDate); 
                 // and get them ALL, no limit
                 limit = null;                  
+            } else if (mRollerReq.isMonthSpecified()) {
+                endDate = DateUtil.getEndOfDay(endDate);
             }
             Map mRet = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
                     mRollerReq.getWebsite(),
