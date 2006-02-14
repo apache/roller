@@ -26,6 +26,7 @@ import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
+import java.io.File;
 
 /**
  * Base class for PlanetManager implementations.
@@ -52,12 +53,39 @@ public abstract class PlanetManagerImpl implements PlanetManager {
         Date now = new Date();
         long startTime = System.currentTimeMillis();
         PlanetConfigData config = getConfiguration();
+        
+        // can't continue without cache dir
         if (config == null || config.getCacheDir() == null) {
             logger.warn("Planet cache directory not set, aborting refresh");
             return;
+        } 
+
+        // allow ${user.home} in cache dir property
+        String cacheDirName = config.getCacheDir().replaceFirst(
+            "\\$\\{user.home}",System.getProperty("user.home"));
+        
+        // allow ${catalina.home} in cache dir property
+        cacheDirName = cacheDirName.replaceFirst(
+            "\\$\\{catalina.home}",System.getProperty("catalina.home"));
+        
+        // create cache  dir if it does not exist
+        File cacheDir = null;
+        try {
+            cacheDir = new File(cacheDirName);
+            if (!cacheDir.exists()) cacheDir.mkdirs();
+        } catch (Exception e) {
+            logger.error("Unable to create planet cache directory");
+            return;
         }
+        
+        // abort if cache dir is not writable
+        if (!cacheDir.canWrite()) {
+            logger.error("Planet cache directory is not writable");
+            return;        
+        }
+        
         FeedFetcherCache feedInfoCache =
-                new DiskFeedInfoCache(config.getCacheDir());
+                new DiskFeedInfoCache(cacheDirName);
         
         if (config.getProxyHost()!=null && config.getProxyPort() > 0) {
             System.setProperty("proxySet", "true");
