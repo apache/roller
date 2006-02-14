@@ -158,14 +158,14 @@
         #set( $catLink = "?catname=$catPath" ) 
     #end
     <div class="next-previous">
-    #if ($pageModel.nextEntry)
-        #showNextWeblogLink($npcat) |
-    #end
-    #if (($pageModel.previousEntry && $pageModel.nextEntry) || $pageModel.previousEntry)
-        <a href="${ctxPath}/page/${website.handle}$catLink">$page.name</a> |
-    #end
     #if ($pageModel.previousEntry)
-        #showPrevWeblogLink($npcat)
+        #showPrevWeblogLink($npcat) |
+    #end
+    #if ($pageModel.previousEntry || $pageModel.nextEntry)
+        <a href="${ctxPath}/page/${website.handle}$catLink">$page.name</a>
+    #end
+    #if ($pageModel.nextEntry)
+        | #showNextWeblogLink($npcat)
     #end
     </div>
 #end
@@ -181,11 +181,11 @@
         #if( $pageModel.weblogEntry )
             #set( $prevURL = "${ctxPath}${prev.permaLink}" )
             <a href="$prevURL" title="Previous Entry"
-                >$utilities.truncateNicely($prev.title, 20, 20, "...") &raquo;</a>
+                > &laquo; $utilities.truncateNicely($prev.title, 25, 25, "...")</a>
         #else
             #set( $prevURL = "${ctxPath}/page/${website.handle}/#formatDate($plainFormat ${prev.pubTime})" )
             <a href="$prevURL" title="Previous Entries"
-                >#showEntryDate(${prev.pubTime}) &raquo;</a>
+                > &laquo; #showEntryDate(${prev.pubTime})</a>
         #end
     #end
     </span>
@@ -202,11 +202,11 @@
         #if( $pageModel.weblogEntry )
             #set( $nextURL = "${ctxPath}${next.permaLink}" )
             <a href="$nextURL" title="Next Entry"
-                >&laquo; $utilities.truncateNicely($next.title, 20, 20, "...")</a>
+                >$utilities.truncateNicely($next.title, 25, 25, "...") &raquo; </a>
         #else
             #set( $nextURL = "${ctxPath}/page/${website.handle}/#formatDate($plainFormat ${next.pubTime})" )
             <a href="$nextURL" title="Next Entries"
-                >&laquo; #showEntryDate(${next.pubTime})</a>
+                >#showEntryDate(${next.pubTime}) &raquo; </a>
         #end
 
     #end
