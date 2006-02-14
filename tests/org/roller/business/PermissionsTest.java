@@ -60,14 +60,15 @@ public class PermissionsTest extends RollerTestBase
         
         // gets hold of goodguy's entry
         UserData goodguy = umgr.getUser("testuser2");
-        WebsiteData website0 = (WebsiteData)umgr.getWebsites(goodguy, null).get(0);
+        WebsiteData website0 = (WebsiteData)umgr.getWebsites(goodguy, null, null).get(0);
         assertNotNull(website0);
         List entries = getRoller().getWeblogManager().getWeblogEntries(
                 website0,
                 null,       // start
                 new Date(), // end
                 null,       // cat
-                null,
+                null,       // status
+                null,       // sortby
                 new Integer(1));
         WeblogEntryData entry = (WeblogEntryData)entries.get(0);
         assertNotNull(entry);
@@ -99,7 +100,7 @@ public class PermissionsTest extends RollerTestBase
         
         // gets hold of testuser0's entry
         UserData testuser0 = umgr.getUser("testuser2");
-        WebsiteData website0 = (WebsiteData)umgr.getWebsites(testuser0, null).get(0);
+        WebsiteData website0 = (WebsiteData)umgr.getWebsites(testuser0, null, null).get(0);
         assertNotNull(website0);
         FolderData root = getRoller().getBookmarkManager().getRootFolder(website0);
         BookmarkData bookmark = (BookmarkData)root.getBookmarks().iterator().next();
@@ -231,7 +232,7 @@ public class PermissionsTest extends RollerTestBase
                 assertFalse(umgr.getPermissions(tsite, tuser).isPending());
                 
                 // assert that user has website
-                List websites = umgr.getWebsites(tuser, null);
+                List websites = umgr.getWebsites(tuser, null, null);
                 assertEquals( tsite.getId(), 
                               ((WebsiteData)websites.get(0)).getId());
                 
@@ -254,7 +255,7 @@ public class PermissionsTest extends RollerTestBase
             {
                 tuser = umgr.retrieveUser(tuser.getId());
                 tsite = umgr.retrieveWebsite(tsite.getId());
-                List websites = umgr.getWebsites(tuser, null);
+                List websites = umgr.getWebsites(tuser, null, null);
                 assertEquals(0, websites.size());
                 List users = umgr.getUsers(tsite, null);
                 assertEquals(0, users.size());

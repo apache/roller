@@ -76,7 +76,7 @@ public class UserManagerTest  extends RollerTestBase
                                  "EnabledUser",
                                  "enabledUser@example.com");
         enabledUser.setEnabled(Boolean.TRUE);
-        enabledSite = ((WebsiteData)umgr.getWebsites(enabledUser, null).get(0));
+        enabledSite = ((WebsiteData)umgr.getWebsites(enabledUser, null, null).get(0));
         enabledSite.setEnabled(Boolean.TRUE);       
 
         disabledUser = createUser(disabledUserName,
@@ -85,7 +85,7 @@ public class UserManagerTest  extends RollerTestBase
                                  "disabledUser@example.com");
                 
         disabledUser.setEnabled(Boolean.FALSE);
-        disabledSite = ((WebsiteData)umgr.getWebsites(disabledUser, null).get(0));
+        disabledSite = ((WebsiteData)umgr.getWebsites(disabledUser, null, null).get(0));
         disabledSite.setEnabled(Boolean.FALSE);  
 
         getRoller().commit();
@@ -251,7 +251,7 @@ public class UserManagerTest  extends RollerTestBase
         UserData user1 = umgr.retrieveUser(user.getId());
         assertNotNull(user1);
 
-        WebsiteData website = (WebsiteData)umgr.getWebsites(user, null).get(0);
+        WebsiteData website = (WebsiteData)umgr.getWebsites(user, null, null).get(0);
         assertNotNull(website);
 
         FolderData root = getRoller().getBookmarkManager().getRootFolder(website);
@@ -288,16 +288,16 @@ public class UserManagerTest  extends RollerTestBase
         
         // can get testuser0 who is enabled
         assertTrue(umgr.getWebsites(
-                umgr.getUser(enabledUserName), Boolean.TRUE).size() > 0);
+                umgr.getUser(enabledUserName), Boolean.TRUE, null).size() > 0);
 
         // can't get testuser1, who is disabled
         disabledUser = umgr.retrieveUser(disabledUser.getId());
         assertTrue(umgr.getWebsites(
-                disabledUser, Boolean.TRUE).size() == 0);
+                disabledUser, Boolean.TRUE, null).size() == 0);
 
         // can get testuser1 with enabledOnly flag set to false
         assertTrue(umgr.getWebsites(
-                umgr.getUser(disabledUserName), Boolean.FALSE).size() == 1);
+                umgr.getUser(disabledUserName), Boolean.FALSE, null).size() == 1);
     }
 
     public void testGetUser() throws RollerException
@@ -374,7 +374,7 @@ public class UserManagerTest  extends RollerTestBase
     {
         UserManager umgr = getRoller().getUserManager();
         WebsiteData wd0 = (WebsiteData)umgr.getWebsites(
-                umgr.getUser(enabledUserName), null).get(0);
+                umgr.getUser(enabledUserName), null, null).get(0);
         assertNotNull(wd0.getPageByName("Weblog"));
     }
 
@@ -383,7 +383,7 @@ public class UserManagerTest  extends RollerTestBase
     {
         UserManager umgr = getRoller().getUserManager();
         WebsiteData wd0 = (WebsiteData)umgr.getWebsites(
-                umgr.getUser(enabledUserName), null).get(0);
+                umgr.getUser(enabledUserName), null, null).get(0);
         assertNotNull(wd0.getPageByLink("Weblog"));
     }
 
@@ -391,7 +391,7 @@ public class UserManagerTest  extends RollerTestBase
     {
         UserManager umgr = getRoller().getUserManager();
         WebsiteData wd0 = (WebsiteData)umgr.getWebsites(
-                umgr.getUser(enabledUserName), null).get(0);
+                umgr.getUser(enabledUserName), null, null).get(0);
         assertEquals(5, wd0.getPages().size());
     }
 

@@ -213,11 +213,12 @@ public class WeblogManagerTest extends RollerTestBase
         
         List entries = wmgr.getWeblogEntries(
                         wd,
-                        null,                       // startDate
-                        new Date(),                 // endDate
-                        "toplevel1",                 // catName
-                        null,           // status
-                        new Integer(15));           // maxEntries
+                        null,             // startDate
+                        new Date(),       // endDate
+                        "toplevel1",      // catName
+                        null,             // status
+                        null,             // sortby
+                        new Integer(15)); // maxEntries
 
         assertEquals(4, entries.size());
         
@@ -673,12 +674,13 @@ public class WeblogManagerTest extends RollerTestBase
 
         // PUBLISHISHED ONLY
         List publishedEntries = wmgr.getWeblogEntries(
-                        website,                 // userName
-                        null,                    // startDate
-                        new Date(),              // endDate
-                        null,                    // catName
+                        website,                    // userName
+                        null,                       // startDate
+                        new Date(),                 // endDate
+                        null,                       // catName
                         WeblogEntryData.PUBLISHED,  // status
-                        null);                   // maxEntries
+                        null,                       // sortby
+                        null);                      // maxEntries
         assertEquals(mExpectedPublishedEntryCount, publishedEntries.size());
                     
         // DRAFT ONLY
@@ -687,7 +689,8 @@ public class WeblogManagerTest extends RollerTestBase
                         null,                    // startDate
                         new Date(),              // endDate
                         null,                    // catName
-                        WeblogEntryData.DRAFT,  // status
+                        WeblogEntryData.DRAFT,   // status
+                        null,                    // sortby
                         null);                   // maxEntries
         assertEquals(mExpectedEntryCount-mExpectedPublishedEntryCount, draftEntries.size());
                           
@@ -697,7 +700,8 @@ public class WeblogManagerTest extends RollerTestBase
                         null,                    // startDate
                         new Date(),              // endDate
                         null,                    // catName
-                        null,       // status
+                        null,                    // status
+                        null,                    // sortby
                         null);                   // maxEntries
         assertEquals(mExpectedEntryCount, allEntries.size());
 
@@ -708,6 +712,7 @@ public class WeblogManagerTest extends RollerTestBase
                         new Date(),              // endDate
                         null,                    // catName
                         null,                    // status
+                        null,                    // sortby
                         null);                   // maxEntries
         assertEquals(mExpectedEntryCount, allEntries2.size());
                                             
@@ -803,14 +808,15 @@ public class WeblogManagerTest extends RollerTestBase
         
         // gets hold of testuser0's entry
         WebsiteData website0 = (WebsiteData)umgr.getWebsites(
-                umgr.getUser("testuser2"), null).get(0);
+                umgr.getUser("testuser2"), null, null).get(0);
         assertNotNull(website0);
         List entries = getRoller().getWeblogManager().getWeblogEntries(
                 website0,
                 null,       // start
                 new Date(), // end
                 null,       // cat
-                null,
+                null,       // status
+                null,       // sortby
                 new Integer(1));
         WeblogEntryData entry = (WeblogEntryData)entries.get(0);
         assertNotNull(entry);

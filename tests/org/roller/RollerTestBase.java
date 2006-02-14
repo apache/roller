@@ -118,7 +118,7 @@ public abstract class RollerTestBase extends TestCase {
                 "TestUser",
                 "testuser@example.com");
         UserManager umgr = getRoller().getUserManager();
-        mWebsite = (WebsiteData)umgr.getWebsites(mUser, null).get(0);
+        mWebsite = (WebsiteData)umgr.getWebsites(mUser, null, null).get(0);
         getRoller().commit();
         
         getRoller().begin(UserData.SYSTEM_USER);
@@ -197,7 +197,7 @@ public abstract class RollerTestBase extends TestCase {
                     "test"+i+"@test.com"  // emailAddress
                     );
             ud.setEnabled(new Boolean(i%2 == 0)); // half of users are disabled
-            WebsiteData website = (WebsiteData)umgr.getWebsites(ud, null).get(0);
+            WebsiteData website = (WebsiteData)umgr.getWebsites(ud, null, null).get(0);
             mWebsitesCreated.add(website);
             mUsersCreated.add(ud);
             
@@ -378,7 +378,7 @@ public abstract class RollerTestBase extends TestCase {
         
         UserData user = umgr.getUser(deleteMe);
         
-        WebsiteData website = (WebsiteData)umgr.getWebsites(user, null).get(0);
+        WebsiteData website = (WebsiteData)umgr.getWebsites(user, null, null).get(0);
         website.remove();
         
         user.remove();

@@ -45,7 +45,7 @@ public class FileManagerTest extends TestCase
             
             UserManager umgr = mRoller.getUserManager();
             UserData user = umgr.getUser("FileManagerTest_userName");
-            WebsiteData mWebsite = (WebsiteData)umgr.getWebsites(user,null).get(0);
+            WebsiteData mWebsite = (WebsiteData)umgr.getWebsites(user,null, null).get(0);
             
             if(mWebsite == null)
                 mWebsite = this.createTestUser();
@@ -78,7 +78,7 @@ public class FileManagerTest extends TestCase
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
             UserData user = umgr.getUser("FileManagerTest_userName");
-            WebsiteData mWebsite = (WebsiteData)umgr.getWebsites(user,null).get(0);
+            WebsiteData mWebsite = (WebsiteData)umgr.getWebsites(user,null, null).get(0);
             
             if(mWebsite == null)
                 mWebsite = this.createTestUser();
@@ -132,7 +132,7 @@ public class FileManagerTest extends TestCase
                 user.getUserName(), user.getUserName(), user.getUserName(), 
                 "dummy@example.com","basic", "en_US_WIN", "America/Los_Angeles");
         mRoller.commit();
-        WebsiteData website = (WebsiteData)umgr.getWebsites(user,null).get(0);
+        WebsiteData website = (WebsiteData)umgr.getWebsites(user,null, null).get(0);
         return website;
     }
 
