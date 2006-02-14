@@ -43,16 +43,21 @@ function toggleLess(targetId) {
    } 
    fileChanged();
 }
+<%-- 
+Would be nice to disable submit button until a file has been
+chosen, but Netscape7 won't fire fileupload's onselected event.
+leaving this commented out for the day we drop support or Netscape7
+--%>
 function fileChanged() {
-   disabled = true;
-   for (i=0; i<=9; i++) {
-      field = document.getElementById("uploadFile" + i);
-      if (!isblank(field.value)) {
-         disabled = false;
-         break;
-      }
-   }
-   document.forms[0].submitButton.disabled = disabled;
+//   disabled = true;
+//   for (i=0; i<=9; i++) {
+//      field = document.getElementById("uploadFile" + i);
+//      if (!isblank(field.value)) {
+//         disabled = false;
+//         break;
+//      }
+//   }
+//   document.forms[0].submitButton.disabled = disabled;
 }
 -->
 </script>
@@ -90,42 +95,42 @@ File upload form, but only if it's enabled and weblog is under quota
         <form name="uploadFiles" method="post" action="<%= edit %>" enctype="multipart/form-data">
             <br />
             
-            <input type="file" name="uploadedFile0" id="uploadFile0" size="30" onchange="fileChanged()" onkeyup="fileChanged()" value="" /><br />
+            <input type="file" name="uploadedFile0" id="uploadFile0" size="30"     onselect="fileChanged()" onkeyup="fileChanged()" value="" /><br />
               
             <div id="fileControl1" class="miscControl" style="display:none">
-                <input type="file" name="uploadedFile1" id="uploadFile1" size="30" onchange="fileChanged()" onkeyup="fileChanged()" /><br />
+                <input type="file" name="uploadedFile1" id="uploadFile1" size="30" onselect="fileChanged()" onkeyup="fileChanged()" /><br />
             </div>                     
             
             <div id="fileControl2" class="miscControl" style="display:none">
-                <input type="file" name="uploadedFile2" id="uploadFile2" size="30" onchange="fileChanged()" onkeyup="fileChanged()" /><br />
+                <input type="file" name="uploadedFile2" id="uploadFile2" size="30" onselect="fileChanged()" onkeyup="fileChanged()" /><br />
             </div>                     
             
             <div id="fileControl3" class="miscControl" style="display:none">
-                <input type="file" name="uploadedFile3" id="uploadFile3" size="30" onchange="fileChanged()" onkeyup="fileChanged()" /><br />
+                <input type="file" name="uploadedFile3" id="uploadFile3" size="30" onselect="fileChanged()" onkeyup="fileChanged()" /><br />
             </div>                     
             
             <div id="fileControl4" class="miscControl" style="display:none">
-                <input type="file" name="uploadedFile4" id="uploadFile4" size="30" onchange="fileChanged()" onkeyup="fileChanged()" /><br />
+                <input type="file" name="uploadedFile4" id="uploadFile4" size="30" onselect="fileChanged()" onkeyup="fileChanged()" /><br />
             </div>      
                
             <div id="fileControl5" class="miscControl" style="display:none">
-                <input type="file" name="uploadedFile5" id="uploadFile5" size="30" onchange="fileChanged()" onkeyup="fileChanged()" /><br />
+                <input type="file" name="uploadedFile5" id="uploadFile5" size="30" onselect="fileChanged()" onkeyup="fileChanged()" /><br />
             </div>      
                
             <div id="fileControl6" class="miscControl" style="display:none">
-                <input type="file" name="uploadedFile6" id="uploadFile6" size="30" onchange="fileChanged()" onkeyup="fileChanged()" /><br />
+                <input type="file" name="uploadedFile6" id="uploadFile6" size="30" onselect="fileChanged()" onkeyup="fileChanged()" /><br />
             </div>      
                
             <div id="fileControl7" class="miscControl" style="display:none">
-                <input type="file" name="uploadedFile7" id="uploadFile7" size="30" onchange="fileChanged()" onkeyup="fileChanged()" /><br />
+                <input type="file" name="uploadedFile7" id="uploadFile7" size="30" onselect="fileChanged()" onkeyup="fileChanged()" /><br />
             </div>      
                
             <div id="fileControl8" class="miscControl" style="display:none">
-                <input type="file" name="uploadedFile8" id="uploadFile8" size="30" onchange="fileChanged()" onkeyup="fileChanged()" /><br />
+                <input type="file" name="uploadedFile8" id="uploadFile8" size="30" onselect="fileChanged()" onkeyup="fileChanged()" /><br />
             </div>      
                
             <div id="fileControl9" class="miscControl" style="display:none">
-                <input type="file" name="uploadedFile9" id="uploadFile9" size="30" onchange="fileChanged()" onkeyup="fileChanged()" /><br />
+                <input type="file" name="uploadedFile9" id="uploadFile9" size="30" onselect="fileChanged()" onkeyup="fileChanged()" /><br />
             </div>          
                
             <div id="lessToggle" style="display:none; float:left;">
@@ -142,7 +147,12 @@ File upload form, but only if it's enabled and weblog is under quota
             <br />
             <br />
             
-            <input name="submitButton" type="submit" value='<%= bundle.getString("uploadFiles.upload") %>' disabled="true" />
+            <%-- 
+            Would be nice to disable submit button until a file has been
+            chosen, but Netscape7 won't fire fileupload's onselected event,
+            so here we have the submit button enabled from the start
+            --%>
+            <input name="submitButton" type="submit" value='<%= bundle.getString("uploadFiles.upload") %>' /> 
             <input type="hidden" name="method" value="upload" />
             <input type="hidden" name="weblog" value='<%= model.getWebsite().getHandle() %>'>
             <br />
