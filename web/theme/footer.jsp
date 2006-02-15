@@ -6,7 +6,7 @@ Powered by <a href="http://www.rollerweblogger.org">Roller Weblogger</a>
 <a href="http://opensource2.atlassian.com/projects/roller/">
     <fmt:message key="footer.reportIssue" /></a> | 
 
-<a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide_2.x">
+<a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide">
     <fmt:message key="footer.userGuide" /></a> | 
 
 <a href="http://www.rollerweblogger.org/velocidoc/">
