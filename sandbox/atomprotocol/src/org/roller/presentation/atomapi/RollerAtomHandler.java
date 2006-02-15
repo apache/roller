@@ -174,20 +174,18 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public Feed getCollection(String[] pathInfo) throws Exception {
         int start = 0;
-        int end = mMaxEntries;
         if (pathInfo.length > 2) {
             try { 
                 String s = pathInfo[2].trim();
                 start = Integer.parseInt(s);
-                if (start > 0) end = start + mMaxEntries;
             } catch (Throwable t) {
                 mLogger.warn("Unparsable range: " + pathInfo[2]);
             }
         }
         if (pathInfo.length > 0 && pathInfo[1].equals("entries")) {
-            return getCollectionOfEntries(pathInfo, start, end);
+            return getCollectionOfEntries(pathInfo, start, mMaxEntries);
         } else if (pathInfo.length > 0 && pathInfo[1].equals("resources")) {
-            return getCollectionOfResources(pathInfo, start, end);
+            return getCollectionOfResources(pathInfo, start, mMaxEntries);
         }
         throw new Exception("ERROR: bad URL in getCollection()");
     }
@@ -196,7 +194,7 @@ public class RollerAtomHandler implements AtomHandler {
      * Helper method that returns collection of entries, called by getCollection().
      */
     public Feed getCollectionOfEntries(
-            String[] pathInfo, int start, int end) throws Exception {
+            String[] pathInfo, int start, int max) throws Exception {
         String handle = pathInfo[0];
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
@@ -210,7 +208,7 @@ public class RollerAtomHandler implements AtomHandler {
                     null,              // status
                     "updateTime",      // sortby
                     start,             // offset (for range paging)
-                    end - start + 2);  // maxEntries
+                    max + 1);          // maxEntries
             Feed feed = new Feed();
             List atomEntries = new ArrayList();
             int count = 0;
@@ -218,8 +216,8 @@ public class RollerAtomHandler implements AtomHandler {
                 WeblogEntryData rollerEntry = (WeblogEntryData)iter.next();
                 atomEntries.add(createAtomEntry(rollerEntry));
             }
-            if (count > start - end) { // add next link
-                int nextOffset = start + mMaxEntries; 
+            if (count > max) { // add next link
+                int nextOffset = start + max; 
                 String url = absUrl + "/app/" + website.getHandle() + "/entries/" + nextOffset;
                 Link nextLink = new Link();
                 nextLink.setRel("next");
@@ -229,7 +227,7 @@ public class RollerAtomHandler implements AtomHandler {
                 feed.setOtherLinks(next);
             }
             if (start > 0) { // add previous link
-                int prevOffset = start > mMaxEntries ? start - mMaxEntries : 0;
+                int prevOffset = start > max ? start - max : 0;
                 String url = absUrl + "/app/" +website.getHandle() + "/entries/" + prevOffset;
                 Link prevLink = new Link();
                 prevLink.setRel("previous");
@@ -248,7 +246,7 @@ public class RollerAtomHandler implements AtomHandler {
      * Helper method that returns collection of resources, called by getCollection().
      */
     public Feed getCollectionOfResources(
-            String[] pathInfo, int start, int end) throws Exception {
+            String[] pathInfo, int start, int max) throws Exception {
         String handle = pathInfo[0];
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
@@ -259,15 +257,14 @@ public class RollerAtomHandler implements AtomHandler {
             List atomEntries = new ArrayList();
             int count = 0;
             if (files != null && start < files.length) {
-                end = (end > files.length) ? files.length : end;
-                for (int i=start; i<end; i++) {                   
+                for (int i=start; i<(start + max); i++) {                   
                     Entry entry = createAtomResourceEntry(website, files[i]);
                     atomEntries.add(entry);
                     count++;
                 }
             }
             if (start + count < files.length) { // add next link
-                int nextOffset = start + mMaxEntries; 
+                int nextOffset = start + max; 
                 String url = absUrl + "/app/" + website.getHandle() + "/resources/" + nextOffset;
                 Link nextLink = new Link();
                 nextLink.setRel("next");
@@ -277,7 +274,7 @@ public class RollerAtomHandler implements AtomHandler {
                 feed.setOtherLinks(next);
             }
             if (start > 0) { // add previous link
-                int prevOffset = start > mMaxEntries ? start - mMaxEntries : 0;
+                int prevOffset = start > max ? start - max : 0;
                 String url = absUrl + "/app/" +website.getHandle() + "/resources/" + prevOffset;
                 Link prevLink = new Link();
                 prevLink.setRel("previous");
