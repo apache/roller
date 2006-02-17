@@ -174,7 +174,7 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
      */
     public void shutdown() {
         
-        if(this.workers.size() > 0) {
+        if(this.workers != null && this.workers.size() > 0) {
             mLogger.info("stopping all ReferrerQueue worker threads");
             
             // kill all of our threads
