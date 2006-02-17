@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
+  STOP!!!!  This is NOT a Roller configuration file!!
+  Users of Roller should never need to edit this file.  The properties listed
+  here are changed on the Roller Admin Settings page.
+  
   This file defines what properties are made available to get/set
   during the running of the Roller application.  These properties
   are stored in the database and the code *must* be able to make
