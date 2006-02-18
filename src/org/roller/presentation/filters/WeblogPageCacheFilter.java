@@ -37,6 +37,7 @@ import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.cache.LazyExpiringCacheEntry;
 import org.roller.presentation.util.CacheHttpServletResponseWrapper;
 import org.roller.presentation.util.ResponseContent;
+import org.roller.util.Utilities;
 
 
 /**
@@ -198,9 +199,8 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
         key.append(pageRequest.getPageType());
         
         if(pageRequest.getWeblogAnchor() != null) {
-            // TODO: do we need to convert to base64 here?
-            // this.weblogAnchor = Utilities.toBase64(this.weblogAnchor.getBytes());
-            key.append("/").append(pageRequest.getWeblogAnchor());
+            // convert to base64 because there can be spaces in anchors :/
+            key.append("/").append(Utilities.toBase64(pageRequest.getWeblogAnchor().getBytes()));
         } else {
             
             if(pageRequest.getWeblogDate() != null) {
