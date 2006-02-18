@@ -52,6 +52,7 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
+import org.roller.presentation.cache.CacheManager;
 
 
 /**
@@ -104,6 +105,9 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     /** Responds to app-destroy by saving the indexManager's information */
     public void contextDestroyed(ServletContextEvent sce) {
         RollerFactory.getRoller().shutdown();
+        
+        // do we need a more generic mechanism for presentation layer shutdown?
+        CacheManager.shutdown();
     }
     
     
