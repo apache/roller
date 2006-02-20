@@ -17,7 +17,6 @@ public class TestAll extends TestCase
         TestSuite suite = new TestSuite();
         
         suite.addTest(WebsiteTest.suite());
-        suite.addTest(ConfigManagerTest.suite());
         suite.addTest(PermissionsTest.suite());        
         suite.addTest(UserManagerTest.suite());       
         suite.addTest(WeblogManagerTest.suite());        
