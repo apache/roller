@@ -1,17 +1,17 @@
 
 <error-page>
-    <exception-type>org.roller.RollerException</exception-type>
-    <location>/error.jsp</location>
+    <exception-type>java.lang.Exception</exception-type>
+    <location>/WEB-INF/jsps/error.jsp</location>
 </error-page>
 
 <error-page>
     <error-code>403</error-code>
-    <location>/error.jsp</location>
+    <location>/WEB-INF/jsps/403.jsp</location>
 </error-page>
 
 <error-page>
     <error-code>404</error-code>
-    <location>/error.jsp</location>
+    <location>/WEB-INF/jsps/404.jsp</location>
 </error-page>
 
 <error-page>
