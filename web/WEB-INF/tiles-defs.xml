@@ -258,7 +258,7 @@
     <put name="content" value="/WEB-INF/jsps/error404.jsp" />
 </definition>
 <definition name=".loginerror" extends=".tiles-simplepage" >
-    <put name="content" value="/loginerror.jsp" />
+    <put name="content" value="/login.jsp?error=true" />
 </definition>
     
 </tiles-definitions>
