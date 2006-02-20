@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.roller.RollerException;
 import org.roller.business.referrers.IncomingReferrer;
 import org.roller.business.referrers.ReferrerQueueManager;
 import org.roller.model.RollerFactory;
@@ -20,6 +19,7 @@ import org.roller.presentation.RollerContext;
 import org.roller.config.RollerConfig;
 import org.roller.model.UserManager;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.InvalidRequestException;
 import org.roller.presentation.WeblogPageRequest;
 import org.roller.util.SpamChecker;
 
@@ -66,19 +66,16 @@ public class RefererFilter implements Filter {
         WeblogPageRequest pageRequest = null;
         try {
             pageRequest = new WeblogPageRequest(request);
-            String handle = pageRequest.getWeblogHandle();
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            weblog = userMgr.getWebsiteByHandle(handle);
-      
-        } catch(Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            mLogger.warn("ERROR processing request: "+request.getRequestURL());
-            return;
-        }
-        
-        // ReferrerManager only cares about weblog referrers
-        if (weblog == null) {             
-            chain.doFilter(req, res);
+            weblog = userMgr.getWebsiteByHandle(pageRequest.getWeblogHandle());
+            
+            if(weblog == null) {
+                throw new Exception("no weblog named "+pageRequest.getWeblogHandle());
+            }
+            
+        } catch(Exception ex) {
+            // bad url or couldn't obtain weblog
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         
