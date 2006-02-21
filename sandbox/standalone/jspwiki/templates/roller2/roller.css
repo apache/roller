@@ -12,6 +12,7 @@ body {
     padding: 0px;
     font: small Verdana,Arial,Sans-serif;
     font: small/1.5em Verdana, Arial, Helvetica, sans-serif;
+    line-height: 1.2em;
 }
 p {
     margin: 0px 0px 10px 0px;
