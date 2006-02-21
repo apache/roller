@@ -14,8 +14,8 @@ Makes the following assumptions:
 You must download Tomcat and JSPWiki yourself and ensure that the three 
 properties below point to the downloaded files.
 -->
-<property name="tomcat.filename" value="./components/jakarta-tomcat-5.0.28.tar.gz" />	
-<property name="tomcat.basename" value="jakarta-tomcat-5.0.28" />	
+<property name="tomcat.filename" value="./components/jakarta-tomcat-5.5.7.tar.gz" />	
+<property name="tomcat.basename" value="jakarta-tomcat-5.5.7" />	
 <property name="jspwiki.filename" value="./components/jspwiki-2.2.33-bin.zip" />
 
 <property name="roller.srcdir" value="../.." />
@@ -55,10 +55,12 @@ properties below point to the downloaded files.
    <untar src="${tomcat.filename}" dest="./build" compression="gzip" />
    <rename src="./build/${tomcat.basename}" dest="./build/roller-demo" />
 	
+   <!--
    <delete dir="./build/roller-demo/webapps/tomcat-docs" />
    <delete dir="./build/roller-demo/webapps/servlets-examples" />
    <delete dir="./build/roller-demo/webapps/jsp-examples" />
    <delete dir="./build/roller-demo/webapps/webdav" />
+   -->
 
    <!-- unzip JSPWiki, unjar its WAR into ./build/roller-demo/webapps -->
    <mkdir  dir="./build/roller-demo/webapps/wiki" />
@@ -66,7 +68,7 @@ properties below point to the downloaded files.
    <unjar  src="./build/JSPWiki/JSPWiki.war" 
           dest="./build/roller-demo/webapps/wiki" />
    
-   <!-- Roller wiki plugin goes in JSPWiki webapp -->
+   <!-- Standalone demo wiki plugin goes in JSPWiki webapp -->
    <copy file="./build/roller-jspwiki.jar" 
         todir="./build/roller-demo/webapps/wiki/WEB-INF/lib" />
 
@@ -90,15 +92,16 @@ properties below point to the downloaded files.
    <copy todir="./build/roller-demo" overwrite="true">
        <fileset dir="./tomcat" includes="**/**" />
    </copy>
-   <copy todir="./build/roller-demo" overwrite="true" failonerror="false">
-       <fileset dir="./custom" includes="**/**" />
-   </copy>
-        
    <!-- Copy copy-over files for JSPWiki -->
    <copy todir="./build/roller-demo/webapps/wiki" overwrite="true">
        <fileset dir="./jspwiki" includes="**/**" />
    </copy>
-	        
+	
+   <!-- Copy over custom files -->        
+   <copy todir="./build/roller-demo" overwrite="true" failonerror="false">
+       <fileset dir="./custom" includes="**/**" />
+   </copy>
+        
    <chmod perm="+x">
        <fileset dir="./build/roller-demo/bin" includes="*.sh" />
    </chmod>
