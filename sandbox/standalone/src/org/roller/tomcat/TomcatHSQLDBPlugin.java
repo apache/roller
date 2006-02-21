@@ -15,6 +15,11 @@ public class TomcatHSQLDBPlugin implements LifecycleListener {
 		}
 		else if (event.getType().equals(Lifecycle.STOP_EVENT)) {
 			HSQLDBUtility.stop();
+            
+            // This is drastic, but 
+            // 1) we really want Tomcat to stop and 
+            // 2) this is a DEMO bundle
+            System.exit(0);
 		}
 		else {
 			System.out.println(getClass().getName() 
