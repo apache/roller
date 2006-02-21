@@ -216,15 +216,14 @@ public class RollerAtomHandler implements AtomHandler {
                 WeblogEntryData rollerEntry = (WeblogEntryData)iter.next();
                 atomEntries.add(createAtomEntry(rollerEntry));
             }
-            if (count > max) { // add next link
+            List links = new ArrayList();
+            if (entries.size() > max) { // add next link
                 int nextOffset = start + max; 
                 String url = absUrl + "/app/" + website.getHandle() + "/entries/" + nextOffset;
                 Link nextLink = new Link();
                 nextLink.setRel("next");
                 nextLink.setHref(url);
-                List next = new ArrayList();
-                next.add(nextLink);
-                feed.setOtherLinks(next);
+                links.add(nextLink);
             }
             if (start > 0) { // add previous link
                 int prevOffset = start > max ? start - max : 0;
@@ -232,10 +231,9 @@ public class RollerAtomHandler implements AtomHandler {
                 Link prevLink = new Link();
                 prevLink.setRel("previous");
                 prevLink.setHref(url);
-                List prev = new ArrayList();
-                prev.add(prevLink);
-                feed.setOtherLinks(prev);
+                links.add(prevLink);
             }
+            if (links.size() > 0) feed.setOtherLinks(links);
             feed.setEntries(atomEntries);
             return feed;
         }
