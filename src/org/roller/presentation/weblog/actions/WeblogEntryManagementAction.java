@@ -127,7 +127,7 @@ public final class WeblogEntryManagementAction extends DispatchAction
                 }
             }
 
-            this.status = status;
+            this.status = "ALL".equals(queryForm.getStatus()) ? null: queryForm.getStatus();    
             this.maxEntries = maxEntries;
 
             entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
