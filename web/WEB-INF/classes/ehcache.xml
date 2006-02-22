@@ -16,12 +16,12 @@
         overflowToDisk="false" />
         
     <cache name="org.roller.pojos.UserData"
-        maxElementsInMemory="10000"
+        maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />
         
     <cache name="org.roller.pojos.WebsiteData"
-        maxElementsInMemory="10000"
+        maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />
   
