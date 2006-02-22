@@ -1,22 +1,28 @@
 package org.roller.presentation.servlets;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLDecoder;
 import java.util.Date;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.roller.model.RollerFactory;
-import org.roller.util.Utilities;
 
 
 /**
  * Resources servlet.  Acts as a gateway to files uploaded by users.
  *
  * Since we keep uploaded resources in a location outside of the webapp
- * context we need a way to serve them up.  This servlet assumes that 
+ * context we need a way to serve them up.  This servlet assumes that
  * resources are stored on a filesystem in the "uploads.dir" directory.
  *
  * @author Allen Gilliland
@@ -24,72 +30,65 @@ import org.roller.util.Utilities;
  * @web.servlet name="ResourcesServlet"
  * @web.servlet-mapping url-pattern="/resources/*"
  */
-public class ResourceServlet extends HttpServlet
-{
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(ResourceServlet.class);
-
+public class ResourceServlet extends HttpServlet {
+    
+    private static Log mLogger = LogFactory.getLog(ResourceServlet.class);
+    
     private String upload_dir = null;
     private ServletContext context = null;
-
-
-    /** Initializes the servlet.*/
+    
+    
     public void init(ServletConfig config) throws ServletException {
+        
         super.init(config);
-
+        
         this.context = config.getServletContext();
-
+        
         try {
             this.upload_dir = RollerFactory.getRoller().getFileManager().getUploadDir();
             mLogger.debug("upload dir is ["+this.upload_dir+"]");
         } catch(Exception e) { mLogger.warn(e); }
-
+        
     }
-
-    /** Destroys the servlet.
+    
+    
+    /** 
+     * Handles requests for user uploaded resources.
      */
-    public void destroy() {
-
-    }
-
-
-    /** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
         String context = request.getContextPath();
         String servlet = request.getServletPath();
         String reqURI = request.getRequestURI();
-
+        
+        // url decoding
+        reqURI = URLDecoder.decode(reqURI, "UTF-8");
+        
         // calculate the path of the requested resource
         // we expect ... /<context>/<servlet>/path/to/resource
         String reqResource = reqURI.substring(servlet.length() + context.length());
-
-        // Decode the resource portion.  ROL-1051
-        String reqResourceDecoded = Utilities.decode(reqResource);
-
-        // Don't allow ../ in the resource portion.  Security risk.
-        if (reqResourceDecoded.indexOf("../") >= 0) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-
+        
         // now we can formulate the *real* path to the resource on the filesystem
-        String resource_path = this.upload_dir + reqResourceDecoded;
+        String resource_path = this.upload_dir + reqResource;
         File resource = new File(resource_path);
-
+        
         mLogger.debug("Resource requested ["+reqURI+"]");
         mLogger.debug("Real path is ["+resource.getAbsolutePath()+"]");
-
+        
         // do a quick check to make sure the resource exits, otherwise 404
-        if(!resource.exists() || !resource.canRead()) {
+        if(!resource.exists() || !resource.canRead() || resource.isDirectory()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
+        
+        // make sure someone isn't trying to sneek outside the uploads dir
+        File uploadDir = new File(this.upload_dir);
+        if(!resource.getCanonicalPath().startsWith(uploadDir.getCanonicalPath())) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        
         // does the client already have this file?  if so, then 304
         Date ifModDate = new Date(request.getDateHeader("If-Modified-Since"));
         Date lastMod = new Date(resource.lastModified());
@@ -98,13 +97,13 @@ public class ResourceServlet extends HttpServlet
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
-
+        
         // looks like we'll be serving up the file ... lets set some headers
         // set last-modified date so we can do if-modified-since checks
         // set the content type based on whatever is in our web.xml mime defs
         response.addDateHeader("Last-Modified", (new Date()).getTime());
         response.setContentType(this.context.getMimeType(resource.getAbsolutePath()));
-
+        
         // ok, lets serve up the file
         byte[] buf = new byte[8192];
         int length = 0;
@@ -112,35 +111,16 @@ public class ResourceServlet extends HttpServlet
         InputStream resource_file = new FileInputStream(resource);
         while((length = resource_file.read(buf)) > 0)
             out.write(buf, 0, length);
-
+        
         // cleanup
         out.close();
         resource_file.close();
     }
-
-
-    /** Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
+    
+    
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
     }
-
-    /** Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /** Returns a short description of the servlet.
-     */
-    public String getServletInfo() {
-        return "ResourceServlet ... serving you since 2005 ;)";
-    }
-
+    
 }
