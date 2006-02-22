@@ -18,6 +18,7 @@ import java.io.Serializable;
  *    extends="org.apache.struts.validator.ValidatorForm"
  * 
  * @hibernate.class lazy="false" table="bookmark"
+ * @hibernate.cache usage="read-write"
  */
 public class BookmarkData extends WebsiteObject
     implements Serializable, Comparable

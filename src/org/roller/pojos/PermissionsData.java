@@ -21,7 +21,8 @@ package org.roller.pojos;
  *
  * @ejb:bean name="PermissionsData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="roller_user_permissions"  
+ * @hibernate.class lazy="false" table="roller_user_permissions"
+ * @hibernate.cache usage="read-write"
  *
  * @author Dave Johnson
  */

@@ -19,6 +19,7 @@ import java.io.Serializable;
  * @author Anil Gangolli anil@busybuddha.org
  * @ejb:bean name="PingQueueEntryData"
  * @hibernate.class lazy="false" table="pingqueueentry"
+ * @hibernate.cache usage="read-write"
  */
 public class PingQueueEntryData extends PersistentObject implements Serializable
 {

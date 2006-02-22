@@ -24,7 +24,7 @@ import org.roller.model.RollerFactory;
  * @ejb:bean name="FolderData"
  * 
  * @hibernate.class lazy="false" table="folder"
- * hibernate.jcs-cache usage="read-write"
+ * @hibernate.cache usage="read-write"
  */
 public class FolderData extends HierarchicalPersistentObject
     implements Serializable, Comparable

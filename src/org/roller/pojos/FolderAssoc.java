@@ -5,7 +5,8 @@ package org.roller.pojos;
  * @author David M Johnson
  *
  * @ejb:bean name="FolderAssoc"
- * @hibernate.class lazy="false" table="folderassoc" 
+ * @hibernate.class lazy="false" table="folderassoc"
+ * @hibernate.cache usage="read-write"
  */
 public class FolderAssoc extends PersistentObject
     implements Assoc

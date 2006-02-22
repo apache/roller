@@ -2,7 +2,8 @@ package org.roller.pojos;
 /**
  * @author David M Johnson
  * @ejb:bean name="EntryAttribute"
- * @hibernate.class lazy="false" table="entryattribute" 
+ * @hibernate.class lazy="false" table="entryattribute"
+ * @hibernate.cache usage="read-write"
  */
 public class EntryAttributeData extends PersistentObject implements java.lang.Comparable
 {

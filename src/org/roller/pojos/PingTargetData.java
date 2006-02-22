@@ -26,6 +26,7 @@ import java.sql.Timestamp;
  * @ejb:bean name="PingTargetData"
  * @struts.form include-all="true"
  * @hibernate.class lazy="false" table="pingtarget"
+ * @hibernate.cache usage="read-write"
  */
 public class PingTargetData extends PersistentObject implements Serializable
 {

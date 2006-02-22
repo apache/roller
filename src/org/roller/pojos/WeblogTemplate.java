@@ -20,7 +20,8 @@ import org.roller.model.RollerFactory;
  * 
  * @ejb:bean name="WeblogTemplate"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="webpage" hibernate.jcs-cache usage="read-write"
+ * @hibernate.class lazy="false" table="webpage"
+ * @hibernate.cache usage="read-write"
  */
 public class WeblogTemplate extends PersistentObject
    implements Serializable, Template
