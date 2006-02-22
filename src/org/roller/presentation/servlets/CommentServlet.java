@@ -1,7 +1,6 @@
 package org.roller.presentation.servlets;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +40,7 @@ import org.roller.util.StringUtils;
 import org.roller.presentation.*;
 import org.roller.presentation.cache.CacheManager;
 import org.roller.presentation.velocity.DefaultCommentAuthenticator;
+import org.roller.util.Utilities;
 
 /**
  * The CommentServlet handles all incoming weblog entry comment posts.
@@ -361,7 +361,10 @@ public class CommentServlet extends HttpServlet {
             }
             
             msg.append((escapeHtml) ? "\n\n" : "<br /><br />");
-            msg.append(cd.getContent());
+                        
+            msg.append((escapeHtml) ? Utilities.escapeHTML(cd.getContent()) 
+                : Utilities.transformToHTMLSubset(Utilities.escapeHTML(cd.getContent())));
+            
             msg.append((escapeHtml) ? "\n\n----\n"
                     : "<br /><br /><hr /><span style=\"font-size: 11px\">");
             msg.append(resources.getString("email.comment.respond") + ": ");
