@@ -21,7 +21,8 @@ import org.roller.model.RollerFactory;
  * @author David M Johnson
  *
  * @ejb:bean name="WeblogCategoryAssoc"
- * @hibernate.class lazy="false" table="weblogcategoryassoc" 
+ * @hibernate.class lazy="false" table="weblogcategoryassoc"
+ * @hibernate.cache usage="read-write"
  */
 public class WeblogCategoryAssoc extends PersistentObject
     implements Assoc

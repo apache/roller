@@ -12,7 +12,8 @@ import org.roller.util.Utilities;
  *
  * @ejb:bean name="RefererData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="referer" 
+ * @hibernate.class lazy="false" table="referer"
+ * @hibernate.cache usage="read-write"
  */
 public class RefererData extends PersistentObject
     implements java.io.Serializable

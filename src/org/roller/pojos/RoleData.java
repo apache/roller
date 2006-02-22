@@ -8,7 +8,8 @@ package org.roller.pojos;
  *
  * @ejb:bean name="RoleData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="userrole"  
+ * @hibernate.class lazy="false" table="userrole"
+ * @hibernate.cache usage="read-write"
  */
 public class RoleData
    extends org.roller.pojos.PersistentObject

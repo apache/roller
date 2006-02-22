@@ -16,7 +16,8 @@ import org.roller.util.PojoUtil;
  *
  * @ejb:bean name="WeblogCategoryData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="weblogcategory" 
+ * @hibernate.class lazy="false" table="weblogcategory"
+ * @hibernate.cache usage="read-write"
  */
 public class WeblogCategoryData extends HierarchicalPersistentObject
 {

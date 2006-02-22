@@ -20,6 +20,7 @@ import java.io.Serializable;
  * @author Anil Gangolli anil@busybuddha.org
  * @ejb:bean name="AutoPingData"
  * @hibernate.class lazy="false" table="pingcategory"
+ * @hibernate.cache usage="read-write"
  */
 public class PingCategoryRestrictionData extends PersistentObject implements Serializable
 {

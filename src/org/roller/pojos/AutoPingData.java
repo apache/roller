@@ -18,6 +18,7 @@ import java.io.Serializable;
  * @author Anil Gangolli anil@busybuddha.org
  * @ejb:bean name="AutoPingData"
  * @hibernate.class lazy="false" table="autoping"
+ * @hibernate.cache usage="read-write"
  */
 public class AutoPingData extends PersistentObject implements Serializable
 {
