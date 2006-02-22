@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
@@ -107,7 +108,7 @@ public class Utilities {
     //------------------------------------------------------------------------
     /**
      * Escape, but do not replace HTML.
-     * @param escapseAmpersand Optionally escape
+     * @param escapeAmpersand Optionally escape
      * ampersands (&amp;).
      */
     public static String escapeHTML(String s, boolean escapeAmpersand) {
@@ -277,7 +278,8 @@ public class Utilities {
     
     //------------------------------------------------------------------------
     /**
-     * @param pathArray
+     * @param stringArray
+     * @param delim
      * @return
      */
     public static String stringArrayToString(String[] stringArray, String delim) {
@@ -966,18 +968,42 @@ public class Utilities {
             return (String.valueOf(ch));
         }
     }
-    
+
+    /**
+     * URL encoding.
+     * @param s a string to be URL-encoded
+     * @return URL encoding of s using character encoding UTF-8; null if s is null.
+     */
     public static final String encode(String s) {
         try {
             if (s != null)
-                return URLEncoder.encode(s, "utf-8");
+                return URLEncoder.encode(s, "UTF-8");
             else
                 return s;
         } catch (UnsupportedEncodingException e) {
+            // Java Spec requires UTF-8 be in all Java environments, so this should not happen
             return s;
         }
     }
-    
+
+    /**
+     * URL decoding.
+     * @param s a URL-encoded string to be URL-decoded
+     * @return URL decoded value of s using character encoding UTF-8; null if s is null.
+     */
+    public static final String decode(String s) {
+        try {
+            if (s != null)
+                return URLDecoder.decode(s, "UTF-8");
+            else
+                return s;
+        } catch (UnsupportedEncodingException e) {
+            // Java Spec requires UTF-8 be in all Java environments, so this should not happen
+            return s;
+        }
+    }
+
+
     /**
      * @param string
      * @return
