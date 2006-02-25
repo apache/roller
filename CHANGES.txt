@@ -52,6 +52,7 @@ Bug fixes
     * [ROL-988] - bug in showNextPreviousLinks()
     * [ROL-990] - Referrers not filtered against site-wide blacklist
     * [ROL-1007] - Main RSS feed: <lastBuildDate> is empty
+    * [ROL-1051] - Attachments don't work when there are spaces in the filename
 
 -------------------------------------------------------------------------------
 
