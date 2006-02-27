@@ -139,17 +139,17 @@ public class RollerAtomHandler implements AtomHandler {
                     PermissionsData perm = (PermissionsData)iter.next();
                     String handle = perm.getWebsite().getHandle();
                     AtomService.Workspace workspace = new AtomService.Workspace();
-                    workspace.setTitle("Workspace: Collections for " + handle);
+                    workspace.setTitle("Weblog: " + handle);
                     service.addWorkspace(workspace);
                     
                     AtomService.Collection entryCol = new AtomService.Collection();
-                    entryCol.setTitle("Collection: Weblog Entries for " + handle);
+                    entryCol.setTitle("Weblog Entries");
                     entryCol.setMemberType("entry");
                     entryCol.setHref(absUrl + "/app/"+handle+"/entries");
                     workspace.addCollection(entryCol);
                                         
                     AtomService.Collection uploadCol = new AtomService.Collection();
-                    uploadCol.setTitle("Collection: Resources for " + handle);
+                    uploadCol.setTitle("Media Files");
                     uploadCol.setMemberType("media");
                     uploadCol.setHref(absUrl + "/app/"+handle+"/resources");
                     workspace.addCollection(uploadCol);
@@ -255,7 +255,7 @@ public class RollerAtomHandler implements AtomHandler {
             List atomEntries = new ArrayList();
             int count = 0;
             if (files != null && start < files.length) {
-                for (int i=start; i<(start + max); i++) {                   
+                for (int i=start; i<(start + max) && i<(files.length); i++) {                   
                     Entry entry = createAtomResourceEntry(website, files[i]);
                     atomEntries.add(entry);
                     count++;
