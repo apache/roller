@@ -1,6 +1,7 @@
 package org.roller.presentation.velocity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -321,6 +323,13 @@ public class PageModel {
                 }
             }
             
+            Calendar cal = null;
+            if (mRollerReq.getWebsite() != null) {
+                TimeZone tz = mRollerReq.getWebsite().getTimeZoneInstance();
+                cal = Calendar.getInstance(tz);
+            } else {
+                cal = Calendar.getInstance();
+            }
             Integer limit = new Integer(maxEntries);
             Date startDate = null;
             Date endDate = mRollerReq.getDate();
@@ -328,12 +337,12 @@ public class PageModel {
             if (mRollerReq.isDaySpecified()) { 
                 // URL specified a specific day
                 // so get entries for that day
-                endDate = DateUtil.getEndOfDay(endDate);
-                startDate = DateUtil.getStartOfDay(endDate); 
+                endDate = DateUtil.getEndOfDay(endDate, cal);
+                startDate = DateUtil.getStartOfDay(endDate, cal); 
                 // and get them ALL, no limit
                 limit = null;                  
             } else if (mRollerReq.isMonthSpecified()) {
-                endDate = DateUtil.getEndOfDay(endDate);
+                endDate = DateUtil.getEndOfDay(endDate, cal);
             }
             Map mRet = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
                     mRollerReq.getWebsite(),
@@ -354,7 +363,7 @@ public class PageModel {
                 List entries = (List) mRet.get(key);
                 for(int i=0; i < entries.size(); i++) {
                     wrappedEntries.add(i,
-                            WeblogEntryDataWrapper.wrap((WeblogEntryData)entries.get(i)));
+                         WeblogEntryDataWrapper.wrap((WeblogEntryData)entries.get(i)));
                 }
                 mRet.put(key, wrappedEntries);
             }
