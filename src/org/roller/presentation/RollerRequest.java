@@ -850,8 +850,8 @@ public class RollerRequest
             Date today = getToday();
             if (ret.after(today)) ret = today;
             
-            // since a specific date was requested set time to end of day
-            ret = DateUtil.getEndOfDay(ret);
+            // Do this later, once we know what timezone to use 
+            // ret = DateUtil.getEndOfDay(ret);
         } 
         if (   dateString!=null 
             && dateString.length()==6
@@ -864,8 +864,8 @@ public class RollerRequest
             Date today = getToday();
             if (ret.after(today)) ret = today;
             
-            // since a specific date was requested set time to end of day
-            ret = DateUtil.getEndOfMonth(ret); 
+            // Do this later, once we know what timezone to use 
+            // ret = DateUtil.getEndOfMonth(ret); 
         }
         return ret;
     }
