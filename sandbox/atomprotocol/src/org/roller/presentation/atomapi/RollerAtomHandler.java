@@ -139,7 +139,7 @@ public class RollerAtomHandler implements AtomHandler {
                     PermissionsData perm = (PermissionsData)iter.next();
                     String handle = perm.getWebsite().getHandle();
                     AtomService.Workspace workspace = new AtomService.Workspace();
-                    workspace.setTitle("Weblog: " + handle);
+                    workspace.setTitle(Utilities.removeHTML(perm.getWebsite().getName()));
                     service.addWorkspace(workspace);
                     
                     AtomService.Collection entryCol = new AtomService.Collection();
@@ -210,6 +210,7 @@ public class RollerAtomHandler implements AtomHandler {
                     start,             // offset (for range paging)
                     max + 1);          // maxEntries
             Feed feed = new Feed();
+            feed.setTitle("Entries for blog[" + handle + "]");
             List atomEntries = new ArrayList();
             int count = 0;
             for (Iterator iter = entries.iterator(); iter.hasNext() && count < mMaxEntries; count++) {
@@ -561,13 +562,14 @@ public class RollerAtomHandler implements AtomHandler {
     }
     
     /**
-     * Return true if user is allowed to edit a website.
+     * Return true if user is allowed to create/edit entries and resources in weblog.
      */
     private boolean canEdit(WebsiteData website) {
         try {
-            return website.canSave();
+            UserData user = mRoller.getUser();
+            return website.hasUserPermissions(user, PermissionsData.AUTHOR);
         } catch (Exception e) {
-            mLogger.error("ERROR: checking website.canSave()");
+            mLogger.error("ERROR: checking website.hasUserPermissions()");
         }
         return false;
     }
