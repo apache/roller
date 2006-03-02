@@ -133,6 +133,7 @@ public class AtomServlet extends HttpServlet {
                 mLogger.error(e);
             }
         } else {
+            res.setHeader("WWW-Authenticate", "Roller realm");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
@@ -196,6 +197,7 @@ public class AtomServlet extends HttpServlet {
                 mLogger.error(e);
             }
         } else {
+            res.setHeader("WWW-Authenticate", "Roller realm");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
@@ -246,6 +248,7 @@ public class AtomServlet extends HttpServlet {
                 mLogger.error(e);
             }
         } else {
+            res.setHeader("WWW-Authenticate", "Roller realm");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
@@ -276,6 +279,7 @@ public class AtomServlet extends HttpServlet {
                 mLogger.error(e);
             }
         } else {
+            res.setHeader("WWW-Authenticate", "Roller realm");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
