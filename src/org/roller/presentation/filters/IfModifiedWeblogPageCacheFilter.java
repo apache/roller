@@ -170,7 +170,7 @@ public class IfModifiedWeblogPageCacheFilter implements Filter, CacheHandler {
         
         StringBuffer key = new StringBuffer();
         key.append("weblog/");
-        key.append(pageRequest.getWeblogHandle());
+        key.append(pageRequest.getWeblogHandle().toLowerCase());
         key.append("/page/");
         key.append(pageRequest.getWeblogPage());
         

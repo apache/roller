@@ -203,7 +203,7 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
         key.append(feedRequest.getContext());
         
         if(feedRequest.getContext().equals("weblog")) {
-            key.append("/").append(feedRequest.getWeblogHandle());
+            key.append("/").append(feedRequest.getWeblogHandle().toLowerCase());
             key.append("/").append(feedRequest.getFlavor());
             
             if(feedRequest.getWeblogCategory() != null) {
