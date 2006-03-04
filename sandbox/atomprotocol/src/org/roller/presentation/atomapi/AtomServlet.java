@@ -45,6 +45,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.WireFeedOutput;
 import java.io.StringWriter;
+import org.jdom.Namespace;
 
 /**
  * Atom Servlet implements Atom by calling a Roller independent handler.
@@ -295,8 +296,7 @@ public class AtomServlet extends HttpServlet {
     }
     
     /**
-     * Utility method to make up for a Rome shortcoming:
-     * Rome can only serialize entire feeds, not individual elements
+     * Serialize entry to writer.
      */
     public static void serializeEntry(Entry entry, Writer writer)
     throws IllegalArgumentException, FeedException, IOException {
@@ -313,20 +313,29 @@ public class AtomServlet extends HttpServlet {
         
         // Grab entry element from feed and get JDOM to serialize it
         Element entryElement= (Element)feedDoc.getRootElement().getChildren().get(0);
+        
+        // Add our own namespaced element, so we can determine if we can 
+        // count on client to preserve foreign markup as it should.
+        Element rollerElement = new Element("atom-draft", 
+            "http://rollerweblogger.org/namespaces/app");
+        rollerElement.setText("7");
+        entryElement.addContent(rollerElement);
+        
         XMLOutputter outputter = new XMLOutputter();
         outputter.setFormat(Format.getPrettyFormat());
         
-        StringWriter sw = new StringWriter();  // DEBUG
-        outputter.output(entryElement, sw);    // DEBUG
-        System.out.println(sw.toString());     // DEBUG
-        writer.write(sw.toString());           // DEBUG
-        
-        //outputter.output(entryElement, writer);
+        if (mLogger.isDebugEnabled()) {
+            StringWriter sw = new StringWriter();
+            outputter.output(entryElement, sw); 
+            mLogger.debug(sw.toString());
+            writer.write(sw.toString()); 
+        } else {
+            outputter.output(entryElement, writer);
+        }        
     }
     
     /**
-     * Utility method to make up for a Rome shortcoming:
-     * Rome can only parse Atom data with XML document root 'feed'
+     * Parse entry from reader.
      */
     public static Entry parseEntry(Reader rd)
     throws JDOMException, IOException, IllegalArgumentException, FeedException {
@@ -342,6 +351,15 @@ public class AtomServlet extends HttpServlet {
         WireFeedOutput wireFeedOutput = new WireFeedOutput();
         Document feedDoc = wireFeedOutput.outputJDom(feed);
         feedDoc.getRootElement().addContent(fetchedEntryElement);
+        
+        // Check for our special namespaced element. If it's there, then we 
+        // know that client is not preserving foreign markup.
+        Namespace ns = Namespace.getNamespace(
+            "http://rollerweblogger.org/namespaces/app");
+        Element rollerElement = fetchedEntryElement.getChild("atom-draft", ns);
+        if (rollerElement == null) {
+            mLogger.debug("Client is NOT preserving foreign markup");
+        }
         
         WireFeedInput input = new WireFeedInput();
         Feed parsedFeed = (Feed)input.build(feedDoc);
