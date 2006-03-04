@@ -318,7 +318,7 @@ public class AtomServlet extends HttpServlet {
         // count on client to preserve foreign markup as it should.
         Element rollerElement = new Element("atom-draft", 
             "http://rollerweblogger.org/namespaces/app");
-        rollerElement.setText("7");
+        rollerElement.setText("8");
         entryElement.addContent(rollerElement);
         
         XMLOutputter outputter = new XMLOutputter();
