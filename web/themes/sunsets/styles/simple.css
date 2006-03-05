@@ -274,3 +274,40 @@ form#searchForm input.focus {
     border-top:  #c07300 solid 2px;
     color:#000000;
 }
+
+.comments-form th {
+    text-align: right;
+	 padding-right: 5px;
+	 width: 60px;
+}
+
+.comments-syntax-indicator {
+    font-weight: bold;
+}
+
+.comments-syntax-indicator .enabled {
+    color: green;
+    font-style: italic;
+}
+
+.comments-syntax-indicator .disabled {
+    color: red;
+    font-style: italic;
+}
+
+#commentAuthenticator {
+    background-color: #ffd;
+    border: 1px solid orange;
+    margin: 10px 0px;
+    padding: 5px;
+}
+
+span.error {
+    background-color: #ffffcc;
+    font-weight: normal;
+    padding: 3px;
+    margin-bottom: 10px;
+    border: 5px solid red;
+    display: block;
+    font-size: 20px;
+}
