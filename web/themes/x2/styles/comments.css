@@ -32,17 +32,17 @@ div.comments-form table td {
     white-space: nowrap !important;
 }
 
-div.htmlSyntax {
+.comments-syntax-indicator {
     font-weight: bold;
 }
 
-div.htmlSyntax span.enabled {
+.comments-syntax-indicator span.enabled {
     background: transparent;
     color: green;
     font-style: italic;
 }
 
-div.htmlSyntax span.disabled {
+.comments-syntax-indicator span.disabled {
     background: transparent;
     color: red;
     font-style: italic;

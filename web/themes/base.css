@@ -179,8 +179,18 @@ textarea.commentFormTextarea {
     font-size: 12px;
     width: 90% !important;
 }
-div.htmlSyntax {
+.comments-syntax-indicator {
     font-weight: bold;
+}
+.comments-syntax-indicator span.enabled {
+    background: transparent;
+    color: green;
+    font-style: italic;
+}
+.comments-syntax-indicator span.disabled {
+    background: transparent;
+    color: red;
+    font-style: italic;
 }
 div.commentBody {}
 div.commentByline {}
