@@ -404,7 +404,7 @@ public class CacheManager {
      * Get the date of the last time the specified weblog was invalidated.
      */
     public static Date getLastExpiredDate(String weblogHandle) {
-        return (Date) lastExpiredCache.get(weblogHandle);
+        return (Date) lastExpiredCache.get("lastExpired:"+weblogHandle);
     }
     
     
