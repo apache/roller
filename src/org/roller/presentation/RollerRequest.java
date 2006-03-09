@@ -303,11 +303,11 @@ public class RollerRequest
         }
         
         // NOTE: let the caller handle missing website/page instead
-        //if ( mWebsite==null || mPage==null )
-        //{            
-            //String msg = "Invalid pathInfo: "+StringUtils.join(pathInfo,"|");
-            //throw new RollerException(msg);
-        //}
+        if ( mWebsite==null || mPage==null )
+        {            
+            String msg = "Invalid pathInfo: "+StringUtils.join(pathInfo,"|");
+            throw new RollerException(msg);
+        }
     }       
     
     //------------------------------------------------------------------------
