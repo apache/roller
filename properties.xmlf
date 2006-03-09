@@ -16,9 +16,9 @@
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.0" />
 <property name="tools.spring"        value="${ro.tools}/spring-1.2" />
-<property name="tools.jstl"          value="${ro.tools}/standard-1.0.3" />
-<property name="tools.xdoclet"    value="${ro.tools}/buildtime/xdoclet-1.2.3" />
-<property name="tools.tomcat"     value="${ro.tools}/buildtime/tomcat-5.0.28" />
+<property name="tools.jstl"          value="${ro.tools}/jakarta-taglibs-standard-1.1.2" />
+<property name="tools.xdoclet"       value="${ro.tools}/buildtime/xdoclet-1.2.3" />
+<property name="tools.tomcat"        value="${ro.tools}/buildtime/tomcat-5.0.28" />
 
 <!--
 If you would like Ant to copy all the jar files that Resin needs
@@ -81,11 +81,14 @@ in the "base.path" definition.
     <include name="mail.jar"/>
 </fileset>
 
-<fileset id="jstl.jars" dir="${ro.tools}/standard-1.0.3/lib">
+<fileset id="jstl.jars" dir="${tools.jstl}/lib">
     <include name="jstl.jar"/>
     <include name="standard.jar"/>
+
+    <!-- There were in JSTL 1, but gone from 1.1
     <include name="saxpath.jar"/>
     <include name="jaxen-full.jar"/>
+    -->
 </fileset>
 
 <fileset id="hibernate.jar" dir="${tools.hibernate}">
