@@ -5,22 +5,21 @@ Database scripts for $DBTYPE.
 Follow the installation guide for instructions on setting up your database.
 
 #** Define templates to be generated **#
-#set( $templates = ["createdb", "200-to-210-migration"]) 
-#set( $templates = ["createdb", "210-to-220-migration"]) 
+#set( $templates = ["createdb", "200-to-210-migration", "210-to-220-migration"]) 
 
 #** Define special macro needed for alter table with not-null restriction **#
 #macro(addColumnNotNull $table $column $type $default)
 #if($DBTYPE == "MYSQL" || $DBTYPE=="HSQDB")
-alter table $table add column $column $type default '$default' not null;  
+alter table $table add column $column $type default $default not null;  
 #elseif ($DBTYPE == "POSTGRESQL")
 alter table $table add column $column $type;
 alter table $table alter $column set default $default;
-update $table set $column='$default';
+update $table set $column=$default;
 alter table $table alter $column set not null;
 #elseif ($DBTYPE == "HSQLDB")
-alter table $table add column $column $type default '$default' not null; 
+alter table $table add column $column $type default $default not null; 
 #elseif ($DBTYPE == "DERBY" || $DBTYPE == "DB2")
-alter table $table add column $column $type with default '$default' not null;
+alter table $table add column $column $type with default $default not null;
 #elseif ($DBTYPE == "ORACLE")
 alter table $table add column $column $type default $default not null;  
 #end
