@@ -55,7 +55,7 @@ in the "base.path" definition.
     <include name="velocity-dep-1.4.jar"/>
     <include name="velocity-tools-1.1.jar"/>
     <include name="mail.jar"/>
-    <include name="activation.jar"/>        
+    <include name="activation.jar"/>   
 </fileset>
 
 <fileset id="presentation.jars" dir="${ro.tools}/lib">
@@ -84,11 +84,7 @@ in the "base.path" definition.
 <fileset id="jstl.jars" dir="${tools.jstl}/lib">
     <include name="jstl.jar"/>
     <include name="standard.jar"/>
-
-    <!-- There were in JSTL 1, but gone from 1.1
-    <include name="saxpath.jar"/>
-    <include name="jaxen-full.jar"/>
-    -->
+    <include name="xalan.jar"/>
 </fileset>
 
 <fileset id="hibernate.jar" dir="${tools.hibernate}">
