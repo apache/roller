@@ -12,7 +12,7 @@ update roller_comment set approved=$BOOLEAN_TRUE, pending=$BOOLEAN_FALSE, postti
 -- Add to website table: commentmod, blacklist, defaultallowcomments and defaultcommentdays 
 #addColumnNotNull("website" "commentmod" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
 #addColumnNotNull("website" "defaultallowcomments" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
-#addColumnNotNull("website" "defaultcommentdays" "integer" "7")
+#addColumnNotNull("website" "defaultcommentdays" "integer" 7)
 alter table website add column blacklist $TEXT_SQL_TYPE;
 update website set commentmod=$BOOLEAN_FALSE, defaultallowcomments=$BOOLEAN_TRUE, defaultcommentdays=7, blacklist='', datecreated=datecreated;
 
@@ -21,4 +21,4 @@ create index we_status_idx on weblogentry(status);
 
 
 -- Add weblog displaydays column
-#addColumnNotNull("website" "displaycnt" "integer" "15")
+#addColumnNotNull("website" "displaycnt" "integer" 15)
