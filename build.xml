@@ -195,7 +195,7 @@ Key Targets:
         </fileset>
         &custom-gen-web;
 
-        <deploymentdescriptor servletspec="2.3"
+        <deploymentdescriptor servletspec="2.4"
              destdir="${build.stage_web}/WEB-INF"
              sessiontimeout="30"
              displayname="Roller Weblogger">

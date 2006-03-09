@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jstl/xml" prefix="x" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ include file="/taglibs.jsp" %>
 
 <%-- Start by parsing our config defs using the jstl xml toolkit --%>
