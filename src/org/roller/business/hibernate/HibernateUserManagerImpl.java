@@ -3,7 +3,6 @@
  */
 package org.roller.business.hibernate;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.hibernate.criterion.Order;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.criterion.SimpleExpression;
 import org.roller.RollerException;
 import org.roller.business.PersistenceStrategy;
 import org.roller.business.UserManagerImpl;
@@ -46,6 +46,13 @@ public class HibernateUserManagerImpl extends UserManagerImpl
     
     private static Log mLogger =
         LogFactory.getFactory().getInstance(HibernateUserManagerImpl.class);
+        
+    /** Doesn't seem to be any other way to get ignore case w/o QBE */
+    class IgnoreCaseEqExpression extends SimpleExpression {
+        public IgnoreCaseEqExpression(String property, Object value) {
+            super(property, value, "=", true);
+        }
+    }
     
     /**
      * @param strategy
@@ -141,7 +148,7 @@ public class HibernateUserManagerImpl extends UserManagerImpl
             throw new RollerException(e);
         }
     }
-    
+
     /** 
      * Return website specified by handle.
      */
@@ -155,11 +162,11 @@ public class HibernateUserManagerImpl extends UserManagerImpl
         {
             Session session = ((HibernateStrategy)mStrategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
-            if (enabled != null) 
+            if (enabled != null)
             {
                 criteria.add(
                    Expression.conjunction()
-                       .add(Expression.eq("handle", handle))
+                       .add(new IgnoreCaseEqExpression("handle", handle))
                        .add(Expression.eq("enabled", enabled)));
             }
             else
@@ -168,7 +175,8 @@ public class HibernateUserManagerImpl extends UserManagerImpl
                     Expression.conjunction()
                         .add(Expression.eq("handle", handle)));
             }        
-            return (WebsiteData)criteria.uniqueResult();
+            WebsiteData website = (WebsiteData)criteria.uniqueResult();
+            return website;
         }
         catch (HibernateException e)
         {
