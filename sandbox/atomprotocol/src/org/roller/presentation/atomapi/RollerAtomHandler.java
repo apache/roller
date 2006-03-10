@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,6 +48,7 @@ import com.sun.syndication.feed.atom.Category;
 import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Link;
+import com.sun.syndication.feed.atom.Person;
 import javax.activation.FileTypeMap;
 import org.roller.RollerException;
 import org.roller.config.RollerConfig;
@@ -562,7 +564,7 @@ public class RollerAtomHandler implements AtomHandler {
     }
     
     /**
-     * Return true if user is allowed to create/edit entries and resources in weblog.
+     * Return true if user is allowed to create/edit weblog entries and file uploads in a website.
      */
     private boolean canEdit(WebsiteData website) {
         try {
@@ -701,12 +703,17 @@ public class RollerAtomHandler implements AtomHandler {
         contents.add(content);
         
         String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
-        
         atomEntry.setId(        absUrl + entry.getPermaLink());
         atomEntry.setTitle(     entry.getTitle());
         atomEntry.setContents(  contents);
         atomEntry.setPublished( entry.getPubTime());
-        atomEntry.setUpdated(   entry.getUpdateTime());
+        atomEntry.setUpdated(   entry.getUpdateTime());        
+
+        UserData creator = entry.getCreator();        
+        Person author = new Person();
+        author.setName(         creator.getUserName());   
+        author.setEmail(        creator.getEmailAddress());                        
+        atomEntry.setAuthors(   Collections.singletonList(author));
         
         List categories = new ArrayList();
         Category atomCat = new Category();
