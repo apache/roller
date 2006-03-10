@@ -1,6 +1,7 @@
 
-<!--  Include experimental Atom Protocol impl. in build. 
+<!--  Include experimental protocols in build
 <fileset dir="${basedir}/sandbox/atomprotocol/src" includes="**/*Servlet.java" />
+<fileset dir="${basedir}/sandbox/atomadminprotocol/src" includes="**/*Servlet.java" />
 -->
 
 <!--  Custom classes to include in Struts and web generation 
