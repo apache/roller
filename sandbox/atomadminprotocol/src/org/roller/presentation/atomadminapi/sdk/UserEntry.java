@@ -4,20 +4,22 @@
  * Created on January 17, 2006, 12:44 PM
  */
 
-package org.roller.presentation.atomadminapi;
+package org.roller.presentation.atomadminapi.sdk;
 
+import java.io.InputStream;
 import java.util.Date;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Text;
-import org.roller.pojos.UserData;
-import org.roller.presentation.atomadminapi.Entry.Types;
+import org.jdom.input.SAXBuilder;
+import org.roller.presentation.atomadminapi.sdk.Entry.Attributes;
+import org.roller.presentation.atomadminapi.sdk.Entry.Types;
 
 /**
  * This class describes a user entry; a user weblog resource.
  * @author jtb
  */
-class UserEntry extends Entry {
+public class UserEntry extends Entry {
     /** XML tags that define a user entry. */
     static interface Tags {
         public static final String USER = "user";
@@ -28,7 +30,7 @@ class UserEntry extends Entry {
         public static final String LOCALE = "locale";
         public static final String TIMEZONE = "timezone";
         public static final String DATE_CREATED = "date-created";
-    }     
+    }
     
     private String name;
     private String fullName;
@@ -38,14 +40,35 @@ class UserEntry extends Entry {
     private Date dateCreated;
     private String emailAddress;
     
+    /** Construct an empty user entry */
+    public UserEntry(String name, String urlPrefix) {
+        setName(name);
+        String href = urlPrefix + "/" + EntrySet.Types.USERS + "/" + name;                
+        setHref(href);
+    }
+    
     /** Construct a user entry from a JDOM element. */
     public UserEntry(Element e, String urlPrefix) throws Exception {
+        populate(e, urlPrefix);
+    }
+    
+    public UserEntry(InputStream stream, String urlPrefix) throws Exception {               
+        SAXBuilder sb = new SAXBuilder();
+        Document d = sb.build(stream);
+        Element e = d.detachRootElement();
+        
+        populate(e, urlPrefix);        
+    }
+    
+    private void populate(Element e, String urlPrefix) throws Exception {
         // name
         Element nameElement = e.getChild(Tags.NAME, NAMESPACE);
         if (nameElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.NAME);
         }
         setName(nameElement.getText());
+        
+        // href
         String href = urlPrefix + "/" + EntrySet.Types.USERS + "/" + getName();
         setHref(href);
         
@@ -64,101 +87,109 @@ class UserEntry extends Entry {
         setPassword(passwordElement.getText());
         
         // locale
-        Element localeElement = e.getChild(Tags.LOCALE, AtomAdminService.NAMESPACE);
+        Element localeElement = e.getChild(Tags.LOCALE, Service.NAMESPACE);
         if (localeElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.LOCALE);
         }
         setLocale(localeElement.getText());
         
         // timezone
-        Element tzElement = e.getChild(Tags.TIMEZONE, AtomAdminService.NAMESPACE);
+        Element tzElement = e.getChild(Tags.TIMEZONE, Service.NAMESPACE);
         if (tzElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.TIMEZONE);
         }
         setTimezone(tzElement.getText());
         
         // email address
-        Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, AtomAdminService.NAMESPACE);
+        Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
         if (emailElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.EMAIL_ADDRESS);
         }
         setEmailAddress(emailElement.getText());
         
         // created (optional)
-        Element createdElement = e.getChild(Tags.DATE_CREATED, AtomAdminService.NAMESPACE);
+        Element createdElement = e.getChild(Tags.DATE_CREATED, Service.NAMESPACE);
         if (createdElement != null) {
             setDateCreated(new Date(Long.valueOf(createdElement.getText()).longValue()));
         }
     }
     
-    /** Construct a user entry from a Roller UserData object. */
-    public UserEntry(UserData ud, String urlPrefix) {
-        String href = urlPrefix + "/" + EntrySet.Types.USERS + "/" + ud.getUserName();
-        
-        setHref(href);
-        setName(ud.getUserName());
-        setFullName(ud.getFullName());
-        setPassword(ud.getPassword());
-        setLocale(ud.getLocale());
-        setTimezone(ud.getTimeZone());
-        setEmailAddress(ud.getEmailAddress());
-        setDateCreated(ud.getDateCreated());
-    }
         
     public String getType() {
         return Types.USER;
     }
     
     public Document toDocument() {
-        Element user = new Element(Tags.USER, NAMESPACE);
-        Document doc = new Document(user);
+        Element userElement = new Element(Tags.USER, NAMESPACE);
+        Document doc = new Document(userElement);
         
         // href
-        user.setAttribute(Attributes.HREF, getHref());
-               
+        String href = getHref();
+        if (href != null) {
+            userElement.setAttribute(Attributes.HREF, href);
+        }
+        
         // name
-        Element name = new Element(Tags.NAME, AtomAdminService.NAMESPACE);
-        Text nameText = new Text(getName());
-        name.addContent(nameText);
-        user.addContent(name);
-       
+        String name = getName();
+        if (name != null) {
+            Element nameElement = new Element(Tags.NAME, Service.NAMESPACE);
+            Text nameText = new Text(getName());
+            nameElement.addContent(nameText);
+            userElement.addContent(nameElement);
+        }
+        
         // full name
-        Element fullName = new Element(Tags.FULL_NAME, NAMESPACE);
-        Text fullNameText = new Text(getFullName());
-        fullName.addContent(fullNameText);
-        user.addContent(fullName);
+        String fullName = getFullName();
+        if (fullName != null) {
+            Element fullNameElement = new Element(Tags.FULL_NAME, NAMESPACE);
+            Text fullNameText = new Text(getFullName());
+            fullNameElement.addContent(fullNameText);
+            userElement.addContent(fullNameElement);
+        }
         
         // password
-        Element password = new Element(Tags.PASSWORD, NAMESPACE);
-        Text passwordText = new Text(getPassword());
-        password.addContent(passwordText);
-        user.addContent(password);
+        String password = getPassword();
+        if (password != null) {
+            Element passwordElement = new Element(Tags.PASSWORD, NAMESPACE);
+            Text passwordText = new Text(getPassword());
+            passwordElement.addContent(passwordText);
+            userElement.addContent(passwordElement);
+        }
         
         // locale
-        Element locale = new Element(Tags.LOCALE, AtomAdminService.NAMESPACE);
-        Text localeText = new Text(getLocale());
-        locale.addContent(localeText);
-        user.addContent(locale);
+        String locale = getLocale();
+        if (locale != null ) {
+            Element localeElement = new Element(Tags.LOCALE, Service.NAMESPACE);
+            Text localeText = new Text(getLocale());
+            localeElement.addContent(localeText);
+            userElement.addContent(localeElement);
+        }
         
         // timezone
-        Element tz = new Element(Tags.TIMEZONE, AtomAdminService.NAMESPACE);
-        Text tzText = new Text(getTimezone());
-        tz.addContent(tzText);
-        user.addContent(tz);
-                
+        String timezone = getTimezone();
+        if (timezone != null) {
+            Element timezoneElement = new Element(Tags.TIMEZONE, Service.NAMESPACE);
+            Text timezoneText = new Text(timezone);
+            timezoneElement.addContent(timezoneText);
+            userElement.addContent(timezoneElement);
+        }
+        
         // email address
-        Element email = new Element(Tags.EMAIL_ADDRESS, AtomAdminService.NAMESPACE);
-        Text emailText = new Text(String.valueOf(getEmailAddress()));
-        email.addContent(emailText);
-        user.addContent(email);
+        String emailAddress = getEmailAddress();
+        if (emailAddress != null) {
+            Element emailAddressElement = new Element(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
+            Text emailAddressText = new Text(String.valueOf(emailAddress));
+            emailAddressElement.addContent(emailAddressText);
+            userElement.addContent(emailAddressElement);
+        }
         
         // creation date (optional)
-        Element created = new Element(Tags.DATE_CREATED, AtomAdminService.NAMESPACE);
         Date datedCreated = getDateCreated();
-        if (getDateCreated() != null) {
-            Text createdText = new Text(String.valueOf(getDateCreated().getTime()));
-            created.addContent(createdText);
-            user.addContent(created);
+        if (dateCreated != null) {
+            Element dateCreatedElement = new Element(Tags.DATE_CREATED, Service.NAMESPACE);
+            Text dateCreatedText = new Text(String.valueOf(dateCreated.getTime()));
+            dateCreatedElement.addContent(dateCreatedText);
+            userElement.addContent(dateCreatedElement);
         }
         
         return doc;
@@ -232,19 +263,5 @@ class UserEntry extends Entry {
     /** Set the email address of this user entry. */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
-    }      
-    
-    /** This object, as a Roller UserData object. */
-    public UserData toUserData() {
-        UserData ud = new UserData();
-        ud.setUserName(getName());
-        ud.setFullName(getFullName());
-        ud.setPassword(getPassword());
-        ud.setEmailAddress(getEmailAddress());
-        ud.setLocale(getLocale());
-        ud.setTimeZone(getTimezone());
-        ud.setDateCreated(getDateCreated());
-        
-        return ud;
-    }
+    }    
 }

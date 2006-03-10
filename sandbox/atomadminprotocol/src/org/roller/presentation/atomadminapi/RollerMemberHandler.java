@@ -18,6 +18,11 @@ import org.roller.model.UserManager;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
+import org.roller.presentation.atomadminapi.sdk.Entry;
+import org.roller.presentation.atomadminapi.sdk.EntrySet;
+import org.roller.presentation.atomadminapi.sdk.MemberEntry;
+import org.roller.presentation.atomadminapi.sdk.MemberEntrySet;
+import org.roller.presentation.cache.CacheManager;
 
 /**
  * This class handles requests concerning Roller weblog membership (groups).
@@ -117,7 +122,7 @@ class RollerMemberHandler extends Handler {
                 perms.add(pd);
             }
         }
-        EntrySet es = new MemberEntrySet((PermissionsData[])perms.toArray(new PermissionsData[0]), getUrlPrefix());
+        EntrySet es = toMemberEntrySet((PermissionsData[])perms.toArray(new PermissionsData[0]));
         return es;
     }
     
@@ -147,7 +152,7 @@ class RollerMemberHandler extends Handler {
             perms = Collections.singletonList(getRoller().getUserManager().getPermissions(wd, ud));
         }
         
-        EntrySet es = new MemberEntrySet((PermissionsData[])perms.toArray(new PermissionsData[0]), getUrlPrefix());
+        EntrySet es = toMemberEntrySet((PermissionsData[])perms.toArray(new PermissionsData[0]));
         return es;
     }
     
@@ -240,7 +245,7 @@ class RollerMemberHandler extends Handler {
             PermissionsData pd = new PermissionsData();
             pd.setUser(ud);
             pd.setWebsite(wd);
-            pd.setPermissionMask(entry.getPermissionMask());
+            pd.setPermissionMask(stringToMask(entry.getPermission()));
             pd.setPending(false);
             
             return pd;
@@ -287,7 +292,7 @@ class RollerMemberHandler extends Handler {
         // only permission can be updated
         
         if (entry.getPermission() != null) {
-            pd.setPermissionMask(entry.getPermissionMask());
+            pd.setPermissionMask(stringToMask(entry.getPermission()));
         }
     }
     
@@ -305,15 +310,70 @@ class RollerMemberHandler extends Handler {
             getRoller().setUser(UserData.SYSTEM_USER);
             PermissionsData pd = getPermissionsData(handle, username);
             PermissionsData[] pds = new PermissionsData[] { pd };               
-            EntrySet es = new MemberEntrySet(pds, getUrlPrefix());
+            EntrySet es = toMemberEntrySet(pds);
         
             pd.remove();
             getRoller().commit();
 
+            UserData ud = getRoller().getUserManager().getUser(username);            
+            CacheManager.invalidate(ud);
+            WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(handle);
+            CacheManager.invalidate(wd);
+            
             return es;            
         } catch (RollerException re) {
             throw new Exception(re);
         }
     }
+    
+    private MemberEntry toMemberEntry(PermissionsData pd) {
+        MemberEntry me = new MemberEntry(pd.getWebsite().getHandle(), pd.getUser().getUserName(), getUrlPrefix());        
+        me.setPermission(maskToString(pd.getPermissionMask()));          
+        
+        return me;
+    }
+    private MemberEntrySet toMemberEntrySet(PermissionsData[] pds) {
+        if (pds == null) {
+            throw new NullPointerException("ERROR: Null permission data not allowed");
+        }
+        
+        List entries = new ArrayList();        
+        for (int i = 0; i < pds.length; i++) {
+            PermissionsData pd = pds[i];
+            Entry entry = toMemberEntry(pd);
+            entries.add(entry);            
+        }
+        MemberEntrySet mes = new MemberEntrySet(getUrlPrefix());
+        mes.setEntries((Entry[])entries.toArray(new Entry[0])); 
+        
+        return mes;
+    }
+    
+    private static String maskToString(short mask) {
+        if (mask == PermissionsData.ADMIN) {
+            return MemberEntry.Permissions.ADMIN;
+        }
+        if (mask == PermissionsData.AUTHOR) {
+            return MemberEntry.Permissions.AUTHOR;
+        }
+        if (mask == PermissionsData.LIMITED) {
+            return MemberEntry.Permissions.LIMITED;
+        }
+        return null;
+    }
+
+    
+    private static short stringToMask(String s) {
+        if (s.equalsIgnoreCase(MemberEntry.Permissions.ADMIN)) {
+            return PermissionsData.ADMIN;
+        }
+        if (s.equalsIgnoreCase(MemberEntry.Permissions.AUTHOR)) {
+            return PermissionsData.AUTHOR;
+        }
+        if (s.equalsIgnoreCase(MemberEntry.Permissions.LIMITED)) {
+            return PermissionsData.LIMITED;
+        }
+        return 0;
+    }    
 }
 

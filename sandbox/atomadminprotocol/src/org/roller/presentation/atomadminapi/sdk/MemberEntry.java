@@ -4,22 +4,29 @@
  * Created on January 17, 2006, 12:44 PM
  */
 
-package org.roller.presentation.atomadminapi;
+package org.roller.presentation.atomadminapi.sdk;
 
-import java.util.Date;
+import java.io.InputStream;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Text;
-import org.roller.pojos.PermissionsData;
-import org.roller.pojos.UserData;
-import org.roller.presentation.atomadminapi.Entry.Attributes;
-import org.roller.presentation.atomadminapi.Entry.Types;
+import org.jdom.input.SAXBuilder;
+import org.roller.presentation.atomadminapi.sdk.Entry.Attributes;
+import org.roller.presentation.atomadminapi.sdk.Entry.Types;
 
 /**
- *
- * @author jtb
+ * This class describes a member entry. 
+ * A member entry is a triple consisting of a user name, a weblog handle,
+ * and a permission.
  */
-class MemberEntry extends Entry {
+public class MemberEntry extends Entry {
+    /** Member permissions */
+    public interface Permissions {
+        public static final String ADMIN = "ADMIN";
+        public static final String AUTHOR = "AUTHOR";
+        public static final String LIMITED = "LIMITED";
+    }
+    
     static interface Tags {
         public static final String MEMBER = "member";
         public static final String NAME = "name";
@@ -32,66 +39,50 @@ class MemberEntry extends Entry {
     private String permission;
     
     public MemberEntry(Element e, String urlPrefix) throws Exception {
+        populate(e, urlPrefix);
+    }
+    
+    public MemberEntry(String handle, String userName, String urlPrefix) {
+        String href = urlPrefix + "/" + EntrySet.Types.MEMBERS + "/" + handle + "/" + userName;       
+	setHref(href);
+        setHandle(handle);
+        setName(userName);
+    }
+
+    public MemberEntry(InputStream stream, String urlPrefix) throws Exception {               
+        SAXBuilder sb = new SAXBuilder();
+        Document d = sb.build(stream);
+        Element e = d.detachRootElement();
+        
+        populate(e, urlPrefix);        
+    }
+
+    private void populate(Element e, String urlPrefix) throws Exception {
         // name
         Element nameElement = e.getChild(Tags.NAME, NAMESPACE);
         if (nameElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.NAME);
         }
         setName(nameElement.getText());
-        
-        String href = urlPrefix + "/" + EntrySet.Types.MEMBERS + "/" + getHandle() + "/" + getName();
-        setHref(href);
-        
-        // full name
+                
+        // handle
         Element handleElement = e.getChild(Tags.HANDLE, NAMESPACE);
         if (handleElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.HANDLE);
         }
         setHandle(handleElement.getText());
+
+        // href
+        setHref(urlPrefix + "/" + EntrySet.Types.MEMBERS + "/" + getHandle() + "/" + getName()); 
         
         // password
         Element permissionElement = e.getChild(Tags.PERMISSION, NAMESPACE);
         if (permissionElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.PERMISSION);
         }
-        setPermission(permissionElement.getText());                
+        setPermission(permissionElement.getText());
     }
     
-    public MemberEntry(PermissionsData pd, String urlPrefix) {
-        String href = urlPrefix + "/" + EntrySet.Types.MEMBERS + "/" + pd.getWebsite().getHandle() + "/" + pd.getUser().getUserName();
-        
-        setHref(href);
-        setName(pd.getUser().getUserName());
-        setHandle(pd.getWebsite().getHandle());
-        setPermission(maskToString(pd.getPermissionMask()));        
-    }
-    
-    private static String maskToString(short mask) {
-        if (mask == PermissionsData.ADMIN) {
-            return "ADMIN";
-        }
-        if (mask == PermissionsData.AUTHOR) {
-            return "AUTHOR";
-        }
-        if (mask == PermissionsData.LIMITED) {
-            return "LIMITED";
-        }
-        return null;
-    }
-
-    
-    private static short stringToMask(String s) {
-        if (s.equalsIgnoreCase("ADMIN")) {
-            return PermissionsData.ADMIN;
-        }
-        if (s.equalsIgnoreCase("AUTHOR")) {
-            return PermissionsData.AUTHOR;
-        }
-        if (s.equalsIgnoreCase("LIMITED")) {
-            return PermissionsData.LIMITED;
-        }
-        return 0;
-    }
     
     public String getType() {
         return Types.MEMBER;
@@ -105,7 +96,7 @@ class MemberEntry extends Entry {
         member.setAttribute(Attributes.HREF, getHref());
                
         // name
-        Element name = new Element(Tags.NAME, AtomAdminService.NAMESPACE);
+        Element name = new Element(Tags.NAME, Service.NAMESPACE);
         Text nameText = new Text(getName());
         name.addContent(nameText);
         member.addContent(name);
@@ -146,10 +137,6 @@ class MemberEntry extends Entry {
         return permission;
     }
     
-    public short getPermissionMask() {
-        return stringToMask(getPermission());
-    }
-
     public void setPermission(String permission) {
         this.permission = permission;
     }

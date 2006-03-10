@@ -9,6 +9,9 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import org.roller.presentation.atomadminapi.sdk.Service;
+import org.roller.presentation.atomadminapi.sdk.Entry;
+import org.roller.presentation.atomadminapi.sdk.EntrySet;
 
 /**
  * This class handles requests for the AAPP introspection document.
@@ -41,33 +44,33 @@ class IntrospectionHandler extends Handler {
         throw new UnsupportedOperationException("ERROR: DELETE not supported in this handler");
     }
     
-    private AtomAdminService getIntrospection(HttpServletRequest req) throws Exception {
+    private Service getIntrospection(HttpServletRequest req) throws Exception {
         String href = getUrlPrefix();
-        AtomAdminService service = new AtomAdminService(href);
+        Service service = new Service(href);
         
-        AtomAdminService.Workspace workspace = new AtomAdminService.Workspace();
+        Service.Workspace workspace = new Service.Workspace();
         workspace.setTitle("Workspace: Collections for administration");
         workspace.setHref(service.getHref());
         service.setEntries(new Entry[] { workspace });
         
         List workspaceCollections = new ArrayList();
         
-        AtomAdminService.WorkspaceCollection weblogCol = new AtomAdminService.WorkspaceCollection();
+        Service.Workspace.Collection weblogCol = new Service.Workspace.Collection();
         weblogCol.setTitle("Collection: Weblog administration entries");
-        weblogCol.setMemberType(org.roller.presentation.atomadminapi.Entry.Types.WEBLOG);
-        weblogCol.setHref(service.getHref() + "/" + org.roller.presentation.atomadminapi.EntrySet.Types.WEBLOGS);
+        weblogCol.setMemberType(org.roller.presentation.atomadminapi.sdk.Entry.Types.WEBLOG);
+        weblogCol.setHref(service.getHref() + "/" + org.roller.presentation.atomadminapi.sdk.EntrySet.Types.WEBLOGS);
         workspaceCollections.add(weblogCol);
         
-        AtomAdminService.WorkspaceCollection userCol = new AtomAdminService.WorkspaceCollection();
+        Service.Workspace.Collection userCol = new Service.Workspace.Collection();
         userCol.setTitle("Collection: User administration entries");
         userCol.setMemberType("user");
-        userCol.setHref(service.getHref() + "/" + org.roller.presentation.atomadminapi.EntrySet.Types.USERS);
+        userCol.setHref(service.getHref() + "/" + org.roller.presentation.atomadminapi.sdk.EntrySet.Types.USERS);
         workspaceCollections.add(userCol);
         
-        AtomAdminService.WorkspaceCollection memberCol = new AtomAdminService.WorkspaceCollection();
+        Service.Workspace.Collection memberCol = new Service.Workspace.Collection();
         memberCol.setTitle("Collection: Member administration entries");
         memberCol.setMemberType("member");
-        memberCol.setHref(service.getHref() + "/" + org.roller.presentation.atomadminapi.EntrySet.Types.MEMBERS);
+        memberCol.setHref(service.getHref() + "/" + org.roller.presentation.atomadminapi.sdk.EntrySet.Types.MEMBERS);
         workspaceCollections.add(memberCol);
         
         workspace.setEntries((Entry[])workspaceCollections.toArray(new Entry[0]));

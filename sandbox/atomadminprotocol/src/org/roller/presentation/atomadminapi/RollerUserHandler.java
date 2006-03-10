@@ -6,7 +6,7 @@
 package org.roller.presentation.atomadminapi;
 
 import java.io.Reader;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
@@ -14,8 +14,11 @@ import org.jdom.input.SAXBuilder;
 import org.roller.RollerException;
 import org.roller.model.UserManager;
 import org.roller.pojos.UserData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.atomadminapi.EntrySet.Types;
+import org.roller.presentation.atomadminapi.sdk.Entry;
+import org.roller.presentation.atomadminapi.sdk.EntrySet;
+import org.roller.presentation.atomadminapi.sdk.UserEntry;
+import org.roller.presentation.atomadminapi.sdk.UserEntrySet;
+import org.roller.presentation.cache.CacheManager;
 
 /**
  * This class handles request concerning Roller users.
@@ -65,7 +68,7 @@ class RollerUserHandler extends Handler {
     
     private EntrySet getCollection() throws Exception {
         List users = getRoller().getUserManager().getUsers();
-        EntrySet es = new UserEntrySet((UserData[])users.toArray(new UserData[0]), getUrlPrefix());
+        EntrySet es = toUserEntrySet((UserData[])users.toArray(new UserData[0]));
         
         return es;
     }
@@ -76,7 +79,7 @@ class RollerUserHandler extends Handler {
             throw new Exception("ERROR: Unknown user name: " + getUri().getEntryId());
         }
         UserData[] uds = new UserData[] { ud };
-        EntrySet c = new UserEntrySet(uds, getUrlPrefix());
+        EntrySet c = toUserEntrySet(uds);
         
         return c;
     }
@@ -128,7 +131,7 @@ class RollerUserHandler extends Handler {
             
             for (int i = 0; i < c.getEntries().length; i++) {
                 UserEntry entry = (UserEntry)c.getEntries()[i];
-                UserData user = entry.toUserData();
+                UserData user = toUserData(entry);
                 mgr.addUser(user);
             }
             getRoller().commit();
@@ -182,16 +185,66 @@ class RollerUserHandler extends Handler {
             UserManager mgr = getRoller().getUserManager();
             UserData ud = mgr.getUser(getUri().getEntryId());
             
+            // don't allow deletion of the currently authenticated user
+            if (ud.getUserName().equals(getUsername())) {
+                throw new Exception("ERROR: Can't delete authenticated user: " + getUsername());
+            }
+            
             UserData[] uds = new UserData[] { ud };
-            EntrySet es = new UserEntrySet(uds, getUrlPrefix());
+            EntrySet es = toUserEntrySet(uds);
             
             ud.remove();
             getRoller().commit();
+            
+            CacheManager.invalidate(ud);
             
             return es;
         } catch (RollerException re) {
             throw new Exception(re);
         }
     }
+    
+    private UserEntry toUserEntry(UserData ud) {
+        UserEntry ue = new UserEntry(ud.getUserName(), getUrlPrefix());
+        ue.setFullName(ud.getFullName());
+        ue.setPassword(ud.getPassword());
+        ue.setLocale(ud.getLocale());
+        ue.setTimezone(ud.getTimeZone());
+        ue.setEmailAddress(ud.getEmailAddress());
+        ue.setDateCreated(ud.getDateCreated());        
+        
+        return ue;
+    }
+    
+    private UserEntrySet toUserEntrySet(UserData[] uds) {
+        if (uds == null) {
+            throw new NullPointerException("ERROR: Null user data not allowed");
+        }
+        UserEntrySet ues = new UserEntrySet(getUrlPrefix());        
+        
+        List entries = new ArrayList();        
+        for (int i = 0; i < uds.length; i++) {
+            UserData ud = uds[i];
+            Entry entry = toUserEntry(ud);
+            entries.add(entry);            
+        }
+        ues.setEntries((Entry[])entries.toArray(new Entry[0]));  
+        
+        return ues;
+    }
+    
+    /** This object, as a Roller UserData object. */
+    public UserData toUserData(UserEntry ue) {
+        UserData ud = new UserData();
+        ud.setUserName(ue.getName());
+        ud.setFullName(ue.getFullName());
+        ud.setPassword(ue.getPassword());
+        ud.setEmailAddress(ue.getEmailAddress());
+        ud.setLocale(ue.getLocale());
+        ud.setTimeZone(ue.getTimezone());
+        ud.setDateCreated(ue.getDateCreated());
+        
+        return ud;
+    }    
 }
 
