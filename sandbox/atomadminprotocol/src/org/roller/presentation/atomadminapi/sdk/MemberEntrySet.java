@@ -4,44 +4,43 @@
  * Created on January 17, 2006, 12:44 PM
  */
 
-package org.roller.presentation.atomadminapi;
+package org.roller.presentation.atomadminapi.sdk;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.roller.pojos.PermissionsData;
-import org.roller.pojos.UserData;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.atomadminapi.EntrySet.Types;
+import org.jdom.input.SAXBuilder;
+import org.roller.presentation.atomadminapi.sdk.EntrySet.Types;
 
 /**
  * This class describes a set of member entries. 
  *
  * @author jtb
  */
-class MemberEntrySet extends EntrySet {
+public class MemberEntrySet extends EntrySet {
     static interface Tags {
         public static final String MEMBERS = "members";
     }       
         
-    public MemberEntrySet(PermissionsData[] members, String urlPrefix) {
-        if (members == null) {
-            throw new NullPointerException("ERROR: Null members not allowed");
-        }
-        
-        List entries = new ArrayList();        
-        for (int i = 0; i < members.length; i++) {
-            PermissionsData pd = members[i];
-            Entry entry = new MemberEntry(pd, urlPrefix);
-            entries.add(entry);            
-        }
-        setEntries((Entry[])entries.toArray(new Entry[0]));
-        setHref(urlPrefix + "/" + Types.MEMBERS);
+    public MemberEntrySet(String urlPrefix) {
+        setHref(urlPrefix + "/" + Types.MEMBERS);        
+    }    
+
+    public MemberEntrySet(Document d, String urlPrefix) throws Exception {
+        populate(d, urlPrefix);
     }
     
-    public MemberEntrySet(Document d, String urlPrefix) throws Exception {
+    public MemberEntrySet(InputStream stream, String urlPrefix) throws Exception {               
+        SAXBuilder sb = new SAXBuilder();
+        Document d = sb.build(stream);
+
+        populate(d, urlPrefix);        
+    }    
+    
+    private void populate(Document d, String urlPrefix) throws Exception {
         Element root = d.getRootElement();
         String rootName = root.getName();
         if (!rootName.equals(Tags.MEMBERS)) {

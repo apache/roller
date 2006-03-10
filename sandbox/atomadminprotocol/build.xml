@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+    <!ENTITY properties SYSTEM "properties.xmlf">
+]>
+<project name="aapp" default="all">	
+    <target name="all" depends="sdk,javadoc"/>
+            
+    <target name="sdk">
+        <mkdir dir="dist"/>
+        <jar basedir="../../build/compile_web/" destfile="dist/aapp-sdk.jar">
+            <include name="org/roller/presentation/atomadminapi/sdk/*.class"/>            
+        </jar>
+    </target>
+
+    <target name="javadoc">
+        <mkdir dir="javadoc"/>
+        <javadoc packagenames="org.roller.presentation.atomadminapi.sdk.*" sourcepath="src" destdir="javadoc" classpath="../../build/compile_web"/>
+    </target>
+    
+    <target name="clean">
+        <delete dir="dist" />
+        <delete dir="javadoc" />
+    </target>
+
+</project>

@@ -6,16 +6,23 @@
 package org.roller.presentation.atomadminapi;
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
 import org.roller.RollerException;
 import org.roller.model.UserManager;
+import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
-import org.roller.presentation.atomadminapi.EntrySet.Types;
+import org.roller.presentation.atomadminapi.sdk.Entry;
+import org.roller.presentation.atomadminapi.sdk.EntrySet;
+import org.roller.presentation.atomadminapi.sdk.WeblogEntry;
+import org.roller.presentation.atomadminapi.sdk.WeblogEntrySet;
+import org.roller.presentation.cache.CacheManager;
 
 /**
  * This class handles requests concernning Roller weblog resources.
@@ -68,7 +75,7 @@ class RollerWeblogHandler extends Handler {
     
     private EntrySet getCollection() throws Exception {
         List users = getRoller().getUserManager().getUsers();
-        EntrySet c = new WeblogEntrySet((UserData[])users.toArray(new UserData[0]), getUrlPrefix());
+        EntrySet c = toWeblogEntrySet(users);
         
         return c;
     }
@@ -79,7 +86,7 @@ class RollerWeblogHandler extends Handler {
             throw new Exception("ERROR: Unknown weblog handle: " + getUri().getEntryId());
         }
         WebsiteData[] wds = new WebsiteData[] { wd };
-        EntrySet c = new WeblogEntrySet(wds, getUrlPrefix());
+        EntrySet c = toWeblogEntrySet(wds);
         
         return c;
     }
@@ -197,15 +204,68 @@ class RollerWeblogHandler extends Handler {
             }
             
             WebsiteData[] wds = new WebsiteData[] { wd };            
-            EntrySet es = new WeblogEntrySet(wds, getUrlPrefix());            
+            EntrySet es = toWeblogEntrySet(wds);            
             
             wd.remove();
             getRoller().commit();
+            
+            CacheManager.invalidate(wd);
             
             return es;
         } catch (RollerException re) {
             throw new Exception(re);
         }
     }
+    
+    private WeblogEntry toWeblogEntry(WebsiteData wd) {
+        WeblogEntry we = new WeblogEntry(wd.getHandle(), getUrlPrefix());
+        we.setName(wd.getName());
+        we.setDescription(wd.getDescription());
+        we.setLocale(wd.getLocale());
+        we.setTimezone(wd.getTimeZone());
+        we.setCreatingUser(wd.getCreator().getUserName());
+        we.setEmailAddress(wd.getEmailAddress());        
+        we.setDateCreated(wd.getDateCreated());
+        
+        return we;
+    }
+    
+    private WeblogEntrySet toWeblogEntrySet(List uds) {
+        if (uds == null) {
+            throw new NullPointerException("ERROR: Null user data not allowed");
+        }
+        
+        WeblogEntrySet wes = new WeblogEntrySet(getUrlPrefix());
+        List entries = new ArrayList();        
+        for (Iterator i = uds.iterator(); i.hasNext(); ) {
+            UserData ud = (UserData)i.next();
+            List permissions = ud.getPermissions();
+            for (Iterator j = permissions.iterator(); j.hasNext(); ) {
+                PermissionsData pd = (PermissionsData)j.next();
+                WebsiteData wd = pd.getWebsite();
+                WeblogEntry we = toWeblogEntry(wd);
+                entries.add(we);
+            }
+        }
+        wes.setEntries((Entry[])entries.toArray(new Entry[0]));
+
+        return wes;
+    }
+    
+    private WeblogEntrySet toWeblogEntrySet(WebsiteData[] wds) {
+        if (wds == null) {
+            throw new NullPointerException("ERROR: Null website datas not allowed");
+        }
+        
+        WeblogEntrySet wes = new WeblogEntrySet(getUrlPrefix());        
+        List entries = new ArrayList();
+        for (int i = 0; i < wds.length; i++) {
+            WeblogEntry we = toWeblogEntry(wds[i]);
+            entries.add(we);
+        }
+        wes.setEntries((Entry[])entries.toArray(new Entry[0]));
+        
+        return wes;
+    }    
 }
 

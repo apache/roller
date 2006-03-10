@@ -4,11 +4,10 @@
  * Created on January 17, 2006, 12:44 PM
  */
 
-package org.roller.presentation.atomadminapi;
+package org.roller.presentation.atomadminapi.sdk;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.jar.Attributes;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -18,9 +17,9 @@ import org.jdom.Element;
  *
  * @author jtb
  */
-abstract class EntrySet extends Entry {
+public abstract class EntrySet extends Entry {
     /** Entry set types. */
-    static interface Types {
+    public static interface Types {
         /*
          * Set of user entries. 
          * A user entry describes a user of the weblog server.

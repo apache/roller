@@ -1,23 +1,23 @@
+package org.roller.presentation.atomadminapi.sdk;
 /*
  * WeblogEntry.java
  *
  * Created on January 17, 2006, 12:44 PM
  */
 
-package org.roller.presentation.atomadminapi;
-
+import java.io.InputStream;
 import java.util.Date;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Text;
-import org.roller.pojos.WebsiteData;
-import org.roller.presentation.atomadminapi.Entry.Types;
+import org.jdom.input.SAXBuilder;
+import org.roller.presentation.atomadminapi.sdk.Entry.Attributes;
+import org.roller.presentation.atomadminapi.sdk.Entry.Types;
 
 /**
- *
- * @author jtb
+ * This class describes a weblog entry. 
  */
-class WeblogEntry extends Entry {
+public class WeblogEntry extends Entry {
     static interface Tags {
         public static final String WEBLOG = "weblog";
         public static final String HANDLE = "handle";
@@ -40,76 +40,83 @@ class WeblogEntry extends Entry {
     private String emailAddress;
     
     public WeblogEntry(Element e, String urlPrefix) throws Exception {
+        populate(e, urlPrefix);
+    }
+    
+    public WeblogEntry(InputStream stream, String urlPrefix) throws Exception {               
+        SAXBuilder sb = new SAXBuilder();
+        Document d = sb.build(stream);
+        Element e = d.detachRootElement();
+        
+        populate(e, urlPrefix);        
+    }
+    
+    private void populate(Element e, String urlPrefix) throws Exception {
         // handle
-        Element handleElement = e.getChild(Tags.HANDLE, AtomAdminService.NAMESPACE);
+        Element handleElement = e.getChild(Tags.HANDLE, Service.NAMESPACE);
         if (handleElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.HANDLE);
         }
+        
+        // href
         setHandle(handleElement.getText());
         String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + getHandle();        
         setHref(href);        
         
         // name
-        Element nameElement = e.getChild(Tags.NAME, AtomAdminService.NAMESPACE);
+        Element nameElement = e.getChild(Tags.NAME, Service.NAMESPACE);
         if (nameElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.NAME);
         }
         setName(nameElement.getText());
         
         // description
-        Element descElement = e.getChild(Tags.DESCRIPTION, AtomAdminService.NAMESPACE);
+        Element descElement = e.getChild(Tags.DESCRIPTION, Service.NAMESPACE);
         if (descElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.DESCRIPTION);
         }
         setDescription(descElement.getText());
         
         // locale
-        Element localeElement = e.getChild(Tags.LOCALE, AtomAdminService.NAMESPACE);
+        Element localeElement = e.getChild(Tags.LOCALE, Service.NAMESPACE);
         if (localeElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.LOCALE);
         }
         setLocale(localeElement.getText());
         
         // timezone
-        Element tzElement = e.getChild(Tags.TIMEZONE, AtomAdminService.NAMESPACE);
+        Element tzElement = e.getChild(Tags.TIMEZONE, Service.NAMESPACE);
         if (tzElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.TIMEZONE);
         }
         setTimezone(tzElement.getText());
         
         // creator
-        Element creatorElement = e.getChild(Tags.CREATING_USER, AtomAdminService.NAMESPACE);
+        Element creatorElement = e.getChild(Tags.CREATING_USER, Service.NAMESPACE);
         if (creatorElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.CREATING_USER);
         }
         setCreatingUser(creatorElement.getText());
         
         // email address
-        Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, AtomAdminService.NAMESPACE);
+        Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
         if (emailElement == null) {
             throw new Exception("ERROR: Missing element: " + Tags.EMAIL_ADDRESS);
         }
         setEmailAddress(emailElement.getText());        
         
         // created (optional)
-        Element createdElement = e.getChild(Tags.DATE_CREATED, AtomAdminService.NAMESPACE);
+        Element createdElement = e.getChild(Tags.DATE_CREATED, Service.NAMESPACE);
         if (createdElement != null) {
             setDateCreated(new Date(Long.valueOf(createdElement.getText()).longValue()));
         }              
     }
     
-    public WeblogEntry(WebsiteData wd, String urlPrefix) {
-        String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + wd.getHandle();
-        
+    
+    public WeblogEntry(String handle, String urlPrefix) {
+        String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + handle;        
         setHref(href);
-        setHandle(wd.getHandle());
-        setName(wd.getName());
-        setDescription(wd.getDescription());
-        setLocale(wd.getLocale());
-        setTimezone(wd.getTimeZone());
-        setCreatingUser(wd.getCreator().getUserName());
-        setEmailAddress(wd.getEmailAddress());        
-        setDateCreated(wd.getDateCreated());
+        setHandle(handle);
     }
     
     public String getType() {
@@ -117,56 +124,56 @@ class WeblogEntry extends Entry {
     }
     
     public Document toDocument() {        
-        Element weblog = new Element(Tags.WEBLOG, AtomAdminService.NAMESPACE);
+        Element weblog = new Element(Tags.WEBLOG, Service.NAMESPACE);
         Document doc = new Document(weblog);
         
         // link
         weblog.setAttribute(Attributes.HREF, getHref());
         
         // handle
-        Element handle = new Element(Tags.HANDLE, AtomAdminService.NAMESPACE);
+        Element handle = new Element(Tags.HANDLE, Service.NAMESPACE);
         Text handleText = new Text(getHandle());
         handle.addContent(handleText);
         weblog.addContent(handle);
         
         // name
-        Element name = new Element(Tags.NAME, AtomAdminService.NAMESPACE);
+        Element name = new Element(Tags.NAME, Service.NAMESPACE);
         Text nameText = new Text(getName());
         name.addContent(nameText);
         weblog.addContent(name);
         
         // description
-        Element desc = new Element(Tags.DESCRIPTION, AtomAdminService.NAMESPACE);
+        Element desc = new Element(Tags.DESCRIPTION, Service.NAMESPACE);
         Text descText = new Text(getDescription());
         desc.addContent(descText);
         weblog.addContent(desc);
         
         // locale
-        Element locale = new Element(Tags.LOCALE, AtomAdminService.NAMESPACE);
+        Element locale = new Element(Tags.LOCALE, Service.NAMESPACE);
         Text localeText = new Text(getLocale());
         locale.addContent(localeText);
         weblog.addContent(locale);
         
         // timezone
-        Element tz = new Element(Tags.TIMEZONE, AtomAdminService.NAMESPACE);
+        Element tz = new Element(Tags.TIMEZONE, Service.NAMESPACE);
         Text tzText = new Text(getTimezone());
         tz.addContent(tzText);
         weblog.addContent(tz);
         
         // creating user
-        Element creator = new Element(Tags.CREATING_USER, AtomAdminService.NAMESPACE);
+        Element creator = new Element(Tags.CREATING_USER, Service.NAMESPACE);
         Text creatorText = new Text(String.valueOf(getCreatingUser()));
         creator.addContent(creatorText);
         weblog.addContent(creator);
         
         // email address
-        Element email = new Element(Tags.EMAIL_ADDRESS, AtomAdminService.NAMESPACE);
+        Element email = new Element(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
         Text emailText = new Text(String.valueOf(getEmailAddress()));
         email.addContent(emailText);
         weblog.addContent(email);        
         
         // creation date (optional)
-        Element created = new Element(Tags.DATE_CREATED, AtomAdminService.NAMESPACE);
+        Element created = new Element(Tags.DATE_CREATED, Service.NAMESPACE);
         Date datedCreated = getDateCreated();
         if (dateCreated != null) {
             Text createdText = new Text(String.valueOf(dateCreated.getTime()));

@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.output.XMLOutputter;
 import org.jdom.output.Format;
+import org.roller.presentation.atomadminapi.sdk.EntrySet;
 
 /**
  * Atom Admin Servlet implements the Atom Admin endpoint.
@@ -54,16 +55,13 @@ public class AtomAdminServlet extends HttpServlet {
             }
             
             EntrySet c = handler.processGet();
-            Document doc = c.toDocument();
             
+            res.setStatus(HttpServletResponse.SC_OK);            
             res.setContentType("application/xml; charset=utf8");
+            String s = c.toString();
             Writer writer = res.getWriter();
-            XMLOutputter outputter = new XMLOutputter();
-            outputter.setFormat(Format.getPrettyFormat());
-            outputter.output(doc, writer);
-            writer.close();
-            
-            res.setStatus(HttpServletResponse.SC_OK);
+            writer.write(s);            
+            writer.close();            
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace(res.getWriter());
@@ -85,17 +83,13 @@ public class AtomAdminServlet extends HttpServlet {
             }
             
             EntrySet c = handler.processPost(new InputStreamReader(req.getInputStream()));
-            Document doc = c.toDocument();
             
-            
+            res.setStatus(HttpServletResponse.SC_CREATED);            
             res.setContentType("application/xml; charset=utf8");
+            String s = c.toString();
             Writer writer = res.getWriter();
-            XMLOutputter outputter = new XMLOutputter();
-            outputter.setFormat(Format.getPrettyFormat());
-            outputter.output(doc, writer);
-            writer.close();
-            
-            res.setStatus(HttpServletResponse.SC_OK);
+            writer.write(s);            
+            writer.close();            
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace(res.getWriter());
@@ -117,16 +111,13 @@ public class AtomAdminServlet extends HttpServlet {
             }
             
             EntrySet c = handler.processPut(new InputStreamReader(req.getInputStream()));
-            Document doc = c.toDocument();
             
+            res.setStatus(HttpServletResponse.SC_OK);            
             res.setContentType("application/xml; charset=utf8");
+            String s = c.toString();
             Writer writer = res.getWriter();
-            XMLOutputter outputter = new XMLOutputter();
-            outputter.setFormat(Format.getPrettyFormat());
-            outputter.output(doc, writer);
-            writer.close();
-            
-            res.setStatus(HttpServletResponse.SC_OK);
+            writer.write(s);            
+            writer.close();            
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace(res.getWriter());
@@ -135,7 +126,7 @@ public class AtomAdminServlet extends HttpServlet {
     }
     
     /**
-     * Handle Atom DELETE by calling appropriate handler.
+     * Handle Atom Admin DELETE by calling appropriate handler.
      */
     protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
@@ -147,16 +138,13 @@ public class AtomAdminServlet extends HttpServlet {
             }
             
             EntrySet es = handler.processDelete();
-            Document doc = es.toDocument();
             
+            res.setStatus(HttpServletResponse.SC_OK);                        
             res.setContentType("application/xml; charset=utf8");
+            String s = es.toString();
             Writer writer = res.getWriter();
-            XMLOutputter outputter = new XMLOutputter();
-            outputter.setFormat(Format.getPrettyFormat());
-            outputter.output(doc, writer);
-            writer.close();
-            
-            res.setStatus(HttpServletResponse.SC_OK);            
+            writer.write(s);            
+            writer.close();                        
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace(res.getWriter());

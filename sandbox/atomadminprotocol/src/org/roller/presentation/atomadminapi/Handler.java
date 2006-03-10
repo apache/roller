@@ -15,6 +15,7 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.UserData;
 import org.roller.presentation.RollerContext;
+import org.roller.presentation.atomadminapi.sdk.EntrySet;
 import org.roller.util.StringUtils;
 
 /**
