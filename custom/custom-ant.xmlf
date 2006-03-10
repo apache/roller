@@ -44,7 +44,7 @@
    </java>
 </target>
 
-<!-- generate JDO mappings -->
+<!-- generate JDO mappings 
 <target name="gen-jdomappings" description="XDoclet Generate JDO mappings">
     <taskdef name="jdodoclet"
         classname="xdoclet.modules.jdo.JdoDocletTask"
@@ -63,6 +63,7 @@
         <jdometadata jdoSpec="2.0" />
     </jdodoclet>
 </target>
+-->
 
 <!-- Extend the init-hsqldb target to include custom tables
 <target name="init-hsqldb-ex" depends="init-hsqldb" >

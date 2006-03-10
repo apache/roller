@@ -1,5 +1,6 @@
 
 <!--  Include experimental Atom Protocol impl. in build. 
+<src path="${basedir}/sandbox/atomadminprotocol/src" />
 <src path="${basedir}/sandbox/atomprotocol/src" />
 -->
 
