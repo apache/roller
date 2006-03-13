@@ -157,6 +157,8 @@ public class ContextLoader {
                 ((RollerPropertyData)props.get("site.name")).getValue());
             weblog.setDescription(
                 ((RollerPropertyData)props.get("site.description")).getValue());
+            weblog.setEntryDisplayCount(
+                RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries"));
             ctx.put("handle",   weblog.getHandle() );
             ctx.put("userName", weblog.getHandle() );
             ctx.put("fullName", weblog.getHandle());
@@ -164,7 +166,7 @@ public class ContextLoader {
             ctx.put("timezone", TimeZone.getDefault());
             ctx.put("timeZone", TimeZone.getDefault());
             ctx.put("emailAddress",
-                ((RollerPropertyData)props.get("site.adminemail")).getValue());
+                ((RollerPropertyData)props.get("site.adminemail")).getValue());           
         }
         ctx.put("website", WebsiteDataWrapper.wrap(weblog) );
         
