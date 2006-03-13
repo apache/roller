@@ -62,7 +62,15 @@ public class ResourceServlet extends HttpServlet {
         String servlet = request.getServletPath();
         String reqURI = request.getRequestURI();
         
-        // url decoding
+        // URL decoding
+        
+        // Fix for ROL-1065: even though a + should mean space in a URL, folks 
+        // who upload files with plus signs expect them to work without 
+        // escaping. This is essentially what other systems do (e.g. JIRA) to 
+        // enable this.
+        reqURI = reqURI.replaceAll("\\+", "%2B");
+        
+        // now we really decode the URL
         reqURI = URLDecoder.decode(reqURI, "UTF-8");
         
         // calculate the path of the requested resource
