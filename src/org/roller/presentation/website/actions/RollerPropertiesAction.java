@@ -141,8 +141,8 @@ public class RollerPropertiesAction extends DispatchAction {
                     // this is a bit hacky since we are assuming that any prop
                     // with a value of "true" or "false" is meant to be a boolean
                     // it may not always be the case, but we should be okay for now
-                    if(updProp.getValue().equals("true") ||
-                            updProp.getValue().equals("false")) {
+                    if( updProp.getValue() != null // null check needed w/Oracle
+                        && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
                         
                         if(incomingProp == null || !incomingProp.equals("on"))
                             incomingProp = "false";
