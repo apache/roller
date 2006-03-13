@@ -33,8 +33,8 @@ import org.apache.commons.logging.LogFactory;
  * </pre>
  * 
  * <pre>
- * Also includes addNoFollow() and transformToHTMLSubset() from Simon
- * Brown's Pebble blog server.
+ * Also includes addNoFollow() and transformToHTMLSubset() from 
+ * Simon Brown's Pebble blog server (BSD license).
  * Copyright (c) 2003-2005, Simon Brown
  * All rights reserved.
  * </pre>
@@ -70,6 +70,7 @@ public class Utilities {
     private static final Pattern CLOSING_LI_TAG_PATTERN = Pattern.compile("&lt;/li&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern CLOSING_A_TAG_PATTERN = Pattern.compile("&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_A_TAG_PATTERN = Pattern.compile("&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
+    private static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
   
     /**
      * Utility methods for calling StringUtils since it cannot be
@@ -1075,6 +1076,7 @@ public class Utilities {
         s = replace(s, CLOSING_OL_TAG_PATTERN, "</ol>");
         s = replace(s, OPENING_LI_TAG_PATTERN, "<li>");
         s = replace(s, CLOSING_LI_TAG_PATTERN, "</li>");
+        s = replace(s, QUOTE_PATTERN, "\"");
         
         // HTTP links
         s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
