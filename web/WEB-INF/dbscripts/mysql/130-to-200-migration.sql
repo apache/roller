@@ -37,12 +37,12 @@ create index website_handle_index on website(handle);
 -- Add userid to weblogentry so we can track original creator of entry
 alter table weblogentry add column userid varchar(48);
 alter table weblogentry modify userid varchar(48) default '';
-update weblogentry set userid='';
+update weblogentry set userid='', pubtime=pubtime, updatetime=updatetime;
 alter table weblogentry modify userid varchar(48) not null;
 
 alter table weblogentry add column status varchar(20);
 alter table weblogentry modify status varchar(20) default '';
-update weblogentry set status='';
+update weblogentry set status='', pubtime=pubtime, updatetime=updatetime;
 alter table weblogentry modify status varchar(20) not null;
 
 create index we_status_idx on weblogentry(status);
