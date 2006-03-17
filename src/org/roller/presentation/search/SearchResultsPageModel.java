@@ -26,6 +26,7 @@ import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
+import org.roller.pojos.WeblogEntryComparator;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WeblogEntryWrapperComparator;
 import org.roller.pojos.WebsiteData;
@@ -51,6 +52,7 @@ public class SearchResultsPageModel {
     private Set      categories = new TreeSet();
     private boolean  websiteSpecificSearch = false;
     private String   errorMessage = null;
+    private boolean  useWrappers = false;
     
     /* How many results to display */
     private static int LIMIT = 10;
@@ -63,7 +65,8 @@ public class SearchResultsPageModel {
     private static ResourceBundle bundle = 
         ResourceBundle.getBundle("ApplicationResources");          
 
-    public SearchResultsPageModel(HttpServletRequest request) {        
+    public SearchResultsPageModel(HttpServletRequest request, boolean wrappers) { 
+        useWrappers = wrappers;
         try {            
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             setWebsiteSpecificSearch(checkForWebsite(request));
@@ -193,15 +196,34 @@ public class SearchResultsPageModel {
             
             // maybe null if search result returned inactive user
             // or entry's user is not the requested user.
-            if (entry != null) {
-                addToSearchResults(searchResults, WeblogEntryDataWrapper.wrap(entry));
-            }
+            if (entry != null && useWrappers) {
+                addEntryWrapperToSearchResults(searchResults, WeblogEntryDataWrapper.wrap(entry));
+            } 
+            else if (entry != null && !useWrappers) {
+                addEntryToSearchResults(searchResults, entry);
+            } 
         }
         rreq.getRequest().setAttribute("categories", categories);
         return searchResults;
     }
     
-    private void addToSearchResults(
+    private void addEntryToSearchResults(
+            TreeMap searchResults, WeblogEntryData entry) {
+        // convert entry's each date to midnight (00m 00h 00s)
+        Date midnight = DateUtil.getStartOfDay( entry.getPubTime() );
+        
+        // ensure we do not get duplicates from Lucene by
+        // using a Set Collection.  Entries sorted by pubTime.
+        TreeSet set = (TreeSet) searchResults.get(midnight);
+        if (set == null) {
+            // date is not mapped yet, so we need a new Set
+            set = new TreeSet( new WeblogEntryComparator() );
+            searchResults.put(midnight, set);
+        }
+        set.add(entry);
+    }
+    
+    private void addEntryWrapperToSearchResults(
             TreeMap searchResults, WeblogEntryDataWrapper entry) {
         // convert entry's each date to midnight (00m 00h 00s)
         Date midnight = DateUtil.getStartOfDay( entry.getPubTime() );

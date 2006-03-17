@@ -48,7 +48,7 @@ public class SearchAction extends Action {
             HttpServletResponse response,
             ActionMapping mapping) throws RollerException, IOException {        
             super(titleKey, request, response, mapping);
-            setSearchModel(new SearchResultsPageModel(request));
+            setSearchModel(new SearchResultsPageModel(request, false));
         }
 
         public SearchResultsPageModel getSearchModel() {
