@@ -95,7 +95,6 @@ public interface RefererManager extends Serializable
 
     public void processReferrer(
             String requestUrl, 
-            String queryString,
             String referrerUrl,
             String weblogHandle, 
             String weblogAnchor,                                
