@@ -59,7 +59,12 @@ public class RefererFilter implements Filter {
         boolean isRefSpammer = false;
         boolean isRobot = false;
         String referrerUrl = request.getHeader("Referer");
-        String requestUrl = request.getRequestURL().toString();
+        StringBuffer reqsb = request.getRequestURL();
+        if (request.getQueryString() != null) {
+            reqsb.append("?");
+            reqsb.append(request.getQueryString());
+        }
+        String requestUrl = reqsb.toString();
         
         // parse the incoming request and make sure it's a valid page request
         WebsiteData weblog = null;
@@ -147,7 +152,6 @@ public class RefererFilter implements Filter {
             try {
                 IncomingReferrer referrer = new IncomingReferrer();
                 referrer.setReferrerUrl(referrerUrl);
-                referrer.setQueryString(request.getQueryString());
                 referrer.setRequestUrl(requestUrl);
                 referrer.setWeblogHandle(pageRequest.getWeblogHandle());
                 referrer.setWeblogAnchor(pageRequest.getWeblogAnchor());

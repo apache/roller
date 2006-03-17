@@ -47,7 +47,6 @@ public class ReferrerProcessingJob implements Job {
         try {
             RefererManager refMgr = RollerFactory.getRoller().getRefererManager();
             refMgr.processReferrer(referrer.getRequestUrl(),
-                                   referrer.getQueryString(),
                                    referrer.getReferrerUrl(),
                                    referrer.getWeblogHandle(),
                                    referrer.getWeblogAnchor(),

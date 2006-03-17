@@ -152,7 +152,6 @@ public abstract class RefererManagerImpl implements RefererManager
 
     public void processReferrer(
             String requestUrl, 
-            String queryString, 
             String referrerUrl,
             String weblogHandle, 
             String entryAnchor, 
@@ -231,10 +230,6 @@ public abstract class RefererManagerImpl implements RefererManager
             } else if (matchRef.size() == 0) {
                 
                 // Referer was not found in database, so new Referer object
-                String requrl = requestUrl;
-                if (queryString != null && queryString.length() > 0) {
-                    requestUrl = requestUrl + "?" + queryString;
-                }
                 Integer one = new Integer(1);
                 RefererData ref =
                     new RefererData(
