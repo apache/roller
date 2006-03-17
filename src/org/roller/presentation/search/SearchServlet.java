@@ -52,36 +52,10 @@ public class SearchServlet extends PageServlet {
         
         // search model executes search, makes results available to page
         SearchResultsPageModel model = 
-            new SearchResultsPageModel(rreq.getRequest());
+            new SearchResultsPageModel(rreq.getRequest(), true);
         ctx.put("searchResults", model);
         return super.prepareForPageExecution(ctx, rreq, response, page);
     }
-        
-    /**
-     * If this is not a user-specific search, we need to display the
-     * "generic" search results list.
-     */
-    private Template generalSearchResults(
-            HttpServletRequest request, 
-            HttpServletResponse response, Context ctx) {
-        Template outty = null;
-        Exception pageException = null;
-        try {
-            ContextLoader.setupContext(
-                ctx, RollerRequest.getRollerRequest(request), response );
-            outty = getTemplate( "searchresults.vm", "UTF-8" );
-        } catch (Exception e) {
-            pageException = e;
-            response.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
-        }
-        
-        if (pageException != null) {
-            mLogger.error("EXCEPTION: in RollerServlet", pageException);
-            request.setAttribute("DisplayException", pageException);
-        }
-        return outty;
-    }
-    
 }
 
 
