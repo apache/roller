@@ -1,5 +1,8 @@
+// global vars for access from callback function
+var req = false;
+var element;
+
 function clientSideInclude(id, url) {
-  var req = false;
   // For Safari, Firefox, and other non-MS browsers
   if (window.XMLHttpRequest) {
     try {
@@ -19,7 +22,8 @@ function clientSideInclude(id, url) {
       }
     }
   }
- var element = document.getElementById(id);
+ // var element = document.getElementById(id);
+ element = document.getElementById(id);
  if (!element) {
   alert("Bad id " + id +
    "passed to clientSideInclude." +
@@ -28,16 +32,23 @@ function clientSideInclude(id, url) {
   return;
  }
   if (req) {
-    // Synchronous request, wait till we have it all
-    req.open('GET', url, false);
+    // Asynchronous request using processReqChange callback
+    req.onreadystatechange = processReqChange;
+    req.open('GET', url, true);
     req.send(null);
-    element.innerHTML = req.responseText;
-  } else {
-    element.innerHTML =
-   "Sorry, your browser does not support " +
-      "XMLHTTPRequest objects. This page requires " +
-      "Internet Explorer 5 or better for Windows, " +
-      "or Firefox for any system, or Safari. Other " +
-      "compatible browsers may also exist.";
   }
 }
+
+// handle onreadystatechange event of req object
+function processReqChange() {
+    // only if req shows "loaded"
+    if (req.readyState == 4) {
+        // only if "OK"
+        if (req.status == 200) {
+            element.innerHTML = req.responseText;
+         } else {
+            alert("There was a problem retrieving the XML data:\n" +
+                req.statusText);
+         }
+    }
+} 
