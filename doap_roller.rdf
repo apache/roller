@@ -38,6 +38,8 @@
         <foaf:name>David Johnson</foaf:name>
           <foaf:mbox rdf:resource="mailto:Davidm.Johnson@Sun.COM"/>
       </foaf:Person>
+    </maintainer>
+    <maintainer>
       <foaf:Person rdf:about="http://torrez.us/foaf#elias">
         <foaf:name>Elias Torres</foaf:name>
           <foaf:mbox rdf:resource="mailto:elias@torrez.us"/>
