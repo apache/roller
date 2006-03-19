@@ -56,7 +56,6 @@
     <maintainer>
       <foaf:Person rdf:about="http://torrez.us/foaf#elias">
         <foaf:name>Elias Torres</foaf:name>
-          <foaf:mbox rdf:resource="mailto:elias@torrez.us"/>
 	  <foaf:mbox_sha1sum>171e69034f0c1563ed13d66d4abaa8b5d70e4e57</foaf:mbox_sha1sum>
 	  <rdfs:seeAlso rdf:resource="http://torrez.us/foaf#elias" />
       </foaf:Person>
