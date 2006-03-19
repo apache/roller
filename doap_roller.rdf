@@ -3,6 +3,7 @@
 <rdf:RDF xml:lang="en"
          xmlns="http://usefulinc.com/ns/doap#" 
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+	 xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:asfext="http://projects.apache.org/ns/asfext#"
          xmlns:foaf="http://xmlns.com/foaf/0.1/">
 <!--
@@ -20,9 +21,7 @@
     <homepage rdf:resource="http://rollerweblogger.org/" />
     <asfext:pmc rdf:resource="http://incubator.apache.org" />
     <shortdesc>Roller is the open source blog server that drives Sun Microsystem's blogs.sun.com employee blogging site, internal blogs at IBM, the Javalobby'sJRoller Java community site, and hundreds of other sites. If you want to set up a blog server for yourself or for several thousand of your closest friends, then Roller is the perfect choice.</shortdesc>
-    <description>Roller is the open source blog server that drives Sun Microsystem's blogs.sun.com employee blogging site, internal blogs at IBM, the Javalobby'sJRoller Java community site, and hundreds of other sites. If you want to set up a blog server for yourself or for several thousand of your closest friends, then Roller is the perfect choice.
-
-Roller is a blog server, a Java-based web application that is designed to support multiple simultaneous weblog users and visitors. Roller supports all of the latest-and-greatest weblogging features such as comments, WYSIWYG HTML editing, page templates, RSS syndication, trackback, blogroll management, Wiki integration and provides an XML-RPC interface for blogging clients such as w:bloggar, MarsEdit Ecto and nntp//rss.</description>
+    <description>Roller is the open source blog server that drives Sun Microsystem's blogs.sun.com employee blogging site, internal blogs at IBM, the Javalobby'sJRoller Java community site, and hundreds of other sites. If you want to set up a blog server for yourself or for several thousand of your closest friends, then Roller is the perfect choice. Roller is a blog server, a Java-based web application that is designed to support multiple simultaneous weblog users and visitors. Roller supports all of the latest-and-greatest weblogging features such as comments, WYSIWYG HTML editing, page templates, RSS syndication, trackback, blogroll management, Wiki integration and provides an XML-RPC interface for blogging clients such as w:bloggar, MarsEdit Ecto and nntp//rss.</description>
     <bug-database rdf:resource="http://opensource2.atlassian.com/projects/roller/" />
     <mailing-list rdf:resource="http://mail-archives.apache.org/mod_mbox/incubator-roller-dev/" />
     <download-page rdf:resource="https://roller.dev.java.net/servlets/ProjectDocumentList?folderID=4653&expandFolder=4653&folderID=4653" />
@@ -38,6 +37,12 @@ Roller is a blog server, a Java-based web application that is designed to suppor
       <foaf:Person>
         <foaf:name>David Johnson</foaf:name>
           <foaf:mbox rdf:resource="mailto:Davidm.Johnson@Sun.COM"/>
+      </foaf:Person>
+      <foaf:Person rdf:about="http://torrez.us/foaf#elias">
+        <foaf:name>Elias Torres</foaf:name>
+          <foaf:mbox rdf:resource="mailto:elias@torrez.us"/>
+	  <foaf:mbox_sha1sum>171e69034f0c1563ed13d66d4abaa8b5d70e4e57</foaf:mbox_sha1sum>
+	  <rdfs:seeAlso rdf:resource="http://torrez.us/foaf#elias" />
       </foaf:Person>
     </maintainer>
   </Project>
