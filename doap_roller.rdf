@@ -20,8 +20,22 @@
     <name>Apache Roller</name>
     <homepage rdf:resource="http://rollerweblogger.org/" />
     <asfext:pmc rdf:resource="http://incubator.apache.org" />
-    <shortdesc>Roller is the open source blog server that drives Sun Microsystem's blogs.sun.com employee blogging site, internal blogs at IBM, the Javalobby'sJRoller Java community site, and hundreds of other sites. If you want to set up a blog server for yourself or for several thousand of your closest friends, then Roller is the perfect choice.</shortdesc>
-    <description>Roller is the open source blog server that drives Sun Microsystem's blogs.sun.com employee blogging site, internal blogs at IBM, the Javalobby'sJRoller Java community site, and hundreds of other sites. If you want to set up a blog server for yourself or for several thousand of your closest friends, then Roller is the perfect choice. Roller is a blog server, a Java-based web application that is designed to support multiple simultaneous weblog users and visitors. Roller supports all of the latest-and-greatest weblogging features such as comments, WYSIWYG HTML editing, page templates, RSS syndication, trackback, blogroll management, Wiki integration and provides an XML-RPC interface for blogging clients such as w:bloggar, MarsEdit Ecto and nntp//rss.</description>
+    <shortdesc>
+	    Roller is the open source blog server that drives Sun Microsystem's
+	    blogs.sun.com employee blogging site, internal blogs at IBM, the
+	    Javalobby's JRoller Java community site, and hundreds of other
+	    sites. If you want to set up a blog server for yourself or for
+	    several thousand of your closest friends, then Roller is the
+	    perfect choice.
+    </shortdesc>
+    <description>
+	    Roller is the open source blog server that drives Sun Microsystem's
+	    blogs.sun.com employee blogging site, internal blogs at IBM, the
+	    Javalobby's JRoller Java community site, and hundreds of other
+	    sites. If you want to set up a blog server for yourself or for
+	    several thousand of your closest friends, then Roller is the
+	    perfect choice. 
+    </description>
     <bug-database rdf:resource="http://opensource2.atlassian.com/projects/roller/" />
     <mailing-list rdf:resource="http://mail-archives.apache.org/mod_mbox/incubator-roller-dev/" />
     <download-page rdf:resource="https://roller.dev.java.net/servlets/ProjectDocumentList?folderID=4653&amp;expandFolder=4653&amp;folderID=4653" />
