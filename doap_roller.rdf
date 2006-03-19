@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl"?>
+<rdf:RDF xml:lang="en"
+         xmlns="http://usefulinc.com/ns/doap#" 
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+         xmlns:asfext="http://projects.apache.org/ns/asfext#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+<!--
+  =======================================================================
+
+   Copyright (c) 2006 The Apache Software Foundation.  
+   All rights reserved.
+
+  =======================================================================
+-->
+  <Project rdf:about="http://roller.rdf.apache.org/">
+    <created>2006-03-19</created>
+    <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
+    <name>Apache Roller</name>
+    <homepage rdf:resource="http://rollerweblogger.org/" />
+    <asfext:pmc rdf:resource="http://incubator.apache.org" />
+    <shortdesc>Roller is the open source blog server that drives Sun Microsystem's blogs.sun.com employee blogging site, internal blogs at IBM, the Javalobby'sJRoller Java community site, and hundreds of other sites. If you want to set up a blog server for yourself or for several thousand of your closest friends, then Roller is the perfect choice.</shortdesc>
+    <description>Roller is the open source blog server that drives Sun Microsystem's blogs.sun.com employee blogging site, internal blogs at IBM, the Javalobby'sJRoller Java community site, and hundreds of other sites. If you want to set up a blog server for yourself or for several thousand of your closest friends, then Roller is the perfect choice.
+
+Roller is a blog server, a Java-based web application that is designed to support multiple simultaneous weblog users and visitors. Roller supports all of the latest-and-greatest weblogging features such as comments, WYSIWYG HTML editing, page templates, RSS syndication, trackback, blogroll management, Wiki integration and provides an XML-RPC interface for blogging clients such as w:bloggar, MarsEdit Ecto and nntp//rss.</description>
+    <bug-database rdf:resource="http://opensource2.atlassian.com/projects/roller/" />
+    <mailing-list rdf:resource="http://mail-archives.apache.org/mod_mbox/incubator-roller-dev/" />
+    <download-page rdf:resource="https://roller.dev.java.net/servlets/ProjectDocumentList?folderID=4653&expandFolder=4653&folderID=4653" />
+    <programming-language>Java</programming-language>
+    <category rdf:resource="http://projects.apache.org/category/network-server" />
+    <repository>
+      <SVNRepository>
+        <location rdf:resource="https://svn.apache.org/repos/asf/incubator/roller/"/>
+        <browse rdf:resource="https://svn.apache.org/repos/asf/incubator/roller/"/>
+      </SVNRepository>
+    </repository>
+    <maintainer>
+      <foaf:Person>
+        <foaf:name>David Johnson</foaf:name>
+          <foaf:mbox rdf:resource="mailto:Davidm.Johnson@Sun.COM"/>
+      </foaf:Person>
+    </maintainer>
+  </Project>
+</rdf:RDF>
