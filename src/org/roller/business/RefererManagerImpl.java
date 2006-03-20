@@ -39,7 +39,6 @@ public abstract class RefererManagerImpl implements RefererManager
     protected PersistenceStrategy mStrategy;
     protected Date mRefDate = new Date();
     protected SimpleDateFormat mDateFormat = DateUtil.get8charDateFormat();
-    protected boolean doLinkbackExtraction = false;
 
     protected abstract List getReferersWithSameTitle(
                     WebsiteData website, 
@@ -66,9 +65,6 @@ public abstract class RefererManagerImpl implements RefererManager
 
     public RefererManagerImpl()
     {
-        // do we want to do linkback extractions for referrer processing?
-        this.doLinkbackExtraction = 
-                RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
     }
 
     //-----------------------------------------------------------------------
@@ -254,18 +250,20 @@ public abstract class RefererManagerImpl implements RefererManager
                 String refurl = ref.getRefererUrl();
                 
                 // If not a direct or search engine then search for linkback
+                boolean doLinkbackExtraction = 
+                    RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
                 if (doLinkbackExtraction
-                && entry != null
-                && !refurl.equals("direct")
-                && !refurl.startsWith("http://google")
-                && !refurl.startsWith("http://www.google")
-                && !refurl.startsWith("http://search.netscape")
-                && !refurl.startsWith("http://www.blinkpro")
-                && !refurl.startsWith("http://search.msn")
-                && !refurl.startsWith("http://search.yahoo")
-                && !refurl.startsWith("http://uk.search.yahoo")
-                && !refurl.startsWith("http://www.javablogs.com")
-                && !refurl.startsWith("http://www.teoma")
+                    && entry != null
+                    && !refurl.equals("direct")
+                    && !refurl.startsWith("http://google")
+                    && !refurl.startsWith("http://www.google")
+                    && !refurl.startsWith("http://search.netscape")
+                    && !refurl.startsWith("http://www.blinkpro")
+                    && !refurl.startsWith("http://search.msn")
+                    && !refurl.startsWith("http://search.yahoo")
+                    && !refurl.startsWith("http://uk.search.yahoo")
+                    && !refurl.startsWith("http://www.javablogs.com")
+                    && !refurl.startsWith("http://www.teoma")
                 ) {
                     // Launch thread to extract referer linkback
                     
