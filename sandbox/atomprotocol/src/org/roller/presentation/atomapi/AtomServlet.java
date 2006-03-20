@@ -136,7 +136,6 @@ public class AtomServlet extends HttpServlet {
         } else {
             res.setHeader("WWW-Authenticate", "BASIC realm=\"Roller\"");
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            res.flushBuffer();
         }
     }
     
