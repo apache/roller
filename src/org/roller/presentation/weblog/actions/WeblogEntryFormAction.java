@@ -144,7 +144,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 request.setAttribute("javax.servlet.error.message",
                         resources.getString("weblogEntry.notFound"));
                 forward = mapping.findForward("error");
-            } else if (rses.isUserAuthorizedToAuthor(entry.getWebsite())
+            } else if (rses.isUserAuthorized(entry.getWebsite())
             || (rses.isUserAuthorized(entry.getWebsite()) && !entry.isPublished())) {
                 form.copyFrom(entry, request.getLocale());
                 WeblogEntryPageModel pageModel = new WeblogEntryPageModel(
@@ -204,7 +204,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                     RollerSession.getRollerSession(request);
             WeblogEntryPageModel pageModel = new WeblogEntryPageModel(
                     request, response, mapping, (WeblogEntryFormEx)actionForm, mode);
-            if (rollerSession.isUserAuthorizedToAuthor(
+            if (rollerSession.isUserAuthorized(
                     pageModel.getWeblogEntry().getWebsite())) {
                 request.setAttribute("model", pageModel);
             } else {
@@ -660,7 +660,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
             WebsiteData site = umgr.retrieveWebsite(wf.getWebsiteId());
             RollerSession rses =
                     RollerSession.getRollerSession(request);
-            if ( rses.isUserAuthorizedToAuthor(site) ) {
+            if ( rses.isUserAuthorized(site) ) {
                 HttpSession session = request.getSession(true);
                 
                 // we need to save any new entries before SpellChecking
