@@ -27,7 +27,7 @@ public class WeblogEntryManagementForm
     private String mExportFormat = "rss";
     private String mCategoryId = null;
     private String mStatus = "ALL";
-    private String mSortby = "pubTime";
+    private String mSortby = "updateTime";
     
     /** max entries displayed per page */
     private int count = 30; 
