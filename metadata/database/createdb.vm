@@ -15,7 +15,7 @@ create table rolleruser (
     passphrase      varchar(255) not null,
     fullname        varchar(255) not null,
     emailaddress    varchar(255) not null,
-    datecreated     timestamp not null,
+    datecreated     $TIMESTAMP_SQL_TYPE not null,
     locale          varchar(20),  
     timezone        varchar(50),    
     isenabled       $BOOLEAN_SQL_TYPE_TRUE not null
@@ -54,14 +54,14 @@ create table roller_audit_log (
     object_id       varchar(48),           
     object_class    varchar(255),          
     comment_text    varchar(255) not null, 
-    change_time     timestamp              
+    change_time     $TIMESTAMP_SQL_TYPE              
 );
 
 create table usercookie (
     id              varchar(48) not null primary key,
     username        varchar(255) not null,
     cookieid        varchar(100) not null,
-    datecreated     timestamp not null
+    datecreated     $TIMESTAMP_SQL_TYPE not null
 );
 create index uc_username_idx on usercookie( username$!INDEXSIZE );
 create index uc_cookieid_idx on usercookie( cookieid$!INDEXSIZE );
@@ -73,7 +73,7 @@ create table webpage (
     link            varchar(255),
     websiteid       varchar(48)  not null,
     template        $TEXT_SQL_TYPE not null,
-    updatetime      timestamp     not null
+    updatetime      $TIMESTAMP_SQL_TYPE     not null
 );
 create index wp_name_idx on webpage( name$!INDEXSIZE );
 create index wp_link_idx on webpage( link$!INDEXSIZE );
@@ -102,7 +102,7 @@ create table website (
     defaultplugins    varchar(255),
     isenabled         $BOOLEAN_SQL_TYPE_TRUE not null,
     isactive          $BOOLEAN_SQL_TYPE_TRUE not null,
-    datecreated      timestamp not null,
+    datecreated      $TIMESTAMP_SQL_TYPE not null,
     blacklist            $TEXT_SQL_TYPE,
     defaultallowcomments $BOOLEAN_SQL_TYPE_TRUE not null,
     defaultcommentdays   integer default 7 not null,
@@ -175,7 +175,7 @@ create table weblogentry (
     title           varchar(255)  not null,
     text            $TEXT_SQL_TYPE not null,
     pubtime         $TIMESTAMP_SQL_TYPE_NULL,
-    updatetime      timestamp     not null,
+    updatetime      $TIMESTAMP_SQL_TYPE     not null,
     websiteid       varchar(48)  not null,
     categoryid      varchar(48)  not null,
     publishentry    $BOOLEAN_SQL_TYPE_TRUE not null,
@@ -213,7 +213,7 @@ create table roller_comment (
     email   varchar(255),
     url     varchar(255),
     content $TEXT_SQL_TYPE,
-    posttime timestamp   not null,
+    posttime $TIMESTAMP_SQL_TYPE   not null,
     spam    $BOOLEAN_SQL_TYPE_FALSE not null,
     notify  $BOOLEAN_SQL_TYPE_FALSE not null,
     remotehost varchar(128),
@@ -236,7 +236,7 @@ create table pingtarget (
     pingurl      varchar(255) not null,
     websiteid    varchar(48),
     conditioncode    integer default 0 not null,
-    lastsuccess  timestamp
+    lastsuccess  $TIMESTAMP_SQL_TYPE
 );
 create index pt_websiteid_idx on pingtarget( websiteid );
 
@@ -267,7 +267,7 @@ create index pc_categoryid_idx on pingcategory( categoryid );
 -- attempts:  number of ping attempts that have been made for this entry
 create table pingqueueentry (
     id             varchar(48) not null primary key,
-    entrytime      timestamp not null, 
+    entrytime      $TIMESTAMP_SQL_TYPE not null, 
     pingtargetid   varchar(48) not null,  
     websiteid      varchar(48) not null,  
     attempts       integer not null
@@ -285,7 +285,7 @@ create table referer (
     datestr   varchar(10),
     refurl    varchar(255) not null,
     refpermalink varchar(255),
-    reftime   timestamp,
+    reftime   $TIMESTAMP_SQL_TYPE,
     requrl    varchar(255),
     title     varchar(255),
     excerpt   $TEXT_SQL_TYPE,
@@ -394,7 +394,7 @@ create table rag_subscription (
     feed_url         varchar(255) not null,
     site_url         varchar(255),
     author           varchar(255),
-    last_updated     timestamp,
+    last_updated     $TIMESTAMP_SQL_TYPE,
     inbound_links    integer default -1,
     inbound_blogs    integer default -1
 );
@@ -410,8 +410,8 @@ create table rag_entry (
     author           varchar(255),
     content          $TEXT_SQL_TYPE,
     categories       $TEXT_SQL_TYPE,
-    published        timestamp not null,
-    updated          timestamp    
+    published        $TIMESTAMP_SQL_TYPE not null,
+    updated          $TIMESTAMP_SQL_TYPE    
 );
 create index rage_sid_idx on rag_entry(subscription_id$!INDEXSIZE); 
 
