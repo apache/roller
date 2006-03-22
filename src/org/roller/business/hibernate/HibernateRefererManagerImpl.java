@@ -31,6 +31,13 @@ import org.roller.pojos.RefererData;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.pojos.WebsiteDisplayData;
+import org.hibernate.dialect.DB2Dialect;
+import org.hibernate.dialect.DerbyDialect;
+import org.hibernate.dialect.HSQLDialect;
+import org.hibernate.dialect.OracleDialect;
+import org.hibernate.dialect.SQLServerDialect;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.dialect.Dialect;
 
 
 /**
@@ -178,7 +185,10 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
             con = ses.connection();
             
             final PreparedStatement stmt;
-            if (con.getMetaData().getDriverName().startsWith("HSQL")) {
+            
+            Dialect currentDialect = ((SessionFactoryImplementor)ses.getSessionFactory()).getDialect();
+            
+            if (currentDialect instanceof HSQLDialect) {
                 // special handling for HSQLDB
                 stmt = con.prepareStatement(
                     "select top ? w.id, w.name, w.handle, sum(r.dayhits) as s "+
@@ -188,7 +198,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
                 stmt.setInt(1, max);
                 stmt.setBoolean(2, true);
                 stmt.setBoolean(3, true);
-            } else if(con.getMetaData().getDriverName().startsWith("Apache Derby")) {
+            } else if(currentDialect instanceof DerbyDialect) {
 	           // special handling for Derby
 				stmt = con.prepareStatement(
 				    "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
@@ -198,7 +208,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
 				stmt.setBoolean(1, true);				
                 stmt.setBoolean(2, true);
                 stmt.setMaxRows(max);
-            } else if(con.getMetaData().getDriverName().startsWith("IBM DB2")) {
+            } else if(currentDialect instanceof DB2Dialect) {
                 // special handling for IBM DB2
                 stmt = con.prepareStatement(
                     "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
@@ -208,7 +218,7 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
                     Integer.toString(max) + " rows only");
                 stmt.setBoolean(1, true);
                 stmt.setBoolean(2, true);
-            } else if (con.getMetaData().getDriverName().startsWith("Oracle")) {
+            } else if (currentDialect instanceof OracleDialect) {
 				stmt = con.prepareStatement(
                     "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
                     "from website w, referer r "+
@@ -216,7 +226,13 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
                     "group by w.name, w.handle, w.id order by s desc");
 				stmt.setBoolean(1, true);
 				stmt.setBoolean(2, true);
-				stmt.setInt(3, max );				
+				stmt.setInt(3, max );
+            } else if (currentDialect instanceof SQLServerDialect) {
+            	stmt = con.prepareStatement("select top " + max + " w.id, w.name, w.handle, sum(r.dayhits) as s " +
+            	     "from website as w, referer as r where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
+            	     "group by w.name, w.handle, w.id order by s desc");
+            	stmt.setBoolean(1, true);
+                stmt.setBoolean(2, true);
             } else { // for MySQL and PostgreSQL
                 stmt = con.prepareStatement(
                     "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
@@ -483,9 +499,15 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
         }       
         try {
             Session session = ((HibernateStrategy)mStrategy).getSession();
+            Dialect currentDialect = ((SessionFactoryImplementor)session.getSessionFactory()).getDialect();
             String reset = "update RefererData set dayHits=0";
             session.createQuery(reset).executeUpdate();
-            String delete = "delete RefererData where excerpt is null or excerpt=''";
+            String delete = null;
+            if ( currentDialect instanceof SQLServerDialect || currentDialect instanceof OracleDialect ){
+            	delete = "delete RefererData where excerpt is null or excerpt like ''";
+            } else {
+            	delete = "delete RefererData where excerpt is null or excerpt=''";	
+            }
             session.createQuery(delete).executeUpdate();
         } catch (Exception e) {
             mLogger.error("EXCEPTION resetting referers",e);
@@ -502,10 +524,16 @@ public class HibernateRefererManagerImpl extends RefererManagerImpl
         }       
         try {
             Session session = ((HibernateStrategy)mStrategy).getSession();
+            Dialect currentDialect = ((SessionFactoryImplementor)session.getSessionFactory()).getDialect();
             String reset = "update RefererData set dayHits=0 where website=:site";
             session.createQuery(reset)
                 .setParameter("site",website).executeUpdate();
-            String delete = "delete RefererData where website=:site and (excerpt is null or excerpt='')";
+            String delete = null;
+            if ( currentDialect instanceof SQLServerDialect || currentDialect instanceof OracleDialect ){
+            	delete = "delete RefererData where website=:site and (excerpt is null or excerpt like '')";
+            } else {
+            	delete = "delete RefererData where website=:site and (excerpt is null or excerpt='')";            	
+            }
             session.createQuery(delete)
                 .setParameter("site",website).executeUpdate();
         } catch (Exception e) {

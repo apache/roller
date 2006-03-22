@@ -11,12 +11,13 @@
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         
         <!--
-        If you want to use HSQLDB, PostgreSQL, DB2 or Derby, Oracle then use the right dialect   
+        If you want to use HSQLDB, PostgreSQL, DB2 or Derby, Oracle, SQLServer then use the right dialect   
         <property name="dialect">org.hibernate.dialect.HQLDBDialect</property> 
         <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="dialect">org.hibernate.dialect.DB2Dialect</property>
         <property name="dialect">org.hibernate.dialect.DerbyDialect</property>
         <property name="dialect">org.hibernate.dialect.Oracle9Dialect</property>
+        <property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
         -->
 
         <!--

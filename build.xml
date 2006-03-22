@@ -522,6 +522,12 @@ ro.buildUser=${user.name}
          templatePath="${basedir}/metadata/database/" 
          outputDirectory="build/roller/WEB-INF/dbscripts/oracle/" 
          outputFile="README.txt" />
+    <texen 
+        controlTemplate="control.vm" 
+        contextProperties="${basedir}/metadata/database/mssql.properties"
+        templatePath="${basedir}/metadata/database/" 
+        outputDirectory="build/roller/WEB-INF/dbscripts/mssql/" 
+        outputFile="README.txt" />
 </target>
 
 <!-- ********************************************************************* -->
