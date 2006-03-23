@@ -2,6 +2,59 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 2.2 release: improvements and bug fixes, no major new features
+
+Improvement
+    * [ROL-995] - Limit comments to safe HTML subset only
+    * [ROL-1009] - Entries page and metaweblog.getRecentPosts() should sort by update time
+    * [ROL-1032] - Confirmation message when moderated comment is submitted
+    * [ROL-1036] - Entries page should support next/prev paging and updateTime ordering
+    * [ROL-1042] - Make newsfeeds obey entry count settings in weblog preferences
+    * [ROL-1046] - Make it easier to set Planet cache directory
+    * [ROL-1092] - Entries page should default to sort by updateTime
+    * [ROL-920] - Next/Prev-Entry-Navigation
+    * [ROL-485] - Inactive user status - Retire Weblog
+    * [ROL-938] - Make Technorati API limit configurable
+
+Bug
+    * [ROL-473] - Page view for specific date should show all entries for date
+    * [ROL-736] - Not possible to add one blog to multiple groups
+    * [ROL-873] - Supplied web.xml is not Servlet 2.4 compliant
+    * [ROL-902] - Publish to future not working
+    * [ROL-927] - Cannot update site-wide settings against Oracle database
+    * [ROL-970] - Fix Hibernate Errors
+    * [ROL-1024] - Error in comment generated e-mail
+    * [ROL-1026] - File upload bug on mozilla, solaris
+    * [ROL-1028] - Newsfeeds not using max entries set in config
+    * [ROL-1029] - Roller's MetaWeblog API support not compatible with del.icio.us
+    * [ROL-1035] - #showRecentComments() should sort by reverse chrono
+    * [ROL-1038] - Generated mails have no date header
+    * [ROL-1039] - "Unexpected Exception" instead of a 404 Bug
+    * [ROL-1040] - In-line search results broken
+    * [ROL-1056] - Retire weblog exception error
+    * [ROL-1058] - HTML friendly tags: bug w/ links left in comments
+    * [ROL-1065] - 404 on uploaded files containing a "+"
+    * [ROL-1066] - Cache treats weblog handles as mixed case
+    * [ROL-1071] - Error in getDaysPopularWebsites
+    * [ROL-1072] - showRecentCommentsList - bottom to top instead top to bottom
+    * [ROL-1076] - 2.1 upgrade script errors on MySQL 5.0
+    * [ROL-1078] - Blog feed replace by site wide feed
+    * [ROL-1082] - XMLHttpRequest in clientSideInclude.js should use Asynchronous request
+    * [ROL-1083] - 200-to-210-migration.sql fails in MySQL 5.x
+    * [ROL-1085] - Duplicate referrer records created for same URL
+    * [ROL-1086] - Site-wide search broken
+    * [ROL-1089] - A small typo in the installation guide
+    * [ROL-1090] - Enabling linkback extraction requires restart
+    * [ROL-1091] - Limited authors should be able to preview blog entries
+
+-------------------------------------------------------------------------------
+
+Roller 2.1.1 release: emergency bug fix release
+
+   * [ROL-1081] - Migration script for 1.3 to 2.0 resets entry pubtime and  updatetime 
+
+-------------------------------------------------------------------------------
+
 Roller 2.1 release: new feature release adds comment management and performance fixes
 
 New Features
