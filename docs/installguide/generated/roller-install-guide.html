@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060201;11261500">
+	<META NAME="CHANGED" CONTENT="20060323;11154300">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.79in }
@@ -27,7 +27,7 @@ Guide</B></FONT></P>
 <P ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 32pt"><B>Apache
 Roller</B></FONT></P>
 <P ALIGN=CENTER STYLE="margin-bottom: 0in"><A NAME="DDE_LINK1"></A><FONT SIZE=5 STYLE="font-size: 20pt"><B>Version
-2.1-incubating</B></FONT></P>
+2.2-incubating</B></FONT></P>
 <P ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
 </P>
 <P ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
@@ -81,25 +81,25 @@ Microsystems, Inc. </I></FONT>
 		<FONT FACE="Albany, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Table
 		of Contents</B></FONT></FONT></P>
 	</DIV>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">Introduction	3</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">STEP 1: Before you
-	install Roller	4</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">STEP 2: Unpack the
-	Roller distribution	5</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">STEP 3: Create
-	Roller tables in your database	6</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">STEP 4: Install
-	required third party jars	7</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Introduction	3</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	1: Before you install Roller	4</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	2: Unpack the Roller distribution	5</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	3: Create Roller tables in your database	6</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	4: Install required third party jars	7</B></FONT></P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4.1: Install
 	JDBC driver jar(s)	7</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4.2: Install
 	JavaMail and Activation jars	7</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">STEP 5: Deploy
-	Roller to your application server	8</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">STEP 6: Check your
-	internationalization settings	10</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">STEP 7: Setup
-	Roller data directories 	11</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	5: Deploy Roller to your application server	8</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	6: Check your internationalization settings	10</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	7: Setup Roller data directories 	11</B></FONT></P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 7.1: Create
 	uploads directory	11</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 7.2: Create
@@ -108,18 +108,36 @@ Microsystems, Inc. </I></FONT>
 	planet-cache directory (optional)	11</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 7.4: Make
 	sure that the logs subdirectory exists	12</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">STEP 8: Review
-	Roller configuration	13</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	8: Review Roller configuration	13</B></FONT></P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 8.1: Review
 	the WEB-INF/classes/roller.properties file	13</P>
 	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">Where to define
 	custom properties	13</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 8.2: Change
 	keys in the WEB-INF/security.xml file	14</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">STEP 9: Start
-	Tomcat and start using Roller	15</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in">Appendix A: The
-	WEB-INF/roller.properties file	16</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	9: Start Tomcat and start using Roller	15</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
+	A: Upgrading an existing Roller installation	16</B></FONT></P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 1: Shutdown
+	and backup your old Roller [#1]	16</P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 2: Install
+	the new Roller [#2]	16</P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 3: Copy
+	resources and update configs [#3]	17</P>
+	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">3.1 Copy your old
+	resources and other files you've added	17</P>
+	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">3.2 Remove
+	JavaMail jars if duplicated	17</P>
+	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">3.3 Review
+	configuration properties	17</P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4: Upgrade
+	the database [#4]	17</P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 5: Startup
+	your app server [#5]	18</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
+	B: The WEB-INF/roller.properties file	19</B></FONT></P>
 </DIV>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
@@ -139,6 +157,12 @@ environment: </B>
 	<LI><P STYLE="font-weight: medium">Relational Database:		MySQL 4.X
 	(or later)</P>
 </UL>
+<P><BR><BR>
+</P>
+<P><B>NOTE: If you're upgrading from an earlier release of Roller,
+read Appendix B first</B></P>
+<P><BR><BR>
+</P>
 <P><B>What do you need to know to install Roller? </B>You need to
 know how to use the UNIX or Windows command-line, how to set
 environment variables, how to create a database in MySQL and how to
@@ -158,6 +182,8 @@ MySQL, but Roller also includes database setup scripts for PostgreSQL
 information on which platforms we can vouch for, see the the
 <SPAN STYLE="font-weight: medium"><I>Platforms</I></SPAN> page on the
 Roller wiki.</P>
+<P><BR><BR>
+</P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP1Prerequisites1"></A><A NAME="ref-InstallationGuide_2.x-1"></A>
@@ -259,7 +285,7 @@ tables in MySQL:</P>
 <FONT FACE="Courier New"><FONT SIZE=2>	mysql&gt; source createdb.sql</FONT></FONT>
 <FONT FACE="Courier New"><FONT SIZE=2>	mysql&gt; quit</FONT></FONT></PRE><P>
 <B>Windows example:</B></P>
-<PRE>	<FONT FACE="Courier New">C&gt; cd %ROLLER%\dbscripts\mysql</FONT>
+<PRE>	<FONT FACE="Courier New">C&gt; cd %ROLLER%\WEB-INF\dbscripts\mysql</FONT>
 <FONT FACE="Courier New">	C&gt; mysql -u root -p</FONT>
 <FONT FACE="Courier New">	password: *****</FONT>
 <FONT FACE="Courier New">	mysql&gt; create database roller;</FONT>
@@ -608,7 +634,7 @@ be set before you start up Roller. We'll first talk about what ways
 there are for defining your custom Roller configuration, then show
 which properties we think you should set.  <B>NOTE</B>: the default
 <FONT FACE="Courier New">roller.properties</FONT> file is shown in
-Appendix A.</P>
+Appendix B.</P>
 <H4><A NAME="section-ConfigurationGuide_2.x-WhereToDefineCustomProperties"></A>
 Where to define custom properties</H4>
 <P STYLE="margin-bottom: 0in">There are three ways you can alter the
@@ -761,7 +787,166 @@ encountered the very same problems that you are encountering.
 </P>
 <P><BR><BR>
 </P>
-<H2 STYLE="page-break-before: always">Appendix A: The
+<H2 STYLE="page-break-before: always">Appendix A: Upgrading an
+existing Roller installation</H2>
+<P>This document describes how to upgrade an existing installation to
+the latest release of Roller by upgrading the Roller database and
+replacing the old Roller files (which are typically found in
+tomcat/webapps/roller) with the new release. 
+</P>
+<P>The steps are:</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in">STEP 1: Shutdown and backup your
+	old Roller</P>
+	<LI><P STYLE="margin-bottom: 0in">STEP 2: Install the new Roller</P>
+	<LI><P STYLE="margin-bottom: 0in">STEP 3: Copy old configuration</P>
+	<LI><P STYLE="margin-bottom: 0in">STEP 4: Upgrade the database</P>
+	<LI><P STYLE="margin-bottom: 0in">STEP 5: Startup Tomcat 
+	</P>
+</UL>
+<H3><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller1"></A><A NAME="ref-UpgradeGuide_2.1-1"></A>
+STEP 1: Shutdown and backup your old Roller [#1]</H3>
+<P>Before you get started with your upgrade, you should shutdown your
+existing Roller install, make a backup of your data, and move the old
+Roller files out of the way. Here is an example of how you'd do this
+with a Tomcat/MySQL setup: 
+</P>
+<P STYLE="margin-bottom: 0in">Run shutdown.sh to stop Tomcat, for
+example: 
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in">   <FONT FACE="Courier New"><FONT SIZE=3>%
+cd $CATALINA_HOME/bin</FONT></FONT></P>
+<PRE STYLE="margin-bottom: 0.2in">   <FONT FACE="Courier New"><FONT SIZE=3>% ./shutdown.sh</FONT></FONT></PRE><P STYLE="margin-bottom: 0in">
+Backup your database to somewhere safe on your system or to a remote
+file-system, for example if you use MySQL you might do something like
+this:</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in">   <FONT FACE="Courier New">% mysqldump
+-u scott -p rollerdb &gt; \</FONT></P>
+<P STYLE="margin-bottom: 0in">  
+<FONT FACE="Courier New">/somewhere/safe/roller-backup-20050420.dmp</FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in">Here's an example for PostgreSQL users:
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in">   <FONT FACE="Courier New">pg_dump -h
+127.0.0.1 -W -U scott rollerdb &gt; roller.db</FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in">Move your Roller files to somewhere
+safe, for example: 
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<PRE>   <FONT FACE="Courier New"><FONT SIZE=3>% cd $CATALINA_HOME/webapps</FONT></FONT>
+   <FONT FACE="Courier New"><FONT SIZE=3>% mkdir /somewhere/safe/roller-old</FONT></FONT>
+   <FONT FACE="Courier New"><FONT SIZE=3>% mv roller /somewhere/safe/roller-old</FONT></FONT></PRE><H3>
+<A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
+STEP 2: Install the new Roller [#2]</H3>
+<P>Follow the normal installation instructions to install Roller,
+except: 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in">Don't create a new database for
+	Roller, instead point the new Roller to your old Roller database 
+	</P>
+	<LI><P>DO NOT start Tomcat when you are done with the installation,
+	we'll do that later 
+	</P>
+</UL>
+<P><BR><BR>
+</P>
+<H3><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
+STEP 3: Copy resources and update configs [#3]</H3>
+<H4><A NAME="section-UpgradeGuide_2.1-3.1CopyYourOldResourcesAndOtherFilesYouveAdded"></A>
+3.1 Copy your old resources and other files you've added</H4>
+<P>User uploaded files are, by default, stored in the <TT><FONT FACE="Courier New">/resources</FONT></TT>
+sub-directory of the Roller context directory. You should copy your
+old resources directory into your new Roller installation. 
+</P>
+<P>For example, on UNIX you can use <TT><FONT FACE="Courier New">cp
+-r</FONT></TT> to copy the whole directory: 
+</P>
+<PRE>   <FONT FACE="Courier New"><FONT SIZE=3>% cd %CATALINA_HOME/webapps/roller</FONT></FONT>
+   <FONT FACE="Courier New"><FONT SIZE=3>% cp -r /somewhere/safe/roller-old/roller/resources .</FONT></FONT></PRE><P>
+NOTE: If you have any new themes under roller/themes, make sure to
+copy those as well. 
+</P>
+<H4><A NAME="section-UpgradeGuide_2.1-3.2RemoveJavaMailJarsIfDuplicated"></A>
+3.2 Remove JavaMail jars if duplicated</H4>
+<P>In an upgrade installation, you may already have the JavaMail jars
+<TT>mail.jar</TT> and <TT>activation.jar</TT> in your Tomcat
+<TT>common/lib</TT>. If so, you should remove them from the
+<TT>WEB-INF/lib</TT> directory within the web app. (Keep them only in
+the <TT>common/lib</TT> directory.) 
+</P>
+<H4><A NAME="section-UpgradeGuide_2.1-3.3ReviewConfigurationProperties"></A>
+3.3 Review configuration properties</H4>
+<P>Review properties as described in STEP #8 of the installation
+guide.</P>
+<H3><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
+STEP 4: Upgrade the database [#4]</H3>
+<P>Use the appropriate database upgrade script to upgrade your
+database. To do this, login to your database and run one (or more) of
+the Roller upgrade scripts located in Roller's <FONT FACE="Courier New">WEB-INF/dbscripts</FONT>
+directory that corresponds to your database. There's a directory for
+MySQL, PostgreSQL, HSQLDB and more. 
+</P>
+<P>The database script directories 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Courier New">WEB-INF/dbscripts/mysql
+	</FONT>
+	</P>
+	<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Courier New">WEB-INF/dbscripts/postgresql
+	</FONT>
+	</P>
+	<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Courier New">WEB-INF/dbscripts/hsql
+	</FONT>
+	</P>
+	<LI><P>and more... 
+	</P>
+</UL>
+<P>There is an upgrade script for each release of Roller. If you're
+upgrading from Roller 2.0, which was the last release before 2.1
+you'll only need to run one script, that's <TT>200-to-210-migration.sql</TT>.
+For example, here's how you'd do it for a MySQL database running on
+UNIX: 
+</P>
+<PRE>    <FONT FACE="Courier New"><FONT SIZE=3>% cd $CATALINA_HOME/webapps/roller/WEB-INF/dbscripts/mysql</FONT></FONT>
+    <FONT FACE="Courier New"><FONT SIZE=3>% mysql -u root -p</FONT></FONT>
+    <FONT FACE="Courier New"><FONT SIZE=3>password: *****</FONT></FONT>
+    <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; use roller;</FONT></FONT>
+    <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; source 200-to-210-migration.sql</FONT></FONT>
+    <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; quit</FONT></FONT></PRE><P>
+If you're upgrading from an earlier release you'll have to run each
+of the older scripts in order to upgrade your database.</P>
+<H3><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
+STEP 5: Startup your app server [#5]</H3>
+<P>Use the standard Tomcat <FONT FACE="Courier New">startup.sh</FONT>
+(or <FONT FACE="Courier New">startup.bat </FONT>on Windows) script to
+start Tomcat. As Roller starts up, it will perform some final steps
+to upgrade your database, this may take few seconds longer than your
+average Roller startup. 
+</P>
+<P>And you're done! 
+</P>
+<P>If Roller doesn't come up, check the logs for exceptions and error
+messages. You should see these messages in the
+<FONT FACE="Courier New">tomcat/logs/catalina.out</FONT> file and in
+<FONT FACE="Courier New">tomcat/logs/roller.log</FONT>. If you still
+can't diagnose and fix your startup program, then subscribe to the
+Roller user mailing list for help. If there are any interesting
+messages in the log files, send those along too. 
+</P>
+<P></P>
+<H2></H2>
+<H2 STYLE="page-break-before: always">Appendix B: The
 <FONT FACE="Courier New">WEB-INF/roller.properties</FONT> file</H2>
 <P>This file defines the default start-up properties for Roller. See
 step 8 for instructions on how to override the properties in this
