@@ -1,59 +1,66 @@
 
-Roller Installation Guide
 
-Roller Weblogger
-Version 2.1-incubating
+Installation Guide
 
-Original text is copyright 2002-2004 David M Johnson
-Contributors: Roller team and  Sun Microsystems, Inc.
+Apache Roller
+Version 2.2-incubating
+
+Original text is copyright ? 2002-2004 David M Johnson
+Contributors: Roller team and  Sun Microsystems, Inc. 
 
 Table of Contents
 
-Introduction	
-STEP 1: Before you install Roller	
-STEP 2: Unpack the Roller distribution	
-STEP 3: Create Roller tables in your database	
-STEP 4: Install required third party jars	
-STEP 4.1: Install JDBC driver jar(s)	
-STEP 4.2: Install JavaMail and Activation jars	
-STEP 5: Deploy Roller to your application server
-STEP 6: Check your internationalization settings
-STEP 7: Setup Roller data directories
-STEP 7.1: Create uploads directory
-STEP 7.2: Create search-index directory
-STEP 7.3: Create planet-cache directory (optional)
-STEP 7.4: Make sure that the logs subdirectory exists
-STEP 8: Review Roller configuration
-STEP 8.1: Review the WEB-INF/classes/roller.properties file
-Where to define custom properties
-STEP 8.2: Change keys in the WEB-INF/security.xml file
-STEP 9: Start Tomcat and start using Roller
-Appendix A: The WEB-INF/roller.properties file
+Introduction	3
+
+STEP 1: Before you install Roller 4
+STEP 2: Unpack the Roller distribution	5
+STEP 3: Create Roller tables in your database	6
+STEP 4: Install required third party jars	7
+    STEP 4.1: Install JDBC driver jar(s)	7
+    STEP 4.2: Install JavaMail and Activation jars	7
+STEP 5: Deploy Roller to your application server	8
+STEP 6: Check your internationalization settings	10
+STEP 7: Setup Roller data directories 	11
+    STEP 7.1: Create uploads directory	11
+    STEP 7.2: Create search-index directory	11
+    STEP 7.3: Create planet-cache directory (optional)	11
+    STEP 7.4: Make sure that the logs subdirectory exists	12
+STEP 8: Review Roller configuration	13
+    STEP 8.1: Review the WEB-INF/classes/roller.properties file	13
+    Where to define custom properties	13
+    STEP 8.2: Change keys in the WEB-INF/security.xml file	14
+STEP 9: Start Tomcat and start using Roller	15
+
+Appendix A: Upgrading an existing Roller installation	16
+    STEP 1: Shutdown and backup your old Roller [#1]	16
+    STEP 2: Install the new Roller [#2]	16
+    STEP 3: Copy resources and update configs [#3]	17
+    3.1 Copy your old resources and other files you've added	17
+    3.2 Remove JavaMail jars if duplicated	17
+    3.3 Review configuration properties	17
+    STEP 4: Upgrade the database [#4]	17
+    STEP 5: Startup your app server [#5]	18
+
+Appendix B: The WEB-INF/roller.properties file	19
 
 Introduction
-
 This document describes how to install Roller in the following environment: 
+Operating System: 		UNIX or Windows based operating system 
+Java development kit: 	Java 2 SE 1.4 SDK (or later)
+Application server: 		Tomcat 5.X (or later)
+Relational Database:		MySQL 4.X (or later)
 
-Operating System:     UNIX or Windows based operating system 
-Java development kit: Java 2 SE 1.4 SDK (or later)
-Application server:   Tomcat 5.X (or later)
-Relational Database:  MySQL 4.X (or later)
+NOTE: If you're upgrading from an earlier release of Roller, read Appendix B first
 
 What do you need to know to install Roller? You need to know how to use the UNIX or Windows command-line, how to set environment variables, how to create a database in MySQL and how to start and stop Tomcat.
-
 What about other servlet containers? These instructions target Tomcat, but you should be able to make Roller work with just about any standard Servlet 2.3 compatible application server. For full support of Roller's internationalization features, we recommend Servlet 2.4. If you deploy Roller to a non-Tomcat server, please contribute your install notes to help others who might want to do the same. 
-
 What about other databases? These instructions target MySQL, but Roller also includes database setup scripts for PostgreSQL 7.X later, Apache Derby, IBM DB2, Oracle and HSQL-DB.
-
 What platform combinations are known to work? For information on which platforms we can vouch for, see the the Platforms page on the Roller wiki.
 
 
 STEP 1: Before you install Roller
-
 Before you install Roller software you should install and configure the Java development kit, your application server and your database.
-
 As part of the Tomcat install you should have set the environment variable CATALINA_HOME to point to your Tomcat installation directory. If not, you might want to set it now because we will refer to it in this installation guide. Below are some examples that show how to set this variable. Make sure you substitute the right path to your Tomcat installation.
-
 For UNIX with bash shell:
 	% export CATALINA_HOME=/opt/jakarta-tomcat-5.0.29
 
@@ -69,7 +76,6 @@ For MySQL, make sure you enable UTF-8 support. See the page Setting Up UTF-8 on 
 
 For MySQL, make sure that TCP/IP networking is enabled. In some versions of MySQL, this option is off by default. See the page Debian MySQL for details. The Connector/J JDBC driver can only access MySQL via TCP/IP. 
 
-
 STEP 2: Unpack the Roller distribution
 
 Pick a directory on your computer and unpack the Roller distribution using either GNU tar on UNIX or WinZip on Windows. Hereinafter, we'll refer to that directory as your Roller installation directory, $ROLLER in the UNIX examples or %ROLLER% in the Windows examples.
@@ -77,6 +83,7 @@ Pick a directory on your computer and unpack the Roller distribution using eithe
 Here are some examples to show you how you might unpack Roller on your computer.
 
 UNIX example
+
 Assuming you download the distribution into your home directory and you'd like to install Roller into /usr/local you might do something like this:
 	% cd /usr/local
 	% tar xzvf ~/roller-2.1.tar.gz
@@ -84,8 +91,8 @@ Assuming you download the distribution into your home directory and you'd like t
 That would create the Roller installation directory /usr/local/roller. 
 
 Windows example
-Use WinZip to extract the Roller distribution file into the directory of your choice for example, no example necessary.
 
+Use WinZip to extract the Roller distribution file into the directory of your choice for example, no example necessary.
 
 STEP 3: Create Roller tables in your database
 
@@ -103,6 +110,7 @@ WEB-INF/dbscripts/oracle/creatdb.sql
 Here are some examples to show you how you might create the Roller tables in MySQL:
 
 UNIX example:
+
 	% cd $ROLLER/WEB-INF/dbscripts/mysql
 	% mysql -u root -p
 	password: *****
@@ -114,7 +122,8 @@ UNIX example:
 	mysql> quit
 
 Windows example:
-	C> cd %ROLLER%\dbscripts\mysql
+
+	C> cd %ROLLER%\WEB-INF\dbscripts\mysql
 	C> mysql -u root -p
 	password: *****
 	mysql> create database roller;
@@ -125,11 +134,8 @@ Windows example:
 	mysql> quit
 
 NOTES
-
 For MySQL, don't forget to call flush privileges to commit your changes to MySQL.
-
 To check whether your MySQL is setup properly, use the command line mysql program to connect using the user name and password you created. For example (we use 127.0.0.1 here instead of localhost to ensure that TCP/IP networking is enabled):
-
 		mysql roller -h 127.0.0.1 -u scott -ptiger
 
 	
@@ -148,7 +154,6 @@ Windows example
 	C> copy mysql-connector.jar %CATALINA_HOME%\common\lib
 
 NOTES
-
 For MySQL 4.1.X users, we recommend that you use the J/Connector 3.0.X JDBC drivers instead of the newer 3.1.X series. If you must use J/Connector/J 3.1.X then please read Installation FAQ page item #13 on the Roller wiki.
 
 STEP 4.2: Install JavaMail and Activation jars
@@ -172,10 +177,12 @@ STEP 5: Deploy Roller to your application server
 
 To deploy Roller to your application server you need to inform your application server:
 
-   Where to find the Roller installation directory  
-   How to configure the Roller datasource under the JNDI name jdbc/rollerdb 
+Where to find the Roller installation directory  
+
+How to configure the Roller datasource under the JNDI name jdbc/rollerdb 
 
 For Tomcat you can do this by creating what's known as a context configuration file named roller.xml and placing that file in the Tomcat conf/Catalina/localhost directory. 
+
 
 Example context configuration file for Tomcat 5.0.X users
 
@@ -241,9 +248,7 @@ The portions shown in bold are the ones that you'll probably have to change. Mak
 NOTES
 
 If Roller starts up fine but later fails and you find an error like the one below in your roller.log file then try dropping your maxActive, maxIdle, and removeAbandoned values. Depending on your database configuration you may have to go pretty low, such as setting maxActive to 6, maxIdle to 3 and removeAbandonedTimeout to 60. 
-
 	User scott@localhost has more than 'max_user_connections' active connections
-
 
 STEP 6: Check your internationalization settings
 
@@ -274,6 +279,7 @@ STEP 7: Setup Roller data directories
 Roller stores file uploads, search index files, cache files and log files on disk. So before you start, check to make sure the directories that Roller expects exist and are writable by the Tomcat process. 
 
 STEP 7.1: Create uploads directory
+
 By default, Roller saves uploaded files under the directory:
 
 	${user.home}/roller_data/uploads
@@ -282,19 +288,16 @@ Here ${user.home} is the Java system property that normally evaluates to the hom
 
 In most cases, this default will probably work fine for you. However, for security reasons some application servers are set up to run as a server user identity whose home directory does not exist or is not writable by the server user itself. If this is the case for your server, override the property uploads.dir in the roller.properties file. See step 8 for more information on the roller.properties file.
 
-STEP 7.2: Create search-index directory'
+STEP 7.2: Create search-index directory
 
 By default, Roller creates and maintains its text search index data in files under the directory
 	${user.home}/roller_data/roller-index 
-
 Again, ${user.home} is the Java system property that normally evaluates to the home directory of the user identity executing the server's JVM process. You can specify a different directory by overriding the property search.index.dir in roller.properties. See step 8 for more information on the roller.properties file.
 
 STEP 7.3: Create planet-cache directory (optional)
 
 You only need to do this if you are planning on using Roller's integrated planet aggregator: create a directory for the planet cache (e.g. /var/roller/planet-cache). 
-
 The planet aggregator is off by default. To enable it, you'll have to override the planet.aggregator.enabled property (see the ConfigurationGuide). Once you've got Roller up and running, login (as an adminstrator), go to the Planet:Configuration page and set full-path to the directory you choose for the planet-cache. 
-
 Currently, you must specify the location of the planet-cache directory through the Roller web UI (but we planning to move it to roller.properties because it is really a startup property). 
 
 STEP 7.4: Make sure that the logs subdirectory exists
@@ -312,8 +315,7 @@ Before you start Roller for the first time, review your configuration.
 
 STEP 8.1: Review the WEB-INF/classes/roller.properties file
 
-Roller tries to pick a good set of configuration defaults which should let anyone start up the application without much work, but here are a few properties which are custom to each install and should be set before you start up Roller. We'll first talk about what ways there are for defining your custom Roller configuration, then show which properties we think you should set.  NOTE: the default roller.properties file is shown in Appendix A.
-
+Roller tries to pick a good set of configuration defaults which should let anyone start up the application without much work, but here are a few properties which are custom to each install and should be set before you start up Roller. We'll first talk about what ways there are for defining your custom Roller configuration, then show which properties we think you should set.  NOTE: the default roller.properties file is shown in Appendix B.
 Where to define custom properties
 
 There are three ways you can alter the default configuration for Roller. 
@@ -348,9 +350,7 @@ Here is a sample roller-custom.properties with the few properties that should be
 STEP 8.2: Change keys in the WEB-INF/security.xml file
 
 Starting with version 2.1, Roller uses the Acegi security infrastructure. Several of the security features rely on keys that are intended to be site-specific. These keys are used to compute HMAC (hash-based message authentication code) values for Remember Me cookies. Knowledge of these keys could allow an attacker to forge invalid cookies, and thereby gain unauthorized access to your Roller installation (at the application level). 
-
 Roller ships with default values, and these should assumed to be widely known. You should change your keys to be secret values specific to your own site. 
-
 Here is how to change the keys. 
 
 1.Find your WEB-INF/security.xml file and open it in a text editor.
@@ -358,30 +358,116 @@ Here is how to change the keys.
 3.For the beans with ids "rememberMeServices" and "rememberMeAuthenticationProvider" change the value field of the property with name="key" to be different from the default value of "rollerlovesacegi". You can use any string value of your choosing. It should be a secret specific to your site. Use the same key value in these two beans; they must match 
 
 NOTES 
-
 The reason one should change the anonymous provider key is that a granted authorities list is embedded within the anonymous authentication token.
-
 
 STEP 9: Start Tomcat and start using Roller
 
 Start your Servlet Container, open your web browser, browse to the Roller start page and start using Roller. If you are installing Roller on Tomcat then your Roller start page URL is probably http://localhost:8080/roller.
 
 UNIX example
+
 	% cd $CATALINA_HOME/bin
 	% ./startup.sh
 
 Windows example
+
 	C> cd %CATALINA_HOME%\bin
 	C> startup
 
 NOTE: the first user you create will have administrator privileges, so make sure you create the first user yourself. An admin user can grant and revoke admin rights from other users. 
 
 You're done! 
-
 Roller should be working perfectly now. If not, then please consult the Installation FAQ page on the Roller wiki and then check with the experts on the Roller mailing lists. Somebody has probably encountered the very same problems that you are encountering. 
 
+Appendix A: Upgrading an existing Roller installation
 
-Appendix A: The WEB-INF/roller.properties file
+This document describes how to upgrade an existing installation to the latest release of Roller by upgrading the Roller database and replacing the old Roller files (which are typically found in tomcat/webapps/roller) with the new release. 
+The steps are:
+
+STEP 1: Shutdown and backup your old Roller
+STEP 2: Install the new Roller
+STEP 3: Copy old configuration
+STEP 4: Upgrade the database
+STEP 5: Startup Tomcat 
+STEP 1: Shutdown and backup your old Roller [#1]
+
+Before you get started with your upgrade, you should shutdown your existing Roller install, make a backup of your data, and move the old Roller files out of the way. Here is an example of how you'd do this with a Tomcat/MySQL setup: 
+Run shutdown.sh to stop Tomcat, for example: 
+
+   % cd $CATALINA_HOME/bin
+   % ./shutdown.sh
+
+Backup your database to somewhere safe on your system or to a remote file-system, for example if you use MySQL you might do something like this:
+
+   % mysqldump -u scott -p rollerdb > \
+   /somewhere/safe/roller-backup-20050420.dmp
+
+Here's an example for PostgreSQL users: 
+
+   pg_dump -h 127.0.0.1 -W -U scott rollerdb > roller.db
+
+Move your Roller files to somewhere safe, for example: 
+
+   % cd $CATALINA_HOME/webapps
+   % mkdir /somewhere/safe/roller-old
+   % mv roller /somewhere/safe/roller-old
+
+STEP 2: Install the new Roller [#2]
+
+Follow the normal installation instructions to install Roller, except: 
+Don't create a new database for Roller, instead point the new Roller to your old Roller database 
+DO NOT start Tomcat when you are done with the installation, we'll do that later 
+
+
+STEP 3: Copy resources and update configs [#3]
+
+3.1 Copy your old resources and other files you've added
+User uploaded files are, by default, stored in the /resources sub-directory of the Roller context directory. You should copy your old resources directory into your new Roller installation. 
+For example, on UNIX you can use cp -r to copy the whole directory: 
+
+   % cd %CATALINA_HOME/webapps/roller
+   % cp -r /somewhere/safe/roller-old/roller/resources .
+
+NOTE: If you have any new themes under roller/themes, make sure to copy those as well. 
+
+3.2 Remove JavaMail jars if duplicated
+
+In an upgrade installation, you may already have the JavaMail jars mail.jar and activation.jar in your Tomcat common/lib. If so, you should remove them from the WEB-INF/lib directory within the web app. (Keep them only in the common/lib directory.) 
+
+3.3 Review configuration properties
+
+Review properties as described in STEP #8 of the installation guide.
+
+STEP 4: Upgrade the database [#4]
+
+Use the appropriate database upgrade script to upgrade your database. To do this, login to your database and run one (or more) of the Roller upgrade scripts located in Roller's WEB-INF/dbscripts directory that corresponds to your database. There's a directory for MySQL, PostgreSQL, HSQLDB and more. 
+The database script directories 
+
+WEB-INF/dbscripts/mysql 
+WEB-INF/dbscripts/postgresql 
+WEB-INF/dbscripts/hsql 
+and more... 
+
+There is an upgrade script for each release of Roller. If you're upgrading from Roller 2.0, which was the last release before 2.1 you'll only need to run one script, that's 200-to-210-migration.sql. For example, here's how you'd do it for a MySQL database running on UNIX: 
+
+    % cd $CATALINA_HOME/webapps/roller/WEB-INF/dbscripts/mysql
+    % mysql -u root -p
+    password: *****
+    mysql> use roller;
+    mysql> source 200-to-210-migration.sql
+    mysql> quit
+
+If you're upgrading from an earlier release you'll have to run each of the older scripts in order to upgrade your database.
+
+STEP 5: Startup your app server [#5]
+
+Use the standard Tomcat startup.sh (or startup.bat on Windows) script to start Tomcat. As Roller starts up, it will perform some final steps to upgrade your database, this may take few seconds longer than your average Roller startup. 
+And you're done! 
+
+If Roller doesn't come up, check the logs for exceptions and error messages. You should see these messages in the tomcat/logs/catalina.out file and in tomcat/logs/roller.log. If you still can't diagnose and fix your startup program, then subscribe to the Roller user mailing list for help. If there are any interesting messages in the log files, send those along too. 
+
+
+Appendix B: The WEB-INF/roller.properties file
 
 This file defines the default start-up properties for Roller. See step 8 for instructions on how to override the properties in this file.
 
