@@ -653,12 +653,13 @@ ro.buildUser=${user.name}
 
     <copy todir="${ro.build}/roller-src">
         <fileset dir="${basedir}">
+            <include name="src/**" />
+            <include name="tests/**" />
+            <include name="testdata/**" />
             <include name="metadata/**" />
             <include name="personal/**" />
             <include name="custom/**" />
             <include name="contrib/**" />
-            <include name="src/**" />
-            <include name="tests/**" />
             <include name="web/**" />
             <include name="docs/**" />
             <include name="ant.properties" />
