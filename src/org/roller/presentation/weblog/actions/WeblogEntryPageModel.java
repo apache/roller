@@ -397,7 +397,9 @@ public class WeblogEntryPageModel extends BasePageModel
     }
     
     public int getCommentCount() {
-        List comments = weblogEntry.getComments(false, false);
+        // Don't check for comments on unsaved entry (fixed ROL-970)
+        if (weblogEntry.getId() == null) return 0;
+        List comments = comments = weblogEntry.getComments(false, false);
         return comments != null ? comments.size() : 0;
     }
 }
