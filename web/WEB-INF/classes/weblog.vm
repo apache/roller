@@ -4,53 +4,49 @@
  * @author David M Johnson (comment macros)
  *#
 
-
-#** ======================================================================== *#
-#** Display recent entries macros *#
-#** ======================================================================== *#
-
 #**
  * Shows weblog entries from specified category using specified page as a "day 
  * template" for the display of each day. The maxEntries argument is ignored
  * because now the number of entries to display is controlled by the 
  * entryDisplayCount property on the Preferences:Settings page.
- *
+ * <p>
  * This macro allows Roller to support five different types of blog displays:
- * 
- * Current day page
- *     /page/<handle>/
+ * <p>
+ * Current day page<br />
+ *     /page/&lt;handle&gt;/<br>
  * On the current day page, Roller will show the most recent N blog  
  * entries (not just those for the day).
  * At the end of the page, a previous link points to day page of entries  
  * before the ones shown (and the link is displayed as the day's date).  
  * This works exactly as before.
- * 
- * Day page
- *     /page/<handle>/YYYYMMDD
- * On a day page, Roller will show all of the entries for a specific  
+ * <p>
+ * Day page<br>
+ *     /page/&lt;handle&gt;/YYYYMMDD<br>
+ * <p>On a day page, Roller will show all of the entries for a specific  
  * day. At the end of the page, a next/previous link allows navigation  
  * to next and previous day of entries (and the links are displayed as  
  * the day's dates). Before, day pages always showed N entries (where  
  * usually N=15), but now they'll show only a day's worth (e.g. 1-3  
  * entries).
- * 
- * Month page
- *     /page/<handle>/YYYYMM
- * On a month page, Roller will show the most recent N blog entries in  
+ * <p>
+ * Month page<br>
+ *     /page/&lt;handle&gt;/YYYYMM<br>
+ * <p>On a month page, Roller will show the most recent N blog entries in  
  * the month. At the end of the page, a previous link points to day page  
  * of entries before the ones shown. This is new; we didn't have month  
  * pages before.
- * 
- * Entry page
- *     /page/<handle>?entry=<anchor>
- * On an entry page, one entry is shown. The next/prev links link to the  
+ * <p>
+ * Entry page<br>
+ *     /page/&lt;handle&gt;?entry=&lt;anchor&gt;<br>
+ * <p>On an entry page, one entry is shown. The next/prev links link to the  
  * next and previous entries (and the links are displayed as the entry  
  * titles, nicely truncated). This one also works exactly as before.
- * 
- * Search page
- *     /page/<handle>?q=<search terms>
- * If there are search results, then this macro will show them using the 
+ * <p>
+ * Search page<br>
+ *     /page/<handle>?q=<search terms><br>
+ * <p>If there are search results, then this macro will show them using the 
  * current weblog's day template.
+ * <br>
  *
  * @param pageName   Page name of page to serve as day template.
  * @param maxEntries (ignored)
@@ -140,9 +136,9 @@
 #end
 
 
-#** ======================================================================== *#
-#** Next / previous links macros *#
-#** ======================================================================== *#
+## ======================================================================== 
+## Next / previous links macros 
+## ======================================================================== 
 
 #**
  * Displays next previous links, called by #showWeblogEntries().
@@ -214,9 +210,9 @@
 #end
 
 
-#** ======================================================================== *#
-#** Individual weblog entry display macros *#
-#** ======================================================================== *#
+## ======================================================================== 
+## Individual weblog entry display macros 
+## ======================================================================== 
 
 
 #**
@@ -375,9 +371,9 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
 #end
 
 
-#** ======================================================================== *#
-#** Search form and results macros *#
-#** ======================================================================== *#
+## ======================================================================== 
+## Search form and results macros 
+## ======================================================================== 
 
 
 #**
@@ -477,9 +473,9 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
 #end
 
 
-#** ======================================================================== *#
-#** Other macros *#
-#** ======================================================================== *#
+## ======================================================================== 
+## Other macros 
+## ======================================================================== 
 
 
 #**
@@ -534,9 +530,9 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
 #end
 
 
-#** ======================================================================== *#
-#** Deprecated macros *#
-#** ======================================================================== *#
+## ======================================================================== 
+## Deprecated macros 
+## ======================================================================== 
 
 
 #**
