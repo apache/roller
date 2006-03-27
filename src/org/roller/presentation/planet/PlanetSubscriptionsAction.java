@@ -200,20 +200,25 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
             
             if (RollerSession.getRollerSession(request).isGlobalAdminUser()) {
                 
+                ActionMessages messages = new ActionMessages();
                 PlanetSubscriptionData sub = null;
                 ActionErrors errors = validate(planet, form);
                 if (errors.isEmpty()) {
                     if (form.getId() == null || form.getId().trim().length() == 0) {                        
-                        // User adding new subscription to group.                        
-                        // Does form specify a subscription that already exists?
+                        // Adding new subscription to group                        
+                        // But, does subscription to that feed already exist?
                         if (form.getFeedUrl() != null) {
-                            sub = planet.getSubscription(form.getFeedUrl());                           
+                            sub = planet.getSubscription(form.getFeedUrl()); 
                         }
-                        // If not, then create a new one
-                        if (sub == null) {
-                            sub = new PlanetSubscriptionData();   
-                        }
-                        // And add it to the group
+                        if (sub != null) {
+                            // Yes, we'll use it instead
+                            messages.add(null, new ActionMessage(
+                                "planetSubscription.foundExisting", sub.getTitle()));
+                        } else {
+                            // No, add new subscription
+                            sub = new PlanetSubscriptionData(); 
+                            form.copyTo(sub, request.getLocale());
+                        }                        
                         targetGroup.addSubscription(sub);
                         
                     } else {
@@ -226,7 +231,6 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                     planet.saveGroup(targetGroup);
                     roller.commit();
                     
-                    ActionMessages messages = new ActionMessages();
                     messages.add(null,
                             new ActionMessage("planetSubscription.success.saved"));
                     saveMessages(request, messages);
