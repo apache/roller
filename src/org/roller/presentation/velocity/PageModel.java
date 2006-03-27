@@ -342,7 +342,7 @@ public class PageModel {
                 // and get them ALL, no limit
                 limit = null;                  
             } else if (mRollerReq.isMonthSpecified()) {
-                endDate = DateUtil.getEndOfDay(endDate, cal);
+                endDate = DateUtil.getEndOfMonth(endDate, cal);
             }
             Map mRet = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
                     mRollerReq.getWebsite(),
