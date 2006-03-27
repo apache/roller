@@ -1,7 +1,7 @@
 $pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1.0" encoding='utf-8'?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <title>$utilities.textToHTML($website.name,true)</title>
-    <subtitle>$utilities.textToHTML($website.description,true)</subtitle>
+    <title type="html">$utilities.textToHTML($website.name,true)</title>
+    <subtitle type="html">$utilities.textToHTML($website.description,true)</subtitle>
     #if( $catPath && $catPath.length() > 0) 
        #set( $postfix = "?catname=$catPath" ) 
     #else
@@ -29,7 +29,7 @@ $pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1
     #set( $entries = $pageModel.getRecentWeblogEntriesArray($entryCount, 'nil') )
     #foreach( $entry in $entries )
     <entry>
-        <title>$utilities.textToHTML($entry.title,true)</title>
+        <title type="html">$utilities.textToHTML($entry.title,true)</title>
         <id>$absBaseURL$entry.permaLink</id>
         <link rel="alternate" type="text/html" href="$absBaseURL$entry.permaLink"/>
         <published>$utilities.formatIso8601Date($entry.pubTime)</published>

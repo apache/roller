@@ -1,7 +1,7 @@
 $pageHelper.setContentType("application/rss+xml;charset=utf-8")<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>
-  <title>$utilities.textToHTML($website.name,true)</title>
+  <title>$utilities.removeHTML($website.name)</title>
   <link>$websiteURL</link>
   <description>$utilities.textToHTML($website.description,true)</description>
   <language>en-us</language>
@@ -11,7 +11,7 @@ $pageHelper.setContentType("application/rss+xml;charset=utf-8")<?xml version="1.
   #set( $entries = $pageModel.getRecentWeblogEntriesArray($entryCount, 'nil') )
   #foreach( $entry in $entries )
   <item>
-    <title>$utilities.textToHTML($entry.title,true)</title>
+    <title>$utilities.removeHTML($entry.title)</title>
     #if( $entry.link && !$entry.link.trim().equals("") )
     <source url="$utilities.textToHTML($entry.link)">$utilities.textToHTML($entry.link)</source>
     #end
