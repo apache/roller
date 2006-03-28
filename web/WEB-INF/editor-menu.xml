@@ -31,7 +31,8 @@ Each menu or menu item is governed by four attrbibutes:
                                           perms="admin" 
                                           subforwards="commentQuery" />
         <menu-item forward="categories"   name="tabbedmenu.weblog.categories" />
-        <menu-item forward="bookmarks"    name="tabbedmenu.bookmarks.allFolders" />
+        <menu-item forward="bookmarks"    name="tabbedmenu.bookmarks.allFolders" 
+                                          subforwards="importBookmarks" />
         <menu-item forward="uploadFiles"  name="tabbedmenu.website.files" />
         <menu-item forward="referers"     name="tabbedmenu.weblog.referers" />
     </menu>
