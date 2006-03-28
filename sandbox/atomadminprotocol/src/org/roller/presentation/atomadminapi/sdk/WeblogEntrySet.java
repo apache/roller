@@ -6,12 +6,14 @@
 
 package org.roller.presentation.atomadminapi.sdk;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.roller.presentation.atomadminapi.sdk.EntrySet.Types;
 
@@ -28,22 +30,22 @@ public class WeblogEntrySet extends EntrySet {
         setHref(urlPrefix + "/" + Types.WEBLOGS);
     }
     
-    public WeblogEntrySet(Document d, String urlPrefix) throws Exception {
+    public WeblogEntrySet(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
         populate(d, urlPrefix);
     }
     
-    public WeblogEntrySet(InputStream stream, String urlPrefix) throws Exception {               
+    public WeblogEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException, UnexpectedRootElementException {               
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
 
         populate(d, urlPrefix);        
     }    
     
-    private void populate(Document d, String urlPrefix) throws Exception {
+    private void populate(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
         Element root = d.getRootElement();
         String rootName = root.getName();
         if (!rootName.equals(Tags.WEBLOGS)) {
-            throw new Exception("ERROR: Expected root name: " + Tags.WEBLOGS + ", root name was: " + rootName);
+            throw new UnexpectedRootElementException("ERROR: Unexpected root element", Tags.WEBLOGS, rootName);
         }
         List weblogs = root.getChildren(WeblogEntry.Tags.WEBLOG, Service.NAMESPACE);
         if (weblogs != null) {

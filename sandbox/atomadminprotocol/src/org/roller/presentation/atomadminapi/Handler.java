@@ -87,7 +87,7 @@ abstract class Handler {
     private String urlPrefix;
     
     /** Get a Handler object implementation based on the given request. */
-    public static Handler getHandler(HttpServletRequest req) throws Exception {
+    public static Handler getHandler(HttpServletRequest req) throws HandlerException {
          URI uri = new URI(req);
          Handler handler;
          
@@ -102,10 +102,10 @@ abstract class Handler {
              } else if (type.equals(EntrySet.Types.MEMBERS)) {
                  handler = new RollerMemberHandler(req);                  
              } else {
-                 throw new Exception("ERROR: Unknown type: " + uri.getType());
+                 throw new BadRequestException("ERROR: Unknown type: " + uri.getType());
              }
          } else {
-             throw new Exception("ERROR: Unknown URI type");
+             throw new BadRequestException("ERROR: Unknown URI type");
          }
     
          return handler;
@@ -155,13 +155,13 @@ abstract class Handler {
     }   
     
     /** Process an HTTP GET request. */
-    public abstract EntrySet processGet() throws Exception;
+    public abstract EntrySet processGet() throws HandlerException;
     /** Process an HTTP POST request. */
-    public abstract EntrySet processPost(Reader r) throws Exception;
+    public abstract EntrySet processPost(Reader r) throws HandlerException;
     /** Process an HTTP PUT request. */
-    public abstract EntrySet processPut(Reader r) throws Exception;
+    public abstract EntrySet processPut(Reader r) throws HandlerException;
     /** Process an HTTP DELETE request. */
-    public abstract EntrySet processDelete() throws Exception;
+    public abstract EntrySet processDelete() throws HandlerException;
     
     protected URI getUri() {
         return uri;

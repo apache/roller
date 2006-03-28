@@ -6,10 +6,12 @@
 
 package org.roller.presentation.atomadminapi.sdk;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.Text;
 import org.jdom.input.SAXBuilder;
 import org.roller.presentation.atomadminapi.sdk.Entry.Attributes;
@@ -48,11 +50,11 @@ public class UserEntry extends Entry {
     }
     
     /** Construct a user entry from a JDOM element. */
-    public UserEntry(Element e, String urlPrefix) throws Exception {
+    public UserEntry(Element e, String urlPrefix) throws MissingElementException {
         populate(e, urlPrefix);
     }
     
-    public UserEntry(InputStream stream, String urlPrefix) throws Exception {               
+    public UserEntry(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException {               
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
         Element e = d.detachRootElement();
@@ -60,11 +62,11 @@ public class UserEntry extends Entry {
         populate(e, urlPrefix);        
     }
     
-    private void populate(Element e, String urlPrefix) throws Exception {
+    private void populate(Element e, String urlPrefix) throws MissingElementException {
         // name
         Element nameElement = e.getChild(Tags.NAME, NAMESPACE);
         if (nameElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.NAME);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.NAME);
         }
         setName(nameElement.getText());
         
@@ -75,35 +77,35 @@ public class UserEntry extends Entry {
         // full name
         Element fullNameElement = e.getChild(Tags.FULL_NAME, NAMESPACE);
         if (fullNameElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.FULL_NAME);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.FULL_NAME);
         }
         setFullName(fullNameElement.getText());
         
         // password
         Element passwordElement = e.getChild(Tags.PASSWORD, NAMESPACE);
         if (passwordElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.PASSWORD);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.PASSWORD);
         }
         setPassword(passwordElement.getText());
         
         // locale
         Element localeElement = e.getChild(Tags.LOCALE, Service.NAMESPACE);
         if (localeElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.LOCALE);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.LOCALE);
         }
         setLocale(localeElement.getText());
         
         // timezone
         Element tzElement = e.getChild(Tags.TIMEZONE, Service.NAMESPACE);
         if (tzElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.TIMEZONE);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.TIMEZONE);
         }
         setTimezone(tzElement.getText());
         
         // email address
         Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
         if (emailElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.EMAIL_ADDRESS);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.EMAIL_ADDRESS);
         }
         setEmailAddress(emailElement.getText());
         
