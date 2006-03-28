@@ -127,7 +127,6 @@ public class RollerAtomHandler implements AtomHandler {
     
     /**
      * Return Atom service document for site, getting blog-name from pathInfo.
-     * Since a user can (currently) have only one blog, one workspace is returned.
      * The workspace will contain collections for entries, categories and resources.
      */
     public AtomService getIntrospection(String[] pathInfo) throws Exception {

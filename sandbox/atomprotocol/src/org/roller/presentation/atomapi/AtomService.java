@@ -28,7 +28,7 @@ import org.jdom.filter.Filter;
  * This class models an Atom workspace.
  * @author Dave Johnson
  */
-/* Based on: draft-ietf-atompub-protocol-06.txt
+/* Based on: draft-ietf-atompub-protocol-08.txt
  * 
  * appService =
  *    element app:service {
