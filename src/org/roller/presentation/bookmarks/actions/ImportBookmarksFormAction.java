@@ -2,10 +2,7 @@
 package org.roller.presentation.bookmarks.actions;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,145 +22,160 @@ import org.roller.presentation.bookmarks.formbeans.FolderFormEx;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.roller.RollerException;
+import org.roller.model.Roller;
+import org.roller.pojos.FolderData;
+import org.roller.pojos.WebsiteData;
+import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.cache.CacheManager;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
- * @struts.action name="folderFormEx" path="/editor/importBookmarks" 
+ * @struts.action name="folderFormEx" path="/editor/importBookmarks"
  *  scope="request" input=".import" validate="false"
- * 
+ *
  * @struts.action-forward name="importBookmarks.page" path=".import"
- * 
+ *
  * TODO Should import into folder with same name as imported file
  */
-public final class ImportBookmarksFormAction extends Action
-{
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(RollerRequest.class);
-
-	/** 
-     * Request to import bookmarks 
+public final class ImportBookmarksFormAction extends Action {
+    
+    private static final String HANDLE = "opmlupload.website.handle";    
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(RollerRequest.class);
+    
+    /**
+     * Request to import bookmarks
      */
-	public ActionForward execute(
-		ActionMapping 		mapping,
-		ActionForm 			actionForm,
-		HttpServletRequest 	request,
-		HttpServletResponse response)
-		throws IOException, ServletException 
-	{
+    public ActionForward execute(
+            ActionMapping 		mapping,
+            ActionForm 			actionForm,
+            HttpServletRequest 	request,
+            HttpServletResponse response)
+            throws Exception {
+        
         ActionErrors errors = new ActionErrors();
-	    FolderFormEx theForm = (FolderFormEx)actionForm;
-		ActionForward fwd = mapping.findForward("importBookmarks.page");
-	    if ( theForm.getBookmarksFile() != null )
-        {
-            //this line is here for when the input page is upload-utf8.jsp,
-            //it sets the correct character encoding for the response
+        FolderFormEx theForm = (FolderFormEx)actionForm;
+        ActionForward fwd = mapping.findForward("importBookmarks.page");
+        
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        RollerSession rses = RollerSession.getRollerSession(request);        
+        BookmarkManager bm = RollerFactory.getRoller().getBookmarkManager();
+        
+        BasePageModel pageModel = new BasePageModel(
+            "bookmarksImport.title", request, response, mapping);
+        request.setAttribute("model", pageModel);
+
+        WebsiteData website = getWebsite(request);
+        pageModel.setWebsite(website);
+        
+        // if user authorized and a file is being uploaded
+        if (rses.isUserAuthorizedToAuthor(website) && theForm.getBookmarksFile() != null) {
+            
+            // this line is here for when the input page is upload-utf8.jsp,
+            // it sets the correct character encoding for the response
             String encoding = request.getCharacterEncoding();
-            if ((encoding != null) && (encoding.equalsIgnoreCase("utf-8")))
-            {
+            if ((encoding != null) && (encoding.equalsIgnoreCase("utf-8"))) {
                 response.setContentType("text/html; charset=utf-8");
-            }
-
-            boolean writeFile = false; //theForm.getWriteFile();
-
+            }            
+            boolean writeFile = false;
+            
             //retrieve the file representation
             FormFile file = theForm.getBookmarksFile();
-        /*
-            //retrieve the file name
-            String fileName= file.getFileName();
-
-            //retrieve the content type
-            String contentType = file.getContentType();
-
-            //retrieve the file size
-            String size = (file.getFileSize() + " bytes");
-        */
             String data = null;
-
             InputStream stream = null;
-            try 
-            {
+            try {
+               
                 //retrieve the file data
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 stream = file.getInputStream();
-                if (!writeFile) 
-                {
+                if (!writeFile) {
                     //only write files out that are less than 1MB
                     if (file.getFileSize() < (4*1024000)) {
-
+                        
                         byte[] buffer = new byte[8192];
                         int bytesRead = 0;
                         while ((bytesRead=stream.read(buffer,0,8192)) != -1) {
                             baos.write(buffer, 0, bytesRead);
                         }
                         data = new String(baos.toByteArray());
-
-                        SimpleDateFormat formatter = 
+                        
+                        SimpleDateFormat formatter =
                                 new SimpleDateFormat("yyyyMMddHHmmss");
                         Date now = new Date();
                         String folderName = "imported-" + formatter.format(now);
                         
                         // Use Roller BookmarkManager to import bookmarks
-                        RollerRequest rreq = 
-                            RollerRequest.getRollerRequest(request);
-                        BookmarkManager bm = 
-                            RollerFactory.getRoller().getBookmarkManager();
-                        RollerSession rses = 
-                            RollerSession.getRollerSession(request);
-                        bm.importBookmarks(
-                            rreq.getWebsite(), folderName, data);
-                        
-                        RollerFactory.getRoller().commit();
 
-                        CacheManager.invalidate(rreq.getWebsite());
-                    }
-                    else 
-                    {
-                        data = "The file is greater than 4MB, " 
-                            +" and has not been written to stream." 
-                            +" File Size: "+file.getFileSize()+" bytes. " 
-                            +" This is a limitation of this particular "
-                            +" web application, hard-coded in "
-                            +" org.apache.struts.webapp.upload.UploadAction";
+                        bm.importBookmarks(website, folderName, data);                        
+                        RollerFactory.getRoller().commit();                        
+                        CacheManager.invalidate(website);
+                        
+                        ActionMessages messages = new ActionMessages();
+                        messages.add(ActionMessages.GLOBAL_MESSAGE,
+                           new ActionMessage("bookmarksImport.imported", folderName));
+                        saveMessages(request, messages);
+                    } 
+                    else {
+                        data = "The file is greater than 4MB, "
+                                +" and has not been written to stream."
+                                +" File Size: "+file.getFileSize()+" bytes. "
+                                +" This is a limitation of this particular "
+                                +" web application, hard-coded in "
+                                +" org.apache.struts.webapp.upload.UploadAction";
+                        errors.add(ActionErrors.GLOBAL_ERROR,
+                           new ActionError("bookmarksImport.error",data));
                     }
                 }
-                else 
-                {
-                    //write the file to the file specified
-                    /*OutputStream bos = 
-                        new FileOutputStream(theForm.getFilePath());
-                    int bytesRead = 0;
-                    byte[] buffer = new byte[8192];
-                    while ((bytesRead = stream.read(buffer, 0, 8192)) != -1) {
-                        bos.write(buffer, 0, bytesRead);
-                    }
-                    bos.close();
-                    data = "The file has been written to \"" 
-                        + theForm.getFilePath() + "\"";
-                    */
-                }
-            }
-            catch (Exception e) 
-            {
-            	errors.add(ActionErrors.GLOBAL_ERROR,
-				    new ActionError("error.importing.bookmarks",e.toString()));
-			    saveErrors(request,errors);
+                
+            } 
+            catch (Exception e) {
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                     new ActionError("bookmarksImport.error",e.toString()));
+                saveErrors(request,errors);
                 mLogger.error("ERROR: importing bookmarks",e);
-            }
-            finally 
-            {
-                if ( stream!=null )
-                {
+            } 
+            finally {
+                if ( stream!=null ) {
                     try { stream.close(); } 
                     catch (Exception e) { mLogger.error("Closing stream",e); };
                 }
-            }
-
+            }            
             //destroy the temporary file created
             file.destroy();
         }
-		return fwd; 
-	}
+        else if (!rses.isUserAuthorizedToAuthor(website)) {
+            fwd = mapping.findForward("access-denied");
+        }        
+        return fwd;
+    }
+    
+    /**
+     * Other actions can get the website handle from request params, but
+     * request params don't come accross in a file-upload post so we have to
+     * stash the website handle in the session.
+     */
+    public static WebsiteData getWebsite(HttpServletRequest request) throws RollerException {
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        WebsiteData website = rreq.getWebsite();
+        String folderid = request.getParameter(RollerRequest.FOLDERID_KEY);
+        if (website == null && folderid != null) { 
+            BookmarkManager bm = RollerFactory.getRoller().getBookmarkManager();
+            FolderData folder = bm.retrieveFolder(folderid);     
+            website = folder.getWebsite();
+        }           
+        if (website != null) {
+            request.getSession().setAttribute(HANDLE, website.getHandle());
+        } 
+        else {
+            String handle = (String)request.getSession().getAttribute(HANDLE);
+            Roller roller = RollerFactory.getRoller();
+            website = roller.getUserManager().getWebsiteByHandle(handle);
+        }
+        return website;
+    }
 }
 

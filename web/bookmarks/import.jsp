@@ -1,9 +1,18 @@
 <%@ include file="/taglibs.jsp" %>
+<%@ page import="org.roller.presentation.BasePageModel" %>
+<% BasePageModel model = (BasePageModel)request.getAttribute("model"); %>
 
-<h1><fmt:message key="bookmarksImport.title" /></h1>
-<p><fmt:message key="bookmarksImport.prompt" /></p>
-
+<p class="subtitle">
+    <fmt:message key="bookmarksImport.subtitle" >
+    <fmt:param value="${model.website.handle}" />
+    </fmt:message>
+</p>
+<p class="pagetip">
+    <fmt:message key="bookmarksImport.prompt" />
+</p>     
+      
 <html:form action="/editor/importBookmarks" method="post" enctype="multipart/form-data">
+    <input name="weblog" type="hidden" value='<c:out value="${model.website.handle}" />' />
     <html:file property="bookmarksFile" />
     <br />
     <br />
