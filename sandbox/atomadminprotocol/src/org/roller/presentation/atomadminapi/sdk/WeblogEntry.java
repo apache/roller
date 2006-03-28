@@ -5,10 +5,12 @@ package org.roller.presentation.atomadminapi.sdk;
  * Created on January 17, 2006, 12:44 PM
  */
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.Text;
 import org.jdom.input.SAXBuilder;
 import org.roller.presentation.atomadminapi.sdk.Entry.Attributes;
@@ -39,11 +41,11 @@ public class WeblogEntry extends Entry {
     private String creatingUser;
     private String emailAddress;
     
-    public WeblogEntry(Element e, String urlPrefix) throws Exception {
+    public WeblogEntry(Element e, String urlPrefix) throws MissingElementException {
         populate(e, urlPrefix);
     }
     
-    public WeblogEntry(InputStream stream, String urlPrefix) throws Exception {               
+    public WeblogEntry(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException {               
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
         Element e = d.detachRootElement();
@@ -51,11 +53,11 @@ public class WeblogEntry extends Entry {
         populate(e, urlPrefix);        
     }
     
-    private void populate(Element e, String urlPrefix) throws Exception {
+    private void populate(Element e, String urlPrefix) throws MissingElementException {
         // handle
         Element handleElement = e.getChild(Tags.HANDLE, Service.NAMESPACE);
         if (handleElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.HANDLE);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.HANDLE);
         }
         
         // href
@@ -66,42 +68,42 @@ public class WeblogEntry extends Entry {
         // name
         Element nameElement = e.getChild(Tags.NAME, Service.NAMESPACE);
         if (nameElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.NAME);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.NAME);
         }
         setName(nameElement.getText());
         
         // description
         Element descElement = e.getChild(Tags.DESCRIPTION, Service.NAMESPACE);
         if (descElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.DESCRIPTION);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.DESCRIPTION);
         }
         setDescription(descElement.getText());
         
         // locale
         Element localeElement = e.getChild(Tags.LOCALE, Service.NAMESPACE);
         if (localeElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.LOCALE);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.LOCALE);
         }
         setLocale(localeElement.getText());
         
         // timezone
         Element tzElement = e.getChild(Tags.TIMEZONE, Service.NAMESPACE);
         if (tzElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.TIMEZONE);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.TIMEZONE);
         }
         setTimezone(tzElement.getText());
         
         // creator
         Element creatorElement = e.getChild(Tags.CREATING_USER, Service.NAMESPACE);
         if (creatorElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.CREATING_USER);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.CREATING_USER);
         }
         setCreatingUser(creatorElement.getText());
         
         // email address
         Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
         if (emailElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.EMAIL_ADDRESS);
+            throw new MissingElementException("ERROR: Missing element: ", e.getName(), Tags.EMAIL_ADDRESS);
         }
         setEmailAddress(emailElement.getText());        
         

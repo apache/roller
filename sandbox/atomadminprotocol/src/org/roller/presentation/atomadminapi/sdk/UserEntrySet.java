@@ -6,12 +6,14 @@
 
 package org.roller.presentation.atomadminapi.sdk;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.roller.presentation.atomadminapi.sdk.EntrySet.Types;
 
@@ -31,22 +33,22 @@ public class UserEntrySet extends EntrySet {
     }
     
     /** Construct based on a JDOM Document object. */
-    public UserEntrySet(Document d, String urlPrefix) throws Exception {
+    public UserEntrySet(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
         populate(d, urlPrefix);
     }
     
-    public UserEntrySet(InputStream stream, String urlPrefix) throws Exception {               
+    public UserEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException, UnexpectedRootElementException {               
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
 
         populate(d, urlPrefix);        
     }        
     
-    private void populate(Document d, String urlPrefix) throws Exception {
+    private void populate(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
         Element root = d.getRootElement();
         String rootName = root.getName();
         if (!rootName.equals(Tags.USERS)) {
-            throw new Exception("ERROR: Expected root name: " + Tags.USERS + ", root name was: " + rootName);
+            throw new UnexpectedRootElementException("ERROR: Unexpected root element", Tags.USERS, rootName);
         }
         List users = root.getChildren(UserEntry.Tags.USER, NAMESPACE);
         if (users != null) {

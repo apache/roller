@@ -7,11 +7,13 @@
 package org.roller.presentation.atomadminapi.sdk;
 
 import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.roller.presentation.atomadminapi.sdk.EntrySet.Types;
 
@@ -29,22 +31,22 @@ public class MemberEntrySet extends EntrySet {
         setHref(urlPrefix + "/" + Types.MEMBERS);        
     }    
 
-    public MemberEntrySet(Document d, String urlPrefix) throws Exception {
+    public MemberEntrySet(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
         populate(d, urlPrefix);
     }
     
-    public MemberEntrySet(InputStream stream, String urlPrefix) throws Exception {               
+    public MemberEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException, UnexpectedRootElementException {               
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
 
         populate(d, urlPrefix);        
     }    
     
-    private void populate(Document d, String urlPrefix) throws Exception {
+    private void populate(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
         Element root = d.getRootElement();
         String rootName = root.getName();
         if (!rootName.equals(Tags.MEMBERS)) {
-            throw new Exception("ERROR: Expected root name: " + Tags.MEMBERS + ", root name was: " + rootName);
+            throw new UnexpectedRootElementException("ERROR: Incorrect root element", Tags.MEMBERS, rootName);
         }
         List members = root.getChildren(MemberEntry.Tags.MEMBER, NAMESPACE);
         if (members != null) {

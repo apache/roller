@@ -24,11 +24,11 @@ class IntrospectionHandler extends Handler {
         super(request);
     }
     
-    public EntrySet processGet() throws Exception {
+    public EntrySet processGet() throws HandlerException {
         if (getUri().isIntrospection()) {
             return getIntrospection(getRequest());
         } else {
-            throw new Exception("ERROR: Unknown GET URI type");
+            throw new BadRequestException("ERROR: Unknown GET URI type");
         }
     }
     
@@ -44,7 +44,7 @@ class IntrospectionHandler extends Handler {
         throw new UnsupportedOperationException("ERROR: DELETE not supported in this handler");
     }
     
-    private Service getIntrospection(HttpServletRequest req) throws Exception {
+    private Service getIntrospection(HttpServletRequest req) {
         String href = getUrlPrefix();
         Service service = new Service(href);
         

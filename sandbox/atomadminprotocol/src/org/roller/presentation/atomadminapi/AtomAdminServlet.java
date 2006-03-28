@@ -62,10 +62,10 @@ public class AtomAdminServlet extends HttpServlet {
             Writer writer = res.getWriter();
             writer.write(s);            
             writer.close();            
-        } catch (Exception e) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            e.printStackTrace(res.getWriter());
-            logger.error(e);
+        } catch (HandlerException he) {
+            res.sendError(he.getStatus(), he.getMessage());
+            he.printStackTrace(res.getWriter());
+            logger.error(he);
         }
     }
     
@@ -90,10 +90,10 @@ public class AtomAdminServlet extends HttpServlet {
             Writer writer = res.getWriter();
             writer.write(s);            
             writer.close();            
-        } catch (Exception e) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            e.printStackTrace(res.getWriter());
-            logger.error(e);
+        } catch (HandlerException he) {
+            res.sendError(he.getStatus(), he.getMessage());
+            he.printStackTrace(res.getWriter());
+            logger.error(he);
         }
     }
     
@@ -118,10 +118,10 @@ public class AtomAdminServlet extends HttpServlet {
             Writer writer = res.getWriter();
             writer.write(s);            
             writer.close();            
-        } catch (Exception e) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            e.printStackTrace(res.getWriter());
-            logger.error(e);
+        } catch (HandlerException he) {
+            res.sendError(he.getStatus(), he.getMessage());
+            he.printStackTrace(res.getWriter());
+            logger.error(he);
         }
     }
     
@@ -145,10 +145,10 @@ public class AtomAdminServlet extends HttpServlet {
             Writer writer = res.getWriter();
             writer.write(s);            
             writer.close();                        
-        } catch (Exception e) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            e.printStackTrace(res.getWriter());
-            logger.error(e);
+        } catch (HandlerException he) {
+            res.sendError(he.getStatus(), he.getMessage());
+            he.printStackTrace(res.getWriter());
+            logger.error(he);
         }
     }
 }

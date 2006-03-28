@@ -7,10 +7,12 @@
 package org.roller.presentation.atomadminapi.sdk;
 
 import java.io.InputStream;
+import java.io.IOException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Text;
 import org.jdom.input.SAXBuilder;
+import org.jdom.JDOMException;
 import org.roller.presentation.atomadminapi.sdk.Entry.Attributes;
 import org.roller.presentation.atomadminapi.sdk.Entry.Types;
 
@@ -38,7 +40,7 @@ public class MemberEntry extends Entry {
     private String handle;
     private String permission;
     
-    public MemberEntry(Element e, String urlPrefix) throws Exception {
+    public MemberEntry(Element e, String urlPrefix) throws MissingElementException {
         populate(e, urlPrefix);
     }
     
@@ -49,7 +51,7 @@ public class MemberEntry extends Entry {
         setName(userName);
     }
 
-    public MemberEntry(InputStream stream, String urlPrefix) throws Exception {               
+    public MemberEntry(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException {               
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
         Element e = d.detachRootElement();
@@ -57,18 +59,18 @@ public class MemberEntry extends Entry {
         populate(e, urlPrefix);        
     }
 
-    private void populate(Element e, String urlPrefix) throws Exception {
+    private void populate(Element e, String urlPrefix) throws MissingElementException {
         // name
         Element nameElement = e.getChild(Tags.NAME, NAMESPACE);
         if (nameElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.NAME);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.NAME);
         }
         setName(nameElement.getText());
                 
         // handle
         Element handleElement = e.getChild(Tags.HANDLE, NAMESPACE);
         if (handleElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.HANDLE);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.HANDLE);
         }
         setHandle(handleElement.getText());
 
@@ -78,7 +80,7 @@ public class MemberEntry extends Entry {
         // password
         Element permissionElement = e.getChild(Tags.PERMISSION, NAMESPACE);
         if (permissionElement == null) {
-            throw new Exception("ERROR: Missing element: " + Tags.PERMISSION);
+            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.PERMISSION);
         }
         setPermission(permissionElement.getText());
     }
