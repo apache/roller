@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.roller.RollerException;
-import org.roller.config.RollerRuntimeConfig;
+import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.pojos.UserData;
@@ -89,7 +89,7 @@ abstract class Handler {
     /** Get a Handler object implementation based on the given request. */
     public static Handler getHandler(HttpServletRequest req) throws HandlerException {
         
-         boolean enabled = RollerRuntimeConfig.getBooleanProperty(
+         boolean enabled = RollerConfig.getBooleanProperty(
               "webservices.adminprotocol.enable");
          if (!enabled) { 
               throw new NotAllowedException("ERROR: Admin protocol not enabled");    
