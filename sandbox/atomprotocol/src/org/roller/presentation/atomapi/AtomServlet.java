@@ -46,7 +46,7 @@ import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.WireFeedOutput;
 import java.io.StringWriter;
 import org.jdom.Namespace;
-import org.roller.config.RollerRuntimeConfig;
+import org.roller.config.RollerConfig;
 
 /**
  * Atom Servlet implements Atom by calling a Roller independent handler.
@@ -67,7 +67,7 @@ public class AtomServlet extends HttpServlet {
      */
     private AtomHandler createAtomRequestHandler(HttpServletRequest request) 
     throws ServletException {
-        boolean enabled = RollerRuntimeConfig.getBooleanProperty(
+        boolean enabled = RollerConfig.getBooleanProperty(
             "webservices.atomprotocol.enable");
         if (!enabled) {
             throw new ServletException("ERROR: Atom protocol not enabled");
