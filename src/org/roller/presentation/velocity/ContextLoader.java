@@ -355,7 +355,7 @@ public class ContextLoader {
         
         HttpServletRequest request = rreq.getRequest();
         String url = null;
-        if (website != null) {
+        if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
             url = Utilities.escapeHTML(
                       rollerCtx.getAbsoluteContextUrl(request) 
                           + "/page/" + website.getHandle());
