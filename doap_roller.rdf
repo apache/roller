@@ -20,25 +20,9 @@
     <name>Apache Roller</name>
     <homepage rdf:resource="http://rollerweblogger.org/" />
     <asfext:pmc rdf:resource="http://incubator.apache.org" />
-    <shortdesc>
-	    Roller is the open source blog server that drives Sun Microsystem's
-	    blogs.sun.com employee blogging site, internal blogs at IBM, the
-	    Javalobby's JRoller Java community site, and hundreds of other
-	    sites. If you want to set up a blog server for yourself or for
-	    several thousand of your closest friends, then Roller is the
-	    perfect choice.
-    </shortdesc>
-    <description>
-	    Roller is the open source blog server that drives Sun Microsystem's
-	    blogs.sun.com employee blogging site, internal blogs at IBM, the
-	    Javalobby's JRoller Java community site, and hundreds of other
-	    sites. If you want to set up a blog server for yourself or for
-	    several thousand of your closest friends, then Roller is the
-	    perfect choice. 
-    </description>
+    <description>Roller is the open source blog server that drives Sun Microsystem's blogs.sun.com employee blogging site, internal blogs at IBM, the Javalobby's JRoller Java community site, and hundreds of other sites. If you want to set up a blog server for yourself or for several thousand of your closest friends, then Roller is the perfect choice.</description>
     <bug-database rdf:resource="http://opensource2.atlassian.com/projects/roller/" />
     <mailing-list rdf:resource="http://mail-archives.apache.org/mod_mbox/incubator-roller-dev/" />
-    <download-page rdf:resource="https://roller.dev.java.net/servlets/ProjectDocumentList?folderID=4653&amp;expandFolder=4653&amp;folderID=4653" />
     <programming-language>Java</programming-language>
     <category rdf:resource="http://projects.apache.org/category/network-server" />
     <repository>
@@ -54,10 +38,10 @@
       </foaf:Person>
     </maintainer>
     <maintainer>
-      <foaf:Person rdf:about="http://torrez.us/foaf#elias">
+      <foaf:Person rdf:about="http://torrez.us/who#elias">
         <foaf:name>Elias Torres</foaf:name>
 	  <foaf:mbox_sha1sum>171e69034f0c1563ed13d66d4abaa8b5d70e4e57</foaf:mbox_sha1sum>
-	  <rdfs:seeAlso rdf:resource="http://torrez.us/foaf#elias" />
+	  <rdfs:seeAlso rdf:resource="http://torrez.us/who#elias" />
       </foaf:Person>
     </maintainer>
   </Project>
