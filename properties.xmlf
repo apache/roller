@@ -46,6 +46,8 @@ in the "base.path" definition.
     <include name="commons-codec-1.3.jar" />
     <include name="concurrent-1.3.2.jar"/>
     <include name="jazzy-core.jar" />
+    <include name="jaxen-full.jar" />
+    <include name="saxpath.jar" />
     <include name="jdom.jar"/>
     <include name="lucene-1.4.3.jar"/>
     <include name="log4j-1.2.11.jar"/>
