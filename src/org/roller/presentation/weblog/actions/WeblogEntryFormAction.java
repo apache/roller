@@ -582,11 +582,12 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 return mapping.findForward("access-denied");
             }
         } catch (Exception e) {
-            throw new ServletException(e);
+            throw new ServletException(e); 
         }
         
         // need to reset all values to empty (including 'id')
         actionForm = new WeblogEntryFormEx();
+        actionForm.reset(mapping, request);
         request.setAttribute(mapping.getName(), actionForm);
         return create(mapping, actionForm, request, response);
     }
