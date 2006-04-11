@@ -46,6 +46,7 @@ Bug
     * [ROL-1089] - A small typo in the installation guide
     * [ROL-1090] - Enabling linkback extraction requires restart
     * [ROL-1091] - Limited authors should be able to preview blog entries
+    * [ROL-1108] - Cannot post immediately after doing a delete 
 
 -------------------------------------------------------------------------------
 
