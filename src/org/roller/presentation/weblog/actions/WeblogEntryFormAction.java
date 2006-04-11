@@ -587,6 +587,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
         
         // need to reset all values to empty (including 'id')
         actionForm = new WeblogEntryFormEx();
+        actionForm.reset(mapping, request);
         request.setAttribute(mapping.getName(), actionForm);
         return create(mapping, actionForm, request, response);
     }
