@@ -6,6 +6,6 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 
 alter table weblogentry add column summary $TEXT_SQL_TYPE default null;
 alter table weblogentry add column content_type varchar(48) default null;
-alter table weblogentry add column content_src varchar(512) default null;
+alter table weblogentry add column content_src varchar(255) default null;
 
 
