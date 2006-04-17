@@ -1,7 +1,7 @@
-
 <%-- This page is designed to be included in edit-weblog.jsp --%>
-
 <%@ include file="/taglibs.jsp" %>
+<html:hidden property="summary" />
+
 <script type="text/javascript" src="<html:rewrite page="/theme/scripts/xmlp.js"/>"></script>
 <script type="text/javascript">
 <!--  

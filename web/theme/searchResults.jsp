@@ -127,7 +127,7 @@ request.setAttribute("searchResults", searchResults);
             </span>
 
            <span class="entryDescription">
-               <roller:ApplyPlugins name="post" scope="page" stripHtml="true" maxLength="120" skipFlag="true" />
+               <roller:ShowEntryText name="post" scope="page" stripHtml="true" maxLength="120" singleEntry="true" />
            </span>
 
            <span style="font-size:x-small;">(<a

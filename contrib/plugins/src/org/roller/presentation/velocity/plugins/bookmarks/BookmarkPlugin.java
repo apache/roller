@@ -64,9 +64,9 @@ public class BookmarkPlugin implements PagePlugin
         return text;
     }
 
-    public String render(WeblogEntryData entry, boolean skipFlag)
+    public String render(WeblogEntryData entry, String str)
     {
-        String text = entry.getText();        
+        String text = str;        
         try
         {
             BookmarkManager bMgr = RollerFactory.getRoller().getBookmarkManager();
@@ -176,4 +176,6 @@ public class BookmarkPlugin implements PagePlugin
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
+
+    public boolean getSkipOnSingleEntry() {return false;}
 }

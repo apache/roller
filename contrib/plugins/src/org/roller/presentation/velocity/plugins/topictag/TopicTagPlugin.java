@@ -189,12 +189,12 @@ public class TopicTagPlugin implements PagePlugin
      * Apply the plugin to the given entry.  Returns the entry text with topic tags expanded.
      *
      * @param entry           WeblogEntry to which plugin should be applied.
-     * @param skipFlagIgnored the "skip flag" is ignored for this plugin
+     * @param singleEntry     Ignored.
      * @return Results of applying plugin to entry.
      */
-    public String render(WeblogEntryData entry, boolean skipFlagIgnored)
+    public String render(WeblogEntryData entry, String str)
     {
-        String entryText = entry.getText();
+        String entryText = str;
         StringBuffer result = new StringBuffer(entryText.length());
         MessageFormat fmt = getLinkFormat();
 
@@ -464,5 +464,5 @@ public class TopicTagPlugin implements PagePlugin
         this.userBookmarks = userBookmarks;
     }
 
-
+    public boolean getSkipOnSingleEntry() {return false;}
 }

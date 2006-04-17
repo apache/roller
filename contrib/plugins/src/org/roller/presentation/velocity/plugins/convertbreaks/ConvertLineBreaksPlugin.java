@@ -64,7 +64,7 @@ public class ConvertLineBreaksPlugin implements PagePlugin {
      * Transform the given plain text into html text by inserting p and br
      * tags around paragraphs and after line breaks.
      */
-    public String render(WeblogEntryData entry, boolean skip) {
+    public String render(WeblogEntryData entry, String str) {
         
         mLogger.debug("Rendering weblog entry: "+entry.getTitle());
         
@@ -124,4 +124,6 @@ public class ConvertLineBreaksPlugin implements PagePlugin {
         
         return buf.toString();
     }
+
+    public boolean getSkipOnSingleEntry() {return false;}
 }

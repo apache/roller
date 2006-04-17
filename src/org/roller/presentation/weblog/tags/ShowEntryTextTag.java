@@ -1,0 +1,202 @@
+/* Created on Feb 27, 2004 */
+package org.roller.presentation.weblog.tags;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+import java.util.Map;
+import java.io.IOException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.util.RequestUtils;
+import org.apache.velocity.VelocityContext;
+
+import org.roller.model.Roller;
+import org.roller.model.PagePluginManager;
+import org.roller.model.RollerFactory;
+import org.roller.pojos.WeblogEntryData;
+import org.roller.presentation.RollerContext;
+import org.roller.util.Utilities;
+import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
+
+/**
+ * Shows either entry summary or text, as appropriate and with plugins applied.
+ * @jsp.tag name="ShowEntryText"
+ * @author David M Johnson
+ */
+public class ShowEntryTextTag extends TagSupport {
+    static final long serialVersionUID = 3166731504235428544L;
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(ShowEntrySummaryTag.class);
+    
+    private String name = null;
+    private String property = null;
+    private String scope = "request";
+    private boolean noPlugins = false;
+    private boolean stripHtml = false;
+    private boolean singleEntry = false;
+    private int maxLength = -1;
+    
+    /**
+     * @see javax.servlet.jsp.tagext.Tag#doStartTag()
+     */
+    public int doStartTag() throws JspException {
+        Roller roller = RollerFactory.getRoller();
+        WeblogEntryData entry =
+            (WeblogEntryData)RequestUtils.lookup(pageContext, name, property, scope);
+        
+        String sourceText = entry.getSummary();
+        if (sourceText == null || (singleEntry && entry.getText() != null)) {
+            sourceText = entry.getText();
+        }
+        
+        String xformed = sourceText;        
+        if (entry.getPlugins() != null) {
+            RollerContext rctx = 
+                RollerContext.getRollerContext();
+            try {
+                PagePluginManager ppmgr = roller.getPagePluginManager();
+                Map plugins = ppmgr.createAndInitPagePlugins(
+                        entry.getWebsite(),
+                        rctx.getServletContext(),
+                        rctx.getAbsoluteContextUrl(),
+                        new VelocityContext());
+
+                xformed = ppmgr.applyPagePlugins(entry, plugins, sourceText, true);
+                
+            } catch (Exception e) {
+                mLogger.error(e);
+            }
+        }
+        
+        if (stripHtml) {
+            // don't escape ampersands
+            xformed = Utilities.escapeHTML( Utilities.removeHTML(xformed), false );
+        }
+        
+        if (maxLength != -1) {
+            xformed = Utilities.truncateNicely(xformed, maxLength, maxLength, "...");
+        }
+        
+        // somehow things (&#8220) are getting double-escaped
+        // but I cannot seem to track it down
+        xformed = Utilities.stringReplace(xformed, "&amp#", "&#");
+        
+        try {
+            pageContext.getOut().println(xformed);
+        } catch (IOException e) {
+            throw new JspException("ERROR applying plugin to entry", e);
+        }
+        return TagSupport.SKIP_BODY;
+    }
+    
+    /**
+     * Maximum length of text displayed, only applies if stripHtml is true.
+     * @jsp.attribute required="false"
+     * @return Returns the maxLength.
+     */
+    public int getMaxLength() {
+        return maxLength;
+    }
+    
+    /**
+     * Maximum length of text displayed, only applies if stripHtml is true.
+     * @param maxLength The maxLength to set.
+     */
+    public void setMaxLength(int maxLength) {
+        this.maxLength = maxLength;
+    }
+    
+    /**
+     * Set to true to prevent application of plugins.
+     * @jsp.attribute required="false"
+     * @return Returns the noPlugins.
+     */
+    public boolean getNoPlugins() {
+        return noPlugins;
+    }
+    
+    /**
+     * Set to true to prevent application of plugins.
+     * @param stripHtml The stripHtml to set.
+     */
+    public void setNoPlugins(boolean noPlugins) {
+        this.noPlugins = noPlugins;
+    }
+    
+    /**
+     * Set to true to strip all HTML markup from output.
+     * @jsp.attribute required="false"
+     * @return Returns the noPlugins.
+     */
+    public boolean getStripHtml() {
+        return stripHtml;
+    }
+    
+    /**
+     * Set to true to strip all HTML markup from output.
+     * @param stripHtml The stripHtml to set.
+     */
+    public void setStripHtml(boolean stripHtml) {
+        this.stripHtml = stripHtml;
+    }
+    
+    /**
+     * Set to true to inform PagePlugins of single entry page.
+     * @jsp.attribute required="false"
+     */
+    public boolean getSingleEntry() {
+        return singleEntry;
+    }
+    
+    /**
+     * Set to true to inform PagePlugins of single entry page.
+     * should "skip" themselves.
+     */
+    public void setSingleEntry(boolean singleEntry) {
+        this.singleEntry = singleEntry;
+    }
+    
+    /**
+     * @return Returns the name.
+     */
+    public String getName() {
+        return name;
+    }
+    
+    /**
+     * @jsp.attribute required="true"
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    /**
+     * @return Returns the property.
+     */
+    public String getProperty() {
+        return property;
+    }
+    /**
+     * @jsp.attribute required="false"
+     */
+    public void setProperty(String property) {
+        this.property = property;
+    }
+    
+    /**
+     * @jsp.attribute required="false"
+     */
+    public String getScope() {
+        return scope;
+    }
+    /**
+     * @param scope The scope to set.
+     */
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+}

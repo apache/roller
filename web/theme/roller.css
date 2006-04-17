@@ -447,7 +447,15 @@ div.output {
 weblog editor styles 
 ---------------------------------------------------------------------- */
 
-div.previewEntry {
+div.previewEntrySummary {
+   border: 1px solid gray;
+   clear: both;
+   height: 12em;
+   width: 98%;
+   padding: 10px;
+   overflow: auto;
+}
+div.previewEntryContent {
    border: 1px solid gray;
    clear: both;
    height: 22em;
@@ -641,3 +649,10 @@ pre {
     overflow: auto;
     overflow-x: auto;
 }
+
+.toplabel {
+    font-weight: bold;
+    margin: 10px 0px 0px 0px;
+}
+
+

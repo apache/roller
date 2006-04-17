@@ -25,7 +25,7 @@ import org.roller.config.RollerRuntimeConfig;
 import org.roller.util.rome.ContentModule;
 
 import org.roller.util.Utilities;
-
+import org.apache.commons.lang.StringUtils;
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndContent;
@@ -166,20 +166,26 @@ public class PlanetEntryData extends PersistentObject
     {
         Roller roller = RollerFactory.getRoller();
         PagePluginManager ppmgr = roller.getPagePluginManager();
-        WeblogEntryData processedEntry = 
-            ppmgr.applyPagePlugins(rollerEntry, pagePlugins, true);
+       
+        String content = "";
+        if (!StringUtils.isEmpty(rollerEntry.getText())) {
+            content = rollerEntry.getText();
+        } else {
+            content = rollerEntry.getSummary();
+        }
+        content = ppmgr.applyPagePlugins(rollerEntry, pagePlugins, content, true);
         
-        setAuthor(    processedEntry.getCreator().getFullName());
-        setTitle(     processedEntry.getTitle());
-        setPermalink( processedEntry.getLink());
-        setPublished( processedEntry.getPubTime());         
-        setContent(   processedEntry.getText());
+        setAuthor(    rollerEntry.getCreator().getFullName());
+        setTitle(     rollerEntry.getTitle());
+        setPermalink( rollerEntry.getLink());
+        setPublished( rollerEntry.getPubTime());         
+        setContent(   content);
         
         setPermalink(RollerRuntimeConfig.getProperty("site.absoluteurl") 
-                    + processedEntry.getPermaLink());
+            + rollerEntry.getPermaLink());
         
         List cats = new ArrayList();
-        cats.add(processedEntry.getCategory().getPath());
+        cats.add(rollerEntry.getCategory().getPath());
         setCategories(cats);   
     }
     

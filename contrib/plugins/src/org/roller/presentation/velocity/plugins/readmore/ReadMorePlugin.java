@@ -74,11 +74,8 @@ public class ReadMorePlugin implements PagePlugin
 		return str;
 	}
     
-    public String render(WeblogEntryData entry, boolean skipFlag)
-    {
-        if (skipFlag) 
-            return entry.getText();
-        
+    public String render(WeblogEntryData entry, String str)
+    {        
         // in case it didn't initialize
         String pageLink = "Weblog";
         try
@@ -96,7 +93,7 @@ public class ReadMorePlugin implements PagePlugin
         //String result = Utilities.truncateNicely(entry.getText(), 240, 260, "... ");
         
         // if the result is shorter, we need to add "Read More" link
-        if (result.length() < entry.getText().length())
+        if (result.length() < str.length())
         {            
             String link = "<div class=\"readMore\"><a href=\"" + 
                 baseURL + entry.getPermaLink() + "\">Read More</a></div>";
@@ -109,4 +106,7 @@ public class ReadMorePlugin implements PagePlugin
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
+
+
+    public boolean getSkipOnSingleEntry() {return true;}
 }

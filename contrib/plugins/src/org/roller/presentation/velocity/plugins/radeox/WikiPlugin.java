@@ -55,11 +55,13 @@ public class WikiPlugin implements PagePlugin
         return EngineManager.getInstance().render(src, context);
     }
     
-    public String render( WeblogEntryData entry, boolean skipFlag)
+    public String render( WeblogEntryData entry, String str)
     {
-        return render( entry.getText() );
+        return render(str);
     }
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
+
+    public boolean getSkipOnSingleEntry() {return false;}
 }
