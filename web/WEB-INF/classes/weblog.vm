@@ -226,7 +226,7 @@
    #else
       #if( $pageModel.weblogEntry) 
           ## on single-entry pages, we prefer text
-          #if( $entry.content )
+          #if( $entry.text )
               #set( $sourceText = $entry.text )
           #else 
               #set( $sourceText = $entry.summary )
