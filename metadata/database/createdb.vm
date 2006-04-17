@@ -186,7 +186,10 @@ create table weblogentry (
     rightToLeft     $BOOLEAN_SQL_TYPE_FALSE not null,
     pinnedtomain    $BOOLEAN_SQL_TYPE_FALSE not null,
     locale          varchar(20),
-    status          varchar(20) not null
+    status          varchar(20) not null,
+    content         $TEXT_SQL_TYPE default null, 
+    content_type    varchar(48) default null, 
+    content_src     varchar(512) default null
 );
 create index we_websiteid_idx on weblogentry( websiteid );
 create index we_categoryid_idx on weblogentry( categoryid );

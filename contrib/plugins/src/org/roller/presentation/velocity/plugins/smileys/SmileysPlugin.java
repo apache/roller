@@ -174,11 +174,13 @@ public class SmileysPlugin implements PagePlugin
     /* 
      * @see org.roller.presentation.velocity.PagePlugin#render(org.roller.pojos.WeblogEntryData, boolean)
      */
-    public String render(WeblogEntryData entry, boolean skipFlag)
+    public String render(WeblogEntryData entry, String str)
     {
-        return render(entry.getText());
+        return render(str);
     }
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
+
+    public boolean getSkipOnSingleEntry() {return false;}
 }

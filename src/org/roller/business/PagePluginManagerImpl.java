@@ -98,8 +98,9 @@ public class PagePluginManagerImpl implements PagePluginManager {
         return ret;
     }
     
-    public WeblogEntryData applyPagePlugins(
-            WeblogEntryData entry, Map pagePlugins, boolean skipFlag) { 
+    public String applyPagePlugins(
+        WeblogEntryData entry, Map pagePlugins, String str, boolean singleEntry) { 
+        String ret = str;
         WeblogEntryData copy = new WeblogEntryData(entry);        
         List entryPlugins = copy.getPluginsList();
         if (entryPlugins != null && !entryPlugins.isEmpty()) {    
@@ -108,13 +109,15 @@ public class PagePluginManagerImpl implements PagePluginManager {
                 String key = (String)iter.next();
                 PagePlugin pagePlugin = (PagePlugin)pagePlugins.get(key);
                 if (pagePlugin != null) {
-                    copy.setText((pagePlugin).render(copy, skipFlag));
+                    if (!(singleEntry && pagePlugin.getSkipOnSingleEntry())) {
+                        ret = pagePlugin.render(entry, ret);
+                    }
                 } else {
                     mLogger.error("ERROR: plugin not found: " + key);
                 }
             }
         }
-        return copy;
+        return ret;
     }
     
     private static boolean isPagePlugin(Class pluginClass) {

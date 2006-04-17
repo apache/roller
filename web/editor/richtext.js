@@ -78,7 +78,7 @@ function writeRichText(rte, html, width, height, buttons, readOnly) {
 		if (buttons == true) {
 			document.writeln('<table class="rteBack" cellpadding=2 cellspacing=0 id="Buttons1_' + rte + '" width="' + tablewidth + '">');
 			document.writeln('	<tr>');
-			document.writeln('		<td>');
+            document.writeln('		<td>');
 			document.writeln('			<select id="formatblock_' + rte + '" onchange="selectFont(\'' + rte + '\', this.id);">');
 			document.writeln('				<option value="">[Style]</option>');
 			document.writeln('				<option value="<p>">Paragraph &lt;p&gt;</option>');
@@ -119,58 +119,74 @@ function writeRichText(rte, html, width, height, buttons, readOnly) {
 			document.writeln('</table>');
 			document.writeln('<table class="rteBack" cellpadding="0" cellspacing="0" id="Buttons2_' + rte + '" width="' + tablewidth + '">');
 			document.writeln('	<tr>');
-			document.writeln('		<td><img id="bold" class="rteImage" src="' + imagesPath + 'bold.gif" width="25" height="24" alt="Bold" title="Bold" onClick="rteCommand(\'' + rte + '\', \'bold\', \'\')"></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'italic.gif" width="25" height="24" alt="Italic" title="Italic" onClick="rteCommand(\'' + rte + '\', \'italic\', \'\')"></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'underline.gif" width="25" height="24" alt="Underline" title="Underline" onClick="rteCommand(\'' + rte + '\', \'underline\', \'\')"></td>');
+
+// ROLLER_MOD: changed icon images
+
+			document.writeln('		<td><img id="bold" class="rteImage" src="' + imagesPath + 'bold.gif" width="16" height="16" alt="Bold" title="Bold" onClick="rteCommand(\'' + rte + '\', \'bold\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_italic.png" width="16" height="16" alt="Italic" title="Italic" onClick="rteCommand(\'' + rte + '\', \'italic\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_underline.png" width="16" height="16" alt="Underline" title="Underline" onClick="rteCommand(\'' + rte + '\', \'underline\', \'\')"></td>');
 			document.writeln('		<td><img class="rteVertSep" src="' + imagesPath + 'blackdot.gif" width="1" height="20" border="0" alt=""></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'left_just.gif" width="25" height="24" alt="Align Left" title="Align Left" onClick="rteCommand(\'' + rte + '\', \'justifyleft\', \'\')"></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'centre.gif" width="25" height="24" alt="Center" title="Center" onClick="rteCommand(\'' + rte + '\', \'justifycenter\', \'\')"></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'right_just.gif" width="25" height="24" alt="Align Right" title="Align Right" onClick="rteCommand(\'' + rte + '\', \'justifyright\', \'\')"></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'justifyfull.gif" width="25" height="24" alt="Justify Full" title="Justify Full" onclick="rteCommand(\'' + rte + '\', \'justifyfull\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_align_left.png" width="16" height="16" alt="Align Left" title="Align Left" onClick="rteCommand(\'' + rte + '\', \'justifyleft\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_align_center.png" width="16" height="16" alt="Center" title="Center" onClick="rteCommand(\'' + rte + '\', \'justifycenter\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_align_right.png" width="16" height="16" alt="Align Right" title="Align Right" onClick="rteCommand(\'' + rte + '\', \'justifyright\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_align_justify.png" width="16" height="16" alt="Justify Full" title="Justify Full" onclick="rteCommand(\'' + rte + '\', \'justifyfull\', \'\')"></td>');
 			document.writeln('		<td><img class="rteVertSep" src="' + imagesPath + 'blackdot.gif" width="1" height="20" border="0" alt=""></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'hr.gif" width="25" height="24" alt="Horizontal Rule" title="Horizontal Rule" onClick="rteCommand(\'' + rte + '\', \'inserthorizontalrule\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_horizontalrule.png" width="16" height="16" alt="Horizontal Rule" title="Horizontal Rule" onClick="rteCommand(\'' + rte + '\', \'inserthorizontalrule\', \'\')"></td>');
 			document.writeln('		<td><img class="rteVertSep" src="' + imagesPath + 'blackdot.gif" width="1" height="20" border="0" alt=""></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'numbered_list.gif" width="25" height="24" alt="Ordered List" title="Ordered List" onClick="rteCommand(\'' + rte + '\', \'insertorderedlist\', \'\')"></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'list.gif" width="25" height="24" alt="Unordered List" title="Unordered List" onClick="rteCommand(\'' + rte + '\', \'insertunorderedlist\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_list_numbers.png" width="16" height="16" alt="Ordered List" title="Ordered List" onClick="rteCommand(\'' + rte + '\', \'insertorderedlist\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_list_bullets.png" width="16" height="16" alt="Unordered List" title="Unordered List" onClick="rteCommand(\'' + rte + '\', \'insertunorderedlist\', \'\')"></td>');
 			document.writeln('		<td><img class="rteVertSep" src="' + imagesPath + 'blackdot.gif" width="1" height="20" border="0" alt=""></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'outdent.gif" width="25" height="24" alt="Outdent" title="Outdent" onClick="rteCommand(\'' + rte + '\', \'outdent\', \'\')"></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'indent.gif" width="25" height="24" alt="Indent" title="Indent" onClick="rteCommand(\'' + rte + '\', \'indent\', \'\')"></td>');
-			document.writeln('		<td><div id="forecolor_' + rte + '"><img class="rteImage" src="' + imagesPath + 'textcolor.gif" width="25" height="24" alt="Text Color" title="Text Color" onClick="dlgColorPalette(\'' + rte + '\', \'forecolor\', \'\')"></div></td>');
-			document.writeln('		<td><div id="hilitecolor_' + rte + '"><img class="rteImage" src="' + imagesPath + 'bgcolor.gif" width="25" height="24" alt="Background Color" title="Background Color" onClick="dlgColorPalette(\'' + rte + '\', \'hilitecolor\', \'\')"></div></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_indent_remove.png" width="16" height="16" alt="Outdent" title="Outdent" onClick="rteCommand(\'' + rte + '\', \'outdent\', \'\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_indent.png" width="16" height="16" alt="Indent" title="Indent" onClick="rteCommand(\'' + rte + '\', \'indent\', \'\')"></td>');
+			document.writeln('		<td><div id="forecolor_' + rte + '"><img class="rteImage" src="' + imagesPath + 'color_swatch.png" width="16" height="16" alt="Text Color" title="Text Color" onClick="dlgColorPalette(\'' + rte + '\', \'forecolor\', \'\')"></div></td>');
+			document.writeln('		<td><div id="hilitecolor_' + rte + '"><img class="rteImage" src="' + imagesPath + 'paintcan.png" width="16" height="16 alt="Background Color" title="Background Color" onClick="dlgColorPalette(\'' + rte + '\', \'hilitecolor\', \'\')"></div></td>');
 			document.writeln('		<td><img class="rteVertSep" src="' + imagesPath + 'blackdot.gif" width="1" height="20" border="0" alt=""></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'hyperlink.gif" width="25" height="24" alt="Insert Link" title="Insert Link" onClick="dlgInsertLink(\'' + rte + '\', \'link\')"></td>');
-			document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'image.gif" width="25" height="24" alt="Add Image" title="Add Image" onClick="addImage(\'' + rte + '\')"></td>');
-			document.writeln('		<td><div id="table_' + rte + '"><img class="rteImage" src="' + imagesPath + 'insert_table.gif" width="25" height="24" alt="Insert Table" title="Insert Table" onClick="dlgInsertTable(\'' + rte + '\', \'table\', \'\')"></div></td>');
-			if (isIE) {
-				document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'spellcheck.gif" width="25" height="24" alt="Spell Check" title="Spell Check" onClick="checkspell()"></td>');
-			}
-	//		document.writeln('		<td><img class="rteVertSep" src="' + imagesPath + 'blackdot.gif" width="1" height="20" border="0" alt=""></td>');
-	//		document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'cut.gif" width="25" height="24" alt="Cut" title="Cut" onClick="rteCommand(\'' + rte + '\', \'cut\')"></td>');
-	//		document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'copy.gif" width="25" height="24" alt="Copy" title="Copy" onClick="rteCommand(\'' + rte + '\', \'copy\')"></td>');
-	//		document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'paste.gif" width="25" height="24" alt="Paste" title="Paste" onClick="rteCommand(\'' + rte + '\', \'paste\')"></td>');
-	//		document.writeln('		<td><img class="rteVertSep" src="' + imagesPath + 'blackdot.gif" width="1" height="20" border="0" alt=""></td>');
-	//		document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'undo.gif" width="25" height="24" alt="Undo" title="Undo" onClick="rteCommand(\'' + rte + '\', \'undo\')"></td>');
-	//		document.writeln('		<td><img class="rteImage" src="' + imagesPath + 'redo.gif" width="25" height="24" alt="Redo" title="Redo" onClick="rteCommand(\'' + rte + '\', \'redo\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'link_add.png" width="16" height="16" alt="Insert Link" title="Insert Link" onClick="dlgInsertLink(\'' + rte + '\', \'link\')"></td>');
+			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'image_add.png" width="16" height="16" alt="Add Image" title="Add Image" onClick="addImage(\'' + rte + '\')"></td>');
+			document.writeln('		<td><div id="table_' + rte + '"><img class="rteImage" src="' + imagesPath + 'table_add.png" width="16" height="16" alt="Insert Table" title="Insert Table" onClick="dlgInsertTable(\'' + rte + '\', \'table\', \'\')"></div></td>');
 			document.writeln('		<td width="100%"></td>');
 			document.writeln('	</tr>');
 			document.writeln('</table>');
 		}
-		document.writeln('<iframe id="' + rte + '" name="' + rte + '" width="' + width + 'px" height="' + height + 'px" src="' + includesPath + 'blank.htm"></iframe>');
-		if (!readOnly) document.writeln('<br /><input type="checkbox" id="chkSrc' + rte + '" onclick="toggleHTMLSrc(\'' + rte + '\',' + buttons + ');" />&nbsp;<label for="chkSrc' + rte + '">View Source</label>');
+        if (getCookie(rte + '_size') != null) {
+            height = getCookie(rte + '_size');
+        }
+		document.writeln('<iframe class="rteFrame" id="' + rte + '" name="' + rte + '" width="' + width + '" height="' + height + '" src="' + includesPath + 'blank.htm"></iframe>');
+
+// ROLLER_MOD: added resize buttons
+			
+        document.writeln('<table class="rteBack" cellpadding="0" cellspacing="0" id="Buttons3_' + rte + '" width="' + tablewidth + '"><tr>');        
+		if (!readOnly) {
+            document.writeln('<td><input type="checkbox" id="chkSrc' + rte + '" onclick="toggleHTMLSrc(\'' + rte + '\',' + buttons + ');" />&nbsp;<label for="chkSrc' + rte + '">View Source</label></td>');
+        }
+	    document.writeln('<td align="right"><a href="#" onclick="changeSize(\'' + rte + '\',\'' + rte + '_size\', 20)" /><img class="rteImageSm" src="' + imagesPath + 'arrow_down.png" width="16" height="16" border="0" /></a>'   );
+	    document.writeln('<a href="#" onclick="changeSize(\'' + rte + '\',\'' + rte + '_size\', -20)" /><img class="rteImageSm" src="' + imagesPath + 'arrow_up.png" width="16" height="16" border="0" /></a></td>'   );
+        document.writeln("</tr></table>");
+
 		document.writeln('<iframe width="154" height="104" id="cp' + rte + '" src="' + includesPath + 'palette.htm" marginwidth="0" marginheight="0" scrolling="no" style="visibility:hidden; position: absolute;"></iframe>');
 		document.writeln('<input type="hidden" id="hdn' + rte + '" name="' + rte + '" value="">');
 		document.writeln('</div>');
-		
 		document.getElementById('hdn' + rte).value = html;
 		enableDesignMode(rte, html, readOnly);
+
 	} else {
 		if (!readOnly) {
-			document.writeln('<textarea name="' + rte + '" id="' + rte + '" style="width: ' + width + 'px; height: ' + height + 'px;">' + html + '</textarea>');
+			document.writeln('<textarea name="' + rte + '" id="' + rte + '" style="width: ' + width + '; height: ' + height + ';">' + html + '</textarea>');
 		} else {
-			document.writeln('<textarea name="' + rte + '" id="' + rte + '" style="width: ' + width + 'px; height: ' + height + 'px;" readonly>' + html + '</textarea>');
+			document.writeln('<textarea name="' + rte + '" id="' + rte + '" style="width: ' + width + '; height: ' + height + ';" readonly>' + html + '</textarea>');
 		}
 	}
 }
+
+// ROLLER_MOD: added resize method
+function changeSize(id, cookiename, num) {
+    var frame = document.getElementById(id);
+    frame.height = Number(frame.height) + Number(num); 
+    var expires = new Date();
+    expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
+    setCookie(cookiename, frame.height, expires);
+}
+
 
 function enableDesignMode(rte, html, readOnly) {
 	var frameHtml = "<html id=\"" + rte + "\">\n";

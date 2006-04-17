@@ -55,7 +55,6 @@ public class PageHelper
     private HttpServletResponse  mResponse = null;     
     private RollerRequest        mRollerReq = null;  
     private Map                  mPagePlugins = null;  // Plugins keyed by name   
-    private boolean              mSkipFlag = false;
     private WebsiteData          mWebsite = null;
     
     //------------------------------------------------------------------------
@@ -94,20 +93,7 @@ public class PageHelper
                 RollerContext.getRollerContext().getAbsoluteContextUrl(),
                 mVelocityContext);
     }
-   
-    //------------------------------------------------------------------------
-    /**
-     * This is a quasi-hack: there are places we don't want to render the
-     * ReadMore Plugin in particular (I cannot think of other plugins
-     * which warrant this treatment).  The "skip flag" will be made
-     * available to the Plugin if it wants to check to see if it should
-     * be skipped.
-     */
-    public void setSkipFlag(boolean skip) 
-    {
-        mSkipFlag = skip;
-    }
-    
+       
     //------------------------------------------------------------------------
     
     /**
@@ -434,29 +420,27 @@ public class PageHelper
      * Pass the String through any PagePlugins that have been
      * assigned to the PageHelper, as selected by the Entry.
      * 
-     * @param str
-     * @return
+     * @param entry Entry being rendered.
+     * @param str   String to which plugins are to be applied.
+     * @return      Result of applying plugins to str.
      */
-    public String renderPlugins(WeblogEntryDataWrapper entry)
+    public String renderPlugins(WeblogEntryDataWrapper entry, String str)
     {
-        mLogger.debug("Rendering page plugins on WeblogEntryData");
-        
-        // we have to make a copy to temporarily store the
-        // changes wrought by Plugins (otherwise they might
-        // end up persisted!).
-        WeblogEntryData copy = new WeblogEntryData(entry.getPojo());
-        
+        String ret = str;
+        mLogger.debug("Applying page plugins to string");
+                
         if (mPagePlugins != null)
         {
-            List entryPlugins = copy.getPluginsList();
+            List entryPlugins = entry.getPluginsList();
             // if no Entry plugins, don't bother looping.
             if (entryPlugins != null && !entryPlugins.isEmpty())
             {    
                 // need to do this to tell ReadMore not to do its job
                 // if we are in the "view one Entry" page.
+                boolean singleEntry = false;
                 if (mRollerReq == null || mRollerReq.getWeblogEntry() != null)
                 {
-                    mSkipFlag = true;
+                    singleEntry = true;
                 }
                 
                 // now loop over mPagePlugins, matching
@@ -469,13 +453,15 @@ public class PageHelper
                     if (entryPlugins.contains(key))
                     {
                         PagePlugin pagePlugin = (PagePlugin)mPagePlugins.get(key);
-                        copy.setText((pagePlugin).render(copy, mSkipFlag));
+                        if (!(singleEntry && pagePlugin.getSkipOnSingleEntry())) { 
+                            ret = pagePlugin.render(entry.getPojo(), ret);
+                        }
                     }
                 }
             }
         }
         
-        return copy.getText();
+        return ret;
     }
     
     /**

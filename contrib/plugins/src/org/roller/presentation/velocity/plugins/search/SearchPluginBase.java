@@ -52,12 +52,12 @@ public abstract class SearchPluginBase {
      * Apply plugin to content of specified WeblogEntry.
      *
      * @param entry           WeblogEntry to which plugin should be applied.
-     * @param skipFlag        ignored for this plugin.
+     * @param singleEntry     Ignored.
      * @return Results of applying plugin to entry.
      * @see org.roller.model.PagePlugin#render(org.roller.pojos.WeblogEntryData, boolean)
      */
-    public String render(WeblogEntryData entry, boolean skipFlag) {
-        return render(entry.getText());
+    public String render(WeblogEntryData entry, String str) {
+        return render(str);
     }
 
     /**
@@ -170,4 +170,6 @@ public abstract class SearchPluginBase {
             throw new RuntimeException(uex);
         }
     }
+
+    public boolean getSkipOnSingleEntry() {return false;}
 }

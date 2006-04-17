@@ -74,7 +74,7 @@
       </property-def>
       <property-def  name="users.editor.pages"  key="configForm.editorPages">
          <type>text</type>
-         <default-value>editor-ekit.jsp,editor-text.jsp,editor-dhtml.jsp,editor-text-js.jsp,editor-wiki-js.jsp,editor-rte.jsp</default-value>
+         <default-value>editor-text.jsp,editor-rte.jsp</default-value>
          <rows>3</rows>
          <cols>40</cols>
       </property-def>

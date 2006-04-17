@@ -54,7 +54,10 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     private String    id            = null;
     private String    title         = null;
     private String    link          = null;
+    private String    summary       = null;
     private String    text          = null;
+    private String    contentType   = null;
+    private String    contentSrc    = null;
     private String    anchor        = null;
     private Timestamp pubTime       = null;
     private Timestamp updateTime    = null;
@@ -231,6 +234,25 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     }
 
     /** 
+     * Get summary for weblog entry (maps to RSS description and Atom summary).
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field 
+     * @hibernate.property column="summary" non-null="false" unique="false"
+     */
+    public String getSummary() {
+        return summary;
+    }
+
+    /** 
+     * Set summary for weblog entry (maps to RSS description and Atom summary).
+     * @ejb:persistent-field 
+     */
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    /** 
+     * Get content text for weblog entry (maps to RSS content:encoded and Atom content).
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
      * @hibernate.property column="text" non-null="true" unique="false"
@@ -240,12 +262,51 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         return this.text;
     }
 
-    /** @ejb:persistent-field */
+    /** 
+     * Set content text for weblog entry (maps to RSS content:encoded and Atom content).
+     * @ejb:persistent-field 
+     */
     public void setText(java.lang.String text)
     {
         this.text = text;
     }
+    
+    /** 
+     * Get content type (text, html, xhtml or a MIME content type)
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field 
+     * @hibernate.property column="content_type" non-null="false" unique="false"
+     */
+    public String getContentType() {
+        return contentType;
+    }
 
+    /** 
+     * Set content type (text, html, xhtml or a MIME content type)
+     * @ejb:persistent-field 
+     */
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    /** 
+     * Get URL for out-of-line content.
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field 
+     * @hibernate.property column="content_src" non-null="false" unique="false"
+     */
+    public String getContentSrc() {
+        return contentSrc;
+    }
+
+    /** 
+     * Set URL for out-of-line content.
+     * @ejb:persistent-field 
+     */
+    public void setContentSrc(String contentSrc) {
+        this.contentSrc = contentSrc;
+    }
+        
     /** 
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field 
@@ -1156,4 +1217,6 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         }
         return false;
     }
+
+
 }

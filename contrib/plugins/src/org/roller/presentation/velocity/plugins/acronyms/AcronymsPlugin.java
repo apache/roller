@@ -101,12 +101,12 @@ public class AcronymsPlugin implements PagePlugin
     /**
 	 * @see org.roller.presentation.velocity.PagePlugin#render(org.roller.pojos.WeblogEntryData, boolean)
 	 */
-	public String render(WeblogEntryData entry, boolean skipFlag)
+	public String render(WeblogEntryData entry, String str)
 	{
-        String text = entry.getText();
+        String text = str;
         
 		if (mLogger.isDebugEnabled()) {
-			mLogger.debug("render( entry = "+entry.getId()+", skipFlag = "+skipFlag+" )");
+			mLogger.debug("render(entry = "+entry.getId()+")");
 		}
 
         /*
@@ -138,14 +138,6 @@ public class AcronymsPlugin implements PagePlugin
                 + "</acronym>";
             count++;
         }
-		
-		// check skipper
-        /* I don't think this Plugin should skip. -Lance
-		if (skipFlag)
-		{
-			return text;
-		}
-        */
         
         // if there are none, no work to do
         if (acronymPatterns == null || acronymPatterns.length == 0) {
@@ -234,4 +226,6 @@ public class AcronymsPlugin implements PagePlugin
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
+
+    public boolean getSkipOnSingleEntry() {return false;}
 }

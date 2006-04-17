@@ -1,20 +1,34 @@
 .rteImage {
-	background: #D3D3D3;
-	border: 1px solid #D3D3D3;
+	background: #FFFFFF; 
+	background: #F0F0F0;
+	border: 1px solid #D3D3D3; 
+    padding: 2px;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.rteImageSm {
+	background: #FFFFFF; 
+	background: #F0F0F0;
+	border: 1px solid #D3D3D3; 
+    padding: 2px;
+    margin: 2px 0px 0px 0px;
 	cursor: pointer;
 	cursor: hand;
 }
 
 .rteImageRaised, .rteImage:hover {
-	background: #D3D3D3;
+	background: #FFFFFF; 
+    background: #F0F0F0; 
 	border: 1px outset;
 	cursor: pointer;
 	cursor: hand;
 }
 
 .rteImageLowered, .rteImage:active {
-	background: #D3D3D3;
-	border: 1px inset;
+	background: #FFFFFF; 
+	background: #F0F0F0; 
+	/*border: 1px inset;*/
 	cursor: pointer;
 	cursor: hand;
 }
@@ -24,18 +38,27 @@
 }
 
 .rteBack {
-	background: #D3D3D3;
-	border: 1px outset;
+	background: #FFFFFF; 
+	background: #F0F0F0; 
+	/*border: 1px outset; */
 	letter-spacing: 0;
 	padding: 2px;
 }
 
 .rteBack tbody tr td, .rteBack tr td {
-	background: #D3D3D3;
+	background: #FFFFFF; 
+	background: #F0F0F0; 
 	padding: 0;
 }
 
 .rteDiv {
 	display: block;
 	position: relative;
+	background: #F0F0F0;
+    border: 1px solid #F0F0F0;
 }
+
+.rteFrame {
+   border: 0px;
+}
+

@@ -9,18 +9,8 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 
 /**
- * Interface for Roller weblog entry plugins.
- * Plugin objects operate on the text field of a weblog entry object. 
- * Plugins save state and may not be thread-safe.
- * Consequently, new plugin objects are created for each request.
- * This interface has no dependency on Servlet classes, but page plugins may.
- *
- * Existing implementations:
- * autogenerate links from Bookmarks (BookmarkPlugin),
- * obfuscate email addresses (EmailObfuscator), truncate an Entry at 250
- * characters and add a Read More... link (ReadMorePlugin), and transform
- * 'simple markup' according to several schemes (JSPWiki, Radeox, Textile).
- * See the "contrib" directory for these implementations.
+ * Interface for Roller weblog entry page plugins, which can transform
+ * entry summary or text fields.
  *
  * @author David M Johnson
  */
@@ -42,29 +32,18 @@ public interface PagePlugin {
             Context ctx) throws RollerException;
     
     /**
-     * Apply plugin to content of specified WeblogEntry.  The WeblogEntryData
-     * is actually a copy of the real thing, so that changes made via
-     * entry.setText() are not persisted.  Notice this; no changes made
-     * to the entry will be persisted.
-     * Some Plugins are only suited to rendering during Page display
-     * (not when generating RSS or Trackback content or in the
-     * Entry Preview) - ReadMorePlugin is an example of such a case.
-     * If the skipFlag is set to 'true' it merely returns the
-     * unadorned contents of entry.getText().
-     *
-     * @param entry WeblogEntry to which plugin should be applied.
-     * @param skipFlag Should processing be skipped.
-     * @return Results of applying plugin to entry.
+     * Apply plugin to summary or text string associated with entry.
+     * @param entry       Entry being rendered.
+     * @param str         String to which plugin should be applied.
+     * @param singleEntry Indicates rendering on single entry page.
+     * @return            Results of applying plugin to entry.
      */
-    public String render(WeblogEntryData entry, boolean skipFlag);
+    public String render(WeblogEntryData entry, String str);
     
     /**
-     * Apply plugin to content of specified String.  Some plugins
-     * may require interaction with an Entry to do its job (such
-     * as the BookmarkPlugin) and will simply return the String
-     * that was passed in.
-     *
+     * Apply plugin to summary or text specified in string.
      * @param str String to which plugin should be applied.
+     * @param singleEntry Indicates rendering on single entry page.
      * @return Results of applying plugin to string.
      */
     public String render(String str);
@@ -89,4 +68,7 @@ public interface PagePlugin {
      * @return A brief description of the Plugin.
      */
     public String getDescription();
+    
+    /** Returns true if this plugin should be skipped on single entry pages. */
+    public boolean getSkipOnSingleEntry();
 }

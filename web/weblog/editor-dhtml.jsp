@@ -1,8 +1,6 @@
-
 <%-- This page is designed to be included in edit-weblog.jsp --%>
-
 <%@ include file="/taglibs.jsp" %>
-
+<html:hidden property="summary" />
 <html:hidden property="text" />
     
 <script language="JavaScript">

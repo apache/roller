@@ -74,36 +74,203 @@ function publish() {
 </c:choose>
 
 <html:form action="/editor/weblog" method="post" focus="title">
-
     <html:hidden property="day"/>
     <html:hidden property="id"/>
     <html:hidden property="creatorId"/>
     <html:hidden property="websiteId"/>
     <html:hidden property="anchor"/>
-    <%-- updateTime is now set after the entry is submitted -- Allen G
-    <html:hidden property="updateTime"/> --%>
     <html:hidden property="status"/>
     <html:hidden property="link"/>
+    <html:hidden property="contentType" />
+    <html:hidden property="contentSrc" />
     <html:hidden name="method" property="method" value="save"/>
-
-   <%-- ================================================================== --%>
-   <%-- weblog entry fields: title, link, category, etc. --%>
-
-   <table class="entryEditTable" cellpadding="0" cellspacing="0">
-       <tr><td class="entryEditFormLabel">
-        <label for="title"><fmt:message key="weblogEdit.title" /></label>
-        </td><td>
-        <html:text property="title" size="50" maxlength="255" tabindex="1" />
-       </td></tr>
-
-    <tr><td class="entryEditFormLabel">
-        <label for="categoryId"><fmt:message key="weblogEdit.category" /></label>
-        </td><td>
-        <html:select property="categoryId" size="1" tabindex="4">
-            <html:optionsCollection name="model" property="categories" value="id" label="path"  />
-        </html:select>
-    </td></tr>
     
+    <%-- ================================================================== --%>
+    <%-- Title field --%>
+
+    <p class="toplabel"><fmt:message key="weblogEdit.title" /></p>   
+    <html:text property="title" style="width:100%" maxlength="255" tabindex="1" />
+    
+    
+    <%-- ================================================================== --%>
+    <%-- Weblog edit, preview, or spell check area --%>
+    
+    <%-- EDIT MODE --%>
+    <c:if test="${model.editMode}">
+    <div style="width: 100%;"> <%-- need this div to control text-area size in IE 6 --%>
+       <%-- include edit page --%>
+       <div >
+            <jsp:include page="<%= model.getEditorPage() %>" />
+       </div>
+     </div>
+    </c:if>
+    
+    <%-- PREVIEW MODE --%>
+    <c:if test="${model.previewMode}" >
+        <html:hidden property="text" />
+        <html:hidden property="summary" />
+
+        <br />
+        <br />
+        <div class="centerTitle"><fmt:message key="weblogEdit.previewSummary" /></div>
+        <div class="previewEntrySummary">
+           <roller:ShowEntrySummary name="model" property="weblogEntry" />
+        </div>
+        
+        <br />
+        <br />
+        <div class="centerTitle"><fmt:message key="weblogEdit.previewContent" /></div>
+        <div class="previewEntryContent">
+           <roller:ShowEntryContent name="model" property="weblogEntry" />
+        </div>
+    </c:if>
+
+    <%-- SPELLCHECK MODE --%>
+    <c:if test="${model.spellMode}" >
+        <html:hidden property="text" />
+        <html:hidden property="summary" />
+        
+        <br />
+        <br />
+        <div class="centerTitle"><fmt:message key="weblogEdit.spellCheckContent" /></div>
+        <div class="previewEntryContent">
+           <c:out value="${model.spellCheckHtml}" escapeXml="false" />
+        </div>
+    </c:if>
+    
+    
+   <%-- ================================================================== --%>
+   <%-- the button box --%>
+
+   <br></br>
+   <div class="control">
+
+        <%-- save draft and post buttons: only in edit and preview mode --%>
+        <c:if test="${model.editMode || model.previewMode}" >
+        
+            <c:choose>
+            
+	            <c:when test="${model.userAuthorizedToAuthor}" >        
+                    <input type="button" name="post"
+	                       value='<fmt:message key="weblogEdit.post" />'
+	                       onclick="publish()" />
+	                <input type="button" name="draft"
+	                       value='<fmt:message key="weblogEdit.save" />'
+	                       onclick="saveDraft()" />                                      
+	                <c:if test="${!empty weblogEntryFormEx.id}">
+	                    <input type="button" name="draft"
+	                           value='<fmt:message key="weblogEdit.deleteEntry" />'
+	                           onclick="deleteWeblogEntry()" />
+	                </c:if>
+	            </c:when> 
+	            
+	            <c:when test="${model.userAuthorized}" > 
+                    <c:if test="${weblogEntryFormEx.status == 'DRAFT'}">       
+		                <input type="button" name="post"
+		                       value='<fmt:message key="weblogEdit.submitForReview" />'
+		                       onclick="publish()" />
+		                <input type="button" name="draft"
+		                       value='<fmt:message key="weblogEdit.save" />'
+		                       onclick="saveDraft()" />                  
+		                <%-- only show delete button for saved entries --%>
+		                <c:if test="${!empty weblogEntryFormEx.id}">
+		                    <input type="button" name="draft"
+		                           value='<fmt:message key="weblogEdit.deleteEntry" />'
+		                           onclick="deleteWeblogEntry()" />
+		                </c:if>   
+                    </c:if>            
+	            </c:when>
+                
+            </c:choose>
+             
+        </c:if>
+
+        <%-- edit mode buttons --%>
+        <c:if test="${model.editMode}" >
+
+            <input type="button" name="preview"
+                   value='<fmt:message key="weblogEdit.previewMode" />'
+                   onclick="previewMode()" />
+
+            <input type="button" name="spelling"
+                   value='<fmt:message key="weblogEdit.check" />'
+                   onclick="spellCheck()" />
+
+        </c:if>
+
+        <%-- preview mode buttons --%>
+        <c:if test="${model.previewMode}" >
+            <input type="button" name="edit" value='<fmt:message key="weblogEdit.returnToEditMode" />'
+                   onclick="returnToEditMode()" />
+        </c:if>
+
+        <%-- spell mode buttons --%>
+        <c:if test="${model.spellMode}" >
+
+            <input type="button" name="correctSpelling"
+                   value='<fmt:message key="weblogEdit.correctSpelling" />'
+                   onclick="submitSpellingCorrections()"  />
+
+            <input type="button" name="cancelSpelling"
+                   value='<fmt:message key="weblogEdit.cancelSpelling" />'
+                   onclick="returnToEditMode()" />
+
+        </c:if>
+    </div>
+
+    
+    <%-- ================================================================== --%>
+    <%-- Other settings --%>
+
+    <br />
+    <h2><fmt:message key="weblogEdit.otherSettings" /></h2>
+ 
+    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">   
+      
+       <tr><td class="entryEditFormLabel">
+          <label for="title">
+             <fmt:message key="weblogEdit.status" />
+          </label>
+       </td><td>
+          <c:if test="${!empty weblogEntryFormEx.id}">
+             <c:if test="${weblogEntryFormEx.published}">
+                <span style="color:green; font-weight:bold">
+                   <fmt:message key="weblogEdit.published" />
+                   (<fmt:message key="weblogEdit.updateTime" />
+                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
+                      dateStyle="short" timeStyle="short" />)
+                </span>
+            </c:if>
+            <c:if test="${weblogEntryFormEx.draft}">
+                <span style="color:orange; font-weight:bold">
+                   <fmt:message key="weblogEdit.draft" />
+                   (<fmt:message key="weblogEdit.updateTime" />
+                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
+                      dateStyle="short" timeStyle="short" />)
+                </span>
+            </c:if>
+            <c:if test="${weblogEntryFormEx.pending}">
+                <span style="color:orange; font-weight:bold">
+                   <fmt:message key="weblogEdit.pending" />
+                   (<fmt:message key="weblogEdit.updateTime" />
+                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
+                      dateStyle="short" timeStyle="short" />)
+                </span>
+            </c:if>
+        </c:if>
+        <c:if test="${empty weblogEntryFormEx.id}">
+           <span style="color:red; font-weight:bold"><fmt:message key="weblogEdit.unsaved" /></span>
+        </c:if>
+    </td></tr>
+        
+    <tr><td class="entryEditFormLabel">
+       <label for="categoryId"><fmt:message key="weblogEdit.category" /></label>
+    </td><td>
+       <html:select property="categoryId" size="1" tabindex="4">
+       <html:optionsCollection name="model" property="categories" value="id" label="path"  />
+       </html:select>
+    </td></tr>
+        
     <tr>
         <td class="entryEditFormLabel">
             <label for="link"><fmt:message key="weblogEdit.pubTime" /></label>
@@ -138,87 +305,16 @@ function publish() {
             </a>
         </td></tr>
     </c:if>
-
-    <tr><td class="entryEditFormLabel">
-        <label for="title">
-           <fmt:message key="weblogEdit.status" />
-        </label>
-    </td><td>
-        <c:if test="${!empty weblogEntryFormEx.id}">
-            <c:if test="${weblogEntryFormEx.published}">
-                <span style="color:green; font-weight:bold">
-                   <fmt:message key="weblogEdit.published" />
-                   (<fmt:message key="weblogEdit.updateTime" />
-                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
-                      dateStyle="short" timeStyle="short" />)
-                </span>
-            </c:if>
-            <c:if test="${weblogEntryFormEx.draft}">
-                <span style="color:orange; font-weight:bold">
-                   <fmt:message key="weblogEdit.draft" />
-                   (<fmt:message key="weblogEdit.updateTime" />
-                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
-                      dateStyle="short" timeStyle="short" />)
-                </span>
-            </c:if>
-            <c:if test="${weblogEntryFormEx.pending}">
-                <span style="color:orange; font-weight:bold">
-                   <fmt:message key="weblogEdit.pending" />
-                   (<fmt:message key="weblogEdit.updateTime" />
-                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
-                      dateStyle="short" timeStyle="short" />)
-                </span>
-            </c:if>
-        </c:if>
-        <c:if test="${empty weblogEntryFormEx.id}">
-           <span style="color:red; font-weight:bold"><fmt:message key="weblogEdit.unsaved" /></span>
-        </c:if>
-    </td></tr>
+    
    </table>
-    
+  
+   
     <%-- ================================================================== --%>
-    <%-- Weblog edit, preview, or spell check area --%>
-
-    <%-- EDIT MODE --%>
-    <c:if test="${model.editMode}">
-
-    <div style="width: 100%;"> <%-- need this div to control text-area size in IE 6 --%>
-
-       <%-- include edit page --%>
-       <div >
-            <jsp:include page="<%= model.getEditorPage() %>" />
-       </div>
-
-     </div>
-
-    </c:if>
-
-    <%-- PREVIEW MODE --%>
-    <c:if test="${model.previewMode}" >
-        <br />
-        <div class="centerTitle"><fmt:message key="weblogEdit.previewMode" /></div>
-        <html:hidden property="text" />
-        <div class="previewEntry">
-           <roller:ApplyPlugins name="model" property="weblogEntry" skipFlag="true" />
-        </div>
-    </c:if>
-
-    <%-- SPELLCHECK MODE --%>
-    <c:if test="${model.spellMode}" >
-        <br />
-        <div class="centerTitle"><fmt:message key="weblogEdit.spellMode" /></div>
-        <html:hidden property="text" />
-        <div class="previewEntry">
-           <c:out value="${model.spellCheckHtml}" escapeXml="false" />
-        </div>
-    </c:if>
+    <%-- More other settings --%>
     
-    
-  <h2><fmt:message key="weblogEdit.otherSettings" /></h2>
-    
-  <%-- ================================================================== --%>
-  <%-- comment settings --%>
-
+   <%-- comment settings --%>
+   
+  <br />
   <div id="commentControlToggle" class="controlToggle">
   <span id="icommentControl">+</span>
   <a class="controlToggle" onclick="javascript:toggleControl('commentControlToggle','commentControl')">
@@ -321,95 +417,13 @@ function publish() {
 <% } %>
   </div>
 
-  
-  
-   <%-- ================================================================== --%>
-   <%-- the button box --%>
 
-   <br></br>
-   <div class="control">
-
-        <%-- save draft and post buttons: only in edit and preview mode --%>
-        <c:if test="${model.editMode || model.previewMode}" >
-        
-            <c:choose>
-            
-	            <c:when test="${model.userAuthorizedToAuthor}" >        
-                    <input type="button" name="post"
-	                       value='<fmt:message key="weblogEdit.post" />'
-	                       onclick="publish()" />
-	                <input type="button" name="draft"
-	                       value='<fmt:message key="weblogEdit.save" />'
-	                       onclick="saveDraft()" />                                      
-	                <c:if test="${!empty weblogEntryFormEx.id}">
-	                    <input type="button" name="draft"
-	                           value='<fmt:message key="weblogEdit.deleteEntry" />'
-	                           onclick="deleteWeblogEntry()" />
-	                </c:if>
-	            </c:when> 
-	            
-	            <c:when test="${model.userAuthorized}" > 
-                    <c:if test="${weblogEntryFormEx.status == 'DRAFT'}">       
-		                <input type="button" name="post"
-		                       value='<fmt:message key="weblogEdit.submitForReview" />'
-		                       onclick="publish()" />
-		                <input type="button" name="draft"
-		                       value='<fmt:message key="weblogEdit.save" />'
-		                       onclick="saveDraft()" />                  
-		                <%-- only show delete button for saved entries --%>
-		                <c:if test="${!empty weblogEntryFormEx.id}">
-		                    <input type="button" name="draft"
-		                           value='<fmt:message key="weblogEdit.deleteEntry" />'
-		                           onclick="deleteWeblogEntry()" />
-		                </c:if>   
-                    </c:if>            
-	            </c:when>
-                
-            </c:choose>
-             
-        </c:if>
-
-        <%-- edit mode buttons --%>
-        <c:if test="${model.editMode}" >
-
-            <input type="button" name="preview"
-                   value='<fmt:message key="weblogEdit.previewMode" />'
-                   onclick="previewMode()" />
-
-            <input type="button" name="spelling"
-                   value='<fmt:message key="weblogEdit.check" />'
-                   onclick="spellCheck()" />
-
-        </c:if>
-
-        <%-- preview mode buttons --%>
-        <c:if test="${model.previewMode}" >
-            <input type="button" name="edit" value='<fmt:message key="weblogEdit.returnToEditMode" />'
-                   onclick="returnToEditMode()" />
-        </c:if>
-
-        <%-- spell mode buttons --%>
-        <c:if test="${model.spellMode}" >
-
-            <input type="button" name="correctSpelling"
-                   value='<fmt:message key="weblogEdit.correctSpelling" />'
-                   onclick="submitSpellingCorrections()"  />
-
-            <input type="button" name="cancelSpelling"
-                   value='<fmt:message key="weblogEdit.cancelSpelling" />'
-                   onclick="returnToEditMode()" />
-
-        </c:if>
-    </div>
-
-    
     <%-- ================================================================== --%>
     <%-- Trackback control --%>
     <c:if test="${!empty weblogEntryFormEx.id && model.userAuthorizedToAuthor}">
         <br />
-        <br />
         <a name="trackbacks"></a>
-        <h1><fmt:message key="weblogEdit.trackback" /></h1>
+        <h2><fmt:message key="weblogEdit.trackback" /></h2>
         <fmt:message key="weblogEdit.trackbackUrl" /><br />
         <html:text property="trackbackUrl" size="80" maxlength="255" />
 

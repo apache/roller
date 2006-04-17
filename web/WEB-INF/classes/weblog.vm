@@ -216,63 +216,79 @@
 
 
 #**
- * Use this macro in your day template if you want to override
- * entry rendering in both your HTML and RSS weblog output by defining
- * a page template named _entry.
- *
- * <p>It is no longer necessary to use a page template named _entry
- * if you want to override entry rendering in both your
- * HTML and RSS weblog output (for support of PagePlugins).
- * However, backwards compatibility for such use is still included,
- * or if you have some other need to override entry rendering.
- * The _entry page is now loaded by ContextLoader as $entryPage.</p>
+ * Use this to show entry summary or text as appropriate on your blog pages.
+ * On single-entry pages, text is prefered. Everywhere else, summary is 
+ * preferred. Also, applies all plugins configured by entry.
  *#
 #macro( showEntryText $entry )
-   #if(  $entryPage )
+   #if( $entryPage )
       #parse($entryPage.id)
    #else
-      #if ( $entry.plugins )
-         #set( $entryText = $pageHelper.renderPlugins( $entry ) )
+      #if( $pageModel.weblogEntry) 
+          ## on single-entry pages, we prefer text
+          #if( $entry.content )
+              #set( $sourceText = $entry.text )
+          #else 
+              #set( $sourceText = $entry.summary )
+          #end
       #else
-         #set( $entryText = $entry.text )
+          ## on multi-entry pages, we prefer summary
+          #if( $entry.summary )
+              #set( $sourceText = $entry.summary )
+          #else 
+              #set( $sourceText = $entry.text )
+          #end
       #end
-      #if( $entryLength == -1 )
-        $utilities.textToCDATA($entryText)
+      #if( $entry.plugins )
+         #set( $displayText = $pageHelper.renderPlugins($entry, $sourceText) )
       #else
-        #set( $entryText = $utilities.textToCDATA($utilities.removeHTML($entryText)) )
-        $stringUtils.left( $entryText, $entryLength )... [$entryText.length() characters]
+         #set( $displayText = $entry.text )
       #end
+      $utilities.textToCDATA($displayText)
    #end
 #end
 
 
 #**
- * Use this macro in your day template if you want to override
- * entry rendering in both your HTML and RSS weblog output by defining
- * a page template named _desc.
- *
- * <p>It is no longer necessary to use a page template named _desc
- * if you want to override entry rendering in both your
- * HTML and RSS weblog output (for support of PagePlugins).
- * However, backwards compatibility for such use is still included,
- * or if you have some other need to override entry rendering.
- * The _desc page is now loaded by ContextLoader as $descPage.</p>
+ * Roller uses this macro to display entry.summary in RSS and Atom feeds.
  *#
-#macro( showEntryDescription $entry )
-   #if(  $descPage )
+#macro( showEntrySummary $entry )
+   #if($descPage)
       #parse($descPage.id)
    #else
-      #if ( $entry.plugins )
-         #set( $entryText = $pageHelper.renderPlugins( $entry ) )
+      #if( $entry.plugins)
+         #set( $displayText = $pageHelper.renderPlugins( $entry, $entry.summary))
       #else
-         #set( $entryText = $entry.text )
+         #set( $displayText = $entry.summary )
+      #end
+      #if( $displayText == -1 )
+        $utilities.textToXML($displayText)
+      #else
+        #set( $displayText = $stringUtils.left( $displayText, $entryLength ) )
+        #set( $displayText = $utilities.textToXML($utilities.removeHTML($displayText)) )
+        $displayText... [$entry.text.length() characters]
+      #end
+   #end
+#end
+
+#**
+ * Roller uses this macro to display entry.text in RSS and Atom feeds.
+ *#
+#macro( showEntryContent $entry )
+   #if($descPage)
+      #parse($descPage.id)
+   #else
+      #if( $entry.plugins)
+         #set( $displayText = $pageHelper.renderPlugins( $entry, $entry.text))
+      #else
+         #set( $displayText = $entry.text )
       #end
       #if( $entryLength == -1 )
-        $utilities.textToXML($entryText)
+        $utilities.textToXML($displayText)
       #else
-        #set( $entryText = $stringUtils.left( $entryText, $entryLength ) )
-        #set( $entryText = $utilities.textToXML($utilities.removeHTML($entryText)) )
-        $entryText... [$entry.text.length() characters]
+        #set( $displayText = $stringUtils.left( $displayText, $entryLength ) )
+        #set( $displayText = $utilities.textToXML($utilities.removeHTML($displayText)) )
+        $displayText... [$entry.text.length() characters]
       #end
    #end
 #end

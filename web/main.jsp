@@ -52,7 +52,7 @@ request.setAttribute("popularWebsites",
                 <br />
 
             </span>
-            <roller:ApplyPlugins name="post" scope="page" skipFlag="false" />
+            <roller:ShowEntryText name="post" scope="page" singleEntry="true" />
 
          </div>
     </c:forEach>
@@ -84,7 +84,7 @@ request.setAttribute("popularWebsites",
         </span>
         
         <span class="entryDescription">
-        <roller:ApplyPlugins name="post" scope="page" stripHtml="true" maxLength="120" skipFlag="true" />
+        <roller:ShowEntryText name="post" scope="page" stripHtml="true" maxLength="120" singleEntry="false" />
         </span>
         
     </div>

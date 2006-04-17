@@ -182,7 +182,7 @@ WeblogEntryManagementAction.PageModel model =
         <br />
    
         <div style="overflow:auto">
-            <roller:ApplyPlugins name="post" skipFlag="true" scope="page" />
+            <roller:ShowEntryText name="post" singleEntry="false" scope="page" />
         </div>
         
     </td></tr>

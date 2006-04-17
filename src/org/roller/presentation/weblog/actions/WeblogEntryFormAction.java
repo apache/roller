@@ -722,14 +722,19 @@ public final class WeblogEntryFormAction extends DispatchAction {
                         RollerContext.getRollerContext().getAbsoluteContextUrl(),
                         new VelocityContext());
                 
-                WeblogEntryData applied =
-                        ppmgr.applyPagePlugins(entry, plugins, true);
-                String title = applied.getTitle();
-                String excerpt = applied.getText();
-                excerpt = StringUtils.left( Utilities.removeHTML(excerpt),255 );
+                String content = "";
+                if (!StringUtils.isEmpty(entry.getText())) {
+                    content = entry.getText();
+                } else {
+                    content = entry.getSummary();
+                }
+                content = ppmgr.applyPagePlugins(entry, plugins, content, true);
+
+                String title = entry.getTitle();
+                String excerpt = StringUtils.left( Utilities.removeHTML(content),255 );
                 
-                String url = rctx.createEntryPermalink(applied, request, true);
-                String blog_name = applied.getWebsite().getName();
+                String url = rctx.createEntryPermalink(entry, request, true);
+                String blog_name = entry.getWebsite().getName();
                 
                 if (form.getTrackbackUrl() != null) {
                     // by default let all trackbacks to be sent
