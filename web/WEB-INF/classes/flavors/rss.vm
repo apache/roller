@@ -23,7 +23,7 @@ $pageHelper.setContentType("application/rss+xml;charset=utf-8")<?xml version="1.
     <pubDate>$utilities.formatRfc822Date($entry.pubTime)</pubDate>
     <category>$utilities.textToHTML($entry.category.name,true)</category>
     #if( $entry.summary )<description>#showEntrySummary($entry)</description>#end    
-    #if( $entry.content )<content:encoded>#showEntryContent($entry)</content:encoded>#end
+    #if( $entry.text )<content:encoded>#showEntryContent($entry)</content:encoded>#end
     #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
     #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
     #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
