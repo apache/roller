@@ -257,44 +257,36 @@
  * Roller uses this macro to display entry.summary in RSS and Atom feeds.
  *#
 #macro( showEntrySummary $entry )
-   #if($descPage)
-      #parse($descPage.id)
-   #else
-      #if( $entry.plugins)
-         #set( $displayText = $pageHelper.renderPlugins( $entry, $entry.summary))
-      #else
-         #set( $displayText = $entry.summary )
-      #end
-      #if( $displayText == -1 )
-        $utilities.textToXML($displayText)
-      #else
-        #set( $displayText = $stringUtils.left( $displayText, $entryLength ) )
-        #set( $displayText = $utilities.textToXML($utilities.removeHTML($displayText)) )
-        $displayText... [$entry.text.length() characters]
-      #end
-   #end
+  #if( $entry.plugins)
+     #set( $displayText = $pageHelper.renderPlugins($entry, $entry.summary))
+  #else
+     #set( $displayText = $entry.summary )
+  #end
+  #if( $entryLength == -1 )
+     $utilities.textToXML($displayText)
+  #else
+     #set( $displayText = $stringUtils.left( $displayText, $entryLength ) )
+     #set( $displayText = $utilities.textToXML($utilities.removeHTML($displayText)) )
+     $displayText... [$entry.text.length() characters]
+  #end
 #end
 
 #**
  * Roller uses this macro to display entry.text in RSS and Atom feeds.
  *#
 #macro( showEntryContent $entry )
-   #if($descPage)
-      #parse($descPage.id)
-   #else
-      #if( $entry.plugins)
-         #set( $displayText = $pageHelper.renderPlugins( $entry, $entry.text))
-      #else
-         #set( $displayText = $entry.text )
-      #end
-      #if( $entryLength == -1 )
-        $utilities.textToXML($displayText)
-      #else
-        #set( $displayText = $stringUtils.left( $displayText, $entryLength ) )
-        #set( $displayText = $utilities.textToXML($utilities.removeHTML($displayText)) )
-        $displayText... [$entry.text.length() characters]
-      #end
-   #end
+  #if( $entry.plugins)
+     #set( $displayText = $pageHelper.renderPlugins( $entry, $entry.text))
+  #else
+     #set( $displayText = $entry.text )
+  #end
+  #if( $entryLength == -1 )
+    $utilities.textToXML($displayText)
+  #else
+    #set( $displayText = $stringUtils.left( $displayText, $entryLength ) )
+    #set( $displayText = $utilities.textToXML($utilities.removeHTML($displayText)) )
+    $displayText... [$entry.text.length() characters]
+  #end
 #end
 
 
