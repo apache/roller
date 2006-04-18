@@ -16,7 +16,7 @@
         document.weblogEntryFormEx.submit();
     }
    // Usage: initRTE(imagesPath, includesPath, cssFile, genXHTML)
-   initRTE("images/", "<%= request.getContextPath() %>/editor/", false, true);
+   initRTE("images/", "<%= request.getContextPath() %>/editor/", '', false);
 //-->
 </script>
 <noscript><p><b>Javascript must be enabled to use this form.</b></p></noscript>
