@@ -454,7 +454,11 @@ public class PageHelper
                     {
                         PagePlugin pagePlugin = (PagePlugin)mPagePlugins.get(key);
                         if (!(singleEntry && pagePlugin.getSkipOnSingleEntry())) { 
-                            ret = pagePlugin.render(entry.getPojo(), ret);
+                            try {
+                                ret = pagePlugin.render(entry.getPojo(), ret);
+                            } catch (Throwable t) {
+                                mLogger.error("ERROR from plugin: " + pagePlugin.getName(), t);
+                            }
                         }
                     }
                 }
