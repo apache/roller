@@ -226,16 +226,16 @@
    #else
       #if( $pageModel.weblogEntry) 
           ## on single-entry pages, we prefer text
-          #if( $entry.text )
+          #if( $utilities.isNotEmpty($entry.text) )
               #set( $sourceText = $entry.text )
           #else 
               #set( $sourceText = $entry.summary )
           #end
       #else
           ## on multi-entry pages, we prefer summary
-          #if( $entry.summary )
+          #if( $utilities.isNotEmpty($entry.summary) )
               #set( $sourceText = $entry.summary )
-              #if( $entry.text )
+              #if( $utilities.isNotEmpty($entry.text) )
                  #set( $readMore = "<a class='readmore' href='$baseURL$entry.permaLink'> ...</a>" )
                  #set( $sourceText = "$sourceText$readMore")
               #end
