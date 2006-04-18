@@ -1,7 +1,7 @@
 $pageHelper.setContentType("application/rss+xml;charset=utf-8")<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" 
   xmlns:dc="http://purl.org/dc/elements/1.1/"
-  xmlns:content="http://purl.org/rss/1.0/modules/content/" >
+  xmlns:atom="http://www.w3.org/2005/Atom" >
 <channel>
   <title>$utilities.textToHTML($utilities.removeHTML($website.name))</title>
   <link>$websiteURL</link>
@@ -22,8 +22,8 @@ $pageHelper.setContentType("application/rss+xml;charset=utf-8")<?xml version="1.
     #end
     <pubDate>$utilities.formatRfc822Date($entry.pubTime)</pubDate>
     <category>$utilities.textToHTML($entry.category.name,true)</category>
-    #if( $entry.summary )<description>#showEntrySummary($entry)</description>#end    
-    #if( $entry.text )<content:encoded>#showEntryContent($entry)</content:encoded>#end
+    #if( $utilities.isNotEmpty($entry.summary) )<atom:summary type="html">#showEntrySummary($entry)</atom:summary>#end    
+    #if( $utilities.isNotEmpty($entry.text) )<description>#showEntryContent($entry)</description>#end
     #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
     #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
     #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
