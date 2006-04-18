@@ -86,12 +86,100 @@ function publish() {
     <html:hidden name="method" property="method" value="save"/>
     
     <%-- ================================================================== --%>
-    <%-- Title field --%>
+    <%-- Title, category, dates and other metadata --%>
 
-    <p class="toplabel"><fmt:message key="weblogEdit.title" /></p>   
-    <html:text property="title" style="width:100%" maxlength="255" tabindex="1" />
+    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">   
+
+       <tr><td class="entryEditFormLabel">
+          <label for="title">
+             <fmt:message key="weblogEdit.title" />
+          </label>
+       </td><td>
+           <html:text property="title" style="width:100%" maxlength="255" tabindex="1" />
+       </td></tr>
+       
+       <tr><td class="entryEditFormLabel">
+          <label for="status">
+             <fmt:message key="weblogEdit.status" />
+          </label>
+       </td><td>
+          <c:if test="${!empty weblogEntryFormEx.id}">
+             <c:if test="${weblogEntryFormEx.published}">
+                <span style="color:green; font-weight:bold">
+                   <fmt:message key="weblogEdit.published" />
+                   (<fmt:message key="weblogEdit.updateTime" />
+                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
+                      dateStyle="short" timeStyle="short" />)
+                </span>
+            </c:if>
+            <c:if test="${weblogEntryFormEx.draft}">
+                <span style="color:orange; font-weight:bold">
+                   <fmt:message key="weblogEdit.draft" />
+                   (<fmt:message key="weblogEdit.updateTime" />
+                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
+                      dateStyle="short" timeStyle="short" />)
+                </span>
+            </c:if>
+            <c:if test="${weblogEntryFormEx.pending}">
+                <span style="color:orange; font-weight:bold">
+                   <fmt:message key="weblogEdit.pending" />
+                   (<fmt:message key="weblogEdit.updateTime" />
+                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
+                      dateStyle="short" timeStyle="short" />)
+                </span>
+            </c:if>
+        </c:if>
+        <c:if test="${empty weblogEntryFormEx.id}">
+           <span style="color:red; font-weight:bold"><fmt:message key="weblogEdit.unsaved" /></span>
+        </c:if>
+    </td></tr>
+        
+    <tr><td class="entryEditFormLabel">
+       <label for="categoryId"><fmt:message key="weblogEdit.category" /></label>
+    </td><td>
+       <html:select property="categoryId" size="1" tabindex="4">
+       <html:optionsCollection name="model" property="categories" value="id" label="path"  />
+       </html:select>
+    </td></tr>
+        
+    <tr>
+        <td class="entryEditFormLabel">
+            <label for="link"><fmt:message key="weblogEdit.pubTime" /></label>
+        </td>
+        <td>
+        <div>
+           <html:select property="hours">
+               <html:options name="model" property="hoursList" />
+            </html:select>
+           :
+           <html:select property="minutes" >
+               <html:options name="model" property="minutesList" />
+           </html:select>
+           :
+           <html:select property="seconds">
+               <html:options name="model" property="secondsList" />
+           </html:select>
+           &nbsp;&nbsp;
+           <roller:Date property="dateString" dateFormat='<%= model.getShortDateFormat() %>' />
+           <c:out value="${model.weblogEntry.website.timeZone}" />
+        </div>
+    </td></tr>
     
+    <c:if test="${!empty weblogEntryFormEx.id}">
+        <tr><td class="entryEditFormLabel">
+            <label for="categoryId">
+               <fmt:message key="weblogEdit.permaLink" />
+            </label>
+            </td><td>
+            <a href='<c:out value="${model.permaLink}" />'>
+               <c:out value="${model.permaLink}" />
+            </a>
+        </td></tr>
+    </c:if>
     
+   </table>
+    
+   
     <%-- ================================================================== --%>
     <%-- Weblog edit, preview, or spell check area --%>
     
@@ -222,99 +310,11 @@ function publish() {
     <%-- ================================================================== --%>
     <%-- Other settings --%>
 
-    <br />
     <h2><fmt:message key="weblogEdit.otherSettings" /></h2>
- 
-    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">   
-      
-       <tr><td class="entryEditFormLabel">
-          <label for="title">
-             <fmt:message key="weblogEdit.status" />
-          </label>
-       </td><td>
-          <c:if test="${!empty weblogEntryFormEx.id}">
-             <c:if test="${weblogEntryFormEx.published}">
-                <span style="color:green; font-weight:bold">
-                   <fmt:message key="weblogEdit.published" />
-                   (<fmt:message key="weblogEdit.updateTime" />
-                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
-                      dateStyle="short" timeStyle="short" />)
-                </span>
-            </c:if>
-            <c:if test="${weblogEntryFormEx.draft}">
-                <span style="color:orange; font-weight:bold">
-                   <fmt:message key="weblogEdit.draft" />
-                   (<fmt:message key="weblogEdit.updateTime" />
-                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
-                      dateStyle="short" timeStyle="short" />)
-                </span>
-            </c:if>
-            <c:if test="${weblogEntryFormEx.pending}">
-                <span style="color:orange; font-weight:bold">
-                   <fmt:message key="weblogEdit.pending" />
-                   (<fmt:message key="weblogEdit.updateTime" />
-                   <fmt:formatDate value="${weblogEntryFormEx.updateTime}" type="both"
-                      dateStyle="short" timeStyle="short" />)
-                </span>
-            </c:if>
-        </c:if>
-        <c:if test="${empty weblogEntryFormEx.id}">
-           <span style="color:red; font-weight:bold"><fmt:message key="weblogEdit.unsaved" /></span>
-        </c:if>
-    </td></tr>
-        
-    <tr><td class="entryEditFormLabel">
-       <label for="categoryId"><fmt:message key="weblogEdit.category" /></label>
-    </td><td>
-       <html:select property="categoryId" size="1" tabindex="4">
-       <html:optionsCollection name="model" property="categories" value="id" label="path"  />
-       </html:select>
-    </td></tr>
-        
-    <tr>
-        <td class="entryEditFormLabel">
-            <label for="link"><fmt:message key="weblogEdit.pubTime" /></label>
-        </td>
-        <td>
-        <div>
-           <html:select property="hours">
-               <html:options name="model" property="hoursList" />
-            </html:select>
-           :
-           <html:select property="minutes" >
-               <html:options name="model" property="minutesList" />
-           </html:select>
-           :
-           <html:select property="seconds">
-               <html:options name="model" property="secondsList" />
-           </html:select>
-           &nbsp;&nbsp;
-           <roller:Date property="dateString" dateFormat='<%= model.getShortDateFormat() %>' />
-           <c:out value="${model.weblogEntry.website.timeZone}" />
-        </div>
-    </td></tr>
-    
-    <c:if test="${!empty weblogEntryFormEx.id}">
-        <tr><td class="entryEditFormLabel">
-            <label for="categoryId">
-               <fmt:message key="weblogEdit.permaLink" />
-            </label>
-            </td><td>
-            <a href='<c:out value="${model.permaLink}" />'>
-               <c:out value="${model.permaLink}" />
-            </a>
-        </td></tr>
-    </c:if>
-    
-   </table>
-  
+     
+  <%-- ================================================================== --%>
+  <%-- comment settings --%>
    
-    <%-- ================================================================== --%>
-    <%-- More other settings --%>
-    
-   <%-- comment settings --%>
-   
-  <br />
   <div id="commentControlToggle" class="controlToggle">
   <span id="icommentControl">+</span>
   <a class="controlToggle" onclick="javascript:toggleControl('commentControlToggle','commentControl')">
