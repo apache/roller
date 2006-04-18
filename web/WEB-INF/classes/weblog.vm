@@ -235,6 +235,10 @@
           ## on multi-entry pages, we prefer summary
           #if( $entry.summary )
               #set( $sourceText = $entry.summary )
+              #if( $entry.text )
+                 #set( $readMore = "<a class='readmore' href='$baseURL$entry.permaLink'> ...</a>" )
+                 #set( $sourceText = "$sourceText$readMore")
+              #end
           #else 
               #set( $sourceText = $entry.text )
           #end
