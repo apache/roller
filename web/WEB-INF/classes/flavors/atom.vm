@@ -30,8 +30,8 @@ $pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1
         <published>$utilities.formatIso8601Date($entry.pubTime)</published>
         <updated>$utilities.formatIso8601Date($entry.updateTime)</updated> 
         <category term="$utilities.textToHTML($entry.category.path, true)" label="$utilities.textToHTML($entry.category.name, true)" />
-        #if( $entry.summary )<summary type="html">#showEntrySummary($entry)</summary>#end
-        #if( $entry.text )<content type="html">#showEntryContent($entry)</content>#end
+        #if( $utilities.isNotEmpty($entry.summary) )<summary type="html">#showEntrySummary($entry)</summary>#end
+        #if( $utilities.isNotEmpty($entry.text) )<content type="html">#showEntryContent($entry)</content>#end
         #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
         #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
         #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
