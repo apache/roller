@@ -122,7 +122,7 @@ function writeRichText(rte, html, width, height, buttons, readOnly) {
 
 // ROLLER_MOD: changed icon images
 
-			document.writeln('		<td><img id="bold" class="rteImage" src="' + imagesPath + 'bold.gif" width="16" height="16" alt="Bold" title="Bold" onClick="rteCommand(\'' + rte + '\', \'bold\', \'\')"></td>');
+			document.writeln('		<td><img id="bold" class="rteImage" src="' + imagesPath + 'text_bold.png" width="16" height="16" alt="Bold" title="Bold" onClick="rteCommand(\'' + rte + '\', \'bold\', \'\')"></td>');
 			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_italic.png" width="16" height="16" alt="Italic" title="Italic" onClick="rteCommand(\'' + rte + '\', \'italic\', \'\')"></td>');
 			document.writeln('		<td><img class="rteImage"   src="' + imagesPath + 'text_underline.png" width="16" height="16" alt="Underline" title="Underline" onClick="rteCommand(\'' + rte + '\', \'underline\', \'\')"></td>');
 			document.writeln('		<td><img class="rteVertSep" src="' + imagesPath + 'blackdot.gif" width="1" height="20" border="0" alt=""></td>');
