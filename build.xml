@@ -816,7 +816,6 @@ ro.buildUser=${user.name}
         <formatter type="xml"/>
         <batchtest toDir="${build.reports}/business/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
-		<!-- UserManager Tests -->
 		<include name="org/roller/business/UserTest.class"/> 
 	        <include name="org/roller/business/WeblogTest.class"/>
 	        <include name="org/roller/business/PermissionTest.class"/>
@@ -827,6 +826,7 @@ ro.buildUser=${user.name}
 	        <include name="org/roller/business/WeblogCategoryTest.class"/>
 	        <include name="org/roller/business/CommentTest.class"/>
 		<include name="org/roller/business/FileManagerTest.class"/>
+		<include name="org/roller/business/IndexManagerTest.class"/>
 	        <include name="org/roller/business/PlanetManagerTest.class"/>
 		<include name="org/roller/business/BookmarkManagerTest.class"/>
 		<include name="org/roller/business/RefererManagerTest.class"/>

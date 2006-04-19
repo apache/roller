@@ -1,18 +1,19 @@
 package org.roller.business;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.roller.RollerTestBase;
 import org.roller.business.search.operations.AddEntryOperation;
 import org.roller.business.search.operations.SearchOperation;
 import org.roller.model.IndexManager;
+import org.roller.model.RollerFactory;
 import org.roller.pojos.WeblogEntryData;
 
 
 /**
  * Test Search Manager business layer operations.
  */
-public class IndexManagerTest extends RollerTestBase {
+public class IndexManagerTest extends TestCase {
     
     
     public IndexManagerTest(String name) {
@@ -27,7 +28,7 @@ public class IndexManagerTest extends RollerTestBase {
     
     public void testSearch() throws Exception {
         try {
-            IndexManager imgr = getRoller().getIndexManager();
+            IndexManager imgr = RollerFactory.getRoller().getIndexManager();
             
             WeblogEntryData wd1 = new WeblogEntryData();
             wd1.setId("dummy");
