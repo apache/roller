@@ -73,11 +73,17 @@ public class Utilities {
     private static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
   
     /**
-     * Utility methods for calling StringUtils since it cannot be
-     * instantiated and Utilties can.
+     * Test if string is not null and and not empty.
      */
     public static boolean isNotEmpty(String str) {
         return StringUtils.isNotEmpty(str);
+    }
+    
+    /**
+     * Test if string is null or empty.
+     */
+    public static boolean isEmpty(String str) {
+        return StringUtils.isEmpty(str);
     }
     
     //------------------------------------------------------------------------
