@@ -155,10 +155,10 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                     
                     targetGroup.removeSubscription(sub);
                     planet.deleteSubscription(sub);
-                    roller.commit();
+                    roller.flush();
+                    // TODO: why release here?
                     roller.release();
                     
-                    roller.begin();
                     form.doReset(mapping, request);
                     
                     form.setGroupHandle(groupHandle);
@@ -229,7 +229,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                     form.setGroupHandle(groupHandle);
                     planet.saveSubscription(sub);
                     planet.saveGroup(targetGroup);
-                    roller.commit();
+                    roller.flush();
                     
                     messages.add(null,
                             new ActionMessage("planetSubscription.success.saved"));

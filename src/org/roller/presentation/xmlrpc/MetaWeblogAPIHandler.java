@@ -113,7 +113,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         Roller roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
-        WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
+        WeblogEntryData entry = weblogMgr.getWeblogEntry(postid);
         
         validate(entry.getWebsite().getHandle(), userid,password);
         
@@ -157,8 +157,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                 entry.setCategory(cd);
             }
             
-            entry.save();
-            roller.commit();
+            // save the entry
+            weblogMgr.saveWeblogEntry(entry);
+            roller.flush();
+            
+            // notify cache
             flushPageCache(entry.getWebsite());
             
             // TODO: Roller timestamps need better than 1 second accuracy
@@ -225,7 +228,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
-            UserData user = roller.getUserManager().getUser(userid);
+            UserData user = roller.getUserManager().getUserByUsername(userid);
             Timestamp current =
                     new Timestamp(System.currentTimeMillis());
             
@@ -253,8 +256,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                 entry.setCategory(website.getBloggerCategory());
             }
             
-            entry.save();
-            roller.commit();
+            // save the entry
+            weblogMgr.saveWeblogEntry(entry);
+            roller.flush();
+            
+            // notify cache
             flushPageCache(entry.getWebsite());
             
             // TODO: Roller timestamps need better than 1 second accuracy
@@ -287,7 +293,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         Roller roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
-        WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
+        WeblogEntryData entry = weblogMgr.getWeblogEntry(postid);
         
         validate(entry.getWebsite().getHandle(), userid,password);
         

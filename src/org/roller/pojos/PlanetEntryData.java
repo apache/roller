@@ -215,7 +215,7 @@ public class PlanetEntryData extends PersistentObject
         this.categoriesString = categoriesString;
     }
     /** 
-     * @hibernate.many-to-one column="subscription_id" cascade="save-update" not-null="true"
+     * @hibernate.many-to-one column="subscription_id" cascade="none" not-null="true"
      */
     public PlanetSubscriptionData getSubscription()
     {
@@ -382,6 +382,20 @@ public class PlanetEntryData extends PersistentObject
         PlanetEntryData other = (PlanetEntryData)o;
         return getPermalink().compareTo(other.getPermalink());
     }
+    
+    public boolean equals(Object other) {
+        
+        if(this == other) return true;
+        if(!(other instanceof PlanetEntryData)) return false;
+        
+        final PlanetEntryData that = (PlanetEntryData) other;
+        return this.permalink.equals(that.getPermalink());
+    }
+    
+    public int hashCode() {
+        return this.permalink.hashCode();
+    }
+    
     public void setData(PersistentObject vo)
     {
     }

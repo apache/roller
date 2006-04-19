@@ -118,10 +118,15 @@ public final class CommentManagementAction extends DispatchAction {
                 WeblogManager mgr= RollerFactory.getRoller().getWeblogManager();
                 
                 // delete all comments with delete box checked
+                CommentData deleteComment = null;
                 String[] deleteIds = queryForm.getDeleteComments();
-                List deletedList = Arrays.asList(deleteIds); 
+                List deletedList = Arrays.asList(deleteIds);
                 if (deleteIds != null && deleteIds.length > 0) {
-                    mgr.removeComments(deleteIds);
+                    for(int j=0; j < deleteIds.length; j++) {
+                        deleteComment = mgr.getComment(deleteIds[j]);
+                        
+                        mgr.removeComment(deleteComment);
+                    }
                 }
                 
                 // Collect comments approved for first time, so we can send
@@ -133,7 +138,7 @@ public final class CommentManagementAction extends DispatchAction {
                 List flushList = new ArrayList();
                 for (int i=0; i<ids.length; i++) {                    
                     if (deletedList.contains(ids[i])) continue;                    
-                    CommentData comment = mgr.retrieveComment(ids[i]);
+                    CommentData comment = mgr.getComment(ids[i]);
                     
                     // apply spam checkbox 
                     List spamIds = Arrays.asList(queryForm.getSpamComments());
@@ -165,10 +170,11 @@ public final class CommentManagementAction extends DispatchAction {
                             comment.setApproved(Boolean.FALSE);
                         }
                     }
-                    comment.save();
+                    mgr.saveComment(comment);
                     flushList.add(comment);
-                }               
-                RollerFactory.getRoller().commit();
+                }
+                
+                RollerFactory.getRoller().flush();
                 for (Iterator comments=flushList.iterator(); comments.hasNext();) {
                     CacheManager.invalidate((CommentData)comments.next());
                 }

@@ -14,7 +14,7 @@
 <property name="build.jspc"          value="${ro.build}/jspc"/>
 <property name="build.reports"       value="${ro.build}/reports"/>
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
-<property name="tools.hibernate"     value="${ro.tools}/hibernate-3.0" />
+<property name="tools.hibernate"     value="${ro.tools}/hibernate-3.1" />
 <property name="tools.spring"        value="${ro.tools}/spring-1.2" />
 <property name="tools.jstl"          value="${ro.tools}/jakarta-taglibs-standard-1.1.2" />
 <property name="tools.xdoclet"       value="${ro.tools}/buildtime/xdoclet-1.2.3" />

@@ -39,7 +39,7 @@ import org.roller.util.Utilities;
  * @hibernate.class lazy="false" table="weblogentry"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogEntryData extends WebsiteObject implements Serializable
+public class WeblogEntryData extends PersistentObject implements Serializable
 {
     private static Log mLogger = 
         LogFactory.getFactory().getInstance(WeblogEntryData.class);
@@ -182,7 +182,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     public void setCategoryId(String id) throws RollerException
     {
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-        setCategory(wmgr.retrieveWeblogCategory(id));
+        setCategory(wmgr.getWeblogCategory(id));
     }
 
     /** 
@@ -329,7 +329,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.roller.pojos.EntryAttributeData"
      * @ejb:persistent-field
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all" 
+     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan" 
      * @hibernate.collection-key column="entryid" type="String"
      * @hibernate.collection-one-to-many class="org.roller.pojos.EntryAttributeData"
      */
@@ -398,7 +398,6 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
         {
             attMap.remove(att);
             attSet.remove(att);
-            att.remove();
         }
     }
     //-------------------------------------------------------------------------
@@ -587,27 +586,6 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     public void setPinnedToMain(Boolean pinnedToMain)
     {
         this.pinnedToMain = pinnedToMain;
-    }
-
-    //------------------------------------------------------------------------
-
-    /**
-     * Save the entry and queue applicable web log update pings if the entry is published.
-     * @see org.roller.pojos.PersistentObject#save()
-     */
-    public void save() throws RollerException
-    {
-        // If no anchor then create one
-        if (getAnchor()==null || getAnchor().trim().equals(""))
-        {
-            setAnchor(createAnchor());
-        }
-        super.save();
-        if (isPublished()) 
-        {
-            // Queue applicable pings for this update.
-            RollerFactory.getRoller().getAutopingManager().queueApplicableAutoPings(this);
-        }
     }
     
     //------------------------------------------------------------------------
@@ -1136,14 +1114,6 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     {
     }
     
-    /** 
-     * @see org.roller.pojos.PersistentObject#remove()
-     */
-    public void remove() throws RollerException
-    {
-        RollerFactory.getRoller().getWeblogManager().removeWeblogEntryContents(this);
-        super.remove();
-    }
     
     /**
      * Convenience method to transform mPlugins to a List
@@ -1167,7 +1137,7 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     public void setCreatorId(String creatorId) throws RollerException
     {
         UserManager umgr = RollerFactory.getRoller().getUserManager();
-        setCreator(umgr.retrieveUser(creatorId)); 
+        setCreator(umgr.getUser(creatorId)); 
     }
 
     /** Convenience method for checking status */
@@ -1200,23 +1170,27 @@ public class WeblogEntryData extends WebsiteObject implements Serializable
     {
     }
     
-    public boolean canSave() throws RollerException
-    {
-        Roller roller = RollerFactory.getRoller();
-        if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-        {
+    
+    /**
+     * Determine if the specified user has permissions to edit this entry.
+     */
+    public boolean hasWritePermissions(UserData user) throws RollerException {
+        
+        // global admins can hack whatever they want
+        if(user.hasRole("admin")) {
             return true;
         }
+        
         boolean author = getWebsite().hasUserPermissions(
-                roller.getUser(), (short)(PermissionsData.AUTHOR));
+                user, (short)(PermissionsData.AUTHOR));
         boolean limited = getWebsite().hasUserPermissions(
-                roller.getUser(), (short)(PermissionsData.LIMITED));
-        if (author || (limited && isDraft()) || (limited && isPending()))
-        {
+                user, (short)(PermissionsData.LIMITED));
+        
+        if (author || (limited && isDraft()) || (limited && isPending())) {
             return true;
         }
+        
         return false;
     }
-
 
 }

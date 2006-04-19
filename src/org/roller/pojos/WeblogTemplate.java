@@ -320,18 +320,5 @@ public class WeblogTemplate extends PersistentObject
       this.lastModified = other.getLastModified()!=null ? (Date)other.getLastModified().clone() : null;
    }
 
-   public boolean canSave() throws RollerException
-   {
-       Roller roller = RollerFactory.getRoller();
-       if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-       {
-           return true;
-       }
-       if (getWebsite().hasUserPermissions(roller.getUser(), PermissionsData.ADMIN))
-       {
-           return true;
-       }
-       return false;
-   }
 
 }

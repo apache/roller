@@ -147,10 +147,10 @@ public final class PlanetGroupsAction extends DispatchAction
                 {
                     PlanetGroupData group = planet.getGroup(form.getHandle());
                     planet.deleteGroup(group);
-                    roller.commit();
+                    roller.flush();
+                    // TODO: why release here?
                     roller.release();
                     
-                    roller.begin();
                     form.doReset(mapping, request);
                     
                     request.setAttribute("model", 
@@ -203,8 +203,8 @@ public final class PlanetGroupsAction extends DispatchAction
                         group = planet.getGroupById(form.getId());
                     }                
                     form.copyTo(group, request.getLocale());
-                    planet.saveGroup(group);           
-                    roller.commit();
+                    planet.saveGroup(group);  
+                    roller.flush();
 
                     ActionMessages messages = new ActionMessages();
                     messages.add(null, 

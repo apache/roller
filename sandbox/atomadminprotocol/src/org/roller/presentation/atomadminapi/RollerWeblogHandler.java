@@ -181,17 +181,14 @@ class RollerWeblogHandler extends Handler {
             
             //TODO: group blogging check?
             
-            // Need system user to create website
-            getRoller().setUser(UserData.SYSTEM_USER);
             HashMap pages = null; //getRollerContext().readThemeMacros(form.getTheme());
             
             for (int i = 0; i < c.getEntries().length; i++) {
                 WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
                 UserData user = mgr.getUser(entry.getCreatingUser());
                 WebsiteData wd = mgr.createWebsite(user, pages, entry.getHandle(), entry.getName(), entry.getDescription(), entry.getEmailAddress(), DEFAULT_THEME, entry.getLocale(), entry.getTimezone());
-                wd.save();
             }
-            getRoller().commit();
+            getRoller().flush();
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create weblogs: " + c, re);
         }
@@ -203,8 +200,6 @@ class RollerWeblogHandler extends Handler {
             
             //TODO: group blogging check?
             
-            // Need system user to create website
-            getRoller().setUser(UserData.SYSTEM_USER);
             HashMap pages = null;
             
             for (int i = 0; i < c.getEntries().length; i++) {
@@ -215,7 +210,7 @@ class RollerWeblogHandler extends Handler {
                 }
                 updateWebsiteData(wd, entry);
             }
-            getRoller().commit();
+            getRoller().flush();
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update weblogs: " + c, re);
         }
@@ -239,7 +234,9 @@ class RollerWeblogHandler extends Handler {
         }
         
         try {
-            wd.save();
+            UserManager mgr = getRoller().getUserManager();
+            mgr.storeWebsite(wd);
+            
             CacheManager.invalidate(wd);
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update website data", re);
@@ -250,9 +247,6 @@ class RollerWeblogHandler extends Handler {
         try {
             UserManager mgr = getRoller().getUserManager();
             
-            // Need system user to create website
-            getRoller().setUser(UserData.SYSTEM_USER);
-            
             WebsiteData wd = mgr.getWebsiteByHandle(getUri().getEntryId());
             if (wd == null) {
                 throw new NotFoundException("ERROR: Uknown weblog handle: " + getUri().getEntryId());
@@ -261,8 +255,7 @@ class RollerWeblogHandler extends Handler {
             WebsiteData[] wds = new WebsiteData[] { wd };
             EntrySet es = toWeblogEntrySet(wds);
             
-            wd.remove();
-            getRoller().commit();
+            mgr.removeWebsite(wd);
             
             CacheManager.invalidate(wd);
             

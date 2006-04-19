@@ -20,6 +20,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
@@ -114,6 +115,8 @@ public class MemberPermissionsAction extends DispatchAction
         // Ensure use has admin perms for this weblog
         if (model.getWebsite() != null && rses.isUserAuthorizedToAdmin(model.getWebsite())) {
 
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            
             Iterator iter = model.getPermissions().iterator();
             int removed = 0;
             int changed = 0;
@@ -135,12 +138,13 @@ public class MemberPermissionsAction extends DispatchAction
                     {
                         if (val == -1) 
                         {
-                            perms.remove();
+                            userMgr.removePermissions(perms);
                             removed++;
                         }
                         else
                         {
                             perms.setPermissionMask(val);
+                            userMgr.savePermissions(perms);
                             changed++;
                         }
                     }
@@ -148,7 +152,7 @@ public class MemberPermissionsAction extends DispatchAction
             }
             if (removed > 0 || changed > 0)
             {
-                RollerFactory.getRoller().commit();  
+                RollerFactory.getRoller().flush();
             }
             if (removed > 0) 
             {

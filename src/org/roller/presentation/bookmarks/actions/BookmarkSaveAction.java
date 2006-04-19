@@ -46,12 +46,12 @@ public class BookmarkSaveAction extends Action
         BookmarkData bd = null;
         if (null != form.getId() && !form.getId().trim().equals("")) 
         {
-            bd = bmgr.retrieveBookmark(form.getId());
+            bd = bmgr.getBookmark(form.getId());
         }
         else 
         {
-            bd = bmgr.createBookmark();
-            FolderData fd = bmgr.retrieveFolder(
+            bd = new BookmarkData();
+            FolderData fd = bmgr.getFolder(
                 request.getParameter(RollerRequest.FOLDERID_KEY));
             bd.setFolder(fd);
         }
@@ -60,8 +60,8 @@ public class BookmarkSaveAction extends Action
                 rses.getAuthenticatedUser(), PermissionsData.AUTHOR))
         {
             form.copyTo(bd, request.getLocale());
-            bd.save();
-            RollerFactory.getRoller().commit();
+            bmgr.saveBookmark(bd);
+            RollerFactory.getRoller().flush();
             
             CacheManager.invalidate(bd);
             

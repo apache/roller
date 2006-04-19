@@ -8,53 +8,42 @@
 
 package org.roller.model;
 
+import java.util.List;
+import org.roller.RollerException;
 import org.roller.pojos.PingTargetData;
 import org.roller.pojos.WebsiteData;
-import org.roller.RollerException;
 
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * Manages ping targets.
  */
-public interface PingTargetManager extends Serializable
-{
-    /**
-     * Release all resources associated with Roller session.
-     */
-    public void release();
-
-    /**
-     * Create a common (shared) ping target.  This method does not persist the new instance.
-     *
-     * @param name
-     * @param pingUrl
-     * @return the new ping target.
-     * @throws RollerException
-     */
-    public PingTargetData createCommonPingTarget(String name, String pingUrl) throws RollerException;
-
-    /**
-     * Create a custom ping target for the specified website.  This method does not persist the new instance.
-     *
-     * @param name    a short descriptive name of the ping target
-     * @param pingUrl the URL to which to send pings
-     * @param website the website for which the custom target is created.
-     * @return the new ping target.
-     * @throws RollerException
-     */
-    public PingTargetData createCustomPingTarget(String name, String pingUrl,
-                                                 WebsiteData website) throws RollerException;
-
+public interface PingTargetManager {
+    
+    
     /**
      * Store a ping target.
      *
      * @param pingTarget ping target data object.
      * @throws RollerException
      */
-    public void storePingTarget(PingTargetData pingTarget) throws RollerException;
-
+    public void savePingTarget(PingTargetData pingTarget) throws RollerException;
+    
+    
+    /**
+     * Remove a ping target.
+     *
+     * @param id id of the ping target to be removed
+     * @throws RollerException
+     */
+    public void removePingTarget(PingTargetData pingTarget) throws RollerException;
+    
+    
+    /**
+     * Remove all custom targets (regardless of website).
+     */
+    public void removeAllCustomPingTargets() throws RollerException;
+    
+    
     /**
      * Retrieve a specific ping target by id.
      *
@@ -62,16 +51,9 @@ public interface PingTargetManager extends Serializable
      * @return the ping target whose id is specified.
      * @throws RollerException
      */
-    public PingTargetData retrievePingTarget(String id) throws RollerException;
-
-    /**
-     * Remove a ping target by id.
-     *
-     * @param id id of the ping target to be removed
-     * @throws RollerException
-     */
-    public void removePingTarget(String id) throws RollerException;
-
+    public PingTargetData getPingTarget(String id) throws RollerException;
+    
+    
     /**
      * Get a list of the common (shared) ping targets.
      *
@@ -79,7 +61,8 @@ public interface PingTargetManager extends Serializable
      * @throws RollerException
      */
     public List getCommonPingTargets() throws RollerException;
-
+    
+    
     /**
      * Get a list of the custom ping targets for the given website.
      *
@@ -89,21 +72,8 @@ public interface PingTargetManager extends Serializable
      * @throws RollerException
      */
     public List getCustomPingTargets(WebsiteData website) throws RollerException;
-
-    /**
-     * Remove all of the custom ping targets for the given website.
-     *
-     * @param website the website whose custom ping targets should be removed
-     * @throws RollerException
-     */
-    public void removeCustomPingTargets(WebsiteData website) throws RollerException;
-
-    /**
-     * Remove all custom targets (regardless of website).
-     */
-    public void removeAllCustomPingTargets() throws RollerException;
-
-
+    
+    
     /**
      * Check if the ping target has a name that is unique in the appropriate set.  If the ping target has no website id
      * (is common), then this checks if the name is unique amongst common targets, and if custom then unique amongst
@@ -115,7 +85,8 @@ public interface PingTargetManager extends Serializable
      * @throws RollerException
      */
     public boolean isNameUnique(PingTargetData pingTarget) throws RollerException;
-
+    
+    
     /**
      * Check if the url of the ping target is well-formed.  For this test, it must parse as a <code>java.net.URL</code>,
      * with protocol <code>http</code> and a non-empty <code>host</code> portion.
@@ -125,7 +96,8 @@ public interface PingTargetManager extends Serializable
      * @throws RollerException
      */
     public boolean isUrlWellFormed(PingTargetData pingTarget) throws RollerException;
-
+    
+    
     /**
      * Check if the host portion of the url of the ping target is known, meaning it is either a well-formed IP address
      * or a hostname that resolves from the server.  The ping target url must parse as a <code>java.net.URL</code> in
@@ -137,5 +109,11 @@ public interface PingTargetManager extends Serializable
      * @throws RollerException
      */
     public boolean isHostnameKnown(PingTargetData pingTarget) throws RollerException;
-
+    
+    
+    /**
+     * Release all resources associated with Roller session.
+     */
+    public void release();
+    
 }

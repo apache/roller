@@ -168,14 +168,14 @@ public class WebsiteFormEx extends WebsiteForm
         if (getDefaultCategoryId() != null) 
         {
             WeblogCategoryData defaultCat = 
-                wmgr.retrieveWeblogCategory(getDefaultCategoryId());
+                wmgr.getWeblogCategory(getDefaultCategoryId());
             dataHolder.setDefaultCategory(defaultCat);
         }
 
         if (getBloggerCategoryId() != null) 
         {
             WeblogCategoryData bloggerCat = 
-                wmgr.retrieveWeblogCategory(getBloggerCategoryId());
+                wmgr.getWeblogCategory(getBloggerCategoryId());
             dataHolder.setBloggerCategory(bloggerCat);
         }
     }

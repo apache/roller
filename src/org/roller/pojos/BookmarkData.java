@@ -20,7 +20,7 @@ import java.io.Serializable;
  * @hibernate.class lazy="false" table="bookmark"
  * @hibernate.cache usage="read-write"
  */
-public class BookmarkData extends WebsiteObject
+public class BookmarkData extends PersistentObject
     implements Serializable, Comparable
 {
     static final long serialVersionUID = 2315131256728236003L;

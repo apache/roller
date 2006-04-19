@@ -61,9 +61,8 @@ public class PingQueueTask extends TimerTask
         try
         {
             roller = RollerFactory.getRoller();
-            roller.begin();
             PingQueueProcessor.getInstance().processQueue();
-            roller.commit();
+            roller.flush();
         }
         catch (RollerException e)
         {

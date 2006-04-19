@@ -8,9 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.roller.RollerException;
-import org.roller.business.PersistenceStrategy;
 import org.roller.model.BookmarkManager;
-import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 
 /**
@@ -62,21 +60,13 @@ public class FolderData extends HierarchicalPersistentObject
     public void setData(org.roller.pojos.PersistentObject otherData)
     {
         mNewParent =       ((FolderData) otherData).mNewParent;
-        this.bookmarks =   ((FolderData) otherData).getBookmarks();
         this.id =          ((FolderData) otherData).getId();
         this.name =        ((FolderData) otherData).getName();
         this.description = ((FolderData) otherData).getDescription();
         this.website =     ((FolderData) otherData).getWebsite();
+        this.setBookmarks(((FolderData) otherData).getBookmarks());
     }
-
-    public void save() throws RollerException
-    {   
-        if (RollerFactory.getRoller().getBookmarkManager().isDuplicateFolderName(this))
-        {
-            throw new RollerException("Duplicate folder name");
-        }
-        super.save(); 
-    }
+    
     
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getAssocClass()
@@ -292,7 +282,7 @@ public class FolderData extends HierarchicalPersistentObject
      *
      * @ejb:persistent-field
      * 
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="delete" 
+     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan" 
      * @hibernate.collection-key column="folderid" 
      * @hibernate.collection-one-to-many class="org.roller.pojos.BookmarkData"
      */
@@ -301,8 +291,8 @@ public class FolderData extends HierarchicalPersistentObject
         return this.bookmarks;
     }
 
-    /** @ejb:persistent-field */
-    public void setBookmarks(Set bookmarks)
+    // this is private to force the use of add/remove bookmark methods.
+    private void setBookmarks(Set bookmarks)
     {
         this.bookmarks = bookmarks;
     }
@@ -311,15 +301,13 @@ public class FolderData extends HierarchicalPersistentObject
     public void addBookmark(BookmarkData bookmark) throws RollerException
     {
         bookmark.setFolder(this);
-        bookmarks.add(bookmark);  
-        bookmark.save();      
+        getBookmarks().add(bookmark);
     }
 
     /** Remove boomkark from folder */
     public void removeBookmark(BookmarkData bookmark)
     {
-        bookmarks.remove(bookmark);
-        bookmark.setFolder(null);
+        getBookmarks().remove(bookmark);
     }
 
     /**
@@ -330,7 +318,7 @@ public class FolderData extends HierarchicalPersistentObject
     public List retrieveBookmarks(boolean subfolders) throws RollerException
     {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
-        return bmgr.retrieveBookmarks(this, subfolders);
+        return bmgr.getBookmarks(this, subfolders);
     }
 
     /** 
@@ -343,8 +331,11 @@ public class FolderData extends HierarchicalPersistentObject
         while (entries.hasNext())
         {
             BookmarkData bookmark = (BookmarkData) entries.next();
-            bookmark.setFolder(dest);
-            bookmark.save();
+            
+            // just add bookmarks to new folder
+            // this breaks the old folder/bkmrk relationship
+            // so it's not necessary to explicitly remove
+            dest.addBookmark(bookmark);
         }
     }
 
@@ -360,8 +351,8 @@ public class FolderData extends HierarchicalPersistentObject
         HierarchicalPersistentObject associatedObject, 
         String relation) throws RollerException
     {
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
-        return bmgr.createFolderAssoc(
+        return new FolderAssoc(
+                null,
             (FolderData)object, 
             (FolderData)associatedObject, 
             relation);
@@ -481,7 +472,7 @@ public class FolderData extends HierarchicalPersistentObject
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getParentAssoc()
      */
-    protected Assoc getParentAssoc() throws RollerException
+    public Assoc getParentAssoc() throws RollerException
     {
         return RollerFactory.getRoller().getBookmarkManager().getFolderParentAssoc(this);
     }
@@ -489,7 +480,7 @@ public class FolderData extends HierarchicalPersistentObject
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getChildAssocs()
      */
-    protected List getChildAssocs() throws RollerException
+    public List getChildAssocs() throws RollerException
     {
         return RollerFactory.getRoller().getBookmarkManager().getFolderChildAssocs(this);
     }
@@ -508,17 +499,6 @@ public class FolderData extends HierarchicalPersistentObject
     public List getAncestorAssocs() throws RollerException
     {
         return RollerFactory.getRoller().getBookmarkManager().getFolderAncestorAssocs(this);
-    }
-    
-    protected void removeDescendent(
-            PersistenceStrategy pstrategy, PersistentObject po)  throws RollerException
-    {
-        /*FolderData folder = (FolderData)po;
-        Iterator bookmarks = folder.getBookmarks().iterator();
-        while (bookmarks.hasNext()) {
-            bookmarks.remove();
-        }*/
-        pstrategy.remove(po);
     }
 
 }

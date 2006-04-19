@@ -44,13 +44,13 @@ public class CategorySaveAction extends Action
         WeblogCategoryData cd = null;
         if (null != form.getId() && !form.getId().trim().equals("")) 
         {
-            cd = wmgr.retrieveWeblogCategory(form.getId());
+            cd = wmgr.getWeblogCategory(form.getId());
         }
         else 
         {
-            cd = wmgr.createWeblogCategory();
+            cd = new WeblogCategoryData();
             String pid = form.getParentId();
-            WeblogCategoryData parentCat = wmgr.retrieveWeblogCategory(pid);
+            WeblogCategoryData parentCat = wmgr.getWeblogCategory(pid);
             cd.setWebsite(parentCat.getWebsite());
             cd.setParent(parentCat);
         }
@@ -60,8 +60,8 @@ public class CategorySaveAction extends Action
             rses.getAuthenticatedUser(), PermissionsData.AUTHOR))
         {
             form.copyTo(cd, request.getLocale());
-            cd.save();
-            RollerFactory.getRoller().commit();
+            wmgr.saveWeblogCategory(cd);
+            RollerFactory.getRoller().flush();
             
             // notify caches of object invalidation
             CacheManager.invalidate(cd);

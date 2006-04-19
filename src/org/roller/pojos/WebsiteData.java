@@ -46,8 +46,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     private String  handle = null;
     private String  name = null;
     private String  description = null;
-    private String  defaultPageId = null;
-    private String  weblogDayPageId = null;
+    private String  defaultPageId = "dummy";
+    private String  weblogDayPageId = "dummy";
     private Boolean enableBloggerApi = Boolean.TRUE;
     private String  editorPage = null;
     private String  blacklist = null;
@@ -130,7 +130,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     }
 
     /** 
-     * @hibernate.bag lazy="true" inverse="true" cascade="delete" 
+     * @hibernate.bag lazy="true" inverse="true" cascade="delete"
      * @hibernate.collection-key column="website_id"
      * @hibernate.collection-one-to-many 
      *    class="org.roller.pojos.PermissionsData"
@@ -178,7 +178,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         // if we didn't get the Template from a theme then look in the db
         if(template == null) {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            template = userMgr.retrievePage(this.defaultPageId);
+            template = userMgr.getPage(this.defaultPageId);
         }
         
         if(template != null)
@@ -951,30 +951,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
         }
         return TimeZone.getTimeZone(timeZone);
     }
-    
-    /** 
-     * @see org.roller.pojos.PersistentObject#remove()
-     */
-    public void remove() throws RollerException
-    {
-        RollerFactory.getRoller().getUserManager().removeWebsiteContents(this);        
-        super.remove();
-    }
 
-    public boolean canSave() throws RollerException
-    {
-        Roller roller = RollerFactory.getRoller();
-        if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-        {
-            return true;
-        }
-        if (hasUserPermissions(roller.getUser(), 
-                (short)(PermissionsData.ADMIN|PermissionsData.AUTHOR)))
-        {
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Returns true if user has all permissions specified by mask.

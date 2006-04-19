@@ -115,20 +115,20 @@ public class CategoriesAction extends DispatchAction
                 // Move subCategories to new category.
                 String Categories[] = form.getSelectedCategories();
                 WeblogCategoryData parent = 
-                    wmgr.retrieveWeblogCategory(form.getMoveToCategoryId());
+                    wmgr.getWeblogCategory(form.getMoveToCategoryId());
                 if (null != Categories)
                 {
                     for (int i = 0; i < Categories.length; i++)
                     {
                         WeblogCategoryData cd = 
-                            wmgr.retrieveWeblogCategory(Categories[i]); 
+                            wmgr.getWeblogCategory(Categories[i]); 
                         
                         // Don't move category into itself.                  
                         if (    !cd.getId().equals(parent.getId()) 
                              && !parent.descendentOf(cd))
                         {
                             cd.setParent(parent);
-                            cd.save();
+                            wmgr.saveWeblogCategory(cd);
                         }
                         else 
                         {
@@ -137,7 +137,8 @@ public class CategoriesAction extends DispatchAction
                         }
                     }
                 }    
-                RollerFactory.getRoller().commit();
+                // TODO: new manager method, moveCategory(cat, newPath)
+                RollerFactory.getRoller().flush();
                 saveMessages(request, messages);
             }
             catch (RollerException e)
@@ -208,7 +209,7 @@ public class CategoriesAction extends DispatchAction
             }
             else 
             {
-                cat = wmgr.retrieveWeblogCategory(catId);  
+                cat = wmgr.getWeblogCategory(catId);  
                 website = cat.getWebsite();
             }
             form.setId(cat.getId());

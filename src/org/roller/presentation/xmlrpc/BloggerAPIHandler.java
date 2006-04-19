@@ -68,20 +68,23 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         
         Roller roller = RollerFactory.getRoller();
         WeblogManager weblogMgr = roller.getWeblogManager();
-        WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
+        WeblogEntryData entry = weblogMgr.getWeblogEntry(postid);
         
         validate(entry.getWebsite().getHandle(), userid, password);
         
         try {
-            entry.remove();
-            roller.commit();
+            // delete the entry
+            weblogMgr.removeWeblogEntry(entry);
+            roller.flush();
+            
+            // notify cache
             flushPageCache(entry.getWebsite());
         } catch (Exception e) {
             String msg = "ERROR in blogger.deletePost: "+e.getClass().getName();
             mLogger.error(msg,e);
-            e.printStackTrace();
             throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
         }
+        
         return true;
     }
     
@@ -121,9 +124,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             Roller roller = RollerFactory.getRoller();
             UserManager userMgr = roller.getUserManager();
             
-            WeblogTemplate page = userMgr.retrievePage(templateType);
+            WeblogTemplate page = userMgr.getPage(templateType);
             page.setContents(templateData);
-            userMgr.storePage(page);
+            userMgr.savePage(page);
             flushPageCache(page.getWebsite());
             
             return true;
@@ -161,7 +164,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         try {
             Roller roller = RollerFactory.getRoller();
             UserManager userMgr = roller.getUserManager();
-            WeblogTemplate page = userMgr.retrievePage(templateType);
+            WeblogTemplate page = userMgr.getPage(templateType);
             
             if ( null == page ) {
                 throw new XmlRpcException(UNKNOWN_EXCEPTION,"Template not found");
@@ -197,7 +200,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         try {
             Roller roller = RollerFactory.getRoller();
             UserManager userMgr = roller.getUserManager();
-            UserData user = userMgr.getUser(userid);
+            UserData user = userMgr.getUserByUsername(userid);
             
             // parses full name into two strings, firstname and lastname
             String firstname = "", lastname = "";
@@ -262,7 +265,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                         RollerContext.getRollerContext().getAbsoluteContextUrl(req);
                 
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
-                UserData user = umgr.getUser(userid);
+                UserData user = umgr.getUserByUsername(userid);
                 // get list of user's enabled websites
                 List websites = umgr.getWebsites(user, Boolean.TRUE, null);
                 Iterator iter = websites.iterator();
@@ -313,7 +316,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager weblogMgr = roller.getWeblogManager();
-                WeblogEntryData entry = weblogMgr.retrieveWeblogEntry(postid);
+                WeblogEntryData entry = weblogMgr.getWeblogEntry(postid);
                 entry.setText(content);
                 entry.setUpdateTime(current);
                 if (Boolean.valueOf(publish).booleanValue()) {
@@ -322,9 +325,13 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                     entry.setStatus(WeblogEntryData.DRAFT);
                 }
                 
-                entry.save();
-                roller.commit();
+                // save the entry
+                weblogMgr.saveWeblogEntry(entry);
+                roller.flush();
+                
+                // notify cache
                 flushPageCache(entry.getWebsite());
+                
                 return true;
             } catch (Exception e) {
                 String msg = "ERROR in BlooggerAPIHander.editPost";
@@ -374,6 +381,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         try {
             RollerRequest rreq = RollerRequest.getRollerRequest();
             Roller roller = RollerFactory.getRoller();
+            WeblogManager weblogMgr = roller.getWeblogManager();
             
             Timestamp current = new Timestamp(System.currentTimeMillis());
             
@@ -382,7 +390,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entry.setText(content);
             entry.setPubTime(current);
             entry.setUpdateTime(current);
-            entry.setCreator(roller.getUser());
+            // TODO BACKEND: fix from backend refactoring
+            //entry.setCreator(roller.getUser());
             entry.setWebsite(website);
             entry.setCategory(website.getBloggerCategory());
             if (Boolean.valueOf(publish).booleanValue()) {
@@ -390,8 +399,12 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             } else {
                 entry.setStatus(WeblogEntryData.DRAFT);
             }
-            entry.save();
-            roller.commit();
+            
+            // save the entry
+            weblogMgr.saveWeblogEntry(entry);
+            roller.flush();
+            
+            // notify cache
             flushPageCache(entry.getWebsite());
 /*
             String blogUrl = Utilities.escapeHTML(

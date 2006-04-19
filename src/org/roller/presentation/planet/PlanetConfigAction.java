@@ -135,7 +135,7 @@ public final class PlanetConfigAction extends DispatchAction
                         group.setTitle("external");
                         planet.saveGroup(group);
                     }
-                    roller.commit();
+                    roller.flush();
                     ActionMessages messages = new ActionMessages();
                     messages.add(null, new ActionMessage("planetConfig.success.saved"));
                     saveMessages(request, messages);

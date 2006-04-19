@@ -62,7 +62,7 @@ public class CategoryEditAction extends Action
             WeblogCategoryData cd = rreq.getWeblogCategory();
             request.setAttribute("state","correcting");    
             
-            parentCat = wmgr.retrieveWeblogCategory(cd.getId());          
+            parentCat = wmgr.getWeblogCategory(cd.getId());          
             pageModel = new BasePageModel(
                 "categoryForm.correct.title", request, response, mapping);
             pageModel.setWebsite(cd.getWebsite());
@@ -73,7 +73,7 @@ public class CategoryEditAction extends Action
             request.setAttribute("state","add");
             
             String pid = request.getParameter(RollerRequest.PARENTID_KEY);
-            parentCat = wmgr.retrieveWeblogCategory(pid);             
+            parentCat = wmgr.getWeblogCategory(pid);             
             form.setParentId(parentCat.getId()); 
             
             pageModel = new BasePageModel(

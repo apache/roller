@@ -160,12 +160,13 @@ public class RollerPropertiesAction extends DispatchAction {
                 }
                 
                 // save it
-                propsManager.store(props);
+                propsManager.saveProperties(props);
+                RollerFactory.getRoller().flush();
+                
                 // this operation causes OutOfMemory exceptions on sites with 
                 // lots of referers so i am disabling it until it's 
                 // not as dangerous -- Allen G
                 //mRoller.getRefererManager().applyRefererFilters();
-                mRoller.commit();
                 
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(null, new ActionMessage("weblogEdit.changesSaved"));

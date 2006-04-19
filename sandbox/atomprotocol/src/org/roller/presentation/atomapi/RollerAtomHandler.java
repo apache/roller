@@ -52,6 +52,7 @@ import com.sun.syndication.feed.atom.Person;
 import javax.activation.FileTypeMap;
 import org.roller.RollerException;
 import org.roller.config.RollerConfig;
+import org.roller.model.WeblogManager;
 import org.roller.presentation.cache.CacheManager;
 
 /**
@@ -82,7 +83,7 @@ public class RollerAtomHandler implements AtomHandler {
     private HttpServletRequest mRequest;
     private Roller             mRoller;
     private RollerContext      mRollerContext;
-    private String             mUsername;
+    private UserData           user;
     private int                mMaxEntries = 20;
     //private MessageDigest    md5Helper = null;
     //private MD5Encoder       md5Encoder = new MD5Encoder();
@@ -104,12 +105,11 @@ public class RollerAtomHandler implements AtomHandler {
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         //mUsername = authenticateWSSE(request);
-        mUsername = authenticateBASIC(request);
+        String mUsername = authenticateBASIC(request);
         
         if (mUsername != null) {
             try {
-                UserData user = mRoller.getUserManager().getUser(mUsername);
-                mRoller.setUser(user);
+                this.user = mRoller.getUserManager().getUserByUsername(mUsername);
             } catch (Exception e) {
                 mLogger.error("ERROR: setting user", e);
             }
@@ -120,7 +120,7 @@ public class RollerAtomHandler implements AtomHandler {
      * Return weblogHandle of authenticated user or null if there is none.
      */
     public String getAuthenticatedUsername() {
-        return mUsername;
+        return this.user.getUserName();
     }
     
     //---------------------------------------------------------------- introspection
@@ -133,7 +133,6 @@ public class RollerAtomHandler implements AtomHandler {
         if (pathInfo.length == 0) {
             String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
             AtomService service = new AtomService();
-            UserData user = mRoller.getUserManager().getUser(mUsername);
             List perms = mRoller.getUserManager().getAllPermissions(user);
             if (perms != null) {
                 for (Iterator iter=perms.iterator(); iter.hasNext();) {
@@ -298,13 +297,12 @@ public class RollerAtomHandler implements AtomHandler {
         // authenticated client posted a weblog entry
         String handle = pathInfo[0];
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
-        UserData creator = mRoller.getUserManager().getUser(mUsername);
         if (canEdit(website)) {
             // Save it and commit it
+            WeblogManager mgr = mRoller.getWeblogManager();
             WeblogEntryData rollerEntry = createRollerEntry(website, entry);
-            rollerEntry.setCreator(creator);
-            rollerEntry.save();
-            mRoller.commit();
+            rollerEntry.setCreator(this.user);
+            mgr.saveWeblogEntry(rollerEntry);
             
             // Throttle one entry per second
             // (MySQL timestamp has 1 sec resolution, damnit)
@@ -326,7 +324,7 @@ public class RollerAtomHandler implements AtomHandler {
         if (pathInfo.length == 3) // URI is /blogname/entries/entryid
         {
             WeblogEntryData entry =
-                mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
+                mRoller.getWeblogManager().getWeblogEntry(pathInfo[2]);
             if (entry != null && !canView(entry)) {
                 throw new Exception("ERROR not authorized to view entry");
             } else if (entry != null) {
@@ -344,8 +342,10 @@ public class RollerAtomHandler implements AtomHandler {
         if (pathInfo.length == 3) // URI is /blogname/entries/entryid
         {
             WeblogEntryData rollerEntry =
-                    mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
+                    mRoller.getWeblogManager().getWeblogEntry(pathInfo[2]);
             if (canEdit(rollerEntry)) {
+                WeblogManager mgr = mRoller.getWeblogManager();
+                
                 WeblogEntryData rawUpdate = createRollerEntry(rollerEntry.getWebsite(), entry);
                 rollerEntry.setPubTime(rawUpdate.getPubTime());
                 rollerEntry.setUpdateTime(rawUpdate.getUpdateTime());
@@ -353,8 +353,8 @@ public class RollerAtomHandler implements AtomHandler {
                 rollerEntry.setStatus(rawUpdate.getStatus());
                 rollerEntry.setCategory(rawUpdate.getCategory());
                 rollerEntry.setTitle(rawUpdate.getTitle());
-                rollerEntry.save();
-                mRoller.commit();
+                
+                mgr.saveWeblogEntry(rollerEntry);
                 
                 CacheManager.invalidate(rollerEntry.getWebsite());
                 if (rollerEntry.isPublished()) {
@@ -374,10 +374,10 @@ public class RollerAtomHandler implements AtomHandler {
         if (pathInfo.length == 3) // URI is /blogname/entries/entryid
         {
             WeblogEntryData rollerEntry =
-                    mRoller.getWeblogManager().retrieveWeblogEntry(pathInfo[2]);
+                    mRoller.getWeblogManager().getWeblogEntry(pathInfo[2]);
             if (canEdit(rollerEntry)) {
-                rollerEntry.remove();
-                mRoller.commit();
+                WeblogManager mgr = mRoller.getWeblogManager();
+                mgr.removeWeblogEntry(rollerEntry);
                 return;
             }
             throw new Exception("ERROR not authorized to delete entry");
@@ -555,7 +555,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     private boolean canEdit(WeblogEntryData entry) {
         try {
-            return entry.canSave();
+            return entry.hasWritePermissions(this.user);
         } catch (Exception e) {
             mLogger.error("ERROR: checking website.canSave()");
         }
@@ -567,8 +567,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     private boolean canEdit(WebsiteData website) {
         try {
-            UserData user = mRoller.getUser();
-            return website.hasUserPermissions(user, PermissionsData.AUTHOR);
+            return website.hasUserPermissions(this.user, PermissionsData.AUTHOR);
         } catch (Exception e) {
             mLogger.error("ERROR: checking website.hasUserPermissions()");
         }
@@ -624,7 +623,7 @@ public class RollerAtomHandler implements AtomHandler {
         }
         String digest = null;
         try {
-            UserData user = mRoller.getUserManager().getUser(userName);
+            UserData user = mRoller.getUserManager().getUserByUsername(userName);
             digest = WSSEUtilities.generateDigest(
                     WSSEUtilities.base64Decode(nonce),
                     created.getBytes("UTF-8"),
@@ -657,7 +656,7 @@ public class RollerAtomHandler implements AtomHandler {
                         int p = userPass.indexOf(":");
                         if (p != -1) {
                             userID = userPass.substring(0, p);
-                            UserData user = mRoller.getUserManager().getUser(userID);                                                        
+                            UserData user = mRoller.getUserManager().getUserByUsername(userID);                                                        
                             boolean enabled = user.getEnabled().booleanValue();
                             if (enabled) {    
                                 // are passwords encrypted?
@@ -671,9 +670,6 @@ public class RollerAtomHandler implements AtomHandler {
                                         RollerConfig.getProperty("passwds.encryption.algorithm"));
                                 }
                                 valid = user.getPassword().equals(password);
-                                if (valid) {
-                                    RollerFactory.getRoller().setUser(user);
-                                }
                             }
                         }
                     }

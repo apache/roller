@@ -63,7 +63,7 @@ public class BookmarkEditAction extends Action
             request.setAttribute("state","correcting"); 
                 
             // Folder is specified by request param, pass it on as attribute.                 
-            parentFolder = bmgr.retrieveFolder(rreq.getFolder().getId());        
+            parentFolder = bmgr.getFolder(rreq.getFolder().getId());        
             
             request.setAttribute("model", new BasePageModel(
                 "bookmarkForm.correct.title", request, response, mapping));
@@ -74,7 +74,7 @@ public class BookmarkEditAction extends Action
             request.setAttribute("state","add");
             
             // Folder is specified by request param, pass it on as attribute.                 
-            parentFolder = bmgr.retrieveFolder(rreq.getFolder().getId()); 
+            parentFolder = bmgr.getFolder(rreq.getFolder().getId()); 
             
             request.setAttribute("model", new BasePageModel(
                 "bookmarkForm.add.title", request, response, mapping));

@@ -1,7 +1,6 @@
 package org.roller.pojos;
 
 import org.roller.RollerException;
-import org.roller.business.PersistenceStrategy;
 import org.roller.model.RollerFactory;
 
 /**
@@ -70,23 +69,6 @@ public class WeblogCategoryAssoc extends PersistentObject
         this.id = id;
     }
 
-
-    /** 
-     * Remove self and all child categories. 
-     */
-    public void remove() throws RollerException
-    {
-        PersistenceStrategy pstrategy =
-            RollerFactory.getRoller().getPersistenceStrategy();
-        pstrategy.remove(this);
-    }
-
-    public void save() throws RollerException
-    {
-        PersistenceStrategy pstrategy =
-            RollerFactory.getRoller().getPersistenceStrategy();
-        pstrategy.store(this);
-    }
 
     /**
      * Setter is needed in RollerImpl.storePersistentObject()

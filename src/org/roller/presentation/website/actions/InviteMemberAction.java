@@ -121,7 +121,7 @@ public class InviteMemberAction extends DispatchAction
         ActionMessages errors = new ActionErrors();
         InviteMemberForm form = (InviteMemberForm)actionForm;
         UserManager umgr = RollerFactory.getRoller().getUserManager();
-        UserData user = umgr.getUser(form.getUserName());
+        UserData user = umgr.getUserByUsername(form.getUserName());
         
         BasePageModel pageModel = new BasePageModel(
             "inviteMember.title", request, response, mapping);              
@@ -158,6 +158,8 @@ public class InviteMemberAction extends DispatchAction
                 {
                     String mask = request.getParameter("permissionsMask");
                     umgr.inviteUser(website, user, Short.parseShort(mask));
+                    RollerFactory.getRoller().flush();
+                    
                     request.setAttribute("user", user);
                     try 
                     {

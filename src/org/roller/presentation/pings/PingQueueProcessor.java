@@ -172,7 +172,7 @@ public class PingQueueProcessor
             logger.warn("Error on ping attempt (" + pingQueueEntry.getAttempts() + ") for " + pingQueueEntry +
                 ": [" + ex.getMessage() + "]. Will re-queue for later attempts.");
             if (logger.isDebugEnabled()) logger.debug("Error on last ping attempt was: ", ex);
-            pingQueueMgr.storeQueueEntry(pingQueueEntry);
+            pingQueueMgr.saveQueueEntry(pingQueueEntry);
         }
         else
         {

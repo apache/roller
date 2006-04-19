@@ -62,7 +62,6 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
      */
     private void syncWebsites() {
         try {
-            roller.begin(UserData.SYSTEM_USER);
             List liveUserFeeds = new ArrayList();
             String baseURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
             if (baseURL == null || baseURL.trim().length()==0) {
@@ -77,7 +76,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                     group.setHandle("all");
                     group.setTitle("all");
                     planet.saveGroup(group);
-                    roller.commit();
+                    roller.flush();
                 }
                 try {
                     String baseFeedURL = baseURL + "/rss/";
@@ -118,10 +117,10 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                         }
                     }
                     planet.saveGroup(group);
-                    roller.commit();
+                    roller.flush();
                     roller.release();
                     
-                    roller.begin();
+                    // TODO: new planet manager method deleteSubs(list)
                     group = group = planet.getGroup("all");
                     Iterator subs = group.getSubscriptions().iterator();
                     while (subs.hasNext()) {
@@ -132,7 +131,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                             planet.deleteSubscription(sub);
                         }
                     }
-                    roller.commit();
+                    roller.flush();
                 } finally {
                     roller.release();
                 }
@@ -149,7 +148,6 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
         int count = 0;
         int errorCount = 0;
         try {
-            roller.begin(UserData.SYSTEM_USER);
             PlanetManager planet = roller.getPlanetManager();
             PlanetConfigData config = planet.getConfiguration();
             Technorati technorati = null;
@@ -222,7 +220,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                     }
                     count++;
                 }
-                roller.commit();
+                roller.flush();
             } finally {
                 roller.release();
             }

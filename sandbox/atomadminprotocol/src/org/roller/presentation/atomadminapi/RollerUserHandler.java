@@ -171,15 +171,12 @@ class RollerUserHandler extends Handler {
         try {
             UserManager mgr = getRoller().getUserManager();
             
-            // Need system user to create website
-            getRoller().setUser(UserData.SYSTEM_USER);
-            
             for (int i = 0; i < c.getEntries().length; i++) {
                 UserEntry entry = (UserEntry)c.getEntries()[i];
                 UserData user = toUserData(entry);
                 mgr.addUser(user);
             }
-            getRoller().commit();
+            getRoller().flush();
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create users: " + c, re);
         }
@@ -189,9 +186,6 @@ class RollerUserHandler extends Handler {
         try {
             UserManager mgr = getRoller().getUserManager();
             
-            // Need system user to create user
-            getRoller().setUser(UserData.SYSTEM_USER);
-            
             for (int i = 0; i < c.getEntries().length; i++) {
                 UserEntry entry = (UserEntry)c.getEntries()[i];
                 UserData ud = mgr.getUser(entry.getName());
@@ -199,9 +193,10 @@ class RollerUserHandler extends Handler {
                     throw new NotFoundException("ERROR: Uknown user: " + entry.getName());
                 }
                 updateUserData(ud, entry);
-                ud.save();
+                
+                mgr.storeUser(ud);
             }
-            getRoller().commit();
+            getRoller().flush();
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update users: " + c, re);
         }
@@ -229,7 +224,6 @@ class RollerUserHandler extends Handler {
     
     private EntrySet deleteEntry() throws HandlerException {
         try {
-            getRoller().setUser(UserData.SYSTEM_USER);
             UserManager mgr = getRoller().getUserManager();
             UserData ud = mgr.getUser(getUri().getEntryId());
             
@@ -242,8 +236,8 @@ class RollerUserHandler extends Handler {
             }
             
             UserData[] uds = new UserData[] { ud };
-            ud.remove();
-            getRoller().commit();
+            mgr.removeUser(ud);
+            
             CacheManager.invalidate(ud);
             
             EntrySet es = toUserEntrySet(uds);

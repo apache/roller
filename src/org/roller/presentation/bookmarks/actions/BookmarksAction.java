@@ -112,20 +112,22 @@ public class BookmarksAction extends DispatchAction
             {
                 for (int i = 0; i < folders.length; i++)
                 {
-                    FolderData fd = bmgr.retrieveFolder(folders[i]);
-                    fd.remove(); // removes child folders and bookmarks too
+                    FolderData fd = bmgr.getFolder(folders[i]);
+                    bmgr.removeFolder(fd); // removes child folders and bookmarks too
                 }
             }
-
+            
+            BookmarkData bookmark = null;
             String bookmarks[] = form.getSelectedBookmarks();
             if (null != bookmarks)
             {
                 for (int j = 0; j < bookmarks.length; j++)
                 {
-                    bmgr.removeBookmark(bookmarks[j]);
+                    bookmark = bmgr.getBookmark(bookmarks[j]);
+                    bmgr.removeBookmark(bookmark);
                 }
             }
-            roller.commit();
+            RollerFactory.getRoller().flush();
                 
             CacheManager.invalidate(website);
 
@@ -177,19 +179,19 @@ public class BookmarksAction extends DispatchAction
     
                 // Move subfolders to new folder.
                 String folders[] = form.getSelectedFolders();
-                FolderData parent = bmgr.retrieveFolder(form.getMoveToFolderId());
+                FolderData parent = bmgr.getFolder(form.getMoveToFolderId());
                 if (null != folders)
                 {
                     for (int i = 0; i < folders.length; i++)
                     {
-                        FolderData fd = bmgr.retrieveFolder(folders[i]);
+                        FolderData fd = bmgr.getFolder(folders[i]);
     
                         // Don't move folder into itself.
                         if (    !fd.getId().equals(parent.getId())
                              && !parent.descendentOf(fd))
                         {
                             fd.setParent(parent);
-                            fd.save();
+                            bmgr.saveFolder(fd);
                         }
                         else 
                         {
@@ -205,16 +207,22 @@ public class BookmarksAction extends DispatchAction
                 {
                     for (int j = 0; j < bookmarks.length; j++)
                     {
-                        BookmarkData bd = bmgr.retrieveBookmark(bookmarks[j]);
+                        // maybe we should be using folder.addBookmark()?
+                        BookmarkData bd = bmgr.getBookmark(bookmarks[j]);
                         bd.setFolder(parent);
-                        bd.save();
+                        bmgr.saveBookmark(bd);
                     }
                 }
-                roller.commit();
+                RollerFactory.getRoller().flush();
 
                 CacheManager.invalidate(website);
                 
                 saveMessages(request, messages);
+                
+                // recreate model now that folder is altered
+                pageModel = new BookmarksPageModel(
+                        request, response, mapping, (BookmarksForm)actionForm);
+                request.setAttribute("model", pageModel);
             }
             catch (RollerException e)
             {
@@ -288,7 +296,7 @@ public class BookmarksAction extends DispatchAction
             }
             else
             {
-                folder = bmgr.retrieveFolder(folderId);
+                folder = bmgr.getFolder(folderId);
                 website = folder.getWebsite();
             }
             form.setFolderId(folder.getId());

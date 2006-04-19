@@ -154,15 +154,8 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             upgradeDatabaseIfNeeded();
             
             Roller roller = RollerFactory.getRoller();
-            roller.begin(UserData.SYSTEM_USER);
             
             setupRollerProperties();
-            roller.getThemeManager();
-            setupSpellChecker();
-            setupIndexManager(roller);
-            initializePingFeatures(roller);
-            setupPingQueueTask(roller);
-            setupScheduledTasks(mContext, roller);
             
             // call Spring's context ContextLoaderListener to initialize
             // all the context files specified in web.xml. This is necessary
@@ -172,7 +165,14 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             
             initializeSecurityFeatures(mContext);
             
-            roller.commit();
+            roller.getThemeManager();
+            setupSpellChecker();
+            setupIndexManager(roller);
+            initializePingFeatures(roller);
+            setupPingQueueTask(roller);
+            setupScheduledTasks(mContext, roller);
+            
+            roller.flush();
             roller.release();
             
         } catch (Throwable t) {

@@ -35,7 +35,6 @@ public class ExportRssTest extends StrutsActionTestBase
      */
     public void testExportRecent() throws Exception
     {      
-        getRoller().begin(UserData.SYSTEM_USER);
         ExportRss exporter = new ExportRss(mWebsite);
         
         //List entries = getRoller().getWeblogManager().getAllRecentWeblogEntries(new Date(), 5);
@@ -67,7 +66,6 @@ public class ExportRssTest extends StrutsActionTestBase
         }
         finally 
         {
-            getRoller().begin(UserData.SYSTEM_USER);
         }
     }
     
@@ -77,14 +75,7 @@ public class ExportRssTest extends StrutsActionTestBase
      */
     public void setUp() throws Exception
     {
-        super.setUp();
-
-        getRoller().begin(UserData.SYSTEM_USER);
-        //RollerConfigData  rollerConfig = rollerContext.getRollerConfig();
-        //oldUploadPath = rollerConfig.getUploadPath();
-        //rollerConfig.setUploadPath("build/junk");
-        //rollerConfig.save();
-        getRoller().commit();        
+        super.setUp();       
 
         MockServletContext mContext = getMockFactory().getMockServletContext();
         mContext.setRealPath("build/junk", "./build/junk");

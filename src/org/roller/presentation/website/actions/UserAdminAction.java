@@ -73,7 +73,7 @@ public final class UserAdminAction extends UserBaseAction
                 {
                     ActionMessages msgs = getErrors(request);
                     msgs = (msgs == null) ? new ActionMessages() : msgs;
-                    user = mgr.getUser(userForm.getUserName(), null);                    
+                    user = mgr.getUserByUsername(userForm.getUserName(), null);                    
                     if (user != null)
                     {
                         userForm.copyFrom(user, request.getLocale());                        
@@ -132,9 +132,7 @@ public final class UserAdminAction extends UserBaseAction
                 RollerSession.getRollerSession(request);
             if (rollerSession.isGlobalAdminUser() )
             {
-                // Need system user to update user
-                RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
-                UserManager mgr= RollerFactory.getRoller().getUserManager();
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
                 UserAdminForm userForm = (UserAdminForm)actionForm;
                 
                 if (userForm.isNewUser()) {
@@ -163,12 +161,14 @@ public final class UserAdminAction extends UserBaseAction
                         msgs.add(ActionErrors.GLOBAL_ERROR, 
                             new ActionError("userSettings.needPasswordTwice"));
                     }
+                    
                     // If no error messages, then add user
                     if (msgs.isEmpty()) {
                         try {
                             // Save new user to database
                             mgr.addUser(user);                            
-                            RollerFactory.getRoller().commit();
+                            RollerFactory.getRoller().flush();
+                            
                             msgs.add(ActionMessages.GLOBAL_MESSAGE, 
                                 new ActionMessage("userSettings.saved"));
                             saveMessages(request, msgs);
@@ -190,7 +190,7 @@ public final class UserAdminAction extends UserBaseAction
                     
                 } else {
                     
-                    UserData user = mgr.retrieveUser(userForm.getId());
+                    UserData user = mgr.getUser(userForm.getId());
                     userForm.copyTo(user, request.getLocale()); 
                 
                     // Check username and email addresses
@@ -220,9 +220,9 @@ public final class UserAdminAction extends UserBaseAction
                     if (msgs.isEmpty()) {
                         try {
                            // Persist changes to user
-                            mgr.storeUser( user );
-                            RollerFactory.getRoller().commit(); 
-
+                            mgr.saveUser(user);
+                            RollerFactory.getRoller().flush();
+                            
                             msgs.add(ActionMessages.GLOBAL_MESSAGE,
                                 new ActionMessage("userSettings.saved"));
                             saveMessages(request, msgs);
