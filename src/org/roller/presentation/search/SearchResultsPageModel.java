@@ -180,13 +180,13 @@ public class SearchResultsPageModel {
                 // "wrong user" results have been reported
                 if (handle.equals(rreq.getWebsite().getHandle())) {
                     // get real entry for display on user's site
-                    entry = weblogMgr.retrieveWeblogEntry(
+                    entry = weblogMgr.getWeblogEntry(
                             doc.getField(FieldConstants.ID).stringValue() );
                 }
             } else {
                 // if user is not enabled, website will be null
                 //entry = buildSearchEntry(website, doc);
-                entry = weblogMgr.retrieveWeblogEntry(
+                entry = weblogMgr.getWeblogEntry(
                         doc.getField(FieldConstants.ID).stringValue() );
                 if (doc.getField(FieldConstants.CATEGORY) != null) {
                     categories.add(

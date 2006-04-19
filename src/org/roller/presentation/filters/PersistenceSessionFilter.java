@@ -42,6 +42,7 @@ public class PersistenceSessionFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } finally {
+            mLogger.debug("Releasing Roller Session");
             roller.release();
         }
         

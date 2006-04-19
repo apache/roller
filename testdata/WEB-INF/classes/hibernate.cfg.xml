@@ -10,6 +10,10 @@
         <property name="connection.datasource">java:comp/env/jdbc/rollerdb</property>
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         -->
+        
+        <!-- use thread local Session context -->
+        <property name="hibernate.current_session_context_class">thread</property>
+        
         <!--
         If you want to use HSQLDB, PostgreSQL, DB2 or Derby, Oracle then use the right dialect   
         <property name="dialect">org.hibernate.dialect.HQLDBDialect</property> 
@@ -42,7 +46,6 @@
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         -->
 
-        <mapping resource="org/roller/business/HitCountData.hbm.xml" />
         <mapping resource="org/roller/pojos/BookmarkData.hbm.xml" />
         <mapping resource="org/roller/pojos/CommentData.hbm.xml" />
         <mapping resource="org/roller/pojos/EntryAttributeData.hbm.xml" />

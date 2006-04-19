@@ -40,9 +40,8 @@ public class TurnoverReferersTask extends TimerTask implements ScheduledTask {
         
         try {
             Roller roller = RollerFactory.getRoller();
-            roller.begin();
             roller.getRefererManager().clearReferrers();
-            roller.commit();
+            roller.flush();
             roller.release();
             mLogger.info("task completed");   
             

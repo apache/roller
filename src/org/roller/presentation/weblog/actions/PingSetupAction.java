@@ -181,10 +181,9 @@ public class PingSetupAction extends DispatchAction
             {
                 return mapping.findForward("access-denied");
             }
-            AutoPingData autoPing = autoPingMgr.createAutoPing(pingTarget, 
-                    rreq.getWebsite());
-            autoPingMgr.storeAutoPing(autoPing);
-            RollerFactory.getRoller().commit();
+            AutoPingData autoPing = new AutoPingData(null, pingTarget, rreq.getWebsite());
+            autoPingMgr.saveAutoPing(autoPing);
+            RollerFactory.getRoller().flush();
 
             return view(mapping, form, req, res);
         }
@@ -212,7 +211,7 @@ public class PingSetupAction extends DispatchAction
                 return mapping.findForward("access-denied");
             }
             autoPingMgr.removeAutoPing(pingTarget, rreq.getWebsite());
-            RollerFactory.getRoller().commit();
+            RollerFactory.getRoller().flush();
         
             return view(mapping, form, req, res);
         }
@@ -315,7 +314,7 @@ public class PingSetupAction extends DispatchAction
             throw new RollerException("Missing ping target id: " + pingTargetId);
         }
 
-        PingTargetData pingTarget = pingTargetMgr.retrievePingTarget(pingTargetId);
+        PingTargetData pingTarget = pingTargetMgr.getPingTarget(pingTargetId);
         if (pingTarget == null)
         {
             throw new RollerException("No such ping target id: " + pingTargetId);

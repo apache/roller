@@ -38,9 +38,8 @@ public class RefreshEntriesTask extends TimerTask implements ScheduledTask {
     }
     public void run() {
         try {
-            roller.begin(UserData.SYSTEM_USER);
             roller.getPlanetManager().refreshEntries();
-            roller.commit();
+            roller.flush();
             roller.release();
         } catch (RollerException e) {
             logger.error("ERROR refreshing entries", e);

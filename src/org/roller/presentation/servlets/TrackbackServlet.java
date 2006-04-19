@@ -21,6 +21,7 @@ import org.roller.pojos.CommentData;
 import org.roller.util.SpamChecker;
 
 import org.roller.model.RollerFactory;
+import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerContext;
@@ -185,8 +186,9 @@ public class TrackbackServlet extends HttpServlet {
                         } 
 
                         // save, commit, send response
-                        comment.save();
-                        RollerFactory.getRoller().commit();
+                        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+                        mgr.saveComment(comment);
+                        RollerFactory.getRoller().flush();
 
                         // Clear all caches associated with comment
                         CacheManager.invalidate(comment);

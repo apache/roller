@@ -15,7 +15,7 @@ jboss-cache.jar (1.2.2 alpha)
 - TreeCache clustered cache
 - runtime, optional
 
-jgroups-2.2.7.jar (2.2.7)
+jgroups-2.2.8.jar (2.2.8)
 - JGroups multicast library
 - runtime, optional (required by replicated caches)
 
@@ -31,7 +31,7 @@ commons-logging-1.0.4.jar (1.0.4)
 - Commons Logging
 - runtime, required
 
-c3p0-0.8.5.2.jar (0.8.5.2)
+c3p0-0.9.0.jar (0.9.0)
 - C3P0 JDBC connection pool
 - runtime, optional
 
@@ -55,7 +55,7 @@ checkstyle-all.jar (unknown)
 - Checkstyle
 - buildtime
 
-log4j-1.2.9.jar (1.2.9)
+log4j-1.2.11.jar (1.2.11)
 - Log4j Library
 - runtime, optional
 
@@ -63,15 +63,15 @@ junit-3.8.1.jar (3.8.1)
 - JUnit test framework
 - buildtime
 
-dom4j-1.6.jar (1.6)
+dom4j-1.6.1.jar (1.6.1)
 - XML configuration & mapping parser
 - runtime, required
 
-antlr-2.7.5H3.jar (2.7.5H3)
-- ANother Tool for Language Recognition (patched with proper context classloading)
-- runtime
+antlr-2.7.6rc1.jar (2.7.6rc1)
+- ANother Tool for Language Recognition
+- runtime, required
 
-cglib-2.1.jar (2.1.0)
+cglib-2.1.3.jar (2.1.3)
 - CGLIB bytecode generator
 - runtime, required
 
@@ -87,7 +87,7 @@ asm.jar (unknown)
 - ASM bytecode library
 - runtime, required
 
-ant-launcher-1.6.3.jar (1.6.3)
+ant-launcher-1.6.5.jar (1.6.5)
 - Ant launcher
 - buildtime
 
@@ -99,7 +99,7 @@ jdbc2_0-stdext.jar (2.0)
 - Standard Extension JDBC APIs
 - runtime, required for standalone operation (outside application server)
 
-ant-antlr-1.6.3.jar (1.6.3)
+ant-antlr-1.6.5.jar (1.6.5)
 - Ant antlr support
 - buildtime
 
@@ -115,15 +115,15 @@ xerces-2.6.2.jar (2.6.2)
 - SAX parser
 - runtime, required for JDK < 1.4
 
-jaxen-1.1-beta-4.jar (1.1-beta-4)
+jaxen-1.1-beta-7.jar (1.1-beta-7)
 - Jaxen - universal java xpath engine
 - runtime, required if you want to deserialize a Configuration to improve startup performance
 
-ant-junit-1.6.3.jar (1.6.3)
+ant-junit-1.6.5.jar (1.6.5)
 - Ant junit support
 - buildtime
 
-ant-swing-1.6.3.jar (1.6.3)
+ant-swing-1.6.5.jar (1.6.5)
 - Ant swing support
 - buildtime
 
@@ -131,7 +131,7 @@ commons-collections-2.1.1.jar (2.1.1)
 - Commons Collections
 - runtime, required
 
-ant-1.6.3.jar (1.6.3)
+ant-1.6.5.jar (1.6.5)
 - Ant core
 - buildtime
 
@@ -142,3 +142,7 @@ proxool-0.8.3.jar (0.8.3)
 concurrent-1.3.2.jar (1.3.2)
 - unknown name
 - runtime, optional (required by TreeCache)
+
+syndiag2.jar (2.0)
+- antlr to bnf image generator
+- buildtime

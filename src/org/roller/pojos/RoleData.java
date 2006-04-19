@@ -114,14 +114,6 @@ public class RoleData
          RoleData lTest = (RoleData) pOther;
          boolean lEquals = true;
 
-         if( this.id == null )
-         {
-            lEquals = lEquals && ( lTest.getId() == null );
-         }
-         else
-         {
-            lEquals = lEquals && this.id.equals( lTest.getId() );
-         }
          if( this.userName == null )
          {
             lEquals = lEquals && ( lTest.getUserName() == null );

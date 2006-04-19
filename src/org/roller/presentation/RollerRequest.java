@@ -152,8 +152,9 @@ public class RollerRequest
         if (userName != null)
         {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            UserData currentUser = userMgr.getUser(userName);
-            RollerFactory.getRoller().setUser(currentUser);
+            UserData currentUser = userMgr.getUserByUsername(userName);
+            // TODO: possible fix for backend refactoryings
+            //RollerFactory.getRoller().setUser(currentUser);
         }
         
         // path info may be null, (e.g. on JSP error page)
@@ -335,14 +336,14 @@ public class RollerRequest
             }
             else if (websiteid != null && mWebsite == null )
             {
-                mWebsite = userMgr.retrieveWebsite(websiteid); 
+                mWebsite = userMgr.getWebsite(websiteid); 
             }
             
             // Look for page ID in request params
             String pageId = mRequest.getParameter(RollerRequest.PAGEID_KEY);                    
             if ( pageId != null )
             {
-                mPage = userMgr.retrievePage(pageId);                 
+                mPage = userMgr.getPage(pageId);                 
             }
             else if (mWebsite != null) 
             {
@@ -609,7 +610,7 @@ public class RollerRequest
                 try
                 {
                     mBookmark = RollerFactory.getRoller()
-                        .getBookmarkManager().retrieveBookmark(id);
+                        .getBookmarkManager().getBookmark(id);
                 }
                 catch (RollerException e)
                 {
@@ -636,7 +637,7 @@ public class RollerRequest
                 {
                     mWeblogCategory = 
                         RollerFactory.getRoller()
-                            .getWeblogManager().retrieveWeblogCategory(id);
+                            .getWeblogManager().getWeblogCategory(id);
                 }
                 catch (RollerException e)
                 {
@@ -677,7 +678,7 @@ public class RollerRequest
                 try
                 {
                     folder = RollerFactory.getRoller()
-                        .getBookmarkManager().retrieveFolder(id);
+                        .getBookmarkManager().getFolder(id);
                 }
                 catch (RollerException e)
                 {
@@ -703,7 +704,7 @@ public class RollerRequest
                 try
                 {
                     mPage = RollerFactory.getRoller()
-                        .getUserManager().retrievePage(id);
+                        .getUserManager().getPage(id);
                 }
                 catch (RollerException e)
                 {
@@ -788,7 +789,7 @@ public class RollerRequest
                 if ( entryid != null )
                 {
                     WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
-                    mWeblogEntry = weblogMgr.retrieveWeblogEntry(entryid);                
+                    mWeblogEntry = weblogMgr.getWeblogEntry(entryid);                
                 
                     // We can use entry to find the website, if we don't have one
                     if ( mWeblogEntry != null && mWebsite == null )

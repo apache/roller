@@ -258,49 +258,6 @@ public class PingTargetData extends PersistentObject implements Serializable
         return true;
     }
 
-    /**
-     * Determine if the current user has rights to save the current instance.
-     *
-     * @return true if the user has rights to save the current instance, false otherwise.
-     * @throws RollerException
-     */
-    public boolean canSave() throws RollerException
-    {
-        Roller roller = RollerFactory.getRoller();
-        UserData user = roller.getUser();
-        // This is more verbose but easier to debug than returning the value of the boolean expression
-        if (user.equals(UserData.SYSTEM_USER))
-        {
-            return true;
-        }
-        if (website == null && user.hasRole("admin"))
-        {
-            return true;
-        }
-        if (website != null && website.hasUserPermissions(
-                user, (short)(PermissionsData.ADMIN | PermissionsData.AUTHOR))) 
-        {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Remove the object.
-     *
-     * @throws RollerException
-     * @see org.roller.pojos.PersistentObject#remove()
-     */
-    public void remove() throws RollerException
-    {
-        // First remove ping queue entries and auto ping configurations that use this target.
-        PingQueueManager pingQueueMgr = RollerFactory.getRoller().getPingQueueManager();
-        pingQueueMgr.removeQueueEntriesByPingTarget(this);
-        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
-        List autopings = autoPingMgr.getAutoPingsByTarget(this);
-        autoPingMgr.removeAutoPings(autopings);
-        super.remove();
-    }
 
     /**
      * Generate a string form of the object appropriate for logging or debugging.

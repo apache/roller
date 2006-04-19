@@ -762,6 +762,7 @@ ro.buildUser=${user.name}
         <fileset dir="${basedir}/web/WEB-INF/classes">
             <include name="App*.properties"/>
             <include name="**/*.vm"/>
+	    <exclude name="hibernate.cfg.xml"/>
         </fileset>
     </copy>
     <copy file="${basedir}/web/WEB-INF/classes/roller.properties"
@@ -815,7 +816,20 @@ ro.buildUser=${user.name}
         <formatter type="xml"/>
         <batchtest toDir="${build.reports}/business/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
-               <include name="org/roller/business/*Test.class"/> 
+		<!-- UserManager Tests -->
+		<include name="org/roller/business/UserTest.class"/> 
+	        <include name="org/roller/business/WeblogTest.class"/>
+	        <include name="org/roller/business/PermissionTest.class"/>
+	        <include name="org/roller/business/WeblogPageTest.class"/>
+	        <include name="org/roller/business/PingsTest.class"/>
+	        <include name="org/roller/business/PropertiesTest.class"/>
+	        <include name="org/roller/business/WeblogEntryTest.class"/>
+	        <include name="org/roller/business/WeblogCategoryTest.class"/>
+	        <include name="org/roller/business/CommentTest.class"/>
+		<include name="org/roller/business/FileManagerTest.class"/>
+	        <include name="org/roller/business/PlanetManagerTest.class"/>
+		<include name="org/roller/business/BookmarkManagerTest.class"/>
+		<include name="org/roller/business/RefererManagerTest.class"/>
             </fileset>
         </batchtest>
     </junit>

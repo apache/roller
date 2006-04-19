@@ -58,7 +58,7 @@ public class FolderEditAction extends Action
             request.setAttribute("state","correcting"); 
             
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
-            parentFolder = bmgr.retrieveFolder(parentId);
+            parentFolder = bmgr.getFolder(parentId);
             
             BasePageModel pageModel = new BasePageModel(
                 "folderForm.correct.title", request, response, mapping);
@@ -71,7 +71,7 @@ public class FolderEditAction extends Action
             request.setAttribute("state","add");
             
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
-            parentFolder = bmgr.retrieveFolder(parentId);
+            parentFolder = bmgr.getFolder(parentId);
             
             BasePageModel pageModel = new BasePageModel(
                 "folderForm.add.title", request, response, mapping);

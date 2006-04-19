@@ -135,9 +135,6 @@ public class UserNewAction extends UserBaseAction
         {
             // Add new user
             UserManager mgr = RollerFactory.getRoller().getUserManager(); 
-            
-            // Need system user to add new user
-            RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
 
             UserData ud = new UserData();
             form.copyTo(ud, request.getLocale()); // doesn't copy password
@@ -153,16 +150,10 @@ public class UserNewAction extends UserBaseAction
                   form.getPasswordText(), form.getPasswordConfirm());
             }
             
-            //String theme = form.getTheme();
-            //HashMap pages = rollerContext.readThemeMacros(theme);
+            // save new user
             mgr.addUser(ud);
-            //mgr.createWebsite(ud, pages, theme, form.getLocale(), form.getTimezone());
-            RollerFactory.getRoller().commit();
-
-			// Flush cache so user will immediately appear on index page
-            //PageCacheFilter.removeFromCache( request, ud );
-            //MainPageAction.flushMainPageCache();
-
+            RollerFactory.getRoller().flush();
+            
             if (form.getAdminCreated()) 
             {
                 // User created for admin, so return to new user page with empty form

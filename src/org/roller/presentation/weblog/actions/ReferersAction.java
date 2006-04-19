@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.model.RefererManager;
 import org.roller.model.RollerFactory;
+import org.roller.pojos.RefererData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
@@ -102,7 +103,7 @@ public class ReferersAction extends DispatchAction
                 RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
                 WebsiteData website = rreq.getWebsite();
                 refmgr.clearReferrers(website);
-                RollerFactory.getRoller().commit();
+                RollerFactory.getRoller().flush();
                 
                 CacheManager.invalidate(website);
             }
@@ -131,15 +132,17 @@ public class ReferersAction extends DispatchAction
             {
                 RefererManager refmgr = RollerFactory.getRoller().getRefererManager();
                 WebsiteData website = rreq.getWebsite();
-
+                
+                RefererData referer = null;
                 String[] deleteIds = req.getParameterValues("id");
                 if (deleteIds != null)
                 {
                     for (int i=0; i<deleteIds.length; i++)
                     {
-                        refmgr.removeReferer(deleteIds[i]);
+                        referer = refmgr.getReferer(deleteIds[i]);
+                        refmgr.removeReferer(referer);
                     }
-                    RollerFactory.getRoller().commit();
+                    RollerFactory.getRoller().flush();
                     
                     CacheManager.invalidate(website);
                     

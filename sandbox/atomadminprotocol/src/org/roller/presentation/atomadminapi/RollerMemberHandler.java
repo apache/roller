@@ -269,15 +269,12 @@ class RollerMemberHandler extends Handler {
         try {
             UserManager mgr = getRoller().getUserManager();
             
-            // Need system user to create website
-            getRoller().setUser(UserData.SYSTEM_USER);
-            
             for (int i = 0; i < c.getEntries().length; i++) {
                 MemberEntry entry = (MemberEntry)c.getEntries()[i];
                 PermissionsData pd = toPermissionsData(entry);
-                pd.save();
+                mgr.storePermissions(pd);
             }
-            getRoller().commit();
+            getRoller().flush();
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create members", re);
         }
@@ -319,7 +316,6 @@ class RollerMemberHandler extends Handler {
     
     private void updateMembers(MemberEntrySet c) throws HandlerException {
         try {
-            getRoller().setUser(UserData.SYSTEM_USER);
             for (int i = 0; i < c.getEntries().length; i++) {
                 MemberEntry entry = (MemberEntry)c.getEntries()[i];
                 PermissionsData pd = getPermissionsData(entry);
@@ -328,7 +324,7 @@ class RollerMemberHandler extends Handler {
                 }
                 updatePermissionsData(pd, entry);
             }
-            getRoller().commit();
+            getRoller().flush();
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update members", re);
         }
@@ -347,7 +343,9 @@ class RollerMemberHandler extends Handler {
             WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(entry.getHandle());
             CacheManager.invalidate(wd);
             
-            pd.save();
+            UserManager mgr = getRoller().getUserManager();
+            mgr.storePermissions(pd);
+            
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update permissions data", re);
         }
@@ -365,7 +363,6 @@ class RollerMemberHandler extends Handler {
         }
         
         try {
-            getRoller().setUser(UserData.SYSTEM_USER);
             PermissionsData pd = getPermissionsData(handle, username);
             PermissionsData[] pds;
             if (pd == null) {
@@ -373,8 +370,8 @@ class RollerMemberHandler extends Handler {
             }
             pds = new PermissionsData[] { pd };
             
-            pd.remove();
-            getRoller().commit();
+            UserManager mgr = getRoller().getUserManager();
+            mgr.removePermissions(pd);
             
             UserData ud = getRoller().getUserManager().getUser(username);
             CacheManager.invalidate(ud);

@@ -311,7 +311,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 if(theme_template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
                     // this is the main Weblog template
                     try {
-                        template = userMgr.retrievePage(website.getDefaultPageId());
+                        template = userMgr.getPage(website.getDefaultPageId());
                     } catch(Exception e) {
                         // user may not have a default page yet
                     }
@@ -335,7 +335,7 @@ public class ThemeManagerImpl implements ThemeManager {
                             theme_template.getContents(),       // contents
                             new Date()                          // last mod
                             );
-                    userMgr.storePage( template );
+                    userMgr.savePage( template );
                 }
             }
             
@@ -363,7 +363,7 @@ public class ThemeManagerImpl implements ThemeManager {
             }
             
             // save our updated website
-            userMgr.storeWebsite(website);
+            userMgr.saveWebsite(website);
             
         } catch (Exception e) {
             mLogger.error("ERROR in action",e);

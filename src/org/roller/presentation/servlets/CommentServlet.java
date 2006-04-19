@@ -207,8 +207,8 @@ public class CommentServlet extends HttpServlet {
                         comment.setApproved(Boolean.TRUE);
                     }
                     
-                    comment.save();
-                    RollerFactory.getRoller().commit();
+                    mgr.saveComment(comment);
+                    RollerFactory.getRoller().flush();
                     reindexEntry(entry);
                     
                     // Clear all caches associated with comment

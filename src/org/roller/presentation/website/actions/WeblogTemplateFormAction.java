@@ -77,18 +77,14 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 validateLink( data );
 
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
-                mgr.storePage( data );
-                RollerFactory.getRoller().commit();
-
+                mgr.savePage( data );
+                RollerFactory.getRoller().flush();
+                
                 ActionMessages uiMessages = new ActionMessages();
                 uiMessages.add(ActionMessages.GLOBAL_MESSAGE, 
                         new ActionMessage("pagesForm.addNewPage.success", 
                                 data.getName()));
                 saveMessages(request, uiMessages);
-                
-                UserData user = rses.getAuthenticatedUser();
-                //PageCacheFilter.removeFromCache( request, website );
-                //CacheManager.invalidate(data);
                     
                 actionForm.reset(mapping,request);                
                 
@@ -129,12 +125,8 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 pageModel.setWebsite(pd.getWebsite());
                 request.setAttribute("model", pageModel); 
                 
-                UserData ud = rses.getAuthenticatedUser();
                 WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
-
-                //PageCacheFilter.removeFromCache( request, pd.getWebsite() );
-                //CacheManager.invalidate(pd);
                 
                 addModelObjects(request, response, mapping, pd.getWebsite());
             }
@@ -172,7 +164,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
             if (website == null && form.getId()!=null) 
             {
                 UserManager mgr = RollerFactory.getRoller().getUserManager();                
-                WeblogTemplate template = mgr.retrievePage(form.getId());
+                WeblogTemplate template = mgr.getPage(form.getId());
                 website = template.getWebsite();
             }
             
@@ -208,19 +200,25 @@ public final class WeblogTemplateFormAction extends DispatchAction
         {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
-            WeblogTemplate template = mgr.retrievePage(form.getId());
+            WeblogTemplate template = mgr.getPage(form.getId());
             WebsiteData website = template.getWebsite();
             
             RollerSession rses = RollerSession.getRollerSession(request);          
             if ( rses.isUserAuthorizedToAdmin(website) )
             {
-                mgr.removePageSafely(template.getId());
-                RollerFactory.getRoller().commit();
-
-                UserData user = rses.getAuthenticatedUser();
-                //PageCacheFilter.removeFromCache(request, template.getWebsite());
-                CacheManager.invalidate(template);
+                if(!template.isRequired()) {
                     
+                    mgr.removePage(template);
+                    RollerFactory.getRoller().flush();
+                    
+                    // notify cache
+                    CacheManager.invalidate(template);
+                } else {
+                    
+                    // someone trying to remove a required template
+                    throw new RollerException("Cannot remove required page");
+                }
+                
                 addModelObjects(
                         request, response, mapping, template.getWebsite());
                 actionForm.reset(mapping, request);
@@ -303,7 +301,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
             UserManager mgr = RollerFactory.getRoller().getUserManager();
-            WeblogTemplate data = mgr.retrievePage(form.getId());
+            WeblogTemplate data = mgr.getPage(form.getId());
             WebsiteData website = data.getWebsite();
             
             RollerSession rses = RollerSession.getRollerSession(request);
@@ -314,9 +312,9 @@ public final class WeblogTemplateFormAction extends DispatchAction
 
                 validateLink( data );
 
-                mgr.storePage( data );
-                RollerFactory.getRoller().commit();
-
+                mgr.savePage( data );
+                RollerFactory.getRoller().flush();
+                
                 // set the (possibly) new link back into the Form bean
                 ((WeblogTemplateForm)actionForm).setLink( data.getLink() );
 
@@ -326,8 +324,6 @@ public final class WeblogTemplateFormAction extends DispatchAction
                                 data.getName()));
                 saveMessages(request, uiMessages);
 
-                UserData user = rses.getAuthenticatedUser();
-                //PageCacheFilter.removeFromCache(request, data.getWebsite());
                 CacheManager.invalidate(data);
                 
                 BasePageModel pageModel = new BasePageModel(

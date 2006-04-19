@@ -14,6 +14,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.roller.RollerException;
 import org.roller.model.RollerFactory;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.WeblogCategoryData;
@@ -43,7 +44,7 @@ public class CategoryDeleteAction extends Action
 
         String catid = request.getParameter(RollerRequest.WEBLOGCATEGORYID_KEY);
         WeblogCategoryData catToDelete = 
-                wmgr.retrieveWeblogCategory(catid);
+                wmgr.getWeblogCategory(catid);
         RollerSession rses = RollerSession.getRollerSession(request);
         if (rses.isUserAuthorizedToAuthor(catToDelete.getWebsite()))
         {
@@ -56,7 +57,7 @@ public class CategoryDeleteAction extends Action
             {
                 // Present CategoryDeleteOK? page to user
                 RollerRequest rreq = RollerRequest.getRollerRequest(request);
-                WeblogCategoryData theCat = wmgr.retrieveWeblogCategory(catid);
+                WeblogCategoryData theCat = wmgr.getWeblogCategory(catid);
                 Iterator allCats = 
                     wmgr.getWeblogCategories(theCat.getWebsite()).iterator();
                 List destCats = new LinkedList();
@@ -67,7 +68,8 @@ public class CategoryDeleteAction extends Action
                     // root and the sub-cats of the category being deleted.
                     if (!cat.getId().equals(catid) 
                         && cat.getParent()!=null
-                        && !cat.descendentOf(catToDelete))
+                        && !cat.descendentOf(catToDelete)
+                        && cat.retrieveWeblogEntries(true).size() < 1)
                     {
                         destCats.add(cat);
                     }                    
@@ -90,27 +92,18 @@ public class CategoryDeleteAction extends Action
                     }               
                 }
             }
-            else if (form.isDelete().booleanValue()) 
-            {
-                // User clicked YES to delete
-                WeblogCategoryData destCat = null;
-                if (form.getMoveToWeblogCategoryId() != null) 
-                {
-                    destCat = wmgr.retrieveWeblogCategory(form.getMoveToWeblogCategoryId());
-                }
-                  
-                // move entries to destCat and remove catToDelete
-                catToDelete.remove(destCat);
+            else if (form.isDelete().booleanValue()) {
                 
-                RollerFactory.getRoller().commit();
+                // User clicked YES to delete
+                // remove cat to delete
+                wmgr.removeWeblogCategory(catToDelete);
+                RollerFactory.getRoller().flush();
                 
                 // notify caches of invalidated object
                 CacheManager.invalidate(catToDelete);
                 
-                if (null != returnId) 
-                {
-                    request.setAttribute(
-                        RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
+                if (null != returnId) {
+                    request.setAttribute(RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
                 }               
             }
             else 

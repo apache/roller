@@ -103,7 +103,7 @@ public final class WeblogEntryManagementAction extends DispatchAction
 
             if (null != queryForm.getCategoryId() && !queryForm.getCategoryId().equals("")) {
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-                WeblogCategoryData cd = wmgr.retrieveWeblogCategory(queryForm.getCategoryId());
+                WeblogCategoryData cd = wmgr.getWeblogCategory(queryForm.getCategoryId());
                 category = cd.getPath();
             }
 

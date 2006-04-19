@@ -123,9 +123,6 @@ public class YourProfileAction extends UserBaseAction
                 RollerSession rollerSession = RollerSession.getRollerSession(request);
                 UserData data = rollerSession.getAuthenticatedUser();
                 
-                // Need system user to update user
-                RollerFactory.getRoller().setUser(UserData.SYSTEM_USER);
-                
                 // We want to be VERY selective about what data gets updated
                 data.setFullName(form.getFullName());
                 data.setEmailAddress(form.getEmailAddress());
@@ -151,9 +148,8 @@ public class YourProfileAction extends UserBaseAction
                 
                 // save the updated profile
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
-                mgr.storeUser(data);
-                
-                RollerFactory.getRoller().commit();
+                mgr.saveUser(data);
+                RollerFactory.getRoller().flush();
 
                 request.setAttribute("model", new BasePageModel(
                         "yourProfile.title", request, response, mapping));

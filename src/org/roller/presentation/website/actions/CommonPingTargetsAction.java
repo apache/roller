@@ -68,9 +68,8 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
     protected PingTargetData createPingTarget(RollerRequest rreq, PingTargetForm pingTargetForm)
         throws RollerException
     {
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
-        return pingTargetMgr.createCommonPingTarget(
-            pingTargetForm.getName(), pingTargetForm.getPingUrl());
+        return new PingTargetData(null, pingTargetForm.getName(), 
+                pingTargetForm.getPingUrl(), null);
     }
 
 

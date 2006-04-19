@@ -76,47 +76,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
             // why does this throw an exception?
         }
     }
-
-    public void save() throws RollerException
-    {   
-        if (RollerFactory.getRoller().getWeblogManager().isDuplicateWeblogCategoryName(this))
-        {
-            throw new RollerException("Duplicate category name");
-        }
-        super.save();
-    }
-   
-    /**
-     * Remove this category and recategorize all entries in this category and
-     * in all subcategories to a specified destination category (destCat).
-     * @param destCat New category for entries in remove categories (or null if none).
-     */
-    public void remove(WeblogCategoryData destCat) throws RollerException
-    {
-        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-        
-        // recategorize entries in this category
-        if (destCat != null) 
-        {
-            wmgr.moveWeblogCategoryContents(getId(), destCat.getId());
-        }
-        // delete this category
-        super.remove();
-        
-        if (getWebsite().getBloggerCategory().equals(this))
-        {
-            WeblogCategoryData rootCat = wmgr.getRootWeblogCategory(getWebsite());
-            getWebsite().setBloggerCategory(rootCat);
-        }
-        
-        if (getWebsite().getDefaultCategory().equals(this))
-        {
-            WeblogCategoryData rootCat = wmgr.getRootWeblogCategory(getWebsite());
-            getWebsite().setDefaultCategory(rootCat);
-        }
-        
-        getWebsite().save();
-    }
+    
     
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getAssocClass()
@@ -344,29 +304,12 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         HierarchicalPersistentObject associatedObject, 
         String relation) throws RollerException
     {
-        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-        return wmgr.createWeblogCategoryAssoc(
-            (WeblogCategoryData)object, 
-            (WeblogCategoryData)associatedObject, 
-            relation);
+        return new WeblogCategoryAssoc(null,
+                (WeblogCategoryData)object,
+                (WeblogCategoryData)associatedObject,
+                relation);
     }
-
-    //------------------------------------------------------------------------
     
-    /** 
-     * Move all weblog entries that exist in this category and all
-     * subcategories of this category to a single new category.
-     */ 
-    public void moveContents(WeblogCategoryData dest) throws RollerException
-    {
-        Iterator entries = retrieveWeblogEntries(true).iterator();
-        while (entries.hasNext())
-        {
-            WeblogEntryData entry = (WeblogEntryData) entries.next();
-            entry.setCategory(dest);
-            entry.save();
-        }
-    }
     
     /** 
      * Retrieve all weblog entries in this category and, optionally, include
@@ -382,7 +325,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
         throws RollerException
     {
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-        return wmgr.retrieveWeblogEntries(this, subcats);
+        return wmgr.getWeblogEntries(this, subcats);
     }
 
     //-------------------------------------------------------- Good citizenship
@@ -458,7 +401,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getParentAssoc()
      */
-    protected Assoc getParentAssoc() throws RollerException
+    public Assoc getParentAssoc() throws RollerException
     {
         return RollerFactory.getRoller().getWeblogManager().getWeblogCategoryParentAssoc(this);
     }
@@ -466,7 +409,7 @@ public class WeblogCategoryData extends HierarchicalPersistentObject
     /** 
      * @see org.roller.pojos.HierarchicalPersistentObject#getChildAssocs()
      */
-    protected List getChildAssocs() throws RollerException
+    public List getChildAssocs() throws RollerException
     {
         return RollerFactory.getRoller().getWeblogManager().getWeblogCategoryChildAssocs(this);
     }

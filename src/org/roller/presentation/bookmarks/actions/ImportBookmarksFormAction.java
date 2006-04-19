@@ -110,8 +110,8 @@ public final class ImportBookmarksFormAction extends Action {
                         
                         // Use Roller BookmarkManager to import bookmarks
 
-                        bm.importBookmarks(website, folderName, data);                        
-                        RollerFactory.getRoller().commit();                        
+                        bm.importBookmarks(website, folderName, data);  
+                        RollerFactory.getRoller().flush();
                         CacheManager.invalidate(website);
                         
                         ActionMessages messages = new ActionMessages();
@@ -164,7 +164,7 @@ public final class ImportBookmarksFormAction extends Action {
         String folderid = request.getParameter(RollerRequest.FOLDERID_KEY);
         if (website == null && folderid != null) { 
             BookmarkManager bm = RollerFactory.getRoller().getBookmarkManager();
-            FolderData folder = bm.retrieveFolder(folderid);     
+            FolderData folder = bm.getFolder(folderid);     
             website = folder.getWebsite();
         }           
         if (website != null) {

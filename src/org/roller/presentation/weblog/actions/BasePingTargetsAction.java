@@ -141,7 +141,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
             String pingTargetId = pingTargetForm.getId();
             if (pingTargetId != null && pingTargetId.length() > 0)
             {
-                pingTarget = pingTargetMgr.retrievePingTarget(
+                pingTarget = pingTargetMgr.getPingTarget(
                         pingTargetForm.getId());
                 if (pingTarget == null) 
                     throw new RollerException(
@@ -163,8 +163,8 @@ public abstract class BasePingTargetsAction extends DispatchAction
 
             // Appears to be ok.  
             // Save it, commit and return refreshed view of target list.
-            pingTarget.save();
-            RollerFactory.getRoller().commit();
+            pingTargetMgr.savePingTarget(pingTarget);
+            RollerFactory.getRoller().flush();
             
             ActionMessages msgs = new ActionMessages();
             msgs.add(ActionMessages.GLOBAL_MESSAGE, 
@@ -300,8 +300,9 @@ public abstract class BasePingTargetsAction extends DispatchAction
             {
                 throw new RollerException("Missing ping target id.");
             }
-            pingTargetMgr.removePingTarget(pingTargetId);
-            RollerFactory.getRoller().commit();
+            PingTargetData ping = pingTargetMgr.getPingTarget(pingTargetId);
+            pingTargetMgr.removePingTarget(ping);
+            RollerFactory.getRoller().flush();
             return view(mapping, form, req, res);
         }
         catch (Exception e)
@@ -327,7 +328,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
             throw new RollerException("Missing ping target id: " + pingTargetId);
         }
 
-        PingTargetData pingTarget = pingTargetMgr.retrievePingTarget(pingTargetId);
+        PingTargetData pingTarget = pingTargetMgr.getPingTarget(pingTargetId);
         if (pingTarget == null)
         {
             throw new RollerException("No such ping target id: " + pingTargetId);

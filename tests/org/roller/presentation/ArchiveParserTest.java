@@ -56,7 +56,7 @@ public class ArchiveParserTest extends RollerTestBase
             //ArchiveParser parser = new ArchiveParser(getRoller(), mWebsite, archiveFile);
             //getRoller().begin(UserData.SYSTEM_USER);
             String result = null; // parser.parse();
-            getRoller().commit();
+            getRoller().flush();
             assertTrue(result.length() > 0);
             System.out.println(result);
         }

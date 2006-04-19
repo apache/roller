@@ -787,17 +787,4 @@ public class RollerConfigData
         return super.hashCode();
     }
 
-    public boolean canSave() throws RollerException
-    {
-        Roller roller = RollerFactory.getRoller();
-        if (roller.getUser().equals(UserData.SYSTEM_USER)) 
-        {
-            return true;
-        }
-        if (roller.getUser().hasRole("admin"))
-        {
-            return true;
-        }
-        return false;
-    }
 }

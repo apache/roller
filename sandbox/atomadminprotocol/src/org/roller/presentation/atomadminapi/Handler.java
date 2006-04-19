@@ -139,7 +139,6 @@ abstract class Handler {
                 UserData user = getRoller().getUserManager().getUser(auth.getUserId());
                 if (user != null && user.hasRole("admin") && user.getEnabled().booleanValue()) {
                     // success!
-                    getRoller().setUser(user);
                     username = auth.getUserId();
                 } else {
                     logger.warn("WARN: Is not global admin user: " + user.getUserName());

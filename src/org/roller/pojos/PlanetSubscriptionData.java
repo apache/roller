@@ -88,16 +88,15 @@ public class PlanetSubscriptionData extends PersistentObject
         this.id = id;
     }
     /** 
-     * @hibernate.bag lazy="true" inverse="true" cascade="delete" 
+     * @hibernate.bag lazy="true" inverse="true" cascade="all-delete-orphan" 
      * @hibernate.collection-key column="subscription_id"
-     * @hibernate.collection-one-to-many 
-     *    class="org.roller.pojos.PlanetEntryData"
+     * @hibernate.collection-one-to-many class="org.roller.pojos.PlanetEntryData"
      */
     public List getEntries()
     {
         return entries;
     }
-    public void setEntries(List entries)
+    private void setEntries(List entries)
     {
         this.entries = entries;
     }
@@ -195,18 +194,31 @@ public class PlanetSubscriptionData extends PersistentObject
         return getFeedUrl().compareTo(other.getFeedUrl());
     }
 
+    public boolean equals(Object other) {
+        
+        if(this == other) return true;
+        if(!(other instanceof PlanetSubscriptionData)) return false;
+        
+        final PlanetSubscriptionData that = (PlanetSubscriptionData) other;
+        return this.feedUrl.equals(that.getFeedUrl());
+    }
+    
+    public int hashCode() {
+        return this.feedUrl.hashCode();
+    }
+    
     public void addEntry(PlanetEntryData entry)
     {
-        entries.add(entry);
+        this.getEntries().add(entry);
     }
     
     public void addEntries(Collection newEntries)
     {
-        entries.addAll(newEntries);
+        this.getEntries().addAll(newEntries);
     }
     
     public void purgeEntries()
     {
-        entries.clear();
+        this.getEntries().clear();
     }
 }

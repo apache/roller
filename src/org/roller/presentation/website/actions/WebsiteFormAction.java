@@ -136,7 +136,7 @@ public final class WebsiteFormAction extends DispatchAction {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             UserManager umgr = RollerFactory.getRoller().getUserManager();
             
-            WebsiteData wd = umgr.retrieveWebsite(form.getId());
+            WebsiteData wd = umgr.getWebsite(form.getId());
             
             // Set website in request, so subsequent action gets it
             RollerRequest.getRollerRequest(request).setWebsite(wd);
@@ -149,9 +149,10 @@ public final class WebsiteFormAction extends DispatchAction {
                     form.setEnabled(wd.getEnabled());
                     form.copyTo(wd, request.getLocale());
                     
-                    wd.save();
+                    umgr.saveWebsite(wd);
                     RollerFactory.getRoller().getRefererManager().applyRefererFilters(wd);
-                    RollerFactory.getRoller().commit();
+                    
+                    RollerFactory.getRoller().flush();
                     
                     messages.add(null,
                         new ActionMessage("websiteSettings.savedChanges"));
@@ -225,7 +226,7 @@ public final class WebsiteFormAction extends DispatchAction {
             throws Exception {
         WebsiteFormEx form = (WebsiteFormEx)actionForm;
         UserManager umgr = RollerFactory.getRoller().getUserManager();
-        WebsiteData website = umgr.retrieveWebsite(form.getId());
+        WebsiteData website = umgr.getWebsite(form.getId());
         ActionForward forward = mapping.findForward("removeWebsite.page");
         request.setAttribute("model", new WebsitePageModel(
                 "websiteRemove.title", request, response, mapping, website));
@@ -255,14 +256,15 @@ public final class WebsiteFormAction extends DispatchAction {
         try {
             UserManager umgr = RollerFactory.getRoller().getUserManager();
             WebsiteFormEx form = (WebsiteFormEx)actionForm;
-            WebsiteData website = umgr.retrieveWebsite(form.getId());
+            WebsiteData website = umgr.getWebsite(form.getId());
             
             RollerSession rses = RollerSession.getRollerSession(request);
             if ( rses.isUserAuthorizedToAdmin(website) ) {
-                website.remove();
-                RollerFactory.getRoller().commit();
                 
-                //PageCacheFilter.removeFromCache(request, website);
+                // remove website
+                umgr.removeWebsite(website);
+                RollerFactory.getRoller().flush();
+                
                 CacheManager.invalidate(website);
                 
                 actionForm.reset(mapping, request);

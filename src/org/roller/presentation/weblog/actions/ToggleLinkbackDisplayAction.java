@@ -49,14 +49,14 @@ public class ToggleLinkbackDisplayAction extends Action
                 {
                     RefererManager refmgr = 
                         RollerFactory.getRoller().getRefererManager();                        
-                    RefererData ref = refmgr.retrieveReferer(refid); 
+                    RefererData ref = refmgr.getReferer(refid); 
                     entry = ref.getWeblogEntry();
                     boolean was = ref.getVisible()==null ? 
                                   false : ref.getVisible().booleanValue(); 
                     ref.setVisible(Boolean.valueOf( !was )); // what up, dog?                     
-                    ref.save();
+                    refmgr.saveReferer(ref);
                     
-                    RollerFactory.getRoller().commit();
+                    RollerFactory.getRoller().flush();
                     
                     //PageCacheFilter.removeFromCache( req, rreq.getWebsite() );
                     CacheManager.invalidate(rreq.getWebsite());

@@ -104,7 +104,6 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation
         Roller roller = RollerFactory.getRoller();
         try
         {
-            roller.begin();
             if (writer != null)
             {
                 WeblogManager weblogManager = roller.getWeblogManager();

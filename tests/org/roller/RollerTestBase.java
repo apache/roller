@@ -111,7 +111,7 @@ public abstract class RollerTestBase extends TestCase {
         String FS = File.separator;
         RollerConfig.setContextRealPath(".." + FS + "roller");
         RollerConfig.setUploadsDir("." + FS + "roller_dat" + FS + "uploads");       
-        getRoller().begin(UserData.SYSTEM_USER);
+        
         mUser = createUser(
                 testUsername,
                 "password",
@@ -119,32 +119,25 @@ public abstract class RollerTestBase extends TestCase {
                 "testuser@example.com");
         UserManager umgr = getRoller().getUserManager();
         mWebsite = (WebsiteData)umgr.getWebsites(mUser, null, null).get(0);
-        getRoller().commit();
         
-        getRoller().begin(UserData.SYSTEM_USER);
         PropertiesManager propmgr = getRoller().getPropertiesManager();
         Map props = propmgr.getProperties();
         RollerPropertyData prop =
                 (RollerPropertyData)props.get("site.absoluteurl");
         prop.setValue("http://localhost:8080/roller");
-        propmgr.store(props);
-        getRoller().commit();
+        propmgr.saveProperties(props);
         
-        getRoller().begin(UserData.SYSTEM_USER);
         PlanetManager planet = getRoller().getPlanetManager();
         PlanetConfigData config = config = new PlanetConfigData();
         config.setCacheDir("");
         config.setTitle("Test");
         config.setAdminEmail("admin@example.com");
         planet.saveConfiguration(config);
-        getRoller().commit();
         
-        getRoller().begin(UserData.SYSTEM_USER);
         PlanetGroupData group = new PlanetGroupData();
         group.setHandle("external");
         group.setTitle("external");
         planet.saveGroup(group);
-        getRoller().commit();
     }
     
     //-----------------------------------------------------------------------
@@ -168,10 +161,31 @@ public abstract class RollerTestBase extends TestCase {
                 Boolean.TRUE);
         umgr.addUser(ud);
         
-        // Create website for user with those pages
-        WebsiteData website = umgr.createWebsite(
-           ud, new HashMap(), username, username, username,"dummy@example.com",
-           "basic","en_US_WIN", "America/Los_Angeles");
+        WebsiteData website = new WebsiteData(
+                    null,                // id
+                    username,                // name
+                    username,              // handle
+                    username,         // description
+                    ud,                // userId
+                    "dummy",             // defaultPageId
+                    "dummy",             // weblogDayPageId
+                    Boolean.TRUE,        // enableBloggerApi
+                    null,                // bloggerCategory
+                    null,                // defaultCategory
+                    "editor-text.jsp",   // editorPage
+                    "",                  // blacklist
+                    Boolean.TRUE,        // allowComments
+                    Boolean.FALSE,       // emailComments
+                    "",                  // emailFromAddress
+                    Boolean.TRUE,        // isEnabled
+                    "dummy@example.com",               // emailAddress
+                    new Date(),          // dateCreated
+                    Boolean.TRUE,        // defaultAllowComments
+                    0,                   // defaultCommentDays
+                    Boolean.FALSE);      // moderateComments
+            website.setEditorTheme("basic");
+            website.setLocale("en_US_WIN");
+            website.setTimeZone("America/Los_Angeles");
         
         ThemeManager themeMgr = getRoller().getThemeManager();
         Theme usersTheme = themeMgr.getTheme(website.getEditorTheme());
@@ -188,7 +202,6 @@ public abstract class RollerTestBase extends TestCase {
         
         // Loop to create weblogs
         for (int i=0; i<mBlogCount; i++) {
-            getRoller().begin(UserData.SYSTEM_USER);
             
             UserData ud = createUser(
                     "testuser"+i,         // userName
@@ -208,11 +221,10 @@ public abstract class RollerTestBase extends TestCase {
             mCalendar.setTime(new Date());
             
             // create categories
-            website  = umgr.retrieveWebsite(website.getId());
+            website  = umgr.getWebsite(website.getId());
             WeblogCategoryData rootCat = wmgr.getRootWeblogCategory(website);
             createCategoryPostsAndComments(0, wmgr, ud, website, rootCat);
             
-            getRoller().commit();
         }
         
         // commit all the objects
@@ -245,7 +257,7 @@ public abstract class RollerTestBase extends TestCase {
                     day,        // pubTime
                     day,        // updateTime
                     WeblogEntryData.PUBLISHED ); // publishEntry
-            wd.save();
+            wmgr.saveWeblogEntry(wd);
             
             // roll calendar back to today
             mCalendar.roll(Calendar.DATE, false);
@@ -272,7 +284,7 @@ public abstract class RollerTestBase extends TestCase {
                     day,        // pubTime
                     day,        // updateTime
                     status ); // publishEntry
-            wd.save();
+            wmgr.saveWeblogEntry(wd);
             
             // add at beginning of list
             mEntriesCreated.add(0, wd);
@@ -294,7 +306,7 @@ public abstract class RollerTestBase extends TestCase {
                 comment.setPending(Boolean.FALSE);
                 comment.setSpam(Boolean.FALSE);
                 comment.setNotify(Boolean.FALSE);
-                comment.save();
+                wmgr.saveComment(comment);
                 mCommentsCreated.add(comment);
                 mLogger.debug("         Created comment ["
                         +comment.getId()+"]"+ comment.getName());
@@ -305,13 +317,14 @@ public abstract class RollerTestBase extends TestCase {
         
         // create categories under the category passed in
         for ( int j=0; j<mCatCount; j++ ) {
-            WeblogCategoryData cat = wmgr.createWeblogCategory(
+            WeblogCategoryData cat = new WeblogCategoryData(
+                    null,                           // id
                     website,                       // website
                     rootCat,                       // parent
                     rootCat.getName()+"-cat"+j,    // name
                     "desc",                        // description
                     null );                       // image
-            cat.save();
+            wmgr.saveWeblogCategory(cat);
             mCategoriesCreated.add(cat);
             mLogger.debug("   Created cat ["+cat.getId()+"]"+cat.getName());
             
@@ -324,20 +337,20 @@ public abstract class RollerTestBase extends TestCase {
     //-----------------------------------------------------------------------
     /** Tear down weblogs created in setupTestWeblogs() */
     public void tearDownTestWeblogs() throws Exception {
-        getRoller().begin(UserData.SYSTEM_USER);
         UserManager umgr = getRoller().getUserManager();
         for (Iterator siteIter = mWebsitesCreated.iterator(); siteIter.hasNext();) {
             WebsiteData site = (WebsiteData) siteIter.next();
-            site = umgr.retrieveWebsite(site.getId());
-            if (site != null) site.remove();
+            site = umgr.getWebsite(site.getId());
+            if (site != null) {
+                umgr.removeWebsite(site);
+            }
         }
         
         for (Iterator userIter = mUsersCreated.iterator(); userIter.hasNext();) {
             UserData user = (UserData) userIter.next();
-            user = umgr.retrieveUser(user.getId());
-            if (user != null) user.remove();
+            user = umgr.getUser(user.getId());
+            if (user != null) umgr.removeUser(user);
         }
-        getRoller().commit();
     }
     
     //------------------------------------------------------------------------
@@ -351,13 +364,10 @@ public abstract class RollerTestBase extends TestCase {
      */
     public void tearDown() throws Exception {
         try {
-            getRoller().begin(UserData.SYSTEM_USER);
             PlanetManager planet = getRoller().getPlanetManager();
             PlanetConfigData config = planet.getConfiguration();
             PlanetGroupData group = planet.getGroup("external");
-            group.remove();
-            config.remove();
-            getRoller().commit();
+            planet.deleteGroup(group);
             
             deleteWebsite(testUsername);
         } catch (RollerException e) {
@@ -373,17 +383,15 @@ public abstract class RollerTestBase extends TestCase {
      */
     private void deleteWebsite(String deleteMe) throws RollerException {
         mLogger.debug("try to delete " + deleteMe);
-        getRoller().begin(UserData.SYSTEM_USER);
         UserManager umgr = getRoller().getUserManager();
         
-        UserData user = umgr.getUser(deleteMe);
+        UserData user = umgr.getUserByUsername(deleteMe);
         
         WebsiteData website = (WebsiteData)umgr.getWebsites(user, null, null).get(0);
-        website.remove();
+        umgr.removeWebsite(website);
         
-        user.remove();
+        umgr.removeUser(user);
         
-        getRoller().commit();
     }
     
     //------------------------------------------------------------------------

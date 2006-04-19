@@ -323,7 +323,7 @@ public class TopicTagPlugin implements PagePlugin
         else
         {
             BookmarkManager bMgr = RollerFactory.getRoller().getBookmarkManager();
-            List bookmarks = bMgr.retrieveBookmarks(bMgr.getRootFolder(website), true);
+            List bookmarks = bMgr.getBookmarks(bMgr.getRootFolder(website), true);
 
             for (Iterator i = bookmarks.iterator(); i.hasNext();)
             {

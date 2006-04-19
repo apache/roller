@@ -18,6 +18,7 @@ import org.roller.RollerException;
 import org.roller.config.RollerConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
+import org.roller.model.UserManager;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
@@ -74,14 +75,16 @@ public class YourWebsitesAction extends DispatchAction
             throws Exception
     {
         YourWebsitesForm form = (YourWebsitesForm)actionForm;
-        Roller roller = RollerFactory.getRoller();
-        PermissionsData perms = 
-            roller.getUserManager().retrievePermissions(form.getInviteId());
         
+        UserManager userMgr = RollerFactory.getRoller().getUserManager();
+        PermissionsData perms = userMgr.getPermissions(form.getInviteId());
+        
+        // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation  
+        // TODO EXCEPTIONS: better exception handling
         perms.setPending(false);
-        // ROLLER_2.0: notify inviter that invitee has accepted invitation  
-        roller.commit();
-
+        userMgr.savePermissions(perms);
+        RollerFactory.getRoller().flush();
+        
         ActionMessages msgs = new ActionMessages();
         msgs.add(null, new ActionMessage(
                 "yourWebsites.accepted", perms.getWebsite().getHandle()));
@@ -101,13 +104,14 @@ public class YourWebsitesAction extends DispatchAction
             throws Exception
     {
         YourWebsitesForm form = (YourWebsitesForm)actionForm;
-        Roller roller = RollerFactory.getRoller();
-        PermissionsData perms = 
-            roller.getUserManager().retrievePermissions(form.getInviteId());
         
-        perms.remove();
-        // ROLLER_2.0: notify inviter that invitee has declined invitation  
-        roller.commit();
+        UserManager userMgr = RollerFactory.getRoller().getUserManager();
+        PermissionsData perms = userMgr.getPermissions(form.getInviteId());
+        
+        // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
+        // TODO EXCEPTIONS: better exception handling here
+        userMgr.removePermissions(perms);
+        RollerFactory.getRoller().flush();
         
         ActionMessages msgs = new ActionMessages();
         msgs.add(null, new ActionMessage(
@@ -128,18 +132,21 @@ public class YourWebsitesAction extends DispatchAction
             throws Exception
     {
         YourWebsitesForm form = (YourWebsitesForm)actionForm;
-        Roller roller = RollerFactory.getRoller();
+        
         RollerSession rses = RollerSession.getRollerSession(request);
         UserData user = rses.getAuthenticatedUser();
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WebsiteData website = rreq.getWebsite();
-        PermissionsData perms = 
-            roller.getUserManager().getPermissions(website, user);
+        
+        UserManager userMgr = RollerFactory.getRoller().getUserManager();
+        PermissionsData perms = userMgr.getPermissions(website, user);
+        
         if (perms != null) 
         {
-            // TODO: notify website members that user has resigned  
-            perms.remove();
-            roller.commit();
+            // TODO ROLLER_2.0: notify website members that user has resigned
+            // TODO EXCEPTIONS: better exception handling
+            userMgr.removePermissions(perms);
+            RollerFactory.getRoller().flush();
         }
         
         ActionMessages msgs = new ActionMessages();

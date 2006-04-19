@@ -166,7 +166,7 @@ public class PageModel {
     /** Get number of approved non-spam comments for entry */
     public int getCommentCount(String entryId, boolean noSpam, boolean approvedOnly) {
         try {
-            WeblogEntryData entry = mWeblogMgr.retrieveWeblogEntry(entryId);
+            WeblogEntryData entry = mWeblogMgr.getWeblogEntry(entryId);
             return entry.getComments(noSpam, approvedOnly).size();
         } catch (RollerException alreadyLogged) {}
         return 0;

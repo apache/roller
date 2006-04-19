@@ -21,8 +21,8 @@ import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.ThemeManager;
+import org.roller.model.UserManager;
 import org.roller.pojos.Theme;
-import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerRequest;
@@ -275,17 +275,17 @@ public class ThemeEditorAction extends DispatchAction {
                 // update theme for website and save
                 if(newTheme != null) {
                     try {
-                        Roller roller = RollerFactory.getRoller();
                         String username = rses.getAuthenticatedUser().getUserName();
-                        website.setEditorTheme(newTheme);
-                        website.save();
-                        roller.commit();
                         
-                        mLogger.debug("Saved theme "+newTheme+
-                                " for "+username);
+                        website.setEditorTheme(newTheme);
+                        
+                        UserManager userMgr = RollerFactory.getRoller().getUserManager();
+                        userMgr.saveWebsite(website);
+                        RollerFactory.getRoller().flush();
+                        
+                        mLogger.debug("Saved theme "+newTheme+" for "+username);
                         
                         // make sure to flush the page cache so ppl can see the change
-                        //PageCacheFilter.removeFromCache(request, website);
                         CacheManager.invalidate(website);
                         
                         // update complete ... now just send them back to edit
@@ -352,9 +352,8 @@ public class ThemeEditorAction extends DispatchAction {
                     // only if custom themes are allowed
                     if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
                         try {
-                            roller.begin(UserData.SYSTEM_USER);
                             themeMgr.saveThemePages(website, usersTheme);
-                            roller.commit();
+                            RollerFactory.getRoller().flush();
                         } catch(RollerException re) {
                             mLogger.error(re);
                             errors.add(null, new ActionMessage("Error customizing theme"));

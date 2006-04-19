@@ -48,14 +48,14 @@ public class FolderSaveAction extends Action
         FolderData fd = null;
         if (null != form.getId() && !form.getId().trim().equals("")) 
         {
-            fd = bmgr.retrieveFolder(form.getId());
+            fd = bmgr.getFolder(form.getId());
             website = fd.getWebsite();
         }
         else 
         {
-            fd = bmgr.createFolder();        
+            fd = new FolderData();
             String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
-            FolderData parent = bmgr.retrieveFolder(parentId);
+            FolderData parent = bmgr.getFolder(parentId);
             website = parent.getWebsite();
             fd.setParent(parent);
             fd.setWebsite(website);
@@ -66,8 +66,8 @@ public class FolderSaveAction extends Action
         {
             // Copy form values to object
             form.copyTo(fd, request.getLocale());
-            fd.save();
-            RollerFactory.getRoller().commit();
+            bmgr.saveFolder(fd);
+            RollerFactory.getRoller().flush();
             
             CacheManager.invalidate(fd);
         }

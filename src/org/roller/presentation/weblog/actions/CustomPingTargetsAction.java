@@ -90,10 +90,8 @@ public class CustomPingTargetsAction
     protected PingTargetData createPingTarget(RollerRequest rreq, PingTargetForm pingTargetForm)
         throws RollerException
     {
-        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
-        return pingTargetMgr.createCustomPingTarget(
-            pingTargetForm.getName(), pingTargetForm.getPingUrl(), 
-            rreq.getWebsite());
+        return new PingTargetData(null, pingTargetForm.getName(), 
+                pingTargetForm.getPingUrl(), rreq.getWebsite());
     }
 
 
