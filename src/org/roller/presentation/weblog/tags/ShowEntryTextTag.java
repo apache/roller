@@ -1,4 +1,4 @@
-/* Created on Feb 27, 2004 */
+/* Created on April 14, 2006 */
 package org.roller.presentation.weblog.tags;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +25,6 @@ import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 /**
  * Shows either entry summary or text, as appropriate and with plugins applied.
  * @jsp.tag name="ShowEntryText"
- * @author David M Johnson
  */
 public class ShowEntryTextTag extends TagSupport {
     static final long serialVersionUID = 3166731504235428544L;
@@ -45,50 +44,58 @@ public class ShowEntryTextTag extends TagSupport {
      */
     public int doStartTag() throws JspException {
         Roller roller = RollerFactory.getRoller();
-        WeblogEntryData entry =
-            (WeblogEntryData)RequestUtils.lookup(pageContext, name, property, scope);
+        WeblogEntryData entry = (WeblogEntryData)
+            RequestUtils.lookup(pageContext, name, property, scope);  
         
-        String sourceText = entry.getSummary();
-        if (sourceText == null || (singleEntry && entry.getText() != null)) {
-            sourceText = entry.getText();
+        String sourceText = null;
+        boolean hasSummary = Utilities.isNotEmpty(entry.getSummary());
+        boolean hasText= Utilities.isNotEmpty(entry.getText());
+        if (singleEntry) {
+            if (hasText) sourceText = entry.getText();
+            else if (hasSummary) sourceText = entry.getSummary();
+        } else {
+            if (hasSummary) sourceText = entry.getSummary();
+            else if (hasText) sourceText = entry.getText();
         }
-        
-        String xformed = sourceText;        
-        if (entry.getPlugins() != null) {
-            RollerContext rctx = 
-                RollerContext.getRollerContext();
+        if (Utilities.isNotEmpty(sourceText)) {
             try {
-                PagePluginManager ppmgr = roller.getPagePluginManager();
-                Map plugins = ppmgr.createAndInitPagePlugins(
-                        entry.getWebsite(),
-                        rctx.getServletContext(),
-                        rctx.getAbsoluteContextUrl(),
-                        new VelocityContext());
+                String xformed = sourceText;        
+                if (entry.getPlugins() != null) {
+                    RollerContext rctx = 
+                        RollerContext.getRollerContext();
+                    try {
+                        PagePluginManager ppmgr = roller.getPagePluginManager();
+                        Map plugins = ppmgr.createAndInitPagePlugins(
+                                entry.getWebsite(),
+                                rctx.getServletContext(),
+                                rctx.getAbsoluteContextUrl(),
+                                new VelocityContext());
 
-                xformed = ppmgr.applyPagePlugins(entry, plugins, sourceText, true);
+                        xformed = ppmgr.applyPagePlugins(entry, plugins, sourceText, true);
+
+                    } catch (Exception e) {
+                        mLogger.error(e);
+                    }
+                }
+
+                if (stripHtml) {
+                    // don't escape ampersands
+                    xformed = Utilities.escapeHTML( Utilities.removeHTML(xformed), false );
+                }
+
+                if (maxLength != -1) {
+                    xformed = Utilities.truncateNicely(xformed, maxLength, maxLength, "...");
+                }
+
+                // somehow things (&#8220) are getting double-escaped
+                // but I cannot seem to track it down
+                xformed = Utilities.stringReplace(xformed, "&amp#", "&#");
+
+                pageContext.getOut().println(xformed);
                 
-            } catch (Exception e) {
-                mLogger.error(e);
+            } catch (Throwable e) {
+                throw new JspException("ERROR applying plugin to entry", e);
             }
-        }
-        
-        if (stripHtml) {
-            // don't escape ampersands
-            xformed = Utilities.escapeHTML( Utilities.removeHTML(xformed), false );
-        }
-        
-        if (maxLength != -1) {
-            xformed = Utilities.truncateNicely(xformed, maxLength, maxLength, "...");
-        }
-        
-        // somehow things (&#8220) are getting double-escaped
-        // but I cannot seem to track it down
-        xformed = Utilities.stringReplace(xformed, "&amp#", "&#");
-        
-        try {
-            pageContext.getOut().println(xformed);
-        } catch (IOException e) {
-            throw new JspException("ERROR applying plugin to entry", e);
         }
         return TagSupport.SKIP_BODY;
     }
