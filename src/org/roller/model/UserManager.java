@@ -90,7 +90,7 @@ public interface UserManager {
     /**
      * Store a single weblog.
      */
-    public void saveWebsite(WebsiteData data) throws RollerException;
+    public void saveWebsite(WebsiteData data, boolean applyCommentDefaults) throws RollerException;
     
     
     public void removeWebsite(WebsiteData website) throws RollerException;

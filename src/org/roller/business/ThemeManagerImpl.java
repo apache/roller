@@ -363,7 +363,7 @@ public class ThemeManagerImpl implements ThemeManager {
             }
             
             // save our updated website
-            userMgr.saveWebsite(website);
+            userMgr.saveWebsite(website, false);
             
         } catch (Exception e) {
             mLogger.error("ERROR in action",e);

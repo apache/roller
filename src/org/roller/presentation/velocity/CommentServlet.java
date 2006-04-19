@@ -49,6 +49,12 @@ public class CommentServlet extends HttpServlet {
         
         // calculate the location of the requested permalink
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        
+        // ROL-1102: prevent NPE for bad URLs
+        if (rreq == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        } 
         WeblogEntryData entry = rreq.getWeblogEntry();
         if (entry != null) {
             forward += entry.getPermaLink();
@@ -61,8 +67,7 @@ public class CommentServlet extends HttpServlet {
                     forward += "&popup=true";
             }
                 
-        }
-        
+        }        
         mLogger.debug("forwarding to "+forward);
         
         // send an HTTP 301 response

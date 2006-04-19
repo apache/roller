@@ -12,6 +12,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.BooleanUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -149,7 +150,15 @@ public final class WebsiteFormAction extends DispatchAction {
                     form.setEnabled(wd.getEnabled());
                     form.copyTo(wd, request.getLocale());
                     
-                    umgr.saveWebsite(wd);
+                    // ROL-485: comments not be allowed on inactive weblogs
+                    wd.setAllowComments(wd.getActive());
+                    
+                    // ROL-1050: apply comment defaults to existing entries
+                    boolean applyCommentDefaults = form.isApplyCommentDefaults();
+                        //BooleanUtils.toBoolean(form.isApplyCommentDefaults());
+                    
+                    umgr.saveWebsite(wd, applyCommentDefaults);  
+                    
                     RollerFactory.getRoller().getRefererManager().applyRefererFilters(wd);
                     
                     RollerFactory.getRoller().flush();
@@ -158,7 +167,7 @@ public final class WebsiteFormAction extends DispatchAction {
                         new ActionMessage("websiteSettings.savedChanges"));
                     
                     request.getSession().setAttribute(
-                            RollerRequest.WEBSITEID_KEY, form.getId());
+                        RollerRequest.WEBSITEID_KEY, form.getId());
                     
                     // Clear cache entries associated with website
                     CacheManager.invalidate(wd);

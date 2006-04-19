@@ -159,6 +159,10 @@ public final class UploadFileFormAction extends DispatchAction {
 		    String baseURL = rctx.getAbsoluteContextUrl(request);
             String resourcesBaseURL = baseURL + fmgr.getUploadUrl() + "/" + website.getHandle();
             Iterator uploads = lastUploads.iterator();
+            if (uploads.hasNext()) {
+                messages.add(ActionMessages.GLOBAL_MESSAGE, 
+                    new ActionMessage("uploadFiles.uploadedFiles"));
+            }
             while (uploads.hasNext()) {                
                 messages.add(ActionMessages.GLOBAL_MESSAGE, 
                     new ActionMessage("uploadFiles.uploadedFile", 
