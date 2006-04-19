@@ -142,3 +142,22 @@ span.mm_weblog_name {
 td.mm_table_actions {
     background: #fff4d4;
 }
+
+
+/* RTE editor  */
+
+.rteBack tbody tr td, .rteBack tr td, .rteDiv, .rteBack .rteImageLowered, .rteImage:active, .rteImageRaised, .rteImage:hover, .rteImageSm, .rteImage {
+	background: #e3e3e3;
+}
+.rteImage {
+	border: 1px solid #bcc5cd; 
+}
+.rteImageSm {
+	border: 1px solid #bcc5cd; 
+}
+.rteDiv {
+    border: 1px solid #bcc5cd;
+}
+
+
+
