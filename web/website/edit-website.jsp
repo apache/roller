@@ -101,27 +101,35 @@ WebsiteFormAction.WebsitePageModel model =
         <td class="field"><html:checkbox property="moderateComments" /></input></td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
-<%
-boolean emailComments = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-if (emailComments) { %>
+    
+    <%
+    boolean emailComments = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+    if (emailComments) { %>
+        <tr>
+            <td class="label"><fmt:message key="websiteSettings.emailComments" /></td>
+            <td class="field"><html:checkbox property="emailComments" onclick="toggleNextRow(this)" /></input></td>
+            <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+        </tr>
+
+        <tr <c:if test="${!websiteFormEx.emailComments}">style="display: none"</c:if>>
+            <td class="label"><fmt:message key="websiteSettings.emailFromAddress" /></td>
+            <td class="field"><html:text size="50" property="emailFromAddress" /></input></td>
+            <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+        </tr>
+    <% } %>
+
+    <%-- ***** Default entry comment settings ***** --%>
+
     <tr>
-        <td class="label"><fmt:message key="websiteSettings.emailComments" /></td>
-        <td class="field"><html:checkbox property="emailComments" onclick="toggleNextRow(this)" /></input></td>
-        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+        <td colspan="3"><h2><fmt:message key="websiteSettings.defaultCommentSettings" /></h2></td>
     </tr>
-
-    <tr <c:if test="${!websiteFormEx.emailComments}">style="display: none"</c:if>>
-        <td class="label"><fmt:message key="websiteSettings.emailFromAddress" /></td>
-        <td class="field"><html:text size="50" property="emailFromAddress" /></input></td>
-        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
-    </tr>
-<% } %>
-
+    
     <tr>
         <td class="label"><fmt:message key="websiteSettings.defaultAllowComments" /></td>
         <td class="field"><html:checkbox property="defaultAllowComments" /></input></td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
+    
      <tr>
         <td class="label"><fmt:message key="websiteSettings.defaultCommentDays" /></td>
         <td class="field">
@@ -140,6 +148,12 @@ if (emailComments) { %>
              <html:option key="weblogEdit.days90" value="90"  />
          </html:select>
         </td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.applyCommentDefaults" /></td>
+        <td class="field"><html:checkbox property="applyCommentDefaults" /></input></td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
 

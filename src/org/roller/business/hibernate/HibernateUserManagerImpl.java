@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
@@ -65,15 +66,18 @@ public class HibernateUserManagerImpl implements UserManager {
         
         this.strategy = strat;
     }
-    
-    
+   
     /**
-     * @see org.roller.model.UserManager#storeWebsite(org.roller.pojos.WebsiteData)
+     * Update existing website and optionally apply new comment defaults to all
+     * existing weblog entries in website.
+     * @param website              The website to be updated
+     * @param applyCommentDefaults True to apply website's comment defaults to 
+     *                             all existing comments
      */
-    public void saveWebsite(WebsiteData data) throws RollerException {
-        this.strategy.store(data);
-    }
-    
+    public void saveWebsite(WebsiteData website, boolean applyCommentDefaults) throws RollerException {
+        strategy.store(website);
+        if (applyCommentDefaults) applyCommentDefaults(website);
+    }    
     
     public void removeWebsite(WebsiteData weblog) throws RollerException {
         
@@ -785,5 +789,34 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
+    /**
+     * Apply comment defaults (defaultAllowComments and defaultCommentDays) to
+     * all existing entries in a website using a single HQL query.
+     * @param website Website where comment defaults are from/to be applied.
+     */
+    private void applyCommentDefaults(WebsiteData website) throws RollerException {
+        if (log.isDebugEnabled()) {
+            log.debug("applyCommentDefaults");
+        }       
+        try {
+            Session session = strategy.getSession();
+            String updateString = "update WeblogEntryData set "
+                +"allowComments=:allowed, commentDays=:days, "
+                +"pubTime=pubTime, updateTime=updateTime " // ensure timestamps are NOT reset
+                +"where website=:site";
+            Query update = session.createQuery(updateString);
+            update.setParameter("allowed", website.getDefaultAllowComments());
+            update.setParameter("days", new Integer(website.getDefaultCommentDays()));
+            update.setParameter("site", website);
+            update.executeUpdate();            
+        } catch (Exception e) {
+            log.error("EXCEPTION applying comment defaults",e);
+        }
+    }  
 }
+
+
+
+
+
 
