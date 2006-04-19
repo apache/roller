@@ -1,4 +1,4 @@
-/* Created on Feb 27, 2004 */
+/* Created on April 14, 2006 */
 package org.roller.presentation.weblog.tags;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +24,6 @@ import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 /**
  * Shows entry summary with plugins applied.
  * @jsp.tag name="ShowEntrySummary"
- * @author David M Johnson
  */
 public class ShowEntrySummaryTag extends TagSupport {
     static final long serialVersionUID = 3166731504235428544L;
@@ -41,35 +40,27 @@ public class ShowEntrySummaryTag extends TagSupport {
      */
     public int doStartTag() throws JspException {
         Roller roller = RollerFactory.getRoller();
-        WeblogEntryData entry =
-            (WeblogEntryData)RequestUtils.lookup(pageContext, name, property, scope);
-        
-        String xformed = null;
-        
-        if (entry.getPlugins() != null) {
-            RollerContext rctx = 
-                RollerContext.getRollerContext();
-            try {
-                PagePluginManager ppmgr = roller.getPagePluginManager();
-                Map plugins = ppmgr.createAndInitPagePlugins(
+        WeblogEntryData entry = (WeblogEntryData)
+            RequestUtils.lookup(pageContext, name, property, scope);
+        if (Utilities.isNotEmpty(entry.getSummary())) {
+            String xformed = entry.getSummary();
+            try {        
+                if (entry.getPlugins() != null) {
+                    RollerContext rctx = 
+                        RollerContext.getRollerContext();
+                    PagePluginManager ppmgr = roller.getPagePluginManager();
+                    Map plugins = ppmgr.createAndInitPagePlugins(
                         entry.getWebsite(),
                         rctx.getServletContext(),
                         rctx.getAbsoluteContextUrl(),
                         new VelocityContext());
-                xformed = ppmgr.applyPagePlugins(
-                              entry, plugins, entry.getSummary(), true);
-                
-            } catch (Exception e) {
-                mLogger.error(e);
+                    xformed = ppmgr.applyPagePlugins(
+                        entry, plugins, entry.getSummary(), true);
+                }               
+                pageContext.getOut().println(xformed);
+            } catch (Throwable e) {
+                throw new JspException("ERROR applying plugin to entry", e);
             }
-        } else {
-            xformed = entry.getText();
-        }
-                
-        try {
-            pageContext.getOut().println(xformed);
-        } catch (IOException e) {
-            throw new JspException("ERROR applying plugin to entry", e);
         }
         return TagSupport.SKIP_BODY;
     }

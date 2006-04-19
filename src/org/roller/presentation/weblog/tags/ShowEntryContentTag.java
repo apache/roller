@@ -1,4 +1,4 @@
-/* Created on Feb 27, 2004 */
+/* Created on April 14, 2006 */
 package org.roller.presentation.weblog.tags;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +24,6 @@ import org.roller.pojos.wrapper.WeblogEntryDataWrapper;
 /**
  * Shows entry text with plugins applied.
  * @jsp.tag name="ShowEntryContent"
- * @author David M Johnson
  */
 public class ShowEntryContentTag extends TagSupport {
     static final long serialVersionUID = 3166731504235428544L;
@@ -44,48 +43,46 @@ public class ShowEntryContentTag extends TagSupport {
      */
     public int doStartTag() throws JspException {
         Roller roller = RollerFactory.getRoller();
-        WeblogEntryData entry =
-            (WeblogEntryData)RequestUtils.lookup(pageContext, name, property, scope);
-        
-        String xformed = null;
-        
-        if (entry.getPlugins() != null) {
-            RollerContext rctx = 
-                RollerContext.getRollerContext();
+        WeblogEntryData entry = (WeblogEntryData)
+            RequestUtils.lookup(pageContext, name, property, scope);
+        if (Utilities.isNotEmpty(entry.getText())) {
+            String xformed = entry.getText();;        
             try {
-                PagePluginManager ppmgr = roller.getPagePluginManager();
-                Map plugins = ppmgr.createAndInitPagePlugins(
-                        entry.getWebsite(),
-                        rctx.getServletContext(),
-                        rctx.getAbsoluteContextUrl(),
-                        new VelocityContext());
-                xformed = ppmgr.applyPagePlugins(
-                              entry, plugins, entry.getText(), singleEntry);
-                
-            } catch (Exception e) {
-                mLogger.error(e);
+                if (entry.getPlugins() != null) {
+                    RollerContext rctx = 
+                        RollerContext.getRollerContext();
+                    try {
+                        PagePluginManager ppmgr = roller.getPagePluginManager();
+                        Map plugins = ppmgr.createAndInitPagePlugins(
+                            entry.getWebsite(),
+                            rctx.getServletContext(),
+                            rctx.getAbsoluteContextUrl(),
+                            new VelocityContext());
+                        xformed = ppmgr.applyPagePlugins(
+                            entry, plugins, entry.getText(), singleEntry);
+                    } catch (Exception e) {
+                        mLogger.error(e);
+                    }
+                }
+
+                if (stripHtml) {
+                    // don't escape ampersands
+                    xformed = Utilities.escapeHTML( Utilities.removeHTML(xformed), false );
+                }
+
+                if (maxLength != -1) {
+                    xformed = Utilities.truncateNicely(xformed, maxLength, maxLength, "...");
+                }
+
+                // somehow things (&#8220) are getting double-escaped
+                // but I cannot seem to track it down
+                xformed = Utilities.stringReplace(xformed, "&amp#", "&#");
+
+                pageContext.getOut().println(xformed);
+
+            } catch (Throwable e) {
+                throw new JspException("ERROR applying plugin to entry", e);
             }
-        } else {
-            xformed = entry.getText();
-        }
-        
-        if (stripHtml) {
-            // don't escape ampersands
-            xformed = Utilities.escapeHTML( Utilities.removeHTML(xformed), false );
-        }
-        
-        if (maxLength != -1) {
-            xformed = Utilities.truncateNicely(xformed, maxLength, maxLength, "...");
-        }
-        
-        // somehow things (&#8220) are getting double-escaped
-        // but I cannot seem to track it down
-        xformed = Utilities.stringReplace(xformed, "&amp#", "&#");
-        
-        try {
-            pageContext.getOut().println(xformed);
-        } catch (IOException e) {
-            throw new JspException("ERROR applying plugin to entry", e);
         }
         return TagSupport.SKIP_BODY;
     }
