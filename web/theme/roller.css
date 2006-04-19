@@ -319,10 +319,10 @@ td.pendingcomment {
     background: #ffcccc;
     border: 1px grey solid;
 }
-td.pendingentry {
+td.pendingentry, tr.pendingentry {
     background: #ffcccc;
 }
-td.draftentry {
+td.draftentry, tr.draftentry {
     background: #ffffcc;
 }
 .draftEntryBox {
