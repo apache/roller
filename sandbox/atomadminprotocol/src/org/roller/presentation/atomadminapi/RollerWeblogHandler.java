@@ -13,11 +13,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.roller.RollerException;
-import org.roller.config.RollerConfig;
+import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.UserManager;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
@@ -29,6 +31,7 @@ import org.roller.presentation.atomadminapi.sdk.UnexpectedRootElementException;
 import org.roller.presentation.atomadminapi.sdk.WeblogEntry;
 import org.roller.presentation.atomadminapi.sdk.WeblogEntrySet;
 import org.roller.presentation.cache.CacheManager;
+import org.roller.util.Utilities;
 
 /**
  * This class handles requests concerning Roller weblog resources.
@@ -36,6 +39,9 @@ import org.roller.presentation.cache.CacheManager;
  * @author jtb
  */
 class RollerWeblogHandler extends Handler {
+    private static Log log =
+        LogFactory.getFactory().getInstance(RollerWeblogHandler.class);
+
     /** Theme name used when creating weblogs */
     private static final String DEFAULT_THEME = "basic";
     
@@ -197,10 +203,19 @@ class RollerWeblogHandler extends Handler {
                     DEFAULT_THEME,
                     entry.getLocale(),
                     entry.getTimezone());
-                wd.setEditorPage(RollerConfig.getProperty("newweblog.editor"));
+                
+                try {
+                    String def = RollerRuntimeConfig.getProperty("users.editor.pages");
+                    String[] defs = Utilities.stringToStringArray(def,",");
+                    wd.setEditorPage(defs[0]);
+                } catch (Exception ex) {
+                    log.error("ERROR setting default editor page for weblog", ex);
+                }
+                
                 mgr.addWebsite(wd);
             }
             getRoller().flush();
+            
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create weblogs: " + c, re);
         }

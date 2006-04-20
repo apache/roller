@@ -1,5 +1,4 @@
 package org.roller.presentation.website.actions;
-import java.util.HashMap;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +16,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.roller.RollerException;
 import org.roller.config.RollerConfig;
+import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
 import org.roller.model.ThemeManager;
@@ -27,6 +27,7 @@ import org.roller.presentation.BasePageModel;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerSession;
 import org.roller.presentation.website.formbeans.CreateWebsiteForm;
+import org.roller.util.Utilities;
 
 
 /**
@@ -146,7 +147,15 @@ public class CreateWebsiteAction extends DispatchAction
                     form.getTheme(),
                     form.getLocale(),
                     form.getTimeZone());
-            wd.setEditorPage(RollerConfig.getProperty("newweblog.editor"));
+            
+            try {
+                String def = RollerRuntimeConfig.getProperty("users.editor.pages");
+                String[] defs = Utilities.stringToStringArray(def,",");
+                wd.setEditorPage(defs[0]);
+            } catch (Exception ex) {
+                log.error("ERROR setting default editor page for weblog", ex);
+            }
+            
             mgr.addWebsite(wd);
             
             RollerFactory.getRoller().flush();
