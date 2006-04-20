@@ -162,30 +162,16 @@ public abstract class RollerTestBase extends TestCase {
         umgr.addUser(ud);
         
         WebsiteData website = new WebsiteData(
-                    null,                // id
-                    username,                // name
                     username,              // handle
+                    ud,                // creator
+                    username,              // name
                     username,         // description
-                    ud,                // userId
-                    "dummy",             // defaultPageId
-                    "dummy",             // weblogDayPageId
-                    Boolean.TRUE,        // enableBloggerApi
-                    null,                // bloggerCategory
-                    null,                // defaultCategory
-                    "editor-text.jsp",   // editorPage
-                    "",                  // blacklist
-                    Boolean.TRUE,        // allowComments
-                    Boolean.FALSE,       // emailComments
-                    "",                  // emailFromAddress
-                    Boolean.TRUE,        // isEnabled
                     "dummy@example.com",               // emailAddress
-                    new Date(),          // dateCreated
-                    Boolean.TRUE,        // defaultAllowComments
-                    0,                   // defaultCommentDays
-                    Boolean.FALSE);      // moderateComments
-            website.setEditorTheme("basic");
-            website.setLocale("en_US_WIN");
-            website.setTimeZone("America/Los_Angeles");
+                    "",             // emailFrom
+                    "basic",        // theme
+                    "en_US_WIN",    // locale
+                    "America/Los_Angeles" // timezone
+                    );
         
         ThemeManager themeMgr = getRoller().getThemeManager();
         Theme usersTheme = themeMgr.getTheme(website.getEditorTheme());
