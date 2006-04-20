@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.roller.business.BookmarkManagerTest;
 import org.roller.config.RollerConfig;
 import org.roller.model.PlanetManager;
 import org.roller.model.PropertiesManager;
@@ -42,7 +41,7 @@ import org.roller.pojos.WebsiteData;
  */
 public abstract class RollerTestBase extends TestCase {
     public static Log mLogger =
-            LogFactory.getFactory().getInstance(BookmarkManagerTest.class);
+            LogFactory.getFactory().getInstance(RollerTestBase.class);
     
     private Roller mRoller = null;
     
