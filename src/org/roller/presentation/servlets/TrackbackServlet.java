@@ -177,7 +177,7 @@ public class TrackbackServlet extends HttpServlet {
                     
                     if (error == null) {
                         // If comment moderation is on, set comment as pending
-                        if (verified && website.getModerateComments().booleanValue()) {
+                        if (verified && website.getCommentModerationRequired()) {
                             comment.setPending(Boolean.TRUE);   
                             comment.setApproved(Boolean.FALSE);
                         } else if (verified) { 

@@ -96,15 +96,15 @@ WebsiteFormAction.WebsitePageModel model =
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
     
+    <c:if test="${!model.moderationRequired}">
     <tr>
         <td class="label"><fmt:message key="websiteSettings.moderateComments" /></td>
         <td class="field"><html:checkbox property="moderateComments" /></input></td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
+    </c:if>
     
-    <%
-    boolean emailComments = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
-    if (emailComments) { %>
+    <c:if test="${!model.moderationRequired}">
         <tr>
             <td class="label"><fmt:message key="websiteSettings.emailComments" /></td>
             <td class="field"><html:checkbox property="emailComments" onclick="toggleNextRow(this)" /></input></td>
@@ -116,7 +116,7 @@ WebsiteFormAction.WebsitePageModel model =
             <td class="field"><html:text size="50" property="emailFromAddress" /></input></td>
             <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
         </tr>
-    <% } %>
+    </c:if>
 
     <%-- ***** Default entry comment settings ***** --%>
 
