@@ -15,6 +15,7 @@ import org.roller.model.PropertiesManager;
 import org.roller.model.RefererManager;
 import org.roller.model.RollerFactory;
 import org.roller.model.UserManager;
+import org.roller.pojos.RefererData;
 import org.roller.pojos.RollerPropertyData;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
@@ -103,6 +104,60 @@ public class RefererTest extends TestCase {
     }
     
     
+    /**
+     * Test basic persistence operations ... Create, Update, Delete
+     */
+    public void testRefererCRUD() throws Exception {
+        
+        RefererManager mgr = RollerFactory.getRoller().getRefererManager();
+        RefererData referer = null;
+        
+        RefererData testReferer = new RefererData();
+        testReferer.setWebsite(testWeblog);
+        testReferer.setDateString("20060420");
+        testReferer.setRefererUrl("blah");
+        testReferer.setRefererPermalink("blah");
+        testReferer.setRequestUrl("foo");
+        testReferer.setTitle("lksdjf");
+        testReferer.setTotalHits(new Integer(3));
+        testReferer.setDayHits(new Integer(2));
+        testReferer.setVisible(Boolean.TRUE);
+        testReferer.setDuplicate(Boolean.FALSE);
+        testReferer.setExcerpt("");
+        
+        // save referer
+        mgr.saveReferer(testReferer);
+        String id = testReferer.getId();
+        TestUtils.endSession(true);
+        
+        // check that create was successful
+        referer = null;
+        referer = mgr.getReferer(id);
+        assertNotNull(referer);
+        assertEquals(testReferer, referer);
+        
+        // update referer
+        referer.setTitle("testtesttest");
+        mgr.saveReferer(referer);
+        TestUtils.endSession(true);
+        
+        // check that update was successful
+        referer = null;
+        referer = mgr.getReferer(id);
+        assertNotNull(referer);
+        assertEquals("testtesttest", referer.getTitle());
+        
+        // delete referer
+        mgr.removeReferer(referer);
+        TestUtils.endSession(true);
+        
+        // check that delete was successful
+        referer = null;
+        referer = mgr.getReferer(id);
+        assertNull(referer);
+    }
+    
+    
     public void testGetReferersToDate() throws Exception {
         
         RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
@@ -170,7 +225,7 @@ public class RefererTest extends TestCase {
         umgr.saveWebsite(testWeblog);
         TestUtils.endSession(true);
         
-        rmgr.applyRefererFilters();
+        rmgr.applyRefererFilters(testWeblog);
         TestUtils.endSession(true);
         
         refs = rmgr.getReferers(testWeblog);
