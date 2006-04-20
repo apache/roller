@@ -22,7 +22,7 @@ $pageHelper.setContentType("application/rss+xml;charset=utf-8")<?xml version="1.
     #end
     <pubDate>$utilities.formatRfc822Date($entry.pubTime)</pubDate>
     <category>$utilities.textToHTML($entry.category.name,true)</category>
-    #if( $utilities.isNotEmpty($entry.summary) && $utilities.isNotEmpty($entry.text))<summary type="html">#showEntrySummary($entry)</summary>#end
+    #if( $utilities.isNotEmpty($entry.summary) && $utilities.isNotEmpty($entry.text))<atom:summary type="html">#showEntrySummary($entry)</atom:summary>#end
     #if( $utilities.isNotEmpty($entry.summary) && $utilities.isEmpty($entry.text))<description>#showEntrySummary($entry)</description>#end
     #if( $utilities.isNotEmpty($entry.text) )<description>#showEntryContent($entry)</description>#end
     #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
