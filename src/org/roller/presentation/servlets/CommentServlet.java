@@ -198,7 +198,7 @@ public class CommentServlet extends HttpServlet {
                     }
                      
                     // If comment moderation is on, set comment as pending
-                    if (website.getModerateComments().booleanValue()) {
+                    if (website.getCommentModerationRequired()) {
                         comment.setPending(Boolean.TRUE);   
                         comment.setApproved(Boolean.FALSE);
                         message = bundle.getString("commentServlet.submittedToModerator");

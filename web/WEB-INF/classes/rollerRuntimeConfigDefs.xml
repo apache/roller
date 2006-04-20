@@ -105,6 +105,10 @@
          <!-- defaults to false because we don't distribute mail jars -->
          <default-value>false</default-value> 
       </property-def>
+      <property-def  name="users.moderation.required"  key="configForm.moderationRequired">
+         <type>boolean</type>
+         <default-value>false</default-value>
+      </property-def>
       <property-def name="site.trackbackVerification.enabled" key="configForm.enableTrackbackValidation">
          <type>boolean</type>
          <default-value>false</default-value>
