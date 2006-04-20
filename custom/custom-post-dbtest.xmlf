@@ -1,5 +1,5 @@
 
-<!-- add post-test tasks to test-hibernate target of build.xml
+<!-- add post-test tasks to test-hibernate target of build.xml 
     <sql driver="org.hsqldb.jdbcDriver"
          url="jdbc:hsqldb:hsql://localhost:3219"
          userid="sa" password=""

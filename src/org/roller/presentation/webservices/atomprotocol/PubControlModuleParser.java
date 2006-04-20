@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package org.roller.presentation.atomapi;
+package org.roller.presentation.webservices.atomprotocol;
 
 import org.jdom.Element;
 import org.jdom.Namespace;

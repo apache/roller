@@ -1,13 +1,4 @@
 
-<!-- Need Atom PubControl Module for Atom protocol support
-<copy todir="${build.stage_web}/WEB-INF/classes" overwrite="true">
-   <fileset dir="${basedir}/sandbox/atomprotocol">
-      <include name="rome.properties" />
-   </fileset>
-</copy>
--->
-
-
 <!-- Example: copy custom files into the Roller web context
 <copy todir="${build.stage_web}" overwrite="true">
    <fileset dir="${basedir}/sandbox/planetroller/web">
