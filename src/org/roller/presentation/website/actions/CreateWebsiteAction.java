@@ -136,32 +136,18 @@ public class CreateWebsiteAction extends DispatchAction
                 }
             }
             
-            WebsiteData newWebsite = new WebsiteData(
-                    null,                           // id
-                    form.getName(),                 // name
-                    form.getHandle(),               // handle
-                    form.getDescription(),          // description
-                    user,                           // userId
-                    "dummy",                        // defaultPageId
-                    "dummy",                        // weblogDayPageId
-                    Boolean.TRUE,                   // enableBloggerApi
-                    null,                           // bloggerCategory
-                    null,                           // defaultCategory
-                    "editor-text.jsp",              // editorPage
-                    "",                             // blacklist
-                    Boolean.TRUE,                   // allowComments
-                    Boolean.FALSE,                  // emailComments
-                    "",                             // emailFromAddress
-                    Boolean.TRUE,                   // isEnabled
-                    form.getEmailAddress(),         // emailAddress
-                    new java.util.Date(),           // dateCreated
-                    Boolean.TRUE,                   // defaultAllowComments
-                    0,                              // defaultCommentDays
-                    Boolean.FALSE);                 // moderateComments
-            newWebsite.setEditorTheme(form.getTheme());
-            newWebsite.setLocale(form.getLocale());
-            newWebsite.setTimeZone(form.getTimeZone());
-            mgr.addWebsite(newWebsite);
+            WebsiteData wd = new WebsiteData(
+                    form.getHandle(),
+                    user,
+                    form.getName(),
+                    form.getDescription(),
+                    form.getEmailAddress(),
+                    form.getEmailAddress(),
+                    form.getTheme(),
+                    form.getLocale(),
+                    form.getTimeZone());
+            wd.setEditorPage(RollerConfig.getProperty("newweblog.editor"));
+            mgr.addWebsite(wd);
             
             RollerFactory.getRoller().flush();
             
