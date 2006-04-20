@@ -104,7 +104,7 @@ WebsiteFormAction.WebsitePageModel model =
     </tr>
     </c:if>
     
-    <c:if test="${!model.moderationRequired}">
+    <c:if test="${model.emailNotificationEnabled}">
         <tr>
             <td class="label"><fmt:message key="websiteSettings.emailComments" /></td>
             <td class="field"><html:checkbox property="emailComments" onclick="toggleNextRow(this)" /></input></td>
