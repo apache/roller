@@ -152,13 +152,14 @@ public final class WebsiteFormAction extends DispatchAction {
                     
                     // ROL-485: comments not be allowed on inactive weblogs
                     wd.setAllowComments(wd.getActive());
+                                        
+                    umgr.saveWebsite(wd);  
                     
                     // ROL-1050: apply comment defaults to existing entries
-                    boolean applyCommentDefaults = form.isApplyCommentDefaults();
-                        //BooleanUtils.toBoolean(form.isApplyCommentDefaults());
-                    
-                    umgr.saveWebsite(wd, applyCommentDefaults);  
-                    
+                    if (form.isApplyCommentDefaults()) {
+                        wmgr.applyCommentDefaultsToEntries(wd);
+                    }
+
                     RollerFactory.getRoller().getRefererManager().applyRefererFilters(wd);
                     
                     RollerFactory.getRoller().flush();

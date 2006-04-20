@@ -68,15 +68,10 @@ public class HibernateUserManagerImpl implements UserManager {
     }
    
     /**
-     * Update existing website and optionally apply new comment defaults to all
-     * existing weblog entries in website.
-     * @param website              The website to be updated
-     * @param applyCommentDefaults True to apply website's comment defaults to 
-     *                             all existing comments
+     * Update existing website.
      */
-    public void saveWebsite(WebsiteData website, boolean applyCommentDefaults) throws RollerException {
+    public void saveWebsite(WebsiteData website) throws RollerException {
         strategy.store(website);
-        if (applyCommentDefaults) applyCommentDefaults(website);
     }    
     
     public void removeWebsite(WebsiteData weblog) throws RollerException {
@@ -787,32 +782,7 @@ public class HibernateUserManagerImpl implements UserManager {
         public IgnoreCaseEqExpression(String property, Object value) {
             super(property, value, "=", true);
         }
-    }
-    
-    /**
-     * Apply comment defaults (defaultAllowComments and defaultCommentDays) to
-     * all existing entries in a website using a single HQL query.
-     * @param website Website where comment defaults are from/to be applied.
-     */
-    private void applyCommentDefaults(WebsiteData website) throws RollerException {
-        if (log.isDebugEnabled()) {
-            log.debug("applyCommentDefaults");
-        }       
-        try {
-            Session session = strategy.getSession();
-            String updateString = "update WeblogEntryData set "
-                +"allowComments=:allowed, commentDays=:days, "
-                +"pubTime=pubTime, updateTime=updateTime " // ensure timestamps are NOT reset
-                +"where website=:site";
-            Query update = session.createQuery(updateString);
-            update.setParameter("allowed", website.getDefaultAllowComments());
-            update.setParameter("days", new Integer(website.getDefaultCommentDays()));
-            update.setParameter("site", website);
-            update.executeUpdate();            
-        } catch (Exception e) {
-            log.error("EXCEPTION applying comment defaults",e);
-        }
-    }  
+    } 
 }
 
 

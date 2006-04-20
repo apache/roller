@@ -280,7 +280,7 @@ public class ThemeEditorAction extends DispatchAction {
                         website.setEditorTheme(newTheme);
                         
                         UserManager userMgr = RollerFactory.getRoller().getUserManager();
-                        userMgr.saveWebsite(website, false);
+                        userMgr.saveWebsite(website);
                         RollerFactory.getRoller().flush();
                         
                         mLogger.debug("Saved theme "+newTheme+" for "+username);
