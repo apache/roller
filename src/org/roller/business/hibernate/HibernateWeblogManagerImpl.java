@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +51,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     private static Log log = LogFactory.getLog(HibernateWeblogManagerImpl.class);
     
     private HibernatePersistenceStrategy strategy = null;
+    
+    // cached mapping of entryAnchors -> entryIds
+    private Hashtable entryAnchorToIdMap = new Hashtable();
     
     /* inline creation of reverse comparator, anonymous inner class */
     private Comparator reverseComparator = new ReverseComparator();
@@ -204,6 +208,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         // remove entry
         this.strategy.remove(entry);
+        
+        // remove entry from cache mapping
+        this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
     }
     
     
@@ -424,15 +431,34 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    public WeblogEntryData getWeblogEntryByAnchor(
-            WebsiteData website, String anchor) throws RollerException {
+    
+    public WeblogEntryData getWeblogEntryByAnchor(WebsiteData website, String anchor) 
+            throws RollerException {
+        
         if (website == null)
             throw new RollerException("Website is null");
         
         if (anchor == null)
             throw new RollerException("Anchor is null");
         
+        // mapping key is combo of weblog + anchor
+        String mappingKey = website.getHandle()+":"+anchor;
         
+        // check cache first
+        // NOTE: if we ever allow changing anchors then this needs updating
+        if(this.entryAnchorToIdMap.containsKey(mappingKey)) {
+            
+            WeblogEntryData entry = this.getWeblogEntry((String) this.entryAnchorToIdMap.get(mappingKey));
+            if(entry != null) {
+                log.debug("entryAnchorToIdMap CACHE HIT - "+mappingKey);
+                return entry;
+            } else {
+                // mapping hit with lookup miss?  mapping must be old, remove it
+                this.entryAnchorToIdMap.remove(mappingKey);
+            }
+        }
+        
+        // cache failed, do lookup
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WeblogEntryData.class);
@@ -443,7 +469,19 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             criteria.setMaxResults(1);
             
             List list = criteria.list();
-            return list.size()!=0 ? (WeblogEntryData)list.get(0) : null;
+            
+            WeblogEntryData entry = null;
+            if(list.size() != 0) {
+                entry = (WeblogEntryData) criteria.uniqueResult();
+            }
+            
+            // add mapping to cache
+            if(entry != null) {
+                log.debug("entryAnchorToIdMap CACHE MISS - "+mappingKey);
+                this.entryAnchorToIdMap.put(mappingKey, entry.getId());
+            }
+            
+            return entry;
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
