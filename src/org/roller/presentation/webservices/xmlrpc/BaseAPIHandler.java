@@ -1,7 +1,7 @@
 /*
  * Created on Apr 11, 2003
  */
-package org.roller.presentation.xmlrpc;
+package org.roller.presentation.webservices.xmlrpc;
 
 import java.io.Serializable;
 

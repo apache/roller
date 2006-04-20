@@ -2,7 +2,7 @@
  * RollerXMLRPCServlet.java
  */
 
-package org.roller.presentation.xmlrpc;
+package org.roller.presentation.webservices.xmlrpc;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

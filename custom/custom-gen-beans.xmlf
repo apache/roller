@@ -1,5 +1,5 @@
 
-<!--  Custom classes to include in Hibernate mapping file generation 
+<!--  Custom classes to include in Hibernate mapping file generation, for example:
 <fileset dir="${basedir}/custom/src" includes="**/*Data.java" /> 
 
 <fileset dir="${basedir}/sandbox/planetroller/src" 

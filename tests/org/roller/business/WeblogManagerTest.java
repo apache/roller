@@ -1,4 +1,4 @@
-package org.roller.business; 
+ package org.roller.business; 
 
 import java.sql.Timestamp;
 import java.util.Date;

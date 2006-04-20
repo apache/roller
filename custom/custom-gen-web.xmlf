@@ -1,10 +1,9 @@
 
 <!--  Include experimental protocols in build
-<fileset dir="${basedir}/sandbox/atomprotocol/src" includes="**/*Servlet.java" />
 <fileset dir="${basedir}/sandbox/atomadminprotocol/src" includes="**/*Servlet.java" />
 -->
 
-<!--  Custom classes to include in Struts and web generation 
+<!--  Custom classes to include in Struts and web generation, for example:
 <fileset dir="${basedir}/custom/src" includes="**/*Data.java" />
 <fileset dir="${basedir}/sandbox/planetroller/src" includes="**/*Data.java" />
 <fileset dir="${basedir}/sandbox/planetroller/src" includes="**/*Action.java" />

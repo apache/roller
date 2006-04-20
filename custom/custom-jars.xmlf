@@ -1,7 +1,4 @@
 <!-- 
-Custom jars to be added to both rollerbeans and rollerweb compiles 
--->
-
-<!-- Uncomment this to compile experimental JDO backend
+Custom jars to be added to both rollerbeans and rollerweb compiles, for example:
 <fileset dir="${basedir}/sandbox/jdobackend/lib" includes="*.jar" />
- -->
+-->

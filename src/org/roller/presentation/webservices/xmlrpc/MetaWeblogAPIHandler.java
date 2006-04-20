@@ -1,5 +1,5 @@
 
-package org.roller.presentation.xmlrpc;
+package org.roller.presentation.webservices.xmlrpc;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;

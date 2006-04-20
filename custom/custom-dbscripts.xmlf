@@ -1,5 +1,5 @@
 
-<!-- Include SQL files in dbscript substitution
+<!-- Include SQL files in dbscript substitution, for example:
    <fileset dir="./sandbox/planetroller/metadata/database">     
       <include name="createdb-planet-raw.sql" />
       <include name="droptables-planet-raw.sql" />
