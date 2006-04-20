@@ -17,6 +17,7 @@ import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.roller.RollerException;
+import org.roller.config.RollerConfig;
 import org.roller.model.UserManager;
 import org.roller.pojos.PermissionsData;
 import org.roller.pojos.UserData;
@@ -186,7 +187,18 @@ class RollerWeblogHandler extends Handler {
             for (int i = 0; i < c.getEntries().length; i++) {
                 WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
                 UserData user = mgr.getUser(entry.getCreatingUser());
-                WebsiteData wd = mgr.createWebsite(user, pages, entry.getHandle(), entry.getName(), entry.getDescription(), entry.getEmailAddress(), DEFAULT_THEME, entry.getLocale(), entry.getTimezone());
+                WebsiteData wd = new WebsiteData(
+                    entry.getHandle(),
+                    user,
+                    entry.getName(),
+                    entry.getDescription(),
+                    entry.getEmailAddress(),
+                    entry.getEmailAddress(),
+                    DEFAULT_THEME,
+                    entry.getLocale(),
+                    entry.getTimezone());
+                wd.setEditorPage(RollerConfig.getProperty("newweblog.editor"));
+                mgr.addWebsite(wd);
             }
             getRoller().flush();
         } catch (RollerException re) {
@@ -235,7 +247,7 @@ class RollerWeblogHandler extends Handler {
         
         try {
             UserManager mgr = getRoller().getUserManager();
-            mgr.storeWebsite(wd);
+            mgr.saveWebsite(wd);
             
             CacheManager.invalidate(wd);
         } catch (RollerException re) {

@@ -194,7 +194,7 @@ class RollerUserHandler extends Handler {
                 }
                 updateUserData(ud, entry);
                 
-                mgr.storeUser(ud);
+                mgr.saveUser(ud);
             }
             getRoller().flush();
         } catch (RollerException re) {
