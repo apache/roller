@@ -272,7 +272,7 @@ class RollerMemberHandler extends Handler {
             for (int i = 0; i < c.getEntries().length; i++) {
                 MemberEntry entry = (MemberEntry)c.getEntries()[i];
                 PermissionsData pd = toPermissionsData(entry);
-                mgr.storePermissions(pd);
+                mgr.savePermissions(pd);
             }
             getRoller().flush();
         } catch (RollerException re) {
@@ -344,7 +344,7 @@ class RollerMemberHandler extends Handler {
             CacheManager.invalidate(wd);
             
             UserManager mgr = getRoller().getUserManager();
-            mgr.storePermissions(pd);
+            mgr.savePermissions(pd);
             
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update permissions data", re);
