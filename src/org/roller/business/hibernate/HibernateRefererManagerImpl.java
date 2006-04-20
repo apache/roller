@@ -164,7 +164,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                 or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
             }
             criteria.add(Expression.conjunction()
-            .add(Expression.isNull("excerpt"))
+            .add(Expression.disjunction().add(Expression.isNull("excerpt")).add(Expression.eq("excerpt", "")))
             .add(or)
             );
             
@@ -203,7 +203,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                 or.add(Expression.ilike("refererUrl","%"+ignoreWord+"%"));
             }
             criteria.add(Expression.conjunction()
-            .add(Expression.isNull("excerpt"))
+            .add(Expression.disjunction().add(Expression.isNull("excerpt")).add(Expression.eq("excerpt", "")))
             .add(Expression.eq("website",website))
             .add(or)
             );
