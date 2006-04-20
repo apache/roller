@@ -21,24 +21,25 @@ import org.roller.pojos.UserData;
 import org.roller.pojos.WebsiteData;
 import org.roller.util.Utilities;
 
+
 /**
  * Test Roller Bookmark Management.
  */
-public class BookmarkManagerTest extends TestCase {
+public class BookmarkTest extends TestCase {
     
-    public static Log log = LogFactory.getLog(BookmarkManagerTest.class);
+    public static Log log = LogFactory.getLog(BookmarkTest.class);
     
     UserData testUser = null;
     WebsiteData testWeblog = null;
     
     
-    public BookmarkManagerTest(String name) {
+    public BookmarkTest(String name) {
         super(name);
     }
     
     
     public static Test suite() {
-        return new TestSuite(BookmarkManagerTest.class);
+        return new TestSuite(BookmarkTest.class);
     }
     
     

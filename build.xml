@@ -828,8 +828,8 @@ ro.buildUser=${user.name}
 		<include name="org/roller/business/FileManagerTest.class"/>
 		<include name="org/roller/business/IndexManagerTest.class"/>
 	        <include name="org/roller/business/PlanetManagerTest.class"/>
-		<include name="org/roller/business/BookmarkManagerTest.class"/>
-		<include name="org/roller/business/RefererManagerTest.class"/>
+		<include name="org/roller/business/BookmarkTest.class"/>
+		<include name="org/roller/business/RefererTest.class"/>
             </fileset>
         </batchtest>
     </junit>
