@@ -20,11 +20,9 @@ import org.roller.pojos.WebsiteData;
 public interface WeblogManager {
     
     public static final String CATEGORY_ATT = "category.att";
-    
-    
+       
     public void saveWeblogEntry(WeblogEntryData entry) throws RollerException;
-    
-    
+        
     public void removeWeblogEntry(WeblogEntryData entry) throws RollerException;
     
     
@@ -366,6 +364,10 @@ public interface WeblogManager {
      */
     public String getUrl(WebsiteData website, String contextUrl) throws RollerException;
     
+    /**
+     * Apply comment default settings from website to all of website's entries.
+     */
+    public void applyCommentDefaultsToEntries(WebsiteData website) throws RollerException;
     
     /**
      * Release all resources associated with Roller session.

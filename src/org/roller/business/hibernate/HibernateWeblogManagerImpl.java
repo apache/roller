@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.collections.comparators.ReverseComparator;
+import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.roller.model.WeblogManager;
 import org.roller.util.DateUtil;
@@ -1006,5 +1007,29 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     
     public void release() {}
-    
+
+    /**
+     * Apply comment defaults (defaultAllowComments and defaultCommentDays) to
+     * all existing entries in a website using a single HQL query.
+     * @param website Website where comment defaults are from/to be applied.
+     */
+    public void applyCommentDefaultsToEntries(WebsiteData website) throws RollerException {
+        if (log.isDebugEnabled()) {
+            log.debug("applyCommentDefaults");
+        }       
+        try {
+            Session session = strategy.getSession();
+            String updateString = "update WeblogEntryData set "
+                +"allowComments=:allowed, commentDays=:days, "
+                +"pubTime=pubTime, updateTime=updateTime " // ensure timestamps are NOT reset
+                +"where website=:site";
+            Query update = session.createQuery(updateString);
+            update.setParameter("allowed", website.getDefaultAllowComments());
+            update.setParameter("days", new Integer(website.getDefaultCommentDays()));
+            update.setParameter("site", website);
+            update.executeUpdate();            
+        } catch (Exception e) {
+            log.error("EXCEPTION applying comment defaults",e);
+        }
+    }     
 }

@@ -13,8 +13,7 @@ import org.roller.pojos.WebsiteData;
  * Manages users, weblogs, permissions, and weblog pages.
  */
 public interface UserManager {
-    
-    
+        
     /**
      * Add new user object to Roller. User will be given the global editor role,
      * unless it's the first user, who will get the global admin role.
@@ -90,7 +89,7 @@ public interface UserManager {
     /**
      * Store a single weblog.
      */
-    public void saveWebsite(WebsiteData data, boolean applyCommentDefaults) throws RollerException;
+    public void saveWebsite(WebsiteData data) throws RollerException;
     
     
     public void removeWebsite(WebsiteData website) throws RollerException;
