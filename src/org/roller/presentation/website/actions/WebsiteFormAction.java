@@ -296,6 +296,8 @@ public final class WebsiteFormAction extends DispatchAction {
     public class WebsitePageModel extends BasePageModel {
         private List permissions = new ArrayList();
         private boolean groupBloggingEnabled = false;
+        private boolean emailNotificationEnabled = false;
+        private boolean moderationRequired = false;
         public WebsitePageModel(
                 String titleKey,
                 HttpServletRequest request,
@@ -309,15 +311,21 @@ public final class WebsiteFormAction extends DispatchAction {
             UserData user = rollerSession.getAuthenticatedUser();
             permissions = roller.getUserManager().getAllPermissions(website);
             groupBloggingEnabled =
-                    RollerConfig.getBooleanProperty("groupblogging.enabled");
+                RollerConfig.getBooleanProperty("groupblogging.enabled");
+            emailNotificationEnabled = 
+                RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+            moderationRequired =  
+                RollerRuntimeConfig.getBooleanProperty("users.moderation.required");
         }
         public boolean isGroupBloggingEnabled() {
             return groupBloggingEnabled;
         }
-        public void setGroupBloggingEnabled(boolean groupBloggingEnabled) {
-            this.groupBloggingEnabled = groupBloggingEnabled;
+        public boolean isEmailNotificationEnabled() {
+            return emailNotificationEnabled;
         }
-        
+        public boolean isModerationRequired() {
+            return moderationRequired;
+        }
         public boolean getHasPagePlugins() {
             boolean ret = false;
             try {
