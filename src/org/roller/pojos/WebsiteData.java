@@ -961,8 +961,8 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
      * Returns true if comment moderation is required by website or config.
      */ 
     public boolean getCommentModerationRequired() { 
-        return getModerateComments() 
-         || RollerRuntimeConfig.getBooleanProperty("users.moderation.required");
+        return (getModerateComments().booleanValue()
+         || RollerRuntimeConfig.getBooleanProperty("users.moderation.required"));
     }
     
     /** No-op */
