@@ -135,7 +135,7 @@ public class AtomServlet extends HttpServlet {
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 e.printStackTrace(res.getWriter());
                 mLogger.error(e);
@@ -199,7 +199,7 @@ public class AtomServlet extends HttpServlet {
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 e.printStackTrace(res.getWriter());
                 mLogger.error(e);
@@ -250,7 +250,7 @@ public class AtomServlet extends HttpServlet {
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 e.printStackTrace(res.getWriter());
                 mLogger.error(e);
@@ -281,7 +281,7 @@ public class AtomServlet extends HttpServlet {
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 e.printStackTrace(res.getWriter());
                 mLogger.error(e);
