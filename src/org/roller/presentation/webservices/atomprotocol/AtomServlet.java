@@ -68,7 +68,7 @@ public class AtomServlet extends HttpServlet {
     private AtomHandler createAtomRequestHandler(HttpServletRequest request) 
     throws ServletException {
         boolean enabled = RollerConfig.getBooleanProperty(
-            "webservices.atomprotocol.enable");
+            "webservices.atomprotocol.enabled");
         if (!enabled) {
             throw new ServletException("ERROR: Atom protocol not enabled");
         }
