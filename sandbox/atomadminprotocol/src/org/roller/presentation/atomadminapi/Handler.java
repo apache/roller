@@ -90,7 +90,7 @@ abstract class Handler {
     public static Handler getHandler(HttpServletRequest req) throws HandlerException {
         
          boolean enabled = RollerConfig.getBooleanProperty(
-              "webservices.adminprotocol.enable");
+              "webservices.adminprotocol.enabled");
          if (!enabled) { 
               throw new NotAllowedException("ERROR: Admin protocol not enabled");    
          }
