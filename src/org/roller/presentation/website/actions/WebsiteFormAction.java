@@ -94,7 +94,7 @@ public final class WebsiteFormAction extends DispatchAction {
                 List cd = wmgr.getWeblogCategories(website, true);
                 request.setAttribute("categories",cd);
                 
-                List bcd = wmgr.getWeblogCategories(website, true);
+                List bcd = wmgr.getWeblogCategories(website, false);
                 request.setAttribute("bloggerCategories",bcd);
                 
                 List pages = umgr.getPages(website);
