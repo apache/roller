@@ -302,7 +302,8 @@ public class RollerAtomHandler implements AtomHandler {
             WeblogManager mgr = mRoller.getWeblogManager();
             WeblogEntryData rollerEntry = createRollerEntry(website, entry);
             rollerEntry.setCreator(this.user);
-            mgr.saveWeblogEntry(rollerEntry);
+            mgr.saveWeblogEntry(rollerEntry);    
+            mRoller.flush();
             
             // Throttle one entry per second
             // (MySQL timestamp has 1 sec resolution, damnit)
@@ -355,6 +356,7 @@ public class RollerAtomHandler implements AtomHandler {
                 rollerEntry.setTitle(rawUpdate.getTitle());
                 
                 mgr.saveWeblogEntry(rollerEntry);
+                mRoller.flush();
                 
                 CacheManager.invalidate(rollerEntry.getWebsite());
                 if (rollerEntry.isPublished()) {
@@ -378,6 +380,7 @@ public class RollerAtomHandler implements AtomHandler {
             if (canEdit(rollerEntry)) {
                 WeblogManager mgr = mRoller.getWeblogManager();
                 mgr.removeWeblogEntry(rollerEntry);
+                mRoller.flush();
                 return;
             }
             throw new Exception("ERROR not authorized to delete entry");
