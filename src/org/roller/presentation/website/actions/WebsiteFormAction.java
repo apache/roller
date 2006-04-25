@@ -151,7 +151,11 @@ public final class WebsiteFormAction extends DispatchAction {
                     form.copyTo(wd, request.getLocale());
                     
                     // ROL-485: comments not be allowed on inactive weblogs
-                    wd.setAllowComments(wd.getActive());
+                    if (wd.getActive() != null && !wd.getActive().booleanValue()) {
+                        wd.setAllowComments(Boolean.FALSE);
+                        messages.add(null, new ActionMessage(
+                            "websiteSettings.commentsOffForInactiveWeblog"));
+                    }
                                         
                     umgr.saveWebsite(wd);  
                     
