@@ -57,6 +57,10 @@ public class BaseAPIHandler implements Serializable
     public static final String BLOGGERAPI_DISABLED_MSG = 
             "Weblog does not exist or XML-RPC disabled in web";
     
+    public static final int BLOGGERAPI_INCOMPLETE_POST = 1006;
+    public static final String BLOGGERAPI_INCOMPLETE_POST_MSG = 
+            "Incomplete weblog entry";
+    
     public static final int INVALID_POSTID = 2000;
     public static final String INVALID_POSTID_MSG = 
             "The entry postid you submitted is invalid";
