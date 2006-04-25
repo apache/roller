@@ -26,6 +26,7 @@ import org.roller.pojos.WeblogEntryData;
 import org.roller.pojos.WebsiteData;
 import org.roller.presentation.RollerContext;
 import org.roller.presentation.RollerRequest;
+import org.roller.util.Utilities;
 
 
 /**
@@ -366,7 +367,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("    Publish: " + publish);
         mLogger.debug("    Content:\n " + content);
         
-        WebsiteData website = validate(blogid, userid,password);
+        WebsiteData website = validate(blogid, userid, password);
         
         // extract the title from the content
         String title = "";
@@ -376,6 +377,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                     content.substring(content.indexOf("<title>") + 7,
                     content.indexOf("</title>"));
             content = StringUtils.replace(content, "<title>"+title+"</title>", "");
+        }
+        if (Utilities.isEmpty(title)) { 
+            title = Utilities.truncateNicely(content, 15, 15, "...");
         }
         
         try {
@@ -390,8 +394,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entry.setText(content);
             entry.setPubTime(current);
             entry.setUpdateTime(current);
-            // TODO BACKEND: fix from backend refactoring
-            //entry.setCreator(roller.getUser());
+            UserData user = roller.getUserManager().getUserByUsername(userid);
+            entry.setCreator(user);
             entry.setWebsite(website);
             entry.setCategory(website.getBloggerCategory());
             if (Boolean.valueOf(publish).booleanValue()) {
@@ -406,14 +410,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             
             // notify cache
             flushPageCache(entry.getWebsite());
-/*
-            String blogUrl = Utilities.escapeHTML(
-                RollerContext.getRollerContext(req).getAbsoluteContextUrl(req)
-                + "/page/" + userid);
-            RollerXmlRpcClient.sendWeblogsPing(
-                blogUrl,
-                entry.getWebsite().getName());
- */
+
             return entry.getId();
         } catch (Exception e) {
             String msg = "ERROR in BlooggerAPIHander.newPost";

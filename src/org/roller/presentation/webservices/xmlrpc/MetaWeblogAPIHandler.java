@@ -208,7 +208,13 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Hashtable postcontent = struct;
         String description = (String)postcontent.get("description");
         String title = (String)postcontent.get("title");
-        if (title == null) title = "";
+        if (Utilities.isEmpty(title) && Utilities.isEmpty(description)) {
+            throw new XmlRpcException(
+              BLOGGERAPI_INCOMPLETE_POST, "Must specify title or description");
+        }
+        if (Utilities.isEmpty(title)) { 
+            title = Utilities.truncateNicely(description, 15, 15, "...");
+        }
         
         Date dateCreated = (Date)postcontent.get("dateCreated");
         if (dateCreated == null) dateCreated = (Date)postcontent.get("pubDate");
@@ -224,6 +230,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         }
         mLogger.debug("      Title: " + title);
         mLogger.debug("   Category: " + cat);
+        
         
         try {
             Roller roller = RollerFactory.getRoller();
@@ -249,7 +256,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             if ( cat != null ) {
                 // Use first category specified by request
                 WeblogCategoryData cd =
-                        weblogMgr.getWeblogCategoryByPath(website, cat);
+                    weblogMgr.getWeblogCategoryByPath(website, cat);
                 entry.setCategory(cd);
             } else {
                 // Use Blogger API category from user's weblog config
