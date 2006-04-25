@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20051209;11500200">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060323;11315500">
+	<META NAME="CHANGED" CONTENT="20060425;10012100">
 	<META NAME="SDFOOTNOTE" CONTENT=";;;;P">
 	<META NAME="SDENDNOTE" CONTENT="ARABIC">
 	<STYLE>
@@ -40,7 +40,7 @@
 		<P ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 32pt"><B>Apache
 		Roller</B></FONT></P>
 		<P ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=5 STYLE="font-size: 20pt"><B>Version
-		2.2-incubating</B></FONT></P>
+		2.3-incubating</B></FONT></P>
 		<P ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
 		</P>
 		<P ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
@@ -608,26 +608,23 @@
 		</P>
 		<P> 
 		</P>
-		<P><SPAN ID="Frame7" DIR="LTR" STYLE="float: left; width: 6.13in; height: 5.67in; border: none; padding: 0in; background: #ffffff">
-			<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_m4d036c80.png" NAME="graphics8" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-			7: Weblog editor</I></FONT></P>
+		<P><SPAN ID="Frame7" DIR="LTR" STYLE="float: left; width: 6.71in; height: 7.54in; border: none; padding: 0in; background: #ffffff">
+			<P STYLE="margin-top: 0.08in"><FONT SIZE=2><I>Illustration 7:
+			Weblog editor</I></FONT></P>
+			<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_27fdfebe.png" NAME="graphics8" ALIGN=LEFT WIDTH=613 HEIGHT=686 BORDER=0><BR CLEAR=LEFT><BR><BR>
+			</P>
 		</SPAN><BR CLEAR=LEFT><BR><BR>
 		</P>
-		<P>The above screenshow shows the default plain text weblog post
-		editor. With this editor, you are entering raw HTML and if you
-		don't know HTML you will not be able to do bold, italics, paragraph
-		breaks, etc. Roller also support several other <A HREF="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=WysiwygEditors">WYSIWYG
-		editors</A> and you can pick the one you want using your weblogs's
-		<B>Preferences:Settings</B> page. 
-		</P>
+		<P>The above screenshow shows the RTE weblog entry editor
+		(editor-rte.jsp), a rich text editor that creates the HTML for you.
+		If you prefer to edit the HTML yourself, you can switch to the
+		plain text editor (editor-text.jsp). Use the Preferences:Settings
+		page to pick the weblog editor page you'd like to use.</P>
 		<P>Let's cover the fields on the page: 
 		</P>
 		<UL>
-			<LI><P><B>Title</B>: this is the optional title of your entry you
-			don't have to include one, but we recommend that you do. If you
-			don't some readers might see the first couple of words of your
-			entry used as your title. 
-			</P>
+			<LI><P><B>Title</B>: this is the title for your post, it is
+			required.</P>
 		</UL>
 		<UL>
 			<LI><P><B>Category</B>: You must pick a category for your entry.
@@ -636,13 +633,11 @@
 			</P>
 		</UL>
 		<UL>
-			<LI><P><B>Pub Time</B>: Roller will set the Pub Time of your entry
-			to the time when you first click the <B>Post to Weblog</B> button.
-			If you'd like your post to be published at a specific time in the
-			future, you can set the Pub Time yourself. Your new entry won't
-			appear on your weblog or in your newsfeed until the time you
-			specify. You can also use Pub Time to publish entries in the past.
-						</P>
+			<LI><P><B>Pub Time</B>: You don't need to set this unless you want
+			to post at a specific time in the past or in the future. The best
+			thing to do is to leave it blank. Roller will set it for you when
+			you click the Post to Weblog button to publish your new weblog
+			entry.</P>
 		</UL>
 		<UL>
 			<LI><P><B>Status</B>: This field displays the status of your
@@ -651,11 +646,17 @@
 			</P>
 		</UL>
 		<UL>
-			<LI><P><B>Your post</B>: the big text box is the body of your blog
-			entry. Normally, you enter the HTML for your post here. You don't
-			have to enter a complete HTML document, just the text your post. 
-			</P>
+			<LI><P><B>Summary (optional)</B>: For long posts, you might want
+			to enter a sentence or two as summary in addition to the content.
+			If you do, your short summary will appear on the front page of
+			your weblog and the content will appear on the single-entry view.
+			Your summary will also be included in your newsfeed in an
+			<FONT FACE="Courier New">&lt;atom:summary&gt;</FONT> element.</P>
+			<LI><P><B>Content</B>: This is where you put the body of your
+			weblog entry.</P>
 		</UL>
+		<P><BR><BR>
+		</P>
 		<P>Below the weblog entry fields are the Other Settings 
 		</P>
 		<UL>
@@ -688,8 +689,8 @@
 				<LI><P>Bookmark Linker</P>
 				<LI><P>Email Scrambler</P>
 				<LI><P>Emoticons</P>
-				<LI><P>Read More Summary 
-				</P>
+				<LI><P>Read More Summary &ndash; <I>deprecated: use a summary
+				instead</I></P>
 			</UL>
 		</UL>
 		<UL>
@@ -738,8 +739,9 @@
 		</UL>
 		<UL>
 			<LI><P><B>Spell Check</B>: Click this button to spell check your
-			post. 
-			</P>
+			post. Be forewarned that Roller's spell checker is far from
+			perfect. It catches HTML tags as spelling errors and its user
+			interface is clunky. We're investigating alternatives.</P>
 		</UL>
 		<H2>3.2 - Finding and editing weblog entries</H2>
 		<P>All of your blog entries are saved in a database. Once your blog
@@ -1232,10 +1234,10 @@
 		settings on the screen-shot below (which needs to be updated to
 		Roller 2.1): 
 		</P>
-		<P><SPAN ID="Frame14" DIR="LTR" STYLE="float: left; width: 6.78in; height: 7.84in; border: none; padding: 0in; background: #ffffff">
-			<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_m3c68c547.png" NAME="graphics2" ALIGN=LEFT WIDTH=640 HEIGHT=728 BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-			14: Weblog  settings page part 1</I></FONT></P>
-			<P STYLE="margin-top: 0.08in"><BR><BR>
+		<P><SPAN ID="Frame14" DIR="LTR" STYLE="float: left; width: 6.78in; height: 5.95in; border: none; padding: 0in; background: #ffffff">
+			<P STYLE="margin-top: 0.08in"><FONT SIZE=2><I>Illustration 14:
+			Weblog  settings page part 1</I></FONT></P>
+			<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_27e86c29.png" NAME="graphics2" ALIGN=LEFT WIDTH=651 HEIGHT=549 BORDER=0><BR CLEAR=LEFT><BR><BR>
 			</P>
 		</SPAN><BR CLEAR=LEFT><BR><BR>
 		</P>
@@ -1261,8 +1263,10 @@
 		<UL>
 			<LI><P><B>Email address of weblog owner</B>: Enter the email
 			address that you would like people to use to contact the person in
-			charge of your blog; usually that's you. 
-			</P>
+			charge of your blog; usually that's you. To thwart spammers, your
+			email address will be obfuscated when displayed on your blog.
+			Please enter a valid address, otherwise Roller's email features
+			will not work.</P>
 			<LI><P><B>Locale</B>: Choose the language and country for this
 			weblog.  (Which is used how?)  (See section x.x for setting the
 			locale for your user account.)</P>
@@ -1278,6 +1282,7 @@
 			<LI><P><B>Page to be used as the homepage</B> - Choose a page
 			template to be used as the main page of your weblog.  (Removed
 			from Roller 2.1?)</P>
+			<LI><P>Weblog is active</P>
 		</UL>
 		<UL>
 			<LI><P><B>Weblog editor page to be used</B> - Choose a weblog
@@ -1286,43 +1291,65 @@
 		</UL>
 		<UL>
 			<UL>
-				<LI><P STYLE="margin-bottom: 0in">editor-text.jsp: 	simple text
-				editor 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in">editor-dhtml.jsp: 	rich text
-				editor (works only in MSIE) 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in">editor-ekit.jsp: 	rich text
-				editor (a Java applet) 
-				</P>
-				<LI><P STYLE="margin-bottom: 0in">editor-rte.jsp: 		rich text
-				editor (works in most browsers) 
-				</P>
-				<LI><P>editor-text-js.jsp: 	enhanced simple text editor</P>
-				<LI><P>editor-wiki-js.jsp: 	wiki style editor (?) 
-				</P>
+				<LI><P STYLE="margin-bottom: 0in">editor-text.jsp: 	Simple text
+				editor, you must enter HTML</P>
+				<LI><P STYLE="margin-bottom: 0in">editor-rte.jsp: 		Rich text
+				editor (works in Firefox and IE but not Safari)</P>
 			</UL>
+		</UL>
+		<P STYLE="margin-bottom: 0in"><BR>
+		</P>
+		<UL>
 			<LI><P><B>Number of entries to display on weblog</B>: Enter the
-			(maximum?) number of entries to be displayed on the (main?) weblog
-			page.</P>
+			maximum number of entries to be displayed on your weblog.</P>
 		</UL>
 		<P><B>Comments</B> 
 		</P>
 		<UL>
-			<LI><P><B>Allow commments for your weblog</B> &ndash; Check this
+			<LI><P><B>Allow comments for your weblog?</B> &ndash; Check this
 			box to allow visitors to leave comments on your weblog. 
 			</P>
-			<LI><P>Moderate comments &ndash; Check this box to enable comment
-			moderation</P>
-			<LI><P>By default, allow comments for new entries &ndash; Check
-			this box to enable comments on new blog entries by default.  You
-			can override this setting when creating a new blog entry by using
-			the Comment Settings section of the New Entry page.</P>
-			<LI><P>Default time to allow comments for new entries &ndash;
-			Choose the default amount of time to allow comments for new blog
-			entries.  This setting may also be overriden using the Comment
-			Settings section of the New Entry page.</P>
+			<LI><P><B>Moderate comments</B> &ndash; Check this box to enable
+			comment moderation (i.e. you must approve each comment before it
+			is displayed).</P>
+			<LI><P><B>Email comments</B> &ndash; Check this box to receive an
+			email notification of each new comments. 
+			</P>
+			<LI><P><B>Default from e-mail address for comments</B> &ndash;
+			This will be used as the from address in comment emails sent by
+			Roller.</P>
 		</UL>
+		<P><B>Default comment settings</B></P>
+		<UL>
+			<LI><P><B>By default, allow comments for new entries</B> &ndash;
+			Check this box to enable comments on your weblog. You can  also
+			control comments on each individual weblog entry.</P>
+			<LI><P><B>Default time to allow comments for new entries </B><SPAN STYLE="font-weight: medium">&ndash;
+			Choose the default amount of time to allow comments for new blog
+			entries.  This setting may also be overridden using the Comment
+			Settings section of the New Entry page.</SPAN></P>
+			<LI><P STYLE="font-weight: medium"><B>Apply comment defaults to
+			all existing entries? </B>- If you check this box, when you click
+			the Save button the comment defaults you have set will be applied
+			to all existing comments.</P>
+		</UL>
+		<P STYLE="font-weight: medium"><BR><BR>
+		</P>
+		<P><BR><BR>
+		</P>
+		<P><BR><BR>
+		</P>
+		<P><BR><BR>
+		</P>
+		<P><SPAN ID="Frame27" DIR="LTR" STYLE="float: left; width: 6.93in; height: 3.59in; border: none; padding: 0in; background: #ffffff">
+			<P STYLE="margin-top: 0.08in"><FONT SIZE=2><I>Illustration 15:
+			Weblog  settings page part 2</I></FONT></P>
+			<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_m48711925.png" NAME="graphics14" ALIGN=LEFT WIDTH=650 HEIGHT=522 BORDER=0><BR CLEAR=LEFT><BR><BR>
+			</P>
+		</SPAN><BR CLEAR=LEFT><BR><BR>
+		</P>
+		<P><BR><BR>
+		</P>
 		<P><B>Weblog client API</B> 
 		</P>
 		<UL>
@@ -1340,21 +1367,11 @@
 		<P><B>Formatting</B> 
 		</P>
 		<UL>
-			<LI><P><B>Default entry formatters</B>: this is the list of
-			plug-ins to be enabled by default on a new weblog entry. 
+			<LI><P><B>Default entry formatters: </B><SPAN STYLE="font-weight: medium">this
+			is the list of plug-ins to be enabled by default on a new weblog
+			entry. </SPAN>
 			</P>
 		</UL>
-		<P><BR><BR>
-		</P>
-		<P><BR><BR>
-		</P>
-		<P><SPAN ID="Frame27" DIR="LTR" STYLE="float: left; width: 6.93in; height: 3.59in; border: none; padding: 0in; background: #ffffff">
-			<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_m49cf2d5.png" NAME="graphics14" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-			15: Weblog  settings page part 2</I></FONT></P>
-		</SPAN><BR CLEAR=LEFT><BR><BR>
-		</P>
-		<P><BR><BR>
-		</P>
 		<P><B>Spam pevention</B> 
 		</P>
 		<UL>
@@ -1726,72 +1743,70 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P>
 		<DL>
 			<DD>
 			<TABLE WIDTH=610 BORDER=1 CELLPADDING=2 CELLSPACING=3>
-				<COL WIDTH=97>
-				<COL WIDTH=494>
+				<COL WIDTH=119>
+				<COL WIDTH=472>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=119>
 						<P><FONT SIZE=2><B>$now</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=494>
+					<TD WIDTH=472>
 						<P><FONT SIZE=2>The current time (a java.util.Date object).</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=119>
 						<P><FONT SIZE=2><B>$ctxPath</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=494>
+					<TD WIDTH=472>
 						<P><FONT SIZE=2>The path under which Roller is running (see
 						Webapp context).</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=119>
 						<P><FONT SIZE=2><B>$baseURL</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=494>
+					<TD WIDTH=472>
 						<P><FONT SIZE=2>Base URL for your Roller website </FONT>
 						</P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=119>
 						<P><FONT SIZE=2><B>$absBaseURL</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=494>
+					<TD WIDTH=472>
 						<P><FONT SIZE=2>Absolute base URL for your Roller website.</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=119>
 						<P><FONT SIZE=2><B>$uploadPath</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=494>
+					<TD WIDTH=472>
 						<P><FONT SIZE=2>The location where uploaded files are placed.</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
-						<P><A HREF="http://www.rollerweblogger.org/javadoc/org/roller/model/UserData.html"><B><FONT SIZE=2>$user</FONT></B></A><FONT SIZE=2><B><IMG SRC="http://www.rollerweblogger.org/wiki/images/out.png" NAME="graphics29" ALIGN=BOTTOM WIDTH=6 HEIGHT=6 BORDER=0></B>
-						</FONT>
-						</P>
+					<TD WIDTH=119>
+						<P><B><FONT SIZE=2>$user</FONT></B></P>
 					</TD>
-					<TD WIDTH=494>
+					<TD WIDTH=472>
 						<P><FONT SIZE=2>The current user object for the page/entry
 						being viewed.</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=119>
 						<P><FONT SIZE=2><B>$userName</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=494>
+					<TD WIDTH=472>
 						<P><FONT SIZE=2>The current user's username.</FONT></P>
 					</TD>
 				</TR>
@@ -1802,80 +1817,78 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P>
 		<DL>
 			<DD>
 			<TABLE WIDTH=608 BORDER=1 CELLPADDING=2 CELLSPACING=3>
-				<COL WIDTH=97>
-				<COL WIDTH=492>
+				<COL WIDTH=118>
+				<COL WIDTH=471>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=118>
 						<P><FONT SIZE=2><B>$fullName</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=492>
+					<TD WIDTH=471>
 						<P><FONT SIZE=2>The current user's full name.</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=118>
 						<P><FONT SIZE=2><B>$emailAddress</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=492>
+					<TD WIDTH=471>
 						<P><FONT SIZE=2>The current user's email address.</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
-						<P><A HREF="http://www.rollerweblogger.org/javadoc/org/roller/model/WebsiteData.html"><B><FONT SIZE=2>$website</FONT></B></A><FONT SIZE=2><B><IMG SRC="http://www.rollerweblogger.org/wiki/images/out.png" NAME="graphics30" ALIGN=BOTTOM WIDTH=6 HEIGHT=6 BORDER=0></B>
-						</FONT>
-						</P>
+					<TD WIDTH=118>
+						<P><B><FONT SIZE=2>$website</FONT></B></P>
 					</TD>
-					<TD WIDTH=492>
+					<TD WIDTH=471>
 						<P><FONT SIZE=2>The website for the current user.</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=118>
 						<P><FONT SIZE=2><B>$page</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=492>
+					<TD WIDTH=471>
 						<P><FONT SIZE=2>The current page being viewed.</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=118>
 						<P><FONT SIZE=2><B>$requestParameters</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=492>
+					<TD WIDTH=471>
 						<P><FONT SIZE=2>A map of the request parameters </FONT>
 						</P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=118>
 						<P><FONT SIZE=2><B>$rollerVersion</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=492>
+					<TD WIDTH=471>
 						<P><FONT SIZE=2>Version number of Roller software</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=118>
 						<P><FONT SIZE=2><B>$utilities</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=492>
+					<TD WIDTH=471>
 						<P><FONT SIZE=2>A utilities object </FONT>
 						</P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=97>
+					<TD WIDTH=118>
 						<P><FONT SIZE=2><B>$stringUtils</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=492>
+					<TD WIDTH=471>
 						<P><FONT SIZE=2>A string utilities object</FONT></P>
 					</TD>
 				</TR>
@@ -1888,34 +1901,34 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P>
 		<DL>
 			<DD>
 			<TABLE WIDTH=607 BORDER=1 CELLPADDING=2 CELLSPACING=3>
-				<COL WIDTH=98>
-				<COL WIDTH=490>
+				<COL WIDTH=120>
+				<COL WIDTH=468>
 				<TR>
-					<TD WIDTH=98>
+					<TD WIDTH=120>
 						<P><FONT SIZE=2><B>$dateFormatter</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=490>
+					<TD WIDTH=468>
 						<P><FONT SIZE=2>Date formatter object </FONT>
 						</P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=98>
+					<TD WIDTH=120>
 						<P><FONT SIZE=2><B>$toStringFormat</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=490>
+					<TD WIDTH=468>
 						<P><FONT SIZE=2>A date format to be used with the macro
 						formatDate( $dateFormat $date ) :<BR>EEEE MMMM dd, yyyy</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=98>
+					<TD WIDTH=120>
 						<P><FONT SIZE=2><B>$plainFormat</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=490>
+					<TD WIDTH=468>
 						<P><FONT SIZE=2>Another date format for use with the
 						formatDate() macro:<BR>yyyyMMdd</FONT></P>
 					</TD>
@@ -1930,24 +1943,22 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P>
 		<DL>
 			<DD>
 			<TABLE WIDTH=608 BORDER=1 CELLPADDING=2 CELLSPACING=3>
-				<COL WIDTH=101>
-				<COL WIDTH=488>
+				<COL WIDTH=123>
+				<COL WIDTH=466>
 				<TR>
-					<TD WIDTH=101>
+					<TD WIDTH=123>
 						<P><FONT SIZE=2><B>$day</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=488>
+					<TD WIDTH=466>
 						<P><FONT SIZE=2>Date object holding date being displayed</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=101>
-						<P><A HREF="http://www.rollerweblogger.org/javadoc/org/roller/presentation/weblog/WeblogEntryDataEx.html"><B><FONT SIZE=2>$entries</FONT></B></A><FONT SIZE=2><B><IMG SRC="http://www.rollerweblogger.org/wiki/images/out.png" NAME="graphics31" ALIGN=BOTTOM WIDTH=6 HEIGHT=6 BORDER=0></B>
-						</FONT>
-						</P>
+					<TD WIDTH=123>
+						<P><B><FONT SIZE=2>$entries</FONT></B></P>
 					</TD>
-					<TD WIDTH=488>
+					<TD WIDTH=466>
 						<P><FONT SIZE=2>Collection of entries for date being displayed</FONT></P>
 					</TD>
 				</TR>
@@ -1961,42 +1972,40 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P>
 		<DL>
 			<DD>
 			<TABLE WIDTH=607 BORDER=1 CELLPADDING=2 CELLSPACING=3>
-				<COL WIDTH=100>
-				<COL WIDTH=488>
+				<COL WIDTH=125>
+				<COL WIDTH=463>
 				<TR>
-					<TD WIDTH=100>
+					<TD WIDTH=125>
 						<P><FONT SIZE=2><B>$isCommentPage</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=488>
+					<TD WIDTH=463>
 						<P><FONT SIZE=2>will be set to true</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=100>
-						<P><A HREF="http://www.rollerweblogger.org/javadoc/org/roller/presentation/weblog/WeblogEntryDataEx.html"><B><FONT SIZE=2>$entry</FONT></B></A><FONT SIZE=2><B><IMG SRC="http://www.rollerweblogger.org/wiki/images/out.png" NAME="graphics32" ALIGN=BOTTOM WIDTH=6 HEIGHT=6 BORDER=0></B>
-						</FONT>
-						</P>
+					<TD WIDTH=125>
+						<P><B><FONT SIZE=2>$entry</FONT></B></P>
 					</TD>
-					<TD WIDTH=488>
+					<TD WIDTH=463>
 						<P><FONT SIZE=2>weblog entry containing collection of comments</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=100>
+					<TD WIDTH=125>
 						<P><FONT SIZE=2><B>$autoFormat</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=488>
+					<TD WIDTH=463>
 						<P><FONT SIZE=2>True if comments should be autoformatted</FONT></P>
 					</TD>
 				</TR>
 				<TR>
-					<TD WIDTH=100>
+					<TD WIDTH=125>
 						<P><FONT SIZE=2><B>$escapeHtml</B> </FONT>
 						</P>
 					</TD>
-					<TD WIDTH=488>
+					<TD WIDTH=463>
 						<P><FONT SIZE=2>True if HTML should be escaped </FONT>
 						</P>
 					</TD>
