@@ -88,7 +88,7 @@ public class ReadMorePlugin implements PagePlugin
             mLogger.warn("Unable to get pageLink", e);
         }
         
-        String result = Utilities.removeHTML(entry.getText(), true);
+        String result = Utilities.removeHTML(str, true);
         result = Utilities.truncateText(result, 240, 260, "...");
         //String result = Utilities.truncateNicely(entry.getText(), 240, 260, "... ");
         

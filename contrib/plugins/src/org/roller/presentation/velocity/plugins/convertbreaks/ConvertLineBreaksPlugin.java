@@ -68,7 +68,7 @@ public class ConvertLineBreaksPlugin implements PagePlugin {
         
         mLogger.debug("Rendering weblog entry: "+entry.getTitle());
         
-        return this.render(entry.getText());
+        return this.render(str);
     }
     
     
