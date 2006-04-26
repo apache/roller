@@ -58,7 +58,7 @@ public class WebsiteData extends org.roller.pojos.PersistentObject
     private String  defaultPlugins   = null;
     private Boolean enabled          = Boolean.TRUE;
     private Boolean active           = Boolean.TRUE;
-    private Date    dateCreated      = null;
+    private Date    dateCreated      = new java.util.Date();
     private Boolean defaultAllowComments = Boolean.TRUE;
     private int     defaultCommentDays = 0;
     private Boolean moderateComments  = Boolean.FALSE;
