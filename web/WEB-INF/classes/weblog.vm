@@ -246,7 +246,7 @@
       #if( $entry.plugins )
          #set( $displayText = $pageHelper.renderPlugins($entry, $sourceText) )
       #else
-         #set( $displayText = $entry.text )
+         #set( $displayText = $sourceText )
       #end
       $utilities.textToCDATA($displayText)
    #end
