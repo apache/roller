@@ -20,7 +20,7 @@ import org.roller.presentation.atomadminapi.sdk.EntrySet;
  * @author jtb
  */
 class IntrospectionHandler extends Handler {   
-    public IntrospectionHandler(HttpServletRequest request) {
+    public IntrospectionHandler(HttpServletRequest request) throws HandlerException {
         super(request);
     }
     

@@ -15,14 +15,11 @@
  */
 package org.roller.presentation.atomadminapi;
 
-import java.util.StringTokenizer;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
-import com.sun.syndication.io.impl.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.roller.model.Roller;
+import org.roller.RollerException;
 import org.roller.pojos.UserData;
-import org.roller.presentation.RollerContext;
 
 /**
  * This class implements HTTP basic authentication for roller.
@@ -30,23 +27,24 @@ import org.roller.presentation.RollerContext;
  * @author jtb
  */
 class WSSEAuthenticator extends Authenticator {
-    private static Log logger = LogFactory.getFactory().getInstance(WSSEAuthenticator.class);
- 
     /** Creates a new instance of HttpBasicAuthenticator */
     public WSSEAuthenticator(HttpServletRequest req) {
         super(req);
     }
-       
-    public boolean authenticate() {
+    
+    public void authenticate() throws HandlerException {
+        setUserName(null);
         String wsseHeader = getRequest().getHeader("X-WSSE");
-        if (wsseHeader == null) return false;
+        if (wsseHeader == null) {
+            throw new UnauthorizedException("ERROR: WSSE header was not set");
+        };
         
-        String id = null;
         String userName = null;
         String created = null;
         String nonce = null;
         String passwordDigest = null;
         String[] tokens = wsseHeader.split(",");
+        
         for (int i = 0; i < tokens.length; i++) {
             int index = tokens[i].indexOf('=');
             if (index != -1) {
@@ -64,26 +62,25 @@ class WSSEAuthenticator extends Authenticator {
                 }
             }
         }
-        String digest = null;
+        
         try {
             UserData user = getRoller().getUserManager().getUser(userName);
-            digest = WSSEUtilities.generateDigest(
-                    WSSEUtilities.base64Decode(nonce),
-                    created.getBytes("UTF-8"),
-                    user.getPassword().getBytes("UTF-8"));
-            if (digest.equals(passwordDigest)) {
-                id = userName;
+            if (user == null) {
+                throw new UnauthorizedException("ERROR: User does not exist: " + userName);
             }
-        } catch (Exception e) {
-            logger.error("ERROR in wsseAuthenticataion: " + e.getMessage(), e);
+            String digest = WSSEUtilities.generateDigest(WSSEUtilities.base64Decode(nonce), created.getBytes("UTF-8"), user.getPassword().getBytes("UTF-8"));
+            if (digest.equals(passwordDigest)) {
+                setUserName(userName);
+            } else {
+                throw new UnauthorizedException("ERROR: User is not authorized to use the AAPP endpoint: " + userName);
+            }
+        } catch (RollerException re) {
+            throw new InternalException("ERROR: Could not get roller user: " + userName, re);
+        } catch (IOException ioe) {
+            throw new InternalException("ERROR: Could not get roller user: " + userName, ioe);
         }
         
-        if (id != null) {
-            setUserId(id);
-            return true;
-        } else {
-            setUserId(null);
-            return false;
-        }
+        // make sure the user has the admin role
+        verifyUser();
     }
 }

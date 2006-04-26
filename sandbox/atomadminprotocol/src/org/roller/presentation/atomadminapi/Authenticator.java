@@ -16,18 +16,20 @@
 package org.roller.presentation.atomadminapi;
 
 import javax.servlet.http.HttpServletRequest;
+import org.roller.RollerException;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
+import org.roller.pojos.UserData;
 
 /**
  * TODO
  *
  * @author jtb
  */
-abstract class Authenticator {   
+abstract class Authenticator {
     private HttpServletRequest request;
     private Roller             roller;
-    private String             userId;
+    private String             userName;
     
     /** Creates a new instance of HttpBasicAuthenticator */
     public Authenticator(HttpServletRequest req) {
@@ -35,28 +37,45 @@ abstract class Authenticator {
         setRoller(RollerFactory.getRoller());
     }
     
-    public abstract boolean authenticate();    
-
+    public abstract void authenticate() throws HandlerException;
+    
+    /** 
+     * This method should be called by extensions of this class within their
+     * implementation of authenticate().
+     */
+    protected void verifyUser() throws HandlerException {
+        try {
+            UserData user = getRoller().getUserManager().getUserByUsername(getUserName());
+            if (user != null && user.hasRole("admin") && user.getEnabled().booleanValue()) {
+                // success! no exception
+            } else {
+                throw new UnauthorizedException("ERROR: User must have the admin role to use the AAPP endpoint: " + getUserName());
+            }
+        } catch (RollerException re) {
+            throw new InternalException("ERROR: Could not verify user: " + getUserName(), re);
+        }
+    }
+    
     public HttpServletRequest getRequest() {
         return request;
     }
-
+    
     protected void setRequest(HttpServletRequest request) {
         this.request = request;
     }
-
-    public String getUserId() {
-        return userId;
+    
+    public String getUserName() {
+        return userName;
     }
-
-    protected void setUserId(String userId) {
-        this.userId = userId;
+    
+    protected void setUserName(String userId) {
+        this.userName = userId;
     }
-
+    
     protected Roller getRoller() {
         return roller;
     }
-
+    
     protected void setRoller(Roller roller) {
         this.roller = roller;
     }

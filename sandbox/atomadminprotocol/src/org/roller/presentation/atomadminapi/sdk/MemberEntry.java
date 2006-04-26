@@ -117,7 +117,27 @@ public class MemberEntry extends Entry {
                 
         return doc;
     }
-            
+
+    public boolean equals(Object o) {
+        if ( o == null || o.getClass() != this.getClass()) { 
+            return false;        
+        }
+        
+        MemberEntry other = (MemberEntry)o;
+        
+        if (!areEqual(getHandle(), other.getHandle())) {
+            return false;
+        }
+        if (!areEqual(getName(), other.getName())) {
+            return false;
+        }
+        if (!areEqual(getPermission(), other.getPermission())) {
+            return false;
+        }
+        
+        return super.equals(o);
+    }
+    
 
     public String getName() {
         return name;

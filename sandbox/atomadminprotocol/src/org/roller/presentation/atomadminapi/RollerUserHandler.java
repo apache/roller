@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -30,7 +31,7 @@ import org.roller.presentation.cache.CacheManager;
  * @author jtb
  */
 class RollerUserHandler extends Handler {
-    public RollerUserHandler(HttpServletRequest request) {
+    public RollerUserHandler(HttpServletRequest request) throws HandlerException {
         super(request);
     }
     
@@ -86,7 +87,7 @@ class RollerUserHandler extends Handler {
     
     private EntrySet getEntry() throws HandlerException {
         try {
-            UserData ud = getRoller().getUserManager().getUser(getUri().getEntryId());
+            UserData ud = getRoller().getUserManager().getUserByUsername(getUri().getEntryId());
             if (ud == null) {
                 throw new NotFoundException("ERROR: Unknown user: " + getUri().getEntryId());
             }
@@ -104,7 +105,7 @@ class RollerUserHandler extends Handler {
             SAXBuilder builder = new SAXBuilder();
             Document collectionDoc = builder.build(r);
             EntrySet c = new UserEntrySet(collectionDoc, getUrlPrefix());
-            createUsers((UserEntrySet)c);
+            c = createUsers((UserEntrySet)c);
             
             return c;
         } catch (JDOMException je) {
@@ -114,7 +115,7 @@ class RollerUserHandler extends Handler {
         } catch (MissingElementException mee) {
             throw new InternalException("ERROR: Could not post collection", mee);
         } catch (UnexpectedRootElementException uree) {
-            throw new InternalException("ERROR: Could not post collection", uree);            
+            throw new InternalException("ERROR: Could not post collection", uree);
         }
     }
     
@@ -123,17 +124,17 @@ class RollerUserHandler extends Handler {
             SAXBuilder builder = new SAXBuilder();
             Document collectionDoc = builder.build(r);
             EntrySet c = new UserEntrySet(collectionDoc, getUrlPrefix());
-            updateUsers((UserEntrySet)c);
+            c = updateUsers((UserEntrySet)c);
             
             return c;
         } catch (JDOMException je) {
-            throw new InternalException("ERROR: Could not post collection", je);
+            throw new InternalException("ERROR: Could not put collection", je);
         } catch (IOException ioe) {
-            throw new InternalException("ERROR: Could not post collection", ioe);
+            throw new InternalException("ERROR: Could not put collection", ioe);
         } catch (MissingElementException mee) {
-            throw new InternalException("ERROR: Could not post collection", mee);
+            throw new InternalException("ERROR: Could not put collection", mee);
         } catch (UnexpectedRootElementException uree) {
-            throw new InternalException("ERROR: Could not post collection", uree);            
+            throw new InternalException("ERROR: Could not put collection", uree);
         }
     }
     
@@ -163,40 +164,51 @@ class RollerUserHandler extends Handler {
         } catch (MissingElementException mee) {
             throw new InternalException("ERROR: Could not post collection", mee);
         } catch (UnexpectedRootElementException uree) {
-            throw new InternalException("ERROR: Could not post collection", uree);            
+            throw new InternalException("ERROR: Could not post collection", uree);
         }
     }
     
-    private void createUsers(UserEntrySet c) throws HandlerException {
+    private UserEntrySet createUsers(UserEntrySet c) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
             
+            List userDatas = new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 UserEntry entry = (UserEntry)c.getEntries()[i];
-                UserData user = toUserData(entry);
-                mgr.addUser(user);
+                if (entry.getDateCreated() == null) {
+                    // if no creation date supplied, add it
+                    entry.setDateCreated(new Date());
+                }
+                UserData ud = toUserData(entry);
+                mgr.addUser(ud);
+                userDatas.add(ud);
             }
             getRoller().flush();
+            return toUserEntrySet((UserData[])userDatas.toArray(new UserData[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create users: " + c, re);
         }
     }
     
-    private void updateUsers(UserEntrySet c) throws NotFoundException, InternalException {
+    private UserEntrySet updateUsers(UserEntrySet c) throws NotFoundException, InternalException {
         try {
             UserManager mgr = getRoller().getUserManager();
             
+            List userDatas = new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 UserEntry entry = (UserEntry)c.getEntries()[i];
-                UserData ud = mgr.getUser(entry.getName());
+                UserData ud = mgr.getUserByUsername(entry.getName());
                 if (ud == null) {
                     throw new NotFoundException("ERROR: Uknown user: " + entry.getName());
                 }
                 updateUserData(ud, entry);
                 
                 mgr.saveUser(ud);
+                CacheManager.invalidate(ud);
+                userDatas.add(ud);
             }
             getRoller().flush();
+            return toUserEntrySet((UserData[])userDatas.toArray(new UserData[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update users: " + c, re);
         }
@@ -212,10 +224,10 @@ class RollerUserHandler extends Handler {
             ud.setPassword(entry.getPassword());
         }
         if (entry.getLocale() != null) {
-            ud.setLocale(entry.getLocale());
+            ud.setLocale(entry.getLocale().toString());
         }
         if (entry.getTimezone() != null) {
-            ud.setTimeZone(entry.getTimezone());
+            ud.setTimeZone(entry.getTimezone().getID());
         }
         if (entry.getEmailAddress() != null) {
             ud.setEmailAddress(entry.getEmailAddress());
@@ -225,21 +237,21 @@ class RollerUserHandler extends Handler {
     private EntrySet deleteEntry() throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
-            UserData ud = mgr.getUser(getUri().getEntryId());
+            UserData ud = mgr.getUserByUsername(getUri().getEntryId());
             
             if (ud == null) {
                 throw new NotFoundException("ERROR: Uknown user: " + getUri().getEntryId());
             }
             // don't allow deletion of the currently authenticated user
-            if (ud.getUserName().equals(getUsername())) {
-                throw new NotAllowedException("ERROR: Can't delete authenticated user: " + getUsername());
+            if (ud.getUserName().equals(getUserName())) {
+                throw new NotAllowedException("ERROR: Can't delete authenticated user: " + getUserName());
             }
             
             UserData[] uds = new UserData[] { ud };
             mgr.removeUser(ud);
             
             CacheManager.invalidate(ud);
-            
+            getRoller().flush();
             EntrySet es = toUserEntrySet(uds);
             return es;
         } catch (RollerException re) {
@@ -251,9 +263,12 @@ class RollerUserHandler extends Handler {
         if (ud == null) {
             throw new NullPointerException("ERROR: Null user data not allowed");
         }
+        
+        // password field is not set
+        // we never return password field
+        
         UserEntry ue = new UserEntry(ud.getUserName(), getUrlPrefix());
         ue.setFullName(ud.getFullName());
-        ue.setPassword(ud.getPassword());
         ue.setLocale(ud.getLocale());
         ue.setTimezone(ud.getTimeZone());
         ue.setEmailAddress(ud.getEmailAddress());
@@ -284,13 +299,18 @@ class RollerUserHandler extends Handler {
         if (ue == null) {
             throw new NullPointerException("ERROR: Null user entry not allowed");
         }
+        
+        //
+        // if any of the entry fields are null, the set below amounts
+        // to a no-op.
+        //
         UserData ud = new UserData();
         ud.setUserName(ue.getName());
         ud.setFullName(ue.getFullName());
         ud.setPassword(ue.getPassword());
         ud.setEmailAddress(ue.getEmailAddress());
-        ud.setLocale(ue.getLocale());
-        ud.setTimeZone(ue.getTimezone());
+        ud.setLocale(ue.getLocale().toString());
+        ud.setTimeZone(ue.getTimezone().getID());
         ud.setDateCreated(ue.getDateCreated());
         
         return ud;

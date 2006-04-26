@@ -30,19 +30,27 @@ import org.roller.presentation.cache.CacheManager;
 
 /**
  * This class handles requests concerning Roller weblog membership (groups).
- *
- * @author jtb
  */
 class RollerMemberHandler extends Handler {
     static class MemberURI extends URI {
         private String username;
         private String handle;
         
-        public MemberURI(HttpServletRequest req) {
+        public MemberURI(HttpServletRequest req) throws BadRequestException {
             super(req);
-            setHandle(getEntryId());
-            if (getEntryIds() != null && getEntryIds().length > 1) {
-                setUsername(getEntryIds()[1]);
+            String entryId = getEntryId();
+            if (entryId == null) {
+                username = null;
+                handle = null;
+            } else {
+                String[] entryIds = entryId.split("/");
+                if (entryIds == null || entryIds.length == 0) {
+                    throw new BadRequestException("ERROR: Invalid path info: " + req.getPathInfo()); 
+                }
+                handle = entryIds[0];
+                if (entryIds.length > 1) {
+                    username = entryIds[1];
+                }
             }
         }
         
@@ -69,7 +77,7 @@ class RollerMemberHandler extends Handler {
     
     private URI memberUri;
     
-    public RollerMemberHandler(HttpServletRequest request) {
+    public RollerMemberHandler(HttpServletRequest request) throws HandlerException {
         super(request);
         memberUri = new MemberURI(request);
     }
@@ -154,7 +162,7 @@ class RollerMemberHandler extends Handler {
                 if (wd == null) {
                     throw new NotFoundException("ERROR: Unknown weblog handle: " + handle);
                 }
-                UserData ud = getRoller().getUserManager().getUser(username);
+                UserData ud = getRoller().getUserManager().getUserByUsername(username);
                 if (ud == null) {
                     throw new NotFoundException("ERROR: Unknown user name: " + username);
                 }
@@ -177,7 +185,7 @@ class RollerMemberHandler extends Handler {
             SAXBuilder builder = new SAXBuilder();
             Document collectionDoc = builder.build(r);
             EntrySet c = new MemberEntrySet(collectionDoc, getUrlPrefix());
-            createMembers((MemberEntrySet)c);
+            c = createMembers((MemberEntrySet)c);
             
             return c;
         } catch (JDOMException je) {
@@ -196,7 +204,7 @@ class RollerMemberHandler extends Handler {
             SAXBuilder builder = new SAXBuilder();
             Document collectionDoc = builder.build(r);
             EntrySet c = new MemberEntrySet(collectionDoc, getUrlPrefix());
-            updateMembers((MemberEntrySet)c);
+            c = updateMembers((MemberEntrySet)c);
             
             return c;
         } catch (JDOMException je) {
@@ -265,16 +273,19 @@ class RollerMemberHandler extends Handler {
         }        
     }
     
-    private void createMembers(MemberEntrySet c) throws HandlerException {
+    private MemberEntrySet createMembers(MemberEntrySet c) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
             
+            List permissionsDatas= new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 MemberEntry entry = (MemberEntry)c.getEntries()[i];
                 PermissionsData pd = toPermissionsData(entry);
                 mgr.savePermissions(pd);
+                permissionsDatas.add(pd);
             }
             getRoller().flush();
+            return toMemberEntrySet((PermissionsData[])permissionsDatas.toArray(new PermissionsData[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create members", re);
         }
@@ -283,7 +294,7 @@ class RollerMemberHandler extends Handler {
     private PermissionsData toPermissionsData(MemberEntry entry) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
-            UserData ud = mgr.getUser(entry.getName());
+            UserData ud = mgr.getUserByUsername(entry.getName());
             WebsiteData wd = mgr.getWebsiteByHandle(entry.getHandle());
             PermissionsData pd = new PermissionsData();
             pd.setUser(ud);
@@ -304,7 +315,7 @@ class RollerMemberHandler extends Handler {
     private PermissionsData getPermissionsData(String handle, String username) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
-            UserData ud = mgr.getUser(username);
+            UserData ud = mgr.getUserByUsername(username);
             WebsiteData wd = mgr.getWebsiteByHandle(handle);
             PermissionsData pd = mgr.getPermissions(wd, ud);
             
@@ -314,8 +325,9 @@ class RollerMemberHandler extends Handler {
         }
     }
     
-    private void updateMembers(MemberEntrySet c) throws HandlerException {
+    private MemberEntrySet updateMembers(MemberEntrySet c) throws HandlerException {
         try {
+            List permissionsDatas= new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 MemberEntry entry = (MemberEntry)c.getEntries()[i];
                 PermissionsData pd = getPermissionsData(entry);
@@ -323,8 +335,10 @@ class RollerMemberHandler extends Handler {
                     throw new NotFoundException("ERROR: Permissions do not exist for weblog handle: " + entry.getHandle() + ", user name: " + entry.getName());
                 }
                 updatePermissionsData(pd, entry);
+                permissionsDatas.add(pd);
             }
             getRoller().flush();
+            return toMemberEntrySet((PermissionsData[])permissionsDatas.toArray(new PermissionsData[0]));            
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update members", re);
         }
@@ -336,9 +350,11 @@ class RollerMemberHandler extends Handler {
         if (entry.getPermission() != null) {
             pd.setPermissionMask(stringToMask(entry.getPermission()));
         }
+		
+		// TODO: does the permissions data need to be invalidated?
         
         try {
-            UserData ud = getRoller().getUserManager().getUser(entry.getName());
+            UserData ud = getRoller().getUserManager().getUserByUsername(entry.getName());
             CacheManager.invalidate(ud);
             WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(entry.getHandle());
             CacheManager.invalidate(wd);
@@ -373,10 +389,11 @@ class RollerMemberHandler extends Handler {
             UserManager mgr = getRoller().getUserManager();
             mgr.removePermissions(pd);
             
-            UserData ud = getRoller().getUserManager().getUser(username);
+            UserData ud = getRoller().getUserManager().getUserByUsername(username);
             CacheManager.invalidate(ud);
             WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(handle);
             CacheManager.invalidate(wd);
+            getRoller().flush();
             
             EntrySet es = toMemberEntrySet(pds);
             return es;

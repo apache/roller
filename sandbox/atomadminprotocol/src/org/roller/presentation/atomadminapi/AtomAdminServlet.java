@@ -48,11 +48,7 @@ public class AtomAdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
             Handler handler = Handler.getHandler(req);
-            String userName = handler.getUsername();
-            if (userName == null) {
-                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+            String userName = handler.getUserName();
             
             EntrySet c = handler.processGet();
             
@@ -76,11 +72,7 @@ public class AtomAdminServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
             Handler handler = Handler.getHandler(req);
-            String userName = handler.getUsername();
-            if (userName == null) {
-                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+            String userName = handler.getUserName();
             
             EntrySet c = handler.processPost(new InputStreamReader(req.getInputStream()));
             
@@ -104,11 +96,7 @@ public class AtomAdminServlet extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
             Handler handler = Handler.getHandler(req);
-            String userName = handler.getUsername();
-            if (userName == null) {
-                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+            String userName = handler.getUserName();
             
             EntrySet c = handler.processPut(new InputStreamReader(req.getInputStream()));
             
@@ -131,11 +119,7 @@ public class AtomAdminServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
             Handler handler = Handler.getHandler(req);
-            String userName = handler.getUsername();
-            if (userName == null) {
-                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+            String userName = handler.getUserName();
             
             EntrySet es = handler.processDelete();
             
