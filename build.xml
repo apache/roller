@@ -936,6 +936,60 @@ ro.buildUser=${user.name}
 
 </target>
 
+    <target name="test-aapp" depends="test-aapp-sdk, test-aapp-handler"/>
+   
+    <target name="test-aapp-sdk" depends="build-tests">
+        <mkdir dir="${build.reports}/presentation/xml"/>
+        <mkdir dir="${build.reports}/presentation/html"/>
+
+        <junit fork="true" dir="${build.tests}" printsummary="on">
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <classpath>
+                <path refid="junit.path"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest toDir="${build.reports}/presentation/xml">
+                <fileset dir="${build.tests}/WEB-INF/classes">
+                    <include name="org/roller/presentation/atomadminapi/sdk/*EntryTest.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="${build.reports}/presentation/xml">
+            <fileset dir="${build.reports}/presentation/xml">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="noframes" toDir="${build.reports}/presentation/html"/>
+        </junitreport>
+    </target>
+    
+    <target name="test-aapp-handler" depends="build-tests">
+        <mkdir dir="${build.reports}/presentation/xml"/>
+        <mkdir dir="${build.reports}/presentation/html"/>
+
+        <junit fork="true" dir="${build.tests}" printsummary="on">
+            <syspropertyset>
+                <propertyref builtin="commandline"/>
+            </syspropertyset>
+            <classpath>
+                <path refid="junit.path"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest toDir="${build.reports}/presentation/xml">
+                <fileset dir="${build.tests}/WEB-INF/classes">
+                    <include name="org/roller/presentation/atomadminapi/*HandlerTest.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="${build.reports}/presentation/xml">
+            <fileset dir="${build.reports}/presentation/xml">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="noframes" toDir="${build.reports}/presentation/html"/>
+        </junitreport>
+    </target>
+
 <!-- You can specify testClass using -DtestClass=foo -->
 <property name="testClass" value="org.roller.presentation.velocity.plugins.smileys.SmileysTest"/>
 <target name="test-one" depends="build-tests">

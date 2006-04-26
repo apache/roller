@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<weblogs xmlns="http://purl.org/atom/aapp#">
+<weblogs xmlns="http://purl.org/roller/aapp#">
 	<weblog>
 		<handle>test2</handle>
 		<name>Test 2</name>

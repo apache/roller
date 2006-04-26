@@ -2,7 +2,7 @@
 <!DOCTYPE project [
     <!ENTITY properties SYSTEM "properties.xmlf">
 ]>
-<project name="aapp" default="all">	
+<project name="aapp" default="all">
     <target name="all" depends="sdk,javadoc"/>
             
     <target name="sdk">
@@ -21,5 +21,4 @@
         <delete dir="dist" />
         <delete dir="javadoc" />
     </target>
-
 </project>

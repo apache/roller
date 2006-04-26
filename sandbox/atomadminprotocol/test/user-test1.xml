@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<users xmlns="http://purl.org/atom/aapp#">
+<users xmlns="http://purl.org/roller/aapp#">
 	<user>
 		<name>test1</name>
 		<full-name>Test One</full-name>
