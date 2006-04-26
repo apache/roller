@@ -7,11 +7,13 @@ package org.roller.presentation.atomadminapi;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
+import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,12 +42,12 @@ import org.roller.util.Utilities;
  */
 class RollerWeblogHandler extends Handler {
     private static Log log =
-        LogFactory.getFactory().getInstance(RollerWeblogHandler.class);
-
+            LogFactory.getFactory().getInstance(RollerWeblogHandler.class);
+    
     /** Theme name used when creating weblogs */
     private static final String DEFAULT_THEME = "basic";
     
-    public RollerWeblogHandler(HttpServletRequest request) {
+    public RollerWeblogHandler(HttpServletRequest request) throws HandlerException {
         super(request);
     }
     
@@ -91,7 +93,7 @@ class RollerWeblogHandler extends Handler {
             if (users == null) {
                 users = Collections.EMPTY_LIST;
             }
-            EntrySet c = toWeblogEntrySet(users);
+            EntrySet c = toWeblogEntrySet((UserData[])users.toArray(new UserData[0]));
             
             return c;
         } catch (RollerException re) {
@@ -100,10 +102,11 @@ class RollerWeblogHandler extends Handler {
     }
     
     private EntrySet getEntry() throws HandlerException {
+        String handle = getUri().getEntryId();
         try {
-            WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(getUri().getEntryId());
+            WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(handle);
             if (wd == null) {
-                throw new NotFoundException("ERROR: Unknown weblog handle: " + getUri().getEntryId());
+                throw new NotFoundException("ERROR: Unknown weblog handle: " + handle);
             }
             WebsiteData[] wds = new WebsiteData[] { wd };
             EntrySet c = toWeblogEntrySet(wds);
@@ -119,7 +122,7 @@ class RollerWeblogHandler extends Handler {
             SAXBuilder builder = new SAXBuilder();
             Document collectionDoc = builder.build(r);
             EntrySet c = new WeblogEntrySet(collectionDoc, getUrlPrefix());
-            createWeblogs((WeblogEntrySet)c);
+            c = createWeblogs((WeblogEntrySet)c);
             
             return c;
         } catch (JDOMException je) {
@@ -129,8 +132,8 @@ class RollerWeblogHandler extends Handler {
         } catch (MissingElementException mee) {
             throw new InternalException("ERROR: Could not post collection", mee);
         } catch (UnexpectedRootElementException uree) {
-            throw new InternalException("ERROR: Could not post collection", uree);            
-        }        
+            throw new InternalException("ERROR: Could not post collection", uree);
+        }
     }
     
     private EntrySet putCollection(Reader r) throws HandlerException {
@@ -138,7 +141,7 @@ class RollerWeblogHandler extends Handler {
             SAXBuilder builder = new SAXBuilder();
             Document collectionDoc = builder.build(r);
             EntrySet c = new WeblogEntrySet(collectionDoc, getUrlPrefix());
-            updateWeblogs((WeblogEntrySet)c);
+            c = updateWeblogs((WeblogEntrySet)c);
             
             return c;
         } catch (JDOMException je) {
@@ -148,7 +151,7 @@ class RollerWeblogHandler extends Handler {
         } catch (MissingElementException mee) {
             throw new InternalException("ERROR: Could not post collection", mee);
         } catch (UnexpectedRootElementException uree) {
-            throw new InternalException("ERROR: Could not post collection", uree);            
+            throw new InternalException("ERROR: Could not post collection", uree);
         }
     }
     
@@ -178,31 +181,35 @@ class RollerWeblogHandler extends Handler {
         } catch (MissingElementException mee) {
             throw new InternalException("ERROR: Could not post collection", mee);
         } catch (UnexpectedRootElementException uree) {
-            throw new InternalException("ERROR: Could not post collection", uree);            
+            throw new InternalException("ERROR: Could not post collection", uree);
         }
     }
     
-    private void createWeblogs(WeblogEntrySet c) throws HandlerException {
+    private WeblogEntrySet createWeblogs(WeblogEntrySet c) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
-            
-            //TODO: group blogging check?
-            
             HashMap pages = null; //getRollerContext().readThemeMacros(form.getTheme());
             
+            List websiteDatas = new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
-                UserData user = mgr.getUser(entry.getCreatingUser());
+                UserData user = mgr.getUserByUsername(entry.getCreatingUser());
                 WebsiteData wd = new WebsiteData(
-                    entry.getHandle(),
-                    user,
-                    entry.getName(),
-                    entry.getDescription(),
-                    entry.getEmailAddress(),
-                    entry.getEmailAddress(),
-                    DEFAULT_THEME,
-                    entry.getLocale(),
-                    entry.getTimezone());
+                        entry.getHandle(),
+                        user,
+                        entry.getName(),
+                        entry.getDescription(),
+                        entry.getEmailAddress(),
+                        entry.getEmailAddress(),
+                        DEFAULT_THEME,
+                        entry.getLocale().toString(),
+                        entry.getTimezone().getID());
+                
+                Date dateCreated  = entry.getDateCreated();
+                if (dateCreated == null) {
+                    dateCreated = new Date();
+                }
+                wd.setDateCreated(dateCreated);
                 
                 try {
                     String def = RollerRuntimeConfig.getProperty("users.editor.pages");
@@ -213,15 +220,18 @@ class RollerWeblogHandler extends Handler {
                 }
                 
                 mgr.addWebsite(wd);
+                websiteDatas.add(wd);
             }
+            
             getRoller().flush();
+            return toWeblogEntrySet((WebsiteData[])websiteDatas.toArray(new WebsiteData[0]));
             
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create weblogs: " + c, re);
         }
     }
     
-    private void updateWeblogs(WeblogEntrySet c) throws HandlerException {
+    private WeblogEntrySet updateWeblogs(WeblogEntrySet c) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
             
@@ -229,6 +239,7 @@ class RollerWeblogHandler extends Handler {
             
             HashMap pages = null;
             
+            List websiteDatas = new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
                 WebsiteData wd = mgr.getWebsiteByHandle(entry.getHandle());
@@ -236,8 +247,10 @@ class RollerWeblogHandler extends Handler {
                     throw new NotFoundException("ERROR: Uknown weblog: " + entry.getHandle());
                 }
                 updateWebsiteData(wd, entry);
+                websiteDatas.add(wd);
             }
             getRoller().flush();
+            return toWeblogEntrySet((WebsiteData[])websiteDatas.toArray(new WebsiteData[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update weblogs: " + c, re);
         }
@@ -251,10 +264,10 @@ class RollerWeblogHandler extends Handler {
             wd.setDescription(entry.getDescription());
         }
         if (entry.getLocale() != null) {
-            wd.setLocale(entry.getLocale());
+            wd.setLocale(entry.getLocale().toString());
         }
         if (entry.getTimezone() != null) {
-            wd.setTimeZone(entry.getTimezone());
+            wd.setTimeZone(entry.getTimezone().getID());
         }
         if (entry.getEmailAddress() != null) {
             wd.setEmailAddress(entry.getEmailAddress());
@@ -271,12 +284,14 @@ class RollerWeblogHandler extends Handler {
     }
     
     private EntrySet deleteEntry() throws HandlerException {
+        String handle = getUri().getEntryId();
+        
         try {
             UserManager mgr = getRoller().getUserManager();
             
-            WebsiteData wd = mgr.getWebsiteByHandle(getUri().getEntryId());
+            WebsiteData wd = mgr.getWebsiteByHandle(handle);
             if (wd == null) {
-                throw new NotFoundException("ERROR: Uknown weblog handle: " + getUri().getEntryId());
+                throw new NotFoundException("ERROR: Uknown weblog handle: " + handle);
             }
             
             WebsiteData[] wds = new WebsiteData[] { wd };
@@ -285,14 +300,15 @@ class RollerWeblogHandler extends Handler {
             mgr.removeWebsite(wd);
             
             CacheManager.invalidate(wd);
+            getRoller().flush();
             
             return es;
         } catch (RollerException re) {
-            throw new InternalException("ERROR: Could not delete entry: " + getUri().getEntryId(),re);
+            throw new InternalException("ERROR: Could not delete entry: " + handle, re);
         }
     }
     
-    private WeblogEntry toWeblogEntry(WebsiteData wd) {
+    private WeblogEntry toWeblogEntry(WebsiteData wd) throws HandlerException {
         if (wd == null) {
             throw new NullPointerException("ERROR: Null website data not allowed");
         }
@@ -304,19 +320,26 @@ class RollerWeblogHandler extends Handler {
         we.setCreatingUser(wd.getCreator().getUserName());
         we.setEmailAddress(wd.getEmailAddress());
         we.setDateCreated(wd.getDateCreated());
+        try {
+            AppUrl appUrl = new AppUrl(getRollerContext().getAbsoluteContextUrl(getRequest()), wd.getHandle());
+            we.setAppEntriesUrl(appUrl.getEntryUrl().toString());
+            we.setAppResourcesUrl(appUrl.getResourceUrl().toString());
+        } catch (MalformedURLException mfue) {
+            throw new InternalException("ERROR: Could not get APP URLs", mfue);
+        }
         
         return we;
     }
     
-    private WeblogEntrySet toWeblogEntrySet(List uds) {
+    private WeblogEntrySet toWeblogEntrySet(UserData[] uds) throws HandlerException {
         if (uds == null) {
             throw new NullPointerException("ERROR: Null user data not allowed");
         }
         
         WeblogEntrySet wes = new WeblogEntrySet(getUrlPrefix());
         List entries = new ArrayList();
-        for (Iterator i = uds.iterator(); i.hasNext(); ) {
-            UserData ud = (UserData)i.next();
+        for (int i = 0; i < uds.length; i++) {
+            UserData ud = uds[i];
             List permissions = ud.getPermissions();
             for (Iterator j = permissions.iterator(); j.hasNext(); ) {
                 PermissionsData pd = (PermissionsData)j.next();
@@ -330,7 +353,7 @@ class RollerWeblogHandler extends Handler {
         return wes;
     }
     
-    private WeblogEntrySet toWeblogEntrySet(WebsiteData[] wds) {
+    private WeblogEntrySet toWeblogEntrySet(WebsiteData[] wds) throws HandlerException {
         if (wds == null) {
             throw new NullPointerException("ERROR: Null website datas not allowed");
         }

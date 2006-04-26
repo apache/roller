@@ -8,6 +8,8 @@ package org.roller.presentation.atomadminapi.sdk;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -30,16 +32,20 @@ public class WeblogEntry extends Entry {
         public static final String DATE_CREATED = "date-created";
         public static final String CREATING_USER = "creating-user";
         public static final String EMAIL_ADDRESS = "email-address";
+        public static final String APP_ENTRIES_URL = "app-entries-url";        
+        public static final String APP_RESOURCES_URL = "app-resources-url";                
     }
     
     private String handle;
     private String name;
     private String description;
-    private String locale;
-    private String timezone;
+    private Locale locale;
+    private TimeZone timezone;
     private Date dateCreated;
     private String creatingUser;
     private String emailAddress;
+    private String appEntriesUrl;
+    private String appResourcesUrl;
     
     public WeblogEntry(Element e, String urlPrefix) throws MissingElementException {
         populate(e, urlPrefix);
@@ -59,9 +65,9 @@ public class WeblogEntry extends Entry {
         if (handleElement == null) {
             throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.HANDLE);
         }
+        setHandle(handleElement.getText());
         
         // href
-        setHandle(handleElement.getText());
         String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + getHandle();        
         setHref(href);        
         
@@ -112,6 +118,18 @@ public class WeblogEntry extends Entry {
         if (createdElement != null) {
             setDateCreated(new Date(Long.valueOf(createdElement.getText()).longValue()));
         }              
+        
+        // APP entries URL (optional)
+        Element appEntriesUrlElement = e.getChild(Tags.APP_ENTRIES_URL, Service.NAMESPACE);
+        if (appEntriesUrlElement != null) {
+            setAppEntriesUrl(appEntriesUrlElement.getText());
+        }                      
+        
+        // APP resources URL (optional)
+        Element appResourcesUrlElement = e.getChild(Tags.APP_RESOURCES_URL, Service.NAMESPACE);
+        if (appResourcesUrlElement != null) {
+            setAppResourcesUrl(appResourcesUrlElement.getText());
+        }                              
     }
     
     
@@ -152,13 +170,13 @@ public class WeblogEntry extends Entry {
         
         // locale
         Element locale = new Element(Tags.LOCALE, Service.NAMESPACE);
-        Text localeText = new Text(getLocale());
+        Text localeText = new Text(getLocale().toString());
         locale.addContent(localeText);
         weblog.addContent(locale);
         
         // timezone
         Element tz = new Element(Tags.TIMEZONE, Service.NAMESPACE);
-        Text tzText = new Text(getTimezone());
+        Text tzText = new Text(getTimezone().getID());
         tz.addContent(tzText);
         weblog.addContent(tz);
         
@@ -182,9 +200,57 @@ public class WeblogEntry extends Entry {
             created.addContent(createdText);
             weblog.addContent(created);
         }
+
+        // APP entries URL (optional)
+        Element appEntriesUrlElement = new Element(Tags.APP_ENTRIES_URL, Service.NAMESPACE);
+        String appEntriesUrl = getAppEntriesUrl();
+        if (appEntriesUrl != null) {
+            Text appEntriesUrlText = new Text(appEntriesUrl);
+            appEntriesUrlElement.addContent(appEntriesUrlText);
+            weblog.addContent(appEntriesUrlElement);
+        }
+
+        // APP entries URL (optional)
+        Element appResourcesUrlElement = new Element(Tags.APP_RESOURCES_URL, Service.NAMESPACE);
+        String appResourcesUrl = getAppResourcesUrl();
+        if (appResourcesUrl != null) {
+            Text appResourcesUrlText = new Text(appResourcesUrl);
+            appResourcesUrlElement.addContent(appResourcesUrlText);
+            weblog.addContent(appResourcesUrlElement);
+        }
         
         return doc;
     }    
+
+    /** Test if a user entry is equal to this user entry. */
+    public boolean equals(Object o) {
+        if ( o == null || o.getClass() != this.getClass()) { 
+            return false;        
+        }
+        
+        WeblogEntry other = (WeblogEntry)o;
+        
+        if (!areEqual(getEmailAddress(), other.getEmailAddress())) {
+            return false;
+        }
+        if (!areEqual(getHandle(), other.getHandle())) {
+            return false;
+        }
+        if (!areEqual(getLocale(), other.getLocale())) {
+            return false;
+        }
+        if (!areEqual(getName(), other.getName())) {
+            return false;
+        }
+        if (!areEqual(getDescription(), other.getDescription())) {
+            return false;
+        }
+        if (!areEqual(getTimezone(), other.getTimezone())) {
+            return false;
+        }
+        
+        return super.equals(o);
+    }
     
     public String getHandle() {
         return handle;
@@ -202,20 +268,29 @@ public class WeblogEntry extends Entry {
         this.description = description;
     }
     
-    public String getLocale() {
+    public Locale getLocale() {
         return locale;
     }
     
-    public void setLocale(String locale) {
+    public void setLocale(Locale locale) {
         this.locale = locale;
     }
     
-    public String getTimezone() {
+    public void setLocale(String localeString) {
+        this.locale = new LocaleString(localeString).getLocale();
+    }    
+    
+    
+    public TimeZone getTimezone() {
         return timezone;
     }
     
-    public void setTimezone(String timezone) {
+    public void setTimezone(TimeZone timezone) {
         this.timezone = timezone;
+    }
+
+    public void setTimezone(String timezoneString) {
+        this.timezone = TimeZone.getTimeZone(timezoneString);
     }
     
     public String getName() {
@@ -248,5 +323,21 @@ public class WeblogEntry extends Entry {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public String getAppEntriesUrl() {
+        return appEntriesUrl;
+    }
+
+    public void setAppEntriesUrl(String appEntriesUrl) {
+        this.appEntriesUrl = appEntriesUrl;
+    }
+
+    public String getAppResourcesUrl() {
+        return appResourcesUrl;
+    }
+
+    public void setAppResourcesUrl(String appResourcesUrl) {
+        this.appResourcesUrl = appResourcesUrl;
     }
 }

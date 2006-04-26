@@ -80,5 +80,25 @@ public abstract class EntrySet extends Entry {
         }
         
         return doc;
+    }
+   
+    public boolean equals(Object o) {
+        if ( o == null || o.getClass() != this.getClass()) { 
+            return false;        
+        }
+                
+        EntrySet other = (EntrySet)o;
+        
+        if (!areEqual(getHref(), other.getHref())) {
+            return false;
+        }
+        if (!areEqual(getType(), other.getType())) {
+            return false;
+        }        
+        if (!areEqual(getEntries(), other.getEntries())) {
+            return false;
+        }
+        
+        return true;
     }    
 }

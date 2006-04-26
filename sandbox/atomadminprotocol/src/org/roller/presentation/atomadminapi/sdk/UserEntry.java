@@ -9,6 +9,8 @@ package org.roller.presentation.atomadminapi.sdk;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -37,8 +39,8 @@ public class UserEntry extends Entry {
     private String name;
     private String fullName;
     private String password;
-    private String locale;
-    private String timezone;
+    private Locale locale;
+    private TimeZone timezone;
     private Date dateCreated;
     private String emailAddress;
     
@@ -82,11 +84,11 @@ public class UserEntry extends Entry {
         setFullName(fullNameElement.getText());
         
         // password
+        // this is optional
         Element passwordElement = e.getChild(Tags.PASSWORD, NAMESPACE);
-        if (passwordElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.PASSWORD);
+        if (passwordElement != null) {
+            setPassword(passwordElement.getText());            
         }
-        setPassword(passwordElement.getText());
         
         // locale
         Element localeElement = e.getChild(Tags.LOCALE, Service.NAMESPACE);
@@ -159,19 +161,19 @@ public class UserEntry extends Entry {
         }
         
         // locale
-        String locale = getLocale();
+        Locale locale = getLocale();
         if (locale != null ) {
             Element localeElement = new Element(Tags.LOCALE, Service.NAMESPACE);
-            Text localeText = new Text(getLocale());
+            Text localeText = new Text(getLocale().toString());
             localeElement.addContent(localeText);
             userElement.addContent(localeElement);
         }
         
         // timezone
-        String timezone = getTimezone();
+        TimeZone timezone = getTimezone();
         if (timezone != null) {
             Element timezoneElement = new Element(Tags.TIMEZONE, Service.NAMESPACE);
-            Text timezoneText = new Text(timezone);
+            Text timezoneText = new Text(timezone.getID());
             timezoneElement.addContent(timezoneText);
             userElement.addContent(timezoneElement);
         }
@@ -228,23 +230,33 @@ public class UserEntry extends Entry {
     }
     
     /** Get the locale string of this user entry. */
-    public String getLocale() {
+    public Locale getLocale() {
         return locale;
     }
     
-    /** Set the locale string of this user entry. */
-    public void setLocale(String locale) {
+    /** Set the locale of this user entry. */
+    public void setLocale(Locale locale) {
         this.locale = locale;
     }
     
+    /** Set the locale string of this user entry. */
+    public void setLocale(String localeString) {
+        this.locale = new LocaleString(localeString).getLocale();
+    }    
+    
     /** Get the timezone string of this user entry. */
-    public String getTimezone() {
+    public TimeZone getTimezone() {
         return timezone;
     }
     
-    /** Set the timezone string of this user entry. */
-    public void setTimezone(String timezone) {
+    /** Set the timezone of this user entry. */
+    public void setTimezone(TimeZone timezone) {
         this.timezone = timezone;
+    }
+
+    /** Set the timezone string of this user entry. */
+    public void setTimezone(String timezoneString) {
+        this.timezone = TimeZone.getTimeZone(timezoneString);
     }
     
     /** Get the date created of this user entry. */
@@ -265,5 +277,33 @@ public class UserEntry extends Entry {
     /** Set the email address of this user entry. */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
-    }    
+    }
+    
+    /** Test if a user entry is equal to this user entry. */
+    public boolean equals(Object o) {
+        if ( o == null || o.getClass() != this.getClass()) { 
+            return false;        
+        }
+        
+        UserEntry other = (UserEntry)o;
+        
+        if (!areEqual(getEmailAddress(), other.getEmailAddress())) {
+            return false;
+        }
+        if (!areEqual(getFullName(), other.getFullName())) {
+            return false;
+        }
+        if (!areEqual(getLocale(), other.getLocale())) {
+            return false;
+        }
+        if (!areEqual(getName(), other.getName())) {
+            return false;
+        }
+        if (!areEqual(getTimezone(), other.getTimezone())) {
+            return false;
+        }
+        
+        return super.equals(o);
+    }
+    
 }

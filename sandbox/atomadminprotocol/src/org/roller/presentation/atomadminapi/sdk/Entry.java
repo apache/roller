@@ -9,6 +9,7 @@ package org.roller.presentation.atomadminapi.sdk;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Arrays;
 import org.jdom.Document;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
@@ -21,7 +22,7 @@ import org.jdom.output.XMLOutputter;
  * @author jtb
  */
 public abstract class Entry {
-    protected static final Namespace NAMESPACE = Namespace.getNamespace("http://purl.org/atom/aapp#");
+    protected static final Namespace NAMESPACE = Namespace.getNamespace("http://purl.org/roller/aapp#");
     
     /** Entry types. */
     public static interface Types {
@@ -86,4 +87,29 @@ public abstract class Entry {
     }
     
     public abstract String getType();
+    
+    public boolean equals(Object o) {
+        if ( o == null || o.getClass() != this.getClass()) { 
+            return false;        
+        }
+                
+        Entry other = (Entry)o;
+        
+        if (!areEqual(getHref(), other.getHref())) {
+            return false;
+        }
+        if (!areEqual(getType(), other.getType())) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    protected static boolean areEqual(Object o1, Object o2) {
+        return o1 == null ? o2 == null : o1.equals(o2);
+    }
+    
+    protected static boolean areEqual(Object[] oa1, Object[] oa2) {
+        return oa1 == null ? oa2 == null : Arrays.equals(oa1, oa2);
+    }    
 }
