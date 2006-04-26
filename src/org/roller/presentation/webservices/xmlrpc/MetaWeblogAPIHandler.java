@@ -434,10 +434,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         if (entry.getLink() != null) {
             struct.put("link", Utilities.escapeHTML(entry.getLink()));
         }
-        
         struct.put("description", entry.getText());
-        struct.put("pubDate", entry.getPubTime());
-        struct.put("dateCreated", entry.getPubTime());
+        if (entry.getPubTime() != null) {
+            struct.put("pubDate", entry.getPubTime());
+            struct.put("dateCreated", entry.getPubTime());
+        }
         struct.put("guid", Utilities.escapeHTML(permalink));
         struct.put("permaLink", Utilities.escapeHTML(permalink));
         struct.put("postid", entry.getId());

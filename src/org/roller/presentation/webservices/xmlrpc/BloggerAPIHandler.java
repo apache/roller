@@ -466,7 +466,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                     while (i.hasNext()) {
                         WeblogEntryData entry = (WeblogEntryData) i.next();
                         Hashtable result = new Hashtable();
-                        result.put("dateCreated", entry.getPubTime());
+                        if (entry.getPubTime() != null) {
+                            result.put("dateCreated", entry.getPubTime());
+                        } 
                         result.put("userid", userid);
                         result.put("postid", entry.getId());
                         result.put("content", entry.getText());
