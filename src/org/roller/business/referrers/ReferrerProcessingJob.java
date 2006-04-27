@@ -51,6 +51,8 @@ public class ReferrerProcessingJob implements Job {
                                    referrer.getWeblogHandle(),
                                    referrer.getWeblogAnchor(),
                                    referrer.getWeblogDateString());
+            
+            RollerFactory.getRoller().flush();
         } catch(RollerException re) {
             // trouble
             mLogger.warn("Trouble processing referrer", re);
