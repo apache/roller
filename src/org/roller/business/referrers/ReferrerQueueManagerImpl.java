@@ -11,12 +11,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.roller.RollerException;
 import org.roller.business.runnable.ContinuousWorkerThread;
 import org.roller.business.runnable.WorkerThread;
 import org.roller.config.RollerConfig;
+import org.roller.model.RollerFactory;
 
 
 /**
@@ -139,6 +140,13 @@ public class ReferrerQueueManagerImpl implements ReferrerQueueManager {
             
             // execute
             job.execute();
+            
+            try {
+                // flush changes
+                RollerFactory.getRoller().flush();
+            } catch (RollerException ex) {
+                mLogger.error("ERROR commiting referrer", ex);
+            }
         }
         
     }
