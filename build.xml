@@ -388,6 +388,7 @@ ro.buildUser=${user.name}
             <include name="README.txt"/>
             <include name="LICENSE.txt"/>
             <include name="CHANGES.txt"/>
+            <include name="NOTICE.txt"/>
         </fileset>
     </copy>
 	&custom-web;
