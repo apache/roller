@@ -219,18 +219,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Date dateCreated = (Date)postcontent.get("dateCreated");
         if (dateCreated == null) dateCreated = (Date)postcontent.get("pubDate");
         if (dateCreated == null) dateCreated = new Date();
-        
-        String cat = null;
-        if ( postcontent.get("categories") != null ) {
-            Vector cats = (Vector)postcontent.get("categories");
-            if (cats.size() > 0) {
-                // only use the first category passed in
-                cat = (String)cats.elementAt(0);
-            }
-        }
         mLogger.debug("      Title: " + title);
-        mLogger.debug("   Category: " + cat);
-        
         
         try {
             Roller roller = RollerFactory.getRoller();
@@ -251,15 +240,25 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             } else {
                 entry.setStatus(WeblogEntryData.DRAFT);
             }
-            
-            
-            if ( cat != null ) {
-                // Use first category specified by request
-                WeblogCategoryData cd =
-                    weblogMgr.getWeblogCategoryByPath(website, cat);
-                entry.setCategory(cd);
-            } else {
-                // Use Blogger API category from user's weblog config
+                        
+            // MetaWeblog supports multiple cats, Roller supports one/entry
+            // so here we take accept the first category that exists
+            WeblogCategoryData rollerCat = null;
+            if ( postcontent.get("categories") != null ) {
+                Vector cats = (Vector)postcontent.get("categories");
+                if (cats != null && cats.size() > 0) {
+                    for (int i=0; i<cats.size(); i++) {
+                        String cat = (String)cats.get(i);
+                        rollerCat = weblogMgr.getWeblogCategoryByPath(website, cat);
+                        if (rollerCat != null) {
+                            entry.setCategory(rollerCat);
+                            break;
+                        }
+                    }
+                }
+            }
+            if (rollerCat == null) { 
+                // or we fall back to the default Blogger API category
                 entry.setCategory(website.getBloggerCategory());
             }
             
