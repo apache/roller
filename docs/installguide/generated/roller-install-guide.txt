@@ -1,9 +1,9 @@
-ï»¿
+
 
 Installation Guide
 
 Apache Roller
-Version 2.2-incubating
+Version 2.3-incubating
 
 
 
@@ -25,7 +25,7 @@ Version 2.2-incubating
 
 
 
-Original text is copyright Â© 2002-2004 David M Johnson
+Original text is copyright © 2002-2004 David M Johnson
 Contributors: Roller team and  Sun Microsystems, Inc. 
 Table of Contents
 Introduction	3
@@ -241,7 +241,7 @@ Roller's approach to internationalization (I18N) is to do everything in UTF-8. S
 
 Check your application server's URI encoding setting!
 
-Make sure that your web application server uses UTF-8 to encode URI's. This allows you to use diacritical characters like 'Ã§' in your URLs. This is important for Roller because weblog entry titles are used in URLs. 
+Make sure that your web application server uses UTF-8 to encode URI's. This allows you to use diacritical characters like 'ç' in your URLs. This is important for Roller because weblog entry titles are used in URLs. 
 
 For example, in Tomcat the URI encoding is specified in the connectors that are configured in the Tomcat configuration file conf/server.xml. Here's a connector with the URI encoding attribute set properly:
 
@@ -400,12 +400,12 @@ WEB-INF/dbscripts/mysql
 WEB-INF/dbscripts/postgresql 
 WEB-INF/dbscripts/hsql 
 and more... 
-There is an upgrade script for each release of Roller. If you're upgrading from Roller 2.0, which was the last release before 2.1 you'll only need to run one script, that's 200-to-210-migration.sql. For example, here's how you'd do it for a MySQL database running on UNIX: 
+There is an upgrade script for each release of Roller. If you're upgrading from Roller 2.2, which was the last release before 2.3 you'll only need to run one script, that's 200-to-210-migration.sql. For example, here's how you'd do it for a MySQL database running on UNIX: 
     % cd $CATALINA_HOME/webapps/roller/WEB-INF/dbscripts/mysql
     % mysql -u root -p
     password: *****
     mysql> use roller;
-    mysql> source 200-to-210-migration.sql
+    mysql> source 220-to-230-migration.sql
     mysql> quit
 If you're upgrading from an earlier release you'll have to run each of the older scripts in order to upgrade your database.
 STEP 5: Startup your app server [#5]
