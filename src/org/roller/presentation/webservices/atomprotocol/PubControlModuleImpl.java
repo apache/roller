@@ -19,15 +19,15 @@ package org.roller.presentation.webservices.atomprotocol;
 import com.sun.syndication.feed.module.ModuleImpl;
 
 public class PubControlModuleImpl extends ModuleImpl implements PubControlModule {
-    private Boolean _draft;
+    private boolean _draft = false;
 
     public PubControlModuleImpl() {
         super(PubControlModule.class,PubControlModule.URI);
     }
-    public Boolean getDraft() {
+    public boolean getDraft() {
         return _draft;
     }
-    public void setDraft(Boolean draft) {
+    public void setDraft(boolean draft) {
         _draft = draft;
     }
     public Class getInterface() {

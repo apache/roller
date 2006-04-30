@@ -38,11 +38,11 @@ public class PubControlModuleParser implements ModuleParser {
         if (e != null) {
             Element draftElem = e.getChild("draft", getContentNamespace());
             if (draftElem != null) {
-                if ("yes".equals(draftElem.getText())) m.setDraft(Boolean.TRUE); 
-                if ("no".equals(draftElem.getText())) m.setDraft(Boolean.FALSE);                
+                if ("yes".equals(draftElem.getText())) m.setDraft(true); 
+                if ("no".equals(draftElem.getText())) m.setDraft(false);                
             }
         }
-        return m.getDraft()!=null ? m : null;
+        return m;
     }
 }
 

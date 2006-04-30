@@ -184,7 +184,7 @@ public class AtomServlet extends HttpServlet {
                     writer.close(); 
                 } else if (handler.isMediaCollectionURI(pathInfo)) {
                     // get incoming file name from HTTP header
-                    String name = req.getHeader("Name");
+                    String name = req.getHeader("Title");
                     
                     // hand input stream of to hander to post file
                     Entry resource = handler.postMedia(
