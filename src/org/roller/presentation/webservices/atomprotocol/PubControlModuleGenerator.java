@@ -48,12 +48,10 @@ public class PubControlModuleGenerator implements ModuleGenerator {
 
     public void generate(Module module, Element element) {
         PubControlModule m = (PubControlModule)module;
-        if (m.getDraft() != null) {
-            String draft = m.getDraft().booleanValue() ? "yes" : "no";
-            Element control = new Element("control", PUBCONTROL_NS);
-            control.addContent(generateSimpleElement("draft", draft));
-            element.addContent(control);
-        }
+        String draft = m.getDraft() ? "yes" : "no";
+        Element control = new Element("control", PUBCONTROL_NS);
+        control.addContent(generateSimpleElement("draft", draft));
+        element.addContent(control);
     }
 
     protected Element generateSimpleElement(String name, String value)  {

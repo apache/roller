@@ -20,6 +20,6 @@ import com.sun.syndication.feed.module.Module;
 
 public interface PubControlModule extends Module {
     public static final String URI = "http://purl.org/atom/app#";
-    public Boolean getDraft();
-    public void setDraft(Boolean draft);
+    public boolean getDraft();
+    public void setDraft(boolean draft);
 }

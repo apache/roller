@@ -803,7 +803,7 @@ public class RollerAtomHandler implements AtomHandler {
                
         PubControlModule control = 
             (PubControlModule)entry.getModule("http://purl.org/atom/app#");
-        if (control!=null && control.getDraft()!=null && control.getDraft().booleanValue()) {
+        if (control!=null && control.getDraft()) {
             rollerEntry.setStatus(WeblogEntryData.DRAFT);
         } else {
             rollerEntry.setStatus(WeblogEntryData.PUBLISHED);
@@ -815,12 +815,17 @@ public class RollerAtomHandler implements AtomHandler {
         if (categories != null && categories.size() > 0) {
             for (int i=0; i<categories.size(); i++) {
                 Category cat = (Category)categories.get(i);
-                WeblogCategoryData rollerCat =
-                    mRoller.getWeblogManager().getWeblogCategoryByPath(
-                    website, cat.getTerm());
-                if (rollerCat != null) {
-                    rollerEntry.setCategory(rollerCat);
-                    break;
+                // Caller has no way of knowing our categories, so be lenient here
+                String catString = cat.getTerm() != null ? cat.getTerm() : cat.getLabel();
+                if (catString != null) {
+                    WeblogCategoryData rollerCat =
+                        mRoller.getWeblogManager().getWeblogCategoryByPath(
+                        website, catString);
+                    if (rollerCat != null) {
+                        // Found a valid category, so break out
+                        rollerEntry.setCategory(rollerCat);
+                        break;
+                    }
                 }
             }
         } else {
