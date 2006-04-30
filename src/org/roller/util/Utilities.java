@@ -604,7 +604,7 @@ public class Utilities {
      * This method based on code from the String taglib at Apache Jakarta:
      * http://cvs.apache.org/viewcvs/jakarta-taglibs/string/src/org/apache/taglibs/string/util/StringW.java?rev=1.16&content-type=text/vnd.viewcvs-markup
      * Copyright (c) 1999 The Apache Software Foundation.
-     * Author: Henri Yandell bayard@generationjava.com
+     * Author: timster@mac.com
      *
      * @param str
      * @param lower
