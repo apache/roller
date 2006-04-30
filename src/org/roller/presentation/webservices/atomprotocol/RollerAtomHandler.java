@@ -824,6 +824,7 @@ public class RollerAtomHandler implements AtomHandler {
                 }
             }
         } else {
+            // or we fall back to the default Blogger API category
             rollerEntry.setCategory(website.getBloggerCategory());
         }
         return rollerEntry;
