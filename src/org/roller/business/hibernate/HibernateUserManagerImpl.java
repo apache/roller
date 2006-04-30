@@ -256,30 +256,36 @@ public class HibernateUserManagerImpl implements UserManager {
         
         // add default categories
         WeblogCategoryData rootCat = new WeblogCategoryData(
-                null, // id
+                null,      // id
                 newWeblog, // newWeblog
-                null,   // parent
-                "root",  // name
-                "root",  // description
-                null ); // image
+                null,      // parent
+                "root",    // name
+                "root",    // description
+                null );    // image
         this.strategy.store(rootCat);
         
         String cats = RollerConfig.getProperty("newuser.categories");
+        WeblogCategoryData firstCat = rootCat; 
         if (cats != null) {
             String[] splitcats = cats.split(",");
             for (int i=0; i<splitcats.length; i++) {
                 WeblogCategoryData c = new WeblogCategoryData(
-                        null,            // id
-                        newWeblog,         // newWeblog
-                        rootCat,         // parent
-                        splitcats[i],    // name
-                        splitcats[i],    // description
-                        null );          // image
+                    null,            // id
+                    newWeblog,       // newWeblog
+                    rootCat,         // parent
+                    splitcats[i],    // name
+                    splitcats[i],    // description
+                    null );          // image
+                if (i == 0) firstCat = c;
                 this.strategy.store(c);
             }
         }
-        newWeblog.setBloggerCategory(rootCat);
+        // Use first category as default for Blogger API
+        newWeblog.setBloggerCategory(firstCat);
+        
+        // But default category for weblog itself should be  root
         newWeblog.setDefaultCategory(rootCat);
+
         this.strategy.store(newWeblog);
         
         // add default bookmarks
