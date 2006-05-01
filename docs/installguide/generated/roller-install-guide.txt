@@ -96,11 +96,31 @@ Here are some examples to show you how you might unpack Roller on your computer.
 UNIX example
 Assuming you download the distribution into your home directory and you'd like to install Roller into /usr/local you might do something like this:
 	% cd /usr/local
-	% tar xzvf ~/roller-2.1.tar.gz
+	% tar xzvf ~/roller-2.3.tar.gz
 
 That would create the Roller installation directory /usr/local/roller. 
 Windows example
 Use WinZip to extract the Roller distribution file into the directory of your choice for example, no example necessary.
+Download required jars 
+Roller requires the Hibernate persistence library, which you must download separately from Roller. 
+
+	Download Hibernate 3.1.2 from SourceForge
+	http://prdownloads.sourceforge.net/hibernate/hibernate-3.1.2.tar.gz
+
+Copy the following files from Hibernate into the Roller WEB-INF/lib directory:
+hibernate3.jar
+asm-attrs.jar
+asm.jar
+cglib-2.1.3.jar
+dom4j.1.6.1.jar
+ehcache-1.1.jar
+jdbc2_0-stdext.jar
+jta.jar
+
+The Roller Support project at Java.Net offers some required jar bundles that might make installation easier. Visit http://roller.dev.java.net for more information.
+
+
+
 
 STEP 3: Create Roller tables in your database
 Create a new database within your MySQL installation, create a user with all privileges within that database and run the Roller database creation script to create tables within that new database.

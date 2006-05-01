@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060430;16431900">
+	<META NAME="CHANGED" CONTENT="20060501;14392900">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.79in }
@@ -242,7 +242,7 @@ your computer.</P>
 and you'd like to install Roller into <FONT FACE="Courier New">/usr/local</FONT>
 you might do something like this:</P>
 <PRE><FONT FACE="Courier New"><FONT SIZE=2>	% cd /usr/local</FONT></FONT>
-<FONT FACE="Courier New"><FONT SIZE=2>	% tar xzvf ~/roller-2.1.tar.gz</FONT></FONT>
+<FONT FACE="Courier New"><FONT SIZE=2>	% tar xzvf ~/roller-2.3.tar.gz</FONT></FONT>
 </PRE><P>
 That would create the Roller installation directory
 <FONT FACE="Courier New">/usr/local/roller</FONT>. 
@@ -250,6 +250,43 @@ That would create the Roller installation directory
 <P><B>Windows example</B></P>
 <P>Use WinZip to extract the Roller distribution file into the
 directory of your choice for example, no example necessary.</P>
+<H3>Download required jars 
+</H3>
+<P>Roller <I>requires</I> the Hibernate persistence library, which
+you must download separately from Roller. 
+</P>
+<P><BR><BR>
+</P>
+<P>	Download Hibernate 3.1.2 from SourceForge</P>
+<P>	<A HREF="http://prdownloads.sourceforge.net/hibernate/hibernate-3.1.2.tar.gz">http://prdownloads.sourceforge.net/hibernate/hibernate-3.1.2.tar.gz</A></P>
+<P><BR><BR>
+</P>
+<P>Copy the following files from Hibernate into the Roller
+WEB-INF/lib directory:</P>
+<UL>
+	<LI><P>hibernate3.jar</P>
+	<LI><P>asm-attrs.jar</P>
+</UL>
+<UL>
+	<LI><P>asm.jar</P>
+	<LI><P>cglib-2.1.3.jar</P>
+	<LI><P>dom4j.1.6.1.jar</P>
+	<LI><P>ehcache-1.1.jar</P>
+	<LI><P>jdbc2_0-stdext.jar</P>
+	<LI><P>jta.jar</P>
+</UL>
+<P><BR><BR>
+</P>
+<P>The Roller Support project at Java.Net offers some required jar
+bundles that might make installation easier. Visit
+<A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
+for more information.</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP3CreateRollerTablesInYourDatabase3"></A><A NAME="ref-InstallationGuide_2.x-3"></A>
