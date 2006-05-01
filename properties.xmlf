@@ -1,4 +1,20 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+-->
 <!-- ================================================ -->
 <!-- Properties and classpaths -->
 <!-- ================================================ -->
@@ -66,6 +82,14 @@ in the "base.path" definition.
 
 <fileset id="commons.jars" dir="${tools.struts}/lib">
     <include name="commons-*.jar"/>
+</fileset>
+
+<fileset id="commons-httpclient.jar" dir="${ro.tools}/lib">
+    <include name="commons-httpclient*.jar"/>
+</fileset>
+
+<fileset id="commons-httpclient.jar" dir="${ro.tools}/lib">
+    <include name="commons-httpclient*.jar"/>
 </fileset>
 
 <fileset id="struts.jars" dir="${tools.struts}/lib">
@@ -158,11 +182,13 @@ in the "base.path" definition.
        </fileset>
     </path>
     <path>
+       <fileset refid="commons-httpclient.jar"/>
        <fileset dir="${build.stage_web}/WEB-INF/lib">
           <include name="*.jar"/>
        </fileset>
     </path>
     <fileset refid="servlet.jars"/>
+    <fileset refid="commons-httpclient.jar"/>
     <path location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
     <path location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
     <path location="${ro.tools}/buildtime/hsqldb.jar"/>
