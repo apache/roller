@@ -28,22 +28,22 @@
 
 <%@ page import="javax.servlet.jsp.jstl.core.Config" %>
 
-<%@ page import="org.roller.model.Roller" %>
-<%@ page import="org.roller.model.RollerFactory" %>
+<%@ page import="org.apache.roller.model.Roller" %>
+<%@ page import="org.apache.roller.model.RollerFactory" %>
 
-<%@ page import="org.roller.pojos.UserData" %>
-<%@ page import="org.roller.pojos.WebsiteData" %>
-<%@ page import="org.roller.pojos.RollerConfigData" %>
+<%@ page import="org.apache.roller.pojos.UserData" %>
+<%@ page import="org.apache.roller.pojos.WebsiteData" %>
+<%@ page import="org.apache.roller.pojos.RollerConfigData" %>
 
-<%@ page import="org.roller.config.RollerConfig" %>
-<%@ page import="org.roller.config.RollerRuntimeConfig" %>
-<%@ page import="org.roller.config.RollerConfig" %>
+<%@ page import="org.apache.roller.config.RollerConfig" %>
+<%@ page import="org.apache.roller.config.RollerRuntimeConfig" %>
+<%@ page import="org.apache.roller.config.RollerConfig" %>
 
-<%@ page import="org.roller.presentation.RollerRequest" %>
-<%@ page import="org.roller.presentation.BasePageModel" %>
-<%@ page import="org.roller.presentation.RollerContext" %>
-<%@ page import="org.roller.presentation.RollerSession" %>
-<%@ page import="org.roller.presentation.LanguageUtil" %>
+<%@ page import="org.apache.roller.presentation.RollerRequest" %>
+<%@ page import="org.apache.roller.presentation.BasePageModel" %>
+<%@ page import="org.apache.roller.presentation.RollerContext" %>
+<%@ page import="org.apache.roller.presentation.RollerSession" %>
+<%@ page import="org.apache.roller.presentation.LanguageUtil" %>
 
 <%   
 // see if we have an authenticated user so we can set the display locale

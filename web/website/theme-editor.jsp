@@ -18,10 +18,10 @@
 <%@ include file="/taglibs.jsp" %>
 <%
 // this just makes the name for a custom theme available to our jstl EL
-String customTheme = org.roller.pojos.Theme.CUSTOM;
+String customTheme = org.apache.roller.pojos.Theme.CUSTOM;
 request.setAttribute("customTheme", customTheme);
 
-boolean allowCustom = org.roller.config.RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed");
+boolean allowCustom = org.apache.roller.config.RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed");
 request.setAttribute("allowCustom", new Boolean(allowCustom));
 %>
 <p class="subtitle">

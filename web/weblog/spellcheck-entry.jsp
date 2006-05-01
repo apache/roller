@@ -17,7 +17,7 @@
 -->
 <!-- spellcheck-entry.jsp -->
 <%@ include file="/taglibs.jsp" %>
-<%@ page import="org.roller.model.RollerSpellCheck,com.swabunga.spell.event.SpellCheckEvent" %>
+<%@ page import="org.apache.roller.model.RollerSpellCheck,com.swabunga.spell.event.SpellCheckEvent" %>
 <%@ page import="org.apache.commons.lang.StringUtils,java.util.*" %>
 
 <script type="text/javascript">

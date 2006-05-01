@@ -16,9 +16,9 @@
   directory of this distribution.
 -->
 <%@ page session="false"
-    import="org.roller.pojos.WebsiteData,
-            org.roller.presentation.RollerRequest,
-            org.roller.util.DateUtil,
+    import="org.apache.roller.pojos.WebsiteData,
+            org.apache.roller.presentation.RollerRequest,
+            org.apache.roller.util.DateUtil,
             java.text.DateFormat,
             java.util.Date,
             java.util.Locale,

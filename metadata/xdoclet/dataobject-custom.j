@@ -2,7 +2,7 @@
    /**
 	* Setter is needed in RollerImpl.storeValueObject()
     */
-   public void setData( org.roller.model.ValueObject otherData )
+   public void setData( org.apache.roller.model.ValueObject otherData )
    {
     <XDtEjbPersistent:forAllPersistentFields>
      <XDtEjbDataObj:ifIsAggregate>

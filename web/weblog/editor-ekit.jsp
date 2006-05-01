@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <%-- This page is designed to be included in edit-weblog.jsp --%>
-<%@ page import="org.roller.presentation.weblog.formbeans.WeblogEntryFormEx" %>
+<%@ page import="org.apache.roller.presentation.weblog.formbeans.WeblogEntryFormEx" %>
 <%@ include file="/taglibs.jsp" %>
 <html:hidden property="summary" />
 

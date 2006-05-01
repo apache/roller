@@ -3,7 +3,7 @@
    <tag>
       <name>link</name>
 
-      <tag-class>org.roller.presentation.tags.LinkTag</tag-class>
+      <tag-class>org.apache.roller.presentation.tags.LinkTag</tag-class>
 
       <body-content>JSP</body-content>
 
@@ -259,7 +259,7 @@
    <tag>
       <name>linkparam</name>
 
-      <tag-class>org.roller.presentation.tags.LinkParamTag</tag-class>
+      <tag-class>org.apache.roller.presentation.tags.LinkParamTag</tag-class>
 
       <body-content>JSP</body-content>
 

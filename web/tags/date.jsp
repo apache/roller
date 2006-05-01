@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %><% {
-String prefix = org.roller.presentation.tags.DateTag.KEY_PREFIX;
+String prefix = org.apache.roller.presentation.tags.DateTag.KEY_PREFIX;
 String formName = request.getAttribute(prefix+"_formName").toString(); 
 String dateField = request.getAttribute(prefix+"_property").toString(); 
 String dateFormat = request.getAttribute(prefix+"_dateFormat").toString();
