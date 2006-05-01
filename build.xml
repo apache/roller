@@ -110,9 +110,9 @@ Key Targets:
 
     <!-- Use EJBDoclet to generate Struts forms -->
     <ejbdoclet destdir="${build.generated}/src" excludedtags="@version,@author">
-	<fileset dir="./src" includes="org/roller/pojos/WeblogTemplate.java" />
-        <fileset dir="./src" includes="org/roller/pojos/*Data.java" />
-        <fileset dir="./src" includes="org/roller/business/*Data.java" /> 
+	<fileset dir="./src" includes="org/apache/roller/pojos/WeblogTemplate.java" />
+        <fileset dir="./src" includes="org/apache/roller/pojos/*Data.java" />
+        <fileset dir="./src" includes="org/apache/roller/business/*Data.java" /> 
         &custom-gen-web;
      
         <!-- Generate Struts forms -->
@@ -120,7 +120,7 @@ Key Targets:
             prefixWithPackageStructure="no"
             templateFile="./metadata/xdoclet/struts_form.xdt">
 
-            <!-- into the org.roller.presentation.forms package -->
+            <!-- into the org.apache.roller.presentation.forms package -->
             <packageSubstitution packages="pojos"
                 substituteWith="presentation.forms"/>
             <packageSubstitution packages="presentation"
@@ -139,10 +139,10 @@ Key Targets:
     </copy>
 
     <!-- Change Struts form names from *DataForm.java to *Form.java  -->
-    <replace dir="${build.generated}/src.presentation/org/roller/presentation/forms"
+    <replace dir="${build.generated}/src.presentation/org/apache/roller/presentation/forms"
         token="DataForm" value="Form"/>
-    <move todir="${build.generated}/src.presentation/org/roller/presentation/forms">
-        <fileset dir="${build.generated}/src.presentation/org/roller/presentation/forms" >
+    <move todir="${build.generated}/src.presentation/org/apache/roller/presentation/forms">
+        <fileset dir="${build.generated}/src.presentation/org/apache/roller/presentation/forms" >
             <include name="*DataForm.java"/>
             <include name="*ConfigForm.java" />
         </fileset>
@@ -166,10 +166,10 @@ Key Targets:
         excludedtags="@version,@author"
         addedtags="@xdoclet-generated at ${TODAY}"
         force="true">
-	<fileset dir="./src" includes="org/roller/pojos/WeblogTemplate.java" />
-        <fileset dir="./src" includes="org/roller/pojos/*Data.java" />
-        <fileset dir="./src" includes="org/roller/pojos/*Assoc.java" />
-        <fileset dir="./src" includes="org/roller/business/*Data.java" />
+	<fileset dir="./src" includes="org/apache/roller/pojos/WeblogTemplate.java" />
+        <fileset dir="./src" includes="org/apache/roller/pojos/*Data.java" />
+        <fileset dir="./src" includes="org/apache/roller/pojos/*Assoc.java" />
+        <fileset dir="./src" includes="org/apache/roller/business/*Data.java" />
         &custom-gen-beans;
         <hibernate validatexml="true" version="3.0"/>
     </hibernatedoclet>
@@ -200,9 +200,9 @@ Key Targets:
             <include name="**/*FormEx.java" />
             <include name="**/*Servlet.java" />
             <include name="**/*Tag.java" />
-            <include name="org/roller/presentation/**/actions/*.java" />
-            <include name="org/roller/presentation/RollerContext.java" />
-            <include name="org/roller/presentation/RollerSession.java" />
+            <include name="org/apache/roller/presentation/**/actions/*.java" />
+            <include name="org/apache/roller/presentation/RollerContext.java" />
+            <include name="org/apache/roller/presentation/RollerSession.java" />
             <exclude name="**/IPBanFilter**" />
             <exclude name="**/LinkTag**" />
             <exclude name="**/LinkParamTag**" />
@@ -250,16 +250,16 @@ Key Targets:
                 maybe we can extend the process to only wrap classes that have
                 methods tagged with @roller.wrapPojoMethod ??
             -->
-            <include name="org/roller/pojos/BookmarkData.java"/>
-            <include name="org/roller/pojos/CommentData.java"/>
-            <include name="org/roller/pojos/EntryAttributeData.java"/>
-            <include name="org/roller/pojos/FolderData.java"/>
-            <include name="org/roller/pojos/RefererData.java"/>
-            <include name="org/roller/pojos/Template.java"/>
-            <include name="org/roller/pojos/UserData.java"/>
-            <include name="org/roller/pojos/WeblogEntryData.java"/>
-            <include name="org/roller/pojos/WeblogCategoryData.java"/>
-            <include name="org/roller/pojos/WebsiteData.java"/>
+            <include name="org/apache/roller/pojos/BookmarkData.java"/>
+            <include name="org/apache/roller/pojos/CommentData.java"/>
+            <include name="org/apache/roller/pojos/EntryAttributeData.java"/>
+            <include name="org/apache/roller/pojos/FolderData.java"/>
+            <include name="org/apache/roller/pojos/RefererData.java"/>
+            <include name="org/apache/roller/pojos/Template.java"/>
+            <include name="org/apache/roller/pojos/UserData.java"/>
+            <include name="org/apache/roller/pojos/WeblogEntryData.java"/>
+            <include name="org/apache/roller/pojos/WeblogCategoryData.java"/>
+            <include name="org/apache/roller/pojos/WebsiteData.java"/>
         </fileset>
 
         <template 
@@ -289,7 +289,7 @@ ro.buildUser=${user.name}
     </echo>
 
     <javac debug="${build.debug}" destdir="${build.compile_beans}"
-        excludes="org/roller/presentation/**" >
+        excludes="org/apache/roller/presentation/**" >
         <src path="${basedir}/src" />
         <src path="${build.generated}/src.business"/>
         &custom-src-beans;
@@ -300,7 +300,7 @@ ro.buildUser=${user.name}
     </javac>
     
     <!-- Copy class resources -->
-    <copy todir="${build.compile_beans}/org/roller/model">
+    <copy todir="${build.compile_beans}/org/apache/roller/model">
         <fileset dir="${build.generated}/src.business" includes="*.hbm.xml"/>
     </copy>
     <!-- Jar up the beans -->
@@ -347,7 +347,7 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.compile_web}"/>
     <antcall target="prepare.resin" />
     <javac debug="${build.debug}" destdir="${build.compile_web}"
-        includes="org/roller/presentation/**, org/roller/util/rome/**" >
+        includes="org/apache/roller/presentation/**, org/apache/roller/util/rome/**" >
         <src path="./src"  />
         <src path="${build.generated}/src.presentation"/>
         &custom-src-web;
@@ -585,8 +585,8 @@ ro.buildUser=${user.name}
             <pathelement path="${ro.build}/generated/src.presentation"/>
         </sourcepath>
         <packageset dir="src" defaultexcludes="yes">
-          <include name="org/roller/**" />
-          <exclude name="org/roller/business/prevayler/**" />
+          <include name="org/apache/roller/**" />
+          <exclude name="org/apache/roller/business/prevayler/**" />
         </packageset>
         <link href="http://java.sun.com/j2se/1.4/docs/api/"/>
         <link href="http://java.sun.com/products/servlet/2.3/javadoc/"/>
@@ -882,9 +882,9 @@ ro.buildUser=${user.name}
     </javac>
     
     <!-- register Ant tasks that were just built -->
-    <taskdef name="startdb" classname="org.roller.ant.StartHsqldbTask" 
+    <taskdef name="startdb" classname="org.apache.roller.ant.StartHsqldbTask" 
         classpath="${basedir}/tools/buildtime/hsqldb.jar;${build.tests}/WEB-INF/classes" />
-    <taskdef name="stopdb" classname="org.roller.ant.StopHsqldbTask" 
+    <taskdef name="stopdb" classname="org.apache.roller.ant.StopHsqldbTask" 
         classpath="${basedir}/tools/buildtime/hsqldb.jar;${build.tests}/WEB-INF/classes" />
     
     <!-- Copy custom testing files -->
@@ -956,20 +956,20 @@ ro.buildUser=${user.name}
         <formatter type="xml"/>
         <batchtest toDir="${build.reports}/business/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
-		<include name="org/roller/business/UserTest.class"/> 
-	        <include name="org/roller/business/WeblogTest.class"/>
-	        <include name="org/roller/business/PermissionTest.class"/>
-	        <include name="org/roller/business/WeblogPageTest.class"/>
-	        <include name="org/roller/business/PingsTest.class"/>
-	        <include name="org/roller/business/PropertiesTest.class"/>
-	        <include name="org/roller/business/WeblogEntryTest.class"/>
-	        <include name="org/roller/business/WeblogCategoryTest.class"/>
-	        <include name="org/roller/business/CommentTest.class"/>
-		<include name="org/roller/business/FileManagerTest.class"/>
-		<include name="org/roller/business/IndexManagerTest.class"/>
-	        <include name="org/roller/business/PlanetManagerTest.class"/>
-		<include name="org/roller/business/BookmarkTest.class"/>
-		<include name="org/roller/business/RefererTest.class"/>
+		<include name="org/apache/roller/business/UserTest.class"/> 
+	        <include name="org/apache/roller/business/WeblogTest.class"/>
+	        <include name="org/apache/roller/business/PermissionTest.class"/>
+	        <include name="org/apache/roller/business/WeblogPageTest.class"/>
+	        <include name="org/apache/roller/business/PingsTest.class"/>
+	        <include name="org/apache/roller/business/PropertiesTest.class"/>
+	        <include name="org/apache/roller/business/WeblogEntryTest.class"/>
+	        <include name="org/apache/roller/business/WeblogCategoryTest.class"/>
+	        <include name="org/apache/roller/business/CommentTest.class"/>
+		<include name="org/apache/roller/business/FileManagerTest.class"/>
+		<include name="org/apache/roller/business/IndexManagerTest.class"/>
+	        <include name="org/apache/roller/business/PlanetManagerTest.class"/>
+		<include name="org/apache/roller/business/BookmarkTest.class"/>
+		<include name="org/apache/roller/business/RefererTest.class"/>
             </fileset>
         </batchtest>
     </junit>
@@ -1011,7 +1011,7 @@ ro.buildUser=${user.name}
     <junit fork="true" dir="${build.tests}">
         <batchtest toDir="${build.reports}/presentation/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
-                <include name="org/roller/presentation/**/*Test.class"/> 
+                <include name="org/apache/roller/presentation/**/*Test.class"/> 
 	            <exclude name="**/ApplicationResourcesTest.class"/>
 	            <exclude name="**/ArchiveParserTest.class"/>
 	            <exclude name="**/AtomCollectionTest.class"/>
@@ -1020,7 +1020,7 @@ ro.buildUser=${user.name}
 	            <exclude name="**/LanguageUtilTest.class"/>            
             </fileset>
         </batchtest>
-        <!--arg value="org.roller.presentation.velocity.ExportRssTest"/-->
+        <!--arg value="org.apache.roller.presentation.velocity.ExportRssTest"/-->
         <jvmarg value="-Dro.build=${ro.build}"/>
         <jvmarg value="-Dcatalina.base=${build.tests}"/> <!-- needed to satisfy ref in log4j.properties -->
         <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
@@ -1056,7 +1056,7 @@ ro.buildUser=${user.name}
 	<junit fork="true" dir="${build.tests}">
         <batchtest toDir="${build.reports}/utils/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
-                <include name="org/roller/util/*Test.class"/>
+                <include name="org/apache/roller/util/*Test.class"/>
             </fileset>
         </batchtest>
 		<!-- needed to satisfy ref in log4j.properties -->
@@ -1092,7 +1092,7 @@ ro.buildUser=${user.name}
             <formatter type="xml"/>
             <batchtest toDir="${build.reports}/presentation/xml">
                 <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/roller/presentation/atomadminapi/sdk/*EntryTest.class"/>
+                    <include name="org/apache/roller/presentation/atomadminapi/sdk/*EntryTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -1118,7 +1118,7 @@ ro.buildUser=${user.name}
             <formatter type="xml"/>
             <batchtest toDir="${build.reports}/presentation/xml">
                 <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/roller/presentation/atomadminapi/*HandlerTest.class"/>
+                    <include name="org/apache/roller/presentation/atomadminapi/*HandlerTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -1131,7 +1131,7 @@ ro.buildUser=${user.name}
     </target>
 
 <!-- You can specify testClass using -DtestClass=foo -->
-<property name="testClass" value="org.roller.presentation.velocity.plugins.smileys.SmileysTest"/>
+<property name="testClass" value="org.apache.roller.presentation.velocity.plugins.smileys.SmileysTest"/>
 <target name="test-one" depends="build-tests">
     <java classname="junit.textui.TestRunner" fork="yes" failonerror="false">
         <arg value="${testClass}"/>
@@ -1177,7 +1177,7 @@ Use -Dverbose=1 to get verbose output.
     <condition property="command" value="-purge">
         <isset property="delete" />
     </condition>
-    <java classname="org.roller.business.utils.ConsistencyCheck" fork="yes">
+    <java classname="org.apache.roller.business.utils.ConsistencyCheck" fork="yes">
         <arg value="${command}"/>
         <jvmarg value="-Dusername=roller"/>
         <jvmarg value="-Dpassword=tiger"/>
