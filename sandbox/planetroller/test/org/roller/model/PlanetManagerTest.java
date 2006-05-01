@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.roller.model;
+package org.apache.roller.model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,12 +23,12 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.roller.RollerException;
-import org.roller.pojos.PlanetConfigData;
-import org.roller.pojos.PlanetEntryData;
-import org.roller.pojos.PlanetGroupData;
-import org.roller.pojos.PlanetSubscriptionData;
-import org.roller.pojos.UserData;
+import org.apache.roller.RollerException;
+import org.apache.roller.pojos.PlanetConfigData;
+import org.apache.roller.pojos.PlanetEntryData;
+import org.apache.roller.pojos.PlanetGroupData;
+import org.apache.roller.pojos.PlanetSubscriptionData;
+import org.apache.roller.pojos.UserData;
 
 /**
  * Test database implementation of PlanetManager.
