@@ -12,20 +12,12 @@ try {
 function postWeblogEntry() {
     document.weblogEntryFormEx.submit();
 }
-function spellCheck() {
-    document.weblogEntryFormEx.method.value = "spellCheck";
-    postWeblogEntry();
-}
 function previewMode() {
     document.weblogEntryFormEx.method.value = "preview";
     postWeblogEntry();
 }
 function returnToEditMode() {
     document.weblogEntryFormEx.method.value = "returnToEditMode";
-    postWeblogEntry();
-}
-function submitSpellingCorrections() {
-    document.weblogEntryFormEx.method.value = "correctSpelling";
     postWeblogEntry();
 }
 function deleteWeblogEntry() {
@@ -181,7 +173,7 @@ function publish() {
     
    
     <%-- ================================================================== --%>
-    <%-- Weblog edit, preview, or spell check area --%>
+    <%-- Weblog edit or preview --%>
     
     <%-- EDIT MODE --%>
     <c:if test="${model.editMode}">
@@ -213,20 +205,7 @@ function publish() {
         </div>
     </c:if>
 
-    <%-- SPELLCHECK MODE --%>
-    <c:if test="${model.spellMode}" >
-        <html:hidden property="text" />
-        <html:hidden property="summary" />
         
-        <br />
-        <br />
-        <div class="centerTitle"><fmt:message key="weblogEdit.spellCheckContent" /></div>
-        <div class="previewEntryContent">
-           <c:out value="${model.spellCheckHtml}" escapeXml="false" />
-        </div>
-    </c:if>
-    
-    
    <%-- ================================================================== --%>
    <%-- the button box --%>
 
@@ -280,10 +259,6 @@ function publish() {
                    value='<fmt:message key="weblogEdit.previewMode" />'
                    onclick="previewMode()" />
 
-            <input type="button" name="spelling"
-                   value='<fmt:message key="weblogEdit.check" />'
-                   onclick="spellCheck()" />
-
         </c:if>
 
         <%-- preview mode buttons --%>
@@ -292,18 +267,6 @@ function publish() {
                    onclick="returnToEditMode()" />
         </c:if>
 
-        <%-- spell mode buttons --%>
-        <c:if test="${model.spellMode}" >
-
-            <input type="button" name="correctSpelling"
-                   value='<fmt:message key="weblogEdit.correctSpelling" />'
-                   onclick="submitSpellingCorrections()"  />
-
-            <input type="button" name="cancelSpelling"
-                   value='<fmt:message key="weblogEdit.cancelSpelling" />'
-                   onclick="returnToEditMode()" />
-
-        </c:if>
     </div>
 
     

@@ -27,7 +27,7 @@ import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
 import org.roller.presentation.weblog.tags.EditWeblogCalendarModel;
 import org.roller.util.StringUtils;
 
-import com.swabunga.spell.event.SpellCheckEvent;
+//import com.swabunga.spell.event.SpellCheckEvent;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -288,34 +288,6 @@ public class WeblogEntryPageModel extends BasePageModel
         return context + getWeblogEntry().getPermaLink();
     }
     
-    public String getSpellCheckHtml() throws RollerException
-    {
-        String text = getWeblogEntry().getText();
-        String escapeText = StringUtils.replace( text, "<", "{" );
-        escapeText = StringUtils.replace( escapeText, ">", "}" );
-        StringBuffer newText = new StringBuffer(escapeText);
-        ArrayList events = (ArrayList)
-            getRequest().getSession().getAttribute("spellCheckEvents");
-        SpellCheckEvent event = null;
-        String word = null;
-        int start = -1;
-        int end = -1;
-        String select = null;
-        for(ListIterator it=events.listIterator(events.size()); it.hasPrevious();)
-        {
-            event = (SpellCheckEvent)it.previous();
-            word = event.getInvalidWord();
-            start = event.getWordContextPosition();
-            end = start + word.length();
-            select = makeSelect(word, event.getSuggestions());
-    
-            newText.replace( start, end, select );
-        }
-        escapeText = StringUtils.replace( newText.toString(), "}", "&gt;" );
-        escapeText = StringUtils.replace( escapeText, "{", "&lt;" );
-        return escapeText;
-    }
-    
     public static String makeSelect(String word, List words)
     {
         StringBuffer buf = new StringBuffer("<select name=\"");
@@ -403,3 +375,4 @@ public class WeblogEntryPageModel extends BasePageModel
         return comments != null ? comments.size() : 0;
     }
 }
+

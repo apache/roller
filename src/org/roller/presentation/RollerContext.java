@@ -39,7 +39,6 @@ import org.roller.config.RollerConfig;
 import org.roller.config.RollerRuntimeConfig;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
-import org.roller.model.RollerSpellCheck;
 import org.roller.model.ScheduledTask;
 import org.roller.pojos.UserData;
 import org.roller.pojos.WeblogEntryData;
@@ -166,7 +165,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             initializeSecurityFeatures(mContext);
             
             roller.getThemeManager();
-            setupSpellChecker();
             setupIndexManager(roller);
             initializePingFeatures(roller);
             setupPingQueueTask(roller);
@@ -397,31 +395,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         }
         return mAuthenticator;
     }
-    
-    
-    /**
-     * RollerSpellCheck must be initialized with a dictionary file
-     * so that it can return valid a SpellChecker.
-     */
-    private void setupSpellChecker() {
-        InputStream is = null;
-        try {
-            is = mContext.getResourceAsStream("/WEB-INF/english.0");
-            RollerSpellCheck.init(is);
-        } catch (Exception e) {
-            mContext.log("ERROR reading dictionary file");
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-    
-    
+       
     /**
      * Returns the full url for the website of the specified username.
      */

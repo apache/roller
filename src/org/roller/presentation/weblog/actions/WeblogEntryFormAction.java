@@ -1,7 +1,6 @@
 
 package org.roller.presentation.weblog.actions;
 
-import com.swabunga.spell.event.SpellCheckEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -50,7 +49,6 @@ import org.roller.model.IndexManager;
 import org.roller.model.PagePluginManager;
 import org.roller.model.Roller;
 import org.roller.model.RollerFactory;
-import org.roller.model.RollerSpellCheck;
 import org.roller.model.UserManager;
 import org.roller.model.WeblogManager;
 import org.roller.pojos.CommentData;
@@ -66,6 +64,8 @@ import org.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
 import org.roller.util.MailUtil;
 import org.roller.util.StringUtils;
 import org.roller.util.Utilities;
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 /**
@@ -600,102 +600,6 @@ public final class WeblogEntryFormAction extends DispatchAction {
         return create(mapping, actionForm, request, response);
     }
     
-    //-----------------------------------------------------------------------
-    public ActionForward correctSpelling(
-            ActionMapping       mapping,
-            ActionForm          actionForm,
-            HttpServletRequest  request,
-            HttpServletResponse response)
-            throws IOException, ServletException {
-        try {
-            WeblogEntryFormEx wf = (WeblogEntryFormEx)actionForm;
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData site = umgr.getWebsite(wf.getWebsiteId());
-            RollerSession rses =
-                    RollerSession.getRollerSession(request);
-            if (rses.isUserAuthorizedToAuthor(site)) {
-                HttpSession session = request.getSession(true);
-                // misspelt words have been submitted
-                if (wf.getReplacementWords() != null &&
-                        wf.getReplacementWords().length > 0) {
-                    // replace misspelt words with chosen replacement
-                    String[] replacementWords = wf.getReplacementWords();
-                    StringBuffer entryText = new StringBuffer(wf.getText());
-                    
-                    ArrayList events =
-                            (ArrayList) session.getAttribute("spellCheckEvents");
-                    SpellCheckEvent event = null;
-                    String oldWord = null;
-                    String newWord = null;
-                    int start = -1;
-                    int end = -1;
-                    int count = replacementWords.length;
-                    for(ListIterator it=events.listIterator(events.size());
-                    it.hasPrevious();) {
-                        event = (SpellCheckEvent)it.previous();
-                        oldWord = event.getInvalidWord();
-                        newWord = replacementWords[ --count ];
-                        if (!oldWord.equals(newWord)) {
-                            start = event.getWordContextPosition();
-                            end = start + oldWord.length();
-                            entryText.replace( start, end, newWord );
-                        }
-                    }
-                    wf.setText( entryText.toString() );
-                    
-                    return save(mapping, wf, request, response);
-                } else {
-                    return display(WeblogEntryPageModel.EDIT_MODE,
-                            mapping, actionForm, request, response);
-                }
-            }
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-        return mapping.findForward("access-denied");
-    }
-    
-    //-----------------------------------------------------------------------
-    public ActionForward spellCheck(
-            ActionMapping       mapping,
-            ActionForm          actionForm,
-            HttpServletRequest  request,
-            HttpServletResponse response)
-            throws IOException, ServletException {
-        ActionForward forward = mapping.findForward("weblogEdit.page");
-        try {
-            WeblogEntryFormEx wf = (WeblogEntryFormEx)actionForm;
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData site = umgr.getWebsite(wf.getWebsiteId());
-            RollerSession rses =
-                    RollerSession.getRollerSession(request);
-            if ( rses.isUserAuthorized(site) ) {
-                HttpSession session = request.getSession(true);
-                
-                // we need to save any new entries before SpellChecking
-                if (wf.getId() == null) {
-                    save(mapping, actionForm, request, response);
-                }
-                
-                // pass the submitted entry text through the spellchecker
-                ArrayList words =
-                        RollerSpellCheck.getSpellingErrors( wf.getText() );
-                session.setAttribute("spellCheckEvents", words);
-                
-                request.setAttribute("model",
-                        new WeblogEntryPageModel(
-                        request, response, mapping,
-                        (WeblogEntryFormEx)actionForm,
-                        WeblogEntryPageModel.SPELL_MODE, words));
-            } else {
-                forward = mapping.findForward("access-denied");
-            }
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-        return forward;
-    }
-    
     /**
      *
      */
@@ -917,4 +821,5 @@ public final class WeblogEntryFormAction extends DispatchAction {
     
     
 }
+
 
