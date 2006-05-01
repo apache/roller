@@ -737,7 +737,7 @@ public class RollerAtomHandler implements AtomHandler {
         List modules = new ArrayList();
         PubControlModule pubControl = new PubControlModuleImpl();
         pubControl.setDraft(
-            new Boolean(!WeblogEntryData.PUBLISHED.equals(entry.getStatus())));
+            !WeblogEntryData.PUBLISHED.equals(entry.getStatus()));
         modules.add(pubControl);
         atomEntry.setModules(modules);
         
