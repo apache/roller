@@ -16,7 +16,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<members xmlns="http://purl.org/roller/aapp#">
+<members xmlns="http://purl.org/apache/roller/aapp#">
 	<member>
 		<name>test2</name>
 		<handle>test1</handle>

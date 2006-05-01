@@ -42,10 +42,10 @@ properties below point to the downloaded files.
     </javac>   	
     <jar destfile="./build/roller-hsqldb.jar" 
         basedir="./build/classes" 
-        excludes="org/roller/jspwiki/**" />
+        excludes="org/apache/roller/jspwiki/**" />
     <jar destfile="./build/roller-jspwiki.jar"
         basedir="./build/classes" 
-        includes="org/roller/jspwiki/**" />
+        includes="org/apache/roller/jspwiki/**" />
 </target>
 
 <target name="create_bundle" depends="plugins"
@@ -114,9 +114,9 @@ properties below point to the downloaded files.
 	<!-- assumes that build/roller-demo/blogdata/ directory is empty -->
 	
     <!-- Start HSQLDB with Roller's custom startdb task -->
-    <taskdef name="startdb" classname="org.roller.ant.StartHsqldbTask" 
+    <taskdef name="startdb" classname="org.apache.roller.ant.StartHsqldbTask" 
         classpath="./build/roller-demo/common/lib/hsqldb.jar;${roller.srcdir}/build/tests/WEB-INF/classes" />
-    <taskdef name="stopdb" classname="org.roller.ant.StopHsqldbTask" 
+    <taskdef name="stopdb" classname="org.apache.roller.ant.StopHsqldbTask" 
         classpath="./build/roller-demo/common/lib/hsqldb.jar;${roller.srcdir}/build/tests/WEB-INF/classes" />
     <startdb database="./build/roller-demo/blogdata/rollerdb" port="3219" />
         

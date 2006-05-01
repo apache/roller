@@ -25,13 +25,13 @@
     <target name="sdk">
         <mkdir dir="dist"/>
         <jar basedir="../../build/compile_web/" destfile="dist/aapp-sdk.jar">
-            <include name="org/roller/presentation/atomadminapi/sdk/*.class"/>            
+            <include name="org/apache/roller/presentation/atomadminapi/sdk/*.class"/>            
         </jar>
     </target>
 
     <target name="javadoc">
         <mkdir dir="javadoc"/>
-        <javadoc packagenames="org.roller.presentation.atomadminapi.sdk.*" sourcepath="src" destdir="javadoc" classpath="../../build/compile_web"/>
+        <javadoc packagenames="org.apache.roller.presentation.atomadminapi.sdk.*" sourcepath="src" destdir="javadoc" classpath="../../build/compile_web"/>
     </target>
     
     <target name="clean">

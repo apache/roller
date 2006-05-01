@@ -16,7 +16,7 @@
 * directory of this distribution.
 */
 
-package org.roller.util;
+package org.apache.roller.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

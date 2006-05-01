@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.roller.tools.planet;
+package org.apache.roller.tools.planet;
 
 import java.io.FileInputStream;
 import java.net.URL;
@@ -28,11 +28,11 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.velocity.app.Velocity;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
-import org.roller.model.PlanetManager;
-import org.roller.pojos.PlanetConfigData;
-import org.roller.pojos.PlanetGroupData;
-import org.roller.pojos.PlanetSubscriptionData;
-import org.roller.util.rome.ContentModule;
+import org.apache.roller.model.PlanetManager;
+import org.apache.roller.pojos.PlanetConfigData;
+import org.apache.roller.pojos.PlanetGroupData;
+import org.apache.roller.pojos.PlanetSubscriptionData;
+import org.apache.roller.util.rome.ContentModule;
 
 import com.sun.syndication.feed.module.DCModule;
 import com.sun.syndication.feed.synd.SyndEntry;
