@@ -18,10 +18,10 @@
 <%@ page language="java" errorPage="/error.jsp" contentType="text/html; charset=UTF-8" %><%@ 
 taglib uri="http://java.sun.com/jstl/core" prefix="c" %><%@ 
 taglib uri="http://www.rollerweblogger.org/tags" prefix="roller" %><%@ 
-page import="org.roller.model.*" %><%@
-page import="org.roller.pojos.*" %><%@
-page import="org.roller.config.RollerConfig" %><%@
-page import="org.roller.presentation.RollerSession" %><%@
+page import="org.apache.roller.model.*" %><%@
+page import="org.apache.roller.pojos.*" %><%@
+page import="org.apache.roller.config.RollerConfig" %><%@
+page import="org.apache.roller.presentation.RollerSession" %><%@
 page import="java.util.List" %>
 <%
 Roller roller = RollerFactory.getRoller();

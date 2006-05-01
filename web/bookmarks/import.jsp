@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %>
-<%@ page import="org.roller.presentation.BasePageModel" %>
+<%@ page import="org.apache.roller.presentation.BasePageModel" %>
 <% BasePageModel model = (BasePageModel)request.getAttribute("model"); %>
 
 <p class="subtitle">

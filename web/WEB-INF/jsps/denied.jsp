@@ -18,7 +18,7 @@
 
 <%@ include file="/taglibs.jsp" %>
 
-<%@ page import="java.io.*,org.roller.util.Utilities" isErrorPage="true" %>
+<%@ page import="java.io.*,org.apache.roller.util.Utilities" isErrorPage="true" %>
 
 <h2><fmt:message key="error.permissionDenied.title" /></h2>
 <fmt:message key="error.permissionDenied.prompt" />

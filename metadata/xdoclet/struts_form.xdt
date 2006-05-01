@@ -1,6 +1,6 @@
 package <XDtPackage:packageOf><XDtStrutsForm:strutsFormClass/></XDtPackage:packageOf>;
 
-import org.roller.RollerException;
+import org.apache.roller.RollerException;
 import java.util.Locale;
 
 /**

@@ -21,7 +21,7 @@
 <%-- Start by parsing our config defs using the jstl xml toolkit --%>
 <%-- Then we'll progress through the config defs and print out the form --%>
 <x:parse var="configDefs">
-  <%= org.roller.config.RollerRuntimeConfig.getRuntimeConfigDefsAsString() %>
+  <%= org.apache.roller.config.RollerRuntimeConfig.getRuntimeConfigDefsAsString() %>
 </x:parse>
 
 

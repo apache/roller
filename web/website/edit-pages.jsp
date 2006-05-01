@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %><%
-request.setAttribute("customTheme", org.roller.pojos.Theme.CUSTOM); %>
+request.setAttribute("customTheme", org.apache.roller.pojos.Theme.CUSTOM); %>
 
 <roller:StatusMessage/>
 

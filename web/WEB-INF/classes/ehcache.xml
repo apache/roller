@@ -10,17 +10,17 @@
         timeToLiveSeconds="1200"
         overflowToDisk="false" />
 
-    <cache name="org.roller.pojos.RollerPropertyData"
+    <cache name="org.apache.roller.pojos.RollerPropertyData"
         maxElementsInMemory="100"
         eternal="false"
         overflowToDisk="false" />
         
-    <cache name="org.roller.pojos.UserData"
+    <cache name="org.apache.roller.pojos.UserData"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />
         
-    <cache name="org.roller.pojos.WebsiteData"
+    <cache name="org.apache.roller.pojos.WebsiteData"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false" />

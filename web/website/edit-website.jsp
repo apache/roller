@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %>
-<%@ page import="org.roller.presentation.website.actions.WebsiteFormAction" %>
+<%@ page import="org.apache.roller.presentation.website.actions.WebsiteFormAction" %>
 <%
 WebsiteFormAction.WebsitePageModel model = 
     (WebsiteFormAction.WebsitePageModel)request.getAttribute("model");
@@ -208,7 +208,7 @@ WebsiteFormAction.WebsitePageModel model =
         <tr>
             <td class="label">Default Entry Formatters <br />(applied in the listed order)</td>
             <td class="field">
-            <logic:iterate id="plugin" type="org.roller.model.PagePlugin"
+            <logic:iterate id="plugin" type="org.apache.roller.model.PagePlugin"
                 collection="<%= model.getPagePlugins() %>">
                 <html:multibox property="defaultPluginsArray"
                     title="<%= plugin.getName() %>" value="<%= plugin.getName() %>" /></input>

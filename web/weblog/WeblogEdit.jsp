@@ -16,10 +16,10 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %>
-<%@ page import="org.roller.pojos.*" %>
-<%@ page import="org.roller.presentation.weblog.formbeans.WeblogEntryFormEx" %>
-<%@ page import="org.roller.presentation.weblog.actions.WeblogEntryPageModel" %>
-<%@ page import="org.roller.presentation.RollerRequest" %>
+<%@ page import="org.apache.roller.pojos.*" %>
+<%@ page import="org.apache.roller.presentation.weblog.formbeans.WeblogEntryFormEx" %>
+<%@ page import="org.apache.roller.presentation.weblog.actions.WeblogEntryPageModel" %>
+<%@ page import="org.apache.roller.presentation.RollerRequest" %>
 <%
 WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model");
 try {
@@ -332,7 +332,7 @@ function publish() {
          <fmt:message key="weblogEdit.pluginsToApply" /></a>
       </div>
       <div id="pluginControl" class="miscControl" style="display:none">
-        <logic:iterate id="plugin" type="org.roller.model.PagePlugin"
+        <logic:iterate id="plugin" type="org.apache.roller.model.PagePlugin"
             collection="<%= model.getPagePlugins() %>">
             <html:multibox property="pluginsArray"
                  title="<%= plugin.getName() %>" value="<%= plugin.getName() %>"

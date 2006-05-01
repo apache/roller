@@ -18,7 +18,7 @@
 <%@ include file="/taglibs.jsp" %>
 
 <%
-boolean debug = org.roller.config.RollerRuntimeConfig.getBooleanProperty("site.debugMode");
+boolean debug = org.apache.roller.config.RollerRuntimeConfig.getBooleanProperty("site.debugMode");
 request.setAttribute("debug", new Boolean(debug));
 %>
 
