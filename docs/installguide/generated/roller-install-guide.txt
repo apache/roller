@@ -31,32 +31,39 @@ Table of Contents
 Introduction	3
 STEP 1: Before you install Roller	4
 STEP 2: Unpack the Roller distribution	5
-STEP 3: Create Roller tables in your database	6
-STEP 4: Install required third party jars	7
-STEP 4.1: Install JDBC driver jar(s)	7
-STEP 4.2: Install JavaMail and Activation jars	7
-STEP 5: Deploy Roller to your application server	8
-STEP 6: Check your internationalization settings	10
-STEP 7: Setup Roller data directories 	11
-STEP 7.1: Create uploads directory	11
-STEP 7.2: Create search-index directory	11
-STEP 7.3: Create planet-cache directory (optional)	11
-STEP 7.4: Make sure that the logs subdirectory exists	12
-STEP 8: Review Roller configuration	13
-STEP 8.1: Review the WEB-INF/classes/roller.properties file	13
-Where to define custom properties	13
-STEP 8.2: Change keys in the WEB-INF/security.xml file	14
-STEP 9: Start Tomcat and start using Roller	15
-Appendix A: Upgrading an existing Roller installation	16
-STEP 1: Shutdown and backup your old Roller [#1]	16
-STEP 2: Install the new Roller [#2]	16
-STEP 3: Copy resources and update configs [#3]	17
-3.1 Copy your old resources and other files you've added	17
-3.2 Remove JavaMail jars if duplicated	17
-3.3 Review configuration properties	17
-STEP 4: Upgrade the database [#4]	17
-STEP 5: Startup your app server [#5]	18
-Appendix B: The WEB-INF/roller.properties file	19
+STEP 3: Install required third party jars	6
+STEP 4.1: Download and install Hibernate	6
+STEP 4.2: Install JDBC driver jar(s)	6
+STEP 4.3: Install JavaMail and Activation jars	7
+STEP 4: Create Roller tables in your database	8
+STEP 5: Deploy Roller to your application server	9
+STEP 6: Check your internationalization settings	11
+STEP 7: Setup Roller data directories 	12
+STEP 7.1: Create uploads directory	12
+STEP 7.2: Create search-index directory	12
+STEP 7.3: Create planet-cache directory (optional)	12
+STEP 7.4: Make sure that the logs subdirectory exists	13
+STEP 8: Review Roller configuration	14
+STEP 8.1: Review the WEB-INF/classes/roller.properties file	14
+Where to define custom properties	14
+STEP 8.2: Change keys in the WEB-INF/security.xml file	15
+STEP 9: Start Tomcat and start using Roller	16
+Appendix A: Upgrading an existing Roller installation	17
+STEP 1: Shutdown and backup your old Roller [#1]	17
+STEP 2: Install the new Roller [#2]	17
+STEP 3: Copy resources and update configs [#3]	18
+3.1 Copy your old resources and other files you've added	18
+3.2 Remove JavaMail jars if duplicated	18
+3.3 Review configuration properties	18
+STEP 4: Upgrade the database [#4]	18
+STEP 5: Startup your app server [#5]	19
+Appendix B: The WEB-INF/roller.properties file	20
+Appendix C: Setting up the optional JSPWiki plugin	27
+Downloading and installing the required JSPWiki jars	27
+Enable the JSPWiki plugin via Roller property override	27
+Appendix D: Setting up the optional Ekit editor page	28
+Downloading and installing the required Ekit applet jar	28
+Enable the Ekit plugin via Roller runtime configuration definitions file	28
 
 Introduction
 This document describes how to install Roller in the following environment: 
@@ -77,13 +84,13 @@ STEP 1: Before you install Roller
 Before you install Roller software you should install and configure the Java development kit, your application server and your database.
 As part of the Tomcat install you should have set the environment variable CATALINA_HOME to point to your Tomcat installation directory. If not, you might want to set it now because we will refer to it in this installation guide. Below are some examples that show how to set this variable. Make sure you substitute the right path to your Tomcat installation.
 For UNIX with bash shell:
-	% export CATALINA_HOME=/opt/jakarta-tomcat-5.0.29
+	% export CATALINA_HOME=/opt/jakarta-tomcat-5.5.9
 
 For UNIX with c-shell:
-	% setenv CATALINA_HOME /opt/jakarta-tomcat-5.0.29
+	% setenv CATALINA_HOME /opt/jakarta-tomcat-5.5.9
 
 For Windows with DOS shell
-	C> set CATALINA_HOME d:\jakarta-tomcat-5.0.29 
+	C> set CATALINA_HOME d:\jakarta-tomcat-5.5.9
 
 NOTES
 For MySQL, make sure you enable UTF-8 support. See the page Setting Up UTF-8 on MySQL page on the Roller wiki for details.
@@ -101,12 +108,14 @@ Assuming you download the distribution into your home directory and you'd like t
 That would create the Roller installation directory /usr/local/roller. 
 Windows example
 Use WinZip to extract the Roller distribution file into the directory of your choice for example, no example necessary.
-Download required jars 
-Roller requires the Hibernate persistence library, which you must download separately from Roller. 
 
+
+STEP 3: Install required third party jars
+You also need to download and install some third-party jars, jars that we can't include in Roller due to licensing restrictions. These are the JDBC driver, JavaMail and Activation jars.
+STEP 4.1: Download and install Hibernate
+Roller requires the Hibernate persistence library, which you must download separately from Roller. 
 	Download Hibernate 3.1.2 from SourceForge
 	http://prdownloads.sourceforge.net/hibernate/hibernate-3.1.2.tar.gz
-
 Copy the following files from Hibernate into the Roller WEB-INF/lib directory:
 hibernate3.jar
 asm-attrs.jar
@@ -116,13 +125,29 @@ dom4j.1.6.1.jar
 ehcache-1.1.jar
 jdbc2_0-stdext.jar
 jta.jar
+The Roller Support project at Java.Net offers some required jar bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
+STEP 4.2: Install JDBC driver jar(s)
+Download the JDBC driver jar for your database and put it in the classpath of your application server. For example, assuming Tomcat and MySQL, you'd download the J/Connector JDBC driver from mysql.com and you'd place it in the Tomcat common/lib directory.
+UNIX example
+	% cp mysql-connector.jar $CATALINA_HOME/common/lib
 
-The Roller Support project at Java.Net offers some required jar bundles that might make installation easier. Visit http://roller.dev.java.net for more information.
+Windows example
+	C> copy mysql-connector.jar %CATALINA_HOME%\common\lib
 
+NOTES
+For MySQL 4.1.X users, we recommend that you use the J/Connector 3.0.X JDBC drivers instead of the newer 3.1.X series. If you must use J/Connector/J 3.1.X then please read Installation FAQ page item #13 on the Roller wiki.
 
-
-
-STEP 3: Create Roller tables in your database
+STEP 4.3: Install JavaMail and Activation jars
+If you like to use Roller's e-mail notification features, you'll need to add the JavaMail and Activation jars to your application server's classpath. Currently, we ship these jars with Roller, but you will need to  move them from the Roller WEB-INF/lib directory and into the Tomcat common/lib directory, or your server's equivalent location.
+UNIX example
+	% mv $ROLLER/WEB-INF/lib/mail.jar $CATALINA_HOME/common/lib
+	% mv $ROLLER/WEB-INF/lib/activation.jar $CATALINA_HOME/common/lib	
+Windows example
+	c> move %ROLLER%\WEB-INF\lib\mail.jar %CATALINA_HOME%\common\lib
+	C> move %ROLLER%\WEB-INF\lib\activation.jar %CATALINA_HOME%\common\lib
+NOTES
+To enable the Roller's e-mail notification features, you'll also need to setup a mail session resource in your application server configuration file (see the next section) and you'll need to configure e-mail notification in the Roller UI.
+STEP 4: Create Roller tables in your database
 Create a new database within your MySQL installation, create a user with all privileges within that database and run the Roller database creation script to create tables within that new database.
 Roller includes database creation scripts for a variety of database, but MySQL is the most widely used and best supported option. You can find the database creation scripts in the Roller installation directory under WEB-INF/dbscripts/<dbname>. Here's the list of scripts currently in Roller:
 WEB-INF/dbscripts/mysql/creatdb.sql	
@@ -159,31 +184,6 @@ To check whether your MySQL is setup properly, use the command line mysql progra
 		mysql roller -h 127.0.0.1 -u scott -ptiger
 
 	
-STEP 4: Install required third party jars
-You also need to download and install some third-party jars, jars that we can't include in Roller due to licensing restrictions. These are the JDBC driver, JavaMail and Activation jars.
-STEP 4.1: Install JDBC driver jar(s)
-Download the JDBC driver jar for your database and put it in the classpath of your application server. For example, assuming Tomcat and MySQL, you'd download the J/Connector JDBC driver from mysql.com and you'd place it in the Tomcat common/lib directory.
-UNIX example
-	% cp mysql-connector.jar $CATALINA_HOME/common/lib
-
-Windows example
-	C> copy mysql-connector.jar %CATALINA_HOME%\common\lib
-
-NOTES
-For MySQL 4.1.X users, we recommend that you use the J/Connector 3.0.X JDBC drivers instead of the newer 3.1.X series. If you must use J/Connector/J 3.1.X then please read Installation FAQ page item #13 on the Roller wiki.
-
-STEP 4.2: Install JavaMail and Activation jars
-If you like to use Roller's e-mail notification features, you'll need to add the JavaMail and Activation jars to your application server's classpath. Currently, we ship these jars with Roller.  You will need to  move them from the Roller WEB-INF/lib directory and into the Tomcat common/lib directory, or your server's equivalent location.
-UNIX example
-	% mv $ROLLER/WEB-INF/lib/mail.jar $CATALINA_HOME/common/lib
-	% mv $ROLLER/WEB-INF/lib/activation.jar $CATALINA_HOME/common/lib	
-Windows example
-	c> move %ROLLER%\WEB-INF\lib\mail.jar %CATALINA_HOME%\common\lib
-	C> move %ROLLER%\WEB-INF\lib\activation.jar %CATALINA_HOME%\common\lib
-NOTES
-To enable the Roller's e-mail notification features, you'll also need to setup a mail session resource in your application server configuration file (see the next section) and you'll need to configure e-mail notification in the Roller UI.
-
-
 STEP 5: Deploy Roller to your application server
 To deploy Roller to your application server you need to inform your application server:
 Where to find the Roller installation directory  
@@ -366,6 +366,8 @@ Windows example
 
 NOTE: the first user you create will have administrator privileges, so make sure you create the first user yourself. An admin user can grant and revoke admin rights from other users. 
 
+NOTE: if you'd like to use Roller's JSPWiki plugin, which allows you to enter blog entries using JSPWiki syntax, then you'll have to download and install separately the JSPWiki jars. See Appendix C for more information.
+
 You're done! 
 Roller should be working perfectly now. If not, then please consult the Installation FAQ page on the Roller wiki and then check with the experts on the Roller mailing lists. Somebody has probably encountered the very same problems that you are encountering. 
 
@@ -413,6 +415,8 @@ NOTE: If you have any new themes under roller/themes, make sure to copy those as
 In an upgrade installation, you may already have the JavaMail jars mail.jar and activation.jar in your Tomcat common/lib. If so, you should remove them from the WEB-INF/lib directory within the web app. (Keep them only in the common/lib directory.) 
 3.3 Review configuration properties
 Review properties as described in STEP #8 of the installation guide.
+WARNING: In Roller 2.3 we changed the Roller package names from org.roller to org.apache.roller. Because of this you MUST review your roller-custom.properties file, search for the string "org.roller"and replace all occurances of it with "org.apache.roller".
+WARNING: The jars required for Roller's JSPWiki plugin and Ekit editor have been removed from the Roller distribution. If you'd like to continue to use these plugins, please refer to Appendices C and D.
 STEP 4: Upgrade the database [#4]
 Use the appropriate database upgrade script to upgrade your database. To do this, login to your database and run one (or more) of the Roller upgrade scripts located in Roller's WEB-INF/dbscripts directory that corresponds to your database. There's a directory for MySQL, PostgreSQL, HSQLDB and more. 
 The database script directories 
@@ -437,10 +441,47 @@ If Roller doesn't come up, check the logs for exceptions and error messages. You
 Appendix B: The WEB-INF/roller.properties file
 This file defines the default start-up properties for Roller. See step 8 for instructions on how to override the properties in this file.
 
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  The ASF licenses this file to You
+# under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.  For additional information regarding
+# copyright in this work, please see the NOTICE file in the top level
+# directory of this distribution.
+
 # roller.properties
 #
 # This file is for meant for Roller deployment properties
 # Any properties that don't change at runtime are defined here
+#
+# You can override the values in this file in a couple ways ..
+#   1. define a roller-custom.properties file and place it somewhere
+#       at the root of one of your classpath locations.
+#       for example:
+#           $TOMCAT_HOME/common/classes
+#           $ROLLER_LOCATION/WEB-INF/classes
+#
+#   2. specify a custom properties file via jvm option
+#       example:
+#           roller.custom.config=/path/to/properties/file
+#
+#   **NOTE: if you run multiple instances of roller on the same server
+#           then you should beware of the fact that the override options above
+#           may affect *all* of you running instances.  if you want to do
+#           custom overrides for each instance then you must do it by
+#           placing a roller-custom.properties file at WEB-INF/classes/ in
+#           each of you roller installations.
+#
+# properties in this file are accessed like this ...
+#    RollerConfig.getProperty("propname");
 
 # User management settings
 
@@ -491,10 +532,15 @@ search.index.comments=true
 #-----------------------------------
 
 # The default cache implementation we want to use
-cache.defaultFactory=org.roller.presentation.cache.ExpiringLRUCacheFactoryImpl
+cache.defaultFactory=org.apache.roller.presentation.cache.ExpiringLRUCacheFactoryImpl
 cache.customHandlers=
 
-# Main/Planet page cache (this is low on purpose)
+# This sets how many minutes into the future we look to prepare
+# entries posted into the future which need to be invalidated from the cache.
+# It is very unlikely that this should ever need to be changed
+cache.futureInvalidations.peerTime=3
+
+# Main page cache (this is low on purpose)
 cache.mainpage.size=10
 cache.mainpage.timeout=1800
 # set "true" to NOT cache the custom pages for users who are logged in
@@ -536,7 +582,8 @@ securelogin.enabled=false
 # Scheme enforcement ensures that specific URLs are viewed only via HTTPS
 schemeenforcement.enabled=false
 # URL patterns that require HTTPS
-schemeenforcement.https.urls=/editor/yourProfile.do*,/admin/user.do*
+schemeenforcement.https.urls=/j_security_check,/login-redirect.jsp,/login.jsp,\
+/user.do,/editor/yourProfile.do,/admin/user.do,/editor/userdata
 
 # Password security settings
 passwds.encryption.enabled=false
@@ -547,34 +594,34 @@ passwds.encryption.algorithm=SHA
 
 # Weblog entry editor plugins
 plugins.page=\
-org.roller.presentation.velocity.plugins.convertbreaks.ConvertLineBreaksPlugin \
-,org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin \
-,org.roller.presentation.velocity.plugins.search.WikipediaLinkPlugin \
-,org.roller.presentation.velocity.plugins.search.GoogleLinkPlugin \
-,org.roller.presentation.velocity.plugins.textile.TextilePlugin \
-,org.roller.presentation.velocity.plugins.acronyms.AcronymsPlugin \
-,org.roller.presentation.velocity.plugins.bookmarks.BookmarkPlugin \
-,org.roller.presentation.velocity.plugins.email.ObfuscateEmailPlugin \
-,org.roller.presentation.velocity.plugins.smileys.SmileysPlugin \
-,org.roller.presentation.velocity.plugins.readmore.ReadMorePlugin
+org.apache.roller.presentation.velocity.plugins.convertbreaks.ConvertLineBreaksPlugin \
+,org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin \
+,org.apache.roller.presentation.velocity.plugins.search.WikipediaLinkPlugin \
+,org.apache.roller.presentation.velocity.plugins.search.GoogleLinkPlugin \
+,org.apache.roller.presentation.velocity.plugins.textile.TextilePlugin \
+,org.apache.roller.presentation.velocity.plugins.acronyms.AcronymsPlugin \
+,org.apache.roller.presentation.velocity.plugins.bookmarks.BookmarkPlugin \
+,org.apache.roller.presentation.velocity.plugins.email.ObfuscateEmailPlugin \
+,org.apache.roller.presentation.velocity.plugins.smileys.SmileysPlugin \
+,org.apache.roller.presentation.velocity.plugins.readmore.ReadMorePlugin
 
 #----------------------------------
 # scheduled tasks, each is comma separated list of classes
 
 # Comma separated list of task classnames to be executed once per day
-tasks.daily=org.roller.presentation.TurnoverReferersTask\
+tasks.daily=org.apache.roller.presentation.TurnoverReferersTask\
 
 # Needed to enable nightly fetching of blacklist
-#,org.roller.presentation.BlacklistUpdateTask\
+#,org.apache.roller.presentation.BlacklistUpdateTask\
 
 # Daily Planet task: syncs weblog list with Roller, refreshes Technorati stats
-#,org.roller.presentation.planet.SyncWebsitesTask
+#,org.apache.roller.presentation.planet.SyncWebsitesTask
 
 # Comma separated list of task classnames to be executed hourly
 tasks.hourly=\
 
 # Hourly Planet task: refresh latest entry list from all weblogs in list
-#org.roller.presentation.planet.RefreshEntriesTask
+#org.apache.roller.presentation.planet.RefreshEntriesTask
 
 #----------------------------------
 # Velocity settings
@@ -583,23 +630,23 @@ velocity.properties=/WEB-INF/velocity.properties
 velocity.toolbox.file=/WEB-INF/toolbox.xml
 
 # Page model implementation
-velocity.pagemodel.classname=org.roller.presentation.velocity.PageModel
+velocity.pagemodel.classname=org.apache.roller.presentation.velocity.PageModel
 # Experimental page model that allows user's access to Planet aggregations
-#velocity.pagemodel.classname=org.roller.presentation.velocity.planet.PlanetPageModel
+#velocity.pagemodel.classname=org.apache.roller.presentation.velocity.planet.PlanetPageModel
 
 #----------------------------------
 # Persistence settings
 
-persistence.roller.classname=org.roller.business.hibernate.HibernateRollerImpl
-persistence.filemanager.classname=org.roller.business.FileManagerImpl
+persistence.roller.classname=org.apache.roller.business.hibernate.HibernateRollerImpl
+persistence.filemanager.classname=org.apache.roller.business.FileManagerImpl
 
 # authenticator settings (experimental)
-authenticator.classname=org.roller.presentation.DefaultAuthenticator
+authenticator.classname=org.apache.roller.presentation.DefaultAuthenticator
 
 #----------------------------------
 # comment, referrer and trackback settings
 
-comment.authenticator.classname=org.roller.presentation.velocity.MathCommentAuthenticator
+comment.authenticator.classname=org.apache.roller.presentation.velocity.MathCommentAuthenticator
 comment.notification.separateOwnerMessage=false
 comment.notification.hideCommenterAddresses=false
 
@@ -617,7 +664,7 @@ site.blacklist.enable.referrers=true
 # trackback.allowedURLs=http://w3.ibm.com/.*||http://another.example.com/.*
 trackback.allowedURLs=
 
-#Robot check in referral processing.  If this pattern is set and the User-Agent in the
+#Robot check in referral processing. If this pattern is set and the User-Agent in the
 #request matches this pattern, all referral processing is skipped; this means that
 #the referral spam check is skipped, the request is allowed to proceed, but the
 #referrer is not recorded and hit count is not incremented.  Recommended for large sites
@@ -709,8 +756,11 @@ planet.aggregator.enabled=false
 # Planet cache must exist and must be writable by Roller process
 planet.aggregator.cache.dir=/var/roller/planetcache
 
+# Number of queries allowed per day
+planet.aggregator.technorati.limit=500
+
 #----------------------------------
-# user creation setttings: blogroll and cats for new users
+# defaults for new weblogs
 
 # list of links to include in root bookmark folder of each new blog
 # format is like so: linktitle2|linkurl2,linktitle2|linkurl2,linktitle3|linkurl3
@@ -725,6 +775,10 @@ jroller.com|http://jroller.com
 # comma-separated list of top-level categories to be created in each new weblog
 newuser.categories=\
 General,Status,Java,Music,Politics
+
+# Default weblog editor
+# The list of available editors is in rollerRuntimeConfigDefs.xml
+newweblog.editor=editor-text.jsp
 
 #----------------------------------
 # misc settings
@@ -742,15 +796,22 @@ editor.theme=tan
 # Optional site-wide customization settings for the TopicTag plugin.
 # n.b. these default settings match the coded default values that would be 
 # applied if these were omitted.
-org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicBookmarkName=Default Topic Site
-org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicSite=http://www.technorati.com/tag
-org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]
-org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithoutBookmark=topic:\\[(.*?)\\]
-org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.linkFormatString=<a rel=\"tag\" href=\"{0}{1}\">{2}</a>
+org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicBookmarkName=Default Topic Site
+org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicSite=http://www.technorati.com/tag
+org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]
+org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithoutBookmark=topic:\\[(.*?)\\]
+org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.linkFormatString=<a rel=\"tag\" href=\"{0}{1}\">{2}</a>
 
 # Set to true to allow only default topic tag site (and avoid costly bookmark queries)
-org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.ignoreBookmarks=true
+org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.ignoreBookmarks=true
 
+#---------------------------------
+# Experimental settings
+
+# Atom Publishing Protocol (APP) - this is an incomplete and untested 
+# implementation of an unfinished IETF specification. Intended only for 
+# interoperability testing. DO NOT ENABLE IN PRODUCTION!
+webservices.atomprotocol.enabled=false
 
 #----------------------------------
 # legacy settings (thing that should be deprecated
@@ -760,3 +821,44 @@ aggregator.enabled=false
 aggregator.cache.enabled=
 aggregator.cache.timeout=14400
 
+Appendix C: Setting up the optional JSPWiki plugin
+If you'd like to use Roller's JSPWiki plugin, you must 1) download and install the required JSPWiki jars and 2) enable the JSPWiki plugin via a Roller custom configuration file.
+WARNING: The JSPWiki editor has been deprecated (due to LGPL licensing) and may be removed from a future release of Roller.
+Downloading and installing the required JSPWiki jars
+Download JSPWiki version 2.2.33 from http://jspwiki.org, copy the following jars from JSPWiki's WEB-INF/lib directory to Roller's WEB-INF/lib directory:
+JSPWiki.jar
+ecs.jar
+jrcs-diff.jar
+oscache.jar
+NOTE: The Roller Support project at Java.Net offers some required jar bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
+Enable the JSPWiki plugin via Roller property override
+Follow the instructions in Appendix B for setting up a roller-custom.properties file. You'll need to override the plugins.page property to ensure that the JSPWiki plugin is included in the list. For example, this setting would add the JSPWiki to the end of the list of built-in Roller plugins:
+plugins.page=\
+org.apache.roller.presentation.velocity.plugins.convertbreaks.ConvertLineBreaksPlugin \
+,org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin \
+,org.apache.roller.presentation.velocity.plugins.search.WikipediaLinkPlugin \
+,org.apache.roller.presentation.velocity.plugins.search.GoogleLinkPlugin \
+,org.apache.roller.presentation.velocity.plugins.textile.TextilePlugin \
+,org.apache.roller.presentation.velocity.plugins.acronyms.AcronymsPlugin \
+,org.apache.roller.presentation.velocity.plugins.bookmarks.BookmarkPlugin \
+,org.apache.roller.presentation.velocity.plugins.email.ObfuscateEmailPlugin \
+,org.apache.roller.presentation.velocity.plugins.smileys.SmileysPlugin \
+,org.apache.roller.presentation.velocity.plugins.readmore.ReadMorePlugin \
+,org.apache.roller.presentation.velocity.plugins.jspwiki.WikiPlugin
+
+
+
+Appendix D: Setting up the optional Ekit editor page
+If you'd like to continue to use Roller's Ekit editor page, which was deprecated in Roller 2.3, you must 1) download and install the Ekit applet jar and 2) add the Ekit page to the list of available editors in the Roller runtime configuration file.
+WARNING: The Ekit editor has been deprecated (due to LGPL licensing) and may be removed from a future release of Roller.
+Downloading and installing the required Ekit applet jar
+Download Ekit version 1.1 from http://www.hexidec.com/ekit.php and place the Ekit ekitappletspell.jar jar in Roller's editor direcotory.
+NOTE: The Roller Support project at Java.Net offers some required jar bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
+Enable the Ekit plugin via Roller runtime configuration definitions file
+If you want users to be able to pick the old Ekit editor page, then you'll need to add it to the Roller runtime configuration definition file in WEB-INF/rollerRuntimeConfigDefs.xml as follows:
+<property-def  name="users.editor.pages"  key="configForm.editorPages">
+   <type>text</type>
+   <default-value>editor-text.jsp,editor-rte.jsp, editor-ekit.jsp</default-value>
+   <rows>3</rows>
+   <cols>40</cols>
+</property-def>

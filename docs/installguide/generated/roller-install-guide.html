@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060501;14392900">
+	<META NAME="CHANGED" CONTENT="20060503;16394400">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.79in }
@@ -87,57 +87,71 @@ Microsystems, Inc. </I></FONT>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
 	2: Unpack the Roller distribution	5</B></FONT></P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
-	3: Create Roller tables in your database	6</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
-	4: Install required third party jars	7</B></FONT></P>
-	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4.1: Install
-	JDBC driver jar(s)	7</P>
+	3: Install required third party jars	6</B></FONT></P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4.1:
+	Download and install Hibernate	6</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4.2: Install
+	JDBC driver jar(s)	6</P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4.3: Install
 	JavaMail and Activation jars	7</P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
-	5: Deploy Roller to your application server	8</B></FONT></P>
+	4: Create Roller tables in your database	8</B></FONT></P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
-	6: Check your internationalization settings	10</B></FONT></P>
+	5: Deploy Roller to your application server	9</B></FONT></P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
-	7: Setup Roller data directories 	11</B></FONT></P>
+	6: Check your internationalization settings	11</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
+	7: Setup Roller data directories 	12</B></FONT></P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 7.1: Create
-	uploads directory	11</P>
+	uploads directory	12</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 7.2: Create
-	search-index directory	11</P>
+	search-index directory	12</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 7.3: Create
-	planet-cache directory (optional)	11</P>
+	planet-cache directory (optional)	12</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 7.4: Make
-	sure that the logs subdirectory exists	12</P>
+	sure that the logs subdirectory exists	13</P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
-	8: Review Roller configuration	13</B></FONT></P>
+	8: Review Roller configuration	14</B></FONT></P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 8.1: Review
-	the WEB-INF/classes/roller.properties file	13</P>
+	the WEB-INF/classes/roller.properties file	14</P>
 	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">Where to define
-	custom properties	13</P>
+	custom properties	14</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 8.2: Change
-	keys in the WEB-INF/security.xml file	14</P>
+	keys in the WEB-INF/security.xml file	15</P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
-	9: Start Tomcat and start using Roller	15</B></FONT></P>
+	9: Start Tomcat and start using Roller	16</B></FONT></P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
-	A: Upgrading an existing Roller installation	16</B></FONT></P>
+	A: Upgrading an existing Roller installation	17</B></FONT></P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 1: Shutdown
-	and backup your old Roller [#1]	16</P>
+	and backup your old Roller [#1]	17</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 2: Install
-	the new Roller [#2]	16</P>
+	the new Roller [#2]	17</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 3: Copy
-	resources and update configs [#3]	17</P>
+	resources and update configs [#3]	18</P>
 	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">3.1 Copy your old
-	resources and other files you've added	17</P>
+	resources and other files you've added	18</P>
 	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">3.2 Remove
-	JavaMail jars if duplicated	17</P>
+	JavaMail jars if duplicated	18</P>
 	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">3.3 Review
-	configuration properties	17</P>
+	configuration properties	18</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4: Upgrade
-	the database [#4]	17</P>
+	the database [#4]	18</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 5: Startup
-	your app server [#5]	18</P>
+	your app server [#5]	19</P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
-	B: The WEB-INF/roller.properties file	19</B></FONT></P>
+	B: The WEB-INF/roller.properties file	20</B></FONT></P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
+	C: Setting up the optional JSPWiki plugin	27</B></FONT></P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">Downloading and
+	installing the required JSPWiki jars	27</P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">Enable the
+	JSPWiki plugin via Roller property override	27</P>
+	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
+	D: Setting up the optional Ekit editor page	28</B></FONT></P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">Downloading and
+	installing the required Ekit applet jar	28</P>
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">Enable the Ekit
+	plugin via Roller runtime configuration definitions file	28</P>
 </DIV>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
@@ -199,18 +213,17 @@ how to set this variable. Make sure you substitute the right path to
 your Tomcat installation.</P>
 <P>For UNIX with bash shell:</P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>	%
-export CATALINA_HOME=/opt/jakarta-tomcat-5.0.29</FONT></FONT></P>
+export CATALINA_HOME=/opt/jakarta-tomcat-5.5.9</FONT></FONT></P>
 <P><BR><BR>
 </P>
 <P>For UNIX with c-shell:</P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>	%
-setenv CATALINA_HOME /opt/jakarta-tomcat-5.0.29</FONT></FONT></P>
+setenv CATALINA_HOME /opt/jakarta-tomcat-5.5.9</FONT></FONT></P>
 <P><BR><BR>
 </P>
 <P>For Windows with DOS shell</P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>	C&gt;
-set CATALINA_HOME d:\jakarta-tomcat-5.0.29 </FONT></FONT>
-</P>
+set CATALINA_HOME d:\jakarta-tomcat-5.5.9</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P><B>NOTES</B></P>
@@ -250,17 +263,19 @@ That would create the Roller installation directory
 <P><B>Windows example</B></P>
 <P>Use WinZip to extract the Roller distribution file into the
 directory of your choice for example, no example necessary.</P>
-<H3>Download required jars 
-</H3>
+<H3><A NAME="DDE_LINK3"></A></H3>
+<H2></H2>
+<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP4DownloadAndInstallRequiredJars4"></A>
+STEP 3: Install required third party jars</H2>
+<P>You also need to download and install some third-party jars, jars
+that we can't include in Roller due to licensing restrictions. These
+are the JDBC driver, JavaMail and Activation jars.</P>
+<H3>STEP 4.1: Download and install Hibernate</H3>
 <P>Roller <I>requires</I> the Hibernate persistence library, which
 you must download separately from Roller. 
 </P>
-<P><BR><BR>
-</P>
 <P>	Download Hibernate 3.1.2 from SourceForge</P>
 <P>	<A HREF="http://prdownloads.sourceforge.net/hibernate/hibernate-3.1.2.tar.gz">http://prdownloads.sourceforge.net/hibernate/hibernate-3.1.2.tar.gz</A></P>
-<P><BR><BR>
-</P>
 <P>Copy the following files from Hibernate into the Roller
 WEB-INF/lib directory:</P>
 <UL>
@@ -275,22 +290,62 @@ WEB-INF/lib directory:</P>
 	<LI><P>jdbc2_0-stdext.jar</P>
 	<LI><P>jta.jar</P>
 </UL>
-<P><BR><BR>
-</P>
 <P>The Roller Support project at Java.Net offers some required jar
-bundles that might make installation easier. Visit
+bundles that might make this part  of the installation easier. Visit
 <A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
 for more information.</P>
-<P><BR><BR>
-</P>
-<P><BR><BR>
-</P>
-<P><BR><BR>
-</P>
+<H3>STEP 4.2: Install JDBC driver jar(s)</H3>
+<P>Download the JDBC driver jar for your database and put it in the
+classpath of your application server. For example, assuming Tomcat
+and MySQL, you'd download the J/Connector JDBC driver from mysql.com
+and you'd place it in the Tomcat <FONT FACE="Courier New">common/lib</FONT>
+directory.</P>
+<P><B>UNIX example</B></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>	%
+cp mysql-connector.jar $CATALINA_HOME/common/lib</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
+<P><B>Windows example</B></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>	C&gt;
+copy mysql-connector.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P><B>NOTES</B></P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in">For MySQL 4.1.X users, we
+	recommend that you use the J/Connector 3.0.X JDBC drivers instead of
+	the newer 3.1.X series. If you <I>must</I> use J/Connector/J 3.1.X
+	then please read <I>Installation FAQ</I> page item #13 on the Roller
+	wiki.</P>
+</UL>
+<P><BR><BR>
+</P>
+<H3>STEP 4.3: Install JavaMail and Activation jars</H3>
+<P>If you like to use Roller's e-mail notification features, you'll
+need to add the JavaMail and Activation jars to your application
+server's classpath. Currently, we ship these jars with Roller, but
+you will need to  <B>move</B> them from the Roller <FONT FACE="Courier New">WEB-INF/lib</FONT>
+directory and into the Tomcat <FONT FACE="Courier New">common/lib</FONT>
+directory, or your server's equivalent location.</P>
+<P><B>UNIX example</B></P>
+<P><FONT FACE="Courier New"><FONT SIZE=2>	% mv
+$ROLLER/WEB-INF/lib/mail.jar $CATALINA_HOME/common/lib</FONT></FONT></P>
+<P><FONT SIZE=2><FONT FACE="Courier New">	% mv
+$ROLLER/WEB-INF/lib/activation.jar $CATALINA_HOME/common/lib</FONT>	</FONT></P>
+<P><B>Windows example</B></P>
+<P><FONT FACE="Courier New"><FONT SIZE=2>	c&gt; move
+%ROLLER%\WEB-INF\lib\mail.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
+<P><FONT FACE="Courier New"><FONT SIZE=2>	C&gt; move
+%ROLLER%\WEB-INF\lib\activation.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
+<P><B>NOTES</B></P>
+<UL>
+	<LI><P>To enable the Roller's e-mail notification features, you'll
+	also need to setup a mail session resource in your application
+	server configuration file (see the next section) and you'll need to
+	configure e-mail notification in the Roller UI.</P>
+</UL>
 <H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP3CreateRollerTablesInYourDatabase3"></A><A NAME="ref-InstallationGuide_2.x-3"></A>
-STEP 3: Create Roller tables in your database</H2>
+STEP 4: Create Roller tables in your database</H2>
 <P>Create a new database within your MySQL installation, create a
 user with all privileges within that database and run the Roller
 database creation script to create tables within that new database.</P>
@@ -345,65 +400,6 @@ tables in MySQL:</P>
 <P><BR><BR>
 </P>
 <P>	</P>
-<H2><A NAME="section-InstallationGuide_2.x-STEP4DownloadAndInstallRequiredJars4"></A>
-STEP 4: Install required third party jars</H2>
-<P>You also need to download and install some third-party jars, jars
-that we can't include in Roller due to licensing restrictions. These
-are the JDBC driver, JavaMail and Activation jars.</P>
-<H3>STEP 4.1: Install JDBC driver jar(s)</H3>
-<P>Download the JDBC driver jar for your database and put it in the
-classpath of your application server. For example, assuming Tomcat
-and MySQL, you'd download the J/Connector JDBC driver from mysql.com
-and you'd place it in the Tomcat <FONT FACE="Courier New">common/lib</FONT>
-directory.</P>
-<P><B>UNIX example</B></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>	%
-cp mysql-connector.jar $CATALINA_HOME/common/lib</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><BR>
-</P>
-<P><B>Windows example</B></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>	C&gt;
-copy mysql-connector.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><BR>
-</P>
-<P><B>NOTES</B></P>
-<UL>
-	<LI><P STYLE="margin-bottom: 0in">For MySQL 4.1.X users, we
-	recommend that you use the J/Connector 3.0.X JDBC drivers instead of
-	the newer 3.1.X series. If you <I>must</I> use J/Connector/J 3.1.X
-	then please read <I>Installation FAQ</I> page item #13 on the Roller
-	wiki.</P>
-</UL>
-<P><BR><BR>
-</P>
-<H3>STEP 4.2: Install JavaMail and Activation jars</H3>
-<P>If you like to use Roller's e-mail notification features, you'll
-need to add the JavaMail and Activation jars to your application
-server's classpath. Currently, we ship these jars with Roller.  You
-will need to  <B>move</B> them from the Roller <FONT FACE="Courier New">WEB-INF/lib</FONT>
-directory and into the Tomcat <FONT FACE="Courier New">common/lib</FONT>
-directory, or your server's equivalent location.</P>
-<P><B>UNIX example</B></P>
-<P><FONT FACE="Courier New"><FONT SIZE=2>	% mv
-$ROLLER/WEB-INF/lib/mail.jar $CATALINA_HOME/common/lib</FONT></FONT></P>
-<P><FONT SIZE=2><FONT FACE="Courier New">	% mv
-$ROLLER/WEB-INF/lib/activation.jar $CATALINA_HOME/common/lib</FONT>	</FONT></P>
-<P><B>Windows example</B></P>
-<P><FONT FACE="Courier New"><FONT SIZE=2>	c&gt; move
-%ROLLER%\WEB-INF\lib\mail.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
-<P><FONT FACE="Courier New"><FONT SIZE=2>	C&gt; move
-%ROLLER%\WEB-INF\lib\activation.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
-<P><B>NOTES</B></P>
-<UL>
-	<LI><P>To enable the Roller's e-mail notification features, you'll
-	also need to setup a mail session resource in your application
-	server configuration file (see the next section) and you'll need to
-	configure e-mail notification in the Roller UI.</P>
-</UL>
-<P><BR><BR>
-</P>
-<P STYLE="margin-bottom: 0in"><BR>
-</P>
 <H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP5DeployRollerToYourApplicationServer5"></A><A NAME="ref-InstallationGuide_2.x-5"></A>
 STEP 5: Deploy Roller to your application server</H2>
 <P>To deploy Roller to your application server you need to inform
@@ -813,6 +809,13 @@ the first user you create will have administrator privileges, so make
 sure you create the first user yourself. An admin user can grant and
 revoke admin rights from other users. </SPAN>
 </P>
+<P STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; font-weight: medium"><B>NOTE</B>: if
+you'd like to use Roller's JSPWiki plugin, which allows you to enter
+blog entries using JSPWiki syntax, then you'll have to download and
+install separately the JSPWiki jars. See Appendix C for more
+information.</P>
 <P><BR><BR>
 </P>
 <P><B>You're done! </B>
@@ -926,6 +929,14 @@ the <TT>common/lib</TT> directory.)
 3.3 Review configuration properties</H4>
 <P>Review properties as described in STEP #8 of the installation
 guide.</P>
+<P><B>WARNING: In Roller 2.3 we changed the Roller package names from
+<FONT FACE="Courier New">org.roller</FONT> to <FONT FACE="Courier New">org.apache.roller</FONT>.
+Because of this you MUST review your roller-custom.properties file,
+search for the string &ldquo;org.roller&rdquo;and replace all
+occurances of it with &ldquo;org.apache.roller&rdquo;.</B></P>
+<P><B>WARNING: The jars required for Roller's JSPWiki plugin and Ekit
+editor have been removed from the Roller distribution. If you'd like
+to continue to use these plugins, please refer to Appendices C and D.</B></P>
 <H3><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
 STEP 4: Upgrade the database [#4]</H3>
 <P>Use the appropriate database upgrade script to upgrade your
@@ -992,12 +1003,86 @@ file.</P>
 <P><BR><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+Licensed to the Apache Software Foundation (ASF) under one or more</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+contributor license agreements.  The ASF licenses this file to You</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+under the Apache License, Version 2.0 (the &quot;License&quot;); you
+may not</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+use this file except in compliance with the License.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+You may obtain a copy of the License at</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+    http://www.apache.org/licenses/LICENSE-2.0</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+Unless required by applicable law or agreed to in writing, software</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+distributed under the License is distributed on an &quot;AS IS&quot;
+BASIS,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+implied.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+See the License for the specific language governing permissions and</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+limitations under the License.  For additional information regarding</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+copyright in this work, please see the NOTICE file in the top level</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+directory of this distribution.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 roller.properties</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 This file is for meant for Roller deployment properties</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 Any properties that don't change at runtime are defined here</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+You can override the values in this file in a couple ways ..</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+  1. define a roller-custom.properties file and place it somewhere</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+      at the root of one of your classpath locations.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+      for example:</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+          $TOMCAT_HOME/common/classes</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+          $ROLLER_LOCATION/WEB-INF/classes</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+  2. specify a custom properties file via jvm option</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+      example:</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+          roller.custom.config=/path/to/properties/file</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+  **NOTE: if you run multiple instances of roller on the same server</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+          then you should beware of the fact that the override
+options above</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+          may affect *all* of you running instances.  if you want to
+do</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+          custom overrides for each instance then you must do it by</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+          placing a roller-custom.properties file at WEB-INF/classes/
+in</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+          each of you roller installations.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+properties in this file are accessed like this ...</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+   RollerConfig.getProperty(&quot;propname&quot;);</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
@@ -1094,12 +1179,22 @@ CacheFactory</FONT></FONT></P>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 The default cache implementation we want to use</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>cache.defaultFactory=org.roller.presentation.cache.ExpiringLRUCacheFactoryImpl</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>cache.defaultFactory=org.apache.roller.presentation.cache.ExpiringLRUCacheFactoryImpl</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>cache.customHandlers=</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
-Main/Planet page cache (this is low on purpose)</FONT></FONT></P>
+This sets how many minutes into the future we look to prepare</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+entries posted into the future which need to be invalidated from the
+cache.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+It is very unlikely that this should ever need to be changed</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>cache.futureInvalidations.peerTime=3</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+Main page cache (this is low on purpose)</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>cache.mainpage.size=10</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>cache.mainpage.timeout=1800</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
@@ -1169,7 +1264,8 @@ HTTPS</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>schemeenforcement.enabled=false</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 URL patterns that require HTTPS</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>schemeenforcement.https.urls=/editor/yourProfile.do*,/admin/user.do*</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>schemeenforcement.https.urls=/j_security_check,/login-redirect.jsp,/login.jsp,\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>/user.do,/editor/yourProfile.do,/admin/user.do,/editor/userdata</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
@@ -1186,25 +1282,25 @@ Enabled plugins ... remember, order does matter!!</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 Weblog entry editor plugins</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>plugins.page=\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.roller.presentation.velocity.plugins.convertbreaks.ConvertLineBreaksPlugin
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.convertbreaks.ConvertLineBreaksPlugin
 \</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin
 \</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.roller.presentation.velocity.plugins.search.WikipediaLinkPlugin
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.search.WikipediaLinkPlugin
 \</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.roller.presentation.velocity.plugins.search.GoogleLinkPlugin
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.search.GoogleLinkPlugin
 \</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.roller.presentation.velocity.plugins.textile.TextilePlugin
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.textile.TextilePlugin
 \</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.roller.presentation.velocity.plugins.acronyms.AcronymsPlugin
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.acronyms.AcronymsPlugin
 \</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.roller.presentation.velocity.plugins.bookmarks.BookmarkPlugin
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.bookmarks.BookmarkPlugin
 \</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.roller.presentation.velocity.plugins.email.ObfuscateEmailPlugin
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.email.ObfuscateEmailPlugin
 \</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.roller.presentation.velocity.plugins.smileys.SmileysPlugin
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.smileys.SmileysPlugin
 \</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.roller.presentation.velocity.plugins.readmore.ReadMorePlugin</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.readmore.ReadMorePlugin</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1214,18 +1310,18 @@ scheduled tasks, each is comma separated list of classes</FONT></FONT></P>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 Comma separated list of task classnames to be executed once per day</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>tasks.daily=org.roller.presentation.TurnoverReferersTask\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>tasks.daily=org.apache.roller.presentation.TurnoverReferersTask\</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 Needed to enable nightly fetching of blacklist</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#,org.roller.presentation.BlacklistUpdateTask\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#,org.apache.roller.presentation.BlacklistUpdateTask\</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 Daily Planet task: syncs weblog list with Roller, refreshes
 Technorati stats</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#,org.roller.presentation.planet.SyncWebsitesTask</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#,org.apache.roller.presentation.planet.SyncWebsitesTask</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
@@ -1236,7 +1332,7 @@ Comma separated list of task classnames to be executed hourly</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 Hourly Planet task: refresh latest entry list from all weblogs in
 list</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#org.roller.presentation.planet.RefreshEntriesTask</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#org.apache.roller.presentation.planet.RefreshEntriesTask</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1250,11 +1346,11 @@ Velocity settings</FONT></FONT></P>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 Page model implementation</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>velocity.pagemodel.classname=org.roller.presentation.velocity.PageModel</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>velocity.pagemodel.classname=org.apache.roller.presentation.velocity.PageModel</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 Experimental page model that allows user's access to Planet
 aggregations</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#velocity.pagemodel.classname=org.roller.presentation.velocity.planet.PlanetPageModel</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#velocity.pagemodel.classname=org.apache.roller.presentation.velocity.planet.PlanetPageModel</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1262,13 +1358,13 @@ aggregations</FONT></FONT></P>
 Persistence settings</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>persistence.roller.classname=org.roller.business.hibernate.HibernateRollerImpl</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>persistence.filemanager.classname=org.roller.business.FileManagerImpl</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>persistence.roller.classname=org.apache.roller.business.hibernate.HibernateRollerImpl</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>persistence.filemanager.classname=org.apache.roller.business.FileManagerImpl</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 authenticator settings (experimental)</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>authenticator.classname=org.roller.presentation.DefaultAuthenticator</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>authenticator.classname=org.apache.roller.presentation.DefaultAuthenticator</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1276,7 +1372,7 @@ authenticator settings (experimental)</FONT></FONT></P>
 comment, referrer and trackback settings</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>comment.authenticator.classname=org.roller.presentation.velocity.MathCommentAuthenticator</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>comment.authenticator.classname=org.apache.roller.presentation.velocity.MathCommentAuthenticator</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>comment.notification.separateOwnerMessage=false</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>comment.notification.hideCommenterAddresses=false</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
@@ -1309,7 +1405,7 @@ trackback.allowedURLs=http://w3.ibm.com/.*||http://another.example.com/.*</FONT>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#Robot
-check in referral processing.  If this pattern is set and the
+check in referral processing. If this pattern is set and the
 User-Agent in the</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#request
 matches this pattern, all referral processing is skipped; this means
@@ -1531,9 +1627,14 @@ Planet cache must exist and must be writable by Roller process</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>planet.aggregator.cache.dir=/var/roller/planetcache</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+Number of queries allowed per day</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>planet.aggregator.technorati.limit=500</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
-user creation setttings: blogroll and cats for new users</FONT></FONT></P>
+defaults for new weblogs</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
@@ -1559,6 +1660,13 @@ comma-separated list of top-level categories to be created in each
 new weblog</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>newuser.categories=\</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>General,Status,Java,Music,Politics</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+Default weblog editor</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+The list of available editors is in rollerRuntimeConfigDefs.xml</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>newweblog.editor=editor-text.jsp</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1589,21 +1697,36 @@ be </FONT></FONT>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 applied if these were omitted.</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicBookmarkName=Default
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicBookmarkName=Default
 Topic Site</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicSite=http://www.technorati.com/tag</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithoutBookmark=topic:\\[(.*?)\\]</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.linkFormatString=&lt;a
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicSite=http://www.technorati.com/tag</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithoutBookmark=topic:\\[(.*?)\\]</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.linkFormatString=&lt;a
 rel=\&quot;tag\&quot; href=\&quot;{0}{1}\&quot;&gt;{2}&lt;/a&gt;</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
 Set to true to allow only default topic tag site (and avoid costly
 bookmark queries)</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.ignoreBookmarks=true</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.ignoreBookmarks=true</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#---------------------------------</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+Experimental settings</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+Atom Publishing Protocol (APP) - this is an incomplete and untested </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+implementation of an unfinished IETF specification. Intended only for
+</FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#
+interoperability testing. DO NOT ENABLE IN PRODUCTION!</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>webservices.atomprotocol.enabled=false</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1618,5 +1741,91 @@ settings for old #showNewseeds macro (not related to Planet stuff)</FONT></FONT>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>aggregator.cache.timeout=14400</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
+<H2 STYLE="page-break-before: always"><A NAME="DDE_LINK2"></A>Appendix
+C: Setting up the optional JSPWiki plugin</H2>
+<P>If you'd like to use Roller's JSPWiki plugin, you must 1) download
+and install the required JSPWiki jars and 2) enable the JSPWiki
+plugin via a Roller custom configuration file.</P>
+<P><B>WARNING</B>: The JSPWiki editor has been deprecated (due to
+LGPL licensing) and may be removed from a future release of Roller.</P>
+<H3>Downloading and installing the required JSPWiki jars</H3>
+<P>Download JSPWiki version 2.2.33 from <A HREF="http://jspwiki.org/">http://jspwiki.org</A>,
+copy the following jars from JSPWiki's WEB-INF/lib directory to
+Roller's WEB-INF/lib directory:</P>
+<UL>
+	<LI><P>JSPWiki.jar</P>
+	<LI><P>ecs.jar</P>
+	<LI><P>jrcs-diff.jar</P>
+	<LI><P>oscache.jar</P>
+</UL>
+<P><B>NOTE</B>: The Roller Support project at Java.Net offers some
+required jar bundles that might make this part  of the installation
+easier. Visit <A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
+for more information.</P>
+<H3>Enable the JSPWiki plugin via Roller property override</H3>
+<P>Follow the instructions in Appendix B for setting up a
+<FONT FACE="Courier New">roller-custom.properties</FONT> file. You'll
+need to override the <FONT FACE="Courier New">plugins.page</FONT>
+property to ensure that the JSPWiki plugin is included in the list.
+For example, this setting would add the JSPWiki to the end of the
+list of built-in Roller plugins:</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">plugins.page=\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">org.apache.roller.presentation.velocity.plugins.convertbreaks.ConvertLineBreaksPlugin
+\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin
+\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.search.WikipediaLinkPlugin
+\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.search.GoogleLinkPlugin
+\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.textile.TextilePlugin
+\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.acronyms.AcronymsPlugin
+\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.bookmarks.BookmarkPlugin
+\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.email.ObfuscateEmailPlugin
+\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.smileys.SmileysPlugin
+\</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.readmore.ReadMorePlugin<B>
+\</B></FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 9pt"><B><FONT FACE="Courier New">,org.apache.roller.presentation.velocity.plugins.jspwiki.WikiPlugin</FONT></B></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P></P>
+<P></P>
+<H2 STYLE="page-break-before: always">Appendix D: Setting up the
+optional Ekit editor page</H2>
+<P>If you'd like to continue to use Roller's Ekit editor page, which
+was deprecated in Roller 2.3, you must 1) download and install the
+Ekit applet jar and 2) add the Ekit page to the list of available
+editors in the Roller runtime configuration file.</P>
+<P><B>WARNING</B>: The Ekit editor has been deprecated (due to LGPL
+licensing) and may be removed from a future release of Roller.</P>
+<H3>Downloading and installing the required Ekit applet jar</H3>
+<P>Download Ekit version 1.1 from <A HREF="http://www.hexidec.com/ekit.phaa">http://www.hexidec.com/ekit.ph</A>p
+and place the Ekit <FONT FACE="Courier New">ekitappletspell.jar</FONT>
+jar in Roller's editor direcotory.</P>
+<P><B>NOTE</B>: The Roller Support project at Java.Net offers some
+required jar bundles that might make this part  of the installation
+easier. Visit <A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
+for more information.</P>
+<H3>Enable the Ekit plugin via Roller runtime configuration
+definitions file</H3>
+<P>If you want users to be able to pick the old Ekit editor page,
+then you'll need to add it to the Roller runtime configuration
+definition file in <FONT FACE="Courier New">WEB-INF/rollerRuntimeConfigDefs.xml</FONT>
+as follows:</P>
+<P STYLE="margin-bottom: 0in; font-weight: medium"><FONT SIZE=2><FONT FACE="Courier New">&lt;property-def
+ name=&quot;users.editor.pages&quot;  key=&quot;configForm.editorPages&quot;&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; font-weight: medium">  
+<FONT FACE="Courier New"><FONT SIZE=2>&lt;type&gt;text&lt;/type&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; font-weight: medium">  
+<FONT FACE="Courier New"><FONT SIZE=2>&lt;default-value&gt;editor-text.jsp,editor-rte.jsp,
+<B>editor-ekit.jsp</B>&lt;/default-value&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; font-weight: medium">   <FONT FACE="Courier New"><FONT SIZE=2>&lt;rows&gt;3&lt;/rows&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; font-weight: medium">   <FONT FACE="Courier New"><FONT SIZE=2>&lt;cols&gt;40&lt;/cols&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>&lt;/property-def&gt;</FONT></FONT></P>
 </BODY>
 </HTML>
