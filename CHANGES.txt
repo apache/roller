@@ -2,7 +2,21 @@
 ROLLER CHANGE LOG
 -----------------
 
-Roller 2.2 release: improvements and bug fixes, no major new features
+Roller 2.3: improvements and bug fixes, no major new features
+
+    * [ROL-872] - Support for both entry summary and content
+    * [ROL-1079] - Slight modification on the file upload confirmation message
+    * [ROL-1102] - NPE in CommentServlet.doGet(CommentServlet.java:52)
+    * [ROL-1115] - Make it possible to require comment moderation for all weblogs
+    * [ROL-1116] - Make it possible to set default weblog editor
+    * [ROL-980] - Change to org.apache.roller packaging
+    * [ROL-982] - Add Apache license text to all source files
+    * [ROL-1111] - Backend Refactorings
+
+
+-------------------------------------------------------------------------------
+
+Roller 2.2: (not a public release) improvements and bug fixes, no major new features
 
 Improvement
     * [ROL-995] - Limit comments to safe HTML subset only
