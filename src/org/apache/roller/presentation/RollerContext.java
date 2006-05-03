@@ -133,6 +133,14 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
      */
     public void contextInitialized(ServletContextEvent sce) {
         
+        try {
+            Class.forName("org.hibernate.Session");
+        } catch (Throwable t) {
+            // if Hibernate is not available, we're hosed
+            throw new RuntimeException(
+               "FATAL ERROR: Hibernate not found, please refer to the Roller Installation Guide for instructions on how to install the required Hibernate jars");
+        }
+        
         mLogger.debug("RollerContext initializing");
         
         // Save context in self and self in context
