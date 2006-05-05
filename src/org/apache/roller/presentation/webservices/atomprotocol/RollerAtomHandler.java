@@ -53,7 +53,7 @@ import javax.activation.FileTypeMap;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.WeblogManager;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 
 /**
  * Roller's Atom Protocol implementation.

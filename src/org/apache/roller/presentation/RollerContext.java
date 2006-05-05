@@ -68,7 +68,7 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 
 
 /**

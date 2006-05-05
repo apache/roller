@@ -15,13 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * LazyExpiringCacheEntry.java
- *
- * Created on January 17, 2006, 10:14 AM
- */
 
-package org.apache.roller.presentation.cache;
+package org.apache.roller.util.cache;
 
 import java.io.Serializable;
 
@@ -46,8 +41,6 @@ import java.io.Serializable;
  * the list of cached objects and inspect the keys to figure out what items to
  * invalidate.  Instead we can just sit back and let the items be invalidated as
  * we try to use them.
- *
- * @author Allen Gilliland
  */
 public class LazyExpiringCacheEntry implements Serializable {
     

@@ -15,13 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * LRUCacheFactoryImpl.java
- *
- * Created on October 26, 2005, 3:33 PM
- */
 
-package org.apache.roller.presentation.cache;
+package org.apache.roller.util.cache;
 
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -30,8 +25,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Roller Expiring LRU cache factory.
- *
- * @author Allen Gilliland
  */
 public class ExpiringLRUCacheFactoryImpl implements CacheFactory {
     

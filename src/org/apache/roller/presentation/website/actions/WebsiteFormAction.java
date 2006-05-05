@@ -58,7 +58,7 @@ import org.apache.roller.presentation.BasePageModel;
 import org.apache.roller.presentation.RollerContext;
 import org.apache.roller.presentation.RollerRequest;
 import org.apache.roller.presentation.RollerSession;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.presentation.website.formbeans.WebsiteFormEx;
 import org.apache.roller.util.Blacklist;
 

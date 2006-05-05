@@ -15,13 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * ExpiringLRUCacheImpl.java
- *
- * Created on November 6, 2005, 10:33 AM
- */
 
-package org.apache.roller.presentation.cache;
+package org.apache.roller.util.cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

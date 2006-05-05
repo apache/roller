@@ -50,9 +50,9 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.presentation.LanguageUtil;
-import org.apache.roller.presentation.cache.Cache;
-import org.apache.roller.presentation.cache.CacheHandler;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.Cache;
+import org.apache.roller.util.cache.CacheHandler;
+import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.presentation.util.CacheHttpServletResponseWrapper;
 import org.apache.roller.presentation.util.ResponseContent;
 

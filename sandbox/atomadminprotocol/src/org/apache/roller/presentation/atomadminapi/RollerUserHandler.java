@@ -40,7 +40,7 @@ import org.apache.roller.presentation.atomadminapi.sdk.MissingElementException;
 import org.apache.roller.presentation.atomadminapi.sdk.UnexpectedRootElementException;
 import org.apache.roller.presentation.atomadminapi.sdk.UserEntry;
 import org.apache.roller.presentation.atomadminapi.sdk.UserEntrySet;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 
 /**
  * This class handles request concerning Roller users.

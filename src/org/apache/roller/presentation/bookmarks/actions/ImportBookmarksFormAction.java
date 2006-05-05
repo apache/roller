@@ -47,7 +47,7 @@ import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.presentation.BasePageModel;
 import org.apache.roller.presentation.RollerSession;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 
 /////////////////////////////////////////////////////////////////////////////
 /**

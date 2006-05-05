@@ -15,13 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * CacheFactory.java
- *
- * Created on October 26, 2005, 3:25 PM
- */
 
-package org.apache.roller.presentation.cache;
+package org.apache.roller.util.cache;
 
 import java.util.Map;
 
@@ -32,8 +27,6 @@ import java.util.Map;
  *
  * In Roller you switch between various caching options by choosing a different
  * cache factory before starting up the application.
- *
- * @author Allen Gilliland
  */
 public interface CacheFactory {
     

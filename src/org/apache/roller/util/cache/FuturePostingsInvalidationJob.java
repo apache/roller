@@ -15,13 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * FuturePostingsInvalidationJob.java
- *
- * Created on February 14, 2006, 5:48 PM
- */
 
-package org.apache.roller.presentation.cache;
+package org.apache.roller.util.cache;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -52,8 +47,6 @@ import org.apache.roller.pojos.WeblogEntryData;
  * and expiring them once our wait period is over.  This prevents us from
  * having to somehow determine which entries published in the last XX mins
  * had previously been published into the future.
- *
- * @author Allen Gilliland
  */
 public class FuturePostingsInvalidationJob implements Job {
     
