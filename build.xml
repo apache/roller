@@ -289,7 +289,7 @@ ro.buildUser=${user.name}
     </echo>
 
     <javac debug="${build.debug}" destdir="${build.compile_beans}"
-        excludes="org/apache/roller/presentation/**" >
+        excludes="org/apache/roller/presentation/**, org/apache/roller/webservices/**" >
         <src path="${basedir}/src" />
         <src path="${build.generated}/src.business"/>
         &custom-src-beans;
@@ -347,7 +347,7 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.compile_web}"/>
     <antcall target="prepare.resin" />
     <javac debug="${build.debug}" destdir="${build.compile_web}"
-        includes="org/apache/roller/presentation/**, org/apache/roller/util/rome/**" >
+        includes="org/apache/roller/presentation/**, org/apache/roller/webservices/**, org/apache/roller/util/rome/**" >
         <src path="./src"  />
         <src path="${build.generated}/src.presentation"/>
         &custom-src-web;

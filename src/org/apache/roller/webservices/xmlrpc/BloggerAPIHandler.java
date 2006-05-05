@@ -16,7 +16,7 @@
 * directory of this distribution.
 */
 
-package org.apache.roller.presentation.webservices.xmlrpc;
+package org.apache.roller.webservices.xmlrpc;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
