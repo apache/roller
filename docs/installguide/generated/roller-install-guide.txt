@@ -31,9 +31,9 @@ Introduction	3
 STEP 1: Before you install Roller	4
 STEP 2: Unpack the Roller distribution	5
 STEP 3: Install required third party jars	6
-STEP 4.1: Download and install Hibernate	6
-STEP 4.2: Install JDBC driver jar(s)	6
-STEP 4.3: Install JavaMail and Activation jars	7
+STEP 3.1: Download and install Hibernate	6
+STEP 3.2: Install JDBC driver jar(s)	6
+STEP 3.3: Install JavaMail and Activation jars	7
 STEP 4: Create Roller tables in your database	8
 STEP 5: Deploy Roller to your application server	9
 STEP 6: Check your internationalization settings	11
@@ -111,7 +111,7 @@ Use WinZip to extract the Roller distribution file into the directory of your ch
 
 STEP 3: Install required third party jars
 You also need to download and install some third-party jars, jars that we can't include in Roller due to licensing restrictions. These are the JDBC driver, JavaMail and Activation jars.
-STEP 4.1: Download and install Hibernate
+STEP 3.1: Download and install Hibernate
 Roller requires the Hibernate persistence library, which you must download separately from Roller. 
 	Download Hibernate 3.1.2 from SourceForge
 	http://prdownloads.sourceforge.net/hibernate/hibernate-3.1.2.tar.gz
@@ -125,7 +125,7 @@ ehcache-1.1.jar
 jdbc2_0-stdext.jar
 jta.jar
 The Roller Support project at Java.Net offers some bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
-STEP 4.2: Install JDBC driver jar(s)
+STEP 3.2: Install JDBC driver jar(s)
 Download the JDBC driver jar for your database and put it in the classpath of your application server. For example, assuming Tomcat and MySQL, you'd download the J/Connector JDBC driver from mysql.com and you'd place it in the Tomcat common/lib directory.
 UNIX example
 	% cp mysql-connector.jar $CATALINA_HOME/common/lib
@@ -136,7 +136,7 @@ Windows example
 NOTES
 For MySQL 4.1.X users, we recommend that you use the J/Connector 3.0.X JDBC drivers instead of the newer 3.1.X series. If you must use J/Connector/J 3.1.X then please read Installation FAQ page item #13 on the Roller wiki.
 
-STEP 4.3: Install JavaMail and Activation jars
+STEP 3.3: Install JavaMail and Activation jars
 If you like to use Roller's e-mail notification features, you'll need to add the JavaMail and Activation jars to your application server's classpath. Currently, we ship these jars with Roller, but you will need to  move them from the Roller WEB-INF/lib directory and into the Tomcat common/lib directory, or your server's equivalent location.
 UNIX example
 	% mv $ROLLER/WEB-INF/lib/mail.jar $CATALINA_HOME/common/lib

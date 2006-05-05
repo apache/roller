@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060505;14200200">
+	<META NAME="CHANGED" CONTENT="20060505;15113200">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.79in }
@@ -94,11 +94,11 @@ file in the top level directory of this distribution.</I></FONT></FONT></P>
 	2: Unpack the Roller distribution	5</B></FONT></P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
 	3: Install required third party jars	6</B></FONT></P>
-	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4.1:
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 3.1:
 	Download and install Hibernate	6</P>
-	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4.2: Install
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 3.2: Install
 	JDBC driver jar(s)	6</P>
-	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4.3: Install
+	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 3.3: Install
 	JavaMail and Activation jars	7</P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>STEP
 	4: Create Roller tables in your database	8</B></FONT></P>
@@ -276,7 +276,7 @@ STEP 3: Install required third party jars</H2>
 <P>You also need to download and install some third-party jars, jars
 that we can't include in Roller due to licensing restrictions. These
 are the JDBC driver, JavaMail and Activation jars.</P>
-<H3>STEP 4.1: Download and install Hibernate</H3>
+<H3>STEP 3.1: Download and install Hibernate</H3>
 <P>Roller <I>requires</I> the Hibernate persistence library, which
 you must download separately from Roller. 
 </P>
@@ -300,7 +300,7 @@ WEB-INF/lib directory:</P>
 might make this part  of the installation easier. Visit
 <A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
 for more information.</P>
-<H3>STEP 4.2: Install JDBC driver jar(s)</H3>
+<H3>STEP 3.2: Install JDBC driver jar(s)</H3>
 <P>Download the JDBC driver jar for your database and put it in the
 classpath of your application server. For example, assuming Tomcat
 and MySQL, you'd download the J/Connector JDBC driver from mysql.com
@@ -326,7 +326,7 @@ copy mysql-connector.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
 </UL>
 <P><BR><BR>
 </P>
-<H3>STEP 4.3: Install JavaMail and Activation jars</H3>
+<H3>STEP 3.3: Install JavaMail and Activation jars</H3>
 <P>If you like to use Roller's e-mail notification features, you'll
 need to add the JavaMail and Activation jars to your application
 server's classpath. Currently, we ship these jars with Roller, but
