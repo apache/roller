@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060503;16394400">
+	<META NAME="CHANGED" CONTENT="20060505;14200200">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.79in }
@@ -64,16 +64,22 @@ Roller</B></FONT></P>
 </P>
 <P ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
 </P>
-<P ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
-</P>
-<P ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
-</P>
-<P ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
-</P>
-<P ALIGN=CENTER><FONT SIZE=2><I>Original text is copyright &copy;
-2002-2004 David M Johnson</I></FONT></P>
-<P ALIGN=CENTER><FONT SIZE=2><I>Contributors: Roller team and  Sun
-Microsystems, Inc. </I></FONT>
+<P ALIGN=LEFT><FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"><I>Licensed
+to the Apache Software Foundation (ASF) under one or more contributor
+license agreements.  The ASF licenses this file to You under the
+Apache License, Version 2.0 (the &quot;License&quot;); you may not
+use this file except in compliance with the License. You may obtain a
+copy of the License at</I></FONT></FONT></P>
+<P ALIGN=LEFT>      <FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"><I>http://www.apache.org/licenses/LICENSE-2.0</I></FONT></FONT></P>
+<P ALIGN=LEFT><FONT FACE="Courier New"><FONT SIZE=1 STYLE="font-size: 8pt"><I>Unless
+required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot;
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing
+permissions and limitations under the License.  For additional
+information regarding copyright in this work, please see the NOTICE
+file in the top level directory of this distribution.</I></FONT></FONT></P>
+<P ALIGN=LEFT STYLE="page-break-before: always"><BR><BR>
 </P>
 <DIV ID="Table of Contents1" DIR="LTR">
 	<DIV ID="Table of Contents1_Head" DIR="LTR">
@@ -123,11 +129,11 @@ Microsystems, Inc. </I></FONT>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
 	A: Upgrading an existing Roller installation	17</B></FONT></P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 1: Shutdown
-	and backup your old Roller [#1]	17</P>
+	and backup your old Roller 	17</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 2: Install
-	the new Roller [#2]	17</P>
+	the new Roller 	17</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 3: Copy
-	resources and update configs [#3]	18</P>
+	resources and update configs 	18</P>
 	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">3.1 Copy your old
 	resources and other files you've added	18</P>
 	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">3.2 Remove
@@ -135,9 +141,9 @@ Microsystems, Inc. </I></FONT>
 	<P STYLE="margin-left: 0.59in; margin-bottom: 0in">3.3 Review
 	configuration properties	18</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 4: Upgrade
-	the database [#4]	18</P>
+	the database 	18</P>
 	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">STEP 5: Startup
-	your app server [#5]	19</P>
+	your app server 	19</P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
 	B: The WEB-INF/roller.properties file	20</B></FONT></P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
@@ -174,7 +180,7 @@ environment: </B>
 <P><BR><BR>
 </P>
 <P><B>NOTE: If you're upgrading from an earlier release of Roller,
-read Appendix B first</B></P>
+read Appendix A first</B></P>
 <P><BR><BR>
 </P>
 <P><B>What do you need to know to install Roller? </B>You need to
@@ -290,8 +296,8 @@ WEB-INF/lib directory:</P>
 	<LI><P>jdbc2_0-stdext.jar</P>
 	<LI><P>jta.jar</P>
 </UL>
-<P>The Roller Support project at Java.Net offers some required jar
-bundles that might make this part  of the installation easier. Visit
+<P>The Roller Support project at Java.Net offers some bundles that
+might make this part  of the installation easier. Visit
 <A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
 for more information.</P>
 <H3>STEP 4.2: Install JDBC driver jar(s)</H3>
@@ -832,7 +838,8 @@ existing Roller installation</H2>
 <P>This document describes how to upgrade an existing installation to
 the latest release of Roller by upgrading the Roller database and
 replacing the old Roller files (which are typically found in
-tomcat/webapps/roller) with the new release. 
+<FONT FACE="Courier New">tomcat/webapps/roller</FONT>) with the new
+release. 
 </P>
 <P>The steps are:</P>
 <UL>
@@ -845,7 +852,8 @@ tomcat/webapps/roller) with the new release.
 	</P>
 </UL>
 <H3><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller1"></A><A NAME="ref-UpgradeGuide_2.1-1"></A>
-STEP 1: Shutdown and backup your old Roller [#1]</H3>
+STEP 1: Shutdown and backup your old Roller 
+</H3>
 <P>Before you get started with your upgrade, you should shutdown your
 existing Roller install, make a backup of your data, and move the old
 Roller files out of the way. Here is an example of how you'd do this
@@ -887,7 +895,8 @@ safe, for example:
    <FONT FACE="Courier New"><FONT SIZE=3>% mkdir /somewhere/safe/roller-old</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mv roller /somewhere/safe/roller-old</FONT></FONT></PRE><H3>
 <A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
-STEP 2: Install the new Roller [#2]</H3>
+STEP 2: Install the new Roller 
+</H3>
 <P>Follow the normal installation instructions to install Roller,
 except: 
 </P>
@@ -902,7 +911,8 @@ except:
 <P><BR><BR>
 </P>
 <H3><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
-STEP 3: Copy resources and update configs [#3]</H3>
+STEP 3: Copy resources and update configs 
+</H3>
 <H4><A NAME="section-UpgradeGuide_2.1-3.1CopyYourOldResourcesAndOtherFilesYouveAdded"></A>
 3.1 Copy your old resources and other files you've added</H4>
 <P>User uploaded files are, by default, stored in the <TT><FONT FACE="Courier New">/resources</FONT></TT>
@@ -929,16 +939,20 @@ the <TT>common/lib</TT> directory.)
 3.3 Review configuration properties</H4>
 <P>Review properties as described in STEP #8 of the installation
 guide.</P>
-<P><B>WARNING: In Roller 2.3 we changed the Roller package names from
-<FONT FACE="Courier New">org.roller</FONT> to <FONT FACE="Courier New">org.apache.roller</FONT>.
-Because of this you MUST review your roller-custom.properties file,
-search for the string &ldquo;org.roller&rdquo;and replace all
-occurances of it with &ldquo;org.apache.roller&rdquo;.</B></P>
-<P><B>WARNING: The jars required for Roller's JSPWiki plugin and Ekit
-editor have been removed from the Roller distribution. If you'd like
-to continue to use these plugins, please refer to Appendices C and D.</B></P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Thorndale"><FONT SIZE=3 STYLE="font-size: 13pt"><B>WARNING:
+	In Roller 2.3 we changed the Roller package names from org.roller to
+	org.apache.roller. Because of this you MUST review your
+	roller-custom.properties file, search for the string &ldquo;org.roller&rdquo;and
+	replace all occurances of it with &ldquo;org.apache.roller&rdquo;.</B></FONT></FONT></P>
+	<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Thorndale"><FONT SIZE=3 STYLE="font-size: 13pt"><B>WARNING:
+	The jars required for Roller's JSPWiki plugin and Ekit editor have
+	been removed from the Roller distribution. If you'd like to continue
+	to use these plugins, please refer to Appendices C and D.</B></FONT></FONT></P>
+</UL>
 <H3><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
-STEP 4: Upgrade the database [#4]</H3>
+STEP 4: Upgrade the database 
+</H3>
 <P>Use the appropriate database upgrade script to upgrade your
 database. To do this, login to your database and run one (or more) of
 the Roller upgrade scripts located in Roller's <FONT FACE="Courier New">WEB-INF/dbscripts</FONT>
@@ -961,8 +975,8 @@ MySQL, PostgreSQL, HSQLDB and more.
 	</P>
 </UL>
 <P>There is an upgrade script for each release of Roller. If you're
-upgrading from Roller 2.2, which was the last release before 2.3
-you'll only need to run one script, that's <TT>200-to-210-migration.sql</TT>.
+upgrading from Roller 2.1, which was the last release before 2.3
+you'll only need to run one script, that's <TT>210-to-230-migration.sql</TT>.
 For example, here's how you'd do it for a MySQL database running on
 UNIX: 
 </P>
@@ -970,12 +984,13 @@ UNIX:
     <FONT FACE="Courier New"><FONT SIZE=3>% mysql -u root -p</FONT></FONT>
     <FONT FACE="Courier New"><FONT SIZE=3>password: *****</FONT></FONT>
     <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; use roller;</FONT></FONT>
-    <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; source 220-to-230-migration.sql</FONT></FONT>
+    <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; source 210-to-230-migration.sql</FONT></FONT>
     <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; quit</FONT></FONT></PRE><P>
 If you're upgrading from an earlier release you'll have to run each
 of the older scripts in order to upgrade your database.</P>
 <H3><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
-STEP 5: Startup your app server [#5]</H3>
+STEP 5: Startup your app server 
+</H3>
 <P>Use the standard Tomcat <FONT FACE="Courier New">startup.sh</FONT>
 (or <FONT FACE="Courier New">startup.bat </FONT>on Windows) script to
 start Tomcat. As Roller starts up, it will perform some final steps
@@ -1741,8 +1756,8 @@ settings for old #showNewseeds macro (not related to Planet stuff)</FONT></FONT>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>aggregator.cache.timeout=14400</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<H2 STYLE="page-break-before: always"><A NAME="DDE_LINK2"></A>Appendix
-C: Setting up the optional JSPWiki plugin</H2>
+<H2 STYLE="page-break-before: always">Appendix C: Setting up the
+optional JSPWiki plugin</H2>
 <P>If you'd like to use Roller's JSPWiki plugin, you must 1) download
 and install the required JSPWiki jars and 2) enable the JSPWiki
 plugin via a Roller custom configuration file.</P>
@@ -1759,8 +1774,8 @@ Roller's WEB-INF/lib directory:</P>
 	<LI><P>oscache.jar</P>
 </UL>
 <P><B>NOTE</B>: The Roller Support project at Java.Net offers some
-required jar bundles that might make this part  of the installation
-easier. Visit <A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
+bundles that might make this part  of the installation easier. Visit
+<A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
 for more information.</P>
 <H3>Enable the JSPWiki plugin via Roller property override</H3>
 <P>Follow the instructions in Appendix B for setting up a
@@ -1790,11 +1805,13 @@ list of built-in Roller plugins:</P>
 \</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.readmore.ReadMorePlugin<B>
 \</B></FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT SIZE=2 STYLE="font-size: 9pt"><B><FONT FACE="Courier New">,org.apache.roller.presentation.velocity.plugins.jspwiki.WikiPlugin</FONT></B></FONT></P>
+<P STYLE="margin-bottom: 0in"><A NAME="DDE_LINK2"></A><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt"><B>,org.apache.roller.presentation.velocity.plugins.jspwiki.WikiPlugin</B></FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<P></P>
-<P></P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
 <H2 STYLE="page-break-before: always">Appendix D: Setting up the
 optional Ekit editor page</H2>
 <P>If you'd like to continue to use Roller's Ekit editor page, which
@@ -1808,8 +1825,8 @@ licensing) and may be removed from a future release of Roller.</P>
 and place the Ekit <FONT FACE="Courier New">ekitappletspell.jar</FONT>
 jar in Roller's editor direcotory.</P>
 <P><B>NOTE</B>: The Roller Support project at Java.Net offers some
-required jar bundles that might make this part  of the installation
-easier. Visit <A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
+bundles that might make this part  of the installation easier. Visit
+<A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
 for more information.</P>
 <H3>Enable the Ekit plugin via Roller runtime configuration
 definitions file</H3>
@@ -1817,7 +1834,7 @@ definitions file</H3>
 then you'll need to add it to the Roller runtime configuration
 definition file in <FONT FACE="Courier New">WEB-INF/rollerRuntimeConfigDefs.xml</FONT>
 as follows:</P>
-<P STYLE="margin-bottom: 0in; font-weight: medium"><FONT SIZE=2><FONT FACE="Courier New">&lt;property-def
+<P STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>&lt;property-def
  name=&quot;users.editor.pages&quot;  key=&quot;configForm.editorPages&quot;&gt;</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in; font-weight: medium">  
 <FONT FACE="Courier New"><FONT SIZE=2>&lt;type&gt;text&lt;/type&gt;</FONT></FONT></P>

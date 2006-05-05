@@ -22,11 +22,10 @@ Version 2.3-incubating
 
 
 
+Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  The ASF licenses this file to You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.  For additional information regarding copyright in this work, please see the NOTICE file in the top level directory of this distribution.
 
-
-
-Original text is copyright © 2002-2004 David M Johnson
-Contributors: Roller team and  Sun Microsystems, Inc. 
 Table of Contents
 Introduction	3
 STEP 1: Before you install Roller	4
@@ -49,14 +48,14 @@ Where to define custom properties	14
 STEP 8.2: Change keys in the WEB-INF/security.xml file	15
 STEP 9: Start Tomcat and start using Roller	16
 Appendix A: Upgrading an existing Roller installation	17
-STEP 1: Shutdown and backup your old Roller [#1]	17
-STEP 2: Install the new Roller [#2]	17
-STEP 3: Copy resources and update configs [#3]	18
+STEP 1: Shutdown and backup your old Roller 	17
+STEP 2: Install the new Roller 	17
+STEP 3: Copy resources and update configs 	18
 3.1 Copy your old resources and other files you've added	18
 3.2 Remove JavaMail jars if duplicated	18
 3.3 Review configuration properties	18
-STEP 4: Upgrade the database [#4]	18
-STEP 5: Startup your app server [#5]	19
+STEP 4: Upgrade the database 	18
+STEP 5: Startup your app server 	19
 Appendix B: The WEB-INF/roller.properties file	20
 Appendix C: Setting up the optional JSPWiki plugin	27
 Downloading and installing the required JSPWiki jars	27
@@ -72,7 +71,7 @@ Java development kit: 	Java 2 SE 1.4 SDK (or later)
 Application server: 		Tomcat 5.X (or later)
 Relational Database:		MySQL 4.X (or later)
 
-NOTE: If you're upgrading from an earlier release of Roller, read Appendix B first
+NOTE: If you're upgrading from an earlier release of Roller, read Appendix A first
 
 What do you need to know to install Roller? You need to know how to use the UNIX or Windows command-line, how to set environment variables, how to create a database in MySQL and how to start and stop Tomcat.
 What about other servlet containers? These instructions target Tomcat, but you should be able to make Roller work with just about any standard Servlet 2.3 compatible application server. For full support of Roller's internationalization features, we recommend Servlet 2.4. If you deploy Roller to a non-Tomcat server, please contribute your install notes to help others who might want to do the same. 
@@ -125,7 +124,7 @@ dom4j.1.6.1.jar
 ehcache-1.1.jar
 jdbc2_0-stdext.jar
 jta.jar
-The Roller Support project at Java.Net offers some required jar bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
+The Roller Support project at Java.Net offers some bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
 STEP 4.2: Install JDBC driver jar(s)
 Download the JDBC driver jar for your database and put it in the classpath of your application server. For example, assuming Tomcat and MySQL, you'd download the J/Connector JDBC driver from mysql.com and you'd place it in the Tomcat common/lib directory.
 UNIX example
@@ -379,7 +378,7 @@ STEP 2: Install the new Roller
 STEP 3: Copy old configuration
 STEP 4: Upgrade the database
 STEP 5: Startup Tomcat 
-STEP 1: Shutdown and backup your old Roller [#1]
+STEP 1: Shutdown and backup your old Roller 
 Before you get started with your upgrade, you should shutdown your existing Roller install, make a backup of your data, and move the old Roller files out of the way. Here is an example of how you'd do this with a Tomcat/MySQL setup: 
 Run shutdown.sh to stop Tomcat, for example: 
 
@@ -399,12 +398,12 @@ Move your Roller files to somewhere safe, for example:
    % cd $CATALINA_HOME/webapps
    % mkdir /somewhere/safe/roller-old
    % mv roller /somewhere/safe/roller-old
-STEP 2: Install the new Roller [#2]
+STEP 2: Install the new Roller 
 Follow the normal installation instructions to install Roller, except: 
 Don't create a new database for Roller, instead point the new Roller to your old Roller database 
 DO NOT start Tomcat when you are done with the installation, we'll do that later 
 
-STEP 3: Copy resources and update configs [#3]
+STEP 3: Copy resources and update configs 
 3.1 Copy your old resources and other files you've added
 User uploaded files are, by default, stored in the /resources sub-directory of the Roller context directory. You should copy your old resources directory into your new Roller installation. 
 For example, on UNIX you can use cp -r to copy the whole directory: 
@@ -417,22 +416,22 @@ In an upgrade installation, you may already have the JavaMail jars mail.jar and 
 Review properties as described in STEP #8 of the installation guide.
 WARNING: In Roller 2.3 we changed the Roller package names from org.roller to org.apache.roller. Because of this you MUST review your roller-custom.properties file, search for the string "org.roller"and replace all occurances of it with "org.apache.roller".
 WARNING: The jars required for Roller's JSPWiki plugin and Ekit editor have been removed from the Roller distribution. If you'd like to continue to use these plugins, please refer to Appendices C and D.
-STEP 4: Upgrade the database [#4]
+STEP 4: Upgrade the database 
 Use the appropriate database upgrade script to upgrade your database. To do this, login to your database and run one (or more) of the Roller upgrade scripts located in Roller's WEB-INF/dbscripts directory that corresponds to your database. There's a directory for MySQL, PostgreSQL, HSQLDB and more. 
 The database script directories 
 WEB-INF/dbscripts/mysql 
 WEB-INF/dbscripts/postgresql 
 WEB-INF/dbscripts/hsql 
 and more... 
-There is an upgrade script for each release of Roller. If you're upgrading from Roller 2.2, which was the last release before 2.3 you'll only need to run one script, that's 200-to-210-migration.sql. For example, here's how you'd do it for a MySQL database running on UNIX: 
+There is an upgrade script for each release of Roller. If you're upgrading from Roller 2.1, which was the last release before 2.3 you'll only need to run one script, that's 210-to-230-migration.sql. For example, here's how you'd do it for a MySQL database running on UNIX: 
     % cd $CATALINA_HOME/webapps/roller/WEB-INF/dbscripts/mysql
     % mysql -u root -p
     password: *****
     mysql> use roller;
-    mysql> source 220-to-230-migration.sql
+    mysql> source 210-to-230-migration.sql
     mysql> quit
 If you're upgrading from an earlier release you'll have to run each of the older scripts in order to upgrade your database.
-STEP 5: Startup your app server [#5]
+STEP 5: Startup your app server 
 Use the standard Tomcat startup.sh (or startup.bat on Windows) script to start Tomcat. As Roller starts up, it will perform some final steps to upgrade your database, this may take few seconds longer than your average Roller startup. 
 And you're done! 
 If Roller doesn't come up, check the logs for exceptions and error messages. You should see these messages in the tomcat/logs/catalina.out file and in tomcat/logs/roller.log. If you still can't diagnose and fix your startup program, then subscribe to the Roller user mailing list for help. If there are any interesting messages in the log files, send those along too. 
@@ -830,7 +829,7 @@ JSPWiki.jar
 ecs.jar
 jrcs-diff.jar
 oscache.jar
-NOTE: The Roller Support project at Java.Net offers some required jar bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
+NOTE: The Roller Support project at Java.Net offers some bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
 Enable the JSPWiki plugin via Roller property override
 Follow the instructions in Appendix B for setting up a roller-custom.properties file. You'll need to override the plugins.page property to ensure that the JSPWiki plugin is included in the list. For example, this setting would add the JSPWiki to the end of the list of built-in Roller plugins:
 plugins.page=\
@@ -853,7 +852,7 @@ If you'd like to continue to use Roller's Ekit editor page, which was deprecated
 WARNING: The Ekit editor has been deprecated (due to LGPL licensing) and may be removed from a future release of Roller.
 Downloading and installing the required Ekit applet jar
 Download Ekit version 1.1 from http://www.hexidec.com/ekit.php and place the Ekit ekitappletspell.jar jar in Roller's editor direcotory.
-NOTE: The Roller Support project at Java.Net offers some required jar bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
+NOTE: The Roller Support project at Java.Net offers some bundles that might make this part  of the installation easier. Visit http://roller.dev.java.net for more information.
 Enable the Ekit plugin via Roller runtime configuration definitions file
 If you want users to be able to pick the old Ekit editor page, then you'll need to add it to the Roller runtime configuration definition file in WEB-INF/rollerRuntimeConfigDefs.xml as follows:
 <property-def  name="users.editor.pages"  key="configForm.editorPages">
