@@ -5,7 +5,7 @@ Database scripts for $DBTYPE.
 Follow the installation guide for instructions on setting up your database.
 
 #** Define templates to be generated **#
-#set( $templates = ["createdb", "200-to-210-migration", "210-to-220-migration", "220-to-230-migration"]) 
+#set( $templates = ["createdb", "200-to-210-migration", "210-to-230-migration"]) 
 
 #** Define special macro needed for alter table with not-null restriction **#
 #macro(addColumnNotNull $table $column $type $default)
