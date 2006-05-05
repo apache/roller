@@ -1248,4 +1248,15 @@ Use -Dverbose=1 to get verbose output.
     </sql>  
 </target>
 
+<!-- ********************************************************************* -->
+<!-- Experimental Admin API SDK -->
+<!-- ********************************************************************* -->
+
+<target name="adminapi-sdk">
+    <mkdir dir="dist"/>
+    <jar basedir="./build/compile_web/" destfile="./build/aapp-sdk.jar">
+        <include name="org/apache/roller/presentation/atomadminapi/sdk/*.class"/>            
+    </jar>
+</target>
+
 </project>
