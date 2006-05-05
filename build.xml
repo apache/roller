@@ -637,6 +637,7 @@ ro.buildUser=${user.name}
     
     <!-- takes the full release, removes unshippable jars -->
             
+    
     <!-- first, deal with the webapp release file -->
     <mkdir dir="${ro.build}/apache-release" />
     <mkdir dir="${ro.build}/unshippable/roller/WEB-INF/lib" />
@@ -683,61 +684,64 @@ ro.buildUser=${user.name}
          includes="roller/**"/>
     <gzip zipfile="${ro.build}/apache-roller-${ro.version}.tar.gz"
               src="${ro.build}/apache-roller-${ro.version}.tar" />
-    <delete>
-        <fileset dir="${ro.build}" includes="*.tar"/>
-        <fileset dir="${ro.build}/apache-release" />
-    </delete>
-    
-    <!-- second, deal with the tools release file -->
-    <mkdir dir="${ro.build}/apache-release" />
-    <mkdir dir="${ro.build}/unshippable/roller-src/tools" />
-    <gunzip dest="${ro.build}/apache-release/roller-tools-${ro.version}.tar" 
-             src="${ro.build}/roller-tools-${ro.version}.tar.gz" />
-    <untar src="${ro.build}/apache-release/roller-tools-${ro.version}.tar" 
-          dest="${ro.build}/apache-release" />                 
-    <move todir="${ro.build}/unshippable/roller-src/tools">
-        <fileset dir="${ro.build}/apache-release/roller-src/tools">
-            <include name="hibernate-3.1/**" />
-            <include name="lib/ekit*" />
-            <include name="lib/JSPWiki.jar" />
-            <include name="lib/radeox.jar" />
-            <include name="lib/ekit*" />
-            <include name="buildtime/ejb-1.1.jar" />
-        </fileset>
-    </move>    
-    <tar  tarfile="${ro.build}/apache-roller-tools-${ro.version}.tar"
-          basedir="${ro.build}/apache-release"
-         includes="roller-src/**"/>
-    <gzip zipfile="${ro.build}/apache-roller-tools-${ro.version}.tar.gz"
-              src="${ro.build}/apache-roller-tools-${ro.version}.tar" />
-    <delete>
-        <fileset dir="${ro.build}" includes="*.tar"/>
-        <fileset dir="${ro.build}/apache-release" />
-    </delete>
-    
-    <!-- third, just copy the src release file and add apache prefix -->
-    <copy file="${ro.build}/roller-src-${ro.version}.tar.gz" 
-        tofile="${ro.build}/apache-roller-src-${ro.version}.tar.gz" />
-        
-        
-    <!-- forth, create the unshippable Roller deps tarball -->
     <tar  tarfile="${ro.build}/unshippable-${ro.version}.tar"
           basedir="${ro.build}/unshippable"
          includes="roller/**"/>
     <gzip zipfile="${ro.build}/unshippable-${ro.version}.tar.gz"
-              src="${ro.build}/unshippable-${ro.version}.tar" />
-              
-    <!-- fifth and final, create the unshippable Roller src deps tarball -->
-    <tar  tarfile="${ro.build}/unshippable-tools-${ro.version}.tar"
+              src="${ro.build}/unshippable-${ro.version}.tar" />    
+    <delete>
+        <fileset dir="${ro.build}" includes="*.tar"/>
+        <fileset dir="${ro.build}/unshippable" includes="**" />
+    </delete>  
+    <delete>
+        <fileset dir="${ro.build}" includes="*.tar"/>
+        <fileset dir="${ro.build}/apache-release" />
+    </delete>
+    
+    
+    <!-- second, deal with the source release -->
+    <mkdir dir="${ro.build}/apache-release" />
+    <mkdir dir="${ro.build}/unshippable/" />    
+    <gunzip dest="${ro.build}/apache-release/roller-src-${ro.version}.tar" 
+             src="${ro.build}/roller-src-${ro.version}.tar.gz" />
+    <untar src="${ro.build}/apache-release/roller-src-${ro.version}.tar" 
+          dest="${ro.build}/apache-release" />                
+    <move todir="${ro.build}/unshippable/roller-src">
+        <fileset dir="${ro.build}/apache-release/roller-src">
+            <include name="contrib/lib/JSPWiki.jar" />
+            <include name="contrib/lib/radeox.jar" />
+            <include name="**/hibernate-3.1/**" />
+            <include name="**/lib/ekit*" />
+            <include name="**/lib/ekit*" />
+            <include name="**/buildtime/ejb-1.1.jar" />
+            <include name="**/theme/scripts/demo.html" />
+            <include name="**/theme//scripts/i18n.js" />
+            <include name="**/theme//scripts/xmlp.js" />
+            <include name="**/theme//scripts/classes/**" />
+            <include name="**/weblog/editor-ekit.jsp" />
+            <include name="**/weblog/editor-text-js.jsp" />
+            <include name="**/ekitappletspell.jar" />
+        </fileset>
+    </move>
+    <tar  tarfile="${ro.build}/apache-roller-src-${ro.version}.tar"
+          basedir="${ro.build}/apache-release"
+         includes="roller-src/**"/>
+    <gzip zipfile="${ro.build}/apache-roller-src-${ro.version}.tar.gz"
+              src="${ro.build}/apache-roller-src-${ro.version}.tar" />                        
+    <tar  tarfile="${ro.build}/unshippable-src-${ro.version}.tar"
           basedir="${ro.build}/unshippable"
          includes="roller-src/**"/>
-    <gzip zipfile="${ro.build}/unshippable-tools-${ro.version}.tar.gz"
-              src="${ro.build}/unshippable-tools-${ro.version}.tar" />
-    
+    <gzip zipfile="${ro.build}/unshippable-src-${ro.version}.tar.gz"
+              src="${ro.build}/unshippable-src-${ro.version}.tar" />    
+              
     <delete>
         <fileset dir="${ro.build}" includes="*.tar"/>
         <fileset dir="${ro.build}/unshippable" includes="**" />
     </delete>    
+    <delete>
+        <fileset dir="${ro.build}" includes="*.tar"/>
+        <fileset dir="${ro.build}/apache-release" />
+    </delete>      
     
 </target>
 
@@ -793,6 +797,7 @@ ro.buildUser=${user.name}
             <include name="contrib/**" />
             <include name="web/**" />
             <include name="docs/**" />
+            <include name="tools/**" />
             <include name="ant.properties" />
             <include name="build.bat" />
             <include name="build.sh" />
@@ -802,7 +807,6 @@ ro.buildUser=${user.name}
             <include name="LICENSE.txt" />
             <include name="README.txt" />
             
-            <exclude name="contril/lib/**"/>
             <exclude name="**/codewright*/**"/>
             <exclude name="docs/installguide/old/**"/>
             <exclude name="docs/userguide/old/**"/>
@@ -818,37 +822,10 @@ ro.buildUser=${user.name}
         </fileset>
     </copy>
 
-    <!-- Tar and GZip the sources -->
     <tar tarfile="${ro.build}/roller-src-${ro.version}.tar" basedir="${ro.build}" includes="roller-src/**" />
     <gzip zipfile="${ro.build}/roller-src-${ro.version}.tar.gz"
         src="${ro.build}/roller-src-${ro.version}.tar" />
    
-    <!-- Clear the source release dir, we're making the tools release next --> 
-    <delete dir="${ro.build}/roller-src" />
-
-    <!-- Tar and GZip the tools -->
-    <copy todir="${ro.build}/roller-src/tools">
-        <fileset dir="${basedir}">
-            <include name="LICENSE.txt" />
-            <include name="NOTICE.txt" />
-        </fileset>
-        <fileset dir="${basedir}/tools">
-            <include name="**" />
-            <exclude name="**/*.bak" />
-            <exclude name="**/*~" />
-        </fileset>
-    </copy>
-    <mkdir dir="${ro.build}/roller-src/contrib/lib" />
-    <copy todir="${ro.build}/roller-src/contrib/lib">
-        <fileset dir="${basedir}/contrib/lib">
-            <include name="*.jar" />
-        </fileset>
-    </copy>
-    <tar tarfile="${ro.build}/roller-tools-${ro.version}.tar"
-        basedir="${ro.build}" includes="roller-src/**" />
-    <gzip zipfile="${ro.build}/roller-tools-${ro.version}.tar.gz"
-              src="${ro.build}/roller-tools-${ro.version}.tar" />
-
     <delete>
         <fileset dir="${ro.build}" includes="*.tar"/>
     </delete>
