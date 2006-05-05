@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package org.apache.roller.presentation.webservices.atomprotocol;
+package org.apache.roller.webservices.atomprotocol;
 
 import com.sun.syndication.feed.module.ModuleImpl;
 

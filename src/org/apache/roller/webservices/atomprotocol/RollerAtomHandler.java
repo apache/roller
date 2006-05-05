@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.presentation.webservices.atomprotocol;
+package org.apache.roller.webservices.atomprotocol;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -42,6 +42,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.presentation.RollerContext;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.Utilities;
+import org.apache.roller.util.WSSEUtilities;
 
 import com.sun.syndication.feed.atom.Content;
 import com.sun.syndication.feed.atom.Category;

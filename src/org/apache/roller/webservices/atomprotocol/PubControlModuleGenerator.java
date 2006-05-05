@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package org.apache.roller.presentation.webservices.atomprotocol;
+package org.apache.roller.webservices.atomprotocol;
 
 import java.util.Collections;
 import java.util.HashSet;

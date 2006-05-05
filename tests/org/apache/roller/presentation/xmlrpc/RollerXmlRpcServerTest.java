@@ -12,8 +12,8 @@ import com.mockrunner.servlet.ServletTestModule;
 import org.apache.roller.RollerTestBase;
 import org.apache.roller.presentation.MockRollerContext;
 import org.apache.roller.presentation.RollerRequest;
-import org.apache.roller.presentation.webservices.xmlrpc.RollerXMLRPCServlet;
 import org.apache.roller.util.RegexUtil;
+import org.apache.roller.webservices.xmlrpc.RollerXMLRPCServlet;
  
 import java.util.ArrayList;
 import java.util.Date;
