@@ -37,7 +37,7 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.presentation.RollerRequest;
 import org.apache.roller.presentation.RollerSession;
 import org.apache.roller.presentation.bookmarks.formbeans.BookmarkFormEx;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 
 /**
  * @struts.action path="/editor/bookmarkSave" name="bookmarkFormEx"

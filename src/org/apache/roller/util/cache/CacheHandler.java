@@ -15,13 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * CacheHandler.java
- *
- * Created on November 5, 2005, 7:33 PM
- */
 
-package org.apache.roller.presentation.cache;
+package org.apache.roller.util.cache;
 
 import java.util.Map;
 import org.apache.roller.pojos.BookmarkData;
@@ -42,8 +37,6 @@ import org.apache.roller.pojos.WebsiteData;
  * the set of invalidate() methods which server as notifications of changed
  * objects.  Various caches can determine for themselves how to deal with changes
  * to each type of object.
- *
- * @author Allen Gilliland
  */
 public interface CacheHandler {
     

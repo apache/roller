@@ -49,7 +49,7 @@ import org.apache.roller.presentation.atomadminapi.sdk.MissingElementException;
 import org.apache.roller.presentation.atomadminapi.sdk.UnexpectedRootElementException;
 import org.apache.roller.presentation.atomadminapi.sdk.WeblogEntry;
 import org.apache.roller.presentation.atomadminapi.sdk.WeblogEntrySet;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.Utilities;
 
 /**

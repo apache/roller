@@ -34,7 +34,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.presentation.PlanetRequest;
-import org.apache.roller.presentation.cache.ExpiringCacheEntry;
+import org.apache.roller.util.cache.ExpiringCacheEntry;
 
 
 /**

@@ -15,12 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * LRUCacheImpl.java
- *
- * Created on November 6, 2005, 10:33 AM
- */
-package org.apache.roller.presentation.cache;
+
+package org.apache.roller.util.cache;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,8 +30,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A simple LRU Cache.
- *
- * @author Allen Gilliland
  */
 public class LRUCacheImpl implements Cache {
     

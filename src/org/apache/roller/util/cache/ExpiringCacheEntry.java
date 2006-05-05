@@ -15,13 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * ExpiringCacheEntry.java
- *
- * Created on November 4, 2005, 12:10 PM
- */
 
-package org.apache.roller.presentation.cache;
+package org.apache.roller.util.cache;
 
 import java.io.Serializable;
 
@@ -31,8 +26,6 @@ import java.io.Serializable;
  *
  * We use this class to wrap objects being cached and associate a timestamp
  * and timeout period with them so we can know when they expire.
- *
- * @author Allen Gilliland
  */
 public class ExpiringCacheEntry implements Serializable {
     

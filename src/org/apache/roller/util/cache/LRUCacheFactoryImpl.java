@@ -15,64 +15,44 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * RollerCache.java
- *
- * Created on September 18, 2005, 10:59 AM
- */
 
-package org.apache.roller.presentation.cache;
+package org.apache.roller.util.cache;
 
 import java.util.Map;
-import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
- * Base interface representing a presentation cache in Roller.
- *
- * @author Allen Gilliland
+ * Roller LRU Cache factory.
  */
-public interface Cache {
+public class LRUCacheFactoryImpl implements CacheFactory {
     
-    /**
-     * put an item in the cache.
-     */
-    public void put(String key, Object value);
+    private static Log mLogger = LogFactory.getLog(LRUCacheFactoryImpl.class);
     
     
-    /**
-     * get an item from the cache.
-     */
-    public Object get(String key);
+    // protected so that only the CacheManager can instantiate us
+    protected LRUCacheFactoryImpl() {}
     
     
     /**
-     * remove an item from the cache.
+     * Construct a new instance of a Roller LRUCache.
      */
-    public void remove(String key);
-    
-    
-    /**
-     * remove a set of items from the cache.
-     */
-    public void remove(Set keys);
-    
-    
-    /**
-     * clear the entire cache.
-     */
-    public void clear();
-    
-    
-    /**
-     * get a list of keys used in the cache.
-     */
-    public Set keySet();
-    
-    
-    /**
-     * get cache stats.
-     */
-    public Map stats();
+    public Cache constructCache(Map properties) {
+        
+        int size = 100;
+        
+        try {
+            size = Integer.parseInt((String) properties.get("size"));
+        } catch(Exception e) {
+            // ignored
+        }
+        
+        Cache cache = new LRUCacheImpl(size);
+        
+        mLogger.debug("new cache constructed. size="+size);
+        
+        return cache;
+    }
     
 }

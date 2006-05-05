@@ -37,7 +37,7 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.presentation.RollerRequest;
 import org.apache.roller.presentation.RollerSession;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.presentation.weblog.formbeans.CategoryDeleteForm;
 
 /**

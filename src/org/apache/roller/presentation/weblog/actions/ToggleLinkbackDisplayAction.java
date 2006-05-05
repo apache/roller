@@ -34,7 +34,7 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.presentation.RollerContext;
 import org.apache.roller.presentation.RollerRequest;
 import org.apache.roller.presentation.RollerSession;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 
 /**
  * Toggle display of a linkback.

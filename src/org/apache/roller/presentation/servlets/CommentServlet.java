@@ -57,7 +57,7 @@ import org.apache.roller.presentation.weblog.formbeans.CommentFormEx;
 import org.apache.roller.util.SpamChecker;
 import org.apache.roller.util.MailUtil;
 import org.apache.roller.util.StringUtils;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.presentation.velocity.DefaultCommentAuthenticator;
 import org.apache.roller.util.Utilities;
 

@@ -15,13 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * CacheManager.java
- *
- * Created on September 30, 2005, 4:28 PM
- */
 
-package org.apache.roller.presentation.cache;
+package org.apache.roller.util.cache;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -65,7 +60,7 @@ public class CacheManager {
     private static Log mLogger = LogFactory.getLog(CacheManager.class);
     
     private static final String DEFAULT_FACTORY = 
-            "org.apache.roller.presentation.cache.ExpiringLRUCacheFactoryImpl";
+            "org.apache.roller.util.cache.ExpiringLRUCacheFactoryImpl";
     
     // a reference to the cache factory in use
     private static CacheFactory mCacheFactory = null;
@@ -186,7 +181,7 @@ public class CacheManager {
      * the cache.
      *
      * example:
-     *   factory -> org.apache.roller.presentation.cache.LRUCacheFactoryImpl
+     *   factory -> org.apache.roller.util.cache.LRUCacheFactoryImpl
      *
      * This allows Roller admins the ability to choose a caching strategy to
      * use for the whole system, but override it in certain places where they

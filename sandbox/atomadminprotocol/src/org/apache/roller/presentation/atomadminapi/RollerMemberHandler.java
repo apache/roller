@@ -43,7 +43,7 @@ import org.apache.roller.presentation.atomadminapi.sdk.MemberEntry;
 import org.apache.roller.presentation.atomadminapi.sdk.MemberEntrySet;
 import org.apache.roller.presentation.atomadminapi.sdk.MissingElementException;
 import org.apache.roller.presentation.atomadminapi.sdk.UnexpectedRootElementException;
-import org.apache.roller.presentation.cache.CacheManager;
+import org.apache.roller.util.cache.CacheManager;
 
 /**
  * This class handles requests concerning Roller weblog membership (groups).
