@@ -4,6 +4,7 @@ ROLLER CHANGE LOG
 
 Roller 2.3: improvements and bug fixes, no major new features
 
+Improvement
     * [ROL-872] - Support for both entry summary and content
     * [ROL-1079] - Slight modification on the file upload confirmation message
     * [ROL-1102] - NPE in CommentServlet.doGet(CommentServlet.java:52)
@@ -12,13 +13,6 @@ Roller 2.3: improvements and bug fixes, no major new features
     * [ROL-980] - Change to org.apache.roller packaging
     * [ROL-982] - Add Apache license text to all source files
     * [ROL-1111] - Backend Refactorings
-
-
--------------------------------------------------------------------------------
-
-Roller 2.2: (not a public release) improvements and bug fixes, no major new features
-
-Improvement
     * [ROL-995] - Limit comments to safe HTML subset only
     * [ROL-1009] - Entries page and metaweblog.getRecentPosts() should sort by update time
     * [ROL-1032] - Confirmation message when moderated comment is submitted
@@ -61,11 +55,18 @@ Bug
     * [ROL-1090] - Enabling linkback extraction requires restart
     * [ROL-1091] - Limited authors should be able to preview blog entries
 
+
+-------------------------------------------------------------------------------
+
+Roller 2.2 : we skipped this release
+
+
 -------------------------------------------------------------------------------
 
 Roller 2.1.1 release: emergency bug fix release
 
    * [ROL-1081] - Migration script for 1.3 to 2.0 resets entry pubtime and  updatetime 
+
 
 -------------------------------------------------------------------------------
 
@@ -120,6 +121,7 @@ Bug fixes
     * [ROL-990] - Referrers not filtered against site-wide blacklist
     * [ROL-1007] - Main RSS feed: <lastBuildDate> is empty
     * [ROL-1051] - Attachments don't work when there are spaces in the filename
+
 
 -------------------------------------------------------------------------------
 
@@ -180,6 +182,7 @@ Roller 1.3 - Bug fix release
     * [ROL-613] - Support other system property expansion in file paths in Roller configuration
     * [ROL-775] - Updated ApplicationResources for DE locale
 
+
 ------------------------------------------------------------------------------
 Roller 1.2 - New feature release
 
@@ -201,12 +204,14 @@ Also, changed license to Apache License v2.0
     * [ROL-742] - Saving Website:Settings clears hit count
     * [ROL-743] - #showOpmlLink() macro broken
 
+
 ------------------------------------------------------------------------------
 Roller 1.1.2 - Bug fix release
 
 No new features, just one bug fix.
 
    * [ROL-724] - Deleted and modified entris not removed from Search Index
+
 
 ------------------------------------------------------------------------------
 Roller 1.1.1 - Bug fix release
@@ -215,6 +220,7 @@ No new features, just one bug fix.
 
    * [ROL-716] Search is broken
    
+
 ------------------------------------------------------------------------------
 Roller 1.1 - New feature release
 
@@ -300,6 +306,7 @@ Fixes minor found in Roller 1.0 RC2.
     * [ROL-501] - Allow commenters to opt-in to email notification of comments
     * [ROL-558] - Resources should not be browsable
 
+
 --------------------------------------------------------------------------------
 
 1.0RC2: 2nd Release Candidate for Roller 1.0
@@ -323,6 +330,7 @@ Fixes minor found in Roller 1.0 RC2.
    [ROL-551] - Toggle linkback throws exception
    [ROL-477] - Pluggable authentication mechanism for comments (with JCaptcha option)
    [ROL-507] - Redundant numerical character references in RSS feed
+
 	
 --------------------------------------------------------------------------------
 1.0RC1: 1st Release Candidate for Roller 1.0
@@ -385,10 +393,12 @@ improvements have been made, including:
    ROL-201 FIXED Sample Apache JkMounts for mod-jk 
    ROL-105 FIXED User can delete Referrers 
 
+
 --------------------------------------------------------------------------------
 0.9.8.2: Bug fix release 
 
    Includes a couple of I18N fixes. 
+
 
 --------------------------------------------------------------------------------
 0.9.8.1: Bug fix release
@@ -415,6 +425,7 @@ improvements have been made, including:
    ROL-264 FIXED Ping Weblogs.com should be off by default in weblog editor
    ROL-245 FIXED Mispelling 
    
+
 --------------------------------------------------------------------------------
 0.9.8: Performance improvements and bug fixes
 
@@ -448,6 +459,7 @@ Weblog.com ping and integrated Lucene weblog search.
    ROL-205 FIXED dstest.jsp wont compile 
    ROL-200 FIXED Context XML file for Tomcat 4.1.x 
 
+
 ---------------------------------------------------------------------------------
 0.9.7.3: Bug fix release
 
@@ -457,6 +469,7 @@ Fixes these bugs:
    ROL-193 Trackback URL display should use absolute URL 
    ROL-192 LinkbackExtract should mind absolute URL config 
    
+
 ---------------------------------------------------------------------------------
 0.9.7.2: Bug fix release
 
@@ -475,6 +488,7 @@ For the full details of bug fixes, see Roller's JIRA issue tracking system
 at the URL below:
 
    http://opensource.atlassian.com/projects/roller/
+
 
 ---------------------------------------------------------------------------------
 0.9.7.1: Bug fix release
@@ -504,6 +518,7 @@ at the URL below:
 
    http://opensource.atlassian.com/projects/roller/
    
+
 ---------------------------------------------------------------------------------
 0.9.7: Major new release
 
@@ -576,6 +591,7 @@ tracking system at the URL below:
 
    http://opensource.atlassian.com/projects/roller/
 
+
 -----------------------------------------------------------------------------
 0.9.5: Enhancements, better database support, bug fixes (August 31, 2002)
 
@@ -591,6 +607,7 @@ Matt Raible, Simon Stewart for their work on this release.
     - Bookmark import by file-upload of OPML file (Dave)
     - Multiple bookmark move and delete on edit-bookmark page (Dave)
     - Some bug fixes
+
 
 -----------------------------------------------------------------------------
 0.9.4: Bug fixes (July 6, 2002)
@@ -627,8 +644,10 @@ Matt Raible, Simon Stewart for their work on this release.
 
     - Lots of bug fixes: too numerous to list.
 
+
 -----------------------------------------------------------------------------
 0.9.2: Minor bug fixes in user and newsfeed managers 
+
 
 -----------------------------------------------------------------------------
 0.9.1: Bug fix release April 29, 2002
@@ -648,6 +667,7 @@ Matt Raible, Simon Stewart for their work on this release.
 
 - Introduced org.roller.business.castor.ManagerBase and made general
   improvements in database connection usage.
+
 
 -----------------------------------------------------------------------------
 0.9.0: Initial public release April 6, 2002
