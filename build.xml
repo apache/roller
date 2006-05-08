@@ -641,7 +641,6 @@ ro.buildUser=${user.name}
     <!-- first, deal with the webapp release file -->
     <mkdir dir="${ro.build}/apache-release" />
     <mkdir dir="${ro.build}/unshippable/roller/WEB-INF/lib" />
-    <mkdir dir="${ro.build}/unshippable/roller/theme/scripts/classes" />
     <gunzip dest="${ro.build}/apache-release/roller-${ro.version}.tar" 
              src="${ro.build}/roller-${ro.version}.tar.gz" />
     <untar src="${ro.build}/apache-release/roller-${ro.version}.tar" 
