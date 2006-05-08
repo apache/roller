@@ -220,7 +220,7 @@ public class CommentServlet extends HttpServlet {
                     if (website.getCommentModerationRequired()) {
                         comment.setPending(Boolean.TRUE);   
                         comment.setApproved(Boolean.FALSE);
-                        message = bundle.getString("commentServlet.submittedToModerator");
+                        //message = bundle.getString("commentServlet.submittedToModerator");
                     } else { 
                         comment.setPending(Boolean.FALSE);   
                         comment.setApproved(Boolean.TRUE);
