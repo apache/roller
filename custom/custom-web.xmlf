@@ -1,3 +1,8 @@
+<copy todir="${build.stage_web}" overwrite="true">
+   <fileset dir="${basedir}/custom/web">
+      <include name="**/**" />
+   </fileset>
+</copy>
 
 <!-- Example: copy custom files into the Roller web context
 <copy todir="${build.stage_web}" overwrite="true">
@@ -6,4 +11,3 @@
    </fileset>
 </copy>
 -->
-
