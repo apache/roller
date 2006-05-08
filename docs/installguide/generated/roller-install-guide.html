@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060505;15113200">
+	<META NAME="CHANGED" CONTENT="20060508;14292600">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.79in }
@@ -146,18 +146,6 @@ file in the top level directory of this distribution.</I></FONT></FONT></P>
 	your app server 	19</P>
 	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
 	B: The WEB-INF/roller.properties file	20</B></FONT></P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
-	C: Setting up the optional JSPWiki plugin	27</B></FONT></P>
-	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">Downloading and
-	installing the required JSPWiki jars	27</P>
-	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">Enable the
-	JSPWiki plugin via Roller property override	27</P>
-	<P STYLE="margin-left: 0.2in; margin-bottom: 0in"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Appendix
-	D: Setting up the optional Ekit editor page	28</B></FONT></P>
-	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">Downloading and
-	installing the required Ekit applet jar	28</P>
-	<P STYLE="margin-left: 0.39in; margin-bottom: 0in">Enable the Ekit
-	plugin via Roller runtime configuration definitions file	28</P>
 </DIV>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
@@ -276,7 +264,7 @@ STEP 3: Install required third party jars</H2>
 <P>You also need to download and install some third-party jars, jars
 that we can't include in Roller due to licensing restrictions. These
 are the JDBC driver, JavaMail and Activation jars.</P>
-<H3>STEP 3.1: Download and install Hibernate</H3>
+<H3><A NAME="DDE_LINK4"></A>STEP 3.1: Download and install Hibernate</H3>
 <P>Roller <I>requires</I> the Hibernate persistence library, which
 you must download separately from Roller. 
 </P>
@@ -946,9 +934,11 @@ guide.</P>
 	roller-custom.properties file, search for the string &ldquo;org.roller&rdquo;and
 	replace all occurances of it with &ldquo;org.apache.roller&rdquo;.</B></FONT></FONT></P>
 	<LI><P STYLE="margin-bottom: 0in"><FONT FACE="Thorndale"><FONT SIZE=3 STYLE="font-size: 13pt"><B>WARNING:
-	The jars required for Roller's JSPWiki plugin and Ekit editor have
-	been removed from the Roller distribution. If you'd like to continue
-	to use these plugins, please refer to Appendices C and D.</B></FONT></FONT></P>
+	The files required for Roller's JSPWiki plugin, Ekit editor and
+	Javascript enhanced editor have been removed from the Roller
+	distribution. If you'd like to continue to use these plugins, please
+	visit the Roller Support project on Java.Net
+	(http://roller.dev.java.net).</B></FONT></FONT></P>
 </UL>
 <H3><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
 STEP 4: Upgrade the database 
@@ -1754,95 +1744,7 @@ settings for old #showNewseeds macro (not related to Planet stuff)</FONT></FONT>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>aggregator.enabled=false</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>aggregator.cache.enabled=</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2>aggregator.cache.timeout=14400</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><BR>
+<P STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
-<H2 STYLE="page-break-before: always">Appendix C: Setting up the
-optional JSPWiki plugin</H2>
-<P>If you'd like to use Roller's JSPWiki plugin, you must 1) download
-and install the required JSPWiki jars and 2) enable the JSPWiki
-plugin via a Roller custom configuration file.</P>
-<P><B>WARNING</B>: The JSPWiki editor has been deprecated (due to
-LGPL licensing) and may be removed from a future release of Roller.</P>
-<H3>Downloading and installing the required JSPWiki jars</H3>
-<P>Download JSPWiki version 2.2.33 from <A HREF="http://jspwiki.org/">http://jspwiki.org</A>,
-copy the following jars from JSPWiki's WEB-INF/lib directory to
-Roller's WEB-INF/lib directory:</P>
-<UL>
-	<LI><P>JSPWiki.jar</P>
-	<LI><P>ecs.jar</P>
-	<LI><P>jrcs-diff.jar</P>
-	<LI><P>oscache.jar</P>
-</UL>
-<P><B>NOTE</B>: The Roller Support project at Java.Net offers some
-bundles that might make this part  of the installation easier. Visit
-<A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
-for more information.</P>
-<H3>Enable the JSPWiki plugin via Roller property override</H3>
-<P>Follow the instructions in Appendix B for setting up a
-<FONT FACE="Courier New">roller-custom.properties</FONT> file. You'll
-need to override the <FONT FACE="Courier New">plugins.page</FONT>
-property to ensure that the JSPWiki plugin is included in the list.
-For example, this setting would add the JSPWiki to the end of the
-list of built-in Roller plugins:</P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">plugins.page=\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">org.apache.roller.presentation.velocity.plugins.convertbreaks.ConvertLineBreaksPlugin
-\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin
-\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.search.WikipediaLinkPlugin
-\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.search.GoogleLinkPlugin
-\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.textile.TextilePlugin
-\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.acronyms.AcronymsPlugin
-\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.bookmarks.BookmarkPlugin
-\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.email.ObfuscateEmailPlugin
-\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.smileys.SmileysPlugin
-\</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt">,org.apache.roller.presentation.velocity.plugins.readmore.ReadMorePlugin<B>
-\</B></FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><A NAME="DDE_LINK2"></A><FONT FACE="Courier New"><FONT SIZE=2 STYLE="font-size: 9pt"><B>,org.apache.roller.presentation.velocity.plugins.jspwiki.WikiPlugin</B></FONT></FONT></P>
-<P STYLE="margin-bottom: 0in"><BR>
-</P>
-<P><BR><BR>
-</P>
-<P><BR><BR>
-</P>
-<H2 STYLE="page-break-before: always">Appendix D: Setting up the
-optional Ekit editor page</H2>
-<P>If you'd like to continue to use Roller's Ekit editor page, which
-was deprecated in Roller 2.3, you must 1) download and install the
-Ekit applet jar and 2) add the Ekit page to the list of available
-editors in the Roller runtime configuration file.</P>
-<P><B>WARNING</B>: The Ekit editor has been deprecated (due to LGPL
-licensing) and may be removed from a future release of Roller.</P>
-<H3>Downloading and installing the required Ekit applet jar</H3>
-<P>Download Ekit version 1.1 from <A HREF="http://www.hexidec.com/ekit.phaa">http://www.hexidec.com/ekit.ph</A>p
-and place the Ekit <FONT FACE="Courier New">ekitappletspell.jar</FONT>
-jar in Roller's editor direcotory.</P>
-<P><B>NOTE</B>: The Roller Support project at Java.Net offers some
-bundles that might make this part  of the installation easier. Visit
-<A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
-for more information.</P>
-<H3>Enable the Ekit plugin via Roller runtime configuration
-definitions file</H3>
-<P>If you want users to be able to pick the old Ekit editor page,
-then you'll need to add it to the Roller runtime configuration
-definition file in <FONT FACE="Courier New">WEB-INF/rollerRuntimeConfigDefs.xml</FONT>
-as follows:</P>
-<P STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>&lt;property-def
- name=&quot;users.editor.pages&quot;  key=&quot;configForm.editorPages&quot;&gt;</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in; font-weight: medium">  
-<FONT FACE="Courier New"><FONT SIZE=2>&lt;type&gt;text&lt;/type&gt;</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in; font-weight: medium">  
-<FONT FACE="Courier New"><FONT SIZE=2>&lt;default-value&gt;editor-text.jsp,editor-rte.jsp,
-<B>editor-ekit.jsp</B>&lt;/default-value&gt;</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in; font-weight: medium">   <FONT FACE="Courier New"><FONT SIZE=2>&lt;rows&gt;3&lt;/rows&gt;</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in; font-weight: medium">   <FONT FACE="Courier New"><FONT SIZE=2>&lt;cols&gt;40&lt;/cols&gt;</FONT></FONT></P>
-<P STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>&lt;/property-def&gt;</FONT></FONT></P>
 </BODY>
 </HTML>

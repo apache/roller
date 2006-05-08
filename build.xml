@@ -646,25 +646,6 @@ ro.buildUser=${user.name}
              src="${ro.build}/roller-${ro.version}.tar.gz" />
     <untar src="${ro.build}/apache-release/roller-${ro.version}.tar" 
           dest="${ro.build}/apache-release" />                 
-    <move todir="${ro.build}/unshippable/roller/theme/scripts">
-        <fileset dir="${ro.build}/apache-release/roller/theme/scripts">
-            <include name="demo.html" />
-            <include name="i18n.js" />
-            <include name="xmlp.js" />
-            <include name="classes/**" />
-        </fileset>
-    </move>
-    <move todir="${ro.build}/unshippable/roller/weblog">
-        <fileset dir="${ro.build}/apache-release/roller/weblog">
-            <include name="editor-ekit.jsp" />
-            <include name="editor-text-js.jsp" />
-        </fileset>
-    </move>
-    <move todir="${ro.build}/unshippable/roller/editor" >
-        <fileset dir="${ro.build}/apache-release/roller/editor">  
-            <include name="ekitappletspell.jar" />
-        </fileset>
-    </move>
     <move todir="${ro.build}/unshippable/roller/WEB-INF/lib" >
         <fileset dir="${ro.build}/apache-release/roller/WEB-INF/lib">            
             <include name="hibernate3.jar" />
@@ -674,9 +655,7 @@ ro.buildUser=${user.name}
             <include name="dom4j-1.6.1.jar" />
             <include name="ehcache-1.1.jar" />
             <include name="jdbc2_0-stdext.jar" />
-            <include name="jta.jar" />                    
-            <include name="JSPWiki.jar" />
-            <include name="radeox.jar" />                      
+            <include name="jta.jar" />                                        
         </fileset>
     </move>    
     <tar  tarfile="${ro.build}/apache-roller-${ro.version}.tar"
@@ -684,11 +663,10 @@ ro.buildUser=${user.name}
          includes="roller/**"/>
     <gzip zipfile="${ro.build}/apache-roller-${ro.version}.tar.gz"
               src="${ro.build}/apache-roller-${ro.version}.tar" />
-    <tar  tarfile="${ro.build}/unshippable-${ro.version}.tar"
-          basedir="${ro.build}/unshippable"
-         includes="roller/**"/>
-    <gzip zipfile="${ro.build}/unshippable-${ro.version}.tar.gz"
-              src="${ro.build}/unshippable-${ro.version}.tar" />    
+    <tar  tarfile="${ro.build}/required-jars-roller-webapp-${ro.version}.tar"
+          basedir="${ro.build}/unshippable/roller" />
+    <gzip zipfile="${ro.build}/required-jars-roller-webapp-${ro.version}.tar.gz"
+              src="${ro.build}/required-jars-roller-webapp-${ro.version}.tar" />    
     <delete>
         <fileset dir="${ro.build}" includes="*.tar"/>
         <fileset dir="${ro.build}/unshippable" includes="**" />
@@ -708,19 +686,7 @@ ro.buildUser=${user.name}
           dest="${ro.build}/apache-release" />                
     <move todir="${ro.build}/unshippable/roller-src">
         <fileset dir="${ro.build}/apache-release/roller-src">
-            <include name="contrib/lib/JSPWiki.jar" />
-            <include name="contrib/lib/radeox.jar" />
             <include name="**/hibernate-3.1/**" />
-            <include name="**/lib/ekit*" />
-            <include name="**/lib/ekit*" />
-            <include name="**/buildtime/ejb-1.1.jar" />
-            <include name="**/theme/scripts/demo.html" />
-            <include name="**/theme//scripts/i18n.js" />
-            <include name="**/theme//scripts/xmlp.js" />
-            <include name="**/theme//scripts/classes/**" />
-            <include name="**/weblog/editor-ekit.jsp" />
-            <include name="**/weblog/editor-text-js.jsp" />
-            <include name="**/ekitappletspell.jar" />
         </fileset>
     </move>
     <tar  tarfile="${ro.build}/apache-roller-src-${ro.version}.tar"
@@ -728,11 +694,10 @@ ro.buildUser=${user.name}
          includes="roller-src/**"/>
     <gzip zipfile="${ro.build}/apache-roller-src-${ro.version}.tar.gz"
               src="${ro.build}/apache-roller-src-${ro.version}.tar" />                        
-    <tar  tarfile="${ro.build}/unshippable-src-${ro.version}.tar"
-          basedir="${ro.build}/unshippable"
-         includes="roller-src/**"/>
-    <gzip zipfile="${ro.build}/unshippable-src-${ro.version}.tar.gz"
-              src="${ro.build}/unshippable-src-${ro.version}.tar" />    
+    <tar  tarfile="${ro.build}/required-jars-roller-src-${ro.version}.tar"
+          basedir="${ro.build}/unshippable/roller-src" />
+    <gzip zipfile="${ro.build}/required-jars-roller-src-${ro.version}.tar.gz"
+              src="${ro.build}/required-jars-roller-src-${ro.version}.tar" />    
               
     <delete>
         <fileset dir="${ro.build}" includes="*.tar"/>
