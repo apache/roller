@@ -4,6 +4,15 @@ ROLLER CHANGE LOG
 
 Roller 2.3: improvements and bug fixes, no major new features
 
+Apache policy compliance 
+    * Java package name changed from org.roller to org.apache.roller
+    * Apache license header applied to all files
+    * JSPWiki plugin removed from release
+    * Ekit editor applet removed from release 
+    * Javascript enhanced editor removed from release
+    * Hibernate jars removed from release
+    * Jazzy spell checker removed from release
+
 Improvement
     * [ROL-872] - Support for both entry summary and content
     * [ROL-1079] - Slight modification on the file upload confirmation message
