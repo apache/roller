@@ -379,7 +379,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             throw new XmlRpcException(UPLOAD_DENIED_EXCEPTION,
                     "File upload denied because:" + msgs.toString());
         } catch (RollerException e) {
-            String msg = "ERROR in BlooggerAPIHander.newMediaObject";
+            String msg = "ERROR in MetaWeblogAPIHandler.newMediaObject";
             mLogger.error(msg,e);
             throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
         }
@@ -430,7 +430,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             return results;
             
         } catch (Exception e) {
-            String msg = "ERROR in BlooggerAPIHander.getRecentPosts";
+            String msg = "ERROR in MetaWeblogAPIHandler.getRecentPosts";
             mLogger.error(msg,e);
             throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
         }
