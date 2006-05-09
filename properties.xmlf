@@ -88,10 +88,6 @@ in the "base.path" definition.
     <include name="commons-httpclient*.jar"/>
 </fileset>
 
-<fileset id="commons-httpclient.jar" dir="${ro.tools}/lib">
-    <include name="commons-httpclient*.jar"/>
-</fileset>
-
 <fileset id="struts.jars" dir="${tools.struts}/lib">
     <include name="*.jar"/>
 </fileset>
@@ -182,7 +178,6 @@ in the "base.path" definition.
        </fileset>
     </path>
     <path>
-       <fileset refid="commons-httpclient.jar"/>
        <fileset dir="${build.stage_web}/WEB-INF/lib">
           <include name="*.jar"/>
        </fileset>

@@ -216,7 +216,7 @@ class RollerUserHandler extends Handler {
                 UserEntry entry = (UserEntry)c.getEntries()[i];
                 UserData ud = mgr.getUserByUsername(entry.getName());
                 if (ud == null) {
-                    throw new NotFoundException("ERROR: Uknown user: " + entry.getName());
+                    throw new NotFoundException("ERROR: Unknown user: " + entry.getName());
                 }
                 updateUserData(ud, entry);
                 
@@ -257,7 +257,7 @@ class RollerUserHandler extends Handler {
             UserData ud = mgr.getUserByUsername(getUri().getEntryId());
             
             if (ud == null) {
-                throw new NotFoundException("ERROR: Uknown user: " + getUri().getEntryId());
+                throw new NotFoundException("ERROR: Unknown user: " + getUri().getEntryId());
             }
             // don't allow deletion of the currently authenticated user
             if (ud.getUserName().equals(getUserName())) {

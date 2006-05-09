@@ -261,7 +261,7 @@ class RollerWeblogHandler extends Handler {
                 WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
                 WebsiteData wd = mgr.getWebsiteByHandle(entry.getHandle());
                 if (wd == null) {
-                    throw new NotFoundException("ERROR: Uknown weblog: " + entry.getHandle());
+                    throw new NotFoundException("ERROR: Unknown weblog: " + entry.getHandle());
                 }
                 updateWebsiteData(wd, entry);
                 websiteDatas.add(wd);
@@ -308,7 +308,7 @@ class RollerWeblogHandler extends Handler {
             
             WebsiteData wd = mgr.getWebsiteByHandle(handle);
             if (wd == null) {
-                throw new NotFoundException("ERROR: Uknown weblog handle: " + handle);
+                throw new NotFoundException("ERROR: Unknown weblog handle: " + handle);
             }
             
             WebsiteData[] wds = new WebsiteData[] { wd };

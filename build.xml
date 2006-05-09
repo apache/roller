@@ -309,6 +309,18 @@ ro.buildUser=${user.name}
 
 </target>
 
+<!-- build standalone aapp-sdk.jar, for external consumption -->
+<target name="aapp-sdk" depends="build">
+    <jar destfile="${ro.build}/lib/aapp-sdk.jar">
+      <manifest>
+        <attribute name="Manifest-Version" value="${ro.version}"/>
+      </manifest>
+      <fileset dir="${build.compile_web}">
+        <include name="org/apache/roller/webservices/adminapi/sdk/*"/>
+      </fileset>
+    </jar>
+</target>
+
 <!-- For versions of Resin before 2.1.9 we have to turn the
     HttpServletResponseWrapper into a CauchoResponseWrapper. We have
     to do away with the original or there will be compile errors. -->
