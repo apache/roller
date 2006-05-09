@@ -58,16 +58,9 @@
 **#
 #macro( showCommentDetails $comment $showPermalink )
     $dateFormatter.applyPattern($text.get( "macro.weblog.datepattern" ))
-    #set($email = $utilities.hexEncode($comment.email))
     <p class="comment-details">
     $text.get("macro.weblog.postedby")
-    #if (!$stringUtils.isEmpty($comment.name) && !$stringUtils.isEmpty($email) && !$stringUtils.isEmpty($comment.remoteHost))
-        <a href="mailto:$email" title="$comment.remoteHost">$comment.name</a>
-    #elseif (!$stringUtils.isEmpty($comment.name) && !$stringUtils.isEmpty($email))
-        <a href="mailto:$email">$comment.name</a>
-    #elseif (!$stringUtils.isEmpty($email) && !$stringUtils.isEmpty($comment.remoteHost))
-        <a href="mailto:$email">$comment.remoteHost</a>
-    #elseif (!$stringUtils.isEmpty($comment.name) && !$stringUtils.isEmpty($comment.remoteHost))
+    #if (!$stringUtils.isEmpty($comment.name) && !$stringUtils.isEmpty($comment.remoteHost))
         <b>$comment.name</b> ($comment.remoteHost)
     #elseif (!$stringUtils.isEmpty($comment.name))
         <b>$comment.name</b>
