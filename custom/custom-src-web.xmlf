@@ -1,9 +1,3 @@
-
-<!--  Include experimental Atom Protocol impl. in build. 
-<src path="${basedir}/sandbox/atomadminprotocol/src" />
--->
-
-
 <!-- Exampe: custom classes to include in front-end compilation
  Your classes must be under the package org.roller.presentation.
 <src dir="${basedir}/sandbox/planetroller/src" />
