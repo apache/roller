@@ -162,9 +162,6 @@ public class WebsiteFormEx extends WebsiteForm {
         if (this.getActive() == null) {
             dataHolder.setActive(Boolean.FALSE);
         }
-        if (this.isApplyCommentDefaults() == null) {
-            dataHolder.setApplyCommentDefaults(false);
-        }
         
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         
