@@ -69,7 +69,7 @@ public class ShowEntrySummaryTag extends TagSupport {
                     Map plugins = ppmgr.createAndInitPagePlugins(
                         entry.getWebsite(),
                         rctx.getServletContext(),
-                        rctx.getAbsoluteContextUrl(),
+                        rctx.getAbsoluteContextUrl((HttpServletRequest)pageContext.getRequest()),
                         new VelocityContext());
                     xformed = ppmgr.applyPagePlugins(
                         entry, plugins, entry.getSummary(), true);

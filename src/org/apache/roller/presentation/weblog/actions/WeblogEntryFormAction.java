@@ -648,7 +648,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 Map plugins = ppmgr.createAndInitPagePlugins(
                         entry.getWebsite(),
                         RollerContext.getRollerContext().getServletContext(),
-                        RollerContext.getRollerContext().getAbsoluteContextUrl(),
+                        RollerContext.getRollerContext().getAbsoluteContextUrl(request),
                         new VelocityContext());
                 
                 String content = "";
