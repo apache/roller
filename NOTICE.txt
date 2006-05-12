@@ -43,15 +43,9 @@ THIRD PARTY COMPONENTS
 
 THIRD PARTY LGPL COMPONENTS
 
-   * Roller includes the Hibernate persistence library, LGPL license
+   * Roller depends (but does not include) the Hibernate persistence 
+     library, LGPL license
 
-   * Roller includes the Ekit HTML editor by Howard Kistler, LGPL license
-   
-   * Roller includes the Jazzy spellchecker, LGPL license
-   
-   * Roller includes the JSPWiki Wiki Engine, LGPL license
-
-   * Roller includes the Radeox Wiki Engine, LGPL license
 
 
 
