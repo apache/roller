@@ -229,7 +229,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 Map plugins = ppmgr.createAndInitPagePlugins(
                     getWebsite(),
                     RollerContext.getRollerContext().getServletContext(),
-                    RollerContext.getRollerContext().getAbsoluteContextUrl(),
+                    RollerContext.getRollerContext().getAbsoluteContextUrl(request),
                     new VelocityContext());
                 Iterator it = plugins.values().iterator();
                 while (it.hasNext()) list.add(it.next());

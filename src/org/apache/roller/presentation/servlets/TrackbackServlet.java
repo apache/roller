@@ -179,7 +179,7 @@ public class TrackbackServlet extends HttpServlet {
                         
                         // ...ensure trackbacker actually links to us
                         RollerContext rctx= RollerContext.getRollerContext();
-                        String absurl = rctx.getAbsoluteContextUrl();
+                        String absurl = rctx.getAbsoluteContextUrl(req);
                         LinkbackExtractor linkback = new LinkbackExtractor(
                             comment.getUrl(), absurl + entry.getPermaLink());
                         if (linkback.getExcerpt() == null) {
