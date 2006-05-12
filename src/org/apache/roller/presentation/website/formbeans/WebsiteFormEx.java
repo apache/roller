@@ -38,7 +38,7 @@ public class WebsiteFormEx extends WebsiteForm {
     private String bloggerCategoryId;
     private String defaultCategoryId;
     private String[] defaultPluginsArray;
-    private Boolean applyCommentDefaults = false;
+    private Boolean applyCommentDefaults = Boolean.FALSE;
     
     /**
      * @return Returns the bloggerCategoryId.
@@ -183,7 +183,7 @@ public class WebsiteFormEx extends WebsiteForm {
             javax.servlet.ServletRequest request) {
         doReset(mapping, request);
         defaultPluginsArray = new String[0];
-        applyCommentDefaults = false;
+        applyCommentDefaults = Boolean.FALSE;
     }
     
     public void reset(
@@ -191,7 +191,7 @@ public class WebsiteFormEx extends WebsiteForm {
             javax.servlet.http.HttpServletRequest request) {
         doReset(mapping, request);
         defaultPluginsArray = new String[0];
-        applyCommentDefaults = false;
+        applyCommentDefaults = Boolean.FALSE;
     }
     
 }
