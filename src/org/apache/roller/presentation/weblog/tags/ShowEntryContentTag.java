@@ -71,9 +71,8 @@ public class ShowEntryContentTag extends TagSupport {
                     try {
                         PagePluginManager ppmgr = roller.getPagePluginManager();
                         Map plugins = ppmgr.createAndInitPagePlugins(
-                            entry.getWebsite(),
-                            rctx.getServletContext(),
-                            rctx.getAbsoluteContextUrl(),
+                            entry.getWebsite(), rctx.getServletContext(),
+                            rctx.getAbsoluteContextUrl((HttpServletRequest)pageContext.getRequest()),
                             new VelocityContext());
                         xformed = ppmgr.applyPagePlugins(
                             entry, plugins, entry.getText(), singleEntry);

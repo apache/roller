@@ -85,7 +85,7 @@ public class ShowEntryTextTag extends TagSupport {
                         Map plugins = ppmgr.createAndInitPagePlugins(
                                 entry.getWebsite(),
                                 rctx.getServletContext(),
-                                rctx.getAbsoluteContextUrl(),
+                                rctx.getAbsoluteContextUrl(request),
                                 new VelocityContext());
 
                         xformed = ppmgr.applyPagePlugins(entry, plugins, sourceText, true);
