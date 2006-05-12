@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * RollerMemberHandler.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on January 17, 2006, 12:44 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 package org.apache.roller.webservices.adminapi;
 
@@ -31,7 +26,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
 import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.PermissionsData;
@@ -62,7 +56,7 @@ class RollerMemberHandler extends Handler {
             } else {
                 String[] entryIds = entryId.split("/");
                 if (entryIds == null || entryIds.length == 0) {
-                    throw new BadRequestException("ERROR: Invalid path info: " + req.getPathInfo()); 
+                    throw new BadRequestException("ERROR: Invalid path info: " + req.getPathInfo());
                 }
                 handle = entryIds[0];
                 if (entryIds.length > 1) {
@@ -97,6 +91,10 @@ class RollerMemberHandler extends Handler {
     public RollerMemberHandler(HttpServletRequest request) throws HandlerException {
         super(request);
         memberUri = new MemberURI(request);
+    }
+    
+    protected EntrySet getEntrySet(Document d) throws MissingElementException, UnexpectedRootElementException {
+        return new MemberEntrySet(d, getUrlPrefix());
     }
     
     protected URI getUri() {
@@ -198,96 +196,67 @@ class RollerMemberHandler extends Handler {
     }
     
     private EntrySet postCollection(Reader r) throws HandlerException {
-        try {
-            SAXBuilder builder = new SAXBuilder();
-            Document collectionDoc = builder.build(r);
-            EntrySet c = new MemberEntrySet(collectionDoc, getUrlPrefix());
-            c = createMembers((MemberEntrySet)c);
-            
-            return c;
-        } catch (JDOMException je) {
-            throw new InternalException("ERROR: Could not post collection", je);
-        } catch (IOException ioe) {
-            throw new InternalException("ERROR: Could not post collection", ioe);
-        } catch (MissingElementException mee) {
-            throw new InternalException("ERROR: Could not post collection", mee);
-        } catch (UnexpectedRootElementException uree) {
-            throw new InternalException("ERROR: Could not post collection", uree);            
-        }       
+        EntrySet c = getEntrySet(r);
+        if (c.isEmpty()) {
+            throw new BadRequestException("ERROR: No entries");
+        }
+        c = createMembers((MemberEntrySet)c);
+        
+        return c;
     }
     
     private EntrySet putCollection(Reader r) throws HandlerException {
-        try {
-            SAXBuilder builder = new SAXBuilder();
-            Document collectionDoc = builder.build(r);
-            EntrySet c = new MemberEntrySet(collectionDoc, getUrlPrefix());
-            c = updateMembers((MemberEntrySet)c);
-            
-            return c;
-        } catch (JDOMException je) {
-            throw new InternalException("ERROR: Could not post collection", je);
-        } catch (IOException ioe) {
-            throw new InternalException("ERROR: Could not post collection", ioe);
-        } catch (MissingElementException mee) {
-            throw new InternalException("ERROR: Could not post collection", mee);
-        } catch (UnexpectedRootElementException uree) {
-            throw new InternalException("ERROR: Could not post collection", uree);            
-        }       
+        EntrySet c = getEntrySet(r);
+        if (c.isEmpty()) {
+            throw new BadRequestException("ERROR: No entries");
+        }
+        c = updateMembers((MemberEntrySet)c);
+        
+        return c;
     }
     
     private EntrySet putEntry(Reader r) throws HandlerException {
-        try {
-            SAXBuilder builder = new SAXBuilder();
-            Document collectionDoc = builder.build(r);
-            EntrySet c = new MemberEntrySet(collectionDoc, getUrlPrefix());
-            
-            if (c.getEntries().length > 1) {
-                throw new BadRequestException("ERROR: Cannot put >1 entries per request");
+        EntrySet c = getEntrySet(r);
+        if (c.isEmpty()) {
+            throw new BadRequestException("ERROR: No entries");
+        }
+        if (c.getEntries().length > 1) {
+            throw new BadRequestException("ERROR: Cannot put >1 entries per request");
+        }
+        
+        // only one entry
+        // if there's zero entries, this is a nop
+        MemberEntry entry = (MemberEntry)c.getEntries()[0];
+        
+        MemberURI muri = (MemberURI)getUri();
+        
+        // get handle
+        // if there's no handle in the entry, set it
+        // if the entry and URI handles do not match, exception
+        String handle = muri.getHandle();
+        if (entry.getHandle() == null) {
+            entry.setHandle(handle);
+        } else if (!entry.getHandle().equals(handle)) {
+            throw new BadRequestException("ERROR: URI and entry handle do not match");
+        }
+        
+        // get username
+        // if there's no name in the entry or the URI, exception
+        // if there's no name in the entry, set it
+        // if the names in the entry and URI do not match, exception
+        String username = muri.getUsername();
+        if (entry.getName() == null) {
+            if (username == null) {
+                throw new BadRequestException("ERROR: No user name in URI or entry");
             }
-            if (c.getEntries().length > 0) {
-                // only one entry
-                // if there's zero entries, this is a nop
-                MemberEntry entry = (MemberEntry)c.getEntries()[0];
-                
-                MemberURI muri = (MemberURI)getUri();
-                
-                // get handle
-                // if there's no handle in the entry, set it
-                // if the entry and URI handles do not match, exception
-                String handle = muri.getHandle();
-                if (entry.getHandle() == null) {
-                    entry.setHandle(handle);
-                } else if (!entry.getHandle().equals(handle)) {
-                    throw new BadRequestException("ERROR: URI and entry handle do not match");
-                }
-                
-                // get username
-                // if there's no name in the entry or the URI, exception
-                // if there's no name in the entry, set it
-                // if the names in the entry and URI do not match, exception
-                String username = muri.getUsername();
-                if (entry.getName() == null) {
-                    if (username == null) {
-                        throw new BadRequestException("ERROR: No user name in URI or entry");
-                    }
-                    entry.setName(username);
-                } else if (username != null && !entry.getName().equals(username)) {
-                    throw new BadRequestException("ERROR: URI and entry user name do not match");
-                }
-                
-                updateMembers((MemberEntrySet)c);
-            }
-            
-            return c;
-        } catch (JDOMException je) {
-            throw new InternalException("ERROR: Could not post collection", je);
-        } catch (IOException ioe) {
-            throw new InternalException("ERROR: Could not post collection", ioe);
-        } catch (MissingElementException mee) {
-            throw new InternalException("ERROR: Could not post collection", mee);
-        } catch (UnexpectedRootElementException uree) {
-            throw new InternalException("ERROR: Could not post collection", uree);            
-        }        
+            entry.setName(username);
+        } else if (username != null && !entry.getName().equals(username)) {
+            throw new BadRequestException("ERROR: URI and entry user name do not match");
+        }
+        
+        c = updateMembers((MemberEntrySet)c);
+        
+        return c;
     }
     
     private MemberEntrySet createMembers(MemberEntrySet c) throws HandlerException {
@@ -355,7 +324,7 @@ class RollerMemberHandler extends Handler {
                 permissionsDatas.add(pd);
             }
             getRoller().flush();
-            return toMemberEntrySet((PermissionsData[])permissionsDatas.toArray(new PermissionsData[0]));            
+            return toMemberEntrySet((PermissionsData[])permissionsDatas.toArray(new PermissionsData[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update members", re);
         }
@@ -367,8 +336,8 @@ class RollerMemberHandler extends Handler {
         if (entry.getPermission() != null) {
             pd.setPermissionMask(stringToMask(entry.getPermission()));
         }
-		
-		// TODO: does the permissions data need to be invalidated?
+        
+        // TODO: does the permissions data need to be invalidated?
         
         try {
             UserData ud = getRoller().getUserManager().getUserByUsername(entry.getName());

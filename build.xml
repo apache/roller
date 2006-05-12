@@ -311,13 +311,14 @@ ro.buildUser=${user.name}
 
 <!-- build standalone aapp-sdk.jar, for external consumption -->
 <target name="aapp-sdk" depends="build">
+    <mkdir dir="${ro.build}/lib"/>
     <jar destfile="${ro.build}/lib/aapp-sdk.jar">
-      <manifest>
-        <attribute name="Manifest-Version" value="${ro.version}"/>
-      </manifest>
-      <fileset dir="${build.compile_web}">
-        <include name="org/apache/roller/webservices/adminapi/sdk/*"/>
-      </fileset>
+        <manifest>
+            <attribute name="Manifest-Version" value="${ro.version}"/>
+        </manifest>
+        <fileset dir="${build.compile_web}">
+            <include name="org/apache/roller/webservices/adminapi/sdk/*"/>
+        </fileset>        
     </jar>
 </target>
 
@@ -587,7 +588,7 @@ ro.buildUser=${user.name}
         bottom="Copyright (C) David M Johnson"
         classpathref="javadoc.path"
         destdir="${build.javadoc}"
-        doctitle="Javadocs: Roller Weblogger ${ro.version}"
+        doctitle="Javadocs: Roller Weblogger ${ro.version}"        
         private="false"
         version="false"
         windowtitle="Javadocs: Roller Weblogger ${ro.version}">
@@ -1046,8 +1047,8 @@ ro.buildUser=${user.name}
     <target name="test-aapp" depends="test-aapp-sdk, test-aapp-handler"/>
    
     <target name="test-aapp-sdk" depends="build-tests">
-        <mkdir dir="${build.reports}/presentation/xml"/>
-        <mkdir dir="${build.reports}/presentation/html"/>
+        <mkdir dir="${build.reports}/webservices/adminapi/sdk/xml"/>
+        <mkdir dir="${build.reports}/webservices/adminapi/sdk/html"/>
 
         <junit fork="true" dir="${build.tests}" printsummary="on">
             <syspropertyset>
@@ -1057,23 +1058,23 @@ ro.buildUser=${user.name}
                 <path refid="junit.path"/>
             </classpath>
             <formatter type="xml"/>
-            <batchtest toDir="${build.reports}/presentation/xml">
+            <batchtest toDir="${build.reports}/webservices/adminapi/sdk/xml">
                 <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/apache/roller/presentation/atomadminapi/sdk/*EntryTest.class"/>
+                    <include name="org/apache/roller/webservices/adminapi/sdk/*EntryTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
-        <junitreport todir="${build.reports}/presentation/xml">
-            <fileset dir="${build.reports}/presentation/xml">
+        <junitreport todir="${build.reports}/webservices/adminapi/sdk/xml">
+            <fileset dir="${build.reports}/webservices/adminapi/sdk/xml">
                 <include name="TEST-*.xml"/>
             </fileset>
-            <report format="noframes" toDir="${build.reports}/presentation/html"/>
+            <report format="noframes" toDir="${build.reports}/webservices/adminapi/sdk/html"/>
         </junitreport>
     </target>
     
     <target name="test-aapp-handler" depends="build-tests">
-        <mkdir dir="${build.reports}/presentation/xml"/>
-        <mkdir dir="${build.reports}/presentation/html"/>
+        <mkdir dir="${build.reports}/webservices/adminapi/xml"/>
+        <mkdir dir="${build.reports}/webservices/adminapi/html"/>
 
         <junit fork="true" dir="${build.tests}" printsummary="on">
             <syspropertyset>
@@ -1083,17 +1084,17 @@ ro.buildUser=${user.name}
                 <path refid="junit.path"/>
             </classpath>
             <formatter type="xml"/>
-            <batchtest toDir="${build.reports}/presentation/xml">
+            <batchtest toDir="${build.reports}/webservices/adminapi/xml">
                 <fileset dir="${build.tests}/WEB-INF/classes">
-                    <include name="org/apache/roller/presentation/atomadminapi/*HandlerTest.class"/>
+                    <include name="org/apache/roller/webservices/adminapi/*HandlerTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
-        <junitreport todir="${build.reports}/presentation/xml">
-            <fileset dir="${build.reports}/presentation/xml">
+        <junitreport todir="${build.reports}/webservices/adminapi/xml">
+            <fileset dir="${build.reports}/webservices/adminapi/xml">
                 <include name="TEST-*.xml"/>
             </fileset>
-            <report format="noframes" toDir="${build.reports}/presentation/html"/>
+            <report format="noframes" toDir="${build.reports}/webservices/adminapi/html"/>
         </junitreport>
     </target>
 
