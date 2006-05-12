@@ -38,7 +38,7 @@ public class WebsiteFormEx extends WebsiteForm {
     private String bloggerCategoryId;
     private String defaultCategoryId;
     private String[] defaultPluginsArray;
-    private boolean applyCommentDefaults = false;
+    private Boolean applyCommentDefaults = false;
     
     /**
      * @return Returns the bloggerCategoryId.
@@ -82,11 +82,11 @@ public class WebsiteFormEx extends WebsiteForm {
         defaultPluginsArray = strings;
     }
     
-    public boolean isApplyCommentDefaults() {
+    public Boolean isApplyCommentDefaults() {
         return applyCommentDefaults;
     }
     
-    public void setApplyCommentDefaults(boolean applyCommentDefaults) {
+    public void setApplyCommentDefaults(Boolean applyCommentDefaults) {
         this.applyCommentDefaults = applyCommentDefaults;
     }
     
@@ -161,6 +161,9 @@ public class WebsiteFormEx extends WebsiteForm {
         }
         if (this.getActive() == null) {
             dataHolder.setActive(Boolean.FALSE);
+        }
+        if (this.isApplyCommentDefaults() == null) {
+            dataHolder.setApplyCommentDefaults(false);
         }
         
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
