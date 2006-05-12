@@ -382,6 +382,8 @@ public class RollerAtomHandler implements AtomHandler {
                 WeblogManager mgr = mRoller.getWeblogManager();
                 mgr.removeWeblogEntry(rollerEntry);
                 mRoller.flush();
+                CacheManager.invalidate(rollerEntry.getWebsite());
+                mRoller.getIndexManager().removeEntryIndexOperation(rollerEntry);
                 return;
             }
             throw new Exception("ERROR not authorized to delete entry");
