@@ -177,7 +177,7 @@ public final class WebsiteFormAction extends DispatchAction {
                     umgr.saveWebsite(wd);  
                     
                     // ROL-1050: apply comment defaults to existing entries
-                    if (form.isApplyCommentDefaults()) {
+                    if (form.getApplyCommentDefaults()) {
                         wmgr.applyCommentDefaultsToEntries(wd);
                     }
 
