@@ -15,12 +15,6 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * Entry.java
- *
- * Created on January 17, 2006, 12:44 PM
- */
-
 package org.apache.roller.webservices.adminapi.sdk;
 
 import java.io.IOException;
@@ -35,11 +29,9 @@ import org.jdom.output.XMLOutputter;
 /**
  * This class is the abstract notion of an entry.
  * Weblog resources are represented by sets of entries.
- *
- * @author jtb
  */
 public abstract class Entry {
-    protected static final Namespace NAMESPACE = Namespace.getNamespace("http://purl.org/roller/aapp#");
+    protected static final Namespace NAMESPACE = Namespace.getNamespace("http://purl.org/apache/roller/aapp#");
     
     /** Entry types. */
     public static interface Types {

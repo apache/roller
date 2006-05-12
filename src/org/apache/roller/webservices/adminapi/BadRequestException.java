@@ -28,6 +28,10 @@ public class BadRequestException extends HandlerException {
         super(msg);
     }    
     
+    public BadRequestException(String msg, Throwable t) {
+        super(msg, t);
+    }    
+
     public int getStatus() {
         return HttpServletResponse.SC_BAD_REQUEST;
     }
