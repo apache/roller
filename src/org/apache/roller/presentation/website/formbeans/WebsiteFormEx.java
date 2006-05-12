@@ -82,7 +82,7 @@ public class WebsiteFormEx extends WebsiteForm {
         defaultPluginsArray = strings;
     }
     
-    public Boolean isApplyCommentDefaults() {
+    public Boolean getApplyCommentDefaults() {
         return applyCommentDefaults;
     }
     
@@ -183,6 +183,7 @@ public class WebsiteFormEx extends WebsiteForm {
             javax.servlet.ServletRequest request) {
         doReset(mapping, request);
         defaultPluginsArray = new String[0];
+        applyCommentDefaults = false;
     }
     
     public void reset(
@@ -190,6 +191,7 @@ public class WebsiteFormEx extends WebsiteForm {
             javax.servlet.http.HttpServletRequest request) {
         doReset(mapping, request);
         defaultPluginsArray = new String[0];
+        applyCommentDefaults = false;
     }
     
 }
