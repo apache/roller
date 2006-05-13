@@ -52,6 +52,7 @@ Bug
     * [ROL-1058] - HTML friendly tags: bug w/ links left in comments
     * [ROL-1065] - 404 on uploaded files containing a "+"
     * [ROL-1066] - Cache treats weblog handles as mixed case
+    * [ROL-1070] - CommentAuthenticator internationalization broken in 2.1
     * [ROL-1071] - Error in getDaysPopularWebsites
     * [ROL-1072] - showRecentCommentsList - bottom to top instead top to bottom
     * [ROL-1076] - 2.1 upgrade script errors on MySQL 5.0
