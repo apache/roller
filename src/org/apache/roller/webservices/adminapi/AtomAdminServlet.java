@@ -53,7 +53,7 @@ public class AtomAdminServlet extends HttpServlet {
             EntrySet c = handler.processGet();
             
             res.setStatus(HttpServletResponse.SC_OK);            
-            res.setContentType("application/xml; charset=utf8");
+            res.setContentType("application/xml; charset=utf-8");
             String s = c.toString();
             Writer writer = res.getWriter();
             writer.write(s);            
@@ -77,7 +77,7 @@ public class AtomAdminServlet extends HttpServlet {
             EntrySet c = handler.processPost(new InputStreamReader(req.getInputStream()));
             
             res.setStatus(HttpServletResponse.SC_CREATED);            
-            res.setContentType("application/xml; charset=utf8");
+            res.setContentType("application/xml; charset=utf-8");
             String s = c.toString();
             Writer writer = res.getWriter();
             writer.write(s);            
@@ -101,7 +101,7 @@ public class AtomAdminServlet extends HttpServlet {
             EntrySet c = handler.processPut(new InputStreamReader(req.getInputStream()));
             
             res.setStatus(HttpServletResponse.SC_OK);            
-            res.setContentType("application/xml; charset=utf8");
+            res.setContentType("application/xml; charset=utf-8");
             String s = c.toString();
             Writer writer = res.getWriter();
             writer.write(s);            
@@ -124,7 +124,7 @@ public class AtomAdminServlet extends HttpServlet {
             EntrySet es = handler.processDelete();
             
             res.setStatus(HttpServletResponse.SC_OK);                        
-            res.setContentType("application/xml; charset=utf8");
+            res.setContentType("application/xml; charset=utf-8");
             String s = es.toString();
             Writer writer = res.getWriter();
             writer.write(s);            
