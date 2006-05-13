@@ -432,7 +432,7 @@ public class AappTest extends TestCase {
         
         method.setRequestBody(body);
         
-        String contentType = "application/xml; charset=utf8";
+        String contentType = "application/xml; charset=utf-8";
         method.setRequestHeader("Content-type", contentType);
         
         int status = httpClient.executeMethod(method);
@@ -449,7 +449,7 @@ public class AappTest extends TestCase {
         
         method.setRequestBody(body);
         
-        String contentType = "application/xml; charset=utf8";
+        String contentType = "application/xml; charset=utf-8";
         method.setRequestHeader("Content-type", contentType);
         
         int status = httpClient.executeMethod(method);
@@ -464,7 +464,7 @@ public class AappTest extends TestCase {
         HttpMethod method = new GetMethod(url);
         addAuthHeader(method, user, password);
         
-        String contentType = "application/xml; charset=utf8";
+        String contentType = "application/xml; charset=utf-8";
         method.setRequestHeader("Content-type", contentType);
         
         int status = httpClient.executeMethod(method);
@@ -479,7 +479,7 @@ public class AappTest extends TestCase {
         HttpMethod method = new DeleteMethod(url);
         addAuthHeader(method, user, password);
                 
-        String contentType = "application/xml; charset=utf8";
+        String contentType = "application/xml; charset=utf-8";
         method.setRequestHeader("Content-type", contentType);
         
         int status = httpClient.executeMethod(method);
