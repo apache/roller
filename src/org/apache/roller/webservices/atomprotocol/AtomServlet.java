@@ -90,7 +90,7 @@ public class AtomServlet extends HttpServlet {
                     // return an Atom Service document
                     AtomService service = handler.getIntrospection(pathInfo);
                     Document doc = AtomService.serviceToDocument(service);
-                    res.setContentType("application/xml; charset=utf8");
+                    res.setContentType("application/xml; charset=utf-8");
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
                     outputter.setFormat(Format.getPrettyFormat());
@@ -103,7 +103,7 @@ public class AtomServlet extends HttpServlet {
                     col.setFeedType(FEED_TYPE);
                     WireFeedOutput wireFeedOutput = new WireFeedOutput();
                     Document feedDoc = wireFeedOutput.outputJDom(col);
-                    res.setContentType("application/atom+xml; charset=utf8");
+                    res.setContentType("application/atom+xml; charset=utf-8");
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
                     outputter.setFormat(Format.getPrettyFormat());
@@ -115,7 +115,7 @@ public class AtomServlet extends HttpServlet {
                     Entry entry = handler.getEntry(pathInfo);
                     if (entry != null) {
                         Writer writer = res.getWriter();
-                        res.setContentType("application/atom+xml; charset=utf8");
+                        res.setContentType("application/atom+xml; charset=utf-8");
                         serializeEntry(entry, writer);
                         writer.close();
                     } else {
@@ -126,7 +126,7 @@ public class AtomServlet extends HttpServlet {
                     Entry entry = handler.getMedia(pathInfo);
                     if (entry != null) {
                         Writer writer = res.getWriter();
-                        res.setContentType("application/atom+xml; charset=utf8");
+                        res.setContentType("application/atom+xml; charset=utf-8");
                         serializeEntry(entry, writer);
                         writer.close();
                     } else {
@@ -178,7 +178,7 @@ public class AtomServlet extends HttpServlet {
                     }
                     // write entry back out to response
                     res.setStatus(HttpServletResponse.SC_CREATED);
-                    res.setContentType("application/atom+xml; charset=utf8");
+                    res.setContentType("application/atom+xml; charset=utf-8");
                     Writer writer = res.getWriter();
                     serializeEntry(savedEntry, writer);
                     writer.close(); 
@@ -231,7 +231,7 @@ public class AtomServlet extends HttpServlet {
                     Entry updatedEntry = handler.putEntry(pathInfo, unsavedEntry);
                     
                     // write entry back out to response
-                    res.setContentType("application/atom+xml; charset=utf8");
+                    res.setContentType("application/atom+xml; charset=utf-8");
                     Writer writer = res.getWriter();
                     serializeEntry(updatedEntry, writer);
                     res.setStatus(HttpServletResponse.SC_OK);
@@ -242,7 +242,7 @@ public class AtomServlet extends HttpServlet {
                         pathInfo, req.getContentType(), req.getInputStream());
                                         
                     // write entry back out to response
-                    res.setContentType("application/atom+xml; charset=utf8");
+                    res.setContentType("application/atom+xml; charset=utf-8");
                     Writer writer = res.getWriter();
                     serializeEntry(updatedEntry, writer);
                     writer.close();
