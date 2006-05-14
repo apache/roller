@@ -15,12 +15,6 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * EntrySet.java
- *
- * Created on January 17, 2006, 12:44 PM
- */
-
 package org.apache.roller.webservices.adminapi.sdk;
 
 import java.util.Arrays;
@@ -81,6 +75,11 @@ public abstract class EntrySet extends Entry {
     /** Set the entries of this object. */
     public void setEntries(Entry[] entryArray) {
         entries = Arrays.asList(entryArray);
+    }
+    
+    /** Is this entry set empty? */
+    public boolean isEmpty() {
+        return entries == null || entries.size() == 0;
     }
     
     /** This object as a JDOM Document */
