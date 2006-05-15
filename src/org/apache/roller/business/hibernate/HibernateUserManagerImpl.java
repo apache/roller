@@ -87,6 +87,8 @@ public class HibernateUserManagerImpl implements UserManager {
      * Update existing website.
      */
     public void saveWebsite(WebsiteData website) throws RollerException {
+        
+        website.setLastModified(new java.util.Date());
         strategy.store(website);
     }    
     
@@ -213,8 +215,11 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * @see org.apache.roller.model.UserManager#storePage(org.apache.roller.pojos.WeblogTemplate)
      */
-    public void savePage(WeblogTemplate data) throws RollerException {
-        this.strategy.store(data);
+    public void savePage(WeblogTemplate page) throws RollerException {
+        this.strategy.store(page);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
     }
     
     

@@ -91,6 +91,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throw new RollerException("Duplicate category name");
         }
         
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(cat.getWebsite());
+        
         this.strategy.store(cat);
     }
     
@@ -116,6 +119,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             cat.getWebsite().setDefaultCategory(rootCat);
             this.strategy.store(cat.getWebsite());
         }
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(cat.getWebsite());
     }
     
     
@@ -168,11 +174,17 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     public void saveComment(CommentData comment) throws RollerException {
         this.strategy.store(comment);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(comment.getWeblogEntry().getWebsite());
     }
     
     
     public void removeComment(CommentData comment) throws RollerException {
         this.strategy.remove(comment);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(comment.getWeblogEntry().getWebsite());
     }
     
     
@@ -184,6 +196,11 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
         
         this.strategy.store(entry);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        if(entry.isPublished()) {
+            RollerFactory.getRoller().getUserManager().saveWebsite(entry.getWebsite());
+        }
         
         if(entry.isPublished()) {
             // Queue applicable pings for this update.
@@ -225,6 +242,11 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         // remove entry
         this.strategy.remove(entry);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        if(entry.isPublished()) {
+            RollerFactory.getRoller().getUserManager().saveWebsite(entry.getWebsite());
+        }
         
         // remove entry from cache mapping
         this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());

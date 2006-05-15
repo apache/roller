@@ -20,7 +20,6 @@
  */
 package org.apache.roller.business.hibernate;
 
-import java.io.IOException;
 import java.io.StringReader;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -39,9 +38,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.apache.roller.model.BookmarkManager;
+import org.apache.roller.model.RollerFactory;
 import org.apache.roller.util.Utilities;
 
 
@@ -70,6 +69,9 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     public void saveBookmark(BookmarkData bookmark) throws RollerException {
         this.strategy.store(bookmark);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(bookmark.getWebsite());
     }
     
     
@@ -84,6 +86,9 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     public void removeBookmark(BookmarkData bookmark) throws RollerException {
         this.strategy.remove(bookmark);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(bookmark.getWebsite());
     }
     
     //------------------------------------------------------------ Folder CRUD
@@ -96,12 +101,18 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         }
         
         this.strategy.store(folder);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
     }
     
     
     public void removeFolder(FolderData folder) throws RollerException {
         
         this.strategy.remove(folder);
+        
+        // update weblog last modified date.  date updated by saveWebsite()
+        RollerFactory.getRoller().getUserManager().saveWebsite(folder.getWebsite());
     }
     
     
