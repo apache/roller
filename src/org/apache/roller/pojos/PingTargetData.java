@@ -18,15 +18,9 @@
 
 package org.apache.roller.pojos;
 
-import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.AutoPingManager;
-import org.apache.roller.model.PingQueueManager;
-
 import java.io.Serializable;
-import java.util.List;
 import java.sql.Timestamp;
+
 
 /**
  * Ping target.   Each instance represents a possible target of a weblog update ping that we send.  Ping targets are
@@ -39,28 +33,29 @@ import java.sql.Timestamp;
  * @hibernate.class lazy="false" table="pingtarget"
  * @hibernate.cache usage="read-write"
  */
-public class PingTargetData extends PersistentObject implements Serializable
-{
+public class PingTargetData extends PersistentObject implements Serializable {
+    
+    public static final long serialVersionUID = -6354583200913127874L;
+    
+    public static final int CONDITION_OK = 0;           // last use (after possible retrials) was successful
+    public static final int CONDITION_FAILING = 1;      // last use failed after retrials
+    public static final int CONDITION_DISABLED = 2;     // disabled by failure policy after failures - editing resets
+    
     private String id = null;
     private String name = null;
     private String pingUrl = null;
     private WebsiteData website = null;
     private int conditionCode = -1;
     private Timestamp lastSuccess = null;
-
-    public static final int CONDITION_OK = 0;           // last use (after possible retrials) was successful
-    public static final int CONDITION_FAILING = 1;      // last use failed after retrials
-    public static final int CONDITION_DISABLED = 2;     // disabled by failure policy after failures - editing resets
-
-    public static final long serialVersionUID = -6354583200913127874L;
-
+    
+    
     /**
      * Default empty constructor.
      */
-    public PingTargetData()
-    {
+    public PingTargetData() {
     }
-
+    
+    
     /**
      * Constructor.
      *
@@ -69,8 +64,7 @@ public class PingTargetData extends PersistentObject implements Serializable
      * @param pingUrl the URL to which to send the ping
      * @param website the website (on this server) for which this is a custom ping target (may be null)
      */
-    public PingTargetData(String id, String name, String pingUrl, WebsiteData website)
-    {
+    public PingTargetData(String id, String name, String pingUrl, WebsiteData website) {
         this.id = id;
         this.name = name;
         this.pingUrl = pingUrl;
@@ -78,12 +72,12 @@ public class PingTargetData extends PersistentObject implements Serializable
         this.conditionCode = CONDITION_OK;
         this.lastSuccess = null;
     }
-
+    
+    
     /**
      * Setter needed by RollerImpl.storePersistentObject()
      */
-    public void setData(PersistentObject vo)
-    {
+    public void setData(PersistentObject vo) {
         PingTargetData other = (PingTargetData) vo;
         
         id = other.getId();
@@ -93,8 +87,8 @@ public class PingTargetData extends PersistentObject implements Serializable
         conditionCode = other.getConditionCode();
         lastSuccess = other.getLastSuccess();
     }
-
-
+    
+    
     /**
      * Get the unique id of this ping target.
      *
@@ -103,22 +97,22 @@ public class PingTargetData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
-    public java.lang.String getId()
-    {
+    public java.lang.String getId() {
         return this.id;
     }
-
+    
+    
     /**
      * Set the unique id of this ping target
      *
      * @param id
      * @ejb:persistent-field
      */
-    public void setId(java.lang.String id)
-    {
+    public void setId(java.lang.String id) {
         this.id = id;
     }
-
+    
+    
     /**
      * get the name of this ping target.  This is a name assigned by the administrator or a user (for custom) targets.
      * It is deescriptive and is not necessarily unique.
@@ -127,22 +121,22 @@ public class PingTargetData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.property column="name" non-null="true"
      */
-    public java.lang.String getName()
-    {
+    public java.lang.String getName() {
         return this.name;
     }
-
+    
+    
     /**
      * Set the name of this ping target.
      *
      * @param name the name of this ping target
      * @ejb:persistent-field
      */
-    public void setName(java.lang.String name)
-    {
+    public void setName(java.lang.String name) {
         this.name = name;
     }
-
+    
+    
     /**
      * Get the URL to ping.
      *
@@ -150,22 +144,22 @@ public class PingTargetData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.property column="pingurl" non-null="true"
      */
-    public String getPingUrl()
-    {
+    public String getPingUrl() {
         return pingUrl;
     }
-
+    
+    
     /**
      * Set the URL to ping.
      *
      * @param pingUrl
      * @ejb:persistent-field
      */
-    public void setPingUrl(String pingUrl)
-    {
+    public void setPingUrl(String pingUrl) {
         this.pingUrl = pingUrl;
     }
-
+    
+    
     /**
      * Get the website (on this server) for which this ping target is a custom target.  This may be null, indicating
      * that it is a common ping target, not a custom one.
@@ -175,11 +169,11 @@ public class PingTargetData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
-    public WebsiteData getWebsite()
-    {
+    public WebsiteData getWebsite() {
         return website;
     }
-
+    
+    
     /**
      * Set the website (on this server) for which this ping target is a custom target.
      *
@@ -187,11 +181,11 @@ public class PingTargetData extends PersistentObject implements Serializable
      *                custom target
      * @ejb:persistent-field
      */
-    public void setWebsite(WebsiteData website)
-    {
+    public void setWebsite(WebsiteData website) {
         this.website = website;
     }
-
+    
+    
     /**
      * Get the condition code value.  This code, in combination with the last success timestamp, provides a status
      * indicator on the ping target based on its  usage by the ping queue processor. It can be used to implement a
@@ -202,22 +196,22 @@ public class PingTargetData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.property column="conditioncode" not-null="true"
      */
-    public int getConditionCode()
-    {
+    public int getConditionCode() {
         return conditionCode;
     }
-
+    
+    
     /**
      * Set the condition code value.
      *
      * @param conditionCode the condition code value to set
      * @ejb:persistent-field
      */
-    public void setConditionCode(int conditionCode)
-    {
+    public void setConditionCode(int conditionCode) {
         this.conditionCode = conditionCode;
     }
-
+    
+    
     /**
      * Get the timestamp of the last successful ping (UTC/GMT).
      *
@@ -225,66 +219,65 @@ public class PingTargetData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.property column="lastsuccess" not-null="false"
      */
-    public Timestamp getLastSuccess()
-    {
+    public Timestamp getLastSuccess() {
         return lastSuccess;
     }
-
+    
+    
     /**
      * Set the timestamp of the last successful ping.
      *
      * @param lastSuccess the timestamp of the last successful ping.
      * @ejb:persistent-field
      */
-    public void setLastSuccess(Timestamp lastSuccess)
-    {
+    public void setLastSuccess(Timestamp lastSuccess) {
         this.lastSuccess = lastSuccess;
     }
-
+    
+    
     /**
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode()
-    {
+    public int hashCode() {
         return id.hashCode();
     }
-
+    
+    
     /**
      * @see java.lang.Object#equals(Object o)
      */
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PingTargetData)) return false;
-
+        
         final PingTargetData pingTargetData = (PingTargetData) o;
-
+        
         if (conditionCode != pingTargetData.getConditionCode()) return false;
         if (id != null ? !id.equals(pingTargetData.getId()) : pingTargetData.getId() != null) return false;
         if (lastSuccess != null ? !lastSuccess.equals(pingTargetData.getLastSuccess()) : pingTargetData.getLastSuccess() != null) return false;
         if (name != null ? !name.equals(pingTargetData.getName()) : pingTargetData.getName() != null) return false;
         if (pingUrl != null ? !pingUrl.equals(pingTargetData.getPingUrl()) : pingTargetData.getPingUrl() != null) return false;
         if (website != null ? !website.equals(pingTargetData.getWebsite()) : pingTargetData.getWebsite() != null) return false;
-
+        
         return true;
     }
-
-
+    
+    
     /**
      * Generate a string form of the object appropriate for logging or debugging.
      *
      * @return a string form of the object appropriate for logging or debugging.
      * @see java.lang.Object#toString()
      */
-    public String toString()
-    {
+    public String toString() {
         return "PingTargetData{" +
-            "id='" + id + "'" +
-            ", name='" + name + "'" +
-            ", pingUrl='" + pingUrl + "'" +
-            ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") +
-            ", conditionCode=" + conditionCode +
-            ", lastSuccess=" + lastSuccess +
-            "}";
+                "id='" + id + "'" +
+                ", name='" + name + "'" +
+                ", pingUrl='" + pingUrl + "'" +
+                ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") +
+                ", conditionCode=" + conditionCode +
+                ", lastSuccess=" + lastSuccess +
+                "}";
     }
+    
 }
