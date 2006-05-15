@@ -26,9 +26,12 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.business.runnable.Job;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.FolderData;
@@ -57,16 +60,13 @@ import org.apache.roller.pojos.WebsiteData;
  */
 public class CacheManager {
     
-    private static Log mLogger = LogFactory.getLog(CacheManager.class);
+    private static Log log = LogFactory.getLog(CacheManager.class);
     
     private static final String DEFAULT_FACTORY = 
             "org.apache.roller.util.cache.ExpiringLRUCacheFactoryImpl";
     
     // a reference to the cache factory in use
-    private static CacheFactory mCacheFactory = null;
-    
-    // maintain a cache of the last expired time for each weblog
-    private static Cache lastExpiredCache = null;
+    private static CacheFactory cacheFactory = null;
     
     // a list of all cache handlers who have obtained a cache
     private static Set cacheHandlers = new HashSet();
@@ -81,38 +81,26 @@ public class CacheManager {
         // use reflection to instantiate our factory class
         try {
             Class factoryClass = Class.forName(classname);
-            mCacheFactory = (CacheFactory) factoryClass.newInstance();
+            cacheFactory = (CacheFactory) factoryClass.newInstance();
         } catch(ClassCastException cce) {
-            mLogger.error("It appears that your factory does not implement "+
+            log.error("It appears that your factory does not implement "+
                     "the CacheFactory interface",cce);
         } catch(Exception e) {
-            mLogger.error("Unable to instantiate cache factory ["+classname+"]"+
+            log.error("Unable to instantiate cache factory ["+classname+"]"+
                     " falling back on default", e);
         }
         
-        if(mCacheFactory == null) try {
+        if(cacheFactory == null) try {
             // hmm ... failed to load the specified cache factory
             // lets try our default
             Class factoryClass = Class.forName(DEFAULT_FACTORY);
-            mCacheFactory = (CacheFactory) factoryClass.newInstance();
+            cacheFactory = (CacheFactory) factoryClass.newInstance();
         } catch(Exception e) {
-            mLogger.fatal("Failed to instantiate a cache factory", e);
+            log.fatal("Failed to instantiate a cache factory", e);
         }
         
-        mLogger.info("Cache Manager Initialized.");
-        mLogger.info("Default cache factory = "+mCacheFactory.getClass().getName());
-        
-        
-        // setup our cache for expiration dates
-        // TODO: this really should not be something that is cached here
-        //       a better approach would be to add a weblog.lastChanged field
-        //       and track this along with the WebsiteData object
-        String lastExpCacheFactory = RollerConfig.getProperty("cache.lastExpired.factory");
-        Map lastExpProps = new HashMap();
-        if(lastExpCacheFactory != null) {
-            lastExpProps.put("factory", lastExpCacheFactory);
-        }
-        lastExpiredCache = CacheManager.constructCache(null, lastExpProps);
+        log.info("Cache Manager Initialized.");
+        log.info("Cache Factory = "+cacheFactory.getClass().getName());
         
         
         // add custom handlers
@@ -129,10 +117,10 @@ public class CacheManager {
                     
                     cacheHandlers.add(customHandler);
                 } catch(ClassCastException cce) {
-                    mLogger.error("It appears that your handler does not implement "+
+                    log.error("It appears that your handler does not implement "+
                             "the CacheHandler interface",cce);
                 } catch(Exception e) {
-                    mLogger.error("Unable to instantiate cache handler ["+cHandlers[i]+"]", e);
+                    log.error("Unable to instantiate cache handler ["+cHandlers[i]+"]", e);
                 }
             }
         }
@@ -190,7 +178,7 @@ public class CacheManager {
      */
     public static Cache constructCache(CacheHandler handler, Map properties) {
         
-        mLogger.debug("Constructing new cache with props "+properties);
+        log.debug("Constructing new cache with props "+properties);
         
         Cache cache = null;
         
@@ -206,17 +194,17 @@ public class CacheManager {
                 // now ask for a new cache
                 cache = factory.constructCache(properties);
             } catch(ClassCastException cce) {
-                mLogger.error("It appears that your factory ["+classname+
+                log.error("It appears that your factory ["+classname+
                         "] does not implement the CacheFactory interface",cce);
             } catch(Exception e) {
-                mLogger.error("Unable to instantiate cache factory ["+classname+
+                log.error("Unable to instantiate cache factory ["+classname+
                         "] falling back on default", e);
             }
         }
         
         if(cache == null) {
             // ask our default cache factory for a new cache instance
-            cache = mCacheFactory.constructCache(properties);
+            cache = cacheFactory.constructCache(properties);
         }
         
         // register the handler for this new cache
@@ -241,7 +229,7 @@ public class CacheManager {
      */
     public static void registerHandler(CacheHandler handler) {
         
-        mLogger.debug("Registering handler "+handler);
+        log.debug("Registering handler "+handler);
         
         if(handler != null) {
             cacheHandlers.add(handler);
@@ -251,9 +239,7 @@ public class CacheManager {
     
     public static void invalidate(WeblogEntryData entry) {
         
-        mLogger.debug("invalidating entry = "+entry.getAnchor());
-        
-        setLastExpiredDate(entry.getWebsite().getHandle());
+        log.debug("invalidating entry = "+entry.getAnchor());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -264,9 +250,7 @@ public class CacheManager {
     
     public static void invalidate(WebsiteData website) {
         
-        mLogger.debug("invalidating website = "+website.getHandle());
-        
-        setLastExpiredDate(website.getHandle());
+        log.debug("invalidating website = "+website.getHandle());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -277,9 +261,7 @@ public class CacheManager {
     
     public static void invalidate(BookmarkData bookmark) {
         
-        mLogger.debug("invalidating bookmark = "+bookmark.getId());
-        
-        setLastExpiredDate(bookmark.getWebsite().getHandle());
+        log.debug("invalidating bookmark = "+bookmark.getId());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -290,9 +272,7 @@ public class CacheManager {
     
     public static void invalidate(FolderData folder) {
         
-        mLogger.debug("invalidating folder = "+folder.getId());
-        
-        setLastExpiredDate(folder.getWebsite().getHandle());
+        log.debug("invalidating folder = "+folder.getId());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -303,9 +283,7 @@ public class CacheManager {
     
     public static void invalidate(CommentData comment) {
         
-        mLogger.debug("invalidating comment = "+comment.getId());
-        
-        setLastExpiredDate(comment.getWeblogEntry().getWebsite().getHandle());
+        log.debug("invalidating comment = "+comment.getId());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -316,7 +294,7 @@ public class CacheManager {
     
     public static void invalidate(RefererData referer) {
         
-        mLogger.debug("invalidating referer = "+referer.getId());
+        log.debug("invalidating referer = "+referer.getId());
         
         // NOTE: Invalidating an entire website for each referer is not
         //       good for our caching.  This may need reevaluation later.
@@ -331,7 +309,7 @@ public class CacheManager {
     
     public static void invalidate(UserData user) {
         
-        mLogger.debug("invalidating user = "+user.getUserName());
+        log.debug("invalidating user = "+user.getUserName());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -342,9 +320,7 @@ public class CacheManager {
     
     public static void invalidate(WeblogCategoryData category) {
         
-        mLogger.debug("invalidating category = "+category.getId());
-        
-        setLastExpiredDate(category.getWebsite().getHandle());
+        log.debug("invalidating category = "+category.getId());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -355,9 +331,7 @@ public class CacheManager {
     
     public static void invalidate(WeblogTemplate template) {
         
-        mLogger.debug("invalidating template = "+template.getId());
-        
-        setLastExpiredDate(template.getWebsite().getHandle());
+        log.debug("invalidating template = "+template.getId());
         
         Iterator handlers = cacheHandlers.iterator();
         while(handlers.hasNext()) {
@@ -370,9 +344,6 @@ public class CacheManager {
      * Flush the entire cache system.
      */
     public static void clear() {
-        
-        // update all expired dates
-        lastExpiredCache.clear();
         
         // loop through all handlers and trigger a clear
         CacheHandler handler = null;
@@ -390,9 +361,6 @@ public class CacheManager {
      */
     public static void clear(String handlerClass) {
         
-        // update all expired dates
-        lastExpiredCache.clear();
-        
         // loop through all handlers to find the one we want
         CacheHandler handler = null;
         Iterator handlers = cacheHandlers.iterator();
@@ -406,16 +374,23 @@ public class CacheManager {
     }
     
     
-    public static void setLastExpiredDate(String weblogHandle) {
-        lastExpiredCache.put("lastExpired:"+weblogHandle, new Date());
-    }
-    
-    
     /**
      * Get the date of the last time the specified weblog was invalidated.
+     *
+     * There is some potential for a performance hit to do this lookup, but
+     * we assume that our WebsiteData objects are cached up the @$$ ;)
      */
     public static Date getLastExpiredDate(String weblogHandle) {
-        return (Date) lastExpiredCache.get("lastExpired:"+weblogHandle);
+        
+        try {
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            WebsiteData weblog = userMgr.getWebsiteByHandle(weblogHandle);
+            return weblog.getLastModified();
+        } catch (RollerException ex) {
+            log.error("Error setting last modified date", ex);
+        }
+        
+        return null;
     }
     
     
