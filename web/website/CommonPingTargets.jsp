@@ -29,8 +29,8 @@
     <%-- Headings --%>
     <tr class="rollertable">
         <th class="rollertable" width="20%%"><fmt:message key="pingTarget.name" /></th>
-        <th class="rollertable" width="65%"><fmt:message key="pingTarget.pingUrl" /></th>
-        <th class="rollertable" width="5%"><fmt:message key="pingTarget.autoEnabled" /></th>
+        <th class="rollertable" width="55%"><fmt:message key="pingTarget.pingUrl" /></th>
+        <th class="rollertable" width="15%" colspan="2"><fmt:message key="pingTarget.autoEnabled" /></th>
         <th class="rollertable" width="5%"><fmt:message key="pingTarget.edit" /></th>
         <th class="rollertable" width="5%"><fmt:message key="pingTarget.remove" /></th>
     </tr>
@@ -45,6 +45,18 @@
 
             <td class="rollertable">
                 <str:truncateNicely lower="70" upper="75" ><c:out value="${pingTarget.pingUrl}" /></str:truncateNicely>
+            </td>
+            
+            <!-- TODO: Use icons here -->
+            <td class="rollertable" align="center" >
+            <c:choose>
+              <c:when test="${pingTarget.autoEnabled}">
+              <span style="{color: #00aa00; font-weight: bold;}"><fmt:message key="pingTarget.enabled"/></span>&nbsp;
+              </c:when>
+              <c:otherwise >
+              <span style="{color: #aaaaaa; font-weight: bold;}"><fmt:message key="pingTarget.disabled"/></span>&nbsp;
+              </c:otherwise>
+            </c:choose>
             </td>
             
             <!-- TODO: Use icons here -->
