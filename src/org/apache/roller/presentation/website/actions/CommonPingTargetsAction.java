@@ -19,6 +19,9 @@
 package org.apache.roller.presentation.website.actions;
 
 import java.util.List;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +34,9 @@ import org.apache.roller.presentation.RollerRequest;
 import org.apache.roller.presentation.RollerSession;
 import org.apache.roller.presentation.forms.PingTargetForm;
 import org.apache.roller.presentation.weblog.actions.BasePingTargetsAction;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 
 /**
  * Administer common ping targets.
@@ -64,6 +70,60 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
     }
     
     /*
+     * Set a ping target auto enabled to true.
+     */
+    public ActionForward enableSelected(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest req, HttpServletResponse res)
+        throws Exception
+    {
+        RollerRequest rreq = RollerRequest.getRollerRequest(req);
+        PingTargetData pingTarget = select(rreq);
+        try
+        {
+            if (!hasRequiredRights(rreq, rreq.getWebsite()))
+            {
+                return mapping.findForward("access-denied");
+            }
+            pingTarget.setAutoEnabled(true);
+            RollerFactory.getRoller().flush();
+
+            return view(mapping, form, req, res);
+        }
+        catch (Exception e)
+        {
+            mLogger.error("ERROR in action", e);
+            throw new ServletException(e);
+        }
+    }
+
+    /*
+     * Set a pint target auto enabled to false.
+     */
+    public ActionForward disableSelected(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest req, HttpServletResponse res)
+        throws Exception
+    {
+        RollerRequest rreq = RollerRequest.getRollerRequest(req);
+        PingTargetData pingTarget = select(rreq);
+        try
+        {
+            if (!hasRequiredRights(rreq, rreq.getWebsite()))
+            {
+                return mapping.findForward("access-denied");
+            }
+            pingTarget.setAutoEnabled(false);
+            RollerFactory.getRoller().flush();
+        
+            return view(mapping, form, req, res);
+        }
+        catch (Exception e)
+        {
+            mLogger.error("ERROR in action", e);
+            throw new ServletException(e);
+        }
+    }
+    
+    /*
      * Get the ping targets for the view.  Here we return the common ping targets for the
      * entire site.
      */
@@ -80,7 +140,7 @@ public class CommonPingTargetsAction extends BasePingTargetsAction
         throws RollerException
     {
         return new PingTargetData(null, pingTargetForm.getName(), 
-                pingTargetForm.getPingUrl(), null);
+                pingTargetForm.getPingUrl(), null, pingTargetForm.isAutoEnabled());
     }
 
 

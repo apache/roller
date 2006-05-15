@@ -327,7 +327,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
      * @return the ping target specified by the id in the request
      * @throws RollerException
      */
-    private PingTargetData select(RollerRequest rreq) throws RollerException
+    protected PingTargetData select(RollerRequest rreq) throws RollerException
     {
         String pingTargetId = rreq.getRequest().getParameter(RollerRequest.PINGTARGETID_KEY);
         PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();

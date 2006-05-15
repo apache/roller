@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
@@ -330,7 +329,21 @@ public class HibernateUserManagerImpl implements UserManager {
                 }
             }
         }
-
+        
+        // add any auto enabled ping targets
+        PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
+        AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
+        
+        Iterator pingTargets = pingTargetMgr.getCommonPingTargets().iterator();
+        PingTargetData pingTarget = null;
+        while(pingTargets.hasNext()) {
+            pingTarget = (PingTargetData) pingTargets.next();
+            
+            if(pingTarget.isAutoEnabled()) {
+                AutoPingData autoPing = new AutoPingData(null, pingTarget, newWeblog);
+                autoPingMgr.saveAutoPing(autoPing);
+            }
+        }
     }
     
     

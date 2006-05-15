@@ -47,6 +47,7 @@ public class PingTargetData extends PersistentObject implements Serializable {
     private WebsiteData website = null;
     private int conditionCode = -1;
     private Timestamp lastSuccess = null;
+    private boolean autoEnabled = false;
     
     
     /**
@@ -64,13 +65,14 @@ public class PingTargetData extends PersistentObject implements Serializable {
      * @param pingUrl the URL to which to send the ping
      * @param website the website (on this server) for which this is a custom ping target (may be null)
      */
-    public PingTargetData(String id, String name, String pingUrl, WebsiteData website) {
+    public PingTargetData(String id, String name, String pingUrl, WebsiteData website, boolean autoEnable) {
         this.id = id;
         this.name = name;
         this.pingUrl = pingUrl;
         this.website = website;
         this.conditionCode = CONDITION_OK;
         this.lastSuccess = null;
+        this.autoEnabled = autoEnable;
     }
     
     
@@ -86,6 +88,7 @@ public class PingTargetData extends PersistentObject implements Serializable {
         website = other.getWebsite();
         conditionCode = other.getConditionCode();
         lastSuccess = other.getLastSuccess();
+        autoEnabled = other.isAutoEnabled();
     }
     
     
@@ -232,6 +235,30 @@ public class PingTargetData extends PersistentObject implements Serializable {
      */
     public void setLastSuccess(Timestamp lastSuccess) {
         this.lastSuccess = lastSuccess;
+    }
+    
+    
+    /**
+     * Is this ping target enabled by default for new weblogs?
+     *
+     * @return true if ping target is auto enabled. false otherwise.
+     * @ejb:persistent-field
+     * @hibernate.property column="autoenabled" not-null="true"
+     */
+    public boolean isAutoEnabled() {
+        return autoEnabled;
+    }
+
+    
+    /**
+     * Set the auto enabled status for this ping target.  This field only
+     * applies for common ping targets.
+     *
+     * @param autoEnabled true if the ping target should be auto enabled.
+     * @ejb:persistent-field
+     */
+    public void setAutoEnabled(boolean autoEnabled) {
+        this.autoEnabled = autoEnabled;
     }
     
     
