@@ -102,7 +102,7 @@ public class CustomPingTargetsAction
         throws RollerException
     {
         return new PingTargetData(null, pingTargetForm.getName(), 
-                pingTargetForm.getPingUrl(), rreq.getWebsite());
+                pingTargetForm.getPingUrl(), rreq.getWebsite(), false);
     }
 
 

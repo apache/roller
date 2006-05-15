@@ -204,7 +204,7 @@ public class PingConfig
                 String name = m.group(1);
                 String url = m.group(2);
                 logger.info("Creating common ping target '" + name + "' from configuration properties.");
-                PingTargetData pingTarget = new PingTargetData(null, name, url, null);
+                PingTargetData pingTarget = new PingTargetData(null, name, url, null, false);
                 pingTargetMgr.savePingTarget(pingTarget);
             }
             else

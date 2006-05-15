@@ -29,7 +29,8 @@
     <%-- Headings --%>
     <tr class="rollertable">
         <th class="rollertable" width="20%%"><fmt:message key="pingTarget.name" /></th>
-        <th class="rollertable" width="70%"><fmt:message key="pingTarget.pingUrl" /></th>
+        <th class="rollertable" width="65%"><fmt:message key="pingTarget.pingUrl" /></th>
+        <th class="rollertable" width="5%"><fmt:message key="pingTarget.autoEnabled" /></th>
         <th class="rollertable" width="5%"><fmt:message key="pingTarget.edit" /></th>
         <th class="rollertable" width="5%"><fmt:message key="pingTarget.remove" /></th>
     </tr>
@@ -45,7 +46,33 @@
             <td class="rollertable">
                 <str:truncateNicely lower="70" upper="75" ><c:out value="${pingTarget.pingUrl}" /></str:truncateNicely>
             </td>
-
+            
+            <!-- TODO: Use icons here -->
+            <td class="rollertable" align="center" >
+            <c:choose>
+              <c:when test="${pingTarget.autoEnabled}">
+                 <roller:link page="/admin/commonPingTargets.do">
+                     <roller:linkparam
+                        id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                        name="pingTarget" property="id" />
+                     <roller:linkparam
+                       id="method" value="disableSelected" />
+                     <fmt:message key="pingTarget.disable"/>
+                 </roller:link>
+              </c:when>
+              <c:otherwise >
+                 <roller:link page="/admin/commonPingTargets.do">
+                     <roller:linkparam
+                        id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                        name="pingTarget" property="id" />
+                     <roller:linkparam
+                       id="method" value="enableSelected" />
+                     <fmt:message key="pingTarget.enable"/>
+                 </roller:link>
+              </c:otherwise>
+            </c:choose>
+            </td>
+            
             <td class="rollertable" align="center">
                <roller:link page="/admin/commonPingTargets.do">
                    <roller:linkparam

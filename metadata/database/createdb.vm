@@ -239,7 +239,8 @@ create table pingtarget (
     pingurl      varchar(255) not null,
     websiteid    varchar(48),
     conditioncode    integer default 0 not null,
-    lastsuccess  $TIMESTAMP_SQL_TYPE
+    lastsuccess  $TIMESTAMP_SQL_TYPE,
+    autoenabled  $BOOLEAN_SQL_TYPE_FALSE not null
 );
 create index pt_websiteid_idx on pingtarget( websiteid );
 
