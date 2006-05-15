@@ -15,6 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
+
 package org.apache.roller.pojos;
 
 import java.util.ArrayList;
@@ -80,13 +81,15 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     private int     defaultCommentDays = 0;
     private Boolean moderateComments  = Boolean.FALSE;
     private int     entryDisplayCount = 15;
+    private Date    lastModified     = new Date();
     
     // Associated objects
     private UserData creator = null; // TODO: decide if website.user is needed
     private List     permissions = new ArrayList();
     private WeblogCategoryData bloggerCategory = null;
     private WeblogCategoryData defaultCategory = null;
-        
+    
+    
     public WebsiteData() {    
     }
     
@@ -822,6 +825,8 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         this.enabled = other.getEnabled();
         this.dateCreated = other.getDateCreated();
         this.entryDisplayCount = other.getEntryDisplayCount();
+        this.active = other.getActive();
+        this.lastModified = other.getLastModified();
     }
     
     /**
@@ -984,5 +989,28 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /** No-op */
     public void setCommentModerationRequired(boolean modRequired) {}    
+
+    
+    /**
+     * The last time any visible part of this weblog was modified.
+     * This includes a change to weblog settings, entries, themes, templates, 
+     * comments, categories, bookmarks, folders, etc.
+     *
+     * Pings and Referrers are explicitly not included because pings to not
+     * affect visible changes to a weblog, and referrers change so often that
+     * it would diminish the usefulness of the attribute.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="lastmodified" not-null="true"
+     */
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+    
 }
 

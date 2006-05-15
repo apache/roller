@@ -8,4 +8,4 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 
 #addColumnNotNull("pingtarget" "autoenabled" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
 
-
+alter table website add column lastmodified $TIMESTAMP_SQL_TYPE default null;
