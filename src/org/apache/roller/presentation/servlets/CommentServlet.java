@@ -15,6 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
+
 package org.apache.roller.presentation.servlets;
 
 import java.io.IOException;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
-
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.naming.InitialContext;
@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
@@ -50,7 +49,6 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.presentation.RollerContext;
-import org.apache.roller.presentation.RollerRequest;
 import org.apache.roller.presentation.RollerSession;
 import org.apache.roller.presentation.velocity.CommentAuthenticator;
 import org.apache.roller.presentation.weblog.formbeans.CommentFormEx;
@@ -60,6 +58,9 @@ import org.apache.roller.util.StringUtils;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.presentation.velocity.DefaultCommentAuthenticator;
 import org.apache.roller.util.Utilities;
+import org.apache.roller.util.GenericThrottle;
+import org.apache.roller.util.IPBanList;
+
 
 /**
  * The CommentServlet handles all incoming weblog entry comment posts.
@@ -72,28 +73,27 @@ import org.apache.roller.util.Utilities;
  *
  * If email notification is turned on, each new comment will result in an
  * email sent to the blog owner and all who have commented on the same post.
- * 
- * @author Allen Gilliland
  *
  * @web.servlet name="CommentServlet"
  * @web.servlet-mapping url-pattern="/comment/*"
  */
 public class CommentServlet extends HttpServlet {
     
-    private static Log mLogger = LogFactory.getLog(CommentServlet.class);
+    private static Log log = LogFactory.getLog(CommentServlet.class);
     
     private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
     
-    private ResourceBundle bundle =
-        ResourceBundle.getBundle("ApplicationResources");
+    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     
     private CommentAuthenticator authenticator = null;
+    private GenericThrottle commentThrottle = null;
     
     
     /** 
      * Initialization.
      */
     public void init(ServletConfig config) throws ServletException {
+        
         super.init(config);
         
         // lookup the authenticator we are going to use and instantiate it
@@ -104,156 +104,221 @@ public class CommentServlet extends HttpServlet {
             this.authenticator = (CommentAuthenticator) clazz.newInstance();
             
         } catch(Exception e) {
-            mLogger.error(e);
+            log.error(e);
             this.authenticator = new DefaultCommentAuthenticator();
         }
 
+        // are we doing throttling?
+        if(RollerConfig.getBooleanProperty("comment.throttle.enabled")) {
+            
+            int threshold = 25;
+            try {
+                threshold = Integer.parseInt(RollerConfig.getProperty("comment.throttle.threshold"));
+            } catch(Exception e) {
+                log.warn("bad input for config property comment.throttle.threshold", e);
+            }
+            
+            int interval = 60000;
+            try {
+                interval = Integer.parseInt(RollerConfig.getProperty("comment.throttle.interval"));
+                // convert from seconds to milliseconds
+                interval = interval * 1000;
+            } catch(Exception e) {
+                log.warn("bad input for config property comment.throttle.interval", e);
+            }
+            
+            int maxEntries = 250;
+            try {
+                maxEntries = Integer.parseInt(RollerConfig.getProperty("comment.throttle.maxentries"));
+            } catch(Exception e) {
+                log.warn("bad input for config property comment.throttle.maxentries", e);
+            }
+            
+            commentThrottle = new GenericThrottle(threshold, interval, maxEntries);
+            
+            log.info("Comment Throttling ENABLED");
+        } else {
+            log.info("Comment Throttling DISABLED");
+        }
     }
-    
+
     
     /**
      * Handle incoming http GET requests.
      *
-     * The CommentServlet is not meant to handle GET requests, so we just
-     * redirect these request to the root of the webapp.
+     * The CommentServlet does not support GET requests, it's a 404.
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
         
-        // we should never get any GET requests, but just in case
-        response.sendRedirect(request.getContextPath());
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
     
     
     /**
      * Service incoming POST requests.
      *
-     * Here we handle incoming comment postings.  We will collect the data,
-     * validate it, and save it.
+     * Here we handle incoming comment postings.
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         
-        boolean preview = false;
         String error = null;
         String message = null;
         String entry_permalink = request.getContextPath();
         
+        // are we doing a preview?  or a post?
         String method = request.getParameter("method");
-        if(method == null)
-            method = "post";
-        else if (method.equals("preview"))
-            preview = true;
+        boolean preview = (method != null && method.equals("preview")) ? true : false;
         
-        // parse request and validate
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        HttpSession session = request.getSession();
+        // throttling protection against spammers
+        if(commentThrottle != null &&
+                commentThrottle.processHit(request.getRemoteAddr())) {
+            
+            log.debug("ABUSIVE "+request.getRemoteAddr());
+            IPBanList.getInstance().addBannedIp(request.getRemoteAddr());
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // lookup the entry being commented on and validate it
+        WeblogEntryData entry = null;
+        String entryid = request.getParameter("entryid");
+        try {
+            WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
+            entry = weblogMgr.getWeblogEntry(entryid);
+            
+            // if we couldn't find the entry then we are done
+            if(entry == null) {
+                log.debug("Entry was null: "+entryid);
+                response.sendRedirect(request.getContextPath());
+                return;
+            }
+            
+            // we know what the weblog entry is, so setup our permalink url
+            entry_permalink = entry.getPermaLink();
+            
+        } catch(RollerException re) {
+            log.error("Error looking up entry: "+entryid, re);
+            response.sendRedirect(request.getContextPath());
+            return;
+        }
         
-        // make sure we know the entry this comment is going to
-        WeblogEntryData entry = rreq.getWeblogEntry();
-        if (entry == null || entry.getId() == null) {
-            session.setAttribute(RollerSession.ERROR_MESSAGE, "Cannot post comment to null entry");
-            RequestDispatcher dispatcher = 
-                request.getRequestDispatcher(entry_permalink);
+        log.debug("Doing comment posting for entry = "+entry_permalink);
+        
+        WebsiteData website = entry.getWebsite();
+        
+        // check if site is allowing comments
+        if(!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled"))
+            error = "Comments are disabled for this site.";
+        
+        // check if weblog and entry are allowing comments
+        if (!website.getAllowComments().booleanValue() ||
+                !entry.getCommentsStillAllowed())
+            error = "Comments not allowed on this entry";
+        
+        // bail now if we have already found an error
+        if(error != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute(RollerSession.ERROR_MESSAGE, error);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(entry_permalink);
             dispatcher.forward(request, response);
             return;
         }
+        
+        
+        // collect input from request params and construct new comment object
+        // fields: name, email, url, content, notify
+        // TODO: data validation on collected comment data
+        CommentData comment = new CommentData();
+        comment.setName(request.getParameter("name"));
+        comment.setEmail(request.getParameter("email"));
+        comment.setUrl(request.getParameter("url"));
+        comment.setContent(request.getParameter("content"));
+        comment.setNotify(new Boolean((request.getParameter("notify") != null)));
+        comment.setWeblogEntry(entry);
+        comment.setRemoteHost(request.getRemoteHost());
+        comment.setPostTime(new java.sql.Timestamp(System.currentTimeMillis()));
+        
+        // this is legacy stuff, but still used by ContextLoader
+        // we can probably switch this to a CommentData without problems
+        CommentFormEx cf = new CommentFormEx();
+        RequestUtils.populate(cf, request);
+        //cf.copyTo(comment, request.getLocale());
+        cf.setWeblogEntry(entry);
+        cf.setPostTime(comment.getPostTime());
+        request.setAttribute("commentForm", cf);
+        request.setAttribute("blogEntry", entry);
+        
+        
+        if (preview) {
+            message = "This is a comment preview only";
             
-        try {
-            // we know what our weblog entry is, so setup our permalink url
-            entry_permalink = entry.getPermaLink();
+            // If comment contains blacklisted text, warn commenter
+            SpamChecker checker = new SpamChecker();
+            if (checker.checkComment(comment)) {
+                error = bundle.getString("commentServlet.previewMarkedAsSpam");
+                log.debug("Comment marked as spam");
+            }
+            request.setAttribute("previewComments", "dummy");
+            log.debug("Comment is a preview");
             
-            mLogger.debug("Doing comment posting for entry = "+entry_permalink);
-            
-            // check if we even allow comments
-            if(!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled"))
-                throw new Exception("Comments are disabled for this site.");
-            
-            if (!entry.getWebsite().getAllowComments().booleanValue() ||
-                    !entry.getCommentsStillAllowed())
-                throw new Exception("Comments not allowed on this entry");
-            
-            WebsiteData website = entry.getWebsite();
-            
-            // Construct our Comment object from the submitted data
-            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-            CommentFormEx cf = new CommentFormEx();
-            CommentData comment = new CommentData();
-            RequestUtils.populate(cf, request);
-            cf.copyTo(comment, request.getLocale());
-            
-            comment.setWeblogEntry(entry);
-            comment.setRemoteHost(request.getRemoteHost());
-            comment.setPostTime(new java.sql.Timestamp(System.currentTimeMillis()));
-            
-            cf.setWeblogEntry(entry);
-            cf.setPostTime(new java.sql.Timestamp(System.currentTimeMillis()));
-            
-            request.setAttribute("commentForm", cf);
-            request.setAttribute("blogEntry", entry);
-            
-            if (preview) {
-                message = "This is a comment preview only";
+        } else {
+            if (this.authenticator.authenticate(comment, request)) {
+                log.debug("Comment passed authentication");
                 
-                // If comment contains blacklisted text, warn commenter
+                // If comment contains blacklisted text, mark as spam
                 SpamChecker checker = new SpamChecker();
                 if (checker.checkComment(comment)) {
-                   error = bundle.getString("commentServlet.previewMarkedAsSpam");
-                   mLogger.debug("Comment marked as spam"); 
+                    comment.setSpam(Boolean.TRUE);
+                    error = bundle.getString("commentServlet.commentMarkedAsSpam");
+                    log.debug("Comment marked as spam");
                 }
-                request.setAttribute("previewComments", "dummy");
-                mLogger.debug("Comment is a preview");
                 
-            } else {
-                if (this.authenticator.authenticate(comment, request)) {
-                    mLogger.debug("Comment passed authentication");
-                    
-                    // If comment contains blacklisted text, mark as spam
-                    SpamChecker checker = new SpamChecker();
-                    if (checker.checkComment(comment)) {
-                       comment.setSpam(Boolean.TRUE);
-                       error = bundle.getString("commentServlet.commentMarkedAsSpam");
-                       mLogger.debug("Comment marked as spam"); 
-                    }
-                     
-                    // If comment moderation is on, set comment as pending
-                    if (website.getCommentModerationRequired()) {
-                        comment.setPending(Boolean.TRUE);   
-                        comment.setApproved(Boolean.FALSE);
-                        //message = bundle.getString("commentServlet.submittedToModerator");
-                    } else { 
-                        comment.setPending(Boolean.FALSE);   
-                        comment.setApproved(Boolean.TRUE);
-                    }
-                    
+                // If comment moderation is on, set comment as pending
+                if (website.getCommentModerationRequired()) {
+                    comment.setPending(Boolean.TRUE);
+                    comment.setApproved(Boolean.FALSE);
+                    //message = bundle.getString("commentServlet.submittedToModerator");
+                } else {
+                    comment.setPending(Boolean.FALSE);
+                    comment.setApproved(Boolean.TRUE);
+                }
+                
+                try {
+                    WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
                     mgr.saveComment(comment);
                     RollerFactory.getRoller().flush();
+                    
                     reindexEntry(entry);
                     
                     // Clear all caches associated with comment
                     CacheManager.invalidate(comment);
                     
                     // Send email notifications
-                    RollerContext rc = RollerContext.getRollerContext();                                
+                    RollerContext rc = RollerContext.getRollerContext();
                     String rootURL = rc.getAbsoluteContextUrl(request);
                     if (rootURL == null || rootURL.trim().length()==0) {
                         rootURL = RequestUtils.serverURL(request) + request.getContextPath();
-                    }            
+                    }
                     sendEmailNotification(comment, rootURL);
                     
-                } else {
-                    error = bundle.getString("error.commentAuthFailed");
-                    mLogger.debug("Comment failed authentication");
+                } catch (RollerException re) {
+                    log.error("Error saving comment", re);
+                    error = re.getMessage();
                 }
+                
+                
+                
+            } else {
+                error = bundle.getString("error.commentAuthFailed");
+                log.debug("Comment failed authentication");
             }
-        } catch (RollerException re) {
-            mLogger.error("ERROR posting comment", re);
-            error = re.getMessage();
-        } catch (Exception e) {
-            error = e.getMessage();
         }
         
+
         // the work has been done, now send the user back to the entry page
+        HttpSession session = request.getSession();
         if (error != null)
             session.setAttribute(RollerSession.ERROR_MESSAGE, error);
         if (message != null)
@@ -261,10 +326,10 @@ public class CommentServlet extends HttpServlet {
         
         if(error == null && !preview) {
             entry_permalink = request.getContextPath()+entry_permalink;            
-            mLogger.debug("comment complete, redirecting to "+entry_permalink);
+            log.debug("comment complete, redirecting to "+entry_permalink);
             response.sendRedirect(entry_permalink);
         } else {
-            mLogger.debug("more work needed, forwarding to "+entry_permalink);
+            log.debug("more work needed, forwarding to "+entry_permalink);
             RequestDispatcher dispatcher = 
                 request.getRequestDispatcher(entry_permalink);
             dispatcher.forward(request, response);
@@ -306,7 +371,7 @@ public class CommentServlet extends HttpServlet {
         // Send e-mail to owner and subscribed users (if enabled)
         boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
         if (notify && site.getEmailComments().booleanValue()) {
-            mLogger.debug("Comment notification enabled ... preparing email");
+            log.debug("Comment notification enabled ... preparing email");
             
             // Determine message and addressing options from init parameters
             boolean separateMessages =
@@ -455,16 +520,16 @@ public class CommentServlet extends HttpServlet {
                             ownermsg.toString(), isHtml);
                 }
             } catch (javax.naming.NamingException ne) {
-                mLogger.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
+                log.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
             } catch (Exception e) {
-                mLogger.warn("Exception sending comment mail: " + e.getMessage());
+                log.warn("Exception sending comment mail: " + e.getMessage());
                 // This will log the stack trace if debug is enabled
-                if (mLogger.isDebugEnabled()) {
-                    mLogger.debug(e);
+                if (log.isDebugEnabled()) {
+                    log.debug(e);
                 }
             }
             
-            mLogger.debug("Done sending email message");
+            log.debug("Done sending email message");
             
         } // if email enabled
     }
@@ -486,7 +551,7 @@ public class CommentServlet extends HttpServlet {
         // Only send email if email notificaiton is enabled
         boolean notify = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
         if (notify && site.getEmailComments().booleanValue()) {
-            mLogger.debug("Comment notification enabled ... preparing email");
+            log.debug("Comment notification enabled ... preparing email");
             
 
                                 
@@ -527,16 +592,16 @@ public class CommentServlet extends HttpServlet {
                     null, // bcc
                     subject, msg.toString(), false);
             } catch (javax.naming.NamingException ne) {
-                mLogger.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
+                log.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
             } catch (Exception e) {
-                mLogger.warn("Exception sending comment mail: " + e.getMessage());
+                log.warn("Exception sending comment mail: " + e.getMessage());
                 // This will log the stack trace if debug is enabled
-                if (mLogger.isDebugEnabled()) {
-                    mLogger.debug(e);
+                if (log.isDebugEnabled()) {
+                    log.debug(e);
                 }
             }
             
-            mLogger.debug("Done sending email message");
+            log.debug("Done sending email message");
             
         } // if email enabled
     }
