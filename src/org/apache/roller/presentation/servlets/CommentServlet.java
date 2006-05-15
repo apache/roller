@@ -279,7 +279,7 @@ public class CommentServlet extends HttpServlet {
                 if (website.getCommentModerationRequired()) {
                     comment.setPending(Boolean.TRUE);
                     comment.setApproved(Boolean.FALSE);
-                    //message = bundle.getString("commentServlet.submittedToModerator");
+                    message = bundle.getString("commentServlet.submittedToModerator");
                 } else {
                     comment.setPending(Boolean.FALSE);
                     comment.setApproved(Boolean.TRUE);
@@ -324,7 +324,7 @@ public class CommentServlet extends HttpServlet {
         if (message != null)
             session.setAttribute(RollerSession.STATUS_MESSAGE, message);
         
-        if(error == null && !preview) {
+        if(error == null && message == null && !preview) {
             entry_permalink = request.getContextPath()+entry_permalink;            
             log.debug("comment complete, redirecting to "+entry_permalink);
             response.sendRedirect(entry_permalink);
