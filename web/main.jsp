@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<%@ page import="org.apache.roller.presentation.MainPageAction" %>
+<%@ page import="org.apache.roller.ui.core.MainPageAction" %>
 <%@ page import="java.util.Locale" %>
 <%@ include file="/taglibs.jsp" %>
 <% 

@@ -18,10 +18,10 @@
 <%@ include file="/taglibs.jsp" %>
 
 <%
-org.apache.roller.presentation.search.SearchAction.PageModel model =
-   (org.apache.roller.presentation.search.SearchAction.PageModel)
+org.apache.roller.ui.rendering.search.SearchAction.PageModel model =
+   (org.apache.roller.ui.rendering.search.SearchAction.PageModel)
       request.getAttribute("model");       
-org.apache.roller.presentation.search.SearchResultsPageModel searchResults =
+org.apache.roller.ui.rendering.search.SearchResultsPageModel searchResults =
     model.getSearchModel();
 request.setAttribute("searchResults", searchResults);
 %>

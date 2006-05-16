@@ -17,7 +17,7 @@
 -->
 <%@ page session="false"
     import="org.apache.roller.pojos.WebsiteData,
-            org.apache.roller.presentation.RollerRequest,
+            org.apache.roller.ui.core.RollerRequest,
             org.apache.roller.util.DateUtil,
             java.text.DateFormat,
             java.util.Date,

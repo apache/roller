@@ -19,7 +19,7 @@
 
 <h2>
 <jsp:useBean id="weblogEntryFormEx"  scope="session"
-    class="org.apache.roller.presentation.weblog.formbeans.WeblogEntryFormEx"/>
+    class="org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx"/>
 <fmt:message key="weblogEntryRemove.removeWeblogEntry" /> [<jsp:getProperty name="weblogEntryFormEx" property="title"/>]
 </h2>
 
