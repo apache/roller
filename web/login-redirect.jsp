@@ -21,7 +21,7 @@ taglib uri="http://www.rollerweblogger.org/tags" prefix="roller" %><%@
 page import="org.apache.roller.model.*" %><%@
 page import="org.apache.roller.pojos.*" %><%@
 page import="org.apache.roller.config.RollerConfig" %><%@
-page import="org.apache.roller.presentation.RollerSession" %><%@
+page import="org.apache.roller.ui.core.RollerSession" %><%@
 page import="java.util.List" %>
 <%
 Roller roller = RollerFactory.getRoller();

@@ -17,7 +17,7 @@
 -->
 <%@ include file="/taglibs.jsp" %>
 
-<%@ page import="org.apache.roller.presentation.weblog.actions.WeblogEntryManagementAction" %>
+<%@ page import="org.apache.roller.ui.authoring.struts.actions.WeblogEntryManagementAction" %>
 <%
 WeblogEntryManagementAction.PageModel model = 
     (WeblogEntryManagementAction.PageModel)request.getAttribute("model");

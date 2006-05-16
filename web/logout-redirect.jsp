@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ page import="org.apache.roller.presentation.RollerSession" %>
+<%@ page import="org.apache.roller.ui.core.RollerSession" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ page import="org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices" %>
 

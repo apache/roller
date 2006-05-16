@@ -16,8 +16,8 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %>
-<%@ page import="org.apache.roller.presentation.weblog.actions.WeblogEntryPageModel" %>
-<%@ page import="org.apache.roller.presentation.RollerRequest" %>
+<%@ page import="org.apache.roller.ui.authoring.struts.actions.WeblogEntryPageModel" %>
+<%@ page import="org.apache.roller.ui.core.RollerRequest" %>
 <%
 WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model");
 %>

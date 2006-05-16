@@ -112,7 +112,7 @@ Key Targets:
     <ejbdoclet destdir="${build.generated}/src" excludedtags="@version,@author">
 	<fileset dir="./src" includes="org/apache/roller/pojos/WeblogTemplate.java" />
         <fileset dir="./src" includes="org/apache/roller/pojos/*Data.java" />
-        <fileset dir="./src" includes="org/apache/roller/business/*Data.java" /> 
+
         &custom-gen-web;
      
         <!-- Generate Struts forms -->
@@ -122,9 +122,9 @@ Key Targets:
 
             <!-- into the org.apache.roller.presentation.forms package -->
             <packageSubstitution packages="pojos"
-                substituteWith="presentation.forms"/>
-            <packageSubstitution packages="presentation"
-                substituteWith="presentation.forms"/>
+                substituteWith="ui.authoring.struts.forms"/>
+           <!-- <packageSubstitution packages="presentation"
+                substituteWith="ui.authoring.struts.forms"/> -->
         </strutsform>
 
         <!-- We are not actually generating data objects, but using the
@@ -139,10 +139,10 @@ Key Targets:
     </copy>
 
     <!-- Change Struts form names from *DataForm.java to *Form.java  -->
-    <replace dir="${build.generated}/src.presentation/org/apache/roller/presentation/forms"
+    <replace dir="${build.generated}/src.presentation/org/apache/roller/ui/authoring/struts/forms"
         token="DataForm" value="Form"/>
-    <move todir="${build.generated}/src.presentation/org/apache/roller/presentation/forms">
-        <fileset dir="${build.generated}/src.presentation/org/apache/roller/presentation/forms" >
+    <move todir="${build.generated}/src.presentation/org/apache/roller/ui/authoring/struts/forms">
+        <fileset dir="${build.generated}/src.presentation/org/apache/roller/ui/authoring/struts/forms" >
             <include name="*DataForm.java"/>
             <include name="*ConfigForm.java" />
         </fileset>
@@ -200,9 +200,9 @@ Key Targets:
             <include name="**/*FormEx.java" />
             <include name="**/*Servlet.java" />
             <include name="**/*Tag.java" />
-            <include name="org/apache/roller/presentation/**/actions/*.java" />
-            <include name="org/apache/roller/presentation/RollerContext.java" />
-            <include name="org/apache/roller/presentation/RollerSession.java" />
+            <include name="org/apache/roller/ui/**/actions/*.java" />
+            <include name="org/apache/roller/ui/core/RollerContext.java" />
+            <include name="org/apache/roller/ui/core/RollerSession.java" />
             <exclude name="**/IPBanFilter**" />
             <exclude name="**/LinkTag**" />
             <exclude name="**/LinkParamTag**" />
@@ -289,7 +289,7 @@ ro.buildUser=${user.name}
     </echo>
 
     <javac debug="${build.debug}" destdir="${build.compile_beans}"
-        excludes="org/apache/roller/presentation/**, org/apache/roller/webservices/**" >
+        excludes="org/apache/roller/ui/**, org/apache/roller/webservices/**" >
         <src path="${basedir}/src" />
         <src path="${build.generated}/src.business"/>
         &custom-src-beans;
@@ -360,7 +360,7 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.compile_web}"/>
     <antcall target="prepare.resin" />
     <javac debug="${build.debug}" destdir="${build.compile_web}"
-        includes="org/apache/roller/presentation/**, org/apache/roller/webservices/**, org/apache/roller/util/rome/**" >
+        includes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/util/rome/**" >
         <src path="./src"  />
         <src path="${build.generated}/src.presentation"/>
         &custom-src-web;

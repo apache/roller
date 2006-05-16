@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %>
-<%@ page import="org.apache.roller.presentation.website.actions.WebsiteFormAction" %>
+<%@ page import="org.apache.roller.ui.authoring.struts.actions.WebsiteFormAction" %>
 <%
 WebsiteFormAction.WebsitePageModel model = 
     (WebsiteFormAction.WebsitePageModel)request.getAttribute("model");

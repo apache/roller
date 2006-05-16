@@ -39,7 +39,7 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.presentation.RollerContext;
+import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.WSSEUtilities;

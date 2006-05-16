@@ -30,8 +30,8 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.presentation.RollerContext;
-import org.apache.roller.presentation.RollerRequest;
+import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.Utilities;
 

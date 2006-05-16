@@ -16,7 +16,7 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %>
-<%@ page import="org.apache.roller.presentation.planet.PlanetAction" %>
+<%@ page import="org.apache.roller.ui.admin.struts.actions.PlanetAction" %>
 <%@ page import="java.util.Locale" %>
 
 <%
