@@ -15,6 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
+
 package org.apache.roller.ui.core.filters;
 
 import java.io.ByteArrayOutputStream;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.ui.core.util.ByteArrayOutputStreamWrapper;
 import org.apache.roller.ui.core.util.ByteArrayResponseWrapper;
 
@@ -48,6 +50,8 @@ public class CompressionFilter implements Filter {
     
     private static Log mLogger = LogFactory.getLog(CompressionFilter.class);
     
+    private boolean enabled = true;
+    
     
     /** 
      * If browser does not support gzip, invoke resource normally. If browser 
@@ -62,7 +66,7 @@ public class CompressionFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         
-        if (!isGzipSupported(req)) {
+        if (!this.enabled || !isGzipSupported(req)) {
             // Invoke resource normally.
             chain.doFilter(req, res);
         } else {
@@ -109,7 +113,17 @@ public class CompressionFilter implements Filter {
     }
     
 
-    public void init(FilterConfig config) throws ServletException {}
+    public void init(FilterConfig config) throws ServletException {
+        
+        // is compression enabled?
+        if(RollerConfig.getBooleanProperty("compression.gzipResponse.enabled")) {
+            this.enabled = true;
+            mLogger.info("Compressed Output ENABLED");
+        } else {
+            this.enabled = false;
+            mLogger.info("Compressed Output DISABLED");
+        }
+    }
     
     
     public void destroy() {}
