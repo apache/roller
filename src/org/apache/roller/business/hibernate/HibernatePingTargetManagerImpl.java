@@ -61,17 +61,9 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
     }
     
     
-    public void removePingTarget(String id) throws RollerException {
-        
-        PingTargetData pingTarget = getPingTarget(id);
-        
+    public void removePingTarget(PingTargetData pingTarget) throws RollerException {
         // remove contents and then target
         this.removePingTargetContents(pingTarget);
-        strategy.remove(pingTarget);
-    }
-    
-    
-    public void removePingTarget(PingTargetData pingTarget) throws RollerException {
         this.strategy.remove(pingTarget);
     }
     
@@ -89,6 +81,10 @@ public class HibernatePingTargetManagerImpl implements PingTargetManager {
         Criteria criteria = session.createCriteria(PingQueueEntryData.class);
         criteria.add(Expression.eq("pingTarget", ping));
         List queueEntries = criteria.list();
+        Iterator qIT = queueEntries.iterator();
+        while(qIT.hasNext()) {
+            this.strategy.remove((PingQueueEntryData) qIT.next());
+        }
         
         // Remove the website's auto ping configurations
         AutoPingManager autoPingMgr = RollerFactory.getRoller().getAutopingManager();
