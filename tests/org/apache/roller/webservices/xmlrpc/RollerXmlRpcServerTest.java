@@ -18,7 +18,7 @@
 /*
  * Created on Jun 15, 2004
  */
-package org.apache.roller.presentation.xmlrpc;
+package org.apache.roller.webservices.xmlrpc;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
@@ -27,10 +27,7 @@ import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 
 import org.apache.roller.RollerTestBase;
-import org.apache.roller.presentation.MockRollerContext;
-import org.apache.roller.presentation.RollerRequest;
 import org.apache.roller.util.RegexUtil;
-import org.apache.roller.webservices.xmlrpc.RollerXMLRPCServlet;
  
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +37,8 @@ import java.util.regex.Pattern;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.roller.ui.core.MockRollerContext;
+import org.apache.roller.ui.core.RollerRequest;
 
 /**
  * Makes calls to the RollerXmlRpcServer, which should handle a

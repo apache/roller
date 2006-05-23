@@ -18,12 +18,11 @@
 /*
  * Created on Jun 8, 2004
  */
-package org.apache.roller.presentation;
-
-import org.apache.roller.RollerException;
+package org.apache.roller.ui.core;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.roller.RollerException;
 
 /**
  * @author lance.lavandowska

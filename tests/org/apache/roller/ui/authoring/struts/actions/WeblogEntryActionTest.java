@@ -15,13 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * Created on Oct 27, 2003
- */
-package org.apache.roller.presentation.bookmarks;
-
-import java.util.List;
-import java.util.Set;
+package org.apache.roller.ui.authoring.struts.actions;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,38 +24,31 @@ import junit.framework.TestSuite;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.presentation.BasePageModel;
-import org.apache.roller.presentation.RollerRequest;
-import org.apache.roller.presentation.StrutsActionTestBase;
-import org.apache.roller.presentation.bookmarks.actions.BookmarksAction;
-import org.apache.roller.presentation.bookmarks.formbeans.BookmarksForm;
 
 import com.mockrunner.mock.web.MockActionMapping;
 import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockServletContext;
+import org.apache.roller.ui.StrutsActionTestBase;
+import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
+import org.apache.roller.ui.core.RollerRequest;
 
 /**
- * Test BookmarkAction (proof-of-concept for Mockrunner Struts testing)
- * @author Dave Johnson
+ * @author dave
  */
-public class BookmarksActionTest extends StrutsActionTestBase
+public class WeblogEntryActionTest extends StrutsActionTestBase
 {
-    public void testSelectFolder() 
-    {       
-        MockServletContext ctx = getMockFactory().getMockServletContext();
-        ctx.setServletContextName("/roller");        
-        MockHttpServletRequest request = getMockFactory().getMockRequest();
-        request.setContextPath("/roller");
-
+    public void testCreateWeblogEntry() 
+    {
+        MockHttpServletRequest mockRequest = getMockFactory().getMockRequest();
+        mockRequest.setContextPath("/dummy");        
+        doFilters();
+        
         UserManager umgr = null;
         UserData user = null; 
         try
         {
             umgr = getRoller().getUserManager();
             user = (UserData)umgr.getUsers(mWebsite, null).get(0);       
-            doFilters();
             authenticateUser(user.getUserName(), "editor");
         }
         catch (RollerException e)
@@ -69,30 +56,33 @@ public class BookmarksActionTest extends StrutsActionTestBase
             e.printStackTrace();
             fail();
         }
-
-        // Setup form bean
-        BookmarksForm form = (BookmarksForm)
-            strutsModule.createActionForm(BookmarksForm.class);
-
+        
         // Setup mapping and request parameters
         MockActionMapping mapping = strutsModule.getMockActionMapping();
-        mapping.setupForwards(new String[] {"access-denied","BookmarksForm"});
-        mapping.setParameter("method");        
+        mapping.setupForwards(new String[] {
+            "access-denied","weblogEdit.page","weblogEntryRemove.page"});
+        mapping.setParameter("method");  
         strutsModule.addRequestParameter("weblog",mWebsite.getHandle()); 
-        strutsModule.addRequestParameter("method","selectFolder"); 
-                
+        strutsModule.addRequestParameter("method","create"); 
+        
+        // Setup form bean
+        WeblogEntryFormEx form = (WeblogEntryFormEx)
+            strutsModule.createActionForm(WeblogEntryFormEx.class);
+        form.setTitle("test_title");
+        form.setText("Test blog text");
+
         try {
             RollerRequest rreq = new RollerRequest(strutsModule.getMockPageContext());
             rreq.setWebsite(mWebsite);
             strutsModule.setRequestAttribute(RollerRequest.ROLLER_REQUEST, rreq);
-            strutsModule.actionPerform(BookmarksAction.class, form);        
-        } catch (Throwable e) {
-            e.printStackTrace();
+            strutsModule.actionPerform(WeblogEntryFormAction.class, form);        
+        } catch (Throwable t) {
+            t.printStackTrace();
             fail();
         }
         // Test for success
         strutsModule.verifyNoActionMessages();
-        strutsModule.verifyForward("BookmarksForm");
+        strutsModule.verifyForward("weblogEdit.page");
         
         // Verify objects we put in context for JSP page
         verifyPageContext();
@@ -101,13 +91,13 @@ public class BookmarksActionTest extends StrutsActionTestBase
     protected void verifyPageContext() 
     {
         HttpServletRequest req = (HttpServletRequest)
-        servletModule.getFilteredRequest();
-        assertTrue(req.getAttribute("folder") instanceof FolderData);
-        assertTrue(req.getAttribute("model") instanceof BasePageModel);
+            servletModule.getFilteredRequest();
+        assertNotNull(req.getAttribute("model"));
     }
 
     public static Test suite() 
     {
-        return new TestSuite(BookmarksActionTest.class);
+        return new TestSuite(WeblogEntryActionTest.class);
     }
+
 }

@@ -18,7 +18,7 @@
 /*
  * Created on May 4, 2004
  */
-package org.apache.roller.presentation;
+package org.apache.roller.ui.rendering.velocity;
 
 import java.io.File;
 
@@ -29,7 +29,6 @@ import org.apache.roller.RollerException;
 import org.apache.roller.RollerTestBase;
 import org.apache.roller.business.FileManagerTest;
 import org.apache.roller.pojos.RollerConfigData;
-import org.apache.roller.presentation.velocity.ExportRssTest;
 
 import com.mockrunner.mock.web.MockServletContext;
  

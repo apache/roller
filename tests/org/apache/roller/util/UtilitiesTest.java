@@ -20,7 +20,7 @@
  */
 package org.apache.roller.util;
 
-import org.apache.roller.presentation.bookmarks.BookmarksActionTest;
+import org.apache.roller.ui.authoring.struts.actions.BookmarksActionTest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
