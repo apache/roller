@@ -45,7 +45,7 @@ public class SmileysPlugin implements PagePlugin
     
     public String toString() { return name; } 
     
-    static Pattern[] smileyPatterns = new Pattern[0];
+    public static Pattern[] smileyPatterns = new Pattern[0]; // public for tests
     static String[] imageTags = new String[0];
 
     private static Log mLogger = 
