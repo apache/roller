@@ -187,7 +187,6 @@ in the "base.path" definition.
     <path location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
     <path location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
     <path location="${ro.tools}/buildtime/hsqldb.jar"/>
-    <path location="${ro.tools}/lib/mm.mysql-2.0.14-bin.jar"/>
 </path>
 
 <path id="jasper.path">
