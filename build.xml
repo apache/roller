@@ -913,7 +913,7 @@ ro.buildUser=${user.name}
 	
     &custom-pre-dbtest;
 
-    <junit fork="true" dir="${build.tests}" printsummary="on">
+    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
         <classpath>
             <path refid="junit.path"/>
         </classpath>
@@ -976,7 +976,7 @@ ro.buildUser=${user.name}
         src="./build/roller/WEB-INF/dbscripts/hsqldb/createdb.sql"
         classpath="${ro.tools}/buildtime/hsqldb.jar" />
 
-    <junit fork="true" dir="${build.tests}">
+    <junit fork="true" dir="${build.tests}" showOutput="true">
         <batchtest toDir="${build.reports}/presentation/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
                 <include name="org/apache/roller/presentation/**/*Test.class"/> 
@@ -1021,7 +1021,7 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.reports}/utils/xml"/>
     <mkdir dir="${build.reports}/utils/html"/>
     
-	<junit fork="true" dir="${build.tests}">
+	<junit fork="true" dir="${build.tests}"  showOutput="true">
         <batchtest toDir="${build.reports}/utils/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
                 <include name="org/apache/roller/util/*Test.class"/>
@@ -1050,7 +1050,7 @@ ro.buildUser=${user.name}
         <mkdir dir="${build.reports}/webservices/adminapi/sdk/xml"/>
         <mkdir dir="${build.reports}/webservices/adminapi/sdk/html"/>
 
-        <junit fork="true" dir="${build.tests}" printsummary="on">
+        <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
             <syspropertyset>
                 <propertyref builtin="commandline"/>
             </syspropertyset>
