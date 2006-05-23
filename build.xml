@@ -477,10 +477,7 @@ ro.buildUser=${user.name}
         <fileset refid="spring.jars" /> 
         <fileset refid="jstl.jars" />
         &custom-jars;
-        <fileset dir="${ro.tools}/lib">
-            <include name="mm.mysql-2.0.14-bin.jar" if="resinServer"/>
-        </fileset>
-    	    <fileset dir="${ro.tools}/buildtime">
+    	<fileset dir="${ro.tools}/buildtime">
             <include name="xercesImpl-2.3.0.jar"    if="resinServer"/>
             <include name="xmlParserAPIs-2.3.0.jar" if="resinServer"/>
         </fileset>
@@ -1188,13 +1185,13 @@ Use -Dverbose=1 to get verbose output.
     <sql driver="org.hsqldb.jdbcDriver"
          url="jdbc:hsqldb:hsql://localhost:3219"
          userid="sa" password=""
-         src="./build/roller/WEB-INF/dbscripts/hsql/createdb.sql"
+         src="./build/roller/WEB-INF/dbscripts/hsqldb/createdb.sql"
          classpath="${ro.tools}/buildtime/hsqldb.jar" />    
     &custom-pre-dbtest;
 </target>
 
 <target name="start-db" description="Starts built-in database">  
-    <java classname="org.hsqldb.Server" fork="yes" classpath="./tools/buildtime/hsqldb.jar">
+    <java classname="org.hsqldb.Server"  fork="yes" spawn="true" classpath="./tools/buildtime/hsqldb.jar">
         <arg value="-database"/>
         <arg value="${build.tests}/testdb"/>
         <arg value="-port"/>

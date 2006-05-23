@@ -1,11 +1,13 @@
 
 <!-- Additional Ant tasks to include in build script -->
 
-<!-- Netbeans debug single file 
+<!-- Netbeans debug single class 
 --> 
 <target name="debug-selected-files" if="netbeans.home" depends="build-tests" 
    description="Debug a Single File">
    <fail unless="classname">Must set property 'classname'</fail>
+   <antcall target="start-db" />
+   <antcall target="init-db" />
    <nbjpdastart name="${classname}" addressproperty="jpda.address" transport="dt_socket">
       <classpath>
         <path refid="junit.path"/>
@@ -20,14 +22,16 @@
           <path refid="junit.path"/>
       </classpath>
    </java>
+   <antcall target="stop-db" />
 </target>
 
-<!-- Netbeans debug.single target 
+<!-- Netbeans debug single test class
 -->
 <target name="test-selected-files" if="netbeans.home" depends="build-tests" 
    description="Test/debug a Single File">
    <fail unless="classname">Must set property 'classname'</fail>
-   <nbjpdastart name="junit.textui.TestRunner" addressproperty="jpda.address" transport="dt_socket">
+   <antcall target="start-db" />
+   <antcall target="init-db" />   <nbjpdastart name="junit.textui.TestRunner" addressproperty="jpda.address" transport="dt_socket">
       <classpath>
         <path refid="junit.path"/>
       </classpath>
@@ -42,6 +46,7 @@
           <path refid="junit.path"/>
       </classpath>
    </java>
+   <antcall target="stop-db" />
 </target>
 
 <!-- generate JDO mappings 
