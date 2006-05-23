@@ -20,10 +20,9 @@
  * 
  * Created on 13-Jul-04
  */
-package org.apache.roller.presentation;
+package org.apache.roller.ui;
 
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.servlet.ServletContext;
 
@@ -36,6 +35,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.mockrunner.mock.web.MockServletContext;
+import org.apache.roller.ui.core.LanguageUtil;
 
 /**
  * The purpose of this class is to 

@@ -15,7 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.presentation;
+package org.apache.roller.ui;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -23,12 +23,12 @@ import junit.framework.TestSuite;
 
 import org.apache.roller.BlacklistTest;
 import org.apache.roller.DateTest;
-import org.apache.roller.presentation.bookmarks.BookmarksActionTest;
-import org.apache.roller.presentation.filters.RequestFilterTest;
-import org.apache.roller.presentation.velocity.plugins.smileys.SmileysTest;
-import org.apache.roller.presentation.velocity.plugins.textile.TextileTest;
-import org.apache.roller.presentation.weblog.WeblogEntryActionTest;
-import org.apache.roller.presentation.xmlrpc.RollerXmlRpcServerTest;
+import org.apache.roller.ui.authoring.struts.actions.BookmarksActionTest;
+import org.apache.roller.ui.core.filters.RequestFilterTest;
+import org.apache.roller.ui.rendering.velocity.plugins.smileys.SmileysTest;
+import org.apache.roller.ui.rendering.velocity.plugins.textile.TextileTest;
+import org.apache.roller.ui.authoring.struts.actions.WeblogEntryActionTest;
+import org.apache.roller.webservices.xmlrpc.RollerXmlRpcServerTest;
 import org.apache.roller.util.LRUCache2Test;
 import org.apache.roller.util.LinkbackExtractorTest;
 import org.apache.roller.util.RegexUtilTest;

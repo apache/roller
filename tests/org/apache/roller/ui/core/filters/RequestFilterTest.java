@@ -15,53 +15,51 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.presentation;
+package org.apache.roller.ui.core.filters;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.apache.roller.presentation.filters.PersistenceSessionFilter;
-import org.apache.roller.presentation.filters.RequestFilter;
-import org.apache.roller.presentation.search.SearchServlet;
-
 import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockServletConfig;
+import org.apache.roller.ui.rendering.velocity.VelocityServletTestBase;
+import org.apache.roller.ui.core.RollerRequest;
+import org.apache.roller.ui.rendering.velocity.PageServlet;
 
-
-/**
+/** 
  * @author Dave Johnson
  */
-public class SearchServletTest extends VelocityServletTestBase
-{    
-    public void testSearch() throws Exception
+public class RequestFilterTest extends VelocityServletTestBase {
+    public void setUp() throws Exception
     {
+        super.setUp();       
+    }
+    public RequestFilterTest() {
+    }
+    public void testRequestFilter() throws Exception {        
+        
         servletModule.setServlet(
-            servletModule.createServlet(SearchServlet.class)); 
-        MockHttpServletRequest mockRequest = getMockFactory().getMockRequest();
+           servletModule.createServlet(PageServlet.class));       
 
-        mockRequest.setContextPath("/search");
-        mockRequest.setupAddParameter("q","test");
- 
+        MockHttpServletRequest mockRequest = getMockFactory().getMockRequest();
+        mockRequest.setContextPath("/roller/page");
+        mockRequest.setPathInfo("/testuser/20050101");
+        mockRequest.setRequestURL("http://localost:8080");
+
         servletModule.createFilter(PersistenceSessionFilter.class);
         servletModule.createFilter(RequestFilter.class);
         servletModule.setDoChain(true);
+
+        servletModule.doFilter();   
         
-        servletModule.doFilter();        
-        getMockFactory().addRequestWrapper(new HttpServletRequestWrapper(
-            (HttpServletRequest)servletModule.getFilteredRequest()));
-        servletModule.doGet();
-        assertNotNull(
-            servletModule.getRequestAttribute("zzz_VelocityContext_zzz"));     
+        HttpServletRequest req = (HttpServletRequest)
+            servletModule.getFilteredRequest();
+        RollerRequest rreq = RollerRequest.getRollerRequest(req);
+        assertNotNull(rreq);    
     }
     public static Test suite() 
     {
-        return new TestSuite(SearchServletTest.class);
-    }
-    public static void main(String[] args)
-    {
-        junit.textui.TestRunner.run(SearchServletTest.class);
+        return new TestSuite(RequestFilterTest.class);
     }
 }

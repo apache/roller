@@ -20,7 +20,7 @@
  * 
  * Created on 24-May-04
  */
-package org.apache.roller.presentation;
+package org.apache.roller.ui;
 
 import java.io.FileInputStream;
 import java.util.Iterator;

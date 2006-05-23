@@ -18,7 +18,7 @@
 /*
  * Created on Mar 8, 2004
  */
-package org.apache.roller.presentation;
+package org.apache.roller.ui.core;
 
 public class MockPrincipal implements java.security.Principal
 {

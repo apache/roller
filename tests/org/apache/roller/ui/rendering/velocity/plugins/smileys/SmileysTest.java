@@ -18,16 +18,17 @@
 /*
  * Created on Jun 8, 2004
  */
-package org.apache.roller.presentation.velocity.plugins.smileys;
+package org.apache.roller.ui.rendering.velocity.plugins.smileys;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.apache.roller.presentation.MockRollerRequest;
-import org.apache.roller.presentation.VelocityServletTestBase;
+import org.apache.roller.ui.core.MockRollerRequest;
+import org.apache.roller.ui.rendering.velocity.VelocityServletTestBase;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockServletContext;
+import org.apache.roller.presentation.velocity.plugins.smileys.*;
 
 /**
  * @author lance.lavandowska
