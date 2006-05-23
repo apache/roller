@@ -1002,7 +1002,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
      *
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * @hibernate.property column="lastmodified" not-null="true"
+     * @hibernate.property column="lastmodified" not-null="false"
      */
     public Date getLastModified() {
         return lastModified;
