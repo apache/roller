@@ -900,13 +900,8 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.reports}/business/xml"/>
     <mkdir dir="${build.reports}/business/html"/>
 
-    <startdb database="${build.tests}/testdb" port="3219" />
-    
-    <sql driver="org.hsqldb.jdbcDriver"
-        url="jdbc:hsqldb:hsql://localhost:3219"
-        userid="sa" password=""
-        src="${ro.build}/roller/WEB-INF/dbscripts/hsqldb/createdb.sql"
-        classpath="${ro.tools}/buildtime/hsqldb.jar" />
+    <antcall target="start-db" /> 
+    <antcall target="init-db" /> 
 	
     &custom-pre-dbtest;
 
@@ -946,14 +941,8 @@ ro.buildUser=${user.name}
     </junitreport>
 	
     &custom-post-dbtest;
-
-    <sql driver="org.hsqldb.jdbcDriver"
-        url="jdbc:hsqldb:hsql://localhost:3219"
-        userid="sa" password=""
-        src="${ro.build}/roller/WEB-INF/dbscripts/droptables.sql"
-        classpath="${ro.tools}/buildtime/hsqldb.jar" />
-
-    <stopdb port="3219"/>
+    
+    <antcall target="stop-db" /> 
 
     <echo>Suggested: Run "ant consistency-check".</echo>
 </target>
@@ -965,13 +954,8 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.reports}/presentation/xml"/>
     <mkdir dir="${build.reports}/presentation/html"/>
     
-    <startdb database="${build.tests}/testdb" port="3219" />
-    
-    <sql driver="org.hsqldb.jdbcDriver"
-        url="jdbc:hsqldb:hsql://localhost:3219"
-        userid="sa" password=""
-        src="./build/roller/WEB-INF/dbscripts/hsqldb/createdb.sql"
-        classpath="${ro.tools}/buildtime/hsqldb.jar" />
+    <antcall target="start-db" /> 
+    <antcall target="init-db" /> 
 
     <junit fork="true" dir="${build.tests}" showOutput="true">
         <batchtest toDir="${build.reports}/presentation/xml">
@@ -1002,13 +986,8 @@ ro.buildUser=${user.name}
     <report format="noframes" toDir="${build.reports}/presentation/html"/>
     </junitreport>
     
-    <sql driver="org.hsqldb.jdbcDriver"
-         url="jdbc:hsqldb:hsql://localhost:3219"
-         userid="sa" password=""
-         src="./build/roller/WEB-INF/dbscripts/droptables.sql"
-         classpath="${ro.tools}/buildtime/hsqldb.jar" />
-
-    <stopdb port="3219" />
+    <antcall target="stop-db" /> 
+    
 </target>
 
 <!-- ===================================== -->
@@ -1191,26 +1170,32 @@ Use -Dverbose=1 to get verbose output.
 </target>
 
 <target name="start-db" description="Starts built-in database">  
-    <java classname="org.hsqldb.Server"  fork="yes" spawn="true" classpath="./tools/buildtime/hsqldb.jar">
+    <startdb database="${build.tests}/testdb" port="3219" />
+    <!-- 
+    Not sure we need that custom 'startdb' task if this plain old Ant works:
+    <java classname="org.hsqldb.Server"  
+        fork="yes" spawn="true" classpath="./tools/buildtime/hsqldb.jar">
         <arg value="-database"/>
         <arg value="${build.tests}/testdb"/>
         <arg value="-port"/>
         <arg value="3219"/>
     </java>
+    -->
 </target>
         
-<target name="stop-db" description="Drop tables and stops the built-in database">
-    <sql driver="org.hsqldb.jdbcDriver"
-         url="jdbc:hsqldb:hsql://localhost:3219"
-         userid="sa" password=""
-         src="./build/roller/WEB-INF/dbscripts/droptables.sql"
-         classpath="${ro.tools}/buildtime/hsqldb.jar" />
-    <sql driver="org.hsqldb.jdbcDriver"
+<target name="stop-db" description="Drop tables and stops the built-in database">   
+    <stopdb port="3219"/>
+    <!--
+    This below code does the same thing as 'stopdb' but the 'sql' task throws 
+    an exception when HSQLDB disconnects and that causes a build failure, so 
+    for now I'm keeping the custom 'startdb' and 'stopdb' Ant tasks.
+    <sql driver="org.hsqldb.jdbcDriver" onerror="continue" 
          url="jdbc:hsqldb:hsql://localhost:3219"
          userid="sa" password=""
          classpath="${ro.tools}/buildtime/hsqldb.jar" >
          SHUTDOWN
     </sql>  
+    -->
 </target>
 
 <!-- ********************************************************************* -->

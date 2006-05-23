@@ -31,7 +31,8 @@
    description="Test/debug a Single File">
    <fail unless="classname">Must set property 'classname'</fail>
    <antcall target="start-db" />
-   <antcall target="init-db" />   <nbjpdastart name="junit.textui.TestRunner" addressproperty="jpda.address" transport="dt_socket">
+   <antcall target="init-db" />   
+   <nbjpdastart name="junit.textui.TestRunner" addressproperty="jpda.address" transport="dt_socket">
       <classpath>
         <path refid="junit.path"/>
       </classpath>
