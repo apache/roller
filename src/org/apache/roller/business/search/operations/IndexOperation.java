@@ -15,10 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * Created on Jul 16, 2003
- * Authored by: Mindaugas Idzelis  (min@idzelis.com)
- */
+/* Created on Jul 16, 2003 */
 package org.apache.roller.business.search.operations;
 
 import java.io.IOException;
@@ -40,12 +37,14 @@ import org.apache.roller.util.Utilities;
 import org.apache.roller.config.RollerConfig;
 
 /**
- * @author aim4min
- *         <p/>
- *         This is the base class for all index operation. These operations include:
- *         <p/>
- *         SearchOperation AddWeblogOperation RemoveWeblogOperation
- *         RebuildUserIndexOperation
+ * This is the base class for all index operation. 
+ * These operations include:<br>
+ *    SearchOperation<br>
+ *    AddWeblogOperation<br>
+ *    RemoveWeblogOperation<br>
+ *    RebuildUserIndexOperation
+ *
+ * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public abstract class IndexOperation implements Runnable {
     private static Log mLogger = LogFactory.getFactory().getInstance(IndexOperation.class);
@@ -138,7 +137,9 @@ public abstract class IndexOperation implements Runnable {
 
         // index Category
         WeblogCategoryData categorydata = data.getCategory();
-        Field category = (categorydata == null) ? Field.UnStored(FieldConstants.CATEGORY, "") : Field.Text(FieldConstants.CATEGORY, categorydata.getName());
+        Field category = (categorydata == null) 
+           ? Field.UnStored(FieldConstants.CATEGORY, "") 
+           : Field.Text(FieldConstants.CATEGORY, categorydata.getName());
         doc.add(category);
 
         return doc;
@@ -158,6 +159,7 @@ public abstract class IndexOperation implements Runnable {
             try {
                 reader.close();
             } catch (IOException e) {
+                mLogger.error("ERROR closing reader");
             }
         }
     }

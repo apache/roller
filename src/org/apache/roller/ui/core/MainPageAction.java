@@ -102,7 +102,7 @@ public class MainPageAction extends Action {
             List list = null;
             mLogger.debug("Refreshing popular websites list");
             Roller roller = RollerFactory.getRoller();
-            list = roller.getRefererManager().getDaysPopularWebsites(num);
+            list = roller.getRefererManager().getDaysPopularWebsites(-1, 0, num);
             return list;
         }
         
