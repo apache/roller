@@ -2,21 +2,18 @@ LICENSE.txt - Roller licensing terms
 
 Roller is licensed under the Apache Licence Version 2.0, see below.
 
-PLEASE NOTE: Although Roller itself is under the Apache license, Roller 
-depends on and contains some components that are licensed under the more 
-restrictive terms of the LGPL licence. See the NOTICE.txt file for a list
-of third party components included in Roller. These license are used by
-components used in Roller:
+PLEASE NOTE: Although Roller itself is under the Apache license, Roller depends 
+on one component that is licensed under the more restrictive terms of the LGPL 
+licence (http://www.opensource.org/licenses/lgpl-license.php): which is the 
+Hibernate persistence library.
 
-* LGPL - http://www.opensource.org/licenses/lgpl-license.php
-    - Hibernate persistence library
+Roller also uses the JDOM XML parser library, licensed under the 
+terms of the JDOM license (a BSD-like license listed at end of this file).
 
-* BSD - http://www.opensource.org/licenses/bsd-license.php
-    - Code from Pebble blog server
-    - Code from Blojsom blog server
+And Roller contains some snippets of code from the Blojsom and Pebble
+blog servers, which are both licensed under the terms of the BSD licence 
+(http://www.opensource.org/licenses/bsd-license.php).
 
-* JDOM license - listed at end of this file
-    - JDOM XML parser
 
 -------------------------------------------------------------------------------
 
