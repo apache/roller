@@ -832,6 +832,7 @@ ro.buildUser=${user.name}
 
     <mkdir dir="${build.tests}" />
     <mkdir dir="${build.tests}/logs" />
+    <mkdir dir="${build.tests}/search-index" />
     <mkdir dir="${build.tests}/planet-cache" />
     <mkdir dir="${build.tests}/WEB-INF/classes" />
     <mkdir dir="${build.tests}/WEB-INF/classes/themes" />

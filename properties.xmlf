@@ -171,6 +171,7 @@ in the "base.path" definition.
 
 <path id="junit.path">
     <fileset dir="${ro.tools}/buildtime/" includes="junit-3.8.1.jar"/>
+    <path location="${build.tests}" />
     <path location="${build.tests}/WEB-INF/classes" />
     <path>
        <fileset dir="${ro.tools}/buildtime/mockrunner-0.35/lib">
