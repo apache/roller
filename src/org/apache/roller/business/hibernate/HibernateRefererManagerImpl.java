@@ -78,8 +78,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     private HibernatePersistenceStrategy strategy = null;
     private Date mRefDate = new Date();
     private SimpleDateFormat mDateFormat = DateUtil.get8charDateFormat();
-    
-    
+        
     public HibernateRefererManagerImpl(HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Referer Manager");
@@ -87,22 +86,14 @@ public class HibernateRefererManagerImpl implements RefererManager {
         strategy = strat;
     }
     
-    
-    /**
-     * 
-     * 
-     * @see org.apache.roller.pojos.RefererManager#saveReferer(org.apache.roller.pojos.RefererData)
-     */
     public void saveReferer(RefererData referer) throws RollerException {
         strategy.store(referer);
     }
-    
-    
+        
     public void removeReferer(RefererData referer) throws RollerException {
         strategy.remove(referer);
     }
-    
-    
+        
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      *
@@ -129,8 +120,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             log.error("EXCEPTION resetting referers",e);
         }
     }
-    
-    
+        
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      *
@@ -159,8 +149,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             log.error("EXCEPTION resetting referers",e);
         }
     }
-    
-    
+        
     /**
      * Apply ignoreWord/spam filters to all referers in system.
      */
@@ -196,8 +185,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * Apply ignoreWord/spam filters to all referers in website.
      */
@@ -233,8 +221,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
-    }
-    
+    }    
     
     /**
      * Use Hibernate directly because Roller's Query API does too much allocation.
@@ -255,8 +242,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
@@ -276,28 +262,51 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+       
     /**
-     * Use raw SQL because Hibernate can't handle sorting by sum.
-     *
-     * TODO: do we really need raw sql?  can't hibernate do this?
+     * Return most popular websites based on dayhits, in descending order.
      */
-    public List getDaysPopularWebsites(int max) throws RollerException {
-        // TODO Move to full use of mSupport
+    public List getDaysPopularWebsites(int sinceDays, int offset, int length) 
+        throws RollerException {
+        // TODO: ATLAS getDaysPopularWebsites DONE TESTED
         String msg = "Getting popular websites";
-        Session ses = null; // the session will eventually be release by RequestFilter
-        Connection con = null;
-        try {
-            List list = new ArrayList();
+        ArrayList result = new ArrayList();
+        try {      
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();            
+            Query query = session.createQuery(
+                "select sum(r.dayHits) as s, w.id, w.name, w.handle  "
+               +"from WebsiteData w, RefererData r "
+               +"where r.website=w and w.enabled=true and w.active=true "
+               +"group by w.name, w.handle, w.id order by col_0_0_ desc"); 
             
-            ses = ((HibernatePersistenceStrategy)strategy).getSession();
-            con = ses.connection();
+              // +"group by w.name, w.handle, w.id order by s desc");
+              // The above would be *much* better but "HQL parser does not   
+              // resolve alias in ORDER BY clause" (See Hibernate issue HHH-892)
             
-            final PreparedStatement stmt;
-            
-            Dialect currentDialect = ((SessionFactoryImplementor)ses.getSessionFactory()).getDialect();
-            
+            query.setFirstResult(offset);
+            query.setMaxResults(length);
+            Iterator rawResults = query.list().iterator();
+            for (Iterator it = query.list().iterator(); it.hasNext();) {
+                Object[] row = (Object[])it.next();
+                Integer hits = (Integer)row[0];
+                String websiteId = (String)row[1];
+                String websiteName = (String)row[2];
+                String websiteHandle = (String)row[3];
+                result.add(new WebsiteDisplayData(
+                    websiteId,
+                    websiteName,
+                    websiteHandle,
+                    hits));              
+            }
+            return result;
+                
+            /* The old raw SQL way:
+            List list = new ArrayList();            
+            Session ses = ((HibernatePersistenceStrategy)strategy).getSession();
+            Connection con = ses.connection();            
+            final PreparedStatement stmt;            
+            Dialect currentDialect = ((SessionFactoryImplementor)ses.getSessionFactory()).getDialect();            
             if (currentDialect instanceof HSQLDialect) {
                 // special handling for HSQLDB
                 stmt = con.prepareStatement(
@@ -305,7 +314,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                         "from website as w, referer as r "+
                         "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
                         "group by w.name, w.handle, w.id order by s desc");
-                stmt.setInt(1, max);
+                stmt.setInt(1, len);
                 stmt.setBoolean(2, true);
                 stmt.setBoolean(3, true);
             } else if(currentDialect instanceof DerbyDialect) {
@@ -317,7 +326,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                         "group by w.name, w.handle, w.id order by s desc");
                 stmt.setBoolean(1, true);
                 stmt.setBoolean(2, true);
-                stmt.setMaxRows(max);
+                stmt.setMaxRows(len);
             } else if(currentDialect instanceof DB2Dialect) {
                 // special handling for IBM DB2
                 stmt = con.prepareStatement(
@@ -325,7 +334,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                         "from website as w, referer as r "+
                         "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
                         "group by w.name, w.handle, w.id order by s desc fetch first " +
-                        Integer.toString(max) + " rows only");
+                        Integer.toString(len) + " rows only");
                 stmt.setBoolean(1, true);
                 stmt.setBoolean(2, true);
             } else if (currentDialect instanceof OracleDialect) {
@@ -336,9 +345,9 @@ public class HibernateRefererManagerImpl implements RefererManager {
                         "group by w.name, w.handle, w.id order by s desc");
                 stmt.setBoolean(1, true);
                 stmt.setBoolean(2, true);
-                stmt.setInt(3, max );
+                stmt.setInt(3, len );
             } else if (currentDialect instanceof SQLServerDialect) {
-                stmt = con.prepareStatement("select top " + max + " w.id, w.name, w.handle, sum(r.dayhits) as s " +
+                stmt = con.prepareStatement("select top " + len + " w.id, w.name, w.handle, sum(r.dayhits) as s " +
                         "from website as w, referer as r where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
                         "group by w.name, w.handle, w.id order by s desc");
                 stmt.setBoolean(1, true);
@@ -354,8 +363,8 @@ public class HibernateRefererManagerImpl implements RefererManager {
                         "group by w.name, w.handle, w.id order by s desc limit ?");
                 stmt.setBoolean(1, true);
                 stmt.setBoolean(2, true);
-                stmt.setInt(3, max);
-            }
+                stmt.setInt(3, len);
+            }            
             ResultSet rs = stmt.executeQuery();
             if ( rs.next() ) {
                 do
@@ -369,21 +378,21 @@ public class HibernateRefererManagerImpl implements RefererManager {
                             websiteName,
                             websiteHandle,
                             hits));
-                    if(list.size() >= max) {
+                    if(list.size() >= len) {
                         rs.close();
                         break;
                     }
                 }
                 while ( rs.next() );
-            }
-            return list;
+            }           
+            return list; */
+            
         } catch (Throwable pe) {
             log.error(msg, pe);
             throw new RollerException(msg, pe);
         }
     }
-    
-    
+        
     /**
      * Use raw SQL because Hibernate can't handle the query.
      */
@@ -428,8 +437,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         return hits;
     }
-    
-    
+        
     /**
      * @see org.apache.roller.pojos.RefererManager#getReferers(java.lang.String)
      */
@@ -448,8 +456,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * @see org.apache.roller.pojos.RefererManager#getTodaysReferers(String)
      */
@@ -469,8 +476,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+       
     /**
      * Returns referers for a specified day. Duplicate enties are not
      * included in this list so the hit counts may not be accurate.
@@ -498,8 +504,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * @see org.apache.roller.pojos.RefererManager#getReferersToEntry(
      * java.lang.String, java.lang.String)
@@ -524,8 +529,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * Query for collection of referers.
      */
@@ -543,8 +547,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * Query for collection of referers.
      */
@@ -574,18 +577,15 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     public int getDayHits(WebsiteData website) throws RollerException {
         return getHits(website, DAYHITS);
     }
-    
-    
+        
     public int getTotalHits(WebsiteData website) throws RollerException {
         return getHits(website, TOTALHITS);
     }
-    
-    
+        
     /**
      * @see org.apache.roller.pojos.RefererManager#retrieveReferer(java.lang.String)
      */
@@ -730,8 +730,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             log.error(npe);
         }
     }
-    
-    
+        
     /**
      * Use LinkbackExtractor to parse title and excerpt from referer
      */
@@ -856,10 +855,8 @@ public class HibernateRefererManagerImpl implements RefererManager {
         }
         
     }
-    
-    
-    public void release() {}
-    
+       
+    public void release() {}    
 }
 
 

@@ -30,7 +30,6 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 
-
 /**
  * Interface to weblog entry, category and comment management.
  */
@@ -38,24 +37,27 @@ public interface WeblogManager {
     
     public static final String CATEGORY_ATT = "category.att";
        
+    /**
+     * Save weblog entry.
+     */
     public void saveWeblogEntry(WeblogEntryData entry) throws RollerException;
-        
-    public void removeWeblogEntry(WeblogEntryData entry) throws RollerException;
-    
+       
+    /**
+     * Remove weblog entry.
+     */
+    public void removeWeblogEntry(WeblogEntryData entry) throws RollerException;    
     
     /**
-     * Get weblog entry by ID
+     * Get weblog entry by id.
      */
     public WeblogEntryData getWeblogEntry(String id) throws RollerException;
-    
     
     /** 
      * Get weblog entry by anchor. 
      */
     public WeblogEntryData getWeblogEntryByAnchor(WebsiteData website, String anchor) 
             throws RollerException;
-    
-    
+        
     /**
      * Get WeblogEntries by offset/length as list in reverse chronological order.
      * The range offset and list arguments enable paging through query results.
@@ -80,8 +82,7 @@ public interface WeblogManager {
             int offset,
             int range)
             throws RollerException;
-    
-    
+        
     /**
      * Get WeblogEntries up to limit as list in reverse chronological order.
      * The range offset and list arguments enable paging through query results.
@@ -105,8 +106,7 @@ public interface WeblogManager {
             String  sortBy,
             Integer maxEntries)
             throws RollerException;
-    
-    
+        
     /**
      * Get Weblog Entries grouped by day. This method returns a Map that
      * contains Lists, each List contains WeblogEntryData objects, and the
@@ -128,8 +128,7 @@ public interface WeblogManager {
             String  status,
             Integer maxEntries)
             throws RollerException;
-    
-    
+        
     /**
      * Get Weblog Entry date strings grouped by day. This method returns a Map
      * that contains Lists, each List contains YYYYMMDD date strings objects,
@@ -150,44 +149,47 @@ public interface WeblogManager {
             String  catName,
             String  status,
             Integer maxEntries)
-            throws RollerException;
-    
+            throws RollerException;    
     
     /**
      * Get weblog entries with given category or, optionally, any sub-category
      * of that category.
-     * @param cat     Category.
-     * @param subcats True if sub-categories are to be fetched.
-     * @return        List of weblog entries in category.
+     * @param cat     Category
+     * @param subcats True if sub-categories are to be fetched
+     * @return        List of weblog entries in category
      */
     public List getWeblogEntries(WeblogCategoryData cat, boolean subcats) 
-            throws RollerException;
+            throws RollerException; 
     
+    /** 
+     * Get weblog enties ordered by descending number of comments.
+     * @param website Restrict to only this website (or null for all)
+     * @param sinceDays Restrict to last X days (or -1 for all)
+     * @param len       Maximum number of results to return (for paging)
+     * @returns List of WeblogEntryData objects.
+     */
+    public List getMostCommentedWeblogEntries(
+            WebsiteData website, int sinceDays, int offset, int len)
+            throws RollerException;
     
     /**
      * Get the WeblogEntry following, chronologically, the current entry.
      * Restrict by the Category, if named.
-     *
-     * @param current The "current" WeblogEntryData.
-     * @param catName The value of the requested Category Name.
-     * @return
+     * @param current The "current" WeblogEntryData
+     * @param catName The value of the requested Category Name
      */
     public WeblogEntryData getNextEntry(WeblogEntryData current, String catName) 
-            throws RollerException;
-    
+            throws RollerException;    
     
     /**
      * Get the WeblogEntry prior to, chronologically, the current entry.
      * Restrict by the Category, if named.
-     *
      * @param current The "current" WeblogEntryData.
      * @param catName The value of the requested Category Name.
-     * @return
      */
     public WeblogEntryData getPreviousEntry(WeblogEntryData current, 
             String catName) throws RollerException;
-    
-    
+        
     /**
      * Get entries next after current entry.
      * @param entry Current entry.
@@ -196,8 +198,7 @@ public interface WeblogManager {
      */
     public List getNextEntries(WeblogEntryData entry, 
             String catName, int maxEntries) throws RollerException;
-    
-    
+        
     /**
      * Get entries previous to current entry.
      * @param entry Current entry.
@@ -205,53 +206,47 @@ public interface WeblogManager {
      * @param maxEntries Maximum number of entries to return.
      */
     public List getPreviousEntries(WeblogEntryData entry, 
-            String catName, int maxEntries) throws RollerException;
-    
+            String catName, int maxEntries) throws RollerException;    
     
     /**
      * Get specified number of most recent pinned and published Weblog Entries.
      * @param max Maximum number to return.
      * @return Collection of WeblogEntryData objects.
      */
-    public List getWeblogEntriesPinnedToMain(Integer max) throws RollerException;
-    
+    public List getWeblogEntriesPinnedToMain(Integer max) throws RollerException;    
     
     /** Get time of last update for a weblog specified by username */
-    public Date getWeblogLastPublishTime(WebsiteData website) throws RollerException;
-    
+    public Date getWeblogLastPublishTime(WebsiteData website) throws RollerException;   
     
     /**
      * Gets returns most recent pubTime, optionally restricted by category.
      * @param handle   Handle of website or null for all users
      * @param catName  Category name of posts or null for all categories
      * @return         Date Of last publish time
-     * @throws RollerException
      */
     public Date getWeblogLastPublishTime(WebsiteData website, String catName )
             throws RollerException;
     
-    
+    /**
+     * Save weblog category.
+     */
     public void saveWeblogCategory(WeblogCategoryData cat) throws RollerException;
     
-    
     /**
-     * Recategorize all entries with one category to another.
-     * @param srcId
-     * @param destId
-     * @throws org.apache.roller.RollerException
+     * Remove weblog category.
      */
-    public void moveWeblogCategoryContents(String srcId, String destId) 
-            throws RollerException;
-    
-    
     public void removeWeblogCategory(WeblogCategoryData cat) throws RollerException;
-    
-    
+        
     /**
-     * Get category by ID
+     * Get category by id.
      */
     public WeblogCategoryData getWeblogCategory(String id) throws RollerException;
     
+    /**
+     * Recategorize all entries with one category to another.
+     */
+    public void moveWeblogCategoryContents(String srcId, String destId) 
+            throws RollerException;
     
     /**
      * Get top level categories for a website.
@@ -276,18 +271,19 @@ public interface WeblogManager {
      * @return          Category specified by path or null if not found.
      */
     public WeblogCategoryData getWeblogCategoryByPath(WebsiteData wd, 
-            WeblogCategoryData category, String string) throws RollerException;
+            WeblogCategoryData category, String string) throws RollerException;    
     
+    /** 
+     * Get WebLogCategory objects for a website. 
+     */
+    public List getWeblogCategories(WebsiteData website) throws RollerException;    
     
-    /** Get WebLogCategory objects for a website. */
-    public List getWeblogCategories(WebsiteData website) throws RollerException;
-    
-    
-    /** Get WebLogCategory objects for a website. */
+    /** 
+     * Get WebLogCategory objects for a website. 
+     */
     public List getWeblogCategories(WebsiteData website, boolean includeRoot)
             throws RollerException;
-    
-    
+        
     /**
      * Get absolute path to category, appropriate for use by getWeblogCategoryByPath().
      * @param category WeblogCategoryData.
@@ -295,30 +291,43 @@ public interface WeblogManager {
      */
     public String getPath(WeblogCategoryData category) throws RollerException;
     
-    
+    /**
+     * Get parent association for a category.
+     */
     public Assoc getWeblogCategoryParentAssoc(WeblogCategoryData data) throws RollerException;
     
+    /**
+     * Get child associations for a category.
+     */
     public List getWeblogCategoryChildAssocs(WeblogCategoryData data) throws RollerException;
     
+    /** 
+     * Get all descendent associations for a category.
+     */
     public List getAllWeblogCategoryDecscendentAssocs(WeblogCategoryData data) throws RollerException;
     
+    /**
+     * Get all ancestor associates for a category.
+     */
     public List getWeblogCategoryAncestorAssocs(WeblogCategoryData data) throws RollerException;
     
-    
+    /**
+     * Save comment.
+     */
     public void saveComment(CommentData comment) throws RollerException;
     
-    
-    public void removeComment(CommentData comment) throws RollerException;
-    
-    
     /**
-     * Get comment by ID
+     * Remove comment.
+     */
+    public void removeComment(CommentData comment) throws RollerException;
+   
+    /**
+     * Get comment by id.
      */
     public CommentData getComment(String id) throws RollerException;
-    
-    
+       
     /**
-     * Generic comments query method
+     * Generic comments query method.
      * @param website    Website or null for all comments on site
      * @param entry      Entry or null to include all comments
      * @param startDate  Start date or null for no restriction
@@ -343,52 +352,48 @@ public interface WeblogManager {
             int             offset,
             int             length
             ) throws RollerException;
-    
-    
+        
     /**
      * Create unique anchor for weblog entry.
      */
-    public String createAnchor(WeblogEntryData data) throws RollerException;
-    
+    public String createAnchor(WeblogEntryData data) throws RollerException;    
     
     /**
      * Check for duplicate category name.
      */
     public boolean isDuplicateWeblogCategoryName(WeblogCategoryData data)
-            throws RollerException;
-    
+            throws RollerException;  
     
     /**
      * Check if weblog category is in use.
      */
     public boolean isWeblogCategoryInUse(WeblogCategoryData data)
-            throws RollerException;
-    
+            throws RollerException;    
     
     /**
      * Returns true if ancestor is truly an ancestor of child.
      */
     public boolean isDescendentOf(WeblogCategoryData child, 
-            WeblogCategoryData ancestor) throws RollerException;
-    
+            WeblogCategoryData ancestor) throws RollerException;    
     
     /**
      * Get the URL of a website.
-     * @param website    The website
+     * @param website    The website object 
      * @param contextUrl The context url, this is prepended and can be absolute
      *                   or relative depending on what is desired.
      * @return The url of the user's weblog
      */
-    public String getUrl(WebsiteData website, String contextUrl) throws RollerException;
+    public String getUrl(WebsiteData website, String contextUrl) 
+        throws RollerException;
     
     /**
      * Apply comment default settings from website to all of website's entries.
      */
-    public void applyCommentDefaultsToEntries(WebsiteData website) throws RollerException;
+    public void applyCommentDefaultsToEntries(WebsiteData website) 
+        throws RollerException;
     
     /**
-     * Release all resources associated with Roller session.
+     * Release all resources held by manager.
      */
-    public void release();
-    
+    public void release();    
 }

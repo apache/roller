@@ -300,6 +300,9 @@ public class PlanetManagerTest extends TestCase {
             TestUtils.endSession(true);
             
             assertTrue(entriesSize > 0);
+            
+            Object feed = planet.getSubscription(feed_url1);
+            assertNull(feed);
         }
     }
     
@@ -351,10 +354,10 @@ public class PlanetManagerTest extends TestCase {
                 PlanetGroupData group = planet.getGroup("test_handle");
                 assertNotNull(group);
                 
-                List bigag = planet.getAggregation(group, 30);
+                List bigag = planet.getAggregation(group, 0, 30);
                 assertEquals(30, bigag.size());
                 
-                List littleag = planet.getAggregation(group, 10);
+                List littleag = planet.getAggregation(group, 0, 10);
                 assertEquals(10, littleag.size());
                 
                 planet.deleteGroup(group);

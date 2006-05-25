@@ -110,31 +110,38 @@ public interface PlanetManager extends Serializable
     /** 
      * Get top X subscriptions.
      */
-    public List getTopSubscriptions(int max) throws RollerException;
+    public List getTopSubscriptions(int offset, int len) throws RollerException;
 
     /** 
      * Get top X subscriptions, restricted by group.
      */
     public List getTopSubscriptions( 
-        PlanetGroupData group, int max) throws RollerException;
+        PlanetGroupData group, int offset, int len) throws RollerException;
+
+    /** 
+     * Get entries in a single feed as list of PlanetEntryData objects.
+     */
+    public List getFeedEntries( 
+        String feedUrl, int offset, int len) throws RollerException;
 
     //------------------------------------------------------------ aggregations
     
     /** 
-     * Get agggration for group from cache, enries in  
-     * reverse chonological order.
+     * Get agggration for group from cache, enries in reverse chonological order.
      * Respects category constraints of group.
-     * @param group 
-     * @param maxEntries Maximum number of entries to return. 
+     * @param group Restrict to entries from one subscription group.
+     * @param offset    Offset into results (for paging)
+     * @param len       Maximum number of results to return (for paging) 
      */
     public List getAggregation(
-        PlanetGroupData group, int maxEntries) throws RollerException;
+        PlanetGroupData group, int offset, int len) throws RollerException;
     
     /** 
      * Get agggration from cache, enries in reverse chonological order.
-     * @param maxEntries Maximum number of entries to return. 
+     * @param offset    Offset into results (for paging)
+     * @param len       Maximum number of results to return (for paging)
      */
-    public List getAggregation(int maxEntries) throws RollerException;
+    public List getAggregation(int offset, int len) throws RollerException;
     
     //------------------------------------------------------------------ update
     

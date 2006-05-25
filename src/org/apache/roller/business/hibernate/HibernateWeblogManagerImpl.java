@@ -1040,6 +1040,12 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         return map;
     }
     
+    public List getMostCommentedWeblogEntries(
+            WebsiteData website, int sinceDays, int offset, int len) 
+            throws RollerException {
+        return null;
+    }
+    
     public List getNextEntries(
             WeblogEntryData current, String catName, int maxEntries)
             throws RollerException {
@@ -1109,4 +1115,6 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             log.error("EXCEPTION applying comment defaults",e);
         }
     }     
+
+
 }

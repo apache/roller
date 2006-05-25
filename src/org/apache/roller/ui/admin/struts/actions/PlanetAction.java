@@ -115,7 +115,7 @@ public class PlanetAction extends Action
         public List getAggregation(int num) throws RollerException
         {
             Roller roller = RollerFactory.getRoller();           
-            return roller.getPlanetManager().getAggregation(num);
+            return roller.getPlanetManager().getAggregation(0, num);
         }
         /** 
          * Get named group
@@ -144,7 +144,7 @@ public class PlanetAction extends Action
             {
                 Roller roller = RollerFactory.getRoller();   
                 PlanetGroupData group= roller.getPlanetManager().getGroup(name);
-                ret = roller.getPlanetManager().getAggregation(group, num);
+                ret = roller.getPlanetManager().getAggregation(group, 0, num);
             }
             catch (RollerException e) 
             {
@@ -161,7 +161,7 @@ public class PlanetAction extends Action
             try 
             {
                 Roller roller = RollerFactory.getRoller();  
-                ret = roller.getPlanetManager().getTopSubscriptions(num);
+                ret = roller.getPlanetManager().getTopSubscriptions(0, num);
             }
             catch (RollerException e) 
             {
@@ -180,7 +180,7 @@ public class PlanetAction extends Action
             {
                 Roller roller = RollerFactory.getRoller(); 
                 PlanetGroupData group= roller.getPlanetManager().getGroup(name);
-                ret = roller.getPlanetManager().getTopSubscriptions(group,num);
+                ret = roller.getPlanetManager().getTopSubscriptions(group, 0, num);
             }
             catch (RollerException e) 
             {
@@ -194,7 +194,7 @@ public class PlanetAction extends Action
         public List getPopularWebsites(int num) throws RollerException
         {
             Roller roller = RollerFactory.getRoller();            
-            return roller.getRefererManager().getDaysPopularWebsites(num);
+            return roller.getRefererManager().getDaysPopularWebsites(-1, 0, num);
         }
     }
 }

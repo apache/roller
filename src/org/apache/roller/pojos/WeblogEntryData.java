@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.pojos;
 
@@ -48,24 +48,21 @@ import org.apache.roller.util.Utilities;
 
 /**
  * Represents a Weblog Entry.
- * 
- * @author David M Johnson
  *
  * @ejb:bean name="WeblogEntryData"
  * @struts.form include-all="true"
  * @hibernate.class lazy="false" table="weblogentry"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogEntryData extends PersistentObject implements Serializable
-{
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(WeblogEntryData.class);
-                                           
+public class WeblogEntryData extends PersistentObject implements Serializable, WeblogEntry {
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(WeblogEntryData.class);
+    
     public static final long serialVersionUID = 2341505386843044125L;
     
-    public static final String DRAFT = "DRAFT";
-    public static final String PENDING = "PENDING";
+    public static final String DRAFT     = "DRAFT";
     public static final String PUBLISHED = "PUBLISHED";
+    public static final String PENDING   = "PENDING";
     
     // Simple properies
     private String    id            = null;
@@ -89,30 +86,28 @@ public class WeblogEntryData extends PersistentObject implements Serializable
     private UserData           creator  = null;
     private WebsiteData        website  = null;
     private WeblogCategoryData category = null;
-        
+    
     // Collection of name/value entry attributes
     private Map attMap = new HashMap();
     private Set attSet = new TreeSet();
     
     //----------------------------------------------------------- Construction
-
-    public WeblogEntryData()
-    {
+    
+    public WeblogEntryData() {
     }
-
+    
     public WeblogEntryData(
-       java.lang.String id, 
-       WeblogCategoryData category, 
-       WebsiteData website, 
-       UserData creator,
-       String title, 
-       String link,
-       String text, 
-       String anchor, 
-       Timestamp pubTime, 
-       Timestamp updateTime, 
-       String status)
-    {
+            java.lang.String id,
+            WeblogCategoryData category,
+            WebsiteData website,
+            UserData creator,
+            String title,
+            String link,
+            String text,
+            String anchor,
+            Timestamp pubTime,
+            Timestamp updateTime,
+            String status) {
         this.id = id;
         this.category = category;
         this.website = website;
@@ -125,19 +120,17 @@ public class WeblogEntryData extends PersistentObject implements Serializable
         this.updateTime = updateTime;
         this.status = status;
     }
-
-    public WeblogEntryData(WeblogEntryData otherData)
-    {
+    
+    public WeblogEntryData(WeblogEntryData otherData) {
         this.setData(otherData);
     }
-
+    
     //---------------------------------------------------------- Initializaion
-
+    
     /**
      * Setter is needed in RollerImpl.storePersistentObject()
      */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData)
-    {
+    public void setData(org.apache.roller.pojos.PersistentObject otherData) {
         WeblogEntryData other = (WeblogEntryData)otherData;
         
         this.id = other.getId();
@@ -157,358 +150,338 @@ public class WeblogEntryData extends PersistentObject implements Serializable
         this.rightToLeft = other.getRightToLeft();
         this.pinnedToMain = other.getPinnedToMain();
     }
-
+    
     //------------------------------------------------------ Simple properties
     
-    /** 
+    /**
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
-    public java.lang.String getId()
-    {
+    public java.lang.String getId() {
         return this.id;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setId(java.lang.String id)
-    {
+    public void setId(java.lang.String id) {
         this.id = id;
     }
-
-    /** 
+    
+    /**
      * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.many-to-one column="categoryid" cascade="none" not-null="true"
      */
-    public org.apache.roller.pojos.WeblogCategoryData getCategory()
-    {
+    public org.apache.roller.pojos.WeblogCategoryData getCategory() {
         return this.category;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setCategory(org.apache.roller.pojos.WeblogCategoryData category)
-    {
+    public void setCategory(org.apache.roller.pojos.WeblogCategoryData category) {
         this.category = category;
     }
-
+    
     /**
      * Set weblog category via weblog category ID.
      * @param id Weblog category ID.
      */
-    public void setCategoryId(String id) throws RollerException
-    {
+    public void setCategoryId(String id) throws RollerException {
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         setCategory(wmgr.getWeblogCategory(id));
     }
-
-    /** 
+    
+    /**
+     * Return collection of WeblogCategoryData objects of this entry.
+     * Added for symetry with PlanetEntryData object.
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
+     */
+    public List getCategories() {
+        List cats = new ArrayList();
+        cats.add(getCategory());
+        return cats;
+    }
+    
+    /** No-op method to please XDoclet */
+    public void setCategories(List cats) {
+        // no-op
+    }
+    
+    /**
      * @roller.wrapPojoMethod type="pojo"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public WebsiteData getWebsite()
-    {
+    public WebsiteData getWebsite() {
         return this.website;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setWebsite(WebsiteData website)
-    {
+    public void setWebsite(WebsiteData website) {
         this.website = website;
     }
-
-    /** 
+    
+    /**
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.many-to-one column="userid" cascade="none" not-null="true"
      */
-    public UserData getCreator()
-    {
+    public UserData getCreator() {
         return this.creator;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setCreator(UserData creator)
-    {
+    public void setCreator(UserData creator) {
         this.creator = creator;
     }
     
-    /** 
+    /**
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="title" non-null="true" unique="false"
      */
-    public java.lang.String getTitle()
-    {
+    public java.lang.String getTitle() {
         return this.title;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setTitle(java.lang.String title)
-    {
+    public void setTitle(java.lang.String title) {
         this.title = title;
     }
-
-    /** 
+    
+    /**
      * Get summary for weblog entry (maps to RSS description and Atom summary).
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="summary" non-null="false" unique="false"
      */
     public String getSummary() {
         return summary;
     }
-
-    /** 
+    
+    /**
      * Set summary for weblog entry (maps to RSS description and Atom summary).
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setSummary(String summary) {
         this.summary = summary;
     }
-
-    /** 
+    
+    /**
      * Get content text for weblog entry (maps to RSS content:encoded and Atom content).
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="text" non-null="true" unique="false"
      */
-    public java.lang.String getText()
-    {
+    public java.lang.String getText() {
         return this.text;
     }
-
-    /** 
+    
+    /**
      * Set content text for weblog entry (maps to RSS content:encoded and Atom content).
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
-    public void setText(java.lang.String text)
-    {
+    public void setText(java.lang.String text) {
         this.text = text;
     }
     
-    /** 
+    /**
      * Get content type (text, html, xhtml or a MIME content type)
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="content_type" non-null="false" unique="false"
      */
     public String getContentType() {
         return contentType;
     }
-
-    /** 
+    
+    /**
      * Set content type (text, html, xhtml or a MIME content type)
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
-
-    /** 
+    
+    /**
      * Get URL for out-of-line content.
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="content_src" non-null="false" unique="false"
      */
     public String getContentSrc() {
         return contentSrc;
     }
-
-    /** 
+    
+    /**
      * Set URL for out-of-line content.
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      */
     public void setContentSrc(String contentSrc) {
         this.contentSrc = contentSrc;
     }
-        
-    /** 
+    
+    /**
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="anchor" non-null="true" unique="false"
      */
-    public java.lang.String getAnchor()
-    {
+    public java.lang.String getAnchor() {
         return this.anchor;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setAnchor(java.lang.String anchor)
-    {
+    public void setAnchor(java.lang.String anchor) {
         this.anchor = anchor;
     }
-
+    
     //-------------------------------------------------------------------------
-    /** 
+    /**
      * Map attributes as set because XDoclet 1.2b4 map support is broken.
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.EntryAttributeData"
      * @ejb:persistent-field
-     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan" 
+     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan"
      * @hibernate.collection-key column="entryid" type="String"
      * @hibernate.collection-one-to-many class="org.apache.roller.pojos.EntryAttributeData"
      */
-    public Set getEntryAttributes()    
-    {
+    public Set getEntryAttributes() {
         return attSet;
     }
     /** @ejb:persistent-field */
-    public void setEntryAttributes(Set attSet)
-    {
+    public void setEntryAttributes(Set attSet) {
         this.attSet = attSet;
         
         // copy set to map
-        if (attSet != null)
-        {
+        if (attSet != null) {
             this.attSet = attSet;
             this.attMap = new HashMap();
             Iterator iter = this.attSet.iterator();
-            while (iter.hasNext()) 
-            {
+            while (iter.hasNext()) {
                 EntryAttributeData att = (EntryAttributeData)iter.next();
                 attMap.put(att.getName(), att);
             }
-        }
-        else 
-        {
+        } else {
             this.attSet = new TreeSet();
             this.attMap = new HashMap();
         }
     }
     
     
-    /** 
+    /**
      * Would be named getEntryAttribute, but that would set off XDoclet
      *
      * @roller.wrapPojoMethod type="simple"
      */
-    public String findEntryAttribute(String name)
-    {
+    public String findEntryAttribute(String name) {
         EntryAttributeData att = ((EntryAttributeData)attMap.get(name));
         return (att != null) ? att.getValue() : null;
     }
     
     
-    public void putEntryAttribute(String name, String value) throws Exception
-    {
+    public void putEntryAttribute(String name, String value) throws Exception {
         EntryAttributeData att = (EntryAttributeData)attMap.get(name);
-        if (att == null) 
-        {
+        if (att == null) {
             att = new EntryAttributeData();
             att.setEntry(this);
             att.setName(name);
             att.setValue(value);
-            attMap.put(name, att);    
+            attMap.put(name, att);
             attSet.add(att);
-        }
-        else 
-        {
+        } else {
             att.setValue(value);
         }
     }
-    public void removeEntryAttribute(String name) throws RollerException
-    {
+    public void removeEntryAttribute(String name) throws RollerException {
         EntryAttributeData att = (EntryAttributeData)attMap.get(name);
-        if (att != null) 
-        {
+        if (att != null) {
             attMap.remove(att);
             attSet.remove(att);
         }
     }
     //-------------------------------------------------------------------------
     
-    /**  
+    /**
      * <p>Publish time is the time that an entry is to be (or was) made available
-     * for viewing by newsfeed readers and visitors to the Roller site.</p> 
-     * 
+     * for viewing by newsfeed readers and visitors to the Roller site.</p>
+     *
      * <p>Roller stores time using the timeZone of the server itself. When
-     * times are displayed  in a user's weblog they must be translated 
+     * times are displayed  in a user's weblog they must be translated
      * to the user's timeZone.</p>
      *
-     * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on 
+     * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on
      * MySQL has only a one-second resolution.</p>
      *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="pubtime" non-null="true" unique="false"
      */
-    public java.sql.Timestamp getPubTime()
-    {
+    public java.sql.Timestamp getPubTime() {
         return this.pubTime;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setPubTime(java.sql.Timestamp pubTime)
-    {
+    public void setPubTime(java.sql.Timestamp pubTime) {
         this.pubTime = pubTime;
     }
-
-    /** 
-     * <p>Update time is the last time that an weblog entry was saved in the 
-     * Roller weblog editor or via web services API (XML-RPC or Atom).</p> 
+    
+    /**
+     * <p>Update time is the last time that an weblog entry was saved in the
+     * Roller weblog editor or via web services API (XML-RPC or Atom).</p>
      *
      * <p>Roller stores time using the timeZone of the server itself. When
-     * times are displayed  in a user's weblog they must be translated 
+     * times are displayed  in a user's weblog they must be translated
      * to the user's timeZone.</p>
      *
-     * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on 
+     * <p>NOTE: Times are stored using the SQL TIMESTAMP datatype, which on
      * MySQL has only a one-second resolution.</p>
      *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="updatetime" non-null="true" unique="false"
      */
-    public java.sql.Timestamp getUpdateTime()
-    {
+    public java.sql.Timestamp getUpdateTime() {
         return this.updateTime;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setUpdateTime(java.sql.Timestamp updateTime)
-    {
+    public void setUpdateTime(java.sql.Timestamp updateTime) {
         this.updateTime = updateTime;
     }
-
-    /** 
+    
+    /**
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="status" non-null="true" unique="false"
      */
-    public String getStatus()
-    {
+    public String getStatus() {
         return this.status;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setStatus(String status)
-    {
+    public void setStatus(String status) {
         this.status = status;
     }
-
+    
     /**
      * Some weblog entries are about one specific link.
      * @return Returns the link.
      *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="link" non-null="false" unique="false"
      */
-    public java.lang.String getLink()
-    {
+    public java.lang.String getLink() {
         return link;
     }
-
+    
     /**
      * @ejb:persistent-field
      * @param link The link to set.
      */
-    public void setLink(java.lang.String link)
-    {
+    public void setLink(java.lang.String link) {
         this.link = link;
     }
-
+    
     /**
      * Comma-delimited list of this entry's Plugins.
      *
@@ -516,17 +489,15 @@ public class WeblogEntryData extends PersistentObject implements Serializable
      * @ejb:persistent-field
      * @hibernate.property column="plugins" non-null="false" unique="false"
      */
-    public java.lang.String getPlugins()
-    {
+    public java.lang.String getPlugins() {
         return plugins;
     }
-
+    
     /** @ejb:persistent-field */
-    public void setPlugins(java.lang.String string)
-    {
+    public void setPlugins(java.lang.String string) {
         plugins = string;
     }
-
+    
     
     /**
      * True if comments are allowed on this weblog entry.
@@ -581,74 +552,66 @@ public class WeblogEntryData extends PersistentObject implements Serializable
     public void setRightToLeft(Boolean rightToLeft) {
         this.rightToLeft = rightToLeft;
     }
-
+    
     /**
      * True if story should be pinned to the top of the Roller site main blog.
      * @return Returns the pinned.
-     * 
+     *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field 
+     * @ejb:persistent-field
      * @hibernate.property column="pinnedtomain" non-null="true" unique="false"
      */
-    public Boolean getPinnedToMain()
-    {
+    public Boolean getPinnedToMain() {
         return pinnedToMain;
     }
     /**
      * True if story should be pinned to the top of the Roller site main blog.
      * @param pinnedToMain The pinned to set.
-     * 
-     * @ejb:persistent-field 
+     *
+     * @ejb:persistent-field
      */
-    public void setPinnedToMain(Boolean pinnedToMain)
-    {
+    public void setPinnedToMain(Boolean pinnedToMain) {
         this.pinnedToMain = pinnedToMain;
     }
     
     //------------------------------------------------------------------------
     
-    /** 
-     * True if comments are still allowed on this entry considering the 
+    /**
+     * True if comments are still allowed on this entry considering the
      * allowComments and commentDays fields.
      *
      * @roller.wrapPojoMethod type="simple"
      */
-    public boolean getCommentsStillAllowed() 
-    {
+    public boolean getCommentsStillAllowed() {
         if(DRAFT.equals(this.status) || PENDING.equals(this.status))
             return false;
         
-    		boolean ret = false;
-    		if (getAllowComments() == null || getAllowComments().booleanValue()) 
-    		{
-    			if (getCommentDays() == null || getCommentDays().intValue() == 0)
-    			{
-    				ret = true;
-    			}
-    			else 
-    			{
-    				Calendar expireCal = Calendar.getInstance(
-                            getWebsite().getLocaleInstance());
-    				expireCal.setTime(getPubTime());
-    				expireCal.add(Calendar.DATE, getCommentDays().intValue());
-    				Date expireDay = expireCal.getTime();
-    				Date today = new Date();
-    				if (today.before(expireDay))
-    				{
-    					ret = true;
-    				}
-    			}
-    		}
-    		return ret;
+        boolean ret = false;
+        if (getAllowComments() == null || getAllowComments().booleanValue()) {
+            if (getCommentDays() == null || getCommentDays().intValue() == 0) {
+                ret = true;
+            } else {
+                Calendar expireCal = Calendar.getInstance(
+                        getWebsite().getLocaleInstance());
+                expireCal.setTime(getPubTime());
+                expireCal.add(Calendar.DATE, getCommentDays().intValue());
+                Date expireDay = expireCal.getTime();
+                Date today = new Date();
+                if (today.before(expireDay)) {
+                    ret = true;
+                }
+            }
+        }
+        return ret;
     }
     public void setCommentsStillAllowed(boolean ignored) {
         // no-op
     }
-
+    
     
     //------------------------------------------------------------------------
     
-    /** 
+    /**
      * Format the publish time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
      *
@@ -656,26 +619,22 @@ public class WeblogEntryData extends PersistentObject implements Serializable
      * @see java.text.SimpleDateFormat
      * @return Publish time formatted according to pattern.
      */
-    public String formatPubTime(String pattern)
-    {
-        try
-        {
-            SimpleDateFormat format = new SimpleDateFormat(pattern, 
+    public String formatPubTime(String pattern) {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat(pattern,
                     this.getWebsite().getLocaleInstance());
-
+            
             return format.format(getPubTime());
-        }
-        catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             mLogger.error("Unexpected exception", e);
         }
-
+        
         return "ERROR: formatting date";
     }
-
+    
     //------------------------------------------------------------------------
     
-    /** 
+    /**
      * Format the update time of this weblog entry using the specified pattern.
      * See java.text.SimpleDateFormat for more information on this format.
      *
@@ -683,22 +642,18 @@ public class WeblogEntryData extends PersistentObject implements Serializable
      * @see java.text.SimpleDateFormat
      * @return Update time formatted according to pattern.
      */
-    public String formatUpdateTime(String pattern)
-    {
-        try
-        {
+    public String formatUpdateTime(String pattern) {
+        try {
             SimpleDateFormat format = new SimpleDateFormat(pattern);
-
+            
             return format.format(getUpdateTime());
-        }
-        catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             mLogger.error("Unexpected exception", e);
         }
-
+        
         return "ERROR: formatting date";
     }
-
+    
     //------------------------------------------------------------------------
     
     /**
@@ -725,19 +680,18 @@ public class WeblogEntryData extends PersistentObject implements Serializable
                     approvedOnly ? Boolean.TRUE : null, // approved
                     ignoreSpam ? Boolean.FALSE : null,  // spam
                     false, // we want chrono order
-                     0,    // offset
+                    0,    // offset
                     -1);   // no limit
         } catch (RollerException alreadyLogged) {}
         return list;
     }
-
+    
     //------------------------------------------------------------------------
     
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.RefererData"
      */
-    public List getReferers()
-    {
+    public List getReferers() {
         List referers = null;
         try {
             referers = RollerFactory.getRoller().getRefererManager().getReferersToEntry(getId());
@@ -746,85 +700,35 @@ public class WeblogEntryData extends PersistentObject implements Serializable
         }
         return referers;
     }
-
+    
     //------------------------------------------------------------------------
-    
-    /**
-     * @param entry
-     * @param url
-     * @param title
-     * @param excerpt
-     * @param blogName
-     */
-    /* moved to trackback servlet -- Allen G
-    public void addTrackback(
-        String url, String title, String excerpt, String blogName) 
-        throws RollerException
-    {
-        String modTitle = blogName + ": "  + title;
-        if (modTitle.length() >= 250)
-        {
-            modTitle = modTitle.substring(0, 257);
-            modTitle += "...";
-        }
         
-        // Track trackbacks as comments
-        CommentData comment = new CommentData();
-        comment.setContent("[Trackback] "+excerpt);
-        comment.setName(blogName);
-        comment.setUrl(url);
-        comment.setWeblogEntry(this);
-        comment.setNotify(Boolean.FALSE);
-        comment.setPostTime(new Timestamp(new Date().getTime()));
-        comment.save();
-         
-        // Alternative: treat trackbacks as referers
-        //RefererData ref = new RefererData();
-        //ref.setWebsite(getWebsite());
-        //ref.setWeblogEntry(this);
-        //ref.setRequestUrl("(trackback)");
-        //ref.setRefererUrl(url);
-        //ref.setTitle(modTitle);
-        //ref.setExcerpt(excerpt);
-        //ref.setVisible(Boolean.TRUE);
-        //ref.setDayHits(new Integer(0));
-        //ref.setTotalHits(new Integer(0));
-        //ref.setDuplicate(Boolean.FALSE);        
-        //ref.setDateString(formatPubTime("yyyyMMdd"));        
-        //mRoller.getRefererManager().storeReferer(ref);
-    }
-    */
-    
     /**
      * Convenience method for getPermalink(category)
      * where no category is necessary.
-     * 
+     *
      * @roller.wrapPojoMethod type="simple"
      * @return
      */
-    public String getPermaLink()
-    {
+    public String getPermaLink() {
         String lAnchor = this.getAnchor();
         
-        try
-        {
+        try {
             lAnchor = URLEncoder.encode(anchor, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
+        } catch (UnsupportedEncodingException e) {
             // go with the "no encoding" version
         }
         
         WebsiteData website = this.getWebsite();
-        String plink = "/page/" + website.getHandle() + 
+        String plink = "/page/" + website.getHandle() +
                 "?entry=" + lAnchor;
         
         return plink;
     }
     
     /**
-     * Get the "relative" URL to this entry.  Proper use of this will 
-     * require prepending the baseURL (either the full root 
+     * Get the "relative" URL to this entry.  Proper use of this will
+     * require prepending the baseURL (either the full root
      * [http://server.com/context] or at least the context
      * [/context]) in order to generate a functional link.
      *
@@ -832,8 +736,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable
      * @param category The category name to insert into the permalink.
      * @return String
      */
-    public String getPermaLink(String categoryPath)
-    {
+    public String getPermaLink(String categoryPath) {
         // i don't really understand the purpose of this method since
         // WeblogEntryData.getPermaLink() is only meant to point to this entry
         
@@ -843,19 +746,15 @@ public class WeblogEntryData extends PersistentObject implements Serializable
     /**
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getCommentsLink()
-    {
+    public String getCommentsLink() {
         String dayString = DateUtil.format8chars(this.getPubTime());
         String lAnchor = this.getAnchor();
-        try
-        {
+        try {
             lAnchor = URLEncoder.encode(anchor, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
+        } catch (UnsupportedEncodingException e) {
             // go with the "no encoding" version
-        }        
-        String clink = "/page/" + this.getWebsite().getHandle() + "?anchor=" + lAnchor;
+        }
+        String clink = "/page/" + this.getWebsite().getHandle() + "?entry=" + lAnchor;
         return clink;
     }
     /** to please XDoclet */
@@ -864,14 +763,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable
     /**
      * Return the Title of this post, or the first 255 characters of the
      * entry's text.
-     * 
+     *
      * @roller.wrapPojoMethod type="simple"
      * @return String
      */
-    public String getDisplayTitle()
-    {
-        if ( getTitle()==null || getTitle().trim().equals("") )
-        {
+    public String getDisplayTitle() {
+        if ( getTitle()==null || getTitle().trim().equals("") ) {
             return StringUtils.left(Utilities.removeHTML(text),255);
         }
         return Utilities.removeHTML(getTitle());
@@ -879,161 +776,125 @@ public class WeblogEntryData extends PersistentObject implements Serializable
     
     //------------------------------------------------------------------------
     
-    public String toString()
-    {
+    public String toString() {
         StringBuffer str = new StringBuffer("{");
-
-        str.append("id=" + id + " " + 
-                   "category=" + category + " " + 
-                   "title=" + title + " " + 
-                    "text=" + text + " " + 
-                    "anchor=" + anchor + " " + 
-                    "pubTime=" + pubTime + " " + 
-                    "updateTime=" + updateTime + " " + 
-                    "status=" + status + " " + 
-                    "plugins=" + plugins);
+        
+        str.append("id=" + id + " " +
+                "category=" + category + " " +
+                "title=" + title + " " +
+                "text=" + text + " " +
+                "anchor=" + anchor + " " +
+                "pubTime=" + pubTime + " " +
+                "updateTime=" + updateTime + " " +
+                "status=" + status + " " +
+                "plugins=" + plugins);
         str.append('}');
-
+        
         return (str.toString());
     }
-
+    
     //------------------------------------------------------------------------
     
-    public boolean equals(Object pOther)
-    {
-        if (pOther instanceof WeblogEntryData)
-        {
+    public boolean equals(Object pOther) {
+        if (pOther instanceof WeblogEntryData) {
             WeblogEntryData lTest = (WeblogEntryData) pOther;
             boolean lEquals = true;
-
-            if (this.id == null)
-            {
+            
+            if (this.id == null) {
                 lEquals = lEquals && (lTest.getId() == null);
-            }
-            else
-            {
+            } else {
                 lEquals = lEquals && this.id.equals(lTest.getId());
             }
-
-            if (this.category == null)
-            {
+            
+            if (this.category == null) {
                 lEquals = lEquals && (lTest.getCategory() == null);
-            }
-            else
-            {
+            } else {
                 lEquals = lEquals && this.category.equals(lTest.getCategory());
             }
-
-            if (this.website == null)
-            {
+            
+            if (this.website == null) {
                 lEquals = lEquals && (lTest.getWebsite() == null);
-            }
-            else
-            {
+            } else {
                 lEquals = lEquals && this.website.equals(lTest.getWebsite());
             }
-
-            if (this.title == null)
-            {
+            
+            if (this.title == null) {
                 lEquals = lEquals && (lTest.getTitle() == null);
-            }
-            else
-            {
+            } else {
                 lEquals = lEquals && this.title.equals(lTest.getTitle());
             }
-
-            if (this.text == null)
-            {
+            
+            if (this.text == null) {
                 lEquals = lEquals && (lTest.getText() == null);
-            }
-            else
-            {
+            } else {
                 lEquals = lEquals && this.text.equals(lTest.getText());
             }
-
-            if (this.anchor == null)
-            {
+            
+            if (this.anchor == null) {
                 lEquals = lEquals && (lTest.getAnchor() == null);
-            }
-            else
-            {
+            } else {
                 lEquals = lEquals && this.anchor.equals(lTest.getAnchor());
             }
-
-            if (this.pubTime == null)
-            {
+            
+            if (this.pubTime == null) {
                 lEquals = lEquals && (lTest.getPubTime() == null);
-            }
-            else
-            {
+            } else {
                 lEquals = lEquals && this.pubTime.equals(lTest.getPubTime());
             }
-
-            if (this.updateTime == null)
-            {
+            
+            if (this.updateTime == null) {
                 lEquals = lEquals && (lTest.getUpdateTime() == null);
+            } else {
+                lEquals = lEquals &&
+                        this.updateTime.equals(lTest.getUpdateTime());
             }
-            else
-            {
-                lEquals = lEquals && 
-                          this.updateTime.equals(lTest.getUpdateTime());
-            }
-
-            if (this.status == null)
-            {
+            
+            if (this.status == null) {
                 lEquals = lEquals && (lTest.getStatus() == null);
+            } else {
+                lEquals = lEquals &&
+                        this.status.equals(lTest.getStatus());
             }
-            else
-            {
-                lEquals = lEquals && 
-                          this.status.equals(lTest.getStatus());
-            }
-
-            if (this.plugins == null)
-            {
+            
+            if (this.plugins == null) {
                 lEquals = lEquals && (lTest.getPlugins() == null);
+            } else {
+                lEquals = lEquals &&
+                        this.plugins.equals(lTest.getPlugins());
             }
-            else
-            {
-                lEquals = lEquals && 
-                          this.plugins.equals(lTest.getPlugins());
-            }
-
-
+            
+            
             return lEquals;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
-
+    
     //------------------------------------------------------------------------
     
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = 17;
-        result = (37 * result) + 
-                 ((this.id != null) ? this.id.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.category != null) ? this.category.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.website != null) ? this.website.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.title != null) ? this.title.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.text != null) ? this.text.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.anchor != null) ? this.anchor.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.pubTime != null) ? this.pubTime.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.updateTime != null) ? this.updateTime.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.status != null) ? this.status.hashCode() : 0);
-        result = (37 * result) + 
-                 ((this.plugins != null) ? this.plugins.hashCode() : 0);
-
+        result = (37 * result) +
+                ((this.id != null) ? this.id.hashCode() : 0);
+        result = (37 * result) +
+                ((this.category != null) ? this.category.hashCode() : 0);
+        result = (37 * result) +
+                ((this.website != null) ? this.website.hashCode() : 0);
+        result = (37 * result) +
+                ((this.title != null) ? this.title.hashCode() : 0);
+        result = (37 * result) +
+                ((this.text != null) ? this.text.hashCode() : 0);
+        result = (37 * result) +
+                ((this.anchor != null) ? this.anchor.hashCode() : 0);
+        result = (37 * result) +
+                ((this.pubTime != null) ? this.pubTime.hashCode() : 0);
+        result = (37 * result) +
+                ((this.updateTime != null) ? this.updateTime.hashCode() : 0);
+        result = (37 * result) +
+                ((this.status != null) ? this.status.hashCode() : 0);
+        result = (37 * result) +
+                ((this.plugins != null) ? this.plugins.hashCode() : 0);
+        
         return result;
     }
     
@@ -1042,51 +903,43 @@ public class WeblogEntryData extends PersistentObject implements Serializable
      *
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getRss09xDescription()
-    {
+    public String getRss09xDescription() {
         return getRss09xDescription(-1);
     }
     
-    /** 
+    /**
      * Return RSS 09x style description (escaped HTML version of entry text)
      *
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getRss09xDescription(int maxLength)
-    {
+    public String getRss09xDescription(int maxLength) {
         String ret = Utilities.escapeHTML(text);
-        if (maxLength != -1 && ret.length() > maxLength) 
-        {  
-            ret = ret.substring(0,maxLength-3)+"..."; 
+        if (maxLength != -1 && ret.length() > maxLength) {
+            ret = ret.substring(0,maxLength-3)+"...";
         }
-        return ret;     
+        return ret;
     }
-
+    
     /** Create anchor for weblog entry, based on title or text */
-    protected String createAnchor() throws RollerException
-    {
+    protected String createAnchor() throws RollerException {
         return RollerFactory.getRoller().getWeblogManager().createAnchor(this);
     }
-
+    
     /** Create anchor for weblog entry, based on title or text */
-    public String createAnchorBase()
-    {
+    public String createAnchorBase() {
         // Use title or text for base anchor
         String base = getTitle();
-        if (base == null || base.trim().equals(""))
-        {
+        if (base == null || base.trim().equals("")) {
             base = getText();
         }
-        if (base != null && !base.trim().equals(""))
-        {
+        if (base != null && !base.trim().equals("")) {
             base = Utilities.replaceNonAlphanumeric(base, ' ');
-
+            
             // Use only the first 4 words
             StringTokenizer toker = new StringTokenizer(base);
             String tmp = null;
             int count = 0;
-            while (toker.hasMoreTokens() && count < 5)
-            {
+            while (toker.hasMoreTokens() && count < 5) {
                 String s = toker.nextToken();
                 s = s.toLowerCase();
                 tmp = (tmp == null) ? s : tmp + "_" + s;
@@ -1096,39 +949,35 @@ public class WeblogEntryData extends PersistentObject implements Serializable
         }
         // No title or text, so instead we will use the items date
         // in YYYYMMDD format as the base anchor
-        else
-        {
+        else {
             base = DateUtil.format8chars(getPubTime());
         }
-
+        
         return base;
     }
-
+    
     /**
      * A no-op.
-     * TODO: fix formbean generation so this is not needed. 
+     * TODO: fix formbean generation so this is not needed.
      * @param string
      */
-    public void setPermaLink(String string)
-    {
+    public void setPermaLink(String string) {
     }
-
+    
     /**
      * A no-op.
-     * TODO: fix formbean generation so this is not needed. 
+     * TODO: fix formbean generation so this is not needed.
      * @param string
      */
-    public void setDisplayTitle(String string)
-    {
+    public void setDisplayTitle(String string) {
     }
-
+    
     /**
      * A no-op.
-     * TODO: fix formbean generation so this is not needed. 
+     * TODO: fix formbean generation so this is not needed.
      * @param string
      */
-    public void setRss09xDescription(String string)
-    {
+    public void setRss09xDescription(String string) {
     }
     
     
@@ -1138,53 +987,44 @@ public class WeblogEntryData extends PersistentObject implements Serializable
      * @roller.wrapPojoMethod type="simple"
      * @return
      */
-    public List getPluginsList()
-    {
-        if (plugins != null)
-        {
+    public List getPluginsList() {
+        if (plugins != null) {
             return Arrays.asList( StringUtils.split(plugins, ",") );
         }
         return new ArrayList();
     }
-
+    
     /**
      * Set creator by user id (for use in form's copyTo method)
      * @param creatorId
      */
-    public void setCreatorId(String creatorId) throws RollerException
-    {
+    public void setCreatorId(String creatorId) throws RollerException {
         UserManager umgr = RollerFactory.getRoller().getUserManager();
-        setCreator(umgr.getUser(creatorId)); 
+        setCreator(umgr.getUser(creatorId));
     }
-
+    
     /** Convenience method for checking status */
-    public boolean isDraft() 
-    {
+    public boolean isDraft() {
         return status.equals(DRAFT);
     }
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
-    public void setDraft(boolean value)
-    {
+    public void setDraft(boolean value) {
     }
     
     /** Convenience method for checking status */
-    public boolean isPending() 
-    {
+    public boolean isPending() {
         return status.equals(PENDING);
     }
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
-    public void setPending(boolean value)
-    {
+    public void setPending(boolean value) {
     }
     
     /** Convenience method for checking status */
-    public boolean isPublished() 
-    {
+    public boolean isPublished() {
         return status.equals(PUBLISHED);
     }
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
-    public void setPublished(boolean value)
-    {
+    public void setPublished(boolean value) {
     }
     
     
@@ -1209,5 +1049,5 @@ public class WeblogEntryData extends PersistentObject implements Serializable
         
         return false;
     }
-
+    
 }
