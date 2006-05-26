@@ -27,7 +27,7 @@ page import="java.util.List" %>
 Roller roller = RollerFactory.getRoller();
 RollerSession rollerSession = RollerSession.getRollerSession(request);
 UserData user = rollerSession.getAuthenticatedUser();
-List websites = roller.getUserManager().getWebsites(user, Boolean.TRUE, null);
+List websites = roller.getUserManager().getWebsites(user, Boolean.TRUE, null, 0, Integer.MAX_VALUE);
 if (websites.size() == 1) {
     WebsiteData website = (WebsiteData)websites.get(0);
     website.hasUserPermissions(user, PermissionsData.LIMITED);
