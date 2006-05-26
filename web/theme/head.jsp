@@ -32,7 +32,7 @@ if (session !=null) session.setAttribute("look", theme);
 <script type="text/javascript" 
     src="<%= request.getContextPath() %>/theme/scripts/roller.js"></script>   
 <script type="text/javascript" 
-    src="<%= request.getContextPath() %>/tags/calendar.js"></script>
+    src="<%= request.getContextPath() %>/roller-ui/scripts/calendar.js"></script>
 <script type="text/javascript" 
     src="<%= request.getContextPath() %>/theme/scripts/overlib.js">
     <!-- overLIB (c) Erik Bosrup -->
