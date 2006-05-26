@@ -46,7 +46,7 @@ request.setAttribute("featuredGroup2_entries",((PlanetAction.PlanetPageData)
 
     <div class="entryBox">
     
-        <a href='<c:out value="${post.permalink}" />' class="entryTitle">
+        <a href='<c:out value="${post.permaLink}" />' class="entryTitle">
            <str:truncateNicely upper="90" >
               <str:removeXml>
                  <c:out value="${post.title}" />
@@ -61,14 +61,14 @@ request.setAttribute("featuredGroup2_entries",((PlanetAction.PlanetPageData)
                   <c:out value="${post.subscription.title}" />
                </str:removeXml>
             </a>               
-            <fmt:formatDate value="${post.published}" type="both" 
+            <fmt:formatDate value="${post.pubTime}" type="both" 
                 dateStyle="medium" timeStyle="medium" />
             <br />
         </span>
 
         <str:truncateNicely upper="250" >
            <str:removeXml>
-              <c:out value="${post.content}" escapeXml="false" />
+              <c:out value="${post.text}" escapeXml="false" />
            </str:removeXml>
         </str:truncateNicely>
         
