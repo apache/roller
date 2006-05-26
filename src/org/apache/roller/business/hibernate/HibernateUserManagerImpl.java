@@ -572,7 +572,6 @@ public class HibernateUserManagerImpl implements UserManager {
     public List getUsersStartingWith(String startsWith,
             int offset, int length, Boolean enabled) throws RollerException {
         
-        List rawresults = new ArrayList();
         List results = new ArrayList();
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
@@ -586,20 +585,11 @@ public class HibernateUserManagerImpl implements UserManager {
                 .add(Expression.like("userName", startsWith, MatchMode.START))
                 .add(Expression.like("emailAddress", startsWith, MatchMode.START)));
             }
-            
-            rawresults = criteria.list();
+            criteria.setFirstResult(offset);
+            criteria.setMaxResults(length);
+            results = criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
-        }
-        int pos = 0;
-        int count = 0;
-        Iterator iter = rawresults.iterator();
-        while (iter.hasNext() && count < length) {
-            UserData user = (UserData)iter.next();
-            if (pos++ >= offset) {
-                results.add(user);
-                count++;
-            }
         }
         return results;
     }
