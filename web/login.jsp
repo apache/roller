@@ -16,12 +16,12 @@
   directory of this distribution.
 -->
 <%@ include file="/taglibs.jsp" %>
-<tiles:insert page="/theme/tiles-simplepage.jsp">
-   <tiles:put name="banner"       value="/theme/banner.jsp" />
-   <tiles:put name="bannerStatus" value="/theme/bannerStatus.jsp" />
-   <tiles:put name="head"         value="/theme/head.jsp" />
-   <tiles:put name="styles"       value="/theme/empty.jsp" />
-   <tiles:put name="messages"     value="/theme/messages.jsp" />
+<tiles:insert page="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
+   <tiles:put name="banner"       value="/WEB-INF/jsps/tiles/banner.jsp" />
+   <tiles:put name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+   <tiles:put name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+   <tiles:put name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+   <tiles:put name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
    <tiles:put name="content"      value="/loginBody.jsp" />
-   <tiles:put name="footer"       value="/theme/footer.jsp" />
+   <tiles:put name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
 </tiles:insert>

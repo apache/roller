@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<%@ include file="/theme/head.jsp" %>
+<%@ include file="/WEB-INF/jsps/tiles/head.jsp" %>
 <link rel="alternate" type="application/atom+xml" 
     title="Atom feed for main page" href="<%= request.getContextPath() %>/atom" />
 
