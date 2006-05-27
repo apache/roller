@@ -28,7 +28,7 @@ import com.mockrunner.servlet.ServletTestModule;
 
 import org.apache.roller.RollerTestBase;
 import org.apache.roller.presentation.MockRollerContext;
-import org.apache.roller.presentation.RollerRequest;
+
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.webservices.xmlrpc.RollerXMLRPCServlet;
  
@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.roller.ui.core.RollerRequest;
 
 /**
  * Makes calls to the RollerXmlRpcServer, which should handle a

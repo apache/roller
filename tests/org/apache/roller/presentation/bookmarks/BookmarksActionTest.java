@@ -20,8 +20,6 @@
  */
 package org.apache.roller.presentation.bookmarks;
 
-import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,15 +30,16 @@ import org.apache.roller.RollerException;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.presentation.BasePageModel;
-import org.apache.roller.presentation.RollerRequest;
-import org.apache.roller.presentation.StrutsActionTestBase;
-import org.apache.roller.presentation.bookmarks.actions.BookmarksAction;
-import org.apache.roller.presentation.bookmarks.formbeans.BookmarksForm;
+
 
 import com.mockrunner.mock.web.MockActionMapping;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockServletContext;
+import org.apache.roller.presentation.StrutsActionTestBase;
+import org.apache.roller.ui.authoring.struts.actions.BookmarksAction;
+import org.apache.roller.ui.authoring.struts.formbeans.BookmarksForm;
+import org.apache.roller.ui.core.BasePageModel;
+import org.apache.roller.ui.core.RollerRequest;
 
 /**
  * Test BookmarkAction (proof-of-concept for Mockrunner Struts testing)

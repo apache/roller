@@ -23,12 +23,10 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.apache.roller.presentation.filters.PersistenceSessionFilter;
-import org.apache.roller.presentation.filters.RequestFilter;
-import org.apache.roller.presentation.search.SearchServlet;
-
 import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockServletConfig;
+import org.apache.roller.ui.core.filters.PersistenceSessionFilter;
+import org.apache.roller.ui.core.filters.RequestFilter;
+import org.apache.roller.ui.rendering.search.SearchServlet;
 
 
 /**

@@ -24,6 +24,7 @@ import org.apache.roller.RollerException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.roller.ui.core.RollerRequest;
 
 /**
  * @author lance.lavandowska

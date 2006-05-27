@@ -25,13 +25,14 @@ import junit.framework.TestSuite;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.presentation.RollerRequest;
-import org.apache.roller.presentation.StrutsActionTestBase;
-import org.apache.roller.presentation.weblog.actions.WeblogEntryFormAction;
-import org.apache.roller.presentation.weblog.formbeans.WeblogEntryFormEx;
+
 
 import com.mockrunner.mock.web.MockActionMapping;
 import com.mockrunner.mock.web.MockHttpServletRequest;
+import org.apache.roller.presentation.StrutsActionTestBase;
+import org.apache.roller.ui.authoring.struts.actions.WeblogEntryFormAction;
+import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
+import org.apache.roller.ui.core.RollerRequest;
 
 /**
  * @author dave
