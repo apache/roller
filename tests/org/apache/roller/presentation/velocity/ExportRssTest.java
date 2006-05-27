@@ -29,12 +29,10 @@ import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.UserData;
 import org.apache.roller.presentation.StrutsActionTestBase;
 
 import com.mockrunner.mock.web.MockServletContext;
+import org.apache.roller.ui.rendering.velocity.ExportRss;
 
 /**
  * Not really a servlet test, the ExportRss class does require

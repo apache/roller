@@ -22,10 +22,9 @@ import junit.framework.TestSuite;
 
 import org.apache.roller.RollerTestBase;
 import org.apache.roller.model.PlanetManager;
-import org.apache.roller.pojos.PlanetGroupData;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.presentation.planet.RefreshEntriesTask;
-import org.apache.roller.presentation.planet.SyncWebsitesTask;
+
+import org.apache.roller.ui.admin.struts.actions.RefreshEntriesTask;
+import org.apache.roller.ui.admin.struts.actions.SyncWebsitesTask;
 
 
 /**

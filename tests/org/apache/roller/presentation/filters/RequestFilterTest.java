@@ -22,11 +22,13 @@ import javax.servlet.http.HttpServletRequest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.apache.roller.presentation.RollerRequest;
-import org.apache.roller.presentation.VelocityServletTestBase;
-import org.apache.roller.presentation.velocity.PageServlet;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
+import org.apache.roller.presentation.VelocityServletTestBase;
+import org.apache.roller.ui.core.RollerRequest;
+import org.apache.roller.ui.core.filters.PersistenceSessionFilter;
+import org.apache.roller.ui.core.filters.RequestFilter;
+import org.apache.roller.ui.rendering.velocity.PageServlet;
 
 /** 
  * @author Dave Johnson

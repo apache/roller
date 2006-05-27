@@ -25,9 +25,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.RollerTestBase;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.presentation.filters.PersistenceSessionFilter;
-import org.apache.roller.presentation.filters.RequestFilter;
+
 
 import com.mockrunner.mock.web.ActionMockObjectFactory;
 import com.mockrunner.mock.web.MockHttpServletRequest;
@@ -36,6 +34,9 @@ import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 import com.mockrunner.struts.ActionTestModule;
 import com.mockrunner.struts.MapMessageResources;
+import org.apache.roller.ui.core.RollerSession;
+import org.apache.roller.ui.core.filters.PersistenceSessionFilter;
+import org.apache.roller.ui.core.filters.RequestFilter;
 
 /** 
  * Base for Struts Action testing. 
