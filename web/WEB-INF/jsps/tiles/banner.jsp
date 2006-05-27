@@ -20,7 +20,7 @@
 <%
 String theme = request.getParameter("look");
 if (theme == null) theme = RollerConfig.getProperty("editor.theme");
-String logourl = "/theme/" + theme + "/logo.gif";
+String logourl = "/roller-ui/theme/" + theme + "/logo.gif";
 request.setAttribute("logourl", logourl);
 %>
 <!--

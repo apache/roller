@@ -27,7 +27,7 @@ if (session !=null) session.setAttribute("look", theme);
 %>
 
 <link rel="stylesheet" type="text/css" media="all" 
-    href="<%= request.getContextPath() %>/theme/<%= theme %>/colors.css" />  
+    href="<%= request.getContextPath() %>/roller-ui/theme/<%= theme %>/colors.css" />  
 
 <script type="text/javascript" 
     src="<%= request.getContextPath() %>/theme/scripts/roller.js"></script>   
