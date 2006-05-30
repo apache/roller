@@ -169,7 +169,7 @@ public interface WeblogManager {
      * @returns List of WeblogEntryData objects.
      */
     public List getMostCommentedWeblogEntries(
-            WebsiteData website, int sinceDays, int offset, int len)
+            WebsiteData website, int sinceDays, int offset, int length)
             throws RollerException;
     
     /**

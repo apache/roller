@@ -273,10 +273,12 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
     
      public List getFeedEntries(String feedUrl, int offset, int length)
         throws RollerException {
-        // TODO: ATLAS getFeedEntries         
+        // TODO: ATLAS getFeedEntries DONE       
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetEntryData.class);
+            criteria.add(Expression.eq("subscription.feedUrl", feedUrl));
+            criteria.addOrder(Order.desc("pubTime"));
             criteria.setFirstResult(offset);
             criteria.setMaxResults(length);
             return criteria.list();

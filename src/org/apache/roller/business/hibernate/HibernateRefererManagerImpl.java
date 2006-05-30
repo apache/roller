@@ -265,6 +265,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
        
     /**
      * Return most popular websites based on dayhits, in descending order.
+     * @returns List of WebsiteDisplayData objects
      */
     public List getDaysPopularWebsites(int sinceDays, int offset, int length) 
         throws RollerException {

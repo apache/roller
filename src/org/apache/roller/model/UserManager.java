@@ -101,20 +101,20 @@ public interface UserManager {
      * containing integers reflecting the number of users whose
      * names start with each letter.
      */
-    public Map getUsernameLetterMap();
+    public Map getUsernameLetterMap() throws RollerException;
     
     /** Get collection of users whose names begin with specified letter */
-    public List getUsersByLetter(char letter);
+    public List getUsersByLetter(char letter, int offset, int length) throws RollerException;
     
     /**
      * Get map with 26 entries, one for each letter A-Z and
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.
      */
-    public Map getWeblogHandleLetterMap();
+    public Map getWeblogHandleLetterMap() throws RollerException;
     
     /** Get collection of weblogs whose handles begin with specified letter */
-    public List getWeblogsByLetter(char letter);
+    public List getWeblogsByLetter(char letter, int offset, int length) throws RollerException;
     
     /**
      * Add new website, give creator admin permission, creates blogroll,
@@ -161,7 +161,7 @@ public interface UserManager {
      * @returns List of WebsiteData objects.
      */
     public List getWebsites(
-            UserData user, Boolean enabled, Boolean active, int offset, int len) 
+            UserData user, Boolean enabled, Boolean active, int offset, int length) 
             throws RollerException;
     
     /**
@@ -171,7 +171,7 @@ public interface UserManager {
      * @param len       Maximum number of results to return (for paging)
      * @returns List of WebsiteData objects.
      */
-    public List getMostCommentedWebsites(int sinceDays, int offset, int len) 
+    public List getMostCommentedWebsites(int sinceDays, int offset, int length) 
             throws RollerException;
     
     /**
