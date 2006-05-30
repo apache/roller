@@ -54,6 +54,7 @@ import org.apache.commons.collections.comparators.ReverseComparator;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.StatCount;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.Utilities;
 
@@ -564,9 +565,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throw new RollerException(e);
         }
     }
-    
-    
-    
+        
     public List getWeblogEntries(WeblogCategoryData cat, boolean subcats)
     throws RollerException {
         try {
@@ -607,9 +606,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throw new RollerException(e);
         }
     }
-    
-    
-    
+        
     public String createAnchor(WeblogEntryData entry) throws RollerException {
         try {
             // Check for uniqueness of anchor
@@ -914,20 +911,17 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         // The category did not match and neither did any sub-categories
         return null;
     }
-    
-    
+        
     public CommentData getComment(String id) throws RollerException {
         return (CommentData) this.strategy.load(id, CommentData.class);
     }
-    
-    
+        
     public WeblogEntryData getWeblogEntry(String id)
     throws RollerException {
         return (WeblogEntryData) this.strategy.load(
                 id, WeblogEntryData.class);
     }
-    
-    
+        
     public List getWeblogEntries(
             WebsiteData website,
             Date    startDate,
@@ -1041,9 +1035,43 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     public List getMostCommentedWeblogEntries(
-            WebsiteData website, int sinceDays, int offset, int len) 
+            WebsiteData website, int sinceDays, int offset, int length) 
             throws RollerException {
-        return null;
+        // TODO: ATLAS getMostCommentedWeblogEntries DONE
+        String msg = "Getting most commented weblog entres";
+        try {      
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();            
+            Query query = null;
+            if (website != null) {
+                query = session.createQuery(
+                    "select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title "
+                   +"from CommentData c where c.weblogEntry.website=:website group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title "
+                   +"order by col_0_0_ desc");
+                query.setParameter("website", website);
+            } else {
+                query = session.createQuery(
+                    "select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title "
+                   +"from CommentData c group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title "
+                   +"order by col_0_0_ desc");
+            }
+            query.setFirstResult(offset);
+            query.setMaxResults(length);
+            List results = new ArrayList();
+            for (Iterator iter = query.list().iterator(); iter.hasNext();) {
+                Object[] row = (Object[]) iter.next();
+                results.add(new StatCount(
+                    (String)row[1], 
+                    (String)row[2], 
+                    (String)row[3], 
+                    "statCount.weblogEntryCommentCountType", 
+                    new Long((Integer)row[0]).longValue()));
+            }
+            return results;
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
     }
     
     public List getNextEntries(
@@ -1087,8 +1115,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 Utilities.escapeHTML(contextUrl + "/page/" + site.getHandle());
         return url;
     }
-    
-    
+        
     public void release() {}
 
     /**
@@ -1115,6 +1142,4 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             log.error("EXCEPTION applying comment defaults",e);
         }
     }     
-
-
 }

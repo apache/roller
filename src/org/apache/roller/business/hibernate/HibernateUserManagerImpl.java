@@ -19,10 +19,12 @@
 package org.apache.roller.business.hibernate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.roller.pojos.StatCount;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -52,6 +54,7 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+import org.hibernate.Query;
 
 /**
  * Hibernate implementation of the UserManager.
@@ -766,30 +769,112 @@ public class HibernateUserManagerImpl implements UserManager {
     
     public void release() {}
     
-    public Map getUsernameLetterMap() {
-        // TODO: ATLAS getUsernameLetterMap
-        return null;
+    public Map getUsernameLetterMap() throws RollerException {
+        // TODO: ATLAS getUsernameLetterMap DONE TESTED
+        String msg = "Getting username letter map";
+        try {      
+            String lc = "abcdefghijklmnopqrstuvwxyz";
+            Map results = new HashMap();
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();
+            for (int i=0; i<26; i++) {
+                Query query = session.createQuery(
+                    "select count(user) from UserData user where lower(user.userName) like '"+lc.charAt(i)+"%'");
+                List row = query.list();
+                Integer count = (Integer)row.get(0);
+                if (count.intValue() > 0) {
+                    results.put(new String(new char[]{lc.charAt(i)}), count);
+                }
+            }
+            return results;
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
     }
     
-    public List getUsersByLetter(char letter) {
-        // TODO: ATLAS getUsersByLetter
-        return null;
+    public List getUsersByLetter(char letter, int offset, int length) 
+        throws RollerException { 
+        // TODO: ATLAS getUsersByLetter DONE
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            Criteria criteria = session.createCriteria(UserData.class);
+            criteria.add(Expression.like("userName", new String(new char[]{letter}) + "%", MatchMode.START));
+            criteria.setFirstResult(offset);
+            criteria.setMaxResults(length);
+            return criteria.list();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
     }
     
-    public Map getWeblogHandleLetterMap() {
-        // TODO: ATLAS getWeblogHandleLetterMap
-        return null;
+    public Map getWeblogHandleLetterMap() throws RollerException {
+        // TODO: ATLAS getWeblogHandleLetterMap DONE
+        String msg = "Getting weblog letter map";
+        try {      
+            String lc = "abcdefghijklmnopqrstuvwxyz";
+            Map results = new HashMap();
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();
+            for (int i=0; i<26; i++) {
+                Query query = session.createQuery(
+                    "select count(website) from WebsiteData website where lower(website.handle) like '"+lc.charAt(i)+"%'");
+                List row = query.list();
+                Integer count = (Integer)row.get(0);
+                if (count.intValue() > 0) {
+                    results.put(new String(new char[]{lc.charAt(i)}), count);
+                }
+            }
+            return results;
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
     }
     
-    public List getWeblogsByLetter(char letter) {
-        // TODO: ATLAS getWeblogsByLetter
-        return null;
+    public List getWeblogsByLetter(char letter, int offset, int length) 
+        throws RollerException {
+        // TODO: ATLAS getWeblogsByLetter DONE
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            Criteria criteria = session.createCriteria(WebsiteData.class);
+            criteria.add(Expression.like("handle", new String(new char[]{letter}) + "%", MatchMode.START));
+            criteria.setFirstResult(offset);
+            criteria.setMaxResults(length);
+            return criteria.list();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
     }
         
-    public List getMostCommentedWebsites(int sinceDays, int offset, int len)
-    throws RollerException {
-        // TODO: ATLAS getMostCommentedWebsites
-        return null;
+    public List getMostCommentedWebsites(int sinceDays, int offset, int length) 
+        throws RollerException {
+        // TODO: ATLAS getMostCommentedWebsites DONE TESTED
+        String msg = "Getting most commented websites";
+        try {      
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();            
+            Query query = session.createQuery(
+                "select count(distinct c), c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description "
+               +"from CommentData c group by c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description "
+               +"order by col_0_0_ desc");
+            query.setFirstResult(offset);
+            query.setMaxResults(length);
+            List results = new ArrayList();
+            for (Iterator iter = query.list().iterator(); iter.hasNext();) {
+                Object[] row = (Object[]) iter.next();
+                results.add(new StatCount(
+                    (String)row[1], 
+                    (String)row[2], 
+                    (String)row[3], 
+                    "statCount.weblogCommentCountType", 
+                    new Long((Integer)row[0]).longValue()));
+            }
+            return results;
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
     }
      
     /** Doesn't seem to be any other way to get ignore case w/o QBE */

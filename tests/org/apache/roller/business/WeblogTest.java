@@ -17,8 +17,6 @@
 */
 package org.apache.roller.business;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -28,7 +26,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -220,5 +221,6 @@ public class WeblogTest extends TestCase {
     public void testRemoveLoadedWeblog() throws Exception {
         // TODO: implement testRemoveLoadedWeblog
     }
-    
 }
+
+
