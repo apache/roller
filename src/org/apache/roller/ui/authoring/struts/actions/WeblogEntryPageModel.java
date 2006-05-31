@@ -132,12 +132,13 @@ public class WeblogEntryPageModel extends BasePageModel
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
                 getWeblogEntry().getWebsite(), // userName
+                null,
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
                 WeblogEntryData.PUBLISHED, // status
                 null,              // sortby (null for pubTime)
-                new Integer(20));  // maxEntries
+                0, 20);   
     }
 
     /**
@@ -152,12 +153,13 @@ public class WeblogEntryPageModel extends BasePageModel
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
                 getWeblogEntry().getWebsite(), 
+                null,
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
                 WeblogEntryData.DRAFT, // status
                 "updateTime",      // sortby 
-                new Integer(20));  // maxEntries
+                0, 20);  // maxEntries
     }
     
     /**
@@ -172,12 +174,13 @@ public class WeblogEntryPageModel extends BasePageModel
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
                 getWeblogEntry().getWebsite(), 
+                null,
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
                 WeblogEntryData.PENDING, // status
                 "updateTime",      // sortby
-                new Integer(20));  // maxEntries
+                0, 20);  
     }
  
     public List getHoursList()

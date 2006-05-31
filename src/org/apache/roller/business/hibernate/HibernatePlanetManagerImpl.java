@@ -191,43 +191,38 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                     "ERROR fetching subscription count", e);
         }
     }
-    
+        
     public synchronized List getTopSubscriptions(int offset, int length) 
         throws RollerException {
-        // TODO: ATLAS getTopSubscriptions DONE
-        String groupHandle = NO_GROUP;
-        List ret = null;
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria =
-                    session.createCriteria(PlanetSubscriptionData.class);
-            criteria.addOrder(Order.desc("inboundblogs"));
-            criteria.setFirstResult(offset);
-            criteria.setMaxResults(length);
-            ret = criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-        return ret;
+        return getTopSubscriptions(null, offset, length);
     }
     
     public synchronized List getTopSubscriptions(
-            PlanetGroupData group, int offset, int length) 
+            String groupHandle, int offset, int length) 
             throws RollerException {
-        // TODO: ATLAS getTopSubscriptions DONE
-        String groupHandle = (group == null) ? NO_GROUP : group.getHandle();
         List ret = null;
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Query query = session.createQuery(
+            Query query = null;
+            if (groupHandle != null) {
+                query = session.createQuery(
                     "select sub from org.apache.roller.pojos.PlanetSubscriptionData sub "
                     +"join sub.groupSubscriptionAssocs assoc "
                     +"where "
                     +"assoc.group.handle=:groupHandle "
                     +"order by sub.inboundblogs desc");
-            query.setString("groupHandle", group.getHandle());
-            query.setFirstResult(offset);
-            query.setMaxResults(length);
+                query.setString("groupHandle", groupHandle);
+            } else {
+                query = session.createQuery(
+                    "select sub from org.apache.roller.pojos.PlanetSubscriptionData sub "
+                    +"order by sub.inboundblogs desc");
+            }
+            if (offset != 0) {
+                query.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                query.setMaxResults(length);
+            }
             ret = query.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -354,8 +349,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
     public Date getLastUpdated(PlanetGroupData group) {
         return (Date)lastUpdatedByGroup.get(group);
     }
-    
-    
+        
     public void refreshEntries() throws RollerException {
         
         Roller roller = RollerFactory.getRoller();
@@ -456,8 +450,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         log.info("--- DONE --- Refreshed entries in "
                 + ((endTime-startTime)/1000.0) + " seconds");
     }
-    
-    
+        
     protected Set getNewEntries(PlanetSubscriptionData sub,
                                 FeedFetcher feedFetcher,
                                 FeedFetcherCache feedInfoCache)

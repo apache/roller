@@ -115,12 +115,14 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                             "site.newsfeeds.defaultEntries");
                     entries = blogmgr.getWeblogEntries(
                             website,
+                            null,                             
                             null,                        // startDate
                             new Date(),                  // endDate
                             null,                        // catName
                             WeblogEntryData.PUBLISHED,   // status
                             null,                        // sortby (null means pubTime)
-                            new Integer(entryCount));    // maxEntries
+                            0,                           // offset
+                            entryCount);                // length
                     
                     sub.setLastUpdated(siteUpdated);
                     saveSubscription(sub);

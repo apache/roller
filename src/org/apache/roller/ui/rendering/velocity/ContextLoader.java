@@ -96,14 +96,23 @@ public class ContextLoader {
         RollerContext rollerCtx = RollerContext.getRollerContext( );
         
         try {
-            // Add page model object to context
+            // Add default page model object to context
             String pageModelClassName =
                 RollerConfig.getProperty("velocity.pagemodel.classname");
             Class pageModelClass = Class.forName(pageModelClassName);
             PageModel pageModel = (PageModel)pageModelClass.newInstance();
-            pageModel.init(rreq);
+            pageModel.init(rreq);            
             ctx.put("pageModel", pageModel );
+            
+            // Add other page models
+            // TODO: ATLAS make page models configurable
+            SitePageModel sitePageModel = new SitePageModel();
+            ctx.put("sitePageModel", sitePageModel);
+            PlanetPageModel planetPageModel = new PlanetPageModel();
+            ctx.put("planetPageModel", planetPageModel);
+            
             ctx.put("pages", pageModel.getPages());
+            
         } catch (Exception e) {
             throw new RollerException("ERROR creating Page Model",e);
         }

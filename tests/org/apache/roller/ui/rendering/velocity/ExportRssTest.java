@@ -55,7 +55,7 @@ public class ExportRssTest extends StrutsActionTestBase
         
         List entries = getRoller().getWeblogManager().getWeblogEntries(
                         null,               // userName
-                        null,               // startDate
+null,                         null,               // startDate
                         new Date(),         // endDate
                         null,               // catName
                         null,               // status

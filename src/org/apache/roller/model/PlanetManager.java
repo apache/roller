@@ -116,7 +116,7 @@ public interface PlanetManager extends Serializable
      * Get top X subscriptions, restricted by group.
      */
     public List getTopSubscriptions( 
-        PlanetGroupData group, int offset, int len) throws RollerException;
+        String groupHandle, int offset, int len) throws RollerException;
 
     /** 
      * Get entries in a single feed as list of PlanetEntryData objects.

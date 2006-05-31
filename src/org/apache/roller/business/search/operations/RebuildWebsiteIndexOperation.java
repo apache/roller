@@ -103,13 +103,14 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                 WeblogManager weblogManager = roller.getWeblogManager();
                 
                 List entries = weblogManager .getWeblogEntries(
-                        website,                   // userName
+                        website,                   // website            
+                        null,
                         null,                      // startDate
                         new Date(),                // endDate (don't index 'future' entries)
                         null,                      // catName
                         WeblogEntryData.PUBLISHED, // status
-                        null,                      // sortby (null mean pubTime)
-                        null);                     // maxEntries (null to get 'em all)
+                        null,                      // sortby (null means pubTime)
+                        0, Integer.MAX_VALUE);     // offset, length
                 
                 for (Iterator wbItr = entries.iterator(); wbItr.hasNext();) {
                     WeblogEntryData entry = (WeblogEntryData) wbItr.next();

@@ -18,41 +18,48 @@
 package org.apache.roller.ui.rendering.velocity;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.PlanetManager;
+import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.pojos.PlanetEntryData;
 import org.apache.roller.pojos.PlanetGroupData;
 import org.apache.roller.pojos.PlanetSubscriptionData;
-import org.apache.roller.ui.core.RollerRequest;
+import org.apache.roller.pojos.wrapper.PlanetEntryDataWrapper;
+import org.apache.roller.pojos.wrapper.PlanetSubscriptionDataWrapper;
 
 /**
- * Allow Roller page templates to get the main Planet aggregation (the 'all'
- * and 'external' group), custom aggregations, specified by handle, and
- * subscription entries (specified by feedUrl).
- * @author Dave Johnson
+ * Page model that provides access to planet aggregations, feeds and 
+ * subscriptions for display on a frontpage weblog.
  */
-public class PlanetPageModel extends PageModel {
-    PlanetManager planetManager = null;
-    
-    public void init(RollerRequest rreq) {
-        super.init(rreq);
-        try {
-            planetManager = RollerFactory.getRoller().getPlanetManager();
-        } catch (Exception e) {
-            mLogger.error("ERROR initializing page model",e);
-        }
-    }
+public class PlanetPageModel {
+    protected static Log log = 
+            LogFactory.getFactory().getInstance(PlanetPageModel.class);
     
     /**
-     * Get move recent WeblogEntry objects from 'all' and
+     * Get move recent PlanetEntry objects from 'all' and
      * 'exernal' Planet groups. in reverse chrono order.
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
     public List getAggregation(int offset, int len) {
-        //return planetManager.getAggregation(offset, len);
-        return null;
+        List results = new ArrayList();
+        try {
+            Roller roller = RollerFactory.getRoller();
+            PlanetManager planetManager = roller.getPlanetManager();
+            List entries = planetManager.getAggregation(offset, len);
+            for (Iterator it = entries.iterator(); it.hasNext();) {
+                PlanetEntryData entry = (PlanetEntryData) it.next();
+                PlanetEntryDataWrapper wrapped = PlanetEntryDataWrapper.wrap(entry);
+                results.add(wrapped);
+            }
+        } catch (Exception e) {
+            log.error("ERROR: get aggregation", e);
+        }
+        return results;
     }
     
     /**
@@ -61,12 +68,18 @@ public class PlanetPageModel extends PageModel {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getAggregation(String group, int offset, int len) {
+    public List getAggregation(String groupHandle, int offset, int len) {
         List list = new ArrayList();
-        //PlanetGroupData group = planetManager.getGroup(group);
-        //if (group != null) {
-        //    list = planetManager.getAggregation(group, offset, len);
-        //}
+        try {
+            Roller roller = RollerFactory.getRoller();
+            PlanetManager planetManager = roller.getPlanetManager();
+            PlanetGroupData group = planetManager.getGroup(groupHandle);
+            if (group != null) {
+                list = planetManager.getAggregation(group, offset, len);
+            }
+        } catch (Exception e) {
+            log.error("ERROR: get aggregation", e);
+        }
         return list;
     }
     
@@ -78,10 +91,16 @@ public class PlanetPageModel extends PageModel {
      */
     public List getFeed(String feedUrl, int offset, int len) {
         List list = new ArrayList();
-        //PlanetSubscriptionData sub = planetManager.getSubscription(feedUrl);
-        //if (sub != null) {
-            //list = sub.getEntries();
-        //}
+        try {
+            Roller roller = RollerFactory.getRoller();
+            PlanetManager planetManager = roller.getPlanetManager();
+            PlanetSubscriptionData sub = planetManager.getSubscription(feedUrl);
+            if (sub != null) {
+                list = sub.getEntries();
+            }
+        } catch (Exception e) {
+            log.error("ERROR: get feed", e);
+        }
         return list;
     }
     
@@ -91,8 +110,30 @@ public class PlanetPageModel extends PageModel {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getRankedBlogs(int sinceDays, int offset, int len) {
-        return null;
+    public List getRankedSubscriptions(int sinceDays, int offset, int length) {
+        return getRankedSubscriptions(null, sinceDays, offset, length);
     }
     
+    /**
+     * Get PlanetSubscription objects in descending order by Planet ranking.
+     * @param groupHandle Only consider weblogs updated in the last sinceDays
+     * @param sinceDays   Only consider weblogs updated in the last sinceDays
+     * @param offset      Offset into results (for paging)
+     * @param len         Max number of results to return
+     */
+    public List getRankedSubscriptions(String groupHandle, int sinceDays, int offset, int length) {
+        List list = new ArrayList();
+        try {
+            Roller roller = RollerFactory.getRoller();
+            PlanetManager planetManager = roller.getPlanetManager();
+            List subs = planetManager.getTopSubscriptions(groupHandle, offset, length);
+            for (Iterator it = subs.iterator(); it.hasNext();) {
+                PlanetSubscriptionData sub = (PlanetSubscriptionData) it.next();
+                list.add(PlanetSubscriptionDataWrapper.wrap(sub)); 
+            }
+        } catch (Exception e) {
+            log.error("ERROR: get ranked blogs", e);
+        }
+        return list;
+    }   
 }

@@ -55,6 +55,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.StatCount;
+import org.apache.roller.pojos.UserData;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.Utilities;
 
@@ -395,12 +396,15 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     public List getWeblogEntries(
             WebsiteData website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            String  status,
-            String  sortby,
-            Integer maxEntries) throws RollerException {
+            UserData    user,
+            Date        startDate,
+            Date        endDate,
+            String      catName,
+            String      status,
+            String      sortby,
+            int         offset,
+            int         length) throws RollerException {
+        
         WeblogCategoryData cat = null;
         if (StringUtils.isNotEmpty(catName) && website != null) {
             cat = getWeblogCategoryByPath(website, catName);
@@ -421,6 +425,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 criteria.add(Expression.eq("w.enabled", Boolean.TRUE));
             }
             
+            if (user != null) {
+                criteria.add(Expression.eq("creator", user));
+            }
+
             if (startDate != null) {
                 criteria.add(
                         Expression.ge("pubTime", startDate));
@@ -445,10 +453,14 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 criteria.addOrder(Order.desc("pubTime"));
             }
             
-            if (maxEntries != null) {
-                criteria.setMaxResults(maxEntries.intValue());
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                criteria.setMaxResults(length);
             }
             return criteria.list();
+            
         } catch (HibernateException e) {
             log.error(e);
             throw new RollerException(e);
@@ -921,34 +933,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         return (WeblogEntryData) this.strategy.load(
                 id, WeblogEntryData.class);
     }
-        
-    public List getWeblogEntries(
-            WebsiteData website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            String  status,
-            String  sortby,
-            int     offset,
-            int     range) throws RollerException {
-        List filtered = new ArrayList();
-        List entries = getWeblogEntries(
-                website,
-                startDate,
-                endDate,
-                catName,
-                status,
-                sortby,
-                new Integer(offset + range));
-        if (entries.size() < offset) {
-            return entries;
-        }
-        for (int i=offset; i<entries.size(); i++) {
-            filtered.add(entries.get(i));
-        }
-        return filtered;
-    }
-    
+            
     /**
      * Gets the Date of the latest Entry publish time, before the end of today,
      * for all WeblogEntries
@@ -963,15 +948,13 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    startDate,
             Date    endDate,
             String  catName,
-            String  status,
-            Integer maxEntries) throws RollerException {
+            String  status) throws RollerException {
         return getWeblogEntryMap(
                 website,
                 startDate,
                 endDate,
                 catName,
                 status,
-                maxEntries,
                 false);
     }
     
@@ -980,15 +963,13 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    startDate,
             Date    endDate,
             String  catName,
-            String  status,
-            Integer maxEntries) throws RollerException {
+            String  status) throws RollerException {
         return getWeblogEntryMap(
                 website,
                 startDate,
                 endDate,
                 catName,
                 status,
-                maxEntries,
                 true);
     }
     
@@ -998,18 +979,18 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    endDate,
             String  catName,
             String  status,
-            Integer maxEntries,
             boolean stringsOnly) throws RollerException {
         TreeMap map = new TreeMap(reverseComparator);
         
         List entries = getWeblogEntries(
-                website,
-                startDate,
-                endDate,
-                catName,
-                status,
-                null,
-                maxEntries);
+            website,                 
+            null,
+            startDate,
+            endDate,
+            catName,
+            status,
+            null,
+            0, Integer.MAX_VALUE);
         
         Calendar cal = Calendar.getInstance();
         if (website != null) {
@@ -1055,8 +1036,12 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                    +"from CommentData c group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title "
                    +"order by col_0_0_ desc");
             }
-            query.setFirstResult(offset);
-            query.setMaxResults(length);
+            if (offset != 0) {
+                query.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                query.setMaxResults(length);
+            }
             List results = new ArrayList();
             for (Iterator iter = query.list().iterator(); iter.hasNext();) {
                 Object[] row = (Object[]) iter.next();

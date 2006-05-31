@@ -18,14 +18,13 @@
 
 package org.apache.roller.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.WeblogCategoryAssoc;
+import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
@@ -74,39 +73,16 @@ public interface WeblogManager {
      */
     public List getWeblogEntries(
             WebsiteData website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            String  status,
-            String  sortBy,
-            int offset,
-            int range)
+            UserData    user,
+            Date        startDate,
+            Date        endDate,
+            String      catName,
+            String      status,
+            String      sortBy,
+            int        offset,
+            int        range)
             throws RollerException;
-        
-    /**
-     * Get WeblogEntries up to limit as list in reverse chronological order.
-     * The range offset and list arguments enable paging through query results.
-     * @param userName   User name or null to get for all users.
-     * @param startDate  Start date or null for no start date.
-     * @param endDate    End date or null for no end date.
-     * @param catName    Category path or null for all categories.
-     * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param sortby     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
-     * @param offset     Index of first entry to include.
-     * @param maxEntries     Max number of entries to include.
-     * @return List of WeblogEntryData objects in reverse chrono order.
-     * @throws RollerException
-     */
-    public List getWeblogEntries(
-            WebsiteData website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            String  status,
-            String  sortBy,
-            Integer maxEntries)
-            throws RollerException;
-        
+       
     /**
      * Get Weblog Entries grouped by day. This method returns a Map that
      * contains Lists, each List contains WeblogEntryData objects, and the
@@ -122,11 +98,10 @@ public interface WeblogManager {
      */
     public Map getWeblogEntryObjectMap(
             WebsiteData website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            String  status,
-            Integer maxEntries)
+            Date        startDate,
+            Date        endDate,
+            String      catName,
+            String      status)
             throws RollerException;
         
     /**
@@ -147,8 +122,7 @@ public interface WeblogManager {
             Date    startDate,
             Date    endDate,
             String  catName,
-            String  status,
-            Integer maxEntries)
+            String  status)
             throws RollerException;    
     
     /**

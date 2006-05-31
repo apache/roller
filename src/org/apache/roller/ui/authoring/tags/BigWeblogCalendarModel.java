@@ -71,12 +71,11 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel
         {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             mMonthMap = mgr.getWeblogEntryObjectMap(
-                            mRollerReq.getWebsite(), // userName
-                            startDate,              // startDate
-                            endDate,                // endDate
-                            catName,                // catName
-                            WeblogEntryData.PUBLISHED, // status
-                            null 
+                            mRollerReq.getWebsite(),   // website
+                            startDate,                 // startDate
+                            endDate,                   // endDate
+                            catName,                   // catName
+                            WeblogEntryData.PUBLISHED  // status
             );
         }
         catch (RollerException e)

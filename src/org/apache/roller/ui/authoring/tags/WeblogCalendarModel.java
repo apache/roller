@@ -143,12 +143,11 @@ public class WeblogCalendarModel implements CalendarModel
         {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             mMonthMap = mgr.getWeblogEntryStringMap(
-                            mRollerReq.getWebsite(), // userName
-                            startDate,              // startDate
-                            endDate,                // endDate
-                            catName,                // catName
-                            WeblogEntryData.PUBLISHED, // status
-                            null 
+                            mRollerReq.getWebsite(),   // website
+                            startDate,                 // startDate
+                            endDate,                   // endDate
+                            catName,                   // catName
+                            WeblogEntryData.PUBLISHED // status
             );
         }
         catch (RollerException e)

@@ -140,7 +140,7 @@ class RollerMemberHandler extends Handler {
     private EntrySet getCollection() throws HandlerException {
         // get all permissions: for all users, for all websites
         try {
-            List users = getRoller().getUserManager().getUsers();
+            List users = getRoller().getUserManager().getUsers(0, Integer.MAX_VALUE);
             List perms = new ArrayList();
             for (Iterator i = users.iterator(); i.hasNext(); ) {
                 UserData user = (UserData)i.next();

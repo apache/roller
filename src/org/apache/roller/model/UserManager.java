@@ -68,14 +68,14 @@ public interface UserManager {
     /** 
      * Get all enabled users 
      */
-    public List getUsers() throws RollerException;    
+    public List getUsers(int offset, int length) throws RollerException;    
     
     /**
      * Get all users, optionally include dis-enabled users.
      *
      * @param enabled True for enabled only, false for disabled only, null for all
      */
-    public List getUsers(Boolean enabled) throws RollerException;    
+    public List getUsers(Boolean enabled, int offset, int length) throws RollerException;    
     
     /**
      * Get all users or a website.
@@ -83,7 +83,7 @@ public interface UserManager {
      * @param website Get all users of this website (or null for all)
      * @returns List of UserData objects.
      */
-    public List getUsers(WebsiteData website, Boolean enabled) throws RollerException;
+    public List getUsers(WebsiteData website, Boolean enabled, int offset, int length) throws RollerException;
         
     /**
      * Returns users whose usernames or email addresses start with a string.
@@ -94,7 +94,7 @@ public interface UserManager {
      * @return List of (up to length) users that match startsWith string
      */
     public List getUsersStartingWith(String startsWith,
-            int offset, int length, Boolean enabled) throws RollerException;    
+            Boolean enabled, int offset, int length) throws RollerException;    
     
     /**
      * Get map with 26 entries, one for each letter A-Z and

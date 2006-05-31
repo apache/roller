@@ -414,12 +414,13 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             if (website != null) {
                 List entries = weblogMgr.getWeblogEntries(
                     website,           // website
+                    null, 
                     null,              // startDate
                     null,              // endDate
                     null,              // catName
                     null,              // status
                     "updateTime",      // sortby
-                    new Integer(numposts));  // maxEntries
+                    0, numposts);  
                 
                 Iterator iter = entries.iterator();
                 while (iter.hasNext()) {
