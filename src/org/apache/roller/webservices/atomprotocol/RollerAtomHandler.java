@@ -203,6 +203,7 @@ public class RollerAtomHandler implements AtomHandler {
         if (canView(website)) {
             entries = mRoller.getWeblogManager().getWeblogEntries(
                     website,           // website
+                    null,
                     null,              // startDate
                     null,              // endDate
                     null,              // catName

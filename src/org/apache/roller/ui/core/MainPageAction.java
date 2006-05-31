@@ -117,12 +117,13 @@ public class MainPageAction extends Action {
                 Roller roller = RollerFactory.getRoller();
                 list = roller.getWeblogManager().getWeblogEntries(
                         null,                   // userName
+                        null,
                         null,                   // startDate
                         new Date(),             // endDate
                         null,                   // catName
                         WeblogEntryData.PUBLISHED, // status
                         null,                   // sortby (null for pubTime)
-                        new Integer(num));      // maxEntries
+                        0, num);                // maxEntries
             } catch (Exception e) {
                 mLogger.error(e);
             }

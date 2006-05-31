@@ -69,7 +69,7 @@ public class UserDataServlet extends HttpServlet {
         try {
             UserManager umgr = roller.getUserManager();
             List users = 
-             umgr.getUsersStartingWith(startsWith, offset, length, enabledOnly);
+             umgr.getUsersStartingWith(startsWith, enabledOnly, offset, length);
             Iterator userIter = users.iterator();
             while (userIter.hasNext()) {
                 UserData user = (UserData)userIter.next();

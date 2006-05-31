@@ -469,12 +469,11 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             WeblogManager weblogMgr = roller.getWeblogManager();
             if (website != null) {
                 Map entries = weblogMgr.getWeblogEntryObjectMap(
-                        website,                // userName
+                        website,                // website
                         null,                   // startDate
                         new Date(),             // endDate
                         null,                   // catName
-                        null,      // status
-                        new Integer(numposts)); // maxEntries
+                        null);
                 
                 Iterator iter = entries.values().iterator();
                 while (iter.hasNext()) {

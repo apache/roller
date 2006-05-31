@@ -20,9 +20,6 @@
  */
 package org.apache.roller.business.hibernate;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,9 +44,6 @@ import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.WebsiteDisplayData;
-import org.hibernate.dialect.DB2Dialect;
-import org.hibernate.dialect.DerbyDialect;
-import org.hibernate.dialect.HSQLDialect;
 import org.hibernate.dialect.OracleDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.SessionFactoryImplementor;
@@ -58,6 +52,7 @@ import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.StatCount;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.Utilities;
@@ -264,8 +259,56 @@ public class HibernateRefererManagerImpl implements RefererManager {
     }
        
     /**
-     * Return most popular websites based on dayhits, in descending order.
-     * @returns List of WebsiteDisplayData objects
+     * Returns hot weblogs as StatCount objects, in descending order by today's hits.
+     */
+    public List getHotWeblogs(int sinceDays, int offset, int length)
+        throws RollerException {
+        // TODO: ATLAS getDaysPopularWebsites DONE TESTED
+        String msg = "Getting hot weblogs";
+        ArrayList result = new ArrayList();
+        try {      
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();            
+            Query query = session.createQuery(
+                "select sum(r.dayHits) as s, w.id, w.name, w.handle  "
+               +"from WebsiteData w, RefererData r "
+               +"where r.website=w and w.enabled=true and w.active=true "
+               +"group by w.name, w.handle, w.id order by col_0_0_ desc"); 
+            
+              // +"group by w.name, w.handle, w.id order by s desc");
+              // The above would be *much* better but "HQL parser does not   
+              // resolve alias in ORDER BY clause" (See Hibernate issue HHH-892)
+            
+            if (offset != 0) {
+                query.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                query.setMaxResults(length);
+            }
+            Iterator rawResults = query.list().iterator();
+            for (Iterator it = query.list().iterator(); it.hasNext();) {
+                Object[] row = (Object[])it.next();
+                Integer hits = (Integer)row[0];
+                String websiteId = (String)row[1];
+                String websiteName = (String)row[2];
+                String websiteHandle = (String)row[3];
+                result.add(new StatCount(
+                    websiteId,
+                    websiteHandle,
+                    websiteName,
+                    "statCount.weblogDayHits",
+                    (long)hits));              
+            }
+            return result;
+            
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
+    }
+    
+    /**
+     * @deprecated Replaced by getHotWeblogs().
      */
     public List getDaysPopularWebsites(int sinceDays, int offset, int length) 
         throws RollerException {
@@ -285,8 +328,12 @@ public class HibernateRefererManagerImpl implements RefererManager {
               // The above would be *much* better but "HQL parser does not   
               // resolve alias in ORDER BY clause" (See Hibernate issue HHH-892)
             
-            query.setFirstResult(offset);
-            query.setMaxResults(length);
+            if (offset != 0) {
+                query.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                query.setMaxResults(length);
+            }
             Iterator rawResults = query.list().iterator();
             for (Iterator it = query.list().iterator(); it.hasNext();) {
                 Object[] row = (Object[])it.next();
@@ -301,92 +348,6 @@ public class HibernateRefererManagerImpl implements RefererManager {
                     hits));              
             }
             return result;
-                
-            /* The old raw SQL way:
-            List list = new ArrayList();            
-            Session ses = ((HibernatePersistenceStrategy)strategy).getSession();
-            Connection con = ses.connection();            
-            final PreparedStatement stmt;            
-            Dialect currentDialect = ((SessionFactoryImplementor)ses.getSessionFactory()).getDialect();            
-            if (currentDialect instanceof HSQLDialect) {
-                // special handling for HSQLDB
-                stmt = con.prepareStatement(
-                        "select top ? w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
-                        "group by w.name, w.handle, w.id order by s desc");
-                stmt.setInt(1, len);
-                stmt.setBoolean(2, true);
-                stmt.setBoolean(3, true);
-            } else if(currentDialect instanceof DerbyDialect) {
-                // special handling for Derby
-                stmt = con.prepareStatement(
-                        "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
-                        "group by w.name, w.handle, w.id order by s desc");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-                stmt.setMaxRows(len);
-            } else if(currentDialect instanceof DB2Dialect) {
-                // special handling for IBM DB2
-                stmt = con.prepareStatement(
-                        "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
-                        "group by w.name, w.handle, w.id order by s desc fetch first " +
-                        Integer.toString(len) + " rows only");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-            } else if (currentDialect instanceof OracleDialect) {
-                stmt = con.prepareStatement(
-                        "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website w, referer r "+
-                        "where r.websiteid=w.id and w.isenabled=? and w.isactive=? and rownum <= ? " +
-                        "group by w.name, w.handle, w.id order by s desc");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-                stmt.setInt(3, len );
-            } else if (currentDialect instanceof SQLServerDialect) {
-                stmt = con.prepareStatement("select top " + len + " w.id, w.name, w.handle, sum(r.dayhits) as s " +
-                        "from website as w, referer as r where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
-                        "group by w.name, w.handle, w.id order by s desc");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-            } else { // for MySQL and PostgreSQL
-                stmt = con.prepareStatement(
-                        "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled= ? and w.isactive=? " +
-                        // Ben Walding (a Postgres SQL user): Basically, you have
-                        // to have all non-aggregated columns that exist in your
-                        // 'SELECT' section, in the 'GROUP BY' section as well:
-                        "group by w.name, w.handle, w.id order by s desc limit ?");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-                stmt.setInt(3, len);
-            }            
-            ResultSet rs = stmt.executeQuery();
-            if ( rs.next() ) {
-                do
-                {
-                    String websiteId = rs.getString(1);
-                    String websiteName = rs.getString(2);
-                    String websiteHandle = rs.getString(3);
-                    Integer hits = new Integer(rs.getInt(4));
-                    list.add(new WebsiteDisplayData(
-                            websiteId,
-                            websiteName,
-                            websiteHandle,
-                            hits));
-                    if(list.size() >= len) {
-                        rs.close();
-                        break;
-                    }
-                }
-                while ( rs.next() );
-            }           
-            return list; */
             
         } catch (Throwable pe) {
             log.error(msg, pe);

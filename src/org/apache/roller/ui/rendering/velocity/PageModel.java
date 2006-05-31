@@ -347,7 +347,7 @@ public class PageModel {
             } else {
                 cal = Calendar.getInstance();
             }
-            Integer limit = new Integer(maxEntries);
+            int limit = maxEntries;
             Date startDate = null;
             Date endDate = mRollerReq.getDate();
             if (endDate == null) endDate = new Date();
@@ -357,7 +357,7 @@ public class PageModel {
                 endDate = DateUtil.getEndOfDay(endDate, cal);
                 startDate = DateUtil.getStartOfDay(endDate, cal); 
                 // and get them ALL, no limit
-                limit = null;                  
+                limit = Integer.MAX_VALUE;                  
             } else if (mRollerReq.isMonthSpecified()) {
                 endDate = DateUtil.getEndOfMonth(endDate, cal);
             }
@@ -366,8 +366,7 @@ public class PageModel {
                     startDate,                    // startDate
                     endDate,                      // endDate
                     catParam,                     // catName
-                    WeblogEntryData.PUBLISHED,    // status
-                    limit);     // maxEntries
+                    WeblogEntryData.PUBLISHED);    // status
             
             // need to wrap pojos
             java.util.Date key = null;
@@ -464,12 +463,13 @@ public class PageModel {
             
             List mEntries = mgr.getWeblogEntries(
                     mRollerReq.getWebsite(),
+                    null,
                     null,                        // startDate
                     day,                         // endDate
                     catParam,                    // catName
                     WeblogEntryData.PUBLISHED,   // status
                     null,                        // sortby (null for pubTime)
-                    new Integer(maxEntries));    // maxEntries
+                    0, maxEntries);    // maxEntries
             
             // wrap pojos
             ret = new ArrayList(mEntries.size());

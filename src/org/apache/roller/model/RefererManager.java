@@ -84,9 +84,19 @@ public interface RefererManager {
      * @param len       Maximum number of results to return (for paging)
      * @return List of WebsiteDisplayData objects.
      */
-    public List getDaysPopularWebsites(int sinceDays, int offset, int len) 
-        throws RollerException;    
+    public List getDaysPopularWebsites(int sinceDays, int offset, int length) 
+        throws RollerException;   
     
+    /**
+     * Returns hot weblogs as StatCount objects, in descending order by today's hits.
+     * @param sinceDays Restrict to last X days (or -1 for all)
+     * @param offset    Offset into results (for paging)
+     * @param len       Maximum number of results to return (for paging)
+     * @return List of StatCount objects.
+     */
+    public List getHotWeblogs(int sinceDays, int offset, int length) 
+        throws RollerException; 
+
     /**
      * Get referers that refer to a specific weblog entry.
      * @param entryid Weblog entry ID

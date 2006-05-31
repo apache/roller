@@ -102,7 +102,7 @@ class RollerWeblogHandler extends Handler {
     
     private EntrySet getCollection() throws HandlerException {
         try {
-            List users = getRoller().getUserManager().getUsers();
+            List users = getRoller().getUserManager().getUsers(0, Integer.MAX_VALUE);
             if (users == null) {
                 users = Collections.EMPTY_LIST;
             }

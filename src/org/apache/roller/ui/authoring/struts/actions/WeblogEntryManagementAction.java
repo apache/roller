@@ -149,6 +149,7 @@ public final class WeblogEntryManagementAction extends DispatchAction
 
             entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
                     website,
+                    null,
                     startDate,
                     endDate,
                     category,

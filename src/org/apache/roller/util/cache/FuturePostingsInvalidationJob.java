@@ -95,8 +95,8 @@ public class FuturePostingsInvalidationJob implements Job {
             mLogger.debug("looking up entries between "+start+" and "+end);
             
             // get all published entries between start and end date
-            expiringEntries = mgr.getWeblogEntries(null, start, end, null, 
-                    null, WeblogEntryData.PUBLISHED, null);
+            expiringEntries = mgr.getWeblogEntries(null, null, start, end, null, 
+                    null, WeblogEntryData.PUBLISHED, 0, Integer.MAX_VALUE);
             
             this.nextExpirations = expiringEntries;
             

@@ -173,6 +173,7 @@ public class PlanetEntryData extends PersistentObject
     /**
      * @hibernate.id column="id"
      *     generator-class="uuid.hex" unsaved-value="null"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getId() {
         return id;
@@ -182,6 +183,7 @@ public class PlanetEntryData extends PersistentObject
     }
     /**
      * @hibernate.property column="categories" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getCategoriesString() {
         return categoriesString;
@@ -200,6 +202,7 @@ public class PlanetEntryData extends PersistentObject
     }
     /**
      * @hibernate.property column="author" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getAuthor() {
         return author;
@@ -209,6 +212,7 @@ public class PlanetEntryData extends PersistentObject
     }
     /**
      * @hibernate.property column="content" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getText() {
         return text;
@@ -218,6 +222,7 @@ public class PlanetEntryData extends PersistentObject
     }
     /**
      * @hibernate.property column="guid" non-null="false" unique="true"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getGuid() {
         return guid;
@@ -227,6 +232,7 @@ public class PlanetEntryData extends PersistentObject
     }
     /**
      * @hibernate.property column="handle" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getHandle() {
         return handle;
@@ -236,6 +242,7 @@ public class PlanetEntryData extends PersistentObject
     }
     /**
      * @hibernate.property column="published" non-null="true" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public Timestamp getPubTime() {
         return published;
@@ -245,6 +252,7 @@ public class PlanetEntryData extends PersistentObject
     }
     /**
      * @hibernate.property column="permalink" non-null="true" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getPermaLink() {
         return permalink;
@@ -254,6 +262,7 @@ public class PlanetEntryData extends PersistentObject
     }
     /**
      * @hibernate.property column="title" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getTitle() {
         return title;
@@ -263,6 +272,7 @@ public class PlanetEntryData extends PersistentObject
     }
     /**
      * @hibernate.property column="updated" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public Timestamp getUpdateTime() {
         return updated;
@@ -288,7 +298,7 @@ public class PlanetEntryData extends PersistentObject
         return false;
     }
     
-    //------------------------------------------------------------- implemenatation
+    //------------------------------------------------------------- implementation
     
     /**
      * Returns categories as list of WeblogCategoryData objects.
@@ -332,6 +342,7 @@ public class PlanetEntryData extends PersistentObject
     
     /** 
      * Returns creator as a UserData object.
+     * @roller.wrapPojoMethod type="pojo"
      * TODO: make planet model entry author name, email, and uri
      */
     public UserData getCreator() {
@@ -346,7 +357,7 @@ public class PlanetEntryData extends PersistentObject
     
     /**
      * Returns summary (always null for planet entry)
-     * TODO: make planet model entry.summary
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getSummary() {
         return null;

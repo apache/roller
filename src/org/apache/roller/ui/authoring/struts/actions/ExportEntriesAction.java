@@ -181,12 +181,13 @@ public class ExportEntriesAction extends DispatchAction
                     
                     List entries = weblogMgr.getWeblogEntries(
                                     rreq.getWebsite(), // userName
+                                    null,
                                     startDate,         // startDate
                                     endDate,           // endDate
                                     null,              // catName
                                     null,              // status
                                     null,              // sortby (null for pubtime)
-                                    null);             // maxEntries
+                                    0, Integer.MAX_VALUE);  
 
                     ActionMessages messages = writeSuccessMessage(request, response, rreq, form);
 

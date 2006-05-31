@@ -78,6 +78,7 @@ public class PlanetSubscriptionData extends PersistentObject
     /** 
      * @hibernate.id column="id" 
      *     generator-class="uuid.hex" unsaved-value="null"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getId()
     {
@@ -102,6 +103,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="feed_url" non-null="true" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getFeedUrl()
     {
@@ -113,6 +115,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="last_updated" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public Date getLastUpdated()
     {
@@ -124,6 +127,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="site_url" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getSiteUrl()
     {
@@ -135,6 +139,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="title" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getTitle()
     {
@@ -146,6 +151,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="author" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getAuthor()
     {
@@ -157,6 +163,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="inbound_links" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public int getInboundlinks()
     {
@@ -168,6 +175,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="inbound_blogs" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public int getInboundblogs()
     {

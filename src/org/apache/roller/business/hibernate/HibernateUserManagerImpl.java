@@ -220,7 +220,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         // TODO BACKEND: we must do this in a better fashion, like getUserCnt()?
         boolean adminUser = false;
-        List existingUsers = this.getUsers();
+        List existingUsers = this.getUsers(0, 1);
         if(existingUsers.size() == 0) {
             // Make first user an admin
             adminUser = true;
@@ -463,8 +463,13 @@ public class HibernateUserManagerImpl implements UserManager {
             if (active != null) {
                 criteria.add(Expression.eq("active", active));
             }
-            criteria.setFirstResult(offset);
-            criteria.setMaxResults(length);
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                criteria.setMaxResults(length);
+            }
+            criteria.addOrder(Order.desc("dateCreated"));
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -532,11 +537,11 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    public List getUsers() throws RollerException {
-        return getUsers(Boolean.TRUE);
+    public List getUsers(int offset, int length) throws RollerException {
+        return getUsers(Boolean.TRUE, offset, length);
     }
     
-    public List getUsers(Boolean enabled) throws RollerException {
+    public List getUsers(Boolean enabled, int offset, int length) throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
@@ -544,7 +549,12 @@ public class HibernateUserManagerImpl implements UserManager {
             if (enabled != null) {
                 criteria.add(Expression.eq("enabled", enabled));
             }
-            
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                criteria.setMaxResults(length);
+            }
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -554,7 +564,7 @@ public class HibernateUserManagerImpl implements UserManager {
     /**
      * Get users of a website
      */
-    public List getUsers(WebsiteData website, Boolean enabled) throws RollerException {
+    public List getUsers(WebsiteData website, Boolean enabled, int offset, int length) throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
@@ -566,14 +576,20 @@ public class HibernateUserManagerImpl implements UserManager {
             if (enabled != null) {
                 criteria.add(Expression.eq("enabled", enabled));
             }
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                criteria.setMaxResults(length);
+            }
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
     }
         
-    public List getUsersStartingWith(String startsWith,
-            int offset, int length, Boolean enabled) throws RollerException {
+    public List getUsersStartingWith(String startsWith, Boolean enabled,
+            int offset, int length) throws RollerException {
         
         List results = new ArrayList();
         try {
@@ -588,8 +604,12 @@ public class HibernateUserManagerImpl implements UserManager {
                 .add(Expression.like("userName", startsWith, MatchMode.START))
                 .add(Expression.like("emailAddress", startsWith, MatchMode.START)));
             }
-            criteria.setFirstResult(offset);
-            criteria.setMaxResults(length);
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                criteria.setMaxResults(length);
+            }
             results = criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -800,8 +820,12 @@ public class HibernateUserManagerImpl implements UserManager {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(UserData.class);
             criteria.add(Expression.like("userName", new String(new char[]{letter}) + "%", MatchMode.START));
-            criteria.setFirstResult(offset);
-            criteria.setMaxResults(length);
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                criteria.setMaxResults(length);
+            }
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -839,8 +863,12 @@ public class HibernateUserManagerImpl implements UserManager {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
             criteria.add(Expression.like("handle", new String(new char[]{letter}) + "%", MatchMode.START));
-            criteria.setFirstResult(offset);
-            criteria.setMaxResults(length);
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                criteria.setMaxResults(length);
+            }
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -858,8 +886,12 @@ public class HibernateUserManagerImpl implements UserManager {
                 "select count(distinct c), c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description "
                +"from CommentData c group by c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description "
                +"order by col_0_0_ desc");
-            query.setFirstResult(offset);
-            query.setMaxResults(length);
+            if (offset != 0) {
+                query.setFirstResult(offset);
+            }
+            if (length != Integer.MAX_VALUE) {
+                query.setMaxResults(length);
+            }
             List results = new ArrayList();
             for (Iterator iter = query.list().iterator(); iter.hasNext();) {
                 Object[] row = (Object[]) iter.next();
