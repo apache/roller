@@ -1,0 +1,6 @@
+<html>
+<body>
+<h1>Velocity template error</h1>
+ERROR message [$!displayException.getMessage()]
+</body>
+</html>

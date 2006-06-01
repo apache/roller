@@ -57,7 +57,7 @@ public class BookmarksActionTest extends StrutsActionTestBase
         try
         {
             umgr = getRoller().getUserManager();
-            user = (UserData)umgr.getUsers(mWebsite, null).get(0);       
+            user = (UserData)umgr.getUsers(mWebsite, null, 0, Integer.MAX_VALUE).get(0);       
             doFilters();
             authenticateUser(user.getUserName(), "editor");
         }

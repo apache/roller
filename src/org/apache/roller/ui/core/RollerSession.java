@@ -81,7 +81,7 @@ public class RollerSession
                 try 
                 {
                     UserManager umgr = RollerFactory.getRoller().getUserManager();
-                    UserData user = umgr.getUserByUsername(principal.getName());
+                    UserData user = umgr.getUserByUserName(principal.getName());
                     // only set authenticated user if user is enabled
                     if (user.getEnabled().booleanValue()) 
                     {

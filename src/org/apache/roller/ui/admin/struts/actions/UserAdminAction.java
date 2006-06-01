@@ -91,7 +91,7 @@ public final class UserAdminAction extends UserBaseAction
                 {
                     ActionMessages msgs = getErrors(request);
                     msgs = (msgs == null) ? new ActionMessages() : msgs;
-                    user = mgr.getUserByUsername(userForm.getUserName(), null);                    
+                    user = mgr.getUserByUserName(userForm.getUserName(), null);                    
                     if (user != null)
                     {
                         userForm.copyFrom(user, request.getLocale());                        

@@ -1016,25 +1016,43 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     public List getMostCommentedWeblogEntries(
-            WebsiteData website, int sinceDays, int offset, int length) 
+            WebsiteData website, Date startDate, Date endDate, int offset, int length) 
             throws RollerException {
         // TODO: ATLAS getMostCommentedWeblogEntries DONE
         String msg = "Getting most commented weblog entres";
+        if (endDate == null) endDate = new Date();
         try {      
             Session session = 
                 ((HibernatePersistenceStrategy)strategy).getSession();            
             Query query = null;
             if (website != null) {
-                query = session.createQuery(
-                    "select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title "
-                   +"from CommentData c where c.weblogEntry.website=:website group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title "
-                   +"order by col_0_0_ desc");
+                StringBuffer sb = new StringBuffer();
+                sb.append("select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title from CommentData c ");
+                sb.append("where c.weblogEntry.website=:website and c.weblogEntry.pubTime < :endDate ");
+                if (startDate != null) {
+                    sb.append("and c.weblogEntry.pubTime > :startDate ");
+                }                   
+                sb.append("group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("order by col_0_0_ desc");
+                query = session.createQuery(sb.toString());
                 query.setParameter("website", website);
+                query.setParameter("endDate", endDate);
+                if (startDate != null) {
+                    query.setParameter("startDate", startDate);
+                }   
             } else {
-                query = session.createQuery(
-                    "select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title "
-                   +"from CommentData c group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title "
-                   +"order by col_0_0_ desc");
+                StringBuffer sb = new StringBuffer();
+                sb.append("select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("from CommentData c group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("where c.weblogEntry.pubTime < :endDate ");
+                if (startDate != null) {
+                    sb.append("and c.weblogEntry.pubTime > :startDate ");
+                } 
+                sb.append("order by col_0_0_ desc");
+                query = session.createQuery(sb.toString());
+                if (startDate != null) {
+                    query.setParameter("startDate", startDate);
+                }   
             }
             if (offset != 0) {
                 query.setFirstResult(offset);
@@ -1127,4 +1145,5 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             log.error("EXCEPTION applying comment defaults",e);
         }
     }     
+
 }

@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * Common weblog entry interface supported by both WeblogEntryData and 
  * PlanetEntryData, meant primarily as documentation -- to help Roller template
- * author's write template code that works with both blog and planet entries.
+ * author's write code that works with both blog and planet entries.
  */
 public interface WeblogEntry {    
 
@@ -68,7 +68,7 @@ public interface WeblogEntry {
      * category information, this may be null. If there are multiple categories
      * then the first category found is returned.
      */
-    public WeblogCategoryData getCategory();
+    public WeblogCategory getCategory();
     
     /** 
      * Returns collection of WeblogCategoryData objects for entry.
@@ -79,7 +79,30 @@ public interface WeblogEntry {
      * Returns user object of author who created post but since titles are not 
      * required by all feed formats so this method may return null.
      */
-    public UserData getCreator();
+    public User getCreator();
+    
+    /**
+     * Returns website object representing site from which entry originated.
+     */
+    public Website getWebsite();
+   
+    
+    public interface User { 
+        /** User name of user */
+        public String getUserName();
+    }
+    
+    public interface WeblogCategory {     
+        /** Name of category */
+        public String getName();
+    }
+    
+    public interface Website {     
+        /** URL of website */
+        public String getUrl();    
+        /** Name of website */
+        public String getName();
+    }
 }
 
 

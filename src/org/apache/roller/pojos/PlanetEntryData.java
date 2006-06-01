@@ -95,13 +95,19 @@ public class PlanetEntryData extends PersistentObject
      * Init entry from Rome entry
      */
     private void initFromRomeEntry(SyndFeed romeFeed, SyndEntry romeEntry) {
-        setAuthor(romeEntry.getAuthor());
         setTitle(romeEntry.getTitle());
         setPermaLink(romeEntry.getLink());
         
-        // Play some games to get the date
+        // Play some games to get the author
         DCModule entrydc = (DCModule)romeEntry.getModule(DCModule.URI);
         DCModule feeddc = (DCModule)romeFeed.getModule(DCModule.URI);
+        if (romeEntry.getAuthor() != null) {
+            setAuthor(romeEntry.getAuthor());
+        } else {
+            setAuthor(entrydc.getCreator()); // use <dc:creator>
+        }
+        
+        // Play some games to get the date too
         if (romeEntry.getPublishedDate() != null) {
             setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime())); // use <pubDate>
         } else if (entrydc != null) {
@@ -319,6 +325,7 @@ public class PlanetEntryData extends PersistentObject
        
     /**
      * Return first entry in category collection.
+     * @roller.wrapPojoMethod type="pojo"
      */
     public WeblogCategoryData getCategory() {
         WeblogCategoryData cat = null;
@@ -390,7 +397,16 @@ public class PlanetEntryData extends PersistentObject
     
     public void setData(PersistentObject vo) {}
 
-     
+    /**
+     * Read-only synomym for getSubscription()
+     * @roller.wrapPojoMethod type="pojo"
+     */
+    public PlanetSubscriptionData getWebsite() {
+        return this.subscription;        
+    }
+    public void setWebsite() {
+        // noop
+    }
 }
 
 

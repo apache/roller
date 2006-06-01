@@ -27,7 +27,7 @@ import java.util.List;
  * @hibernate.class lazy="false" table="rag_subscription"
  */
 public class PlanetSubscriptionData extends PersistentObject 
-    implements Serializable, Comparable
+    implements WeblogEntry.Website, Serializable, Comparable
 {
     /** Database ID */
     protected String id;
@@ -186,6 +186,25 @@ public class PlanetSubscriptionData extends PersistentObject
         this.inboundblogs = inboundblogs;
     }
 
+    /** 
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getName() {
+        return title;
+    }
+    public void setName(String name) {
+        title = name;
+    }
+    /** 
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getUrl() {
+        return siteUrl;
+    }
+    public void setUrl(String url) {
+        siteUrl = url;
+    }
+    
     //-------------------------------------------------------------- implementation
    
     /**

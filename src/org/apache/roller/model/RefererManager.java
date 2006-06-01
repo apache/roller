@@ -79,12 +79,13 @@ public interface RefererManager {
     
     /**
      * Get most popular websites based on referer day hits.
-     * @param sinceDays Restrict to last X days (or -1 for all)
      * @param offset    Offset into results (for paging)
      * @param len       Maximum number of results to return (for paging)
      * @return List of WebsiteDisplayData objects.
      */
-    public List getDaysPopularWebsites(int sinceDays, int offset, int length) 
+    public List getDaysPopularWebsites(
+            int offset, 
+            int length) 
         throws RollerException;   
     
     /**

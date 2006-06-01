@@ -169,7 +169,7 @@ public class RollerRequest
         if (userName != null)
         {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            UserData currentUser = userMgr.getUserByUsername(userName);
+            UserData currentUser = userMgr.getUserByUserName(userName);
             // TODO: possible fix for backend refactoryings
             //RollerFactory.getRoller().setUser(currentUser);
         }

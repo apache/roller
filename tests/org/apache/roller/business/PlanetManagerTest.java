@@ -354,10 +354,10 @@ public class PlanetManagerTest extends TestCase {
                 PlanetGroupData group = planet.getGroup("test_handle");
                 assertNotNull(group);
                 
-                List bigag = planet.getAggregation(group, 0, 30);
+                List bigag = planet.getAggregation(group, null, null, 0, 30);
                 assertEquals(30, bigag.size());
                 
-                List littleag = planet.getAggregation(group, 0, 10);
+                List littleag = planet.getAggregation(group, null, null, 0, 10);
                 assertEquals(10, littleag.size());
                 
                 planet.deleteGroup(group);

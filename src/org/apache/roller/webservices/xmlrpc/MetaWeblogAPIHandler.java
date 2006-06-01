@@ -241,7 +241,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
-            UserData user = roller.getUserManager().getUserByUsername(userid);
+            UserData user = roller.getUserManager().getUserByUserName(userid);
             Timestamp current =
                     new Timestamp(System.currentTimeMillis());
             

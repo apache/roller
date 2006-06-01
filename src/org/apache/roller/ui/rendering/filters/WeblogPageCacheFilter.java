@@ -233,6 +233,9 @@ public class WeblogPageCacheFilter implements Filter, CacheHandler {
                 // categories may contain spaces, which is not desired
                 key.append("/").append(org.apache.commons.lang.StringUtils.deleteWhitespace(cat));
             }
+            
+            // TODO: ATLAS reconcile with new URL structure
+            key.append(pageRequest.getRequest().getQueryString());
         }
         
         // add page name

@@ -138,12 +138,15 @@ public interface WeblogManager {
     /** 
      * Get weblog enties ordered by descending number of comments.
      * @param website Restrict to only this website (or null for all)
-     * @param sinceDays Restrict to last X days (or -1 for all)
      * @param len       Maximum number of results to return (for paging)
      * @returns List of WeblogEntryData objects.
      */
     public List getMostCommentedWeblogEntries(
-            WebsiteData website, int sinceDays, int offset, int length)
+            WebsiteData website,             
+            Date        startDate,
+            Date        endDate,
+            int         offset, 
+            int         length)
             throws RollerException;
     
     /**

@@ -55,7 +55,7 @@ public class WeblogStatsTest extends TestCase {
     }
     public void testGetMostCommentedWeblogs() throws Exception {        
         UserManager mgr = RollerFactory.getRoller().getUserManager();      
-        List list = mgr.getMostCommentedWebsites(10, 0, Integer.MAX_VALUE);  
+        List list = mgr.getMostCommentedWebsites(null, null, 0, Integer.MAX_VALUE);  
         
         assertNotNull(list);
         assertEquals(2, list.size());
@@ -70,7 +70,7 @@ public class WeblogStatsTest extends TestCase {
     }
     public void testGetMostCommentedWeblogEntries() throws Exception {        
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();      
-        List list = mgr.getMostCommentedWeblogEntries(null, 10, 0, Integer.MAX_VALUE);
+        List list = mgr.getMostCommentedWeblogEntries(null, null, null, 0, Integer.MAX_VALUE);
         
         assertNotNull(list);
         assertEquals(3, list.size());

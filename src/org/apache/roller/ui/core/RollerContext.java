@@ -445,24 +445,23 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     
     /** Get absolute URL of Roller context */
     public String getAbsoluteContextUrl(HttpServletRequest request) {
-        
-        String url = RollerRuntimeConfig.getProperty("site.absoluteurl");
-        
-        if (url == null || url.trim().length() == 0) {
-            try {
-                URL absURL = RequestUtils.absoluteURL(request, "/");
-                url = absURL.toString();
-            } catch (MalformedURLException e) {
-                url = "/";
-                mLogger.error("ERROR: forming absolute URL", e);
+        String url = RollerConfig.getProperty("context.absPath");
+        if (url == null) {
+            url = RollerRuntimeConfig.getProperty("site.absoluteurl");
+            if (url == null || url.trim().length() == 0) {
+                try {
+                    URL absURL = RequestUtils.absoluteURL(request, "/");
+                    url = absURL.toString();
+                } catch (MalformedURLException e) {
+                    url = "/";
+                    mLogger.error("ERROR: forming absolute URL", e);
+                }
             }
+            if (url.endsWith("/")) {
+                url = url.substring(0, url.length() - 1);
+            }   
+            RollerConfig.setAbsoluteContextPath(url);
         }
-        
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
-        }
-        
-        mContext.setAttribute("org.apache.roller.absoluteContextURL", url);
         return url;
     }
     

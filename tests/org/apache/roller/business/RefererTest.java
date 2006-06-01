@@ -262,13 +262,13 @@ public class RefererTest extends TestCase {
         log.info("Test apply referers (weblog)");
         RefererManager rmgr = RollerFactory.getRoller().getRefererManager();
         
-        List sites = rmgr.getDaysPopularWebsites(0, 0, 1);
+        List sites = rmgr.getDaysPopularWebsites(0, 1);
         assertEquals(1, sites.size());
         
-        sites = rmgr.getDaysPopularWebsites(0, 1, 1);
+        sites = rmgr.getDaysPopularWebsites(1, 1);
         assertEquals(1, sites.size());
         
-        sites = rmgr.getDaysPopularWebsites(0, 0, 20);
+        sites = rmgr.getDaysPopularWebsites(0, 20);
         assertEquals(2, sites.size());
         
         WebsiteDisplayData site1 = (WebsiteDisplayData)sites.get(0);

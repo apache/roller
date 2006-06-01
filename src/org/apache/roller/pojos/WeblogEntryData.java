@@ -39,7 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
@@ -711,36 +711,18 @@ public class WeblogEntryData extends PersistentObject implements Serializable, W
      * @return
      */
     public String getPermaLink() {
-        String lAnchor = this.getAnchor();
-        
+        // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
+        String lAnchor = this.getAnchor();        
         try {
             lAnchor = URLEncoder.encode(anchor, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // go with the "no encoding" version
-        }
-        
+        }        
         WebsiteData website = this.getWebsite();
-        String plink = "/page/" + website.getHandle() +
-                "?entry=" + lAnchor;
-        
+        String absContextUrl = RollerConfig.getProperty("context.absPath");
+        String plink = 
+          absContextUrl + "/page/" + website.getHandle() + "?entry=" + lAnchor;        
         return plink;
-    }
-    
-    /**
-     * Get the "relative" URL to this entry.  Proper use of this will
-     * require prepending the baseURL (either the full root
-     * [http://server.com/context] or at least the context
-     * [/context]) in order to generate a functional link.
-     *
-     * @roller.wrapPojoMethod type="simple"
-     * @param category The category name to insert into the permalink.
-     * @return String
-     */
-    public String getPermaLink(String categoryPath) {
-        // i don't really understand the purpose of this method since
-        // WeblogEntryData.getPermaLink() is only meant to point to this entry
-        
-        return this.getPermaLink();
     }
     
     /**

@@ -55,12 +55,13 @@ public class ExportRssTest extends StrutsActionTestBase
         
         List entries = getRoller().getWeblogManager().getWeblogEntries(
                         null,               // userName
-null,                         null,               // startDate
+                        null,
+                        null,               // startDate
                         new Date(),         // endDate
                         null,               // catName
                         null,               // status
                         null,               // sortby
-                        new Integer(5));    // maxEntries
+                        0, Integer.MAX_VALUE);    // maxEntries
         
         try
         {
@@ -103,7 +104,7 @@ null,                         null,               // startDate
      * @param mContext
      * @throws IOException
      */
-    private void setupVelocityProperties(MockServletContext mContext) throws IOException
+    private void setupVelocityProperties(MockServletContext mContext) throws IOException 
     {
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("velocity.properties");
         if (is == null) fail("Unable to find velocity.properties");

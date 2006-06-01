@@ -282,16 +282,17 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         }
     }    
    
-    public synchronized List getAggregation(int offset, int len) 
+    public synchronized List getAggregation(Date startDate, Date endDate, int offset, int len) 
         throws RollerException {
-        return getAggregation(null, offset, len);
+        return getAggregation(null, startDate, endDate, offset, len);
     } 
     
     public synchronized List getAggregation(
-        PlanetGroupData group, int offset, int length)
+        PlanetGroupData group, Date startDate, Date endDate, int offset, int length)
         throws RollerException {
         // TODO: ATLAS getAggregation DONE TESTED
         List ret = null;
+        if (endDate == null) endDate = new Date();
         try {
             String groupHandle = (group == null) ? NO_GROUP : group.getHandle();
             long startTime = System.currentTimeMillis();
@@ -299,23 +300,40 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                     ((HibernatePersistenceStrategy)strategy).getSession();
             
             if (group != null) {
-                Query query = session.createQuery(
-                    "select entry from org.apache.roller.pojos.PlanetEntryData entry "
-                    +"join entry.subscription.groupSubscriptionAssocs assoc "
-                    +"where assoc.group=:group order by entry.pubTime desc");
+                StringBuffer sb = new StringBuffer();
+                sb.append("select entry from org.apache.roller.pojos.PlanetEntryData entry ");
+                sb.append("join entry.subscription.groupSubscriptionAssocs assoc ");
+                sb.append("where assoc.group=:group and entry.pubTime < :endDate ");
+                if (startDate != null) {
+                    sb.append("and entry.pubTime > :startDate ");
+                }
+                sb.append("order by entry.pubTime desc");
+                Query query = session.createQuery(sb.toString());
                 query.setEntity("group", group);
                 query.setFirstResult(offset);
                 query.setMaxResults(length);
+                query.setParameter("endDate", endDate);
+                if (startDate != null) {
+                    query.setParameter("startDate", startDate);
+                }
                 ret = query.list();
             } else {
-                Query query = session.createQuery(
-                    "select entry from org.apache.roller.pojos.PlanetEntryData entry "
-                    +"join entry.subscription.groupSubscriptionAssocs assoc "
-                    +"where "
-                    +"assoc.group.handle='external' or assoc.group.handle='all'"
-                    +" order by entry.pubTime desc");
+                StringBuffer sb = new StringBuffer();
+                sb.append("select entry from org.apache.roller.pojos.PlanetEntryData entry ");
+                sb.append("join entry.subscription.groupSubscriptionAssocs assoc ");
+                sb.append("where (assoc.group.handle='external' or assoc.group.handle='all') ");
+                sb.append("and entry.pubTime < :endDate ");
+                if (startDate != null) {
+                    sb.append("and entry.pubTime > :startDate ");
+                }
+                sb.append("order by entry.pubTime desc");
+                Query query = session.createQuery(sb.toString());
                 query.setFirstResult(offset);
                 query.setMaxResults(length);
+                query.setParameter("endDate", endDate);
+                if (startDate != null) {
+                    query.setParameter("startDate", startDate);
+                }
                 ret = query.list();
             }
             Date retLastUpdated = null;

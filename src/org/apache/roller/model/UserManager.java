@@ -18,6 +18,7 @@
 
 package org.apache.roller.model;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.RollerException;
@@ -57,12 +58,12 @@ public interface UserManager {
     /** 
      * Get user object by user name (only enabled users) 
      */
-    public UserData getUserByUsername(String userName) throws RollerException;    
+    public UserData getUserByUserName(String userName) throws RollerException;    
     
     /** 
      * Get user object by user name, optionally include dis-enabled users 
      */
-    public UserData getUserByUsername(String userName, Boolean enabled) 
+    public UserData getUserByUserName(String userName, Boolean enabled) 
             throws RollerException;    
     
     /** 
@@ -72,10 +73,16 @@ public interface UserManager {
     
     /**
      * Get all users, optionally include dis-enabled users.
-     *
      * @param enabled True for enabled only, false for disabled only, null for all
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
      */
-    public List getUsers(Boolean enabled, int offset, int length) throws RollerException;    
+    public List getUsers(
+        Boolean enabled, 
+        Date    startDate,
+        Date    endDate,
+        int     offset, 
+        int     length) throws RollerException;    
     
     /**
      * Get all users or a website.
@@ -83,7 +90,11 @@ public interface UserManager {
      * @param website Get all users of this website (or null for all)
      * @returns List of UserData objects.
      */
-    public List getUsers(WebsiteData website, Boolean enabled, int offset, int length) throws RollerException;
+    public List getUsers(
+        WebsiteData website, 
+        Boolean enabled, 
+        int offset, 
+        int length) throws RollerException;
         
     /**
      * Returns users whose usernames or email addresses start with a string.
@@ -101,7 +112,7 @@ public interface UserManager {
      * containing integers reflecting the number of users whose
      * names start with each letter.
      */
-    public Map getUsernameLetterMap() throws RollerException;
+    public Map getUserNameLetterMap() throws RollerException;
     
     /** Get collection of users whose names begin with specified letter */
     public List getUsersByLetter(char letter, int offset, int length) throws RollerException;
@@ -158,21 +169,34 @@ public interface UserManager {
      * @param len     Maximum number of results to return (for paging)
      * @param enabled Get all with this enabled state (or null or all)
      * @param active  Get all with this active state (or null or all)
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
      * @returns List of WebsiteData objects.
      */
     public List getWebsites(
-            UserData user, Boolean enabled, Boolean active, int offset, int length) 
-            throws RollerException;
+        UserData user, 
+        Boolean  enabled, 
+        Boolean  active, 
+        Date     startDate, 
+        Date     endDate, 
+        int      offset, 
+        int      length) 
+        throws RollerException;
     
     /**
      * Get websites ordered by descending number of comments.
-     * @param sinceDays Restrict to last X days (or -1 for all)
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
      * @param offset    Offset into results (for paging)
      * @param len       Maximum number of results to return (for paging)
      * @returns List of WebsiteData objects.
      */
-    public List getMostCommentedWebsites(int sinceDays, int offset, int length) 
-            throws RollerException;
+    public List getMostCommentedWebsites(
+        Date startDate, 
+        Date endDate, 
+        int  offset, 
+        int  length) 
+        throws RollerException;
     
     /**
      * Save permissions object.

@@ -18,6 +18,7 @@
 package org.apache.roller.ui.rendering.velocity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,12 +54,17 @@ public class SitePageModel {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getWeblogs(int offset, int length) {
+    public List getWeblogs(int sinceDays, int offset, int length) {
         List results = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            List weblogs = umgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, offset, length);
+            List weblogs = umgr.getWebsites(
+                null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length);
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
                 WebsiteData website = (WebsiteData) it.next();
                 results.add(WebsiteDataWrapper.wrap(website));
@@ -76,12 +82,17 @@ public class SitePageModel {
      * @param offset   Offset into results (for paging)
      * @param length   Max number of results to return
      */
-    public List getCommentedWeblogs(int sinceDays , int offset, int length) {
+    public List getMostCommentedWeblogs(int sinceDays , int offset, int length) {
         List results = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            results = umgr.getMostCommentedWebsites(Integer.MAX_VALUE, offset, length);
+            results = umgr.getMostCommentedWebsites(
+                    startDate, new Date(), offset, length);
         } catch (Exception e) {
             log.error("ERROR: fetching commented weblog list", e);
         }
@@ -96,12 +107,18 @@ public class SitePageModel {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getCommentedWeblogEntries(List cats, int sinceDays, int offset, int length) {
+    public List getMostCommentedWeblogEntries(
+            List cats, int sinceDays, int offset, int length) {
         List results = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
         try {            
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
-            results = wmgr.getMostCommentedWeblogEntries(null, Integer.MAX_VALUE, offset, length);
+            results = wmgr.getMostCommentedWeblogEntries(
+                    null, startDate, new Date(), offset, length);
         } catch (Exception e) {
             log.error("ERROR: fetching commented weblog entries list", e);
         }
@@ -111,31 +128,35 @@ public class SitePageModel {
     /**
      * Get most recent WeblogEntry objects across all weblogs,
      * in reverse chrono order by pubTime.
-     * @param cat      To limit results to a specific category
-     * @param offset   Offset into results (for paging)
-     * @param length   Max number of results to return
+     * @param handle    Restrict to this weblog handle (or 'nil' for all)
+     * @param userName  Restrict to this userName (or 'nil' for all)
+     * @param cat       Restrict to category (or 'nil' for all)
+     * @param offset    Offset into results (for paging)
+     * @param length    Max number of results to return
      */
-    public List getWeblogEntries(String cat, int offset, int length) {
-        return getUserWeblogEntries(null, cat, offset, length);
-    }
-    
-    /**
-     * Get most recent WeblogEntry objects across all weblogs,
-     * in reverse chrono order by pubTime.
-     * @param username   Limit entries to those created by this user
-     * @param offset     Offset into results (for paging)
-     * @param len        Max number of results to return
-     */
-    public List getUserWeblogEntries(String username, String cat, int offset, int length) {
+    public List getWeblogEntries(String handle, String userName, String cat, int sinceDays, int offset, int length) {
         List results = new ArrayList();
+        if (handle.equals(PageModel.VELOCITY_NULL)) handle = null;
+        if (userName.equals(PageModel.VELOCITY_NULL)) userName = null;
         if (cat.equals(PageModel.VELOCITY_NULL)) cat = null;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
         try {            
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             UserManager umgr = roller.getUserManager();
-            UserData user = umgr.getUserByUsername(username);
+            WebsiteData website = null;
+            if (handle != null) {
+                website = umgr.getWebsiteByHandle(handle);
+            }
+            UserData user = null;
+            if (userName != null) {
+                user = umgr.getUserByUserName(userName);
+            }
             List entries = wmgr.getWeblogEntries( 
-                null, user, null, new Date(), cat, WeblogEntryData.PUBLISHED, "pubTime", offset, length);
+                website, user, startDate, new Date(), cat, WeblogEntryData.PUBLISHED, "pubTime", offset, length);
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 WeblogEntryData entry = (WeblogEntryData) it.next();
                 results.add(WeblogEntryDataWrapper.wrap(entry));
@@ -145,20 +166,24 @@ public class SitePageModel {
         }
         return results;
     }
-    
+        
     /**
      * Get most recent Comment objects across all weblogs,
      * in reverse chrono order by postTime.
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getComments(int offset, int length) {
+    public List getComments(int sinceDays, int offset, int length) {
         List results = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
         try {            
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
-            List entries = wmgr.getComments(
-                null, null, null, null, new Date(), 
+            List entries = wmgr.getComments( 
+                null, null, null, startDate, new Date(), 
                 Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, true, offset, length);
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 CommentData comment = (CommentData) it.next();
@@ -175,7 +200,7 @@ public class SitePageModel {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getUsers(int offset, int length) {
+    public List getUsers(int sinceDays, int offset, int length) {
         List results = new ArrayList();
         try {            
             Roller roller = RollerFactory.getRoller();
@@ -215,7 +240,7 @@ public class SitePageModel {
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            UserData user = umgr.getUserByUsername(username, Boolean.TRUE);
+            UserData user = umgr.getUserByUserName(username, Boolean.TRUE);
             wrappedUser = UserDataWrapper.wrap(user);
         } catch (Exception e) {
             log.error("ERROR: fetching users by letter", e);
@@ -242,12 +267,12 @@ public class SitePageModel {
      * containing integers reflecting the number of users whose
      * names start with each letter.
      */
-    public Map getUsernameLetterMap() {
+    public Map getUserNameLetterMap() {
         Map results = new HashMap();
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            results = umgr.getUsernameLetterMap();
+            results = umgr.getUserNameLetterMap();
         } catch (Exception e) {
             log.error("ERROR: fetching username letter map", e);
         }
@@ -255,12 +280,13 @@ public class SitePageModel {
     }
     
     /** Get collection of users whose names begin with specified letter */
-    public List getUsersByLetter(char letter, int offset, int length) {
+    public List getUsersByLetter(String letter, int offset, int length) {
         List results = new ArrayList();
+        letter = letter.toUpperCase();
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            List users = umgr.getUsersByLetter(letter, offset, length);
+            List users = umgr.getUsersByLetter(letter.charAt(0), offset, length);
             for (Iterator it = users.iterator(); it.hasNext();) {
                 UserData user = (UserData) it.next();
                 results.add(UserDataWrapper.wrap(user));
@@ -289,12 +315,13 @@ public class SitePageModel {
     }
     
     /** Get collection of weblogs whose handles begin with specified letter */
-    public List getWeblogsByLetter(char letter, int offset, int length) {
+    public List getWeblogsByLetter(String letter, int offset, int length) {
         List results = new ArrayList();
+        letter = letter.toUpperCase();
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            List weblogs = umgr.getWeblogsByLetter(letter, offset, length);
+            List weblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length);
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
                 WebsiteData website = (WebsiteData) it.next();
                 results.add(WebsiteDataWrapper.wrap(website));
