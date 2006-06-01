@@ -82,9 +82,9 @@ public class WeblogStatsTest extends TestCase {
         StatCount s2 = (StatCount)list.get(1);
         assertEquals(1L, s2.getCount());   
     }
-    public void testGetUsernameLetterMap() throws Exception {        
+    public void testGetUserNameLetterMap() throws Exception {        
         UserManager mgr = RollerFactory.getRoller().getUserManager();      
-        Map map = mgr.getUsernameLetterMap();    
+        Map map = mgr.getUserNameLetterMap();    
         assertNotNull(map.get("a"));
         assertNotNull(map.get("b"));
         assertNull(map.get("c"));

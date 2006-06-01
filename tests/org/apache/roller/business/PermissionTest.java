@@ -216,7 +216,7 @@ public class PermissionTest extends TestCase {
         TestUtils.endSession(true);
         
         // re-query now that we have changed things
-        user = mgr.getUserByUsername(user.getUserName());
+        user = mgr.getUserByUserName(user.getUserName());
         testWeblog = mgr.getWebsiteByHandle(testWeblog.getHandle());
         
         // assert that invitation list is empty
@@ -225,7 +225,7 @@ public class PermissionTest extends TestCase {
         
         // assert that user is member of weblog
         assertFalse(mgr.getPermissions(testWeblog, user).isPending());
-        List weblogs = mgr.getWebsites(user, null, null, 0, Integer.MAX_VALUE);
+        List weblogs = mgr.getWebsites(user, null, null, null, null, 0, Integer.MAX_VALUE);
         assertEquals(1, weblogs.size());
         assertEquals(testWeblog.getId(), ((WebsiteData)weblogs.get(0)).getId());
         
@@ -238,7 +238,7 @@ public class PermissionTest extends TestCase {
         TestUtils.endSession(true);
         
         user = mgr.getUser(user.getId());
-        weblogs = mgr.getWebsites(user, null, null, 0, -1);
+        weblogs = mgr.getWebsites(user, null, null, null, null, 0, -1);
         assertEquals(0, weblogs.size());
         
         // cleanup the extra test user

@@ -76,7 +76,7 @@ public class UserTest extends TestCase {
         testUser.setEnabled(Boolean.TRUE);
         
         // make sure test user does not exist
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNull(user);
         
         // add test user
@@ -125,7 +125,7 @@ public class UserTest extends TestCase {
         TestUtils.endSession(true);
         
         // lookup by username
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
         
@@ -156,7 +156,7 @@ public class UserTest extends TestCase {
         user.setEnabled(Boolean.FALSE);
         mgr.saveUser(user);
         user = null;
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNull(user);
         
         // remove test user
@@ -178,7 +178,7 @@ public class UserTest extends TestCase {
         TestUtils.endSession(true);
         
         // verify user has 2 roles, admin & editor
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(2, user.getRoles().size());
         assertTrue(user.hasRole("editor"));
@@ -191,7 +191,7 @@ public class UserTest extends TestCase {
         
         // check that role was removed
         user = null;
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(1, user.getRoles().size());
         assertTrue(user.hasRole("editor"));
@@ -204,7 +204,7 @@ public class UserTest extends TestCase {
         
         // check that role was added
         user = null;
-        user = mgr.getUserByUsername(testUser.getUserName());
+        user = mgr.getUserByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(2, user.getRoles().size());
         assertTrue(user.hasRole("editor"));
