@@ -54,7 +54,7 @@ class BasicAuthenticator extends Authenticator {
                     int p = userPass.indexOf(":");
                     if (p != -1) {
                         userName = userPass.substring(0, p);
-                        UserData user = getRoller().getUserManager().getUserByUsername(userName);
+                        UserData user = getRoller().getUserManager().getUserByUserName(userName);
                         if (user == null) {
                             throw new UnauthorizedException("ERROR: User does not exist: " + userName);
                         }

@@ -195,7 +195,7 @@ public class ThemeManagerImpl implements ThemeManager {
         Map themes = new HashMap();
         
         // NOTE: we need to figure out how to get the roller context path
-        String themespath = RollerConfig.getProperty("context.realpath");
+        String themespath = RollerConfig.getProperty("context.realPath");
         if(themespath.endsWith(File.separator))
             themespath += "themes";
         else

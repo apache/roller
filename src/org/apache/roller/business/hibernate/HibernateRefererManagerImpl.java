@@ -22,6 +22,7 @@ package org.apache.roller.business.hibernate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -266,14 +267,19 @@ public class HibernateRefererManagerImpl implements RefererManager {
         // TODO: ATLAS getDaysPopularWebsites DONE TESTED
         String msg = "Getting hot weblogs";
         ArrayList result = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
         try {      
             Session session = 
                 ((HibernatePersistenceStrategy)strategy).getSession();            
             Query query = session.createQuery(
                 "select sum(r.dayHits) as s, w.id, w.name, w.handle  "
                +"from WebsiteData w, RefererData r "
-               +"where r.website=w and w.enabled=true and w.active=true "
+               +"where r.website=w and w.enabled=true and w.active=true and w.lastModified > :startDate"
                +"group by w.name, w.handle, w.id order by col_0_0_ desc"); 
+            query.setParameter("startDate", startDate);
             
               // +"group by w.name, w.handle, w.id order by s desc");
               // The above would be *much* better but "HQL parser does not   
@@ -310,7 +316,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     /**
      * @deprecated Replaced by getHotWeblogs().
      */
-    public List getDaysPopularWebsites(int sinceDays, int offset, int length) 
+    public List getDaysPopularWebsites(int offset, int length) 
         throws RollerException {
         // TODO: ATLAS getDaysPopularWebsites DONE TESTED
         String msg = "Getting popular websites";

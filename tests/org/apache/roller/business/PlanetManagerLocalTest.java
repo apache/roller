@@ -57,7 +57,7 @@ public class PlanetManagerLocalTest extends RollerTestBase {
             refreshTask.init(getRoller(), "dummy");
             refreshTask.run();
             
-            List agg = planet.getAggregation(0, -1);
+            List agg = planet.getAggregation(null, null, 0, -1);
             int size = agg.size();
             assertEquals(mBlogCount * mExpectedPublishedEntryCount, size);
         }

@@ -19,11 +19,13 @@
 package org.apache.roller.business.hibernate;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import org.apache.roller.pojos.StatCount;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -226,8 +228,8 @@ public class HibernateUserManagerImpl implements UserManager {
             adminUser = true;
         }
         
-        if(getUserByUsername(newUser.getUserName()) != null ||
-                getUserByUsername(newUser.getUserName().toLowerCase()) != null) {
+        if(getUserByUserName(newUser.getUserName()) != null ||
+                getUserByUserName(newUser.getUserName().toLowerCase()) != null) {
             throw new RollerException("error.add.user.userNameInUse");
         }
         
@@ -446,9 +448,10 @@ public class HibernateUserManagerImpl implements UserManager {
      * Get websites of a user
      */
     public List getWebsites(
-        UserData user, Boolean enabled, Boolean active, int offset, int length)  
+        UserData user, Boolean enabled, Boolean active, Date startDate, Date endDate, int offset, int length)  
         throws RollerException {
         // TODO: ATLAS getWebsites DONE TESTED
+        if (endDate == null) endDate = new Date();
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
@@ -456,7 +459,10 @@ public class HibernateUserManagerImpl implements UserManager {
                 criteria.createAlias("permissions","permissions");
                 criteria.add(Expression.eq("permissions.user", user));
                 criteria.add(Expression.eq("permissions.pending", Boolean.FALSE));
-            }
+            }            criteria.add(Expression.lt("dateCreated", endDate));
+            if (startDate != null) {
+                criteria.add(Expression.gt("dateCreated", startDate));
+            }            
             if (enabled != null) {
                 criteria.add(Expression.eq("enabled", enabled));
             }
@@ -480,11 +486,11 @@ public class HibernateUserManagerImpl implements UserManager {
         return (UserData)this.strategy.load(id,UserData.class);
     }
         
-    public UserData getUserByUsername(String userName) throws RollerException {
-        return getUserByUsername(userName, Boolean.TRUE);
+    public UserData getUserByUserName(String userName) throws RollerException {
+        return getUserByUserName(userName, Boolean.TRUE);
     }
     
-    public UserData getUserByUsername(String userName, Boolean enabled)
+    public UserData getUserByUserName(String userName, Boolean enabled)
     throws RollerException {
         
         if (userName==null )
@@ -538,14 +544,18 @@ public class HibernateUserManagerImpl implements UserManager {
     }
     
     public List getUsers(int offset, int length) throws RollerException {
-        return getUsers(Boolean.TRUE, offset, length);
+        return getUsers(Boolean.TRUE, null, null, offset, length);
     }
     
-    public List getUsers(Boolean enabled, int offset, int length) throws RollerException {
-        
+    public List getUsers(Boolean enabled, Date startDate, Date endDate, int offset, int length) throws RollerException {
+        if (endDate == null) endDate = new Date();
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(UserData.class);
+            criteria.add(Expression.lt("dateCreated", endDate));
+            if (startDate != null) {
+                criteria.add(Expression.gt("dateCreated", startDate));
+            }
             if (enabled != null) {
                 criteria.add(Expression.eq("enabled", enabled));
             }
@@ -789,17 +799,17 @@ public class HibernateUserManagerImpl implements UserManager {
     
     public void release() {}
     
-    public Map getUsernameLetterMap() throws RollerException {
-        // TODO: ATLAS getUsernameLetterMap DONE TESTED
+    public Map getUserNameLetterMap() throws RollerException {
+        // TODO: ATLAS getUserNameLetterMap DONE TESTED
         String msg = "Getting username letter map";
         try {      
-            String lc = "abcdefghijklmnopqrstuvwxyz";
-            Map results = new HashMap();
+            String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            Map results = new TreeMap();
             Session session = 
                 ((HibernatePersistenceStrategy)strategy).getSession();
             for (int i=0; i<26; i++) {
                 Query query = session.createQuery(
-                    "select count(user) from UserData user where lower(user.userName) like '"+lc.charAt(i)+"%'");
+                    "select count(user) from UserData user where upper(user.userName) like '"+lc.charAt(i)+"%'");
                 List row = query.list();
                 Integer count = (Integer)row.get(0);
                 if (count.intValue() > 0) {
@@ -820,6 +830,7 @@ public class HibernateUserManagerImpl implements UserManager {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(UserData.class);
             criteria.add(Expression.like("userName", new String(new char[]{letter}) + "%", MatchMode.START));
+            criteria.addOrder(Order.asc("userName"));
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
@@ -836,18 +847,16 @@ public class HibernateUserManagerImpl implements UserManager {
         // TODO: ATLAS getWeblogHandleLetterMap DONE
         String msg = "Getting weblog letter map";
         try {      
-            String lc = "abcdefghijklmnopqrstuvwxyz";
-            Map results = new HashMap();
+            String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            Map results = new TreeMap();
             Session session = 
                 ((HibernatePersistenceStrategy)strategy).getSession();
             for (int i=0; i<26; i++) {
                 Query query = session.createQuery(
-                    "select count(website) from WebsiteData website where lower(website.handle) like '"+lc.charAt(i)+"%'");
+                    "select count(website) from WebsiteData website where upper(website.handle) like '"+lc.charAt(i)+"%'");
                 List row = query.list();
                 Integer count = (Integer)row.get(0);
-                if (count.intValue() > 0) {
-                    results.put(new String(new char[]{lc.charAt(i)}), count);
-                }
+                results.put(new String(new char[]{lc.charAt(i)}), count);
             }
             return results;
         } catch (Throwable pe) {
@@ -863,6 +872,7 @@ public class HibernateUserManagerImpl implements UserManager {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
             criteria.add(Expression.like("handle", new String(new char[]{letter}) + "%", MatchMode.START));
+            criteria.addOrder(Order.asc("handle"));
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
@@ -875,17 +885,26 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
         
-    public List getMostCommentedWebsites(int sinceDays, int offset, int length) 
+    public List getMostCommentedWebsites(Date startDate, Date endDate, int offset, int length) 
         throws RollerException {
         // TODO: ATLAS getMostCommentedWebsites DONE TESTED
         String msg = "Getting most commented websites";
+        if (endDate == null) endDate = new Date();
         try {      
             Session session = 
                 ((HibernatePersistenceStrategy)strategy).getSession();            
-            Query query = session.createQuery(
-                "select count(distinct c), c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description "
-               +"from CommentData c group by c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description "
-               +"order by col_0_0_ desc");
+            StringBuffer sb = new StringBuffer();
+            sb.append("select count(distinct c), c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description ");
+            sb.append("from CommentData c where c.weblogEntry.pubTime < :endDate ");
+            if (startDate != null) {
+                sb.append("and c.weblogEntry.pubTime > :startDate ");
+            }  
+            sb.append("group by c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description order by col_0_0_ desc");
+            Query query = session.createQuery(sb.toString());
+            query.setParameter("endDate", endDate);
+            if (startDate != null) {
+                query.setParameter("startDate", startDate);
+            }   
             if (offset != 0) {
                 query.setFirstResult(offset);
             }

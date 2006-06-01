@@ -177,7 +177,7 @@ class RollerMemberHandler extends Handler {
                 if (wd == null) {
                     throw new NotFoundException("ERROR: Unknown weblog handle: " + handle);
                 }
-                UserData ud = getRoller().getUserManager().getUserByUsername(username);
+                UserData ud = getRoller().getUserManager().getUserByUserName(username);
                 if (ud == null) {
                     throw new NotFoundException("ERROR: Unknown user name: " + username);
                 }
@@ -280,7 +280,7 @@ class RollerMemberHandler extends Handler {
     private PermissionsData toPermissionsData(MemberEntry entry) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
-            UserData ud = mgr.getUserByUsername(entry.getName());
+            UserData ud = mgr.getUserByUserName(entry.getName());
             WebsiteData wd = mgr.getWebsiteByHandle(entry.getHandle());
             PermissionsData pd = new PermissionsData();
             pd.setUser(ud);
@@ -301,7 +301,7 @@ class RollerMemberHandler extends Handler {
     private PermissionsData getPermissionsData(String handle, String username) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
-            UserData ud = mgr.getUserByUsername(username);
+            UserData ud = mgr.getUserByUserName(username);
             WebsiteData wd = mgr.getWebsiteByHandle(handle);
             PermissionsData pd = mgr.getPermissions(wd, ud);
             
@@ -340,7 +340,7 @@ class RollerMemberHandler extends Handler {
         // TODO: does the permissions data need to be invalidated?
         
         try {
-            UserData ud = getRoller().getUserManager().getUserByUsername(entry.getName());
+            UserData ud = getRoller().getUserManager().getUserByUserName(entry.getName());
             CacheManager.invalidate(ud);
             WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(entry.getHandle());
             CacheManager.invalidate(wd);
@@ -375,7 +375,7 @@ class RollerMemberHandler extends Handler {
             UserManager mgr = getRoller().getUserManager();
             mgr.removePermissions(pd);
             
-            UserData ud = getRoller().getUserManager().getUserByUsername(username);
+            UserData ud = getRoller().getUserManager().getUserByUserName(username);
             CacheManager.invalidate(ud);
             WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(handle);
             CacheManager.invalidate(wd);

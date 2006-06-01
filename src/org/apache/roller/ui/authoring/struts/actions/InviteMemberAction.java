@@ -138,7 +138,7 @@ public class InviteMemberAction extends DispatchAction
         ActionMessages errors = new ActionErrors();
         InviteMemberForm form = (InviteMemberForm)actionForm;
         UserManager umgr = RollerFactory.getRoller().getUserManager();
-        UserData user = umgr.getUserByUsername(form.getUserName());
+        UserData user = umgr.getUserByUserName(form.getUserName());
         
         BasePageModel pageModel = new BasePageModel(
             "inviteMember.title", request, response, mapping);              

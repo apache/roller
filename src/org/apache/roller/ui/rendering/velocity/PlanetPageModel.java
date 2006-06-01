@@ -18,6 +18,8 @@
 package org.apache.roller.ui.rendering.velocity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -45,12 +47,16 @@ public class PlanetPageModel {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getAggregation(int offset, int len) {
+    public List getAggregation(int sinceDays, int offset, int len) {
         List results = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();        
         try {
             Roller roller = RollerFactory.getRoller();
             PlanetManager planetManager = roller.getPlanetManager();
-            List entries = planetManager.getAggregation(offset, len);
+            List entries = planetManager.getAggregation(startDate, null, offset, len);
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 PlanetEntryData entry = (PlanetEntryData) it.next();
                 PlanetEntryDataWrapper wrapped = PlanetEntryDataWrapper.wrap(entry);
@@ -68,14 +74,18 @@ public class PlanetPageModel {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getAggregation(String groupHandle, int offset, int len) {
+    public List getAggregation(String groupHandle, int sinceDays, int offset, int len) {
         List list = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
         try {
             Roller roller = RollerFactory.getRoller();
             PlanetManager planetManager = roller.getPlanetManager();
             PlanetGroupData group = planetManager.getGroup(groupHandle);
             if (group != null) {
-                list = planetManager.getAggregation(group, offset, len);
+                list = planetManager.getAggregation(group, startDate, null, offset, len);
             }
         } catch (Exception e) {
             log.error("ERROR: get aggregation", e);

@@ -177,7 +177,7 @@ class RollerWeblogHandler extends Handler {
             List websiteDatas = new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
-                UserData user = mgr.getUserByUsername(entry.getCreatingUser());
+                UserData user = mgr.getUserByUserName(entry.getCreatingUser());
                 WebsiteData wd = new WebsiteData(
                         entry.getHandle(),
                         user,

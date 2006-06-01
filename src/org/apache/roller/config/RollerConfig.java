@@ -35,7 +35,7 @@ import java.util.Properties;
  * @author Allen Gilliland
  */
 public class RollerConfig {
-
+    
     private static String default_config = "/roller.properties";
     private static String custom_config = "/roller-custom.properties";
     private static String custom_jvm_param = "roller.custom.config";
@@ -46,12 +46,11 @@ public class RollerConfig {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(RollerConfig.class);
 
-
     /*
-    * Static block run once at class loading
-    *
-    * We load the default properties and any custom properties we find
-    */
+     * Static block run once at class loading
+     *
+     * We load the default properties and any custom properties we find
+     */
     static {
         mConfig = new Properties();
 
@@ -137,10 +136,9 @@ public class RollerConfig {
 
     /**
      * Retrieve a property value
-     *
      * @param     key Name of the property
      * @return    String Value of property requested, null if not found
-     **/
+     */
     public static String getProperty(String key) {
         mLogger.debug("Fetching property ["+key+"="+mConfig.getProperty(key)+"]");
         return mConfig.getProperty(key);
@@ -149,7 +147,7 @@ public class RollerConfig {
 
     /**
      * Retrieve a property as a boolean ... defaults to false if not present.
-     **/
+     */
     public static boolean getBooleanProperty(String name) {
         return getBooleanProperty(name,false);
     }
@@ -169,7 +167,7 @@ public class RollerConfig {
 
     /**
      * Retrieve a property as an int ... defaults to 0 if not present.
-     **/
+     */
     public static int getIntProperty(String name) {
         return getIntProperty(name, 0);
     }
@@ -189,21 +187,31 @@ public class RollerConfig {
 
     /**
      * Retrieve all property keys
-     *
      * @return Enumeration A list of all keys
      **/
     public static Enumeration keys() {
         return mConfig.keys();
     }
-
+   
+    /**
+     * Set the "context.absPath" property at runtime.
+     * <p />
+     * Properties are meant to be read-only, but we make this exception because 
+     * Roller POJOs and backend classes need access to the 
+     * <p />
+     * This property is *not* persisted in any way.
+     */
+    public static void setAbsoluteContextPath(String path) {
+        mConfig.setProperty("context.absPath", path);
+    }
 
     /**
      * Set the "uploads.dir" property at runtime.
-     *
-     * Properties are meant to be read-only, but we make this exception because we 
-     * know that some people are still writing their uploads to the webapp context 
-     * and we can only get that path at runtime (and for unit testing).
-     * 
+     * <p />
+     * Properties are meant to be read-only, but we make this exception because  
+     * we know that some people are still writing their uploads to the webapp  
+     * context and we can only get that path at runtime (and for unit testing).
+     * <p />
      * This property is *not* persisted in any way.
      */
     public static void setUploadsDir(String path) {
@@ -213,24 +221,24 @@ public class RollerConfig {
     }
 
     /**
-     * Set the "context.realpath" property at runtime.
-     *
-     * Properties are meant to be read-only, but we make this  exception because 
-     * there are some classes which rely on having filesystem access to files in the 
-     * roller webapp context (and for unit testing).
-     *
+     * Set the "context.realPath" property at runtime.
+     * <p />
+     * Properties are meant to be read-only, but we make this exception because 
+     * there are some classes which rely on having filesystem access to files
+     * in theRoller webapp context (and for unit testing).
+     * <p />
      * This property is *not* persisted in any way.
      */
     public static void setContextRealPath(String path) {
-        mConfig.setProperty("context.realpath", path);
+        mConfig.setProperty("context.realPath", path);
     }
     
     /**
      * Set the "context.realpath" property at runtime.
-     *
-     * Properties are meant to be read-only, but we make this exception to make it
-     * possible for unit tests to control the cache directory.
-     *
+     * <p />
+     * Properties are meant to be read-only, but we make this exception to make 
+     * it possible for unit tests to control the cache directory.
+     * <p />
      * This property is *not* persisted in any way.
      */
     public static void setPlanetCachePath(String path) {

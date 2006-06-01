@@ -125,7 +125,7 @@ public class BaseAPIHandler implements Serializable
             RollerRequest rreq = RollerRequest.getRollerRequest();
             
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            user = userMgr.getUserByUsername(username);
+            user = userMgr.getUserByUserName(username);
             userEnabled = user.getEnabled().booleanValue();
             
             website = userMgr.getWebsiteByHandle(blogid);
@@ -207,7 +207,7 @@ public class BaseAPIHandler implements Serializable
             RollerRequest rreq = RollerRequest.getRollerRequest();
             
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            user = userMgr.getUserByUsername(username);
+            user = userMgr.getUserByUserName(username);
             
             enabled = user.getEnabled().booleanValue();
             if (enabled)

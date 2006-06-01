@@ -110,7 +110,7 @@ public class RollerAtomHandler implements AtomHandler {
         
         if (mUsername != null) {
             try {
-                this.user = mRoller.getUserManager().getUserByUsername(mUsername);
+                this.user = mRoller.getUserManager().getUserByUserName(mUsername);
             } catch (Exception e) {
                 mLogger.error("ERROR: setting user", e);
             }
@@ -630,7 +630,7 @@ public class RollerAtomHandler implements AtomHandler {
         }
         String digest = null;
         try {
-            UserData user = mRoller.getUserManager().getUserByUsername(userName);
+            UserData user = mRoller.getUserManager().getUserByUserName(userName);
             digest = WSSEUtilities.generateDigest(
                     WSSEUtilities.base64Decode(nonce),
                     created.getBytes("UTF-8"),
@@ -663,7 +663,7 @@ public class RollerAtomHandler implements AtomHandler {
                         int p = userPass.indexOf(":");
                         if (p != -1) {
                             userID = userPass.substring(0, p);
-                            UserData user = mRoller.getUserManager().getUserByUsername(userID);                                                        
+                            UserData user = mRoller.getUserManager().getUserByUserName(userID);                                                        
                             boolean enabled = user.getEnabled().booleanValue();
                             if (enabled) {    
                                 // are passwords encrypted?

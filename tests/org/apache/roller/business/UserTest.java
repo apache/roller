@@ -138,7 +138,7 @@ public class UserTest extends TestCase {
         
         // lookup by UserName (part)
         user = null;
-        List users1 = mgr.getUsersStartingWith(testUser.getUserName().substring(0, 3), 0, 1, Boolean.TRUE);
+        List users1 = mgr.getUsersStartingWith(testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users1.size());
         user = (UserData) users1.get(0);
         assertNotNull(user);
@@ -146,7 +146,7 @@ public class UserTest extends TestCase {
         
         // lookup by Email (part)
         user = null;
-        List users2 = mgr.getUsersStartingWith(testUser.getEmailAddress().substring(0, 3), 0, 1, Boolean.TRUE);
+        List users2 = mgr.getUsersStartingWith(testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 1);
         assertEquals(1, users2.size());
         user = (UserData) users2.get(0);
         assertNotNull(user);

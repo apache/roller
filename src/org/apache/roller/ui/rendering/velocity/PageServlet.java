@@ -19,7 +19,6 @@ package org.apache.roller.ui.rendering.velocity;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.SocketException;
 import java.util.Date;
 import java.util.Map;
 import javax.servlet.ServletConfig;
@@ -38,8 +37,8 @@ import org.apache.velocity.servlet.VelocityServlet;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.InvalidRequestException;
 import org.apache.roller.ui.core.RollerRequest;
+import org.apache.velocity.exception.ParseErrorException;
 
 
 /**
@@ -198,14 +197,25 @@ public class PageServlet extends VelocityServlet {
         
         try {
             outty = getTemplate(page.getId(), "UTF-8");
-        } catch(ResourceNotFoundException ex) {
+        } 
+        catch (ParseErrorException parseError) {            
+            // Error at this point indicates error in template, so let's show 
+            // it to the template author so they can debug it.
+            ctx.put("displayException", parseError);
+            try {
+                outty = getTemplate("error-page.vm", "UTF-8");
+            } catch (Throwable totallyUnexpected) {
+                throw new RuntimeException("ERROR parsing Velocity error page");
+            }
+        } 
+        catch (ResourceNotFoundException notFound) {
             // just rethrow
-            throw ex;
-        } catch(Exception ex) {
+            throw notFound;
+        } 
+        catch (Exception ex) { 
             // wrap this as a roller exception
-            throw new RollerException("Error getting velocity template", ex);
-        }
-        
+            throw new RollerException("ERROR getting velocity template", ex);            
+        }        
         return outty;
     }
     

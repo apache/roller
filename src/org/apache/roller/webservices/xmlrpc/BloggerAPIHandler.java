@@ -218,7 +218,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         try {
             Roller roller = RollerFactory.getRoller();
             UserManager userMgr = roller.getUserManager();
-            UserData user = userMgr.getUserByUsername(userid);
+            UserData user = userMgr.getUserByUserName(userid);
             
             // parses full name into two strings, firstname and lastname
             String firstname = "", lastname = "";
@@ -283,7 +283,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                         RollerContext.getRollerContext().getAbsoluteContextUrl(req);
                 
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
-                UserData user = umgr.getUserByUsername(userid);
+                UserData user = umgr.getUserByUserName(userid);
                 // get list of user's enabled websites
                 List websites = umgr.getWebsites(user, Boolean.TRUE, null, 0, -1);
                 Iterator iter = websites.iterator();
@@ -411,7 +411,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entry.setText(content);
             entry.setPubTime(current);
             entry.setUpdateTime(current);
-            UserData user = roller.getUserManager().getUserByUsername(userid);
+            UserData user = roller.getUserManager().getUserByUserName(userid);
             entry.setCreator(user);
             entry.setWebsite(website);
             entry.setCategory(website.getBloggerCategory());

@@ -763,6 +763,10 @@ public class PageModel {
         return mRollerReq.getRequest().getParameter(key);
     }
     
+    public int getIntRequestParameter(String key) {
+        return Integer.parseInt(mRollerReq.getRequest().getParameter(key));
+    }
+    
     //------------------------------------------------------------------------
     
     public FolderDataWrapper getFolderByPath(String path) {

@@ -33,6 +33,7 @@ import org.apache.roller.util.PojoUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.ThemeNotFoundException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.ThemeManager;
 import org.apache.roller.model.UserManager;
@@ -51,7 +52,7 @@ import org.apache.roller.model.UserManager;
  * @hibernate.cache usage="read-write"
  */
 public class WebsiteData extends org.apache.roller.pojos.PersistentObject
-        implements java.io.Serializable {
+        implements WeblogEntry.Website, java.io.Serializable {
     public static final long serialVersionUID = 206437645033737127L;
     
     private static Log mLogger = LogFactory.getLog(WebsiteData.class);
@@ -1011,6 +1012,17 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
-    
+  
+    /** 
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getUrl() {
+        // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
+        String absContextUrl = RollerConfig.getProperty("context.absPath");
+        return absContextUrl + "/page/" + getHandle();       
+    }
+    public void setUrl(String url) {
+        // noop
+    }
 }
 

@@ -13,10 +13,10 @@ $pageHelper.setContentType("application/rss+xml;charset=utf-8")<?xml version="1.
   #set( $entries = $pageModel.getRecentWeblogEntriesArray($entryCount, 'nil') )
   #foreach( $entry in $entries )
   <item>
-    <guid isPermaLink="true">$absBaseURL$entry.permaLink</guid>
+    <guid isPermaLink="true">$entry.permaLink</guid>
     <title>$utilities.textToHTML($utilities.removeHTML($entry.title))</title>
     <dc:creator>$utilities.textToHTML($entry.creator.fullName,true)</dc:creator>
-    <link>$absBaseURL$entry.permaLink</link>
+    <link>$entry.permaLink</link>
     #if( $entry.link && !$entry.link.trim().equals("") )
     <source url="$utilities.textToHTML($entry.link)">$utilities.textToHTML($entry.link)</source>
     #end

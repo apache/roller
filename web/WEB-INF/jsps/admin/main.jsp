@@ -45,7 +45,7 @@ request.setAttribute("popularWebsites",
     <c:forEach var="post" items="${pinnedPosts}">
         <div class="entryBoxPinned">
 
-            <a href='<c:out value="${baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
+            <a href='<c:out value="${post.permaLink}" />' class="entryTitle">
                 <str:truncateNicely upper="90" >
                    <c:out value="${post.displayTitle}" />
                 </str:truncateNicely></a>
@@ -79,7 +79,7 @@ request.setAttribute("popularWebsites",
     <c:if test="${!post.pinnedToMain}">
     <div class="entryBox">
 
-        <a href='<c:out value="${baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
+        <a href='<c:out value="${post.permaLink}" />' class="entryTitle">
             <str:truncateNicely upper="90" >
                <c:out value="${post.displayTitle}" />
             </str:truncateNicely></a>

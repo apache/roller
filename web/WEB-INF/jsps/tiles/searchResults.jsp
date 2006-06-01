@@ -122,7 +122,7 @@ request.setAttribute("searchResults", searchResults);
         <div class="daybox" style="margin: 0px 5px 0px 10px">
         <c:forEach var="post" items="${dayMap}">
 
-            <a href='<c:out value="${model.baseURL}" /><c:out value="${post.permaLink}" />' class="entryTitle">
+            <a href='<c:out value="${post.permaLink}" />' class="entryTitle">
                 <str:truncateNicely upper="90" >
                    <c:out value="${post.displayTitle}" />
                 </str:truncateNicely></a>

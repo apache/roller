@@ -106,7 +106,7 @@ public class PlanetAction extends Action {
          */
         public List getAggregation(int num) throws RollerException {
             Roller roller = RollerFactory.getRoller();
-            return roller.getPlanetManager().getAggregation(0, num);
+            return roller.getPlanetManager().getAggregation(null, null, 0, num);
         }
         /**
          * Get named group
@@ -129,7 +129,7 @@ public class PlanetAction extends Action {
             try {
                 Roller roller = RollerFactory.getRoller();
                 PlanetGroupData group= roller.getPlanetManager().getGroup(name);
-                ret = roller.getPlanetManager().getAggregation(group, 0, num);
+                ret = roller.getPlanetManager().getAggregation(group, null, null, 0, num);
             } catch (RollerException e) {
                 mLogger.error(e);
             }
@@ -167,7 +167,7 @@ public class PlanetAction extends Action {
          */
         public List getPopularWebsites(int num) throws RollerException {
             Roller roller = RollerFactory.getRoller();
-            return roller.getRefererManager().getDaysPopularWebsites(-1, 0, num);
+            return roller.getRefererManager().getDaysPopularWebsites(0, num);
         }
     }
 }
