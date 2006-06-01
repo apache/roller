@@ -81,7 +81,7 @@ public final class TestUtils {
         mgr.addUser(testUser);
         
         // query for the user to make sure we return the persisted object
-        UserData user = mgr.getUserByUsername(username);
+        UserData user = mgr.getUserByUserName(username);
         
         if(user == null)
             throw new RollerException("error inserting new user");
