@@ -180,22 +180,22 @@ public class WeblogTest extends TestCase {
         
         // get all weblogs for user
         weblog = null;
-        List weblogs1 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, 0, Integer.MAX_VALUE);
+        List weblogs1 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, Integer.MAX_VALUE);
         assertEquals(2, weblogs1.size());
         weblog = (WebsiteData) weblogs1.get(0);
         assertNotNull(weblog);
         
         // testing paging
-        List weblogs11 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, 0, 1);
+        List weblogs11 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, 1);
         assertEquals(1, weblogs11.size());     
-        List weblogs12 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, 1, 1);
+        List weblogs12 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 1, 1);
         assertEquals(1, weblogs11.size());     
         
         // make sure disabled weblogs are not returned
         weblog.setEnabled(Boolean.FALSE);
         mgr.saveWebsite(weblog);
         TestUtils.endSession(true);
-        List weblogs2 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, 0, Integer.MAX_VALUE);
+        List weblogs2 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, Integer.MAX_VALUE);
         assertEquals(1, weblogs2.size());
         weblog = (WebsiteData) weblogs2.get(0);
         assertNotNull(weblog);
@@ -204,7 +204,7 @@ public class WeblogTest extends TestCase {
         weblog.setActive(Boolean.FALSE);
         mgr.saveWebsite(weblog);
         TestUtils.endSession(true);
-        List weblogs3 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, 0, Integer.MAX_VALUE);
+        List weblogs3 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, Integer.MAX_VALUE);
         assertEquals(0, weblogs3.size());
         
         // remove test weblogs
