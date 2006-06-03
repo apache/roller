@@ -1,0 +1,118 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "DTD/xhtml1-strict.dtd">
+<!--
+Unless otherwise indicated, all code below was written by Eric Costello,
+and you are free to use, modify and distribute it. Please leave this
+comment block intact so that people can find the original unmodified
+version at: http://www.glish.com/css/blogger/
+
+Also see:
+http://www.schwa.com
+http://www.glish.com
+-->
+
+<!--
+This template requires the existence of two auxilliary files on your web server:
+blogger.js and blogger.css. Those files should be placed in the same directory as
+your blog page, if you put them somwhere else, just adjust the paths for those files below.
+-->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    #showContentLanguage($locale.language)
+    <title>#showWebsiteTitle()</title>
+    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
+    <link rel="stylesheet" type="text/css" href="#showThemePath("moonshine")/theme.css" />
+    <style type="text/css">
+    #includePage("_css")
+    </style>
+</head>
+<body id="body" class="all">
+<div id="banner">
+<h1>#showWebsiteTitle()</h1>
+<h2>#showWebsiteDescription()</h2></div>
+
+<div id="rightcontent">
+    <div class="padded">
+    #showWeblogCalendar()
+    </div>
+
+    <div class="padded">
+    #showRSSBadge()
+    </div>
+
+    <div class="padded">
+    #showSearchForm()
+    </div>
+
+    <!-- This section is optional and can be removed if
+         you do not have other pages on your site -->
+    <h2>Blog::Navigation</h2>
+    <div class="padded">
+    #showBasicNavBar(true)
+    </div>
+
+    <h2>Blog::Editing</h2>
+    <div class="padded">
+    #showEditorNavBar(true)
+    </div>
+
+    <h2>Bookmarks::Blogroll</h2>
+    <div class="padded">
+    #showBlogroll()
+    </div>
+
+    <h2>Blog::Referers</h2>
+    <div class="padded">
+    <!-- Referrers -->
+    #showReferers(30 20)
+    </div>
+
+    <!--
+    You don't have to keep the link to the w3c validator, but if you do you'll
+    be helping to support web standards! You should leave the link to webstandards.org
+    for users who view the page using older browsers. If you leave the link to my CSS site
+    you'll help other people find information about coding standards compliant web sites
+    -->
+    <h2>Site notes</h2>
+    <div class="padded">
+    <p>
+    <a href="http://validator.w3.org/check/referer" title="Validate this page">This page
+    validates as XHTML 1.0</a>, and will look much better in a browser that supports
+    <a href="http://www.webstandards.org/upgrade/"
+       title="Download a browser that complies with Web standards.">web standards</a>,
+    but it is accessible to any browser or Internet device. It was created using techniques
+    detailed at <a href="http://www.glish.com/css/">glish.com/css/</a>.
+    </p>
+    </div>
+
+    <!-- You can link to other sites that you like here
+    <h2>Other  sites</h2>
+    <div class="padded">
+    <a href="">duck</a>
+    </div>
+    -->
+
+    <div class="padded">
+    Powered by <a href="http://www.rollerweblogger.org/">Roller Weblogger</a>.
+    </div>
+
+</div>
+
+<div id="centercontent">
+    <div class="padded">
+    #showWeblogCategoryChooser()
+    </div>
+
+    #showNextPreviousLinks()
+
+    #showWeblogEntries("_day" 5)
+</div>
+
+<div id="copyrightnotice">
+Copyright (C) 2003, <a href="mailto:$encodedEmail">$fullName</a>
+</div>
+
+</body>
+</html>

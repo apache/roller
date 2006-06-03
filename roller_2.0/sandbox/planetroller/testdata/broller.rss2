@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  <title>Blogging Roller</title>
+  <link>http://rollerweblogger.org/page/roller</link>
+  <description>Dave Johnson on software development, Java, and the Roller Weblogger project.</description>
+  <language>en-us</language>
+  <copyright>Copyright 
+2005
+</copyright>
+  <lastBuildDate>Fri, 18 Feb 2005 09:35:48 EST</lastBuildDate>
+  <generator>Roller Weblogger 1.0.1 (20050208013657:dave)</generator>
+      <item>
+    <title>Write about anything</title>
+        <description>                             &lt;blockquote&gt;&lt;a href=&quot;http://blogs.sun.com/roller/comments/paulhu/Weblog/tips_for_bloggers_i_do&quot;&gt;Paul Humphreys&lt;/a&gt;: Jonathan wants Sun employees to blog. The title on the blogs.sun.com page says &#39;Welcome to Blogs.sun.com! This space is accessible to any Sun employee to write about anything.&#39; It really is true. I do not get reminder or requests from anyone that I must write wonderful things about Sun, increase my technical content and not to write about random things that no one has any interest in.&lt;/blockquote&gt;
+
+People I meet have a hard time believing that &quot;write about anything bit&quot; but it&#39;s true. I&#39;d like to see every company, every organization in fact, adopt something like Tim&#39;s &lt;a href=&quot;http://www.tbray.org/ongoing/When/200x/2004/05/02/Policy&quot;&gt;Policy on Public Discourse&lt;/a&gt;.
+
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050218#write_about_anything</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050218#write_about_anything</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=write_about_anything</comments>
+        <pubDate>Fri, 18 Feb 2005 09:35:48 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Notes from the Chapel Hill Blog Together meet-up</title>
+        <description>                             &lt;p /&gt;
+&lt;a href=&quot;http://mistersugar.com/blogtogether/article/8/chapel-hill-meetup-21605-notes&quot;&gt;Anton&lt;/a&gt; posted some notes about the first Chapel Hill Blog Together meet-up. It was held Wednesday at the tiny &lt;a href=&quot;http://www.caffedriade.com/&quot;&gt;Caffe Driade&lt;/a&gt;, a &lt;a href=&quot;http://www.caffedriade.com/images/13.jpg&quot;&gt;bunker in the woods&lt;/a&gt; off of Franklin Street that has been converted in to a cute little coffee bar.  
+&lt;p /&gt;
+It was really cool to meet a bunch of very enthusiastic bloggers from my hometown. These folks are revved up about using blogs for important things like community activism, social change, and health care. Yes, health care. I met a new Roller user: &lt;a href=&quot;http://virgo.cit.nih.gov:4080/roller/page/bglassmanblog/Weblog&quot;&gt;Bernard Glassman&lt;/a&gt; of the National Cancer Research Institute is using Roller as part of a project to help patients share experiences and educate each about treatment options. 
+&lt;p /&gt;
+As &lt;a href=&quot;http://justinsomnia.org/&quot; title=&quot;justinsomnia.org&quot; &gt;Justin&lt;/a&gt; &lt;a href=&quot;http://mistersugar.com/blogtogether/article/8/chapel-hill-meetup-21605-notes&quot;&gt;said&lt;/a&gt;, &quot;what an excellent cross-section of the community.&quot; Inspirational, even. Chapel Hill is a 35 mile drive for me, but I&#39;ll be back.&lt;/p&gt;
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050218#notes_from_the_chapel_hill</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050218#notes_from_the_chapel_hill</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=notes_from_the_chapel_hill</comments>
+        <pubDate>Fri, 18 Feb 2005 09:27:37 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>&quot;there should be no standard [wiki] syntax&quot;</title>
+        <description>                             &lt;p&gt;First google result for: &lt;a href=&quot;http://www.google.com/search?q=standard+wiki+syntax&quot;&gt;standard wiki syntax&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Is &quot;no standard syntax&quot; really a good thing? When the wiki itself is the user interface, perhaps it is, but if you want the user interface to be a slick WYSIWYG desktop client that edits any wiki via Atom, then having a different syntax for each wiki really sucks.&lt;/p&gt;
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050218#there_should_be_no_standard</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050218#there_should_be_no_standard</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=there_should_be_no_standard</comments>
+        <pubDate>Fri, 18 Feb 2005 09:03:55 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Triangle blogger con 2005 links</title>
+        <description>                             &lt;p /&gt;
+&lt;a href=&quot;http://www.loebrich.org/2005/02/13/blog_together_triangle_bloggers_conference_2005.html&quot;&gt;Bruce&lt;/a&gt; has a great list of links about the Triangle Blogger conference. The first weekly Triangle blogger meet-up&lt;/a&gt; is tonight at Caffe Driade in Chapel Hill (&lt;a href=&quot;http://blogtogether.mistersugar.com/blogtogether/article/3/chapel-hill-meetup-21605&quot;&gt;Anton Zuiker&lt;/a&gt; has the details). 
+         </description>
+    <category>General</category>
+    <link>http://rollerweblogger.org/page/roller/20050216#triangle_blogger_con_links</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050216#triangle_blogger_con_links</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=triangle_blogger_con_links</comments>
+        <pubDate>Wed, 16 Feb 2005 08:58:09 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Clearly see the big three</title>
+        <description>                             &lt;p /&gt;
+&lt;img src=&quot;http://www.rollerweblogger.org/resources/roller/google-share-02-05.gif&quot; 
+alt=&quot;pie chart of blog server market share&quot; /&gt;
+&lt;p&gt;
+&quot;Interesting analysis of the market share of the popular blogging tools by Elise Bauer.&quot; She used  Google to gather the statistics. From &lt;a href=&quot;http://www.threadwatch.org/node/1485&quot;&gt; Threadwatch.org&lt;/a&gt; via Scoble.
+&lt;/p&gt;
+         </description>
+    <category>Roller</category>
+    <link>http://rollerweblogger.org/page/roller/20050216#clearly_see_the_big_three</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050216#clearly_see_the_big_three</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=clearly_see_the_big_three</comments>
+        <pubDate>Wed, 16 Feb 2005 08:46:54 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Planet Roller internals</title>
+        <description>                             &lt;p&gt;I promised some details on PlanetTool (the command-line tool that generates &lt;a href=&quot;http://rollerweblogger.org/planet&quot;&gt;Planet Roller&lt;/a&gt;) internals, so here goes. This is what happens when PlanetTool runs:&lt;/p&gt;
+
+&lt;img src=&quot;http://www.rollerweblogger.org/resources/roller/aggregator.png&quot; alt=&quot;diagram of PlanetTool&quot; &gt;
+
+&lt;p /&gt;
+
+&lt;b&gt;Startup&lt;/b&gt;
+&lt;p&gt;&lt;b&gt;(1)&lt;/b&gt; We start by reading the XML configuration file (via JDOM and XPath)&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;(2)&lt;/b&gt; From the config, we create a config object, subscriptions and groups&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;(3)&lt;/b&gt; A group has subscriptions&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;(4)&lt;/b&gt; And a subscription can belong to more than one group&lt;/p&gt;
+
+&lt;b&gt;Refresh subscription data&lt;/b&gt;
+&lt;p&gt;&lt;b&gt;(5)&lt;/b&gt; For each subscription, call the Rome Fetcher&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;(6)&lt;/b&gt; Fetcher uses Conditional Get and Etags and caches feeds on disk&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;(7)&lt;/b&gt; Feeds parsed into entries objects and added to subscription objects&lt;/p&gt;
+
+&lt;b&gt;File generation&lt;/b&gt;
+&lt;p&gt;&lt;b&gt;(8)&lt;/b&gt; Call Velocity Texen with name of a control template&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;(9)&lt;/b&gt; Texen calls our control template&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;(10)&lt;/b&gt; Control template calls file generation templates&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;(11)&lt;/b&gt; Templates calls planet object to get config, group, subscription, and entry objects needed to generates files needed for aggregated site (HTML, RSS, OPML, etc.)&lt;/p&gt;
+
+
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050215#planet_roller_internals</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050215#planet_roller_internals</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=planet_roller_internals</comments>
+        <pubDate>Tue, 15 Feb 2005 08:42:17 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Turning the paper into a community forum</title>
+        <description>                             &lt;blockquote&gt;
+&lt;a href=&quot;http://dangillmor.typepad.com/dan_gillmor_on_grassroots/2005/02/the_news_record.html&quot;&gt;Dan Gillmor on Grassroots Journalism, Etc.: The News &amp; Record&lt;/a&gt;: &quot;As noted here before, the News &amp; Record, the newspaper of record in Greensboro, North Carolina, is embarking on one of mainstream journalism&#39;s most important experiments: turning the paper into a community forum, &#39;to build a Web presence that invites readers in to share the news they know and engage in the civic discussion,&#39; as John Robinson, the paper&#39;s editor wrote on his blog. (See online editor Lex Alexander&#39;s &lt;a href=&quot;http://blog.news-record.com/staff/lexblog/archives/2005/01/newsrecordcom_a_1.html&quot;&gt;memo&lt;/a&gt;, chock-full of ideas, for more.)&quot;
+&lt;/blockquote&gt;
+
+What about the stodgy old Raleigh N&amp;amp;O? &lt;a href=&quot;http://www.newsobserver.com/member_center/rss/&quot;&gt;Newsobserver.com&lt;/a&gt; has newsfeeds now, I guess that&#39;s a start. By the way, the N&amp;amp;O newsfeeds are not really hidden behind the registration wall, anybody can get them. Here is the current list:&lt;/p&gt;
+
+&lt;table border=&quot;0&quot; width=&quot;60%&quot; align=&quot;center&quot;&gt;
+&lt;tr&gt;
+&lt;td width=&quot;30%&quot;&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss1.xml&quot;&gt;News&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss2.xml&quot;&gt;Politics&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss3.xml&quot;&gt;Business&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss4.xml&quot;&gt;Sports&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss5.xml&quot;&gt;College Sports&lt;/a&gt;&lt;br /&gt;
+&lt;/td&gt;
+&lt;td width=&quot;30%&quot;&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss6.xml&quot;&gt;Duke&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss7.xml&quot;&gt;NCSU&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss8.xml&quot;&gt;UNC&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss9.xml&quot;&gt;WFU&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss10.xml&quot;&gt;ECU&lt;/a&gt;&lt;br /&gt;
+&lt;/td&gt;
+&lt;td width=&quot;30%&quot;&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss11.xml&quot;&gt;Preps&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss12.xml&quot;&gt;Canes&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss13.xml&quot;&gt;Lifestyles&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&quot;http://apps.newsobserver.com/rss/rss14.xml&quot;&gt;Opinion&lt;/a&gt;&lt;br /&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+Story via &lt;a href=&quot;http://radio.weblogs.com/0107946/2005/02/14.html#a3404&quot;&gt;Ed Cone&lt;/a&gt;.
+&lt;p /&gt;
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050214#turning_the_paper_into_a</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050214#turning_the_paper_into_a</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=turning_the_paper_into_a</comments>
+        <pubDate>Mon, 14 Feb 2005 11:52:40 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Couple of notes from the Triangle blogger con</title>
+        <description>                             &lt;p&gt;I attended the Triangle Bloggers Conference 2005 on Saturday morning in Chapel Hill. The meeting was held in a classroom large enough to accommodate the approximately 150 people in attendance, power in every seat, and wireless internet. The agenda was divided into three portions, but the conference was really one long, seamless, and very interesting conversation between audience members and the speakers. The theme was using blogs to build community, how to build a larger readership for your blog, how to use blogs in grassroots journalism. Here are a couple of the things I wrote down (these are not 100% accurate quotes):
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://radio.weblogs.com/0128341/2004/12/28.html&quot;&gt;David Hoggard&lt;/a&gt;: You&#39;ve heard of &#39;dancing like nobody is watching&#39; -- you&#39;ve got blog like nobody is reading if you want to get your authentic voice out there.
+&lt;/li&gt;&lt;li&gt;
+&lt;a href=&quot;http://scripting.com&quot;&gt;Dave Winer&lt;/a&gt;: Why do you care about being popular? Bloggers don&#39;t need readers. Bloggers are documenting the human knowledge base and making expertise available that was previously only available to the press and big institutions.
+&lt;/li&gt;&lt;li&gt;
+&lt;a href=&quot;http://www.lotusmedia.org/blog/&quot;&gt;Ruby Sinreich&lt;/a&gt;: blogs will never replace the mainstream media, their role is to watchdog the media and that is a good place to be. Few people will get their news from blogs, but those that do are journalists, politicians, activists -- people who can make a difference.
+&lt;/li&gt;&lt;li&gt;
+&lt;a href=&quot;http://www.mathewgross.com/blog/&quot;&gt;Matt Gross&lt;/a&gt;: On the Blog for America site, approximately 5% of visitors would click on the comments link and 1% would leave a comment. &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I also got a chance to talk to folks about corporate blogs at SAS and IBM (both have some internal Roller sites) and student blogs at UNC. I also spent some time talking to Roch Smith, the man behind the &lt;a href=&quot;http://www.greensboro101.com/mod/info/display/contact/index.php&quot;&gt;Greensboro 101&lt;/a&gt; community aggregator. All and all it was a great experience. I learned a lot about blogging and I feel a little more connected to my hometown and the Triangle in general. Thanks to &lt;a href=&quot;http://mistersugar.com/&quot;&gt;Anton Zuiker&lt;/a&gt;, &lt;a href=&quot;http://www.ibiblio.org/pjones/wordpress/&quot;&gt;Paul Jones&lt;/a&gt;, and everybody else who helped put it together. More information, check &lt;a href=&quot;http://mistersugar.com:2538/blogtogether/show/live+blogging+the+conference&quot;&gt;here&lt;/a&gt; and &lt;a href=&quot;http://www.technorati.com/cosmos/search.html?rank=&amp;amp;url=http%3A%2F%2Fmistersugar.com%3A2538%2Fblogtogether%2Fshow%2FTriangle%2BBloggers%2BConference%2B2005&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050213#couple_of_notes_from_the</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050213#couple_of_notes_from_the</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=couple_of_notes_from_the</comments>
+        <pubDate>Sun, 13 Feb 2005 22:17:59 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Rome + Texen = Planet Roller</title>
+        <description>                             &lt;BR /&gt;
+&lt;BR /&gt;
+After a couple days of hacking with the Rome Fetcher and Velocity Texen, 
+&lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.rollerweblogger.org/planet/roller.html&quot;&gt;Planet Roller&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;
+is born. 
+&lt;P&gt;
+Planet Roller is currently a command-line line tool that reads a configuration file of newsfeed subscription data, then generates an aggegated weblog with an 
+&lt;A CLASS=&quot;external&quot; HREF=&quot;http://rollerweblogger.org/planet/roller.rss&quot;&gt;RSS feed&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;, and an 
+&lt;A CLASS=&quot;external&quot; HREF=&quot;http://rollerweblogger.org/planet/roller.opml&quot;&gt;OPML listing&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt; of all subscriptions. It&#39;s essentially a Java version of &lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.planetplanet.org/&quot;&gt;Planet Planet&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;. I&#39;ve got it set up to run every 30 mintues. Yes, I&#39;m aware that the RSS gets a warning on 
+&lt;A CLASS=&quot;external&quot; HREF=&quot;http://feedvalidator.org/check.cgi?url=http%3A%2F%2Frollerweblogger.org%2Fplanet%2Froller.rss&quot;&gt;validation&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;. No, I haven&#39;t added newsfeed autodiscovery yet. Yes, I stole 
+&lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.dme.org/&quot;&gt;David Edmondson&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;&#39;s Planet Sun theme.&amp;nbsp; No, I haven&#39;t done any testing on the OPML. Enough questions already! I need to get back to work.
+&lt;P&gt;
+I&#39;ll be adding a couple more details to this post as the night progresses. 
+&lt;P&gt;
+OK, I&#39;m back. Did I mention that Planet Roller is a &lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.rollerweblogger.org/page/roller/20040201&quot;&gt;community aggregator&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;, a &amp;quot;A Community Aggregator is a portal-like web application that displays weblog posts from a group of closely related but separately hosted weblogs and provides synthetic newsfeeds so that readers may subscribe to the group as a whole.&amp;quot;
+&lt;P&gt;
+&lt;B&gt;Configuring Planet Roller&lt;/B&gt;
+&lt;P&gt;
+Currently, Planet Roller is just a &lt;I&gt;simple command-line tool&lt;/I&gt; that is designed to run as a scheduled task. It reads a list of newsfeed subscriptions from an XML file, as shown below. Eventually, there will also be a UI for Planet Roller so that you don&#39;t have to shell into to a server and edit an XML file to add and delete subscriptions.
+&lt;P&gt;
+&lt;PRE&gt;
+&amp;lt;planet-config&amp;gt;
+   &amp;lt;main-page&amp;gt;control.vm&amp;lt;/main-page&amp;gt;
+   &amp;lt;admin-name&amp;gt;Dave Johnson&amp;lt;/admin-name&amp;gt;
+   &amp;lt;admin-email&amp;gt;dave.johnson@rollerweblogger.org&amp;lt;/admin-email&amp;gt;
+   &amp;lt;site-url&amp;gt;http://rollerweblogger.org/planet&amp;lt;/site-url&amp;gt;
+   &amp;lt;output-dir&amp;gt;/nfs/ank/home1/r/roller/public_html/planet&amp;lt;/output-dir&amp;gt;
+   &amp;lt;template-dir&amp;gt;/nfs/ank/home1/r/roller/planet-roller/templates&amp;lt;/template-dir&amp;gt;
+   &amp;lt;cache-dir&amp;gt;/nfs/ank/home1/r/roller/planet-roller/cache&amp;lt;/cache-dir&amp;gt;
+   &amp;lt;subscription id=&quot;dave&quot;&amp;gt;
+      &amp;lt;title&amp;gt;Blogging Roller&amp;lt;/title&amp;gt;
+      &amp;lt;feed-url&amp;gt;http://rollerweblogger.org/rss/roller&amp;lt;/feed-url&amp;gt;
+      &amp;lt;site-url&amp;gt;http://rollerweblogger.org/page/roller&amp;lt;/site-url&amp;gt;
+   &amp;lt;/subscription&amp;gt;
+   &amp;lt;subscription id=&quot;lance&quot;&amp;gt;
+      &amp;lt;title&amp;gt;Vanity Foul&amp;lt;/title&amp;gt;
+      &amp;lt;feed-url&amp;gt;http://www.brainopolis.com/roller/rss/lance&amp;lt;/feed-url&amp;gt;
+      &amp;lt;site-url&amp;gt;http://www.brainopolis.com/roller/page/lance&amp;lt;/site-url&amp;gt;
+   &amp;lt;/subscription&amp;gt;
+   &amp;lt;subscription id=&quot;matt&quot;&amp;gt;
+      &amp;lt;title&amp;gt;Raible Designs&amp;lt;/title&amp;gt;
+      &amp;lt;feed-url&amp;gt;http://raibledesigns.com/rss/rd&amp;lt;/feed-url&amp;gt;
+      &amp;lt;site-url&amp;gt;http://raibledesigns.com/page/rd&amp;lt;/site-url&amp;gt;
+   &amp;lt;/subscription&amp;gt;
+   &amp;lt;subscription id=&quot;anil&quot;&amp;gt;
+      &amp;lt;title&amp;gt;Collected Bits&amp;lt;/title&amp;gt;
+      &amp;lt;feed-url&amp;gt;http://www.busybuddha.org/blog/rss/anil&amp;lt;/feed-url&amp;gt;
+      &amp;lt;site-url&amp;gt;http://www.busybuddha.org/blog/page/anil&amp;lt;/site-url&amp;gt;
+   &amp;lt;/subscription&amp;gt;
+   &amp;lt;subscription id=&quot;henri&quot;&amp;gt;
+      &amp;lt;title&amp;gt;Goldfish Bowl&amp;lt;/title&amp;gt;
+      &amp;lt;feed-url&amp;gt;http://blog.generationjava.com/roller/rss/bayard&amp;lt;/feed-url&amp;gt;
+      &amp;lt;site-url&amp;gt;http://blog.generationjava.com/roller/page/bayard&amp;lt;/site-url&amp;gt;
+   &amp;lt;/subscription&amp;gt;
+   &amp;lt;subscription id=&quot;pat&quot;&amp;gt;
+      &amp;lt;title&amp;gt;P@ Sunglasses&amp;lt;/title&amp;gt;
+      &amp;lt;feed-url&amp;gt;http://blogs.sun.com/roller/rss/pat&amp;lt;/feed-url&amp;gt;
+      &amp;lt;site-url&amp;gt;http://blogs.sun.com/roller/page/pat&amp;lt;/site-url&amp;gt;
+   &amp;lt;/subscription&amp;gt;
+   &amp;lt;group handle=&quot;roller&quot;&amp;gt;
+      &amp;lt;title&amp;gt;Planet Roller&amp;lt;/title&amp;gt;
+      &amp;lt;description&amp;gt;Other folks who are blogging Roller&amp;lt;/description&amp;gt;
+      &amp;lt;max-page-entries&amp;gt;30&amp;lt;/max-page-entries&amp;gt;
+      &amp;lt;max-feed-entries&amp;gt;30&amp;lt;/max-feed-entries&amp;gt;
+      &amp;lt;subscription-ref refid=&quot;dave&quot; /&amp;gt;
+      &amp;lt;subscription-ref refid=&quot;lance&quot; /&amp;gt;
+      &amp;lt;subscription-ref refid=&quot;pat&quot; /&amp;gt;
+      &amp;lt;subscription-ref refid=&quot;matt&quot; /&amp;gt;
+      &amp;lt;subscription-ref refid=&quot;anil&quot; /&amp;gt;
+      &amp;lt;subscription-ref refid=&quot;henri&quot; /&amp;gt;
+   &amp;lt;/group&amp;gt;
+   &amp;lt;group handle=&quot;trijug&quot;&amp;gt;
+      &amp;lt;title&amp;gt;Planet TriJUG&amp;lt;/title&amp;gt;
+      &amp;lt;description&amp;gt;Triangle Java User Group Bloggers&amp;lt;/description&amp;gt;
+      &amp;lt;max-page-entries&amp;gt;40&amp;lt;/max-page-entries&amp;gt;
+      &amp;lt;max-feed-entries&amp;gt;40&amp;lt;/max-feed-entries&amp;gt;
+      &amp;lt;subscription-ref refid=&quot;dave&quot; /&amp;gt;
+   &amp;lt;/group&amp;gt;
+&amp;lt;/planet-config&amp;gt;
+&lt;/PRE&gt;
+&lt;P&gt;
+The configuration file contains three types of information: 1) configuration information for the planet site itself, 2) newsfeed subscriptions, and 3) groups. Groups allow a single Planet Roller site to host differernt aggregations. In the above configuration file, I&#39;ve defined two groups &amp;quot;Planet Roller&amp;quot; and &amp;quot;Planet &lt;A CLASS=&quot;wikipage&quot; HREF=&quot;http://www.rollerweblogger.org/wiki/Wiki.jsp?page=TriJUG&quot;&gt;TriJUG&lt;/A&gt;&amp;quot;. Note that one subscription can appear in more than one group. 
+&lt;P&gt;
+&lt;B&gt;Customizing Planet Roller File Generation&lt;/B&gt;
+&lt;P&gt;
+The command-line version of Planet Roller uses the &lt;A CLASS=&quot;external&quot; HREF=&quot;http://jakarta.apache.org/velocity/texen.html&quot;&gt;Texen&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt; feature of &lt;A CLASS=&quot;external&quot; HREF=&quot;http://jakarta.apache.org/velocity/&quot;&gt;Velocity&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt; to generate whatever files you want in your Planet Roller site. I included templates for HTML, RSS, and OPML, but you can tweak these and/or add whatever you want. 
+&lt;P&gt;
+You tell Planet Roller which templates to use by specifying a Texen control template in the &lt;TT&gt;&amp;lt;main-page&amp;gt;&lt;/TT&gt; element of the config file. Specify the templates directory in the &lt;TT&gt;&amp;lt;template-dir&amp;gt;&lt;/TT&gt; element. The control template does not generate anything itself. It controls the file generation process and it determines which files are generated and which template is used for each. Here is Planet Roller&#39;s current control template:
+&lt;P&gt;
+&lt;PRE&gt;
+#set ($groupHandles = $planet.groupHandles)
+#foreach ($groupHandle in $groupHandles)
+    #set ($outputFile = $strings.concat([$groupHandle, &quot;.html&quot;]))
+    $generator.parse(&quot;html.vm&quot;, $outputFile, &quot;groupHandle&quot;, $groupHandle)
+    #set ($outputFile = $strings.concat([$groupHandle, &quot;.rss&quot;]))
+    $generator.parse(&quot;rss.vm&quot;,  $outputFile, &quot;groupHandle&quot;, $groupHandle)
+    #set ($outputFile = $strings.concat([$groupHandle, &quot;.opml&quot;]))
+    $generator.parse(&quot;opml.vm&quot;, $outputFile, &quot;groupHandle&quot;, $groupHandle)
+#end
+&lt;/PRE&gt;
+&lt;P&gt;
+The control template loops through the groups defined in the config file and for each, generates an HTML file using the &lt;TT&gt;html.vm&lt;/TT&gt; template, an RSS file using the &lt;TT&gt;rss.vm&lt;/TT&gt; template, and an OPML file using the &lt;TT&gt;opml.vm&lt;/TT&gt; template. You can provide your own control template, or just hack the one that comes with Planet Roller. 
+&lt;P&gt;
+Based on the above configuration data and control template, when Planet Roller runs, you&#39;ll end up with six files:
+&lt;P&gt;
+&lt;UL&gt;
+&lt;LI&gt; &lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.rollerweblogger.org/planet/roller.html&quot;&gt;roller.html&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;
+&lt;/LI&gt;
+&lt;LI&gt; &lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.rollerweblogger.org/planet/roller.opml&quot;&gt;roller.opml&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;
+&lt;/LI&gt;
+&lt;LI&gt; &lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.rollerweblogger.org/planet/roller.rss&quot;&gt;roller.rss&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;
+&lt;/LI&gt;
+&lt;LI&gt; &lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.rollerweblogger.org/planet/trijug.html&quot;&gt;trijug.html&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;
+&lt;/LI&gt;
+&lt;LI&gt; &lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.rollerweblogger.org/planet/trijug.opml&quot;&gt;trijug.opml&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;
+&lt;/LI&gt;
+&lt;LI&gt; &lt;A CLASS=&quot;external&quot; HREF=&quot;http://www.rollerweblogger.org/planet/trijug.rss&quot;&gt;trijug.rss&lt;/A&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot; /&gt;
+&lt;/LI&gt;
+&lt;/UL&gt;
+&lt;P&gt;
+Let&#39;s look at the RSS template, so you can get a feel for how the templates work.
+&lt;P&gt;
+&lt;PRE&gt;
+&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&amp;gt;
+&amp;lt;rss version=&quot;2.0&quot; xmlns:dc=&quot;http://purl.org/dc/elements/1.1/&quot;&amp;gt;
+&amp;lt;channel&amp;gt;
+  #set($group = $planet.getGroup($groupHandle))
+  &amp;lt;title&amp;gt;$utilities.textToHTML($group.title,true)&amp;lt;/title&amp;gt;
+  &amp;lt;link&amp;gt;$planet.configuration.url/${group.handle}.html&amp;lt;/link&amp;gt;
+  &amp;lt;description&amp;gt;$utilities.textToHTML($group.description,true)&amp;lt;/description&amp;gt;
+  &amp;lt;lastBuildDate&amp;gt;$utilities.formatRfc822Date($date)&amp;lt;/lastBuildDate&amp;gt;
+  &amp;lt;generator&amp;gt;Roller Planet 1.1-dev&amp;lt;/generator&amp;gt;
+  #set($entries = $planet.getAggregation($group, 30))
+  #foreach( $entry in $entries )
+  &amp;lt;item&amp;gt;
+    &amp;lt;title&amp;gt;$utilities.textToHTML($entry.title,true)&amp;lt;/title&amp;gt;
+    &amp;lt;description&amp;gt;$utilities.textToHTML($entry.content,true)&amp;lt;/description&amp;gt;
+    &amp;lt;category&amp;gt;$utilities.textToHTML($entry.category,true)&amp;lt;/category&amp;gt;
+    &amp;lt;link&amp;gt;$entry.permalink&amp;lt;/link&amp;gt;
+    &amp;lt;pubDate&amp;gt;$utilities.formatRfc822Date($entry.published)&amp;lt;/pubDate&amp;gt;
+    #if($entry.author)&amp;lt;dc:creator&amp;gt;$utilities.textToHTML($entry.author,true)&amp;lt;/dc:creator&amp;gt;#end
+  &amp;lt;/item&amp;gt;
+  #end
+&amp;lt;/channel&amp;gt;
+&amp;lt;/rss&amp;gt;
+&lt;/PRE&gt;
+&lt;P&gt;
+And here is the OPML template:
+&lt;PRE&gt;
+&amp;lt;?xml version=&quot;1.0&quot; encoding=&#39;utf-8&#39;?&amp;gt;
+#set($group = $planet.getGroup($groupHandle))
+&amp;lt;opml version=&quot;1.1&quot;&amp;gt;
+&amp;lt;head&amp;gt;
+   &amp;lt;title&amp;gt;$group.description&amp;lt;/title&amp;gt;
+   &amp;lt;dateCreated&amp;gt;$utilities.formatRfc822Date($date)&amp;lt;/dateCreated&amp;gt;
+   &amp;lt;dateModified&amp;gt;$utilities.formatRfc822Date($date)&amp;lt;/dateModified&amp;gt;
+   &amp;lt;ownerName&amp;gt;$planet.config.adminName&amp;lt;/ownerName&amp;gt;
+   &amp;lt;ownerEmail&amp;gt;$planet.config.adminEmail&amp;lt;/ownerEmail&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+#foreach($sub in $group.subscriptions)
+   &amp;lt;outline text=&quot;$utilities.textToHTML($sub.title)&quot; 
+          xmlUrl=&quot;$utilities.textToHTML($sub.feedUrl)&quot; 
+         htmlUrl=&quot;$utilities.textToHTML($sub.siteUrl)&quot; /&amp;gt;
+#end
+&amp;lt;/body&amp;gt;
+&amp;lt;/opml&amp;gt;
+&lt;/PRE&gt;
+&lt;P&gt;
+Within a template, you have access to the configuration through the $planet object, plus there are a couple of other objects that you&#39;ll find helpful in generating files. Here are the objects that are available in a template:
+&lt;P&gt;
+&lt;UL&gt;
+&lt;LI&gt; &lt;B&gt;groupHandle&lt;/B&gt;: a string that contains the &amp;quot;handle&amp;quot; of the current group, which you can use to get the group object from the planet.
+&lt;/LI&gt;
+&lt;LI&gt; &lt;B&gt;planet&lt;/B&gt;: the planet object allows you to access groups via &lt;TT&gt;$planet.getGroup($groupHandle)&lt;/TT&gt; and aggregations for groups via &lt;TT&gt;$planet.getAggregation($group, N)&lt;/TT&gt; where N is the max number of entries to be returned.
+&lt;/LI&gt;
+&lt;LI&gt; &lt;B&gt;planet.configuration&lt;/B&gt;: this object contains configuration information, such as 
+&lt;/LI&gt;
+&lt;LI&gt; &lt;B&gt;date&lt;/B&gt;: current date
+&lt;/LI&gt;
+&lt;LI&gt; &lt;B&gt;utilities&lt;/B&gt;: text-to-HTML, data formatting, and other utilities
+&lt;/LI&gt;
+&lt;/UL&gt;
+&lt;P&gt;
+&lt;B&gt;Running Planet Roller&lt;/B&gt;
+&lt;P&gt;
+You can run Planet Roller from a simple script, like the one below:
+&lt;P&gt;
+&lt;PRE&gt;
+#!/bin/bash
+_CP=.:./lib/planet-roller-1.1-dev.jar
+_CP=${_CP}:./lib/rollerbeans.jar
+_CP=${_CP}:./lib/commons-logging.jar
+_CP=${_CP}:./lib/jaxen-full.jar
+_CP=${_CP}:./lib/jdom.jar
+_CP=${_CP}:./lib/dom4j-1.4.jar
+_CP=${_CP}:./lib/rome-0.5.jar
+_CP=${_CP}:./lib/rome-fetcher-0.5.jar
+_CP=${_CP}:./lib/velocity-1.4.jar
+_CP=${_CP}:./lib/velocity-dep-1.4.jar
+java -classpath ${_CP} org.roller.tools.planet.PlanetTool $1 
+&lt;/PRE&gt;
+&lt;P&gt;
+If you want Planet Roller to run on a schedule, schedule it. For example, on UNIX you can use cron. I use the following cron task to run Planet Roller on the 6th and 36th minute of every hour:
+&lt;P&gt;
+&lt;PRE&gt;
+   6,36 * * * * (cd ~roller/planet-roller; ./planet-roller.sh)
+&lt;/PRE&gt;
+&lt;P&gt;
+Planet Roller uses the Rome Fetcher library to retrieve, parse, and cache newsfeed data to disk. Fetcher uses HTTP Conditional Get and Etags to ensure that feeds are only downloaded when truly updated.
+&lt;P&gt;
+That&#39;s enough for now. Tomorrow, I&#39;ll tell you about Planet Roller internals.
+ 
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050213#rome_texen_planet_roller</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050213#rome_texen_planet_roller</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=rome_texen_planet_roller</comments>
+        <pubDate>Sun, 13 Feb 2005 19:31:09 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>First blogs.sun.com podcast</title>
+        <description>                             &lt;blockquote&gt;
+&lt;a href=&quot;http://blogs.sun.com/roller/page/jimgris/20050210#neooffice_j_podcast_on_bsc&quot;&gt;Jim Gisanzio&lt;/a&gt;: Check out what is probably Sun&#39;s first BSC Podcast -- &lt;a href=&quot;http://blogs.sun.com/roller/page/webmink/20050209#san_diego_preso&quot;&gt;Simon Phipps interviewing Ed Peterlin&lt;/a&gt; at Linux Desktop Summit on &lt;a href=&quot;http://www.neooffice.org/&quot;&gt;NeoOffice/J&lt;/a&gt;
+&lt;/blockquote&gt;
+
+
+
+
+         </description>
+    <category>Sun</category>
+    <link>http://rollerweblogger.org/page/roller/20050211#first_blogs_sun_com_podcast</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050211#first_blogs_sun_com_podcast</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=first_blogs_sun_com_podcast</comments>
+        <pubDate>Fri, 11 Feb 2005 09:52:23 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Triangle Bloggers Conference 2005</title>
+        <description>                             
+&lt;p&gt;I&#39;m looking forward to &lt;a href=&quot;http://mistersugar.com:2538/blogtogether/show/Triangle+Bloggers+Conference+2005&quot;&gt;Triangle Blogger Con 2005&lt;/a&gt;
+in Chapel Hill tomorrow. Big time bloggers &lt;a href=&quot;http://www.scripting.com/&quot;&gt;Dave Winer&lt;/a&gt;, &lt;a href=&quot;http://dangillmor.typepad.com/&quot;&gt;Dan Gillmore&lt;/a&gt;, and
+&lt;a href=&quot;http://www.lotusmedia.org/blog/&quot;&gt;Ruby Sinreich&lt;/a&gt; will be in attendance and, I assume, helping to lead the
+discussions. It&#39;s a very short conference with thee sessions in the
+morning focusing on using blogs to help build communities. That&#39;s a
+very appropriate topic for me since I&#39;m spending today writing a &lt;a href=&quot;http://www.rollerweblogger.org/page/roller/20040201&quot;&gt;community aggregator&lt;/a&gt; front end for Roller, which I&#39;m calling &lt;a href=&quot;http://www.rollerweblogger.org/wiki/Wiki.jsp?page=Proposal_PlanetRoller&quot;&gt;Planet Roller&lt;/a&gt; (I&#39;m not sure if the name will stick).&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;Update&lt;/span&gt;: via &lt;a href=&quot;http://mistersugar.com/article/3865/&quot;&gt;Mister Suger&lt;/a&gt;, the Durham Morning Herald on the conference: &lt;a href=&quot;http://www.herald-sun.com/orange/10-575389.html&quot;&gt;Bloggers Gathering Outside Cyberspace&lt;/a&gt;&lt;/p&gt;
+
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050211#triangle_bloggers_conference_2005</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050211#triangle_bloggers_conference_2005</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=triangle_bloggers_conference_2005</comments>
+        <pubDate>Fri, 11 Feb 2005 09:11:04 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Raleigh, NC: coffee shops with free wireless</title>
+        <description>                             
+&lt;p&gt;These are the best places I&#39;ve found in Raleigh to get work done, drink good coffee, and enjoy free wireless access to the net.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.helioscoffee.com/&quot;&gt;Helios Coffee&lt;/a&gt; -
+in trendy Glenwood South (413 Glenwood Ave). Bonus features: very cool
+music, outside seating, good smoothies, beer and&amp;nbsp; wine.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://percolatorlounge.com/&quot;&gt;Percolator Lounge&lt;/a&gt; - in North Raleigh at Quail Corners (5039 Falls of Neuse Rd, used to be a Cupajoe)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://triangle.com/dining/restaurantreview/story/1239600p-7350317c.html&quot;&gt;Cafe Cyclo&lt;/a&gt; - in Cameron Village (2020 Cameron St.). Bonus features: excellent food, full bar, ice cream store next door.&lt;/li&gt;
+&lt;/ul&gt;
+
+
+
+
+&lt;p&gt;Know any others? I need to find similar places in Chapel Hill. I&#39;ll leave comments open on this one.&lt;/p&gt;
+
+         </description>
+    <category>General</category>
+    <link>http://rollerweblogger.org/page/roller/20050210#raleigh_nc_coffee_shops_with</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050210#raleigh_nc_coffee_shops_with</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=raleigh_nc_coffee_shops_with</comments>
+        <pubDate>Thu, 10 Feb 2005 14:25:11 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Corporate Podcasting goes live at Sun</title>
+        <description>                             &lt;p&gt;&lt;a href=&quot;http://blogs.sun.com/roller/page/rama/20050208#podcasts_via_the_command_line&quot;&gt;Rama&lt;/a&gt; and the rest of the crew at &lt;a href=&quot;http://sun.com&quot;&gt;Sun.com&lt;/a&gt; have been working long and hard to bring you the coolest of the cool. Podcasting, or &lt;a href=&quot;http://mediacast.sun.com&quot;&gt;MediaCast&lt;/a&gt;ing
+as the cool kids call it, has gone live at Sun (actually it&#39;s
+beta).&amp;nbsp; Stay tuned to Rama&#39;s blog because the best is yet to come.&lt;br&gt;
+&lt;br&gt;
+I&#39;m proud to say that I&#39;m part of the Sun.com crew. My little part in
+this endeavor was to add MediaCast support to the Roller instance we
+have running on blogs.sun.com. I did it by implementing part of the
+&lt;a href=&quot;http://www.rollerweblogger.org/wiki/Wiki.jsp?page=Proposal_WeblogEntryPlugin&quot;&gt;Weblog Entry Plugin&lt;/a&gt; architecture, which is on the table for &lt;a href=&quot;http://sourceforge.net/mailarchive/forum.php?thread_id=6510081&amp;amp;forum_id=9297&quot;&gt;Roller 1.1&lt;/a&gt; release.&lt;br&gt;
+
+&lt;/p&gt;
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050208#corporate_podcasting_goes_live_at</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050208#corporate_podcasting_goes_live_at</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=corporate_podcasting_goes_live_at</comments>
+        <pubDate>Tue, 8 Feb 2005 20:26:47 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Blogger with no time to blog</title>
+        <description>                             
+&lt;p&gt;
+I find it somewhat ironic that, because I&#39;m working on a book about
+blog technologies and working full time on developing blog software, I
+have almost no time to blog. That&#39;s why you&#39;ve seen so few personal
+blog entries recently. &lt;a href=&quot;http://raibledesigns.com/page/rd?anchor=life_update&quot;&gt;Matt&#39;s right&lt;/a&gt;,
+the mix of personal entries are what really make a blog for me. I hope
+that will change soon. Now that Roller 1.0 is really, truly out of the
+way (fingers crossed) and the really fun part of the book is starting
+up, I hope that will change (but I&#39;m not making any promises).
+&lt;/p&gt;
+         </description>
+    <category>Blogging</category>
+    <link>http://rollerweblogger.org/page/roller/20050208#blogger_with_no_time_to</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050208#blogger_with_no_time_to</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=blogger_with_no_time_to</comments>
+        <pubDate>Tue, 8 Feb 2005 19:46:58 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+    <item>
+    <title>Roller 1.0.1 bug fix release (with nofollow support)</title>
+        <description>                             
+&lt;blockquote&gt;
+&lt;a href=&quot;http://www.rollerweblogger.org/page/project/20050208&quot;&gt;Roller Weblogger&lt;/a&gt;: Roller 1.0.1 is a bug fix release that also adds support for Google&#39;s new rel=&quot;nofollow&quot; flag. 
+You can &lt;a class=&quot;external&quot; href=&quot;http://roller.dev.java.net/servlets/ProjectDocumentList?folderID=2775&amp;amp;expandFolder=2775&amp;amp;folderID=2641&quot;&gt;get the release&lt;/a&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot;&gt; on Roller&#39;s Java.Net download space. 
+You can read the &lt;a class=&quot;external&quot; href=&quot;http://opensource.atlassian.com/projects/roller/secure/ReleaseNote.jspa?projectId=10000&amp;amp;styleName=Html&amp;amp;version=10150&quot;&gt;change list&lt;/a&gt;&lt;img class=&quot;outlink&quot; src=&quot;http://www.rollerweblogger.org/wiki/images/out.png&quot; alt=&quot;&quot;&gt; on Roller&#39;s JIRA issue tracking system. 
+And, you can find &lt;a class=&quot;wikipage&quot; href=&quot;http://www.rollerweblogger.org/wiki/Wiki.jsp?page=InstallationGuide&quot;&gt;install instructions&lt;/a&gt; and &lt;a class=&quot;wikipage&quot; href=&quot;http://www.rollerweblogger.org/wiki/Wiki.jsp?page=RollerMinorUpdateGuide&quot;&gt;instructions for upgrading&lt;/a&gt; your existing Roller 1.0 install to 1.0.1 on the Roller wiki. Happy rolling!
+&lt;/blockquote&gt;
+         </description>
+    <category>Roller</category>
+    <link>http://rollerweblogger.org/page/roller/20050208#roller_1_0_1_bug</link>
+    <guid isPermaLink="true">http://rollerweblogger.org/page/roller/20050208#roller_1_0_1_bug</guid>
+        <comments>http://rollerweblogger.org/page/roller?anchor=roller_1_0_1_bug</comments>
+        <pubDate>Tue, 8 Feb 2005 14:14:05 EST</pubDate>
+    <dc:creator>David M Johnson</dc:creator>
+  </item>
+  </channel>
+</rss>

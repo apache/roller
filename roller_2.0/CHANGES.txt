@@ -1,0 +1,533 @@
+
+ROLLER CHANGE LOG
+-----------------
+
+Roller 2.0 release: major new release adds group blogging and streamlined UI
+
+  New Features
+    * [ROL-598] - Group blog support
+    * [ROL-599] - Group blog simple workflow support
+    * [ROL-467] - Multiple Authors of a Blog
+    * [ROL-600] - Admins are superusers
+    * [ROL-809] - Support for Apache Derby
+    * [ROL-810] - IBM DB2 support
+  Improvements
+    * [ROL-767] - Turn on MathCommentAuthenticator by default
+    * [ROL-789] - Allow trackbacks to be enable/disabled independently of comments
+    * [ROL-793] - planet configs cache dir should be in roller.properties not UI
+    * [ROL-812] - Remove the old $macros support
+    * [ROL-815] - Upgrade to Hibernate 3.0.5
+    * [ROL-839] - Allow configuration of list of allowable trackbacks (for internal corporate blogs)
+  Bugs fixed
+    * [ROL-683] - Calendar may show extra day
+    * [ROL-751] - If did not input anything, the new blog entry will also be saved.
+    * [ROL-754] - Database creation failes under MySQL 5.0.x (fix included)
+    * [ROL-760] - multi language search string corrupted in resin2.1.x and tomcat4.x
+    * [ROL-766] - Internationalization broken in #showNewsfeed() macro
+    * [ROL-780] - Next / Prev links on weblog pages broken
+    * [ROL-781] - Atom 1.0 feed broken
+    * [ROL-799] - New Editor theme has whitespace around Roller logo in Safari
+    * [ROL-803] - E-Mail address for weblog is not persisted when weblog created
+    * [ROL-804] - Add new theme text box is too wide
+    * [ROL-806] - Deleting a template with no content fails
+    * [ROL-807] - Clicking the "Customize" button on the Theme page returns a result page with no CSS
+    * [ROL-811] - Unnecessary JSESSIONIDs in URLs
+    * [ROL-814] - Edit links not appearing on blog pages, despite logged-in state
+    * [ROL-816] - Draft entries available in blog via permalink
+    * [ROL-817] - Search results page not updated for 2.0 UI
+    * [ROL-820] - Registration page should not default to Albanian
+    * [ROL-822] - Posting/previewing of comment broken
+    * [ROL-834] - Planet not refreshing
+    * [ROL-835] - User can't create blog when group blogging disabled
+    * [ROL-836] - Disabled users should not show up in list of possible invitees
+    * [ROL-837] - Calendar doesn't reflect date on entry page
+    * [ROL-838] - Comment form shown when comments disabled sitewide
+    * [ROL-843] - Intermittent planet page errors
+    * [ROL-844] - Posting a blog entry breaks the blog page
+    * [ROL-861] - After deleting a user, the main.do page no longer loads
+
+
+-------------------------------------------------------------------------------
+Roller 1.3 - Bug fix release
+
+    Bug fixes
+    * [ROL-760] - multi language search string corrupted in resin2.1.x and tomcat4.x
+    * [ROL-766] - Internationalization broken in #showNewsfeed() macro
+    * [ROL-782] - Weblog Editor plug-ins broken or won't load altogether
+
+    Improvements
+    * [ROL-613] - Support other system property expansion in file paths in Roller configuration
+    * [ROL-775] - Updated ApplicationResources for DE locale
+
+------------------------------------------------------------------------------
+Roller 1.2 - New feature release
+
+Also, changed license to Apache License v2.0
+
+    New Feature
+    * [ROL-305] - Configurable Weblogs.com pings
+
+    Improvement
+    * [ROL-708] - Metadata driven configuration
+    * [ROL-730] - Upgraded to Ekit-editor version 1.0
+
+    Bugs fixes
+    * [ROL-684] - ekit jar in wrong place
+    * [ROL-699] - Weblog Editor shows wrong timezone
+    * [ROL-725] - RSS dates are invalid in non-English locales
+    * [ROL-729] - Deleting Pinned to Main Entry
+    * [ROL-734] - Bookmark OPML fails if folder named 'unfiled' already exists
+    * [ROL-742] - Saving Website:Settings clears hit count
+    * [ROL-743] - #showOpmlLink() macro broken
+
+------------------------------------------------------------------------------
+Roller 1.1.2 - Bug fix release
+
+No new features, just one bug fix.
+
+   * [ROL-724] - Deleted and modified entris not removed from Search Index
+
+------------------------------------------------------------------------------
+Roller 1.1.1 - Bug fix release
+
+No new features, just one bug fix.
+
+   * [ROL-716] Search is broken
+   
+------------------------------------------------------------------------------
+Roller 1.1 - New feature release
+
+This release includes basic support for Podcasting, bug fixes and minor improvements.
+A new aggregator front page (known as Planet Roller) has been added to Roller, but
+it is an unsupported feature available only via Roller's custom build mechanism.
+
+    New Features
+    * [ROL-711] - Support Podcasting
+	* [ROL-596] - Aggregator front page (unsupported: only in custom builds)
+
+    Bugs
+	* [ROL-405] - getConfigPath() in RollerContext doesn't handle SecurityException
+	* [ROL-433] - Bookmarks, Import of OPML file fails on trying to insert null.
+	* [ROL-464] - Error changing name of folder
+	* [ROL-529] - read more summary plugins can't support chinese title
+	* [ROL-649] - Email notification may not send notifications with bad addresses
+	* [ROL-650] - Email privacy issues in comment notification
+	* [ROL-651] - Notification emails don't use the correct website URL
+	* [ROL-652] - Notification emails contain unnecessary information for commenter
+	* [ROL-655] - Bookmark linker plugin is overly agressive
+	* [ROL-665] - Broken themes on Tomcat 5.5.7
+	* [ROL-677] - CloseSessionFilter not always called for login.jsp
+	* [ROL-689] - Rolling theme in theme selectors - preview fails to return
+	* [ROL-695] - Can't save anything in an empty db or empty website
+	* [ROL-700] - Exception on RollerSession passivation
+	* [ROL-701] - Rolling theme includes don't show up in preview
+	* [ROL-710] - MetaWeblog API: permalinks should not be relative
+
+    Improvements
+	* [ROL-530] - Child categories should be in a parent categories feed
+	* [ROL-604] - Add MS SqlServer support to Roller
+	* [ROL-615] - Lift 100 entry limit in MetaWelog API
+	* [ROL-632] - UserCookieData lacks equals() and hashcode()
+	* [ROL-669] - Main page should include auto-disco link
+	* [ROL-679] - Externalize configuration of Hibernate
+	
+	
+1.0.1 Bug Fix Releasee
+
+Fixes minor bugs in Roller 1.0 and adds support for rel="nofollow"
+
+    Bug
+    * [ROL-621] - Twisty Comments broken in 1.0
+    * [ROL-623] - Unexpanded type macros in 097-098 upgrade script for mysql
+    * [ROL-625] - Remember Me doesn't work in 1.0 and Firefox
+    * [ROL-628] - Flawed SQL clause for moving users in 097-to-098-upgrade script.
+    * [ROL-631] - Blacklist update task doesn't catch all exceptions
+    * [ROL-640] - Search page reports incorrect (high) counts
+    * [ROL-641] - CommentsServlet *throws* an NPE if it can't find a weblog entry
+    * [ROL-647] - Unclosed link tag causes StringIndexOutOfBoundsException if 
+                  using Textile and ReadMore plugins
+    
+    New Feature
+    * [ROL-627] - rel="nofollow" for referrers, trackbacks, and comments
+
+    Improvement
+    * [ROL-642] - cheb theme requires a minor adjustment to fix font color problem on the menu
+    * [ROL-643] - Add Icelandic application resources
+
+
+1.0 FINAL
+
+Fixes minor found in Roller 1.0 RC2.
+
+    * [ROL-538] - Remember Me seems to be broken
+    * [ROL-554] - Norwegian and Danish characters are corrupted
+    * [ROL-560] - Weblog Edit page problems with some browsers
+    * [ROL-565] - File upload creates bogus directory
+    * [ROL-572] - User admin page glitches
+    * [ROL-574] - Site wide RSS feed is your own if you are logged in
+    * [ROL-575] - Confusing instructions -- Replace "&" by "&"
+    * [ROL-576] - Email notification is not working
+    * [ROL-577] - Missing and Unexpected jars in lib
+    * [ROL-578] - Captcha requiring duplicate gimpybackgrounds directory
+    * [ROL-581] - Warning navigating to Website tab
+    * [ROL-583] - Double defined listeners
+    * [ROL-585] - Restore old themes
+    * [ROL-586] - Edit folder fails with exception
+    * [ROL-590] - "Read More" plugin should ignore HTML tags
+    * [ROL-603] - roller.log file created in startup directory
+    * [ROL-612] - blacklist.txt file getting written to /
+    * [ROL-501] - Allow commenters to opt-in to email notification of comments
+    * [ROL-558] - Resources should not be browsable
+
+--------------------------------------------------------------------------------
+
+1.0RC2: 2nd Release Candidate for Roller 1.0
+
+   [ROL-338] - Delete-user blows up on PostgreSQL
+   [ROL-508] - I18N problems in sending a trackback
+   [ROL-509] - Errors in PostgreSQL migration script for 0.98 to 1.0
+   [ROL-512] - Recent Drafts list in Weblog editor does not show future posts
+   [ROL-516] - properties.xmlf missing from src release
+   [ROL-522] - RSS feed pubDate does not indicate AM/PM
+   [ROL-523] - org.apache.jasper.JasperException: /taglibs.jsp(0,0)  problem
+   [ROL-524] - rollerpw.sh utility won't work with PostgreSQL
+   [ROL-525] - Attempt to disable Blogger API raises exception
+   [ROL-532] - no rollback on exception when deleting user
+   [ROL-535] - Velocity context not properly populated on CommentServlet.doPost()
+   [ROL-539] - Correct comments path in #showHiddenCommentsForm()
+   [ROL-542] - XML-RPC deletePost not working
+   [ROL-544] - Exception on following link after comment submission
+   [ROL-548] - Bookmark display macro not obeying sort order
+   [ROL-550] - Checkbox for e-mail on comments appears even if e-mail is centrally disabled
+   [ROL-551] - Toggle linkback throws exception
+   [ROL-477] - Pluggable authentication mechanism for comments (with JCaptcha option)
+   [ROL-507] - Redundant numerical character references in RSS feed
+	
+--------------------------------------------------------------------------------
+1.0RC1: 1st Release Candidate for Roller 1.0
+
+The major new features of Roller 0.9.9 are a new Editor UI, hierarchical 
+categories, hierarchical bookmark/blogroll folders with OPML import/export, 
+Atom API support, Atom newsfeed support, a new look-and-feel in the Web 
+interface, lots of other features, and numerous bug fixes. 
+
+This is the fifth release in the Roller 0.9.9 branch. The first release 
+was deployed on JRoller in May. Since then many bug fixes and architectural
+improvements have been made, including:
+
+   ROL-199 FIXED Referential integrity failure deleting bookmark folder
+   ROL-60  FIXED Encrypt passwords in the DB 
+   ROL-294 FIXED Add a #showWeblogEntriesForCategory(catname) macro. 
+   ROL-293 FIXED add macro to display all bookmarks without specifying category 
+   ROL-292 FIXED BoggerAPIHandler shows password in plain text 
+   ROL-229 FIXED Customizable Calendar? 
+   ROL-359 FIXED CVS Create-db.sql fails on postgresql 
+   ROL-310 FIXED Deleting entry should also delete referrers and comments 
+   ROL-271 FIXED Description field should be encoded or CDATA-ified 
+   ROL-325 FIXED Don't allow delete of last category 
+   ROL-318 FIXED Don't count referrers from own blog 
+   ROL-303 FIXED Hierarchical Categories 
+   ROL-357 FIXED Improve Calendar/archive navigation 
+   ROL-321 FIXED Improve wiki syntax handling in RSS feeds 
+   ROL-273 FIXED Installation instructions need to include mention of mail.jar 
+   ROL-306 FIXED Linkback enable link does not work 
+   ROL-147 FIXED Nesting bookmark folders 
+   ROL-275 FIXED Newpost in bloggerapi always tries to ping rpc.weblogs.com 
+   ROL-274 FIXED Postgres expects boolean value in queries, not '1' 
+   ROL-299 FIXED Recent entries preview doesn't use _entry page 
+   ROL-289 FIXED Referrer filter not working 
+   ROL-298 FIXED RSS feeds do not support HTTP Conditional GET or Gzip encoding 
+   ROL-282 FIXED roller-index location should be configurable 
+   ROL-308 FIXED Search should list findings in reverse chrono order 
+   ROL-307 FIXED Todays page hits count inaccurate 
+   ROL-279 FIXED User management page needs improvement. 
+   ROL-231 FIXED view of weblog fails 
+   ROL-311 FIXED Want to browse previous and next article 
+   ROL-339 FIXED Weblog calendar not showing all entries 
+   ROL-347 FIXED Where did sign-up link in the main page 
+   ROL-326 FIXED Allow for mime-type override on pages 
+   ROL-233 FIXED Add timezone setting to Website::Settings 
+   ROL-13  FIXED Front page improvements 
+   ROL-297 FIXED Include <guid> elements in default RSS feeds 
+   ROL-235 FIXED Localized SimpleDateFormat fouls up calendar weblog title
+   ROL-224 FIXED Lucene Search Should Display Summary 
+   ROL-142 FIXED Make RollerConfig use database tables rather than xml file. 
+   ROL-168 FIXED Obfuscate email addresses in Comments (and elsewhere?) 
+   ROL-18  FIXED OPML export of bookmarks 
+   ROL-268 FIXED postgres features 
+   ROL-225 FIXED RSS import from other blogs 
+   ROL-288 FIXED Search function should also search the titles 
+   ROL-315 FIXED Send trackback doesn't strip HTML from wiki entries
+   ROL-290 FIXED Some admin config options are never persisted 
+   ROL-286 FIXED Use ResultSet.next() instead of ResultSet.first() 
+   ROL-312 FIXED Add basic FOAF support from current data 
+   ROL-201 FIXED Sample Apache JkMounts for mod-jk 
+   ROL-105 FIXED User can delete Referrers 
+
+--------------------------------------------------------------------------------
+0.9.8.2: Bug fix release 
+
+   Includes a couple of I18N fixes. 
+
+--------------------------------------------------------------------------------
+0.9.8.1: Bug fix release
+
+   ROL-252 FIXED Wrong comments link in RSS       
+   ROL-241 FIXED xml feed uses dc:date instead of pubDate 
+   ROL-258 FIXED Enable comments by default for new blogs 
+   ROL-251 FIXED Roller config changes should be immediately flushed 
+   ROL-171 FIXED comments needs improvement, I get lots of double postings 
+   ROL-249 FIXED Disabling comments doesn't disable the comment form on 
+                    the comment-form-in-page 
+   ROL-246 FIXED Adding a page causes unhandled exception 
+   ROL-232 FIXED &nbsp problems in RSS feed 
+   ROL-212 FIXED Empty blog page 
+   ROL-255 FIXED Theme won't change 
+   ROL-216 FIXED Admin can't delete user. 
+   ROL-242 FIXED Weblogs.com ping sends wrong URL 
+   ROL-259 FIXED Get rid of the FIRST POST! 
+   ROL-237 FIXED Preview Theme doesn't seem to be working 
+   ROL-214 FIXED Category chooser for Currency theme 
+   ROL-202 FIXED Error saving customizations to theme 
+   ROL-238 FIXED Parameters intended for the 'edit website settings' are 
+                    being sent to the logout-redirect.jsp. 
+   ROL-264 FIXED Ping Weblogs.com should be off by default in weblog editor
+   ROL-245 FIXED Mispelling 
+   
+--------------------------------------------------------------------------------
+0.9.8: Performance improvements and bug fixes
+
+Dramatic performance increase due to addition of database indices, proper 
+use of persistence sessions, and new version of OSCache. New features include 
+Weblog.com ping and integrated Lucene weblog search.
+
+   ROL-197 FIXED error inserting null into page.updatetime on register new user 
+   ROL-196 FIXED Blogger/MetaBlog API operations flush entire cache 
+   ROL-187 FIXED Some SQL friendly table and column renames 
+   ROL-206 FIXED Comment links in site-wide RSS feed are wrong 
+   ROL-160 FIXED Theme switcher workflow issues 
+   ROL-172 FIXED index.jsp only contains Home | Login links 
+   ROL-198 FIXED Support accented characters in RSS 
+   ROL-208 FIXED Client-aborts should not be logged as errors 
+   ROL-60  FIXED Encrypt passwords in the DB 
+   ROL-189 FIXED Add macro to set content type of a page 
+   ROL-180 FIXED Use relative URLs in HTML, make RSS URLs configurable 
+   ROL-173 FIXED hsqldb migration script has syntax issues 
+   ROL-179 FIXED Main page not updating list of updated blogs 
+   ROL-183 FIXED Linkback extractor can't handle relative auto-discovery links 
+   ROL-120 FIXED encoding type wrong (freeroller) 
+   ROL-178 FIXED PageCache and RssCache filter timeouts cannot differ 
+   ROL-100 FIXED Resin specific install guide 
+   ROL-181 FIXED Ping weblogs.com when entry changed/entered 
+   ROL-185 FIXED Test page doesn't close JDBC connection 
+   ROL-215 FIXED Anchor links for Currency theme 
+   ROL-209 FIXED Blogger API error messages reversed 
+   ROL-184 FIXED SQL script improvements 
+   ROL-207 FIXED Main page list of popular blogs should be smaller 
+   ROL-205 FIXED dstest.jsp wont compile 
+   ROL-200 FIXED Context XML file for Tomcat 4.1.x 
+
+---------------------------------------------------------------------------------
+0.9.7.3: Bug fix release
+
+Fixes these bugs:
+
+   ROL-196 Blogger/MetaBlog API operations flush entire cache       
+   ROL-193 Trackback URL display should use absolute URL 
+   ROL-192 LinkbackExtract should mind absolute URL config 
+   
+---------------------------------------------------------------------------------
+0.9.7.2: Bug fix release
+
+Fixes these bugs:
+
+   ROL-179 Main page not updating list of updated blogs       
+   ROL-183 Linkback extractor can't handle relative 
+           auto-discovery links 
+   ROL-180 Use relative URLs in HTML, make RSS URLs configurable 
+   ROL-175 Most recent weblog entries on main page not refreshed 
+   ROL-178 PageCache and RssCache filter timeouts cannot differ 
+   ROL-188 Links to "Most recent weblog posts" are always http 
+           (roller running on https)
+           
+For the full details of bug fixes, see Roller's JIRA issue tracking system 
+at the URL below:
+
+   http://opensource.atlassian.com/projects/roller/
+
+---------------------------------------------------------------------------------
+0.9.7.1: Bug fix release
+
+Fixes these bugs:
+
+   ROL-155 referrer.refpermalink should be allowed to be null.       
+   ROL-167 JavaScript error on delete comments page 
+   ROL-157 Postgres SQL problems 
+   ROL-152 Delete comment page is blank 
+   ROL-166 Add missing <comments> element to RSS output 
+   ROL-161 Comments not always in proper chrono order 
+   ROL-153 Missing DBCP jars needed for Tomcat 4.0.X 
+   ROL-159 Newsfeed display macro(s) broken 
+   ROL-171 comments needs improvement, I get lots of double postings 
+   ROL-162 Comment formatting not preserved when HTML disabled 
+   ROL-156 Remove JSTL to please Resin 
+   ROL-169 Javier's Calendar style improvements 
+   ROL-163 #showRSSAutodiscoveryLink() is not XHTML compliant 
+   ROL-170 Support Mozilla 1.3 Midas Editor 
+   ROL-164 Upgrade to Velocity 1.3.1 
+   ROL-165 Upgrade to Hibernate 2.0 RC1 
+   ROL-154 Missing indices needed for MySQL 4.0 
+   
+For the full details of bug fixes, see Roller's JIRA issue tracking system 
+at the URL below:
+
+   http://opensource.atlassian.com/projects/roller/
+   
+---------------------------------------------------------------------------------
+0.9.7: Major new release
+
+Summary of new features:
+
+   Comments, Trackbacks, and Linkbacks
+   * Both in-page and pop-up style comments are supported
+   * Remember-me feature for comments
+   * You can delete comments that you don't like
+   * Support for Movable Type style Trackbacks
+   * Trackbacks are treated as comments
+   * You can send Trackback pings to other weblogs
+   * Support for Mark Pilgrim style "for further reading" Linkbacks
+   * Linkback searches referring sites and RSS feeds for excerpts
+   * Linkbacks can be disabled by Roller administrator
+   * New showDayReferrers() macros displays Linkbacks for day
+   
+   MetaWeblog API
+   * Support for both Blogger API and MetaWeblog API
+   * Allows both titles and categories from w.bloggar and other clients.
+
+   General
+   * Simplified main page is much faster than before
+   * Main page displays most recent posts and most popular blogs
+   * Main page RSS feed aggregates all posts on site   
+   * Remember-me feature for logins
+   * New VelociMacros are replacing old page macros
+   * One click to post as public or post as private 
+   * Spell checker for posts
+      
+For the full list of bug fixes, see Roller's JIRA issue tracking system 
+at the URL below:
+
+   http://opensource.atlassian.com/projects/roller/
+
+
+---------------------------------------------------------------------------------
+0.9.6: Administration enhancements, new features, bug fixes
+
+Summary of new features:
+
+   Multi-user features:
+   - Admin UI for deleting users
+   - Better start page: pages through users, shows time of last update
+   - Plugin authenticator for JavaLobby integration
+   - Allow users to change their email addresses and passwords
+   
+   Weblog authoring enhancements:
+   - Ekit HTML editor applet is available as an option to users
+   - Option to save weblog entries without publishing them
+   - Better control over weblog entry publish date
+   - Daily referrer and hit tracking
+   
+   New and improved macros:
+   - Protection from recursion in includePage and showWeblogEntries macros   
+   - Big archive calendar macro shows titles for each day
+   - Expand/collapse feature in Bookmark and Newsfeed macros
+   - Users can control number of weblog entries displayed
+   - New macros, including those necessary for RSS templating
+   
+   RSS related features:
+   - Built in support for RSS 2.0
+   - Multiple RSS feeds for each weblog, one for each category
+   - RSS feeds available with full-text or excerpts only
+   - RSS aggregation features may now be disabled
+   - RSS syndication output is now cached
+      
+For the full list of enhancements and bug fixes, see Roller's JIRA issue
+tracking system at the URL below:
+
+   http://opensource.atlassian.com/projects/roller/
+
+-----------------------------------------------------------------------------
+0.9.5: Enhancements, better database support, bug fixes (August 31, 2002)
+
+This new Roller release includes some enhancements to XHTML support, 
+bookmark management, database support for PostgreSQL and HSQL-DB, and 
+some bug fixes. Thanks to new Roller contributors Lance Lavandowska, 
+Matt Raible, Simon Stewart for their work on this release.
+
+    - Support for XHTML and CSS in generated weblog pages (Matt)
+    - Better Page URLs in the Navigation Bar Tag and PageServlet (Lance)
+    - Support for HSQL and PostgreSQL databases (Lance and Simon)
+    - Export feature for backing up website (Dave)
+    - Bookmark import by file-upload of OPML file (Dave)
+    - Multiple bookmark move and delete on edit-bookmark page (Dave)
+    - Some bug fixes
+
+-----------------------------------------------------------------------------
+0.9.4: Bug fixes (July 6, 2002)
+
+    Fixes for these bugs:
+
+        Bug #576004: Blogger API posts do not flush cache
+        Bug #576719: Calendar in Weblog:Edit page not working
+        Bug #576902: Error in web.xml, rollerdb datasource was omited
+        Bug #576157: RSS feed items are not ordered properly
+        Bug #576731: Database jars should go in common/lib
+
+
+-----------------------------------------------------------------------------
+0.9.3: New features, better configuration, and bug fixes (June 30, 2002)
+
+    - Blogger API Support: You can enable Blogger API and choose which 
+      the category for incoming Blogger API posts on the Website Settings page.
+      You can configure your Blogger API client by using the path 
+      /roller/xmlrpc and your Roller username and password. Blogger API 
+      support was contributed by Shawn Dahlen (dahlen at mitre.org)
+      
+    - Database configuration via JNDI DataSources: Roller now looks up 
+      datasources in JNDI (using java:comp/env/jdbc/rollerdb).
+       
+    - Database connection pooling: if you follow the instructions in the
+      Roller installation guide, Roller will use database connection pooling.
+        
+    - Results caching for weblog pages: Roller now uses OSCache for caching
+      all weblog pages. This results in a dramatic improvement in performance.
+
+    - Three new themes: Roller now includes three new themes, adapted from
+      free themes found on blogskins.com.
+
+    - Lots of bug fixes: too numerous to list.
+
+-----------------------------------------------------------------------------
+0.9.2: Minor bug fixes in user and newsfeed managers 
+
+-----------------------------------------------------------------------------
+0.9.1: Bug fix release April 29, 2002
+
+- BUG #542478 FIXED: Delete category broken
+  Now, if you try to delete a category that is in use you will get a 
+  warning. You will be asked if you would like to move the entries in 
+  that category to another category.
+
+- BUG #542479 FIXED: Delete folder broken
+  Now, if you try to delete a folder that has contents you will get a 
+  warning. You will be asked if you would like to move the contents of 
+  that folder to another folder.
+
+- Changed Castor JDO data member in RollerImpl to transient so that it
+  does not cause an error if the Roller session is serialized.
+
+- Introduced org.roller.business.castor.ManagerBase and made general
+  improvements in database connection usage.
+
+-----------------------------------------------------------------------------
+0.9.0: Initial public release April 6, 2002
+  

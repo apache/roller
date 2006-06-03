@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  #set($group = $planet.getGroup($groupHandle))
+  <title>$utilities.textToHTML($group.title,true)</title>
+  <link>$utilities.textToHTML(${planet.configuration.siteUrl})/${group.handle}.html</link>
+  <description>$utilities.textToHTML($group.description,true)</description>
+  <lastBuildDate>$utilities.formatRfc822Date($date)</lastBuildDate>
+  <generator>Roller Planet 1.1-dev</generator>
+  #set($entries = $planet.getAggregation($group, $group.maxFeedEntries))
+  #foreach( $entry in $entries )
+  <item>
+    #if($entry.title)<title>$utilities.textToHTML($entry.title,true)</title> #end
+    #if($entry.content)
+       <description>$utilities.textToHTML($entry.content,true)</description> #end
+    #if($entry.categories)
+        #foreach($cat in $entry.categories)
+     	   <category>$utilities.textToHTML($cat,true)</category>
+     	#end
+    #end
+    #if($entry.permalink)<link>$utilities.textToHTML($entry.permalink)</link> #end
+    <pubDate>$utilities.formatRfc822Date($entry.published)</pubDate>
+    #if($entry.author)
+       <dc:creator>$utilities.textToHTML($entry.author,true)</dc:creator>
+    #end
+  </item>
+  #end
+</channel>
+</rss>

@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        #showContentLanguage($locale.language)
+
+        <title>#showWebsiteTitle()</title>
+        <base href="$absBaseURL" />
+        <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
+        #showThemeStyle("sotto" "default.css" false)
+        #showRSSAutodiscoveryLink()
+    </head>
+<body>
+
+<div id="mainContainer">
+
+    <div id="pageBanner">
+        <h1><a href="$ctxPath/page/$website.handle">#showWebsiteTitle()</a></h1>
+    </div>
+    <div id="gutter">
+      <span id="gutterimage1">&nbsp;</span>
+      <span id="gutterimage2">&nbsp;</span>
+      <span id="gutterimage3">&nbsp;</span>
+      <span class="floatSpacer"></span>
+    </div>
+    <ul id="adminBar">
+      <li><a href="$ctxPath/page/$website.handle">Home</a></li>
+    ## showBasicNavBar was wrapped with a div, so I'm not using it
+    #if( $website )
+        #foreach( $iPage in $pages )
+            #set( $invisible = $iPage.Name.startsWith("_") )
+            ## Again, there is no "break" in Velocity
+            #if( !$invisible )
+                #set( $isSelected = false )
+                ##if( $page && $iPage.Id == $page.Id ) #set($isSelected = true) #end
+
+                ## hopefully there will be no spaces in link
+                <li>
+                #if( !$isSelected )
+                    <a href="$ctxPath/page/$website.handle/$iPage.Link">#end$iPage.Name#if( !$isSelected )</a>#end
+                </li>
+            #end
+        #end
+    #end
+
+    ## strutsUrlHelper( useIds, isAction, path, val1, val2)
+    #if( $req.getUserPrincipal() )
+        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "weblogCreate", "Weblog", "Edit") )
+        <li><a href="$editUrl">Edit Weblog</a></li>
+
+        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "editWebsite", "Website", "Settings") )
+        <li><a href="$editUrl">Settings</a></li>
+
+        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "logout-redirect", "null", "null") )
+        <li><a href="$editUrl">Logout</a></li>
+    #else
+        #set( $editUrl = $pageHelper.strutsUrlHelper(false, true, "login-redirect", "null", "null") )
+        <li><a href="$editUrl">Login</a></li>
+    #end
+    </ul>
+
+    <div id="midColumn">
+        <div class="standardSpacer">&nbsp;</div>
+        #showNextPreviousLinks()
+        #showWeblogEntries("_day" 15)
+    </div>
+
+    <div id="leftColumn">
+        <div class="standardSpacer">&nbsp;</div>
+
+        <div class="sidebarBox">
+            <form id="searchForm" method="get" action="$ctxPath/search/$website.handle"
+                onsubmit="return validateSearch(this)">
+                <div>
+                <label for="q" class="styled" accesskey="4">Search this site:</label>
+                <input type="text" id="q" name="q" size="20" class="styled"
+                    maxlength="255" value="#if($term)$term#end" />
+                <input class="styled" type="submit" value="Search" />
+                </div>
+            </form>
+            <script type="text/javascript">
+                function validateSearch(form) {
+                    if (form.q.value == "") {
+                        alert("Please enter a search term to continue.");
+                        form.q.focus();
+                        return false;
+                    }
+                    return true;
+                }
+            </script>
+        </div>
+
+        <div class="sidebarBox">
+            #showWeblogCalendar()
+        </div>
+
+        #if( $req.getUserPrincipal() )
+        <div class="sidebarBox">
+            <div class="links">
+                <div class="rFolder">Editor Menu</div>
+                #showEditorNavBar(true)
+            </div>
+        </div>
+        #end
+
+        <div class="sidebarBox">
+            <div class="links">
+                #showBlogroll()
+            </div>
+        </div>
+
+        <p class="sidebarBox">
+            <a title="RSS 1.0 Newsfeed" href="$ctxPath/rss/$website.handle">
+            <img class="noBorder" alt="[RSS Newsfeed]"
+                src="#showThemeImagePath("sotto" "valid-rss.png")" />
+            </a>
+        </p>
+
+        <p class="sidebarBox">
+            Valid
+            <a title="Valid XHTML?"
+                href="http://validator.w3.org/check?uri=$absBaseURL$ctxPath/page/$website.handle">XHTML</a>
+            or <a title="Valid CSS?"
+                href="http://jigsaw.w3.org/css-validator/validator?uri=$absBaseURL$ctxPath/page/$website.handle">CSS</a>?
+        </p>
+
+        <div class="sidebarBox">
+            <a title="This is a Roller site."
+                href="http://www.rollerweblogger.org"><img class="noBorder"
+                width="80" height="15" alt="[This is a Roller site]"
+                src="#showThemeImagePath("sotto" "roller-logo.gif")" /></a>
+        </div>
+        <div class="sidebarBox">
+            Theme by <a href="http://sotto.org">Rowell Sotto</a>.
+        </div>
+    </div>
+
+    <div style="clear:both">&nbsp;</div>
+
+    <div id="pageFooterBoundingBox"></div>
+</div>
+
+<div id="copyrightBoundingBox">
+  <a class="copyright"
+    href="mailto:$encodedEmail">&copy; $fullName</a>
+</div>
+
+</body>
+</html>

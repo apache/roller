@@ -1,0 +1,101 @@
+package <XDtPackage:packageName/>.wrapper;
+
+import <XDtClass:fullClassName/>;
+
+
+/**
+ * Generated wrapper for class: <XDtClass:fullClassName/>
+ */
+public class <XDtClass:className/>Wrapper {
+
+    // keep a reference to the wrapped pojo
+    private <XDtClass:className/> pojo = null;
+
+    // this is private so that we can force the use of the .wrap(pojo) method
+    private <XDtClass:className/>Wrapper(<XDtClass:className/> toWrap) {
+        this.pojo = toWrap;
+    }
+
+    // wrap the given pojo if it is not null
+    public static <XDtClass:className/>Wrapper wrap(<XDtClass:className/> toWrap) {
+        if(toWrap != null)
+            return new <XDtClass:className/>Wrapper(toWrap);
+
+        return null;
+    }
+
+<XDtMethod:forAllMethods superclasses="true">
+  <XDtMethod:ifHasMethodTag tagName="roller.wrapPojoMethod">
+    <XDtMethod:ifMethodTagValueEquals tagName="roller.wrapPojoMethod" paramName="type" value="pojo">
+
+    /**
+     * pojo method tagged with @roller.wrapPojoMethod type="pojo"
+     *
+     * This method returns another pojo so we need to wrap the returned pojo.
+     */
+    <XDtMethod:modifiers/> <XDtPackage:packageOf><XDtMethod:methodType/></XDtPackage:packageOf>.<XDtClass:classOf><XDtMethod:methodType/></XDtClass:classOf>Wrapper <XDtMethod:methodName/>(<XDtParameter:parameterList/>)
+        <XDtMethod:exceptionList/>
+    {
+        return <XDtPackage:packageOf><XDtMethod:methodType/></XDtPackage:packageOf>.<XDtClass:classOf><XDtMethod:methodType/></XDtClass:classOf>Wrapper.wrap(this.pojo.<XDtMethod:methodName/>(<XDtParameter:parameterList includeDefinition="false" />));
+    }
+
+    </XDtMethod:ifMethodTagValueEquals>
+
+    <XDtMethod:ifMethodTagValueEquals tagName="roller.wrapPojoMethod" paramName="type" value="pojo-collection">
+
+    /**
+     * pojo method tagged with @roller.wrapPojoMethod type="pojo-collection"
+     *
+     * This method returns a collection of pojos so we need to wrap
+     * each pojo that is part of the collection.
+     */
+    <XDtMethod:modifiers/> java.util.List <XDtMethod:methodName/>(<XDtParameter:parameterList/>)
+        <XDtMethod:exceptionList/>
+    {
+        <XDtMethod:methodType/> initialCollection = this.pojo.<XDtMethod:methodName/>(<XDtParameter:parameterList includeDefinition="false" />);
+
+        // iterate through and wrap
+        // we force the use of an ArrayList because it should be good enough to cover
+        // for any Collection type we encounter.
+        java.util.ArrayList wrappedCollection = new java.util.ArrayList(initialCollection.size());
+        java.util.Iterator it = initialCollection.iterator();
+        int i = 0;
+        while(it.hasNext()) {
+            wrappedCollection.add(i, <XDtPackage:packageOf><XDtMethod:methodTagValue tagName="roller.wrapPojoMethod" paramName="class"/></XDtPackage:packageOf>.<XDtClass:classOf><XDtMethod:methodTagValue tagName="roller.wrapPojoMethod" paramName="class"/></XDtClass:classOf>Wrapper.wrap((<XDtMethod:methodTagValue tagName="roller.wrapPojoMethod" paramName="class"/>) it.next()));
+            i++;
+        }
+
+        return wrappedCollection;
+    }
+
+    </XDtMethod:ifMethodTagValueEquals>
+
+    <XDtMethod:ifMethodTagValueEquals tagName="roller.wrapPojoMethod" paramName="type" value="simple">
+
+    /**
+     * pojo method tagged with @roller.wrapPojoMethod type="simple"
+     *
+     * Simply returns the same value that the pojo would have returned.
+     */
+    <XDtMethod:modifiers/> <XDtMethod:methodType/> <XDtMethod:methodName/>(<XDtParameter:parameterList/>)
+        <XDtMethod:exceptionList/>
+    {   
+        return this.pojo.<XDtMethod:methodName/>(<XDtParameter:parameterList includeDefinition="false" />);
+    }
+    </XDtMethod:ifMethodTagValueEquals>
+    
+  </XDtMethod:ifHasMethodTag>
+</XDtMethod:forAllMethods>
+
+
+    /**
+     * this is a special method to access the original pojo
+     * we don't really want to do this, but it's necessary
+     * because some parts of the rendering process still need the
+     * orginal pojo object
+     */
+    public <XDtClass:fullClassName/> getPojo() {
+        return this.pojo;
+    }
+
+}

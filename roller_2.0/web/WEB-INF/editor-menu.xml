@@ -1,0 +1,60 @@
+<!-- 
+Defines the Roller Weblog Editor/Admin UI menu and roles allowed to use each 
+menu. See also, admin-menu.xml, which defines the Global Admin menu.
+Each menu or menu item is governed by four attrbibutes:
+
+    1) roles: these are the global roles the are allowed to view item
+       - admin:  the Roller site-wide admin role
+       - editor: the normal Roller user role
+       Default is roles="admin,editor"
+       Use "any" to indicate that role is not required to view ite
+       
+    2) perms: these are the website specific permissions required to view item
+       - editor:  author and allowed to manage current website
+       - author:  allowed to edit any part of the current website, except users
+       - limited: allowed only to post drafts in current website
+       Default is perms="admin,author"
+       Use "any" to indicate that website perms are not required to view item
+       
+    3) enable property: if true, show this menu
+
+    4) disable property: if true, don't show this menu
+-->
+<menu-bar>
+    
+    <menu name="tabbedmenu.weblog" perms="admin,author,limited">
+        <menu-item forward="weblogCreate" name="tabbedmenu.weblog.newEntry" 
+                                          perms="admin,author,limited" />
+        <menu-item forward="weblogQuery"  name="tabbedmenu.weblog.archives" 
+                                          perms="admin,author,limited" />
+        <menu-item forward="categories"   name="tabbedmenu.weblog.categories" />
+        <menu-item forward="bookmarks"    name="tabbedmenu.bookmarks.allFolders" />
+        <menu-item forward="uploadFiles"  name="tabbedmenu.website.files" />
+        <menu-item forward="referers"     name="tabbedmenu.weblog.referers" />
+    </menu>
+
+    <menu name="tabbedmenu.website" perms="admin">
+        <menu-item forward="editWebsite"       name="tabbedmenu.website.settings" 
+                                               perms="admin" />
+        <menu-item forward="editTheme"         name="tabbedmenu.website.themes" 
+                                               perms="admin" />
+        <menu-item forward="editPages"         name="tabbedmenu.website.pages" 
+                                               perms="admin" />
+        <menu-item forward="memberPermissions" enabledProperty="groupblogging.enabled"
+                                               name="tabbedmenu.website.members" 
+                                               perms="admin" />
+        <menu-item forward="pingSetup"         name="tabbedmenu.weblog.pingSetup" 
+                                               disabledProperty="pings.disablePingUsage" 
+                                               perms="admin" />
+        <menu-item forward="customPingTargets" name="tabbedmenu.weblog.customPingTargets" 
+                                               disabledProperty="pings.disallowCustomTargets" 
+                                               perms="admin" />        
+        <menu-item forward="maintenance"       name="tabbedmenu.website.maintenance" 
+                                               perms="admin" />
+    </menu>
+
+</menu-bar>
+
+
+
+

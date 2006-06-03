@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+    <!ENTITY properties SYSTEM "properties.xmlf">
+]>
+<project name="planet-roller" default="release">
+	
+	<!-- Bring in properties.xml -->
+	&properties;
+	
+	<fileset id="roller-jars" dir="${rollerjars.dir}">
+        <include name="rollerbeans.jar"/>
+        <include name="rome-0.6.jar"/>
+        <include name="velocity-1.4.jar"/>
+        <include name="velocity-dep-1.4.jar"/>
+        <include name="jdom.jar"/>
+        <include name="dom4j-1.4.jar"/>
+        <include name="jaxen-full.jar"/>
+        <include name="commons-logging.jar"/>
+        <include name="commons-lang-2.0.jar"/>
+    </fileset>
+    <fileset id="planet-jars" dir="${planetjars.dir}">
+        <include name="commons-httpclient-2.0.2.jar"/>
+        <include name="rome-fetcher-0.6.jar"/>
+    </fileset>
+    <path id="planet.path">
+		<fileset refid="roller-jars" />
+		<fileset refid="planet-jars" />
+    </path>
+	
+    <target name="compile">
+	    <mkdir dir="./build/classes" />
+        <javac debug="on" destdir="./build/classes" 
+            excludes="**/hibernate/**,**/presentation/**" >
+            <src path="./src" />
+            <classpath>
+                <path location="../../build/compile_beans" />
+                <path refid="planet.path"/>
+            </classpath>
+        </javac>
+    	    <copy todir="./build/classes" file="./src/rome.properties" />
+    </target>
+
+    <target name="release" depends="compile">
+	    <mkdir dir="./build/planet-roller/testdata" />
+	    <mkdir dir="./build/planet-roller/templates" />
+	    <mkdir dir="./build/planet-roller/theme" />
+	    <mkdir dir="./build/planet-roller/lib" />
+	    <mkdir dir="./build/planet-roller/src" />
+    	
+    	    <!-- Include jars needed to build and run -->
+    	    <jar basedir="./build/classes" 
+    	    	    destfile="./build/planet-roller/lib/planet-roller-${planet.version}.jar" />
+    	    <copy todir="./build/planet-roller/lib">
+			<fileset refid="roller-jars" />
+			<fileset refid="planet-jars" />
+	    	</copy>
+
+    	    <!-- Include sample theme, template, and config files -->
+	    <copy todir="./build/planet-roller/templates">
+	    		<fileset dir="./templates" includes="*.vm" />
+	    	</copy>
+	    <copy todir="./build/planet-roller/testdata">
+	    		<fileset dir="./testdata" includes="**/dummy.txt" />
+	    	</copy>
+    	    <copy file="./planet-tool.sh" todir="./build/planet-roller" />
+	    <copy failonerror="false" file="./release-setenv.sh" 
+	    	    tofile="./build/planet-roller/setenv.sh" />
+	    <chmod file="./build/planet-roller/setenv.sh" perm="+x" />
+	    <chmod file="./build/planet-roller/planet-tool.sh" perm="+x" />
+	    <copy file="./planet-config.xml" todir="./build/planet-roller" />
+
+    	    <!-- Include source and build files -->
+    	    <copy todir="./build/planet-roller/src" >
+    	        <fileset dir="./src" />
+        </copy>
+	    <copy failonerror="false" file="./release-properties.xmlf" 
+	    	    tofile="./build/planet-roller/properties.xmlf" />
+	    <copy file="./build.xml" todir="./build/planet-roller" />
+
+    	    <!-- Package it up -->
+    	    <tar destfile="./build/planet-roller-${planet.version}.tar" 
+    	    	   basedir="./build" includes="planet-roller/**" />
+    	
+    </target>
+	
+	<target name="clean">
+	    <delete dir="./build" />
+	</target>
+
+</project>

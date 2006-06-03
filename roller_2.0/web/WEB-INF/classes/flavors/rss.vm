@@ -1,0 +1,37 @@
+$pageHelper.setContentType("application/rss+xml;charset=utf-8")<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  <title>$utilities.textToHTML($website.name,true)</title>
+  <link>$websiteURL</link>
+  <description>$utilities.textToHTML($website.description,true)</description>
+  <language>en-us</language>
+  <copyright>Copyright #formatDate("yyyy" $now)</copyright>
+  <lastBuildDate>$utilities.formatRfc822Date($updateTime)</lastBuildDate>
+  <generator>Roller Weblogger #showVersion() ($rollerBuildTime:$rollerBuildUser)</generator>
+  #set( $entries = $pageModel.getRecentWeblogEntriesArray($entryCount, 'nil') )
+  #foreach( $entry in $entries )
+  <item>
+    <title>$utilities.textToHTML($entry.title,true)</title>
+    #if( $entry.link && !$entry.link.trim().equals("") )
+    <source url="$utilities.textToHTML($entry.link)">$utilities.textToHTML($entry.link)</source>
+    #end
+    <description>#showEntryDescription($entry)</description>
+    <category>$utilities.textToHTML($entry.category.name,true)</category>
+    <link>$absBaseURL$entry.permaLink</link>
+    <guid isPermaLink="true">$absBaseURL$entry.permaLink</guid>
+    #if( $website.allowComments )
+    <comments>$absBaseURL$utilities.textToHTML($entry.commentsLink)</comments>
+    #end
+    <pubDate>$utilities.formatRfc822Date($entry.pubTime)</pubDate>
+    <dc:creator>$utilities.textToHTML($entry.creator.fullName,true)</dc:creator>
+    #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
+    #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
+    #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
+    #if( $mc_url && $mc_length && $mc_type )
+       <enclosure url="$mc_url" type="$mc_type" length="$mc_length" />
+       #set($mc_url = false) #set($mc_type = false) #set($mc_length = false)
+    #end
+  </item>
+  #end
+</channel>
+</rss>

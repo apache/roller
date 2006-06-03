@@ -1,0 +1,22 @@
+
+<div class="box">
+
+<h2 class="box">
+  #showDayPermalink( $day )
+  #showEntryDate( $day )
+</h2>   
+#foreach( $entry in $entries )
+  <a name="$utilities.encode($entry.anchor)" id="$utilities.encode($entry.anchor)"></a>
+  <b>$entry.title</b>
+    #showEntryText($entry)
+    $text.get("macro.weblog.postedby") $entry.creator.userName
+  <span class="dateStamp">(#showTimestamp($entry.pubTime))</span>
+  #showEntryPermalink( $entry )
+  #showCommentsPageLink( $entry )
+  <br/>
+  <br/>
+#end
+    
+#showLinkbacks( $day )
+
+</div>

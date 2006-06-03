@@ -1,0 +1,350 @@
+!!!The Roller Weblogger Installation Guide v0.9.7
+See also: UserGuide
+
+Orignal text is ''Copyright © 2002 David M Johnson''
+
+* Introduction
+** STEP 1: Prerequisites[1]
+** STEP 2: Unpack the downloaded ZIP or TAR file[2]
+** STEP 3: Create Roller tables in your database[3]
+** STEP 4: Download and install JDBC driver[4]
+** STEP 5: Configure Roller's Servlet Context[5]
+** STEP 6: Configure Roller before start-up[6]
+** STEP 7: Start Tomcat and Roller[7]
+* Appendix A: Building and deploying Roller from Source[8]
+* Appendix B: Changes for deploying Roller on Resin[9]
+
+
+
+\\
+\\
+!!!Introduction
+
+This document describes how to install the [Roller Weblogger|http://www.rollerweblogger.org] on the Tomcat Servlet Engine and assumes the following configuration.
+
+* Java 1.4.X SDK
+* Tomcat 4.X.Y Servlet Container
+* A MySQL 3.2.X, Postgres, or HSQL database
+* Windows XP or Redhat 7.X Linux
+
+If you have more recent versions of the above software, don't worry, Roller will probably work fine. If you have older versions of the above software, you may have problems. Roller will not work on Tomcat 3.X or versions of Java prior to 1.4.0.  Older versions of Windows/Linux and MySQL may work fine for Roller.
+
+You should be able to make Roller work on any Servlet API 2.3 compatible Servlet Container (e.g. Resin, OrionServer, WebSphere, WebLogic, ...) and any JDBC-accessible database (e.g. Oracle, Informix, ...), but this document does not tell you how specifically to do that. 
+
+
+
+\\
+\\
+!!!Overview
+
+Here is an overview of the steps involved in a Roller installation:
+
+#[1]__Prerequisites__. Before you get to Roller, make sure your Java SDK, Tomcat, and MySQL are correcly installed on your system.
+#[2]__Unpack the downloaded ZIP or TAR file__. In this step, you unpack the ZIP or TAR file that downloaded into your Servlet Container's web application deployment directory.
+#[3]__Create Roller tables in your database__. In this step you use an SQL script to create within your database the tables required to run Roller.
+#[4]__Configure Roller's Servlet Context__. Edit the Tomcat configuration file to add a Servlet Context to do Servlet Authentication against the Roller database, and configure a connection pooling datasouce for access via JNDI.
+#[5]__Make JDBC driver available to Tomcat__. To support Servlet Authentication that you configured in step 4, you must place your JDBC driver jar(s) in Tomcat's common/lib directory.
+#[6]__Configure Roller before start-up__. Review the Roller configuration settings in Roller's web.xml before you start Roller.
+#[7]__Start your Servlet Container and your database__. Start your Servlet Container, open your web browser, browse to the Roller start page and start using Roller.
+
+
+
+\\
+\\
+!!!STEP 1: Prerequisites [#1]
+
+Before you install the Roller software you need to make sure you have installed your Java SDK, your Tomcat Servlet Engine, and your MySQL database installed and configured on your system.
+
+As part of the Tomcat install, you should have set an environment variable called CATALINA_HOME as show in the example below. I'm telling you this now because later, in other examples in this guide we will refer to the CATALINA_HOME variable. 
+
+    UNIX (csh) example
+
+    {{{
+    % setenv CATALINA_HOME /opt/jakarta-tomcat-4.1.24
+    }}}
+
+    Windows example, from an MS-DOS or Command Prompt window:
+    
+    {{{
+    C> set CATALINA_HOME d:\jakarta-tomcat-4.1.24
+    }}}
+
+
+
+
+\\
+\\
+!!!STEP 2: Unpack the downloaded ZIP or TAR file [#2]
+
+In this step, you unpack the ZIP or TAR file that downloaded into your Servlet Container's web application deployment directory. Tomcat's deployment directory is located in the webapps directory of the Tomcat install directory. 
+
+    UNIX example
+
+    {{{
+    % cp roller.tgz $CATALINA_HOME/webapps
+    % cd $CATALINA_HOME/webapps
+    % tar xzvf roller.tgz
+    }}}
+
+    On Windows: Use WinZIP to extract roller.zip into %CATALINA_HOME%\webapps
+
+__NOTE:__ Currenty, Roller cannot be installed as a WAR file because Roller needs to write to a file in the Roller web application directory (WEB-INF/roller-config.xml). At some point in the future this will be fixed.
+
+
+
+
+\\
+\\
+!!!STEP 3: Create Roller tables in your database [#3]
+
+Now you need to create a new database, create a user with appropriate privileges, and use an SQL script to create the database tables required to run Roller. To do this, login to your database and run one of the Roller database creation scripts located in Roller's WEB-INF directory:
+
+    createdb-mysql.sql - creates tables for MySQL
+    createdb-hsql.sql - creates tables for HSQL-DB
+    createdb-postgres.sql - creates tables for Postgres
+
+The examples below show you how you might do this using MySQL, assuming your Roller user will have username roller and password tiger. For more information on MySQL, refer to the MySQL Reference Manual.
+
+    UNIX example
+
+    {{{
+    % cd $CATALINA_HOME/webapps/roller/WEB-INF
+    % mysql -u root -p
+    password: *****
+    mysql> create database roller;
+    mysql> grant all on roller.* to roller identified by 'tiger';
+    mysql> use roller;
+    mysql> source createdb-mysql.sql
+    mysql> quit
+    }}}
+
+    Windows example, from an MS-DOS or Command Prompt window:
+
+    {{{
+    C> cd %CATALINA_HOME%\webapps\roller\WEB-INF
+    C> mysql -u root -p
+    password: *****
+    mysql> create database roller;
+    mysql> grant all on roller.* to roller identified by 'tiger';
+    mysql> use roller;
+    mysql> source createdb-mysql.sql
+    mysql> quit
+    }}}
+
+__NOTES:__
+
+If you are upgrading from Roller 0.9.6 you can upgrade your database using one of the 096-to-097-micrgration.sql scripts. This is a risky operation so you should backup your database before you run the migration script. 
+
+
+
+
+\\
+\\
+!!!STEP 4: Download and install JDBC driver [#4]
+
+To support Servlet Authentication that you configured in step 4, you must place your JDBC driver jar(s) in Tomcat's common/lib directory. You can find the MySQL JDBC driver, known as __Connector/J__, on the [Connector/J page of the MySQL web site|http://www.mysql.com/products/connector-j/index.html]. Download the connector, unzip the files, and copy the JDBC driver jar to the Tomcat common/lib directory.
+
+UNIX example: unzip and untar the MySQL Connector/J download into a directory, cd to that directory and then copy to Tomcat common/lib
+
+    {{{
+    % cp mysql-connector-java-3.0.7-stable-bin.jar $CATALINA_HOME/common/lib
+    }}}
+
+Windows example, from an MS-DOS or Command Prompt window: unzip the MySQL Connector/J download into a directory, cd to that directory and then copy to Tomcat common/lib
+
+    {{{
+    C> copy mysql-connector-java-3.0.7-stable-bin.jar %CATALINA_HOME%\common\lib
+    }}}
+
+NOTE: Due to a [known bug|http://www.rollerweblogger.org/page/roller/20030525#heads_up_mysql_connector_j] in Connector/J v3.0.7, you should probably use one of the [v3.0 nightly builds|http://mmmysql.sourceforge.net/snapshots/stable/] instead of v3.0.7 - soon Connector/J v3.0.8 will appear and it will fix this problem.
+
+
+
+
+\\
+\\
+!!!STEP 5: Configure Roller's Servlet Context [#5]
+
+Edit the Tomcat Servlet engine's conf/server.xml configuration file to add a the Roller Servlet Context. This is where you configure the Servlet Authentication to use the Roller database tables and where you configure the Roller datasource. Look for the section of the server.xml file where Contexts are defined and assuming that you are using MySQL you should add the following. Make sure you replace roller/tiger with your MySQL username and password.
+
+{{{
+<Context path="/roller" docBase="roller" debug="0">
+
+<Realm className="org.apache.catalina.realm.JDBCRealm"      
+    driverName="com.mysql.jdbc.Driver" 
+    connectionURL=
+    "jdbc:mysql://mysql.kattare.com/roller?user=roller&amp;password=tiger&amp;autoReconnect=true" 
+    userTable="rolleruser" 
+    userNameCol="username" 
+    userCredCol="password" 
+    userRoleTable="role" 
+    roleNameCol="role" debug="0" />
+
+<Resource name="jdbc/rollerdb" auth="Container" type="javax.sql.DataSource" />
+
+<ResourceParams name="jdbc/rollerdb">
+    <parameter>
+       <name>factory</name>
+       <value>org.apache.commons.dbcp.BasicDataSourceFactory</value>
+    </parameter>
+    <parameter>
+       <name>driverClassName</name>
+       <value>com.mysql.jdbc.Driver</value>
+    </parameter>
+    <parameter>        
+       <name>url</name>
+       <value>jdbc:mysql://mysql.kattare.com/roller?user=roller&amp;password=tiger&amp;autoReconnect=true</value>
+    </parameter>
+    <parameter><name>maxActive</name>    <value>100</value></parameter>
+    <parameter><name>maxIdle</name>      <value>1000</value></parameter>
+    <parameter><name>maxWait</name>      <value>100</value></parameter>
+    <parameter><name>logAbandoned</name> <value>true</value></parameter>
+</ResourceParams>
+
+</Context>
+}}}
+
+__NOTES:__
+
+* The first part of the __<Context>__ configuration above sets up an Authentication __<Realm>__ for Tomcat. This allows Tomcat to check a user's login credentials (username and password) against a table in the Roller database. Here, we configure Tomcat to use the __rolleruser__ and __role__ tables in the Roller database. For more information on configuring this see the Tomcat docs for [JDBC Realm|http://jakarta.apache.org/tomcat/tomcat-4.1-doc/realm-howto.html#JDBCRealm].
+
+* The second part of the __<Context>__ configuration sets up the Roller DataSource as a __<Resource>__. Here you'll have to repeat some of the connection parameters that you entered in the __<Realm>__ setup.
+
+* The '&' character is used to identify entity references in XML, so you'll have to change the '&user=roller&password=password' to '&amp;amp;user=roller&amp;amp;password=password' in the connectionURL to avoid parsing exceptions while starting Tomcat.
+
+* If you are not using MySQL or if you are using the newer MySQL Connector/J JDBC driver, then you will have to substitute the appropriate JDBC connection parameters (driver class name and connection URL) for your database.
+
+* For more information on Tomcat's server.xml configuration file, refer to the [Tomcat Configuration Reference|http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/index.html].
+
+
+
+
+\\
+\\
+!!!STEP 6: Configure Roller before start-up [#6]
+
+!!Specify the Administrative user
+
+Before you start Roller, you need to specify the username of the user (or users) who will be the administrator of the Roller site. This administrator will be the only one who can access the Admin and Config pages in the Roller Editor UI. 
+
+Do this by editing the file roller/WEB-INF/roller-config.xml, an XML file. Look for the lines shown below and when you have found then, carefully change the string adminUser to the name of the username that you will use as your Roller administrator, or to a comma-sepatared list of users who will be your Roller administrators.
+
+    {{{
+    <adminUsers>
+        <adminUsers>adminUser</adminUsers>
+    </adminUsers>
+    }}}
+
+When you first start Roller, before doing anything else, create a new user with the name that you specified as the admin user.
+
+!!Tune the Page Cache settings
+
+Roller uses a technique called page caching to improve performance, reduce CPU usage, and reduce calls to the database. Page caching is implemented using an open source Java produce called OsCache. You can configure OsCache by editing the file roller/WEB-INF/classes/oscache.properties. For information on the settings in this file, please refer to the [OsCache website|http://www.opensymphony.com/oscache/]. The properties file that is included in Roller configures OsCache for memory caching with a maximum of 100 entries. If you have a high volume site, you may need to tune these settings, otherwise the defaults should be fine.
+
+If you'd like to use the Gzip filter and you are running Tomcat, you will need to use the alternate cache, CommonsPageCache.  You can make this change by uncommenting the "handler" init-parameters for PageCache in the web.xml file (change the /metadata/xdoclet/web-settings.xml if you are compiling for yourself).  Then you can uncomment the Gzip filters in web.xml (or in /metadata/xdoclet/filter-mappings.xml).  If you are using Resin, see [Appendix B|9].
+
+!!Set up the Logging Options
+
+Roller uses the open source Java Log4J logging package for logging. By default, Roller will place it's log file (roller.log) in the directory from which you started Roller, this file will not grow larger than 1MB in size, and when it does Log4J will start a new log file. Log4J will save the most recent two log files and delete older ones. You can configure all of these things by editing the Log4J configuration file at roller/WEB-INF/classes/log4j.properties.
+
+For example, if you want to place the Roller log file in the /var/logs directory, you would edit the  log4j.properties file and set the following property:
+
+   {{{
+   log4j.appender.R.File=/var/logs/roller.log
+   }}}
+
+
+
+
+\\
+\\
+!!!STEP 7: Start Tomcat and Roller [#7]
+
+Start your Servlet Container, open your web browser, browse to the Roller start page and start using Roller. If you are installing Roller on Tomcat then your Roller start page URL is probably [http://localhost:8080/roller].
+
+    UNIX example:
+
+    {{{
+    % cd $CATALINA_HOME/bin
+    % ./startup.sh}}}
+
+    Windows example, from an MS-DOS or Command Prompt window:
+
+    {{{
+    C> cd %CATALINA_HOME%\bin
+    C> startup
+    }}}
+
+You are done! Roller should be working perfectly now. If not, then please join consult with the experts on the [roller-user mailing list|http://sourceforge.net/mail/?group_id=47722]. Somebody has probably encountered the very same problems that you are encountering.
+
+
+
+
+\\
+\\
+!!!Appendix A: Building and deploying Roller from source [#8]
+
+Build and deploying Roller from source involves three simple steps: get the source, run the build script, follow the installation instructions above to deploy the results.
+
+!! Get the Roller source code
+
+If you want to build a stable released version of Roller then download the source files from SourceForge, both the source file and the tools file. The source file contains the source code for Roller. The tools file contains all of the 3rd party jars that are needed to build Roller. 
+
+On the other hand, if you want to build the latest, greatest, bleeding-edge, and possibly unstable version of Roller then get the sources from the SourceForge CVS repository. Refer to Roller's [SourceForge CVS page|http://sourceforge.net/cvs/?group_id=47722] for further instructions.
+
+!! Do a build 
+
+Once you have extracted the Roller source code into a directory on your system, then open up a command prompt and __cd__ to that directory. Build Roller by using either the UNIX or Windows version of the build script. This script sets up the right classpath and calls Roller's Ant build script __build.xml__.
+
+   On UNIX:
+
+   {{{
+   % build.sh all
+   }}}
+
+   On Windows:
+   {{{
+   C> build all
+   }}}
+
+This will build Roller and will stage the Roller web application into the __build/roller__ subdirectory.
+
+!! Deploy
+
+You can simply copy the build/roller to your tomcat/webapps directory and follow the installation instructions above (steps 3 through 7) to complete your deployment.
+
+If you have problems making a build then please join consult with the experts on the [roller-dev mailing list|http://sourceforge.net/mail/?group_id=47722]. Somebody has probably encountered the very same problems that you are encountering.
+
+
+
+
+\\
+\\
+!!! Appendix B: Deploying Roller on Resin [#9]
+
+!! resin.conf and roller.conf
+If you are already familiar with Resin's configuration files, you will know that you can split the configuration among more than one file.  Copy the example config file found at /personal/roller.conf into your ${resin.base}/conf directory, and add the following line in resin.conf's <host> declaration:
+
+    <resin:include href='roller.conf'/>
+
+__Note:__ Unless you're really a wiz with resin's configuration file, you'll definintely want to check the source out of CVS and include the aforementioned /person/roller.conf.
+
+Modify the roller.conf file, setting the correct <app-dir> and <resource-ref> values.
+
+!! Resin and Roller and Gzip Compression
+An issue was found with Tomcat and the CompressionFilter used in Roller, so the Filter was commented out as the default.  If you are using Resin, you can uncomment the filter-mappings for the CompressionFilter.  If you are recompiling Roller, look in /metadata/xdoclet/filter-mappings.xml.  If you want to modify the precompiled Roller, edit the /WEB-INF/web.xml directly.
+
+!! What version of Resin are you using?
+
+!Versions of Resin before 2.1.9 
+Versions of Resin before 2.1.9  have a problem with ServletFilters and the HttpServletResponseWrapper.  To get around this issue, you will need to recompile Roller after making a couple changes to the build.xml file.
+* Uncomment the "resinServer" property.
+* Uncomment the line that declares the "resin.path" property.
+* Inside the path declaration for base.path, uncomment the fileset for Resin, and correct the "dir" property as necessary (use relative pathing such as you see in the default setting).
+This will automatically perform all changes necessary to support Resin 2.1.8 and earlier.
+
+! Using Resin 2.1.9 (and later?)
+Because Resin 2.1.9 (and later) doesn't require the drastic changes above, the installation will miss one key strategic point: You will need to copy all XML related jars from Resin's /tools/lib directory, namely xercesImpl-2.3.0.jar and xmlParser-2.3.0.jar.  Or just uncomment the "resinServer" property and run the stage-web Ant task.
+
+! One last thing
+The latest version of Resin (2.1.9 as of this writing) has a conflict with the usage of the Jakarta Standard JSTL library.  Dave and Lance are currently in the process of straightening this out...  For now you will need to remove or comment the line <%@ taglib uri="core-stl"        prefix="c"%> from /theme/header.jsp.  __Update:__ Build 2.1.snap, as of May 5 2003, corrects this problem so you won't need to worry if you are using a version of Resin built after May 5 2003.

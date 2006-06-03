@@ -1,0 +1,9 @@
+
+<!-- Include hacked ROME jars needed for experimental Atom Protocol impl.
+<fileset dir="${basedir}/sandbox/atomprotocol/lib" includes="*.jar" />
+-->
+
+<!-- Custom jars to be added to both rollerbeans and rollerweb compiles -->
+<!-- <fileset dir="${basedir}/custom/lib" includes="*.java" />
+<fileset dir="${basedir}/sandbox/planetroller/web/WEB-INF/lib" includes="*.jar" />
+-->
