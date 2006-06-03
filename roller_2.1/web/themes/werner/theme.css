@@ -1,0 +1,317 @@
+#MainColumn {
+ margin-top: 5px;
+ margin-left: 60px;
+ margin-bottom: 5px;
+ margin-right: 240px;
+}
+
+#SideBar {
+ position:absolute;
+ top:0px;
+ right: 10px;
+ width:220px;
+}
+
+div.day {
+  border-style: dotted;
+  border-width: thin;
+  font-family: verdana, sans-serif;
+  font-size: small;
+  color: black;
+  color : #000000;
+}
+
+
+
+pre {
+  background:#FFFF77;
+}
+
+h1 {
+  color:#000000;
+}
+h2 {
+  font-family:verdana, arial, sans-serif;
+  color:#999;
+  font-size:9px;
+  font-weight:bold;
+  background:#eee;
+  line-height:14px;
+  padding:2px;
+  margin-top:10px;
+  border-bottom:1px dotted #666;
+  text-transform:uppercase;
+  letter-spacing: .2em;  					
+}
+
+h2.box {
+  font-family:verdana, arial, sans-serif;
+  color:#000;
+  font-size:11px;
+  font-weight:bold;
+  line-height:14px;
+  padding:2px;
+  margin-top:10px;
+  border-bottom:1px dotted #666;
+  border-top:1px dotted #666;
+  text-transform:uppercase;
+  letter-spacing: .2em;  					
+}
+
+p {
+  font-family: verdana, sans-serif;
+  font-size: small;
+  color: black;
+  color : #000000;
+}
+
+body {
+  font-family: verdana, sans-serif;
+  font-size: small;
+  color: black;
+  background-color: white;
+}
+a {
+  text-decoration: none;
+}
+a:link { 
+  color: blue;
+  font-weight: medium;
+}
+a:visited {
+  color: red;
+  font-weight: medium;
+}
+
+a:hover {
+  text-decoration:
+}
+img {
+  border: 0px;
+  margin: 0px; 
+}
+img.photo {
+   padding: 12px;
+}
+
+.dateStamp {
+  color : gray;
+  font-size: small;
+}
+.daypermalink {
+  border-style : none;
+}
+
+.rFolder {
+  font-size: medium;
+  font-weight: bolder;
+}
+.rBookmarkTd {
+  font-size: small;
+  vertical-align: top;
+  font-weight: normal;
+
+}
+.rBookmark {
+  margin-left: 10px;
+  font-size: small
+  font-weight: normal;
+}
+.rBookmark0 {
+  margin-left: 10px;
+  font-size: small
+  font-weight: normal;
+}
+.rBookmark1 {
+  margin-left: 10px;
+  font-size: small;
+  font-weight: bold;
+}
+.rBookmark2 {
+  margin-left: 10px;
+  font-weight: bold;
+  font-size: large
+}
+.rBookmark3 {
+  margin-left: 10px;
+  font-size: x-large
+}
+
+.hCalendarTable {
+  text-align : center;
+}
+.hCalendarTitle {
+  text-align : center;
+  font-weight : bolder;
+  font-size: large;
+}
+.hCalendarDayNameRow {
+  text-align : center;
+  font-weight : bolder;
+  font-size : x-small;
+}
+.hCalendarDay {
+  text-align : center;
+  font-size : x-small;
+}
+.hCalendarDayCurrent {
+  text-align : center;
+  font-size : x-small;
+  font-weight : bolder ;
+}
+.hCalendarDayLinked {
+  font-size : x-small;
+  font-weight : bolder ;
+  text-align : center;
+}
+.hCalendarDayNotInMonth {
+  font-size : x-small;
+  background-color: #eee;
+  color: gray;
+}
+.hCalendarNextPrev {
+  font-size : x-small;
+  text-align : center;
+  font-style : italic;
+}
+
+div.box {
+  margin: 5px 5px 5px 5px;
+  border: dashed 1px gray;
+  padding: 2px;
+}
+
+div.menubox {
+  margin: 5px 5px 5px 5px;
+  border: dashed 1px gray;
+  padding: 2px;
+  background-color:#eee;
+}
+
+div.namebox {
+  margin: 5px 5px 5px 5px;
+  border: dashed 1px gray;
+  padding: 2px;
+  font-weight:bold;
+  background:#66C;
+  color:yellow;
+}
+
+.rChosenCategory {
+    font-weight: bolder;
+}
+.rUnchosenCategory {
+    font-size: medium;
+}
+
+ul.rReferersList {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+  font-size : x-small;
+}
+li.rReferersListItem {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+
+  font-size : x-small;
+}
+    
+.hCalendarMonthYearRowBig {
+
+  font-size: x-large;
+  font-weight: bold;
+}
+
+.hCalendarTableBig {
+  width: 95%;
+  border: dashed 1px #aaaaaa;
+  text-align : center;
+  padding: 5px;
+}
+
+.hCalendarMonthYearRowBig {
+  color: white;
+  background-color : #9191cd;
+  border: dashed 1px #aaaaaa;
+  width: 12%;
+}
+
+.hCalendarDayNameRowBig {
+  border: dashed 1px #aaaaaa;
+  background-color: #ffffff;
+  margin: 2px;
+  width: 12%;
+  font-weight: bold;
+}
+
+.bCalendarDayContentBig {
+  font-size: x-small;
+  padding: 3px 0px 3px 0px;
+}
+
+.hCalendarDayTitleBig {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 25%;
+  padding: 3px 0 3px 0;
+  background: transparent;
+  color: #050505;
+  border-right: 1px solid #050505;
+  border-bottom: 1px solid #050505;
+  font-size: small;
+  text-align: center;
+
+  font-size: small;
+}
+
+.hCalendarDayBig {
+  vertical-align: top;
+  border: dashed 1px #aaaaaa;
+  background-color: #ffffff;
+  margin: 2px;
+  width: 12%;
+}
+
+TD.hCalendarDayCurrentBig {
+  vertical-align: top;
+  border: dashed 1px #aaaaaa;
+  background-color: #ffffff;
+  margin: 2px;
+  width: 12%;
+}
+
+TD.hCalendarDayLinkedBig {
+  vertical-align: top;
+  border-color: #8facc5; 
+  border-width: 1px; 
+  border-style: solid;  
+  background-color: #ffffff;
+  margin: 2px;
+  width: 12%;
+}
+
+TD.hCalendarDayNotInMonthBig {
+  vertical-align: top;
+  border: dashed 1px #aaaaaa;
+  background-color: #ffffff;
+  margin: 2px;
+  width: 12%;
+}
+
+.hCalendarDayNameRowBig {
+  border: dashed 1px #aaaaaa;
+  background-color: #ffffff;
+  margin: 2px;
+  width: 12%;
+  font-weight: bold;
+}
+
+.hCalendarNextPrevBig {
+  border: dashed 1px #aaaaaa;
+  background-color: #ffffff;
+  margin: 2px;
+  width: 12%;
+}

@@ -1,0 +1,43 @@
+
+Near the start of the bloggar\CMS\CMS.ini file, bump up the count by one.
+
+Like this:
+
+  [CMS]
+  Count=11
+
+Then add following to the end of the CMS.ini file. Change 'yourserver.com'
+to the address of your Roller server. If you want the icon to work then drop 
+rollerbadge.jpg in the same directory as CMS.ini.
+
+  [CMS-11]
+  Name=Roller
+  URL=http://www.rollerweblogger.org
+  Icon=rollerbadge.jpg
+  Service=0
+  Host=yourserver.com
+  Page=/roller/xmlrpc
+  Port=80
+  Https=0
+  MultiCateg=3
+  GetCategMethod=3
+  PostMethod=3
+  GetPostsMethod=3
+  TemplateMethod=1
+  
+If you are a FreeRoller user, then here are your settings:
+
+  [CMS-11]
+  Name=FreeRoller
+  URL=http://www.rollerweblogger.org
+  Icon=rollerbadge.jpg
+  Service=0
+  Host=freeroller.net
+  Page=/xmlrpc
+  Port=80
+  Https=0
+  MultiCateg=3
+  GetCategMethod=3
+  PostMethod=3
+  GetPostsMethod=3
+  TemplateMethod=1

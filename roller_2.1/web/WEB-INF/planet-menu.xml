@@ -1,0 +1,13 @@
+<!-- 
+Menu shown when planet enabled only.
+-->
+<menu-bar>
+    <menu name="tabbedmenu.planet.localEntries" 
+        forward="main" roles="any" perms="any"></menu>
+    <menu name="tabbedmenu.planet.planetEntries" 
+        forward="planet" roles="any" perms="any"></menu>
+</menu-bar>
+
+
+
+

@@ -1,0 +1,140 @@
+#**
+ * Website and page information and display.
+ * @author  Lance Lavandowska (conversion to Velocimacros)
+ *#
+
+#**
+ * Sets content type header for page, must be first line in template.
+**#
+#macro( setContentType $ctype )
+$pageHelper.setContentType($ctype)## comment here kills trailing whitespace
+#end
+
+#**
+ * Set the META tag for ContentType.  We do this in addition to
+ * setting the Response header because the header does not get
+ * cached.  So in order to maintain the ContentType we must present
+ * it inside the rendered page itself.
+**#
+#macro( showContentType $ctype )
+    <meta http-equiv="Content-Type" content="$ctype">
+#end
+
+#**
+ * Display website title.
+ *#
+#macro( showWebsiteTitle )$website.Name#end
+
+#**
+ * Display website description.
+ *#
+#macro( showWebsiteDescription )$website.Description#end
+
+#**
+ * Include a page and evaluate it as a template.
+ * @param pageName Name of page to be included.
+ *#
+#macro( includePage $pageName )
+    #set( $iPageId = false )## This is required for such constructs; see velocity docs and ROL-689
+    #set( $iPageId = $pageModel.getPageIdByName( $pageName ) )
+    #if ( !$iPageId ) ## no page found, parse pageName
+        #set( $iPageId = $pageName )
+    #end
+    #parse( $iPageId )
+#end
+
+#**
+ * Show name of current page.
+ *#
+#macro( showPageName )$page.Name#end
+
+#**
+ * Show current page's description.
+ *#
+#macro( showPageDescription )$page.Description#end
+
+#**
+ * Show current page's update time.
+ *#
+#macro( showPageUpdateTime )$page.UpdateTime#end
+
+#**
+ * Shows weblog category chooser with support for hierarhical categories.
+ * To style completely with CSS, set $divider to "" (empty string).
+ * @param parentCategory Name of top-level category to display.
+ * @param divider        The text to place between each category.
+ *#
+#macro( showWeblogSubcategoryChooser2 $parentCategory $divider )
+    #set( $rawUrl = "${ctxPath}/page/${website.handle}" )
+
+    <div class="rWeblogCategoryChooser">
+    #set( $weblogUrl = $rawUrl )
+    #set( $chosenCat = "" )
+    #if( $req.getParameter( $WEBLOGCATEGORYNAME_KEY ) )
+        #set( $chosenCat = $req.getParameter( $WEBLOGCATEGORYNAME_KEY ) )
+        <span class="rUnchosenCategory"><a href="$weblogUrl">$text.get( "macro.weblog.allcategories" )</a></span>
+    #else
+        <span class="rChosenCategory">$text.get( "macro.weblog.allcategories" )</span>
+    #end
+
+    #if ( $req.getParameter($PAGEID_KEY)  )
+        #set( $pageParam = "&$PAGEID_KEY=$req.getParameter($PAGEID_KEY)" )
+    #end
+    #set( $cats = $pageModel.getWeblogCategories($parentCategory) )
+    #foreach( $cat in $cats )
+        ## $pageHelper.strutsUrlHelper() wasn't working, so do it manually
+        #set( $catParam = "?$WEBLOGCATEGORYNAME_KEY=$utilities.encode($cat.path)" )
+        #set( $weblogUrl = "$rawUrl$catParam$!pageParam" )
+        $divider
+        #if( $chosenCat == $cat.path )
+            <span class="rChosenCategory">$cat.Name</span>
+        #else
+            <span class="rUnchosenCategory"><a href="$weblogUrl">$cat.Name</a></span>
+        #end
+    #end
+    </div>
+#end
+
+#**
+ * Shows weblog category chooser using "|" as divider.
+ * @param parentCategory Name of top-level category to display.
+ *#
+#macro( showWeblogSubcategoryChooser $parentCategory )
+    #showWeblogSubcategoryChooser2( $parentCategory "|" )
+#end
+
+#**
+ * Shows weblog category chooser for all categories using "|" as divider.
+ *#
+#macro( showWeblogCategoryChooser )#showWeblogSubcategoryChooser2("nil" "|")#end
+
+#**
+ * Display weblog calandar for one specific category.
+ * @param big            True to display a BIG calendar, good for an archive page.
+ * @param parentCategory Name of top-level category to display.
+ *#
+#macro( displayWeblogCalendar $big $cat)
+    $pageHelper.showWeblogCalendar( $big, $cat )
+#end
+
+#**
+ * Show weblog calandar.
+ *#
+#macro( showWeblogCalendar )
+    #displayWeblogCalendar( false 'nil' )
+#end
+
+#**
+ * Display a BIG weblog calendar, good for an archive page.
+ *#
+#macro( showBigWeblogCalendar )
+    #displayWeblogCalendar( true 'nil' )
+#end
+
+#**
+ * Show RSD (Really Simple Discovery) link for your weblog.
+ *#
+#macro( showRSDLink )
+    <link rel="EditURI" type="application/rsd+xml"
+        title="RSD" href="$absBaseURL/rsd/${website.handle}"/>
+#end

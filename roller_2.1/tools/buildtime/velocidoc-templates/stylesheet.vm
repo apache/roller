@@ -1,0 +1,48 @@
+/* Javadoc style sheet */
+
+/* Define colors, fonts and other style attributes here to override the defaults  */
+
+body {
+	background-color: white;
+	background-repeat: repeat-x;
+	background-position: bottom;
+	background-attachment: fixed;
+	color: #555;
+	font-family: 'Lucida Sans', 'Helvetica', 'Sans-serif', 'sans'; font-size: 8pt; line-height: 1.8em;
+	height: 99%;
+	padding: 0;
+	margin: 10px;
+}
+a:link
+{
+	color: #ad3537;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:visited
+{
+	color: #a03030;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+/* Table colors */
+.TableHeadingColor     { background: #c6ab74 } 
+.TableSubHeadingColor  { background: #c6ab74 } /* Light brown */
+.TableRowColor         { background: #FFFFFF } /* White */
+
+/* Font used in left-hand frame lists */
+td,p,.FrameTitleFont   { font-family: 'Lucida Sans', 'Helvetica', 'Sans-serif', 'sans'; font-size: 8pt; line-height: 1.8em; }
+.FrameHeadingFont { font-family: 'Lucida Sans', 'Helvetica', 'Sans-serif', 'sans'; font-size: 8pt; line-height: 1.8em; }
+.FrameItemFont    { font-family: 'Lucida Sans', 'Helvetica', 'Sans-serif', 'sans'; font-size: 8pt; line-height: 1.8em; }
+
+/* Navigation bar fonts and colors */
+.NavBarCell1    { background-color:#ddd;}/* Light mauve */
+.NavBarCell1Rev { background-color:#fff;}/* Dark Blue */
+.NavBarFont1    { font-family: 'Lucida Sans', 'Helvetica', 'Sans-serif', 'sans'; font-size: 8pt; line-height: 1.8em;}
+.NavBarFont1Rev { font-family: 'Lucida Sans', 'Helvetica', 'Sans-serif', 'sans'; font-size: 8pt; line-height: 1.8em;}
+
+.NavBarCell2    { font-family: 'Lucida Sans', 'Helvetica', 'Sans-serif', 'sans'; font-size: 8pt; line-height: 1.8em;}
+.NavBarCell3    { font-family: 'Lucida Sans', 'Helvetica', 'Sans-serif', 'sans'; font-size: 8pt; line-height: 1.8em;}
+

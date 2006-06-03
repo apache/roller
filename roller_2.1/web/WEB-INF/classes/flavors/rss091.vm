@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+$pageHelper.setContentType("text/xml;charset=utf-8")
+<rss version="0.91">
+    <channel>
+    <title>$utilities.textToHTML($website.name,true)</title>
+    <link>$websiteURL</link>
+    <description>$utilities.textToHTML($website.description,true)</description>
+    <language>en-us</language>
+    <copyright>Copyright #formatDate("yyyy" $now)</copyright>
+    <managingEditor>$emailAddress</managingEditor>
+    <webMaster>$emailAddress</webMaster>
+    #set( $entries = $pageModel.getRecentWeblogEntriesArray($entryCount, 'nil') )
+    #foreach( $entry in $entries )
+    <item>
+        <title>$utilities.textToHTML($entry.title,true)</title>
+        <link>$absBaseURL$entry.permaLink</link>
+        <description>#showEntryDescription($entry)</description>
+    </item>
+    #end
+    </channel>
+</rss>

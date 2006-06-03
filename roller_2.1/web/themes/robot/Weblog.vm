@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    #showContentLanguage($locale.language)
+    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
+    <link rel="stylesheet" type="text/css" href="#showThemePath("robot")/theme.css" />
+    <style type="text/css">#includePage("_css")</style>
+    #showRSSAutodiscoveryLink()
+    #showRSDLink()
+
+    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js">
+    </script>
+    <title>#showWebsiteTitle()</title>
+</head>
+
+<body>
+
+<div id="Header"><a href="http://bluerobot.com/" title="BlueRobot Home">BLUEROBOT.COM</a></div>
+
+<div id="Content">
+    <center>
+      <h1>#showWebsiteTitle()</h1>
+      <p class="descrip">#showWebsiteDescription()</p>
+      #showWeblogCategoryChooser()<br>
+    </center>
+    #showNextPreviousLinks()
+    #displayWeblogEntries()
+    <hr />
+    #showReferers( 40 25 )
+</div>
+
+<div id="Menu">
+    <h2>Calendar</h2>
+    #showWeblogCalendar()<br>
+    #showSearchForm()
+    <h2>RSS Feeds</h2>
+    #showRSSBadge()<br>
+    #showRSSLinks()
+    <h2>Links</h2>
+    #showBlogroll()
+    <h2>Navigation</h2>
+    #showBasicNavBar(true)<br>
+    #showEditorNavBar(true)<br>
+
+<!-- BlueRobot was here. -->
+
+</body>
+
+</html>

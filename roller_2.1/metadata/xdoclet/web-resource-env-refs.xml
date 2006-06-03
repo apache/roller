@@ -1,0 +1,14 @@
+<!-- Web app resource refs. -->
+    <resource-ref>
+            <res-ref-name>jdbc/rollerdb</res-ref-name>
+            <res-type>javax.sql.DataSource</res-type>
+            <res-auth>Container</res-auth>
+    </resource-ref>
+
+<!-- Uncomment this for email notification of comments
+    <resource-ref>
+        <res-ref-name>mail/Session</res-ref-name>
+        <res-type>javax.mail.Session</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+-->

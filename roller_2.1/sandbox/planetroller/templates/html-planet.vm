@@ -1,0 +1,82 @@
+<html>
+#set($group = $planet.getGroup($groupHandle))
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>$group.title</title>
+   <link rel="stylesheet" media="screen" type="text/css" href="planet-roller.css">
+</head>
+<body>
+
+<div id="banner">
+&nbsp;$group.title<br />
+</div>
+
+<div class="dateheading">
+</div>
+#set($entries = $planet.getAggregation($group, $group.maxPageEntries))
+#foreach($entry in $entries)
+<div class="entry"> 
+   <h2>
+       <a href="$entry.subscription.siteUrl" title="$entry.subscription.title">
+       #if ($entry.author) $entry.author
+       #else $utilities.truncateNicely($entry.subscription.title, 15, 20, "...")
+       #end
+       </a> - <a href="$entry.permalink">$entry.title</a>
+       <br /><span  style="font-size:small">$entry.getCategoriesAsString("|")</a>
+       <span class="techno">
+          <a href="http://www.technorati.com/cosmos/search.html?rak=&amp;sub=mtcosmos&amp;url=$entry.permalink">
+             <img class="button" src="cosmos.gif" alt="[Technorati links]" height="18" width="19">
+          </a>
+       </span>
+   </h2>
+   <div class="date">
+      <a href="$entry.permalink">$entry.published</a> 
+   </div>
+$entry.content
+</div>
+#end
+
+<br>
+
+<div id="sidebar">
+   <div id="about">
+   <h1>About</h1>
+   <p>
+      Planet Roller is an aggregation of public weblogs written by folks interested
+      in the <a href="http://rollerweblogger.org">Roller Weblogger.</a>.
+      The opinions expressed in those weblogs and hence
+      this aggregation are those of the original authors.
+   </p>
+   <p>
+      Planet Roller is powered by an experimental new proposed 
+      <a href="">Roller</a> feature called, drum role please... Planet Roller.
+   </p>
+   <p>
+	  Site design borrowed from David Edmonson's 
+	  <a href="http://planetsun.org">Planet Sun</a> design.
+   </p>
+   <p>
+      <a href="$planet.configuration.siteUrl/${groupHandle}.rss"><img class="button"
+         src="rss20.png" alt="[RSS 2.0 Feed]" height="15" width="80"></a>
+      <a href="$planet.configuration.siteUrl/${groupHandle}.opml"><img class="button"
+         src="opml.png" alt="[OPML Subscriptions]" height="15" width="80"></a>
+   </p>
+</div>
+
+<div id="freshness">
+   <p>Last updated: $utilities.formatRfc822Date($date)</p>
+</div>
+
+<div id="blogroll">
+   <h1>Subscriptions</h1>
+   <ul>
+   #foreach ($sub in $group.subscriptions)
+      <li><a href="$sub.siteUrl">$sub.title</a><a href="$sub.feedUrl">(feed)</a></li>
+   #end
+   </ul>
+</div>
+</div>
+
+</body>
+</html>
+

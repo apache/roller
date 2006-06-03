@@ -1,0 +1,14 @@
+#includePage("_header")
+
+<div id="MainColumn">
+   <div align="center">
+       <h2>#showWebsiteTitle()</h2>
+       #showWeblogCategoryChooser()
+   </div>
+    #showNextPreviousLinks()
+    #displayWeblogEntries()<br/>
+   #includePage("_badges")
+</div>
+
+#includePage("_sideColumn")
+#includePage("_footer")
