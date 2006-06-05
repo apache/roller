@@ -1,0 +1,56 @@
+#includePage("_header")
+#tabbedMenu("users")  
+#set($maxResults = 15)
+
+<div class="entriesBox">
+   <div class="entriesBoxInner">
+      <div class="entryBox">
+
+<h2 class="pageTitle">User directory</h2>
+
+
+#if($pageModel.getRequestParameter("userName"))
+    #set($userName = $pageModel.getRequestParameter("userName"))
+    <a href="?letter=$stringUtils.left($userName,1)">Back to user directory</a>
+    #set($user = $sitePageModel.getUser($userName))
+    #showUserProfile($user);
+#else 
+    #showUserDirectory()    
+#end
+
+      </div>
+   </div>
+</div>
+
+
+    <br />
+
+    </div>
+
+    <div id="rightcontent">
+
+<div class="sidebarfade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+            <div class="sidebarBody">
+
+             <h3>Newest users</h3>
+             <hr size="1" noshade="noshade" />	
+             #set($newusers = $sitePageModel.getUsers(30, 0, 20))
+             <ul>
+             #foreach($user in $newusers)
+                <li>$user.fullName (<a href="?userName=$user.userName" title="$user.dateCreated">$user.userName</a>)</li>
+             #end
+             </ul>		
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

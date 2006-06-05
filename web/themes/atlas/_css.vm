@@ -1,0 +1,113 @@
+.comments-head	{ 
+  font-size: medium;
+  font-weight : bolder;
+  text-transform : uppercase;
+  letter-spacing : 0.3em;
+  margin-top: 20px;
+  border-bottom: 1px grey solid;
+}
+
+.comment-details {
+  font-size : x-small;
+  border-bottom: dashed 1px gray;
+  margin-bottom: 20px;
+}	
+
+.menuItemTable {
+    width: 100%;
+    height: 2px;
+    padding: 0px 0px 0px 10px;
+}
+#centercontent_wrap {
+    width: 70%;
+}
+#rightcontent_wrap {
+    width: 29%;
+}
+div.menu-tl {
+    margin: 0px; 
+    padding: 0px; 
+    height: 100%;
+    width: 100%;
+    background: url("$baseURL/themes/roller2/images/menutab-tl.gif") no-repeat top left;   
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    display: table;
+}
+
+div.menu-tr {
+    margin: 0px; 
+    padding: 0px; 
+    height: 100%;
+    width: 100%;
+    background: url("$baseURL/themes/roller2/images/menutab-tr.gif") no-repeat top right;    
+    background-repeat: no-repeat;
+}
+
+td div.menu-tr div.menu-tl a {
+   display: table-cell;
+   vertical-align: middle;
+   padding: 3px 5px 0px 5px;
+}
+
+.menuTabTable {
+    height: 25px;
+    _height: 21px; /* for IE */
+    margin: 0px; 
+    padding: 0px; 
+}
+td.menuTabSeparator {
+    width: 4px;
+}  
+td.menuTabSelected {
+    margin: 0px; 
+    padding: 0px; 
+    font-weight: bold;
+    vertical-align: top;
+}
+td.menuTabUnselected {
+    margin: 0px; 
+    padding: 0px; 
+    vertical-align: top;
+}
+div.entryBox {
+    padding:10px;
+}
+.entryDetails {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    text-decoration: none;
+}
+.entry {
+   font-family: Arial, Helvetica, sans-serif;
+   border-bottom-width: thin;
+   border-bottom-style: solid;
+   border-bottom-color: #999999;
+   font-weight: normal;
+   padding: 3px 3px 3px 0px;
+   color: #666666;
+} 
+.entryDescription {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration: none;
+	color: #000000;
+        line-height: 13px;
+}
+
+table.directory {
+    width:100%;
+}
+table.directory td, table.directory td {
+    text-align: left;
+    border: 1px solid grey;
+}
+
+.sidebarBody li {
+    font-size: 11px;
+}
+.sidebarBody ul {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}

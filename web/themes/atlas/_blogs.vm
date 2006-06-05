@@ -1,0 +1,46 @@
+#includePage("_header")
+#tabbedMenu("blogs")
+#set($maxResults = 15)
+
+<div class="entriesBox">
+    <div class="entriesBoxInner">  
+        <div class="entryBox">
+        <h2 class="pageTitle">Blog directory</h2>
+        #if($pageModel.getRequestParameter("weblog"))
+            #set($handle = $pageModel.getRequestParameter("weblog"))
+            <a href="?letter=$stringUtils.left($handle,1)">Back to blog directory</a>
+            #set($weblog = $sitePageModel.getWeblog($handle))
+            #showWeblogProfile($weblog)
+        #else 
+            #showWeblogDirectory()    
+        #end
+        </div>
+    </div>
+</div>
+
+<br />
+<div id="rightcontent">
+<div class="sidebarfade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+            <div class="sidebarBody">
+
+             <h3>Newest blogs</h3>
+             <hr size="1" noshade="noshade" />	
+
+             #set($newblogs = $sitePageModel.getWeblogs(30, 0, 20))
+             <ul>
+             #foreach($blog in $newblogs)
+                <li>$blog.name (<a href="?weblog=$blog.handle" title="$blog.dateCreated">$blog.handle</a>)</li>
+             #end
+             </ul>	
+
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+</body>
+</html>
