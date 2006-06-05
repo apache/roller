@@ -14,43 +14,36 @@
     #end
     
     #set($entries = $sitePageModel.getWeblogEntries('nil', 'nil', 'nil', 30, $offset, $maxResults))
-    #showEntriesPager($entries)
+    #showEntriesPager($entries $maxResults)
 
       </div>
    </div>
 </div>
+<br />
+</div>
 
-    <br />
+<div id="rightcontent">
+    <div class="sidebarfade">
+        <div class="menu-tr">
+            <div class="menu-tl">
+                <div class="sidebarBody">
 
-    </div>
-
-    <div id="rightcontent">
-
-<div class="sidebarfade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            <div class="sidebarBody">
-
-             <h3>Hot blogs (today's hits)</h3>
-             <hr size="1" noshade="noshade" />
-
-
-#set($hotblogs = $sitePageModel.getHotWeblogs(7, 0, 20))
-<ul>
-#foreach($blog in $hotblogs)
-    <li>$blog.subjectNameShort | $blog.count</li>
-#end
-</ul>   
-             <br />		
+                    <h3>Hot blogs (today's hits)</h3>
+                    <hr size="1" noshade="noshade" />
+                    #set($hotblogs = $sitePageModel.getHotWeblogs(7, 0, 20))
+                    <ul>
+                        #foreach($blog in $hotblogs)
+                        <li>$blog.subjectNameShort | $blog.count</li>
+                        #end
+                    </ul>   
+                   <br />
+		
             </div>
         </div>
     </div>
 </div>
 
 </div>
-
 </div>
-
 </body>
-
 </html>
