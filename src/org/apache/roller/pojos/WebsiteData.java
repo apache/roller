@@ -685,6 +685,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     /**
      * @ejb:persistent-field
      * @hibernate.property column="datecreated" non-null="true" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public Date getDateCreated() {
         if (dateCreated == null) {

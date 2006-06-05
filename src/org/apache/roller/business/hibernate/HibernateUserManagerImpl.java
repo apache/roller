@@ -448,7 +448,8 @@ public class HibernateUserManagerImpl implements UserManager {
      * Get websites of a user
      */
     public List getWebsites(
-        UserData user, Boolean enabled, Boolean active, Date startDate, Date endDate, int offset, int length)  
+        UserData user, Boolean enabled, Boolean active, 
+        Date startDate, Date endDate, int offset, int length)  
         throws RollerException {
         // TODO: ATLAS getWebsites DONE TESTED
         if (endDate == null) endDate = new Date();
@@ -565,6 +566,7 @@ public class HibernateUserManagerImpl implements UserManager {
             if (length != Integer.MAX_VALUE) {
                 criteria.setMaxResults(length);
             }
+            criteria.addOrder(Order.desc("dateCreated"));
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -894,7 +896,7 @@ public class HibernateUserManagerImpl implements UserManager {
             Session session = 
                 ((HibernatePersistenceStrategy)strategy).getSession();            
             StringBuffer sb = new StringBuffer();
-            sb.append("select count(distinct c), c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description ");
+            sb.append("select count(distinct c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name ");
             sb.append("from CommentData c where c.weblogEntry.pubTime < :endDate ");
             if (startDate != null) {
                 sb.append("and c.weblogEntry.pubTime > :startDate ");

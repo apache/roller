@@ -65,6 +65,7 @@ public class PermissionsData extends PersistentObject
     }
     /** 
      * @hibernate.many-to-one column="website_id" cascade="none" not-null="false"
+     * @roller.wrapPojoMethod type="pojo"
      */
     public WebsiteData getWebsite() 
     {
@@ -76,6 +77,7 @@ public class PermissionsData extends PersistentObject
     }
     /** 
      * @hibernate.many-to-one column="user_id" cascade="none" not-null="false"
+     * @roller.wrapPojoMethod type="pojo"
      */
     public UserData getUser() 
     {
@@ -104,6 +106,7 @@ public class PermissionsData extends PersistentObject
      * And false if user is member of website.
      * @ejb:persistent-field
      * @hibernate.property column="pending" non-null="true" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public boolean isPending() 
     {

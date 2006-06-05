@@ -32,10 +32,12 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
+import org.apache.roller.pojos.wrapper.PermissionsDataWrapper;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
@@ -68,6 +70,46 @@ public class SitePageModel {
             for (Iterator it = weblogs.iterator(); it.hasNext();) {
                 WebsiteData website = (WebsiteData) it.next();
                 results.add(WebsiteDataWrapper.wrap(website));
+            }
+        } catch (Exception e) {
+            log.error("ERROR: fetching weblog list", e);
+        }
+        return results;
+    }
+    
+    /** 
+     * Return list of weblogs that user belongs to.
+     */
+    public List getUsersWeblogs(String userName) {
+        List results = new ArrayList();
+        try {            
+            Roller roller = RollerFactory.getRoller();
+            UserManager umgr = roller.getUserManager();
+            UserData user = umgr.getUserByUserName(userName);
+            List perms = umgr.getAllPermissions(user);
+            for (Iterator it = perms.iterator(); it.hasNext();) {
+                PermissionsData perm = (PermissionsData) it.next();
+                results.add(PermissionsDataWrapper.wrap(perm));
+            }
+        } catch (Exception e) {
+            log.error("ERROR: fetching weblog list", e);
+        }
+        return results;
+    }
+    
+    /** 
+     * Return list of users that belong to website.
+     */
+    public List getWeblogsUsers(String handle) {
+        List results = new ArrayList();
+        try {            
+            Roller roller = RollerFactory.getRoller();
+            UserManager umgr = roller.getUserManager();
+            WebsiteData website = umgr.getWebsiteByHandle(handle);
+            List perms = umgr.getAllPermissions(website);
+            for (Iterator it = perms.iterator(); it.hasNext();) {
+                PermissionsData perm = (PermissionsData) it.next();
+                results.add(PermissionsDataWrapper.wrap(perm));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
