@@ -26,7 +26,7 @@
     <div id="banner">
         <div class="bannerBox">
            <img class="bannerlogo" 
-              src='#showThemePath("roller2")/tan/logo.gif' />
+              src='#showThemePath("atlas")/tan/logo.gif' />
         </div>
         <div class="bannerStatusBox">
            <div class="bannerLeft">          
