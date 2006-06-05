@@ -1,0 +1,42 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+#includePage("_macros")
+<head>
+  <title>#showWebsiteTitle()</title>
+  <link rel="stylesheet" type="text/css" 
+     href="#showThemePath("atlas")/roller.css" />
+  <link rel="stylesheet" type="text/css" 
+     href="#showThemePath("atlas")/layout.css" />
+  <link rel="stylesheet" type="text/css" 
+     href="#showThemePath("atlas")/menu.css" /> 
+  <link rel="stylesheet" type="text/css" 
+     href="#showThemePath("atlas")/tan/colors.css" />
+
+  <style type="text/css">
+  #includePage("_css")
+  </style>
+
+</head>
+<body class="view" bgcolor="#FFFFFF">
+
+<div id="wrapper">
+
+    <div id="banner">
+        <div class="bannerBox">
+           <img class="bannerlogo" 
+              src='#showThemePath("roller2")/tan/logo.gif' />
+        </div>
+        <div class="bannerStatusBox">
+           <div class="bannerLeft">          
+           </div>
+           <div class="bannerRight">
+           </div>
+        </div>
+    </div>
+
+    <div id="leftcontent">
+    </div>
+
+    <div id="centercontent">

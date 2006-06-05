@@ -1,0 +1,53 @@
+#includePage("_header")
+#tabbedMenu("planet")
+#set($maxResults = 7)
+
+<div class="entriesBox">
+   <div class="entriesBoxInner">
+      <div class="entryBox">
+
+    <h2 class="pageTitle">Most recent posts on and off site</h2>
+
+    #if($pageModel.getRequestParameter("offset"))
+        #set($offset = $pageModel.getIntRequestParameter("offset"))
+    #else
+        #set($offset = 0)
+    #end
+    
+    #set($entries = $planetPageModel.getAggregation(30, $offset, $maxResults))
+    #showEntriesPager($entries $maxResults)
+
+      </div>
+   </div>
+</div>
+
+<br />
+
+<div id="rightcontent">
+<div class="sidebarfade">
+    <div class="menu-tr">
+        <div class="menu-tl">
+            <div class="sidebarBody">
+
+             <h3>Ranked blogs</h3>
+             <hr size="1" noshade="noshade" />	
+
+    #set($subs = $planetPageModel.getRankedSubscriptions(30, 0, 20))
+    <ul>
+    #foreach($sub in $subs)
+        <li><a href="$sub.siteUrl">$sub.title</a> | $sub.inboundlinks</li>
+    #end
+    </ul>
+          
+             <br />		
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+
+</body>
+
+</html>

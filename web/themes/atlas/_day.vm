@@ -1,0 +1,8 @@
+#foreach( $entry in $entries )
+
+<div class="entryBox">
+   <h3>$entry.formatPubTime("MMM d, yyyy"): <b>$entry.title</b></h3>
+   #showEntryText( $entry )
+</div>
+
+#end
