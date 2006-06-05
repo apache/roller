@@ -13,7 +13,7 @@
     #set($userName = $pageModel.getRequestParameter("userName"))
     <a href="?letter=$stringUtils.left($userName,1)">Back to user directory</a>
     #set($user = $sitePageModel.getUser($userName))
-    #showUserProfile($user);
+    #showUserProfile($user)
 #else 
     #showUserDirectory()    
 #end
