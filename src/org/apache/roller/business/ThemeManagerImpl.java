@@ -281,13 +281,19 @@ public class ThemeManagerImpl implements ThemeManager {
                 continue;
             }
 
+            // Strip "_" from to form link
+            String template_link = template_name;
+            if (template_name.startsWith("_") && template_name.length() > 1) {
+                template_link = template_link.substring(1);
+            }
+            
             // construct ThemeTemplate representing this file
             theme_template = new ThemeTemplate(
                     theme_name+":"+template_name,
                     template_name,
                     template_name,
                     new String(chars),
-                    template_name,
+                    template_link,
                     new Date(template_file.lastModified()));
 
             // add it to the theme
