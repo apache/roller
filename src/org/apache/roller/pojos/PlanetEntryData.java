@@ -51,7 +51,7 @@ import org.apache.roller.model.RollerFactory;
  * @hibernate.class lazy="false" table="rag_entry"
  */
 public class PlanetEntryData extends PersistentObject
-        implements WeblogEntry, Serializable, Comparable {
+        implements Serializable, Comparable {
     protected String    id;
     protected String    handle;
     protected String    title;

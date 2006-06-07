@@ -1068,7 +1068,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                     (String)row[2], 
                     (String)row[3], 
                     "statCount.weblogEntryCommentCountType", 
-                    new Long((Integer)row[0]).longValue()));
+                    new Long(((Integer)row[0]).intValue()).longValue()));
             }
             return results;
         } catch (Throwable pe) {

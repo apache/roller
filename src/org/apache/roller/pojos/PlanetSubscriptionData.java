@@ -27,7 +27,7 @@ import java.util.List;
  * @hibernate.class lazy="false" table="rag_subscription"
  */
 public class PlanetSubscriptionData extends PersistentObject 
-    implements WeblogEntry.Website, Serializable, Comparable
+    implements Serializable, Comparable
 {
     /** Database ID */
     protected String id;

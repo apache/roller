@@ -18,6 +18,7 @@
 
 package org.apache.roller.pojos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -43,7 +44,7 @@ import org.apache.roller.util.Utilities;
  */
 public class UserData
         extends org.apache.roller.pojos.PersistentObject
-        implements WeblogEntry.User, java.io.Serializable {
+        implements Serializable {
     public static final UserData SYSTEM_USER = new UserData(
             "n/a","systemuser","n/a","systemuser","n/a",
             "en_US_WIN", "America/Los_Angeles", new Date(), Boolean.TRUE);
