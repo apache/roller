@@ -37,10 +37,10 @@ request.setAttribute("logourl", logourl);
 <div id="logo">
     <!-- Transparent PNG fix for IE, thanks to Kenneth M. Kolano -->
     <div id="logoshadow" 
-        style="_background-image:none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<c:out value='${model.baseURL}' />/theme/logo-shadow.png',sizingMethod='crop');">
+        style="_background-image:none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<c:out value='${model.baseURL}' />/roller-ui/images/logo-shadow.png',sizingMethod='crop');">
         <div id="logobackground">
             <a href='<c:out value="${model.baseURL}" />/main.do' id="logoimage" 
-                style="_background-image:none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<c:out value='${model.baseURL}' />/theme/transparent-logo.png', sizingMethod='crop');">
+                style="_background-image:none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<c:out value='${model.baseURL}' />/roller-ui/images/transparent-logo.png', sizingMethod='crop');">
             </a>
         </div>
     </div>

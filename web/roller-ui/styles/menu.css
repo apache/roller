@@ -32,7 +32,7 @@ div.menu-tl {
     padding: 0px; 
     height: 100%;
     width: 100%;
-    background: url("images/menutab-tl.gif") no-repeat top left;   
+    background: url("../images/menutab-tl.gif") no-repeat top left;   
     background-repeat: no-repeat;
     vertical-align: middle;
     display: table;
@@ -42,7 +42,7 @@ div.menu-tr {
     padding: 0px; 
     height: 100%;
     width: 100%;
-    background: url("images/menutab-tr.gif") no-repeat top right;    
+    background: url("../images/menutab-tr.gif") no-repeat top right;    
     background-repeat: no-repeat;
 }
 

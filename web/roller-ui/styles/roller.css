@@ -114,7 +114,7 @@ Page element styles: boxes and borders, etc.
 }
 .sidebarBody li {
    list-style-position: inside;
-   list-style-image: url(images/dash.gif);
+   list-style-image: url(../images/dash.gif);
    margin-left: 0em;
    padding-left: 0.5em;  
    padding-top: 3px;
@@ -610,7 +610,7 @@ div.helptext {
     width: 165px;
     height: 50px;
     _background: transparent !important;
-    background-image: url(logo-shadow.png); 
+    background-image: url(../images/logo-shadow.png); 
 }
 #logobackground {
     width: 159px;
@@ -621,7 +621,7 @@ div.helptext {
     height: 44px;
     display: block;
     cursor: pointer; /* Make IE show correct cursor for link */
-    background-image: url(transparent-logo.png);
+    background-image: url(../images/transparent-logo.png);
 }
 
 /* main menu page */

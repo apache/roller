@@ -23,7 +23,7 @@ function cancel() {
     document.inviteMemberForm.method.value="cancel"; 
     document.inviteMemberForm.submit();
 }
-<%@ include file="/theme/scripts/ajax-user.js" %>
+<%@ include file="/roller-ui/scripts/ajax-user.js" %>
 // -->
 </script> 
 
