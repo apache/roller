@@ -22,7 +22,7 @@ function cancel() {
     document.userAdminForm.method.value="cancel"; 
     document.userAdminForm.submit();
 }
-<%@ include file="/theme/scripts/ajax-user.js" %>
+<%@ include file="/roller-ui/scripts/ajax-user.js" %>
 // -->
 </script> 
 

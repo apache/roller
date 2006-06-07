@@ -5,13 +5,13 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <%@ include file="/taglibs.jsp" %>
 
 <link rel="stylesheet" type="text/css" media="all" 
-    href="<%= request.getContextPath() %>/theme/layout.css" />
+    href='<c:url value="/roller-ui/styles/layout.css"/>'>
 <link rel="stylesheet" type="text/css" media="all" 
-    href="<%= request.getContextPath() %>/theme/roller.css" />   
+    href='<c:url value="/roller-ui/styles/roller.css"/>'>   
 <link rel="stylesheet" type="text/css" media="all" 
-    href="<%= request.getContextPath() %>/theme/menu.css" />
+    href='<c:url value="/roller-ui/styles/menu.css"/>'>
 <link rel="stylesheet" type="text/css" media="all" 
-    href="<%= request.getContextPath() %>/theme/calendar.css" />
+    href='<c:url value="/roller-ui/styles/calendar.css"/>'>
       
 <%
 //String theme = theme = RollerConfig.getProperty("editor.theme");
@@ -32,9 +32,9 @@ if (session !=null) session.setAttribute("look", theme);
 <script type="text/javascript" 
     src="<%= request.getContextPath() %>/theme/scripts/roller.js"></script>   
 <script type="text/javascript" 
-    src="<%= request.getContextPath() %>/roller-ui/scripts/calendar.js"></script>
+    src='<c:url value="/roller-ui/scripts/calendar.js"/>'></script>
 <script type="text/javascript" 
-    src="<%= request.getContextPath() %>/theme/scripts/overlib.js">
+    src='<c:url value="/roller-ui/scripts/overlib.js"/>'>
     <!-- overLIB (c) Erik Bosrup -->
 </script>  
 
