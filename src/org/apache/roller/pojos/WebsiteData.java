@@ -18,6 +18,7 @@
 
 package org.apache.roller.pojos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ import org.apache.roller.model.UserManager;
  * @hibernate.cache usage="read-write"
  */
 public class WebsiteData extends org.apache.roller.pojos.PersistentObject
-        implements WeblogEntry.Website, java.io.Serializable {
+        implements Serializable {
     public static final long serialVersionUID = 206437645033737127L;
     
     private static Log mLogger = LogFactory.getLog(WebsiteData.class);

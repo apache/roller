@@ -303,7 +303,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
                     websiteHandle,
                     websiteName,
                     "statCount.weblogDayHits",
-                    (long)hits));              
+                    hits.longValue()));              
             }
             return result;
             

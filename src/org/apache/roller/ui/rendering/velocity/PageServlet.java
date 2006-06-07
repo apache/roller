@@ -60,8 +60,7 @@ import org.apache.velocity.exception.ParseErrorException;
 public class PageServlet extends VelocityServlet {
     
     private static Log mLogger = LogFactory.getLog(PageServlet.class);
-    
-    
+        
     /**
      * Sets servletContext for WebappResourceLoader.
      */

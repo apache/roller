@@ -921,7 +921,7 @@ public class HibernateUserManagerImpl implements UserManager {
                     (String)row[2], 
                     (String)row[3], 
                     "statCount.weblogCommentCountType", 
-                    new Long((Integer)row[0]).longValue()));
+                    new Long(((Integer)row[0]).intValue()).longValue()));
             }
             return results;
         } catch (Throwable pe) {

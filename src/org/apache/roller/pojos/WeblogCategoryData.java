@@ -36,8 +36,7 @@ import org.apache.roller.util.PojoUtil;
  * @hibernate.class lazy="false" table="weblogcategory"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogCategoryData 
-    extends HierarchicalPersistentObject implements WeblogEntry.WeblogCategory
+public class WeblogCategoryData extends HierarchicalPersistentObject
 {
     public static final long serialVersionUID = 1435782148712018954L;
 

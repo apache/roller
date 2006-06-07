@@ -215,11 +215,12 @@ public class ContextLoader {
             Template entryPage = weblog.getPageByName("_entry");
             if (entryPage != null) {
                 ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
-            }
-            Template descPage = weblog.getPageByName("_desc");
-            if (descPage != null) {
-                ctx.put("descPage", TemplateWrapper.wrap(descPage));
-            }
+            }            
+            // TODO: ATLAS: no templates use this, should be safe to remove 
+            // Template descPage = weblog.getPageByName("_desc");
+            //if (descPage != null) {
+                //ctx.put("descPage", TemplateWrapper.wrap(descPage));
+            //}
         }
 
         boolean commentsEnabled =

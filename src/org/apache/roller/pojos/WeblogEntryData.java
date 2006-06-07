@@ -54,7 +54,7 @@ import org.apache.roller.util.Utilities;
  * @hibernate.class lazy="false" table="weblogentry"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogEntryData extends PersistentObject implements Serializable, WeblogEntry {
+public class WeblogEntryData extends PersistentObject implements Serializable {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(WeblogEntryData.class);
     
