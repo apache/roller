@@ -301,7 +301,7 @@ public class PageHelper
      */
     public String showWeblogCalendar( boolean big, String cat )
     {
-        if (PageModel.VELOCITY_NULL.equals(cat)) cat = null;
+        if (WeblogPageModel.VELOCITY_NULL.equals(cat)) cat = null;
         String ret = null;
         try
         {

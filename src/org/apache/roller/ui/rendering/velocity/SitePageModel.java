@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.RefererManager;
@@ -46,9 +47,17 @@ import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
  * Page model that provides access to site-wide users, weblogs and entries for
  * display on a frontpage weblog.
  */
-public class SitePageModel {
+public class SitePageModel implements PageModel {
     protected static Log log = 
             LogFactory.getFactory().getInstance(SitePageModel.class);
+    
+    public String getModelName() {
+        return "sitePageModel";
+    }
+        
+    public void init(HttpServletRequest request) {
+        // no-op for now
+    }
     
     /**
      * Get most collection of Website objects,
@@ -178,9 +187,9 @@ public class SitePageModel {
      */
     public List getWeblogEntries(String handle, String userName, String cat, int sinceDays, int offset, int length) {
         List results = new ArrayList();
-        if (handle.equals(PageModel.VELOCITY_NULL)) handle = null;
-        if (userName.equals(PageModel.VELOCITY_NULL)) userName = null;
-        if (cat.equals(PageModel.VELOCITY_NULL)) cat = null;
+        if (handle.equals(WeblogPageModel.VELOCITY_NULL)) handle = null;
+        if (userName.equals(WeblogPageModel.VELOCITY_NULL)) userName = null;
+        if (cat.equals(WeblogPageModel.VELOCITY_NULL)) cat = null;
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, -1 * sinceDays);
