@@ -107,7 +107,7 @@
     </table>
 
     <h2 class="pageTitle">Weblog users</h2>
-    #set($perms = $sitePageModel.getWeblogsUsers($weblog.handle))
+    #set($users = $sitePageModel.getWeblogsUsers($weblog.handle))
     <table class="rollertable">
         <thead>
             <tr>
@@ -115,10 +115,10 @@
                 <th>Full name</th>
             </tr>
         </thead>    
-        #foreach($perm in $perms) 
+        #foreach($user in $users) 
         <tr>
-            <td>$perm.user.userName</td>
-            <td>$perm.user.fullName</td>
+            <td>$user.userName</td>
+            <td>$user.fullName</td>
         </tr>
         #end
     </table>
@@ -234,7 +234,7 @@
     </table>
 
     <h2 class="pageTitle">User's weblogs</h2>
-    #set($perms = $sitePageModel.getUsersWeblogs($user.userName))
+    #set($weblogs = $sitePageModel.getUsersWeblogs($user.userName))
     #if($perms.size() > 0)
     <table class="rollertable">
         <thead>
@@ -243,10 +243,10 @@
                 <th>Name</th>
             </tr>
         </thead>    
-        #foreach($perm in $perms) 
+        #foreach($weblog in $weblogs) 
         <tr>
-            <td><a href="$baseURL/page/$perm.website.handle">$perm.website.handle</a></td>
-            <td>$perm.website.name</td>
+            <td><a href="$baseURL/page/$weblog.handle">$weblog.handle</a></td>
+            <td>$weblog.name</td>
         </tr>
         #end
     </table>

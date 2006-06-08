@@ -704,11 +704,18 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     //------------------------------------------------------------------------
         
     /**
-     * Convenience method for getPermalink(category)
-     * where no category is necessary.
-     *
+     * Returns absolute entry permalink.
      * @roller.wrapPojoMethod type="simple"
-     * @return
+     */
+    public String getPermalink() {
+        String absContextUrl = RollerConfig.getProperty("context.absPath");
+        return absContextUrl + getPermaLink();       
+    }
+    
+    /**
+     * Returns entry permalink, relative to Roller context.
+     * @deprecated Use getPermalink() instead.
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getPermaLink() {
         // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
@@ -719,10 +726,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
             // go with the "no encoding" version
         }        
         WebsiteData website = this.getWebsite();
-        String absContextUrl = RollerConfig.getProperty("context.absPath");
-        String plink = 
-          absContextUrl + "/page/" + website.getHandle() + "?entry=" + lAnchor;        
-        return plink;
+        return "/page/" + website.getHandle() + "?entry=" + lAnchor;        
     }
     
     /**
@@ -939,12 +943,14 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     }
     
     /**
-     * A no-op.
-     * TODO: fix formbean generation so this is not needed.
-     * @param string
+     * A no-op. TODO: fix formbean generation so this is not needed.
      */
-    public void setPermaLink(String string) {
-    }
+    public void setPermalink(String string) {}
+    
+    /**
+     * A no-op. TODO: fix formbean generation so this is not needed.
+     */
+    public void setPermaLink(String string) {}
     
     /**
      * A no-op.
