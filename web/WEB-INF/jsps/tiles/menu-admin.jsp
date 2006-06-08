@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/taglibs.jsp" %>
 
-<roller:Menu model="admin-menu.xml" view="/menu-tabbed.vm" />
+<roller:Menu model="admin-menu.xml" view="templates/menu/menu-tabbed.vm" />
 
 
 
