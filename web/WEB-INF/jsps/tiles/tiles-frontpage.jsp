@@ -58,7 +58,7 @@ request.setAttribute("siteDescription", siteDescription);
         <tiles:insert attribute="title" />
         <c:choose>
             <c:when test="${planetEnabled}">
-               <roller:Menu model="planet-menu.xml" view="/menu-tabbed.vm" />
+               <roller:Menu model="planet-menu.xml" view="templates/menu/menu-tabbed.vm" />
             </c:when>
             <c:otherwise>
             </c:otherwise>
