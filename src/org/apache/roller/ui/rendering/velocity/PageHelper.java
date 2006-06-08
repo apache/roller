@@ -255,11 +255,11 @@ public class PageHelper
         editorTag.setPageContext(mPageContext);
         if ( vertical )
         {
-            editorTag.setView("/navbar-vertical.vm");
+            editorTag.setView("templates/navbar/navbar-vertical.vm");
         }
         else
         {
-            editorTag.setView("/navbar-horizontal.vm");
+            editorTag.setView("templates/navbar/navbar-horizontal.vm");
         }
         editorTag.setModel("editor-menu.xml");
         return editorTag.emit();

@@ -99,7 +99,7 @@ public class FoafServlet extends VelocityServlet {
             setupContext(ctx, rreq);
             
             response.setContentType("application/rdf+xml");
-            return getTemplate("/flavors/foaf.vm");
+            return getTemplate("templates/weblogs/foaf.vm");
             
         } catch (Exception e) {
             mLogger.error("ERROR in FoafServlet", e);

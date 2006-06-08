@@ -50,9 +50,9 @@ import org.apache.roller.model.WeblogManager;
  * <p>If there is a request parameter named "flavor", then the Velocity
  * template specified by that parameter will be used for rendering. For
  * example if the flavor is "rss092" then the template at classpath
- * "/flavors/rss092.vm" will be used for rendering.</p>
+ * "templates/feeds/rss092.vm" will be used for rendering.</p>
  *
- * <p>Otherwise, the template /flavors/rss.vm" will be used for rendering.</p>
+ * <p>Otherwise, the template templates/feeds/rss.vm" will be used for rendering.</p>
  *
  * <p>Assumes that If-Modified-Since has already been handled.</p>
  *
@@ -121,21 +121,21 @@ public class FlavorServlet extends VelocityServlet {
                     // user has defined an RSS override page, we will use that.
                     useTemplate = pageModel.getPageByName("_rss").getId();
                 else
-                    useTemplate = "/flavors/rss.vm";
+                    useTemplate = "templates/feeds/rss.vm";
             } else if (request.getServletPath().endsWith("atom")) {
                 if (pageModel.getPageByName("_atom") != null)
                     // If the request specified the "/atom" mapping and the
                     // user has defined an Atom override page, we will use that.
                     useTemplate = pageModel.getPageByName("_atom").getId();
                 else
-                    useTemplate = "/flavors/atom.vm";
+                    useTemplate = "templates/feeds/atom.vm";
             } else if (request.getParameter("flavor") != null) {
                 // If request specifies a "flavor" then use that.
                 String flavor = request.getParameter("flavor");
-                useTemplate = "/flavors/" + flavor + ".vm";
+                useTemplate = "templates/feeds/" + flavor + ".vm";
             } else {
                 // Fall through to default RSS page template.
-                useTemplate = "/flavors/rss.vm";
+                useTemplate = "templates/feeds/rss.vm";
             }
             
             outty = getTemplate(useTemplate);
