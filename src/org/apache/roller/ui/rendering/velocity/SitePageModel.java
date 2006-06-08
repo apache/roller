@@ -38,7 +38,6 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
-import org.apache.roller.pojos.wrapper.PermissionsDataWrapper;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
@@ -98,7 +97,7 @@ public class SitePageModel implements PageModel {
             List perms = umgr.getAllPermissions(user);
             for (Iterator it = perms.iterator(); it.hasNext();) {
                 PermissionsData perm = (PermissionsData) it.next();
-                results.add(PermissionsDataWrapper.wrap(perm));
+                results.add(WebsiteDataWrapper.wrap(perm.getWebsite()));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
@@ -118,7 +117,7 @@ public class SitePageModel implements PageModel {
             List perms = umgr.getAllPermissions(website);
             for (Iterator it = perms.iterator(); it.hasNext();) {
                 PermissionsData perm = (PermissionsData) it.next();
-                results.add(PermissionsDataWrapper.wrap(perm));
+                results.add(UserDataWrapper.wrap(perm.getUser()));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching weblog list", e);
