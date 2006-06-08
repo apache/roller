@@ -114,7 +114,7 @@ public class FlavorServlet extends VelocityServlet {
             ContextLoader.setupContext(ctx, rreq, response);
             
             String useTemplate;
-            PageModel pageModel = (PageModel)ctx.get("pageModel");
+            WeblogPageModel pageModel = (WeblogPageModel)ctx.get("pageModel");
             if (request.getServletPath().endsWith("rss")) {
                 if (pageModel.getPageByName("_rss") != null)
                     // If the request specified the "/rss" mapping and the

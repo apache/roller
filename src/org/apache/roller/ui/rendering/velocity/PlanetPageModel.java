@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.PlanetManager;
@@ -37,9 +38,17 @@ import org.apache.roller.pojos.wrapper.PlanetSubscriptionDataWrapper;
  * Page model that provides access to planet aggregations, feeds and 
  * subscriptions for display on a frontpage weblog.
  */
-public class PlanetPageModel {
+public class PlanetPageModel implements PageModel {
     protected static Log log = 
             LogFactory.getFactory().getInstance(PlanetPageModel.class);
+    
+    public String getModelName() {
+        return "planetPageModel";
+    }
+    
+    public void init(HttpServletRequest request) {
+        // no-op for now
+    } 
     
     /**
      * Get move recent PlanetEntry objects from 'all' and
