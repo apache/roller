@@ -68,7 +68,6 @@ public class PageServlet extends VelocityServlet {
         throws ServletException {
         
         super.init( config );
-        WebappResourceLoader.setServletContext( getServletContext() );
     }
     
     
@@ -118,7 +117,7 @@ public class PageServlet extends VelocityServlet {
                 
                 // User doesn't have one so return the default
                 if(page == null) {
-                    page = new WeblogTemplate("/popupcomments.vm", website, 
+                    page = new WeblogTemplate("templates/weblog/popupcomments.vm", website, 
                             "Comments", "Comments", "dummy_link", 
                             "dummy_template", new Date());
                 }
@@ -202,7 +201,7 @@ public class PageServlet extends VelocityServlet {
             // it to the template author so they can debug it.
             ctx.put("displayException", parseError);
             try {
-                outty = getTemplate("error-page.vm", "UTF-8");
+                outty = getTemplate("templates/error-page.vm", "UTF-8");
             } catch (Throwable totallyUnexpected) {
                 throw new RuntimeException("ERROR parsing Velocity error page");
             }
@@ -251,7 +250,7 @@ public class PageServlet extends VelocityServlet {
         // couldn't find Template, load default "no-op" decorator
         if (decorator == null) {
             try {
-                decorator = getTemplate("/themes/noop_decorator.vm", "UTF-8");
+                decorator = getTemplate("/templates/weblog/noop_decorator.vm", "UTF-8");
             } catch (ResourceNotFoundException ex) {
                 // just rethrow
                 throw ex;

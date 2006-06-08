@@ -108,7 +108,7 @@ public class PlanetFeedServlet extends VelocityServlet
             }
             context.put("entryCount", new Integer(entryCount));            
             
-            return getTemplate("planetrss.vm");
+            return getTemplate("templates/planet/planetrss.vm");
         }
         catch (Exception e)
         {

@@ -24,7 +24,7 @@
  * Show Editor navbar using CSS friendly template.
  *#
 #macro( showEditorMenu )
-    $pageHelper.showMenu("editor-menu.xml", "/navbar-css.vm")
+    $pageHelper.showMenu("editor-menu.xml", "templates/navbar/navbar-css.vm")
 #end
 
 #**
