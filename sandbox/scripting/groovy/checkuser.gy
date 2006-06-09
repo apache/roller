@@ -17,7 +17,7 @@
 */
 username =    "zebulon";
 
-roller = org.roller.model.RollerFactory.getRoller();
+roller = org.apache.roller.model.RollerFactory.getRoller();
 user = roller.getUserManager().getUser(username);
 println "User ${user.userName} with id ${user.id} has roles:";
 user.getRoles().each({ item -> println "   ${item.getRole()}" });
