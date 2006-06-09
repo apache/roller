@@ -262,6 +262,11 @@
 
 <!-- Misc login and error pages -->
 
+<definition name=".login" extends=".tiles-simplepage" >
+    <put name="banner" value="/WEB-INF/jsps/tiles/banner.jsp" />
+    <put name="content" value="/WEB-INF/jsps/loginBody.jsp" />
+</definition>
+
 <definition name=".denied" extends=".tiles-simplepage" >
     <put name="content" value="/WEB-INF/jsps/denied.jsp" />
 </definition>
