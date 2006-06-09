@@ -434,7 +434,6 @@ ro.buildUser=${user.name}
 	
 <target name="stage-web" depends="build-web" description="Stage web app, including jars">
 
-    <mkdir dir="${build.stage_web}/resources"/>
     <mkdir dir="${build.stage_web}/WEB-INF/lib"/>
     <mkdir dir="${build.stage_web}/WEB-INF/tlds"/>
     <mkdir dir="${build.stage_web}/docs"/>
