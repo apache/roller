@@ -21,8 +21,8 @@ description = "Who put the voodoo pon reggae";
 handle =      "scratchblog";
 theme =       "basic";
 
-roller = org.roller.model.RollerFactory.getRoller();
-roller.begin(org.roller.pojos.UserData.SYSTEM_USER);
+roller = org.apache.roller.model.RollerFactory.getRoller();
+roller.begin(org.apache.roller.pojos.UserData.SYSTEM_USER);
 user = roller.getUserManager().getUser(username);
 roller.getUserManager().createWebsite(
    user, 

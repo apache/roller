@@ -22,7 +22,7 @@ email =       "lee.perry@upsetter.net";
 locale =      "en_GB";
 timeZone =    "America/Jamaica";
 
-user = new org.roller.pojos.UserData();
+user = new org.apache.roller.pojos.UserData();
 user.setUserName(username);
 user.setPassword(password);
 user.setFullName(fullName);
@@ -31,10 +31,9 @@ user.setLocale(locale);
 user.setTimeZone(timeZone);
 user.setDateCreated(new java.util.Date());
 
-roller = org.roller.model.RollerFactory.getRoller();
-roller.begin(org.roller.pojos.UserData.SYSTEM_USER);
+roller = org.apache.roller.model.RollerFactory.getRoller();
 roller.getUserManager().addUser(user);
-roller.commit();
+roller.flush();
 
 user = roller.getUserManager().getUser(username);
 println "Created user ${user.userName} with id ${user.id}";

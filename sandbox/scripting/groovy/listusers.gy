@@ -15,8 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-import org.roller.model.RollerFactory;
-import org.roller.pojos.UserData;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.pojos.UserData;
 
 print "\nCreating Roller instance... "
 t0 = System.currentTimeMillis();
@@ -24,10 +24,8 @@ roller = RollerFactory.getRoller();
 t1 = System.currentTimeMillis();
 println "DONE (${t1-t0} milliseconds)"
 
-roller.begin(UserData.SYSTEM_USER);
-
-println "\nUsers in the system:"
-users = roller.getUserManager().getUsers();
+println "\nFirst 10 users in the system:"
+users = roller.getUserManager().getUsers(0, 10);
 for (u in users) {
    println "   User [${u.userName}] has password [${u.password}]";
    weblogs = roller.getUserManager().getWebsites(u, Boolean.FALSE);
