@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+-->
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost/rollerdb_20</property>
+        <property name="hibernate.connection.username">scott</property>
+        <property name="hibernate.connection.password">tiger</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <mapping resource="org/roller/business/HitCountData.hbm.xml" />
+        <mapping resource="org/roller/pojos/BookmarkData.hbm.xml" />
+        <mapping resource="org/roller/pojos/CommentData.hbm.xml" />
+        <mapping resource="org/roller/pojos/EntryAttributeData.hbm.xml" />
+        <mapping resource="org/roller/pojos/FolderAssoc.hbm.xml" />
+        <mapping resource="org/roller/pojos/FolderData.hbm.xml" />
+        <mapping resource="org/roller/pojos/WeblogTemplate.hbm.xml" />
+        <mapping resource="org/roller/pojos/PingCategoryRestrictionData.hbm.xml" />
+        <mapping resource="org/roller/pojos/AutoPingData.hbm.xml" />
+        <mapping resource="org/roller/pojos/PingQueueEntryData.hbm.xml" />
+        <mapping resource="org/roller/pojos/PingTargetData.hbm.xml" />
+        <mapping resource="org/roller/pojos/RefererData.hbm.xml" />
+        <mapping resource="org/roller/pojos/RoleData.hbm.xml" />
+        <mapping resource="org/roller/pojos/RollerConfigData.hbm.xml" />
+        <mapping resource="org/roller/pojos/UserData.hbm.xml" />
+        <mapping resource="org/roller/pojos/UserCookieData.hbm.xml" />
+        <mapping resource="org/roller/pojos/WeblogCategoryData.hbm.xml" />
+        <mapping resource="org/roller/pojos/WeblogCategoryAssoc.hbm.xml" />
+        <mapping resource="org/roller/pojos/WeblogEntryData.hbm.xml" />
+        <mapping resource="org/roller/pojos/WebsiteData.hbm.xml" />
+        <mapping resource="org/roller/pojos/RollerPropertyData.hbm.xml" />
+        <mapping resource="org/roller/pojos/PermissionsData.hbm.xml" />
+        <mapping resource="org/roller/pojos/PlanetConfigData.hbm.xml" />
+        <mapping resource="org/roller/pojos/PlanetGroupData.hbm.xml" />
+        <mapping resource="org/roller/pojos/PlanetEntryData.hbm.xml" />
+        <mapping resource="org/roller/pojos/PlanetSubscriptionData.hbm.xml" />
+        <mapping resource="org/roller/pojos/PlanetGroupSubscriptionAssoc.hbm.xml" />
+    </session-factory>
+</hibernate-configuration>
