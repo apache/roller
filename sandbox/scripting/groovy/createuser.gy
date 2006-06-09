@@ -31,10 +31,13 @@ user.setLocale(locale);
 user.setTimeZone(timeZone);
 user.setDateCreated(new java.util.Date());
 
-roller = org.apache.roller.model.RollerFactory.getRoller();
-roller.getUserManager().addUser(user);
-roller.flush();
-
+try {
+   roller = org.apache.roller.model.RollerFactory.getRoller();
+   roller.getUserManager().addUser(user);
+   roller.flush();
+} catch (org.apache.roller.RollerException re) {
+   re.printStackTrace();
+}
 user = roller.getUserManager().getUser(username);
-println "Created user ${user.userName} with id ${user.id}";
+println "Created user ${user.username} with id ${user.id}";
 

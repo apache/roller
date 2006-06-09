@@ -36,6 +36,9 @@
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         -->     
    
+        <!-- use thread local Session context -->
+        <property name="hibernate.current_session_context_class">thread</property>
+        
         <!-- Hibernate L2 Caching -->
         <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
         <property name="hibernate.generate_statistics">true</property>
