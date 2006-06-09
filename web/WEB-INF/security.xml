@@ -46,7 +46,7 @@
                 /editor/**=admin,editor
                 /admin/**=admin
                 /rewrite-status*=admin
-                /login-redirect.jsp=admin,editor
+                /roller-ui/login-redirect.jsp=admin,editor
             </value>
         </property>
     </bean>
@@ -117,7 +117,7 @@
     
     <bean id="authenticationProcessingFilter" class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="authenticationFailureUrl" value="/login.jsp?error=true"/>
+        <property name="authenticationFailureUrl" value="/roller-ui/login?error=true"/>
         <property name="defaultTargetUrl" value="/"/>
         <property name="filterProcessesUrl" value="/j_security_check"/>
         <property name="rememberMeServices" ref="rememberMeServices"/>
@@ -136,7 +136,7 @@
     <bean id="remoteUserFilter" class="org.acegisecurity.wrapper.SecurityContextHolderAwareRequestFilter"/>
 
     <bean id="authenticationProcessingFilterEntryPoint" class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
-        <property name="loginFormUrl" value="/login.jsp"/>
+        <property name="loginFormUrl" value="/roller-ui/login"/>
         <property name="forceHttps" value="false"/>
     </bean>
 

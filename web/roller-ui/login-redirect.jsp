@@ -1,4 +1,4 @@
-<!--
+<%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,14 +14,22 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
--->
-<%@ include file="/taglibs.jsp" %>
-<tiles:insert page="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
-   <tiles:put name="banner"       value="/WEB-INF/jsps/tiles/banner.jsp" />
-   <tiles:put name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
-   <tiles:put name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
-   <tiles:put name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
-   <tiles:put name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
-   <tiles:put name="content"      value="/loginBody.jsp" />
-   <tiles:put name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
-</tiles:insert>
+--%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page import="org.apache.roller.model.*" %>
+<%@ page import="org.apache.roller.pojos.*" %>
+<%@ page import="org.apache.roller.ui.core.RollerSession" %>
+<%@ page import="java.util.List" %>
+<%
+UserData user = RollerSession.getRollerSession(request).getAuthenticatedUser();
+List websites = RollerFactory.getRoller().getUserManager().getWebsites(user, Boolean.TRUE, null, null, null, 0, Integer.MAX_VALUE);
+
+if (websites.size() == 1) {
+    WebsiteData website = (WebsiteData) websites.get(0);
+    response.sendRedirect(request.getContextPath()+"/editor/weblog.do?method=create&weblog="+website.getHandle());
+} else {
+    response.sendRedirect(request.getContextPath()+"/editor/yourWebsites.do");
+}
+
+%>
+
