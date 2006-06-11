@@ -3,7 +3,7 @@
         <servlet-name>action</servlet-name>
         <url-pattern>*.do</url-pattern>
     </servlet-mapping>
-    
+    <!--
     <servlet-mapping>
         <servlet-name>action</servlet-name>
         <url-pattern>/roller-ui/login</url-pattern>
@@ -13,7 +13,7 @@
         <servlet-name>action</servlet-name>
         <url-pattern>/roller-ui/logout</url-pattern>
     </servlet-mapping>
-
+    -->
     <!-- we map the page servlet manually because of webdoclets inheritance issue -->
     <servlet-mapping>
         <servlet-name>PageServlet</servlet-name>

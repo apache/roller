@@ -2,7 +2,7 @@
 <forward name="access-denied"          path=".denied"/>
 <forward name="error"                  path="/error.jsp"/>
 <forward name="login-redirect"         path="/roller-ui/login-redirect.jsp"/>
-<forward name="logout-redirect"        path="/roller-ui/logout"/>
+<forward name="logout-redirect"        path="/roller-ui/logout-redirect.jsp"/>
 
 <!-- unprotected actions -->
 <forward name="page"                   path="/page"/>
