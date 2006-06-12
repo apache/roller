@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.authoring.struts.actions;
+package org.apache.roller.ui.core.struts.actions;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
