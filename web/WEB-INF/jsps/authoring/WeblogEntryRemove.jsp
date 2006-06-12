@@ -32,7 +32,7 @@
 <table>
     <tr>
         <td>
-            <html:form action="/editor/weblog" method="post">
+            <html:form action="/roller-ui/authoring/weblog" method="post">
                 <input type="submit" value='<fmt:message key="weblogEntryRemove.yes" />' /></input>
                 <html:hidden property="method" value="remove"/></input>
                 <html:hidden property="id" /></input>
@@ -40,7 +40,7 @@
         </div>
         </td>
         <td>
-            <html:form action="/editor/weblog" method="post">
+            <html:form action="/roller-ui/authoring/weblog" method="post">
                 <input type="submit" value='<fmt:message key="weblogEntryRemove.no" />' /></input>
                 <html:hidden property="method" value="cancel"/></input>
                 <html:hidden property="id" /></input>

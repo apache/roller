@@ -38,7 +38,7 @@
 <table>
 <tr>
 	<td>
-		<html:form action="/editor/page" method="post">
+		<html:form action="/roller-ui/authoring/page" method="post">
 			<input type="submit" value='<fmt:message key="application.yes" />' ></input>
 			<html:hidden property="method" value="remove"/></input>
 			<html:hidden property="id" /></input>
@@ -46,7 +46,7 @@
 		</html:form>
 	</td>
 	<td>
-		<html:form action="/editor/page" method="post">
+		<html:form action="/roller-ui/authoring/page" method="post">
 			<input type="submit" value='<fmt:message key="application.no" />' ></input>
 			<html:hidden property="id" /></input>
 			<html:hidden property="method" value="cancel"/></input>

@@ -29,7 +29,7 @@
 <table>
 <tr>
 <td>
-<html:form action="/editor/customPingTargets" method="post">
+<html:form action="/roller-ui/authoring/customPingTargets" method="post">
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
     <html:hidden property="method" value="deleteConfirmed" />
     <html:hidden property="id" />
@@ -39,7 +39,7 @@
 </html:form>
 </td>
 <td>
-<html:form action="/editor/customPingTargets" method="post">
+<html:form action="/roller-ui/authoring/customPingTargets" method="post">
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
     <!-- Results in returning to the view on common ping targets. -->
     <div class="control">

@@ -31,7 +31,7 @@ function cancel() {
 
 <roller:StatusMessage/>
 
-<html:form action="/editor/page" method="post">
+<html:form action="/roller-ui/authoring/page" method="post">
 
 	<p class="subtitle">
         <fmt:message key="pageForm.editPage" />:

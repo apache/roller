@@ -58,7 +58,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
                 </td>
     
                 <td class="rollertable" align="center">
-                   <roller:link page="/editor/customPingTargets.do">
+                   <roller:link page="/roller-ui/authoring/customPingTargets.do">
                        <roller:linkparam
                            id="<%= RollerRequest.PINGTARGETID_KEY %>"
                            name="pingTarget" property="id" />
@@ -72,7 +72,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
                 </td>
     
                 <td class="rollertable" align="center">
-                   <roller:link page="/editor/customPingTargets.do">
+                   <roller:link page="/roller-ui/authoring/customPingTargets.do">
                        <roller:linkparam
     	                   id="<%= RollerRequest.PINGTARGETID_KEY %>"
     	                   name="pingTarget" property="id" />
@@ -92,7 +92,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
     
     <br />
     
-    <html:form action="/editor/customPingTargets" method="post">
+    <html:form action="/roller-ui/authoring/customPingTargets" method="post">
         <div class="control">
            <html:hidden property="method" value="addNew" />
            <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />           

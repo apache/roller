@@ -55,7 +55,7 @@ import org.apache.roller.ui.authoring.struts.formbeans.CategoriesForm;
 /**
  * Actions that are initiated from the CategoriesForm.
  * 
- * @struts.action name="categoriesForm" path="/editor/categories" parameter="method"
+ * @struts.action name="categoriesForm" path="/roller-ui/authoring/categories" parameter="method"
  * @struts.action-forward name="CategoriesForm" path=".CategoriesForm"
  * 
  * @author Dave Johnson

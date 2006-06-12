@@ -45,7 +45,7 @@ import org.apache.roller.util.cache.CacheManager;
 
 /**
  * Display today's referers.
- * @struts.action name="refererForm" path="/editor/referers"
+ * @struts.action name="refererForm" path="/roller-ui/authoring/referers"
  *      scope="session" parameter="method"
  * 
  * @struts.action-forward name="referers.page" path=".referers"

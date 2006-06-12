@@ -55,7 +55,7 @@ import org.apache.roller.util.Utilities;
 /////////////////////////////////////////////////////////////////////////////
 /**
  * Page form action.
- * @struts.action name="weblogTemplateForm" path="/editor/page"
+ * @struts.action name="weblogTemplateForm" path="/roller-ui/authoring/page"
  *  	scope="session" parameter="method"
  * 
  * @struts.action-forward name="removePage.page" path=".remove-page"

@@ -57,7 +57,7 @@ function onMove()
         <b><fmt:message key="categoriesForm.path" /></b>:
         <c:forEach var="loopcategory" items="${model.categoryPath}">
             /
-            <roller:link page="/editor/categories.do">
+            <roller:link page="/roller-ui/authoring/categories.do">
                 <roller:linkparam id="method" value="selectCategory" />
                 <roller:linkparam 
                     id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
@@ -73,7 +73,7 @@ function onMove()
 
 <%-- Form is a table of categories each with checkbox --%>
 
-<html:form action="/editor/categories" method="post">
+<html:form action="/roller-ui/authoring/categories" method="post">
 <input type="hidden" name="method" /> 
 <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' /> 
 <html:hidden property="parentId" /> 
@@ -129,7 +129,7 @@ function onMove()
             <td class="rollertable" align="center"><img src='<c:url value="/images/folder.png"/>' alt="icon" /></td>
             
             <td class="rollertable">
-               <roller:link page="/editor/categories.do">
+               <roller:link page="/roller-ui/authoring/categories.do">
                    <roller:linkparam id="method" value="selectCategory" />
                    <roller:linkparam 
                        id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
@@ -143,7 +143,7 @@ function onMove()
             </td>
 
             <td class="rollertable" align="center">
-               <roller:link page="/editor/categoryEdit.do">
+               <roller:link page="/roller-ui/authoring/categoryEdit.do">
                    <roller:linkparam 
                        id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
                        name="loopcategory" property="id" />
@@ -152,7 +152,7 @@ function onMove()
             </td>
 
             <td class="rollertable" align="center">
-               <roller:link page="/editor/categoryDelete.do">
+               <roller:link page="/roller-ui/authoring/categoryDelete.do">
                    <roller:linkparam 
 	                   id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
 	                   name="loopcategory" property="id" />

@@ -24,7 +24,7 @@
 
 <h3>Bake your Weblog Template</h3>
 
-    <html:form action="/editor/bake" method="post">
+    <html:form action="/roller-ui/authoring/bake" method="post">
         <input type="submit" value="Bake" />
         <input type=hidden name="method" value="bake" />
     </html:form>

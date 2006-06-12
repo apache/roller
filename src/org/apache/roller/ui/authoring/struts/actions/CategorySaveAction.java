@@ -39,8 +39,8 @@ import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogCategoryFormEx;
 
 /**
- * @struts.action path="/editor/categorySave" name="weblogCategoryFormEx"
- *    validate="true" input="/editor/categoryEdit.do"
+ * @struts.action path="/roller-ui/authoring/categorySave" name="weblogCategoryFormEx"
+ *    validate="true" input="/roller-ui/authoring/categoryEdit.do"
  * 
  * @author Dave Johnson
  */

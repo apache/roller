@@ -27,7 +27,7 @@
     <fmt:message key="referers.tip" />
 </p>
 
-<html:form action="/editor/referers" method="post">
+<html:form action="/roller-ui/authoring/referers" method="post">
 <input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
 <input type="hidden" name="method" value="delete" />
 
@@ -62,7 +62,7 @@
 <%-- Form allows reset of day hits --%>
 <h1><fmt:message key="referers.hitCounters" /></h1>
 <p><fmt:message key="referers.hits" />: <c:out value="${pageHits}"/></p>
-<html:form action="/editor/referers" method="post">
+<html:form action="/roller-ui/authoring/referers" method="post">
     <input type=hidden name="weblog" value='<c:out value="${model.website.handle}" />' />
     <input type="hidden" name="method" value="reset" />
     <input type="submit" value='<fmt:message key="referers.reset" />' /></input>

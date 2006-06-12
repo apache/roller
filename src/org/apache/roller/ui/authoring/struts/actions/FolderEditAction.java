@@ -35,7 +35,7 @@ import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.authoring.struts.formbeans.FolderFormEx;
 
 /**
- * @struts.action path="/editor/folderEdit" name="folderFormEx" validate="false"
+ * @struts.action path="/roller-ui/authoring/folderEdit" name="folderFormEx" validate="false"
  * @struts.action-forward name="FolderForm" path=".FolderForm"
  * 
  * @author Dave Johnson

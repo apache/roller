@@ -50,7 +50,7 @@ import org.apache.roller.util.cache.CacheManager;
  * Allows user to perform Website maintenence operations such as flushing
  * the website page cache or re-indexing the website search index.
  * 
- * @struts.action path="/editor/maintenance" name="maintenanceForm" 
+ * @struts.action path="/roller-ui/authoring/maintenance" name="maintenanceForm" 
  *     scope="request" parameter="method"
  * 
  * @struts.action-forward name="maintenance.page" path=".Maintenance"

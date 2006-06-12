@@ -42,7 +42,7 @@ function handlePreview() {
 <p class="subtitle"><fmt:message key="createWebsite.prompt" /></p>
 
 <br /> 
-<html:form action="/editor/createWebsite" method="post" focus="handle">
+<html:form action="/roller-ui/authoring/createWebsite" method="post" focus="handle">
 <input type="hidden" name="method" value="save"></input> 
 
 <table class="formtable">

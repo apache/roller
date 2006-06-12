@@ -157,7 +157,7 @@ WeblogEntryManagementAction.PageModel model =
         </td>
         
         <td>
-            <roller:link page="/editor/weblog.do">
+            <roller:link page="/roller-ui/authoring/weblog.do">
                 <roller:linkparam
                     id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
                     name="post" property="id" />

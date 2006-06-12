@@ -19,7 +19,7 @@
 
 <p class="subtitle"><fmt:message key="maintenance.subtitle" /></p>
     
-<html:form action="/editor/maintenance" method="post">
+<html:form action="/roller-ui/authoring/maintenance" method="post">
     <input type="hidden" name="method" value="" />
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' /> 
 

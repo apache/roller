@@ -51,7 +51,7 @@ import org.apache.roller.util.cache.CacheManager;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
- * @struts.action name="folderFormEx" path="/editor/importBookmarks"
+ * @struts.action name="folderFormEx" path="/roller-ui/authoring/importBookmarks"
  *  scope="request" input=".import" validate="false"
  *
  * @struts.action-forward name="importBookmarks.page" path=".import"

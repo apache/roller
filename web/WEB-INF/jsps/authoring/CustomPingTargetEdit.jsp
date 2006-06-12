@@ -31,7 +31,7 @@ function cancel() {
 </fmt:message>
 </p>
 
-<html:form action="/editor/customPingTargets" method="post" focus="name">
+<html:form action="/roller-ui/authoring/customPingTargets" method="post" focus="name">
     <html:hidden property="method" value="save" />
     <html:hidden property="id" />
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />

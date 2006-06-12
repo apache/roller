@@ -59,7 +59,7 @@ import org.apache.roller.ui.core.pings.WeblogUpdatePinger;
  * Actions for setting up automatic ping configuration for a weblog.
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @struts.action name="pingSetupForm" path="/editor/pingSetup" scope="request" parameter="method"
+ * @struts.action name="pingSetupForm" path="/roller-ui/authoring/pingSetup" scope="request" parameter="method"
  * @struts.action-forward name="pingSetup.page" path=".Pings"
  * @struts.action-forward name="pingResult.page" path=".PingResult"
  */

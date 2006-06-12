@@ -41,7 +41,7 @@ function save() {
 
 <p><fmt:message key="memberPermissions.description" /></p>
 
-<html:form action="/editor/memberPermissions" method="post">
+<html:form action="/roller-ui/authoring/memberPermissions" method="post">
     <html:hidden property="websiteId" />
     
     <table class="rollertable">

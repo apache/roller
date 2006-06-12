@@ -39,7 +39,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogCategoryFormEx;
 
 /**
- * @struts.action path="/editor/categoryEdit" name="weblogCategoryFormEx" validate="false"
+ * @struts.action path="/roller-ui/authoring/categoryEdit" name="weblogCategoryFormEx" validate="false"
  * @struts.action-forward name="CategoryForm" path=".CategoryForm"
  * 
  * @author Dave Johnson

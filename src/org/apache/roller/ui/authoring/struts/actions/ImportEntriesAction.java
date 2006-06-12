@@ -45,7 +45,7 @@ import org.apache.roller.ui.authoring.struts.formbeans.ImportEntriesForm;
 import org.apache.roller.util.StringUtils;
 /**
  * TODO: revisit this class once Atom 1.0 support comes to Rome
- * @struts.action name="importEntries" path="/editor/importEntries"
+ * @struts.action name="importEntries" path="/roller-ui/authoring/importEntries"
  *                scope="request" parameter="method"
  * 
  * @struts.action-forward name="importEntries.page" path=".import-entries"

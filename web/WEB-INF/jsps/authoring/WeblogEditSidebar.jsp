@@ -32,7 +32,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
 
 <c:choose>
 <c:when test="${model.commentCount > 0}">
-    <c:url value="/editor/commentManagement.do" var="commentManagement">
+    <c:url value="/roller-ui/authoring/commentManagement.do" var="commentManagement">
        <c:param name="method" value="query" />
        <c:param name="weblog" value="${model.website.handle}" />
        <c:param name="entryid" value="${model.weblogEntry.id}" />
@@ -59,7 +59,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
    <span><fmt:message key="application.none" /></span>
 </c:if>
 <c:forEach var="post" items="${model.recentPendingEntries}">
-    <span class="entryEditSidebarLink"><roller:link page="/editor/weblog.do">
+    <span class="entryEditSidebarLink"><roller:link page="/roller-ui/authoring/weblog.do">
        <roller:linkparam
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />
@@ -81,7 +81,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
    <span><fmt:message key="application.none" /></span>
 </c:if>
 <c:forEach var="post" items="${model.recentDraftEntries}">
-    <span class="entryEditSidebarLink"><roller:link page="/editor/weblog.do">
+    <span class="entryEditSidebarLink"><roller:link page="/roller-ui/authoring/weblog.do">
        <roller:linkparam
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />
@@ -105,7 +105,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
    <span><fmt:message key="application.none" /></span>
 </c:if>
 <c:forEach var="post" items="${model.recentPublishedEntries}">
-    <span class="entryEditSidebarLink"><roller:link page="/editor/weblog.do">
+    <span class="entryEditSidebarLink"><roller:link page="/roller-ui/authoring/weblog.do">
        <roller:linkparam
            id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
            name="post" property="id" />

@@ -25,7 +25,7 @@ BasePageModel model = (BasePageModel)request.getAttribute("model");
 
 <roller:StatusMessage/>
 
-<html:form action="/editor/exportEntries" method="post" focus="title">
+<html:form action="/roller-ui/authoring/exportEntries" method="post" focus="title">
 
     <html:hidden name="method" property="method" value="export"/>
 

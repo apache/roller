@@ -49,7 +49,7 @@ import org.apache.roller.ui.authoring.struts.formbeans.MemberPermissionsForm;
 /**
  * Allows website admin to change website member permissions.
  * 
- * @struts.action path="/editor/memberPermissions" parameter="method" name="memberPermissionsForm"
+ * @struts.action path="/roller-ui/authoring/memberPermissions" parameter="method" name="memberPermissionsForm"
  * @struts.action-forward name="memberPermissions.page" path=".MemberPermissions"
  */
 public class MemberPermissionsAction extends DispatchAction

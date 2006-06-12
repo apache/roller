@@ -55,10 +55,10 @@ import org.apache.roller.util.Utilities;
 /**
  * Action for quering, approving, marking as spam and deleting comments.
  *
- * @struts.action path="/editor/commentManagement" name="commentManagementForm" 
+ * @struts.action path="/roller-ui/authoring/commentManagement" name="commentManagementForm" 
  *     scope="request" parameter="method"
  *
- * @struts.action path="/editor/commentQuery" name="commentQueryForm" 
+ * @struts.action path="/roller-ui/authoring/commentQuery" name="commentQueryForm" 
  *     scope="request" parameter="method"
  *
  * @struts.action path="/admin/commentManagement" name="commentManagementForm" 
@@ -371,7 +371,7 @@ public final class CommentManagementAction extends DispatchAction {
             StringBuffer sb = new StringBuffer();
             sb.append(request.getContextPath());
             if (getWebsite() != null) {
-                sb.append("/editor/commentManagement.do"); // TODO: get path from Struts
+                sb.append("/roller-ui/authoring/commentManagement.do"); // TODO: get path from Struts
                 sb.append("?method=query");
                 sb.append("&weblog=");
                 sb.append(getWebsite().getHandle());

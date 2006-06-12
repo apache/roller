@@ -47,7 +47,7 @@ import org.apache.roller.ui.authoring.struts.formbeans.YourWebsitesForm;
 /**
  * Allows user to view and pick from list of his/her websites.
  * 
- * @struts.action path="/editor/yourWebsites" name="yourWebsitesForm" parameter="method"
+ * @struts.action path="/roller-ui/authoring/yourWebsites" name="yourWebsitesForm" parameter="method"
  * @struts.action-forward name="yourWebsites.page" path=".YourWebsites"
  */
 public class YourWebsitesAction extends DispatchAction

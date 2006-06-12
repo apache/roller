@@ -40,9 +40,9 @@ import org.apache.roller.ui.authoring.struts.formbeans.FolderFormEx;
 import org.apache.roller.util.cache.CacheManager;
 
 /**
- * @struts.action path="/editor/folderSave" name="folderFormEx" 
- *     validate="true" input="/editor/folderEdit.do"
- * @struts.action-forward name="Bookmarks" path="/editor/bookmarks.do?method=selectFolder"
+ * @struts.action path="/roller-ui/authoring/folderSave" name="folderFormEx" 
+ *     validate="true" input="/roller-ui/authoring/folderEdit.do"
+ * @struts.action-forward name="Bookmarks" path="/roller-ui/authoring/bookmarks.do?method=selectFolder"
  * 
  * @author Dave Johnson
  */
