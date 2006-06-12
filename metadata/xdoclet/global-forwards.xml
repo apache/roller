@@ -51,20 +51,20 @@
 
 <!-- global admin actions -->
 
-<forward name="rollerConfig"            path="/admin/rollerConfig.do?method=edit"/>
-<forward name="adminUser"               path="/admin/user.do?method=edit"/>
-<forward name="commentManagementGlobal" path="/admin/commentManagement.do?method=query"/>
-<forward name="commentQueryGlobal"      path="/admin/commentQuery.do?method=query"/>
-<forward name="addUser"                 path="/admin/user.do?method=add"/>
-<forward name="commonPingTargets"       path="/admin/commonPingTargets.do"/>
-<forward name="cacheInfo"		path="/admin/cacheInfo.do"/>
+<forward name="rollerConfig"            path="/roller-ui/admin/rollerConfig.do?method=edit"/>
+<forward name="adminUser"               path="/roller-ui/admin/user.do?method=edit"/>
+<forward name="commentManagementGlobal" path="/roller-ui/admin/commentManagement.do?method=query"/>
+<forward name="commentQueryGlobal"      path="/roller-ui/admin/commentQuery.do?method=query"/>
+<forward name="addUser"                 path="/roller-ui/admin/user.do?method=add"/>
+<forward name="commonPingTargets"       path="/roller-ui/admin/commonPingTargets.do"/>
+<forward name="cacheInfo"		path="/roller-ui/admin/cacheInfo.do"/>
 
 <!-- planet admin actions -->
 
-<forward name="planetConfig"             path="/admin/planetConfig.do?method=getConfig"/>
-<forward name="planetSubscriptions"      path="/admin/planetSubscriptions.do?method=getSubscriptions"/>
-<forward name="planetGroups"             path="/admin/planetGroups.do?method=getGroups"/>
-<forward name="planetGroupSubscriptions" path="/admin/planetGroupSubscriptions.do?method=getGroupSubscriptions"/>
+<forward name="planetConfig"             path="/roller-ui/admin/planetConfig.do?method=getConfig"/>
+<forward name="planetSubscriptions"      path="/roller-ui/admin/planetSubscriptions.do?method=getSubscriptions"/>
+<forward name="planetGroups"             path="/roller-ui/admin/planetGroups.do?method=getGroups"/>
+<forward name="planetGroupSubscriptions" path="/roller-ui/admin/planetGroupSubscriptions.do?method=getGroupSubscriptions"/>
 
 </global-forwards>
 

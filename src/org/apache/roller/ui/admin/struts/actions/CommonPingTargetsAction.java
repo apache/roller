@@ -42,7 +42,7 @@ import org.apache.struts.action.ActionMapping;
  * Administer common ping targets.
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @struts.action name="pingTargetForm" path="/admin/commonPingTargets" scope="request" parameter="method"
+ * @struts.action name="pingTargetForm" path="/roller-ui/admin/commonPingTargets" scope="request" parameter="method"
  * @struts.action-forward name="pingTargets.page" path=".CommonPingTargets"
  * @struts.action-forward name="pingTargetEdit.page" path=".CommonPingTargetEdit"
  * @struts.action-forward name="pingTargetDeleteOK.page" path=".CommonPingTargetDeleteOK"

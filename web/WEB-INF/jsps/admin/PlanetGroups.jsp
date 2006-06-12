@@ -43,7 +43,7 @@ function deleteGroup()
     </c:if>
     </p>
     
-    <html:form action="/admin/planetGroups" method="post">
+    <html:form action="/roller-ui/admin/planetGroups" method="post">
         <html:hidden property="method" value="saveGroup" />
         <html:hidden property="id" />
         
@@ -114,7 +114,7 @@ function deleteGroup()
                 </td>
                 
                 <td class="rollertable">
-                    <roller:link page="/admin/planetGroups.do">
+                    <roller:link page="/roller-ui/admin/planetGroups.do">
                         <roller:linkparam 
                             id="method" value="getGroups" />                   
                         <roller:linkparam 
@@ -125,7 +125,7 @@ function deleteGroup()
                 </td>       
                                         
                 <td class="rollertable">
-                    <roller:link page="/admin/planetSubscriptions.do">
+                    <roller:link page="/roller-ui/admin/planetSubscriptions.do">
                         <roller:linkparam 
                             id="method" value="getSubscriptions" />                   
                         <roller:linkparam 

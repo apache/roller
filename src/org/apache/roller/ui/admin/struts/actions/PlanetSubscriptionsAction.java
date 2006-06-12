@@ -53,7 +53,7 @@ import org.apache.roller.util.Technorati;
  * Add, remove, and view existing subscriptions in a group.
  * If no group is specified via the groupHandle parameter, then uses "external".
  *
- * @struts.action name="planetSubscriptionFormEx" path="/admin/planetSubscriptions"
+ * @struts.action name="planetSubscriptionFormEx" path="/roller-ui/admin/planetSubscriptions"
  *                scope="request" parameter="method"
  *
  * @struts.action-forward name="planetSubscriptions.page"

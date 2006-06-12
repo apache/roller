@@ -34,7 +34,7 @@ CommentManagementAction.CommentManagementPageModel model =
 <p><fmt:message key="commentManagement.sidebarDescription" /></p>
     
  <% String path = model.getWebsite()==null 
-    ? "/admin/commentQuery" : "/roller-ui/authoring/commentQuery"; %>
+    ? "/roller-ui/admin/commentQuery" : "/roller-ui/authoring/commentQuery"; %>
  <html:form action="<%= path %>" method="post">
  
     <c:if test="${!empty model.website}">

@@ -54,7 +54,7 @@ import org.apache.roller.util.StringUtils;
 /**
  * Actions for administering a user allow user query, edit, and delete of users.
  * 
- * @struts.action name="userAdminForm" path="/admin/user"
+ * @struts.action name="userAdminForm" path="/roller-ui/admin/user"
  *  	scope="request" parameter="method"
  * 
  * @struts.action-forward name="adminUser.page" path=".UserAdmin"

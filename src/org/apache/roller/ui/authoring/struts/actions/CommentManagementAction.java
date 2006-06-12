@@ -61,10 +61,10 @@ import org.apache.roller.util.Utilities;
  * @struts.action path="/roller-ui/authoring/commentQuery" name="commentQueryForm" 
  *     scope="request" parameter="method"
  *
- * @struts.action path="/admin/commentManagement" name="commentManagementForm" 
+ * @struts.action path="/roller-ui/admin/commentManagement" name="commentManagementForm" 
  *     scope="request" parameter="method"
  *
- * @struts.action path="/admin/commentQuery" name="commentQueryForm" 
+ * @struts.action path="/roller-ui/admin/commentQuery" name="commentQueryForm" 
  *     scope="request" parameter="method"
  *
  * @struts.action-forward name="commentManagement.page" path=".CommentManagement"
@@ -376,7 +376,7 @@ public final class CommentManagementAction extends DispatchAction {
                 sb.append("&weblog=");
                 sb.append(getWebsite().getHandle());
             } else {
-                sb.append("/admin/commentManagement.do"); // TODO: get path from Struts
+                sb.append("/roller-ui/admin/commentManagement.do"); // TODO: get path from Struts
                 sb.append("?method=query");
             }
             sb.append("&count=");

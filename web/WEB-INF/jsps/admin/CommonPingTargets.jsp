@@ -63,7 +63,7 @@
             <td class="rollertable" align="center" >
             <c:choose>
               <c:when test="${pingTarget.autoEnabled}">
-                 <roller:link page="/admin/commonPingTargets.do">
+                 <roller:link page="/roller-ui/admin/commonPingTargets.do">
                      <roller:linkparam
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
@@ -73,7 +73,7 @@
                  </roller:link>
               </c:when>
               <c:otherwise >
-                 <roller:link page="/admin/commonPingTargets.do">
+                 <roller:link page="/roller-ui/admin/commonPingTargets.do">
                      <roller:linkparam
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
@@ -86,7 +86,7 @@
             </td>
             
             <td class="rollertable" align="center">
-               <roller:link page="/admin/commonPingTargets.do">
+               <roller:link page="/roller-ui/admin/commonPingTargets.do">
                    <roller:linkparam
                        id="<%= RollerRequest.PINGTARGETID_KEY %>"
                        name="pingTarget" property="id" />
@@ -98,7 +98,7 @@
             </td>
 
             <td class="rollertable" align="center">
-               <roller:link page="/admin/commonPingTargets.do">
+               <roller:link page="/roller-ui/admin/commonPingTargets.do">
                    <roller:linkparam
 	                   id="<%= RollerRequest.PINGTARGETID_KEY %>"
 	                   name="pingTarget" property="id" />
@@ -115,7 +115,7 @@
 </table>
 
 <p/>
-<html:form action="/admin/commonPingTargets" method="post">
+<html:form action="/roller-ui/admin/commonPingTargets" method="post">
     <div class="control">
        <html:hidden property="method" value="addNew" />
        <input type="submit" value='<fmt:message key="pingTarget.addNew"/>' />

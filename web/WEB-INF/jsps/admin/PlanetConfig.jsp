@@ -31,7 +31,7 @@ function syncWebsites()
 // -->
 </script>
 
-<html:form action="/admin/planetConfig" method="post">
+<html:form action="/roller-ui/admin/planetConfig" method="post">
     <html:hidden property="method" value="saveConfig" />
     <html:hidden property="id" />
     

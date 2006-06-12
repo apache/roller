@@ -32,7 +32,7 @@
 <table>
 <tr>
 <td>
-<html:form action="/admin/commonPingTargets" method="post">
+<html:form action="/roller-ui/admin/commonPingTargets" method="post">
     <html:hidden property="method" value="deleteConfirmed" />
     <html:hidden property="id" />
     <div class="control">
@@ -41,7 +41,7 @@
 </html:form>
 </td>
 <td>
-<html:form action="/admin/commonPingTargets" method="post">
+<html:form action="/roller-ui/admin/commonPingTargets" method="post">
     <!-- Results in returning to the view on common ping targets. -->
     <div class="control">
        <input type="submit" value='<fmt:message key="pingTarget.cancel" />' />

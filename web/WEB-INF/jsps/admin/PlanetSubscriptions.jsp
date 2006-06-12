@@ -58,7 +58,7 @@ function deleteSubscription()
         </c:when>
     </c:choose>
     
-    <html:form action="/admin/planetSubscriptions" method="post">
+    <html:form action="/roller-ui/admin/planetSubscriptions" method="post">
         <html:hidden property="method" value="saveSubscription" />
         <html:hidden property="id" />
         <html:hidden property="groupHandle" />
@@ -142,7 +142,7 @@ function deleteSubscription()
                     </td>
 
                     <td class="rollertable">
-                        <roller:link page="/admin/planetSubscriptions.do">
+                        <roller:link page="/roller-ui/admin/planetSubscriptions.do">
                             <roller:linkparam 
                                 id="method" value="getSubscriptions" />                   
                             <roller:linkparam 
