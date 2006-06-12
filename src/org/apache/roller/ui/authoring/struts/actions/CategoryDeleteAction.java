@@ -41,7 +41,7 @@ import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.CategoryDeleteForm;
 
 /**
- * @struts.action path="/editor/categoryDelete" name="categoryDeleteForm"
+ * @struts.action path="/roller-ui/authoring/categoryDelete" name="categoryDeleteForm"
  * @struts.action-forward name="CategoryDeleteOK" path=".CategoryDeleteOK"
  *
  * @author Dave Johnson

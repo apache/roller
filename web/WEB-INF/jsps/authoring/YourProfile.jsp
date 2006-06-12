@@ -19,7 +19,7 @@
 
 <p class="subtitle"><fmt:message key="yourProfile.description" /></p>
 
-<html:form action="/editor/yourProfile" method="post" focus="fullName">
+<html:form action="/roller-ui/authoring/yourProfile" method="post" focus="fullName">
     <input type="hidden" name="method" value="save"></input> 
            
 <table class="formtable">

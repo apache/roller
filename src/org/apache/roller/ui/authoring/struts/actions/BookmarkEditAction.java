@@ -40,7 +40,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.BookmarkFormEx;
 
 /**
- * @struts.action path="/editor/bookmarkEdit" name="bookmarkFormEx" validate="false"
+ * @struts.action path="/roller-ui/authoring/bookmarkEdit" name="bookmarkFormEx" validate="false"
  * @struts.action-forward name="BookmarkForm" path=".BookmarkForm"
  * 
  * @author Dave Johnson

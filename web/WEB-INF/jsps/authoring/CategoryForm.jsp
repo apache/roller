@@ -41,7 +41,7 @@
 </c:if>
 </p>
 
-<html:form action="/editor/categorySave" method="post" focus="name">
+<html:form action="/roller-ui/authoring/categorySave" method="post" focus="name">
 
     <html:hidden property="method" name="method" value="update"/>
     <html:hidden property="id" />
@@ -68,7 +68,7 @@
     
     <p>
     <input type="submit" value="<fmt:message key='categoryForm.save' />" />
-    <c:url var="categoriesUrl" value="/editor/categories.do">
+    <c:url var="categoriesUrl" value="/roller-ui/authoring/categories.do">
        <c:param name="method" value="selectCategory" />
        <c:param name="weblog" value="${model.website.handle}" />
        <c:param name="categoryid" value="${requestScope.parentId}" />

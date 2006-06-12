@@ -43,7 +43,7 @@
          <property name="objectDefinitionSource">
             <value>
                 PATTERN_TYPE_APACHE_ANT
-                /editor/**=admin,editor
+                /roller-ui/authoring/**=admin,editor
                 /admin/**=admin
                 /rewrite-status*=admin
                 /roller-ui/login-redirect.jsp=admin,editor

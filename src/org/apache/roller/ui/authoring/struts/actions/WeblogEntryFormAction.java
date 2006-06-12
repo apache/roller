@@ -88,7 +88,7 @@ import org.apache.roller.util.Utilities;
 /**
  * Supports Weblog Entry form actions edit, remove, update, etc.
  *
- * @struts.action name="weblogEntryFormEx" path="/editor/weblog"
+ * @struts.action name="weblogEntryFormEx" path="/roller-ui/authoring/weblog"
  *     scope="request" parameter="method"
  *
  * @struts.action-forward name="weblogEdit.page" path=".WeblogEdit"
@@ -431,7 +431,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                     + request.getContextPath();
                 }
                 String editURL = rootURL
-                        + "/editor/weblog.do?method=edit&entryid=" + entry.getId();
+                        + "/roller-ui/authoring/weblog.do?method=edit&entryid=" + entry.getId();
                 
                 ResourceBundle resources = ResourceBundle.getBundle(
                         "ApplicationResources", request.getLocale());

@@ -46,7 +46,7 @@ import org.apache.roller.pojos.UserData;
  *     usernameN, emailaddressN <br/>
  * 
  * @web.servlet name="UserDataServlet" 
- * @web.servlet-mapping url-pattern="/editor/userdata/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/authoring/userdata/*"
  * @author David M Johnson
  */
 public class UserDataServlet extends HttpServlet {

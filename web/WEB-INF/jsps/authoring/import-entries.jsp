@@ -21,7 +21,7 @@
 
 <roller:StatusMessage/>
 
-<html:form action="/editor/importEntries" method="post" focus="title">
+<html:form action="/roller-ui/authoring/importEntries" method="post" focus="title">
 
     <html:hidden name="method" property="method" value="importEntries"/>
 

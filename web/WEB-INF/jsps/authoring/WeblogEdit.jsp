@@ -82,7 +82,7 @@ function publish() {
     </c:otherwise>
 </c:choose>
 
-<html:form action="/editor/weblog" method="post" focus="title">
+<html:form action="/roller-ui/authoring/weblog" method="post" focus="title">
     <html:hidden property="day"/>
     <html:hidden property="id"/>
     <html:hidden property="creatorId"/>

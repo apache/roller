@@ -59,7 +59,7 @@ import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryManagementForm
 import org.apache.roller.util.DateUtil;
 
 /**
- * @struts.action path="/editor/exportEntries" name="weblogQueryForm" 
+ * @struts.action path="/roller-ui/authoring/exportEntries" name="weblogQueryForm" 
  *    scope="request" parameter="method"
  * 
  * @struts.action-forward name="exportEntries.page" path=".export-entries"

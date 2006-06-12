@@ -39,7 +39,7 @@
 
 <roller:StatusMessage/>
 
-<html:form action="/editor/weblog" method="post">
+<html:form action="/roller-ui/authoring/weblog" method="post">
     <bean:define id="text" name="weblogEntryFormEx" 
           property="text" type="java.lang.String" />
     <input type="hidden" name="method" value="spellCheck"/>

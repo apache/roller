@@ -112,7 +112,7 @@ Table of files, each with link, size and checkbox
 --%>
 
 <h1><fmt:message key="uploadFiles.manageFiles" /></h1>    
-<html:form action="/editor/uploadFiles" method="post">
+<html:form action="/roller-ui/authoring/uploadFiles" method="post">
 
     <table class="rollertable">
 

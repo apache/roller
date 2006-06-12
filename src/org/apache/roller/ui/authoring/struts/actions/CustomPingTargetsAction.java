@@ -44,7 +44,7 @@ import org.apache.roller.ui.core.RollerSession;
  * Administer custom ping targets.
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @struts.action name="pingTargetForm" path="/editor/customPingTargets" scope="request" parameter="method"
+ * @struts.action name="pingTargetForm" path="/roller-ui/authoring/customPingTargets" scope="request" parameter="method"
  * @struts.action-forward name="pingTargets.page" path=".CustomPingTargets"
  * @struts.action-forward name="pingTargetEdit.page" path=".CustomPingTargetEdit"
  * @struts.action-forward name="pingTargetDeleteOK.page" path=".CustomPingTargetDeleteOK"

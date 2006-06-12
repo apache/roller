@@ -66,7 +66,7 @@ function onMove()
         <fmt:message key="bookmarksForm.path" />:
         <c:forEach var="loopfolder" items="${model.folderPath}">
             /
-            <roller:link page="/editor/bookmarks.do">
+            <roller:link page="/roller-ui/authoring/bookmarks.do">
                 <roller:linkparam id="method" value="selectFolder" />
                 <roller:linkparam 
                     id="<%= RollerRequest.FOLDERID_KEY %>" 
@@ -81,7 +81,7 @@ function onMove()
 
 <%-- Form is a table of folders followed by bookmarks, each with checkbox --%>
 
-<html:form action="/editor/bookmarks" method="post">
+<html:form action="/roller-ui/authoring/bookmarks" method="post">
 <input type="hidden" name="method" /> 
 <html:hidden property="folderId" /> 
 
@@ -135,7 +135,7 @@ function onMove()
             <td class="rollertable" align="center"><img src='<c:url value="/images/folder.png"/>' alt="icon" /></td>
             
             <td class="rollertable">
-               <roller:link page="/editor/bookmarks.do">
+               <roller:link page="/roller-ui/authoring/bookmarks.do">
                    <roller:linkparam id="method" value="selectFolder" />
                    <roller:linkparam 
                        id="<%= RollerRequest.FOLDERID_KEY %>" 
@@ -149,7 +149,7 @@ function onMove()
             </td>
 
             <td class="rollertable" align="center">
-               <roller:link page="/editor/folderEdit.do">
+               <roller:link forward="folderEdit">
                    <roller:linkparam 
                        id="<%= RollerRequest.FOLDERID_KEY %>" 
                        name="loopfolder" property="id" />
@@ -183,7 +183,7 @@ function onMove()
             </td>
 
             <td class="rollertable" align="center">
-               <roller:link page="/editor/bookmarkEdit.do">
+               <roller:link page="/roller-ui/authoring/bookmarkEdit.do">
                    <roller:linkparam 
                        id="<%= RollerRequest.BOOKMARKID_KEY %>" 
                        name="loopbookmark" property="id" />                   

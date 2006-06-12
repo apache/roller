@@ -58,7 +58,7 @@ import org.apache.roller.util.RollerMessages;
 
 /////////////////////////////////////////////////////////////////////////////
 /**
- * @struts.action name="uploadFiles" path="/editor/uploadFiles"
+ * @struts.action name="uploadFiles" path="/roller-ui/authoring/uploadFiles"
  *  	parameter="method" scope="request" validate="false"
  *
  * @struts.action-forward name="uploadFiles.page" path=".upload-file"

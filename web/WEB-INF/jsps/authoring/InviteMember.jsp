@@ -30,7 +30,7 @@ function cancel() {
 <p class="subtitle"><fmt:message key="inviteMember.subtitle" /></p>
 <p><fmt:message key="inviteMember.prompt" /></p>
 
-<html:form action="/editor/inviteMember" method="post" focus="userName">
+<html:form action="/roller-ui/authoring/inviteMember" method="post" focus="userName">
     <html:hidden property="websiteId" />
     <input name="method" type="hidden" value="send" />
     

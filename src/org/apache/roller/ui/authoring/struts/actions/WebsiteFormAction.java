@@ -67,7 +67,7 @@ import org.apache.roller.util.Blacklist;
 /**
  * Website Settings action.
  *
- * @struts.action name="websiteFormEx" path="/editor/website"
+ * @struts.action name="websiteFormEx" path="/roller-ui/authoring/website"
  * 		scope="session" parameter="method"
  *
  * @struts.action-forward name="editWebsite.page" path=".edit-website"

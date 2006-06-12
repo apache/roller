@@ -47,7 +47,7 @@
 <c:out value="${folderName}" />
 </p>
 
-<html:form action="/editor/folderSave" method="post" focus="name">
+<html:form action="/roller-ui/authoring/folderSave" method="post" focus="name">
 
     <html:hidden property="method" name="method" value="update"/>
     <html:hidden property="id" />

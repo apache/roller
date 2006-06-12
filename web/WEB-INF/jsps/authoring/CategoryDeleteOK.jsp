@@ -40,7 +40,7 @@ function deleteNo()
 [<c:out value="${categoryDeleteForm.name}" />]
 </h3>
 
-<html:form action="/editor/categoryDelete" method="post">
+<html:form action="/roller-ui/authoring/categoryDelete" method="post">
 
 	<html:hidden property="categoryId" />
 	<html:hidden property="confirmDelete" />

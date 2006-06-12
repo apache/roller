@@ -49,7 +49,7 @@ import org.apache.roller.util.DateUtil;
 /**
  * Query weblog entries and display the results in tabular form.
  *
- * @struts.action path="/editor/weblogEntryManagement" name="weblogEntryManagementForm" 
+ * @struts.action path="/roller-ui/authoring/weblogEntryManagement" name="weblogEntryManagementForm" 
  *     scope="request" parameter="method"
  * 
  * @struts.action-forward name="weblogEntryManagement.page" path=".WeblogEntryManagement"
@@ -229,7 +229,7 @@ public final class WeblogEntryManagementAction extends DispatchAction
         private String getQueryLink() {
             StringBuffer sb = new StringBuffer();
             sb.append(request.getContextPath());
-            sb.append("/editor/weblogEntryManagement.do"); // TODO: get path from Struts
+            sb.append("/roller-ui/authoring/weblogEntryManagement.do"); // TODO: get path from Struts
             sb.append("?method=query");
             sb.append("&weblog=");
             sb.append(getWebsite().getHandle());

@@ -27,7 +27,7 @@ WebsiteFormAction.WebsitePageModel model =
    </fmt:message>
 </p>  
    
-<html:form action="/editor/website" method="post">
+<html:form action="/roller-ui/authoring/website" method="post">
     <html:hidden property="method" value="update"/></input>
 
     <html:hidden property="id"/></input>

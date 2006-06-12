@@ -59,7 +59,7 @@ import org.apache.roller.util.MailUtil;
 /**
  * Allows website admin to invite new members to website.
  * 
- * @struts.action path="/editor/inviteMember" parameter="method" name="inviteMemberForm"
+ * @struts.action path="/roller-ui/authoring/inviteMember" parameter="method" name="inviteMemberForm"
  * @struts.action-forward name="inviteMember.page" path=".InviteMember"
  */
 public class InviteMemberAction extends DispatchAction
@@ -238,7 +238,7 @@ public class InviteMemberAction extends DispatchAction
                     rootURL = RequestUtils.serverURL(request) 
                                   + request.getContextPath();
                 }               
-                String url = rootURL + "/editor/yourWebsites.do";
+                String url = rootURL + "/roller-ui/authoring/yourWebsites.do";
                 
                 ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", 

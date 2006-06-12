@@ -50,7 +50,7 @@ function setChecked(val, name) {
             </fmt:message>
         </p>
         <p>           
-            <c:url value="/editor/weblog.do" var="entryLink">
+            <c:url value="/roller-ui/authoring/weblog.do" var="entryLink">
                <c:param name="method" value="edit" />
                <c:param name="weblog" value="${model.website.handle}" />
                <c:param name="entryid" value="${model.weblogEntry.id}" />
@@ -160,7 +160,7 @@ function setChecked(val, name) {
         <%-- ============================================================= --%>
         
         <% String path = model.getWebsite()==null 
-                ? "/admin/commentManagement" : "/editor/commentManagement"; %>
+                ? "/admin/commentManagement" : "/roller-ui/authoring/commentManagement"; %>
         <html:form action="<%= path %>" method="post">
         
             <input type="hidden" name="method" value="update"/>

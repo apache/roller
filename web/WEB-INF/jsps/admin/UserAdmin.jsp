@@ -182,7 +182,7 @@ function cancel() {
                            </a>
                        </td>
                        <td width="%15">
-                           <c:url value="/editor/weblog.do" var="newEntry">
+                           <c:url value="/roller-ui/authoring/weblog.do" var="newEntry">
                                <c:param name="method" value="create" />
                                <c:param name="weblog" value="${perms.website.handle}" />
                            </c:url>
@@ -191,7 +191,7 @@ function cancel() {
                                <fmt:message key="userAdmin.newEntry" /></a>
                        </td>
                        <td width="%15">
-                           <c:url value="/editor/weblogEntryManagement.do" var="editEntries">
+                           <c:url value="/roller-ui/authoring/weblogEntryManagement.do" var="editEntries">
                                <c:param name="method" value="query" />
                                <c:param name="weblog" value="${perms.website.handle}" />
                            </c:url>
@@ -200,7 +200,7 @@ function cancel() {
                                <fmt:message key="userAdmin.editEntries" /></a> 
                        </td>
                        <td width="%15">
-                           <c:url value="/editor/website.do" var="manageWeblog">
+                           <c:url value="/roller-ui/authoring/website.do" var="manageWeblog">
                                <c:param name="method" value="edit" />
                                <c:param name="weblog" value="${perms.website.handle}" />
                            </c:url>

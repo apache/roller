@@ -76,7 +76,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
             <td class="rollertable" align="center" >
             <c:choose>
               <c:when test="${isEnabled[pingTarget.id]}">
-                 <roller:link page="/editor/pingSetup.do">
+                 <roller:link page="/roller-ui/authoring/pingSetup.do">
                      <roller:linkparam
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
@@ -88,7 +88,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
                  </roller:link>
               </c:when>
               <c:otherwise >
-                 <roller:link page="/editor/pingSetup.do">
+                 <roller:link page="/roller-ui/authoring/pingSetup.do">
                      <roller:linkparam
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
@@ -103,7 +103,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
             </td>
 
             <td class="rollertable">
-                 <roller:link page="/editor/pingSetup.do">
+                 <roller:link page="/roller-ui/authoring/pingSetup.do">
                      <roller:linkparam
                         id="<%= RollerRequest.PINGTARGETID_KEY %>"
                         name="pingTarget" property="id" />
@@ -173,7 +173,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
                   <td class="rollertable" align="center" >
                   <c:choose>
                     <c:when test="${isEnabled[pingTarget.id]}">
-                       <roller:link page="/editor/pingSetup.do">
+                       <roller:link page="/roller-ui/authoring/pingSetup.do">
                            <roller:linkparam
                              id="<%= RollerRequest.PINGTARGETID_KEY %>"
                              name="pingTarget" property="id" />
@@ -185,7 +185,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
                        </roller:link>
                     </c:when>
                     <c:otherwise >
-                       <roller:link page="/editor/pingSetup.do">
+                       <roller:link page="/roller-ui/authoring/pingSetup.do">
                            <roller:linkparam
                               id="<%= RollerRequest.PINGTARGETID_KEY %>"
                               name="pingTarget" property="id" />
@@ -200,7 +200,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
                   </td>
 
                   <td class="rollertable">
-                     <roller:link page="/editor/pingSetup.do">
+                     <roller:link page="/roller-ui/authoring/pingSetup.do">
                          <roller:linkparam
                             id="<%= RollerRequest.PINGTARGETID_KEY %>"
                             name="pingTarget" property="id" />

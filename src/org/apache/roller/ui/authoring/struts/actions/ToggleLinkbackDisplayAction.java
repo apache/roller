@@ -38,7 +38,7 @@ import org.apache.roller.util.cache.CacheManager;
 
 /**
  * Toggle display of a linkback.
- * @struts.action path="/editor/toggleLinkback" name="toggleLinkback"
+ * @struts.action path="/roller-ui/authoring/toggleLinkback" name="toggleLinkback"
  */
 public class ToggleLinkbackDisplayAction extends Action
 {

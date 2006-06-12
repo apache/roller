@@ -29,7 +29,7 @@
             <p>
             <%-- Add Bookmark link --%>
             <img src='<c:url value="/images/link_add.png"/>' border="0"alt="icon" />
-            <roller:link page="/editor/bookmarkEdit.do">
+            <roller:link page="/roller-ui/authoring/bookmarkEdit.do">
                 <roller:linkparam id="<%= RollerRequest.FOLDERID_KEY %>"
                     name="folder" property="id" />
                 <fmt:message key="bookmarksForm.addBookmark" />
@@ -39,7 +39,7 @@
 			<%-- Add Folder link --%>
 			<p>
             <img src='<c:url value="/images/folder_add.png"/>' border="0"alt="icon" />
-			<roller:link page="/editor/folderEdit.do">
+			<roller:link page="/roller-ui/authoring/folderEdit.do">
 			    <roller:linkparam id="<%= RollerRequest.PARENTID_KEY %>"
 			         name="folder" property="id" />
 			    <fmt:message key="bookmarksForm.addFolder" />
@@ -50,7 +50,7 @@
                 <%-- Import bookmarks --%>
                 <p>
                 <img src='<c:url value="/images/link_add.png"/>' border="0"alt="icon" />
-                <roller:link page="/editor/importBookmarks.do">
+                <roller:link page="/roller-ui/authoring/importBookmarks.do">
                     <roller:linkparam id="<%= RollerRequest.FOLDERID_KEY %>"
                         name="folder" property="id" />
                     <fmt:message key="bookmarksForm.importBookmarks" />

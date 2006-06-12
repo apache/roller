@@ -25,7 +25,7 @@
              <h3><fmt:message key="pagesForm.addNewPage" /></h3>
              <hr size="1" noshade="noshade" />
              
-             <html:form action="/editor/page" method="post" focus="name">
+             <html:form action="/roller-ui/authoring/page" method="post" focus="name">
 
                 <fmt:message key="pagesForm.name"/>: <input type="text" name="name" size="12" />
 

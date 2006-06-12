@@ -38,7 +38,7 @@
         document.write("<a href=\"http://www.microsoft.com/windows/ie/default.asp\">IE 6 or higher</a> ");
         document.write("for using the dHtml editor. ")
         document.write("Please <a href=\"");
-        document.write("editor/website.do?method=edit&rmik=Settings\">");
+        document.write("roller-ui/authoring/website.do?method=edit&rmik=Settings\">");
         document.write("change to the text editor</a> or upgrade ");
         document.write("your browser.</span>");
     }
