@@ -1,24 +1,26 @@
 <global-forwards>
+    
 <forward name="access-denied"          path=".denied"/>
 <forward name="error"                  path="/error.jsp"/>
-<forward name="login-redirect"         path="/roller-ui/login-redirect.jsp"/>
-<forward name="logout-redirect"        path="/roller-ui/logout-redirect.jsp"/>
 
 <!-- unprotected actions -->
+
 <forward name="page"                   path="/page"/>
 <forward name="main"                   path="/main.do"/>
 <forward name="home.page"              path="/main.do"/>
 <forward name="planet"                 path="/planet.do"/>
-<forward name="createUser"             path="/user.do?method=createUser"/>
-<forward name="registerUser"           path="/user.do?method=registerUser"/>
 
-<!--  landing page actions -->
+<!--  core UI actions -->
 
-<forward name="yourProfile"            path="/roller-ui/authoring/yourProfile.do?method=edit" />
-<forward name="yourWebsites"           path="/roller-ui/authoring/yourWebsites.do?method=edit" />
-<forward name="createWebsite"          path="/roller-ui/authoring/createWebsite.do?method=create" />
+<forward name="login-redirect"         path="/roller-ui/login-redirect.jsp"/>
+<forward name="logout-redirect"        path="/roller-ui/logout-redirect.jsp"/>
+<forward name="createUser"             path="/roller-ui/user.do?method=createUser"/>
+<forward name="registerUser"           path="/roller-ui/user.do?method=registerUser"/>
+<forward name="yourProfile"            path="/roller-ui/yourProfile.do?method=edit" />
+<forward name="createWebsite"          path="/roller-ui/createWebsite.do?method=create" />
+<forward name="yourWebsites"           path="/roller-ui/yourWebsites.do?method=edit" />
 
-<!--  editor/author actions -->
+<!--  LIMITED/AUTHOR weblog UI actions -->
 
 <forward name="weblogEdit"             path="/roller-ui/authoring/weblog.do?method=edit"/>
 <forward name="weblogCreate"           path="/roller-ui/authoring/weblog.do?method=create"/>
@@ -32,7 +34,7 @@
 <forward name="uploadFiles"            path="/roller-ui/authoring/uploadFiles.do"/>
 <forward name="referers"               path="/roller-ui/authoring/referers.do"/>
 
-<!-- manage weblog actions -->
+<!-- ADMIN weblog UI actions -->
 
 <forward name="editWebsite"            path="/roller-ui/authoring/website.do?method=edit"/>
 <forward name="editTheme"              path="/roller-ui/authoring/themeEditor.do?method=edit"/>
@@ -49,7 +51,7 @@
 <forward name="trackback"              path="/roller-ui/authoring/trackback.do?method=send"/>
 <forward name="toggleLinkback"         path="/roller-ui/authoring/toggleLinkback.do"/>
 
-<!-- global admin actions -->
+<!-- global admin UI actions -->
 
 <forward name="rollerConfig"            path="/roller-ui/admin/rollerConfig.do?method=edit"/>
 <forward name="adminUser"               path="/roller-ui/admin/user.do?method=edit"/>
@@ -59,7 +61,7 @@
 <forward name="commonPingTargets"       path="/roller-ui/admin/commonPingTargets.do"/>
 <forward name="cacheInfo"		path="/roller-ui/admin/cacheInfo.do"/>
 
-<!-- planet admin actions -->
+<!-- planet admin UI actions -->
 
 <forward name="planetConfig"             path="/roller-ui/admin/planetConfig.do?method=getConfig"/>
 <forward name="planetSubscriptions"      path="/roller-ui/admin/planetSubscriptions.do?method=getSubscriptions"/>

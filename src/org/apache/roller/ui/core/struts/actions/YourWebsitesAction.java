@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.authoring.struts.actions;
+package org.apache.roller.ui.core.struts.actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ import org.apache.roller.ui.authoring.struts.formbeans.YourWebsitesForm;
 /**
  * Allows user to view and pick from list of his/her websites.
  *
- * @struts.action path="/roller-ui/authoring/yourWebsites" name="yourWebsitesForm" parameter="method"
+ * @struts.action path="/roller-ui/yourWebsites" name="yourWebsitesForm" parameter="method"
  * @struts.action-forward name="yourWebsites.page" path=".YourWebsites"
  */
 public class YourWebsitesAction extends DispatchAction {

@@ -52,7 +52,7 @@ import org.apache.roller.util.StringUtils;
 /**
  * Actions for creating a new user.
  *
- * @struts.action name="userFormEx" path="/user"
+ * @struts.action name="userFormEx" path="/roller-ui/user"
  * 		scope="session" parameter="method"
  *
  * @struts.action-forward name="registerUser.page" path=".UserNew"

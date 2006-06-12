@@ -51,7 +51,7 @@ import org.apache.roller.util.Utilities;
 /**
  * Allows user to create a new website.
  *
- * @struts.action path="/roller-ui/authoring/createWebsite" parameter="method" name="createWebsiteForm"
+ * @struts.action path="/roller-ui/createWebsite" parameter="method" name="createWebsiteForm"
  * @struts.action-forward name="createWebsite.page" path=".CreateWebsite"
  * @struts.action-forward name="createWebsiteDone.page" path=".CreateWebsiteDone"
  */

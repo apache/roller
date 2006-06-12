@@ -43,10 +43,13 @@
          <property name="objectDefinitionSource">
             <value>
                 PATTERN_TYPE_APACHE_ANT
+                /roller-ui/login-redirect.jsp=admin,editor
+                /roller-ui/yourProfile**=admin,editor
+                /roller-ui/createWebsite**=admin,editor
+                /roller-ui/yourWebsites**=admin,editor
                 /roller-ui/authoring/**=admin,editor
                 /roller-ui/admin/**=admin
                 /rewrite-status*=admin
-                /roller-ui/login-redirect.jsp=admin,editor
             </value>
         </property>
     </bean>

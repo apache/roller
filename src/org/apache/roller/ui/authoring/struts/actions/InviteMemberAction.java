@@ -238,7 +238,7 @@ public class InviteMemberAction extends DispatchAction
                     rootURL = RequestUtils.serverURL(request) 
                                   + request.getContextPath();
                 }               
-                String url = rootURL + "/roller-ui/authoring/yourWebsites.do";
+                String url = rootURL + "/roller-ui/yourWebsites.do";
                 
                 ResourceBundle resources = ResourceBundle.getBundle(
                     "ApplicationResources", 
