@@ -43,7 +43,7 @@ import org.apache.roller.util.StringUtils;
 /**
  * Allows user to edit his/her profile.
  *
- * @struts.action name="userFormEx" path="/roller-ui/authoring/yourProfile" parameter="method"
+ * @struts.action name="userFormEx" path="/roller-ui/yourProfile" parameter="method"
  * @struts.action-forward name="yourProfile.page" path=".YourProfile"
  */
 public class YourProfileAction extends UserBaseAction {

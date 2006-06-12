@@ -36,7 +36,7 @@ function cancel() {
 
 <p><fmt:message key="userRegister.prompt" /></p>
 
-<html:form action="/user" method="post" focus="fullName">
+<html:form action="/roller-ui/user" method="post" focus="fullName">
     <html:hidden property="method" name="method" value="add"/></input>
     <html:hidden property="id" /></input>
     <html:hidden property="adminCreated" /></input>
