@@ -32,7 +32,7 @@ function cancel() {
     <p class="subtitle"><fmt:message key="userAdmin.subtitle.searchUser" /></p>
     <p><fmt:message key="userAdmin.prompt.searchUser" /></p>
 
-    <html:form action="/admin/user" method="post" focus="userName">
+    <html:form action="/roller-ui/admin/user" method="post" focus="userName">
         <input name="method" type="hidden" value="edit" />    
         
         <span style="margin:4px"><fmt:message key="inviteMember.userName" /></span>
@@ -49,7 +49,7 @@ function cancel() {
 
     <p class="subtitle"><fmt:message key="userAdmin.subtitle.userCreation" /></p>
     <fmt:message key="userAdmin.prompt.orYouCan" />
-    <c:url value="/admin/user.do" var="newUser">
+    <c:url value="/roller-ui/admin/user.do" var="newUser">
         <c:param name="method" value="newUser" />
     </c:url>
     <a href='<c:out value="${newUser}" />'>
@@ -74,7 +74,7 @@ function cancel() {
         </c:otherwise>
     </c:choose>
     
-    <html:form action="/admin/user" method="post">
+    <html:form action="/roller-ui/admin/user" method="post">
         <html:hidden property="method" value="update"/></input>        
         <html:hidden property="id"/></input>
         <html:hidden property="adminCreated" /></input>

@@ -44,7 +44,7 @@
             <value>
                 PATTERN_TYPE_APACHE_ANT
                 /roller-ui/authoring/**=admin,editor
-                /admin/**=admin
+                /roller-ui/admin/**=admin
                 /rewrite-status*=admin
                 /roller-ui/login-redirect.jsp=admin,editor
             </value>

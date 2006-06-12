@@ -22,7 +22,7 @@
 <fmt:message key="commonPingTarget.subtitle"/>
 </p>
 
-<html:form action="/admin/commonPingTargets" method="post" focus="name">
+<html:form action="/roller-ui/admin/commonPingTargets" method="post" focus="name">
     <html:hidden property="method" value="save" />
     <html:hidden property="id" />
 

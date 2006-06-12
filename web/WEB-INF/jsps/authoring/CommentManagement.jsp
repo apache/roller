@@ -160,7 +160,7 @@ function setChecked(val, name) {
         <%-- ============================================================= --%>
         
         <% String path = model.getWebsite()==null 
-                ? "/admin/commentManagement" : "/roller-ui/authoring/commentManagement"; %>
+                ? "/roller-ui/admin/commentManagement" : "/roller-ui/authoring/commentManagement"; %>
         <html:form action="<%= path %>" method="post">
         
             <input type="hidden" name="method" value="update"/>

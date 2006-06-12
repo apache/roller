@@ -47,7 +47,7 @@ import org.apache.roller.ui.authoring.struts.forms.PlanetConfigForm;
 /**
  * Allows configuration of Planet Roller.
  * 
- * @struts.action name="planetConfigForm" path="/admin/planetConfig"
+ * @struts.action name="planetConfigForm" path="/roller-ui/admin/planetConfig"
  *                scope="request" parameter="method"
  * 
  * @struts.action-forward name="planetConfig.page" 
