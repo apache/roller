@@ -36,7 +36,6 @@ import org.apache.roller.ui.rendering.velocity.PageServlet;
  * This servlet retrieves (and displays) search results.
  *
  * @web.servlet name="SearchServlet" load-on-startup="5"
- * @web.servlet-init-param name="properties" value="/WEB-INF/velocity.properties"
  * @web.servlet-mapping url-pattern="/search/*"
  */
 public class SearchServlet extends PageServlet {

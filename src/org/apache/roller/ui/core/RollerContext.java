@@ -35,16 +35,11 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
-
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.SecurityConfig;
-import org.acegisecurity.intercept.web.PathBasedFilterInvocationDefinitionMap;
 import org.acegisecurity.providers.ProviderManager;
 import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
-import org.acegisecurity.securechannel.ChannelProcessingFilter;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,7 +52,6 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ScheduledTask;
-import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.pings.PingQueueTask;
@@ -69,6 +63,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
 import org.apache.roller.util.cache.CacheManager;
+import org.apache.velocity.runtime.RuntimeSingleton;
 
 
 /**
@@ -189,6 +184,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             
             initializeSecurityFeatures(mContext);
             
+            setupVelocity();
             roller.getThemeManager();
             setupIndexManager(roller);
             initializePingFeatures(roller);
@@ -203,6 +199,30 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         }
         
         mLogger.debug("RollerContext initialization complete");
+    }
+    
+    
+    private void setupVelocity() throws RollerException {
+        
+        mLogger.info("Initializing Velocity");
+        
+        // initialize the Velocity engine
+        Properties velocityProps = new Properties();
+        
+        try {
+            InputStream instream = this.mContext.getResourceAsStream("/WEB-INF/velocity.properties");
+            
+            velocityProps.load(instream);
+            
+            mLogger.debug("Velocity props = "+velocityProps);
+            
+            // init velocity
+            RuntimeSingleton.init(velocityProps);
+            
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+        
     }
     
     
