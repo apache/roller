@@ -64,7 +64,7 @@ public class CommentAuthenticatorServlet extends HttpServlet {
         
         response.setContentType("text/html; charset=utf-8");
         PrintWriter out = response.getWriter();
-        out.println(this.authenticator.getHtml(null, request, response));
+        out.println(this.authenticator.getHtml(request));
     }
     
     

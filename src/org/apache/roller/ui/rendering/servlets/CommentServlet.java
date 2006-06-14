@@ -264,7 +264,7 @@ public class CommentServlet extends HttpServlet {
             log.debug("Comment is a preview");
             
         } else {
-            if (this.authenticator.authenticate(comment, request)) {
+            if (this.authenticator.authenticate(request)) {
                 log.debug("Comment passed authentication");
                 
                 // If comment contains blacklisted text, mark as spam
