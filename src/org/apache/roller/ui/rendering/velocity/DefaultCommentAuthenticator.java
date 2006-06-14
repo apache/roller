@@ -30,17 +30,12 @@ import org.apache.roller.pojos.CommentData;
 public class DefaultCommentAuthenticator implements CommentAuthenticator {
     
     
-    public String getHtml(
-            Context context,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+    public String getHtml(HttpServletRequest request) {
         return "<!-- custom authenticator would go here -->";
     }
     
     
-    public boolean authenticate(
-            CommentData comment,
-            HttpServletRequest request) {
+    public boolean authenticate(HttpServletRequest request) {
         return true;
     }
     

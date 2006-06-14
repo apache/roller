@@ -39,9 +39,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
     private static Log mLogger = LogFactory.getLog(MathCommentAuthenticator.class);
     
     
-    public String getHtml(Context context,
-            HttpServletRequest request,
-            HttpServletResponse response) {
+    public String getHtml(HttpServletRequest request) {
         
         String answer = "";
         
@@ -81,7 +79,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
     }
     
     
-    public boolean authenticate(CommentData comment, HttpServletRequest request) {
+    public boolean authenticate(HttpServletRequest request) {
         
         boolean authentic = false;
         

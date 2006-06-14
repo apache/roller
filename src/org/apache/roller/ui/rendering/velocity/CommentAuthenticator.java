@@ -20,8 +20,8 @@ package org.apache.roller.ui.rendering.velocity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.velocity.context.Context;
 import org.apache.roller.pojos.CommentData;
+import org.apache.velocity.context.Context;
 
 
 /**
@@ -32,29 +32,20 @@ public interface CommentAuthenticator {
     
     /**
      * Plugin should write out HTML for the form fields and other UI elements
-     * needed inside the Roller comment form. Called when HTML form is being
-     * displayed by Velocity template (see comments.vm).
+     * needed to display the comment authentication widget.
      *
-     * @param context Plugin can access objects in context of calling page.
-     * @param request Plugin can access request parameters
-     * @param response Plugin should write to response
+     * @param request comment form request object
      */
-    public String getHtml(
-            Context context,
-            HttpServletRequest request,
-            HttpServletResponse response);
+    public String getHtml(HttpServletRequest request);
     
     
     /**
-     * Plugin should return true only if comment passes authentication test.
-     * Called when a comment is posted, not called when a comment is previewed.
+     * Plugin should return true only if comment posting passes the 
+     * authentication test.
      *
-     * @param comment Comment data that was posted
-     * @param request Plugin can access request parameters
-     * @return True if comment passes authentication test
+     * @param request comment posting request object
+     * @return true if authentication passed, false otherwise
      */
-    public boolean authenticate(
-            CommentData comment,
-            HttpServletRequest request);
+    public boolean authenticate(HttpServletRequest request);
     
 }
