@@ -18,13 +18,15 @@
 
 package org.apache.roller.ui.core.tags.menu;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.VelocityContext;
-import org.apache.roller.RollerException;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.tags.VelocityTag;
 import org.apache.roller.ui.rendering.velocity.ContextLoader;
@@ -82,7 +84,17 @@ public class MenuTag extends VelocityTag
 		ctx.put("req", req );
 		ctx.put("res", res );
 		
-                ContextLoader.loadToolboxContext(req, res, ctx);
+                Map mapCtx = new HashMap();
+                ContextLoader.loadToolboxContext(req, res, mapCtx);
+                
+                // hack.  put mapCtx info velocity ctx
+                String key = null;
+                Iterator ctxIT = mapCtx.keySet().iterator();
+                while(ctxIT.hasNext()) {
+                    key = (String) ctxIT.next();
+                    
+                    ctx.put(key, mapCtx.get(key));
+                }
 	}
 
 }

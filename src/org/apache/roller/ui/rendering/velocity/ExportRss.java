@@ -39,7 +39,9 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -55,7 +57,7 @@ import java.util.TimeZone;
 public class ExportRss
 {
     private VelocityEngine ve = null;
-    private VelocityContext ctx = null;
+    private Map ctx = null;
     private UserData user = null;
     private boolean exportAtom;
     
@@ -74,7 +76,7 @@ public class ExportRss
         ve.info("Done initializing VelocityEngine for ExportRss");
         ve.info("************************************************");
         
-        ctx = new VelocityContext();
+        ctx = new HashMap();
         
         RollerContext rollerCtx = RollerContext.getRollerContext();
         
@@ -108,7 +110,7 @@ public class ExportRss
         if (exportAtom) templateFile = ATOM_TEMPLATE;
         Template template = ve.getTemplate( templateFile, "utf-8" );
         StringWriter sw = new StringWriter();
-        template.merge(ctx, sw);
+        template.merge(new VelocityContext(ctx), sw);
         
         writeResultsToFile((String)ctx.get("uploadPath"), sw, fileName);
     }

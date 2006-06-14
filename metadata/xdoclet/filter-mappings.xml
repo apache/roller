@@ -61,25 +61,6 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
 </filter-mapping>
 
 
-<!-- cache lastModified dates used for HTTP 304 responses -->
-<filter-mapping>
-    <filter-name>IfModifiedWeblogPageCacheFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
-</filter-mapping>
-
-<filter-mapping>
-    <filter-name>IfModifiedFeedCacheFilter</filter-name>
-    <url-pattern>/rss/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>IfModifiedFeedCacheFilter</filter-name>
-    <url-pattern>/atom/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>IfModifiedFeedCacheFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-
 <filter-mapping>
     <filter-name>IfPlanetModifiedFilter</filter-name>
     <url-pattern>/planetrss/*</url-pattern>
@@ -118,28 +99,6 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
 </filter-mapping>
 
 
-<!-- Feed Caching (rss, atom, etc) -->
-<filter-mapping>
-    <filter-name>FeedCacheFilter</filter-name>
-    <url-pattern>/rss/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>FeedCacheFilter</filter-name>
-    <url-pattern>/atom/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>FeedCacheFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-
-
-<!-- Weblog Page Caching -->
-<filter-mapping>
-	<filter-name>WeblogPageCacheFilter</filter-name>
-	<url-pattern>/page/*</url-pattern>
-</filter-mapping>
-
-
 <!-- Main Page Caching -->
 <filter-mapping>
 	<filter-name>MainPageCacheFilter</filter-name>
@@ -163,22 +122,6 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
 
 
 <!-- Do we still need the RequestFilter? -->
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/preview/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/xmlrpc/*</url-pattern>
-</filter-mapping>
 <filter-mapping>
     <filter-name>RequestFilter</filter-name>
     <url-pattern>*.do</url-pattern>
