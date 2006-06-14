@@ -16,36 +16,27 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.velocity;
+package org.apache.roller.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.roller.pojos.CommentData;
 import org.apache.velocity.context.Context;
+import org.apache.roller.pojos.CommentData;
 
 
 /**
- * Interface for comment authentication plugin.
+ * Default authenticator does nothing, always returns true.
  */
-public interface CommentAuthenticator {
+public class DefaultCommentAuthenticator implements CommentAuthenticator {
     
     
-    /**
-     * Plugin should write out HTML for the form fields and other UI elements
-     * needed to display the comment authentication widget.
-     *
-     * @param request comment form request object
-     */
-    public String getHtml(HttpServletRequest request);
+    public String getHtml(HttpServletRequest request) {
+        return "<!-- custom authenticator would go here -->";
+    }
     
     
-    /**
-     * Plugin should return true only if comment posting passes the 
-     * authentication test.
-     *
-     * @param request comment posting request object
-     * @return true if authentication passed, false otherwise
-     */
-    public boolean authenticate(HttpServletRequest request);
+    public boolean authenticate(HttpServletRequest request) {
+        return true;
+    }
     
 }

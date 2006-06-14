@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.ui.rendering.velocity.CommentAuthenticator;
-import org.apache.roller.ui.rendering.velocity.DefaultCommentAuthenticator;
+import org.apache.roller.ui.rendering.util.CommentAuthenticator;
+import org.apache.roller.ui.rendering.util.DefaultCommentAuthenticator;
 
 
 /**
