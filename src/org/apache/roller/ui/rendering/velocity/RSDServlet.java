@@ -41,10 +41,6 @@ import org.apache.roller.ui.core.WeblogRequest;
  *
  *
  * @web.servlet name="RSDServlet" load-on-startup="0"
- *
- * @web.servlet-init-param name="org.apache.velocity.properties" 
- * 		                  value="/WEB-INF/velocity.properties"
- *  
  * @web.servlet-mapping url-pattern="/rsd/*"
  *
  * @author Allen Gilliland
