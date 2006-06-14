@@ -1,0 +1,120 @@
+
+package org.apache.roller.util.cache;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
+/**
+ * A utility class for storing cached content written to a java.io.Writer.
+ */
+public class CachedContent implements Serializable {
+    
+    private static Log log = LogFactory.getLog(CachedContent.class);
+    
+    // default to an 8K buffered cache
+    public static final int DEFAULT_SIZE = 8192;
+    
+    // the byte array we use to maintain the cached content
+    private byte[] content = new byte[0];
+    
+    // Use a byte array output stream to cached the output bytes
+    private transient ByteArrayOutputStream outstream = null;
+    
+    // The PrintWriter that users will be writing to
+    private transient PrintWriter cachedWriter = null;
+    
+    
+    public CachedContent(int size) {
+        
+        // construct output stream
+        if(size > 0) {
+            this.outstream = new ByteArrayOutputStream(size);
+        } else {
+            this.outstream = new ByteArrayOutputStream(DEFAULT_SIZE);
+        }
+        
+        // construct writer from output stream
+        try {
+            this.cachedWriter =
+                    new PrintWriter(new OutputStreamWriter(this.outstream, "UTF-8"));
+        } catch(UnsupportedEncodingException e) {
+            // shouldn't be possible, java always supports utf-8
+            throw new RuntimeException("Encoding problem", e);
+        }
+    }
+    
+    
+    /**
+     * Get the content cached in this object as a byte array.
+     *
+     * NOTE: the content is only a representation of the data written to the
+     *       enclosed Writer up until the last call to flush().
+     */
+    public byte[] getContent() {
+        return this.content;
+    }
+    
+    
+    /**
+     * Get the content cached in this object as a String.
+     *
+     * NOTE: the content is only a representation of the data written to the
+     *       enclosed Writer up until the last call to flush().
+     */
+    public String getContentAsString() {
+        return new String(this.content);
+    }
+    
+    
+    public PrintWriter getCachedWriter() {
+        return cachedWriter;
+    }
+    
+    
+    /**
+     * Called to flush any output in the cached Writer to
+     * the cached content for more permanent storage.
+     *
+     * @throws IllegalStateException if calling flush() after a close()
+     */
+    public void flush() {
+        
+        if(this.outstream == null) {
+            throw new IllegalStateException("Cannot flush() after a close()!");
+        }
+        
+        this.cachedWriter.flush();
+        this.content = this.outstream.toByteArray();
+        
+        log.debug("FLUSHED "+this.content.length);
+    }
+    
+    
+    /**
+     * Close this CachedContent from further writing.
+     */
+    public void close() throws IOException {
+        
+        if(this.cachedWriter != null) {
+            this.cachedWriter.flush();
+            this.cachedWriter.close();
+            this.cachedWriter = null;
+        }
+        
+        if(this.outstream != null) {
+            this.content = this.outstream.toByteArray();
+            this.outstream.close();
+            this.outstream = null;
+        }
+        
+        log.debug("CLOSED");
+    }
+    
+}

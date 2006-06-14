@@ -20,6 +20,8 @@ package org.apache.roller.ui.rendering.velocity;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -44,11 +46,8 @@ import org.apache.velocity.exception.ParseErrorException;
 /**
  * The PageServlet handles all requests for weblog pages at /page/*
  * 
- * @web.servlet name="PageServlet" load-on-startup="0"
- * @web.servlet-init-param name="org.apache.velocity.properties" 
- * 		                  value="/WEB-INF/velocity.properties"
- *  
- * //web.servlet-mapping url-pattern="/page/*"
+ * web.servlet name="PageServlet" load-on-startup="0"
+ * web.servlet-mapping url-pattern="/page/*"
  *
  * NOTE: the webdoclet task allows some elements to be inherited when generating
  *   the web.xml file.  for this reason we can't put the servlet mapping here
@@ -191,7 +190,17 @@ public class PageServlet extends VelocityServlet {
         }
         
         // Made it this far, populate the Context
-        ContextLoader.setupContext( ctx, rreq, response );
+        Map mapCtx = new HashMap();
+        ContextLoader.setupContext( mapCtx, rreq, response );
+        
+        // hack.  put mapCtx info velocity ctx
+        String key = null;
+        Iterator ctxIT = mapCtx.keySet().iterator();
+        while(ctxIT.hasNext()) {
+            key = (String) ctxIT.next();
+            
+            ctx.put(key, mapCtx.get(key));
+        }
         
         try {
             outty = getTemplate(page.getId(), "UTF-8");

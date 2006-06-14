@@ -27,15 +27,16 @@ import org.apache.roller.RollerException;
 import org.apache.roller.ui.core.RollerRequest;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -58,10 +59,10 @@ import org.apache.roller.model.WeblogManager;
  *
  * @author David M Johnson
  *
- * @web.servlet name="RssServlet"
- * @web.servlet-mapping url-pattern="/rss/*"
- * @web.servlet-mapping url-pattern="/atom/*"
- * @web.servlet-mapping url-pattern="/flavor/*"
+ * web.servlet name="RssServlet"
+ * web.servlet-mapping url-pattern="/rss/*"
+ * web.servlet-mapping url-pattern="/atom/*"
+ * web.servlet-mapping url-pattern="/flavor/*"
  */
 public class FlavorServlet extends VelocityServlet {
     
@@ -111,8 +112,18 @@ public class FlavorServlet extends VelocityServlet {
             Date updateTime = wmgr.getWeblogLastPublishTime(rreq.getWebsite(), catname);
             request.setAttribute("updateTime", updateTime);
             
-            ContextLoader.setupContext(ctx, rreq, response);
+            Map mapCtx = new HashMap();
+            ContextLoader.setupContext(mapCtx, rreq, response);
             
+            // hack.  put mapCtx info velocity ctx
+            String key = null;
+            Iterator ctxIT = mapCtx.keySet().iterator();
+            while(ctxIT.hasNext()) {
+                key = (String) ctxIT.next();
+                
+                ctx.put(key, mapCtx.get(key));
+            }
+                
             String useTemplate;
             WeblogPageModel pageModel = (WeblogPageModel)ctx.get("pageModel");
             if (request.getServletPath().endsWith("rss")) {

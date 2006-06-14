@@ -22,7 +22,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -33,7 +32,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.context.Context;
 import org.apache.velocity.tools.view.context.ChainedContext;
 import org.apache.velocity.tools.view.context.ToolboxContext;
 import org.apache.velocity.tools.view.servlet.ServletToolboxManager;
@@ -60,6 +58,7 @@ import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.StringUtils;
 import org.apache.roller.util.Utilities;
+import org.apache.velocity.VelocityContext;
 
 
 /**
@@ -85,7 +84,7 @@ public class ContextLoader {
      * RollerPagePlugins needed for Roller page execution.
      */
     public static void setupContext(
-            Context ctx, 
+            Map ctx, 
             RollerRequest rreq, 
             HttpServletResponse response )
             throws RollerException {
@@ -145,7 +144,7 @@ public class ContextLoader {
      * Load website object and related objects.
      */
     protected static WebsiteData loadWeblogValues(
-            Context ctx, 
+            Map ctx, 
             RollerRequest rreq, 
             RollerContext rollerCtx )
             throws RollerException {
@@ -242,7 +241,7 @@ public class ContextLoader {
      * Load comments for one weblog entry and related objects.
      */
     protected static void loadCommentValues(
-            Context       ctx, 
+            Map       ctx, 
             RollerRequest rreq, 
             RollerContext rollerCtx )
             throws RollerException {
@@ -292,7 +291,7 @@ public class ContextLoader {
      * Load objects needed for RSS and Atom newsfeed generation.
      */
     protected static void loadRssValues(
-            Context ctx, 
+            Map ctx, 
             RollerRequest rreq, 
             WebsiteData website) 
             throws RollerException {
@@ -336,7 +335,7 @@ public class ContextLoader {
      * Load useful utility objects for string and date formatting.
      */
     protected static void loadUtilityObjects(
-            Context ctx, 
+            Map ctx, 
             RollerRequest rreq,                                             
             RollerContext rollerCtx, 
             WebsiteData website)
@@ -374,7 +373,7 @@ public class ContextLoader {
      * Load URL paths useful in page templates.
      */
     protected static void loadPathValues(
-            Context ctx,  RollerRequest rreq, 
+            Map ctx,  RollerRequest rreq, 
             RollerContext rollerCtx, 
             WebsiteData   website)
             throws RollerException {
@@ -421,7 +420,7 @@ public class ContextLoader {
      * If there is an ERROR or STATUS message in the session,
      * place it into the Context for rendering later.
      */
-    private static void loadStatusMessage(Context ctx, RollerRequest rreq) {
+    private static void loadStatusMessage(Map ctx, RollerRequest rreq) {
         
         mLogger.debug("Loading status message");
         
@@ -442,7 +441,7 @@ public class ContextLoader {
         }
     }
         
-    protected static void loadRequestParamKeys(Context ctx) {
+    protected static void loadRequestParamKeys(Map ctx) {
         
         mLogger.debug("Loading request param keys");
         
@@ -469,7 +468,7 @@ public class ContextLoader {
     public static ToolboxContext loadToolboxContext(
             HttpServletRequest request,                                                     
             HttpServletResponse response,                                                    
-            Context ctx) {
+            Map ctx) {
         
         mLogger.debug("Loading toolbox context");
         
@@ -486,8 +485,9 @@ public class ContextLoader {
         }
         
         // load a toolbox context
+        // TODO 3.0: is this okay?
         ChainedContext chainedContext =
-                new ChainedContext(ctx, request, response, servletContext);
+                new ChainedContext(new VelocityContext(ctx), request, response, servletContext);
         ToolboxContext toolboxContext =
                 toolboxManager.getToolboxContext(chainedContext);
         

@@ -17,6 +17,7 @@
 */
 package org.apache.roller.ui.rendering.velocity;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -32,14 +33,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.context.Context;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.PagePlugin;
 import org.apache.roller.model.PagePluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.RefererDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
@@ -54,6 +52,7 @@ import org.apache.roller.ui.core.tags.menu.MenuTag;
 import org.apache.roller.ui.authoring.tags.BigWeblogCalendarModel;
 import org.apache.roller.ui.authoring.tags.WeblogCalendarModel;
 import org.apache.roller.util.StringUtils;
+import org.apache.velocity.VelocityContext;
 
 /**
  * Provides assistance to VelociMacros, filling in where Velocity falls.
@@ -67,7 +66,7 @@ public class PageHelper
     private static Log mLogger = 
        LogFactory.getFactory().getInstance(PageHelper.class);
     
-    private Context              mVelocityContext = null;
+    private Map              mVelocityContext = null;
     private PageContext          mPageContext = null;
     private HttpServletResponse  mResponse = null;     
     private RollerRequest        mRollerReq = null;  
@@ -83,7 +82,7 @@ public class PageHelper
     public PageHelper( 
             HttpServletRequest request, 
             HttpServletResponse response, 
-            Context ctx) throws RollerException
+            Map ctx) throws RollerException
     {
         mVelocityContext = ctx;
         mRollerReq = RollerRequest.getRollerRequest(request);
@@ -101,14 +100,15 @@ public class PageHelper
                 mWebsite = mRollerReq.getWebsite();
             }
         }
-        if (mVelocityContext == null) mVelocityContext = new VelocityContext();
+        if (mVelocityContext == null) mVelocityContext = new HashMap();
         Roller roller = RollerFactory.getRoller(); 
         PagePluginManager ppmgr = roller.getPagePluginManager();
+        // TODO 3.0 : broken by velocity context -> Map
         mPagePlugins = ppmgr.createAndInitPagePlugins(
                 mWebsite, 
                 RollerContext.getRollerContext().getServletContext(),
-                RollerContext.getRollerContext().getAbsoluteContextUrl(request),
-                mVelocityContext);
+                RollerContext.getRollerContext().getAbsoluteContextUrl(),
+                new VelocityContext(mVelocityContext));
     }
        
     //------------------------------------------------------------------------
@@ -306,9 +306,8 @@ public class PageHelper
         try
         {
             HttpServletRequest request =
-                (HttpServletRequest)mPageContext.getRequest();
-            HttpServletResponse response =
-                (HttpServletResponse)mPageContext.getResponse();
+                (HttpServletRequest) mRollerReq.getRequest();
+            HttpServletResponse response = mResponse;
 
             String selfUrl = null;
             String pageLink = mRollerReq.getPageLink();
@@ -499,14 +498,14 @@ public class PageHelper
     public Locale[] getSupportedLanguages()
     {
         Locale currentLocale =
-            (Locale) mPageContext.getSession().getAttribute(Globals.LOCALE_KEY);
+            (Locale) mRollerReq.getRequest().getSession().getAttribute(Globals.LOCALE_KEY);
         if (currentLocale==null) 
         {
-            currentLocale = mPageContext.getRequest().getLocale();
+            currentLocale = mRollerReq.getRequest().getLocale();
         }
             
         Locale[] supportedLanguages =
-            LanguageUtil.getSupportedLanguages(mPageContext.getServletContext());
+            LanguageUtil.getSupportedLanguages(RollerContext.getServletContext());
         if (supportedLanguages==null) {
             return null;
         }
