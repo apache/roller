@@ -40,8 +40,8 @@ import org.apache.roller.ui.core.WeblogRequest;
  * Generates simple rsd feeds for a given weblog.
  *
  *
- * @web.servlet name="RSDServlet" load-on-startup="0"
- * @web.servlet-mapping url-pattern="/rsd/*"
+ * web.servlet name="RSDServlet" load-on-startup="0"
+ * web.servlet-mapping url-pattern="/rsd/*"
  *
  * @author Allen Gilliland
  */
