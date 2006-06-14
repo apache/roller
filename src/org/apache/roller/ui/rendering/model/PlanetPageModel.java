@@ -15,7 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.ui.rendering.velocity;
+package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;

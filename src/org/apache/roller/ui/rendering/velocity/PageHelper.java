@@ -31,6 +31,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.ui.rendering.model.WeblogPageModel;
 import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
