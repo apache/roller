@@ -41,7 +41,7 @@ import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
-import org.apache.roller.ui.rendering.velocity.deprecated.WeblogPageModel;
+import org.apache.roller.ui.rendering.velocity.deprecated.OldWeblogPageModel;
 
 /**
  * Page model that provides access to site-wide users, weblogs and entries for
@@ -187,9 +187,9 @@ public class SitePageModel implements PageModel {
      */
     public List getWeblogEntries(String handle, String userName, String cat, int sinceDays, int offset, int length) {
         List results = new ArrayList();
-        if (handle.equals(WeblogPageModel.VELOCITY_NULL)) handle = null;
-        if (userName.equals(WeblogPageModel.VELOCITY_NULL)) userName = null;
-        if (cat.equals(WeblogPageModel.VELOCITY_NULL)) cat = null;
+        if (handle.equals(OldWeblogPageModel.VELOCITY_NULL)) handle = null;
+        if (userName.equals(OldWeblogPageModel.VELOCITY_NULL)) userName = null;
+        if (cat.equals(OldWeblogPageModel.VELOCITY_NULL)) cat = null;
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, -1 * sinceDays);
