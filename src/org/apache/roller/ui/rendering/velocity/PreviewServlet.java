@@ -43,8 +43,8 @@ import org.apache.roller.ui.core.RollerRequest;
 /**
  * Allow users to preview what their blog would look like in a given theme.
  *
- * @web.servlet name="PreviewServlet" load-on-startup="1"
- * @web.servlet-mapping url-pattern="/preview/*"
+ * web.servlet name="PreviewServlet" load-on-startup="1"
+ * web.servlet-mapping url-pattern="/preview/*"
  */
 public class PreviewServlet extends PageServlet {
     
