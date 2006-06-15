@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.model.PagePluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
@@ -103,12 +103,7 @@ public class PageHelper
         if (mVelocityContext == null) mVelocityContext = new HashMap();
         Roller roller = RollerFactory.getRoller(); 
         PagePluginManager ppmgr = roller.getPagePluginManager();
-        // TODO 3.0 : broken by velocity context -> Map
-        mPagePlugins = ppmgr.createAndInitPagePlugins(
-                mWebsite, 
-                RollerContext.getRollerContext().getServletContext(),
-                RollerContext.getRollerContext().getAbsoluteContextUrl(),
-                new VelocityContext(mVelocityContext));
+        mPagePlugins = ppmgr.createAndInitPagePlugins(mWebsite, ctx);
     }
        
     //------------------------------------------------------------------------
@@ -468,13 +463,11 @@ public class PageHelper
                     String key = (String)iter.next();
                     if (entryPlugins.contains(key))
                     {
-                        PagePlugin pagePlugin = (PagePlugin)mPagePlugins.get(key);
-                        if (!(singleEntry && pagePlugin.getSkipOnSingleEntry())) { 
-                            try {
-                                ret = pagePlugin.render(entry.getPojo(), ret);
-                            } catch (Throwable t) {
-                                mLogger.error("ERROR from plugin: " + pagePlugin.getName(), t);
-                            }
+                        WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin)mPagePlugins.get(key);
+                        try {
+                            ret = pagePlugin.render(entry.getPojo(), ret);
+                        } catch (Throwable t) {
+                            mLogger.error("ERROR from plugin: " + pagePlugin.getName(), t);
                         }
                     }
                 }

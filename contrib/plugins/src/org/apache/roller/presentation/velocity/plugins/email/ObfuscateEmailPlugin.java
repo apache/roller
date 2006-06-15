@@ -21,12 +21,13 @@
  */
 package org.apache.roller.presentation.velocity.plugins.email;
 
+import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.context.Context;
+import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.RegexUtil;
 
@@ -34,7 +35,7 @@ import org.apache.roller.util.RegexUtil;
  * @author lance
  *
  */
-public class ObfuscateEmailPlugin implements PagePlugin
+public class ObfuscateEmailPlugin implements WeblogEntryPlugin
 {
     protected String name = "Email Scrambler";
     protected String description = "Automatically converts email addresses " +
@@ -50,34 +51,19 @@ public class ObfuscateEmailPlugin implements PagePlugin
     
     public String toString() { return name; }
 
-	/* (non-Javadoc)
-	 * @see org.apache.roller.presentation.velocity.PagePlugin#init(org.apache.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
-	 */
-	public void init(
-            WebsiteData website,
-            Object config,
-            String baseURL,
-            Context ctx)
-	{
+	public void init(WebsiteData website, Map model) throws RollerException {
 	}
 
 	/* 
      * Find any likely email addresses and HEX escape them 
      * (non-Javadoc)
-	 * @see org.apache.roller.presentation.velocity.PagePlugin#render(java.lang.String)
+	 * @see org.apache.roller.presentation.velocity.WeblogEntryPlugin#render(java.lang.String)
 	 */
-	public String render(String str)
+	public String render(WeblogEntryData entry, String str)
 	{
         return RegexUtil.encodeEmail(str);
 	}
-    
-    public String render(WeblogEntryData entry, String str)
-    {
-        return render(str);
-    }
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
-
-    public boolean getSkipOnSingleEntry() {return false;}
 }

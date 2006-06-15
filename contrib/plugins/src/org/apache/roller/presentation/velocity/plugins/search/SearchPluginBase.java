@@ -19,7 +19,6 @@
 package org.apache.roller.presentation.velocity.plugins.search;
 
 import org.apache.commons.logging.Log;
-import org.apache.velocity.context.Context;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
@@ -28,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.FieldPosition;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,23 +53,12 @@ public abstract class SearchPluginBase {
      *
      * @see org.apache.roller.model.PagePlugin#init(WebsiteData, Object, String baseUrl, org.apache.velocity.context.Context)
      */
-    public void init(WebsiteData website, Object servletContext, String baseUrl, Context ctx) throws RollerException {
+    public void init(WebsiteData website, Map model) throws RollerException {
         if (mLogger.isDebugEnabled()) {
             mLogger.debug(getClass().getName() + "; version:  " + getVersion() + "; base version " + baseVersion);
         }
     }
-
-    /**
-     * Apply plugin to content of specified WeblogEntry.
-     *
-     * @param entry           WeblogEntry to which plugin should be applied.
-     * @param singleEntry     Ignored.
-     * @return Results of applying plugin to entry.
-     * @see org.apache.roller.model.PagePlugin#render(org.apache.roller.pojos.WeblogEntryData, boolean)
-     */
-    public String render(WeblogEntryData entry, String str) {
-        return render(str);
-    }
+    
 
     /**
      * Apply plugin to content of specified String.
@@ -78,7 +67,7 @@ public abstract class SearchPluginBase {
      * @return Results of applying plugin to string.
      * @see org.apache.roller.model.PagePlugin#render(String)
      */
-    public String render(String str) {
+    public String render(WeblogEntryData entry, String str) {
         Pattern pattern = getPattern();
         Matcher m = pattern.matcher(str);
         StringBuffer result = new StringBuffer(str.length() + 128);   // rough guess at a reasonable length
@@ -181,6 +170,5 @@ public abstract class SearchPluginBase {
             throw new RuntimeException(uex);
         }
     }
-
-    public boolean getSkipOnSingleEntry() {return false;}
+    
 }

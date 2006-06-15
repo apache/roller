@@ -28,6 +28,7 @@ import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +36,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.VelocityContext;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.PagePluginManager;
-import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
@@ -138,11 +137,7 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                 
                 // Populate subscription object with new entries
                 PagePluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
-                Map pagePlugins = ppmgr.createAndInitPagePlugins(
-                        website,
-                        null,
-                        RollerRuntimeConfig.getProperty("site.absoluteurl"),
-                        new VelocityContext());
+                Map pagePlugins = ppmgr.createAndInitPagePlugins(website, new HashMap());
                 Iterator entryIter = entries.iterator();
                 while (entryIter.hasNext()) {
                     try {

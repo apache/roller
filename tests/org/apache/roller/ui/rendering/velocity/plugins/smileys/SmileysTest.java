@@ -46,14 +46,14 @@ public class SmileysTest extends VelocityServletTestBase
         doFilters();
 
         SmileysPlugin plugin = new SmileysPlugin();
-        plugin.init(mWebsite, ctx, "/roller", null);
+        plugin.init(mWebsite, null);
         assertTrue( SmileysPlugin.smileyPatterns.length > 0 );
 
         String test = "put on a happy :-) face";
         String expected = 
             "put on a happy <img src=\"/roller/images/smileys/smile.gif" +
             "\" class=\"smiley\" alt=\":-)\" title=\":-)\"> face";
-        String result = plugin.render(test);
+        String result = plugin.render(null, test);
         //System.out.println(result);
         assertEquals(expected, result);
     }

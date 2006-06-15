@@ -19,10 +19,10 @@
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +48,6 @@ import org.apache.roller.util.StringUtils;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.VelocityContext;
 import org.apache.roller.model.PagePluginManager;
 import org.apache.roller.model.Roller;
 
@@ -231,9 +230,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 PagePluginManager ppmgr = roller.getPagePluginManager();
                 Map plugins = ppmgr.createAndInitPagePlugins(
                     getWebsite(),
-                    RollerContext.getRollerContext().getServletContext(),
-                    RollerContext.getRollerContext().getAbsoluteContextUrl(request),
-                    new VelocityContext());
+                    new HashMap());
                 Iterator it = plugins.values().iterator();
                 while (it.hasNext()) list.add(it.next());
             }

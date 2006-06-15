@@ -28,7 +28,7 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -98,7 +98,7 @@ import javax.servlet.ServletConfig;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @version 0.3
  */
-public class TopicTagPlugin implements PagePlugin
+public class TopicTagPlugin implements WeblogEntryPlugin
 {
     private static final String version = "0.3";
     private static final Log mLogger = LogFactory.getFactory().getInstance(TopicTagPlugin.class);
@@ -127,16 +127,12 @@ public class TopicTagPlugin implements PagePlugin
 
     /**
      * Initialize the plugin instance.   This sets up the configurable properties and default topic site.
-     *
+     * 
      * @param rreq Plugins may need to access RollerRequest.
      * @param ctx  Plugins may place objects into the Velocity Context.
-     * @see PagePlugin#init(org.apache.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
+     * @see PagWeblogEntryPluginit(org.apache.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
      */
-    public void init(
-            WebsiteData website,
-            Object config,
-            String baseURL,
-            Context ctx) throws RollerException
+    public void init(WebsiteData website, Map model) throws RollerException
     {
         if (mLogger.isDebugEnabled())
         {
@@ -244,19 +240,7 @@ public class TopicTagPlugin implements PagePlugin
 
         return result.toString();
     }
-
-    /**
-     * Render from a string without entry data context. Because we require the context of the website in order to do the
-     * bookmark searches.  This implementation can only return the input string.
-     *
-     * @param str String to which plugin should be applied.
-     * @return the input value.
-     * @see PagePlugin#render(String)
-     */
-    public String render(String str)
-    {
-        return str;
-    }
+    
 
     /**
      * Returns the human-friendly name of this Plugin. This is what users will see.
@@ -474,6 +458,5 @@ public class TopicTagPlugin implements PagePlugin
     {
         this.userBookmarks = userBookmarks;
     }
-
-    public boolean getSkipOnSingleEntry() {return false;}
+    
 }

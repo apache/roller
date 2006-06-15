@@ -20,7 +20,7 @@ package org.apache.roller.presentation.velocity.plugins.search;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 
 import java.text.MessageFormat;
 import java.util.regex.Pattern;
@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @version 2.1
  */
-public class WikipediaLinkPlugin extends SearchPluginBase implements PagePlugin {
+public class WikipediaLinkPlugin extends SearchPluginBase implements WeblogEntryPlugin {
     private static final String version = "2.1";
     private static final Pattern pattern = Pattern.compile("wikipedia([:!])\"(.*?)\"(?:\\{(.*?)\\})?");
     private static final MessageFormat linkFormat = new MessageFormat("<a href=\"http://www.wikipedia.org/wiki/Special:Search?search={3}\">{2}</a>");

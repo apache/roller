@@ -18,17 +18,14 @@
 /* Created on April 14, 2006 */
 package org.apache.roller.ui.authoring.tags;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Map;
-import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.VelocityContext;
 
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.PagePluginManager;
@@ -68,9 +65,7 @@ public class ShowEntrySummaryTag extends TagSupport {
                     PagePluginManager ppmgr = roller.getPagePluginManager();
                     Map plugins = ppmgr.createAndInitPagePlugins(
                         entry.getWebsite(),
-                        rctx.getServletContext(),
-                        rctx.getAbsoluteContextUrl((HttpServletRequest)pageContext.getRequest()),
-                        new VelocityContext());
+                        new HashMap());
                     xformed = ppmgr.applyPagePlugins(
                         entry, plugins, entry.getSummary(), true);
                 }               

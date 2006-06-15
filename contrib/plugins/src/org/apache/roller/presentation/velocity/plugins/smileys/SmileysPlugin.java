@@ -20,16 +20,17 @@ package org.apache.roller.presentation.velocity.plugins.smileys;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.context.Context;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.core.RollerContext;
 
 /**
  * Converts ascii emoticons into HTML image tags.
@@ -37,7 +38,7 @@ import org.apache.roller.pojos.WebsiteData;
  * @author lance.lavandowska
  * Created on Jun 8, 2004
  */
-public class SmileysPlugin implements PagePlugin
+public class SmileysPlugin implements WeblogEntryPlugin
 {
     private String name = "Emoticons";
     private String description = "Change ASCII emoticons to graphics.  " +
@@ -76,9 +77,9 @@ public class SmileysPlugin implements PagePlugin
      * Find occurences of ascii emoticons and turn them into
      * HTML image pointers.
      * 
-     * @see org.apache.roller.presentation.velocity.PagePlugin#render(java.lang.String)
+     * @see org.apache.roller.presentation.velocity.WeblogEntryPlugin#render(java.lang.String)
      */
-    public String render(String text)
+    public String render(WeblogEntryData entry, String text)
     {
         Matcher matcher = null;
         for (int i=0; i<smileyPatterns.length; i++)
@@ -93,18 +94,14 @@ public class SmileysPlugin implements PagePlugin
      * Convert the SmileyDefs into RegEx patterns and img tags for
      * later use.  Need an HttpServletRequest though so that we can
      * get the ServletContext Path.  But only do it once.
-     * 
-     * @see org.apache.roller.presentation.velocity.PagePlugin#init(org.apache.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
      */
-    public synchronized void init(
-            WebsiteData website,
-            Object servletContext,
-            String baseURL,
-            Context ctx) throws RollerException
+    public synchronized void init(WebsiteData website, Map model) throws RollerException
     {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1)
         {
+            String baseURL = RollerContext.getRollerContext().getAbsoluteContextUrl(null);
+            
             Pattern[] tempP = new Pattern[SmileysPlugin.smileyDefs.size()];
             String[] tempS = new String[SmileysPlugin.smileyDefs.size()];
             //System.out.println("# smileys: " + smileyDefs.size());
@@ -188,16 +185,8 @@ public class SmileysPlugin implements PagePlugin
         return buf.toString();
     }
 
-    /* 
-     * @see org.apache.roller.presentation.velocity.PagePlugin#render(org.apache.roller.pojos.WeblogEntryData, boolean)
-     */
-    public String render(WeblogEntryData entry, String str)
-    {
-        return render(str);
-    }
-
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
 
-    public boolean getSkipOnSingleEntry() {return false;}
+    //public boolean getSkipOnSingleEntry() {return false;}
 }

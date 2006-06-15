@@ -21,6 +21,7 @@ package org.apache.roller.ui.authoring.struts.actions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.BooleanUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -42,7 +42,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.apache.velocity.VelocityContext;
 import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.config.RollerConfig;
@@ -55,7 +54,6 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
@@ -367,9 +365,7 @@ public final class WebsiteFormAction extends DispatchAction {
                     PagePluginManager ppmgr = roller.getPagePluginManager();
                     Map plugins = ppmgr.createAndInitPagePlugins(
                             getWebsite(),
-                            RollerContext.getRollerContext().getServletContext(),
-                            RollerContext.getRollerContext().getAbsoluteContextUrl(request),
-                            new VelocityContext());
+                            new HashMap());
                     Iterator it = plugins.values().iterator();
                     while (it.hasNext()) list.add(it.next());
                 }
