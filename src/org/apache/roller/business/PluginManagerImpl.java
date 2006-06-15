@@ -28,7 +28,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.WeblogEntryPlugin;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.StringUtils;
@@ -37,18 +37,18 @@ import org.apache.roller.util.StringUtils;
  * Centralized page plugin management.
  * @author Dave Johnson
  */
-public class PagePluginManagerImpl implements PagePluginManager {
+public class PluginManagerImpl implements PluginManager {
     
     private static Log mLogger =
-            LogFactory.getFactory().getInstance(PagePluginManagerImpl.class);
+            LogFactory.getFactory().getInstance(PluginManagerImpl.class);
     
     // Plugin classes keyed by plugin name
     static Map mPagePlugins = new LinkedHashMap();
     
     /**
-     * Creates a new instance of PagePluginManagerImpl
+     * Creates a new instance of PluginManagerImpl
      */
-    public PagePluginManagerImpl() {
+    public PluginManagerImpl() {
         loadPagePluginClasses();
     }
     

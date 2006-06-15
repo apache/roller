@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
 
 import org.apache.roller.model.Roller;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.RollerContext;
@@ -76,7 +76,7 @@ public class ShowEntryTextTag extends TagSupport {
                     RollerContext rctx = 
                         RollerContext.getRollerContext();
                     try {
-                        PagePluginManager ppmgr = roller.getPagePluginManager();
+                        PluginManager ppmgr = roller.getPagePluginManager();
                         Map plugins = ppmgr.createAndInitPagePlugins(
                                 entry.getWebsite(),
                                 new HashMap());

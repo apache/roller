@@ -36,7 +36,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
 
 import java.util.Map;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 
@@ -150,7 +150,7 @@ public class PlanetEntryData extends PersistentObject
     private void initFromRollerEntry(WeblogEntryData rollerEntry, Map pagePlugins)
     throws RollerException {
         Roller roller = RollerFactory.getRoller();
-        PagePluginManager ppmgr = roller.getPagePluginManager();
+        PluginManager ppmgr = roller.getPagePluginManager();
         
         String content = "";
         if (!StringUtils.isEmpty(rollerEntry.getText())) {

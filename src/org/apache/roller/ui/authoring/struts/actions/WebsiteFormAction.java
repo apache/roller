@@ -46,7 +46,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
@@ -349,7 +349,7 @@ public final class WebsiteFormAction extends DispatchAction {
             boolean ret = false;
             try {
                 Roller roller = RollerFactory.getRoller();
-                PagePluginManager ppmgr = roller.getPagePluginManager();
+                PluginManager ppmgr = roller.getPagePluginManager();
                 ret = ppmgr.hasPagePlugins();
             } catch (RollerException e) {
                 mLogger.error(e);
@@ -362,7 +362,7 @@ public final class WebsiteFormAction extends DispatchAction {
             try {
                 if (getHasPagePlugins()) {
                     Roller roller = RollerFactory.getRoller();
-                    PagePluginManager ppmgr = roller.getPagePluginManager();
+                    PluginManager ppmgr = roller.getPagePluginManager();
                     Map plugins = ppmgr.createAndInitPagePlugins(
                             getWebsite(),
                             new HashMap());
