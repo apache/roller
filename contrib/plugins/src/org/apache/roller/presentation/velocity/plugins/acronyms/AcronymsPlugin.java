@@ -25,16 +25,16 @@ package org.apache.roller.presentation.velocity.plugins.acronyms;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.context.Context;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:molen@mail.com">Jaap van der Molen</a>
  * @version $Revision: 1.3 $
  */
-public class AcronymsPlugin implements PagePlugin
+public class AcronymsPlugin implements WeblogEntryPlugin
 {
 	/**
 	 * Logger
@@ -75,17 +75,12 @@ public class AcronymsPlugin implements PagePlugin
 	}
 
 	/**
-	 * @see org.apache.roller.presentation.velocity.PagePlugin#init(org.apache.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
-	 */
-	public void init(
-            WebsiteData website,
-            Object config,
-            String baseURL,
-            Context ctx) throws RollerException
+     * 
+     * 
+     * @see org.apache.roller.presentation.velocityWeblogEntryPluginn#init(org.apache.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
+     */
+	public void init(WebsiteData website, Map model) throws RollerException
 	{
-		if (mLogger.isDebugEnabled()) {
-			mLogger.debug("init(ctx = "+ctx+" )");
-		}
 	}
     
     /**
@@ -116,8 +111,10 @@ public class AcronymsPlugin implements PagePlugin
     }
 
     /**
-	 * @see org.apache.roller.presentation.velocity.PagePlugin#render(org.apache.roller.pojos.WeblogEntryData, boolean)
-	 */
+     * 
+     * 
+     * @see org.apache.roller.presentation.velocityWeblogEntryPluginn#render(org.apache.roller.pojos.WeblogEntryData, boolean)
+     */
 	public String render(WeblogEntryData entry, String str)
 	{
         String text = str;
@@ -163,15 +160,7 @@ public class AcronymsPlugin implements PagePlugin
 
         return matchAcronyms(text, acronymPatterns, acronymTags);
 	}
-
-	/**
-     * Without Website cannot lookup _acronyms page.
-	 * @see org.apache.roller.presentation.velocity.PagePlugin#render(java.lang.String)
-	 */
-	public String render(String text)
-	{
-	    return text;
-	}
+        
 
 	/**
 	 * @return this Page Plugin's name
@@ -243,6 +232,4 @@ public class AcronymsPlugin implements PagePlugin
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
-
-    public boolean getSkipOnSingleEntry() {return false;}
 }

@@ -208,7 +208,7 @@ WebsiteFormAction.WebsitePageModel model =
         <tr>
             <td class="label">Default Entry Formatters <br />(applied in the listed order)</td>
             <td class="field">
-            <logic:iterate id="plugin" type="org.apache.roller.model.PagePlugin"
+            <logic:iterate id="plugin" type="org.apache.roller.model.WeblogEntryPlugin"
                 collection="<%= model.getPagePlugins() %>">
                 <html:multibox property="defaultPluginsArray"
                     title="<%= plugin.getName() %>" value="<%= plugin.getName() %>" /></input>

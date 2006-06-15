@@ -21,23 +21,23 @@
  */
 package org.apache.roller.presentation.velocity.plugins.readmore;
 
-import javax.servlet.ServletConfig;
+import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.context.Context;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
+import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.Utilities;
 
 /**
  * @author lance
  */
-public class ReadMorePlugin implements PagePlugin
+public class ReadMorePlugin implements WeblogEntryPlugin
 {
     protected String name = "Read More Summary";
     protected String description = "Stops entry after 250 characters and creates " +
@@ -56,17 +56,13 @@ public class ReadMorePlugin implements PagePlugin
     public String toString() { return name; }
 
 	/* (non-Javadoc)
-	 * @see org.apache.roller.presentation.velocity.PagePlugin#init(
+	 * @see org.apache.roller.presentation.velocity.WeblogEntryPlugin#init(
      *   org.apache.roller.presentation.RollerRequest, 
      *   org.apache.velocity.context.Context)
 	 */
-	public void init(
-            WebsiteData website,
-            Object config,
-            String baseURL,
-            Context ctx) throws RollerException
+	public void init(WebsiteData website, Map model) throws RollerException
 	{  
-        this.baseURL = baseURL;        
+        this.baseURL = RollerContext.getRollerContext().getAbsoluteContextUrl();        
 	}
 
 	/**
@@ -78,18 +74,7 @@ public class ReadMorePlugin implements PagePlugin
     {
         return website.getDefaultPage().getLink();
     }
-
-    /* 
-     * This method cannot do it's intended job (since it cannot
-     * read the current Entry) so it is to do no work!
-     * 
-     * (non-Javadoc)
-	 * @see org.apache.roller.presentation.velocity.PagePlugin#render(java.lang.String)
-	 */
-	public String render(String str)
-	{
-		return str;
-	}
+    
     
     public String render(WeblogEntryData entry, String str)
     {        
@@ -123,7 +108,5 @@ public class ReadMorePlugin implements PagePlugin
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
-
-
-    public boolean getSkipOnSingleEntry() {return true;}
+    
 }

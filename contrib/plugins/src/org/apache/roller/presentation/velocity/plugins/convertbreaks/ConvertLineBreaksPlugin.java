@@ -21,13 +21,13 @@ package org.apache.roller.presentation.velocity.plugins.convertbreaks;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.context.Context;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 
 /**
  * Simple page plugin that converts paragraphs of plain text into html paragraphs.
@@ -44,7 +44,7 @@ import org.apache.roller.model.PagePlugin;
  *
  * @author Allen Gilliland
  */
-public class ConvertLineBreaksPlugin implements PagePlugin {
+public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
     
     private static Log mLogger = 
         LogFactory.getFactory().getInstance(ConvertLineBreaksPlugin.class);
@@ -67,11 +67,7 @@ public class ConvertLineBreaksPlugin implements PagePlugin {
         return description;
     }
     
-    public void init(
-            WebsiteData website,
-            Object config,
-            String baseURL,
-            Context ctx) throws RollerException {
+    public void init(WebsiteData website, Map model) throws RollerException {
         // we don't need to do any init.
         mLogger.debug("initing");
     }
@@ -82,18 +78,6 @@ public class ConvertLineBreaksPlugin implements PagePlugin {
      * tags around paragraphs and after line breaks.
      */
     public String render(WeblogEntryData entry, String str) {
-        
-        mLogger.debug("Rendering weblog entry: "+entry.getTitle());
-        
-        return this.render(str);
-    }
-    
-    
-    /**
-     * Transform the given plain text into html text by inserting p and br
-     * tags around paragraphs and after line breaks.
-     */
-    public String render(String str) {
         
         if(str == null || str.trim().equals(""))
             return "";
@@ -142,5 +126,5 @@ public class ConvertLineBreaksPlugin implements PagePlugin {
         return buf.toString();
     }
 
-    public boolean getSkipOnSingleEntry() {return false;}
+    //public boolean getSkipOnSingleEntry() {return false;}
 }

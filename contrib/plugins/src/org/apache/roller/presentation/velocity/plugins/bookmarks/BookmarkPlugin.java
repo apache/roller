@@ -24,26 +24,26 @@ package org.apache.roller.presentation.velocity.plugins.bookmarks;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.context.Context;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.BookmarkManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 import java.util.regex.PatternSyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import org.apache.roller.pojos.WebsiteData;
 
 /**
  * @author lance
  * @author Anil Gangolli (significant modifications)
  */
-public class BookmarkPlugin implements PagePlugin
+public class BookmarkPlugin implements WeblogEntryPlugin
 {
     protected String name = "Bookmark Linker";
     protected String description = "Automatically uses your Bookmarks to " +
@@ -60,25 +60,9 @@ public class BookmarkPlugin implements PagePlugin
 
     public String toString() { return name; }
 
-    /* (non-Javadoc)
-     * @see org.apache.roller.presentation.velocity.PagePlugin#init(org.apache.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
-     */
-    public void init(
-            WebsiteData website,
-            Object config,
-            String baseURL,
-            Context ctx) throws RollerException
-    {
-    }
 
-    /*
-     * Without Website cannot lookup Folders & Bookmarks
-     * (non-Javadoc)
-     * @see org.apache.roller.presentation.velocity.PagePlugin#render(java.lang.String)
-     */
-    public String render(String text)
+    public void init(WebsiteData website, Map model) throws RollerException
     {
-        return text;
     }
 
     public String render(WeblogEntryData entry, String str)
@@ -193,6 +177,4 @@ public class BookmarkPlugin implements PagePlugin
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
-
-    public boolean getSkipOnSingleEntry() {return false;}
 }

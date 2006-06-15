@@ -18,19 +18,18 @@
 
 package org.apache.roller.presentation.velocity.plugins.textile;
 
-import javax.servlet.ServletConfig;
+import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.context.Context;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 
 /**
  * @author David M Johnson
  */
-public class TextilePlugin implements PagePlugin
+public class TextilePlugin implements WeblogEntryPlugin
 {
     public String name = "Textile Formatter";
     public String description = "Allows use of Textile formatting to easily " +
@@ -51,13 +50,9 @@ public class TextilePlugin implements PagePlugin
     /** 
      * Put plugin into the page context so templates may access it.
      */
-    public void init(
-            WebsiteData website,
-            Object config,
-            String baseURL,
-            Context ctx)
+    public void init(WebsiteData website, Map model)
     {
-        ctx.put("textileRenderer",this);
+        model.put("textileRenderer",this);
     }
     
     /** 
@@ -66,18 +61,13 @@ public class TextilePlugin implements PagePlugin
      * @param src Input string that uses Textile syntax
      * @return Output string in HTML format.
      */
-    public String render( String src )
+    public String render(WeblogEntryData entry, String src )
     {
         return mTextile.process(src);
-    }
-    
-    public String render( WeblogEntryData entry, String str )
-    {
-        return render( str );
     }
 
     public String getName() { return name; }
     public String getDescription() { return StringEscapeUtils.escapeJavaScript(description); }
 
-    public boolean getSkipOnSingleEntry() {return false;}
+    //public boolean getSkipOnSingleEntry() {return false;}
 }

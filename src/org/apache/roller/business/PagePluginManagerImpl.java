@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.PagePlugin;
+import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.model.PagePluginManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
@@ -76,7 +76,7 @@ public class PagePluginManagerImpl implements PagePluginManager {
                 try {
                     Class pluginClass = Class.forName(plugins[i]);
                     if (isPagePlugin(pluginClass)) {
-                        PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
+                        WeblogEntryPlugin plugin = (WeblogEntryPlugin)pluginClass.newInstance();
                         mPagePlugins.put(plugin.getName(), pluginClass);
                     } else {
                         mLogger.warn(pluginClass + " is not a PagePlugin");
@@ -95,18 +95,14 @@ public class PagePluginManagerImpl implements PagePluginManager {
     /**
      * Create and init plugins for processing entries in a specified website. 
      */
-    public Map createAndInitPagePlugins(
-            WebsiteData website,
-            Object servletContext,
-            String contextPath,
-            Context ctx) {
+    public Map createAndInitPagePlugins(WebsiteData website, Map model) {
         Map ret = new LinkedHashMap();
         Iterator it = getPagePluginClasses().values().iterator();
         while (it.hasNext()) {
             try {
                 Class pluginClass = (Class)it.next();
-                PagePlugin plugin = (PagePlugin)pluginClass.newInstance();
-                plugin.init(website, servletContext, contextPath, ctx);
+                WeblogEntryPlugin plugin = (WeblogEntryPlugin)pluginClass.newInstance();
+                plugin.init(website, model);
                 ret.put(plugin.getName(), plugin);
             } catch (Exception e) {
                 mLogger.error("Unable to init() PagePlugin: ", e);
@@ -124,11 +120,9 @@ public class PagePluginManagerImpl implements PagePluginManager {
             Iterator iter = entryPlugins.iterator();
             while (iter.hasNext()) {
                 String key = (String)iter.next();
-                PagePlugin pagePlugin = (PagePlugin)pagePlugins.get(key);
+                WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin)pagePlugins.get(key);
                 if (pagePlugin != null) {
-                    if (!(singleEntry && pagePlugin.getSkipOnSingleEntry())) {
-                        ret = pagePlugin.render(entry, ret);
-                    }
+                    ret = pagePlugin.render(entry, ret);
                 } else {
                     mLogger.error("ERROR: plugin not found: " + key);
                 }
@@ -140,7 +134,7 @@ public class PagePluginManagerImpl implements PagePluginManager {
     private static boolean isPagePlugin(Class pluginClass) {
         Class[] interfaces = pluginClass.getInterfaces();
         for (int i=0; i<interfaces.length; i++) {
-            if (interfaces[i].equals(PagePlugin.class)) return true;
+            if (interfaces[i].equals(WeblogEntryPlugin.class)) return true;
         }
         return false;
     }

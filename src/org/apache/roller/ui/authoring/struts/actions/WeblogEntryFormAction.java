@@ -25,16 +25,14 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -58,7 +56,6 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.VelocityContext;
 import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.config.RollerConfig;
@@ -68,7 +65,6 @@ import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -647,9 +643,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 PagePluginManager ppmgr = roller.getPagePluginManager();
                 Map plugins = ppmgr.createAndInitPagePlugins(
                         entry.getWebsite(),
-                        RollerContext.getRollerContext().getServletContext(),
-                        RollerContext.getRollerContext().getAbsoluteContextUrl(request),
-                        new VelocityContext());
+                        new HashMap());
                 
                 String content = "";
                 if (!StringUtils.isEmpty(entry.getText())) {
