@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.VelocityContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.tags.VelocityTag;
-import org.apache.roller.ui.rendering.velocity.ContextLoader;
+import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 //import javax.servlet.jsp.tagext.*;
 
 

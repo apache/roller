@@ -31,6 +31,7 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;

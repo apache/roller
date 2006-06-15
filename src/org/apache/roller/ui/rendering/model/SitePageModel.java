@@ -41,6 +41,7 @@ import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.ui.rendering.velocity.deprecated.WeblogPageModel;
 
 /**
  * Page model that provides access to site-wide users, weblogs and entries for
