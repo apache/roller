@@ -8,11 +8,10 @@ import org.apache.roller.ui.rendering.velocity.VelocityWeblogPageRenderer;
 /**
  * The default RendererFactory for Roller.
  */
-public class RollerRendererFactory implements RendererFactory {
+public class VelocityRendererFactory implements RendererFactory {
     
     
-    public Renderer getRenderer(String rendererType, String resourceId) 
-            throws Exception {
+    public Renderer getRenderer(String rendererType, String resourceId) {
         
         if("velocity".equals(rendererType)) {
             
@@ -25,7 +24,8 @@ public class RollerRendererFactory implements RendererFactory {
             return new VelocityWeblogPageRenderer(resourceId);
         }
         
-        throw new Exception("No renderer found!");
+        // we don't want to handle this content
+        return null;
     }
     
 }

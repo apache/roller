@@ -52,8 +52,7 @@ import org.apache.roller.ui.core.WeblogFeedRequest;
 import org.apache.roller.ui.rendering.velocity.ContextLoader;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
-import org.apache.roller.ui.rendering.RendererFactory;
-import org.apache.roller.ui.rendering.RollerRendererFactory;
+import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheHandler;
 import org.apache.roller.util.cache.CacheManager;
@@ -75,8 +74,6 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
     // a unique identifier for our cache, this is used as the prefix for
     // roller config properties that apply to this cache
     private static final String CACHE_ID = "cache.feed";
-    
-    private RendererFactory rendererFactory = null;
     
     private Cache contentCache = null;
     
@@ -112,8 +109,6 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         log.info(cacheProps);
         
         contentCache = CacheManager.constructCache(this, cacheProps);
-        
-        this.rendererFactory = new RollerRendererFactory();
     }
     
     
@@ -285,7 +280,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = rendererFactory.getRenderer("velocity", pageId);
+            renderer = RendererManager.getRenderer("velocity", pageId);
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+pageId, e);

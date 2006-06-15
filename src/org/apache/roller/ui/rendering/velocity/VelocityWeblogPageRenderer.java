@@ -27,7 +27,7 @@ public class VelocityWeblogPageRenderer implements Renderer {
     private String resourceId = null;
     
     
-    public VelocityWeblogPageRenderer(String resource) throws Exception {
+    public VelocityWeblogPageRenderer(String resource) {
         
         this.resourceId = resource;
     }

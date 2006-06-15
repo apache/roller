@@ -48,13 +48,10 @@ import org.apache.roller.ui.core.InvalidRequestException;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.WeblogPageRequest;
-import org.apache.roller.ui.core.util.ResponseContent;
 import org.apache.roller.ui.rendering.velocity.ContextLoader;
-import org.apache.roller.ui.rendering.velocity.WebappResourceLoader;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
-import org.apache.roller.ui.rendering.RendererFactory;
-import org.apache.roller.ui.rendering.RollerRendererFactory;
+import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheHandler;
@@ -75,8 +72,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
     // a unique identifier for our cache, this is used as the prefix for
     // roller config properties that apply to this cache
     private static final String CACHE_ID = "cache.weblogpage";
-    
-    private RendererFactory rendererFactory = null;
     
     private boolean excludeOwnerPages = false;
     private Cache contentCache = null;
@@ -117,8 +112,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         log.info(cacheProps);
         
         contentCache = CacheManager.constructCache(this, cacheProps);
-        
-        this.rendererFactory = new RollerRendererFactory();
     }
     
     
@@ -284,7 +277,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = rendererFactory.getRenderer("velocityWeblogPage", page.getId());
+            renderer = RendererManager.getRenderer("velocityWeblogPage", page.getId());
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+page.getId(), e);
