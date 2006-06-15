@@ -21,7 +21,7 @@ public class VelocityRenderer implements Renderer {
     private String resourceId = null;
     
     
-    public VelocityRenderer(String resource) throws Exception {
+    public VelocityRenderer(String resource) {
         
         this.resourceId = resource;
     }

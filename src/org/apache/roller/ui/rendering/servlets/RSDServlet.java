@@ -35,8 +35,7 @@ import org.apache.roller.ui.core.InvalidRequestException;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.WeblogRequest;
 import org.apache.roller.ui.rendering.Renderer;
-import org.apache.roller.ui.rendering.RendererFactory;
-import org.apache.roller.ui.rendering.RollerRendererFactory;
+import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.util.cache.CachedContent;
 
 
@@ -53,8 +52,6 @@ public class RSDServlet extends HttpServlet {
     
     private static Log log = LogFactory.getLog(RSDServlet.class);
     
-    private RendererFactory rendererFactory = null;
-    
     
     /**
      * Init method for this servlet
@@ -64,8 +61,6 @@ public class RSDServlet extends HttpServlet {
         super.init(servletConfig);
         
         log.info("Initializing RSDServlet");
-        
-        this.rendererFactory = new RollerRendererFactory();
     }
     
     
@@ -131,7 +126,7 @@ public class RSDServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = rendererFactory.getRenderer("velocity", "templates/weblog/rsd.vm");
+            renderer = RendererManager.getRenderer("velocity", "templates/weblog/rsd.vm");
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);
