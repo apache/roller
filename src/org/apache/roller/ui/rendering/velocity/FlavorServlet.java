@@ -21,7 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
-import org.apache.roller.ui.rendering.velocity.deprecated.WeblogPageModel;
+import org.apache.roller.ui.rendering.velocity.deprecated.OldWeblogPageModel;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.servlet.VelocityServlet;
@@ -127,7 +127,7 @@ public class FlavorServlet extends VelocityServlet {
             }
                 
             String useTemplate;
-            WeblogPageModel pageModel = (WeblogPageModel)ctx.get("pageModel");
+            OldWeblogPageModel pageModel = (OldWeblogPageModel)ctx.get("pageModel");
             if (request.getServletPath().endsWith("rss")) {
                 if (pageModel.getPageByName("_rss") != null)
                     // If the request specified the "/rss" mapping and the

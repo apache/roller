@@ -62,11 +62,11 @@ import org.apache.velocity.context.Context;
 /**
  * Provides Roller page templates with access to Roller domain model objects.
  */
-public class WeblogPageModel implements PageModel {
+public class OldWeblogPageModel implements PageModel {
     public final static String VELOCITY_NULL = "nil";
     
     protected static Log mLogger =
-            LogFactory.getFactory().getInstance(WeblogPageModel.class);
+            LogFactory.getFactory().getInstance(OldWeblogPageModel.class);
     
     private BookmarkManager      mBookmarkMgr = null;
     private WeblogManager        mWeblogMgr = null;
@@ -86,7 +86,7 @@ public class WeblogPageModel implements PageModel {
     //------------------------------------------------------------------------
     
     /** init() must be called to complete construction */
-    public WeblogPageModel() {}
+    public OldWeblogPageModel() {}
     
     public String getModelName() {
         return "pageModel";
