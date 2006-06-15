@@ -60,7 +60,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.IndexManager;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
@@ -640,7 +640,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rses.isUserAuthorizedToAuthor(entry.getWebsite())) {
                 // Run entry through registered PagePlugins
-                PagePluginManager ppmgr = roller.getPagePluginManager();
+                PluginManager ppmgr = roller.getPagePluginManager();
                 Map plugins = ppmgr.createAndInitPagePlugins(
                         entry.getWebsite(),
                         new HashMap());

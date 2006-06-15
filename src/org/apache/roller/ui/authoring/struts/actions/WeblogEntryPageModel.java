@@ -48,7 +48,7 @@ import org.apache.roller.util.StringUtils;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 
 /**
@@ -212,7 +212,7 @@ public class WeblogEntryPageModel extends BasePageModel
         boolean ret = false;
         try {
             Roller roller = RollerFactory.getRoller();
-            PagePluginManager ppmgr = roller.getPagePluginManager();
+            PluginManager ppmgr = roller.getPagePluginManager();
             ret = ppmgr.hasPagePlugins();
         } catch (RollerException e) {
             logger.error(e);
@@ -227,7 +227,7 @@ public class WeblogEntryPageModel extends BasePageModel
             if (getHasPagePlugins()) 
             {
                 Roller roller = RollerFactory.getRoller();
-                PagePluginManager ppmgr = roller.getPagePluginManager();
+                PluginManager ppmgr = roller.getPagePluginManager();
                 Map plugins = ppmgr.createAndInitPagePlugins(
                     getWebsite(),
                     new HashMap());

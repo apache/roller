@@ -35,7 +35,7 @@ import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.WeblogEntryPlugin;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.WebsiteData;
@@ -102,7 +102,7 @@ public class PageHelper
         }
         if (mVelocityContext == null) mVelocityContext = new HashMap();
         Roller roller = RollerFactory.getRoller(); 
-        PagePluginManager ppmgr = roller.getPagePluginManager();
+        PluginManager ppmgr = roller.getPagePluginManager();
         mPagePlugins = ppmgr.createAndInitPagePlugins(mWebsite, ctx);
     }
        

@@ -38,7 +38,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
@@ -136,7 +136,7 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                 }
                 
                 // Populate subscription object with new entries
-                PagePluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
+                PluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
                 Map pagePlugins = ppmgr.createAndInitPagePlugins(website, new HashMap());
                 Iterator entryIter = entries.iterator();
                 while (entryIter.hasNext()) {
