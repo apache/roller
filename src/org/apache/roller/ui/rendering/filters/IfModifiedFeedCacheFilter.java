@@ -69,7 +69,7 @@ import org.apache.roller.util.cache.LazyExpiringCacheEntry;
  *
  * This may be applied to /rss/*, /atom/*, /flavor/*
  * 
- * @web.filter name="IfModifiedFeedCacheFilter"
+ * web.filter name="IfModifiedFeedCacheFilter"
  *
  * @author Allen Gilliland
  */

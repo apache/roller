@@ -65,7 +65,7 @@ import org.apache.roller.ui.core.util.ResponseContent;
  *
  * This filter should only be applied to /rss/*, /atom/*, /flavor/*
  *
- * @web.filter name="FeedCacheFilter"
+ * web.filter name="FeedCacheFilter"
  *
  * @author  Allen Gilliland
  */

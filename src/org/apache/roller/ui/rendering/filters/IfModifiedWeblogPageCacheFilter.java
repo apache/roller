@@ -60,7 +60,7 @@ import org.apache.roller.util.Utilities;
 /**
  * A filter used for caching last modified dates.
  * 
- * @web.filter name="IfModifiedWeblogPageCacheFilter"
+ * web.filter name="IfModifiedWeblogPageCacheFilter"
  *
  * @author Allen Gilliland
  */

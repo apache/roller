@@ -60,7 +60,7 @@ import org.apache.roller.util.Utilities;
 /**
  * A filter used for caching fully rendered weblog pages ... /page/*
  *
- * @web.filter name="WeblogPageCacheFilter"
+ * web.filter name="WeblogPageCacheFilter"
  *
  * @author  Allen Gilliland
  */
