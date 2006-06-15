@@ -48,7 +48,7 @@ import org.apache.roller.ui.core.InvalidRequestException;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.WeblogPageRequest;
-import org.apache.roller.ui.rendering.velocity.ContextLoader;
+import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;

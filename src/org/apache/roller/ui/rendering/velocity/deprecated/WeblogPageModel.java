@@ -15,7 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.velocity.deprecated;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +54,7 @@ import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
+import org.apache.roller.ui.rendering.model.*;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.StringUtils;
 import org.apache.velocity.context.Context;

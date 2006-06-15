@@ -17,6 +17,7 @@
 */
 package org.apache.roller.ui.rendering.velocity;
 
+import org.apache.roller.ui.rendering.velocity.deprecated.PageHelper;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;

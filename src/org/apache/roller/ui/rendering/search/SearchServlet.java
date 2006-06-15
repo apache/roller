@@ -19,7 +19,6 @@ package org.apache.roller.ui.rendering.search;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +28,6 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.ui.core.RollerRequest;
-import org.apache.roller.ui.rendering.velocity.ContextLoader;
 import org.apache.roller.ui.rendering.velocity.PageServlet;
 
 /**

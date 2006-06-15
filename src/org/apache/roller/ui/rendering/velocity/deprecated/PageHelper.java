@@ -15,7 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.ui.rendering.velocity;
+package org.apache.roller.ui.rendering.velocity.deprecated;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -31,7 +31,6 @@ import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.ui.rendering.model.WeblogPageModel;
 import org.apache.struts.Globals;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
