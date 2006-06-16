@@ -291,7 +291,7 @@ function setChecked(val, name) {
                         <td style="border: none; padding:0px;">
                             <fmt:message key="commentManagement.entryTitled" /></td>
                         <td class="details" style="border: none; padding:0px;">  
-                            <a href='<c:out value="${comment.weblogEntry.permaLink}" />'>
+                            <a href='<c:out value="${model.baseURL}" /><c:out value="${comment.weblogEntry.permaLink}" />'>
                                <c:out value="${comment.weblogEntry.title}" /></a>
                         </td>
                     </tr>  

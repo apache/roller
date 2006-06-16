@@ -23,10 +23,10 @@ $pageHelper.setContentType("application/atom+xml;charset=utf-8")<?xml version="1
     #set( $entries = $pageModel.getRecentWeblogEntriesArray($entryCount, 'nil') )
     #foreach( $entry in $entries )
     <entry>
-        <id>$entry.permaLink</id>
+        <id>$absBaseURL$entry.permaLink</id>
         <title type="html">$utilities.textToHTML($entry.title,true)</title>
         <author><name>$entry.creator.fullName</name></author>
-        <link rel="alternate" type="text/html" href="$entry.permaLink"/>
+        <link rel="alternate" type="text/html" href="$absBaseURL$entry.permaLink"/>
         <published>$utilities.formatIso8601Date($entry.pubTime)</published>
         <updated>$utilities.formatIso8601Date($entry.updateTime)</updated> 
         <category term="$utilities.textToHTML($entry.category.path, true)" label="$utilities.textToHTML($entry.category.name, true)" />

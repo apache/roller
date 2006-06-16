@@ -32,7 +32,7 @@
             #if($website.allowComments)
                 <span class="noDisplay">[</span>
                     #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
-                    #set( $link = "$entry.permaLink" )
+                    #set( $link = "$ctxPath$entry.permaLink" )
                     <a href="$link" class="storyLink">
                         Comments [$commentCount]</a>
                 <span class="noDisplay">]</span> 

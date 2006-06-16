@@ -11,7 +11,7 @@
 #macro( showCommentsLink $entry )
     #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
     #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
-        #set( $link = "$entry.permaLink&popup=true#comments" )
+        #set( $link = "$ctxPath$entry.permaLink&popup=true#comments" )
         <a href="$link " onclick="window.open('$link', 'comments',
             'width=480,height=480,scrollbars=yes,status=yes,resizable'); return false;"
             class="entrycommentslink">$text.get( "macro.weblog.comments" ) [$commentCount]</a>
@@ -25,7 +25,7 @@
 #macro( showCommentsPageLink $entry )
     #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
     #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
-        #set( $link = "$entry.permaLink#comments" )
+        #set( $link = "$ctxPath$entry.permaLink#comments" )
         <a href="$link" class="entrycommentslink">$text.get( "macro.weblog.comments" ) [$commentCount]</a>
     #end
 #end
@@ -41,7 +41,7 @@
         <div class="comments" id="comments">
             <div id="commentTwisty$entry.Id" class="commentTwisty"
                 onclick="toggleComments('$entry.Id', '${ctxPath}/page/${website.handle}'); return false;">
-            <a href="$entry.permaLink" class="plain">
+            <a href="$ctxPath$entry.permaLink" class="plain">
             #if($commentCount == 0)
                 $text.get( "macro.weblog.addcomment" )
             #elseif($commentCount == 1)
@@ -72,7 +72,7 @@
         $text.get( "macro.weblog.postedbywebsite", [$comment.url, $comment.url] )
     #end
     #if( $showPermalink )
-    <a href="${entry.permaLink}#comment${velocityCount}"
+    <a href="${ctxPath}${entry.permaLink}#comment${velocityCount}"
        class="entrypermalink"
        title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
     #end
@@ -158,7 +158,7 @@
         #set($content = $utilities.encodeEmail($comment.content))
         #set($content = $utilities.addNofollow($content))
         <li class="commentsListItem"><a
-           href="${comment.weblogEntry.permaLink}#comments"
+           href="${ctxPath}${comment.weblogEntry.permaLink}#comments"
            class="entrypermalink"
            title="$text.get( "macro.weblog.commentpermalink.title" ) to
                '$utilities.removeHTML($comment.weblogEntry.title)'"
