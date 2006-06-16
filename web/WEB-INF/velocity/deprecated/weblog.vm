@@ -175,7 +175,7 @@
     #if( $pageModel.previousEntry )
         #set( $prev = $pageModel.previousEntry )
         #if( $pageModel.weblogEntry )
-            #set( $prevURL = "${prev.permaLink}" )
+            #set( $prevURL = "${ctxPath}${prev.permaLink}" )
             <a href="$prevURL" title="Previous Entry"
                 > &laquo; $utilities.truncateNicely($prev.title, 25, 25, "...")</a>
         #else
@@ -196,7 +196,7 @@
     #if( $pageModel.nextEntry )
         #set( $next = $pageModel.nextEntry )        
         #if( $pageModel.weblogEntry )
-            #set( $nextURL = "${next.permaLink}" )
+            #set( $nextURL = "${ctxPath}${next.permaLink}" )
             <a href="$nextURL" title="Next Entry"
                 >$utilities.truncateNicely($next.title, 25, 25, "...") &raquo; </a>
         #else
@@ -236,7 +236,7 @@
           #if( $utilities.isNotEmpty($entry.summary) )
               #set( $sourceText = $entry.summary )
               #if( $utilities.isNotEmpty($entry.text) )
-                 #set( $readMore = "<a class='readmore' href='$entry.permaLink'> ...</a>" )
+                 #set( $readMore = "<a class='readmore' href='$baseURL$entry.permaLink'> ...</a>" )
                  #set( $sourceText = "$sourceText$readMore")
               #end
           #else 
@@ -335,7 +335,7 @@
  * @param entry WeblogEntry object.
  *#
 #macro( showEntryPermalink $entry )
-    <a href="$entry.permaLink"
+    <a href="$baseURL$entry.permaLink"
         title="$text.get( "macro.weblog.entrypermalink.title" )"
         class="entrypermalink">Permalink</a>
     #if ($pageHelper.isUserAuthorizedToEdit())
@@ -370,10 +370,10 @@ $absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anch
          xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
          xmlns:dc="http://purl.org/dc/elements/1.1/">
 <rdf:Description
-    rdf:about="$entry.permaLink"
+    rdf:about="$absBaseURL$entry.permaLink"
     trackback:ping="#showTrackbackURL($entry)"
     dc:title="$entry.title"
-    dc:identifier="$entry.permaLink"
+    dc:identifier="$absBaseURL$entry.permaLink"
     dc:subject="$entry.category.name"
     dc:description="$entry.title"
     dc:creator="$entry.creator.userName"

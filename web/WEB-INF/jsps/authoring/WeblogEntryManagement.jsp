@@ -168,7 +168,7 @@ WeblogEntryManagementAction.PageModel model =
                 
         <td>
             <c:if test='${post.status == "PUBLISHED"}'>
-                <a href='<c:out value="${post.permaLink}" />'>
+                <a href='<c:out value="${model.baseURL}" /><c:out value="${post.permaLink}" />'>
                     <fmt:message key="weblogEntryQuery.view" />
                 </a>
             </c:if>
