@@ -158,7 +158,7 @@ public class PlanetEntryData extends PersistentObject
         } else {
             content = rollerEntry.getSummary();
         }
-        content = ppmgr.applyPagePlugins(rollerEntry, pagePlugins, content, true);
+        content = ppmgr.applyWeblogEntryPlugins(pagePlugins, rollerEntry, content);
         
         setAuthor(    rollerEntry.getCreator().getFullName());
         setTitle(     rollerEntry.getTitle());

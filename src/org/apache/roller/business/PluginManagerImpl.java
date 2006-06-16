@@ -95,7 +95,7 @@ public class PluginManagerImpl implements PluginManager {
     /**
      * Create and init plugins for processing entries in a specified website. 
      */
-    public Map createAndInitPagePlugins(WebsiteData website, Map model) {
+    public Map getWeblogEntryPlugins(WebsiteData website, Map model) {
         Map ret = new LinkedHashMap();
         Iterator it = getPagePluginClasses().values().iterator();
         while (it.hasNext()) {
@@ -111,8 +111,7 @@ public class PluginManagerImpl implements PluginManager {
         return ret;
     }
     
-    public String applyPagePlugins(
-        WeblogEntryData entry, Map pagePlugins, String str, boolean singleEntry) { 
+    public String applyWeblogEntryPlugins(Map pagePlugins, WeblogEntryData entry, String str) { 
         String ret = str;
         WeblogEntryData copy = new WeblogEntryData(entry);        
         List entryPlugins = copy.getPluginsList();

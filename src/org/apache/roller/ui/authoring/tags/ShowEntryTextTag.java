@@ -77,11 +77,11 @@ public class ShowEntryTextTag extends TagSupport {
                         RollerContext.getRollerContext();
                     try {
                         PluginManager ppmgr = roller.getPagePluginManager();
-                        Map plugins = ppmgr.createAndInitPagePlugins(
+                        Map plugins = ppmgr.getWeblogEntryPlugins(
                                 entry.getWebsite(),
                                 new HashMap());
 
-                        xformed = ppmgr.applyPagePlugins(entry, plugins, sourceText, true);
+                        xformed = ppmgr.applyWeblogEntryPlugins(plugins, entry, sourceText);
 
                     } catch (Exception e) {
                         mLogger.error(e);

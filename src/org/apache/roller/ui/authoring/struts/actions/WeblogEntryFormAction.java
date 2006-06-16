@@ -641,7 +641,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
             if (rses.isUserAuthorizedToAuthor(entry.getWebsite())) {
                 // Run entry through registered PagePlugins
                 PluginManager ppmgr = roller.getPagePluginManager();
-                Map plugins = ppmgr.createAndInitPagePlugins(
+                Map plugins = ppmgr.getWeblogEntryPlugins(
                         entry.getWebsite(),
                         new HashMap());
                 
@@ -651,7 +651,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 } else {
                     content = entry.getSummary();
                 }
-                content = ppmgr.applyPagePlugins(entry, plugins, content, true);
+                content = ppmgr.applyWeblogEntryPlugins(plugins, entry, content);
 
                 String title = entry.getTitle();
                 String excerpt = StringUtils.left( Utilities.removeHTML(content),255 );

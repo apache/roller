@@ -63,11 +63,11 @@ public class ShowEntrySummaryTag extends TagSupport {
                     RollerContext rctx = 
                         RollerContext.getRollerContext();
                     PluginManager ppmgr = roller.getPagePluginManager();
-                    Map plugins = ppmgr.createAndInitPagePlugins(
+                    Map plugins = ppmgr.getWeblogEntryPlugins(
                         entry.getWebsite(),
                         new HashMap());
-                    xformed = ppmgr.applyPagePlugins(
-                        entry, plugins, entry.getSummary(), true);
+                    xformed = ppmgr.applyWeblogEntryPlugins(
+                        plugins, entry, entry.getSummary());
                 }               
                 pageContext.getOut().println(xformed);
             } catch (Throwable e) {

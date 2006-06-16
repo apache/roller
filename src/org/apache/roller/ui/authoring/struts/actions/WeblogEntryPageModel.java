@@ -228,7 +228,7 @@ public class WeblogEntryPageModel extends BasePageModel
             {
                 Roller roller = RollerFactory.getRoller();
                 PluginManager ppmgr = roller.getPagePluginManager();
-                Map plugins = ppmgr.createAndInitPagePlugins(
+                Map plugins = ppmgr.getWeblogEntryPlugins(
                     getWebsite(),
                     new HashMap());
                 Iterator it = plugins.values().iterator();
