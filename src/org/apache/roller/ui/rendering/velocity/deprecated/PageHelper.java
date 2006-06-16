@@ -103,7 +103,7 @@ public class PageHelper
         if (mVelocityContext == null) mVelocityContext = new HashMap();
         Roller roller = RollerFactory.getRoller(); 
         PluginManager ppmgr = roller.getPagePluginManager();
-        mPagePlugins = ppmgr.createAndInitPagePlugins(mWebsite, ctx);
+        mPagePlugins = ppmgr.getWeblogEntryPlugins(mWebsite, ctx);
     }
        
     //------------------------------------------------------------------------
