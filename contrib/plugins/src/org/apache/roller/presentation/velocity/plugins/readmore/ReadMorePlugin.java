@@ -34,14 +34,17 @@ import org.apache.roller.util.Utilities;
 
 /**
  * DEPRECATED. Truncates entry text and displays a link to read more.
+ *
+ * This plugin is no longer functional.  It now just returns the orginal
+ * text without performing any transformation.
  */
 public class ReadMorePlugin implements WeblogEntryPlugin {
     
     private static Log mLogger = LogFactory.getLog(ReadMorePlugin.class);
     
     protected String name = "Read More Summary";
-    protected String description = "Stops entry after 250 characters and creates " +
-            "a link to the full entry.";
+    protected String description = "This plugin is no longer functional.  "+
+            "Please use Roller's entry summary field instead.";
     
     private String baseURL = "";
     
@@ -61,38 +64,15 @@ public class ReadMorePlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(WebsiteData website, Map model) throws RollerException {
-        this.baseURL = RollerContext.getRollerContext().getAbsoluteContextUrl();
-    }
+    public void init(WebsiteData website, Map model) throws RollerException {}
     
     
     public String render(WeblogEntryData entry, String str) {
-        // in case it didn't initialize
-        String pageLink = "Weblog";
-        try {
-            pageLink = getPageLink(
-                    RollerFactory.getRoller().getUserManager(), entry.getWebsite());
-        } catch (RollerException e) {
-            mLogger.warn("Unable to get pageLink", e);
-        }
         
-        String result = Utilities.removeHTML(str, true);
-        result = Utilities.truncateText(result, 240, 260, "...");
-        //String result = Utilities.truncateNicely(entry.getText(), 240, 260, "... ");
-        
-        // if the result is shorter, we need to add "Read More" link
-        if (result.length() < str.length()) {
-            String link = "<div class=\"readMore\"><a href=\"" +
-                    baseURL + entry.getPermaLink() + "\">Read More</a></div>";
-            
-            result += link;
-        }
-        return result;
-    }
-    
-    
-    private String getPageLink(UserManager mgr, WebsiteData website) throws RollerException {
-        return website.getDefaultPage().getLink();
+        // this plugin has been deprecated now that Roller supports multiple
+        // entry text fields (summary & content).  this plugin now just returns
+        // the text it is passed in.
+        return str;
     }
     
 }
