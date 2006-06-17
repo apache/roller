@@ -36,24 +36,33 @@ public class VelocityRenderer implements Renderer {
     private static Log log = LogFactory.getLog(VelocityRenderer.class);
     
     private String resourceId = null;
+    private Template resourceTemplate = null;
     
     
-    public VelocityRenderer(String resource) {
+    public VelocityRenderer(String resource) throws Exception {
         
         this.resourceId = resource;
+        
+        // make sure that we can locate the template
+        // if we can't then this will throw an exception
+        resourceTemplate = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
     }
     
     
     public void render(Map model, Writer out) throws Exception {
         
-        // lookup the specified resource
-        Template tmpl = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
+        long startTime = System.currentTimeMillis();
         
         // convert model to Velocity Context
         Context ctx = new VelocityContext(model);
         
-        // render output to servlet response
-        tmpl.merge(ctx, out);
+        // render output to Writer
+        this.resourceTemplate.merge(ctx, out);
+        
+        long endTime = System.currentTimeMillis();
+        long renderTime = (endTime - startTime)/1000;
+        
+        log.debug("Rendered ["+this.resourceId+"] in "+renderTime+" secs");
     }
     
 }

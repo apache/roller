@@ -42,34 +42,42 @@ public class VelocityWeblogPageRenderer implements Renderer {
     private static Log log = LogFactory.getLog(VelocityWeblogPageRenderer.class);
     
     private String resourceId = null;
+    private Template resourceTemplate = null;
     
     
-    public VelocityWeblogPageRenderer(String resource) {
+    public VelocityWeblogPageRenderer(String resource) throws Exception {
         
         this.resourceId = resource;
+        
+        // make sure that we can locate the template
+        // if we can't then this will throw an exception
+        resourceTemplate = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
     }
     
     
     public void render(Map model, Writer out) throws Exception {
         
-        // lookup the specified resource
-        Template tmpl = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
+        long startTime = System.currentTimeMillis();
+        
+        // the template we are going to render
+        // we already looked this up at construction time
+        Template tmpl = this.resourceTemplate;
         
         // convert model to Velocity Context
         Context ctx = new VelocityContext(model);
         
-        // if there is a decorator template then apply it
-        WebsiteData website = null;
         // TODO: this is poor form, we should not need to access the pojo from the wrapper
+        WebsiteData weblog = null;
         WebsiteDataWrapper websiteWrapper = (WebsiteDataWrapper) model.get("website");
         if(websiteWrapper != null) {
-            website = websiteWrapper.getPojo();
+            weblog = websiteWrapper.getPojo();
         }
-        if (website != null) {
+        
+        if (weblog != null) {
             Template decorator = null;
             try {
                 // look for decorator
-                decorator = findDecorator(website, (String) ctx.get("decorator"));
+                decorator = findDecorator(weblog);
             } catch(Exception e) {
                 // error finding decorator
                 log.warn("Could not find a decorator to apply");
@@ -86,8 +94,14 @@ public class VelocityWeblogPageRenderer implements Renderer {
             }
         }
         
-        // render output to servlet response
+        // render output to Writer
         tmpl.merge(ctx, out);
+        
+        long endTime = System.currentTimeMillis();
+        long renderTime = (endTime - startTime)/1000;
+        
+        log.debug("Rendered ["+this.resourceId+"] from weblog "+
+                weblog.getHandle()+" in "+renderTime+" secs");
     }
     
     
@@ -95,34 +109,23 @@ public class VelocityWeblogPageRenderer implements Renderer {
      * Load the decorator template and apply it.  If there is no user specified
      * decorator then the default decorator is applied.
      */
-    private Template findDecorator(WebsiteData website, String decorator_name)
-            throws Exception {
+    private Template findDecorator(WebsiteData website) throws Exception {
         
         Template decorator = null;
         org.apache.roller.pojos.Template decorator_template = null;
         
-        // check for user-specified decorator
-        if (decorator_name != null) {
-            decorator_template = website.getPageByName(decorator_name);
-        }
-        
-        // if no user-specified decorator try default page-name
-        if (decorator_template == null) {
+        try {
+            // see if user defined a custom decorator
             decorator_template = website.getPageByName("_decorator");
-        }
-        
-        // try loading Template
-        if (decorator_template != null) {
-            try {
-                decorator = RollerVelocity.getTemplate(decorator_template.getId(), "UTF-8");
-            } catch (Exception e) {
-                // it may not exist, so this is okay
-            }
+            
+            decorator = RollerVelocity.getTemplate(decorator_template.getId(), "UTF-8");
+        } catch (Exception e) {
+            // it may not exist, so this is okay
         }
         
         // couldn't find Template, load default "no-op" decorator
         if (decorator == null) {
-            decorator = RollerVelocity.getTemplate("/themes/noop_decorator.vm", "UTF-8");
+            decorator = RollerVelocity.getTemplate("templates/weblog/noop_decorator.vm", "UTF-8");
         }
         
         return decorator;
