@@ -30,6 +30,8 @@ public class VelocityRendererFactory implements RendererFactory {
     
     public Renderer getRenderer(String rendererType, String resourceId) {
         
+        Renderer renderer = null;
+        
         // nothing we can do with null values
         if(rendererType == null || resourceId == null) {
             return null;
@@ -38,16 +40,23 @@ public class VelocityRendererFactory implements RendererFactory {
         if("velocity".equals(rendererType)) {
             
             // standard velocity template
-            return new VelocityRenderer(resourceId);
+            try {
+                renderer = new VelocityRenderer(resourceId);
+            } catch(Exception e) {
+                // couldn't find the given resource, can't render
+            }
         } else if("velocityWeblogPage".equals(rendererType)) {
             
             // special case for velocity weblog page templates
             // needed because of the way we do the decorator stuff
-            return new VelocityWeblogPageRenderer(resourceId);
+            try {
+                renderer = new VelocityWeblogPageRenderer(resourceId);
+            } catch(Exception e) {
+                // couldn't find the given resource, can't render
+            }
         }
         
-        // we don't want to handle this content
-        return null;
+        return renderer;
     }
     
 }
