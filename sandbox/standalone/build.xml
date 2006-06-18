@@ -127,7 +127,7 @@ properties below point to the downloaded files.
     <sql driver="org.hsqldb.jdbcDriver"
         url="jdbc:hsqldb:hsql://localhost:3219"
         userid="sa" password=""
-        src="./build/roller-demo/webapps/roller/WEB-INF/dbscripts/hsql/createdb.sql"
+        src="./build/roller-demo/webapps/roller/WEB-INF/dbscripts/hsqldb/createdb.sql"
         classpath="./build/roller-demo/common/lib/hsqldb.jar" />
         
     <!-- Shutdown HSQLDB --> 
