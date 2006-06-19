@@ -15,7 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.ui.admin.struts.actions;
+package org.apache.roller.ui.core.tasks;
 
 import java.io.IOException;
 import java.util.ArrayList;
