@@ -23,7 +23,7 @@ import junit.framework.TestSuite;
 import org.apache.roller.RollerTestBase;
 import org.apache.roller.model.PlanetManager;
 import org.apache.roller.ui.admin.struts.actions.RefreshEntriesTask;
-import org.apache.roller.ui.admin.struts.actions.SyncWebsitesTask;
+import org.apache.roller.ui.core.tasks.SyncWebsitesTask;
 
 /**
  * Test database implementation of PlanetManager for local feeds.
