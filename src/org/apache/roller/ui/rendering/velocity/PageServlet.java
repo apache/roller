@@ -192,7 +192,7 @@ public class PageServlet extends VelocityServlet {
         
         // Made it this far, populate the Context
         Map mapCtx = new HashMap();
-        ContextLoader.setupContext( mapCtx, rreq, response );
+        ContextLoader.setupContext(mapCtx, rreq.getRequest(), response);
         
         // hack.  put mapCtx info velocity ctx
         String key = null;

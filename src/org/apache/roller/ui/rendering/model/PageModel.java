@@ -31,5 +31,5 @@ public interface PageModel {
     /** 
      * Initialize via request.
      */
-    public void init(HttpServletRequest request, Map params);
+    public void init(Map params);
 }

@@ -265,7 +265,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             request.setAttribute("updateTime", updateTime);
             
             // populate the model
-            ModelLoader.loadFeedModels(model, request, response);
+            ModelLoader.loadFeedModels(rreq.getWebsite(), request, response, model);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);

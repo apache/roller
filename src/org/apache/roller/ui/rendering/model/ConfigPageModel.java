@@ -58,8 +58,8 @@ public class ConfigPageModel implements PageModel {
     }
 
     /** Init page model based on request */
-    public void init(HttpServletRequest request, Map map) {
-        this.request = request;
+    public void init(Map map) {
+        this.request = (HttpServletRequest)map.get("request");
     }
         
     /** Absolute URL of Roller server, e.g. http://localhost:8080/roller */

@@ -115,7 +115,7 @@ public class FlavorServlet extends VelocityServlet {
             request.setAttribute("updateTime", updateTime);
             
             Map mapCtx = new HashMap();
-            ContextLoader.setupContext(mapCtx, rreq, response);
+            ContextLoader.setupContext(mapCtx, rreq.getRequest(), response);
             
             // hack.  put mapCtx info velocity ctx
             String key = null;

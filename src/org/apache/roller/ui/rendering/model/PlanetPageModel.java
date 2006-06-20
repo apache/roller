@@ -47,7 +47,7 @@ public class PlanetPageModel implements PageModel {
         return "planetPageModel";
     }
     
-    public void init(HttpServletRequest request, Map map) {
+    public void init(Map map) {
         // no-op for now
     } 
     

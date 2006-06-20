@@ -80,22 +80,19 @@ public class ContextLoader {
     private static final String TOOLBOX_MANAGER_KEY =
             "org.apache.roller.presentation.velocity.toolboxManager";
     
-    private RollerRequest mRollerReq = null;
-    
-    
     /**
      * Setup the a Velocity context by loading it with objects, values, and
      * RollerPagePlugins needed for Roller page execution.
      */
     public static void setupContext(
-            Map ctx, 
-            RollerRequest rreq, 
+            Map                 ctx, 
+            HttpServletRequest  request, 
             HttpServletResponse response )
             throws RollerException {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
-        HttpServletRequest request = rreq.getRequest();
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerContext rollerCtx = RollerContext.getRollerContext( );
         
         try {
@@ -104,7 +101,9 @@ public class ContextLoader {
                 RollerConfig.getProperty("velocity.pagemodel.classname");
             Class pageModelClass = Class.forName(pageModelClassName);
             PageModel pageModel = (PageModel)pageModelClass.newInstance();
-            pageModel.init(rreq.getRequest(), new HashMap());            
+            Map args = new HashMap();
+            args.put("request", request);
+            pageModel.init(args);            
             ctx.put(pageModel.getModelName(), pageModel);
             
             // Add other page models
