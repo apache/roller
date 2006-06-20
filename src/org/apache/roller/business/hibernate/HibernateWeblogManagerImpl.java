@@ -457,7 +457,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 criteria.setMaxResults(length);
             }
             return criteria.list();
@@ -1070,7 +1070,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             if (offset != 0) {
                 query.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 query.setMaxResults(length);
             }
             List results = new ArrayList();

@@ -220,7 +220,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             if (offset != 0) {
                 query.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 query.setMaxResults(length);
             }
             ret = query.list();

@@ -240,7 +240,7 @@ public class WeblogPageModel implements PageModel {
                 // URL specified a specific day so get all entries for that day
                 endDate = DateUtil.getEndOfDay(endDate, cal);
                 startDate = DateUtil.getStartOfDay(endDate, cal); 
-                limit = Integer.MAX_VALUE;                  
+                limit = -1;                  
             } else if (isMonthSpecified) {
                 endDate = DateUtil.getEndOfMonth(endDate, cal);
             }

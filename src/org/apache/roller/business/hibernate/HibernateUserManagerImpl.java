@@ -473,7 +473,7 @@ public class HibernateUserManagerImpl implements UserManager {
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 criteria.setMaxResults(length);
             }
             criteria.addOrder(Order.desc("dateCreated"));
@@ -563,7 +563,7 @@ public class HibernateUserManagerImpl implements UserManager {
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 criteria.setMaxResults(length);
             }
             criteria.addOrder(Order.desc("dateCreated"));
@@ -591,7 +591,7 @@ public class HibernateUserManagerImpl implements UserManager {
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 criteria.setMaxResults(length);
             }
             return criteria.list();
@@ -619,7 +619,7 @@ public class HibernateUserManagerImpl implements UserManager {
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 criteria.setMaxResults(length);
             }
             results = criteria.list();
@@ -836,7 +836,7 @@ public class HibernateUserManagerImpl implements UserManager {
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 criteria.setMaxResults(length);
             }
             return criteria.list();
@@ -878,7 +878,7 @@ public class HibernateUserManagerImpl implements UserManager {
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 criteria.setMaxResults(length);
             }
             return criteria.list();
@@ -910,7 +910,7 @@ public class HibernateUserManagerImpl implements UserManager {
             if (offset != 0) {
                 query.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 query.setMaxResults(length);
             }
             List results = new ArrayList();

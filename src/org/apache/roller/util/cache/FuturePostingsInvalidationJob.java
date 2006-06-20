@@ -96,7 +96,7 @@ public class FuturePostingsInvalidationJob implements Job {
             
             // get all published entries between start and end date
             expiringEntries = mgr.getWeblogEntries(null, null, start, end, null, 
-                    null, WeblogEntryData.PUBLISHED, 0, Integer.MAX_VALUE);
+                    null, WeblogEntryData.PUBLISHED, 0, -1);
             
             this.nextExpirations = expiringEntries;
             
