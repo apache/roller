@@ -32,7 +32,7 @@
     <ul style="list-style-type:none; padding-left:2px; margin: 0px">
         <c:forEach var="blog" items="${topBlogs}">
            <li style="list-style-type:none; padding-left:2px; margin: 0px">
-               <a href='<c:out value="${blog.siteUrl}" />'
+               <a href='<c:out value="${blog.siteURL}" />'
                   title='<c:out value="${blog.title}" />' >
                    <str:left count="120" >
                       <str:removeXml>

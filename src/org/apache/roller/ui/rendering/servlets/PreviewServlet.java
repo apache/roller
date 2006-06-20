@@ -45,11 +45,11 @@ import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
-import org.apache.roller.ui.rendering.model.CalendarPageHelper;
-import org.apache.roller.ui.rendering.model.EditorMenuPageHelper;
+import org.apache.roller.ui.rendering.model.CalendarHelper;
+import org.apache.roller.ui.rendering.model.EditorMenuHelper;
 import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.ui.rendering.model.PageModel;
-import org.apache.roller.ui.rendering.model.UtilitiesPageHelper;
+import org.apache.roller.ui.rendering.model.UtilitiesHelper;
 import org.apache.roller.util.Utilities;
  
 /**

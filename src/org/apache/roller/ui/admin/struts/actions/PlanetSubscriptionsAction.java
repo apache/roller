@@ -208,8 +208,8 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                     if (form.getId() == null || form.getId().trim().length() == 0) {                        
                         // Adding new subscription to group                        
                         // But, does subscription to that feed already exist?
-                        if (form.getFeedUrl() != null) {
-                            sub = planet.getSubscription(form.getFeedUrl()); 
+                        if (form.getFeedURL() != null) {
+                            sub = planet.getSubscription(form.getFeedURL()); 
                         }
                         if (sub != null) {
                             // Yes, we'll use it instead
@@ -261,7 +261,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
         String technoratiFeedUrl = null;
         int inboundlinks = -1;
         int inboundblogs = -1;
-        if (form.getSiteUrl()!=null && form.getSiteUrl().trim().length() > 0) {
+        if (form.getSiteURL()!=null && form.getSiteURL().trim().length() > 0) {
             try {
                 PlanetConfigData config = planet.getConfiguration();
                 Technorati technorati = null;
@@ -272,7 +272,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                     technorati = new Technorati();
                 }
                 Technorati.Result result =
-                        technorati.getBloginfo(form.getSiteUrl());
+                        technorati.getBloginfo(form.getSiteURL());
                 technoratiTitle = result.getWeblog().getName();
                 technoratiFeedUrl = result.getWeblog().getRssurl();
                 form.setInboundlinks(result.getWeblog().getInboundlinks());
@@ -291,15 +291,15 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                         new ActionError("planetSubscription.error.title"));
             }
         }
-        if (form.getFeedUrl()==null || form.getFeedUrl().trim().length()==0) {
+        if (form.getFeedURL()==null || form.getFeedURL().trim().length()==0) {
             if (technoratiFeedUrl!=null && technoratiFeedUrl.trim().length()>0) {
-                form.setFeedUrl(technoratiFeedUrl);
+                form.setFeedURL(technoratiFeedUrl);
             } else {
                 errors.add(null,
                         new ActionError("planetSubscription.error.feedUrl"));
             }
         }
-        if (form.getSiteUrl()==null || form.getSiteUrl().trim().length()==0) {
+        if (form.getSiteURL()==null || form.getSiteURL().trim().length()==0) {
             errors.add(null,
                     new ActionError("planetSubscription.error.siteUrl"));
         }

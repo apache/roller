@@ -732,7 +732,9 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     }
     
     /**
+     * Get relative URL to comments page.
      * @roller.wrapPojoMethod type="simple"
+     * @deprecated Use commentLink() instead
      */
     public String getCommentsLink() {
         String dayString = DateUtil.format8chars(this.getPubTime());
@@ -745,8 +747,23 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         String clink = "/page/" + this.getWebsite().getHandle() + "?entry=" + lAnchor;
         return clink;
     }
-    /** to please XDoclet */
+    /** 
+     * to please XDoclet 
+     * @deprecated Use commentLink() instead
+     */
     public void setCommentsLink(String ignored) {}
+    
+    /**
+     * Get absolute URL of comment page.
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getCommentLink() {
+        String absContextUrl = RollerConfig.getProperty("context.absPath");
+        return absContextUrl + getCommentsLink(); 
+    }
+    /** to please XDoclet */
+    public void setCommentLink(String ignored) {}
+    
     
     /**
      * Return the Title of this post, or the first 255 characters of the

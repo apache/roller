@@ -1019,12 +1019,12 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     /** 
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getUrl() {
+    public String getURL() {
         // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
         String absContextUrl = RollerConfig.getProperty("context.absPath");
         return absContextUrl + "/page/" + getHandle();       
     }
-    public void setUrl(String url) {
+    public void setURL(String url) {
         // noop
     }
 

@@ -55,7 +55,7 @@ request.setAttribute("featuredGroup2_entries",((PlanetAction.PlanetPageData)
         </a><br />
 
         <span class="entryDetails">
-            <a href='<c:out value="${post.subscription.siteUrl}" />' 
+            <a href='<c:out value="${post.subscription.siteURL}" />' 
                 class="entryDetails">
                <str:removeXml>
                   <c:out value="${post.subscription.title}" />

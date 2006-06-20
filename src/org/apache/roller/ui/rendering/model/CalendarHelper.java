@@ -35,19 +35,16 @@ import org.apache.roller.ui.core.tags.calendar.CalendarTag;
 /**
  * Displays weblog calendar by calling hybrid JSP tag.
  */
-public class CalendarPageHelper  {
+public class CalendarHelper  {
     private PageContext pageContext;
     
     protected static Log logger = 
-            LogFactory.getFactory().getInstance(CalendarPageHelper.class);
+        LogFactory.getFactory().getInstance(CalendarHelper.class);
     
     /**
-     * Creates a new instance of CalendarPageHelper
+     * Creates a new instance of CalendarHelper
      */
-    public CalendarPageHelper() {
-    }
-        
-    public void init(PageContext pageContext) {
+    public CalendarHelper(PageContext pageContext) {
         this.pageContext = pageContext;
     }  
     

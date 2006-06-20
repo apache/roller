@@ -281,7 +281,8 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
                 modelsString = RollerConfig.getProperty("rendering.weblogPageModels");
             }
             ModelLoader.loadConfiguredPageModels(modelsString, request, model);
-            ModelLoader.loadUtilityObjects(model);
+            ModelLoader.loadUtilityHelpers(model);
+            ModelLoader.loadPluginHelpers(weblog, model);
 
             // Feeds get weblog's additional custom models too
             if (weblog != null) {

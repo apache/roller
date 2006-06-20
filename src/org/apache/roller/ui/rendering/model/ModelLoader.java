@@ -33,7 +33,8 @@ import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.Utilities;
 
 /**
- * Model loading code, shared by rendering servlets.
+ * Loads page models (read-only data access objects which implement PageModel) 
+ * and helpers (which "help" with HTML gen.) needed by page rendering process.
  */
 public class ModelLoader {
     
@@ -45,7 +46,7 @@ public class ModelLoader {
     public static void loadWeblogPageModels(
         WebsiteData weblog,
         PageContext pageContext,
-        Map         map) throws RollerException { 
+        Map map) throws RollerException { 
         
         HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse)pageContext.getRequest();
@@ -55,8 +56,9 @@ public class ModelLoader {
         String modelsString = 
             RollerConfig.getProperty("rendering.weblogPageModels");
         loadConfiguredPageModels(modelsString, request, map);
-        loadUtilityObjects(map);
-        loadWeblogHelperObjects(pageContext, map);
+        loadUtilityHelpers(map);
+        loadWeblogHelpers(pageContext, map);
+        loadPluginHelpers(weblog, map);
         
         // Weblog pages get weblog's additional custom models too
         if (weblog != null) {
@@ -64,27 +66,42 @@ public class ModelLoader {
         }
     }
 
-    public static void loadWeblogHelperObjects(
+    /** 
+     * Load helpers needed in weblog pages (e.g. calendar, menu).
+     */
+    public static void loadWeblogHelpers(
         PageContext pageContext, Map map) {
         
-        CalendarPageHelper calendarTag = new CalendarPageHelper();
-        calendarTag.init(pageContext);
+        CalendarHelper calendarTag = new CalendarHelper(pageContext);
         map.put("calendarTag", calendarTag);
         
-        EditorMenuPageHelper menuTag = new EditorMenuPageHelper();
-        menuTag.init(pageContext);
+        EditorMenuHelper menuTag = new EditorMenuHelper(pageContext);
         map.put("menuTag", menuTag);
     }
 
-    public static void loadUtilityObjects(Map map) {
-        UtilitiesPageHelper utils = new UtilitiesPageHelper();
+    /**
+     * Load generic utility helpers.
+     */
+    public static void loadUtilityHelpers(Map map) {
+        UtilitiesHelper utils = new UtilitiesHelper();
         map.put("utils", utils);
     }
 
+    /**
+     * Load weblog entry plugin helpers.
+     */
+    public static void loadPluginHelpers(WebsiteData weblog, Map map) {
+        WeblogEntryPluginsHelper plugins = new WeblogEntryPluginsHelper(weblog, map);
+        map.put("plugins", plugins);
+    }
+
+    /**
+     * Load old page models, but only if velocity.pagemodel.classname defined.
+     */
     public static void loadOldModels(
         HttpServletResponse response, 
         HttpServletRequest  request,
-        Map                 map) throws RollerException {
+        Map map) throws RollerException {
 
         // Only load old model if it's specified
         String useOldModel = 
@@ -99,9 +116,9 @@ public class ModelLoader {
      * models fail to load, throws an exception.
      */
     public  static void loadConfiguredPageModels(
-            String modelsString, 
-            HttpServletRequest request, 
-            Map map) throws RollerException {
+        String modelsString, 
+        HttpServletRequest request, 
+        Map map) throws RollerException {
         String currentModel = null;
         try { // if we can't load a configued page models, then bail out
             String[] models = Utilities.stringToStringArray(modelsString, ",");

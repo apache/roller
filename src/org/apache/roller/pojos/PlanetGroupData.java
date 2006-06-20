@@ -204,7 +204,7 @@ public class PlanetGroupData extends PersistentObject implements Serializable
         {
             PlanetGroupSubscriptionAssoc assoc = 
                     (PlanetGroupSubscriptionAssoc)assocs.next();
-            if (assoc.getSubscription().getFeedUrl().equals(sub.getFeedUrl()))
+            if (assoc.getSubscription().getFeedURL().equals(sub.getFeedURL()))
             {
                 target = assoc;
                 break;
