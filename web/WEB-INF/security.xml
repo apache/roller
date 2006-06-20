@@ -27,7 +27,7 @@
             <value>
                 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
-                /**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,channelProcessingFilter,remoteUserFilter,anonymousProcessingFilter,securityEnforcementFilter
+                /**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,channelProcessingFilter,remoteUserFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
             </value>
         </property>
     </bean>
@@ -131,8 +131,7 @@
         <property name="userAttribute" value="anonymous,ROLE_ANONYMOUS"/>
     </bean>
     
-    <bean id="securityEnforcementFilter" class="org.acegisecurity.intercept.web.SecurityEnforcementFilter">
-        <property name="filterSecurityInterceptor" ref="filterInvocationInterceptor"/>
+    <bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
         <property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint"/>
     </bean>
     
@@ -144,7 +143,8 @@
     </bean>
 
     <!-- ===================== REMEMBER ME ==================== -->
-    <bean id="rememberMeProcessingFilter" class="org.acegisecurity.ui.rememberme.RememberMeProcessingFilter"> 
+    <bean id="rememberMeProcessingFilter" class="org.acegisecurity.ui.rememberme.RememberMeProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
         <property name="rememberMeServices" ref="rememberMeServices"/>
     </bean>
  
