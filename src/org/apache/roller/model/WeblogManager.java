@@ -60,14 +60,15 @@ public interface WeblogManager {
     /**
      * Get WeblogEntries by offset/length as list in reverse chronological order.
      * The range offset and list arguments enable paging through query results.
-     * @param userName   User name or null to get for all users.
+     * @param website    Weblog or null to get for all weblogs.
+     * @param user       User or null to get for all users.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param sortby     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
-     * @param offset     Index of first entry to include.
-     * @param length     Max number of entries to include.
+     * @param sortBy     Sort by either 'pubTime' or 'updateTime' (null for pubTime)
+     * @param offset     Offset into results for paging
+     * @param length     Max comments to return (or -1 for no limit)
      * @return List of WeblogEntryData objects in reverse chrono order.
      * @throws RollerException
      */
@@ -79,20 +80,21 @@ public interface WeblogManager {
             String      catName,
             String      status,
             String      sortBy,
-            int        offset,
-            int        range)
+            int         offset,
+            int         range)
             throws RollerException;
        
     /**
      * Get Weblog Entries grouped by day. This method returns a Map that
      * contains Lists, each List contains WeblogEntryData objects, and the
      * Lists are keyed by Date objects.
-     * @param userName   User name or null to get for all users.
+     * @param website    Weblog or null to get for all weblogs.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param maxEntries Max entries or null for no limit.
+     * @param offset     Offset into results for paging
+     * @param length     Max comments to return (or -1 for no limit)
      * @return Map of Lists, keyed by Date, and containing WeblogEntryData.
      * @throws RollerException
      */
@@ -101,28 +103,33 @@ public interface WeblogManager {
             Date        startDate,
             Date        endDate,
             String      catName,
-            String      status)
+            String      status,
+            int         offset,
+            int         range)
             throws RollerException;
         
     /**
      * Get Weblog Entry date strings grouped by day. This method returns a Map
      * that contains Lists, each List contains YYYYMMDD date strings objects,
      * and the Lists are keyed by Date objects.
-     * @param userName   User name or null to get for all users.
+     * @param website    Weblog or null to get for all weblogs.
      * @param startDate  Start date or null for no start date.
      * @param endDate    End date or null for no end date.
      * @param catName    Category path or null for all categories.
      * @param status     Status of DRAFT, PENDING, PUBLISHED or null for all
-     * @param maxEntries Max entries or null for no limit.
+     * @param offset     Offset into results for paging
+     * @param length     Max comments to return (or -1 for no limit)
      * @return Map of Lists, keyed by Date, and containing date strings.
      * @throws RollerException
      */
     public Map getWeblogEntryStringMap(
             WebsiteData website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            String  status)
+            Date        startDate,
+            Date        endDate,
+            String      catName,
+            String      status,
+            int         offset,
+            int         range)
             throws RollerException;    
     
     /**
@@ -137,8 +144,11 @@ public interface WeblogManager {
     
     /** 
      * Get weblog enties ordered by descending number of comments.
-     * @param website Restrict to only this website (or null for all)
-     * @param len       Maximum number of results to return (for paging)
+     * @param website    Weblog or null to get for all weblogs.
+     * @param startDate  Start date or null for no start date.
+     * @param endDate    End date or null for no end date.
+     * @param offset     Offset into results for paging
+     * @param length     Max comments to return (or -1 for no limit)
      * @returns List of WeblogEntryData objects.
      */
     public List getMostCommentedWeblogEntries(

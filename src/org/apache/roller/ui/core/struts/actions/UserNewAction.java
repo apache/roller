@@ -46,7 +46,7 @@ import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.authoring.struts.formbeans.UserFormEx;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 
 /**

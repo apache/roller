@@ -1,6 +1,15 @@
 
-# macros for use with SitePageModel
+#** macros for use with SitePageModel
 
+   Contents
+      #showEntry($entry)
+      #showEnriesPager($entries $maxResults)
+      #showWeblogProfile($weblog)
+      #showWeblogDirectory()
+      #showUserProfile($user)
+      #showUserDirectory()
+      #showCommentsPager($comments $maxResults)
+*#
 ##-----------------------------------------------------------------------------
 #macro( showEntry $entry )
 <div class="entry">

@@ -261,13 +261,13 @@ public class WeblogEntryTest extends TestCase {
         
         // get object map
         entryMap = null;
-        entryMap = mgr.getWeblogEntryObjectMap(testWeblog, null, null, null, null);
+        entryMap = mgr.getWeblogEntryObjectMap(testWeblog, null, null, null, null, 0, -1);
         assertNotNull(entryMap);
         assertTrue(entryMap.keySet().size() > 1);
         
         // get string map
         entryMap = null;
-        entryMap = mgr.getWeblogEntryStringMap(testWeblog, null, null, null, null);
+        entryMap = mgr.getWeblogEntryStringMap(testWeblog, null, null, null, null, 0, -1);
         assertNotNull(entryMap);
         assertTrue(entryMap.keySet().size() > 1);
                 

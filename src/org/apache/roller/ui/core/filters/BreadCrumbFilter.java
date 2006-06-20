@@ -35,7 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.util.Utilities;
 
 /**

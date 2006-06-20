@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This is primarily a static holder for whatever Roller implementation is 

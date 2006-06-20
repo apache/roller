@@ -19,8 +19,8 @@
 package org.apache.roller.ui.rendering.servlets;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,20 +32,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.ThemeNotFoundException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ThemeManager;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.Theme;
-import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.InvalidRequestException;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
-import org.apache.roller.ui.core.WeblogPageRequest;
 import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
+import org.apache.roller.ui.rendering.model.CalendarPageHelper;
+import org.apache.roller.ui.rendering.model.EditorMenuPageHelper;
+import org.apache.roller.ui.rendering.model.ModelLoader;
+import org.apache.roller.ui.rendering.model.PageModel;
+import org.apache.roller.ui.rendering.model.UtilitiesPageHelper;
+import org.apache.roller.util.Utilities;
 
 /**
  * Responsible for rendering weblog page previews.
@@ -178,7 +183,7 @@ public class PreviewServlet extends HttpServlet {
         HashMap model = new HashMap();
         try {
             // populate the model
-            ContextLoader.setupContext(model, rreq, response);
+            ModelLoader.loadPageModels(model, request, response, rreq.getPageContext());
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
@@ -231,5 +236,4 @@ public class PreviewServlet extends HttpServlet {
         
         log.debug("Exiting");
     }
-    
 }

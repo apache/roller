@@ -31,7 +31,7 @@ import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Centralized page plugin management.

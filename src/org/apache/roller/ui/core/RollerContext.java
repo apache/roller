@@ -17,6 +17,9 @@
 */
 package org.apache.roller.ui.core;
 
+
+import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,15 +38,17 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
+
 import org.acegisecurity.providers.ProviderManager;
 import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.utils.UpgradeDatabase;
 import org.apache.roller.config.PingConfig;
@@ -55,16 +60,12 @@ import org.apache.roller.model.ScheduledTask;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.pings.PingQueueTask;
-import org.apache.roller.util.StringUtils;
-import org.apache.roller.util.Utilities;
+import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts.util.RequestUtils;
+import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
-import org.apache.roller.util.cache.CacheManager;
-import org.apache.velocity.runtime.RuntimeSingleton;
-
 
 /**
  * Responds to app init/destroy events and holds Roller instance.
@@ -508,7 +509,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             } else {
                 baseUrl = getContextUrl(request);
             }
-            link = Utilities.escapeHTML(baseUrl + entry.getPermaLink());
+            link = StringEscapeUtils.escapeHtml(baseUrl + entry.getPermaLink());
         } catch (Exception e) {
             mLogger.error("Unexpected exception", e);
         }

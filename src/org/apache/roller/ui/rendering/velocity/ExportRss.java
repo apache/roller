@@ -17,20 +17,6 @@
 */
 package org.apache.roller.ui.rendering.velocity;
 
-import org.apache.roller.ui.rendering.velocity.deprecated.PageHelper;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.util.RegexUtil;
-import org.apache.roller.util.StringUtils;
-import org.apache.roller.util.Utilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,6 +31,21 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.ui.rendering.velocity.deprecated.OldPageHelper;
+import org.apache.roller.util.RegexUtil;
+import org.apache.roller.util.Utilities;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 
 /**
  * Does a lot of the same work as ContextLoader in preparing
@@ -123,11 +124,11 @@ public class ExportRss
         throws RollerException, IOException
     {
         filePath += "/" + user.getUserName();
-        new java.io.File( filePath ).mkdirs(); // create dir path on drive
+        new File( filePath ).mkdirs(); // create dir path on drive
         
         filePath += "/" + fileName;
         
-        File outputFile = new java.io.File( filePath );
+        File outputFile = new File( filePath );
         FileOutputStream out = null;
         try
         {
@@ -149,7 +150,7 @@ public class ExportRss
                     out.close();
                 }
             }
-            catch ( java.io.IOException ioe )
+            catch ( IOException ioe )
             {
                 System.err.println( "ExportRss unable to close OutputStream" );
             }
@@ -243,7 +244,7 @@ public class ExportRss
     private void loadPageHelper() throws RollerException
     {
         // Add Velocity page helper to context
-        PageHelper pageHelper = new PageHelper(null, null, ctx);
+        OldPageHelper pageHelper = new OldPageHelper(null, null, ctx);
         // set no PagePlugins - we *do not* want to render them.
         ctx.put("pageHelper", pageHelper );
     }

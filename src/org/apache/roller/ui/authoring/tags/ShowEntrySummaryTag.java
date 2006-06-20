@@ -22,6 +22,7 @@ import java.util.HashMap;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,8 +33,6 @@ import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.util.Utilities;
-import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 /**
  * Shows entry summary with plugins applied.
@@ -56,7 +55,7 @@ public class ShowEntrySummaryTag extends TagSupport {
         Roller roller = RollerFactory.getRoller();
         WeblogEntryData entry = (WeblogEntryData)
             RequestUtils.lookup(pageContext, name, property, scope);
-        if (Utilities.isNotEmpty(entry.getSummary())) {
+        if (StringUtils.isNotEmpty(entry.getSummary())) {
             String xformed = entry.getSummary();
             try {        
                 if (entry.getPlugins() != null) {

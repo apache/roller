@@ -29,6 +29,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
@@ -51,16 +52,13 @@ import org.apache.roller.ui.core.tags.menu.EditorNavigationBarTag;
 import org.apache.roller.ui.core.tags.menu.MenuTag;
 import org.apache.roller.ui.authoring.tags.BigWeblogCalendarModel;
 import org.apache.roller.ui.authoring.tags.WeblogCalendarModel;
-import org.apache.roller.util.StringUtils;
-import org.apache.velocity.VelocityContext;
-
 
 /**
  * Provides assistance to VelociMacros, filling in where Velocity falls.
  */
-public class PageHelper {
+public class OldPageHelper {
     
-    private static Log mLogger = LogFactory.getLog(PageHelper.class);
+    private static Log mLogger = LogFactory.getLog(OldPageHelper.class);
     
     private Map              mVelocityContext = null;
     private PageContext          mPageContext = null;
@@ -74,7 +72,7 @@ public class PageHelper {
      * Initialize VelocityHelper, setting the variables it will be hiding from
      * the Velocimacros.
      */
-    public PageHelper(
+    public OldPageHelper(
             HttpServletRequest request,
             HttpServletResponse response,
             Map ctx) throws RollerException {
@@ -364,11 +362,11 @@ public class PageHelper {
     
     /**
      * Pass the String through any PagePlugins that have been
-     * assigned to the PageHelper, as selected by the Entry.
-     *
+     * assigned to the OldPageHelper, as selected by the Entry.
+     * 
      * @param entry Entry being rendered.
      * @param str   String to which plugins are to be applied.
-     * @return      Result of applying plugins to str.
+     * @return Result of applying plugins to str.
      */
     public String renderPlugins(WeblogEntryDataWrapper entry, String str) {
         String ret = str;

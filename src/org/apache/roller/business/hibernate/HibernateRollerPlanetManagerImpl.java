@@ -46,7 +46,8 @@ import org.apache.roller.pojos.PlanetEntryData;
 import org.apache.roller.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
+
 
 
 /**

@@ -49,10 +49,10 @@ import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.WeblogFeedRequest;
-import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
+import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheHandler;
 import org.apache.roller.util.cache.CacheManager;
@@ -265,7 +265,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             request.setAttribute("updateTime", updateTime);
             
             // populate the model
-            ContextLoader.setupContext(model, rreq, response);
+            ModelLoader.loadFeedModels(model, request, response);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
@@ -322,7 +322,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         
         log.debug("Exiting");
     }
-    
+
     
     /**
      * Generate a cache key from a parsed weblog feed request.

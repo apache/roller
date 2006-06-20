@@ -56,7 +56,7 @@ import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.model.*;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.context.Context;
 
 /**
@@ -95,7 +95,7 @@ public class OldWeblogPageModel implements PageModel {
     /**
      * Initialize PageModel and allow PageModel to initialized VelocityContext.
      */
-    public void init(HttpServletRequest request) {
+    public void init(HttpServletRequest request, Map map) {
         mRollerReq = RollerRequest.getRollerRequest(request);
         if ( request.getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
             mWebsite = (WebsiteData)
@@ -371,7 +371,8 @@ public class OldWeblogPageModel implements PageModel {
                     startDate,                    // startDate
                     endDate,                      // endDate
                     catParam,                     // catName
-                    WeblogEntryData.PUBLISHED);    // status
+                    WeblogEntryData.PUBLISHED,    // status
+                    0, -1);  
             
             // need to wrap pojos
             java.util.Date key = null;

@@ -19,15 +19,19 @@
 package org.apache.roller.ui.rendering.servlets;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -35,9 +39,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
@@ -48,19 +53,19 @@ import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
+import org.apache.roller.ui.rendering.model.UtilitiesPageHelper;
 import org.apache.roller.ui.rendering.util.CommentAuthenticator;
-import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
-import org.apache.roller.util.SpamChecker;
-import org.apache.roller.util.MailUtil;
-import org.apache.roller.util.StringUtils;
-import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.rendering.util.DefaultCommentAuthenticator;
-import org.apache.roller.util.Utilities;
 import org.apache.roller.util.GenericThrottle;
 import org.apache.roller.util.IPBanList;
-
+import org.apache.roller.util.MailUtil;
+import org.apache.roller.util.SpamChecker;
+import org.apache.roller.util.Utilities;
+import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts.util.RequestUtils;
 
 /**
  * The CommentServlet handles all incoming weblog entry comment posts.
@@ -238,7 +243,7 @@ public class CommentServlet extends HttpServlet {
         comment.setNotify(new Boolean((request.getParameter("notify") != null)));
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
-        comment.setPostTime(new java.sql.Timestamp(System.currentTimeMillis()));
+        comment.setPostTime(new Timestamp(System.currentTimeMillis()));
         
         // this is legacy stuff, but still used by ContextLoader
         // we can probably switch this to a CommentData without problems
@@ -447,7 +452,7 @@ public class CommentServlet extends HttpServlet {
             msg.append((escapeHtml) ? "\n\n" : "<br /><br />");
                         
             msg.append((escapeHtml) ? Utilities.escapeHTML(cd.getContent()) 
-                : Utilities.transformToHTMLSubset(Utilities.escapeHTML(cd.getContent())));
+                : UtilitiesPageHelper.transformToHTMLSubset(Utilities.escapeHTML(cd.getContent())));
             
             msg.append((escapeHtml) ? "\n\n----\n"
                     : "<br /><br /><hr /><span style=\"font-size: 11px\">");
@@ -497,7 +502,7 @@ public class CommentServlet extends HttpServlet {
             //------------------------------------------
             // --- Send message to email recipients
             try {
-                javax.naming.Context ctx = (javax.naming.Context)
+                Context ctx = (Context)
                 new InitialContext().lookup("java:comp/env");
                 Session session = (Session)ctx.lookup("mail/Session");
                 boolean isHtml = !escapeHtml;
@@ -519,7 +524,7 @@ public class CommentServlet extends HttpServlet {
                     sendMessage(session, from, new String[]{user.getEmailAddress()}, cc, bcc, subject,
                             ownermsg.toString(), isHtml);
                 }
-            } catch (javax.naming.NamingException ne) {
+            } catch (NamingException ne) {
                 log.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
             } catch (Exception e) {
                 log.warn("Exception sending comment mail: " + e.getMessage());
@@ -581,7 +586,7 @@ public class CommentServlet extends HttpServlet {
             //------------------------------------------
             // --- Send message to author of approved comment
             try {
-                javax.naming.Context ctx = (javax.naming.Context)
+                Context ctx = (Context)
                 new InitialContext().lookup("java:comp/env");
                 Session session = (Session)ctx.lookup("mail/Session");
                 String[] cc = null;
@@ -591,7 +596,7 @@ public class CommentServlet extends HttpServlet {
                     null, // cc
                     null, // bcc
                     subject, msg.toString(), false);
-            } catch (javax.naming.NamingException ne) {
+            } catch (NamingException ne) {
                 log.error("Unable to lookup mail session.  Check configuration.  NamingException: " + ne.getMessage());
             } catch (Exception e) {
                 log.warn("Exception sending comment mail: " + e.getMessage());

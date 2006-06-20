@@ -22,47 +22,48 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.ui.rendering.model.PageModel;
-import org.apache.roller.ui.rendering.model.PlanetPageModel;
-import org.apache.roller.ui.rendering.model.SitePageModel;
-import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.tools.view.context.ChainedContext;
-import org.apache.velocity.tools.view.context.ToolboxContext;
-import org.apache.velocity.tools.view.servlet.ServletToolboxManager;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
 import org.apache.roller.ui.core.LanguageUtil;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
+import org.apache.roller.ui.rendering.model.PageModel;
+import org.apache.roller.ui.rendering.model.PlanetPageModel;
+import org.apache.roller.ui.rendering.model.SitePageModel;
 import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
-import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
 import org.apache.roller.util.RegexUtil;
-import org.apache.roller.util.StringUtils;
 import org.apache.roller.util.Utilities;
+import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;
-
+import org.apache.velocity.tools.view.context.ChainedContext;
+import org.apache.velocity.tools.view.context.ToolboxContext;
+import org.apache.velocity.tools.view.servlet.ServletToolboxManager;
 
 /**
  * Load Velocity Context with Roller objects, values, and custom plugins.
@@ -103,7 +104,7 @@ public class ContextLoader {
                 RollerConfig.getProperty("velocity.pagemodel.classname");
             Class pageModelClass = Class.forName(pageModelClassName);
             PageModel pageModel = (PageModel)pageModelClass.newInstance();
-            pageModel.init(rreq.getRequest());            
+            pageModel.init(rreq.getRequest(), new HashMap());            
             ctx.put(pageModel.getModelName(), pageModel);
             
             // Add other page models
@@ -121,7 +122,7 @@ public class ContextLoader {
         }
         
         // Add Velocity page helper to context
-        PageHelper pageHelper = new PageHelper(request, response, ctx);
+        OldPageHelper pageHelper = new OldPageHelper(request, response, ctx);
         Roller roller = RollerFactory.getRoller();
         ctx.put("pageHelper", pageHelper);
                 
@@ -363,7 +364,7 @@ public class ContextLoader {
         
         ctx.put("page",            TemplateWrapper.wrap(rreq.getPage()));
         ctx.put("utilities",       new Utilities() );
-        ctx.put("stringUtils",     new StringUtils() );
+        ctx.put("stringUtils",     new OldStringUtils() );
         ctx.put("rollerVersion",   rollerCtx.getRollerVersion() );
         ctx.put("rollerBuildTime", rollerCtx.getRollerBuildTime() );
         ctx.put("rollerBuildUser", rollerCtx.getRollerBuildUser() );

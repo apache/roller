@@ -47,7 +47,7 @@ import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.admin.struts.formbeans.UserAdminForm;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 
 /////////////////////////////////////////////////////////////////////////////
