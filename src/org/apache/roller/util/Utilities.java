@@ -9,83 +9,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
 /**
- * General purpose utilities.
- *
- * <pre>
- * Includes TextToHTML methods donated by Erik Thauvin
- * Copyright (C) 2002-2003 by Erik C. Thauvin (erik@thauvin.net).
- * All rights reserved.
- * </pre>
- * 
- * <pre>
- * Also includes addNoFollow() and transformToHTMLSubset() from 
- * Simon Brown's Pebble blog server (BSD license).
- * Copyright (c) 2003-2005, Simon Brown
- * All rights reserved.
- * </pre>
- *
- * @author David M Johnson
- * @author Lance Lavandowska
- * @author Matt Raible (added encryption methods)
+ * General purpose utilities, not for use in templates.
  */
 public class Utilities {
     /** The <code>Log</code> instance for this class. */
     private static Log mLogger = LogFactory.getLog(Utilities.class);
-    
-    /** Pattern for matching HTML links */
-    private static Pattern mLinkPattern =
-            Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);
-    
-    private static final Pattern OPENING_B_TAG_PATTERN = Pattern.compile("&lt;b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_B_TAG_PATTERN = Pattern.compile("&lt;/b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_I_TAG_PATTERN = Pattern.compile("&lt;i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_I_TAG_PATTERN = Pattern.compile("&lt;/i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_BLOCKQUOTE_TAG_PATTERN = Pattern.compile("&lt;blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_BLOCKQUOTE_TAG_PATTERN = Pattern.compile("&lt;/blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern BR_TAG_PATTERN = Pattern.compile("&lt;br */*&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_P_TAG_PATTERN = Pattern.compile("&lt;p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_P_TAG_PATTERN = Pattern.compile("&lt;/p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_PRE_TAG_PATTERN = Pattern.compile("&lt;pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_PRE_TAG_PATTERN = Pattern.compile("&lt;/pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_UL_TAG_PATTERN = Pattern.compile("&lt;ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_UL_TAG_PATTERN = Pattern.compile("&lt;/ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_OL_TAG_PATTERN = Pattern.compile("&lt;ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_OL_TAG_PATTERN = Pattern.compile("&lt;/ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_LI_TAG_PATTERN = Pattern.compile("&lt;li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_LI_TAG_PATTERN = Pattern.compile("&lt;/li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_A_TAG_PATTERN = Pattern.compile("&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_A_TAG_PATTERN = Pattern.compile("&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
-  
-    /**
-     * Test if string is not null and and not empty.
-     */
-    public static boolean isNotEmpty(String str) {
-        return StringUtils.isNotEmpty(str);
-    }
-    
-    /**
-     * Test if string is null or empty.
-     */
-    public static boolean isEmpty(String str) {
-        return StringUtils.isEmpty(str);
-    }
-    
+      
     //------------------------------------------------------------------------
     /** Strip jsessionid off of a URL */
     public static String stripJsessionId( String url ) {
@@ -121,12 +65,12 @@ public class Utilities {
     public static String escapeHTML(String s, boolean escapeAmpersand) {
         // got to do amp's first so we don't double escape
         if (escapeAmpersand) {
-            s = stringReplace(s, "&", "&amp;");
+            s = StringUtils.replace(s, "&", "&amp;");
         }
-        s = stringReplace(s, "&nbsp;", " ");
-        s = stringReplace(s, "\"", "&quot;");
-        s = stringReplace(s, "<", "&lt;");
-        s = stringReplace(s, ">", "&gt;");
+        s = StringUtils.replace(s, "&nbsp;", " ");
+        s = StringUtils.replace(s, "\"", "&quot;");
+        s = StringUtils.replace(s, "<", "&lt;");
+        s = StringUtils.replace(s, ">", "&gt;");
         return s;
     }
      
@@ -207,39 +151,7 @@ public class Utilities {
         String ret = StringUtils.replace(s, "\n", "<br />");
         return ret;
     }
-    
-    //------------------------------------------------------------------------
-    /**
-     * Format date in ISO-8601 format.
-     */
-    public static String formatIso8601Date(Date d) {
-        return DateUtil.formatIso8601(d);
-    }
-    
-    //------------------------------------------------------------------------
-    /**
-     * Format date in ISO-8601 format.
-     */
-    public static String formatIso8601Day(Date d) {
-        return DateUtil.formatIso8601Day(d);
-    }
-    
-    //------------------------------------------------------------------------
-    /**
-     * Return a date in RFC-822 format.
-     */
-    public static String formatRfc822Date(Date date) {
-        return DateUtil.formatRfc822(date);
-    }
-    
-    //------------------------------------------------------------------------
-    /**
-     * Return a date in RFC-822 format.
-     */
-    public static String format8charsDate(Date date) {
-        return DateUtil.format8chars(date);
-    }
-    
+        
     //------------------------------------------------------------------------
     /**
      * Replaces occurences of non-alphanumeric characters with an underscore.
@@ -297,32 +209,6 @@ public class Utilities {
             else
                 ret = stringArray[i];
         }
-        return ret;
-    }
-    
-    //------------------------------------------------------------------------
-    /**
-     * Replace occurrences of str1 in string str with str2
-     */
-    public static String stringReplace(String str, String str1, String str2) {
-        String ret = StringUtils.replace(str,str1,str2);
-        return ret;
-    }
-    
-    //------------------------------------------------------------------------
-    /**
-     * Replace occurrences of str1 in string str with str2
-     * @param str String to operate on
-     * @param str1 String to be replaced
-     * @param str2 String to be used as replacement
-     * @param maxCount Number of times to replace, 0 for all
-     */
-    public static String stringReplace(
-            String str,
-            String str1,
-            String str2,
-            int maxCount) {
-        String ret = StringUtils.replace(str,str1,str2,maxCount);
         return ret;
     }
     
@@ -541,7 +427,7 @@ public class Utilities {
      * @throws IOException
      */
     public static String encodeString(String str) throws IOException {
-        sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
+        BASE64Encoder encoder = new BASE64Encoder();
         String encodedStr = encoder.encodeBuffer(str.getBytes());
         
         return (encodedStr.trim());
@@ -555,7 +441,7 @@ public class Utilities {
      * @throws IOException
      */
     public static String decodeString(String str) throws IOException {
-        sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
+        BASE64Decoder dec = new BASE64Decoder();
         String value = new String(dec.decodeBuffer(str));
         
         return (value);
@@ -838,143 +724,6 @@ public class Utilities {
     public static String encodeEmail(String str) {
         return str!=null ? RegexUtil.encodeEmail(str) : null;
     }
-    
-    /**
-     * Converts a character to HTML or XML entity.
-     *
-     * @param ch The character to convert.
-     * @param xml Convert the character to XML if set to true.
-     * @author Erik C. Thauvin
-     *
-     * @return The converted string.
-     */
-    public static final String charToHTML(char ch, boolean xml) {
-        int c;
-        
-        // Convert left bracket
-        if (ch == '<') {
-            return ("&lt;");
-        }
-        
-        // Convert left bracket
-        else if (ch == '>') {
-            return ("&gt;");
-        }
-        
-        // Convert ampersand
-        else if (ch == '&') {
-            return ("&amp;");
-        }
-        
-        // Commented out to eliminate redundant numeric character codes (ROL-507)
-        // High-ASCII character
-        //else if (ch >= 128)
-        //{
-        //c = ch;
-        //return ("&#" + c + ';');
-        //}
-        
-        // Convert double quote
-        else if (xml && (ch == '"')) {
-            return ("&quot;");
-        }
-        
-        // Convert single quote
-        else if (xml && (ch == '\'')) {
-            return ("&#39;");
-        }
-        
-        // No conversion
-        else {
-            // Return character as string
-            return (String.valueOf(ch));
-        }
-    }
-    
-    /**
-     * Converts a text string to HTML or XML entities.
-     *
-     * @author Erik C. Thauvin
-     * @param text The string to convert.
-     * @param xml Convert the string to XML if set to true.
-     *
-     * @return The converted string.
-     */
-    public static final String textToHTML(String text, boolean xml) {
-        if (text == null) return "null";
-        final StringBuffer html = new StringBuffer();
-        
-        // Loop thru each characters of the text
-        for (int i = 0; i < text.length(); i++) {
-            // Convert character to HTML/XML
-            html.append(charToHTML(text.charAt(i), xml));
-        }
-        
-        // Return HTML/XML string
-        return html.toString();
-    }
-    
-    /**
-     * Converts a text string to HTML or XML entities.
-     *
-     * @param text The string to convert.
-     * @author Erik C. Thauvin
-     * @return The converted string.
-     */
-    public static final String textToHTML(String text) {
-        return textToHTML(text, false);
-    }
-    
-    /**
-     * Converts a text string to XML entities.
-     *
-     * @param text The string to convert.
-     * @author Erik C. Thauvin
-     * @return The converted string.
-     */
-    public static final String textToXML(String text) {
-        return textToHTML(text, true);
-    }
-    
-    /**
-     * Converts a text string to HTML or XML entities.
-     * @param text The string to convert.
-     * @return The converted string.
-     */
-    public static final String textToCDATA(String text) {
-        if (text == null) return "null";
-        final StringBuffer html = new StringBuffer();
-        
-        // Loop thru each characters of the text
-        for (int i = 0; i < text.length(); i++) {
-            // Convert character to HTML/XML
-            html.append(charToCDATA(text.charAt(i)));
-        }
-        
-        // Return HTML/XML string
-        return html.toString();
-    }
-    
-    /**
-     * Converts a character to CDATA character.
-     * @param ch The character to convert.
-     * @return The converted string.
-     */
-    public static final String charToCDATA(char ch) {
-        int c;
-        
-        if (ch >= 128) {
-            c = ch;
-            
-            return ("&#" + c + ';');
-        }
-        
-        // No conversion
-        else {
-            // Return character as string
-            return (String.valueOf(ch));
-        }
-    }
 
     /**
      * URL encoding.
@@ -1010,7 +759,6 @@ public class Utilities {
         }
     }
 
-
     /**
      * @param string
      * @return
@@ -1023,92 +771,7 @@ public class Utilities {
         }
         return 0;
     }
-    
-    /**
-     * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
-     */
-    public static String addNofollow(String html) {
-        if (html == null || html.length() == 0) {
-            return html;
-        }
-        Matcher m = mLinkPattern.matcher(html);
-        StringBuffer buf = new StringBuffer();
-        while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            String link = html.substring(start, end);
-            buf.append(html.substring(0, start));
-            if (link.indexOf("rel=\"nofollow\"") == -1) {
-                buf.append(
-                        link.substring(0, link.length() - 1) + " rel=\"nofollow\">");
-            } else {
-                buf.append(link);
-            }
-            html = html.substring(end, html.length());
-            m = mLinkPattern.matcher(html);
-        }
-        buf.append(html);
-        return buf.toString();
-    }
-    
-    /**
-     * Transforms the given String into a subset of HTML displayable on a web
-     * page. The subset includes &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;br&gt;,
-     * &lt;pre&gt; and &lt;a href&gt; (and their corresponding end tags).
-     *
-     * @param s   the String to transform
-     * @return    the transformed String
-     */
-    public static String transformToHTMLSubset(String s) {
-        
-        if (s == null) {
-            return null;
-        }
-        
-        s = replace(s, OPENING_B_TAG_PATTERN, "<b>");
-        s = replace(s, CLOSING_B_TAG_PATTERN, "</b>");
-        s = replace(s, OPENING_I_TAG_PATTERN, "<i>");
-        s = replace(s, CLOSING_I_TAG_PATTERN, "</i>");
-        s = replace(s, OPENING_BLOCKQUOTE_TAG_PATTERN, "<blockquote>");
-        s = replace(s, CLOSING_BLOCKQUOTE_TAG_PATTERN, "</blockquote>");
-        s = replace(s, BR_TAG_PATTERN, "<br />");
-        s = replace(s, OPENING_P_TAG_PATTERN, "<p>");
-        s = replace(s, CLOSING_P_TAG_PATTERN, "</p>");
-        s = replace(s, OPENING_PRE_TAG_PATTERN, "<pre>");
-        s = replace(s, CLOSING_PRE_TAG_PATTERN, "</pre>");
-        s = replace(s, OPENING_UL_TAG_PATTERN, "<ul>");
-        s = replace(s, CLOSING_UL_TAG_PATTERN, "</ul>");
-        s = replace(s, OPENING_OL_TAG_PATTERN, "<ol>");
-        s = replace(s, CLOSING_OL_TAG_PATTERN, "</ol>");
-        s = replace(s, OPENING_LI_TAG_PATTERN, "<li>");
-        s = replace(s, CLOSING_LI_TAG_PATTERN, "</li>");
-        s = replace(s, QUOTE_PATTERN, "\"");
-        
-        // HTTP links
-        s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
-        Matcher m = OPENING_A_TAG_PATTERN.matcher(s);
-        while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            String link = s.substring(start, end);
-            link = "<" + link.substring(4, link.length() - 4) + ">";
-            s = s.substring(0, start) + link + s.substring(end, s.length());
-            m = OPENING_A_TAG_PATTERN.matcher(s);
-        }
-        
-        // escaped angle brackets
-        s = s.replaceAll("&amp;lt;", "&lt;");
-        s = s.replaceAll("&amp;gt;", "&gt;");
-        s = s.replaceAll("&amp;#", "&#");
-        
-        return s;
-    }
-    
-    private static String replace(String string, Pattern pattern, String replacement) {
-        Matcher m = pattern.matcher(string);
-        return m.replaceAll(replacement);
-    }
-        
+                    
     /**
      * Convert a byte array into a Base64 string (as used in mime formats)
      */
