@@ -51,7 +51,7 @@ import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.ui.rendering.model.PageModel;
 import org.apache.roller.ui.rendering.model.UtilitiesPageHelper;
 import org.apache.roller.util.Utilities;
-
+ 
 /**
  * Responsible for rendering weblog page previews.
  *
@@ -183,7 +183,7 @@ public class PreviewServlet extends HttpServlet {
         HashMap model = new HashMap();
         try {
             // populate the model
-            ModelLoader.loadPageModels(rreq.getWebsite(), rreq.getPageContext(), model);
+            ModelLoader.loadWeblogPageModels(rreq.getWebsite(), rreq.getPageContext(), model);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);

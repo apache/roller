@@ -36,6 +36,7 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
+import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
@@ -118,6 +119,21 @@ public class WeblogPageModel implements PageModel {
         return ret;
     }
         
+    /** 
+     * Get weblog category or null if request does not specify one.
+     */
+    public WeblogCategoryDataWrapper getWeblogCategory() {
+        
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        WeblogCategoryData cat = rreq.getWeblogCategory(); 
+        
+        WeblogCategoryDataWrapper ret = null;
+        if (cat != null) {
+            ret = WeblogCategoryDataWrapper.wrap(cat);
+        }
+        return ret;
+    }
+    
     /**
      * Get most recent weblog entries for date and category specified by request.
      * @return List of WeblogEntryDataWrapper objects. 

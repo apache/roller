@@ -40,32 +40,32 @@ public class ModelLoader {
     private static Log log = LogFactory.getLog(ModelLoader.class);   
     
     /** 
-     * Load page models needed for rendering a weblog page.
+     * Load page models needed by PageServlet and PreviewServlet.
      */
-    public static void loadPageModels(
+    public static void loadWeblogPageModels(
         WebsiteData weblog,
         PageContext pageContext,
         Map         map) throws RollerException { 
         
         HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse)pageContext.getRequest();
-
-        // Only load old model if it's specified
-        String useOldModel = 
-            RollerConfig.getProperty("velocity.pagemodel.classname");        
-        if (useOldModel != null) { 
-            ContextLoader.setupContext(map, request, response);            
-        }
+        loadOldModels(response, request, map);
         
         // Weblogs pages get the weblog page models
         String modelsString = 
             RollerConfig.getProperty("rendering.weblogPageModels");
         loadConfiguredPageModels(modelsString, request, map);
+        loadUtilityObjects(map);
+        loadWeblogHelperObjects(pageContext, map);
         
-        // Weblog pages get utilities, calendar and editor-menu
-        
-        UtilitiesPageHelper utils = new UtilitiesPageHelper();
-        map.put("utils", utils);
+        // Weblog pages get weblog's additional custom models too
+        if (weblog != null) {
+            loadAdditionalPageModels(weblog, request, map);
+        }
+    }
+
+    public static void loadWeblogHelperObjects(
+        PageContext pageContext, Map map) {
         
         CalendarPageHelper calendarTag = new CalendarPageHelper();
         calendarTag.init(pageContext);
@@ -74,57 +74,31 @@ public class ModelLoader {
         EditorMenuPageHelper menuTag = new EditorMenuPageHelper();
         menuTag.init(pageContext);
         map.put("menuTag", menuTag);
-        
-        // Weblog pages get weblog's additional custom models too
-        if (weblog != null) {
-            loadWeblogPageModels(weblog, request, map);
-        }
     }
-            
-    /** 
-     * Load page models needed for rendering a feed.
-     */
-    public static void loadFeedModels( 
-        WebsiteData         weblog,
-        HttpServletRequest  request,  
+
+    public static void loadUtilityObjects(Map map) {
+        UtilitiesPageHelper utils = new UtilitiesPageHelper();
+        map.put("utils", utils);
+    }
+
+    public static void loadOldModels(
         HttpServletResponse response, 
-        Map                 map) throws RollerException { 
-        
-        // TODO: remove this for Roller 3.0
+        HttpServletRequest  request,
+        Map                 map) throws RollerException {
+
+        // Only load old model if it's specified
         String useOldModel = 
             RollerConfig.getProperty("velocity.pagemodel.classname");        
         if (useOldModel != null) { 
             ContextLoader.setupContext(map, request, response);            
         }
-        
-        // Feeds get the weblog specific page model
-        String modelsString = RollerConfig.getProperty("rendering.weblogPageModels");
-        
-        // Unless the weblog is the frontpage weblog w/aggregated feeds
-        String frontPageHandle = 
-            RollerConfig.getProperty("velocity.pagemodel.classname");
-        boolean frontPageAggregated = 
-            RollerConfig.getBooleanProperty("frontpage.weblog.aggregatedFeeds");
-        if (weblog.getHandle().equals(frontPageHandle) && frontPageAggregated) {
-            modelsString = RollerConfig.getProperty("rendering.weblogPageModels");
-        }
-        loadConfiguredPageModels(modelsString, request, map);
-
-        // Feeds get utilities, but that's all
-        UtilitiesPageHelper utils = new UtilitiesPageHelper();
-        map.put("utils", utils);
-        
-        // Feeds get weblog's additional custom models too
-        if (weblog != null) {
-            loadWeblogPageModels(weblog, request, map);
-        }
     }
-    
+                
     /**
      * Load comma-separated list of configured page models and if any of the
      * models fail to load, throws an exception.
      */
-    private static void loadConfiguredPageModels(
+    public  static void loadConfiguredPageModels(
             String modelsString, 
             HttpServletRequest request, 
             Map map) throws RollerException {
@@ -153,7 +127,7 @@ public class ModelLoader {
      * Load comma-separated list of page models and does not fail if one of the 
      * models fails to load.
      */
-    private static void loadWeblogPageModels(
+    public static void loadAdditionalPageModels(
             WebsiteData weblog, 
             HttpServletRequest request, 
             Map map) {
