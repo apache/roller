@@ -75,7 +75,8 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel
                             startDate,                 // startDate
                             endDate,                   // endDate
                             catName,                   // catName
-                            WeblogEntryData.PUBLISHED  // status
+                            WeblogEntryData.PUBLISHED, // status
+                            0, -1
             );
         }
         catch (RollerException e)

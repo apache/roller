@@ -1,2 +1,483 @@
 
-# macros for use with WeblogPageModel
+#** macros for use with WeblogPageModel
+
+   Contents
+      #showWeblogEntryDayPager()
+      #showEntryText()
+      #showCommentForm()
+      #showTrackbackAutodiscoveryRDF()
+      #showAutodiscoveryLinks()
+      #showSearchForm()
+      #showSearchAgainForm()
+      #showSearchSummary()
+      #showSearchPager()
+      #showBookmarkList()
+      #showPageLinksList()
+      #showCategoryLinksList()
+      #showAuthorMenu()
+      #includePage()
+*#
+
+##-----------------------------------------------------------------------------
+#**
+ * Shows weblog entries from specified category using specified page as a "day 
+ * template" for the display of each day. The maxEntries argument is ignored
+ * because now the number of entries to display is controlled by the 
+ * entryDisplayCount property on the Preferences:Settings page.
+ * <p>
+ * This macro allows Roller to support five different types of blog displays:
+ * <p>
+ * Current day page<br />
+ *     /page/&lt;handle&gt;/<br>
+ * On the current day page, Roller will show the most recent N blog  
+ * entries (not just those for the day).
+ * At the end of the page, a previous link points to day page of entries  
+ * before the ones shown (and the link is displayed as the day's date).  
+ * This works exactly as before.
+ * <p>
+ * Day page<br>
+ *     /page/&lt;handle&gt;/YYYYMMDD<br>
+ * <p>On a day page, Roller will show all of the entries for a specific  
+ * day. At the end of the page, a next/previous link allows navigation  
+ * to next and previous day of entries (and the links are displayed as  
+ * the day's dates). Before, day pages always showed N entries (where  
+ * usually N=15), but now they'll show only a day's worth (e.g. 1-3  
+ * entries).
+ * <p>
+ * Month page<br>
+ *     /page/&lt;handle&gt;/YYYYMM<br>
+ * <p>On a month page, Roller will show the most recent N blog entries in  
+ * the month. At the end of the page, a previous link points to day page  
+ * of entries before the ones shown. This is new; we didn't have month  
+ * pages before.
+ * <p>
+ * Entry page<br>
+ *     /page/&lt;handle&gt;?entry=&lt;anchor&gt;<br>
+ * <p>On an entry page, one entry is shown. The next/prev links link to the  
+ * next and previous entries (and the links are displayed as the entry  
+ * titles, nicely truncated). This one also works exactly as before.
+ * <p>
+ * Search page<br>
+ *     /page/<handle>?q=<search terms><br>
+ * <p>If there are search results, then this macro will show them using the 
+ * current weblog's day template.
+ * <br>
+ *
+ * @param pageName   Page name of page to serve as day template.
+ * @param maxEntries (ignored)
+ * @param category   Only display weblog entries from this category.
+ *#
+#macro( showWeblogEntryDayPager $weblog $pageName $maxEntries $category)
+    #set($maxEntries = $website.entryDisplayCount)
+    #set($dayTemplateId = $pageModel.getPageIdByName($pageName))
+    #if(!$dayTemplateId ) ## if no page name, try Preview space
+        #set($dayTemplateId = $pageName)
+    #end
+    #if ($pageModel.weblogEntry)
+        <div class="top-next-prev">#showNextPreviousControl()</div>
+        #set($day = $entry.pubTime)
+        #set($entries = [$pageModel.weblogEntry])
+        #parse($dayTemplateId )
+        #if($trackbacksEnabled && $website.allowComments && $entry.commentsStillAllowed)
+           <div class="trackbackUrl">
+           $text.get("macro.weblog.trackback") #showTrackbackURL($entry)
+           </div>
+        #end
+        <div class="bottom-next-prev">#showNextPreviousControl()</div>
+        #showEntryLinkbacks($entry)
+        #showComments($entry)
+        #if($commentsEnabled && $website.allowComments && $entry.commentsStillAllowed)
+            #showCommentForm($entry)
+        #else
+            $text.get("comments.disabled")
+        #end
+    #else
+        #if($searchResults)
+            #set($map = $searchResults.results )
+            #showSearchAgainForm()
+            #showSearchSummary()
+            #foreach($day in $searchResults.results.keySet())
+                #set($entries = $searchResults.results.get($day))
+                #parse($dayTemplateId)
+            #end
+            #showSearchPager()
+        #else
+            #set($map = $pageModel.getRecentWeblogEntries($maxEntries, $category))
+            #if($map.size() == 0)
+               $text.get("macro.weblog.noEntriesForDate")
+            #else               
+               #foreach($day in $map.keySet())
+                   #set($entries = $map.get($day))
+                   #parse($dayTemplateId)
+               #end
+            #end
+            <div class="bottom-next-prev">#showNextPreviousControl()</div>
+        #end
+    #end
+#end
+
+##-----------------------------------------------------------------------------
+#**
+ * Use this to show entry summary or text as appropriate on your blog pages.
+ * On single-entry pages, text is prefered. Everywhere else, summary is 
+ * preferred. Also, applies all plugins configured by entry.
+ *#
+#macro( showEntryText $entry )
+   #if( $entryPage )
+      #parse($entryPage.id)
+   #else
+      #if( $pageModel.weblogEntry) 
+          ## on single-entry pages, we prefer text
+          #if( $utilities.isNotEmpty($entry.text) )
+              #set( $sourceText = $entry.text )
+          #else 
+              #set( $sourceText = $entry.summary )
+          #end
+      #else
+          ## on multi-entry pages, we prefer summary
+          #if( $utilities.isNotEmpty($entry.summary) )
+              #set( $sourceText = $entry.summary )
+              #if( $utilities.isNotEmpty($entry.text) )
+                 #set( $readMore = "<a class='readmore' href='$entry.permaLink'> ...</a>" )
+                 #set( $sourceText = "$sourceText$readMore")
+              #end
+          #else 
+              #set( $sourceText = $entry.text )
+          #end
+      #end
+      #if( $entry.plugins )
+         #set( $displayText = $pageHelper.renderPlugins($entry, $sourceText) )
+      #else
+         #set( $displayText = $sourceText )
+      #end
+      $utilities.textToCDATA($displayText)
+   #end
+#end
+
+##-----------------------------------------------------------------------------
+#**
+ * Display comment form for a weblog entry.
+ * @param entry WeblogEntry object for which form is to be shown.
+ *#
+#macro( showCommentForm $entry )
+    <div class="comments-form">
+    <div class="comments-head">$text.get("macro.weblog.postcommentHeader")</div><br/>
+
+    #showStatusMessage()
+
+    <form method="post" action="$ctxPath/comment" focus="name"
+        name="form" onsubmit="fixURL(this); return validateComments(this)">
+        
+        #if($requestParameters.popup)
+        <input type="hidden" name="popup" value="true" />
+        #end
+
+        <!-- is this a post or a preview -->
+        <input type="hidden" name="method" value="post" />
+        <input type="hidden" name="entryid" value="$entry.id" />
+
+        <table cellspacing="0" cellpadding="1" border="0" width="95%">
+        <tr><th>$text.get( "macro.weblog.name" )</th>
+            <td><input type="text" name="name" value="$commentForm.name" size="50" maxlength="255" /></td>
+        </tr>
+
+        <tr><th>$text.get( "macro.weblog.email" )</th>
+            <td><input type="text" name="email" value="$commentForm.email" size="50" maxlength="255" /></td>
+        </tr>
+
+        <tr><th>$text.get( "macro.weblog.url" )</th>
+            <td><input type="text" name="url" value="$commentForm.url" size="50" maxlength="255" /></td>
+        </tr>
+        #if ($pageModel.emailComments)
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="notify" name="notify" />
+                <label for="notify">$text.get( "macro.weblog.notifyMeOfComments" )</label>
+            </td>
+        </tr>
+        #end
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="rememberInfo" name="rememberInfo" />
+                <label for="rememberInfo">$text.get( "macro.weblog.rememberinfo" )</label>
+            </td>
+        </tr>
+        </table>
+        <br/>
+
+        <table>
+        <tr><th style="text-align: left">$text.get( "macro.weblog.yourcomment" )</th></tr>
+        <tr>
+            <td>
+            <textarea name="content" cols="50" rows="10">$commentForm.content</textarea><br />
+            <span class="comments-syntax-indicator">
+            $text.get( "macro.weblog.htmlsyntax" )
+            #if( $escapeHtml )
+                <span class="disabled">$text.get( "macro.weblog.htmldisabled" )</span>
+            #else
+                <span class="enabled">$text.get( "macro.weblog.htmlenabled" )</span>
+            #end
+            </span>
+            </td>
+        </tr>
+        </table>
+        
+        <script type="text/javascript" src="$ctxPath/theme/scripts/clientSideInclude.js"></script>
+        <div id="commentAuthenticator"></div>
+ 
+        <table cellspacing="0" cellpadding="1" border="0" width="95%">
+        <tr>
+            <td align="left" nowrap="nowrap">
+               <input type="button" name="post" value="&nbsp;$text.get( "macro.weblog.preview" )&nbsp;"
+                  onClick="this.form.method.value='preview';this.form.submit()" />
+               <input type="submit" name="post" value="&nbsp;$text.get( "macro.weblog.post" )&nbsp;" />
+            </td>
+            <td align="right">
+               <!-- <input type="button" value="&nbsp;$text.get( "macro.weblog.clear" )&nbsp;" /> -->
+            </td>
+        </tr>
+        </table>
+
+    </form>
+
+    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js"></script>
+    <script type="text/javascript">
+    clientSideInclude('commentAuthenticator', '$ctxPath/CommentAuthenticatorServlet');
+
+    var author = getCookie("commentAuthor");
+    var email = getCookie("commentEmail");
+    var url = getCookie("commentUrl");
+    // check each field - IE will render "null"
+    if (author) {
+        document.form.name.value = author;
+    }
+    if (email) {
+        document.form.email.value = email;
+    }
+    if (url) {
+        document.form.url.value = url;
+    }
+
+    if (author || email || url) {
+        document.form.rememberInfo.checked = true;
+    }
+
+    function fixURL(theForm) {
+        if (theForm.url.value != "" &&
+            theForm.url.value.indexOf("http://") == -1) { //prepend http://
+            theForm.url.value = "http://"+theForm.url.value;
+        }
+        saveUserInformation(theForm);
+    }
+
+    function saveUserInformation(theForm) {
+        if (theForm.rememberInfo.checked) {
+            rememberUser(theForm);
+        } else {
+            forgetUser(theForm);
+        }
+    }
+
+    function validateComments(theForm) {
+        if (theForm.content.value == "") {
+            alert("$text.get( "macro.weblog.commentwarning" )");
+            theForm.content.focus();
+            return false;
+        }
+    }
+    </script>
+    </div>
+#end
+
+
+##-----------------------------------------------------------------------------
+#**
+ * Display a trackback auto-discovery comment for a WeblogEntry.
+ **#
+#macro( showTrackbackAutodiscovery $entry )
+<!--
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:Description
+    rdf:about="$entry.permaLink"
+    trackback:ping="#showTrackbackURL($entry)"
+    dc:title="$entry.title"
+    dc:identifier="$entry.permaLink"
+    dc:subject="$entry.category.name"
+    dc:description="$entry.title"
+    dc:creator="$entry.creator.userName"
+    dc:date="$entry.pubTime" />
+</rdf:RDF>
+-->
+#end
+
+##-----------------------------------------------------------------------------
+#**
+ * Show autodiscovery links for feeds and publishing end-points.
+ *#
+#macro( showAutodiscoveryLinks $weblog )
+    <link rel="alternate" type="application/rss+xml"
+        title="RSS" href="$absBaseURL/rss/${website.handle}" />
+#end
+
+##-----------------------------------------------------------------------------
+#**
+ * Display search form for searching a weblog.  This is only a form, no div
+ * or anything around it.
+ *#
+#macro( showSearchForm )
+    <form id="searchForm" method="get" action="${ctxPath}/search/${website.handle}"
+        style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
+        <p>
+          <input type="text" id="q" name="q" size="20"
+              maxlength="255" value="#if($term)$term#end" />
+          #set( $cats = $pageModel.getWeblogCategories("nil") )
+          <select name="c">
+          <option value="">- In Category -</option>
+          #foreach( $cat in $cats )
+              <option #if($cat.name == $req.getParameter('c'))selected="selected"#end>$cat.name</option>
+          #end
+          </select>
+          <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
+        </p>
+    </form>
+    <script type="text/javascript">
+        function validateSearch(form) {
+            if (form.q.value == "") {
+                alert("$text.get( "macro.weblog.searchalert" )");
+                form.q.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+#end
+
+##-----------------------------------------------------------------------------
+#**
+ * Display search form for searching a weblog.  This is only a form, no div
+ * or anything around it.
+ *#
+#macro( showSearchForm )
+    <form id="searchForm" method="get" action="${ctxPath}/search/${website.handle}"
+        style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
+        <p>
+          <input type="text" id="q" name="q" size="20"
+              maxlength="255" value="#if($term)$term#end" />
+          #set( $cats = $pageModel.getWeblogCategories("nil") )
+          <select name="c">
+          <option value="">- In Category -</option>
+          #foreach( $cat in $cats )
+              <option #if($cat.name == $req.getParameter('c'))selected="selected"#end>$cat.name</option>
+          #end
+          </select>
+          <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
+        </p>
+    </form>
+    <script type="text/javascript">
+        function validateSearch(form) {
+            if (form.q.value == "") {
+                alert("$text.get( "macro.weblog.searchalert" )");
+                form.q.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+#end
+
+##-----------------------------------------------------------------------------
+#**
+ * Display search again form
+ *#
+#macro( showSearchAgainForm )
+    <div id="searchAgain">
+        $text.get( "macro.weblog.searchdictionary", [$searchResults.term, $searchResults.term, $searchResults.term] )
+
+        $text.get( "macro.weblog.searchhits", [$searchResults.hits])
+
+        <form method="get" action="${ctxPath}/search/${website.handle}"
+            style="margin: 5px">
+            <input type="text" id="q" name="q" size="31"
+                maxlength="255" value="$searchResults.term"
+                style="padding-left: 1px" /><br />
+            #set( $cats = $pageModel.getWeblogCategories("nil") )
+            <select name="c">
+            <option value="">- Restrict By Category -</option>
+            #foreach( $cat in $cats )
+              <option #if($cat.name == $req.getParameter('c'))selected="selected"#end>$cat.name</option>
+            #end
+            </select>
+            <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
+        </form>
+
+        $text.get( "macro.weblog.searchgoogle", [$searchResults.term, $absBaseURL, $ctxPath, ${website.handle}] )
+    </div>
+    <!-- searchhi script hangs firefox, commenting it out for now -->
+    <!-- script type="text/javascript" src="$ctxPath/theme/scripts/searchhi.js"></script -->
+#end
+
+##-----------------------------------------------------------------------------
+#**
+ * Displays header like "1 - 10 of 20 found.".
+**#
+#macro( showSearchSummary )
+    #set( $min = $searchResults.offset + 1 )
+    #set( $max = $searchResults.offset + $searchResults.limit )
+    #if( $max > $searchResults.hits )#set( $max = $searchResults.hits )#end
+    <h3>
+        $min - $max of $searchResults.hits found.
+    </h3>
+#end
+
+##-----------------------------------------------------------------------------
+#**
+ * Display list of search result pages (for pagination).
+**#
+#macro( showSearchPager )
+    <h3 style="text-align:center;">
+    #set( $numPages = $searchResults.hits / $searchResults.limit )
+    #set( $remainder = $searchResults.hits % $searchResults.limit )
+    #if( $remainder > 0 )#set( $numPages = $numPages + 1 )#end
+    #if( $numPages > 1 )
+        #foreach( $pageNum in [1..$numPages] )
+            #set( $i = $pageNum - 1 )
+            #set( $start = $searchResults.limit * $i )
+            <a href="?q=${utilities.encode($searchResults.term)}&${USERNAME_KEY}=$!{username}&n=${searchResults.limit}&o=${start}"
+               >$pageNum</a>#if( $pageNum != $numPages) | #end
+        #end
+    #end
+    </h3>
+#end
+
+##-----------------------------------------------------------------------------
+
+#macro( showBookmarkList $weblog )
+#end
+
+##-----------------------------------------------------------------------------
+
+#macro( showPageLinksList $weblog )
+#end
+
+##-----------------------------------------------------------------------------
+
+#macro( showCategoryLinksList $weblog )
+#end
+
+##-----------------------------------------------------------------------------
+
+#macro( showAuthorMenu $weblog )
+#end
+
+##-----------------------------------------------------------------------------
+
+#macro( includePage $pageName )
+#end
+
+
+
+

@@ -120,8 +120,8 @@ public abstract class IndexOperation implements Runnable {
         doc.add(Field.UnStored(FieldConstants.CONTENT, data.getText()));
 
         // store an abbreviated version of the entry text, but don't index
-        doc.add(Field.UnIndexed(FieldConstants.CONTENT_STORED, Utilities
-                .truncateNicely(Utilities.removeHTML(data.getText()), 240, 260, "...")));
+        doc.add(Field.UnIndexed(FieldConstants.CONTENT_STORED, 
+            Utilities.truncateNicely(Utilities.removeHTML(data.getText()), 240, 260, "...")));
 
         doc.add(Field.Keyword(FieldConstants.UPDATED, data.getUpdateTime()
                 .toString()));

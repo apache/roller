@@ -21,25 +21,6 @@
 package org.apache.roller.business.hibernate;
 
 import java.text.SimpleDateFormat;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Order;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.Assoc;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.RefererData;
-import org.apache.roller.pojos.WeblogCategoryAssoc;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -50,15 +31,35 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.apache.commons.collections.comparators.ReverseComparator;
-import org.hibernate.Query;
-import org.hibernate.criterion.MatchMode;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.Roller;
+import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.Assoc;
+import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogCategoryAssoc;
+import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.DateUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.util.Utilities;
-
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 
 /**
  * Hibernate implementation of the WeblogManager.
@@ -948,14 +949,18 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    startDate,
             Date    endDate,
             String  catName,
-            String  status) throws RollerException {
+            String  status,
+            int     offset,
+            int     length) throws RollerException {
         return getWeblogEntryMap(
-                website,
-                startDate,
-                endDate,
-                catName,
-                status,
-                false);
+            website,
+            startDate,
+            endDate,
+            catName,
+            status,
+            false,
+            offset,
+            length);
     }
     
     public Map getWeblogEntryStringMap(
@@ -963,14 +968,18 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    startDate,
             Date    endDate,
             String  catName,
-            String  status) throws RollerException {
+            String  status,
+            int     offset,
+            int     length) throws RollerException {
         return getWeblogEntryMap(
-                website,
-                startDate,
-                endDate,
-                catName,
-                status,
-                true);
+            website,
+            startDate,
+            endDate,
+            catName,
+            status,
+            true,
+            offset,
+            length);
     }
     
     private Map getWeblogEntryMap(
@@ -979,7 +988,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    endDate,
             String  catName,
             String  status,
-            boolean stringsOnly) throws RollerException {
+            boolean stringsOnly,
+            int     offset,
+            int     length) throws RollerException {
+        
         TreeMap map = new TreeMap(reverseComparator);
         
         List entries = getWeblogEntries(
@@ -990,7 +1002,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             catName,
             status,
             null,
-            0, Integer.MAX_VALUE);
+            offset,
+            length);
         
         Calendar cal = Calendar.getInstance();
         if (website != null) {
@@ -1115,7 +1128,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
      */
     public String getUrl(WebsiteData site, String contextUrl) {
         String url =
-                Utilities.escapeHTML(contextUrl + "/page/" + site.getHandle());
+            StringEscapeUtils.escapeHtml(contextUrl + "/page/" + site.getHandle());
         return url;
     }
         

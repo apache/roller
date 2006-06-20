@@ -40,6 +40,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.roller.config.RollerConfig;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Loads MT-Blacklist style blacklist from disk and allows callers to test

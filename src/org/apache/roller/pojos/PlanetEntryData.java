@@ -35,6 +35,7 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
 import java.util.Map;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
@@ -118,7 +119,7 @@ public class PlanetEntryData extends PersistentObject
         if (romeEntry.getContents().size() > 0) {
             SyndContent content= (SyndContent)romeEntry.getContents().get(0);
             if (content != null && content.getType().equals("text/plain")) {
-                setText(Utilities.unescapeHTML(content.getValue()));
+                setText(StringEscapeUtils.unescapeHtml(content.getValue()));
             } else if (content != null) {
                 setText(content.getValue());
             }
@@ -128,7 +129,7 @@ public class PlanetEntryData extends PersistentObject
         if (getText() == null || getText().trim().length() == 0) {
             ContentModule cm = (ContentModule)romeEntry.getModule(ContentModule.URI);
             if (cm != null) {
-                setText(Utilities.unescapeHTML(cm.getEncoded()));
+                setText(StringEscapeUtils.unescapeHtml(cm.getEncoded()));
             }
         }
         

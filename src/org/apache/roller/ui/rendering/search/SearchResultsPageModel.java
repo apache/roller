@@ -29,8 +29,11 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.comparators.ReverseComparator;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
@@ -50,7 +53,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.DateUtil;
-import org.apache.roller.util.StringUtils;
+
 
 
 

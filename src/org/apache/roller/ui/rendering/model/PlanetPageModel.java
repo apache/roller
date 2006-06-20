@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +47,7 @@ public class PlanetPageModel implements PageModel {
         return "planetPageModel";
     }
     
-    public void init(HttpServletRequest request) {
+    public void init(HttpServletRequest request, Map map) {
         // no-op for now
     } 
     

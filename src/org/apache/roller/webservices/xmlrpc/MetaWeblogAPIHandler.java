@@ -20,18 +20,17 @@ package org.apache.roller.webservices.xmlrpc;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
-import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.FileManager;
 import org.apache.roller.model.Roller;
@@ -45,7 +44,8 @@ import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.RollerMessages;
 import org.apache.roller.util.Utilities;
-
+import org.apache.struts.util.RequestUtils;
+import org.apache.xmlrpc.XmlRpcException;
 
 /**
  * Roller XML-RPC Handler for the MetaWeblog API.
@@ -225,11 +225,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Hashtable postcontent = struct;
         String description = (String)postcontent.get("description");
         String title = (String)postcontent.get("title");
-        if (Utilities.isEmpty(title) && Utilities.isEmpty(description)) {
+        if (StringUtils.isEmpty(title) && StringUtils.isEmpty(description)) {
             throw new XmlRpcException(
               BLOGGERAPI_INCOMPLETE_POST, "Must specify title or description");
         }
-        if (Utilities.isEmpty(title)) { 
+        if (StringUtils.isEmpty(title)) { 
             title = Utilities.truncateNicely(description, 15, 15, "...");
         }
         
@@ -479,11 +479,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         struct.put("description", category.getPath());
         
         String catUrl = contextUrl+"/page/"+userid+"?catname="+category.getPath();
-        catUrl = Utilities.stringReplace(catUrl," ","%20");
+        catUrl = StringUtils.replace(catUrl," ","%20");
         struct.put("htmlUrl", catUrl);
         
         String rssUrl = contextUrl+"/rss/"+userid+"?catname="+category.getPath();
-        rssUrl = Utilities.stringReplace(catUrl," ","%20");
+        rssUrl = StringUtils.replace(catUrl," ","%20");
         struct.put("rssUrl",rssUrl);
         
         return struct;

@@ -17,6 +17,7 @@
 */
 package org.apache.roller.ui.rendering.model;
 
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -26,10 +27,9 @@ public interface PageModel {
     /** 
      * Name to be used for the model in template context. 
      */
-    public String getModelName();
-    
+    public String getModelName();   
     /** 
-     * Initialize via request and Velocity Context.
+     * Initialize via request.
      */
-    public void init(HttpServletRequest request);
+    public void init(HttpServletRequest request, Map params);
 }

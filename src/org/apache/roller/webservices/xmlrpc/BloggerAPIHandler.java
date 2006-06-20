@@ -27,24 +27,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.Utilities;
-
+import org.apache.xmlrpc.XmlRpcException;
 
 /**
  * Roller XML-RPC Handler for the Blogger v1 API.
@@ -395,7 +396,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                     content.indexOf("</title>"));
             content = StringUtils.replace(content, "<title>"+title+"</title>", "");
         }
-        if (Utilities.isEmpty(title)) { 
+        if (StringUtils.isEmpty(title)) { 
             title = Utilities.truncateNicely(content, 15, 15, "...");
         }
         
@@ -473,7 +474,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                         null,                   // startDate
                         new Date(),             // endDate
                         null,                   // catName
-                        null);
+                        null, 0, -1);
                 
                 Iterator iter = entries.values().iterator();
                 while (iter.hasNext()) {

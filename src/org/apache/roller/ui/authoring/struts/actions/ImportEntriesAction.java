@@ -42,7 +42,8 @@ import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.ImportEntriesForm;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
+
 /**
  * TODO: revisit this class once Atom 1.0 support comes to Rome
  * @struts.action name="importEntries" path="/roller-ui/authoring/importEntries"

@@ -42,7 +42,7 @@ import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.ui.authoring.struts.actions.WeblogEntryPageModel.PageMode;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.roller.ui.authoring.tags.EditWeblogCalendarModel;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 //import com.swabunga.spell.event.SpellCheckEvent;
 import java.util.Map;

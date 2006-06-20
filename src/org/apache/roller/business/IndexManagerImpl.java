@@ -46,7 +46,7 @@ import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Lucene implementation of IndexManager. This is the central entry point 

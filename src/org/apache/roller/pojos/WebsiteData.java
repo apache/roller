@@ -84,10 +84,11 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     private Boolean moderateComments  = Boolean.FALSE;
     private int     entryDisplayCount = 15;
     private Date    lastModified     = new Date();
+    private String  pageModels       = new String();
     
     // Associated objects
-    private UserData creator = null; // TODO: decide if website.user is needed
-    private List     permissions = new ArrayList();
+    private UserData           creator = null; 
+    private List               permissions = new ArrayList();
     private WeblogCategoryData bloggerCategory = null;
     private WeblogCategoryData defaultCategory = null;
     
@@ -1025,6 +1026,20 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     }
     public void setUrl(String url) {
         // noop
+    }
+
+    /**
+     * Comma-separated list of additional page models to be created when this
+     * weblog is rendered.
+     *
+     * @ejb:persistent-field
+     * @hibernate.property column="pagemodels" not-null="true"
+     */
+    public String getPageModels() {
+        return pageModels;
+    }
+    public void setPageModels(String pageModels) {
+        this.pageModels = pageModels;
     }
 }
 

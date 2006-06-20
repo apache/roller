@@ -19,26 +19,27 @@
 package org.apache.roller.ui.core.struts.actions;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.ui.authoring.struts.formbeans.UserFormEx;
+import org.apache.roller.ui.core.BasePageModel;
+import org.apache.roller.ui.core.RollerSession;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.authoring.struts.formbeans.UserFormEx;
-import org.apache.roller.util.StringUtils;
-
 
 /**
  * Allows user to edit his/her profile.

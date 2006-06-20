@@ -1,0 +1,9 @@
+#** 
+240-to-300-migration.vm: Velocity template that generates vendor-specific database scripts 
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
+
+-- Roller 3.0 schema changes
+
+alter table website add column pagemodels varchar(512) default null;

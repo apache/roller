@@ -28,8 +28,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.RollerPermissionsException;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.authoring.struts.forms.WeblogTemplateForm;
+import org.apache.roller.ui.core.BasePageModel;
+import org.apache.roller.ui.core.RollerRequest;
+import org.apache.roller.ui.core.RollerSession;
+import org.apache.roller.util.Utilities;
+import org.apache.roller.util.cache.CacheManager;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -38,20 +53,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.apache.roller.RollerException;
-import org.apache.roller.RollerPermissionsException;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerRequest;
-import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.util.cache.CacheManager;
-import org.apache.roller.ui.authoring.struts.forms.WeblogTemplateForm;
-import org.apache.roller.util.StringUtils;
-import org.apache.roller.util.Utilities;
+
 /////////////////////////////////////////////////////////////////////////////
 /**
  * Page form action.
@@ -88,7 +90,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
                 data.setWebsite(website);
-                data.setLastModified( new java.util.Date() );
+                data.setLastModified( new Date() );
                 data.setDescription("");
                 data.setContents("");
                 validateLink( data );
@@ -325,7 +327,7 @@ public final class WeblogTemplateFormAction extends DispatchAction
             if (rses.isUserAuthorizedToAdmin(website))
             {
                 form.copyTo(data, request.getLocale());
-                data.setLastModified( new java.util.Date() );
+                data.setLastModified( new Date() );
 
                 validateLink( data );
 

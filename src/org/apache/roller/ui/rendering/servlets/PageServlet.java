@@ -48,10 +48,10 @@ import org.apache.roller.ui.core.InvalidRequestException;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.WeblogPageRequest;
-import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
+import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheHandler;
@@ -262,7 +262,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         // looks like we need to render content
         try {
             // populate the model
-            ContextLoader.setupContext(model, rreq, response);
+            ModelLoader.loadPageModels(model, request, response, rreq.getPageContext());
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
@@ -324,7 +324,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         
         log.debug("Exiting");
     }
-    
+        
     
     /**
      * Generate a cache key from a parsed weblog page request.

@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -97,7 +99,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     }
     
     public WeblogEntryData(
-            java.lang.String id,
+            String id,
             WeblogCategoryData category,
             WebsiteData website,
             UserData creator,
@@ -130,7 +132,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     /**
      * Setter is needed in RollerImpl.storePersistentObject()
      */
-    public void setData(org.apache.roller.pojos.PersistentObject otherData) {
+    public void setData(PersistentObject otherData) {
         WeblogEntryData other = (WeblogEntryData)otherData;
         
         this.id = other.getId();
@@ -158,12 +160,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
-    public java.lang.String getId() {
+    public String getId() {
         return this.id;
     }
     
     /** @ejb:persistent-field */
-    public void setId(java.lang.String id) {
+    public void setId(String id) {
         this.id = id;
     }
     
@@ -172,12 +174,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @hibernate.many-to-one column="categoryid" cascade="none" not-null="true"
      */
-    public org.apache.roller.pojos.WeblogCategoryData getCategory() {
+    public WeblogCategoryData getCategory() {
         return this.category;
     }
     
     /** @ejb:persistent-field */
-    public void setCategory(org.apache.roller.pojos.WeblogCategoryData category) {
+    public void setCategory(WeblogCategoryData category) {
         this.category = category;
     }
     
@@ -239,12 +241,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="title" non-null="true" unique="false"
      */
-    public java.lang.String getTitle() {
+    public String getTitle() {
         return this.title;
     }
     
     /** @ejb:persistent-field */
-    public void setTitle(java.lang.String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
     
@@ -272,7 +274,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="text" non-null="true" unique="false"
      */
-    public java.lang.String getText() {
+    public String getText() {
         return this.text;
     }
     
@@ -280,7 +282,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * Set content text for weblog entry (maps to RSS content:encoded and Atom content).
      * @ejb:persistent-field
      */
-    public void setText(java.lang.String text) {
+    public void setText(String text) {
         this.text = text;
     }
     
@@ -325,12 +327,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="anchor" non-null="true" unique="false"
      */
-    public java.lang.String getAnchor() {
+    public String getAnchor() {
         return this.anchor;
     }
     
     /** @ejb:persistent-field */
-    public void setAnchor(java.lang.String anchor) {
+    public void setAnchor(String anchor) {
         this.anchor = anchor;
     }
     
@@ -415,12 +417,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="pubtime" non-null="true" unique="false"
      */
-    public java.sql.Timestamp getPubTime() {
+    public Timestamp getPubTime() {
         return this.pubTime;
     }
     
     /** @ejb:persistent-field */
-    public void setPubTime(java.sql.Timestamp pubTime) {
+    public void setPubTime(Timestamp pubTime) {
         this.pubTime = pubTime;
     }
     
@@ -439,12 +441,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="updatetime" non-null="true" unique="false"
      */
-    public java.sql.Timestamp getUpdateTime() {
+    public Timestamp getUpdateTime() {
         return this.updateTime;
     }
     
     /** @ejb:persistent-field */
-    public void setUpdateTime(java.sql.Timestamp updateTime) {
+    public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
     
@@ -470,7 +472,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="link" non-null="false" unique="false"
      */
-    public java.lang.String getLink() {
+    public String getLink() {
         return link;
     }
     
@@ -478,7 +480,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @param link The link to set.
      */
-    public void setLink(java.lang.String link) {
+    public void setLink(String link) {
         this.link = link;
     }
     
@@ -489,12 +491,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @ejb:persistent-field
      * @hibernate.property column="plugins" non-null="false" unique="false"
      */
-    public java.lang.String getPlugins() {
+    public String getPlugins() {
         return plugins;
     }
     
     /** @ejb:persistent-field */
-    public void setPlugins(java.lang.String string) {
+    public void setPlugins(String string) {
         plugins = string;
     }
     
@@ -899,7 +901,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getRss09xDescription(int maxLength) {
-        String ret = Utilities.escapeHTML(text);
+        String ret = StringEscapeUtils.escapeHtml(text);
         if (maxLength != -1 && ret.length() > maxLength) {
             ret = ret.substring(0,maxLength-3)+"...";
         }

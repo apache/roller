@@ -22,6 +22,7 @@ import java.util.HashMap;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
@@ -32,7 +33,6 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.Utilities;
-import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 /**
  * Shows either entry summary or text, as appropriate and with plugins applied.
@@ -60,8 +60,8 @@ public class ShowEntryTextTag extends TagSupport {
             RequestUtils.lookup(pageContext, name, property, scope);  
         
         String sourceText = null;
-        boolean hasSummary = Utilities.isNotEmpty(entry.getSummary());
-        boolean hasText= Utilities.isNotEmpty(entry.getText());
+        boolean hasSummary = StringUtils.isNotEmpty(entry.getSummary());
+        boolean hasText= StringUtils.isNotEmpty(entry.getText());
         if (singleEntry) {
             if (hasText) sourceText = entry.getText();
             else if (hasSummary) sourceText = entry.getSummary();
@@ -69,7 +69,7 @@ public class ShowEntryTextTag extends TagSupport {
             if (hasSummary) sourceText = entry.getSummary();
             else if (hasText) sourceText = entry.getText();
         }
-        if (Utilities.isNotEmpty(sourceText)) {
+        if (StringUtils.isNotEmpty(sourceText)) {
             try {
                 String xformed = sourceText;        
                 if (entry.getPlugins() != null) {
@@ -99,7 +99,7 @@ public class ShowEntryTextTag extends TagSupport {
 
                 // somehow things (&#8220) are getting double-escaped
                 // but I cannot seem to track it down
-                xformed = Utilities.stringReplace(xformed, "&amp#", "&#");
+                xformed = StringUtils.replace(xformed, "&amp#", "&#");
 
                 pageContext.getOut().println(xformed);
                 

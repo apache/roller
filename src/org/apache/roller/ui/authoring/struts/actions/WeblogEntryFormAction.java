@@ -45,6 +45,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -75,7 +76,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.roller.util.MailUtil;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.util.Utilities;
 
 
@@ -725,7 +726,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                                     StringBuffer resultBuff = new StringBuffer();
                                     while ((line = rd.readLine()) != null) {
                                         resultBuff.append(
-                                                Utilities.escapeHTML(line, true));
+                                            StringEscapeUtils.escapeHtml(line));
                                         resultBuff.append("<br />");
                                     }
                                     resultMsg.add(ActionMessages.GLOBAL_MESSAGE,
