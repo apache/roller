@@ -363,7 +363,7 @@ public class OldWeblogPageModel implements PageModel {
                 endDate = DateUtil.getEndOfDay(endDate, cal);
                 startDate = DateUtil.getStartOfDay(endDate, cal); 
                 // and get them ALL, no limit
-                limit = Integer.MAX_VALUE;                  
+                limit = -1;                  
             } else if (mRollerReq.isMonthSpecified()) {
                 endDate = DateUtil.getEndOfMonth(endDate, cal);
             }

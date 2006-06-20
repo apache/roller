@@ -187,7 +187,7 @@ public class ExportEntriesAction extends DispatchAction
                                     null,              // catName
                                     null,              // status
                                     null,              // sortby (null for pubtime)
-                                    0, Integer.MAX_VALUE);  
+                                    0, -1);  
 
                     ActionMessages messages = writeSuccessMessage(request, response, rreq, form);
 

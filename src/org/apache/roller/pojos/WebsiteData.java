@@ -1033,7 +1033,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
      * weblog is rendered.
      *
      * @ejb:persistent-field
-     * @hibernate.property column="pagemodels" not-null="true"
+     * @hibernate.property column="pagemodels" not-null="false"
      */
     public String getPageModels() {
         return pageModels;

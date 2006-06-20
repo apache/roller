@@ -406,7 +406,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 // list of enabled website authors and admins
                 ArrayList reviewers = new ArrayList();
                 List websiteUsers = umgr.getUsers(
-                     entry.getWebsite(), Boolean.TRUE, 0, Integer.MAX_VALUE);
+                     entry.getWebsite(), Boolean.TRUE, 0, -1);
                 
                 // build list of reviewers (website users with author permission)
                 Iterator websiteUserIter = websiteUsers.iterator();

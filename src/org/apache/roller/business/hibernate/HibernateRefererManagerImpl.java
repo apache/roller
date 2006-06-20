@@ -288,7 +288,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             if (offset != 0) {
                 query.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 query.setMaxResults(length);
             }
             Iterator rawResults = query.list().iterator();
@@ -337,7 +337,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             if (offset != 0) {
                 query.setFirstResult(offset);
             }
-            if (length != Integer.MAX_VALUE) {
+            if (length != -1) {
                 query.setMaxResults(length);
             }
             Iterator rawResults = query.list().iterator();
