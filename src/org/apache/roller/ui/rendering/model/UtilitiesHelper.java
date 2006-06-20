@@ -20,14 +20,10 @@ package org.apache.roller.ui.rendering.model;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,7 +34,7 @@ import org.apache.roller.util.Utilities;
 /**
  * Utilities object to be placed in template context.
  */
-public class UtilitiesPageHelper {
+public class UtilitiesHelper {
     
     private static Pattern mLinkPattern =
             Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);    
@@ -152,6 +148,21 @@ public class UtilitiesPageHelper {
     public static String autoformat(String s) {
         String ret = StringUtils.replace(s, "\n", "<br />");
         return ret;
+    }
+    
+    /**
+     * Return date for current time.
+     */
+    public static Date getNow() {
+        return new Date();
+    }
+    
+    /**
+     * Format date using SimpleDateFormat format string.
+     */
+    public static String formatDate(Date d, String fmt) {
+        SimpleDateFormat format = new SimpleDateFormat(fmt);
+        return format.format(d);
     }
     
     /**

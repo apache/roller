@@ -105,11 +105,11 @@ public class PlanetSubscriptionData extends PersistentObject
      * @hibernate.property column="feed_url" non-null="true" unique="false"
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getFeedUrl()
+    public String getFeedURL()
     {
         return feedUrl;
     }
-    public void setFeedUrl(String feedUrl)
+    public void setFeedURL(String feedUrl)
     {
         this.feedUrl = feedUrl;
     }
@@ -129,11 +129,11 @@ public class PlanetSubscriptionData extends PersistentObject
      * @hibernate.property column="site_url" non-null="false" unique="false"
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getSiteUrl()
+    public String getSiteURL()
     {
         return siteUrl;
     }
-    public void setSiteUrl(String siteUrl)
+    public void setSiteURL(String siteUrl)
     {
         this.siteUrl = siteUrl;
     }
@@ -218,7 +218,7 @@ public class PlanetSubscriptionData extends PersistentObject
     public int compareTo(Object o)
     {
         PlanetSubscriptionData other = (PlanetSubscriptionData)o;
-        return getFeedUrl().compareTo(other.getFeedUrl());
+        return getFeedURL().compareTo(other.getFeedURL());
     }
 
     public boolean equals(Object other) {
@@ -227,7 +227,7 @@ public class PlanetSubscriptionData extends PersistentObject
         if(!(other instanceof PlanetSubscriptionData)) return false;
         
         final PlanetSubscriptionData that = (PlanetSubscriptionData) other;
-        return this.feedUrl.equals(that.getFeedUrl());
+        return this.feedUrl.equals(that.getFeedURL());
     }
     
     public int hashCode() {

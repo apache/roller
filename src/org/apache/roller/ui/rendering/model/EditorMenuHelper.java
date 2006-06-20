@@ -28,19 +28,16 @@ import org.apache.roller.ui.core.tags.menu.EditorNavigationBarTag;
 /**
  * Displays editor menu/navigation-bar by calling hybrid JSP tag.
  */
-public class EditorMenuPageHelper  {
+public class EditorMenuHelper  {
     private PageContext pageContext;
     
     protected static Log logger =
-            LogFactory.getFactory().getInstance(EditorMenuPageHelper.class);
+            LogFactory.getFactory().getInstance(EditorMenuHelper.class);
     
     /**
-     * Creates a new instance of EditorMenuPageHelper
-     */
-    public EditorMenuPageHelper() {
-    }
-       
-    public void init(PageContext pageContext) {
+     * Creates a new instance of EditorMenuHelper
+     */       
+    public EditorMenuHelper(PageContext pageContext) {
         this.pageContext = pageContext;
     }
     

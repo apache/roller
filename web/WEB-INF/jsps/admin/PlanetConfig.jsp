@@ -53,8 +53,8 @@ function syncWebsites()
     </tr>
 
     <tr>
-        <td class="label"><label for="siteUrl" /><fmt:message key="planetConfig.siteUrl" /></label></td>
-        <td class="field"><html:text property="siteUrl" size="40" maxlength="255" /></td>
+        <td class="label"><label for="siteURL" /><fmt:message key="planetConfig.siteUrl" /></label></td>
+        <td class="field"><html:text property="siteURL" size="40" maxlength="255" /></td>
         <td class="description"><fmt:message key="planetConfig.tip.siteUrl" /></td>
     </tr>
 

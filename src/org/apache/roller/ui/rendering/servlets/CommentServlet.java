@@ -56,7 +56,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.rendering.model.UtilitiesPageHelper;
+import org.apache.roller.ui.rendering.model.UtilitiesHelper;
 import org.apache.roller.ui.rendering.util.CommentAuthenticator;
 import org.apache.roller.ui.rendering.util.DefaultCommentAuthenticator;
 import org.apache.roller.util.GenericThrottle;
@@ -452,7 +452,7 @@ public class CommentServlet extends HttpServlet {
             msg.append((escapeHtml) ? "\n\n" : "<br /><br />");
                         
             msg.append((escapeHtml) ? Utilities.escapeHTML(cd.getContent()) 
-                : UtilitiesPageHelper.transformToHTMLSubset(Utilities.escapeHTML(cd.getContent())));
+                : UtilitiesHelper.transformToHTMLSubset(Utilities.escapeHTML(cd.getContent())));
             
             msg.append((escapeHtml) ? "\n\n----\n"
                     : "<br /><br /><hr /><span style=\"font-size: 11px\">");

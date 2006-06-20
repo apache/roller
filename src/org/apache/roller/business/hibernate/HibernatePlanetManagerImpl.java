@@ -102,7 +102,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         
     public void saveSubscription(PlanetSubscriptionData sub) 
         throws RollerException {
-        PlanetSubscriptionData existing = getSubscription(sub.getFeedUrl());
+        PlanetSubscriptionData existing = getSubscription(sub.getFeedURL());
         if (existing == null || (existing.getId().equals(sub.getId()))) {
             this.strategy.store(sub);
         } else {
@@ -459,7 +459,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             log.info("   " + count + " - "
                     + ((subEndTime-subStartTime)/1000.0)
                     + " seconds to process (" + count + ") entries of "
-                    + sub.getFeedUrl());
+                    + sub.getFeedURL());
         }
         // Clear the aggregation cache
         clearCachedAggregations();
@@ -479,8 +479,8 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         URL feedUrl = null;
         Date lastUpdated = new Date();
         try {
-            feedUrl = new URL(sub.getFeedUrl());
-            log.debug("Get feed from cache "+sub.getFeedUrl());
+            feedUrl = new URL(sub.getFeedURL());
+            log.debug("Get feed from cache "+sub.getFeedURL());
             feed = feedFetcher.retrieveFeed(feedUrl);
             SyndFeedInfo feedInfo = feedInfoCache.getFeedInfo(feedUrl);
             if (feedInfo.getLastModified() != null) {
@@ -492,7 +492,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             }
             Thread.sleep(100); // be nice
         } catch (Exception e) {
-            log.warn("ERROR parsing " + sub.getFeedUrl()
+            log.warn("ERROR parsing " + sub.getFeedURL()
             + " : " + e.getClass().getName() + " : " + e.getMessage());
             log.debug(e);
             return newEntries; // bail out

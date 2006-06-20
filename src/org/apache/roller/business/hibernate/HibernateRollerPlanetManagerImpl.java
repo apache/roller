@@ -78,9 +78,9 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
         String localURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
         
         // if this is not a local url then let parent deal with it
-        if (StringUtils.isEmpty(localURL) || !sub.getFeedUrl().startsWith(localURL)) {
+        if (StringUtils.isEmpty(localURL) || !sub.getFeedURL().startsWith(localURL)) {
             
-            log.debug("Feed is remote, letting parent handle it "+sub.getFeedUrl());
+            log.debug("Feed is remote, letting parent handle it "+sub.getFeedURL());
             
             return super.getNewEntries(sub, feedFetcher, feedInfoCache);
         }
@@ -89,9 +89,9 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
         Set newEntries = new TreeSet();
         try {
             // for local feeds, sub.author = website.handle
-            if (sub.getAuthor()!=null && sub.getFeedUrl().endsWith(sub.getAuthor())) {
+            if (sub.getAuthor()!=null && sub.getFeedURL().endsWith(sub.getAuthor())) {
                 
-                log.debug("Getting LOCAL feed "+sub.getFeedUrl());
+                log.debug("Getting LOCAL feed "+sub.getFeedURL());
                 
                 // get corresponding website object
                 UserManager usermgr = RollerFactory.getRoller().getUserManager();
@@ -158,7 +158,7 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
             log.warn("Problem reading local feed", e);
         }
         
-        log.debug("Failed to fetch locally, trying remote "+sub.getFeedUrl());
+        log.debug("Failed to fetch locally, trying remote "+sub.getFeedURL());
         
         // if there was an error then try normal planet method
         return super.getNewEntries(sub, feedFetcher, feedInfoCache);

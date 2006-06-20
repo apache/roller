@@ -74,17 +74,17 @@ function deleteSubscription()
         </div>
         
         <div class="formrow">
-            <label for="feedUrl" class="formrow" />
+            <label for="feedURL" class="formrow" />
                 <fmt:message key="planetSubscription.feedUrl" /></label>
-            <html:text property="feedUrl" size="40" maxlength="255" />
+            <html:text property="feedURL" size="40" maxlength="255" />
             <img src="../images/help.png" alt="help" 
                 title='<fmt:message key="planetSubscription.tip.feedUrl" />' />
         </div>
         
         <div class="formrow">
-            <label for="siteUrl" class="formrow" />
+            <label for="siteURL" class="formrow" />
                 <fmt:message key="planetSubscription.siteUrl" /></label>
-            <html:text property="siteUrl" size="40" maxlength="255" />
+            <html:text property="siteURL" size="40" maxlength="255" />
             <img src="../images/help.png" alt="help" 
                 title='<fmt:message key="planetSubscription.tip.siteUrl" />' />
         </div>
@@ -137,7 +137,7 @@ function deleteSubscription()
 
                     <td class="rollertable">
                         <str:left count="100" >
-                           <c:out value="${subscription.feedUrl}" />
+                           <c:out value="${subscription.feedURL}" />
                         </str:left>
                     </td>
 
@@ -150,7 +150,7 @@ function deleteSubscription()
                                 name="planetSubscriptionFormEx" 
                                 property="groupHandle" />                   
                             <roller:linkparam 
-                                id="feedUrl" name="subscription" property="feedUrl" />                   
+                                id="feedUrl" name="subscription" property="feedURL" />                   
                             <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
                                 title="<fmt:message key='planetSubscription.edit.tip' />" />
                         </roller:link>

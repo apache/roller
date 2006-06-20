@@ -268,8 +268,8 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             String modelsString = 
                 RollerConfig.getProperty("rendering.weblogPageModels");
             ModelLoader.loadConfiguredPageModels(modelsString, request, model);
-            ModelLoader.loadUtilityObjects(model);
-            ModelLoader.loadWeblogHelperObjects(rreq.getPageContext(), model);
+            ModelLoader.loadUtilityHelpers(model);
+            ModelLoader.loadWeblogHelpers(rreq.getPageContext(), model);
 
             // Weblog pages get weblog's additional custom models too
             if (rreq.getWebsite() != null) {

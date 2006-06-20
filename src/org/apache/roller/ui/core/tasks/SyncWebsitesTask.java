@@ -122,8 +122,8 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                             logger.info("ADDING feed: "+feedUrl);
                             sub = new PlanetSubscriptionData();
                             sub.setTitle(website.getName());
-                            sub.setFeedUrl(feedUrl);
-                            sub.setSiteUrl(siteUrl);
+                            sub.setFeedURL(feedUrl);
+                            sub.setSiteURL(siteUrl);
                             sub.setAuthor(website.getHandle());
                             planet.saveSubscription(sub);
                             group.addSubscription(sub);
@@ -143,8 +143,8 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                     while (subs.hasNext()) {
                         PlanetSubscriptionData sub =
                                 (PlanetSubscriptionData)subs.next();
-                        if (!liveUserFeeds.contains(sub.getFeedUrl())) {
-                            logger.info("DELETING feed: "+sub.getFeedUrl());
+                        if (!liveUserFeeds.contains(sub.getFeedURL())) {
+                            logger.info("DELETING feed: "+sub.getFeedURL());
                             planet.deleteSubscription(sub);
                         }
                     }
@@ -207,20 +207,20 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                     if (count >= start && count < end) {
                         try {
                             Technorati.Result result =
-                                    technorati.getBloginfo(sub.getSiteUrl());
+                                    technorati.getBloginfo(sub.getSiteURL());
                             if (result != null && result.getWeblog() != null) {
                                 sub.setInboundblogs(
                                         result.getWeblog().getInboundblogs());
                                 sub.setInboundlinks(
                                         result.getWeblog().getInboundlinks());
                                 logger.debug("Adding rank for "
-                                        +sub.getFeedUrl()+" ["+count+"|"
+                                        +sub.getFeedURL()+" ["+count+"|"
                                         +sub.getInboundblogs()+"|"
                                         +sub.getInboundlinks()+"]");
                             } else {
                                 logger.debug(
                                         "No ranking available for "
-                                        +sub.getFeedUrl()+" ["+count+"]");
+                                        +sub.getFeedURL()+" ["+count+"]");
                                 sub.setInboundlinks(0);
                                 sub.setInboundblogs(0);
                             }
