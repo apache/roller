@@ -42,7 +42,6 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
-import org.apache.roller.util.Utilities;
 
 /**
  * Parses HTML file for referring linkback title and excerpt.
