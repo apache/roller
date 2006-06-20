@@ -19,15 +19,16 @@ package org.apache.roller.ui.rendering.model;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.Utilities;
 
@@ -42,18 +43,18 @@ public class ModelLoader {
      * Load page models needed for rendering a weblog page.
      */
     public static void loadPageModels(
-        Map map,
-        HttpServletRequest request,  
-        HttpServletResponse response,
-        PageContext pageContext) throws RollerException { 
+        WebsiteData weblog,
+        PageContext pageContext,
+        Map         map) throws RollerException { 
         
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+        HttpServletResponse response = (HttpServletResponse)pageContext.getRequest();
 
         // Only load old model if it's specified
         String useOldModel = 
             RollerConfig.getProperty("velocity.pagemodel.classname");        
         if (useOldModel != null) { 
-            ContextLoader.setupContext(map, rreq, response);            
+            ContextLoader.setupContext(map, request, response);            
         }
         
         // Weblogs pages get the weblog page models
@@ -75,27 +76,25 @@ public class ModelLoader {
         map.put("menuTag", menuTag);
         
         // Weblog pages get weblog's additional custom models too
-        if (rreq.getWebsite() != null) {
-            loadWeblogPageModels(rreq.getWebsite(), request, map);
+        if (weblog != null) {
+            loadWeblogPageModels(weblog, request, map);
         }
     }
             
     /** 
      * Load page models needed for rendering a feed.
      */
-    public static void loadFeedModels(
-            Map map,
-            HttpServletRequest request,  
-            HttpServletResponse response) throws RollerException { 
+    public static void loadFeedModels( 
+        WebsiteData         weblog,
+        HttpServletRequest  request,  
+        HttpServletResponse response, 
+        Map                 map) throws RollerException { 
         
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData weblog = rreq.getWebsite();
-
-        // Only load old model if it's specified
+        // TODO: remove this for Roller 3.0
         String useOldModel = 
             RollerConfig.getProperty("velocity.pagemodel.classname");        
         if (useOldModel != null) { 
-            ContextLoader.setupContext(map, rreq, response);            
+            ContextLoader.setupContext(map, request, response);            
         }
         
         // Feeds get the weblog specific page model
@@ -116,8 +115,8 @@ public class ModelLoader {
         map.put("utils", utils);
         
         // Feeds get weblog's additional custom models too
-        if (rreq.getWebsite() != null) {
-            loadWeblogPageModels(rreq.getWebsite(), request, map);
+        if (weblog != null) {
+            loadWeblogPageModels(weblog, request, map);
         }
     }
     
@@ -136,7 +135,9 @@ public class ModelLoader {
                 currentModel = models[i];
                 Class modelClass = Class.forName(currentModel);
                 PageModel pageModel = (PageModel)modelClass.newInstance();
-                pageModel.init(request, new HashMap());            
+                Map args = new HashMap();
+                args.put("request", request);
+                pageModel.init(args);            
                 map.put(pageModel.getModelName(), pageModel);
             }
         } catch (ClassNotFoundException cnfe) {
@@ -163,7 +164,9 @@ public class ModelLoader {
                 try { // don't die just because of one bad custom model
                     Class modelClass = Class.forName(weblogModels[i]);
                     PageModel pageModel = (PageModel)modelClass.newInstance();
-                    pageModel.init(request, new HashMap());            
+                    Map args = new HashMap();
+                    args.put("request", request);
+                    pageModel.init(args);             
                     map.put(pageModel.getModelName(), pageModel);
                 } catch (ClassNotFoundException cnfe) {
                     log.warn("ERROR: can't find page model: " + weblogModels[i]);

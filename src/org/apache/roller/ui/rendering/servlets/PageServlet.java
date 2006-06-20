@@ -262,7 +262,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         // looks like we need to render content
         try {
             // populate the model
-            ModelLoader.loadPageModels(model, request, response, rreq.getPageContext());
+            ModelLoader.loadPageModels(rreq.getWebsite(), rreq.getPageContext(), model);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);

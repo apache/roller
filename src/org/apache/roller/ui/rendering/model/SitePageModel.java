@@ -55,7 +55,7 @@ public class SitePageModel implements PageModel {
         return "sitePageModel";
     }
         
-    public void init(HttpServletRequest request, Map map) {
+    public void init(Map map) {
         // no-op for now
     }
     

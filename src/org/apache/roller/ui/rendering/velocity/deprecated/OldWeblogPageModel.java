@@ -95,7 +95,8 @@ public class OldWeblogPageModel implements PageModel {
     /**
      * Initialize PageModel and allow PageModel to initialized VelocityContext.
      */
-    public void init(HttpServletRequest request, Map map) {
+    public void init(Map map) {
+        HttpServletRequest request = (HttpServletRequest)map.get("request");
         mRollerReq = RollerRequest.getRollerRequest(request);
         if ( request.getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
             mWebsite = (WebsiteData)
