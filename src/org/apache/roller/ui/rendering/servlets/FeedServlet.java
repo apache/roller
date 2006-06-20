@@ -66,7 +66,7 @@ import org.apache.roller.util.cache.LazyExpiringCacheEntry;
  * @web.servlet-mapping url-pattern="/flavor/*"
  * @web.servlet-mapping url-pattern="/rss/*"
  * @web.servlet-mapping url-pattern="/atom/*"
- */
+ */ 
 public class FeedServlet extends HttpServlet implements CacheHandler {
     
     private static Log log = LogFactory.getLog(FeedServlet.class);
@@ -265,7 +265,28 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             request.setAttribute("updateTime", updateTime);
             
             // populate the model
-            ModelLoader.loadFeedModels(rreq.getWebsite(), request, response, model);
+            
+            // TODO: remove this for Roller 3.0
+            ModelLoader.loadOldModels(response, request, model);
+
+            // Feeds get the weblog specific page model
+            String modelsString = RollerConfig.getProperty("rendering.weblogPageModels");
+
+            // Unless the weblog is the frontpage weblog w/aggregated feeds
+            String frontPageHandle = 
+                RollerConfig.getProperty("velocity.pagemodel.classname");
+            boolean frontPageAggregated = 
+                RollerConfig.getBooleanProperty("frontpage.weblog.aggregatedFeeds");
+            if (weblog.getHandle().equals(frontPageHandle) && frontPageAggregated) {
+                modelsString = RollerConfig.getProperty("rendering.weblogPageModels");
+            }
+            ModelLoader.loadConfiguredPageModels(modelsString, request, model);
+            ModelLoader.loadUtilityObjects(model);
+
+            // Feeds get weblog's additional custom models too
+            if (weblog != null) {
+                ModelLoader.loadAdditionalPageModels(weblog, request, model);
+            }   
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);

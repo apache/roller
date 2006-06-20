@@ -57,7 +57,7 @@ import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheHandler;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.cache.LazyExpiringCacheEntry;
-
+ 
 
 /**
  * Responsible for rendering weblog pages.
@@ -262,8 +262,20 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         // looks like we need to render content
         try {
             // populate the model
-            ModelLoader.loadPageModels(rreq.getWebsite(), rreq.getPageContext(), model);
-            
+            ModelLoader.loadOldModels(response, request, model);
+
+            // Weblogs pages get the weblog page models
+            String modelsString = 
+                RollerConfig.getProperty("rendering.weblogPageModels");
+            ModelLoader.loadConfiguredPageModels(modelsString, request, model);
+            ModelLoader.loadUtilityObjects(model);
+            ModelLoader.loadWeblogHelperObjects(rreq.getPageContext(), model);
+
+            // Weblog pages get weblog's additional custom models too
+            if (rreq.getWebsite() != null) {
+                ModelLoader.loadAdditionalPageModels(rreq.getWebsite(), request, model);
+            }
+        
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
             
