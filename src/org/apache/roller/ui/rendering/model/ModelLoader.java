@@ -90,7 +90,8 @@ public class ModelLoader {
     /**
      * Load weblog entry plugin helpers.
      */
-    public static void loadPluginHelpers(WebsiteData weblog, Map map) {
+    public static void loadPluginHelpers(WebsiteData weblog, Map map) 
+        throws RollerException {
         WeblogEntryPluginsHelper plugins = new WeblogEntryPluginsHelper(weblog, map);
         map.put("plugins", plugins);
     }
