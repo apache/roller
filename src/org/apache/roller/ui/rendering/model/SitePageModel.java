@@ -182,6 +182,7 @@ public class SitePageModel implements PageModel {
      * @param handle    Restrict to this weblog handle (or 'nil' for all)
      * @param userName  Restrict to this userName (or 'nil' for all)
      * @param cat       Restrict to category (or 'nil' for all)
+     * @param sinceDays Limit to past X days in past (or -1 for no limit)
      * @param offset    Offset into results (for paging)
      * @param length    Max number of results to return
      */
