@@ -18,7 +18,7 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
+import org.apache.roller.RollerException;
 
 /**
  * Represents a page model to be used in the blog/feed templates.
@@ -31,5 +31,5 @@ public interface PageModel {
     /** 
      * Initialize via request.
      */
-    public void init(Map params);
+    public void init(Map params) throws RollerException;
 }

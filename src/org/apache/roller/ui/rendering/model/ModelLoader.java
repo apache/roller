@@ -160,6 +160,8 @@ public class ModelLoader {
                     args.put("request", request);
                     pageModel.init(args);             
                     map.put(pageModel.getModelName(), pageModel);
+                } catch (RollerException re) {
+                    log.warn("ERROR: initializing a plugin: " + weblogModels[i]);
                 } catch (ClassNotFoundException cnfe) {
                     log.warn("ERROR: can't find page model: " + weblogModels[i]);
                 } catch (InstantiationException ie) {
