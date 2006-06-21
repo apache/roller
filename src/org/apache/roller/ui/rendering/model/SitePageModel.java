@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.model.RefererManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
@@ -41,7 +41,6 @@ import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
-import org.apache.roller.ui.rendering.velocity.deprecated.OldWeblogPageModel;
 
 /**
  * Page model that provides access to site-wide users, weblogs and entries for
@@ -55,7 +54,7 @@ public class SitePageModel implements PageModel {
         return "sitePageModel";
     }
         
-    public void init(Map map) {
+    public void init(Map map) throws RollerException {
         // no-op for now
     }
     
@@ -188,9 +187,9 @@ public class SitePageModel implements PageModel {
      */
     public List getWeblogEntries(String handle, String userName, String cat, int sinceDays, int offset, int length) {
         List results = new ArrayList();
-        if (handle.equals(OldWeblogPageModel.VELOCITY_NULL)) handle = null;
-        if (userName.equals(OldWeblogPageModel.VELOCITY_NULL)) userName = null;
-        if (cat.equals(OldWeblogPageModel.VELOCITY_NULL)) cat = null;
+        if (handle != null && handle.equals("nil")) handle = null;
+        if (userName != null && userName.equals("nil")) userName = null;
+        if (cat != null && cat.equals("nil")) cat = null;
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, -1 * sinceDays);

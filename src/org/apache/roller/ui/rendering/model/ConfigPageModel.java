@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.ui.core.RollerContext;
 
@@ -58,7 +59,7 @@ public class ConfigPageModel implements PageModel {
     }
 
     /** Init page model based on request */
-    public void init(Map map) {
+    public void init(Map map) throws RollerException {
         this.request = (HttpServletRequest)map.get("request");
     }
         

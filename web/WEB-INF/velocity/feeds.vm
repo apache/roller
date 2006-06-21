@@ -84,7 +84,7 @@
     #end
 #end
 
-#macro(showEntriesRSS20 $entries)
+#macro(showCommentsRSS20 $entries)
     #foreach($entry in $entries)
     <item>
         <!-- TODO: 3.0 Fix this, it's not a unique ID -->
