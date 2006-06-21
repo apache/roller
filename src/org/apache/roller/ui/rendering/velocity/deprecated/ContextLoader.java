@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 package org.apache.roller.ui.rendering.velocity.deprecated;
 
 import java.net.MalformedURLException;
@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,10 +64,13 @@ import org.apache.velocity.tools.view.context.ChainedContext;
 import org.apache.velocity.tools.view.context.ToolboxContext;
 import org.apache.velocity.tools.view.servlet.ServletToolboxManager;
 
+
 /**
  * Load Velocity Context with Roller objects, values, and custom plugins.
- * @author llavandowska
- * @author David M Johnson
+ *
+ * NOTE: This class has been deprecated and should no longer be used.  It is
+ *       left here so that old weblogs which rely on it will continue to
+ *       function properly.  This should only be used by weblog pages.
  */
 public class ContextLoader {
     
@@ -80,14 +82,14 @@ public class ContextLoader {
     private static final String TOOLBOX_MANAGER_KEY =
             "org.apache.roller.presentation.velocity.toolboxManager";
     
-
+    
     /**
      * Setup the a Velocity context by loading it with objects, values, and
      * RollerPagePlugins needed for Roller page execution.
      */
     public static void setupContext(
-            Map                 ctx, 
-            HttpServletRequest  request, 
+            Map                 ctx,
+            HttpServletRequest  request,
             HttpServletResponse response)
             throws RollerException {
         
@@ -107,18 +109,18 @@ public class ContextLoader {
         try {
             // Add default page model object to context
             String pageModelClassName =
-                RollerConfig.getProperty("velocity.pagemodel.classname");
+                    RollerConfig.getProperty("velocity.pagemodel.classname");
             Class pageModelClass = Class.forName(pageModelClassName);
             PageModel pageModel = (PageModel)pageModelClass.newInstance();
             Map args = new HashMap();
             args.put("request", request);
-            pageModel.init(args);            
+            pageModel.init(args);
             ctx.put(pageModel.getModelName(), pageModel);
             
             // Add other page models
-            // TODO: ATLAS make page models configurable            
+            // TODO: ATLAS make page models configurable
             PageModel sitePageModel = new SitePageModel();
-            ctx.put(sitePageModel.getModelName(), sitePageModel);            
+            ctx.put(sitePageModel.getModelName(), sitePageModel);
             PageModel planetPageModel = new PlanetPageModel();
             ctx.put(planetPageModel.getModelName(), planetPageModel);
             
@@ -135,10 +137,10 @@ public class ContextLoader {
         OldPageHelper pageHelper = new OldPageHelper(request, response, ctx, weblog, pageContext, pageRequest);
         Roller roller = RollerFactory.getRoller();
         ctx.put("pageHelper", pageHelper);
-                
+        
         // Load standard Roller objects and values into the context
-        WebsiteData website = 
-            loadWeblogValues(ctx, rreq, rollerCtx );
+        WebsiteData website =
+                loadWeblogValues(ctx, rreq, rollerCtx );
         loadPathValues(       ctx, rreq, rollerCtx, website );
         loadRssValues(        ctx, rreq, website );
         loadUtilityObjects(   ctx, rreq, rollerCtx, website );
@@ -153,27 +155,27 @@ public class ContextLoader {
         // add Velocity Toolbox tools to context
         loadToolboxContext(request, response, ctx);
     }
-        
+    
     /**
      * Load website object and related objects.
      */
     protected static WebsiteData loadWeblogValues(
-            Map ctx, 
-            RollerRequest rreq, 
+            Map ctx,
+            RollerRequest rreq,
             RollerContext rollerCtx )
             throws RollerException {
-                
+        
         Roller mRoller = RollerFactory.getRoller();
         Map props = mRoller.getPropertiesManager().getProperties();
         
-        WebsiteData weblog = rreq.getWebsite();            
+        WebsiteData weblog = rreq.getWebsite();
         if (weblog == null && rreq.getRequest().getParameter("entry") != null) {
             String handle = rreq.getRequest().getParameter("entry");
             weblog = RollerFactory.getRoller().getUserManager().getWebsiteByHandle(handle);
         }
         if (weblog == null && rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
             weblog = (WebsiteData)rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
-        } 
+        }
         
         if (weblog != null) {
             ctx.put("userName",         weblog.getHandle());
@@ -194,11 +196,11 @@ public class ContextLoader {
             weblog.setAllowComments(Boolean.FALSE);
             weblog.setHandle("zzz_none_zzz");
             weblog.setName(
-                ((RollerPropertyData)props.get("site.name")).getValue());
+                    ((RollerPropertyData)props.get("site.name")).getValue());
             weblog.setDescription(
-                ((RollerPropertyData)props.get("site.description")).getValue());
+                    ((RollerPropertyData)props.get("site.description")).getValue());
             weblog.setEntryDisplayCount(
-                RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries"));
+                    RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries"));
             ctx.put("handle",   weblog.getHandle() );
             ctx.put("userName", weblog.getHandle() );
             ctx.put("fullName", weblog.getHandle());
@@ -206,7 +208,7 @@ public class ContextLoader {
             ctx.put("timezone", TimeZone.getDefault());
             ctx.put("timeZone", TimeZone.getDefault());
             ctx.put("emailAddress",
-                ((RollerPropertyData)props.get("site.adminemail")).getValue());           
+                    ((RollerPropertyData)props.get("site.adminemail")).getValue());
         }
         ctx.put("website", WebsiteDataWrapper.wrap(weblog) );
         
@@ -221,7 +223,7 @@ public class ContextLoader {
         ctx.put("viewLocale",
                 LanguageUtil.getViewLocale(rreq.getRequest()));
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
-               
+        
         // if there is an "_entry" page, only load it once
         // but don't do it for dummy website
         if (weblog != null && !"zzz_none_zzz".equals(weblog.getHandle())) {
@@ -229,20 +231,20 @@ public class ContextLoader {
             Template entryPage = weblog.getPageByName("_entry");
             if (entryPage != null) {
                 ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
-            }            
-            // TODO: ATLAS: no templates use this, should be safe to remove 
+            }
+            // TODO: ATLAS: no templates use this, should be safe to remove
             // Template descPage = weblog.getPageByName("_desc");
             //if (descPage != null) {
-                //ctx.put("descPage", TemplateWrapper.wrap(descPage));
+            //ctx.put("descPage", TemplateWrapper.wrap(descPage));
             //}
         }
-
+        
         boolean commentsEnabled =
-            RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
+                RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
         boolean trackbacksEnabled =
-            RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
+                RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled");
         boolean linkbacksEnabled =
-            RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
+                RollerRuntimeConfig.getBooleanProperty("site.linkbacks.enabled");
         
         ctx.put("commentsEnabled",   new Boolean(commentsEnabled) );
         ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
@@ -250,13 +252,13 @@ public class ContextLoader {
         
         return weblog;
     }
-            
+    
     /**
      * Load comments for one weblog entry and related objects.
      */
     protected static void loadCommentValues(
-            Map       ctx, 
-            RollerRequest rreq, 
+            Map       ctx,
+            RollerRequest rreq,
             RollerContext rollerCtx )
             throws RollerException {
         
@@ -265,12 +267,12 @@ public class ContextLoader {
         HttpServletRequest request = rreq.getRequest();
         
         String escapeHtml =
-            RollerRuntimeConfig.getProperty("users.comments.escapehtml");
+                RollerRuntimeConfig.getProperty("users.comments.escapehtml");
         String autoFormat =
-            RollerRuntimeConfig.getProperty("users.comments.autoformat");
+                RollerRuntimeConfig.getProperty("users.comments.autoformat");
         ctx.put("isCommentPage",     Boolean.TRUE);
         ctx.put("escapeHtml",        new Boolean(escapeHtml) );
-        ctx.put("autoformat",        new Boolean(autoFormat) );                
+        ctx.put("autoformat",        new Boolean(autoFormat) );
         
         // Make sure comment form object is available in context
         CommentFormEx commentForm =
@@ -305,9 +307,9 @@ public class ContextLoader {
      * Load objects needed for RSS and Atom newsfeed generation.
      */
     protected static void loadRssValues(
-            Map ctx, 
-            RollerRequest rreq, 
-            WebsiteData website) 
+            Map ctx,
+            RollerRequest rreq,
+            WebsiteData website)
             throws RollerException {
         
         mLogger.debug("Loading rss values");
@@ -325,10 +327,10 @@ public class ContextLoader {
         int entryCount = website.getEntryDisplayCount();
         
         // But don't exceed installation-wide maxEntries settings
-        int maxEntries = 
-            RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
-        int defaultEntries = 
-            RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+        int maxEntries =
+                RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
+        int defaultEntries =
+                RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
         if (entryCount < 1) entryCount = defaultEntries;
         if (entryCount > maxEntries) entryCount = maxEntries;
         ctx.put("entryCount",  new Integer(entryCount));
@@ -349,15 +351,15 @@ public class ContextLoader {
      * Load useful utility objects for string and date formatting.
      */
     protected static void loadUtilityObjects(
-            Map ctx, 
-            RollerRequest rreq,                                             
-            RollerContext rollerCtx, 
+            Map ctx,
+            RollerRequest rreq,
+            RollerContext rollerCtx,
             WebsiteData website)
             throws RollerException {
         
         mLogger.debug("Loading utility objects");
         
-        // date formatter for macro's set this up with the Locale to make 
+        // date formatter for macro's set this up with the Locale to make
         // sure we can reuse it with other patterns in the macro's
         Locale viewLocale = (Locale) ctx.get("viewLocale");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", viewLocale);
@@ -382,13 +384,13 @@ public class ContextLoader {
         
         ctx.put("requestParameters", rreq.getRequest().getParameterMap());
     }
-        
+    
     /**
      * Load URL paths useful in page templates.
      */
     protected static void loadPathValues(
-            Map ctx,  RollerRequest rreq, 
-            RollerContext rollerCtx, 
+            Map ctx,  RollerRequest rreq,
+            RollerContext rollerCtx,
             WebsiteData   website)
             throws RollerException {
         
@@ -398,8 +400,8 @@ public class ContextLoader {
         String url = null;
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
             url = OldUtilities.escapeHTML(
-                      rollerCtx.getAbsoluteContextUrl(request) 
-                          + "/page/" + website.getHandle());
+                    rollerCtx.getAbsoluteContextUrl(request)
+                    + "/page/" + website.getHandle());
         } else {
             url= OldUtilities.escapeHTML(rollerCtx.getAbsoluteContextUrl(request));
         }
@@ -416,7 +418,7 @@ public class ContextLoader {
             throw new RollerException(e);
         }
     }
-      
+    
     /**
      * Determine URL path to Roller upload directory.
      */
@@ -454,7 +456,7 @@ public class ContextLoader {
             session.removeAttribute(RollerSession.STATUS_MESSAGE);
         }
     }
-        
+    
     protected static void loadRequestParamKeys(Map ctx) {
         
         mLogger.debug("Loading request param keys");
@@ -480,8 +482,8 @@ public class ContextLoader {
     }
     
     public static ToolboxContext loadToolboxContext(
-            HttpServletRequest request,                                                     
-            HttpServletResponse response,                                                    
+            HttpServletRequest request,
+            HttpServletResponse response,
             Map ctx) {
         
         mLogger.debug("Loading toolbox context");
