@@ -81,7 +81,7 @@ public class WeblogPageModel implements PageModel {
     
     /** Template context name to be used for model */
     public String getModelName() {
-        return "page";
+        return "can't be just 'page' :(";
     }
 
     /** Init page model based on request */

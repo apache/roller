@@ -41,6 +41,7 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
@@ -108,24 +109,13 @@ public class ContextLoader {
         
         try {
             // Add default page model object to context
+            // TODO 3.0: what to do about old PlanetPageModel?
             String pageModelClassName =
                     RollerConfig.getProperty("velocity.pagemodel.classname");
             Class pageModelClass = Class.forName(pageModelClassName);
-            PageModel pageModel = (PageModel)pageModelClass.newInstance();
-            Map args = new HashMap();
-            args.put("request", request);
-            pageModel.init(args);
-            ctx.put(pageModel.getModelName(), pageModel);
-            
-            // Add other page models
-            // TODO: ATLAS make page models configurable
-            PageModel sitePageModel = new SitePageModel();
-            ctx.put(sitePageModel.getModelName(), sitePageModel);
-            PageModel planetPageModel = new PlanetPageModel();
-            ctx.put(planetPageModel.getModelName(), planetPageModel);
-            
-            // TODO: ATLAS: figure out another way to do this:
-            //ctx.put("pages", pageModel.getPages());
+            OldWeblogPageModel pageModel = (OldWeblogPageModel)pageModelClass.newInstance();
+            pageModel.init(request);
+            ctx.put("pageModel", pageModel);
             
         } catch (Exception e) {
             throw new RollerException("ERROR creating Page Model",e);
@@ -139,43 +129,33 @@ public class ContextLoader {
         ctx.put("pageHelper", pageHelper);
         
         // Load standard Roller objects and values into the context
-        WebsiteData website =
-                loadWeblogValues(ctx, rreq, rollerCtx );
-        loadPathValues(       ctx, rreq, rollerCtx, website );
-        loadRssValues(        ctx, rreq, website );
-        loadUtilityObjects(   ctx, rreq, rollerCtx, website );
-        loadRequestParamKeys( ctx);
-        loadStatusMessage(    ctx, rreq );
+        WebsiteData website = loadWeblogValues(ctx, weblog, request);
+        loadPathValues(ctx, request, rollerCtx, website);
+        loadRssValues(ctx, request, website, rreq.getWeblogCategory());
+        loadUtilityObjects(ctx, request, rollerCtx, website, rreq.getPage());
+        loadRequestParamKeys(ctx);
+        loadStatusMessage(ctx, request);
         
         // If single entry is specified, load comments too
         if ( rreq.getWeblogEntry() != null ) {
-            loadCommentValues( ctx, rreq, rollerCtx );
+            loadCommentValues(ctx, request, rreq.getWeblogEntry());
         }
         
         // add Velocity Toolbox tools to context
         loadToolboxContext(request, response, ctx);
     }
     
+    
     /**
      * Load website object and related objects.
      */
-    protected static WebsiteData loadWeblogValues(
+    private static WebsiteData loadWeblogValues(
             Map ctx,
-            RollerRequest rreq,
-            RollerContext rollerCtx )
-            throws RollerException {
+            WebsiteData weblog,
+            HttpServletRequest request) throws RollerException {
         
         Roller mRoller = RollerFactory.getRoller();
         Map props = mRoller.getPropertiesManager().getProperties();
-        
-        WebsiteData weblog = rreq.getWebsite();
-        if (weblog == null && rreq.getRequest().getParameter("entry") != null) {
-            String handle = rreq.getRequest().getParameter("entry");
-            weblog = RollerFactory.getRoller().getUserManager().getWebsiteByHandle(handle);
-        }
-        if (weblog == null && rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
-            weblog = (WebsiteData)rreq.getRequest().getAttribute(RollerRequest.OWNING_WEBSITE);
-        }
         
         if (weblog != null) {
             ctx.put("userName",         weblog.getHandle());
@@ -220,8 +200,7 @@ public class ContextLoader {
         ctx.put("siteShortName", siteShortName);
         
         // add language of the session (using locale of viewer set by Struts)
-        ctx.put("viewLocale",
-                LanguageUtil.getViewLocale(rreq.getRequest()));
+        ctx.put("viewLocale", LanguageUtil.getViewLocale(request));
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
         
         // if there is an "_entry" page, only load it once
@@ -253,18 +232,16 @@ public class ContextLoader {
         return weblog;
     }
     
+    
     /**
      * Load comments for one weblog entry and related objects.
      */
-    protected static void loadCommentValues(
-            Map       ctx,
-            RollerRequest rreq,
-            RollerContext rollerCtx )
-            throws RollerException {
+    private static void loadCommentValues(
+            Map ctx,
+            HttpServletRequest request,
+            WeblogEntryData entry) throws RollerException {
         
         mLogger.debug("Loading comment values");
-        
-        HttpServletRequest request = rreq.getRequest();
         
         String escapeHtml =
                 RollerRuntimeConfig.getProperty("users.comments.escapehtml");
@@ -297,24 +274,23 @@ public class ContextLoader {
             ctx.put("previewComments",list);
         }
         
-        WeblogEntryData entry = rreq.getWeblogEntry();
         if (entry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
             ctx.put("entry", WeblogEntryDataWrapper.wrap(entry));
         }
     }
     
+    
     /**
      * Load objects needed for RSS and Atom newsfeed generation.
      */
-    protected static void loadRssValues(
+    private static void loadRssValues(
             Map ctx,
-            RollerRequest rreq,
-            WebsiteData website)
+            HttpServletRequest request,
+            WebsiteData website,
+            WeblogCategoryData category)
             throws RollerException {
         
         mLogger.debug("Loading rss values");
-        
-        HttpServletRequest request = rreq.getRequest();
         
         int entryLength = -1;
         String sExcerpts = request.getParameter("excerpts");
@@ -337,9 +313,9 @@ public class ContextLoader {
         
         String catname = null;
         String catPath = null;
-        if ( rreq.getWeblogCategory() != null ) {
-            catname = rreq.getWeblogCategory().getName();
-            catPath = rreq.getWeblogCategory().getPath();
+        if (category != null ) {
+            catname = category.getName();
+            catPath = category.getPath();
         }
         ctx.put("catname", (catname!=null) ? catname : "");
         ctx.put("catPath", (catPath != null) ? catPath : "");
@@ -347,15 +323,16 @@ public class ContextLoader {
         ctx.put("now", new Date());
     }
     
+    
     /**
      * Load useful utility objects for string and date formatting.
      */
-    protected static void loadUtilityObjects(
+    private static void loadUtilityObjects(
             Map ctx,
-            RollerRequest rreq,
+            HttpServletRequest request,
             RollerContext rollerCtx,
-            WebsiteData website)
-            throws RollerException {
+            WebsiteData website,
+            Template page) throws RollerException {
         
         mLogger.debug("Loading utility objects");
         
@@ -374,7 +351,7 @@ public class ContextLoader {
         // the Entry Day link.
         ctx.put("plainFormat", "yyyyMMdd");
         
-        ctx.put("page",            TemplateWrapper.wrap(rreq.getPage()));
+        ctx.put("page",            TemplateWrapper.wrap(page));
         ctx.put("utilities",       new OldUtilities() );
         ctx.put("stringUtils",     new OldStringUtils() );
         ctx.put("rollerVersion",   rollerCtx.getRollerVersion() );
@@ -382,21 +359,22 @@ public class ContextLoader {
         ctx.put("rollerBuildUser", rollerCtx.getRollerBuildUser() );
         ctx.put("newsfeedCache",   NewsfeedCache.getInstance() );
         
-        ctx.put("requestParameters", rreq.getRequest().getParameterMap());
+        ctx.put("requestParameters", request.getParameterMap());
     }
+    
     
     /**
      * Load URL paths useful in page templates.
      */
-    protected static void loadPathValues(
-            Map ctx,  RollerRequest rreq,
+    private static void loadPathValues(
+            Map ctx,
+            HttpServletRequest request,
             RollerContext rollerCtx,
             WebsiteData   website)
             throws RollerException {
         
         mLogger.debug("Loading path values");
         
-        HttpServletRequest request = rreq.getRequest();
         String url = null;
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
             url = OldUtilities.escapeHTML(
@@ -409,7 +387,7 @@ public class ContextLoader {
         ctx.put("baseURL",    rollerCtx.getContextUrl( request ) );
         ctx.put("absBaseURL", rollerCtx.getAbsoluteContextUrl( request ) );
         ctx.put("ctxPath",    request.getContextPath() );
-        ctx.put("uploadPath", ContextLoader.figureResourcePath( rreq ) );
+        ctx.put("uploadPath", ContextLoader.figureResourcePath());
         
         try {
             URL absUrl = RequestUtils.absoluteURL(request, "/");
@@ -419,10 +397,11 @@ public class ContextLoader {
         }
     }
     
+    
     /**
      * Determine URL path to Roller upload directory.
      */
-    private static String figureResourcePath(RollerRequest rreq) {
+    private static String figureResourcePath() {
         
         String uploadurl = null;
         try {
@@ -432,15 +411,16 @@ public class ContextLoader {
         return uploadurl;
     }
     
+    
     /**
      * If there is an ERROR or STATUS message in the session,
      * place it into the Context for rendering later.
      */
-    private static void loadStatusMessage(Map ctx, RollerRequest rreq) {
+    private static void loadStatusMessage(Map ctx, HttpServletRequest req) {
         
         mLogger.debug("Loading status message");
         
-        HttpSession session = rreq.getRequest().getSession(false);
+        HttpSession session = req.getSession(false);
         String msg = null;
         if (session != null)
             msg = (String)session.getAttribute(RollerSession.ERROR_MESSAGE);
@@ -457,7 +437,8 @@ public class ContextLoader {
         }
     }
     
-    protected static void loadRequestParamKeys(Map ctx) {
+    
+    private static void loadRequestParamKeys(Map ctx) {
         
         mLogger.debug("Loading request param keys");
         
@@ -480,6 +461,7 @@ public class ContextLoader {
         ctx.put("WEBLOGDAY_KEY",          RollerRequest.WEBLOGDAY_KEY);
         ctx.put("WEBLOGCOMMENTID_KEY",    RollerRequest.WEBLOGCOMMENTID_KEY);
     }
+    
     
     public static ToolboxContext loadToolboxContext(
             HttpServletRequest request,
@@ -510,17 +492,6 @@ public class ContextLoader {
         if (toolboxContext != null) {
             // add MessageTool to VelocityContext
             ctx.put("text", toolboxContext.internalGet("text"));
-            
-            /*
-            Object[] keys = toolboxContext.internalGetKeys();
-            for (int i=0;i<keys.length;i++) {
-                String key = (String)keys[i];
-                System.out.println("key = "+key);
-                Object tool = toolboxContext.get(key);
-                System.out.println("tool = "+tool);
-                ctx.put(key, tool);
-            }
-             */
         }
         
         return toolboxContext;

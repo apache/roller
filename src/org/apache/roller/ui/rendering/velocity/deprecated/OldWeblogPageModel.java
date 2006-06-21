@@ -54,15 +54,13 @@ import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.rendering.model.*;
 import org.apache.roller.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.velocity.context.Context;
 
 /**
  * Provides Roller page templates with access to Roller domain model objects.
  */
-public class OldWeblogPageModel implements PageModel {
+public class OldWeblogPageModel {
     public final static String VELOCITY_NULL = "nil";
     
     protected static Log mLogger =
@@ -95,8 +93,7 @@ public class OldWeblogPageModel implements PageModel {
     /**
      * Initialize PageModel and allow PageModel to initialized VelocityContext.
      */
-    public void init(Map map) {
-        HttpServletRequest request = (HttpServletRequest)map.get("request");
+    public void init(HttpServletRequest request) {
         mRollerReq = RollerRequest.getRollerRequest(request);
         if ( request.getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
             mWebsite = (WebsiteData)
