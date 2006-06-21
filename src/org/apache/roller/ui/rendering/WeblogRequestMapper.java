@@ -44,6 +44,11 @@ public class WeblogRequestMapper implements RequestMapper {
     
     private static Log log = LogFactory.getLog(WeblogRequestMapper.class);
     
+    private static final String PAGE_SERVLET = "/page";
+    private static final String FEED_SERVLET = "/flavor";
+    private static final String RESOURCE_SERVLET = "/resource";
+    private static final String SEARCH_SERVLET = "/search";
+    
     // url patterns that are not allowed to be considered weblog handles
     Set restricted = null;
     
@@ -71,7 +76,7 @@ public class WeblogRequestMapper implements RequestMapper {
         String weblogRequestContext = null;
         String weblogRequestData = null;
         
-        log.debug("evaluating ["+request.getRequestURI()+"]");
+        log.debug("evaluating ["+request.getServletPath()+"]");
         
         // figure out potential weblog handle
         String servlet = request.getServletPath();
@@ -80,6 +85,11 @@ public class WeblogRequestMapper implements RequestMapper {
             
             // strip off the leading slash
             servlet = servlet.substring(1);
+            
+            // strip off trailing slash if needed
+            if(servlet.endsWith("/")) {
+                servlet = servlet.substring(0, servlet.length() - 1);
+            }
             
             if(servlet.indexOf("/") != -1) {
                 weblogHandle = servlet.substring(0, servlet.indexOf("/"));
@@ -93,10 +103,11 @@ public class WeblogRequestMapper implements RequestMapper {
         
         // check if it's a valid weblog handle
         if(restricted.contains(weblogHandle) || !this.isWeblog(weblogHandle)) {
+            log.debug("DENIED "+weblogHandle);
             return false;
         }
         
-        log.debug("WEBLOG_URL "+request.getRequestURI());
+        log.debug("WEBLOG_URL "+request.getServletPath());
         
         // parse the rest of the url and build forward url
         if(pathInfo != null) {
@@ -105,12 +116,15 @@ public class WeblogRequestMapper implements RequestMapper {
             String[] urlPath = pathInfo.split("/", 3);
             
             // if we have a locale, deal with it
-            if(urlPath[0].indexOf("_") != -1) {
+            if(this.isLocale(urlPath[0])) {
                 weblogLocale = urlPath[0];
                 
+                // no extra path info specified
                 if(urlPath.length == 2) {
                     weblogRequestContext = urlPath[1];
                     weblogRequestData = null;
+                    
+                // request contains extra path info
                 } else if(urlPath.length == 3) {
                     weblogRequestContext = urlPath[1];
                     weblogRequestData = urlPath[2];
@@ -121,11 +135,14 @@ public class WeblogRequestMapper implements RequestMapper {
                 weblogLocale = null;
                 weblogRequestContext = urlPath[0];
                 
-                // if we didn't have a locale then we split too much
-                if(urlPath.length > 2) {
-                    weblogRequestData = urlPath[1] + "/" + urlPath[2];
-                } else {
+                // last part of request is extra path info
+                if(urlPath.length == 2) {
                     weblogRequestData = urlPath[1];
+                    
+                // if we didn't have a locale then we have split too much
+                // so we reassemble the last 2 path elements together
+                } else if(urlPath.length == 3) {
+                    weblogRequestData = urlPath[1] + "/" + urlPath[2];
                 }
             }
             
@@ -150,51 +167,85 @@ public class WeblogRequestMapper implements RequestMapper {
     }
 
     
+    /**
+     * Convenience method for caculating the servlet forward url given a set
+     * of information to make the decision with.
+     *
+     * handle is always assumed valid, all other params may be null.
+     */
     private String calculateForwardUrl(String handle, String locale,
                                        String context, String data) {
         
-        String forwardUrl = null;
+        log.debug(handle+","+locale+","+context+","+data);
+        
+        StringBuffer forwardUrl = new StringBuffer();
         
         // no context means weblog homepage
         if(context == null) {
             
-            forwardUrl = "/page/"+handle;
+            forwardUrl.append(PAGE_SERVLET);
+            forwardUrl.append("/");
+            forwardUrl.append(handle);
+            if(locale != null) {
+                forwardUrl.append("/");
+                forwardUrl.append(locale);
+            }
             
         // requests handled by PageServlet
         } else if(context.equals("page") || context.equals("entry") ||
                 context.equals("date") || context.equals("category")) {
             
-            forwardUrl = "/page/"+handle;
-            
+            forwardUrl.append(PAGE_SERVLET);
+            forwardUrl.append("/");
+            forwardUrl.append(handle);
             if(locale != null) {
-                forwardUrl += "/"+locale;
+                forwardUrl.append("/");
+                forwardUrl.append(locale);
             }
-            
-            forwardUrl += "/"+context+"/"+data;
+            forwardUrl.append("/");
+            forwardUrl.append(context);
+            if(data != null) {
+                forwardUrl.append("/");
+                forwardUrl.append(data);
+            }
             
         // requests handled by FeedServlet
         } else if(context.equals("feed")) {
             
-            forwardUrl = "/feed/"+handle;
-            
+            forwardUrl.append(FEED_SERVLET);
+            forwardUrl.append("/");
+            forwardUrl.append(handle);
             if(locale != null) {
-                forwardUrl += "/"+locale;
+                forwardUrl.append("/");
+                forwardUrl.append(locale);
             }
-            
-            forwardUrl += "/"+context+"/"+data;
+            if(data != null) {
+                forwardUrl.append("/");
+                forwardUrl.append(data);
+            }
             
         // requests handled by ResourceServlet
         } else if(context.equals("resource")) {
             
-            forwardUrl = "/resource/"+handle+"/"+data;
+            forwardUrl.append(RESOURCE_SERVLET);
+            forwardUrl.append("/");
+            forwardUrl.append(handle);
+            if(data != null) {
+                forwardUrl.append("/");
+                forwardUrl.append(data);
+            }
             
         // requests handled by SearchServlet
         } else if(context.equals("search")) {
             
-            forwardUrl = "/search/"+handle;
+            forwardUrl.append(SEARCH_SERVLET);
+            forwardUrl.append("/");
+            forwardUrl.append(handle);
         }
         
-        return forwardUrl;
+        log.debug("FORWARD_URL "+forwardUrl.toString());
+        
+        return forwardUrl.toString();
     }
     
     
@@ -220,6 +271,32 @@ public class WeblogRequestMapper implements RequestMapper {
         }
         
         return isWeblog;
+    }
+    
+    
+    /**
+     * Convenience method which determines if the given string is a valid
+     * locale string.
+     */
+    private boolean isLocale(String potentialLocale) {
+        
+        boolean isLocale = false;
+        
+        // we only support 5 character locale strings, so check that first
+        if(potentialLocale != null && potentialLocale.length() == 5) {
+            
+            // now make sure that the format is proper ... e.g. "en_US"
+            // we are not going to be picky about capitalization
+            String[] langCountry = potentialLocale.split("_");
+            if(langCountry.length == 2 && 
+                    langCountry[0] != null && langCountry[0].length() == 2 && 
+                    langCountry[1] != null && langCountry[1].length() == 2) {
+                
+                isLocale = true;
+            }
+        }
+        
+        return isLocale;
     }
     
 }
