@@ -31,7 +31,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -57,8 +57,8 @@ import org.apache.roller.ui.rendering.model.PageModel;
 import org.apache.roller.ui.rendering.model.PlanetPageModel;
 import org.apache.roller.ui.rendering.model.SitePageModel;
 import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
+import org.apache.roller.ui.core.WeblogPageRequest;
 import org.apache.roller.util.RegexUtil;
-import org.apache.roller.util.Utilities;
 import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.tools.view.context.ChainedContext;
@@ -80,6 +80,7 @@ public class ContextLoader {
     private static final String TOOLBOX_MANAGER_KEY =
             "org.apache.roller.presentation.velocity.toolboxManager";
     
+
     /**
      * Setup the a Velocity context by loading it with objects, values, and
      * RollerPagePlugins needed for Roller page execution.
@@ -87,13 +88,21 @@ public class ContextLoader {
     public static void setupContext(
             Map                 ctx, 
             HttpServletRequest  request, 
-            HttpServletResponse response )
+            HttpServletResponse response)
             throws RollerException {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerContext rollerCtx = RollerContext.getRollerContext( );
+        
+        // if this is a weblog page request then parse it out
+        WeblogPageRequest pageRequest = null;
+        try {
+            pageRequest = new WeblogPageRequest(request);
+        } catch(Exception e) {
+            // ignored, just assume it's not a page request
+        }
         
         try {
             // Add default page model object to context
@@ -121,7 +130,9 @@ public class ContextLoader {
         }
         
         // Add Velocity page helper to context
-        OldPageHelper pageHelper = new OldPageHelper(request, response, ctx);
+        WebsiteData weblog = rreq.getWebsite();
+        PageContext pageContext = rreq.getPageContext();
+        OldPageHelper pageHelper = new OldPageHelper(request, response, ctx, weblog, pageContext, pageRequest);
         Roller roller = RollerFactory.getRoller();
         ctx.put("pageHelper", pageHelper);
                 
@@ -362,7 +373,7 @@ public class ContextLoader {
         ctx.put("plainFormat", "yyyyMMdd");
         
         ctx.put("page",            TemplateWrapper.wrap(rreq.getPage()));
-        ctx.put("utilities",       new Utilities() );
+        ctx.put("utilities",       new OldUtilities() );
         ctx.put("stringUtils",     new OldStringUtils() );
         ctx.put("rollerVersion",   rollerCtx.getRollerVersion() );
         ctx.put("rollerBuildTime", rollerCtx.getRollerBuildTime() );
@@ -386,11 +397,11 @@ public class ContextLoader {
         HttpServletRequest request = rreq.getRequest();
         String url = null;
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
-            url = Utilities.escapeHTML(
+            url = OldUtilities.escapeHTML(
                       rollerCtx.getAbsoluteContextUrl(request) 
                           + "/page/" + website.getHandle());
         } else {
-            url= Utilities.escapeHTML(rollerCtx.getAbsoluteContextUrl(request));
+            url= OldUtilities.escapeHTML(rollerCtx.getAbsoluteContextUrl(request));
         }
         ctx.put("websiteURL", url);
         ctx.put("baseURL",    rollerCtx.getContextUrl( request ) );

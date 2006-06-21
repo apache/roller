@@ -19,7 +19,7 @@
 package org.apache.roller.ui.rendering.velocity.deprecated;
 
 import java.net.MalformedURLException;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +29,6 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
@@ -52,6 +51,8 @@ import org.apache.roller.ui.core.tags.menu.EditorNavigationBarTag;
 import org.apache.roller.ui.core.tags.menu.MenuTag;
 import org.apache.roller.ui.authoring.tags.BigWeblogCalendarModel;
 import org.apache.roller.ui.authoring.tags.WeblogCalendarModel;
+import org.apache.roller.ui.core.WeblogPageRequest;
+
 
 /**
  * Provides assistance to VelociMacros, filling in where Velocity falls.
@@ -60,36 +61,39 @@ public class OldPageHelper {
     
     private static Log mLogger = LogFactory.getLog(OldPageHelper.class);
     
-    private Map              mVelocityContext = null;
-    private PageContext          mPageContext = null;
-    private HttpServletResponse  mResponse = null;
-    private RollerRequest        mRollerReq = null;
-    private Map                  mPagePlugins = null;  // Plugins keyed by name
-    private WebsiteData          mWebsite = null;
+    private PageContext mPageContext = null;
+    private HttpServletRequest mRequest = null;
+    private HttpServletResponse mResponse = null;
+    private RollerRequest mRollerReq = null;
+    private WeblogPageRequest mPageRequest = null;
+    private Map mPagePlugins = null;  // Plugins keyed by name
+    private WebsiteData mWebsite = null;
     
     
     /**
      * Initialize VelocityHelper, setting the variables it will be hiding from
      * the Velocimacros.
      */
-    public OldPageHelper(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Map ctx) throws RollerException {
+    public OldPageHelper(HttpServletRequest request,
+                      HttpServletResponse response,
+                      Map ctx,
+                      WebsiteData website,
+                      PageContext pageContext,
+                      WeblogPageRequest pageRequest) throws RollerException {
         
-        mVelocityContext = ctx;
+        // old roller request, going to be eoled
         mRollerReq = RollerRequest.getRollerRequest(request);
+        
+        // store the parsed page request
+        mPageRequest = pageRequest;
+        
+        mWebsite = website;
+        mPageContext = pageContext;
+        
+        // save original request and response objects
+        mRequest = request;
         mResponse = response;
-        if (mRollerReq != null) {
-            mPageContext = mRollerReq.getPageContext();
-            if (request.getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
-                mWebsite = (WebsiteData)
-                request.getAttribute(RollerRequest.OWNING_WEBSITE);
-            } else if (mRollerReq.getWebsite() != null ) {
-                mWebsite = mRollerReq.getWebsite();
-            }
-        }
-        if (mVelocityContext == null) mVelocityContext = new HashMap();
+        
         Roller roller = RollerFactory.getRoller();
         PluginManager ppmgr = roller.getPagePluginManager();
         mPagePlugins = ppmgr.getWeblogEntryPlugins(mWebsite, ctx);
@@ -136,8 +140,7 @@ public class OldPageHelper {
         } catch (MalformedURLException mue) {
             mLogger.warn("RollerRequest.editEntryUrl exception: ", mue);
         }
-        return
-                mRollerReq.getRequest().getContextPath() + "edtior/weblog.do?method=edit";
+        return mRequest.getContextPath() + "edtior/weblog.do?method=edit";
     }
     
     
@@ -146,9 +149,9 @@ public class OldPageHelper {
         String link = null;
         try {
             RollerSession rollerSession =
-                    RollerSession.getRollerSession(mRollerReq.getRequest());
-            if ( mRollerReq.getWebsite() != null
-                    && rollerSession.isUserAuthorizedToAdmin(mRollerReq.getWebsite())) {
+                    RollerSession.getRollerSession(mRequest);
+            if (mWebsite != null
+                    && rollerSession.isUserAuthorizedToAdmin(mWebsite)) {
                 Hashtable params = new Hashtable();
                 params.put( RollerRequest.REFERERID_KEY, referer.getId());
                 params.put( RollerRequest.WEBLOG_KEY, mWebsite.getHandle());
@@ -177,10 +180,10 @@ public class OldPageHelper {
     public boolean isUserAuthorizedToEdit() {
         try {
             RollerSession rses =
-                    RollerSession.getRollerSession(mRollerReq.getRequest());
+                    RollerSession.getRollerSession(mRequest);
             if ( rses.getAuthenticatedUser() != null
-                    && mRollerReq.getWebsite() != null) {
-                return rses.isUserAuthorizedToAdmin(mRollerReq.getWebsite());
+                    && mWebsite != null) {
+                return rses.isUserAuthorizedToAdmin(mWebsite);
             }
         } catch (Exception e) {
             mLogger.warn("PageHelper.isUserAuthorizedToEdit)", e);
@@ -255,27 +258,26 @@ public class OldPageHelper {
         if (OldWeblogPageModel.VELOCITY_NULL.equals(cat)) cat = null;
         String ret = null;
         try {
-            HttpServletRequest request =
-                    (HttpServletRequest) mRollerReq.getRequest();
             HttpServletResponse response = mResponse;
             
             String selfUrl = null;
-            String pageLink = mRollerReq.getPageLink();
+            String pageLink = mPageRequest.getWeblogPage();
             if ( pageLink != null ) {
-                selfUrl = request.getContextPath() + "/page/"
+                selfUrl = mRequest.getContextPath() + "/page/"
                         + mWebsite.getHandle() + "/"+pageLink;
             } else {
-                selfUrl = request.getContextPath()+"/page/" + mWebsite.getHandle();
+                selfUrl = mRequest.getContextPath()+"/page/" + mWebsite.getHandle();
             }
             
             // setup weblog calendar model
             CalendarModel model = null;
+            Date date = mRollerReq.getDate(true);
             if ( big ) {
                 model = new BigWeblogCalendarModel(
-                        mRollerReq, response, selfUrl, cat);
+                        mRequest, response, mWebsite, date, selfUrl, cat);
             } else {
                 model = new WeblogCalendarModel(
-                        mRollerReq, response, selfUrl, cat);
+                        mRequest, response, mWebsite, date, selfUrl, cat);
             }
             
             // save model in JSP page context so CalendarTag can find it
@@ -286,9 +288,7 @@ public class OldPageHelper {
             calTag.setPageContext(mPageContext);
             calTag.setName("calendar");
             calTag.setModel("calendarModel");
-            //calTag.setLocale(mRollerReq.getWebsite().getLocaleInstance());
-            calTag.setLocale(LanguageUtil.getViewLocale(request));
-            //calTag.setTimeZone(mRollerReq.getWebsite().getTimeZoneInstance());
+            calTag.setLocale(LanguageUtil.getViewLocale(mRequest));
             if ( big ) {
                 calTag.setClassSuffix("Big");
             }
@@ -338,7 +338,7 @@ public class OldPageHelper {
             }
         }
         
-        if (StringUtils.isNotEmpty(val1) && !val1.equals("null")) {
+        if (OldStringUtils.isNotEmpty(val1) && !val1.equals("null")) {
             params.clear();
             params.put("weblog", val1);
         }
@@ -362,11 +362,11 @@ public class OldPageHelper {
     
     /**
      * Pass the String through any PagePlugins that have been
-     * assigned to the OldPageHelper, as selected by the Entry.
-     * 
+     * assigned to the PageHelper, as selected by the Entry.
+     *
      * @param entry Entry being rendered.
      * @param str   String to which plugins are to be applied.
-     * @return Result of applying plugins to str.
+     * @return      Result of applying plugins to str.
      */
     public String renderPlugins(WeblogEntryDataWrapper entry, String str) {
         String ret = str;
@@ -376,12 +376,6 @@ public class OldPageHelper {
             List entryPlugins = entry.getPluginsList();
             // if no Entry plugins, don't bother looping.
             if (entryPlugins != null && !entryPlugins.isEmpty()) {
-                // need to do this to tell ReadMore not to do its job
-                // if we are in the "view one Entry" page.
-                boolean singleEntry = false;
-                if (mRollerReq == null || mRollerReq.getWeblogEntry() != null) {
-                    singleEntry = true;
-                }
                 
                 // now loop over mPagePlugins, matching
                 // against Entry plugins (by name):
@@ -418,9 +412,9 @@ public class OldPageHelper {
      */
     public Locale[] getSupportedLanguages() {
         Locale currentLocale =
-                (Locale) mRollerReq.getRequest().getSession().getAttribute(Globals.LOCALE_KEY);
+                (Locale) mRequest.getSession().getAttribute(Globals.LOCALE_KEY);
         if (currentLocale==null) {
-            currentLocale = mRollerReq.getRequest().getLocale();
+            currentLocale = mRequest.getLocale();
         }
         
         Locale[] supportedLanguages =
@@ -448,18 +442,17 @@ public class OldPageHelper {
      * @return relative URL to page, starting with /username
      */
     public String getPathInfo() {
-        return mRollerReq.getPathInfo();
+        String pathInfo = mRequest.getPathInfo();
+        if(pathInfo == null) {
+            pathInfo = "";
+        }
+        
+        return pathInfo;
     }
     
     
     public String getCommentAuthenticatorHtml() {
-        /* no longer used -- Allen G
-        RollerContext rctx =
-            RollerContext.getRollerContext(mRollerReq.getRequest());
-        return rctx.getCommentAuthenticator().getHtml(
-            mVelocityContext, mRollerReq.getRequest(), mResponse);
-         */
-        
+        // deprecated, does nothing now
         return "";
     }
     

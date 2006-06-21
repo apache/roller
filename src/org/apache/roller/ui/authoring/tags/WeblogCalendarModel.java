@@ -35,6 +35,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.util.DateUtil;
@@ -47,7 +48,6 @@ public class WeblogCalendarModel implements CalendarModel
     private static Log mLogger = 
         LogFactory.getFactory().getInstance(WeblogCalendarModel.class);
     
-    protected RollerRequest       mRollerReq = null;
 	protected HttpServletRequest  mReq = null;
 	protected HttpServletResponse mRes = null;
 	protected Map                 mMonthMap;
@@ -55,16 +55,18 @@ public class WeblogCalendarModel implements CalendarModel
     protected Date                mDay;
     protected String              mCatName = null;
     protected Calendar            mCalendar = null;
+    protected WebsiteData         mWebsite = null;
+    
 
-	public WeblogCalendarModel(
-        RollerRequest rreq, HttpServletResponse res, String url, String cat)
+	public WeblogCalendarModel(HttpServletRequest req, HttpServletResponse res, 
+                WebsiteData website, Date date, String url, String cat)
 	{
-        mRollerReq = rreq;
-		mReq = rreq.getRequest();
+		mReq = req;
 		mRes = res;
-        mSelfUrl = url;
+                mWebsite = website;
+                mSelfUrl = url;
         
-        setDay( mRollerReq.getDate(true) );
+        setDay( date );
         
         // If category is specified in URL, then perpetuate it
         String catKey = RollerRequest.WEBLOGCATEGORYNAME_KEY;
@@ -107,8 +109,8 @@ public class WeblogCalendarModel implements CalendarModel
             mReq.getParameter(RollerRequest.WEBLOGCATEGORYNAME_KEY);
 
         mCalendar = Calendar.getInstance(
-                                mRollerReq.getWebsite().getTimeZoneInstance(),
-                                mRollerReq.getWebsite().getLocaleInstance()
+                                mWebsite.getTimeZoneInstance(),
+                                mWebsite.getLocaleInstance()
         );   
         
         Calendar cal = (Calendar)mCalendar.clone();
@@ -143,7 +145,7 @@ public class WeblogCalendarModel implements CalendarModel
         {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             mMonthMap = mgr.getWeblogEntryStringMap(
-                            mRollerReq.getWebsite(),   // website
+                            mWebsite,                  // website
                             startDate,                 // startDate
                             endDate,                   // endDate
                             catName,                   // catName
@@ -225,7 +227,7 @@ public class WeblogCalendarModel implements CalendarModel
         }
         catch (Exception e)
         {
-           mRollerReq.getServletContext().log("ERROR: creating URL",e);
+           mLogger.error("ERROR: creating URL",e);
         }
         return url;
     } 

@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +31,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.DateUtil;
@@ -55,10 +57,10 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel
      * @param url
      * @param cat
      */
-    public BigWeblogCalendarModel(RollerRequest rreq, HttpServletResponse res, 
-                                  String url, String cat)
+    public BigWeblogCalendarModel(HttpServletRequest req, HttpServletResponse res, 
+                                  WebsiteData website, Date date, String url, String cat)
     {
-        super(rreq, res, url, cat);
+        super(req, res, website, date, url, cat);
     }
     
     /**
@@ -71,7 +73,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel
         {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             mMonthMap = mgr.getWeblogEntryObjectMap(
-                            mRollerReq.getWebsite(),   // website
+                            mWebsite,                  // website
                             startDate,                 // startDate
                             endDate,                   // endDate
                             catName,                   // catName
