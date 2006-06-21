@@ -19,6 +19,8 @@
 package org.apache.roller.ui.rendering.servlets;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -28,26 +30,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.PageContext;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.RefererData;
-import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerRequest;
+import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.WeblogFeedRequest;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
@@ -63,9 +61,7 @@ import org.apache.roller.util.cache.LazyExpiringCacheEntry;
  * Responsible for rendering weblog feeds.
  *
  * @web.servlet name="FeedServlet" load-on-startup="5"
- * @web.servlet-mapping url-pattern="/flavor/*"
- * @web.servlet-mapping url-pattern="/rss/*"
- * @web.servlet-mapping url-pattern="/atom/*"
+ * @web.servlet-mapping url-pattern="/feeds/*"
  */ 
 public class FeedServlet extends HttpServlet implements CacheHandler {
     
@@ -120,117 +116,45 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         
         log.debug("Entering");
         
-        // used for rendering
-        HashMap model = new HashMap();
-        
-        RollerRequest rreq = null;
-        
         WeblogFeedRequest feedRequest = null;
+        WebsiteData weblog = null;
         try {
+            // parse the incoming request and extract the relevant data
             feedRequest = new WeblogFeedRequest(request);
+            
+            // lookup weblog specified by feed request
+            UserManager uMgr = RollerFactory.getRoller().getUserManager();
+            weblog = uMgr.getWebsiteByHandle(feedRequest.getWeblogHandle());
+            
+            if(weblog == null) {
+                throw new RollerException("unable to lookup weblog: "+
+                        feedRequest.getWeblogHandle());
+            }
         } catch(Exception e) {
             // some kind of error parsing the request
             log.error("error creating weblog feed request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
-        // first off lets parse the incoming request and validate it
-        // TODO: this is old pre 3.0 stuff which should be removed when possible
-        try {
-            PageContext pageContext =
-                    JspFactory.getDefaultFactory().getPageContext(
-                    this, request,  response, "", true, 8192, true);
-            
-            rreq = RollerRequest.getRollerRequest(pageContext);
-            
-            // This is an ugly hack to fix the following bug:
-            // ROL-547: "Site wide RSS feed is your own if you are logged in"
-            String[] pathInfo = StringUtils.split(rreq.getPathInfo(),"/");
-            if (pathInfo.length < 1) {
-                // If weblog not specified in URL, set it to null
-                rreq.setWebsite(null);
-            }
-            
-        } catch (RollerException e) {
-            // An error initializing the request is considered to be a 404
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            log.debug("ERROR initializing RollerRequest", e);
-            return;
-        }
-        
-        
-        String pageId = null;
-        WebsiteData weblog = rreq.getWebsite();
-        if (request.getServletPath().endsWith("rss")) {
-            
-            if (weblog != null) {
-                try {
-                    // if useer has a custom rss template then use it
-                    Template page = weblog.getPageByName("_rss");
-                    if(page != null) {
-                        pageId = page.getId();
-                    }
-                } catch (RollerException ex) {
-                    // consider this a page not found
-                }
-            }
-            
-            if(pageId == null) {
-                pageId = "templates/feeds/rss.vm";
-            }
-        } else if (request.getServletPath().endsWith("atom")) {
-            
-            if (weblog != null) {
-                try {
-                    // if user has a custom atom template then use it
-                    Template page = weblog.getPageByName("_atom");
-                    if(page != null) {
-                        pageId = page.getId();
-                    }
-                } catch (RollerException ex) {
-                    // consider this a page not found
-                }
-            }
-            
-            if(pageId == null) {
-                pageId = "templates/feeds/atom.vm";
-            }
-        } else if (request.getParameter("flavor") != null) {
-            
-            // If request specifies a "flavor" then use that.
-            String flavor = request.getParameter("flavor");
-            pageId = "templates/feeds/" + flavor + ".vm";
-        } else {
-            
-            // Fall through to default RSS page template.
-            pageId = "templates/feeds/rss.vm";
-        }
             
         
         // 304 if-modified-since checking
         long sinceDate = request.getDateHeader("If-Modified-Since");
         log.debug("since date = "+sinceDate);
-        // TODO: need to have way to checking weblog last modified time
-        if(weblog.getDateCreated().getTime() <= sinceDate) {
+        if(weblog.getLastModified().getTime() <= sinceDate) {
             log.debug("NOT MODIFIED "+request.getRequestURL());
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
         
         // set last-modified date
-        // TODO: figure out how to get weblog last modified time
-        response.setDateHeader("Last-Modified", weblog.getDateCreated().getTime());
+        response.setDateHeader("Last-Modified", weblog.getLastModified().getTime());
         
         // cached content checking
         String cacheKey = this.CACHE_ID+":"+this.generateKey(feedRequest);
         
         // we need the last expiration time for the given weblog
-        long lastExpiration = 0;
-        Date lastExpirationDate =
-                (Date) CacheManager.getLastExpiredDate(feedRequest.getWeblogHandle());
-        if(lastExpirationDate != null)
-            lastExpiration = lastExpirationDate.getTime();
+        long lastExpiration = weblog.getLastModified().getTime();
         
         LazyExpiringCacheEntry entry =
                 (LazyExpiringCacheEntry) this.contentCache.get(cacheKey);
@@ -256,28 +180,25 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
 
         
         // looks like we need to render content
+        HashMap model = new HashMap();
+        String pageId = null;
         try {
-            // get update time before loading context
-            // TODO: this should really be handled elsewhere
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            String catname = request.getParameter(RollerRequest.WEBLOGCATEGORYNAME_KEY);
-            Date updateTime = wmgr.getWeblogLastPublishTime(rreq.getWebsite(), catname);
-            request.setAttribute("updateTime", updateTime);
+            RollerContext rollerContext = RollerContext.getRollerContext();
             
-            // populate the model
+            // determine what template to render with
+            if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
+                pageId = "site-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
+            } else {
+                pageId = "weblog-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
+            }
             
-            // TODO: remove this for Roller 3.0
-            ModelLoader.loadOldModels(response, request, model);
+            // populate the rendering model
 
             // Feeds get the weblog specific page model
             String modelsString = RollerConfig.getProperty("rendering.weblogPageModels");
-
-            // Unless the weblog is the frontpage weblog w/aggregated feeds
-            String frontPageHandle = 
-                RollerConfig.getProperty("velocity.pagemodel.classname");
-            boolean frontPageAggregated = 
-                RollerConfig.getBooleanProperty("frontpage.weblog.aggregatedFeeds");
-            if (weblog.getHandle().equals(frontPageHandle) && frontPageAggregated) {
+            
+            // special handling for site wide feed
+            if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
                 modelsString = RollerConfig.getProperty("rendering.weblogPageModels");
             }
             ModelLoader.loadConfiguredPageModels(modelsString, request, model);
@@ -285,9 +206,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             ModelLoader.loadPluginHelpers(weblog, model);
 
             // Feeds get weblog's additional custom models too
-            if (weblog != null) {
-                ModelLoader.loadAdditionalPageModels(weblog, request, model);
-            }   
+            ModelLoader.loadAdditionalPageModels(weblog, request, model);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
@@ -362,22 +281,21 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
     private String generateKey(WeblogFeedRequest feedRequest) {
         
         StringBuffer key = new StringBuffer();
-        key.append(feedRequest.getContext());
         
-        if(feedRequest.getContext().equals("weblog")) {
-            key.append("/").append(feedRequest.getWeblogHandle().toLowerCase());
-            key.append("/").append(feedRequest.getFlavor());
-            
-            if(feedRequest.getWeblogCategory() != null) {
-                String cat = feedRequest.getWeblogCategory();
-                if(cat.startsWith("/"))
-                    cat = cat.substring(1).replaceAll("/","_");
-                
-                // categories may contain spaces, which is not desired
-                key.append("/").append(org.apache.commons.lang.StringUtils.deleteWhitespace(cat));
+        key.append("weblog");
+        key.append("/").append(feedRequest.getWeblogHandle().toLowerCase());
+        key.append("/").append(feedRequest.getType());
+        key.append("/").append(feedRequest.getFormat());
+        
+        if(feedRequest.getWeblogCategory() != null) {
+            String cat = feedRequest.getWeblogCategory();
+            try {
+                cat = URLEncoder.encode(cat, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                // should never happen, utf-8 is always supported
             }
-        } else {
-            key.append("/").append(feedRequest.getFlavor());
+            
+            key.append("/").append(cat);
         }
         
         // add language
