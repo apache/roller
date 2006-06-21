@@ -22,7 +22,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -39,6 +38,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -53,9 +53,6 @@ import org.apache.roller.ui.core.LanguageUtil;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.rendering.model.PageModel;
-import org.apache.roller.ui.rendering.model.PlanetPageModel;
-import org.apache.roller.ui.rendering.model.SitePageModel;
 import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.RegexUtil;
@@ -96,9 +93,6 @@ public class ContextLoader {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        RollerContext rollerCtx = RollerContext.getRollerContext( );
-        
         // if this is a weblog page request then parse it out
         WeblogPageRequest pageRequest = null;
         try {
@@ -107,6 +101,20 @@ public class ContextLoader {
             // ignored, just assume it's not a page request
         }
         
+        RollerContext rollerCtx = RollerContext.getRollerContext( );
+        
+        // grab data from the request that we'll need to use
+        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        PageContext pageContext = rreq.getPageContext();
+        WebsiteData weblog = rreq.getWebsite();
+        WeblogEntryData entry = rreq.getWeblogEntry();
+        WeblogCategoryData category = rreq.getWeblogCategory();
+        Template page = rreq.getPage();
+        FolderData folder = rreq.getFolder();
+        Date date = rreq.getDate();
+        boolean isDay = rreq.isDaySpecified();
+        boolean isMonth = rreq.isMonthSpecified();
+        
         try {
             // Add default page model object to context
             // TODO 3.0: what to do about old PlanetPageModel?
@@ -114,31 +122,41 @@ public class ContextLoader {
                     RollerConfig.getProperty("velocity.pagemodel.classname");
             Class pageModelClass = Class.forName(pageModelClassName);
             OldWeblogPageModel pageModel = (OldWeblogPageModel)pageModelClass.newInstance();
-            pageModel.init(request);
+            pageModel.init(request,
+                    weblog,
+                    entry,
+                    category,
+                    date,
+                    isDay,
+                    isMonth);
             ctx.put("pageModel", pageModel);
             
         } catch (Exception e) {
             throw new RollerException("ERROR creating Page Model",e);
         }
         
-        // Add Velocity page helper to context
-        WebsiteData weblog = rreq.getWebsite();
-        PageContext pageContext = rreq.getPageContext();
-        OldPageHelper pageHelper = new OldPageHelper(request, response, ctx, weblog, pageContext, pageRequest);
-        Roller roller = RollerFactory.getRoller();
+        // Add page helper to context
+        OldPageHelper pageHelper = new OldPageHelper(request, 
+                response, 
+                ctx, 
+                weblog, 
+                (date == null) ? new Date() : date, 
+                folder, 
+                page.getName(), 
+                pageContext);
         ctx.put("pageHelper", pageHelper);
         
         // Load standard Roller objects and values into the context
         WebsiteData website = loadWeblogValues(ctx, weblog, request);
         loadPathValues(ctx, request, rollerCtx, website);
-        loadRssValues(ctx, request, website, rreq.getWeblogCategory());
-        loadUtilityObjects(ctx, request, rollerCtx, website, rreq.getPage());
+        loadRssValues(ctx, request, website, category);
+        loadUtilityObjects(ctx, request, rollerCtx, website, page);
         loadRequestParamKeys(ctx);
         loadStatusMessage(ctx, request);
         
         // If single entry is specified, load comments too
-        if ( rreq.getWeblogEntry() != null ) {
-            loadCommentValues(ctx, request, rreq.getWeblogEntry());
+        if (entry != null) {
+            loadCommentValues(ctx, request, entry);
         }
         
         // add Velocity Toolbox tools to context

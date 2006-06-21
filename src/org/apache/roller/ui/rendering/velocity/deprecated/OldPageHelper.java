@@ -82,25 +82,22 @@ public class OldPageHelper {
                       HttpServletResponse response,
                       Map ctx,
                       WebsiteData website,
-                      PageContext pageContext,
-                      WeblogPageRequest pageRequest) throws RollerException {
+                      Date date,
+                      FolderData folder,
+                      String pageName,
+                      PageContext pageContext) throws RollerException {
         
-        mPageContext = pageContext;
-        
-        // store the parsed page request
-        mPageRequest = pageRequest;
-        mPageName = mPageRequest.getWeblogPage();
-        
-        // old roller request, going to be eoled
-        RollerRequest mRollerReq = RollerRequest.getRollerRequest(request);
-        mWebsite = website;
-        mDate = mRollerReq.getDate(true);
-        mFolder = mRollerReq.getFolder();
-        
-        // save original request and response objects
+        // general request objects
         mRequest = request;
         mResponse = response;
+        mPageContext = pageContext;
         
+        // data that we'll be reusing
+        mWebsite = website;
+        mDate = date;
+        mFolder = folder;
+        
+        // init plugins
         Roller roller = RollerFactory.getRoller();
         PluginManager ppmgr = roller.getPagePluginManager();
         mPagePlugins = ppmgr.getWeblogEntryPlugins(mWebsite, ctx);

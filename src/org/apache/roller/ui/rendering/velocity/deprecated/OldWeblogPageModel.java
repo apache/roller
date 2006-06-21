@@ -1,20 +1,21 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.ui.rendering.velocity.deprecated;
 
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -52,11 +52,10 @@ import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+
 
 /**
  * Provides Roller page templates with access to Roller domain model objects.
@@ -75,7 +74,6 @@ public class OldWeblogPageModel {
     private Map                  mCategories = new HashMap();
     private HashMap              mPageMap = new HashMap();
     private HttpServletRequest   mRequest = null;
-    private String               mHandle = null;
     private WebsiteData          mWebsite = null;
     private WeblogEntryData      mEntry = null;
     private WeblogCategoryData   mCategory = null;
@@ -99,27 +97,23 @@ public class OldWeblogPageModel {
     /**
      * Initialize PageModel and allow PageModel to initialized VelocityContext.
      */
-    public void init(HttpServletRequest request) {
+    public void init(HttpServletRequest request,
+            WebsiteData website,
+            WeblogEntryData entry,
+            WeblogCategoryData category,
+            Date date,
+            boolean isDay,
+            boolean isMonth) {
         
         mRequest = request;
         
-        WeblogPageRequest pageRequest = null;
-        try {
-            pageRequest = new WeblogPageRequest(request);
-        } catch(Exception e) {
-            // this should never happen because the old page model
-            // is only supposed to be use on weblog pages
-            mLogger.error("error parsing request", e);
-        }
-        
-        RollerRequest mRollerReq = RollerRequest.getRollerRequest(request);
-        mWebsite = mRollerReq.getWebsite();
-        mHandle = mWebsite.getHandle();
-        mEntry = mRollerReq.getWeblogEntry();
-        mCategory = mRollerReq.getWeblogCategory();
-        mDate = mRollerReq.getDate();
-        mIsDaySpecified = mRollerReq.isDaySpecified();
-        mIsMonthSpecified = mRollerReq.isMonthSpecified();
+        // data we'll need in the methods
+        mWebsite = website;
+        mEntry = entry;
+        mCategory = category;
+        mDate = date;
+        mIsDaySpecified = isDay;
+        mIsMonthSpecified = isMonth;
         
         try {
             mBookmarkMgr = RollerFactory.getRoller().getBookmarkManager();
@@ -173,7 +167,7 @@ public class OldWeblogPageModel {
         List tops = null;
         try {
             Collection mTops = mBookmarkMgr.getRootFolder(
-                    mUserMgr.getWebsiteByHandle(mHandle)).getFolders();
+                    mUserMgr.getWebsiteByHandle(mWebsite.getHandle())).getFolders();
             
             // wrap pojos
             tops = new ArrayList(mTops.size());
@@ -244,7 +238,7 @@ public class OldWeblogPageModel {
         try {
             return FolderDataWrapper.wrap(
                     mBookmarkMgr.getFolder(
-                    mUserMgr.getWebsiteByHandle(mHandle), folderPath));
+                    mUserMgr.getWebsiteByHandle(mWebsite.getHandle()), folderPath));
         } catch (RollerException e) {
             mLogger.error("PageModel getFolder()", e);
         }
