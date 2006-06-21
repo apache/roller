@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * PlanetRequest.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on December 12, 2005, 9:47 AM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.ui.core;
@@ -26,14 +21,14 @@ package org.apache.roller.ui.core;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.ui.rendering.util.InvalidRequestException;
+import org.apache.roller.ui.rendering.util.ParsedRequest;
 
 
 /**
  * Represents a request for a Planet Roller url.
  *
  * currently ... /planet.do and /planetrss
- *
- * @author Allen Gilliland
  */
 public class PlanetRequest extends ParsedRequest {
     
@@ -79,7 +74,7 @@ public class PlanetRequest extends ParsedRequest {
         }
         
         
-        /* 
+        /*
          * parse request parameters
          *
          * the only params we currently care about are:
@@ -91,20 +86,20 @@ public class PlanetRequest extends ParsedRequest {
         }
         
     }
-
+    
     
     public String getContext() {
         return context;
     }
-
+    
     public String getType() {
         return type;
     }
-
+    
     public String getFlavor() {
         return flavor;
     }
-
+    
     public boolean isExcerpts() {
         return excerpts;
     }
