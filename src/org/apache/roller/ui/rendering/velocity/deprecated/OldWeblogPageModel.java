@@ -56,6 +56,7 @@ import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 /**
  * Provides Roller page templates with access to Roller domain model objects.
@@ -73,9 +74,14 @@ public class OldWeblogPageModel {
     
     private Map                  mCategories = new HashMap();
     private HashMap              mPageMap = new HashMap();
-    private RollerRequest        mRollerReq = null;
+    private HttpServletRequest   mRequest = null;
     private String               mHandle = null;
     private WebsiteData          mWebsite = null;
+    private WeblogEntryData      mEntry = null;
+    private WeblogCategoryData   mCategory = null;
+    private Date                 mDate = null;
+    private boolean              mIsDaySpecified = false;
+    private boolean              mIsMonthSpecified = false;
     private WeblogEntryDataWrapper      mNextEntry = null;
     private WeblogEntryDataWrapper      mPreviousEntry = null;
     private WeblogEntryDataWrapper      mLastEntry = null;
@@ -94,15 +100,26 @@ public class OldWeblogPageModel {
      * Initialize PageModel and allow PageModel to initialized VelocityContext.
      */
     public void init(HttpServletRequest request) {
-        mRollerReq = RollerRequest.getRollerRequest(request);
-        if ( request.getAttribute(RollerRequest.OWNING_WEBSITE) != null) {
-            mWebsite = (WebsiteData)
-            request.getAttribute(RollerRequest.OWNING_WEBSITE);
-            mHandle = mWebsite.getHandle();
-        } else if ( mRollerReq.getWebsite() != null ) {
-            mWebsite = mRollerReq.getWebsite();
-            mHandle = mWebsite.getHandle();
+        
+        mRequest = request;
+        
+        WeblogPageRequest pageRequest = null;
+        try {
+            pageRequest = new WeblogPageRequest(request);
+        } catch(Exception e) {
+            // this should never happen because the old page model
+            // is only supposed to be use on weblog pages
+            mLogger.error("error parsing request", e);
         }
+        
+        RollerRequest mRollerReq = RollerRequest.getRollerRequest(request);
+        mWebsite = mRollerReq.getWebsite();
+        mHandle = mWebsite.getHandle();
+        mEntry = mRollerReq.getWeblogEntry();
+        mCategory = mRollerReq.getWeblogCategory();
+        mDate = mRollerReq.getDate();
+        mIsDaySpecified = mRollerReq.isDaySpecified();
+        mIsMonthSpecified = mRollerReq.isMonthSpecified();
         
         try {
             mBookmarkMgr = RollerFactory.getRoller().getBookmarkManager();
@@ -115,8 +132,6 @@ public class OldWeblogPageModel {
             
             // Get the pages, put into context & load map
             if (mWebsite != null) {
-                // if we have website from RollerRequest, use it
-                mWebsite = mRollerReq.getWebsite();
                 
                 // Get the pages, put into context & load map
                 List pages = mWebsite.getPages();
@@ -126,8 +141,6 @@ public class OldWeblogPageModel {
                     mPageMap.put(page.getName(), TemplateWrapper.wrap(page));
                 }
             }
-            
-            
             
         } catch (RollerException e) {
             mLogger.error("PageModel Roller get*Manager Exception", e);
@@ -217,7 +230,7 @@ public class OldWeblogPageModel {
     /** Encapsulates RefererManager */
     public int getDayHits() {
         try {
-            return mRefererMgr.getDayHits(mRollerReq.getWebsite());
+            return mRefererMgr.getDayHits(mWebsite);
         } catch (RollerException e) {
             mLogger.error("PageModel getDayHits()", e);
         }
@@ -330,42 +343,42 @@ public class OldWeblogPageModel {
         try {            
             // If request specifies a category, then use that
             String catParam = null;
-            if (mRollerReq.getWeblogCategory() != null) {
-                catParam = mRollerReq.getWeblogCategory().getPath();
+            if (mCategory != null) {
+                catParam = mCategory.getPath();
             } else if (catName != null) {
                 // use category argument instead
                 catParam = catName;
-            } else if (mRollerReq.getWebsite() != null) // MAIN
+            } else if (mWebsite != null) // MAIN
             {
-                catParam = mRollerReq.getWebsite().getDefaultCategory().getPath();
+                catParam = mWebsite.getDefaultCategory().getPath();
                 if (catParam.equals("/")) {
                     catParam = null;
                 }
             }
             
             Calendar cal = null;
-            if (mRollerReq.getWebsite() != null) {
-                TimeZone tz = mRollerReq.getWebsite().getTimeZoneInstance();
+            if (mWebsite != null) {
+                TimeZone tz = mWebsite.getTimeZoneInstance();
                 cal = Calendar.getInstance(tz);
             } else {
                 cal = Calendar.getInstance();
             }
             int limit = maxEntries;
             Date startDate = null;
-            Date endDate = mRollerReq.getDate();
+            Date endDate = mDate;
             if (endDate == null) endDate = new Date();
-            if (mRollerReq.isDaySpecified()) { 
+            if (mIsDaySpecified) { 
                 // URL specified a specific day
                 // so get entries for that day
                 endDate = DateUtil.getEndOfDay(endDate, cal);
                 startDate = DateUtil.getStartOfDay(endDate, cal); 
                 // and get them ALL, no limit
                 limit = -1;                  
-            } else if (mRollerReq.isMonthSpecified()) {
+            } else if (mIsMonthSpecified) {
                 endDate = DateUtil.getEndOfMonth(endDate, cal);
             }
             Map mRet = RollerFactory.getRoller().getWeblogManager().getWeblogEntryObjectMap(
-                    mRollerReq.getWebsite(),
+                    mWebsite,
                     startDate,                    // startDate
                     endDate,                      // endDate
                     catParam,                     // catName
@@ -443,19 +456,19 @@ public class OldWeblogPageModel {
         if (VELOCITY_NULL.equals(categoryName)) categoryName = null;
         List ret = new ArrayList();
         try {
-            Date day = mRollerReq.getDate();
+            Date day = mDate;
             if (day == null) day = new Date();
             
             // If request specifies a category, then use that
             String catParam = null;
-            if (mRollerReq.getWeblogCategory() != null) {
-                catParam = mRollerReq.getWeblogCategory().getPath();
+            if (mCategory != null) {
+                catParam = mCategory.getPath();
             } else if (categoryName != null) {
                 // use category argument instead
                 catParam = categoryName;
-            } else if (mRollerReq.getWebsite() != null) // MAIN
+            } else if (mWebsite != null) // MAIN
             {
-                catParam = mRollerReq.getWebsite().getDefaultCategory().getPath();
+                catParam = mWebsite.getDefaultCategory().getPath();
                 if (catParam.equals("/")) {
                     catParam = null;
                 }
@@ -466,7 +479,7 @@ public class OldWeblogPageModel {
             //name, day, catParam, maxEntries, true );
             
             List mEntries = mgr.getWeblogEntries(
-                    mRollerReq.getWebsite(),
+                    mWebsite,
                     null,
                     null,                        // startDate
                     day,                         // endDate
@@ -497,9 +510,9 @@ public class OldWeblogPageModel {
         ArrayList referers = new ArrayList();
         try {
             List refs =
-                    mRefererMgr.getReferersToDate(mRollerReq.getWebsite(), date);
+                    mRefererMgr.getReferersToDate(mWebsite, date);
             RollerSession rses =
-                    RollerSession.getRollerSession(mRollerReq.getRequest());
+                    RollerSession.getRollerSession(mRequest);
             
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
                 RefererData referer = (RefererData) rdItr.next();
@@ -516,7 +529,7 @@ public class OldWeblogPageModel {
             
         } catch (Exception e) {
             mLogger.error("PageModel getReferersToDate() fails with URL"
-                    + mRollerReq.getRequestURL(), e);
+                    + mRequest.getRequestURL(), e);
         }
         return referers;
     }
@@ -527,7 +540,7 @@ public class OldWeblogPageModel {
         try {
             List refs = mRefererMgr.getReferersToEntry(entry.getId());
             RollerSession rses =
-               RollerSession.getRollerSession(mRollerReq.getRequest());
+               RollerSession.getRollerSession(mRequest);
             
             for (Iterator rdItr = refs.iterator(); rdItr.hasNext();) {
                 RefererData referer = (RefererData) rdItr.next();
@@ -544,7 +557,7 @@ public class OldWeblogPageModel {
             
         } catch (Exception e) {
             mLogger.error("PageModel getReferersToDate() fails with URL"
-                    + mRollerReq.getRequestURL(), e);
+                    + mRequest.getRequestURL(), e);
         }
         return referers;
     }
@@ -555,7 +568,7 @@ public class OldWeblogPageModel {
     public List getTodaysReferers() {
         List referers = null;
         try {
-            List mReferers = mRefererMgr.getTodaysReferers(mRollerReq.getWebsite());
+            List mReferers = mRefererMgr.getTodaysReferers(mWebsite);
             
             // wrap pojos
             referers = new ArrayList(mReferers.size());
@@ -577,7 +590,7 @@ public class OldWeblogPageModel {
     /** Encapsulates RefererManager */
     public int getTotalHits() {
         try {
-            return mRefererMgr.getTotalHits(mRollerReq.getWebsite());
+            return mRefererMgr.getTotalHits(mWebsite);
         } catch (RollerException e) {
             mLogger.error("PageModel getTotalHits()", e);
         }
@@ -626,9 +639,9 @@ public class OldWeblogPageModel {
                 WeblogCategoryData category = null;
                 if (categoryName != null) {
                     category = mWeblogMgr.getWeblogCategoryByPath(
-                            mRollerReq.getWebsite(), null, categoryName);
+                            mWebsite, null, categoryName);
                 } else {
-                    category = mRollerReq.getWebsite().getDefaultCategory();
+                    category = mWebsite.getDefaultCategory();
                 }
                 
                 List mRet = category.getWeblogCategories();
@@ -657,10 +670,9 @@ public class OldWeblogPageModel {
     
     /** Encapsulates RollerRequest.getWeblogEntry() */
     public WeblogEntryDataWrapper getWeblogEntry() {
-        WeblogEntryData entry = mRollerReq.getWeblogEntry();
         
-        if(entry != null && entry.getStatus().equals(WeblogEntryData.PUBLISHED))
-            return WeblogEntryDataWrapper.wrap(entry);
+        if(mEntry != null && mEntry.getStatus().equals(WeblogEntryData.PUBLISHED))
+            return WeblogEntryDataWrapper.wrap(mEntry);
         else
             return null;
     }
@@ -675,8 +687,8 @@ public class OldWeblogPageModel {
         if (mFirstEntry != null) currentEntry = mFirstEntry;
         if (mNextEntry == null && currentEntry != null) {
             String catName = null;
-            if (mRollerReq.getWeblogCategory() != null) {
-                catName = mRollerReq.getWeblogCategory().getName();
+            if (mCategory != null) {
+                catName = mCategory.getName();
             }
             try {
                 WeblogEntryData nextEntry =
@@ -707,8 +719,8 @@ public class OldWeblogPageModel {
         if (mLastEntry != null) currentEntry = mLastEntry;
         if (mPreviousEntry == null && currentEntry != null ) {
             String catName = null;
-            if (mRollerReq.getWeblogCategory() != null) {
-                catName = mRollerReq.getWeblogCategory().getName();
+            if (mCategory != null) {
+                catName = mCategory.getName();
             }
             try {
                 WeblogEntryData prevEntry =
@@ -728,10 +740,9 @@ public class OldWeblogPageModel {
     public boolean isUserAuthorizedToEdit() {
         try {
             RollerSession rses =
-                    RollerSession.getRollerSession(mRollerReq.getRequest());
-            if (rses.getAuthenticatedUser() != null
-                    && mRollerReq.getWebsite() != null) {
-                return rses.isUserAuthorizedToAuthor(mRollerReq.getWebsite());
+                    RollerSession.getRollerSession(mRequest);
+            if (rses.getAuthenticatedUser() != null && mWebsite != null) {
+                return rses.isUserAuthorizedToAuthor(mWebsite);
             }
         } catch (Exception e) {
             mLogger.warn("PageModel.isUserAuthorizedToEdit()", e);
@@ -744,10 +755,9 @@ public class OldWeblogPageModel {
     public boolean isUserAuthorizedToAdmin() {
         try {
             RollerSession rses =
-                    RollerSession.getRollerSession(mRollerReq.getRequest());
-            if (rses.getAuthenticatedUser() != null
-                    && mRollerReq.getWebsite() != null) {
-                return rses.isUserAuthorizedToAdmin(mRollerReq.getWebsite());
+                    RollerSession.getRollerSession(mRequest);
+            if (rses.getAuthenticatedUser() != null && mWebsite != null) {
+                return rses.isUserAuthorizedToAdmin(mWebsite);
             }
         } catch (Exception e) {
             mLogger.warn("PageModel.isUserAuthorizedToAdmin()", e);
@@ -758,17 +768,17 @@ public class OldWeblogPageModel {
     //------------------------------------------------------------------------
     
     public boolean isUserAuthenticated() {
-        return (mRollerReq.getRequest().getUserPrincipal() != null);
+        return (mRequest.getUserPrincipal() != null);
     }
     
     //------------------------------------------------------------------------
     
     public String getRequestParameter(String key) {
-        return mRollerReq.getRequest().getParameter(key);
+        return mRequest.getParameter(key);
     }
     
     public int getIntRequestParameter(String key) {
-        return Integer.parseInt(mRollerReq.getRequest().getParameter(key));
+        return Integer.parseInt(mRequest.getParameter(key));
     }
     
     //------------------------------------------------------------------------
@@ -823,12 +833,9 @@ public class OldWeblogPageModel {
     }
     
     public boolean getEmailComments() {
-        if (mRollerReq != null) {
-            WebsiteData website = mRollerReq.getWebsite();
-            if (website != null) {
-                boolean emailComments = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");        
-                return (website.getEmailComments().booleanValue() && emailComments);
-            }
+        if (mWebsite != null) {
+            boolean emailComments = RollerRuntimeConfig.getBooleanProperty("users.comments.emailnotify");
+            return (mWebsite.getEmailComments().booleanValue() && emailComments);
         }
         return false;
     }
