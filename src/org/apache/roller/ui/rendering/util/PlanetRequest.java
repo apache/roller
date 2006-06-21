@@ -16,13 +16,11 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core;
+package org.apache.roller.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.ui.rendering.util.InvalidRequestException;
-import org.apache.roller.ui.rendering.util.ParsedRequest;
 
 
 /**

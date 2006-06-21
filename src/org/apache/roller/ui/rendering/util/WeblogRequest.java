@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core;
+package org.apache.roller.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
 

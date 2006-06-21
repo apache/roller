@@ -46,7 +46,7 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.WeblogFeedRequest;
+import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
