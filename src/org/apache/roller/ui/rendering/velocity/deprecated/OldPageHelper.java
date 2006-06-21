@@ -38,6 +38,7 @@ import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.RefererDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
@@ -64,10 +65,13 @@ public class OldPageHelper {
     private PageContext mPageContext = null;
     private HttpServletRequest mRequest = null;
     private HttpServletResponse mResponse = null;
-    private RollerRequest mRollerReq = null;
+    
     private WeblogPageRequest mPageRequest = null;
     private Map mPagePlugins = null;  // Plugins keyed by name
     private WebsiteData mWebsite = null;
+    private Date mDate = null;
+    private FolderData mFolder = null;
+    private String mPageName = null;
     
     
     /**
@@ -81,14 +85,17 @@ public class OldPageHelper {
                       PageContext pageContext,
                       WeblogPageRequest pageRequest) throws RollerException {
         
-        // old roller request, going to be eoled
-        mRollerReq = RollerRequest.getRollerRequest(request);
+        mPageContext = pageContext;
         
         // store the parsed page request
         mPageRequest = pageRequest;
+        mPageName = mPageRequest.getWeblogPage();
         
+        // old roller request, going to be eoled
+        RollerRequest mRollerReq = RollerRequest.getRollerRequest(request);
         mWebsite = website;
-        mPageContext = pageContext;
+        mDate = mRollerReq.getDate(true);
+        mFolder = mRollerReq.getFolder();
         
         // save original request and response objects
         mRequest = request;
@@ -261,7 +268,7 @@ public class OldPageHelper {
             HttpServletResponse response = mResponse;
             
             String selfUrl = null;
-            String pageLink = mPageRequest.getWeblogPage();
+            String pageLink = mPageName;
             if ( pageLink != null ) {
                 selfUrl = mRequest.getContextPath() + "/page/"
                         + mWebsite.getHandle() + "/"+pageLink;
@@ -271,7 +278,7 @@ public class OldPageHelper {
             
             // setup weblog calendar model
             CalendarModel model = null;
-            Date date = mRollerReq.getDate(true);
+            Date date = mDate;
             if ( big ) {
                 model = new BigWeblogCalendarModel(
                         mRequest, response, mWebsite, date, selfUrl, cat);
@@ -329,9 +336,9 @@ public class OldPageHelper {
     public String strutsUrlHelper1( boolean useIds, boolean isAction,
             String path, String val1, String val2, Hashtable params) {
         if (useIds) {
-            if (mRollerReq.getFolder() != null) {
+            if (mFolder != null) {
                 params.put(RollerRequest.FOLDERID_KEY,
-                        mRollerReq.getFolder().getId());
+                        mFolder.getId());
             }
             if (mWebsite != null) {
                 params.put(RollerRequest.WEBLOG_KEY, mWebsite.getHandle());
