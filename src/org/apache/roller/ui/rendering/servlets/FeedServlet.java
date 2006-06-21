@@ -187,9 +187,9 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             
             // determine what template to render with
             if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
-                pageId = "site-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
+                pageId = "templates/feeds/site-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
             } else {
-                pageId = "weblog-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
+                pageId = "templates/feeds/weblog-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
             }
             
             // populate the rendering model
