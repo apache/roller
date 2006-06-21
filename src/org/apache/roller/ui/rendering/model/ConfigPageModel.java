@@ -71,7 +71,7 @@ public class ConfigPageModel implements PageModel {
      * Get Roller string runtime configuration property.
      * @return Property value or null if not found 
      */
-    public String getConfigProperty(String name) {
+    public String getProperty(String name) {
         String ret = null;
         if (allowedProperties.contains(name)) {
             ret = RollerRuntimeConfig.getProperty(name);
@@ -83,7 +83,7 @@ public class ConfigPageModel implements PageModel {
      * Get Roller integer runtime configuration property 
      * @return Property value or -999 if not found 
      */
-    public int getConfigPropertyInt(String name) {
+    public int getIntProperty(String name) {
         int ret = -999;
         if (allowedProperties.contains(name)) {
             ret = RollerRuntimeConfig.getIntProperty(name);
@@ -95,7 +95,7 @@ public class ConfigPageModel implements PageModel {
      * Get Roller boolean runtime configuration property.
      * @return Property value or false if not found 
      */
-    public boolean getConfigPropertyBoolean(String name) {
+    public boolean getBooleanProperty(String name) {
         boolean ret = false;
         if (allowedProperties.contains(name)) {
             return RollerRuntimeConfig.getBooleanProperty(name);
