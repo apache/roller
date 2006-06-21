@@ -39,7 +39,7 @@ public class WeblogRequest extends ParsedRequest {
         
         String pathInfo = request.getPathInfo();
         
-        // we expect a path info of /<handle/*
+        // we expect a path info of /<handle>/*
         if(pathInfo != null && pathInfo.trim().length() > 1) {
             // strip off the leading slash
             pathInfo = pathInfo.substring(1);

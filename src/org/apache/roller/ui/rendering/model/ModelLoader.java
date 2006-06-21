@@ -15,15 +15,14 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.model;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -32,123 +31,103 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.Utilities;
 
+
 /**
  * Loads page models (read-only data access objects which implement PageModel) 
  * and helpers (which "help" with HTML gen.) needed by page rendering process.
  */
 public class ModelLoader {
     
-    private static Log log = LogFactory.getLog(ModelLoader.class);   
+    private static Log log = LogFactory.getLog(ModelLoader.class);
     
-    /** 
-     * Load page models needed by PageServlet and PreviewServlet.
-     */
-    public static void loadWeblogPageModels(
-        WebsiteData weblog,
-        PageContext pageContext,
-        Map map) throws RollerException { 
-        
-        HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
-        HttpServletResponse response = (HttpServletResponse)pageContext.getRequest();
-        loadOldModels(response, request, map);
-        
-        // Weblogs pages get the weblog page models
-        String modelsString = 
-            RollerConfig.getProperty("rendering.weblogPageModels");
-        loadConfiguredPageModels(modelsString, request, map);
-        loadUtilityHelpers(map);
-        loadWeblogHelpers(pageContext, map);
-        loadPluginHelpers(weblog, map);
-        
-        // Weblog pages get weblog's additional custom models too
-        if (weblog != null) {
-            loadAdditionalPageModels(weblog, request, map);
-        }
-    }
-
+    
     /** 
      * Load helpers needed in weblog pages (e.g. calendar, menu).
      */
-    public static void loadWeblogHelpers(
-        PageContext pageContext, Map map) {
+    public static void loadWeblogHelpers(PageContext pageContext, Map model) {
         
         CalendarHelper calendarTag = new CalendarHelper(pageContext);
-        map.put("calendarTag", calendarTag);
+        model.put("calendarTag", calendarTag);
         
         EditorMenuHelper menuTag = new EditorMenuHelper(pageContext);
-        map.put("menuTag", menuTag);
+        model.put("menuTag", menuTag);
     }
-
+    
+    
     /**
      * Load generic utility helpers.
      */
-    public static void loadUtilityHelpers(Map map) {
+    public static void loadUtilityHelpers(Map model) {
         UtilitiesHelper utils = new UtilitiesHelper();
-        map.put("utils", utils);
+        model.put("utils", utils);
     }
-
+    
+    
     /**
      * Load weblog entry plugin helpers.
      */
-    public static void loadPluginHelpers(WebsiteData weblog, Map map) 
+    public static void loadPluginHelpers(WebsiteData weblog, Map model) 
         throws RollerException {
-        WeblogEntryPluginsHelper plugins = new WeblogEntryPluginsHelper(weblog, map);
-        map.put("plugins", plugins);
+        WeblogEntryPluginsHelper plugins = new WeblogEntryPluginsHelper(weblog, model);
+        model.put("plugins", plugins);
     }
-
+    
+    
     /**
      * Load old page models, but only if velocity.pagemodel.classname defined.
      */
     public static void loadOldModels(
         HttpServletResponse response, 
         HttpServletRequest  request,
-        Map map) throws RollerException {
+        Map model) throws RollerException {
 
         // Only load old model if it's specified
         String useOldModel = 
             RollerConfig.getProperty("velocity.pagemodel.classname");        
         if (useOldModel != null) { 
-            ContextLoader.setupContext(map, request, response);            
-        }
-    }
-                
-    /**
-     * Load comma-separated list of configured page models and if any of the
-     * models fail to load, throws an exception.
-     */
-    public  static void loadConfiguredPageModels(
-        String modelsString, 
-        HttpServletRequest request, 
-        Map map) throws RollerException {
-        String currentModel = null;
-        try { // if we can't load a configued page models, then bail out
-            String[] models = Utilities.stringToStringArray(modelsString, ",");
-            for (int i=0; i<models.length; i++) {
-                currentModel = models[i];
-                Class modelClass = Class.forName(currentModel);
-                PageModel pageModel = (PageModel)modelClass.newInstance();
-                Map args = new HashMap();
-                args.put("request", request);
-                pageModel.init(args);            
-                map.put(pageModel.getModelName(), pageModel);
-            }
-        } catch (ClassNotFoundException cnfe) {
-            throw new RollerException("ERROR: can't find page model: " + currentModel);
-        } catch (InstantiationException ie) {
-            throw new RollerException("ERROR: insantiating page model: " + currentModel);
-        } catch (IllegalAccessException iae) {
-            throw new RollerException("ERROR: access exception page model: " + currentModel);
+            ContextLoader.setupContext(model, request, response);            
         }
     }
     
+    
     /**
-     * Load comma-separated list of page models and does not fail if one of the 
-     * models fails to load.
+     * Load set of common weblog models.
+     *
+     * This is the list of models defined by rendering.weblogPageModels
      */
-    public static void loadAdditionalPageModels(
+    public static void loadWeblogModels(Map model, Map initData)
+            throws RollerException {
+        
+        String weblogModels = 
+                RollerConfig.getProperty("rendering.weblogPageModels");
+        loadModels(weblogModels, model, initData);
+    }
+    
+    
+    /**
+     * Load set of common site-wide models.
+     *
+     * This is the list of models defined by rendering.sitePageModels
+     */
+    public static void loadSiteModels(Map model, Map initData)
+            throws RollerException {
+        
+        String weblogModels = 
+                RollerConfig.getProperty("rendering.sitePageModels");
+        loadModels(weblogModels, model, initData);
+    }
+    
+    
+    /**
+     * Load set of custom models allowed for the given weblog.
+     *
+     * Does not fail if there is a problem with one of the models.
+     */
+    public static void loadCustomModels(
             WebsiteData weblog, 
-            HttpServletRequest request, 
-            Map map) {
+            Map model,
+            Map initData) {
+        
         if (weblog.getPageModels() != null) {
             String[] weblogModels = 
                 Utilities.stringToStringArray(weblog.getPageModels(), ",");
@@ -156,10 +135,8 @@ public class ModelLoader {
                 try { // don't die just because of one bad custom model
                     Class modelClass = Class.forName(weblogModels[i]);
                     PageModel pageModel = (PageModel)modelClass.newInstance();
-                    Map args = new HashMap();
-                    args.put("request", request);
-                    pageModel.init(args);             
-                    map.put(pageModel.getModelName(), pageModel);
+                    pageModel.init(initData);             
+                    model.put(pageModel.getModelName(), pageModel);
                 } catch (RollerException re) {
                     log.warn("ERROR: initializing a plugin: " + weblogModels[i]);
                 } catch (ClassNotFoundException cnfe) {
@@ -172,4 +149,34 @@ public class ModelLoader {
             }
         }     
     }
+    
+    
+    /**
+     * Convenience method to load a comma-separated list of page models.
+     * If any of the models fail to load, throws an exception.
+     */
+    private static void loadModels(
+            String modelsString,
+            Map model,
+            Map initData) throws RollerException {
+        
+        String currentModel = null;
+        try { // if we can't load a configued page models, then bail out
+            String[] models = Utilities.stringToStringArray(modelsString, ",");
+            for (int i=0; i<models.length; i++) {
+                currentModel = models[i];
+                Class modelClass = Class.forName(currentModel);
+                PageModel pageModel = (PageModel) modelClass.newInstance();
+                pageModel.init(initData);            
+                model.put(pageModel.getModelName(), pageModel);
+            }
+        } catch (ClassNotFoundException cnfe) {
+            throw new RollerException("ERROR: can't find page model: " + currentModel);
+        } catch (InstantiationException ie) {
+            throw new RollerException("ERROR: insantiating page model: " + currentModel);
+        } catch (IllegalAccessException iae) {
+            throw new RollerException("ERROR: access exception page model: " + currentModel);
+        }
+    }
+    
 }

@@ -32,26 +32,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.ThemeNotFoundException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ThemeManager;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.RollerRequest;
-import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
-import org.apache.roller.ui.rendering.model.CalendarHelper;
-import org.apache.roller.ui.rendering.model.EditorMenuHelper;
 import org.apache.roller.ui.rendering.model.ModelLoader;
-import org.apache.roller.ui.rendering.model.PageModel;
-import org.apache.roller.ui.rendering.model.UtilitiesHelper;
-import org.apache.roller.util.Utilities;
- 
+import org.apache.roller.ui.rendering.util.WeblogPreviewRequest;
+
+
 /**
  * Responsible for rendering weblog page previews.
  *
@@ -83,15 +77,33 @@ public class PreviewServlet extends HttpServlet {
         log.debug("Entering");
         
         Theme previewTheme = null;
-        WebsiteData website = null;
+        WebsiteData weblog = null;
+        
+        WeblogPreviewRequest previewRequest = null;
+        try {
+            previewRequest = new WeblogPreviewRequest(request);
+            
+            // lookup weblog specified by preview request
+            UserManager uMgr = RollerFactory.getRoller().getUserManager();
+            weblog = uMgr.getWebsiteByHandle(previewRequest.getWeblogHandle());
+            
+            if(weblog == null) {
+                throw new RollerException("unable to lookup weblog: "+
+                        previewRequest.getWeblogHandle());
+            }
+        } catch (Exception e) {
+            // some kind of error parsing the request
+            log.error("error creating preview request", e);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
         
         // try getting the preview theme
-        String themeName = request.getParameter("theme");
-        log.debug("preview theme = "+themeName);
-        if (themeName != null) {
+        log.debug("preview theme = "+previewRequest.getTheme());
+        if(previewRequest.getTheme() != null) {
             try {
                 ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                previewTheme = themeMgr.getTheme(themeName);
+                previewTheme = themeMgr.getTheme(previewRequest.getTheme());
                 
             } catch(ThemeNotFoundException tnfe) {
                 // bogus theme specified ... don't worry about it
@@ -99,73 +111,38 @@ public class PreviewServlet extends HttpServlet {
             } catch(RollerException re) {
                 
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                log.error("Error doing page preview", re);
+                log.error("Error doing theme preview", re);
                 return;
             }
         }
         
-        // TODO 3.0: change to previewRequest
-//        WeblogPageRequest pageRequest = null;
-//        try {
-//            pageRequest = new WeblogPageRequest(request);
-//        } catch (Exception e) {
-//            // some kind of error parsing the request
-//            log.error("error creating page request", e);
-//            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-//            return;
-//        }
-        
-        // TODO: this is old logic from pre 3.0 that we'll remove when possible
-        RollerRequest rreq = null;
-        try {
-            PageContext pageContext = 
-                    JspFactory.getDefaultFactory().getPageContext(
+        // construct page context
+        PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
-            
-            rreq = RollerRequest.getRollerRequest(pageContext);
-            
-            // make sure the website is valid
-            website = rreq.getWebsite();
-            if(website == null)
-                throw new InvalidRequestException("invalid weblog");
-            
-        } catch (Exception e) {
-            // An error initializing the request is considered to be a 404
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            log.error("ERROR initializing RollerRequest", e);
-            return;
-        }
         
         // construct a temporary Website object for this request
         // and set the EditorTheme to our previewTheme
         WebsiteData tmpWebsite = new WebsiteData();
-        tmpWebsite.setData(website);
+        tmpWebsite.setData(weblog);
         if(previewTheme != null && previewTheme.isEnabled()) {
             tmpWebsite.setEditorTheme(previewTheme.getName());
-        } else if(themeName.equals(Theme.CUSTOM)) {
+        } else if(previewRequest.getTheme().equals(Theme.CUSTOM)) {
             tmpWebsite.setEditorTheme(Theme.CUSTOM);
         }
         
         Template page = null;
         try {
             page = tmpWebsite.getDefaultPage();
+            
+            if(page == null) {
+                throw new RollerException("Weblog's default page was null");
+            }
         } catch(RollerException re) {
             // couldn't get page
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             log.error("Error getting default page for preview", re);
             return;
         }
-        
-        if (page == null) {
-            // previewing a custom theme when they have no templates
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            log.error("No page found for rendering");
-            return;
-        }
-        
-        // update our roller request object
-        rreq.setPage(page);
-        rreq.setWebsite(tmpWebsite);
         
         log.debug("preview page found, dealing with it");
         
@@ -180,10 +157,32 @@ public class PreviewServlet extends HttpServlet {
         }
         
         // looks like we need to render content
-        HashMap model = new HashMap();
+        Map model = new HashMap();
         try {
-            // populate the model
-            ModelLoader.loadWeblogPageModels(rreq.getWebsite(), rreq.getPageContext(), model);
+            RollerContext rollerContext = RollerContext.getRollerContext();
+            
+            // populate the rendering model
+            Map initData = new HashMap();
+            initData.put("request", request);
+            
+            // Feeds get the weblog specific page model
+            ModelLoader.loadWeblogModels(model, initData);
+            
+            // special handling for site wide feed
+            if (rollerContext.isSiteWideWeblog(tmpWebsite.getHandle())) {
+                ModelLoader.loadSiteModels(model, initData);
+            }
+            
+            // add helpers
+            ModelLoader.loadUtilityHelpers(model);
+            ModelLoader.loadWeblogHelpers(pageContext, model);
+            ModelLoader.loadPluginHelpers(tmpWebsite, model);
+
+            // Feeds get weblog's custom models too
+            ModelLoader.loadCustomModels(tmpWebsite, model, initData);
+            
+            // ick, gotta load pre-3.0 model stuff as well :(
+            ModelLoader.loadOldModels(response, request, model);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);

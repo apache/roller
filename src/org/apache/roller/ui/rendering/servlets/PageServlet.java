@@ -34,6 +34,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.FolderData;
@@ -126,11 +128,20 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         // used for rendering
         HashMap model = new HashMap();
         
-        WebsiteData website = null;
+        WebsiteData weblog = null;
         
         WeblogPageRequest pageRequest = null;
         try {
             pageRequest = new WeblogPageRequest(request);
+            
+            // lookup weblog specified by feed request
+            UserManager uMgr = RollerFactory.getRoller().getUserManager();
+            weblog = uMgr.getWebsiteByHandle(pageRequest.getWeblogHandle());
+            
+            if(weblog == null) {
+                throw new RollerException("unable to lookup weblog: "+
+                        pageRequest.getWeblogHandle());
+            }
         } catch (Exception e) {
             // some kind of error parsing the request
             log.error("error creating page request", e);
@@ -141,17 +152,12 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         // first off lets parse the incoming request and validate it
         // TODO: this is old logic from pre 3.0 that we'll remove when possible
         RollerRequest rreq = null;
+        PageContext pageContext = null;
         try {
-            PageContext pageContext = 
-                    JspFactory.getDefaultFactory().getPageContext(
+            pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
             
             rreq = RollerRequest.getRollerRequest(pageContext);
-            
-            // make sure the website is valid
-            website = rreq.getWebsite();
-            if(website == null)
-                throw new InvalidRequestException("invalid weblog");
             
         } catch (Exception e) {
             // An error initializing the request is considered to be a 404
@@ -167,14 +173,14 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         if (request.getParameter("popup") != null) {
             try {
                 // Does user have a popupcomments page?
-                page = website.getPageByName("_popupcomments");
+                page = weblog.getPageByName("_popupcomments");
             } catch(Exception e ) {
                 // ignored ... considered page not found
             }
             
             // User doesn't have one so return the default
             if(page == null) {
-                page = new WeblogTemplate("templates/weblog/popupcomments.vm", website,
+                page = new WeblogTemplate("templates/weblog/popupcomments.vm", weblog,
                         "Comments", "Comments", "dummy_link",
                         "dummy_template", new Date());
             }
@@ -186,9 +192,9 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             page = rreq.getPage();
             
         } else {
-            // If page not available from request, then use website's default
+            // If page not available from request, then use weblog's default
             try {
-                page = website.getDefaultPage();
+                page = weblog.getDefaultPage();
                 rreq.setPage(page);
             } catch(Exception e) {
                 log.error(e);
@@ -206,7 +212,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         // 304 if-modified-since checking
         long sinceDate = request.getDateHeader("If-Modified-Since");
         log.debug("since date = "+sinceDate);
-        if(website.getLastModified().getTime() <= sinceDate) {
+        if(weblog.getLastModified().getTime() <= sinceDate) {
             log.debug("NOT MODIFIED "+request.getRequestURL());
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
@@ -223,7 +229,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         }
         
         // set last-modified date
-        response.setDateHeader("Last-Modified", website.getLastModified().getTime());
+        response.setDateHeader("Last-Modified", weblog.getLastModified().getTime());
         
         // cached content checking
         String cacheKey = this.CACHE_ID+":"+this.generateKey(pageRequest);
@@ -261,23 +267,33 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         
         // looks like we need to render content
         try {
-            // populate the model
-            ModelLoader.loadOldModels(response, request, model);
-
-            // Weblogs pages get the weblog page models
-            String modelsString = 
-                RollerConfig.getProperty("rendering.weblogPageModels");
-            ModelLoader.loadConfiguredPageModels(modelsString, request, model);
-            ModelLoader.loadUtilityHelpers(model);
-            ModelLoader.loadWeblogHelpers(rreq.getPageContext(), model);
-
-            // Weblog pages get weblog's additional custom models too
-            if (rreq.getWebsite() != null) {
-                ModelLoader.loadAdditionalPageModels(rreq.getWebsite(), request, model);
+            RollerContext rollerContext = RollerContext.getRollerContext();
+            
+            // populate the rendering model
+            Map initData = new HashMap();
+            initData.put("request", request);
+            
+            // Feeds get the weblog specific page model
+            ModelLoader.loadWeblogModels(model, initData);
+            
+            // special handling for site wide feed
+            if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
+                ModelLoader.loadSiteModels(model, initData);
             }
-        
+            
+            // add helpers
+            ModelLoader.loadUtilityHelpers(model);
+            ModelLoader.loadWeblogHelpers(pageContext, model);
+            ModelLoader.loadPluginHelpers(weblog, model);
+
+            // Feeds get weblog's custom models too
+            ModelLoader.loadCustomModels(weblog, model, initData);
+            
+            // ick, gotta load pre-3.0 model stuff as well :(
+            ModelLoader.loadOldModels(response, request, model);
+            
         } catch (RollerException ex) {
-            log.error("ERROR loading model for page", ex);
+            log.error("Error loading model objects for page", ex);
             
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
