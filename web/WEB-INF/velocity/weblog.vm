@@ -4,6 +4,7 @@
    Contents
       #showWeblogEntryDayPager()
       #showEntryText()
+      #showComments()
       #showCommentForm()
       #showTrackbackAutodiscoveryRDF()
       #showAutodiscoveryLinks()
@@ -122,7 +123,7 @@
  * On single-entry pages, text is prefered. Everywhere else, summary is 
  * preferred. Also, applies all plugins configured by entry.
  *#
-#macro( showEntryText $entry )
+#macro( showWeblogEntryText $entry )
    #if( $entryPage )
       #parse($entryPage.id)
    #else
@@ -156,10 +157,47 @@
 
 ##-----------------------------------------------------------------------------
 #**
+ * Display all comments comments for an entry.
+ * @param entry WeblogEntryData object for which comments are to be displayed.
+ *#
+#macro( showComments $entry )
+    <div class="comments" id="comments">
+    #if( $previewComments )
+        #set( $comments = $previewComments )
+        <div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
+    #else
+        <div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
+        #set($comments = $pageModel.getComments($entry))
+    #end
+    <br/>
+    #foreach( $comment in $comments )
+        <!-- comment: $comment.id -->
+        #if($comment.approved || $previewComments)
+            #set($content = $utilities.encodeEmail($comment.content))
+            #if($config.getBooleanProperty("users.comments.escapehtml"))
+                #set($content = $utilities.escapeHTML($content))
+            #else 
+                #set($content = $utilities.transformToHTMLSubset($utilities.escapeHTML($content)))
+            #end
+            #if($config.getBooleanProperty("users.comments.autoformat"))
+                #set($content = $utilities.autoformat($content))
+            #end
+            #set($content = $utilities.addNofollow($content))
+            <div class="comment" id="comment${velocityCount}">
+                ${content}
+                #showCommentDetails($comment true)
+            </div>
+        #end
+    #end
+    </div>
+#end
+
+##-----------------------------------------------------------------------------
+#**
  * Display comment form for a weblog entry.
  * @param entry WeblogEntry object for which form is to be shown.
  *#
-#macro( showCommentForm $entry )
+#macro( showWeblogCommentForm $entry )
     <div class="comments-form">
     <div class="comments-head">$text.get("macro.weblog.postcommentHeader")</div><br/>
 

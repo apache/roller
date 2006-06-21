@@ -138,7 +138,7 @@ public class WeblogPageModel implements PageModel {
      * Get most recent weblog entries for date and category specified by request.
      * @return List of WeblogEntryDataWrapper objects. 
      */
-    public List getWeblogEntriesList(String cat, int offset, int length) {
+    public List getWeblogEntries(String cat, int offset, int length) {
         
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         Date date                   = rreq.getDate();
@@ -356,16 +356,16 @@ public class WeblogPageModel implements PageModel {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             List recent = wmgr.getComments(
                     weblog,
-                    null,  // weblog entry
-                    null,  // search String
-                    null,  // startDate
-                    null,  // endDate
-                    null,  // pending
+                    null,          // weblog entry
+                    null,          // search String
+                    null,          // startDate
+                    null,          // endDate
+                    null,          // pending
                     Boolean.TRUE,  // approved only
                     Boolean.FALSE, // no spam
                     true,          // we want reverse chrono order
                     offset,        // offset
-                    length);       // no limit
+                    length);       // length
             
             // wrap pojos
             recentComments = new ArrayList(recent.size());
