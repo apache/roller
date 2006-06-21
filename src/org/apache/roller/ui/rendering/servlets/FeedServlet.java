@@ -193,20 +193,23 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             }
             
             // populate the rendering model
-
+            Map initData = new HashMap();
+            initData.put("request", request);
+            
             // Feeds get the weblog specific page model
-            String modelsString = RollerConfig.getProperty("rendering.weblogPageModels");
+            ModelLoader.loadWeblogModels(model, initData);
             
             // special handling for site wide feed
             if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
-                modelsString = RollerConfig.getProperty("rendering.weblogPageModels");
+                ModelLoader.loadSiteModels(model, initData);
             }
-            ModelLoader.loadConfiguredPageModels(modelsString, request, model);
+            
+            // utility helpers and plugin helpers
             ModelLoader.loadUtilityHelpers(model);
             ModelLoader.loadPluginHelpers(weblog, model);
 
-            // Feeds get weblog's additional custom models too
-            ModelLoader.loadAdditionalPageModels(weblog, request, model);
+            // Feeds get weblog's custom models too
+            ModelLoader.loadCustomModels(weblog, model, initData);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
