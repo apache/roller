@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+#if($page.weblogCategory && $page.weblogCategory.path.length() > 0) 
+   #set($postfix = "?catname=$page.weblogCategory.path") 
+   #set($cat = $page.weblogCategory.path)
+#else
+   #set($postfix = "") 
+#end   
+<rss version="2.0" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:atom="http://www.w3.org/2005/Atom" >
+<channel>
+  <title>$utils.escapeHTML($utils.removeHTML($page.weblog.name))</title>
+  <link>$page.weblog.URL</link>
+  <description>$utils.escapeHTML($page.weblog.description)</description>
+  <language>en-us</language>
+  <copyright>Copyright $utils.formatDate($page.weblog.lastModified, "yyyy")</copyright>
+  <lastBuildDate>$utils.formatRfc822Date($page.weblog.lastModified)</lastBuildDate>
+  <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTime:$config.rollerBuildUser)</generator>
+    #set($entries = $page.getWeblogEntries($cat, 0, $page.weblog.entryDisplayCount) )
+    #showEntriesRSS20($entries)
+</channel>
+</rss>

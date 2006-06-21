@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO: this won't work, we need to use category string -->
+#if($page.weblogCategory && $page.weblogCategory.path.length() > 0) 
+   #set($postfix = "?catname=$page.weblogCategory.path") 
+   #set($cat = $page.weblogCategory.path)
+#else
+   #set($postfix = "") 
+#end  
+<rss version="2.0" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:atom="http://www.w3.org/2005/Atom" >
+<channel>
+  <title>$utils.escapeHTML($config.getConfigProperty("site.name"))</title>
+  <link>$page.absoluteContextURL</link>
+  <description>$utils.escapeHTML($config.getConfigProperty("site.description"))</description>
+  <language>en-us</language>
+  <copyright>Copyright #formatDate("yyyy" $page.now)</copyright>
+  <lastBuildDate>$utilities.formatRfc822Date($page.now)</lastBuildDate>
+  <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTime:$config.rollerBuildUser)</generator>
+  #set($entries = $site.getWeblogEntries($null, $null, $cat, -1, 0, $config.getConfigProperty("site.newsfeeds.maxEntries")) )
+  #showEntriesRSS20($entries)
+</channel>
+</rss>
