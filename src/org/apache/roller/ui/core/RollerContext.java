@@ -497,6 +497,32 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
     
     
+    /**
+     * Convenience method for Roller classes trying to determine if a given
+     * weblog handle represents the front page blog.
+     */
+    public boolean isFrontPageWeblog(String weblogHandle) {
+        
+        String frontPageHandle = RollerConfig.getProperty("frontpage.weblog.handle");
+        
+        return (frontPageHandle.equals(weblogHandle));
+    }
+    
+    
+    /**
+     * Convenience method for Roller classes trying to determine if a given
+     * weblog handle represents the front page blog configured to render
+     * site-wide data.
+     */
+    public boolean isSiteWideWeblog(String weblogHandle) {
+        
+        boolean siteWide = 
+                RollerConfig.getBooleanProperty("frontpage.weblog.aggregatedFeeds");
+        
+        return (isFrontPageWeblog(weblogHandle) && siteWide);
+    }
+    
+    
     public String createEntryPermalink(
             WeblogEntryData entry,
             HttpServletRequest request,
