@@ -1,67 +1,49 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * WeblogFeedRequest.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on November 7, 2005, 1:59 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.ui.core;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.pojos.WeblogTemplate;
 
 
 /**
  * Represents a request for a Roller weblog feed.
  * 
- * any of /rss/*, /atom/*, /flavor/*
+ * /roller-ui/rendering/feeds/*
  *
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
- * 
- * @author Allen Gilliland
  */
 public class WeblogFeedRequest extends ParsedRequest {
     
     private static Log mLogger = LogFactory.getLog(WeblogFeedRequest.class);
     
-    private static Set feedServlets = new HashSet();
+    private static final String FEED_SERVLET = "/feeds";
     
-    private String context = null;
-    private String flavor = null;
+    private String type = null;
+    private String format = null;
     private String weblogHandle = null;
     private String weblogCategory = null;
     private boolean excerpts = false;
-    
-    
-    static {
-        // initialize our servlet list
-        feedServlets.add("rss");
-        feedServlets.add("flavor");
-        feedServlets.add("atom");
-    }
     
     
     /**
@@ -77,85 +59,64 @@ public class WeblogFeedRequest extends ParsedRequest {
         String servlet = request.getServletPath();
         String pathInfo = request.getPathInfo();
         
-        // what servlet is our destination?
-        if(servlet != null) {
-            // strip off the leading slash
-            servlet = servlet.substring(1);
-            
-            if(feedServlets.contains(servlet)) {
-                this.context = "weblog";
-                this.flavor = servlet;
-            } else {
-                // not a request to a feed servlet
-                throw new InvalidRequestException("not a weblog feed request, "+request.getRequestURL());
-            }
-        } else {
+        // was this request bound for the feed servlet?
+        if(servlet == null || !FEED_SERVLET.equals(servlet)) {
             throw new InvalidRequestException("not a weblog feed request, "+request.getRequestURL());
         }
         
-        // parse the path info
+        /* 
+         * parse the path info.  must conform to the format below.
+         *
+         * /<weblog>/<type>/<format>
+         *
+         */
         if(pathInfo != null && pathInfo.trim().length() > 1) {
             // strip off the leading slash
             pathInfo = pathInfo.substring(1);
             String[] pathElements = pathInfo.split("/");
             
-            if(pathElements[0].length() > 0) {
+            if(pathElements.length == 3) {
                 this.weblogHandle = pathElements[0];
+                this.type = pathElements[1];
+                this.format = pathElements[2];
+            } else {
+                throw new InvalidRequestException("invalid feed path info, "+request.getRequestURL());
             }
             
         } else {
-            
-            // no path info means this was a non-weblog request
-            // we handle a few exceptions for this which include
-            //   /rss - main rss feed
-            //   /atom - main atom feed
-            //   /flavor - main flavor feed
-            
-            this.context = "main";
+            throw new InvalidRequestException("invalid feed path info, "+request.getRequestURL());
         }
+        
         
         /* 
          * parse request parameters
          *
          * the only params we currently care about are:
-         *   flavor - defines the feed type
-         *   catname - specifies a weblog category
-         *   path - specifies a weblog category
+         *   cat - specifies a weblog category
          *   excerpts - specifies the feed should only include excerpts
          *
          */
-        if(request.getParameter("flavor") != null) {
-            this.flavor = request.getParameter("flavor");
-        }
-        
-        if(request.getParameter("path") != null) {
-            this.weblogCategory = request.getParameter("path");
-        }
-        
-        if(request.getParameter("catname") != null) {
-            this.weblogCategory = request.getParameter("catname");
+        if(request.getParameter("cat") != null) {
+            try {
+                this.weblogCategory = URLDecoder.decode(request.getParameter("cat"), "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                // should never happen, utf-8 is always supported by java
+            }
         }
         
         if(request.getParameter("excerpts") != null) {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
         }
         
-        // one small final adjustment.
-        // if our flavor is "flavor" then that means someone is just getting
-        // the default flavor, which is rss, so let's set that
-        if(this.flavor.equals("flavor")) {
-            this.flavor = "rss";
-        }
-        
     }
     
 
-    public String getContext() {
-        return context;
+    public String getType() {
+        return type;
     }
 
-    public String getFlavor() {
-        return flavor;
+    public String getFormat() {
+        return format;
     }
 
     public String getWeblogHandle() {
