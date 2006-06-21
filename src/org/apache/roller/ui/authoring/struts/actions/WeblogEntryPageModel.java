@@ -261,7 +261,8 @@ public class WeblogEntryPageModel extends BasePageModel
 
         // Setup weblog calendar model
         CalendarModel model = new EditWeblogCalendarModel(
-                rollerRequest, getResponse(), selfUrl );
+                rollerRequest.getRequest(), getResponse(), 
+                rollerRequest.getWebsite(), rollerRequest.getDate(true), selfUrl );
         return model;
     }
 

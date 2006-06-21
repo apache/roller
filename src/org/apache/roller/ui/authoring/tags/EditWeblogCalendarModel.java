@@ -18,7 +18,10 @@
 
 package org.apache.roller.ui.authoring.tags;
 
+import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.roller.pojos.WebsiteData;
 
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.tags.menu.RollerMenuModel;
@@ -36,10 +39,10 @@ public class EditWeblogCalendarModel extends WeblogCalendarModel
      * @param resp
      * @param selfUrl
      * @param queryString  */    
-	public EditWeblogCalendarModel(
-        RollerRequest rreq,  HttpServletResponse res, String url)
+	public EditWeblogCalendarModel(HttpServletRequest req,  
+                HttpServletResponse res, WebsiteData website, Date date, String url)
 	{
-        super( rreq, res, url, null );
+        super( req, res, website, date, url, null );
 	}
     
     /** 

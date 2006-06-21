@@ -17,7 +17,7 @@
  */
 package org.apache.roller.ui.rendering.model;
 
-import java.util.Map;
+import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
@@ -56,6 +56,7 @@ public class CalendarHelper  {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WebsiteData weblog = rreq.getWebsite();
         String pageLink = rreq.getPageLink();
+        Date date = rreq.getDate(true);
         
         if ("nil".equals(cat)) cat = null;        
         String ret = null;
@@ -70,9 +71,9 @@ public class CalendarHelper  {
 
             CalendarModel model = null;
             if (big) {
-                model = new BigWeblogCalendarModel(rreq, response, selfUrl, cat);
+                model = new BigWeblogCalendarModel(request, response, weblog, date, selfUrl, cat);
             } else {
-                model = new WeblogCalendarModel(rreq, response, selfUrl, cat);
+                model = new WeblogCalendarModel(request, response, weblog, date, selfUrl, cat);
             }
             
             // save model in JSP page context so CalendarTag can find it
