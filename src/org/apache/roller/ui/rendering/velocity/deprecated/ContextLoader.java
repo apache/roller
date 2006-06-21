@@ -57,7 +57,7 @@ import org.apache.roller.ui.rendering.model.PageModel;
 import org.apache.roller.ui.rendering.model.PlanetPageModel;
 import org.apache.roller.ui.rendering.model.SitePageModel;
 import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
-import org.apache.roller.ui.core.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.RegexUtil;
 import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;

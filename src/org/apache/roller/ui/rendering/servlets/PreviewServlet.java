@@ -38,7 +38,7 @@ import org.apache.roller.model.ThemeManager;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.InvalidRequestException;
+import org.apache.roller.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;

@@ -51,7 +51,7 @@ import org.apache.roller.ui.core.tags.menu.EditorNavigationBarTag;
 import org.apache.roller.ui.core.tags.menu.MenuTag;
 import org.apache.roller.ui.authoring.tags.BigWeblogCalendarModel;
 import org.apache.roller.ui.authoring.tags.WeblogCalendarModel;
-import org.apache.roller.ui.core.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 
 /**

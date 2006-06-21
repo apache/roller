@@ -16,19 +16,14 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core;
+package org.apache.roller.ui.rendering.util;
 
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.util.Utilities;
+import org.apache.roller.ui.rendering.util.InvalidRequestException;
 
 
 /**

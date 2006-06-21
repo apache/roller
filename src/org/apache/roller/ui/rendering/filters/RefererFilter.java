@@ -36,8 +36,8 @@ import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.InvalidRequestException;
-import org.apache.roller.ui.core.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.InvalidRequestException;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.SpamChecker;
 
 
