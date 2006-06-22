@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
@@ -37,13 +39,16 @@ import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 
 /**
- * Model provide information needed to render a feed.
+ * Model provides information needed to render a feed.
  */
-public class FeedRenderModel extends PageRenderModel {
+public class FeedRenderModel implements RenderModel {
     private HttpServletRequest request = null;
     private WebsiteData        weblog = null;
     private String             categoryPath = null;
-   
+    
+    protected static Log log =
+            LogFactory.getFactory().getInstance(FeedRenderModel.class); 
+    
     public FeedRenderModel() {
     }
     
@@ -55,6 +60,11 @@ public class FeedRenderModel extends PageRenderModel {
         Roller roller = RollerFactory.getRoller();
         UserManager umgr = roller.getUserManager();
         weblog = umgr.getWebsiteByHandle(parsed.getWeblogHandle(), Boolean.TRUE);
+    }
+    
+    /** Template context name to be used for model */
+    public String getModelName() {
+        return "model";
     }
     
     /**

@@ -50,7 +50,7 @@ import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 
 /**
- * Model provide information needed to render a weblog page.
+ * Model provides information needed to render a weblog page.
  */
 public class PageRenderModel implements RenderModel {
     private HttpServletRequest     request = null;
