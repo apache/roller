@@ -71,6 +71,7 @@ import org.apache.roller.util.DateUtil;
 public class WeblogPageModel implements PageModel {
     private HttpServletRequest     request = null;
     private WebsiteData            weblog = null;
+    private int                    offset = 0;
     private String                 weblogHandle = null;
     private String                 categoryPath = null;
     private String                 entryAnchor = null;
@@ -171,7 +172,7 @@ public class WeblogPageModel implements PageModel {
      * @param cat Category restriction or null for all categories
      * @return List of WeblogEntryDataWrapper objects.
      */
-    public List getWeblogEntries(String cat, int offset) {        
+    public List getWeblogEntries(String cat, int offset, int length) {        
         if (cat != null && "nil".equals(cat)) cat = null;
         List ret = new ArrayList();
         try {
@@ -225,7 +226,7 @@ public class WeblogPageModel implements PageModel {
                     WeblogEntryData.PUBLISHED, // status
                     null,          // sortby (null for pubTime)
                     offset,        // offset into results
-                    weblog.getEntryDisplayCount()); // max results to return
+                    length); // max results to return
             
             // wrap pojos
             ret = new ArrayList(entries.size());
@@ -247,7 +248,7 @@ public class WeblogPageModel implements PageModel {
      * Get most recent weblog entries for day or month specified by request.
      * @return Map of Lists of weblog entry objects, keyed by 8-char date strings.
      */
-    public Map getWeblogEntriesMonthMap(String cat, int offset) {
+    public Map getWeblogEntriesMonthMap(String cat, int offset, int length) {
         if (cat != null && "nil".equals(cat)) cat = null;
         Map ret = new HashMap();
         try {
@@ -280,7 +281,6 @@ public class WeblogPageModel implements PageModel {
                 cal = Calendar.getInstance();
             }
             
-            int limit = weblog.getEntryDisplayCount();
             Date startDate = null;
             Date endDate = date;
             if (endDate == null) endDate = new Date();
@@ -299,8 +299,8 @@ public class WeblogPageModel implements PageModel {
                     endDate,
                     chosenCatPath,
                     WeblogEntryData.PUBLISHED, 
-                    0, 
-                    weblog.getEntryDisplayCount());
+                    offset,  
+                    length);
             
             // need to wrap pojos
             java.util.Date key = null;
@@ -393,7 +393,7 @@ public class WeblogPageModel implements PageModel {
      * Get most recent approved and non-spam comments in weblog.
      * @return List of CommentDataWrapper objects.
      */
-    public List getComments(int offset) {        
+    public List getComments(int offset, int length) {        
         List recentComments = new ArrayList();
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
@@ -408,7 +408,7 @@ public class WeblogPageModel implements PageModel {
                     Boolean.FALSE, // no spam
                     true,          // we want reverse chrono order
                     offset,        // offset
-                    weblog.getEntryDisplayCount()); // length
+                    length);       // length
             
             // wrap pojos
             recentComments = new ArrayList(recent.size());

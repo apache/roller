@@ -11,12 +11,12 @@
   xmlns:atom="http://www.w3.org/2005/Atom" >
 <channel>
   <title>$utils.escapeHTML($config.getConfigProperty("site.name"))</title>
-  <link>$model.absoluteContextURL</link>
+  <link>$config.absoluteContextURL</link>
   <description>$utils.escapeHTML($config.getConfigProperty("site.description"))</description>
   <language>en-us</language>
   <copyright>Copyright #formatDate("yyyy" $model.now)</copyright>
   <lastBuildDate>$utilities.formatRfc822Date($model.now)</lastBuildDate>
-  <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTime:$config.rollerBuildUser)</generator>
+  <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
   #set($entries = $site.getWeblogEntries($null, $null, $cat, -1, 0, $config.getConfigProperty("site.newsfeeds.maxEntries")) )
   #showEntriesRSS20($entries)
 </channel>

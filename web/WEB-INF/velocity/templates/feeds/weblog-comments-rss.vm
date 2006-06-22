@@ -4,12 +4,12 @@
   xmlns:atom="http://www.w3.org/2005/Atom" >
 <channel>
   <title>$utils.escapeHTML($utils.removeHTML($model.weblog.name)) (Comments)</title>
-  <link>$model.absoluteContextURL</link>
+  <link>$config.absoluteContextURL</link>
   <description>$utils.escapeHTML($model.weblog.description)</description>
   <language>en-us</language>
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
-  <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTime:$config.rollerBuildUser)</generator>
+  <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
   #set($comments = $model.getComments(0, $model.weblog.entryDisplayCount))
   #showCommentsRSS20($comments)
 </channel>
