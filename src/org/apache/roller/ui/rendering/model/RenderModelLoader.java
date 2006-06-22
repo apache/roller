@@ -33,12 +33,12 @@ import org.apache.roller.util.Utilities;
 
 
 /**
- * Loads page models (read-only data access objects which implement PageModel) 
+ * Loads page models (read-only data access objects which implement RenderModel) 
  * and helpers (which "help" with HTML gen.) needed by page rendering process.
  */
-public class ModelLoader {
+public class RenderModelLoader {
     
-    private static Log log = LogFactory.getLog(ModelLoader.class);
+    private static Log log = LogFactory.getLog(RenderModelLoader.class);
     
     
     /** 
@@ -95,11 +95,24 @@ public class ModelLoader {
      *
      * This is the list of models defined by rendering.weblogPageModels
      */
-    public static void loadWeblogModels(Map model, Map initData)
+    public static void loadPageModels(Map model, Map initData)
             throws RollerException {
         
         String weblogModels = 
-                RollerConfig.getProperty("rendering.weblogPageModels");
+                RollerConfig.getProperty("rendering.pageRenderModels");
+        loadModels(weblogModels, model, initData);
+    }
+    
+    /**
+     * Load set of common weblog models.
+     *
+     * This is the list of models defined by rendering.weblogPageModels
+     */
+    public static void loadFeedModels(Map model, Map initData)
+            throws RollerException {
+        
+        String weblogModels = 
+                RollerConfig.getProperty("rendering.feedRenderModels");
         loadModels(weblogModels, model, initData);
     }
     
@@ -113,7 +126,7 @@ public class ModelLoader {
             throws RollerException {
         
         String weblogModels = 
-                RollerConfig.getProperty("rendering.sitePageModels");
+                RollerConfig.getProperty("rendering.siteRenderModels");
         loadModels(weblogModels, model, initData);
     }
     
@@ -134,7 +147,7 @@ public class ModelLoader {
             for (int i=0; i<weblogModels.length; i++) {
                 try { // don't die just because of one bad custom model
                     Class modelClass = Class.forName(weblogModels[i]);
-                    PageModel pageModel = (PageModel)modelClass.newInstance();
+                    RenderModel pageModel = (RenderModel)modelClass.newInstance();
                     pageModel.init(initData);             
                     model.put(pageModel.getModelName(), pageModel);
                 } catch (RollerException re) {
@@ -166,7 +179,7 @@ public class ModelLoader {
             for (int i=0; i<models.length; i++) {
                 currentModel = models[i];
                 Class modelClass = Class.forName(currentModel);
-                PageModel pageModel = (PageModel) modelClass.newInstance();
+                RenderModel pageModel = (RenderModel) modelClass.newInstance();
                 pageModel.init(initData);            
                 model.put(pageModel.getModelName(), pageModel);
             }

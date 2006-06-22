@@ -16,7 +16,7 @@
         href="$config.absoluteContextURL/$model.weblog.handle/feeds/entries/atom$postfix" />
     <updated>$utils.formatIso8601Date($model.weblog.lastModified)</updated>
     <generator uri="http://rollerweblogger.org" version="$config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)">Roller Weblogger</generator>
-    #set($entries = $site.getWeblogEntries($cat, 0, $model.weblog.entryDisplayCount))
+    #set($entries = $site.getWeblogEntries("nil" $cat, 0, $model.weblog.entryDisplayCount))
     #showEntriesAtom10($entries)
 </feed>
 

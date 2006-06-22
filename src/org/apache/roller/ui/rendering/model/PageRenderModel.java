@@ -46,33 +46,16 @@ import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 
-/*
- * Roller 3.0 development notes
- *
- * - I'm still using 'nil' for Velocity null, but perhaps that is unnecessary
- *   or nil-advised ;-) Maybe we can use an undefined variable like $nullValue
- *   insteaed to indicate null when using the new page models.
- *
- * - Note to self - make sure POJOs provide these methods:
- *      website.getPages()
- *      website.getComments()
- *      website.getPageByName(String name)
- *      webste.getDayHits()
- */
-
 /**
- * New Atlas minimalistic page model provides access to a weblog, possibly
- * a weblog entry and pageable collections of entries and comments.
+ * Model provide information needed to render a weblog page.
  */
-public class WeblogPageModel implements PageModel {
+public class PageRenderModel implements RenderModel {
     private HttpServletRequest     request = null;
     private WebsiteData            weblog = null;
     private int                    offset = 0;
-    private String                 weblogHandle = null;
     private String                 categoryPath = null;
     private String                 entryAnchor = null;
     private String                 dateString = null;
@@ -82,10 +65,10 @@ public class WeblogPageModel implements PageModel {
     private WeblogEntryDataWrapper lastEntry = null;
     
     protected static Log log =
-            LogFactory.getFactory().getInstance(WeblogPageModel.class);
+            LogFactory.getFactory().getInstance(PageRenderModel.class);
     
     /** Creates a new instance of AtlasWeblogPageModel */
-    public WeblogPageModel() {
+    public PageRenderModel() {
     }
     
     /** Template context name to be used for model */
@@ -96,32 +79,17 @@ public class WeblogPageModel implements PageModel {
     /** Init page model based on request */
     public void init(Map map) throws RollerException {
         HttpServletRequest request = (HttpServletRequest)map.get("request");
-        try {
-            // Can we parse it as a page request?
-            WeblogPageRequest parsed = new WeblogPageRequest(request);
-            weblogHandle = parsed.getWeblogHandle();
-            categoryPath = parsed.getWeblogCategory();
-            entryAnchor = parsed.getWeblogAnchor();
-            dateString = parsed.getWeblogDate();
-        } catch(Exception ignored) {}
-        if (weblogHandle == null) {
-            try {
-                // Can we parse it as feed request?
-                WeblogFeedRequest parsed = new WeblogFeedRequest(request);
-                weblogHandle = parsed.getWeblogHandle();
-                categoryPath = parsed.getWeblogCategory();
-            } catch(Exception e) {
-                // Can't parse as either; we've got a problem
-                throw new RollerException("ERROR: parsing request", e);
-            }            
-        }
+        WeblogPageRequest parsed = new WeblogPageRequest(request);
+        categoryPath = parsed.getWeblogCategory();
+        entryAnchor = parsed.getWeblogAnchor();
+        dateString = parsed.getWeblogDate();
         Roller roller = RollerFactory.getRoller();
         UserManager umgr = roller.getUserManager();
-        weblog = umgr.getWebsiteByHandle(weblogHandle, Boolean.TRUE);
+        weblog = umgr.getWebsiteByHandle(parsed.getWeblogHandle(), Boolean.TRUE);
     }
     
     /**
-     * Get website being displayed.
+     * Get weblog being displayed.
      */
     public WebsiteDataWrapper getWeblog() {
         return WebsiteDataWrapper.wrap(weblog);

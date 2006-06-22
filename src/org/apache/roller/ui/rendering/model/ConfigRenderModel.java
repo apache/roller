@@ -28,7 +28,7 @@ import org.apache.roller.ui.core.RollerContext;
 /**
  * New Atlas config page model provides access to site URLs and runtime configs.
  */
-public class ConfigPageModel implements PageModel {    
+public class ConfigRenderModel implements RenderModel {    
     private HttpServletRequest request = null;
     
     /** Hand-picked list of runtime properties to be made available */
@@ -50,8 +50,10 @@ public class ConfigPageModel implements PageModel {
             "site.newsfeeds.maxEntries"
     }); 
     
-    /** Creates a new instance of ConfigPageModel */
-    public ConfigPageModel() {}
+    /**
+     * Creates a new instance of ConfigRenderModel
+     */
+    public ConfigRenderModel() {}
 
     /** Template context name to be used for model */
     public String getModelName() {

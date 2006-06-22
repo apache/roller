@@ -51,7 +51,7 @@ import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
-import org.apache.roller.ui.rendering.model.ModelLoader;
+import org.apache.roller.ui.rendering.model.RenderModelLoader;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheHandler;
@@ -259,23 +259,23 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             initData.put("request", request);
             
             // Feeds get the weblog specific page model
-            ModelLoader.loadWeblogModels(model, initData);
+            RenderModelLoader.loadPageModels(model, initData);
             
-            // special handling for site wide feed
+            // special handling for site wide weblog
             if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
-                ModelLoader.loadSiteModels(model, initData);
+                RenderModelLoader.loadSiteModels(model, initData);
             }
             
             // add helpers
-            ModelLoader.loadUtilityHelpers(model);
-            ModelLoader.loadWeblogHelpers(pageContext, model);
-            ModelLoader.loadPluginHelpers(weblog, model);
+            RenderModelLoader.loadUtilityHelpers(model);
+            RenderModelLoader.loadWeblogHelpers(pageContext, model);
+            RenderModelLoader.loadPluginHelpers(weblog, model);
 
             // Feeds get weblog's custom models too
-            ModelLoader.loadCustomModels(weblog, model, initData);
+            RenderModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            ModelLoader.loadOldModels(response, request, model);
+            RenderModelLoader.loadOldModels(response, request, model);
             
         } catch (RollerException ex) {
             log.error("Error loading model objects for page", ex);

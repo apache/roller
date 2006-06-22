@@ -7,7 +7,7 @@
         href="$config.absoluteContextURL/atom/$model.weblog.handle/comments" />
     <updated>$utils.formatIso8601Date($model.weblog.lastModified)</updated>
     <generator uri="http://rollerweblogger.org" version="$config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)">Roller Weblogger</generator>
-  #set($comments = $model.getComments(0, $model.weblog.entryDisplayCount))
+  #set($comments = $model.getComments())
   #showCommentsAtom10($comments)
 </feed>
 
