@@ -39,9 +39,9 @@ import org.apache.roller.pojos.wrapper.PlanetSubscriptionDataWrapper;
  * Page model that provides access to planet aggregations, feeds and 
  * subscriptions for display on a frontpage weblog.
  */
-public class PlanetPageModel implements PageModel {
+public class PlanetRenderModel implements RenderModel {
     protected static Log log = 
-            LogFactory.getFactory().getInstance(PlanetPageModel.class);
+            LogFactory.getFactory().getInstance(PlanetRenderModel.class);
     
     public String getModelName() {
         return "planetPageModel";

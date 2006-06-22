@@ -46,9 +46,9 @@ import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
  * Page model that provides access to site-wide users, weblogs and entries for
  * display on a frontpage weblog.
  */
-public class SitePageModel implements PageModel {
+public class SiteRenderModel implements RenderModel {
     protected static Log log = 
-            LogFactory.getFactory().getInstance(SitePageModel.class);
+            LogFactory.getFactory().getInstance(SiteRenderModel.class);
     
     public String getModelName() {
         return "sitePageModel";

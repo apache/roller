@@ -21,9 +21,9 @@ import java.util.Map;
 import org.apache.roller.RollerException;
 
 /**
- * Represents a page model to be used in the blog/feed templates.
+ * Represents a render model to be used in the blog/feed templates.
  */
-public interface PageModel {    
+public interface RenderModel {    
     /** 
      * Name to be used for the model in template context. 
      */

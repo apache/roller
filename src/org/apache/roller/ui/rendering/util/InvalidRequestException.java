@@ -18,12 +18,14 @@
 
 package org.apache.roller.ui.rendering.util;
 
+import org.apache.roller.RollerException;
+
 
 /**
  * An InvalidRequestException is thrown by the ParsedRequest class or any of
  * its subclasses when the request being parsed is invalid in any way.
  */
-public class InvalidRequestException extends Exception {
+public class InvalidRequestException extends RollerException {
     
     public InvalidRequestException(String msg) {
         super(msg);

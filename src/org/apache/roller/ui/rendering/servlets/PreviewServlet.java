@@ -42,7 +42,7 @@ import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
-import org.apache.roller.ui.rendering.model.ModelLoader;
+import org.apache.roller.ui.rendering.model.RenderModelLoader;
 import org.apache.roller.ui.rendering.util.WeblogPreviewRequest;
 
 
@@ -166,23 +166,23 @@ public class PreviewServlet extends HttpServlet {
             initData.put("request", request);
             
             // Feeds get the weblog specific page model
-            ModelLoader.loadWeblogModels(model, initData);
+            RenderModelLoader.loadPageModels(model, initData);
             
-            // special handling for site wide feed
+            // special handling for site wide weblog
             if (rollerContext.isSiteWideWeblog(tmpWebsite.getHandle())) {
-                ModelLoader.loadSiteModels(model, initData);
+                RenderModelLoader.loadSiteModels(model, initData);
             }
             
             // add helpers
-            ModelLoader.loadUtilityHelpers(model);
-            ModelLoader.loadWeblogHelpers(pageContext, model);
-            ModelLoader.loadPluginHelpers(tmpWebsite, model);
+            RenderModelLoader.loadUtilityHelpers(model);
+            RenderModelLoader.loadWeblogHelpers(pageContext, model);
+            RenderModelLoader.loadPluginHelpers(tmpWebsite, model);
 
             // Feeds get weblog's custom models too
-            ModelLoader.loadCustomModels(tmpWebsite, model, initData);
+            RenderModelLoader.loadCustomModels(tmpWebsite, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            ModelLoader.loadOldModels(response, request, model);
+            RenderModelLoader.loadOldModels(response, request, model);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
