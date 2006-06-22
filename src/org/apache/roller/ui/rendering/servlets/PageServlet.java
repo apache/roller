@@ -46,9 +46,7 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
@@ -149,24 +147,10 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             return;
         }
         
-        // first off lets parse the incoming request and validate it
-        // TODO: this is old logic from pre 3.0 that we'll remove when possible
-        RollerRequest rreq = null;
-        PageContext pageContext = null;
-        try {
-            pageContext = JspFactory.getDefaultFactory().getPageContext(
+        PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
-            
-            rreq = RollerRequest.getRollerRequest(pageContext);
-            
-        } catch (Exception e) {
-            // An error initializing the request is considered to be a 404
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            log.debug("ERROR initializing RollerRequest", e);
-            return;
-        }
         
-        // determine what to render
+        // figure out what we are going to render
         Template page = null;
         
         // If this is a popup request, then deal with it specially
@@ -185,19 +169,20 @@ public class PageServlet extends HttpServlet implements CacheHandler {
                         "dummy_template", new Date());
             }
             
-            rreq.setPage(page);
+        // If request specified the page, then go with that
+        } else if (pageRequest.getWeblogPage() != null) {
+            try {
+                page = weblog.getPageByLink(pageRequest.getWeblogPage());
+            } catch(Exception e) {
+                log.error("Error getting page: "+pageRequest.getWeblogPage(), e);
+            }
             
-        } else if (rreq.getPage() != null) {
-            // If request specified the page, then go with that
-            page = rreq.getPage();
-            
+        // If page not available from request, then use weblog's default
         } else {
-            // If page not available from request, then use weblog's default
             try {
                 page = weblog.getDefaultPage();
-                rreq.setPage(page);
             } catch(Exception e) {
-                log.error(e);
+                log.error("Error getting weblogs default page", e);
             }
         }
         
