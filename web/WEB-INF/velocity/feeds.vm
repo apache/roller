@@ -17,9 +17,9 @@
         <link rel="alternate" type="text/html" href="$entry.permalink"/>
         <published>$utils.formatIso8601Date($entry.pubTime)</published>
         <updated>$utils.formatIso8601Date($entry.updateTime)</updated> 
-        <category term="$utils.escapeHTML($entry.category.path, true)" label="$utils.escapeHTML($entry.category.name)" />
-        #if( $utils.isNotEmpty($entry.summary))<summary type="html">$plugins.render($entry, $entry.summary, false)</summary>#end
-        #if( $utils.isNotEmpty($entry.text) )<content type="html">$plugins.render($entry, $entry.text, false)</content>#end
+        <category term="$utils.escapeHTML($entry.category.path)" label="$utils.escapeHTML($entry.category.name)" />
+        #if( $utils.isNotEmpty($entry.summary))<summary type="html">$utils.escapeHTML($plugins.render($entry, $entry.summary, false))</summary>#end
+        #if( $utils.isNotEmpty($entry.text) )<content type="html">$utils.escapeHTML($plugins.render($entry, $entry.text, false))</content>#end
         #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
         #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
         #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
@@ -42,10 +42,10 @@
     <source url="$utils.escapeHTML($entry.link)">$utils.escapeHTML($entry.link)</source>
     #end
     <pubDate>$utils.formatRfc822Date($entry.pubTime)</pubDate>
-    <category>$utils.escapeHTML($entry.category.name,true)</category>
-    #if( $utils.isNotEmpty($entry.summary) && $utils.isNotEmpty($entry.text))<atom:summary type="html">$plugins.render($entry, $entry.summary, false)</atom:summary>#end
-    #if( $utils.isNotEmpty($entry.summary) && $utils.isEmpty($entry.text))<description>$plugins.render($entry, $entry.summary, false)</description>#end
-    #if( $utils.isNotEmpty($entry.text) )<description>$plugins.render($entry, $entry.text, false)</description>#end
+    <category>$utils.escapeHTML($entry.category.name)</category>
+    #if( $utils.isNotEmpty($entry.summary) && $utils.isNotEmpty($entry.text))<atom:summary type="html">$utils.escapeHTML($plugins.render($entry, $entry.summary, false))</atom:summary>#end
+    #if( $utils.isNotEmpty($entry.summary) && $utils.isEmpty($entry.text))<description>$utils.escapeHTML($plugins.render($entry, $entry.summary, false))</description>#end
+    #if( $utils.isNotEmpty($entry.text) )<description>$utils.escapeHTML($plugins.render($entry, $entry.text, false))</description>#end
     #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
     #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
     #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
@@ -61,46 +61,44 @@
 #end
 
 #macro(showCommentsAtom10 $comments)
-    #foreach($comment in $comment)
+    #foreach($comment in $comments)
     <entry>
-        <!-- TODO: 3.0 Fix this, it's not a unique ID -->
-        <id>$comment.weblogEntry.permalink</id> 
+        <id>$comment.permalink</id> 
         <title type="html">Re: $utils.escapeHTML($comment.weblogEntry.title)</title>
         <author><name>$utils.escapeHTML($utils.removeHTML($comment.name))</name></author>
         <link rel="alternate" type="text/html" href="$comment.weblogEntry.permalink"/>
         <published>$utils.formatIso8601Date($comment.postTime)</published>
         <updated>$utils.formatIso8601Date($comment.postTime)</updated> 
         #if($config.getBooleanProperty("users.comments.escapehtml"))
-            #set($content = $utils.escapeHTML($utils.removeHTML($content)))
+            #set($content = $utils.escapeHTML($utils.removeHTML($comment.content)))
         #else 
-            #set($content = $utilities.transformToHTMLSubset($utilities.escapeHTML($content)))
+            #set($content = $utils.escapeHTML($utils.transformToHTMLSubset($utils.escapeHTML($comment.content))))
         #end
         #if($config.getBooleanProperty("users.comments.autoformat"))
-            #set($content = $utilities.autoformat($content))
+            #set($content = $utils.autoformat($content))
         #end
-        #set($content = $utilities.addNofollow($content))
-        <content type="html">${content}</content>
+        #set($content = $utils.addNofollow($content))
+        <content type="html">${content} $comment.content</content>
     </entry>
     #end
 #end
 
-#macro(showCommentsRSS20 $entries)
-    #foreach($entry in $entries)
+#macro(showCommentsRSS20 $comments)
+    #foreach($comment in $comments)
     <item>
-        <!-- TODO: 3.0 Fix this, it's not a unique ID -->
-        <guid isPermaLink="true">$comment.weblogEntry.permalink</guid>
+        <guid isPermaLink="true">$comment.permalink</guid>
         <title>Re: $utils.escapeHTML($comment.weblogEntry.title)</title>
         <dc:creator>$utils.escapeHTML($utils.removeHTML($comment.name))</dc:creator>
-        <pubDate>$utils.formatIso8601Date($comment.postTime)</pubDate>
+        <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>
         #if($config.getBooleanProperty("users.comments.escapehtml"))
-            #set($content = $utils.escapeHTML($utils.removeHTML($content)))
+            #set($content = $utils.escapeHTML($utils.removeHTML($comment.content)))
         #else 
-            #set($content = $utilities.transformToHTMLSubset($utilities.escapeHTML($content)))
+            #set($content = $utils.escapeHTML($utils.transformToHTMLSubset($utils.escapeHTML($comment.content))))
         #end
         #if($config.getBooleanProperty("users.comments.autoformat"))
-            #set($content = $utilities.autoformat($content))
+            #set($content = $utils.autoformat($content))
         #end
-        #set($content = $utilities.addNofollow($content))
+        #set($content = $utils.addNofollow($content))
         <description>${content}</description>
     </item>
     #end
