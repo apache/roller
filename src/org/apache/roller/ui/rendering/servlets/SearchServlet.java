@@ -1,0 +1,207 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
+package org.apache.roller.ui.rendering.servlets;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspFactory;
+import javax.servlet.jsp.PageContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.ui.rendering.Renderer;
+import org.apache.roller.ui.rendering.RendererManager;
+import org.apache.roller.ui.rendering.model.RenderModel;
+import org.apache.roller.ui.rendering.model.RenderModelLoader;
+import org.apache.roller.ui.rendering.model.SearchResultsRenderModel;
+import org.apache.roller.ui.rendering.util.InvalidRequestException;
+import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
+import org.apache.roller.util.cache.CachedContent;
+
+
+/**
+ * Handles search queries for weblogs.
+ *
+ * @web.servlet name="SearchServlet" load-on-startup="5"
+ * @web.servlet-mapping url-pattern="/search/*"
+ */
+public class SearchServlet extends HttpServlet {
+    
+    private static Log log = LogFactory.getLog(SearchServlet.class);
+    
+    
+    /**
+     * Init method for this servlet
+     */
+    public void init(ServletConfig servletConfig) throws ServletException {
+        
+        super.init(servletConfig);
+        
+        log.info("Initializing SearchServlet");
+    }
+    
+    
+    /**
+     * Handle GET requests for weblog pages.
+     */
+    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        log.debug("Entering");
+        
+        WebsiteData weblog = null;
+        WeblogSearchRequest searchRequest = null;
+        
+        // first off lets parse the incoming request and validate it
+        try {
+            searchRequest = new WeblogSearchRequest(request);
+            
+            // now make sure the specified weblog really exists
+            UserManager userMgr = RollerFactory.getRoller().getUserManager();
+            weblog = userMgr.getWebsiteByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
+            
+        } catch(InvalidRequestException ire) {
+            // An error initializing the request is considered to be a 404
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            log.error("Bad Request: "+ire.getMessage());
+            return;
+            
+        } catch(RollerException re) {
+            // error looking up the weblog, we assume it doesn't exist
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            log.warn("Unable to lookup weblog ["+
+                    searchRequest.getWeblogHandle()+"] "+re.getMessage());
+            return;
+        }
+        
+        // get their default page template to use for rendering
+        Template page = null;
+        try {
+            page = weblog.getDefaultPage();
+            if(page == null) {
+                throw new RollerException("Could not lookup default page "+
+                        "for weblog "+weblog.getHandle());
+            }
+        } catch(Exception e) {
+            log.error("Error getting weblogs default page", e);
+        }
+        
+        // set the content type
+        response.setContentType("text/html; charset=utf-8");
+        
+        // looks like we need to render content
+        Map model = new HashMap();
+        try {
+            RollerContext rollerContext = RollerContext.getRollerContext();
+            PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
+                    this, request, response,"", true, 8192, true);
+            
+            // populate the rendering model
+            Map initData = new HashMap();
+            initData.put("request", request);
+            initData.put("searchRequest", searchRequest);
+            
+            // default weblog models
+            RenderModelLoader.loadSearchModels(model, initData);
+            
+            // special site wide models
+            if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
+                RenderModelLoader.loadSiteModels(model, initData);
+            }
+            
+            // add helpers
+            RenderModelLoader.loadUtilityHelpers(model);
+            RenderModelLoader.loadWeblogHelpers(pageContext, model);
+            RenderModelLoader.loadPluginHelpers(weblog, model);
+
+            // Feeds get weblog's custom models too
+            RenderModelLoader.loadCustomModels(weblog, model, initData);
+            
+            // ick, gotta load pre-3.0 model stuff as well :(
+            RenderModelLoader.loadOldModels(model, request, response, pageContext);
+            
+            // manually add search model again to support pre-3.0 weblogs
+            RenderModel searchModel = new SearchResultsRenderModel();
+            searchModel.init(initData);
+            model.put("searchResults", searchModel);
+            
+        } catch (RollerException ex) {
+            log.error("Error loading model objects for page", ex);
+            
+            if(!response.isCommitted()) response.reset();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        
+        // lookup Renderer we are going to use
+        Renderer renderer = null;
+        try {
+            log.debug("Looking up renderer");
+            renderer = RendererManager.getRenderer("velocity", page.getId());
+        } catch(Exception e) {
+            // nobody wants to render my content :(
+            log.error("Couldn't find renderer for rsd template", e);
+            
+            if(!response.isCommitted()) response.reset();
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        
+        // render content
+        CachedContent rendererOutput = new CachedContent(4096);
+        try {
+            log.debug("Doing rendering");
+            renderer.render(model, rendererOutput.getCachedWriter());
+            
+            // flush rendered output and close
+            rendererOutput.flush();
+            rendererOutput.close();
+        } catch(Exception e) {
+            // bummer, error during rendering
+            log.error("Error during rendering for rsd template", e);
+            
+            if(!response.isCommitted()) response.reset();
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        
+        
+        // post rendering process
+        
+        // flush rendered content to response
+        log.debug("Flushing response output");
+        response.setContentLength(rendererOutput.getContent().length);
+        response.getOutputStream().write(rendererOutput.getContent());
+        
+        log.debug("Exiting");
+    }
+    
+}
