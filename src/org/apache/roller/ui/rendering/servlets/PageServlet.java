@@ -91,7 +91,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         
         super.init(servletConfig);
         
-        log.info("Initializing weblog page servlet");
+        log.info("Initializing PageServlet");
         
         this.excludeOwnerPages = 
                 RollerConfig.getBooleanProperty(this.CACHE_ID+".excludeOwnerEditPages");
@@ -109,7 +109,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             }
         }
         
-        log.info(cacheProps);
+        log.info("Page cache = "+cacheProps);
         
         contentCache = CacheManager.constructCache(this, cacheProps);
     }
