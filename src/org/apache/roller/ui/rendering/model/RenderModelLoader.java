@@ -77,15 +77,16 @@ public class RenderModelLoader {
      * Load old page models, but only if velocity.pagemodel.classname defined.
      */
     public static void loadOldModels(
-        HttpServletResponse response, 
-        HttpServletRequest  request,
-        Map model) throws RollerException {
-
+            Map model,
+            HttpServletRequest  request,
+            HttpServletResponse response,
+            PageContext pageContext) throws RollerException {
+        
         // Only load old model if it's specified
         String useOldModel = 
             RollerConfig.getProperty("velocity.pagemodel.classname");        
         if (useOldModel != null) { 
-            ContextLoader.setupContext(model, request, response);            
+            ContextLoader.setupContext(model, request, response, pageContext);            
         }
     }
     
@@ -103,10 +104,11 @@ public class RenderModelLoader {
         loadModels(weblogModels, model, initData);
     }
     
+    
     /**
-     * Load set of common weblog models.
+     * Load set of common feed models.
      *
-     * This is the list of models defined by rendering.weblogPageModels
+     * This is the list of models defined by rendering.feedRendererModels
      */
     public static void loadFeedModels(Map model, Map initData)
             throws RollerException {
@@ -114,6 +116,20 @@ public class RenderModelLoader {
         String weblogModels = 
                 RollerConfig.getProperty("rendering.feedRenderModels");
         loadModels(weblogModels, model, initData);
+    }
+    
+    
+    /**
+     * Load set of common search models.
+     *
+     * This is the list of models defined by rendering.searchRendererModels
+     */
+    public static void loadSearchModels(Map model, Map initData)
+            throws RollerException {
+        
+        String searchModels = 
+                RollerConfig.getProperty("rendering.searchRenderModels");
+        loadModels(searchModels, model, initData);
     }
     
     
