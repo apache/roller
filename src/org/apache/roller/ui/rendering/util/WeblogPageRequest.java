@@ -52,6 +52,9 @@ public class WeblogPageRequest extends ParsedRequest {
     private String weblogDate = null;
     
     
+    public WeblogPageRequest() {}
+    
+    
     /**
      * Construct the WeblogPageRequest by parsing the incoming url
      */
@@ -208,6 +211,34 @@ public class WeblogPageRequest extends ParsedRequest {
     
     public String getPageType() {
         return pageType;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
+    }
+
+    public void setPageType(String pageType) {
+        this.pageType = pageType;
+    }
+
+    public void setWeblogHandle(String weblogHandle) {
+        this.weblogHandle = weblogHandle;
+    }
+
+    public void setWeblogAnchor(String weblogAnchor) {
+        this.weblogAnchor = weblogAnchor;
+    }
+
+    public void setWeblogPage(String weblogPage) {
+        this.weblogPage = weblogPage;
+    }
+
+    public void setWeblogCategory(String weblogCategory) {
+        this.weblogCategory = weblogCategory;
+    }
+
+    public void setWeblogDate(String weblogDate) {
+        this.weblogDate = weblogDate;
     }
     
 }

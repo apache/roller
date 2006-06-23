@@ -32,6 +32,9 @@ public class WeblogRequest extends ParsedRequest {
     private String weblogHandle = null;
     
     
+    public WeblogRequest() {}
+    
+    
     public WeblogRequest(HttpServletRequest request) throws InvalidRequestException {
         
         // let our parent take care of their business first
@@ -61,6 +64,10 @@ public class WeblogRequest extends ParsedRequest {
     
     public String getWeblogHandle() {
         return weblogHandle;
+    }
+
+    public void setWeblogHandle(String weblogHandle) {
+        this.weblogHandle = weblogHandle;
     }
     
 }
