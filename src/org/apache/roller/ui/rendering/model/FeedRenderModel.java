@@ -15,6 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
@@ -38,34 +39,41 @@ import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 
+
 /**
  * Model provides information needed to render a feed.
  */
 public class FeedRenderModel implements RenderModel {
-    private HttpServletRequest request = null;
+    
     private WebsiteData        weblog = null;
     private String             categoryPath = null;
     
-    protected static Log log =
-            LogFactory.getFactory().getInstance(FeedRenderModel.class); 
+    protected static Log log = LogFactory.getLog(FeedRenderModel.class); 
     
-    public FeedRenderModel() {
-    }
     
-    /** Init page model based on request */
-    public void init(Map map) throws RollerException {
-        HttpServletRequest request = (HttpServletRequest)map.get("request");
-        WeblogFeedRequest parsed = new WeblogFeedRequest(request);
+    public FeedRenderModel() {}
+    
+    
+    public void init(Map initData) throws RollerException {
+        
+        // we expect the init data to contain a feedRequest object
+        WeblogFeedRequest parsed = (WeblogFeedRequest) initData.get("feedRequest");
+        if(parsed == null) {
+            throw new RollerException("expected feedRequest from init data");
+        }
+        
         categoryPath = parsed.getWeblogCategory();
         Roller roller = RollerFactory.getRoller();
         UserManager umgr = roller.getUserManager();
         weblog = umgr.getWebsiteByHandle(parsed.getWeblogHandle(), Boolean.TRUE);
     }
     
+    
     /** Template context name to be used for model */
     public String getModelName() {
         return "model";
     }
+    
     
     /**
      * Get weblog being displayed.
@@ -73,7 +81,8 @@ public class FeedRenderModel implements RenderModel {
     public WebsiteDataWrapper getWeblog() {
         return WebsiteDataWrapper.wrap(weblog);
     }
-
+    
+    
     /**
      * Get category path or name specified by request.
      */
@@ -135,4 +144,5 @@ public class FeedRenderModel implements RenderModel {
         }
         return recentComments;
     }
+    
 }

@@ -87,7 +87,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         
         super.init(servletConfig);
         
-        log.info("Initializing weblog feed servlet");
+        log.info("Initializing FeedServlet");
         
         Map cacheProps = new HashMap();
         Enumeration allProps = RollerConfig.keys();
@@ -102,7 +102,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             }
         }
         
-        log.info(cacheProps);
+        log.info("Feed cache = "+cacheProps);
         
         contentCache = CacheManager.constructCache(this, cacheProps);
     }
@@ -195,6 +195,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
+            initData.put("feedRequest", feedRequest);
             
             // Feeds get the weblog specific page model
             RenderModelLoader.loadFeedModels(model, initData);
