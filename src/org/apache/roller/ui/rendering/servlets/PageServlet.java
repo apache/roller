@@ -257,6 +257,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
+            initData.put("pageRequest", pageRequest);
             
             // Feeds get the weblog specific page model
             RenderModelLoader.loadPageModels(model, initData);
@@ -275,7 +276,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             RenderModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            RenderModelLoader.loadOldModels(response, request, model);
+            RenderModelLoader.loadOldModels(model, request, response, pageContext);
             
         } catch (RollerException ex) {
             log.error("Error loading model objects for page", ex);

@@ -182,7 +182,7 @@ public class PreviewServlet extends HttpServlet {
             RenderModelLoader.loadCustomModels(tmpWebsite, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            RenderModelLoader.loadOldModels(response, request, model);
+            RenderModelLoader.loadOldModels(model, request, response, pageContext);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);

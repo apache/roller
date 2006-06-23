@@ -88,8 +88,8 @@ public class ContextLoader {
     public static void setupContext(
             Map                 ctx,
             HttpServletRequest  request,
-            HttpServletResponse response)
-            throws RollerException {
+            HttpServletResponse response,
+            PageContext pageContext) throws RollerException {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
@@ -105,7 +105,6 @@ public class ContextLoader {
         
         // grab data from the request that we'll need to use
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        PageContext pageContext = rreq.getPageContext();
         WebsiteData weblog = rreq.getWebsite();
         WeblogEntryData entry = rreq.getWeblogEntry();
         WeblogCategoryData category = rreq.getWeblogCategory();
