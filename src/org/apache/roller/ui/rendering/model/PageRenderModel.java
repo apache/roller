@@ -77,9 +77,17 @@ public class PageRenderModel implements RenderModel {
     }
     
     /** Init page model based on request */
-    public void init(Map map) throws RollerException {
-        HttpServletRequest request = (HttpServletRequest)map.get("request");
-        WeblogPageRequest parsed = new WeblogPageRequest(request);
+    public void init(Map initData) throws RollerException {
+        
+        HttpServletRequest request = (HttpServletRequest) initData.get("request");
+        this.request = request;
+        
+        // we expect the init data to contain a pageRequest object
+        WeblogPageRequest parsed = (WeblogPageRequest) initData.get("pageRequest");
+        if(parsed == null) {
+            throw new RollerException("expected pageRequest from init data");
+        }
+        
         categoryPath = parsed.getWeblogCategory();
         entryAnchor = parsed.getWeblogAnchor();
         dateString = parsed.getWeblogDate();
