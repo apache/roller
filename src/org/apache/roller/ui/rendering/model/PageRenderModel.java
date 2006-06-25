@@ -163,8 +163,8 @@ public class PageRenderModel implements RenderModel {
     public List getRecentWeblogEntries(String cat, int length) {  
         if (cat != null && "nil".equals(cat)) cat = null;
         if (length > 100) length = 100;
-        if (length < 1) return Collections.emptyList();
         List recentEntries = new ArrayList();
+        if (length < 1) return recentEntries;
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             List recent = wmgr.getWeblogEntries(
@@ -197,8 +197,8 @@ public class PageRenderModel implements RenderModel {
      */
     public List getRecentComments(int length) {   
         if (length > 100) length = 100;
-        if (length < 1) return Collections.emptyList();
         List recentComments = new ArrayList();
+        if (length < 1) return recentComments;
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             List recent = wmgr.getComments(
