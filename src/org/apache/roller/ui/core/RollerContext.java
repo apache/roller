@@ -503,7 +503,8 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
      */
     public boolean isFrontPageWeblog(String weblogHandle) {
         
-        String frontPageHandle = RollerConfig.getProperty("frontpage.weblog.handle");
+        String frontPageHandle = RollerRuntimeConfig.getProperty(
+                "site.frontpage.weblog.handle");
         
         return (frontPageHandle.equals(weblogHandle));
     }
@@ -516,8 +517,8 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
      */
     public boolean isSiteWideWeblog(String weblogHandle) {
         
-        boolean siteWide = 
-                RollerConfig.getBooleanProperty("frontpage.weblog.aggregatedFeeds");
+        boolean siteWide = RollerRuntimeConfig.getBooleanProperty(
+                "site.frontpage.weblog.aggregated");
         
         return (isFrontPageWeblog(weblogHandle) && siteWide);
     }

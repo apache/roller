@@ -15,13 +15,24 @@
  */
 package org.apache.roller.business;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
-import org.apache.roller.RollerTestBase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.TestUtils;
+
 import org.apache.roller.model.PlanetManager;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.tasks.RefreshEntriesTask;
 import org.apache.roller.ui.core.tasks.SyncWebsitesTask;
 
@@ -29,37 +40,96 @@ import org.apache.roller.ui.core.tasks.SyncWebsitesTask;
  * Test database implementation of PlanetManager for local feeds.
  * @author Dave Johnson
  */
-public class PlanetManagerLocalTest extends RollerTestBase {
+public class PlanetManagerLocalTest extends TestCase {
+    public static Log log = LogFactory.getLog(PlanetManagerLocalTest.class);
+    
+    UserData testUser = null;
+    WebsiteData testWeblog = null;
     
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(PlanetManagerLocalTest.class);
+        TestRunner.run(PlanetManagerLocalTest.class);
     }
     
+    /**
+     * All tests in this suite require a user and a weblog.
+     */
     public void setUp() throws Exception {
-        super.setUp();
-        super.setUpTestWeblogs();
+        
+        try {
+            testUser = TestUtils.setupUser("entryTestUser");
+            testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
+            
+            WeblogEntryData testEntry1 = new WeblogEntryData();
+            testEntry1.setTitle("entryTestEntry1");
+            testEntry1.setLink("testEntryLink1");
+            testEntry1.setText("blah blah entry1");
+            testEntry1.setAnchor("testEntryAnchor1");
+            testEntry1.setPubTime(new Timestamp(new Date().getTime()));
+            testEntry1.setUpdateTime(new Timestamp(new Date().getTime()));
+            testEntry1.setWebsite(testWeblog);
+            testEntry1.setCreator(testUser);
+            testEntry1.setCategory(testWeblog.getDefaultCategory());
+            RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
+
+            WeblogEntryData testEntry2 = new WeblogEntryData();
+            testEntry2.setTitle("entryTestEntry2");
+            testEntry2.setLink("testEntryLink2");
+            testEntry2.setText("blah blah entry2");
+            testEntry2.setAnchor("testEntryAnchor2");
+            testEntry2.setPubTime(new Timestamp(new Date().getTime()));
+            testEntry2.setUpdateTime(new Timestamp(new Date().getTime()));
+            testEntry2.setWebsite(testWeblog);
+            testEntry2.setCreator(testUser);
+            testEntry2.setCategory(testWeblog.getDefaultCategory());
+            RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
+
+            WeblogEntryData testEntry3 = new WeblogEntryData();
+            testEntry3.setTitle("entryTestEntry3");
+            testEntry3.setLink("testEntryLink3");
+            testEntry3.setText("blah blah entry3");
+            testEntry3.setAnchor("testEntryAnchor3");
+            testEntry3.setPubTime(new Timestamp(new Date().getTime()));
+            testEntry3.setUpdateTime(new Timestamp(new Date().getTime()));
+            testEntry3.setWebsite(testWeblog);
+            testEntry3.setCreator(testUser);
+            testEntry3.setCategory(testWeblog.getDefaultCategory());           
+            RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
+
+            TestUtils.endSession(true);
+            
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new Exception("Test setup failed", ex);
+        }
     }
     
     public void tearDown() throws Exception {
-        super.tearDown();
-        super.tearDownTestWeblogs();
+        
+        try {
+            TestUtils.teardownWeblog(testWeblog.getId());
+            TestUtils.teardownUser(testUser.getId());
+            TestUtils.endSession(true);
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new Exception("Test teardown failed", ex);
+        }
     }
+    
     public void testRefreshEntries() {
         try {      
-            PlanetManager planet = getRoller().getPlanetManager();
+            PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
             
             // run sync task to fill aggregator with websites created by super
             SyncWebsitesTask syncTask = new SyncWebsitesTask();
-            syncTask.init(getRoller(), "dummy");
+            syncTask.init(RollerFactory.getRoller(), "dummy");
             syncTask.run();           
             
             RefreshEntriesTask refreshTask = new RefreshEntriesTask();
-            refreshTask.init(getRoller(), "dummy");
+            refreshTask.init(RollerFactory.getRoller(), "dummy");
             refreshTask.run();
             
             List agg = planet.getAggregation(null, null, 0, -1);
-            int size = agg.size();
-            assertEquals(mBlogCount * mExpectedPublishedEntryCount, size);
+            assertEquals(3, agg.size());
         }
         catch (Exception e) {
             e.printStackTrace();

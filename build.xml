@@ -830,6 +830,8 @@ ro.buildUser=${user.name}
 </target>
 
 <target name="build-tests" depends="build" description="Build unit tests" >
+    
+    <delete dir="${ro.build}/tests" failonerror="false" />
 
     <mkdir dir="${build.tests}" />
     <mkdir dir="${build.tests}/logs" />
@@ -918,6 +920,7 @@ ro.buildUser=${user.name}
         <formatter type="xml"/>
         <batchtest toDir="${build.reports}/business/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
+		<include name="org/apache/roller/business/BookmarkTest.class"/>
 		<include name="org/apache/roller/business/UserTest.class"/> 
 	        <include name="org/apache/roller/business/WeblogTest.class"/>
 	        <include name="org/apache/roller/business/PermissionTest.class"/>
@@ -930,7 +933,6 @@ ro.buildUser=${user.name}
 		<include name="org/apache/roller/business/FileManagerTest.class"/>
 		<include name="org/apache/roller/business/IndexManagerTest.class"/>
 	        <include name="org/apache/roller/business/PlanetManagerTest.class"/>
-		<include name="org/apache/roller/business/BookmarkTest.class"/>
 		<include name="org/apache/roller/business/RefererTest.class"/>
             </fileset>
         </batchtest>
@@ -962,16 +964,15 @@ ro.buildUser=${user.name}
     <junit fork="true" dir="${build.tests}" showOutput="true">
         <batchtest toDir="${build.reports}/presentation/xml">
             <fileset dir="${build.tests}/WEB-INF/classes">
-                <include name="org/apache/roller/presentation/**/*Test.class"/> 
-	            <exclude name="**/ApplicationResourcesTest.class"/>
-	            <exclude name="**/ArchiveParserTest.class"/>
-	            <exclude name="**/AtomCollectionTest.class"/>
-	            <exclude name="**/AtomServletTest.class"/>
-	            <exclude name="**/ExportRssTest.class"/>
-	            <exclude name="**/LanguageUtilTest.class"/>            
+                <include name="org/apache/roller/ui/authoring/struts/actions/BookmarksActionTest.class"/>           
+                <include name="org/apache/roller/ui/authoring/struts/actions/WeblogEntryActionTest.class"/>           
+                <include name="org/apache/roller/webservices/xmlrpc/RollerXmlRpcServerTest.class"/>  
+                <include name="org/apache/roller/ui/rendering/velocity/plugins/smileys/SmileysTest.class"/>           
+                <!--
+                <include name="org/apache/roller/ui/rendering/velocity/plugins/textile/TextileTest.class" /> 
+                -->
             </fileset>
         </batchtest>
-        <!--arg value="org.apache.roller.presentation.velocity.ExportRssTest"/-->
         <jvmarg value="-Dro.build=${ro.build}"/>
         <jvmarg value="-Dcatalina.base=${build.tests}"/> <!-- needed to satisfy ref in log4j.properties -->
         <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>

@@ -57,22 +57,11 @@ public class RenderModelLoader {
     /**
      * Load generic utility helpers.
      */
-    public static void loadUtilityHelpers(Map model) {
-        UtilitiesHelper utils = new UtilitiesHelper();
+    public static void loadUtilityHelpers(Map model, HttpServletRequest request) {
+        UtilitiesHelper utils = new UtilitiesHelper(request);
         model.put("utils", utils);
     }
-    
-    
-    /**
-     * Load weblog entry plugin helpers.
-     */
-    public static void loadPluginHelpers(WebsiteData weblog, Map model) 
-        throws RollerException {
-        WeblogEntryPluginsHelper plugins = new WeblogEntryPluginsHelper(weblog, model);
-        model.put("plugins", plugins);
-    }
-    
-    
+               
     /**
      * Load old page models, but only if velocity.pagemodel.classname defined.
      */

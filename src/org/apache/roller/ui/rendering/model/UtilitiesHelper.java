@@ -24,9 +24,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.Utilities;
@@ -35,6 +40,11 @@ import org.apache.roller.util.Utilities;
  * Utilities object to be placed in template context.
  */
 public class UtilitiesHelper {
+    
+    private HttpServletRequest request;
+    
+    protected static Log log =
+            LogFactory.getFactory().getInstance(UtilitiesHelper.class); 
     
     private static Pattern mLinkPattern =
             Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);    
@@ -78,78 +88,42 @@ public class UtilitiesHelper {
             Pattern.compile("&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern QUOTE_PATTERN = 
             Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
+    
+    public UtilitiesHelper(HttpServletRequest request) {
+        this.request = request;
+    }
             
-    public static boolean isEmpty(String str) {
-        if (str == null) return true;
-        return "".equals(str.trim());
+    //---------------------------------------------------- Authentication utils 
+    
+    public boolean getUserAuthorizedToAuthor(WebsiteDataWrapper weblog) {
+        try {
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if (rses.getAuthenticatedUser() != null) {
+                return rses.isUserAuthorizedToAuthor(weblog.getPojo());
+            }
+        } catch (Exception e) {
+            log.warn("ERROR: checking user authorization", e);
+        }
+        return false;
     }
     
-    public static boolean isNotEmpty(String str) {
-        return !isEmpty(str);
+    public boolean getUserAuthorizedToAdmin(WebsiteDataWrapper weblog) {
+        try {
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if (rses.getAuthenticatedUser() != null) {
+                return rses.isUserAuthorizedToAdmin(weblog.getPojo());
+            }
+        } catch (Exception e) {
+            log.warn("ERROR: checking user authorization", e);
+        }
+        return false;
     }
     
-    public static String[] split(String str1, String str2) {
-        return StringUtils.split(str1, str2);
+    public boolean isUserAuthenticated() {
+        return (request.getUserPrincipal() != null);
     }
     
-    public static String replace(String src, String target, String rWith) {
-        return StringUtils.replace(src, target, rWith);
-    }
-    
-    public static String replace(String src, String target, String rWith, int maxCount) {
-        return StringUtils.replace(src, target, rWith, maxCount);
-    }
-    
-    public static boolean equals(String str1, String str2) {
-        return StringUtils.equals(str1, str2);
-    }
-    
-    public static boolean isAlphanumeric(String str) {
-        return StringUtils.isAlphanumeric(str);
-    }
-    
-    public static String[] stripAll(String[] strs) {
-        return StringUtils.stripAll(strs);
-    }
-    
-    public static String left(String str, int length) {
-        return StringUtils.left(str, length);
-    }
-    
-    public static String escapeHTML(String str) {
-        return StringEscapeUtils.escapeHtml(str);
-    }
-    
-    public static String unescapeHTML(String str) {
-        return StringEscapeUtils.unescapeHtml(str);
-    }
-               
-    /**
-     * Remove occurences of html, defined as any text
-     * between the characters "&lt;" and "&gt;".  Replace
-     * any HTML tags with a space.
-     */
-    public static String removeHTML(String str) {
-        return removeHTML(str, true);
-    }
-    
-    /**
-     * Remove occurences of html, defined as any text
-     * between the characters "&lt;" and "&gt;".
-     * Optionally replace HTML tags with a space.
-     */
-    public static String removeHTML(String str, boolean addSpace) {
-        return Utilities.removeHTML(str, addSpace);
-    }
-        
-    /**
-     * Autoformat.
-     */
-    public static String autoformat(String s) {
-        String ret = StringUtils.replace(s, "\n", "<br />");
-        return ret;
-    }
-    
+    //-------------------------------------------------------------- Date utils
     /**
      * Return date for current time.
      */
@@ -192,7 +166,85 @@ public class UtilitiesHelper {
     public static String format8charsDate(Date date) {
         return DateUtil.format8chars(date);
     }
+
+    //------------------------------------------------------------ String utils
     
+    public static boolean isEmpty(String str) {
+        if (str == null) return true;
+        return "".equals(str.trim());
+    }
+    
+    public static boolean isNotEmpty(String str) {
+        return !isEmpty(str);
+    }
+    
+    public static String[] split(String str1, String str2) {
+        return StringUtils.split(str1, str2);
+    }
+    
+    
+    public static boolean equals(String str1, String str2) {
+        return StringUtils.equals(str1, str2);
+    }
+    
+    public static boolean isAlphanumeric(String str) {
+        return StringUtils.isAlphanumeric(str);
+    }
+    
+    public static String[] stripAll(String[] strs) {
+        return StringUtils.stripAll(strs);
+    }
+    
+    public static String left(String str, int length) {
+        return StringUtils.left(str, length);
+    }
+    
+    public static String escapeHTML(String str) {
+        return StringEscapeUtils.escapeHtml(str);
+    }
+    
+    public static String unescapeHTML(String str) {
+        return StringEscapeUtils.unescapeHtml(str);
+    }
+    
+    public static String replace(String src, String target, String rWith) {
+        return StringUtils.replace(src, target, rWith);
+    }
+    
+    public static String replace(String src, String target, String rWith, int maxCount) {
+        return StringUtils.replace(src, target, rWith, maxCount);
+    }
+    
+    private static String replace(String string, Pattern pattern, String replacement) {
+        Matcher m = pattern.matcher(string);
+        return m.replaceAll(replacement);
+    }
+    
+    /**
+     * Remove occurences of html, defined as any text
+     * between the characters "&lt;" and "&gt;".  Replace
+     * any HTML tags with a space.
+     */
+    public static String removeHTML(String str) {
+        return removeHTML(str, true);
+    }
+    
+    /**
+     * Remove occurences of html, defined as any text
+     * between the characters "&lt;" and "&gt;".
+     * Optionally replace HTML tags with a space.
+     */
+    public static String removeHTML(String str, boolean addSpace) {
+        return Utilities.removeHTML(str, addSpace);
+    }
+        
+    /**
+     * Autoformat.
+     */
+    public static String autoformat(String s) {
+        String ret = StringUtils.replace(s, "\n", "<br />");
+        return ret;
+    }
     /**
      * Strips HTML and truncates.
      */
@@ -394,11 +446,6 @@ public class UtilitiesHelper {
         return s;
     }
     
-    private static String replace(String string, Pattern pattern, String replacement) {
-        Matcher m = pattern.matcher(string);
-        return m.replaceAll(replacement);
-    }
-    
     /**
      * Convert a byte array into a Base64 string (as used in mime formats)
      */
@@ -428,4 +475,5 @@ public class UtilitiesHelper {
         
         return tt.toString();
     }
+       
 }

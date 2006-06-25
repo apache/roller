@@ -21,24 +21,6 @@
   <title></title>
 </head>
 <body>
-Abstract implementation of the business layer interfaces.
-
-<p>At this level we avoid dependance on specific persistence engines 
-(e.g. Hibernate). We do this by using an interface named 
-{@link org.apache.roller.business.PersistenceStrategy PersistenceStrategy}
-to store, retrieve and remove 
-{@link org.apache.roller.pojos.PersistentObject PersistentObjects}.</p>
-
-<img src="roller-persistence.png" 
-    alt="diagram of Roller persistence object and strategy" />
-
-<p>The diagram below illustrates the dependency relationships between the 
-{@link org.apache.roller.pojos org.apache.roller.pojos},
-{@link org.apache.roller.model org.apache.roller.model}, and
-org.apache.roller.business packages.</p>
-
-<img src="roller-services-impl.png" 
-    alt="diagram of Roller business and persistence layers" />
-
+Non-database dependent Roller manager implementations.
 </body>
 </html>

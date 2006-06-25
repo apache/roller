@@ -44,6 +44,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
+import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.Utilities;
@@ -1033,7 +1034,32 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
     public void setPublished(boolean value) {
     }
+        
+    /**
+     * Get entry text, transformed by plugins enabled for entry.
+     */
+    public String getTransformedText() {
+        return render(text);
+    }
+    /**
+     * No-op to please XDoclet.
+     */
+    public void setTransformedText(String t) {
+        // no-op
+    }
     
+    /**
+     * Get entry summary, transformed by plugins enabled for entry.
+     */
+    public String getTransformedSummary() {
+        return render(summary);
+    }
+    /**
+     * No-op to please XDoclet.
+     */
+    public void setTransformedSummary(String t) {
+        // no-op
+    }    
     
     /**
      * Determine if the specified user has permissions to edit this entry.
@@ -1057,4 +1083,36 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         return false;
     }
     
+    /**
+     * Transform string based on plugins enabled for this weblog entry.
+     */
+    private String render(String str) {
+        String ret = str;
+        mLogger.debug("Applying page plugins to string");
+        Map plugins = this.website.getInitializedPlugins();
+        if (str != null && plugins != null) {
+            List entryPlugins = getPluginsList();
+            
+            // if no Entry plugins, don't bother looping.
+            if (entryPlugins != null && !entryPlugins.isEmpty()) {
+                
+                // now loop over mPagePlugins, matching
+                // against Entry plugins (by name):
+                // where a match is found render Plugin.
+                Iterator iter = plugins.keySet().iterator();
+                while (iter.hasNext()) {
+                    String key = (String)iter.next();
+                    if (entryPlugins.contains(key)) {
+                        WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin)plugins.get(key);
+                        try {
+                            ret = pagePlugin.render(this, ret);
+                        } catch (Throwable t) {
+                            mLogger.error("ERROR from plugin: " + pagePlugin.getName(), t);
+                        }
+                    }
+                }
+            }
+        }        
+        return ret;
+    } 
 }

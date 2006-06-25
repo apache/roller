@@ -45,66 +45,63 @@ public class IndexManagerTest extends TestCase {
     }
         
     public void testSearch() throws Exception {
-        try {
-            IndexManager imgr = RollerFactory.getRoller().getIndexManager();
-            
-            WebsiteData website = new WebsiteData();
-            website.setHandle("trekker");
-            
-            UserData user = new UserData();
-            user.setUserName("nimoy");
-            
-            WeblogEntryData wd1 = new WeblogEntryData();            
-            wd1.setId("dummy1");
-            wd1.setAnchor("dummy1");
-            wd1.setCreator(user);
-            wd1.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-            wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
-            wd1.setTitle("The Tholian Web");
-            wd1.setWebsite(website);
-            wd1.setText(
-             "When the Enterprise attempts to ascertain the fate of the  "
-            +"U.S.S. Defiant which vanished 3 weeks ago, the warp engines  "
-            +"begin to lose power, and Spock reports strange sensor readings.");
-            imgr.executeIndexOperationNow(
-                new AddEntryOperation((IndexManagerImpl) imgr, wd1));
-            
-            WeblogEntryData wd2 = new WeblogEntryData();
-            wd2.setId("dummy2");
-            wd2.setAnchor("dummy2");
-            wd2.setCreator(user);
-            wd2.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-            wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
-            wd2.setTitle("A Piece of the Action");
-            wd2.setWebsite(website);
-            wd2.setText(
-              "The crew of the Enterprise attempts to make contact with "
-              +"the inhabitants of planet Sigma Iotia II, and Uhura puts Kirk "
-              +"in communication with Boss Oxmyx.");
-             imgr.executeIndexOperationNow(
-                 new AddEntryOperation((IndexManagerImpl) imgr, wd2));
-            
-            SearchOperation search = new SearchOperation(imgr);
-            search.setTerm("Enterprise");
-            imgr.executeIndexOperationNow(search);
-            assertEquals(2, search.getResultsCount());
-            
-            SearchOperation search2 = new SearchOperation(imgr);
-            search2.setTerm("Tholian");
-            imgr.executeIndexOperationNow(search2);
-            assertEquals(1, search2.getResultsCount());
-            
-            // Clean up
-            imgr.removeEntryIndexOperation(wd1);
-            imgr.removeEntryIndexOperation(wd2);
-            
-            SearchOperation search3 = new SearchOperation(imgr);
-            search3.setTerm("Enterprise");
-            imgr.executeIndexOperationNow(search3);
-            assertEquals(0, search3.getResultsCount());
+        IndexManager imgr = RollerFactory.getRoller().getIndexManager();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        WebsiteData website = new WebsiteData();
+        website.setHandle("trekker");
+
+        UserData user = new UserData();
+        user.setUserName("nimoy");
+
+        WeblogEntryData wd1 = new WeblogEntryData();            
+        wd1.setId("dummy1");
+        wd1.setAnchor("dummy1");
+        wd1.setCreator(user);
+        wd1.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        wd1.setPubTime(new Timestamp(System.currentTimeMillis()));
+        wd1.setTitle("The Tholian Web");
+        wd1.setWebsite(website);
+        wd1.setText(
+         "When the Enterprise attempts to ascertain the fate of the  "
+        +"U.S.S. Defiant which vanished 3 weeks ago, the warp engines  "
+        +"begin to lose power, and Spock reports strange sensor readings.");
+        imgr.executeIndexOperationNow(
+            new AddEntryOperation((IndexManagerImpl) imgr, wd1));
+
+        WeblogEntryData wd2 = new WeblogEntryData();
+        wd2.setId("dummy2");
+        wd2.setAnchor("dummy2");
+        wd2.setCreator(user);
+        wd2.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        wd2.setPubTime(new Timestamp(System.currentTimeMillis()));
+        wd2.setTitle("A Piece of the Action");
+        wd2.setWebsite(website);
+        wd2.setText(
+          "The crew of the Enterprise attempts to make contact with "
+          +"the inhabitants of planet Sigma Iotia II, and Uhura puts Kirk "
+          +"in communication with Boss Oxmyx.");
+         imgr.executeIndexOperationNow(
+             new AddEntryOperation((IndexManagerImpl) imgr, wd2));
+
+        Thread.sleep(1000);
+
+        SearchOperation search = new SearchOperation(imgr);
+        search.setTerm("Enterprise");
+        imgr.executeIndexOperationNow(search);
+        assertEquals(2, search.getResultsCount());
+
+        SearchOperation search2 = new SearchOperation(imgr);
+        search2.setTerm("Tholian");
+        imgr.executeIndexOperationNow(search2);
+        assertEquals(1, search2.getResultsCount());
+
+        // Clean up
+        imgr.removeEntryIndexOperation(wd1);
+        imgr.removeEntryIndexOperation(wd2);
+
+        SearchOperation search3 = new SearchOperation(imgr);
+        search3.setTerm("Enterprise");
+        imgr.executeIndexOperationNow(search3);
+        assertEquals(0, search3.getResultsCount());
     }    
 }

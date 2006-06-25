@@ -137,9 +137,8 @@ public class SearchServlet extends HttpServlet {
             }
             
             // add helpers
-            RenderModelLoader.loadUtilityHelpers(model);
+            RenderModelLoader.loadUtilityHelpers(model, request);
             RenderModelLoader.loadWeblogHelpers(pageContext, model);
-            RenderModelLoader.loadPluginHelpers(weblog, model);
 
             // Feeds get weblog's custom models too
             RenderModelLoader.loadCustomModels(weblog, model, initData);
