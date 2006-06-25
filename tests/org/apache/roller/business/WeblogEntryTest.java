@@ -183,7 +183,7 @@ public class WeblogEntryTest extends TestCase {
         
         // get all entries for weblog
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 0, Integer.MAX_VALUE);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 0, -1);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         assertEquals(entry3, entries.get(0));
@@ -196,13 +196,13 @@ public class WeblogEntryTest extends TestCase {
         
         // get all published entries only 
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, WeblogEntryData.PUBLISHED, null, 0, Integer.MAX_VALUE);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, WeblogEntryData.PUBLISHED, null, 0, -1);
         assertNotNull(entries);
         assertEquals(2, entries.size());
         
         // get all entries in date range
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, entry2.getPubTime(), entry2.getPubTime(), null, null, null, 0, Integer.MAX_VALUE);
+        entries = mgr.getWeblogEntries(testWeblog, null, entry2.getPubTime(), entry2.getPubTime(), null, null, null, 0, -1);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
@@ -215,15 +215,15 @@ public class WeblogEntryTest extends TestCase {
         
         // get all entries in category
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, testWeblog.getDefaultCategory().getName(), null, null, 0, Integer.MAX_VALUE);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, testWeblog.getDefaultCategory().getName(), null, null, 0, -1);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         
         // get all entries, limited by offset/range
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 0, Integer.MAX_VALUE);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 1, 1);
         assertNotNull(entries);
-        assertEquals(2, entries.size());
+        assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
         
         // get pinned entries only

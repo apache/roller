@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 /*
  * Created on Jun 15, 2004
  */
@@ -26,9 +26,8 @@ import com.mockrunner.mock.web.MockServletContext;
 import com.mockrunner.mock.web.WebMockObjectFactory;
 import com.mockrunner.servlet.ServletTestModule;
 
-import org.apache.roller.RollerTestBase;
-import org.apache.roller.util.RegexUtil;
- 
+import java.sql.Timestamp;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,18 +35,30 @@ import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.roller.ui.core.MockRollerContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.TestUtils;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.MockRollerContext;
 import org.apache.roller.ui.core.RollerRequest;
+import org.apache.roller.util.RegexUtil;
 
 /**
  * Makes calls to the RollerXmlRpcServer, which should handle a
  * post just as it would with a real XML-RPC call.
- * 
+ *
  * @author lance.lavandowska
  */
-public class RollerXmlRpcServerTest extends RollerTestBase
-{
+public class RollerXmlRpcServerTest extends TestCase {
+    public static Log log = LogFactory.getLog(RollerXmlRpcServerTest.class);
+    UserData testUser = null;
+    WebsiteData testWeblog = null;
     private static HashMap typeMap = new HashMap();
     static {
         typeMap.put(Boolean.class, "boolean");
@@ -55,61 +66,55 @@ public class RollerXmlRpcServerTest extends RollerTestBase
         typeMap.put(Date.class, "dateTime.iso8601");
         typeMap.put(Integer.class, "int");
     }
-
+    
     protected WebMockObjectFactory mockFactory;
     protected MockRollerContext rollerContext;
     protected MockHttpServletRequest mockRequest;
     protected ServletTestModule servletTestModule;
-
-    public void testBloggerGetRecentPosts()
-    {
+    
+    public void testBloggerGetRecentPosts() {
         ArrayList params = new ArrayList();
         params.add("roller"); // appkey
-        params.add("testuser0"); // blogid
-        params.add("testuser0"); // userid
-        params.add("password"); // password
+        params.add(testWeblog.getHandle()); // blogid
+        params.add(testUser.getUserName()); // userid
+        params.add(testUser.getPassword()); // password
         params.add(new Integer(5)); // numposts
         String message = buildXmlRpcString("blogger.getRecentPosts", params);
-
+        
         mockRequest.setBodyContent(message);
         servletTestModule.doPost();
         MockHttpServletResponse response = mockFactory.getMockResponse();
         String responseBody = response.getOutputStreamContent();
-
+        
         // assert no fault code
-        assertTrue(responseBody, 
-                responseBody.indexOf("<name>faultCode</name>") == -1);
+        assertTrue(responseBody,
+            responseBody.indexOf("<name>faultCode</name>") == -1);
         
         // make sure all/any userids returned belong to our test user
-        Pattern userPattern = 
+        Pattern userPattern =
                 Pattern.compile("<name>userid</name><value>(.*?)</value>");
         ArrayList users = RegexUtil.getMatches(userPattern, responseBody, 1);
         Iterator it = users.iterator();
-        while (it.hasNext()) 
-        {
+        while (it.hasNext()) {
             String user = (String)it.next();
             //System.out.println(user);
-            if (user.equals("testuser0"))
-            {
+            if (user.equals(testUser.getUserName())) {
                 continue;
-            }
-            else
-            {
-                fail("getRecentPosts() returned entry for a user [" 
-                        + user + "] other than " + testUsername);
+            } else {
+                fail("getRecentPosts() returned entry for a user ["
+                        + user + "] other than " + testUser.getUserName());
             }
         }
     }
     
     /**
      * Build an XML-RPC message from methodName and params.
-     * 
+     *
      * @param methodName
      * @param params
      * @return
      */
-    private String buildXmlRpcString(String methodName, ArrayList params)
-    {
+    private String buildXmlRpcString(String methodName, ArrayList params) {
         StringBuffer buf = new StringBuffer("<?xml version=\"1.0\"?>");
         buf.append("<methodCall>");
         buf.append("<methodName>").append(methodName).append("</methodName>");
@@ -119,14 +124,11 @@ public class RollerXmlRpcServerTest extends RollerTestBase
             buf.append("<param><value>");
             Object param = it.next();
             String paramType = (String)typeMap.get(param.getClass());
-            if (paramType != null)
-            {
+            if (paramType != null) {
                 buf.append("<").append(paramType).append(">")
-                   .append(param)
-                   .append("</").append(paramType).append(">");                    
-            }
-            else
-            {    
+                .append(param)
+                .append("</").append(paramType).append(">");
+            } else {
                 buf.append("<string>").append(param).append("</string>");
             }
             buf.append("</value></param>");
@@ -137,43 +139,97 @@ public class RollerXmlRpcServerTest extends RollerTestBase
     }
     
     //-----------------------------------------------------------------------
-    public void setUp() throws Exception
-    {
-        // must do super.setup() before creating MockRollerContext
-        super.setUp();
-        setUpTestWeblogs();
+    
+    /**
+     * All tests in this suite require a user and a weblog.
+     */
+    public void setUp() throws Exception {
+        
+        try {
+            mockFactory = new WebMockObjectFactory();
+            
+            // create mock RollerContext
+            MockServletContext ctx = mockFactory.getMockServletContext();
+            ctx.setRealPath("/", ".");
+            rollerContext = new MockRollerContext();
+            rollerContext.init(ctx);
+            
+            mockRequest = mockFactory.getMockRequest();
+            mockRequest.setContextPath("/roller");
+            RollerRequest.getRollerRequest(
+                    mockRequest, mockFactory.getMockServletContext());
+            
+            servletTestModule = new ServletTestModule(mockFactory);
+            servletTestModule.createServlet(RollerXMLRPCServlet.class);
+        
+            testUser = TestUtils.setupUser("entryTestUser");
+            testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
+            
+            WeblogEntryData testEntry1 = new WeblogEntryData();
+            testEntry1.setTitle("entryTestEntry1");
+            testEntry1.setLink("testEntryLink1");
+            testEntry1.setText("blah blah entry1");
+            testEntry1.setAnchor("testEntryAnchor1");
+            testEntry1.setPubTime(new Timestamp(new Date().getTime()));
+            testEntry1.setUpdateTime(new Timestamp(new Date().getTime()));
+            testEntry1.setWebsite(testWeblog);
+            testEntry1.setCreator(testUser);
+            testEntry1.setCategory(testWeblog.getDefaultCategory());
+            RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
 
-        mockFactory = new WebMockObjectFactory();
+            WeblogEntryData testEntry2 = new WeblogEntryData();
+            testEntry2.setTitle("entryTestEntry2");
+            testEntry2.setLink("testEntryLink2");
+            testEntry2.setText("blah blah entry2");
+            testEntry2.setAnchor("testEntryAnchor2");
+            testEntry2.setPubTime(new Timestamp(new Date().getTime()));
+            testEntry2.setUpdateTime(new Timestamp(new Date().getTime()));
+            testEntry2.setWebsite(testWeblog);
+            testEntry2.setCreator(testUser);
+            testEntry2.setCategory(testWeblog.getDefaultCategory());
+            RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
 
-        // create mock RollerContext
-        MockServletContext ctx = mockFactory.getMockServletContext();
-        ctx.setRealPath("/", ".");
-        rollerContext = new MockRollerContext();
-        rollerContext.init(ctx);
+            WeblogEntryData testEntry3 = new WeblogEntryData();
+            testEntry3.setTitle("entryTestEntry3");
+            testEntry3.setLink("testEntryLink3");
+            testEntry3.setText("blah blah entry3");
+            testEntry3.setAnchor("testEntryAnchor3");
+            testEntry3.setPubTime(new Timestamp(new Date().getTime()));
+            testEntry3.setUpdateTime(new Timestamp(new Date().getTime()));
+            testEntry3.setWebsite(testWeblog);
+            testEntry3.setCreator(testUser);
+            testEntry3.setCategory(testWeblog.getDefaultCategory());           
+            RollerFactory.getRoller().getWeblogManager().saveWeblogEntry(testEntry1);
 
-        mockRequest = mockFactory.getMockRequest();
-        mockRequest.setContextPath("/roller");
-        RollerRequest.getRollerRequest(
-                mockRequest, mockFactory.getMockServletContext());
-
-        servletTestModule = new ServletTestModule(mockFactory);
-        servletTestModule.createServlet(RollerXMLRPCServlet.class);
+            TestUtils.endSession(true);
+            
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new Exception("Test setup failed", ex);
+        }
     }
-
-    //-----------------------------------------------------------------------
-    public void tearDown() throws Exception
-    {
-        super.tearDown();
-        mockRequest = null;
-        servletTestModule.clearOutput();
-        servletTestModule.releaseFilters();
-        servletTestModule = null;
-        rollerContext = null;
-        mockFactory = null;
+    
+    public void tearDown() throws Exception {
+        
+        try {
+            TestUtils.teardownWeblog(testWeblog.getId());
+            TestUtils.teardownUser(testUser.getId());
+            TestUtils.endSession(true);
+            
+            mockRequest = null;
+            servletTestModule.clearOutput();
+            servletTestModule.releaseFilters();
+            servletTestModule = null;
+            rollerContext = null;
+            mockFactory = null;
+        
+        } catch (Exception ex) {
+            log.error(ex);
+            throw new Exception("Test teardown failed", ex);
+        }
     }
-
-    public static Test suite() 
-    {
+    
+    public static Test suite() {
         return new TestSuite(RollerXmlRpcServerTest.class);
     }
 }

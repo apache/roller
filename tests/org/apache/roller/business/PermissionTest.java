@@ -225,12 +225,12 @@ public class PermissionTest extends TestCase {
         
         // assert that user is member of weblog
         assertFalse(mgr.getPermissions(testWeblog, user).isPending());
-        List weblogs = mgr.getWebsites(user, null, null, null, null, 0, Integer.MAX_VALUE);
+        List weblogs = mgr.getWebsites(user, null, null, null, null, 0, -1);
         assertEquals(1, weblogs.size());
         assertEquals(testWeblog.getId(), ((WebsiteData)weblogs.get(0)).getId());
         
         // assert that website has user
-        List users = mgr.getUsers(testWeblog, null, 0, Integer.MAX_VALUE); 
+        List users = mgr.getUsers(testWeblog, null, 0, -1); 
         assertEquals(2, users.size());
         
         // test user can be retired from website

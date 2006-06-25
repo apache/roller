@@ -180,7 +180,7 @@ public class WeblogTest extends TestCase {
         
         // get all weblogs for user
         weblog = null;
-        List weblogs1 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, Integer.MAX_VALUE);
+        List weblogs1 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
         assertEquals(2, weblogs1.size());
         weblog = (WebsiteData) weblogs1.get(0);
         assertNotNull(weblog);
@@ -195,7 +195,7 @@ public class WeblogTest extends TestCase {
         weblog.setEnabled(Boolean.FALSE);
         mgr.saveWebsite(weblog);
         TestUtils.endSession(true);
-        List weblogs2 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, Integer.MAX_VALUE);
+        List weblogs2 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
         assertEquals(1, weblogs2.size());
         weblog = (WebsiteData) weblogs2.get(0);
         assertNotNull(weblog);
@@ -204,7 +204,7 @@ public class WeblogTest extends TestCase {
         weblog.setActive(Boolean.FALSE);
         mgr.saveWebsite(weblog);
         TestUtils.endSession(true);
-        List weblogs3 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, Integer.MAX_VALUE);
+        List weblogs3 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
         assertEquals(0, weblogs3.size());
         
         // remove test weblogs

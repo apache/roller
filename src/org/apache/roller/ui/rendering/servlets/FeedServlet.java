@@ -206,8 +206,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             }
             
             // utility helpers and plugin helpers
-            RenderModelLoader.loadUtilityHelpers(model);
-            RenderModelLoader.loadPluginHelpers(weblog, model);
+            RenderModelLoader.loadUtilityHelpers(model, request);
 
             // Feeds get weblog's custom models too
             RenderModelLoader.loadCustomModels(weblog, model, initData);

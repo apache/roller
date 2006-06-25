@@ -36,6 +36,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.ThemeNotFoundException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.model.PluginManager;
+import org.apache.roller.model.Roller;
 import org.apache.roller.model.ThemeManager;
 import org.apache.roller.model.UserManager;
 
@@ -92,6 +94,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     private WeblogCategoryData bloggerCategory = null;
     private WeblogCategoryData defaultCategory = null;
     
+    private Map initializedPlugins = null;
     
     public WebsiteData() {    
     }
@@ -1040,6 +1043,22 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     }
     public void setPageModels(String pageModels) {
         this.pageModels = pageModels;
+    }
+
+    /**
+     * Get initialized plugins for use during rendering process.
+     */
+    public Map getInitializedPlugins() {
+        if (initializedPlugins == null) {
+            try {
+                Roller roller = RollerFactory.getRoller();
+                PluginManager ppmgr = roller.getPagePluginManager();
+                initializedPlugins = ppmgr.getWeblogEntryPlugins(this, new HashMap()); 
+            } catch (Exception e) {
+                this.mLogger.error("ERROR: initializing plugins");
+            }
+        }
+        return initializedPlugins;
     }
 }
 

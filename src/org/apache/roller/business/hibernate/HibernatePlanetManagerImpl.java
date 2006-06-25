@@ -146,14 +146,14 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         return config;
     }    
     
-    public PlanetSubscriptionData getSubscription(String feedUrl) 
+    public PlanetSubscriptionData getSubscription(String feedURL) 
         throws RollerException {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria =
                     session.createCriteria(PlanetSubscriptionData.class);
             criteria.setMaxResults(1);
-            criteria.add(Expression.eq("feedUrl", feedUrl));
+            criteria.add(Expression.eq("feedURL", feedURL));
             List list = criteria.list();
             return list.size()!=0 ? (PlanetSubscriptionData)list.get(0) : null;
         } catch (HibernateException e) {
@@ -171,7 +171,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria =
                     session.createCriteria(PlanetSubscriptionData.class);
-            criteria.addOrder(Order.asc("feedUrl"));
+            criteria.addOrder(Order.asc("feedURL"));
             List list = criteria.list();
             return list.iterator();
         } catch (Throwable e) {
@@ -266,16 +266,16 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         return handles;
     }
     
-     public List getFeedEntries(String feedUrl, int offset, int length)
+     public List getFeedEntries(String feedURL, int offset, int length)
         throws RollerException {
         // TODO: ATLAS getFeedEntries DONE       
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Criteria criteria = session.createCriteria(PlanetEntryData.class);
-            criteria.add(Expression.eq("subscription.feedUrl", feedUrl));
+            criteria.add(Expression.eq("subscription.feedURL", feedURL));
             criteria.addOrder(Order.desc("pubTime"));
             criteria.setFirstResult(offset);
-            criteria.setMaxResults(length);
+            if (length != -1) criteria.setMaxResults(length);
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -311,7 +311,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 Query query = session.createQuery(sb.toString());
                 query.setEntity("group", group);
                 query.setFirstResult(offset);
-                query.setMaxResults(length);
+                if (length != -1) query.setMaxResults(length);
                 query.setParameter("endDate", endDate);
                 if (startDate != null) {
                     query.setParameter("startDate", startDate);
@@ -329,7 +329,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 sb.append("order by entry.pubTime desc");
                 Query query = session.createQuery(sb.toString());
                 query.setFirstResult(offset);
-                query.setMaxResults(length);
+                if (length != -1) query.setMaxResults(length);
                 query.setParameter("endDate", endDate);
                 if (startDate != null) {
                     query.setParameter("startDate", startDate);
@@ -440,7 +440,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             // Fetch latest entries for each subscription
 //            Set newEntries = null;
 //            int count = 0;
-//            if (!StringUtils.isEmpty(localURL) && sub.getFeedUrl().startsWith(localURL)) {
+//            if (!StringUtils.isEmpty(localURL) && sub.getFeedURL().startsWith(localURL)) {
 //                newEntries = getNewEntriesLocal(sub, feedFetcher, feedInfoCache);
 //            } else {
 //                newEntries = getNewEntriesRemote(sub, feedFetcher, feedInfoCache);
@@ -476,13 +476,13 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         
         Set newEntries = new TreeSet();
         SyndFeed feed = null;
-        URL feedUrl = null;
+        URL feedURL = null;
         Date lastUpdated = new Date();
         try {
-            feedUrl = new URL(sub.getFeedURL());
+            feedURL = new URL(sub.getFeedURL());
             log.debug("Get feed from cache "+sub.getFeedURL());
-            feed = feedFetcher.retrieveFeed(feedUrl);
-            SyndFeedInfo feedInfo = feedInfoCache.getFeedInfo(feedUrl);
+            feed = feedFetcher.retrieveFeed(feedURL);
+            SyndFeedInfo feedInfo = feedInfoCache.getFeedInfo(feedURL);
             if (feedInfo.getLastModified() != null) {
                 long lastUpdatedLong =
                         ((Long)feedInfo.getLastModified()).longValue();
@@ -540,11 +540,11 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                         new PlanetEntryData(feed, romeEntry, sub);
                 if (entry.getPubTime() == null) {
                     log.debug(
-                            "No published date, assigning fake date for "+feedUrl);
+                            "No published date, assigning fake date for "+feedURL);
                     entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
                 }
                 if (entry.getPermaLink() == null) {
-                    log.warn("No permalink, rejecting entry from "+feedUrl);
+                    log.warn("No permalink, rejecting entry from "+feedURL);
                 } else {
                     newEntries.add(entry);
                 }

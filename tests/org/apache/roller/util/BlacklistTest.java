@@ -18,13 +18,12 @@
 /*
  * Created on Nov 12, 2003
  */
-package org.apache.roller;
+package org.apache.roller.util;
 
 import java.io.File;
 
 import org.apache.roller.business.FileManagerTest;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.util.Blacklist;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

@@ -102,13 +102,14 @@ create table website (
     defaultplugins    varchar(255),
     isenabled         $BOOLEAN_SQL_TYPE_TRUE not null,
     isactive          $BOOLEAN_SQL_TYPE_TRUE not null,
-    datecreated      $TIMESTAMP_SQL_TYPE not null,
+    datecreated          $TIMESTAMP_SQL_TYPE not null,
     blacklist            $TEXT_SQL_TYPE,
     defaultallowcomments $BOOLEAN_SQL_TYPE_TRUE not null,
     defaultcommentdays   integer default 7 not null,
     commentmod           $BOOLEAN_SQL_TYPE_FALSE not null,
-    displaycnt        integer default 15 not null,
-    lastmodified       $TIMESTAMP_SQL_TYPE
+    displaycnt           integer default 15 not null,
+    lastmodified         $TIMESTAMP_SQL_TYPE,
+    pagemodels           varchar(512) default null
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
