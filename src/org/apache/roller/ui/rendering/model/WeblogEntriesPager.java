@@ -32,7 +32,12 @@ import org.apache.roller.util.DateUtil;
  */
 public class WeblogEntriesPager implements RenderDayPager {
     
-    protected RenderDayPager mode = null; // The classic state pattern    
+    /**
+     * Behavior of the pager is detemined by the mode, which is itself a pager.
+     * The mode may be LatestMode, SingleEntryMode, DayMode or MonthMode.
+     */
+    protected RenderDayPager mode = null;
+    
     protected Map            entries = null;
     protected WebsiteData    weblog = null;
     protected int            offset = 0;
@@ -74,6 +79,7 @@ public class WeblogEntriesPager implements RenderDayPager {
             chosenCatPath = chosenCatPath.equals("/") ? null : chosenCatPath;
         }
         
+        // determine which mode we're working in
         if (entryAnchor != null) {
             mode = new SingleEntryMode();
         } else if (dateString != null && dateString.length() == 8) {
@@ -123,6 +129,10 @@ public class WeblogEntriesPager implements RenderDayPager {
     
     //-------------------------------------------------------------------------
     
+    /**
+     * We're paging through the latest entries in the blog.
+     * In this mode there's no prev/next collection.
+     */
     class LatestMode implements RenderDayPager {
         
         public Map getCurrentValues() {
@@ -184,6 +194,11 @@ public class WeblogEntriesPager implements RenderDayPager {
 
     //-------------------------------------------------------------------------
     
+    /**
+     * We're showing one weblog entry.
+     * Next/prev return permalinks of next and previous weblog entries.
+     * In this mode there's no prev/next collection.
+     */
     class SingleEntryMode implements RenderDayPager {
         String nextLink = null;
         WeblogEntryData entry = null;
@@ -194,6 +209,9 @@ public class WeblogEntriesPager implements RenderDayPager {
             SingleEntryMode.this.getCurrentValues();
         }
         
+        /**
+         * Wrap entry up in map of lists.
+         */
         public Map getCurrentValues() {
             if (entries == null) try {
                 Roller roller = RollerFactory.getRoller();
@@ -203,9 +221,8 @@ public class WeblogEntriesPager implements RenderDayPager {
                     entry = null;
                 } else {
                     entries = new TreeMap();
-                    entries.put(
-                        new Date(entry.getPubTime().getTime()), 
-                        Collections.singletonList(entry));
+                    entries.put(new Date(entry.getPubTime().getTime()), 
+                        Collections.singletonList(WeblogEntryDataWrapper.wrap(entry)));
                 } 
             } catch (Exception e) {
                 log.error("ERROR: fetching entry");
@@ -296,6 +313,11 @@ public class WeblogEntriesPager implements RenderDayPager {
     
     //-------------------------------------------------------------------------
 
+    /**
+     * We're paging through entries in one day.
+     * Next/prev methods return links to offsets within day's entries.
+     * Next/prev collection methods return links to next and previous days.
+     */
     class DayMode implements RenderDayPager {
         private Date day;
         private Date nextDay;
@@ -400,7 +422,12 @@ public class WeblogEntriesPager implements RenderDayPager {
     }
     
     //-------------------------------------------------------------------------
-    
+
+    /**
+     * We're paging through entries within one month.
+     * Next/prev methods return links to offsets within month's entries.
+     * Next/prev collection methods return links to next and previous months.
+     */
     class MonthMode implements RenderDayPager {
         private Date month;
         private Date nextMonth;
@@ -501,6 +528,11 @@ public class WeblogEntriesPager implements RenderDayPager {
                 
     //------------------------------------------------------------------------
     
+    /**
+     * Get current values specified by request, a map of lists of entry  
+     * wrappers, keyed by date objects, where each list holds entries 
+     * for one day.
+     */
     private Map getCurrentValuesImpl() {
         if (entries == null) {
             entries = new TreeMap();
@@ -553,6 +585,9 @@ public class WeblogEntriesPager implements RenderDayPager {
         return entries;
     }
     
+    /** 
+     * Parse data as either 6-char or 8-char format.
+     */
     private Date parseDate(String dateString) {
         Date ret = null;
         SimpleDateFormat char8DateFormat = DateUtil.get8charDateFormat();
@@ -580,10 +615,13 @@ public class WeblogEntriesPager implements RenderDayPager {
         return ret;
     }
     
+    /**
+     * Return today based on current blog's timezone/locale.
+     */
     private Date getToday() {
         Calendar todayCal = Calendar.getInstance();
         todayCal = Calendar.getInstance(
-                weblog.getTimeZoneInstance(),weblog.getLocaleInstance());
+            weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
         todayCal.setTime(new Date());
         return todayCal.getTime();
     }
