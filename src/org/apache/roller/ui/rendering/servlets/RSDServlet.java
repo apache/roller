@@ -46,7 +46,7 @@ import org.apache.roller.util.cache.CachedContent;
  * level of content caching.
  *
  * @web.servlet name="RSDServlet" load-on-startup="7"
- * @web.servlet-mapping url-pattern="/rsd/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/rsd/*"
  */
 public class RSDServlet extends HttpServlet {
     
@@ -84,17 +84,10 @@ public class RSDServlet extends HttpServlet {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             weblog = userMgr.getWebsiteByHandle(weblogRequest.getWeblogHandle(), Boolean.TRUE);
             
-        } catch(InvalidRequestException ire) {
-            // An error initializing the request is considered to be a 404
+        } catch(Exception e) {
+            // invalid rsd request format or weblog doesn't exist
+            log.debug("error creating weblog request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            log.error("Bad Request: "+ire.getMessage());
-            return;
-            
-        } catch(RollerException re) {
-            // error looking up the weblog, we assume it doesn't exist
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            log.warn("Unable to lookup weblog ["+
-                    weblogRequest.getWeblogHandle()+"] "+re.getMessage());
             return;
         }
         

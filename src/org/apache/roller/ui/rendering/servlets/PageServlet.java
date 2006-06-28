@@ -63,7 +63,7 @@ import org.apache.roller.util.cache.LazyExpiringCacheEntry;
  * Responsible for rendering weblog pages.
  *
  * @web.servlet name="PageServlet" load-on-startup="5"
- * @web.servlet-mapping url-pattern="/page/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/page/*"
  */
 public class PageServlet extends HttpServlet implements CacheHandler {
     
@@ -141,8 +141,8 @@ public class PageServlet extends HttpServlet implements CacheHandler {
                         pageRequest.getWeblogHandle());
             }
         } catch (Exception e) {
-            // some kind of error parsing the request
-            log.error("error creating page request", e);
+            // some kind of error parsing the request or looking up weblog
+            log.debug("error creating page request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -359,10 +359,9 @@ public class PageServlet extends HttpServlet implements CacheHandler {
     private String generateKey(WeblogPageRequest pageRequest) {
         
         StringBuffer key = new StringBuffer();
-        key.append("weblog/");
+        key.append("weblog/page/");
         key.append(pageRequest.getWeblogHandle().toLowerCase());
-        key.append("/page/");
-        key.append(pageRequest.getPageType());
+        key.append("/").append(pageRequest.getContext());
         
         if(pageRequest.getWeblogAnchor() != null) {
             // convert to base64 because there can be spaces in anchors :/

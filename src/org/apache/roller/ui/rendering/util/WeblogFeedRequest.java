@@ -33,58 +33,67 @@ import org.apache.commons.logging.LogFactory;
  * We use this class as a helper to parse an incoming url and sort out the
  * information embedded in the url for later use.
  */
-public class WeblogFeedRequest extends ParsedRequest {
+public class WeblogFeedRequest extends WeblogRequest {
     
-    private static Log mLogger = LogFactory.getLog(WeblogFeedRequest.class);
+    private static Log log = LogFactory.getLog(WeblogFeedRequest.class);
     
-    private static final String FEED_SERVLET = "/feeds";
+    private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
     
     private String type = null;
     private String format = null;
-    private String weblogHandle = null;
     private String weblogCategory = null;
     private boolean excerpts = false;
+    
+    
+    public WeblogFeedRequest() {}
     
     
     /**
      * Construct the WeblogFeedRequest by parsing the incoming url
      */
-    public WeblogFeedRequest(HttpServletRequest request) throws InvalidRequestException {
+    public WeblogFeedRequest(HttpServletRequest request) 
+            throws InvalidRequestException {
         
+        // let our parent take care of their business first
+        // parent determines weblog handle and locale if specified
         super(request);
         
-        // parse the request object and figure out what we've got
-        mLogger.debug("parsing url "+request.getRequestURL());
-        
         String servlet = request.getServletPath();
-        String pathInfo = request.getPathInfo();
+        
+        // we only want the path info left over from after our parents parsing
+        String pathInfo = this.getPathInfo();
+        
+        // parse the request object and figure out what we've got
+        log.debug("parsing path "+pathInfo);
         
         // was this request bound for the feed servlet?
         if(servlet == null || !FEED_SERVLET.equals(servlet)) {
-            throw new InvalidRequestException("not a weblog feed request, "+request.getRequestURL());
+            throw new InvalidRequestException("not a weblog feed request, "+
+                    request.getRequestURL());
         }
         
+        
         /* 
-         * parse the path info.  must conform to the format below.
+         * parse the path info.
+         * 
+         * must look like this ...
          *
-         * /<weblog>/<type>/<format>
-         *
+         * /<type>/<format>
          */
         if(pathInfo != null && pathInfo.trim().length() > 1) {
-            // strip off the leading slash
-            pathInfo = pathInfo.substring(1);
-            String[] pathElements = pathInfo.split("/");
             
-            if(pathElements.length == 3) {
-                this.weblogHandle = pathElements[0];
-                this.type = pathElements[1];
-                this.format = pathElements[2];
+            String[] pathElements = pathInfo.split("/");
+            if(pathElements.length == 2) {
+                this.type = pathElements[0];
+                this.format = pathElements[1];
             } else {
-                throw new InvalidRequestException("invalid feed path info, "+request.getRequestURL());
+                throw new InvalidRequestException("invalid feed path info, "+
+                        request.getRequestURL());
             }
             
         } else {
-            throw new InvalidRequestException("invalid feed path info, "+request.getRequestURL());
+            throw new InvalidRequestException("invalid feed path info, "+
+                    request.getRequestURL());
         }
         
         
@@ -98,7 +107,8 @@ public class WeblogFeedRequest extends ParsedRequest {
          */
         if(request.getParameter("cat") != null) {
             try {
-                this.weblogCategory = URLDecoder.decode(request.getParameter("cat"), "UTF-8");
+                this.weblogCategory = 
+                        URLDecoder.decode(request.getParameter("cat"), "UTF-8");
             } catch (UnsupportedEncodingException ex) {
                 // should never happen, utf-8 is always supported by java
             }
@@ -108,27 +118,44 @@ public class WeblogFeedRequest extends ParsedRequest {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
         }
         
+        if(log.isDebugEnabled()) {
+            log.debug("type = "+this.type);
+            log.debug("format = "+this.format);
+            log.debug("weblogCategory = "+this.weblogCategory);
+            log.debug("excerpts = "+this.excerpts);
+        }
     }
-    
 
     public String getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getFormat() {
         return format;
     }
 
-    public String getWeblogHandle() {
-        return weblogHandle;
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     public String getWeblogCategory() {
         return weblogCategory;
     }
 
+    public void setWeblogCategory(String weblogCategory) {
+        this.weblogCategory = weblogCategory;
+    }
+
     public boolean isExcerpts() {
         return excerpts;
     }
 
+    public void setExcerpts(boolean excerpts) {
+        this.excerpts = excerpts;
+    }
+    
 }

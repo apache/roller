@@ -19,46 +19,122 @@
 package org.apache.roller.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
- * Represents a request to single weblog.
- *
+ * Represents a request to a weblog.
+ * 
  * This is a fairly generic parsed request which is only trying to figure out
- * the weblog handle that this request is destined for.
+ * the elements of a weblog request which apply to all weblogs.  We try to 
+ * determine the weblog weblogHandle, if a locale was specified, and then what extra 
+ * path info remains.  The basic format is like this ...
+ * 
+ * /<weblogHandle>[/locale][/extra/path/info]
+ * 
+ * All weblog urls require a weblogHandle, so we ensure that part of the url is
+ * properly specified.  locale is always optional, so we do our best to see
+ * if a locale is specified.  and path info is always optional.
  */
 public class WeblogRequest extends ParsedRequest {
     
+    private static Log log = LogFactory.getLog(WeblogRequest.class);
+    
     private String weblogHandle = null;
+    private String locale = null;
+    private String pathInfo = null;
     
     
     public WeblogRequest() {}
     
     
-    public WeblogRequest(HttpServletRequest request) throws InvalidRequestException {
+    public WeblogRequest(HttpServletRequest request) 
+            throws InvalidRequestException {
         
         // let our parent take care of their business first
         super(request);
         
-        String pathInfo = request.getPathInfo();
+        String path = request.getPathInfo();
         
-        // we expect a path info of /<handle>/*
-        if(pathInfo != null && pathInfo.trim().length() > 1) {
-            // strip off the leading slash
-            pathInfo = pathInfo.substring(1);
-            String[] pathElements = pathInfo.split("/");
+        log.debug("parsing path "+path);
+        
+        // first, cleanup extra slashes and extract the weblog weblogHandle
+        if(path != null && path.trim().length() > 1) {
             
-            if(pathElements[0] != null && pathElements[0].trim().length() > 1) {
-                this.weblogHandle = pathElements[0];
-            } else {
-                // no handle in path info
-                throw new InvalidRequestException("not a weblog request, "+request.getRequestURL());
+            // strip off the leading slash
+            path = path.substring(1);
+            
+            // strip off trailing slash if needed
+            if(path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
             }
             
-        } else {
-            // invalid request ... path info is empty
-            throw new InvalidRequestException("not a weblog request, "+request.getRequestURL());
+            String[] pathElements = path.split("/", 2);
+            if(pathElements[0].trim().length() > 0) {
+                this.weblogHandle = pathElements[0];
+            } else {
+                // no weblogHandle in path info
+                throw new InvalidRequestException("not a weblog request, "+
+                        request.getRequestURL());
+            }
+            
+            // if there is more left of the path info then hold onto it
+            if(pathElements.length == 2) {
+                path = pathElements[1];
+            } else {
+                path = null;
+            }
         }
+        
+        // second, check if we have a locale, everything else is extra path info
+        if(path != null && path.trim().length() > 0) {
+            
+            String[] pathElements = path.split("/", 2);
+            if(this.isLocale(pathElements[0])) {
+                this.locale = pathElements[0];
+                
+                // everything else is path info
+                if(pathElements.length == 2) {
+                    this.pathInfo = pathElements[1];
+                }
+            } else {
+                // no locale, just extra path info
+                this.pathInfo = path;
+            }
+        }
+        
+        if(log.isDebugEnabled()) {
+            log.debug("handle = "+this.weblogHandle);
+            log.debug("locale = "+this.locale);
+            log.debug("pathInfo = "+this.pathInfo);
+        }
+    }
+    
+
+    /**
+     * Convenience method which determines if the given string is a valid
+     * locale string.
+     */
+    private boolean isLocale(String potentialLocale) {
+        
+        boolean isLocale = false;
+        
+        // we only support 5 character locale strings, so check that first
+        if(potentialLocale != null && potentialLocale.length() == 5) {
+            
+            // now make sure that the format is proper ... e.g. "en_US"
+            // we are not going to be picky about capitalization
+            String[] langCountry = potentialLocale.split("_");
+            if(langCountry.length == 2 && 
+                    langCountry[0] != null && langCountry[0].length() == 2 && 
+                    langCountry[1] != null && langCountry[1].length() == 2) {
+                
+                isLocale = true;
+            }
+        }
+        
+        return isLocale;
     }
     
     
@@ -68,6 +144,22 @@ public class WeblogRequest extends ParsedRequest {
 
     public void setWeblogHandle(String weblogHandle) {
         this.weblogHandle = weblogHandle;
+    }
+    
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    public String getPathInfo() {
+        return pathInfo;
+    }
+
+    public void setPathInfo(String pathInfo) {
+        this.pathInfo = pathInfo;
     }
     
 }

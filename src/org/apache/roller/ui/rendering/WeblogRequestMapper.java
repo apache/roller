@@ -44,10 +44,11 @@ public class WeblogRequestMapper implements RequestMapper {
     
     private static Log log = LogFactory.getLog(WeblogRequestMapper.class);
     
-    private static final String PAGE_SERVLET = "/page";
-    private static final String FEED_SERVLET = "/flavor";
-    private static final String RESOURCE_SERVLET = "/resource";
-    private static final String SEARCH_SERVLET = "/search";
+    private static final String PAGE_SERVLET = "/roller-ui/rendering/page";
+    private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
+    private static final String RESOURCE_SERVLET = "/roller-ui/rendering/resources";
+    private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
+    private static final String RSD_SERVLET = "/roller-ui/rendering/rsd";
     
     // url patterns that are not allowed to be considered weblog handles
     Set restricted = null;
@@ -103,7 +104,7 @@ public class WeblogRequestMapper implements RequestMapper {
         
         // check if it's a valid weblog handle
         if(restricted.contains(weblogHandle) || !this.isWeblog(weblogHandle)) {
-            log.debug("DENIED "+weblogHandle);
+            log.debug("SKIPPED "+weblogHandle);
             return false;
         }
         
@@ -111,8 +112,9 @@ public class WeblogRequestMapper implements RequestMapper {
         
         // parse the rest of the url and build forward url
         if(pathInfo != null) {
+            
             // parse the next portion of the url
-            // we expect [locale]/<context>/<extra>/<info>
+            // we expect [locale/]<context>/<extra>/<info>
             String[] urlPath = pathInfo.split("/", 3);
             
             // if we have a locale, deal with it
@@ -241,6 +243,17 @@ public class WeblogRequestMapper implements RequestMapper {
             forwardUrl.append(SEARCH_SERVLET);
             forwardUrl.append("/");
             forwardUrl.append(handle);
+            
+        // requests handled by RSDServlet
+        } else if(context.equals("rsd")) {
+            
+            forwardUrl.append(RSD_SERVLET);
+            forwardUrl.append("/");
+            forwardUrl.append(handle);
+            
+        // unsupported url
+        } else {
+            return null;
         }
         
         log.debug("FORWARD_URL "+forwardUrl.toString());

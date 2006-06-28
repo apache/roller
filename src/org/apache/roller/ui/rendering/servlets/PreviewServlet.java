@@ -50,7 +50,7 @@ import org.apache.roller.ui.rendering.util.WeblogPreviewRequest;
  * Responsible for rendering weblog page previews.
  *
  * @web.servlet name="PreviewServlet" load-on-startup="7"
- * @web.servlet-mapping url-pattern="/preview/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/preview/*"
  */
 public class PreviewServlet extends HttpServlet {
     
@@ -147,14 +147,7 @@ public class PreviewServlet extends HttpServlet {
         log.debug("preview page found, dealing with it");
         
         // set the content type
-        String pageLink = page.getLink();
-        String mimeType = RollerContext.getServletContext().getMimeType(pageLink);
-        if(mimeType != null) {
-            // we found a match ... set the content type
-            response.setContentType(mimeType+"; charset=utf-8");
-        } else {
-            response.setContentType("text/html; charset=utf-8");
-        }
+        response.setContentType("text/html; charset=utf-8");
         
         // looks like we need to render content
         Map model = new HashMap();

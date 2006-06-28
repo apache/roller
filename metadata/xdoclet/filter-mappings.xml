@@ -10,13 +10,6 @@
      commented out for Servlet API 2.3 containers, like Tomcat 4.x and Resin 2.x.
 -->
 
-<!--
-<filter-mapping>
-    <filter-name>UrlRewriteFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-</filter-mapping>
--->
-
 <!-- Ensures character encoding set to UTF-8 and JSTL and Struts locales are in sync.
 Note: Any filters preceding this one MUST not cause request parsing. -->
 <filter-mapping>
@@ -49,10 +42,14 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
+<filter-mapping>
+    <filter-name>RequestMappingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
 
 <filter-mapping>
     <filter-name>RefererFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
+    <url-pattern>/roller-ui/rendering/page/*</url-pattern>
 </filter-mapping>
 
 <filter-mapping>
@@ -61,50 +58,18 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
 </filter-mapping>
 
 
-<filter-mapping>
-    <filter-name>IfPlanetModifiedFilter</filter-name>
-    <url-pattern>/planetrss/*</url-pattern>
-</filter-mapping>
-
-
-<!-- Compression Filters -->
+<!-- Compression Filter -->
 <filter-mapping>
     <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
+    <url-pattern>/roller-ui/rendering/page/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>CompressionFilter</filter-name>
+    <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
     <filter-name>CompressionFilter</filter-name>
     <url-pattern>/planet.do</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/main.do</url-pattern>
-</filter-mapping>
-
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/atom/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/rss/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/foaf/*</url-pattern>
-</filter-mapping>
-
-
-<!-- Main Page Caching -->
-<filter-mapping>
-	<filter-name>MainPageCacheFilter</filter-name>
-	<url-pattern>/main.do</url-pattern>
-	<dispatcher>REQUEST</dispatcher>
-	<dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
 
@@ -114,6 +79,10 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
 	<url-pattern>/planet.do</url-pattern>
 	<dispatcher>REQUEST</dispatcher>
 	<dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>IfPlanetModifiedFilter</filter-name>
+    <url-pattern>/planetrss/*</url-pattern>
 </filter-mapping>
 <filter-mapping>
     <filter-name>PlanetCacheFilter</filter-name>
