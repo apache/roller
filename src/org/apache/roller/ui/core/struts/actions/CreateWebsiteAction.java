@@ -244,7 +244,7 @@ public class CreateWebsiteAction extends DispatchAction {
             themes = themeMgr.getEnabledThemesList();
             if (wd != null) {
                 contextURL = rollerContext.getAbsoluteContextUrl(request);
-                weblogURL = contextURL + "/page/" + wd.getHandle();
+                weblogURL = wd.getURL();
                 rssURL =    contextURL + "/rss/" + wd.getHandle();
                 website = wd;
             }

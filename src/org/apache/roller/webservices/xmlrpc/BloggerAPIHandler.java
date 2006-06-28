@@ -245,6 +245,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             Hashtable result = new Hashtable();
             result.put("nickname", user.getUserName());
             result.put("userid", user.getUserName());
+            // TODO 3.0: this url does not work!!
             result.put("url", contextUrl+"/page/"+userid);
             result.put("email", "");
             result.put("lastname", lastname);
@@ -291,7 +292,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 while (iter.hasNext()) {
                     WebsiteData website = (WebsiteData)iter.next();
                     Hashtable blog = new Hashtable(3);
-                    blog.put("url", contextUrl+"/page/"+website.getHandle());
+                    blog.put("url", website.getURL());
                     blog.put("blogid", website.getHandle());
                     blog.put("blogName", website.getName());
                     result.add(blog);

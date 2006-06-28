@@ -574,7 +574,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         if (weblogHandle == null)
             return;
         
-        String selfSiteFragment = "/page/"+weblogHandle;
+        String selfSiteFragment = "/"+weblogHandle;
         WebsiteData weblog = null;
         WeblogEntryData entry = null;
         

@@ -63,10 +63,9 @@ public class CalendarHelper  {
         try {
             String selfUrl = null;
             if (pageLink != null) {
-                selfUrl = request.getContextPath() + "/page/"
-                        + weblog.getHandle() + "/"+pageLink;
+                selfUrl = weblog.getURL() + "/page/" + pageLink;
             } else {
-                selfUrl = request.getContextPath()+"/page/" + weblog.getHandle();
+                selfUrl = weblog.getURL();
             }
 
             CalendarModel model = null;

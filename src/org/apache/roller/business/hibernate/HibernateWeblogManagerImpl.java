@@ -1121,16 +1121,6 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
         return entry;
     }
-    
-    /**
-     * Get absolute URL to this website.
-     * @return Absolute URL to this website.
-     */
-    public String getUrl(WebsiteData site, String contextUrl) {
-        String url =
-            StringEscapeUtils.escapeHtml(contextUrl + "/page/" + site.getHandle());
-        return url;
-    }
         
     public void release() {}
 
