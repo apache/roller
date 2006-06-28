@@ -50,6 +50,10 @@ public class WeblogRequestMapper implements RequestMapper {
     private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
     private static final String RSD_SERVLET = "/roller-ui/rendering/rsd";
     
+    private static final String COMMENT_SERVLET = "/roller-ui/rendering/comment";
+    private static final String TRACKBACK_SERVLET = "/roller-ui/rendering/trackback";
+    
+    
     // url patterns that are not allowed to be considered weblog handles
     Set restricted = null;
     
@@ -152,7 +156,7 @@ public class WeblogRequestMapper implements RequestMapper {
         
         // calculate forward url
         String forwardUrl = calculateForwardUrl(weblogHandle, weblogLocale,
-                weblogRequestContext, weblogRequestData);
+                weblogRequestContext, weblogRequestData, request.getMethod());
         
         // if we don't have a forward url then the request was invalid somehow
         if(forwardUrl == null) {
@@ -176,84 +180,105 @@ public class WeblogRequestMapper implements RequestMapper {
      * handle is always assumed valid, all other params may be null.
      */
     private String calculateForwardUrl(String handle, String locale,
-                                       String context, String data) {
+                                       String context, String data,
+                                       String method) {
         
-        log.debug(handle+","+locale+","+context+","+data);
+        log.debug(handle+","+locale+","+context+","+data+","+method);
         
         StringBuffer forwardUrl = new StringBuffer();
         
-        // no context means weblog homepage
-        if(context == null) {
-            
-            forwardUrl.append(PAGE_SERVLET);
-            forwardUrl.append("/");
-            forwardUrl.append(handle);
-            if(locale != null) {
+        // POST urls, like comment and trackback servlets
+        if("POST".equals(method)) {
+            if(context.equals("entry")) {
+                // TODO 3.0: need to figure out how to route requests to trackback servlet
+                forwardUrl.append(COMMENT_SERVLET);
                 forwardUrl.append("/");
-                forwardUrl.append(locale);
+                forwardUrl.append(handle);
+                forwardUrl.append("/");
+                forwardUrl.append(context);
+                if(data != null) {
+                    forwardUrl.append("/");
+                    forwardUrl.append(data);
+                }
+            } else {
+                // someone posting data where they aren't supposed to
+                return null;
             }
             
-        // requests handled by PageServlet
-        } else if(context.equals("page") || context.equals("entry") ||
-                context.equals("date") || context.equals("category")) {
-            
-            forwardUrl.append(PAGE_SERVLET);
-            forwardUrl.append("/");
-            forwardUrl.append(handle);
-            if(locale != null) {
-                forwardUrl.append("/");
-                forwardUrl.append(locale);
-            }
-            forwardUrl.append("/");
-            forwardUrl.append(context);
-            if(data != null) {
-                forwardUrl.append("/");
-                forwardUrl.append(data);
-            }
-            
-        // requests handled by FeedServlet
-        } else if(context.equals("feed")) {
-            
-            forwardUrl.append(FEED_SERVLET);
-            forwardUrl.append("/");
-            forwardUrl.append(handle);
-            if(locale != null) {
-                forwardUrl.append("/");
-                forwardUrl.append(locale);
-            }
-            if(data != null) {
-                forwardUrl.append("/");
-                forwardUrl.append(data);
-            }
-            
-        // requests handled by ResourceServlet
-        } else if(context.equals("resource")) {
-            
-            forwardUrl.append(RESOURCE_SERVLET);
-            forwardUrl.append("/");
-            forwardUrl.append(handle);
-            if(data != null) {
-                forwardUrl.append("/");
-                forwardUrl.append(data);
-            }
-            
-        // requests handled by SearchServlet
-        } else if(context.equals("search")) {
-            
-            forwardUrl.append(SEARCH_SERVLET);
-            forwardUrl.append("/");
-            forwardUrl.append(handle);
-            
-        // requests handled by RSDServlet
-        } else if(context.equals("rsd")) {
-            
-            forwardUrl.append(RSD_SERVLET);
-            forwardUrl.append("/");
-            forwardUrl.append(handle);
-            
-        // unsupported url
         } else {
-            return null;
+            // no context means weblog homepage
+            if(context == null) {
+                
+                forwardUrl.append(PAGE_SERVLET);
+                forwardUrl.append("/");
+                forwardUrl.append(handle);
+                if(locale != null) {
+                    forwardUrl.append("/");
+                    forwardUrl.append(locale);
+                }
+                
+                // requests handled by PageServlet
+            } else if(context.equals("page") || context.equals("entry") ||
+                    context.equals("date") || context.equals("category")) {
+                
+                forwardUrl.append(PAGE_SERVLET);
+                forwardUrl.append("/");
+                forwardUrl.append(handle);
+                if(locale != null) {
+                    forwardUrl.append("/");
+                    forwardUrl.append(locale);
+                }
+                forwardUrl.append("/");
+                forwardUrl.append(context);
+                if(data != null) {
+                    forwardUrl.append("/");
+                    forwardUrl.append(data);
+                }
+                
+                // requests handled by FeedServlet
+            } else if(context.equals("feed")) {
+                
+                forwardUrl.append(FEED_SERVLET);
+                forwardUrl.append("/");
+                forwardUrl.append(handle);
+                if(locale != null) {
+                    forwardUrl.append("/");
+                    forwardUrl.append(locale);
+                }
+                if(data != null) {
+                    forwardUrl.append("/");
+                    forwardUrl.append(data);
+                }
+                
+                // requests handled by ResourceServlet
+            } else if(context.equals("resource")) {
+                
+                forwardUrl.append(RESOURCE_SERVLET);
+                forwardUrl.append("/");
+                forwardUrl.append(handle);
+                if(data != null) {
+                    forwardUrl.append("/");
+                    forwardUrl.append(data);
+                }
+                
+                // requests handled by SearchServlet
+            } else if(context.equals("search")) {
+                
+                forwardUrl.append(SEARCH_SERVLET);
+                forwardUrl.append("/");
+                forwardUrl.append(handle);
+                
+                // requests handled by RSDServlet
+            } else if(context.equals("rsd")) {
+                
+                forwardUrl.append(RSD_SERVLET);
+                forwardUrl.append("/");
+                forwardUrl.append(handle);
+                
+                // unsupported url
+            } else {
+                return null;
+            }
         }
         
         log.debug("FORWARD_URL "+forwardUrl.toString());
