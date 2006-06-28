@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * RollerRuntimeConfig.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on May 4, 2005, 3:00 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.config;
@@ -33,6 +28,7 @@ import org.apache.roller.config.runtime.RuntimeConfigDefsParser;
 import org.apache.roller.model.PropertiesManager;
 import org.apache.roller.model.RollerFactory;
 
+
 /**
  * This class acts as a convenience gateway for getting property values
  * via the PropertiesManager.  We do this because most calls to the
@@ -40,16 +36,13 @@ import org.apache.roller.model.RollerFactory;
  * thus the caller doesn't need the full RollerPropertyData object.
  *
  * We also provide some methods for converting to different data types.
- *
- * @author Allen Gilliland
  */
 public class RollerRuntimeConfig {
     
     private static String runtime_config = "/rollerRuntimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
     
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(RollerRuntimeConfig.class);
+    private static Log log = LogFactory.getLog(RollerRuntimeConfig.class);
     
     
     // prevent instantiations
@@ -67,10 +60,10 @@ public class RollerRuntimeConfig {
             PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
             value = pmgr.getProperty(name).getValue();
         } catch(Exception e) {
-            mLogger.warn("Trouble accessing property: "+name, e);
+            log.warn("Trouble accessing property: "+name, e);
         }
         
-        mLogger.debug("fetched property ["+name+"="+value+"]");
+        log.debug("fetched property ["+name+"="+value+"]");
         
         return value;
     }
@@ -106,7 +99,7 @@ public class RollerRuntimeConfig {
         try {
             intval = Integer.parseInt(value);
         } catch(Exception e) {
-            mLogger.warn("Trouble converting to int: "+name, e);
+            log.warn("Trouble converting to int: "+name, e);
         }
         
         return intval;
@@ -127,7 +120,7 @@ public class RollerRuntimeConfig {
                 
             } catch(Exception e) {
                 // error while parsing :(
-                mLogger.error("Error parsing runtime config defs", e);
+                log.error("Error parsing runtime config defs", e);
             }
             
         }
@@ -146,7 +139,7 @@ public class RollerRuntimeConfig {
      */
     public static String getRuntimeConfigDefsAsString() {
         
-        mLogger.debug("Trying to load runtime config defs file");
+        log.debug("Trying to load runtime config defs file");
         
         try {
             InputStreamReader reader =
@@ -162,7 +155,7 @@ public class RollerRuntimeConfig {
             
             return configString.toString();
         } catch(Exception e) {
-            mLogger.error("Error loading runtime config defs file", e);
+            log.error("Error loading runtime config defs file", e);
         }
         
         return "";
