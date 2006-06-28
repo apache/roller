@@ -15,6 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.velocity.deprecated;
 
 import java.net.MalformedURLException;
@@ -232,10 +233,10 @@ public class ContextLoader {
         ctx.put("pageHelper", pageHelper);
         
         // Load standard Roller objects and values into the context
-        WebsiteData website = loadWeblogValues(ctx, weblog, request);
-        loadPathValues(ctx, request, rollerCtx, website);
-        loadRssValues(ctx, request, website, category);
-        loadUtilityObjects(ctx, request, rollerCtx, website, page);
+        loadWeblogValues(ctx, weblog, request);
+        loadPathValues(ctx, request, rollerCtx, weblog);
+        loadRssValues(ctx, request, weblog, category);
+        loadUtilityObjects(ctx, request, rollerCtx, weblog, page);
         loadRequestParamKeys(ctx);
         loadStatusMessage(ctx, request);
         
@@ -252,47 +253,30 @@ public class ContextLoader {
     /**
      * Load website object and related objects.
      */
-    private static WebsiteData loadWeblogValues(
+    private static void loadWeblogValues(
             Map ctx,
             WebsiteData weblog,
             HttpServletRequest request) throws RollerException {
         
+        // weblog cannot be null
+        if(weblog == null)
+            return;
+        
         Roller mRoller = RollerFactory.getRoller();
         Map props = mRoller.getPropertiesManager().getProperties();
         
-        if (weblog != null) {
-            ctx.put("userName",         weblog.getHandle());
-            ctx.put("fullName",         weblog.getName() );
-            ctx.put("emailAddress",     weblog.getEmailAddress() );
-            ctx.put("encodedEmail",     RegexUtil.encode(weblog.getEmailAddress()));
-            ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(weblog.getEmailAddress()));
-            
-            // setup Locale for future rendering
-            ctx.put("locale", weblog.getLocaleInstance());
-            
-            // setup Timezone for future rendering
-            ctx.put("timezone", weblog.getTimeZoneInstance());
-            ctx.put("timeZone", weblog.getTimeZoneInstance());
-        } else {
-            // create dummy website for use in site-wide feeds
-            weblog = new WebsiteData();
-            weblog.setAllowComments(Boolean.FALSE);
-            weblog.setHandle("zzz_none_zzz");
-            weblog.setName(
-                    ((RollerPropertyData)props.get("site.name")).getValue());
-            weblog.setDescription(
-                    ((RollerPropertyData)props.get("site.description")).getValue());
-            weblog.setEntryDisplayCount(
-                    RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries"));
-            ctx.put("handle",   weblog.getHandle() );
-            ctx.put("userName", weblog.getHandle() );
-            ctx.put("fullName", weblog.getHandle());
-            ctx.put("locale",   Locale.getDefault());
-            ctx.put("timezone", TimeZone.getDefault());
-            ctx.put("timeZone", TimeZone.getDefault());
-            ctx.put("emailAddress",
-                    ((RollerPropertyData)props.get("site.adminemail")).getValue());
-        }
+        ctx.put("userName",         weblog.getHandle());
+        ctx.put("fullName",         weblog.getName() );
+        ctx.put("emailAddress",     weblog.getEmailAddress() );
+        ctx.put("encodedEmail",     RegexUtil.encode(weblog.getEmailAddress()));
+        ctx.put("obfuscatedEmail",  RegexUtil.obfuscateEmail(weblog.getEmailAddress()));
+        
+        // setup Locale for future rendering
+        ctx.put("locale", weblog.getLocaleInstance());
+        
+        // setup Timezone for future rendering
+        ctx.put("timezone", weblog.getTimeZoneInstance());
+        ctx.put("timeZone", weblog.getTimeZoneInstance());
         ctx.put("website", WebsiteDataWrapper.wrap(weblog) );
         
         String siteName = ((RollerPropertyData)props.get("site.name")).getValue();
@@ -307,20 +291,16 @@ public class ContextLoader {
         ctx.put("viewLocale", LanguageUtil.getViewLocale(request));
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
         
-        // if there is an "_entry" page, only load it once
-        // but don't do it for dummy website
-        if (weblog != null && !"zzz_none_zzz".equals(weblog.getHandle())) {
-            // alternative display pages - customization
-            Template entryPage = weblog.getPageByName("_entry");
-            if (entryPage != null) {
-                ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
-            }
-            // TODO: ATLAS: no templates use this, should be safe to remove
-            // Template descPage = weblog.getPageByName("_desc");
-            //if (descPage != null) {
-            //ctx.put("descPage", TemplateWrapper.wrap(descPage));
-            //}
+        // alternative display pages - customization
+        Template entryPage = weblog.getPageByName("_entry");
+        if (entryPage != null) {
+            ctx.put("entryPage", TemplateWrapper.wrap(entryPage));
         }
+        // TODO: ATLAS: no templates use this, should be safe to remove
+        // Template descPage = weblog.getPageByName("_desc");
+        //if (descPage != null) {
+        //ctx.put("descPage", TemplateWrapper.wrap(descPage));
+        //}
         
         boolean commentsEnabled =
                 RollerRuntimeConfig.getBooleanProperty("users.comments.enabled");
@@ -332,8 +312,6 @@ public class ContextLoader {
         ctx.put("commentsEnabled",   new Boolean(commentsEnabled) );
         ctx.put("trackbacksEnabled", new Boolean(trackbacksEnabled) );
         ctx.put("linkbacksEnabled",  new Boolean(linkbacksEnabled) );
-        
-        return weblog;
     }
     
     
@@ -423,7 +401,7 @@ public class ContextLoader {
         }
         ctx.put("catname", (catname!=null) ? catname : "");
         ctx.put("catPath", (catPath != null) ? catPath : "");
-        ctx.put("updateTime", request.getAttribute("updateTime"));
+        ctx.put("updateTime", website.getLastModified());
         ctx.put("now", new Date());
     }
     
