@@ -49,7 +49,7 @@ import org.apache.struts.util.RequestUtils;
  * <a href="http://www.movabletype.org/docs/mttrackback.html>MT Trackback</a>.
  *
  * @web.servlet name="TrackbackServlet"
- * @web.servlet-mapping url-pattern="/trackback/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/trackback/*"
  */
 public class TrackbackServlet extends HttpServlet { 
     
