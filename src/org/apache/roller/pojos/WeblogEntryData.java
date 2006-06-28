@@ -42,6 +42,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogEntryPlugin;
@@ -711,8 +712,8 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getPermalink() {
-        String absContextUrl = RollerConfig.getProperty("context.absPath");
-        return absContextUrl + getPermaLink();       
+        String absPath = RollerRuntimeConfig.getProperty("site.absoluteurl");
+        return absPath + getPermaLink();       
     }
     
     /**
@@ -729,7 +730,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
             // go with the "no encoding" version
         }        
         WebsiteData website = this.getWebsite();
-        return "/" + website.getHandle() + "/entry/" + lAnchor;        
+        return "/" + getWebsite().getHandle() + "/entry/" + lAnchor;        
     }
     
     /**
@@ -738,15 +739,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @deprecated Use commentLink() instead
      */
     public String getCommentsLink() {
-        String dayString = DateUtil.format8chars(this.getPubTime());
-        String lAnchor = this.getAnchor();
-        try {
-            lAnchor = URLEncoder.encode(anchor, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // go with the "no encoding" version
-        }
-        String clink = "/page/" + this.getWebsite().getHandle() + "?entry=" + lAnchor;
-        return clink;
+        return getPermaLink() + "#comments";
     }
     /** 
      * to please XDoclet 
@@ -759,8 +752,8 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getCommentLink() {
-        String absContextUrl = RollerConfig.getProperty("context.absPath");
-        return absContextUrl + getCommentsLink(); 
+        String absPath = RollerRuntimeConfig.getProperty("site.absoluteurl");
+        return absPath + getCommentsLink(); 
     }
     /** to please XDoclet */
     public void setCommentLink(String ignored) {}
