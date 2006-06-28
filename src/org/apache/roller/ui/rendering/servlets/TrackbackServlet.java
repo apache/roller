@@ -1,50 +1,46 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * Created on Apr 13, 2003
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-
+import java.sql.Timestamp;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.Timestamp;
-import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.util.SpamChecker;
-
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
-import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.LinkbackExtractor;
+import org.apache.roller.util.SpamChecker;
+import org.apache.roller.util.cache.CacheManager;
+import org.apache.struts.util.RequestUtils;
 
 
 /**
@@ -54,16 +50,10 @@ import org.apache.roller.util.LinkbackExtractor;
  *
  * @web.servlet name="TrackbackServlet"
  * @web.servlet-mapping url-pattern="/trackback/*"
- *
- * @author David M Johnson
  */
 public class TrackbackServlet extends HttpServlet { 
     
-    private static Log logger = 
-        LogFactory.getFactory().getInstance(TrackbackServlet.class);
-        
-    /** Request parameter to indicate a trackback "tb" */
-    //private static final String TRACKBACK_PARAM = "tb";
+    private static Log logger = LogFactory.getLog(TrackbackServlet.class);
     
     /** Request parameter for the trackback "title" */
     private static final String TRACKBACK_TITLE_PARAM = "title";
@@ -87,44 +77,31 @@ public class TrackbackServlet extends HttpServlet {
     public static final String TRACKBACK_MESSAGE =
             "BLOJSOM_TRACKBACK_MESSAGE";
     
-    /** Trackback success page */
-    //private static final String TRACKBACK_SUCCESS_PAGE = "trackback-success";
-    
-    /** Trackback failure page */
-    //private static final String TRACKBACK_FAILURE_PAGE = "trackback-failure";
     
     /**
-     * Constructor.
+     * Handle incoming http GET requests.
+     *
+     * The TrackbackServlet does not support GET requests, it's a 404.
      */
-    public TrackbackServlet() {
-        super();
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
     
-    /**
-     * POSTing to this Servlet will add a Trackback to a Weblog Entrty.
-     */
-    protected void doGet(HttpServletRequest req, HttpServletResponse res)
-    throws ServletException, IOException {
-        doPost(req,res);
-    }
     
     /**
-     * POSTing to this Servlet will add a Trackback to a Weblog Entrty.
+     * Service incoming POST requests.
+     *
+     * Here we handle incoming trackback posts.
      */
-    protected void doPost(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         
-        try {
-            // insure that incoming data is parsed as UTF-8
-            req.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new ServletException("Can't set incoming encoding to UTF-8");
-        }
-        
-        String url = req.getParameter(TRACKBACK_URL_PARAM);
-        String title = req.getParameter(TRACKBACK_TITLE_PARAM);
-        String excerpt = req.getParameter(TRACKBACK_EXCERPT_PARAM);
-        String blogName = req.getParameter(TRACKBACK_BLOG_NAME_PARAM);
+        String url = request.getParameter(TRACKBACK_URL_PARAM);
+        String title = request.getParameter(TRACKBACK_TITLE_PARAM);
+        String excerpt = request.getParameter(TRACKBACK_EXCERPT_PARAM);
+        String blogName = request.getParameter(TRACKBACK_BLOG_NAME_PARAM);
         
         if ((title == null) || "".equals(title)) {
             title = url;
@@ -141,7 +118,7 @@ public class TrackbackServlet extends HttpServlet {
         
         String error = null;
         boolean verified = true;
-        PrintWriter pw = new PrintWriter(res.getOutputStream());
+        PrintWriter pw = new PrintWriter(response.getOutputStream());
         try {
             if(!RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
                 error = "Trackbacks are disabled for this site";
@@ -150,7 +127,7 @@ public class TrackbackServlet extends HttpServlet {
                 error = "title, url, excerpt, and blog_name not specified.";
             } 
             else {                
-                RollerRequest rreq = RollerRequest.getRollerRequest(req);
+                RollerRequest rreq = RollerRequest.getRollerRequest(request);
                 WeblogEntryData entry = rreq.getWeblogEntry();
                 WebsiteData website = entry.getWebsite();
                 boolean siteAllows = website.getAllowComments().booleanValue();
@@ -179,7 +156,7 @@ public class TrackbackServlet extends HttpServlet {
                         
                         // ...ensure trackbacker actually links to us
                         RollerContext rctx= RollerContext.getRollerContext();
-                        String absurl = rctx.getAbsoluteContextUrl(req);
+                        String absurl = rctx.getAbsoluteContextUrl(request);
                         LinkbackExtractor linkback = new LinkbackExtractor(
                             comment.getUrl(), absurl + entry.getPermaLink());
                         if (linkback.getExcerpt() == null) {
@@ -212,9 +189,9 @@ public class TrackbackServlet extends HttpServlet {
 
                         // Send email notifications
                         RollerContext rc = RollerContext.getRollerContext();                                
-                        String rootURL = rc.getAbsoluteContextUrl(req);
+                        String rootURL = rc.getAbsoluteContextUrl(request);
                         if (rootURL == null || rootURL.trim().length()==0) {
-                            rootURL = RequestUtils.serverURL(req) + req.getContextPath();
+                            rootURL = RequestUtils.serverURL(request) + request.getContextPath();
                         } 
                         CommentServlet.sendEmailNotification(comment, rootURL);
 
@@ -252,8 +229,9 @@ public class TrackbackServlet extends HttpServlet {
             pw.println("</response>");
             pw.flush();
         }
-        res.flushBuffer();
+        response.flushBuffer();
         
         // TODO : FindBugs thinks 'pw' should close
     }
+    
 }
