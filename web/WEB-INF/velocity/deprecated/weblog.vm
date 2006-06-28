@@ -158,7 +158,7 @@
         #showPrevWeblogLink($npcat) |
     #end
     #if ($pageModel.previousEntry || $pageModel.nextEntry)
-        <a href="${ctxPath}/page/${website.handle}$catLink">$page.name</a>
+        <a href="${website.URL}$catLink">$page.name</a>
     #end
     #if ($pageModel.nextEntry)
         | #showNextWeblogLink($npcat)

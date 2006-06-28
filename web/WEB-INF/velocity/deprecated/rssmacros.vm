@@ -8,7 +8,7 @@
  * of the specified category.
  *#
 #macro( showRSSLinksForCategory $category )
-    <a href="${ctxPath}/rss/${website.handle}">$text.get("macro.rss.all")</a>
+    <a href="${website.URL}">$text.get("macro.rss.all")</a>
     [<a href="${ctxPath}/rss/${website.handle}?excerpts=true">$text.get("macro.rss.excerpts")</a>]<br />
     #set( $categories = $pageModel.getWeblogCategories($category) )
     #foreach( $cat in $categories )
