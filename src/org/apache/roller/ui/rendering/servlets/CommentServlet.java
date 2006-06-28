@@ -46,6 +46,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.IndexManager;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.UserData;
@@ -57,6 +58,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.model.UtilitiesHelper;
 import org.apache.roller.ui.rendering.util.CommentAuthenticator;
 import org.apache.roller.ui.rendering.util.DefaultCommentAuthenticator;
+import org.apache.roller.ui.rendering.util.WeblogCommentRequest;
 import org.apache.roller.util.GenericThrottle;
 import org.apache.roller.util.IPBanList;
 import org.apache.roller.util.MailUtil;
@@ -79,7 +81,7 @@ import org.apache.struts.util.RequestUtils;
  * email sent to the blog owner and all who have commented on the same post.
  *
  * @web.servlet name="CommentServlet"
- * @web.servlet-mapping url-pattern="/comment/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/comment/*"
  */
 public class CommentServlet extends HttpServlet {
     
@@ -96,9 +98,11 @@ public class CommentServlet extends HttpServlet {
     /** 
      * Initialization.
      */
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig servletConfig) throws ServletException {
         
-        super.init(config);
+        super.init(servletConfig);
+        
+        log.info("Initializing CommentServlet");
         
         // lookup the authenticator we are going to use and instantiate it
         try {
@@ -171,6 +175,9 @@ public class CommentServlet extends HttpServlet {
         String message = null;
         String entry_permalink = request.getContextPath();
         
+        WebsiteData weblog = null;
+        WeblogEntryData entry = null;
+        
         // are we doing a preview?  or a post?
         String method = request.getParameter("method");
         boolean preview = (method != null && method.equals("preview")) ? true : false;
@@ -184,40 +191,47 @@ public class CommentServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-
-        // lookup the entry being commented on and validate it
-        WeblogEntryData entry = null;
-        String entryid = request.getParameter("entryid");
+        
+        WeblogCommentRequest commentRequest = null;
         try {
-            WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
-            entry = weblogMgr.getWeblogEntry(entryid);
+            commentRequest = new WeblogCommentRequest(request);
             
-            // if we couldn't find the entry then we are done
+            // lookup weblog specified by comment request
+            UserManager uMgr = RollerFactory.getRoller().getUserManager();
+            weblog = uMgr.getWebsiteByHandle(commentRequest.getWeblogHandle());
+            
+            if(weblog == null) {
+                throw new RollerException("unable to lookup weblog: "+
+                        commentRequest.getWeblogHandle());
+            }
+            
+            // lookup entry specified by comment request
+            WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
+            entry = weblogMgr.getWeblogEntryByAnchor(weblog, commentRequest.getWeblogAnchor());
+            
             if(entry == null) {
-                log.debug("Entry was null: "+entryid);
-                response.sendRedirect(request.getContextPath());
-                return;
+                throw new RollerException("unable to lookup entry: "+
+                        commentRequest.getWeblogAnchor());
             }
             
             // we know what the weblog entry is, so setup our permalink url
             entry_permalink = entry.getPermaLink();
-            
-        } catch(RollerException re) {
-            log.error("Error looking up entry: "+entryid, re);
-            response.sendRedirect(request.getContextPath());
+        } catch (Exception e) {
+            // some kind of error parsing the request or looking up weblog
+            log.debug("error creating page request", e);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         
-        log.debug("Doing comment posting for entry = "+entry_permalink);
         
-        WebsiteData website = entry.getWebsite();
+        log.debug("Doing comment posting for entry = "+entry_permalink);
         
         // check if site is allowing comments
         if(!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled"))
             error = "Comments are disabled for this site.";
         
         // check if weblog and entry are allowing comments
-        if (!website.getAllowComments().booleanValue() ||
+        if (!weblog.getAllowComments().booleanValue() ||
                 !entry.getCommentsStillAllowed())
             error = "Comments not allowed on this entry";
         
@@ -235,11 +249,11 @@ public class CommentServlet extends HttpServlet {
         // fields: name, email, url, content, notify
         // TODO: data validation on collected comment data
         CommentData comment = new CommentData();
-        comment.setName(request.getParameter("name"));
-        comment.setEmail(request.getParameter("email"));
-        comment.setUrl(request.getParameter("url"));
-        comment.setContent(request.getParameter("content"));
-        comment.setNotify(new Boolean((request.getParameter("notify") != null)));
+        comment.setName(commentRequest.getName());
+        comment.setEmail(commentRequest.getEmail());
+        comment.setUrl(commentRequest.getUrl());
+        comment.setContent(commentRequest.getContent());
+        comment.setNotify(new Boolean(commentRequest.isNotify()));
         comment.setWeblogEntry(entry);
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(new Timestamp(System.currentTimeMillis()));
@@ -280,7 +294,7 @@ public class CommentServlet extends HttpServlet {
                 }
                 
                 // If comment moderation is on, set comment as pending
-                if (website.getCommentModerationRequired()) {
+                if (weblog.getCommentModerationRequired()) {
                     comment.setPending(Boolean.TRUE);
                     comment.setApproved(Boolean.FALSE);
                     message = bundle.getString("commentServlet.submittedToModerator");
