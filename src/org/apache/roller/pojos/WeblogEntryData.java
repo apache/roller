@@ -729,7 +729,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
             // go with the "no encoding" version
         }        
         WebsiteData website = this.getWebsite();
-        return "/page/" + website.getHandle() + "?entry=" + lAnchor;        
+        return "/" + website.getHandle() + "/entry/" + lAnchor;        
     }
     
     /**
