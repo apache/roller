@@ -1,20 +1,21 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.ui.rendering.servlets;
 
 import java.io.File;
@@ -42,14 +43,12 @@ import org.apache.roller.model.RollerFactory;
  * context we need a way to serve them up.  This servlet assumes that
  * resources are stored on a filesystem in the "uploads.dir" directory.
  *
- * @author Allen Gilliland
- *
- * @web.servlet name="ResourcesServlet"
+ * @web.servlet name="ResourcesServlet" load-on-startup="5"
  * @web.servlet-mapping url-pattern="/roller-ui/rendering/resources/*"
  */
 public class ResourceServlet extends HttpServlet {
     
-    private static Log mLogger = LogFactory.getLog(ResourceServlet.class);
+    private static Log log = LogFactory.getLog(ResourceServlet.class);
     
     private String upload_dir = null;
     private ServletContext context = null;
@@ -59,12 +58,16 @@ public class ResourceServlet extends HttpServlet {
         
         super.init(config);
         
+        log.info("Initializing ResourceServlet");
+        
         this.context = config.getServletContext();
         
         try {
             this.upload_dir = RollerFactory.getRoller().getFileManager().getUploadDir();
-            mLogger.debug("upload dir is ["+this.upload_dir+"]");
-        } catch(Exception e) { mLogger.warn(e); }
+            log.debug("upload dir is ["+this.upload_dir+"]");
+        } catch(Exception e) { 
+            log.error(e);
+        }
         
     }
     
@@ -98,8 +101,8 @@ public class ResourceServlet extends HttpServlet {
         String resource_path = this.upload_dir + reqResource;
         File resource = new File(resource_path);
         
-        mLogger.debug("Resource requested ["+reqURI+"]");
-        mLogger.debug("Real path is ["+resource.getAbsolutePath()+"]");
+        log.debug("Resource requested ["+reqURI+"]");
+        log.debug("Real path is ["+resource.getAbsolutePath()+"]");
         
         // do a quick check to make sure the resource exits, otherwise 404
         if(!resource.exists() || !resource.canRead() || resource.isDirectory()) {
@@ -118,7 +121,7 @@ public class ResourceServlet extends HttpServlet {
         Date ifModDate = new Date(request.getDateHeader("If-Modified-Since"));
         Date lastMod = new Date(resource.lastModified());
         if(lastMod.compareTo(ifModDate) <= 0) {
-            mLogger.debug("Resource unmodified ... sending 304");
+            log.debug("Resource unmodified ... sending 304");
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
@@ -140,12 +143,6 @@ public class ResourceServlet extends HttpServlet {
         // cleanup
         out.close();
         resource_file.close();
-    }
-    
-    
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
     }
     
 }

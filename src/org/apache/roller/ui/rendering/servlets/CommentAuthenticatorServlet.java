@@ -38,7 +38,7 @@ import org.apache.roller.ui.rendering.util.DefaultCommentAuthenticator;
  * so that we can cache full pages and still set the comment authentication
  * section dynamically.
  *
- * @web.servlet name="CommentAuthenticatorServlet"
+ * @web.servlet name="CommentAuthenticatorServlet" load-on-startup="7"
  * @web.servlet-mapping url-pattern="/CommentAuthenticatorServlet"
  */
 public class CommentAuthenticatorServlet extends HttpServlet {
@@ -67,6 +67,7 @@ public class CommentAuthenticatorServlet extends HttpServlet {
      * Initialization.
      */
     public void init(ServletConfig config) throws ServletException {
+        
         super.init(config);
         
         // lookup the authenticator we are going to use and instantiate it
