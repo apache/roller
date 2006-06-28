@@ -1024,8 +1024,8 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
      */
     public String getURL() {
         // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
-        String absContextUrl = RollerConfig.getProperty("context.absPath");
-        return absContextUrl + "/page/" + getHandle();       
+        String relPath = RollerRuntimeConfig.getProperty("site.relativeurl");
+        return relPath + "/" + getHandle();
     }
     public void setURL(String url) {
         // noop

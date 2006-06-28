@@ -1,38 +1,35 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/* RollerConfig.java */
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.config;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.PropertyExpander;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.PropertyExpander;
 
 
 /**
  * This is the single entry point for accessing configuration properties in Roller.
- * @author Allen Gilliland
  */
 public class RollerConfig {
     
@@ -43,9 +40,9 @@ public class RollerConfig {
 
     private static Properties mConfig;
 
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(RollerConfig.class);
-
+    private static Log log = LogFactory.getLog(RollerConfig.class);
+    
+    
     /*
      * Static block run once at class loading
      *
@@ -61,15 +58,15 @@ public class RollerConfig {
             // first, lets load our default properties
             InputStream is = config_class.getResourceAsStream(default_config);
             mConfig.load(is);
-            mLogger.info("successfully loaded default properties.");
+            log.info("successfully loaded default properties.");
 
             // now, see if we can find our custom config
             is = config_class.getResourceAsStream(custom_config);
             if(is != null) {
                 mConfig.load(is);
-                mLogger.info("successfully loaded custom properties file from classpath");
+                log.info("successfully loaded custom properties file from classpath");
             } else {
-                mLogger.info("no custom properties file found in classpath");
+                log.info("no custom properties file found in classpath");
             }
 
             // finally, check for an external config file
@@ -81,15 +78,15 @@ public class RollerConfig {
                 if(custom_config_file != null && custom_config_file.exists()) {
                     is = new FileInputStream(custom_config_file);
                     mConfig.load(is);
-                    mLogger.info("successfully loaded custom properties from "+
+                    log.info("successfully loaded custom properties from "+
                             custom_config_file.getAbsolutePath());
                 } else {
-                    mLogger.warn("failed to load custom properties from "+
+                    log.warn("failed to load custom properties from "+
                             custom_config_file.getAbsolutePath());
                 }
 
             } else {
-                mLogger.info("no custom properties file specified via jvm option");
+                log.info("no custom properties file specified via jvm option");
             }
 
             // Now expand system properties for properties in the config.expandedProperties list,
@@ -103,8 +100,8 @@ public class RollerConfig {
                     if (initialValue != null) {
                         String expandedValue = PropertyExpander.expandSystemProperties(initialValue);
                         mConfig.put(propName,expandedValue);
-                        if (mLogger.isDebugEnabled()) {
-                            mLogger.info("Expanded value of " + propName + " from '" +
+                        if (log.isDebugEnabled()) {
+                            log.info("Expanded value of " + propName + " from '" +
                                 initialValue + "' to '" + expandedValue + "'");
                         }
                     }
@@ -112,14 +109,14 @@ public class RollerConfig {
             }
 
             // some debugging for those that want it
-            if(mLogger.isDebugEnabled()) {
-                mLogger.debug("RollerConfig looks like this ...");
+            if(log.isDebugEnabled()) {
+                log.debug("RollerConfig looks like this ...");
 
                 String key = null;
                 Enumeration keys = mConfig.keys();
                 while(keys.hasMoreElements()) {
                     key = (String) keys.nextElement();
-                    mLogger.debug(key+"="+mConfig.getProperty(key));
+                    log.debug(key+"="+mConfig.getProperty(key));
                 }
             }
 
@@ -140,7 +137,7 @@ public class RollerConfig {
      * @return    String Value of property requested, null if not found
      */
     public static String getProperty(String key) {
-        mLogger.debug("Fetching property ["+key+"="+mConfig.getProperty(key)+"]");
+        log.debug("Fetching property ["+key+"="+mConfig.getProperty(key)+"]");
         return mConfig.getProperty(key);
     }
 
@@ -193,17 +190,6 @@ public class RollerConfig {
         return mConfig.keys();
     }
    
-    /**
-     * Set the "context.absPath" property at runtime.
-     * <p />
-     * Properties are meant to be read-only, but we make this exception because 
-     * Roller POJOs and backend classes need access to the 
-     * <p />
-     * This property is *not* persisted in any way.
-     */
-    public static void setAbsoluteContextPath(String path) {
-        mConfig.setProperty("context.absPath", path);
-    }
 
     /**
      * Set the "uploads.dir" property at runtime.

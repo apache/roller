@@ -21,6 +21,7 @@ package org.apache.roller.config;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.runtime.RuntimeConfigDefs;
@@ -39,10 +40,13 @@ import org.apache.roller.model.RollerFactory;
  */
 public class RollerRuntimeConfig {
     
+    private static Log log = LogFactory.getLog(RollerRuntimeConfig.class);
+    
     private static String runtime_config = "/rollerRuntimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
     
-    private static Log log = LogFactory.getLog(RollerRuntimeConfig.class);
+    // for properties that we are storing locally which aren't persisted
+    private static Properties localConfig = new Properties();
     
     
     // prevent instantiations
@@ -56,11 +60,21 @@ public class RollerRuntimeConfig {
     public static String getProperty(String name) {
         
         String value = null;
-        try {
-            PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
-            value = pmgr.getProperty(name).getValue();
-        } catch(Exception e) {
-            log.warn("Trouble accessing property: "+name, e);
+        
+        // try local config first
+        value = localConfig.getProperty(name);
+        
+        // next try db
+        // i don't like this special case for the absoluteurl, but right now
+        // i can't seem to see a better way.  at some point we should come
+        // back to this and see if there is a cleaner way to handle this  -- AG
+        if(value == null || "site.absoluteurl".equals(name)) {
+            try {
+                PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+                value = pmgr.getProperty(name).getValue();
+            } catch(Exception e) {
+                log.warn("Trouble accessing property: "+name, e);
+            }
         }
         
         log.debug("fetched property ["+name+"="+value+"]");
@@ -159,6 +173,34 @@ public class RollerRuntimeConfig {
         }
         
         return "";
+    }
+    
+    
+    /**
+     * Set the "site.absoluteurl" property locally.
+     *
+     * Local properties are a kind of bastardized attempt to maintain some
+     * properties which can only be determined at runtime but which should
+     * not be persisted.
+     *
+     * This property is *not* persisted in any way.
+     */
+    public static void setAbsoluteContextPath(String path) {
+        localConfig.setProperty("site.absoluteurl", path);
+    }
+    
+    
+    /**
+     * Set the "site.relativeurl" property locally.
+     *
+     * Local properties are a kind of bastardized attempt to maintain some
+     * properties which can only be determined at runtime but which should
+     * not be persisted.
+     *
+     * This property is *not* persisted in any way.
+     */
+    public static void setRelativeContextPath(String path) {
+        localConfig.setProperty("site.relativeurl", path);
     }
     
 }
