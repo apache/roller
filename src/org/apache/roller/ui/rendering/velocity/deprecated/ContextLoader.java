@@ -37,6 +37,8 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
+import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.RollerPropertyData;
@@ -54,7 +56,10 @@ import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
+import org.apache.roller.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
+import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;
@@ -93,26 +98,107 @@ public class ContextLoader {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
+        RollerContext rollerCtx = RollerContext.getRollerContext( );
+        
+        WebsiteData weblog = null;
+        WeblogEntryData entry = null;
+        WeblogCategoryData category = null;
+        Template page = null;
+        FolderData folder = null;  // don't even know how this is involved :/
+        Date date = null;
+        boolean isDay = false;
+        boolean isMonth = false;
+        
         // if this is a weblog page request then parse it out
         WeblogPageRequest pageRequest = null;
         try {
             pageRequest = new WeblogPageRequest(request);
+            
+            UserManager uMgr = RollerFactory.getRoller().getUserManager();
+            WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
+            
+            // lookup weblog
+            weblog = uMgr.getWebsiteByHandle(pageRequest.getWeblogHandle());
+            
+            // lookup entry if specified
+            if(pageRequest.getWeblogAnchor() != null) {
+                entry = wMgr.getWeblogEntryByAnchor(weblog, pageRequest.getWeblogAnchor());
+            }
+            
+            // lookup category if specified
+            if(pageRequest.getWeblogCategory() != null) {
+                category = wMgr.getWeblogCategoryByPath(weblog, pageRequest.getWeblogCategory());
+            }
+            
+            // lookup page if specified, otherwise lookup default
+            if(pageRequest.getWeblogPage() != null) {
+                page = weblog.getPageByLink(pageRequest.getWeblogPage());
+            } else {
+                page = weblog.getDefaultPage();
+            }
+            
+            // setup date, isDay, and isMonth
+            if(pageRequest.getWeblogDate() != null) {
+                
+                Date now = new Date();
+                if(pageRequest.getWeblogDate().length() == 8) {
+                    isDay = true;
+                    try {
+                        date = DateUtil.get8charDateFormat().parse(pageRequest.getWeblogDate());
+                        if(date.after(now)) {
+                            date = now;
+                        }
+                    } catch(Exception e) {
+                        // bleh
+                    }
+                } else if(pageRequest.getWeblogDate().length() == 6) {
+                    isMonth = true;
+                    try {
+                        date = DateUtil.get6charDateFormat().parse(pageRequest.getWeblogDate());
+                        if(date.after(now)) {
+                            date = now;
+                        }
+                    } catch(Exception e) {
+                        // bleh
+                    }
+                } else {
+                    isMonth = true;
+                }
+            }
+        } catch(InvalidRequestException ire) {
+            // ignore, must not be a page request
+        } catch(RollerException re) {
+            throw re;
         } catch(Exception e) {
-            // ignored, just assume it's not a page request
+            throw new RollerException(e);
         }
         
-        RollerContext rollerCtx = RollerContext.getRollerContext( );
-        
-        // grab data from the request that we'll need to use
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData weblog = rreq.getWebsite();
-        WeblogEntryData entry = rreq.getWeblogEntry();
-        WeblogCategoryData category = rreq.getWeblogCategory();
-        Template page = rreq.getPage();
-        FolderData folder = rreq.getFolder();
-        Date date = rreq.getDate();
-        boolean isDay = rreq.isDaySpecified();
-        boolean isMonth = rreq.isMonthSpecified();
+        // if not a page request then try search request
+        WeblogSearchRequest searchRequest = null;
+        if(pageRequest == null) try {
+            searchRequest = new WeblogSearchRequest(request);
+            
+            UserManager uMgr = RollerFactory.getRoller().getUserManager();
+            WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
+            
+            // lookup weblog
+            weblog = uMgr.getWebsiteByHandle(searchRequest.getWeblogHandle());
+            
+            // lookup category if specified
+            if(searchRequest.getWeblogCategory() != null) {
+                category = wMgr.getWeblogCategoryByPath(weblog, searchRequest.getWeblogCategory());
+            }
+            
+            // lookup page if specified, otherwise lookup default
+            page = weblog.getDefaultPage();
+            
+        } catch(InvalidRequestException ire) {
+            // ignore, must not be a search request
+        } catch(RollerException re) {
+            throw re;
+        } catch(Exception e) {
+            throw new RollerException(e);
+        }
         
         try {
             // Add default page model object to context
