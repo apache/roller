@@ -303,6 +303,7 @@ public class ContextLoader {
         ctx.put("siteShortName", siteShortName);
         
         // add language of the session (using locale of viewer set by Struts)
+        // TODO 3.0: this will probably need tweaking for multi-lang support
         ctx.put("viewLocale", LanguageUtil.getViewLocale(request));
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
         
@@ -480,9 +481,7 @@ public class ContextLoader {
         
         String url = null;
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
-            url = OldUtilities.escapeHTML(
-                    rollerCtx.getAbsoluteContextUrl(request)
-                    + "/page/" + website.getHandle());
+            url = OldUtilities.escapeHTML(website.getAbsoluteURL());
         } else {
             url= OldUtilities.escapeHTML(rollerCtx.getAbsoluteContextUrl(request));
         }

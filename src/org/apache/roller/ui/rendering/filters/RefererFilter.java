@@ -117,7 +117,7 @@ public class RefererFilter implements Filter {
             
             // Base page URLs, with and without www.
             String basePageUrlWWW =
-                    rctx.getAbsoluteContextUrl(request)+"/page/"+weblog.getHandle();
+                    rctx.getAbsoluteContextUrl(request)+"/"+weblog.getHandle();
             String basePageUrl = basePageUrlWWW;
             if ( basePageUrlWWW.startsWith("http://www.") ) {
                 // chop off the http://www.
@@ -129,7 +129,7 @@ public class RefererFilter implements Filter {
                     (!referrerUrl.startsWith(basePageUrl) &&
                     !referrerUrl.startsWith(basePageUrlWWW))) {
                 
-                String selfSiteFragment = "/page/"+weblog.getHandle();
+                String selfSiteFragment = "/"+weblog.getHandle();
 
                 // validate the referrer
                 if ( referrerUrl != null ) {

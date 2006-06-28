@@ -1030,7 +1030,19 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     public void setURL(String url) {
         // noop
     }
-
+    
+    /** 
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getAbsoluteURL() {
+        // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
+        String relPath = RollerRuntimeConfig.getProperty("site.absoluteurl");
+        return relPath + "/" + getHandle();
+    }
+    public void setAbsoluteURL(String url) {
+        // noop
+    }
+    
     /**
      * Comma-separated list of additional page models to be created when this
      * weblog is rendered.

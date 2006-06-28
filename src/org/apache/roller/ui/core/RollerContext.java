@@ -446,11 +446,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
      * Returns the full url for the website of the specified username.
      */
     public String getContextUrl(HttpServletRequest request, WebsiteData website) {
-        String url = this.getContextUrl(request);
-        if (website != null) {
-            url = url + "/page/" + website.getHandle();
-        }
-        return url;
+        return website.getURL();
     }
     
     

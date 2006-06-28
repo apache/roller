@@ -106,8 +106,7 @@ public class WeblogUpdatePinger
         throws RollerException, IOException, XmlRpcException
     {
         // Figure out the url of the user's website.
-        String websiteUrl =
-            RollerFactory.getRoller().getWeblogManager().getUrl(website, absoluteContextUrl);
+        String websiteUrl = website.getAbsoluteURL();
 
         // Set up the ping parameters.
         Vector params = new Vector();

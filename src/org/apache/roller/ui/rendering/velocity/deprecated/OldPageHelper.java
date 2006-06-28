@@ -267,10 +267,9 @@ public class OldPageHelper {
             String selfUrl = null;
             String pageLink = mPageName;
             if ( pageLink != null ) {
-                selfUrl = mRequest.getContextPath() + "/page/"
-                        + mWebsite.getHandle() + "/"+pageLink;
+                selfUrl = mWebsite.getURL() + "/" + pageLink;
             } else {
-                selfUrl = mRequest.getContextPath()+"/page/" + mWebsite.getHandle();
+                selfUrl = mWebsite.getURL();
             }
             
             // setup weblog calendar model

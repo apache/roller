@@ -361,17 +361,7 @@ public interface WeblogManager {
      * Returns true if ancestor is truly an ancestor of child.
      */
     public boolean isDescendentOf(WeblogCategoryData child, 
-            WeblogCategoryData ancestor) throws RollerException;    
-    
-    /**
-     * Get the URL of a website.
-     * @param website    The website object 
-     * @param contextUrl The context url, this is prepended and can be absolute
-     *                   or relative depending on what is desired.
-     * @return The url of the user's weblog
-     */
-    public String getUrl(WebsiteData website, String contextUrl) 
-        throws RollerException;
+            WeblogCategoryData ancestor) throws RollerException;
     
     /**
      * Apply comment default settings from website to all of website's entries.
