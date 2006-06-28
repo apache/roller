@@ -80,7 +80,7 @@ import org.apache.struts.util.RequestUtils;
  * If email notification is turned on, each new comment will result in an
  * email sent to the blog owner and all who have commented on the same post.
  *
- * @web.servlet name="CommentServlet"
+ * @web.servlet name="CommentServlet" load-on-startup="7"
  * @web.servlet-mapping url-pattern="/roller-ui/rendering/comment/*"
  */
 public class CommentServlet extends HttpServlet {
@@ -173,7 +173,7 @@ public class CommentServlet extends HttpServlet {
         
         String error = null;
         String message = null;
-        String entry_permalink = request.getContextPath();
+        String dispatch_url = null;
         
         WebsiteData weblog = null;
         WeblogEntryData entry = null;
@@ -214,8 +214,9 @@ public class CommentServlet extends HttpServlet {
                         commentRequest.getWeblogAnchor());
             }
             
-            // we know what the weblog entry is, so setup our permalink url
-            entry_permalink = entry.getPermaLink();
+            // we know what the weblog entry is, so setup our urls
+            dispatch_url = "/roller-ui/rendering/page"+entry.getPermaLink();
+            
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
             log.debug("error creating page request", e);
@@ -224,22 +225,28 @@ public class CommentServlet extends HttpServlet {
         }
         
         
-        log.debug("Doing comment posting for entry = "+entry_permalink);
+        log.debug("Doing comment posting for entry = "+entry.getPermaLink());
         
         // check if site is allowing comments
-        if(!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled"))
+        if(!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled")) {
             error = "Comments are disabled for this site.";
         
         // check if weblog and entry are allowing comments
-        if (!weblog.getAllowComments().booleanValue() ||
-                !entry.getCommentsStillAllowed())
+        } else if(!weblog.getAllowComments().booleanValue() ||
+                !entry.getCommentsStillAllowed()) {
             error = "Comments not allowed on this entry";
+        
+        // make sure comment authentication passed
+        } else if(!this.authenticator.authenticate(request)) {
+            error = bundle.getString("error.commentAuthFailed");
+            log.debug("Comment failed authentication");
+        }
         
         // bail now if we have already found an error
         if(error != null) {
             HttpSession session = request.getSession();
             session.setAttribute(RollerSession.ERROR_MESSAGE, error);
-            RequestDispatcher dispatcher = request.getRequestDispatcher(entry_permalink);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
             dispatcher.forward(request, response);
             return;
         }
@@ -262,7 +269,6 @@ public class CommentServlet extends HttpServlet {
         // we can probably switch this to a CommentData without problems
         CommentFormEx cf = new CommentFormEx();
         RequestUtils.populate(cf, request);
-        //cf.copyTo(comment, request.getLocale());
         cf.setWeblogEntry(entry);
         cf.setPostTime(comment.getPostTime());
         request.setAttribute("commentForm", cf);
@@ -282,55 +288,48 @@ public class CommentServlet extends HttpServlet {
             log.debug("Comment is a preview");
             
         } else {
-            if (this.authenticator.authenticate(request)) {
-                log.debug("Comment passed authentication");
-                
-                // If comment contains blacklisted text, mark as spam
-                SpamChecker checker = new SpamChecker();
-                if (checker.checkComment(comment)) {
-                    comment.setSpam(Boolean.TRUE);
-                    error = bundle.getString("commentServlet.commentMarkedAsSpam");
-                    log.debug("Comment marked as spam");
-                }
-                
-                // If comment moderation is on, set comment as pending
-                if (weblog.getCommentModerationRequired()) {
-                    comment.setPending(Boolean.TRUE);
-                    comment.setApproved(Boolean.FALSE);
-                    message = bundle.getString("commentServlet.submittedToModerator");
-                } else {
-                    comment.setPending(Boolean.FALSE);
-                    comment.setApproved(Boolean.TRUE);
-                }
-                
-                try {
-                    WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
-                    mgr.saveComment(comment);
-                    RollerFactory.getRoller().flush();
-                    
-                    reindexEntry(entry);
-                    
-                    // Clear all caches associated with comment
-                    CacheManager.invalidate(comment);
-                    
-                    // Send email notifications
-                    RollerContext rc = RollerContext.getRollerContext();
-                    String rootURL = rc.getAbsoluteContextUrl(request);
-                    if (rootURL == null || rootURL.trim().length()==0) {
-                        rootURL = RequestUtils.serverURL(request) + request.getContextPath();
-                    }
-                    sendEmailNotification(comment, rootURL);
-                    
-                } catch (RollerException re) {
-                    log.error("Error saving comment", re);
-                    error = re.getMessage();
-                }
-                
-                
-                
+            // If comment contains blacklisted text, mark as spam
+            SpamChecker checker = new SpamChecker();
+            if (checker.checkComment(comment)) {
+                comment.setSpam(Boolean.TRUE);
+                error = bundle.getString("commentServlet.commentMarkedAsSpam");
+                log.debug("Comment marked as spam");
+            }
+            
+            // If comment moderation is on, set comment as pending
+            if (weblog.getCommentModerationRequired()) {
+                comment.setPending(Boolean.TRUE);
+                comment.setApproved(Boolean.FALSE);
+                message = bundle.getString("commentServlet.submittedToModerator");
             } else {
-                error = bundle.getString("error.commentAuthFailed");
-                log.debug("Comment failed authentication");
+                comment.setPending(Boolean.FALSE);
+                comment.setApproved(Boolean.TRUE);
+            }
+            
+            try {
+                WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+                mgr.saveComment(comment);
+                RollerFactory.getRoller().flush();
+                
+                reindexEntry(entry);
+                
+                // Clear all caches associated with comment
+                CacheManager.invalidate(comment);
+                
+                // Send email notifications
+                RollerContext rc = RollerContext.getRollerContext();
+                String rootURL = rc.getAbsoluteContextUrl(request);
+                if (rootURL == null || rootURL.trim().length()==0) {
+                    rootURL = RequestUtils.serverURL(request) + request.getContextPath();
+                }
+                sendEmailNotification(comment, rootURL);
+                
+                // comment was successful, clear the comment form
+                request.removeAttribute("commentForm");
+                
+            } catch (RollerException re) {
+                log.error("Error saving comment", re);
+                error = re.getMessage();
             }
         }
         
@@ -342,18 +341,12 @@ public class CommentServlet extends HttpServlet {
         if (message != null)
             session.setAttribute(RollerSession.STATUS_MESSAGE, message);
         
-        if(error == null && message == null && !preview) {
-            entry_permalink = request.getContextPath()+entry_permalink;            
-            log.debug("comment complete, redirecting to "+entry_permalink);
-            response.sendRedirect(entry_permalink);
-        } else {
-            log.debug("more work needed, forwarding to "+entry_permalink);
-            RequestDispatcher dispatcher = 
-                request.getRequestDispatcher(entry_permalink);
-            dispatcher.forward(request, response);
-        }
+        log.debug("comment processed, forwarding to "+dispatch_url);
+        RequestDispatcher dispatcher =
+                request.getRequestDispatcher(dispatch_url);
+        dispatcher.forward(request, response);
     }
-    
+
     
     /**
      * Re-index the WeblogEntry so that the new comment gets indexed.

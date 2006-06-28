@@ -123,9 +123,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         
         log.debug("Entering");
         
-        // used for rendering
-        HashMap model = new HashMap();
-        
         WebsiteData weblog = null;
         
         WeblogPageRequest pageRequest = null;
@@ -147,8 +144,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             return;
         }
         
-        PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", true, 8192, true);
         
         // figure out what we are going to render
         Template page = null;
@@ -218,7 +213,8 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         
         // cached content checking
         String cacheKey = this.CACHE_ID+":"+this.generateKey(pageRequest);
-        if(!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
+        if((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) &&
+                request.getAttribute("skipCache") == null) {
             // we need the last expiration time for the given weblog
             long lastExpiration = 0;
             Date lastExpirationDate =
@@ -251,6 +247,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
 
         
         // looks like we need to render content
+        HashMap model = new HashMap();
         try {
             RollerContext rollerContext = RollerContext.getRollerContext();
             
@@ -258,6 +255,9 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             Map initData = new HashMap();
             initData.put("request", request);
             initData.put("pageRequest", pageRequest);
+            
+            PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
+                    this, request, response,"", true, 8192, true);
             
             // Feeds get the weblog specific page model
             RenderModelLoader.loadPageModels(model, initData);
@@ -327,7 +327,8 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         response.getOutputStream().write(rendererOutput.getContent());
         
         // cache rendered content.  only cache if user is not logged in?
-        if (!this.excludeOwnerPages || !pageRequest.isLoggedIn()) {
+        if((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) &&
+                request.getAttribute("skipCache") == null) {
             log.debug("PUT "+cacheKey);
             this.contentCache.put(cacheKey, new LazyExpiringCacheEntry(rendererOutput));
         } else {
@@ -338,6 +339,25 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         log.debug("Exiting");
     }
         
+    
+    /**
+     * Handle POST requests.
+     *
+     * We have this here because the comment servlet actually forwards some of
+     * its requests on to us to render some pages with cusom messaging.  We
+     * may want to revisit this approach in the future and see if we can do
+     * this in a different way, but for now this is the easy way.
+     */
+    public void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        // make sure caching is disabled
+        request.setAttribute("skipCache", "true");
+        
+        // handle just like a GET request
+        this.doGet(request, response);
+    }
+    
     
     /**
      * Generate a cache key from a parsed weblog page request.
