@@ -56,7 +56,7 @@
 #macro( showNavBar2 $vertical $delimiter $useCSS)
     #set( $container = "div" )
     #if ( $useCSS ) #set( $container = "ul" ) #end
-    #set( $rawUrl = "$ctxPath/page/$website.handle" )
+    #set( $rawUrl = "$website.URL" )
     <$container class="rNavigationBar">
     #printNavLink( "$ctxPath/" $siteShortName $useCSS $vertical "" )
     #if( $website )

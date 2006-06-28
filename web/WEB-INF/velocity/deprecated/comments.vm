@@ -40,7 +40,7 @@
     #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
         <div class="comments" id="comments">
             <div id="commentTwisty$entry.Id" class="commentTwisty"
-                onclick="toggleComments('$entry.Id', '${ctxPath}/page/${website.handle}'); return false;">
+                onclick="toggleComments('$entry.Id', '${website.URL}'); return false;">
             <a href="$ctxPath$entry.permaLink" class="plain">
             #if($commentCount == 0)
                 $text.get( "macro.weblog.addcomment" )
@@ -186,7 +186,7 @@
 
     #showStatusMessage()
 
-    <form method="post" action="$ctxPath/$entry.website.handle/entry/$entry.anchor" focus="name"
+    <form method="post" action="$ctxPath/$entry.permaLink" focus="name"
         name="form" onsubmit="fixURL(this); return validateComments(this)">
         
         #if($requestParameters.popup)
