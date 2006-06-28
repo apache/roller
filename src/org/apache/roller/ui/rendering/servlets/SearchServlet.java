@@ -50,7 +50,7 @@ import org.apache.roller.util.cache.CachedContent;
  * Handles search queries for weblogs.
  *
  * @web.servlet name="SearchServlet" load-on-startup="5"
- * @web.servlet-mapping url-pattern="/search/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/search/*"
  */
 public class SearchServlet extends HttpServlet {
     
@@ -87,17 +87,10 @@ public class SearchServlet extends HttpServlet {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             weblog = userMgr.getWebsiteByHandle(searchRequest.getWeblogHandle(), Boolean.TRUE);
             
-        } catch(InvalidRequestException ire) {
-            // An error initializing the request is considered to be a 404
+        } catch(Exception e) {
+            // invalid search request format or weblog doesn't exist
+            log.debug("error creating weblog search request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            log.error("Bad Request: "+ire.getMessage());
-            return;
-            
-        } catch(RollerException re) {
-            // error looking up the weblog, we assume it doesn't exist
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            log.warn("Unable to lookup weblog ["+
-                    searchRequest.getWeblogHandle()+"] "+re.getMessage());
             return;
         }
         

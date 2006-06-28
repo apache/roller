@@ -26,16 +26,39 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class WeblogSearchRequest extends WeblogRequest {
     
+    private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
+    
     private String query = null;
     private int pageNum = 0;
     private String weblogCategory = null;
     
     
+    public WeblogSearchRequest() {}
+    
+    
     public WeblogSearchRequest(HttpServletRequest request) 
             throws InvalidRequestException {
         
-        // our parent will determine the weblog handle for us
+        // let our parent take care of their business first
+        // parent determines weblog handle and locale if specified
         super(request);
+        
+        String servlet = request.getServletPath();
+        
+        // we only want the path info left over from after our parents parsing
+        String pathInfo = this.getPathInfo();
+        
+        // was this request bound for the search servlet?
+        if(servlet == null || !SEARCH_SERVLET.equals(servlet)) {
+            throw new InvalidRequestException("not a weblog search request, "+
+                    request.getRequestURL());
+        }
+        
+        if(pathInfo != null) {
+            throw new InvalidRequestException("invalid path info, "+
+                    request.getRequestURL());
+        }
+        
         
         /*
          * parse request parameters
@@ -63,17 +86,28 @@ public class WeblogSearchRequest extends WeblogRequest {
         }
     }
 
-    
     public String getQuery() {
         return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 
     public int getPageNum() {
         return pageNum;
     }
 
+    public void setPageNum(int pageNum) {
+        this.pageNum = pageNum;
+    }
+
     public String getWeblogCategory() {
         return weblogCategory;
+    }
+
+    public void setWeblogCategory(String weblogCategory) {
+        this.weblogCategory = weblogCategory;
     }
     
 }

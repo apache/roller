@@ -45,7 +45,7 @@ import org.apache.roller.model.RollerFactory;
  * @author Allen Gilliland
  *
  * @web.servlet name="ResourcesServlet"
- * @web.servlet-mapping url-pattern="/resources/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/resources/*"
  */
 public class ResourceServlet extends HttpServlet {
     

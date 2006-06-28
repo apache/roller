@@ -61,7 +61,7 @@ import org.apache.roller.util.cache.LazyExpiringCacheEntry;
  * Responsible for rendering weblog feeds.
  *
  * @web.servlet name="FeedServlet" load-on-startup="5"
- * @web.servlet-mapping url-pattern="/feeds/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/rendering/feed/*"
  */ 
 public class FeedServlet extends HttpServlet implements CacheHandler {
     
@@ -131,8 +131,8 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
                         feedRequest.getWeblogHandle());
             }
         } catch(Exception e) {
-            // some kind of error parsing the request
-            log.error("error creating weblog feed request", e);
+            // invalid feed request format or weblog doesn't exist
+            log.debug("error creating weblog feed request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
