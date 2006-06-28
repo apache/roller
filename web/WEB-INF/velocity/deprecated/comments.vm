@@ -186,7 +186,7 @@
 
     #showStatusMessage()
 
-    <form method="post" action="$ctxPath/comment" focus="name"
+    <form method="post" action="$ctxPath/$entry.website.handle/entry/$entry.anchor" focus="name"
         name="form" onsubmit="fixURL(this); return validateComments(this)">
         
         #if($requestParameters.popup)
@@ -195,7 +195,6 @@
 
         <!-- is this a post or a preview -->
         <input type="hidden" name="method" value="post" />
-        <input type="hidden" name="entryid" value="$entry.id" />
 
         <table cellspacing="0" cellpadding="1" border="0" width="95%">
         <tr><th>$text.get( "macro.weblog.name" )</th>
