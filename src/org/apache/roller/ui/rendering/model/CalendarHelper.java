@@ -52,7 +52,8 @@ public class CalendarHelper  {
         
         HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();
-
+        
+        // TODO 3.0: this needs to change, we cannot use RollerRequest anymore
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WebsiteData weblog = rreq.getWebsite();
         String pageLink = rreq.getPageLink();
