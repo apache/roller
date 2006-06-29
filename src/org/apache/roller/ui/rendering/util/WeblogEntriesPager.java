@@ -1,4 +1,4 @@
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.util;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
@@ -22,6 +21,7 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.ui.rendering.model.*;
 import org.apache.roller.util.DateUtil;
 
 
