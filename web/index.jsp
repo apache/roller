@@ -1,4 +1,4 @@
-<!--
+<%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,6 +14,21 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
--->
-<%@ page language="java" %>	
-<jsp:forward page="main.do?rmik=tabbedmenu.main&rmk=tabbedmenu.main" />
+--%><%@ page import="org.apache.roller.config.RollerRuntimeConfig" %><%
+
+// lets see if we have a frontpage blog
+String frontpageBlog =
+        RollerRuntimeConfig.getProperty("site.frontpage.weblog.handle");
+
+if(frontpageBlog == null || frontpageBlog.equals("")) {
+    // not set yet, so show the new install page
+    response.setContentType("text/plain");
+    response.getWriter().println("frontpage blog not set");
+} else {
+    // dispatch to frontpage blog
+    RequestDispatcher homepage =
+            request.getRequestDispatcher("/roller-ui/rendering/page/"+frontpageBlog);
+    homepage.forward(request, response);
+}
+
+%>
