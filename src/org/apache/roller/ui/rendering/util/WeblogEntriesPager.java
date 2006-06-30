@@ -26,22 +26,6 @@ import org.apache.roller.util.DateUtil;
 public abstract class WeblogEntriesPager {
     
     
-    public static WeblogEntriesPager getWeblogEntriesPager(
-            WebsiteData weblog,
-            String entryAnchor,
-            String dateString,
-            String catPath,
-            int page) {
-        
-        // determine which implementation to return
-        if (entryAnchor != null) {
-            return new WeblogEntriesPermalinkPager(weblog, entryAnchor);
-        } else {
-            return new WeblogEntriesCollectionPager(weblog, dateString, catPath, page);
-        }
-    }
-    
-    
     /**
      * A map of entries representing this collection.
      *
