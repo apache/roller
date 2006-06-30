@@ -15,6 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
@@ -41,32 +42,38 @@ import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
 import org.apache.roller.ui.core.RollerSession;
+import org.apache.roller.ui.rendering.util.WeblogEntriesPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+
 
 /**
  * Model provides information needed to render a weblog page.
  */
 public class PageRenderModel implements RenderModel {
+    
+    protected static Log log = LogFactory.getLog(PageRenderModel.class);
+    
     private HttpServletRequest     request = null;
     private WebsiteData            weblog = null;
     private int                    offset = 0;
     private String                 categoryPath = null;
     private String                 entryAnchor = null;
     private String                 dateString = null;
+    private int page = 0;
     private WeblogEntryDataWrapper nextEntry = null;
     private WeblogEntryDataWrapper prevEntry = null;
     private WeblogEntryDataWrapper firstEntry = null;
     private WeblogEntryDataWrapper lastEntry = null;
     
-    protected static Log log =
-            LogFactory.getFactory().getInstance(PageRenderModel.class);
+    private WeblogEntriesPager pager = null;
+    
     
     /** 
      * Creates an un-initialized new instance, Roller calls init() to complete
      * construction. 
      */
-    public PageRenderModel() {
-    }
+    public PageRenderModel() {}
+    
     
     /** 
      * Template context name to be used for model.
@@ -74,6 +81,7 @@ public class PageRenderModel implements RenderModel {
     public String getModelName() {
         return "model";
     }
+    
     
     /** 
      * Init page model based on request. 
@@ -92,10 +100,18 @@ public class PageRenderModel implements RenderModel {
         categoryPath = parsed.getWeblogCategory();
         entryAnchor = parsed.getWeblogAnchor();
         dateString = parsed.getWeblogDate();
+        page = parsed.getPageNum();
+        
+        // lookup weblog object
         Roller roller = RollerFactory.getRoller();
         UserManager umgr = roller.getUserManager();
         weblog = umgr.getWebsiteByHandle(parsed.getWeblogHandle(), Boolean.TRUE);
+        
+        // get the entry pager which represents this page
+        this.pager = WeblogEntriesPager.getWeblogEntriesPager(
+                weblog, entryAnchor, dateString, categoryPath, page);
     }
+    
     
     /**
      * Get weblog being displayed.
@@ -104,27 +120,89 @@ public class PageRenderModel implements RenderModel {
         return WebsiteDataWrapper.wrap(weblog);
     }
     
+    
     /**
-     * Get weblog entry to be displayed; null if not on single-entry page or 
-     * if entry not published. The entry is also available from teh pager,
-     * so this is a convenience method.
+     * Is this page considered a permalink?
      */
-    public WeblogEntryDataWrapper getWeblogEntry() {
-       WeblogEntryDataWrapper ret = null;
-        try {
-            Roller roller = RollerFactory.getRoller();
-            WeblogManager wmgr = roller.getWeblogManager();
-            WeblogEntryData entry = 
-                 wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
-            if (entry != null && entry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
-                ret = WeblogEntryDataWrapper.wrap(entry);
-            }
-
-        } catch (Exception e) {
-            log.error("ERROR: fetching entry");
-        }
-        return ret;
+    public boolean isPermalink() {
+        return false;
     }
+    
+    
+    /**
+     * A map of entries representing this page.
+     *
+     * The collection is grouped by days of entries.  Each value is a list of
+     * entry objects keyed by the date they were published.
+     */
+    public Map getEntries() {
+        return this.pager.getEntries();
+    }
+    
+    
+    /**
+     * Link value for next collection view
+     */
+    public String getNextLink() {
+        return this.pager.getNextLink();
+    }
+    
+    /**
+     * Link name for next collection view
+     */
+    public String getNextLinkName() {
+        return this.pager.getNextLinkName();
+    }
+    
+    /**
+     * Link value for prev collection view
+     */
+    public String getPrevLink() {
+        return this.pager.getPrevLink();
+    }
+    
+    /**
+     * Link name for prev collection view
+     */
+    public String getPrevLinkName() {
+        return this.pager.getPrevLinkName();
+    }
+    
+    /**
+     * Does this pager represent a multi-page collection?
+     */
+    public boolean isMultiPage() {
+        return this.pager.isMultiPage();
+    }
+    
+    /**
+     * Link value for next page in current collection view
+     */
+    public String getNextPageLink() {
+        return this.pager.getNextPageLink();
+    }
+    
+    /**
+     * Link name for next page in current collection view
+     */
+    public String getNextPageName() {
+        return this.pager.getNextPageName();
+    }
+    
+    /**
+     * Link value for prev page in current collection view
+     */
+    public String getPrevPageLink() {
+        return this.pager.getPrevPageLink();
+    }
+    
+    /**
+     * Link value for prev page in current collection view
+     */
+    public String getPrevPageName() {
+        return this.pager.getPrevPageName();
+    }
+    
     
     /**
      * Get weblog category specified by request, or null if the category path
@@ -145,14 +223,7 @@ public class PageRenderModel implements RenderModel {
         }
         return ret;
     }
-
-    /**
-     * Return pager for displaying weblog entries, next/prev pagers, etc.
-     */    
-    public RenderDayPager getWeblogEntriesPager(String cat) {
-       return new WeblogEntriesPager(
-               request, weblog, entryAnchor, categoryPath, cat, dateString);
-    }
+    
     
     /**
      * Get up to 100 most recent published entries in weblog.
@@ -190,6 +261,7 @@ public class PageRenderModel implements RenderModel {
         return recentEntries;
     }
     
+    
     /**
      * Get up to 100 most recent approved and non-spam comments in weblog.
      * @param length Max entries to return (1-100)
@@ -226,6 +298,7 @@ public class PageRenderModel implements RenderModel {
         return recentComments;
     }
     
+    
     /**
      * Get comment form to be displayed, may contain preview data. 
      * @return Comment form object or null if not on a comment page.
@@ -243,6 +316,7 @@ public class PageRenderModel implements RenderModel {
         }
         return commentForm;
     }
+    
     
     /**
      * Get preview comment or null if none exists.
