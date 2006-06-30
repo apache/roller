@@ -124,6 +124,7 @@ public class SearchResultsRenderModel extends PageRenderModel {
         }
     }
     
+    // TODO 3.0: need to override page render model methods here
     
     private void convertHitsToEntries(Hits hits) throws RollerException {
         
