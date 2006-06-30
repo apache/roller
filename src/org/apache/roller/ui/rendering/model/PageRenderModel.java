@@ -19,7 +19,6 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -41,8 +40,9 @@ import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
-import org.apache.roller.ui.core.RollerSession;
+import org.apache.roller.ui.rendering.util.WeblogEntriesCollectionPager;
 import org.apache.roller.ui.rendering.util.WeblogEntriesPager;
+import org.apache.roller.ui.rendering.util.WeblogEntriesPermalinkPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 
@@ -108,8 +108,11 @@ public class PageRenderModel implements RenderModel {
         weblog = umgr.getWebsiteByHandle(parsed.getWeblogHandle(), Boolean.TRUE);
         
         // get the entry pager which represents this page
-        this.pager = WeblogEntriesPager.getWeblogEntriesPager(
-                weblog, entryAnchor, dateString, categoryPath, page);
+        if (entryAnchor != null) {
+            this.pager = new WeblogEntriesPermalinkPager(weblog, entryAnchor);
+        } else {
+            this.pager = new WeblogEntriesCollectionPager(weblog, dateString, categoryPath, page);
+        }
     }
     
     
