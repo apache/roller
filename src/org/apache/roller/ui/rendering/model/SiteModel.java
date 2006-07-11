@@ -15,6 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
@@ -42,21 +43,23 @@ import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 
+
 /**
- * Page model that provides access to site-wide users, weblogs and entries for
- * display on a frontpage weblog.
+ * Page model that provides access to site-wide users, weblogs and entries.
  */
-public class SiteRenderModel implements RenderModel {
-    protected static Log log = 
-            LogFactory.getFactory().getInstance(SiteRenderModel.class);
+public class SiteModel implements Model {
+    
+    private static Log log = LogFactory.getLog(SiteModel.class);
+    
     
     public String getModelName() {
         return "sitePageModel";
     }
-        
+    
     public void init(Map map) throws RollerException {
         // no-op for now
     }
+    
     
     /**
      * Get most collection of Website objects,
@@ -85,6 +88,7 @@ public class SiteRenderModel implements RenderModel {
         return results;
     }
     
+    
     /** 
      * Return list of weblogs that user belongs to.
      */
@@ -105,6 +109,7 @@ public class SiteRenderModel implements RenderModel {
         return results;
     }
     
+    
     /** 
      * Return list of users that belong to website.
      */
@@ -124,6 +129,7 @@ public class SiteRenderModel implements RenderModel {
         }
         return results;
     }
+    
     
     /**
      * Get most collection of most commented websites, as StatCount objects,
@@ -148,6 +154,7 @@ public class SiteRenderModel implements RenderModel {
         }
         return results;
     }
+    
     
     /**
      * Get most commented weblog entries across all weblogs, as StatCount 
@@ -174,6 +181,7 @@ public class SiteRenderModel implements RenderModel {
         }
         return results;
     }
+    
     
     /**
      * Get most recent WeblogEntry objects across all weblogs,
@@ -217,7 +225,8 @@ public class SiteRenderModel implements RenderModel {
         }
         return results;
     }
-        
+    
+    
     /**
      * Get most recent Comment objects across all weblogs,
      * in reverse chrono order by postTime.
@@ -246,6 +255,7 @@ public class SiteRenderModel implements RenderModel {
         return results;
     }
     
+    
     /**
      * Get most recent User objects, in reverse chrono order by creationDate.
      * @param offset   Offset into results (for paging)
@@ -267,6 +277,7 @@ public class SiteRenderModel implements RenderModel {
         return results;
     }
     
+    
     /**
      * Get list of WebsiteDisplay objects, ordered by number of hits.
      * @param sinceDays Only consider weblogs updated in the last sinceDays
@@ -285,6 +296,7 @@ public class SiteRenderModel implements RenderModel {
         return results;
     }
     
+    
     /** Get User object by username */
     public UserDataWrapper getUser(String username) {
         UserDataWrapper wrappedUser = null;
@@ -299,6 +311,7 @@ public class SiteRenderModel implements RenderModel {
         return wrappedUser;
     }
     
+    
     /** Get Website object by handle */
     public WebsiteDataWrapper getWeblog(String handle) {
         WebsiteDataWrapper wrappedWebsite = null;
@@ -312,6 +325,7 @@ public class SiteRenderModel implements RenderModel {
         }
         return wrappedWebsite;
     }
+    
     
     /**
      * Get map with 26 entries, one for each letter A-Z and
@@ -329,6 +343,7 @@ public class SiteRenderModel implements RenderModel {
         }
         return results;
     }
+    
     
     /** Get collection of users whose names begin with specified letter */
     public List getUsersByLetter(String letter, int offset, int length) {
@@ -348,6 +363,7 @@ public class SiteRenderModel implements RenderModel {
         return results;
     }
     
+    
     /**
      * Get map with 26 entries, one for each letter A-Z and
      * containing integers reflecting the number of weblogs whose
@@ -364,6 +380,7 @@ public class SiteRenderModel implements RenderModel {
         }
         return results;
     }
+    
     
     /** Get collection of weblogs whose handles begin with specified letter */
     public List getWeblogsByLetter(String letter, int offset, int length) {
@@ -382,6 +399,5 @@ public class SiteRenderModel implements RenderModel {
         }
         return results;
     }
+    
 }
-
-

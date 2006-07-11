@@ -50,7 +50,7 @@ import org.apache.roller.util.DateUtil;
  *
  * Also adds some new methods which are specific only to search results.
  */
-public class SearchResultsRenderModel extends PageRenderModel {
+public class SearchResultsModel extends PageRenderModel {
     
     private static final ResourceBundle bundle = 
             ResourceBundle.getBundle("ApplicationResources");
@@ -70,9 +70,6 @@ public class SearchResultsRenderModel extends PageRenderModel {
     private Set categories = new TreeSet();
     private boolean websiteSpecificSearch = true;
     private String errorMessage = null;
-    
-    
-    public SearchResultsRenderModel() {}
     
     
     public void init(Map initData) throws RollerException {
@@ -124,7 +121,7 @@ public class SearchResultsRenderModel extends PageRenderModel {
         }
     }
     
-    // TODO 3.0: need to override page render model methods here
+    // TODO 3.0: need to override page model methods here
     
     private void convertHitsToEntries(Hits hits) throws RollerException {
         

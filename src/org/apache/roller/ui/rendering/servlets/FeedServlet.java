@@ -50,7 +50,7 @@ import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
-import org.apache.roller.ui.rendering.model.RenderModelLoader;
+import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheHandler;
 import org.apache.roller.util.cache.CacheManager;
@@ -198,18 +198,18 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             initData.put("feedRequest", feedRequest);
             
             // Feeds get the weblog specific page model
-            RenderModelLoader.loadFeedModels(model, initData);
+            ModelLoader.loadFeedModels(model, initData);
             
             // special handling for site wide feed
             if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
-                RenderModelLoader.loadSiteModels(model, initData);
+                ModelLoader.loadSiteModels(model, initData);
             }
             
             // utility helpers and plugin helpers
-            RenderModelLoader.loadUtilityHelpers(model, request);
+            ModelLoader.loadUtilityHelpers(model, initData);
 
             // Feeds get weblog's custom models too
-            RenderModelLoader.loadCustomModels(weblog, model, initData);
+            ModelLoader.loadCustomModels(weblog, model, initData);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);

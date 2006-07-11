@@ -15,31 +15,42 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.model;
 
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.ui.core.tags.menu.EditorNavigationBarTag;
 
+
 /**
- * Displays editor menu/navigation-bar by calling hybrid JSP tag.
+ * Model which provides methods for displaying editor menu/navigation-bar.
+ * 
+ * Implemented by calling hybrid JSP tag.
  */
-public class EditorMenuHelper  {
-    private PageContext pageContext;
+public class MenuModel implements Model {
     
-    protected static Log logger =
-            LogFactory.getFactory().getInstance(EditorMenuHelper.class);
+    private static Log logger = LogFactory.getLog(MenuModel.class);
     
-    /**
-     * Creates a new instance of EditorMenuHelper
-     */       
-    public EditorMenuHelper(PageContext pageContext) {
-        this.pageContext = pageContext;
+    private PageContext pageContext = null;
+    
+    
+    /** Template context name to be used for model */
+    public String getModelName() {
+        return "menuModel";
     }
+    
+    
+    /** Init page model based on request */
+    public void init(Map initData) throws RollerException {
+        
+        // extract page context
+        this.pageContext = (PageContext) initData.get("pageContext");
+    }
+    
     
     /**
      * Call hybrid EditorNavBarTag to render editor navbar.
@@ -57,4 +68,5 @@ public class EditorMenuHelper  {
         editorTag.setModel("editor-menu.xml");
         return editorTag.emit();
     }
+    
 }

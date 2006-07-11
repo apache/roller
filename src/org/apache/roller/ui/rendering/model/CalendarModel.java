@@ -15,48 +15,58 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.model;
 
-import java.util.Date;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
-
 import org.apache.roller.ui.core.tags.calendar.BigWeblogCalendarModel;
-import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
 import org.apache.roller.ui.core.LanguageUtil;
-import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.ui.core.tags.calendar.CalendarTag;
-import org.apache.roller.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.util.DateUtil;
+import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
+
 
 /**
- * Displays weblog calendar or big weblog calendar by calling hybrid JSP tag.
+ * Model which provides functionality for displaying weblog calendar.
+ * 
+ * Implemented by calling hybrid JSP tag.
  */
-public class CalendarHelper  {
-    private PageContext pageContext;
+public class CalendarModel implements Model {
     
-    protected static Log log = 
-        LogFactory.getFactory().getInstance(CalendarHelper.class);
+    private static Log log = LogFactory.getLog(CalendarModel.class);
     
-    public CalendarHelper(PageContext pageContext) {
-        this.pageContext = pageContext;
-    }  
+    private PageContext pageContext = null;
+    
+    
+    /** Template context name to be used for model */
+    public String getModelName() {
+        return "calendarModel";
+    }
+    
+    
+    /** Init page model based on request */
+    public void init(Map initData) throws RollerException {
+        
+        // extract page context
+        this.pageContext = (PageContext) initData.get("pageContext");
+    }
+    
     
     public String showWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument) {        
         return showWeblogCalendar(websiteWrapper, catArgument, false);
     }
     
+    
     public String showWeblogCalendarBig(WebsiteDataWrapper websiteWrapper, String catArgument) { 
         return showWeblogCalendar(websiteWrapper, catArgument, true);
     }
+    
     
     private String showWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument, boolean big) {        
         HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
@@ -64,7 +74,7 @@ public class CalendarHelper  {
         if ("nil".equals(catArgument)) catArgument = null;        
         String ret = null;
         try {
-            CalendarModel model = null;
+            org.apache.roller.ui.core.tags.calendar.CalendarModel model = null;
             if (big) {
                 model = new BigWeblogCalendarModel(request, response, catArgument);
             } else {
@@ -88,6 +98,5 @@ public class CalendarHelper  {
         }
         return ret;
     }
+    
 }
-
-

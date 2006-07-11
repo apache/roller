@@ -24,7 +24,7 @@ package org.apache.roller.util;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.roller.ui.rendering.model.UtilitiesHelper;
+import org.apache.roller.ui.rendering.model.UtilitiesModel;
 
 /**
  * @author lance
@@ -96,12 +96,12 @@ public class UtilitiesTest extends TestCase
     public void testAddNoFollow() {
         String test1 = "<p>this some text with a <a href=\"http://example.com\">link</a>";
         String expect1 = "<p>this some text with a <a href=\"http://example.com\" rel=\"nofollow\">link</a>";
-        String result1 = UtilitiesHelper.addNofollow(test1);
+        String result1 = UtilitiesModel.addNofollow(test1);
         assertEquals(expect1, result1);
 
         String test2 = "<p>this some text with a <A href=\"http://example.com\">link</a>";
         String expect2 = "<p>this some text with a <A href=\"http://example.com\" rel=\"nofollow\">link</a>";
-        String result2 = UtilitiesHelper.addNofollow(test2);
+        String result2 = UtilitiesModel.addNofollow(test2);
         assertEquals(expect2, result2);
 
     }

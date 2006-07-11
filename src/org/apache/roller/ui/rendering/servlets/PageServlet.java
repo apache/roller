@@ -51,7 +51,7 @@ import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
-import org.apache.roller.ui.rendering.model.RenderModelLoader;
+import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheHandler;
@@ -250,32 +250,32 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         HashMap model = new HashMap();
         try {
             RollerContext rollerContext = RollerContext.getRollerContext();
+            PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
+                    this, request, response,"", true, 8192, true);
             
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
             initData.put("pageRequest", pageRequest);
-            
-            PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", true, 8192, true);
+            initData.put("pageContext", pageContext);
             
             // Feeds get the weblog specific page model
-            RenderModelLoader.loadPageModels(model, initData);
+            ModelLoader.loadPageModels(model, initData);
             
             // special handling for site wide weblog
             if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
-                RenderModelLoader.loadSiteModels(model, initData);
+                ModelLoader.loadSiteModels(model, initData);
             }
             
             // add helpers
-            RenderModelLoader.loadUtilityHelpers(model, request);
-            RenderModelLoader.loadWeblogHelpers(pageContext, model);
+            ModelLoader.loadUtilityHelpers(model, initData);
+            ModelLoader.loadWeblogHelpers(model, initData);
 
             // Feeds get weblog's custom models too
-            RenderModelLoader.loadCustomModels(weblog, model, initData);
+            ModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            RenderModelLoader.loadOldModels(model, request, response, pageContext, pageRequest);
+            ModelLoader.loadOldModels(model, request, response, pageContext, pageRequest);
             
         } catch (RollerException ex) {
             log.error("Error loading model objects for page", ex);

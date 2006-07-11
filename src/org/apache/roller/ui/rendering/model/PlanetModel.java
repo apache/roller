@@ -15,6 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
@@ -35,13 +36,14 @@ import org.apache.roller.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.wrapper.PlanetEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.PlanetSubscriptionDataWrapper;
 
+
 /**
- * Page model that provides access to planet aggregations, feeds and 
- * subscriptions for display on a frontpage weblog.
+ * Model that provides access to planet aggregations, feeds and subscriptions.
  */
-public class PlanetRenderModel implements RenderModel {
-    protected static Log log = 
-            LogFactory.getFactory().getInstance(PlanetRenderModel.class);
+public class PlanetModel implements Model {
+    
+    private static Log log = LogFactory.getLog(PlanetModel.class);
+    
     
     public String getModelName() {
         return "planetPageModel";
@@ -50,6 +52,7 @@ public class PlanetRenderModel implements RenderModel {
     public void init(Map map) {
         // no-op for now
     } 
+    
     
     /**
      * Get move recent PlanetEntry objects from 'all' and
@@ -78,6 +81,7 @@ public class PlanetRenderModel implements RenderModel {
         return results;
     }
     
+    
     /**
      * Get move recent WeblogEntry objects from specified
      * Planet groups in reverse chrono order.
@@ -103,6 +107,7 @@ public class PlanetRenderModel implements RenderModel {
         return list;
     }
     
+    
     /**
      * Get move recent WeblogEntry objects from specified
      * Planet subscription in reverse chrono order.
@@ -124,6 +129,7 @@ public class PlanetRenderModel implements RenderModel {
         return list;
     }
     
+    
     /**
      * Get PlanetSubscription objects in descending order by Planet ranking.
      * @param sinceDays Only consider weblogs updated in the last sinceDays
@@ -133,6 +139,7 @@ public class PlanetRenderModel implements RenderModel {
     public List getRankedSubscriptions(int sinceDays, int offset, int length) {
         return getRankedSubscriptions(null, sinceDays, offset, length);
     }
+    
     
     /**
      * Get PlanetSubscription objects in descending order by Planet ranking.
@@ -155,5 +162,6 @@ public class PlanetRenderModel implements RenderModel {
             log.error("ERROR: get ranked blogs", e);
         }
         return list;
-    }   
+    }
+    
 }

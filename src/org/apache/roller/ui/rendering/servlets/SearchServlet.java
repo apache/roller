@@ -38,9 +38,9 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
-import org.apache.roller.ui.rendering.model.RenderModel;
-import org.apache.roller.ui.rendering.model.RenderModelLoader;
-import org.apache.roller.ui.rendering.model.SearchResultsRenderModel;
+import org.apache.roller.ui.rendering.model.Model;
+import org.apache.roller.ui.rendering.model.ModelLoader;
+import org.apache.roller.ui.rendering.model.SearchResultsModel;
 import org.apache.roller.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.cache.CachedContent;
@@ -120,27 +120,28 @@ public class SearchServlet extends HttpServlet {
             Map initData = new HashMap();
             initData.put("request", request);
             initData.put("searchRequest", searchRequest);
+            initData.put("pageContext", pageContext);
             
             // default weblog models
-            RenderModelLoader.loadSearchModels(model, initData);
+            ModelLoader.loadSearchModels(model, initData);
             
             // special site wide models
             if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
-                RenderModelLoader.loadSiteModels(model, initData);
+                ModelLoader.loadSiteModels(model, initData);
             }
             
             // add helpers
-            RenderModelLoader.loadUtilityHelpers(model, request);
-            RenderModelLoader.loadWeblogHelpers(pageContext, model);
+            ModelLoader.loadUtilityHelpers(model, initData);
+            ModelLoader.loadWeblogHelpers(model, initData);
 
             // Feeds get weblog's custom models too
-            RenderModelLoader.loadCustomModels(weblog, model, initData);
+            ModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            RenderModelLoader.loadOldModels(model, request, response, pageContext, searchRequest);
+            ModelLoader.loadOldModels(model, request, response, pageContext, searchRequest);
             
             // manually add search model again to support pre-3.0 weblogs
-            RenderModel searchModel = new SearchResultsRenderModel();
+            Model searchModel = new SearchResultsModel();
             searchModel.init(initData);
             model.put("searchResults", searchModel);
             
