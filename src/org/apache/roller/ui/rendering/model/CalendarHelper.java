@@ -38,7 +38,7 @@ import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 
 /**
- * Displays weblog calendar by calling hybrid JSP tag.
+ * Displays weblog calendar or big weblog calendar by calling hybrid JSP tag.
  */
 public class CalendarHelper  {
     private PageContext pageContext;
@@ -46,14 +46,19 @@ public class CalendarHelper  {
     protected static Log log = 
         LogFactory.getFactory().getInstance(CalendarHelper.class);
     
-    /**
-     * Creates a new instance of CalendarHelper
-     */
     public CalendarHelper(PageContext pageContext) {
         this.pageContext = pageContext;
     }  
     
-    public String emitWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument, boolean big) {        
+    public String showWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument) {        
+        return showWeblogCalendar(websiteWrapper, catArgument, false);
+    }
+    
+    public String showWeblogCalendarBig(WebsiteDataWrapper websiteWrapper, String catArgument) { 
+        return showWeblogCalendar(websiteWrapper, catArgument, true);
+    }
+    
+    private String showWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument, boolean big) {        
         HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();                        
         if ("nil".equals(catArgument)) catArgument = null;        
@@ -67,7 +72,7 @@ public class CalendarHelper  {
             }
             
             // save model in JSP page context so CalendarTag can find it
-            pageContext.setAttribute("calendarModel",model);
+            pageContext.setAttribute("calendarModel", model);
             
             CalendarTag calTag = new CalendarTag();
             calTag.setPageContext(pageContext);
