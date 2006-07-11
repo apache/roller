@@ -137,7 +137,7 @@ public class SearchServlet extends HttpServlet {
             RenderModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            RenderModelLoader.loadOldModels(model, request, response, pageContext);
+            RenderModelLoader.loadOldModels(model, request, response, pageContext, searchRequest);
             
             // manually add search model again to support pre-3.0 weblogs
             RenderModel searchModel = new SearchResultsRenderModel();

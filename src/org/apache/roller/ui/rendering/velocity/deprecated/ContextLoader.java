@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +58,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
 import org.apache.roller.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
@@ -95,7 +95,8 @@ public class ContextLoader {
             Map                 ctx,
             HttpServletRequest  request,
             HttpServletResponse response,
-            PageContext pageContext) throws RollerException {
+            PageContext pageContext,
+            WeblogRequest weblogRequest) throws RollerException {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
@@ -113,7 +114,7 @@ public class ContextLoader {
         // if this is a weblog page request then parse it out
         WeblogPageRequest pageRequest = null;
         try {
-            pageRequest = new WeblogPageRequest(request);
+            pageRequest = (WeblogPageRequest) weblogRequest;
             
             UserManager uMgr = RollerFactory.getRoller().getUserManager();
             WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
@@ -166,6 +167,8 @@ public class ContextLoader {
                     isMonth = true;
                 }
             }
+        } catch(ClassCastException cce) {
+            // ignore, just means this isn't a page request
         } catch(InvalidRequestException ire) {
             // ignore, must not be a page request
         } catch(RollerException re) {
@@ -177,7 +180,7 @@ public class ContextLoader {
         // if not a page request then try search request
         WeblogSearchRequest searchRequest = null;
         if(pageRequest == null) try {
-            searchRequest = new WeblogSearchRequest(request);
+            searchRequest = (WeblogSearchRequest) weblogRequest;
             
             UserManager uMgr = RollerFactory.getRoller().getUserManager();
             WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
@@ -193,6 +196,8 @@ public class ContextLoader {
             // lookup page if specified, otherwise lookup default
             page = weblog.getDefaultPage();
             
+        } catch(ClassCastException cce) {
+            // ignore, just means this isn't a search request
         } catch(InvalidRequestException ire) {
             // ignore, must not be a search request
         } catch(RollerException re) {

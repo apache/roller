@@ -18,7 +18,6 @@
 
 package org.apache.roller.ui.rendering.model;
 
-import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.Utilities;
 
@@ -69,13 +69,14 @@ public class RenderModelLoader {
             Map model,
             HttpServletRequest  request,
             HttpServletResponse response,
-            PageContext pageContext) throws RollerException {
+            PageContext pageContext,
+            WeblogRequest weblogRequest) throws RollerException {
         
         // Only load old model if it's specified
         String useOldModel = 
             RollerConfig.getProperty("velocity.pagemodel.classname");        
         if (useOldModel != null) { 
-            ContextLoader.setupContext(model, request, response, pageContext);            
+            ContextLoader.setupContext(model, request, response, pageContext, weblogRequest);            
         }
     }
     

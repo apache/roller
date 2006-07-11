@@ -43,14 +43,19 @@ import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.RenderModelLoader;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.util.WeblogPreviewRequest;
 
 
 /**
  * Responsible for rendering weblog page previews.
  *
- * @web.servlet name="PreviewServlet" load-on-startup="7"
- * @web.servlet-mapping url-pattern="/roller-ui/rendering/preview/*"
+ * This servlet is used as part of the authoring interface to provide previews
+ * of what a weblog will look like with a given theme.  It is not available
+ * outside of the authoring interface.
+ *
+ * @web.servlet name="PreviewServlet" load-on-startup="9"
+ * @web.servlet-mapping url-pattern="/roller-ui/authoring/preview/*"
  */
 public class PreviewServlet extends HttpServlet {
     
@@ -71,8 +76,8 @@ public class PreviewServlet extends HttpServlet {
     /**
      * Handle GET requests for weblog pages.
      */
-    public void doGet(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
         
         log.debug("Entering");
         
@@ -116,10 +121,6 @@ public class PreviewServlet extends HttpServlet {
             }
         }
         
-        // construct page context
-        PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", true, 8192, true);
-        
         // construct a temporary Website object for this request
         // and set the EditorTheme to our previewTheme
         WebsiteData tmpWebsite = new WebsiteData();
@@ -132,6 +133,7 @@ public class PreviewServlet extends HttpServlet {
         
         Template page = null;
         try {
+            // we just want to show the default view
             page = tmpWebsite.getDefaultPage();
             
             if(page == null) {
@@ -158,7 +160,12 @@ public class PreviewServlet extends HttpServlet {
             Map initData = new HashMap();
             initData.put("request", request);
             
-            // Feeds get the weblog specific page model
+            // we need to add a simple page request to use weblog models
+            WeblogPageRequest pageRequest = new WeblogPageRequest();
+            pageRequest.setWeblogHandle(previewRequest.getWeblogHandle());
+            initData.put("pageRequest", pageRequest);
+            
+            // standard weblog models
             RenderModelLoader.loadPageModels(model, initData);
             
             // special handling for site wide weblog
@@ -166,15 +173,19 @@ public class PreviewServlet extends HttpServlet {
                 RenderModelLoader.loadSiteModels(model, initData);
             }
             
+            // page context for helpers which use jsp tags :/
+            PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
+                    this, request, response,"", true, 8192, true);
+            
             // add helpers
             RenderModelLoader.loadUtilityHelpers(model, request);
             RenderModelLoader.loadWeblogHelpers(pageContext, model);
-
-            // Feeds get weblog's custom models too
+            
+            // weblog's custom models
             RenderModelLoader.loadCustomModels(tmpWebsite, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            RenderModelLoader.loadOldModels(model, request, response, pageContext);
+            RenderModelLoader.loadOldModels(model, request, response, pageContext, pageRequest);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
@@ -227,4 +238,17 @@ public class PreviewServlet extends HttpServlet {
         
         log.debug("Exiting");
     }
+    
+    
+    /**
+     * Handle POST requests.
+     *
+     * Post requests are not allowed, send a 404.
+     */
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+    
 }
