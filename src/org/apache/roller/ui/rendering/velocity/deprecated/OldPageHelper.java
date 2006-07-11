@@ -50,8 +50,8 @@ import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.ui.core.tags.calendar.CalendarTag;
 import org.apache.roller.ui.core.tags.menu.EditorNavigationBarTag;
 import org.apache.roller.ui.core.tags.menu.MenuTag;
-import org.apache.roller.ui.authoring.tags.BigWeblogCalendarModel;
-import org.apache.roller.ui.authoring.tags.WeblogCalendarModel;
+import org.apache.roller.ui.core.tags.calendar.BigWeblogCalendarModel;
+import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 
@@ -277,10 +277,10 @@ public class OldPageHelper {
             Date date = mDate;
             if ( big ) {
                 model = new BigWeblogCalendarModel(
-                        mRequest, response, mWebsite, date, selfUrl, cat);
+                        mRequest, response, cat);
             } else {
                 model = new WeblogCalendarModel(
-                        mRequest, response, mWebsite, date, selfUrl, cat);
+                        mRequest, response, cat);
             }
             
             // save model in JSP page context so CalendarTag can find it

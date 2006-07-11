@@ -222,7 +222,7 @@ public class CalendarTag extends HybridTag
 
                     // determine URL for this calendar day
                     Date tddate = cal.getTime();
-                    String url = model.computeUrl( tddate, false );
+                    String url = model.computeUrl(tddate, false, false);
                     String content = model.getContent( tddate );
 
                     if // day is in calendar month

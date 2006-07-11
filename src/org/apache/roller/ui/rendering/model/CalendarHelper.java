@@ -23,14 +23,19 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 
-import org.apache.roller.ui.authoring.tags.BigWeblogCalendarModel;
-import org.apache.roller.ui.authoring.tags.WeblogCalendarModel;
+import org.apache.roller.ui.core.tags.calendar.BigWeblogCalendarModel;
+import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
 import org.apache.roller.ui.core.LanguageUtil;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.ui.core.tags.calendar.CalendarTag;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.util.DateUtil;
 
 /**
  * Displays weblog calendar by calling hybrid JSP tag.
@@ -38,7 +43,7 @@ import org.apache.roller.ui.core.tags.calendar.CalendarTag;
 public class CalendarHelper  {
     private PageContext pageContext;
     
-    protected static Log logger = 
+    protected static Log log = 
         LogFactory.getFactory().getInstance(CalendarHelper.class);
     
     /**
@@ -48,32 +53,17 @@ public class CalendarHelper  {
         this.pageContext = pageContext;
     }  
     
-    public String emitWeblogCalendar(String cat, boolean big) {
-        
+    public String emitWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument, boolean big) {        
         HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
-        HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();
-        
-        // TODO 3.0: this needs to change, we cannot use RollerRequest anymore
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
-        WebsiteData weblog = rreq.getWebsite();
-        String pageLink = rreq.getPageLink();
-        Date date = rreq.getDate(true);
-        
-        if ("nil".equals(cat)) cat = null;        
+        HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();                        
+        if ("nil".equals(catArgument)) catArgument = null;        
         String ret = null;
         try {
-            String selfUrl = null;
-            if (pageLink != null) {
-                selfUrl = weblog.getURL() + "/page/" + pageLink;
-            } else {
-                selfUrl = weblog.getURL();
-            }
-
             CalendarModel model = null;
             if (big) {
-                model = new BigWeblogCalendarModel(request, response, weblog, date, selfUrl, cat);
+                model = new BigWeblogCalendarModel(request, response, catArgument);
             } else {
-                model = new WeblogCalendarModel(request, response, weblog, date, selfUrl, cat);
+                model = new WeblogCalendarModel(request, response, catArgument);
             }
             
             // save model in JSP page context so CalendarTag can find it
@@ -89,8 +79,10 @@ public class CalendarHelper  {
             }
             ret = calTag.emit();
         } catch (Exception e) {
-            logger.error("ERROR: initializing calendar tag",e);
+            log.error("ERROR: initializing calendar tag",e);
         }
         return ret;
     }
 }
+
+
