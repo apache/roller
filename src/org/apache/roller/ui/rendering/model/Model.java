@@ -23,18 +23,18 @@ import org.apache.roller.RollerException;
 
 
 /**
- * Represents a render model to be used in the blog/feed templates.
+ * Represents a set of functionality to be used at rendering.
  */
-public interface RenderModel {
+public interface Model {
     
     /**
-     * Name to be used for the model in template context.
+     * Name to be used when referring to this model.
      */
     public String getModelName();
     
     
     /**
-     * Initialize via request.
+     * Initialize.
      */
     public void init(Map params) throws RollerException;
     

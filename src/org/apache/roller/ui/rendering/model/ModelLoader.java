@@ -33,35 +33,42 @@ import org.apache.roller.util.Utilities;
 
 
 /**
- * Loads page models (read-only data access objects which implement RenderModel) 
+ * Loads page models (read-only data access objects which implement Model) 
  * and helpers (which "help" with HTML gen.) needed by page rendering process.
  */
-public class RenderModelLoader {
+public class ModelLoader {
     
-    private static Log log = LogFactory.getLog(RenderModelLoader.class);
+    private static Log log = LogFactory.getLog(ModelLoader.class);
     
     
     /** 
      * Load helpers needed in weblog pages (e.g. calendar, menu).
      */
-    public static void loadWeblogHelpers(PageContext pageContext, Map model) {
+    public static void loadWeblogHelpers(Map model, Map initData) 
+            throws RollerException {
         
-        CalendarHelper calendarTag = new CalendarHelper(pageContext);
-        model.put("calendarTag", calendarTag);
+        CalendarModel calendarTag = new CalendarModel();
+        calendarTag.init(initData);
+        model.put(calendarTag.getModelName(), calendarTag);
         
-        EditorMenuHelper menuTag = new EditorMenuHelper(pageContext);
-        model.put("menuTag", menuTag);
+        MenuModel menuTag = new MenuModel();
+        menuTag.init(initData);
+        model.put(menuTag.getModelName(), menuTag);
     }
     
     
     /**
      * Load generic utility helpers.
      */
-    public static void loadUtilityHelpers(Map model, HttpServletRequest request) {
-        UtilitiesHelper utils = new UtilitiesHelper(request);
+    public static void loadUtilityHelpers(Map model, Map initData) 
+            throws RollerException {
+        
+        UtilitiesModel utils = new UtilitiesModel();
+        utils.init(initData);
         model.put("utils", utils);
     }
-               
+    
+    
     /**
      * Load old page models, but only if velocity.pagemodel.classname defined.
      */
@@ -153,17 +160,17 @@ public class RenderModelLoader {
             for (int i=0; i<weblogModels.length; i++) {
                 try { // don't die just because of one bad custom model
                     Class modelClass = Class.forName(weblogModels[i]);
-                    RenderModel pageModel = (RenderModel)modelClass.newInstance();
+                    Model pageModel = (Model)modelClass.newInstance();
                     pageModel.init(initData);             
                     model.put(pageModel.getModelName(), pageModel);
                 } catch (RollerException re) {
                     log.warn("ERROR: initializing a plugin: " + weblogModels[i]);
                 } catch (ClassNotFoundException cnfe) {
-                    log.warn("ERROR: can't find page model: " + weblogModels[i]);
+                    log.warn("ERROR: can't find model: " + weblogModels[i]);
                 } catch (InstantiationException ie) {
-                    log.warn("ERROR: insantiating page model: " + weblogModels[i]);
+                    log.warn("ERROR: insantiating model: " + weblogModels[i]);
                 } catch (IllegalAccessException iae) {
-                    log.warn("ERROR: access exception page model: " + weblogModels[i]);
+                    log.warn("ERROR: access exception model: " + weblogModels[i]);
                 }
             }
         }     
@@ -185,16 +192,16 @@ public class RenderModelLoader {
             for (int i=0; i<models.length; i++) {
                 currentModel = models[i];
                 Class modelClass = Class.forName(currentModel);
-                RenderModel pageModel = (RenderModel) modelClass.newInstance();
+                Model pageModel = (Model) modelClass.newInstance();
                 pageModel.init(initData);            
                 model.put(pageModel.getModelName(), pageModel);
             }
         } catch (ClassNotFoundException cnfe) {
-            throw new RollerException("ERROR: can't find page model: " + currentModel);
+            throw new RollerException("ERROR: can't find model: " + currentModel);
         } catch (InstantiationException ie) {
-            throw new RollerException("ERROR: insantiating page model: " + currentModel);
+            throw new RollerException("ERROR: insantiating model: " + currentModel);
         } catch (IllegalAccessException iae) {
-            throw new RollerException("ERROR: access exception page model: " + currentModel);
+            throw new RollerException("ERROR: access exception model: " + currentModel);
         }
     }
     

@@ -28,9 +28,10 @@ import org.apache.roller.ui.core.RollerContext;
 
 
 /**
- * New Atlas config page model provides access to site URLs and runtime configs.
+ * Model which provides access to application config data like site URLs and 
+ * config properties.
  */
-public class ConfigRenderModel implements RenderModel {
+public class ConfigModel implements Model {
     
     /** Hand-picked list of runtime properties to be made available */
     private static List allowedProperties = 
@@ -49,13 +50,7 @@ public class ConfigRenderModel implements RenderModel {
             "site.linkbacks.enabled",
             "site.newsfeeds.defaultEntries",
             "site.newsfeeds.maxEntries"
-    }); 
-    
-    
-    /**
-     * Creates a new instance of ConfigRenderModel
-     */
-    public ConfigRenderModel() {}
+    });
     
     
     /** Template context name to be used for model */

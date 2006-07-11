@@ -43,15 +43,12 @@ import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 /**
  * Model provides information needed to render a feed.
  */
-public class FeedRenderModel implements RenderModel {
+public class FeedModel implements Model {
     
-    private WebsiteData        weblog = null;
-    private String             categoryPath = null;
+    private static Log log = LogFactory.getLog(FeedModel.class); 
     
-    protected static Log log = LogFactory.getLog(FeedRenderModel.class); 
-    
-    
-    public FeedRenderModel() {}
+    private WebsiteData weblog = null;
+    private String categoryPath = null;
     
     
     public void init(Map initData) throws RollerException {
@@ -63,6 +60,7 @@ public class FeedRenderModel implements RenderModel {
         }
         
         categoryPath = parsed.getWeblogCategory();
+        
         Roller roller = RollerFactory.getRoller();
         UserManager umgr = roller.getUserManager();
         weblog = umgr.getWebsiteByHandle(parsed.getWeblogHandle(), Boolean.TRUE);

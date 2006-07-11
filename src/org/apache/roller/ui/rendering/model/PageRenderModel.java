@@ -49,7 +49,7 @@ import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 /**
  * Model provides information needed to render a weblog page.
  */
-public class PageRenderModel implements RenderModel {
+public class PageRenderModel implements Model {
     
     protected static Log log = LogFactory.getLog(PageRenderModel.class);
     

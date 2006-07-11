@@ -15,6 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.rendering.model;
 
 import java.io.UnsupportedEncodingException;
@@ -22,29 +23,28 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.Utilities;
 
+
 /**
- * Utilities object to be placed in template context.
+ * Model which provides access to a set of general utilities.
  */
-public class UtilitiesHelper {
+public class UtilitiesModel implements Model {
     
-    private HttpServletRequest request;
-    
-    protected static Log log =
-            LogFactory.getFactory().getInstance(UtilitiesHelper.class); 
+    private static Log log = LogFactory.getLog(UtilitiesModel.class); 
     
     private static Pattern mLinkPattern =
             Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);    
@@ -89,10 +89,23 @@ public class UtilitiesHelper {
     private static final Pattern QUOTE_PATTERN = 
             Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
     
-    public UtilitiesHelper(HttpServletRequest request) {
-        this.request = request;
+    private HttpServletRequest request = null;
+    
+    
+    /** Template context name to be used for model */
+    public String getModelName() {
+        return "utilities";
     }
-            
+    
+    
+    /** Init page model based on request */
+    public void init(Map initData) throws RollerException {
+        
+        // extract request object
+        this.request = (HttpServletRequest) initData.get("request");
+    }
+    
+    
     //---------------------------------------------------- Authentication utils 
     
     public boolean getUserAuthorizedToAuthor(WebsiteDataWrapper weblog) {

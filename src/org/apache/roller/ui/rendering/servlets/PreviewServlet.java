@@ -42,7 +42,7 @@ import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
-import org.apache.roller.ui.rendering.model.RenderModelLoader;
+import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.util.WeblogPreviewRequest;
 
@@ -165,27 +165,28 @@ public class PreviewServlet extends HttpServlet {
             pageRequest.setWeblogHandle(previewRequest.getWeblogHandle());
             initData.put("pageRequest", pageRequest);
             
-            // standard weblog models
-            RenderModelLoader.loadPageModels(model, initData);
-            
-            // special handling for site wide weblog
-            if (rollerContext.isSiteWideWeblog(tmpWebsite.getHandle())) {
-                RenderModelLoader.loadSiteModels(model, initData);
-            }
-            
             // page context for helpers which use jsp tags :/
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
+            initData.put("pageContext", pageContext);
+            
+            // standard weblog models
+            ModelLoader.loadPageModels(model, initData);
+            
+            // special handling for site wide weblog
+            if (rollerContext.isSiteWideWeblog(tmpWebsite.getHandle())) {
+                ModelLoader.loadSiteModels(model, initData);
+            }
             
             // add helpers
-            RenderModelLoader.loadUtilityHelpers(model, request);
-            RenderModelLoader.loadWeblogHelpers(pageContext, model);
+            ModelLoader.loadUtilityHelpers(model, initData);
+            ModelLoader.loadWeblogHelpers(model, initData);
             
             // weblog's custom models
-            RenderModelLoader.loadCustomModels(tmpWebsite, model, initData);
+            ModelLoader.loadCustomModels(tmpWebsite, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            RenderModelLoader.loadOldModels(model, request, response, pageContext, pageRequest);
+            ModelLoader.loadOldModels(model, request, response, pageContext, pageRequest);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
