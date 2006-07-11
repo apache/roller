@@ -275,7 +275,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             RenderModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            RenderModelLoader.loadOldModels(model, request, response, pageContext);
+            RenderModelLoader.loadOldModels(model, request, response, pageContext, pageRequest);
             
         } catch (RollerException ex) {
             log.error("Error loading model objects for page", ex);
