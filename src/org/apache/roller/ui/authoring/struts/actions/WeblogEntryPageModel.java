@@ -41,7 +41,6 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.ui.authoring.struts.actions.WeblogEntryPageModel.PageMode;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
-import org.apache.roller.ui.authoring.tags.EditWeblogCalendarModel;
 import org.apache.commons.lang.StringUtils;
 
 //import com.swabunga.spell.event.SpellCheckEvent;
@@ -50,6 +49,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
+import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
 
 /**
  * All data needed to render the edit-weblog page.
@@ -251,19 +251,6 @@ public class WeblogEntryPageModel extends BasePageModel
             editorPage = "editor-text.jsp";
         }
         return editorPage;
-    }
-
-    public CalendarModel getCalendarModel() throws Exception
-    {
-        // Determine URL to self
-        ActionForward selfForward = getMapping().findForward("editWeblog");
-        String selfUrl= getRequest().getContextPath()+selfForward.getPath();
-
-        // Setup weblog calendar model
-        CalendarModel model = new EditWeblogCalendarModel(
-                rollerRequest.getRequest(), getResponse(), 
-                rollerRequest.getWebsite(), rollerRequest.getDate(true), selfUrl );
-        return model;
     }
 
     public UserData getUser()

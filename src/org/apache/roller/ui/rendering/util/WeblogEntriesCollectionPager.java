@@ -1,16 +1,22 @@
 /*
- * WeblogEntriesCollectionPager.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on June 29, 2006, 3:09 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
-
 package org.apache.roller.ui.rendering.util;
 
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -81,7 +86,8 @@ public class WeblogEntriesCollectionPager extends WeblogEntriesPager {
             Calendar cal = Calendar.getInstance();
             
             // parse date string and figure out date
-            thisDate = parseDate(dateString, weblog);
+            thisDate = DateUtil.parseWeblogURLDateString(dateString, 
+                    weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             
             // single day
             if(dateString.length() == 8) {
@@ -288,46 +294,7 @@ public class WeblogEntriesCollectionPager extends WeblogEntriesPager {
         }
         
         return entries;
-    }
-    
-    
-    /** 
-     * Parse data as either 6-char or 8-char format.
-     */
-    Date parseDate(String dateString, WebsiteData weblog) {
-        
-        Date ret = null;
-        SimpleDateFormat char8DateFormat = DateUtil.get8charDateFormat();
-        SimpleDateFormat char6DateFormat = DateUtil.get6charDateFormat();
-        
-        if (dateString != null
-                && dateString.length()==8
-                && StringUtils.isNumeric(dateString) ) {
-            ParsePosition pos = new ParsePosition(0);
-            ret = char8DateFormat.parse(dateString, pos);
-            
-            // make sure the requested date is not in the future
-            Date today = getToday(weblog);
-            if(ret.after(today)) {
-                ret = today;
-            }
-            
-        } else if(dateString != null
-                && dateString.length()==6
-                && StringUtils.isNumeric(dateString)) {
-            ParsePosition pos = new ParsePosition(0);
-            ret = char6DateFormat.parse(dateString, pos);
-            
-            // make sure the requested date is not in the future
-            Date today = getToday(weblog);
-            if(ret.after(today)) {
-                ret = today;
-            }
-        }
-        
-        return ret;
-    }
-    
+    }    
     
     /**
      * Return today based on current blog's timezone/locale.

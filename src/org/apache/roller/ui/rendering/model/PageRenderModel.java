@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.model; 
 
 import java.util.ArrayList;
 import java.util.Date;

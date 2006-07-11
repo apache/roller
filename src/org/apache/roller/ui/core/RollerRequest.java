@@ -101,7 +101,7 @@ public class RollerRequest
     public static final String PAGELINK_KEY           = "pagelink";
     public static final String EXCERPTS_KEY           = "excerpts";
     public static final String WEBLOGENTRY_COUNT      = "count";
-    public static final String WEBLOGCATEGORYNAME_KEY = "catname";
+    public static final String WEBLOGCATEGORYNAME_KEY = "cat";
     public static final String WEBLOGENTRIES_KEY      = "entries";
     public static final String WEBLOGDAY_KEY          = "day";
     
