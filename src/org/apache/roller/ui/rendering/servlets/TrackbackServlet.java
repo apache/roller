@@ -20,7 +20,6 @@ package org.apache.roller.ui.rendering.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Date;
 import javax.servlet.ServletException;
@@ -29,14 +28,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.RollerRequest;
+import org.apache.roller.ui.rendering.util.WeblogTrackbackRequest;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.SpamChecker;
 import org.apache.roller.util.cache.CacheManager;
@@ -45,7 +46,7 @@ import org.apache.struts.util.RequestUtils;
 
 /**
  * Roller's Trackback server implementation. POSTing to this Servlet will add a
- * Trackback to a Weblog Entrty. For more info on Trackback, read the spec:
+ * Trackback to a Weblog Entry. For more info on Trackback, read the spec:
  * <a href="http://www.movabletype.org/docs/mttrackback.html>MT Trackback</a>.
  *
  * @web.servlet name="TrackbackServlet"
@@ -54,18 +55,6 @@ import org.apache.struts.util.RequestUtils;
 public class TrackbackServlet extends HttpServlet { 
     
     private static Log logger = LogFactory.getLog(TrackbackServlet.class);
-    
-    /** Request parameter for the trackback "title" */
-    private static final String TRACKBACK_TITLE_PARAM = "title";
-    
-    /** Request parameter for the trackback "excerpt" */
-    private static final String TRACKBACK_EXCERPT_PARAM = "excerpt";
-    
-    /** Request parameter for the trackback "url" */
-    private static final String TRACKBACK_URL_PARAM = "url";
-    
-    /** Request parameter for the trackback "blog_name" */
-    private static final String TRACKBACK_BLOG_NAME_PARAM = "blog_name";
     
     
     /**
@@ -91,29 +80,51 @@ public class TrackbackServlet extends HttpServlet {
         String error = null;
         PrintWriter pw = response.getWriter();
         
-        String url = request.getParameter(TRACKBACK_URL_PARAM);
-        String title = request.getParameter(TRACKBACK_TITLE_PARAM);
-        String excerpt = request.getParameter(TRACKBACK_EXCERPT_PARAM);
-        String blogName = request.getParameter(TRACKBACK_BLOG_NAME_PARAM);
+        WebsiteData weblog = null;
+        WeblogEntryData entry = null;
         
-        if ((title == null) || "".equals(title)) {
-            title = url;
-        }
-        
-        if (excerpt == null) {
-            excerpt = "";
-        } else {
-            if (excerpt.length() >= 255) {
-                excerpt = excerpt.substring(0, 252);
-                excerpt += "...";
-            }
-        }
-        
-        
+        WeblogTrackbackRequest trackbackRequest = null;
         if(!RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
             error = "Trackbacks are disabled for this site";
-        } else if (title==null || url==null || excerpt==null || blogName==null) {
-            error = "title, url, excerpt, and blog_name not specified.";
+        } else {
+            
+            try {
+                trackbackRequest = new WeblogTrackbackRequest(request);
+                
+                if((trackbackRequest.getTitle() == null) ||
+                        "".equals(trackbackRequest.getTitle())) {
+                    trackbackRequest.setTitle(trackbackRequest.getUrl());
+                }
+                
+                if(trackbackRequest.getExcerpt() == null) {
+                    trackbackRequest.setExcerpt("");
+                } else if(trackbackRequest.getExcerpt().length() >= 255) {
+                    trackbackRequest.setExcerpt(trackbackRequest.getExcerpt().substring(0, 252)+"...");
+                }
+                
+                // lookup weblog specified by comment request
+                UserManager uMgr = RollerFactory.getRoller().getUserManager();
+                weblog = uMgr.getWebsiteByHandle(trackbackRequest.getWeblogHandle());
+                
+                if(weblog == null) {
+                    throw new RollerException("unable to lookup weblog: "+
+                            trackbackRequest.getWeblogHandle());
+                }
+                
+                // lookup entry specified by comment request
+                WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
+                entry = weblogMgr.getWeblogEntryByAnchor(weblog, trackbackRequest.getWeblogAnchor());
+                
+                if(entry == null) {
+                    throw new RollerException("unable to lookup entry: "+
+                            trackbackRequest.getWeblogAnchor());
+                }
+                
+            } catch (Exception e) {
+                // some kind of error parsing the request or looking up weblog
+                logger.debug("error creating page request", e);
+                error = e.getMessage();
+            }
         }
         
         if(error != null) {
@@ -121,20 +132,17 @@ public class TrackbackServlet extends HttpServlet {
             return;
         }
         
-        boolean verified = true;
         try {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
-            WeblogEntryData entry = rreq.getWeblogEntry();
-            WebsiteData website = entry.getWebsite();
-            boolean siteAllows = website.getAllowComments().booleanValue();
+            boolean siteAllows = weblog.getAllowComments().booleanValue();
+            boolean verified = true;
             
             if (entry!=null && siteAllows && entry.getCommentsStillAllowed()) {
                 
                 // Track trackbacks as comments
                 CommentData comment = new CommentData();
-                comment.setContent("[Trackback] "+excerpt);
-                comment.setName(blogName);
-                comment.setUrl(url);
+                comment.setContent("[Trackback] "+trackbackRequest.getExcerpt());
+                comment.setName(trackbackRequest.getBlogName());
+                comment.setUrl(trackbackRequest.getUrl());
                 comment.setWeblogEntry(entry);
                 comment.setNotify(Boolean.FALSE);
                 comment.setPostTime(new Timestamp(new Date().getTime()));
@@ -167,7 +175,7 @@ public class TrackbackServlet extends HttpServlet {
                 
                 if (error == null) {
                     // If comment moderation is on, set comment as pending
-                    if (verified && website.getCommentModerationRequired()) {
+                    if (verified && weblog.getCommentModerationRequired()) {
                         comment.setPending(Boolean.TRUE);
                         comment.setApproved(Boolean.FALSE);
                     } else if (verified) {
