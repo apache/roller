@@ -349,7 +349,7 @@
  * @param entry WeblogEntry object.
  *#
 #macro( showTrackbackURL $entry )
-$absBaseURL/trackback/${website.handle}/$page.link/$utilities.encode($entry.anchor)
+${entry.permalink}
 #end
 
 
