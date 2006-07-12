@@ -186,7 +186,7 @@
 
     #showStatusMessage()
 
-    <form method="post" action="$ctxPath/$entry.permaLink" focus="name"
+    <form method="post" action="$ctxPath$entry.permaLink" focus="name"
         name="form" onsubmit="fixURL(this); return validateComments(this)">
         
         #if($requestParameters.popup)
