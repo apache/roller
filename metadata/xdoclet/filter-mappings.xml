@@ -80,14 +80,6 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
 	<dispatcher>REQUEST</dispatcher>
 	<dispatcher>FORWARD</dispatcher>
 </filter-mapping>
-<filter-mapping>
-    <filter-name>IfPlanetModifiedFilter</filter-name>
-    <url-pattern>/planetrss/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>PlanetCacheFilter</filter-name>
-    <url-pattern>/planetrss</url-pattern>
-</filter-mapping>
 
 
 <!-- Do we still need the RequestFilter? -->
