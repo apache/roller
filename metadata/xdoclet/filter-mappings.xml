@@ -19,6 +19,19 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
+<!-- Ip Banning is mapped for comment and trackbacks only.
+Note: this filter does nothing if an ip ban list is not configured. -->
+<filter-mapping>
+    <filter-name>IPBanFilter</filter-name>
+    <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>IPBanFilter</filter-name>
+    <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+
 <!-- Scheme enforcement.  Only here until we get Acegi scheme enforcement working -->
 <filter-mapping>
     <filter-name>SchemeEnforcementFilter</filter-name>

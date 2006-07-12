@@ -203,7 +203,6 @@ Key Targets:
             <include name="org/apache/roller/ui/**/actions/*.java" />
             <include name="org/apache/roller/ui/core/RollerContext.java" />
             <include name="org/apache/roller/ui/core/RollerSession.java" />
-            <exclude name="**/IPBanFilter**" />
             <exclude name="**/LinkTag**" />
             <exclude name="**/LinkParamTag**" />
         </fileset>
