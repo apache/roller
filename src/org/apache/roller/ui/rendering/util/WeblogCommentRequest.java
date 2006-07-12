@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 
 
 /**
- * Represents a request for a weblog preview.
+ * Represents a request to post a weblog entry comment.
  */
 public class WeblogCommentRequest extends WeblogRequest {
     
