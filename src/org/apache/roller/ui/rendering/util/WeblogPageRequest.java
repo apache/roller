@@ -90,9 +90,16 @@ public class WeblogPageRequest extends WeblogRequest {
          */
         if(pathInfo != null && pathInfo.trim().length() > 0) {
             
-            // we should only ever get 2 path elements
+            // all views use 2 path elements, except category
             String[] pathElements = pathInfo.split("/");
-            if(pathElements.length == 2) {
+            if(pathElements.length > 1 && "category".equals(pathElements[0])) {
+                
+                // category may have multiple path elements, so re-split with max 2
+                pathElements = pathInfo.split("/", 2);
+                this.context = pathElements[0];
+                this.weblogCategory = "/"+pathElements[1];
+                    
+            } else if(pathElements.length == 2) {
                 
                 this.context = pathElements[0];
                 if("entry".equals(this.context)) {
@@ -110,15 +117,6 @@ public class WeblogPageRequest extends WeblogRequest {
                     } else {
                         throw new InvalidRequestException("invalid date, "+
                             request.getRequestURL());
-                    }
-                    
-                } else if("category".equals(this.context)) {
-                    try {
-                        this.weblogCategory =
-                                URLDecoder.decode(pathElements[1], "UTF-8");
-                    } catch (UnsupportedEncodingException ex) {
-                        // should never happen
-                        log.error(ex);
                     }
                     
                 } else if("page".equals(this.context)) {
