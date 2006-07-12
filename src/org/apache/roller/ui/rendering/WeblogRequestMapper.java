@@ -155,8 +155,8 @@ public class WeblogRequestMapper implements RequestMapper {
         }
         
         // calculate forward url
-        String forwardUrl = calculateForwardUrl(weblogHandle, weblogLocale,
-                weblogRequestContext, weblogRequestData, request.getMethod());
+        String forwardUrl = calculateForwardUrl(request, weblogHandle, weblogLocale,
+                weblogRequestContext, weblogRequestData);
         
         // if we don't have a forward url then the request was invalid somehow
         if(forwardUrl == null) {
@@ -179,27 +179,45 @@ public class WeblogRequestMapper implements RequestMapper {
      *
      * handle is always assumed valid, all other params may be null.
      */
-    private String calculateForwardUrl(String handle, String locale,
-                                       String context, String data,
-                                       String method) {
+    private String calculateForwardUrl(HttpServletRequest request,
+                                       String handle, String locale,
+                                       String context, String data) {
         
-        log.debug(handle+","+locale+","+context+","+data+","+method);
+        log.debug(handle+","+locale+","+context+","+data);
         
         StringBuffer forwardUrl = new StringBuffer();
         
         // POST urls, like comment and trackback servlets
-        if("POST".equals(method)) {
+        if("POST".equals(request.getMethod())) {
+            // posting to permalink, this means comment or trackback
             if(context.equals("entry")) {
-                // TODO 3.0: need to figure out how to route requests to trackback servlet
-                forwardUrl.append(COMMENT_SERVLET);
-                forwardUrl.append("/");
-                forwardUrl.append(handle);
-                forwardUrl.append("/");
-                forwardUrl.append(context);
-                if(data != null) {
+                // trackback requests are required to have an "excerpt" param
+                if(request.getParameter("excerpt") != null) {
+                    
+                    forwardUrl.append(TRACKBACK_SERVLET);
                     forwardUrl.append("/");
-                    forwardUrl.append(data);
+                    forwardUrl.append(handle);
+                    forwardUrl.append("/");
+                    forwardUrl.append(context);
+                    if(data != null) {
+                        forwardUrl.append("/");
+                        forwardUrl.append(data);
+                    }
+                    
+                // comment requests are required to have a "content" param
+                } else if(request.getParameter("content") != null) {
+                    
+                    forwardUrl.append(COMMENT_SERVLET);
+                    forwardUrl.append("/");
+                    forwardUrl.append(handle);
+                    forwardUrl.append("/");
+                    forwardUrl.append(context);
+                    if(data != null) {
+                        forwardUrl.append("/");
+                        forwardUrl.append(data);
+                    }
                 }
+                
             } else {
                 // someone posting data where they aren't supposed to
                 return null;
