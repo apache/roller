@@ -53,7 +53,6 @@ public class RollerSession
         LogFactory.getFactory().getInstance(RollerSession.class);
 
     public static final String ROLLER_SESSION = "org.apache.roller.rollersession";
-    public static final String BREADCRUMB = "org.apache.roller.breadcrumb";
     public static final String ERROR_MESSAGE   = "rollererror_message";
     public static final String STATUS_MESSAGE  = "rollerstatus_message";
 
@@ -129,60 +128,6 @@ public class RollerSession
    {
        clearSession(se);
    }
-
-    //----------------------------------------------------------------- Breadcrumbs
-    
-    // TODO: eliminate breadcrumb stuff?
-    
-    /**
-     * Clear bread crumb trail.
-     * @param req the request
-     */
-    public static void clearBreadCrumbTrail( HttpServletRequest req )
-    { 
-        HttpSession ses = req.getSession(false);
-        if (ses != null && ses.getAttribute(BREADCRUMB) != null)
-        {
-            ArrayStack stack = (ArrayStack)ses.getAttribute(BREADCRUMB);
-            stack.clear();
-        }
-    }
-    
-    /**
-     * Store the url of the latest request stored in the session.
-     * @param useReferer If true try to return the "referer" header.
-     */
-    public static String getBreadCrumb( 
-        HttpServletRequest req, boolean useReferer )
-    {
-        String crumb = null;
-        
-        HttpSession ses = req.getSession(false);
-        if (ses != null && ses.getAttribute(BREADCRUMB) != null)
-        {
-            ArrayStack stack = (ArrayStack) ses.getAttribute(BREADCRUMB);
-            if (stack != null && !stack.empty())
-            {
-                crumb = (String)stack.peek();
-            }
-        }
-
-        if ( crumb == null && useReferer )
-        {
-            crumb = req.getHeader("referer");
-        }
-        
-        return crumb;
-    }
-    
-    /**
-     * Store the url of the latest request stored in the session.
-     * Else try to return the "referer" header.
-     */
-    public static String getBreadCrumb( HttpServletRequest req )
-    {
-        return getBreadCrumb(req,true);
-    }
 
     //-------------------------------------------------------- Authentication, etc.
     
@@ -266,7 +211,6 @@ public class RollerSession
         HttpSession session = se.getSession();
         try
         {
-            session.removeAttribute(BREADCRUMB);
             session.removeAttribute(ROLLER_SESSION);
         }
         catch (Throwable e)

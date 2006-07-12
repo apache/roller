@@ -57,11 +57,6 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
     <url-pattern>/roller-ui/rendering/page/*</url-pattern>
 </filter-mapping>
 
-<filter-mapping>
-    <filter-name>BreadCrumbFilter</filter-name>
-    <url-pattern>*.do</url-pattern>
-</filter-mapping>
-
 
 <!-- Compression Filter -->
 <filter-mapping>
