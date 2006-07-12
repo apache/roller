@@ -178,6 +178,12 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             this.misses++;
         }
 
+        // set content type
+        if("rss".equals(feedRequest.getFormat())) {
+            response.setContentType("application/rss+xml; charset=utf-8");
+        } else if("atom".equals(feedRequest.getFormat())) {
+            response.setContentType("application/atom+xml; charset=utf-8");
+        }
         
         // looks like we need to render content
         HashMap model = new HashMap();
