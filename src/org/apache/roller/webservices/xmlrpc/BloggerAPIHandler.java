@@ -475,7 +475,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                         null,                   // startDate
                         new Date(),             // endDate
                         null,                   // catName
-                        null, 0, -1, null);
+                        null, null, 0, -1);
                 
                 Iterator iter = entries.values().iterator();
                 while (iter.hasNext()) {

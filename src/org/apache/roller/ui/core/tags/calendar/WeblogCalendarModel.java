@@ -139,8 +139,7 @@ public class WeblogCalendarModel implements CalendarModel {
                     endDate,                   // endDate
                     cat,                   // cat
                     WeblogEntryData.PUBLISHED, // status
-                    0, -1,
-                    locale);
+locale,                     0, -1);
         } catch (RollerException e) {
             log.error(e);
             monthMap = new HashMap();

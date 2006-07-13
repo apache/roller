@@ -82,7 +82,7 @@ public class ModelLoader {
         // Only load old model if it's specified
         String useOldModel = 
             RollerConfig.getProperty("velocity.pagemodel.classname");        
-        if (useOldModel != null) { 
+        if (useOldModel != null && useOldModel.trim().length() > 0) { 
             ContextLoader.setupContext(model, request, response, pageContext, weblogRequest);            
         }
     }

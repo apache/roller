@@ -380,8 +380,7 @@ public class OldWeblogPageModel {
                     endDate,                      // endDate
                     catParam,                     // catName
                     WeblogEntryData.PUBLISHED,    // status
-                    0, -1,
-                    mLocale);  
+mLocale,                     0, -1);  
             
             // need to wrap pojos
             java.util.Date key = null;
@@ -484,8 +483,7 @@ public class OldWeblogPageModel {
                     catParam,                    // catName
                     WeblogEntryData.PUBLISHED,   // status
                     null,                        // sortby (null for pubTime)
-                    0, maxEntries,               // maxEntries
-                    mLocale);    
+mLocale,                     0, maxEntries);    
             
             // wrap pojos
             ret = new ArrayList(mEntries.size());

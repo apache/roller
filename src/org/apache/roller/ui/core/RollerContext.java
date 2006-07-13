@@ -447,10 +447,9 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
      */
     public String getContextUrl(HttpServletRequest request, WebsiteData website) {
         return website.getURL();
-    }
+    }       
     
-    
-    /** Get absolute URL of Roller context */
+    /** Get context path of Roller, drops trailing slash */
     public String getContextUrl(HttpServletRequest request) {
         String url = request.getContextPath();
         if (url.endsWith("/")) {

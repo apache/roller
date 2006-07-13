@@ -137,7 +137,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // catName
                 WeblogEntryData.PUBLISHED, // status
                 null,              // sortby (null for pubTime)
-                0, 20, null);   
+null,                 0, 20);   
     }
 
     /**
@@ -158,7 +158,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // catName
                 WeblogEntryData.DRAFT, // status
                 "updateTime",      // sortby 
-                0, 20, null);  // maxEntries
+null,                 0, 20);  // maxEntries
     }
     
     /**
@@ -179,7 +179,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // catName
                 WeblogEntryData.PENDING, // status
                 "updateTime",      // sortby
-                0, 20, null);  
+null,                 0, 20);  
     }
  
     public List getHoursList()

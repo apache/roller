@@ -50,7 +50,7 @@ import org.apache.roller.util.DateUtil;
  *
  * Also adds some new methods which are specific only to search results.
  */
-public class SearchResultsModel extends PageRenderModel {
+public class SearchResultsModel extends PageModel {
     
     private static final ResourceBundle bundle = 
             ResourceBundle.getBundle("ApplicationResources");

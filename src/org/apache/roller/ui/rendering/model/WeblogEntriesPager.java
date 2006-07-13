@@ -1,4 +1,4 @@
-package org.apache.roller.ui.rendering.util;
+package org.apache.roller.ui.rendering.model;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -23,80 +23,51 @@ import org.apache.roller.util.DateUtil;
  * Collection returned is a list of lists of entries, where each list of 
  * entries represents one day.
  */
-public abstract class WeblogEntriesPager {
-    
-    
+public interface WeblogEntriesPager {
+        
     /**
      * A map of entries representing this collection.
      *
      * The collection is grouped by days of entries.  Each value is a list of
      * entry objects keyed by the date they were published.
      */
-    public abstract Map getEntries();
-    
-    
+    public Map getEntries();
+        
     /**
      * Link value for next collection view
      */
-    public String getNextLink() {
-        return null;
-    }
-    
+    public String getNextCollectionLink();
     /**
      * Link name for next collection view
      */
-    public String getNextLinkName() {
-        return null;
-    }
-    
+    public String getNextCollectionName();    
     /**
      * Link value for prev collection view
      */
-    public String getPrevLink() {
-        return null;
-    }
-    
+    public String getPrevCollectionLink(); 
     /**
      * Link name for prev collection view
      */
-    public String getPrevLinkName() {
-        return null;
-    }
-    
+    public String getPrevCollectionName();  
     /**
      * Does this pager represent a multi-page collection?
      */
-    public boolean isMultiPage() {
-        return false;
-    }
-    
+    //public boolean isMultiPage();
     /**
      * Link value for next page in current collection view
      */
-    public String getNextPageLink() {
-        return null;
-    }
-    
+    public String getNextLink();
     /**
      * Link name for next page in current collection view
      */
-    public String getNextPageName() {
-        return null;
-    }
-    
+    public String getNextName();    
     /**
      * Link value for prev page in current collection view
      */
-    public String getPrevPageLink() {
-        return null;
-    }
-    
+    public String getPrevLink(); 
     /**
      * Link value for prev page in current collection view
      */
-    public String getPrevPageName() {
-        return null;
-    }
-    
+    public String getPrevName();  
 }
 

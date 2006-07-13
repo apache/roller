@@ -34,12 +34,12 @@ import org.apache.roller.util.PojoUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.ThemeNotFoundException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.ThemeManager;
 import org.apache.roller.model.UserManager;
+import org.apache.roller.model.WeblogManager;
 
 
 /**
@@ -265,9 +265,27 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         return template;
     }
     
+    /**
+     * Lookup a template id for this website by pageName.
+     * @roller.wrapPojoMethod type="simple"
+     */        
+    public String findPageIdByName(String pageName) {        
+        String template_id = null;        
+        try {
+            Template pd = this.getPageByName(pageName);
+            if(pd != null) {
+                template_id = pd.getId();
+            }
+        } catch(Exception e) {
+            mLogger.error("ERROR: getting page ID by name", e);
+        }              
+        return template_id;
+    }
+    
     
     /**
      * Lookup a template for this website by link.
+     * @roller.wrapPojoMethod type="pojo"
      */
     public Template getPageByLink(String link) throws RollerException {
         
@@ -330,7 +348,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         
         
         // now get theme pages if needed and put them in place of db pages
-        if(this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
+        if (this.editorTheme != null && !this.editorTheme.equals(Theme.CUSTOM)) {
             try {
                 Template template = null;
                 ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
@@ -1071,6 +1089,41 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
             }
         }
         return initializedPlugins;
+    }
+    
+    /**
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
+     */
+    public List getWeblogCategories() {
+        List ret = new ArrayList();
+        try {           
+            WeblogCategoryData category = this.getDefaultCategory();
+            ret = category.getWeblogCategories();
+        } catch (RollerException e) {
+            mLogger.error("ERROR: fetching categories", e);
+        }
+        return ret;
+    }
+    
+    /**
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
+     */
+    public List getWeblogCategories(String categoryPath) {
+        List ret = new ArrayList();
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();            
+            WeblogCategoryData category = null;
+            if (categoryPath != null && !categoryPath.equals("nil")) {
+                category = wmgr.getWeblogCategoryByPath(this, null, categoryPath);
+            } else {
+                category = this.getDefaultCategory();
+            }
+            ret = category.getWeblogCategories();
+        } catch (RollerException e) {
+            mLogger.error("ERROR: fetching categories", e);
+        }
+        return ret;
     }
 }
 

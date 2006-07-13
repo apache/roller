@@ -1,0 +1,22 @@
+/* A CSS Framework by Mike Stenhouse of Content with Style */
+
+@import url(nav-horizontal.css);
+
+/* NAV BAR AT THE TOP AND TWO COLUMNS OF CONTENT */
+    div#content {
+    }
+    div#main {
+        float: left;
+        width: 480px;
+        display: inline;
+    }
+    div#sub {
+    }
+    div#local {
+        display: none;
+    }
+    div#nav {
+        margin: 0 auto;
+        position: absolute;
+    }
+/* END CONTENT */

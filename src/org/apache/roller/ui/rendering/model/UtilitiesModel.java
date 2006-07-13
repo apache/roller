@@ -19,10 +19,12 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,11 +34,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.Utilities;
+import org.apache.struts.util.RequestUtils;
 
 
 /**
@@ -135,7 +139,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthenticated() {
         return (request.getUserPrincipal() != null);
     }
-    
+        
     //-------------------------------------------------------------- Date utils
     /**
      * Return date for current time.
