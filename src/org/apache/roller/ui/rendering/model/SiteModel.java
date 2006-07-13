@@ -214,8 +214,9 @@ public class SiteModel implements Model {
             if (userName != null) {
                 user = umgr.getUserByUserName(userName);
             }
+            // TODO 3.0: we may want this to be constrained by a locale
             List entries = wmgr.getWeblogEntries( 
-                website, user, startDate, new Date(), cat, WeblogEntryData.PUBLISHED, "pubTime", offset, length);
+                website, user, startDate, new Date(), cat, WeblogEntryData.PUBLISHED, "pubTime", offset, length, null);
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 WeblogEntryData entry = (WeblogEntryData) it.next();
                 results.add(WeblogEntryDataWrapper.wrap(entry));

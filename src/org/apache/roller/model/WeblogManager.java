@@ -81,7 +81,8 @@ public interface WeblogManager {
             String      status,
             String      sortBy,
             int         offset,
-            int         range)
+            int         range,
+            String      locale)
             throws RollerException;
        
     /**
@@ -105,7 +106,8 @@ public interface WeblogManager {
             String      catName,
             String      status,
             int         offset,
-            int         range)
+            int         range,
+            String      locale)
             throws RollerException;
         
     /**
@@ -129,7 +131,8 @@ public interface WeblogManager {
             String      catName,
             String      status,
             int         offset,
-            int         range)
+            int         range,
+            String      locale)
             throws RollerException;    
     
     /**

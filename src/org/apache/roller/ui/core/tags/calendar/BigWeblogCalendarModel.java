@@ -74,8 +74,8 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                     endDate,                   // endDate
                     catName,                   // cat
                     WeblogEntryData.PUBLISHED, // status
-                    0, -1
-                    );
+                    0, -1,
+                    locale);
         } catch (RollerException e) {
             mLogger.error(e);
             monthMap = new HashMap();

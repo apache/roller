@@ -156,7 +156,8 @@ public final class WeblogEntryManagementAction extends DispatchAction
                     status,
                     queryForm.getSortby(),
                     queryForm.getOffset(),
-                    queryForm.getCount() + 1);
+                    queryForm.getCount() + 1,
+                    null);
            if (entries.size() > queryForm.getCount()) {
                more = true;
                entries.remove(entries.size()-1);

@@ -154,6 +154,9 @@ public class WeblogEntryTest extends TestCase {
         WeblogEntryData entry3 = TestUtils.setupWeblogEntry("entry3", testWeblog.getDefaultCategory(), testWeblog, testUser);
         
         // make a couple changes
+        entry1.setLocale("en_US");
+        mgr.saveWeblogEntry(entry1);
+        entry2.setLocale("ja_JP");
         entry2.setPinnedToMain(Boolean.TRUE);
         entry2.setUpdateTime(new java.sql.Timestamp(entry2.getUpdateTime().getTime()+8822384));
         entry2.setPubTime(entry2.getUpdateTime());
@@ -183,7 +186,7 @@ public class WeblogEntryTest extends TestCase {
         
         // get all entries for weblog
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 0, -1, null);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         assertEquals(entry3, entries.get(0));
@@ -196,35 +199,42 @@ public class WeblogEntryTest extends TestCase {
         
         // get all published entries only 
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, WeblogEntryData.PUBLISHED, null, 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, WeblogEntryData.PUBLISHED, null, 0, -1, null);
         assertNotNull(entries);
         assertEquals(2, entries.size());
         
         // get all entries in date range
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, entry2.getPubTime(), entry2.getPubTime(), null, null, null, 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, entry2.getPubTime(), entry2.getPubTime(), null, null, null, 0, -1, null);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
         
         // get all entries, limited to maxSize
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 0, 2);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 0, 2, null);
         assertNotNull(entries);
         assertEquals(2, entries.size());
         
         // get all entries in category
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, testWeblog.getDefaultCategory().getName(), null, null, 0, -1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, testWeblog.getDefaultCategory().getName(), null, null, 0, -1, null);
         assertNotNull(entries);
         assertEquals(3, entries.size());
         
         // get all entries, limited by offset/range
         entries = null;
-        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 1, 1);
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 1, 1, null);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
+        
+        // get all entries, limited by locale
+        entries = null;
+        entries = mgr.getWeblogEntries(testWeblog, null, null, null, null, null, null, 0, -1, "en_US");
+        assertNotNull(entries);
+        assertEquals(1, entries.size());
+        assertEquals(entry1, entries.get(0));
         
         // get pinned entries only
         entries = null;
@@ -261,13 +271,13 @@ public class WeblogEntryTest extends TestCase {
         
         // get object map
         entryMap = null;
-        entryMap = mgr.getWeblogEntryObjectMap(testWeblog, null, null, null, null, 0, -1);
+        entryMap = mgr.getWeblogEntryObjectMap(testWeblog, null, null, null, null, 0, -1, null);
         assertNotNull(entryMap);
         assertTrue(entryMap.keySet().size() > 1);
         
         // get string map
         entryMap = null;
-        entryMap = mgr.getWeblogEntryStringMap(testWeblog, null, null, null, null, 0, -1);
+        entryMap = mgr.getWeblogEntryStringMap(testWeblog, null, null, null, null, 0, -1, null);
         assertNotNull(entryMap);
         assertTrue(entryMap.keySet().size() > 1);
                 

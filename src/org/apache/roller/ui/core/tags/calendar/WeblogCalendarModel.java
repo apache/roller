@@ -54,6 +54,7 @@ public class WeblogCalendarModel implements CalendarModel {
     protected Date                day;
     protected String              cat = null;
     protected String              pageLink = null;
+    protected String              locale = null;
     protected Calendar            calendar = null;
     protected WebsiteData         weblog = null;
     
@@ -77,6 +78,8 @@ public class WeblogCalendarModel implements CalendarModel {
             day = DateUtil.parseWeblogURLDateString(pageRequest.getWeblogDate(), 
                 weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             initDay(day);
+            
+            locale = pageRequest.getLocale();
             
             if(weblog == null) {
                 throw new RollerException("unable to lookup weblog: "+
@@ -136,7 +139,8 @@ public class WeblogCalendarModel implements CalendarModel {
                     endDate,                   // endDate
                     cat,                   // cat
                     WeblogEntryData.PUBLISHED, // status
-                    0, -1);
+                    0, -1,
+                    locale);
         } catch (RollerException e) {
             log.error(e);
             monthMap = new HashMap();

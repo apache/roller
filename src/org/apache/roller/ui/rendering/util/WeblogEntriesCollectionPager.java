@@ -47,6 +47,7 @@ public class WeblogEntriesCollectionPager extends WeblogEntriesPager {
     private WebsiteData weblog = null;
     private String dateString = null;
     private String catPath = null;
+    private String locale = null;
     private int page = 0;
     
     // these will help define the boundaries of the entries query
@@ -63,11 +64,12 @@ public class WeblogEntriesCollectionPager extends WeblogEntriesPager {
     
     
     public WeblogEntriesCollectionPager(WebsiteData weblog, String dateString,
-                              String catPath, int page) {
+                              String catPath, String locale, int page) {
         
         this.weblog = weblog;
         this.dateString = dateString;
         this.catPath = catPath;
+        this.locale = locale;
         if(page > 0) {
             this.page = page;
         }
@@ -181,7 +183,7 @@ public class WeblogEntriesCollectionPager extends WeblogEntriesPager {
         if(this.entries == null) {
             try {
                 this.entries = getEntriesMap(weblog, startDate, endDate,
-                        catPath, offset, length);
+                        catPath, offset, length, locale);
             } catch (RollerException ex) {
                 log.error("Error getting entries", ex);
             }
@@ -263,7 +265,7 @@ public class WeblogEntriesCollectionPager extends WeblogEntriesPager {
      * results wrapped using our pojo wrappers.
      */
     Map getEntriesMap(WebsiteData weblog, Date start, Date end,
-                      String catPath, int offset, int length)
+                      String catPath, int offset, int length, String locale)
             throws RollerException {
         
         Map entries = new TreeMap();
@@ -275,7 +277,8 @@ public class WeblogEntriesCollectionPager extends WeblogEntriesPager {
                 catPath,
                 WeblogEntryData.PUBLISHED,
                 offset,
-                length);
+                length,
+                locale);
         
         // need to wrap pojos
         java.util.Date key = null;

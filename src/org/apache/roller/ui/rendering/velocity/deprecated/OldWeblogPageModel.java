@@ -80,6 +80,7 @@ public class OldWeblogPageModel {
     private Date                 mDate = null;
     private boolean              mIsDaySpecified = false;
     private boolean              mIsMonthSpecified = false;
+    private String               mLocale = null;
     private WeblogEntryDataWrapper      mNextEntry = null;
     private WeblogEntryDataWrapper      mPreviousEntry = null;
     private WeblogEntryDataWrapper      mLastEntry = null;
@@ -103,7 +104,8 @@ public class OldWeblogPageModel {
             WeblogCategoryData category,
             Date date,
             boolean isDay,
-            boolean isMonth) {
+            boolean isMonth,
+            String locale) {
         
         mRequest = request;
         
@@ -114,6 +116,7 @@ public class OldWeblogPageModel {
         mDate = date;
         mIsDaySpecified = isDay;
         mIsMonthSpecified = isMonth;
+        mLocale = locale;
         
         try {
             mBookmarkMgr = RollerFactory.getRoller().getBookmarkManager();
@@ -377,7 +380,8 @@ public class OldWeblogPageModel {
                     endDate,                      // endDate
                     catParam,                     // catName
                     WeblogEntryData.PUBLISHED,    // status
-                    0, -1);  
+                    0, -1,
+                    mLocale);  
             
             // need to wrap pojos
             java.util.Date key = null;
@@ -480,7 +484,8 @@ public class OldWeblogPageModel {
                     catParam,                    // catName
                     WeblogEntryData.PUBLISHED,   // status
                     null,                        // sortby (null for pubTime)
-                    0, maxEntries);    // maxEntries
+                    0, maxEntries,               // maxEntries
+                    mLocale);    
             
             // wrap pojos
             ret = new ArrayList(mEntries.size());
