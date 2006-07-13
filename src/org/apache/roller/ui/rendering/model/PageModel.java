@@ -52,20 +52,11 @@ import org.apache.roller.ui.rendering.util.WeblogPageRequest;
  */
 public class PageModel implements Model {
     
-    protected static Log           log = LogFactory.getLog(PageModel.class);    
-    private HttpServletRequest     request = null;
-    private WebsiteData            weblog = null;
-    private WeblogEntryData        entry = null;
-    private String                 cat = null; 
-    private String                 entryAnchor = null;
-    private String                 dateString = null;
-    private String                 weblogPage = null;
-    private String                 locale = null;
-    private int                    page = 0;
-    private WeblogEntryDataWrapper nextEntry = null;
-    private WeblogEntryDataWrapper prevEntry = null;
-    private WeblogEntryDataWrapper firstEntry = null;
-    private WeblogEntryDataWrapper lastEntry = null;
+    private static Log log = LogFactory.getLog(PageModel.class);
+    
+    private HttpServletRequest request = null;
+    private WeblogPageRequest pageRequest = null;
+    private WebsiteData weblog = null;
     
     
     /** 
@@ -92,25 +83,15 @@ public class PageModel implements Model {
         this.request = request;
         
         // we expect the init data to contain a pageRequest object
-        WeblogPageRequest parsed = (WeblogPageRequest) initData.get("pageRequest");
-        if(parsed == null) {
+        this.pageRequest = (WeblogPageRequest) initData.get("pageRequest");
+        if(this.pageRequest == null) {
             throw new RollerException("expected pageRequest from init data");
         }
         
-        cat = parsed.getWeblogCategoryName();
-        entryAnchor = parsed.getWeblogAnchor();
-        dateString = parsed.getWeblogDate();
-        weblogPage = parsed.getWeblogPageName();
-        locale = parsed.getLocale();
-        page = parsed.getPageNum();
-        
-        // lookup weblog object
-        Roller roller = RollerFactory.getRoller();
-        UserManager umgr = roller.getUserManager();
-        weblog = umgr.getWebsiteByHandle(parsed.getWeblogHandle(), Boolean.TRUE);
-        
-
+        // extract weblog object
+        weblog = pageRequest.getWeblog();
     }    
+    
     
     /**
      * Get weblog being displayed.
@@ -121,51 +102,44 @@ public class PageModel implements Model {
     
     
     /**
-     * Get weblog entry being displayed or null if none specified by request.
-     */
-    public WeblogEntryDataWrapper getWeblogEntry() {      
-        WeblogEntryDataWrapper ret = null;
-        if (entryAnchor != null) {
-            Roller roller = RollerFactory.getRoller();
-            try {
-                WeblogManager wmgr = roller.getWeblogManager();
-                WeblogEntryData entry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
-                ret = WeblogEntryDataWrapper.wrap(entry);
-            } catch (RollerException e) {
-                log.error("ERROR: getting weblog entry");
-            }
-        }        
-        return ret;
-    }
-    
-    
-    /**
-     * Get weblog entry being displayed or null if none specified by request.
-     */
-    public TemplateWrapper getWeblogPage() {       
-        TemplateWrapper ret = null;
-        try {
-            if (weblogPage != null) {
-                Roller roller = RollerFactory.getRoller();
-                UserManager umgr = roller.getUserManager();
-                WeblogTemplate template = umgr.getPageByName(weblog, weblogPage);
-                ret = TemplateWrapper.wrap(template);
-
-            } else {
-                ret = TemplateWrapper.wrap(weblog.getDefaultPage());
-            }  
-        } catch (RollerException e) {
-            log.error("ERROR: getting page template");
-        }
-        return ret;
-    }
-    
-    
-    /**
      * Is this page considered a permalink?
      */
     public boolean isPermalink() {
-        return entryAnchor != null;
+        return (pageRequest.getWeblogAnchor() != null);
+    }
+    
+    
+    /**
+     * Get weblog entry being displayed or null if none specified by request.
+     */
+    public WeblogEntryDataWrapper getWeblogEntry() {  
+        return WeblogEntryDataWrapper.wrap(pageRequest.getWeblogEntry());
+    }
+    
+    
+    /**
+     * Get weblog entry being displayed or null if none specified by request.
+     */
+    public TemplateWrapper getWeblogPage() {
+        if(pageRequest.getWeblogPageName() != null) {
+            return TemplateWrapper.wrap(pageRequest.getWeblogPage());
+        } else {
+            try {
+                return TemplateWrapper.wrap(weblog.getDefaultPage());
+            } catch (RollerException ex) {
+                log.error("Error getting default page", ex);
+            }
+        }
+        return null;
+    }
+    
+    
+    /**
+     * Get weblog category specified by request, or null if the category path
+     * found in the request does not exist in the current weblog.
+     */
+    public WeblogCategoryDataWrapper getWeblogCategory() {
+        return WeblogCategoryDataWrapper.wrap(pageRequest.getWeblogCategory());
     }
     
     
@@ -177,8 +151,13 @@ public class PageModel implements Model {
      */
     public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {        
         // category specified by argument wins over request parameter
-        String chosenCat = (catArgument != null) ? catArgument : cat;            
-        return new WeblogEntriesPagerImpl(weblog, dateString, entryAnchor, chosenCat, locale, page);
+        String chosenCat = (catArgument != null) ? catArgument : pageRequest.getWeblogCategoryName();            
+        return new WeblogEntriesPagerImpl(weblog, 
+                                          pageRequest.getWeblogDate(), 
+                                          pageRequest.getWeblogAnchor(), 
+                                          chosenCat, 
+                                          pageRequest.getLocale(), 
+                                          pageRequest.getPageNum());
     }
     
     
@@ -189,26 +168,6 @@ public class PageModel implements Model {
      */
     public WeblogEntriesPager getWeblogEntriesPager() {
         return getWeblogEntriesPager(null);
-    }
-    
-    
-    /**
-     * Get weblog category specified by request, or null if the category path
-     * found in the request does not exist in the current weblog.
-     */
-    public WeblogCategoryDataWrapper getWeblogCategory() {
-        WeblogCategoryDataWrapper ret = null;
-        try {
-            Roller roller = RollerFactory.getRoller();
-            WeblogManager wmgr = roller.getWeblogManager();
-            WeblogCategoryData category = wmgr.getWeblogCategoryByPath(weblog, cat);
-            if (category != null) {
-                ret = WeblogCategoryDataWrapper.wrap(category);
-            }
-        } catch (Exception e) {
-            log.error("ERROR: fetching category");
-        }
-        return ret;
     }
     
     
