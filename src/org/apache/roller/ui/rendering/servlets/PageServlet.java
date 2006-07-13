@@ -129,10 +129,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         try {
             pageRequest = new WeblogPageRequest(request);
             
-            // lookup weblog specified by feed request
-            UserManager uMgr = RollerFactory.getRoller().getUserManager();
-            weblog = uMgr.getWebsiteByHandle(pageRequest.getWeblogHandle());
-            
+            weblog = pageRequest.getWeblog();
             if(weblog == null) {
                 throw new RollerException("unable to lookup weblog: "+
                         pageRequest.getWeblogHandle());
@@ -144,6 +141,60 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             return;
         }
         
+        
+        // 304 if-modified-since checking
+        long sinceDate = request.getDateHeader("If-Modified-Since");
+        log.debug("since date = "+sinceDate);
+        if(weblog.getLastModified().getTime() <= sinceDate) {
+            log.debug("NOT MODIFIED "+request.getRequestURL());
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            return;
+        }
+        
+        
+        // set the content type
+        String pageLink = pageRequest.getWeblogPageName();
+        String mimeType = RollerContext.getServletContext().getMimeType(pageLink);
+        if(mimeType != null) {
+            // we found a match ... set the content type
+            response.setContentType(mimeType+"; charset=utf-8");
+        } else {
+            response.setContentType("text/html; charset=utf-8");
+        }
+        
+        // set last-modified date
+        response.setDateHeader("Last-Modified", weblog.getLastModified().getTime());
+        
+        
+        // cached content checking
+        String cacheKey = this.CACHE_ID+":"+this.generateKey(pageRequest);
+        if((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) &&
+                request.getAttribute("skipCache") == null) {
+            
+            LazyExpiringCacheEntry entry =
+                    (LazyExpiringCacheEntry) this.contentCache.get(cacheKey);
+            if(entry != null) {
+                CachedContent cachedContent = 
+                        (CachedContent) entry.getValue(weblog.getLastModified().getTime());
+                
+                if(cachedContent != null) {
+                    log.debug("HIT "+cacheKey);
+                    this.hits++;
+                    
+                    response.setContentLength(cachedContent.getContent().length);
+                    response.getOutputStream().write(cachedContent.getContent());
+                    return;
+
+                } else {
+                    log.debug("HIT-EXPIRED "+cacheKey);
+                }
+                
+            } else {
+                log.debug("MISS "+cacheKey);
+                this.misses++;
+            }
+        }
+
         
         // figure out what we are going to render
         Template page = null;
@@ -183,73 +234,39 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         
         // Still no page?  Then that is a 404
         if (page == null) {
+            if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         
-        // validation
-        // 1. locale is valid
-        // 2. permalink entry exists
-        // 3. category exits
-        
         log.debug("page found, dealing with it");
         
-        // 304 if-modified-since checking
-        long sinceDate = request.getDateHeader("If-Modified-Since");
-        log.debug("since date = "+sinceDate);
-        if(weblog.getLastModified().getTime() <= sinceDate) {
-            log.debug("NOT MODIFIED "+request.getRequestURL());
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        // validation
+        boolean invalid = false;
+        if(pageRequest.getWeblogAnchor() != null) {
+            
+            // permalink specified.  entry must exist and locale must match
+            if(pageRequest.getWeblogEntry() == null) {
+                invalid = true;
+            } else if (pageRequest.getLocale() != null && 
+                    !pageRequest.getLocale().equals(pageRequest.getWeblogEntry().getLocale())) {
+                invalid = true;
+            }
+            
+        } else if(pageRequest.getWeblogCategoryName() != null) {
+            
+            // category specified.  category must exist.
+            if(pageRequest.getWeblogCategory() == null) {
+                invalid = true;
+            }
+        }
+        
+        if(invalid) {
+            if(!response.isCommitted()) response.reset();
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         
-        // set the content type
-        String pageLink = page.getLink();
-        String mimeType = RollerContext.getServletContext().getMimeType(pageLink);
-        if(mimeType != null) {
-            // we found a match ... set the content type
-            response.setContentType(mimeType+"; charset=utf-8");
-        } else {
-            response.setContentType("text/html; charset=utf-8");
-        }
-        
-        // set last-modified date
-        response.setDateHeader("Last-Modified", weblog.getLastModified().getTime());
-        
-        // cached content checking
-        String cacheKey = this.CACHE_ID+":"+this.generateKey(pageRequest);
-        if((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) &&
-                request.getAttribute("skipCache") == null) {
-            // we need the last expiration time for the given weblog
-            long lastExpiration = 0;
-            Date lastExpirationDate =
-                    (Date) CacheManager.getLastExpiredDate(pageRequest.getWeblogHandle());
-            if(lastExpirationDate != null)
-                lastExpiration = lastExpirationDate.getTime();
-            
-            LazyExpiringCacheEntry entry =
-                    (LazyExpiringCacheEntry) this.contentCache.get(cacheKey);
-            if(entry != null) {
-                CachedContent cachedContent = (CachedContent) entry.getValue(lastExpiration);
-                
-                if(cachedContent != null) {
-                    log.debug("HIT "+cacheKey);
-                    this.hits++;
-                    
-                    response.setContentLength(cachedContent.getContent().length);
-                    response.getOutputStream().write(cachedContent.getContent());
-                    return;
-
-                } else {
-                    log.debug("HIT-EXPIRED "+cacheKey);
-                }
-                
-            } else {
-                log.debug("MISS "+cacheKey);
-                this.misses++;
-            }
-        }
-
         
         // looks like we need to render content
         HashMap model = new HashMap();
