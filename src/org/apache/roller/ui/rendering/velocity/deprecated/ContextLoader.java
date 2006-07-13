@@ -110,6 +110,7 @@ public class ContextLoader {
         Date date = null;
         boolean isDay = false;
         boolean isMonth = false;
+        String locale = null;
         
         // if this is a weblog page request then parse it out
         WeblogPageRequest pageRequest = null;
@@ -167,6 +168,10 @@ public class ContextLoader {
                     isMonth = true;
                 }
             }
+            
+            // setup locale
+            locale = pageRequest.getLocale();
+            
         } catch(ClassCastException cce) {
             // ignore, just means this isn't a page request
         } catch(InvalidRequestException ire) {
@@ -196,6 +201,9 @@ public class ContextLoader {
             // lookup page if specified, otherwise lookup default
             page = weblog.getDefaultPage();
             
+            // setup locale
+            locale = searchRequest.getLocale();
+            
         } catch(ClassCastException cce) {
             // ignore, just means this isn't a search request
         } catch(InvalidRequestException ire) {
@@ -219,7 +227,8 @@ public class ContextLoader {
                     category,
                     date,
                     isDay,
-                    isMonth);
+                    isMonth,
+                    locale);
             ctx.put("pageModel", pageModel);
             
         } catch (Exception e) {

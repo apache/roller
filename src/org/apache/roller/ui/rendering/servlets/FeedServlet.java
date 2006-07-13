@@ -307,8 +307,8 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             key.append("/").append(cat);
         }
         
-        // add language
-        key.append("/").append(feedRequest.getLanguage());
+        // add locale
+        key.append("/").append(feedRequest.getLocale());
         
         if(feedRequest.isExcerpts()) {
             key.append("/excerpts");

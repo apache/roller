@@ -59,6 +59,7 @@ public class PageRenderModel implements Model {
     private String                 categoryPath = null;
     private String                 entryAnchor = null;
     private String                 dateString = null;
+    private String                 locale = null;
     private int page = 0;
     private WeblogEntryDataWrapper nextEntry = null;
     private WeblogEntryDataWrapper prevEntry = null;
@@ -100,6 +101,7 @@ public class PageRenderModel implements Model {
         categoryPath = parsed.getWeblogCategory();
         entryAnchor = parsed.getWeblogAnchor();
         dateString = parsed.getWeblogDate();
+        locale = parsed.getLocale();
         page = parsed.getPageNum();
         
         // lookup weblog object
@@ -111,7 +113,7 @@ public class PageRenderModel implements Model {
         if (entryAnchor != null) {
             this.pager = new WeblogEntriesPermalinkPager(weblog, entryAnchor);
         } else {
-            this.pager = new WeblogEntriesCollectionPager(weblog, dateString, categoryPath, page);
+            this.pager = new WeblogEntriesCollectionPager(weblog, dateString, categoryPath, locale, page);
         }
     }
     
@@ -250,7 +252,8 @@ public class PageRenderModel implements Model {
                     WeblogEntryData.PUBLISHED, 
                     "pubTime",  // sortby
                     0,          // offset
-                    length); 
+                    length,
+                    null); 
             
             // wrap pojos
             recentEntries = new ArrayList(recent.size());

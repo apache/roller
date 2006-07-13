@@ -85,6 +85,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     private Boolean   rightToLeft   = Boolean.FALSE;
     private Boolean   pinnedToMain  = Boolean.FALSE;
     private String    status        = DRAFT;
+    private String    locale        = null;
     
     // Associated objects
     private UserData           creator  = null;
@@ -577,6 +578,24 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     public void setPinnedToMain(Boolean pinnedToMain) {
         this.pinnedToMain = pinnedToMain;
     }
+    
+    
+    /**
+     * The locale string that defines the i18n approach for this entry.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="locale" non-null="false" unique="false"
+     */
+    public String getLocale() {
+        return locale;
+    }
+    
+    
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+    
     
     //------------------------------------------------------------------------
     
@@ -1107,5 +1126,6 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
             }
         }        
         return ret;
-    } 
+    }
+    
 }

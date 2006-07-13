@@ -110,7 +110,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                         null,                      // catName
                         WeblogEntryData.PUBLISHED, // status
                         null,                      // sortby (null means pubTime)
-                        0, -1);     // offset, length
+                        0, -1, null);     // offset, length, locale
                 
                 for (Iterator wbItr = entries.iterator(); wbItr.hasNext();) {
                     WeblogEntryData entry = (WeblogEntryData) wbItr.next();

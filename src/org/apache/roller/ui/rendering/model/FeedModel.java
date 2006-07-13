@@ -49,6 +49,7 @@ public class FeedModel implements Model {
     
     private WebsiteData weblog = null;
     private String categoryPath = null;
+    private String locale = null;
     
     
     public void init(Map initData) throws RollerException {
@@ -60,6 +61,7 @@ public class FeedModel implements Model {
         }
         
         categoryPath = parsed.getWeblogCategory();
+        locale = parsed.getLocale();
         
         Roller roller = RollerFactory.getRoller();
         UserManager umgr = roller.getUserManager();
@@ -99,7 +101,7 @@ public class FeedModel implements Model {
             WeblogManager wmgr = roller.getWeblogManager();
             List entries = wmgr.getWeblogEntries(weblog,
                 null, null, new Date(), categoryPath, WeblogEntryData.PUBLISHED, 
-                "pubTime", 0, weblog.getEntryDisplayCount());
+                "pubTime", 0, weblog.getEntryDisplayCount(), locale);
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 WeblogEntryData entry = (WeblogEntryData) it.next();
                 results.add(WeblogEntryDataWrapper.wrap(entry));
