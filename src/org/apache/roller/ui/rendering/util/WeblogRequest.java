@@ -21,6 +21,10 @@ package org.apache.roller.ui.rendering.util;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.Roller;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -168,6 +172,16 @@ public class WeblogRequest extends ParsedRequest {
     }
 
     public WebsiteData getWeblog() {
+        
+        if(weblog == null && weblogHandle != null) {
+            try {
+                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                weblog = umgr.getWebsiteByHandle(weblogHandle, Boolean.TRUE);
+            } catch (RollerException ex) {
+                log.error("Error looking up weblog "+weblogHandle, ex);
+            }
+        }
+        
         return weblog;
     }
 

@@ -24,11 +24,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
+import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
-
 
 /**
  * Represents a request for a Roller weblog page.
@@ -108,7 +110,12 @@ public class WeblogPageRequest extends WeblogRequest {
                 pathElements = pathInfo.split("/", 2);
                 this.context = pathElements[0];
                 this.weblogCategoryName = "/"+pathElements[1];
-                    
+                
+                // all categories must start with a /
+                if(!this.weblogCategoryName.startsWith("/")) {
+                    this.weblogCategoryName = "/"+this.weblogCategoryName;
+                }
+
             } else if(pathElements.length == 2) {
                 
                 this.context = pathElements[0];
@@ -172,6 +179,12 @@ public class WeblogPageRequest extends WeblogRequest {
                 try {
                     this.weblogCategoryName = 
                             URLDecoder.decode(request.getParameter("cat"), "UTF-8");
+                    
+                    // all categories must start with a /
+                    if(!this.weblogCategoryName.startsWith("/")) {
+                        this.weblogCategoryName = "/"+this.weblogCategoryName;
+                    }
+                    
                 } catch (UnsupportedEncodingException ex) {
                     // should never happen
                     log.error(ex);
@@ -255,6 +268,16 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     public WeblogEntryData getWeblogEntry() {
+        
+        if(weblogEntry == null && weblogAnchor != null) {
+            try {
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), weblogAnchor);
+            } catch (RollerException ex) {
+                log.error("Error getting weblog entry "+weblogAnchor, ex);
+            }
+        }
+        
         return weblogEntry;
     }
 
@@ -263,6 +286,16 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     public WeblogTemplate getWeblogPage() {
+        
+        if(weblogPage == null && weblogPageName != null) {
+            try {
+                UserManager umgr = RollerFactory.getRoller().getUserManager();
+                weblogPage = umgr.getPageByLink(getWeblog(), weblogPageName);
+            } catch (RollerException ex) {
+                log.error("Error getting weblog page "+weblogPageName, ex);
+            }
+        }
+        
         return weblogPage;
     }
 
@@ -271,6 +304,16 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     public WeblogCategoryData getWeblogCategory() {
+        
+        if(weblogCategory == null && weblogCategoryName != null) {
+            try {
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                weblogCategory = wmgr.getWeblogCategoryByPath(getWeblog(), weblogCategoryName);
+            } catch (RollerException ex) {
+                log.error("Error getting weblog category "+weblogCategoryName, ex);
+            }
+        }
+        
         return weblogCategory;
     }
 

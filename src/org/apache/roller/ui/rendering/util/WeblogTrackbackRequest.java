@@ -23,6 +23,9 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
 
 
@@ -189,6 +192,16 @@ public class WeblogTrackbackRequest extends WeblogRequest {
     }
 
     public WeblogEntryData getWeblogEntry() {
+        
+        if(weblogEntry == null && weblogAnchor != null) {
+            try {
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), weblogAnchor);
+            } catch (RollerException ex) {
+                log.error("Error getting weblog entry "+weblogAnchor, ex);
+            }
+        }
+        
         return weblogEntry;
     }
 
