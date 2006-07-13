@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>$model.weblog.name | #if (!$model.weblogCategory && $model.weblogPage.name == "Weblog") $model.weblogPage.name #elseif ($model.weblogCategory && $page.Name == "Weblog") $model.weblogCategory.name Category #elseif ($model.weblogPage.name == "Weblog") $title #else $model.weblogPage.name #end</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="en" />
+    <base href="$config.absoluteContextURL/$model.weblog.handle">
+    #includePage("_css")
+    #showRSSAutodiscoveryLink()
+    #showRSDLink()
+    <script type="text/javascript" src="$config.contextURL/themes/scripts/roller.js"></script>
+    <script type="text/javascript" src="$config.contextURL/themes/andreas08/scripts/prototype.js"></script>
+    <script type="text/javascript" 
+        src="$config.contextURL/themes/andreas08/scripts/scriptaculous.js?load=effects"></script>
+    <script type="text/javascript" src="$config.contextURL/themes/andreas08/scripts/lightbox.js"></script>
+    <link rel="stylesheet" type="text/css" href="$config.contextURL/themes/andreas08/styles/lightbox.css" />
+</head>
+
+#if( $model.weblogCategory )
+    #set( $chosenCat = $model.weblogCategory.name )
+    #set( $chosenCat = $stringUtils.replace($chosenCat, " ", "").toLowerCase() )
+    #set( $chosenCat = $stringUtils.replace($chosenCat, "/", "") )
+#end
+
+<body id="page-$model.weblogPage.name"#if($chosenCat) class="$chosenCat"#end>
+    
+<div id="page">  
+
+    <div id="header" class="clearfix">
+        <h1><a href="$config.contextURL/$model.weblog.handle">$model.weblog.name</a></h1>
+
+        <h2><!-- Short tagline goes here --></h2>
+        <div id="branding"></div>
+    </div>
+
+
+    <div id="content" class="clearfix">
+        <div id="main">
+
+        $decorator_body
+
+        </div><!-- end main -->
+
+        <div id="sub">
+            #showCssNavBar()
+            <div class="editorMenu">$menuModel.showEditorNavBar(true)</div>
+            <div class="small box" id="description">
+                <div id="feed">
+                    <a href="$config.contextURL/rss/${website.handle}"><img class="rssbadge"
+                        src="$config.contextURL/themes/$theme/images/feed-icon-16x16.jpg" alt="Click me to subscribe" /></a>
+                </div>
+                $model.weblog.description
+            </div>
+            <div class="small" id="calendar">$calendarModel.showWeblogCalendar($model.weblog, "nil")</div>
+            <div id="searchbar">
+                <h2>Search This Site</h2>
+
+                <form id="search" method="get" 
+                    action="$config.contextURL/search/$model.weblog.handle" style="margin: 0; padding: 0">
+                    <fieldset>
+                        <input type="text" id="q" name="q" size="15" class="text small"
+                            maxlength="255" value="" 
+                            onfocus="this.style.backgroundColor='#ffd'" 
+                            onblur="this.style.backgroundColor='#fff'" />
+                        <input type="submit" value="Go!" id="searchbutton" />
+                    </fieldset>
+                </form>
+            </div>
+
+            <h2>Recent Entries</h2>
+            #showWeblogEntryLinkList(20)
+
+        </div>
+
+        <div id="nav">
+            <div class="wrapper">
+                <h2 class="hide">Navigation</h2>
+                #showCategoryLinkList($model.weblog "nil")
+            </div>
+        </div>
+    </div><!-- end content -->
+
+    <div id="footer" class="clearfix">
+        <p>&copy; $model.weblog.creator.fullName | Design by <a href="http://andreasviklund.com">Andreas Viklund</a></p>
+    </div>
+
+</div><!-- end page -->
+</body>
+</html>

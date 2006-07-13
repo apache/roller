@@ -209,9 +209,8 @@ public class RollerAtomHandler implements AtomHandler {
                     null,              // catName
                     null,              // status
                     "updateTime",      // sortby
-                    start,             // offset (for range paging)
-                    max + 1,           // maxEntries
-                    null);             // locale
+null,                     start,             // offset (for range paging)
+                    max + 1);             // locale
             Feed feed = new Feed();
             feed.setTitle("Entries for blog[" + handle + "]");
             List atomEntries = new ArrayList();

@@ -216,7 +216,7 @@ public class SiteModel implements Model {
             }
             // TODO 3.0: we may want this to be constrained by a locale
             List entries = wmgr.getWeblogEntries( 
-                website, user, startDate, new Date(), cat, WeblogEntryData.PUBLISHED, "pubTime", offset, length, null);
+                website, user, startDate, new Date(), cat, WeblogEntryData.PUBLISHED, "pubTime", null, offset, length);
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 WeblogEntryData entry = (WeblogEntryData) it.next();
                 results.add(WeblogEntryDataWrapper.wrap(entry));

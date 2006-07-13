@@ -601,28 +601,36 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     
     /**
      * True if comments are still allowed on this entry considering the
-     * allowComments and commentDays fields.
+     * allowComments and commentDays fields as well as the website and 
+     * site-wide configs.
      *
      * @roller.wrapPojoMethod type="simple"
      */
     public boolean getCommentsStillAllowed() {
-        if(DRAFT.equals(this.status) || PENDING.equals(this.status))
+        if(DRAFT.equals(this.status) || PENDING.equals(this.status)) {
             return false;
-        
+        }
+        if (!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled")) {
+            return false;
+        }
+        if (website.getAllowComments() != null && !website.getAllowComments().booleanValue()) {
+            return false;
+        }
+        if (getAllowComments() != null && !getAllowComments().booleanValue()) {
+            return false;
+        }
         boolean ret = false;
-        if (getAllowComments() == null || getAllowComments().booleanValue()) {
-            if (getCommentDays() == null || getCommentDays().intValue() == 0) {
+        if (getCommentDays() == null || getCommentDays().intValue() == 0) {
+            ret = true;
+        } else {
+            Calendar expireCal = Calendar.getInstance(
+                    getWebsite().getLocaleInstance());
+            expireCal.setTime(getPubTime());
+            expireCal.add(Calendar.DATE, getCommentDays().intValue());
+            Date expireDay = expireCal.getTime();
+            Date today = new Date();
+            if (today.before(expireDay)) {
                 ret = true;
-            } else {
-                Calendar expireCal = Calendar.getInstance(
-                        getWebsite().getLocaleInstance());
-                expireCal.setTime(getPubTime());
-                expireCal.add(Calendar.DATE, getCommentDays().intValue());
-                Date expireDay = expireCal.getTime();
-                Date today = new Date();
-                if (today.before(expireDay)) {
-                    ret = true;
-                }
             }
         }
         return ret;
@@ -707,6 +715,19 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
                     -1);   // no limit
         } catch (RollerException alreadyLogged) {}
         return list;
+    }
+    
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */    
+    public int getCommentCount() {
+        List comments = getComments(true, true);
+        return comments.size();
+    }
+    
+    /** No-op to please XDoclet */
+    public void setCommentCount(int ignored) {
+        // no-op
     }
     
     //------------------------------------------------------------------------
@@ -1046,9 +1067,10 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     /** no-op: needed only to satisfy XDoclet, use setStatus() instead */
     public void setPublished(boolean value) {
     }
-        
+  
     /**
      * Get entry text, transformed by plugins enabled for entry.
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getTransformedText() {
         return render(text);
@@ -1062,6 +1084,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     
     /**
      * Get entry summary, transformed by plugins enabled for entry.
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getTransformedSummary() {
         return render(summary);

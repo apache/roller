@@ -121,9 +121,8 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                             null,                        // catName
                             WeblogEntryData.PUBLISHED,   // status
                             null,                        // sortby (null means pubTime)
-                            0,                           // offset
-                            entryCount,                  // length
-                            null);                       // locale
+null,                             0,                           // offset
+                            entryCount);                       // locale
                     
                     sub.setLastUpdated(siteUpdated);
                     saveSubscription(sub);

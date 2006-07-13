@@ -34,46 +34,45 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
+import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
-import org.apache.roller.ui.rendering.util.WeblogEntriesCollectionPager;
-import org.apache.roller.ui.rendering.util.WeblogEntriesPager;
-import org.apache.roller.ui.rendering.util.WeblogEntriesPermalinkPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 
 /**
- * Model provides information needed to render a weblog page.
+ * Model provides information needed to render a weblog page. 
+ * Includes methods for paging through a collection of entries restricted by category. 
+ * The getEntries() method must be called first, before any pager methods will work.
  */
-public class PageRenderModel implements Model {
+public class PageModel implements Model {
     
-    protected static Log log = LogFactory.getLog(PageRenderModel.class);
-    
+    protected static Log           log = LogFactory.getLog(PageModel.class);    
     private HttpServletRequest     request = null;
     private WebsiteData            weblog = null;
-    private int                    offset = 0;
-    private String                 categoryPath = null;
+    private WeblogEntryData        entry = null;
+    private String                 cat = null; 
     private String                 entryAnchor = null;
     private String                 dateString = null;
+    private String                 weblogPage = null;
     private String                 locale = null;
-    private int page = 0;
+    private int                    page = 0;
     private WeblogEntryDataWrapper nextEntry = null;
     private WeblogEntryDataWrapper prevEntry = null;
     private WeblogEntryDataWrapper firstEntry = null;
     private WeblogEntryDataWrapper lastEntry = null;
-    
-    private WeblogEntriesPager pager = null;
     
     
     /** 
      * Creates an un-initialized new instance, Roller calls init() to complete
      * construction. 
      */
-    public PageRenderModel() {}
+    public PageModel() {}
     
     
     /** 
@@ -98,9 +97,10 @@ public class PageRenderModel implements Model {
             throw new RollerException("expected pageRequest from init data");
         }
         
-        categoryPath = parsed.getWeblogCategory();
+        cat = parsed.getWeblogCategory();
         entryAnchor = parsed.getWeblogAnchor();
         dateString = parsed.getWeblogDate();
+        weblogPage = parsed.getWeblogPage();
         locale = parsed.getLocale();
         page = parsed.getPageNum();
         
@@ -109,14 +109,8 @@ public class PageRenderModel implements Model {
         UserManager umgr = roller.getUserManager();
         weblog = umgr.getWebsiteByHandle(parsed.getWeblogHandle(), Boolean.TRUE);
         
-        // get the entry pager which represents this page
-        if (entryAnchor != null) {
-            this.pager = new WeblogEntriesPermalinkPager(weblog, entryAnchor);
-        } else {
-            this.pager = new WeblogEntriesCollectionPager(weblog, dateString, categoryPath, locale, page);
-        }
-    }
-    
+
+    }    
     
     /**
      * Get weblog being displayed.
@@ -127,85 +121,74 @@ public class PageRenderModel implements Model {
     
     
     /**
+     * Get weblog entry being displayed or null if none specified by request.
+     */
+    public WeblogEntryDataWrapper getWeblogEntry() {      
+        WeblogEntryDataWrapper ret = null;
+        if (entryAnchor != null) {
+            Roller roller = RollerFactory.getRoller();
+            try {
+                WeblogManager wmgr = roller.getWeblogManager();
+                WeblogEntryData entry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
+                ret = WeblogEntryDataWrapper.wrap(entry);
+            } catch (RollerException e) {
+                log.error("ERROR: getting weblog entry");
+            }
+        }        
+        return ret;
+    }
+    
+    
+    /**
+     * Get weblog entry being displayed or null if none specified by request.
+     */
+    public TemplateWrapper getWeblogPage() {       
+        TemplateWrapper ret = null;
+        try {
+            if (weblogPage != null) {
+                Roller roller = RollerFactory.getRoller();
+                UserManager umgr = roller.getUserManager();
+                WeblogTemplate template = umgr.getPageByName(weblog, weblogPage);
+                ret = TemplateWrapper.wrap(template);
+
+            } else {
+                ret = TemplateWrapper.wrap(weblog.getDefaultPage());
+            }  
+        } catch (RollerException e) {
+            log.error("ERROR: getting page template");
+        }
+        return ret;
+    }
+    
+    
+    /**
      * Is this page considered a permalink?
      */
     public boolean isPermalink() {
-        return false;
+        return entryAnchor != null;
     }
     
     
     /**
-     * A map of entries representing this page.
-     *
-     * The collection is grouped by days of entries.  Each value is a list of
-     * entry objects keyed by the date they were published.
+     * A map of entries representing this page. The collection is grouped by 
+     * days of entries.  Each value is a list of entry objects keyed by the 
+     * date they were published.
+     * @param catArgument Category restriction (null or "nil" for no restriction)
      */
-    public Map getEntries() {
-        return this.pager.getEntries();
+    public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {        
+        // category specified by argument wins over request parameter
+        String chosenCat = (catArgument != null) ? catArgument : cat;            
+        return new WeblogEntriesPagerImpl(weblog, dateString, entryAnchor, chosenCat, locale, page);
     }
     
     
     /**
-     * Link value for next collection view
+     * A map of entries representing this page. The collection is grouped by 
+     * days of entries.  Each value is a list of entry objects keyed by the 
+     * date they were published.
      */
-    public String getNextLink() {
-        return this.pager.getNextLink();
-    }
-    
-    /**
-     * Link name for next collection view
-     */
-    public String getNextLinkName() {
-        return this.pager.getNextLinkName();
-    }
-    
-    /**
-     * Link value for prev collection view
-     */
-    public String getPrevLink() {
-        return this.pager.getPrevLink();
-    }
-    
-    /**
-     * Link name for prev collection view
-     */
-    public String getPrevLinkName() {
-        return this.pager.getPrevLinkName();
-    }
-    
-    /**
-     * Does this pager represent a multi-page collection?
-     */
-    public boolean isMultiPage() {
-        return this.pager.isMultiPage();
-    }
-    
-    /**
-     * Link value for next page in current collection view
-     */
-    public String getNextPageLink() {
-        return this.pager.getNextPageLink();
-    }
-    
-    /**
-     * Link name for next page in current collection view
-     */
-    public String getNextPageName() {
-        return this.pager.getNextPageName();
-    }
-    
-    /**
-     * Link value for prev page in current collection view
-     */
-    public String getPrevPageLink() {
-        return this.pager.getPrevPageLink();
-    }
-    
-    /**
-     * Link value for prev page in current collection view
-     */
-    public String getPrevPageName() {
-        return this.pager.getPrevPageName();
+    public WeblogEntriesPager getWeblogEntriesPager() {
+        return getWeblogEntriesPager(null);
     }
     
     
@@ -218,10 +201,9 @@ public class PageRenderModel implements Model {
         try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
-            WeblogCategoryData cat = wmgr.getWeblogCategoryByPath(
-                    weblog, categoryPath);
-            if (cat != null) {
-                ret = WeblogCategoryDataWrapper.wrap(cat);
+            WeblogCategoryData category = wmgr.getWeblogCategoryByPath(weblog, cat);
+            if (category != null) {
+                ret = WeblogCategoryDataWrapper.wrap(category);
             }
         } catch (Exception e) {
             log.error("ERROR: fetching category");
@@ -248,12 +230,12 @@ public class PageRenderModel implements Model {
                     null,       // user
                     null,       // startDate
                     new Date(), // endDate
-                    cat,        // categoryPath or null
+                    cat,        // cat or null
                     WeblogEntryData.PUBLISHED, 
                     "pubTime",  // sortby
-                    0,          // offset
-                    length,
-                    null); 
+                    null, 
+                    0,
+                    length); 
             
             // wrap pojos
             recentEntries = new ArrayList(recent.size());
@@ -322,8 +304,7 @@ public class PageRenderModel implements Model {
         }
         return commentForm;
     }
-    
-    
+        
     /**
      * Get preview comment or null if none exists.
      */
@@ -342,7 +323,6 @@ public class PageRenderModel implements Model {
         }
         return commentWrapper;
     }
-    
 }
 
 

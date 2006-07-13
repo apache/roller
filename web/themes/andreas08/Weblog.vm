@@ -1,0 +1,13 @@
+#set($pager = $model.getWeblogEntriesPager()) 
+<div class="next-previous">
+#showNextPrevControl($pager)
+</div>
+
+<div class="entries">
+#showWeblogEntriesPager($pager)
+</div>
+
+#if ($model.permalink)
+   #showWeblogEntryComments($entry)
+   #showWeblogEntryCommentForm($entry)
+#end

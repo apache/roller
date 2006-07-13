@@ -403,9 +403,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             String      catName,
             String      status,
             String      sortby,
+            String      locale,
             int         offset,
-            int         length,
-            String      locale) throws RollerException {
+            int         length) throws RollerException {
         
         WeblogCategoryData cat = null;
         if (StringUtils.isNotEmpty(catName) && website != null) {
@@ -955,9 +955,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    endDate,
             String  catName,
             String  status,
+            String  locale,
             int     offset,
-            int     length,
-            String  locale) throws RollerException {
+            int     length) throws RollerException {
         return getWeblogEntryMap(
             website,
             startDate,
@@ -965,9 +965,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             catName,
             status,
             false,
+            locale,
             offset,
-            length,
-            locale);
+            length);
     }
     
     public Map getWeblogEntryStringMap(
@@ -976,9 +976,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    endDate,
             String  catName,
             String  status,
+            String  locale,
             int     offset,
-            int     length,
-            String  locale) throws RollerException {
+            int     length
+            ) throws RollerException {
         return getWeblogEntryMap(
             website,
             startDate,
@@ -986,9 +987,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             catName,
             status,
             true,
+            locale,
             offset,
-            length,
-            locale);
+            length
+            );
     }
     
     private Map getWeblogEntryMap(
@@ -998,9 +1000,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             String  catName,
             String  status,
             boolean stringsOnly,
+            String  locale,
             int     offset,
-            int     length,
-            String  locale) throws RollerException {
+            int     length
+            ) throws RollerException {
         
         TreeMap map = new TreeMap(reverseComparator);
         
@@ -1012,9 +1015,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             catName,
             status,
             null,
-            offset,
-            length,
-            locale);
+locale,             offset,
+            length);
         
         Calendar cal = Calendar.getInstance();
         if (website != null) {

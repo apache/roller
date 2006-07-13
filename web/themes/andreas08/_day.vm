@@ -1,0 +1,59 @@
+<div class="day">
+
+<div class="entry">
+    <a href="$config.contextURL/$model.weblog.handle/$utils.formatDate($day, "yyyyMMdd")">
+        <img class="daypermalink"
+            src="$config.contextURL/themes/andreas08/images/calendar.png"
+            title="$text.get("macro.weblog.daypermalink.title")"
+            alt='$utils.formatDate($day, "yyyyMMdd")' /></a>
+
+   #set($format = $text.get("macro.weblog.date.toStringFormat"))
+   $utils.formatDate($day, $format)
+</div>
+
+#foreach( $entry in $entries )
+<p>
+    <a name="$utils.encode($entry.anchor)"></a>
+    <span class="entryTitle"><a href="$entry.permalink">$entry.title</a>
+        #if ($utils.isUserAuthorizedToAuthor($entry.website))
+            [<a href="$config.getWeblogEntryEditURL($entry)">$text.get("macro.weblog.entrypermalink.edit")</a>]
+        #end
+    </span>
+
+    #if($model.permalink) 
+        #if($utils.isNotEmpty($entry.text))
+            #set($sourceText = $entry.transformedText)
+        #else 
+            #set($sourceText = $entry.transformedSummary)
+        #end
+    #else
+        #if($utils.isNotEmpty($entry.summary))
+            #set($sourceText = $entry.transformedSummary)
+            #if($utils.isNotEmpty($entry.text))
+               #set($readMore = "[<a class='readmore' href='$entry.permalink'>$text.get('macro.weblog.readMore')</a>]" )
+               #set($sourceText = "$sourceText$readMore")
+            #end
+        #else 
+            #set($sourceText = $entry.transformedText)
+        #end
+    #end
+    $sourceText
+
+    <span class="info">
+        #if ($utils.isUserAuthorizedToAuthor($entry.website))
+            [<a href="$config.getWeblogEntryEditURL($entry)">$text.get("macro.weblog.entrypermalink.edit")</a>]
+        #end $entry.commentCount
+        Posted by $entry.creator.fullName in <span class="category">$entry.category.name</span>
+        <span class="dateStamp">at <a href="$entry.permalink">$utils.formatDate($entry.pubTime, "yyyyMMdd")</a></span>
+        #set($commentCount = $entry.commentCount)
+        #if($entry.commentsStillAllowed || $commentCount > 0)  
+            #set($link = "$entry.permalink#comments" )
+            <a href="$link" class="commentsLink">$text.get("macro.weblog.comments")[$commentCount]</a>
+        #end
+    </span>
+
+</p>
+#end
+
+</div>
+

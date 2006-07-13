@@ -18,13 +18,20 @@
 
 package org.apache.roller.ui.rendering.model;
 
+import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.ui.core.RollerContext;
+import org.apache.struts.util.RequestUtils;
 
 
 /**
@@ -32,6 +39,12 @@ import org.apache.roller.ui.core.RollerContext;
  * config properties.
  */
 public class ConfigModel implements Model {
+    
+   private static Log log = LogFactory.getLog(ConfigModel.class); 
+        
+    /** TODO 3.0: remove dependency on request and pageContext */
+    private HttpServletRequest request = null;
+    private PageContext pageContext = null;
     
     /** Hand-picked list of runtime properties to be made available */
     private static List allowedProperties = 
@@ -61,21 +74,38 @@ public class ConfigModel implements Model {
     
     /** Init page model based on request */
     public void init(Map map) throws RollerException {
-        // nothing to do yet
+        request = (HttpServletRequest)map.get("request");
+        pageContext = (PageContext)map.get("pageContext");
     }
     
     
-    /** Relative URL of Roller server, e.g. /roller */
+    /** Relative URL of Roller, e.g. /roller */
     public String getContextURL() {
         // TODO 3.0: fix getContextUrl() to not require request object
-        return RollerContext.getRollerContext().getContextUrl(null);
+        return RollerContext.getRollerContext().getContextUrl(request);
     }
     
     
-    /** Absolute URL of Roller server, e.g. http://localhost:8080/roller */
+    /** Absolute URL of Roller, e.g. http://localhost:8080/roller */
     public String getAbsoluteContextURL() {
         return RollerContext.getRollerContext().getAbsoluteContextUrl();
     }
+    
+    
+    /** URL for editing a weblog entry */
+    public String getWeblogEntryEditURL(WeblogEntryDataWrapper entry) {
+        String ret = null;
+        Hashtable params = new Hashtable();
+        params.put("entryid", entry.getId());
+        params.put("anchor", entry.getAnchor());
+        try {
+            ret = RequestUtils.computeURL(pageContext,
+                "weblogEdit", null, null, null, params, null, false);
+        } catch (MalformedURLException mue) {
+            log.warn("RollerRequest.editEntryUrl exception: ", mue);
+        }
+        return ret;
+    } 
     
     
     /** 

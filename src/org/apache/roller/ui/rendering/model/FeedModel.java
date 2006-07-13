@@ -101,7 +101,7 @@ public class FeedModel implements Model {
             WeblogManager wmgr = roller.getWeblogManager();
             List entries = wmgr.getWeblogEntries(weblog,
                 null, null, new Date(), categoryPath, WeblogEntryData.PUBLISHED, 
-                "pubTime", 0, weblog.getEntryDisplayCount(), locale);
+                "pubTime", locale, 0, weblog.getEntryDisplayCount());
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 WeblogEntryData entry = (WeblogEntryData) it.next();
                 results.add(WeblogEntryDataWrapper.wrap(entry));
