@@ -47,25 +47,19 @@ public class FeedModel implements Model {
     
     private static Log log = LogFactory.getLog(FeedModel.class); 
     
+    private WeblogFeedRequest feedRequest = null;
     private WebsiteData weblog = null;
-    private String categoryPath = null;
-    private String locale = null;
     
     
     public void init(Map initData) throws RollerException {
         
         // we expect the init data to contain a feedRequest object
-        WeblogFeedRequest parsed = (WeblogFeedRequest) initData.get("feedRequest");
-        if(parsed == null) {
+        this.feedRequest = (WeblogFeedRequest) initData.get("feedRequest");
+        if(this.feedRequest == null) {
             throw new RollerException("expected feedRequest from init data");
         }
         
-        categoryPath = parsed.getWeblogCategoryName();
-        locale = parsed.getLocale();
-        
-        Roller roller = RollerFactory.getRoller();
-        UserManager umgr = roller.getUserManager();
-        weblog = umgr.getWebsiteByHandle(parsed.getWeblogHandle(), Boolean.TRUE);
+        weblog = feedRequest.getWeblog();
     }
     
     
@@ -87,7 +81,7 @@ public class FeedModel implements Model {
      * Get category path or name specified by request.
      */
     public String getCategoryPath() {
-        return categoryPath;
+        return feedRequest.getWeblogCategoryName();
     }
     
     /**
@@ -100,8 +94,15 @@ public class FeedModel implements Model {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             List entries = wmgr.getWeblogEntries(weblog,
-                null, null, new Date(), categoryPath, WeblogEntryData.PUBLISHED, 
-                "pubTime", locale, 0, weblog.getEntryDisplayCount());
+                    null, 
+                    null, 
+                    new Date(), 
+                    feedRequest.getWeblogCategoryName(), 
+                    WeblogEntryData.PUBLISHED, 
+                    "pubTime", 
+                    feedRequest.getLocale(), 
+                    0, 
+                    weblog.getEntryDisplayCount());
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 WeblogEntryData entry = (WeblogEntryData) it.next();
                 results.add(WeblogEntryDataWrapper.wrap(entry));
