@@ -129,13 +129,13 @@ public class ContextLoader {
             }
             
             // lookup category if specified
-            if(pageRequest.getWeblogCategory() != null) {
-                category = wMgr.getWeblogCategoryByPath(weblog, pageRequest.getWeblogCategory());
+            if(pageRequest.getWeblogCategoryName() != null) {
+                category = wMgr.getWeblogCategoryByPath(weblog, pageRequest.getWeblogCategoryName());
             }
             
             // lookup page if specified, otherwise lookup default
-            if(pageRequest.getWeblogPage() != null) {
-                page = weblog.getPageByLink(pageRequest.getWeblogPage());
+            if(pageRequest.getWeblogPageName() != null) {
+                page = weblog.getPageByLink(pageRequest.getWeblogPageName());
             } else {
                 page = weblog.getDefaultPage();
             }
@@ -194,8 +194,8 @@ public class ContextLoader {
             weblog = uMgr.getWebsiteByHandle(searchRequest.getWeblogHandle());
             
             // lookup category if specified
-            if(searchRequest.getWeblogCategory() != null) {
-                category = wMgr.getWeblogCategoryByPath(weblog, searchRequest.getWeblogCategory());
+            if(searchRequest.getWeblogCategoryName() != null) {
+                category = wMgr.getWeblogCategoryByPath(weblog, searchRequest.getWeblogCategoryName());
             }
             
             // lookup page if specified, otherwise lookup default

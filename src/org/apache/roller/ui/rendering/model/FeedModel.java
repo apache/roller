@@ -60,7 +60,7 @@ public class FeedModel implements Model {
             throw new RollerException("expected feedRequest from init data");
         }
         
-        categoryPath = parsed.getWeblogCategory();
+        categoryPath = parsed.getWeblogCategoryName();
         locale = parsed.getLocale();
         
         Roller roller = RollerFactory.getRoller();

@@ -19,6 +19,7 @@
 package org.apache.roller.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
+import org.apache.roller.pojos.WeblogCategoryData;
 
 
 /**
@@ -28,9 +29,13 @@ public class WeblogSearchRequest extends WeblogRequest {
     
     private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
     
+    // lightweight attributes
     private String query = null;
     private int pageNum = 0;
-    private String weblogCategory = null;
+    private String weblogCategoryName = null;
+    
+    // heavyweight attributes
+    private WeblogCategoryData weblogCategory = null;
     
     
     public WeblogSearchRequest() {}
@@ -66,7 +71,7 @@ public class WeblogSearchRequest extends WeblogRequest {
          * the only params we currently care about are:
          *   q - specifies the search query
          *   pageNum - specifies what pageNum # to display
-         *   cat - limit results to a certain weblogCategory
+         *   cat - limit results to a certain weblogCategoryName
          */
         if(request.getParameter("q") != null) {
             this.query = request.getParameter("q");
@@ -82,7 +87,7 @@ public class WeblogSearchRequest extends WeblogRequest {
         }
         
         if(request.getParameter("cat") != null) {
-            this.weblogCategory = request.getParameter("cat");
+            this.weblogCategoryName = request.getParameter("cat");
         }
     }
 
@@ -102,11 +107,19 @@ public class WeblogSearchRequest extends WeblogRequest {
         this.pageNum = pageNum;
     }
 
-    public String getWeblogCategory() {
+    public String getWeblogCategoryName() {
+        return weblogCategoryName;
+    }
+
+    public void setWeblogCategoryName(String weblogCategory) {
+        this.weblogCategoryName = weblogCategory;
+    }
+
+    public WeblogCategoryData getWeblogCategory() {
         return weblogCategory;
     }
 
-    public void setWeblogCategory(String weblogCategory) {
+    public void setWeblogCategory(WeblogCategoryData weblogCategory) {
         this.weblogCategory = weblogCategory;
     }
     

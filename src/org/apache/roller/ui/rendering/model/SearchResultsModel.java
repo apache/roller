@@ -83,7 +83,7 @@ public class SearchResultsModel extends PageModel {
         // we need to add a simple page request to make our parent happy
         WeblogPageRequest pageRequest = new WeblogPageRequest();
         pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
-        pageRequest.setWeblogCategory(searchRequest.getWeblogCategory());
+        pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
         initData.put("pageRequest", pageRequest);
         
         // let parent initialize
@@ -102,8 +102,8 @@ public class SearchResultsModel extends PageModel {
             search.setWebsiteHandle(searchRequest.getWeblogHandle());
         }
         
-        if(StringUtils.isNotEmpty(searchRequest.getWeblogCategory())) {
-            search.setCategory(searchRequest.getWeblogCategory());
+        if(StringUtils.isNotEmpty(searchRequest.getWeblogCategoryName())) {
+            search.setCategory(searchRequest.getWeblogCategoryName());
         }
         
         // execute search

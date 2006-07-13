@@ -97,10 +97,10 @@ public class PageModel implements Model {
             throw new RollerException("expected pageRequest from init data");
         }
         
-        cat = parsed.getWeblogCategory();
+        cat = parsed.getWeblogCategoryName();
         entryAnchor = parsed.getWeblogAnchor();
         dateString = parsed.getWeblogDate();
-        weblogPage = parsed.getWeblogPage();
+        weblogPage = parsed.getWeblogPageName();
         locale = parsed.getLocale();
         page = parsed.getPageNum();
         

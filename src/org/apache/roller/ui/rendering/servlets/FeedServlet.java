@@ -296,8 +296,8 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         key.append("/").append(feedRequest.getType());
         key.append("/").append(feedRequest.getFormat());
         
-        if(feedRequest.getWeblogCategory() != null) {
-            String cat = feedRequest.getWeblogCategory();
+        if(feedRequest.getWeblogCategoryName() != null) {
+            String cat = feedRequest.getWeblogCategoryName();
             try {
                 cat = URLEncoder.encode(cat, "UTF-8");
             } catch (UnsupportedEncodingException ex) {

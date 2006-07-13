@@ -165,11 +165,11 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             }
             
         // If request specified the page, then go with that
-        } else if (pageRequest.getWeblogPage() != null) {
+        } else if (pageRequest.getWeblogPageName() != null) {
             try {
-                page = weblog.getPageByLink(pageRequest.getWeblogPage());
+                page = weblog.getPageByLink(pageRequest.getWeblogPageName());
             } catch(Exception e) {
-                log.error("Error getting page: "+pageRequest.getWeblogPage(), e);
+                log.error("Error getting page: "+pageRequest.getWeblogPageName(), e);
             }
             
         // If page not available from request, then use weblog's default
@@ -186,6 +186,11 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+        
+        // validation
+        // 1. locale is valid
+        // 2. permalink entry exists
+        // 3. category exits
         
         log.debug("page found, dealing with it");
         
@@ -392,8 +397,8 @@ public class PageServlet extends HttpServlet implements CacheHandler {
                 key.append("/").append(pageRequest.getWeblogDate());
             }
             
-            if(pageRequest.getWeblogCategory() != null) {
-                String cat = pageRequest.getWeblogCategory();
+            if(pageRequest.getWeblogCategoryName() != null) {
+                String cat = pageRequest.getWeblogCategoryName();
                 if(cat.startsWith("/")) {
                     cat = cat.substring(1);
                 }
@@ -404,7 +409,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         }
         
         // add page name
-        key.append("/").append(pageRequest.getWeblogPage());
+        key.append("/").append(pageRequest.getWeblogPageName());
         
         // add locale
         key.append("/").append(pageRequest.getLocale());
