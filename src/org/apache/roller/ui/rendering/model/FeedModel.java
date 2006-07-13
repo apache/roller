@@ -23,13 +23,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -89,6 +88,17 @@ public class FeedModel implements Model {
      * request plus the weblog.entryDisplayCount.
      */
     public List getWeblogEntries() {
+        // Display same number of entries in feed as displayed on page
+        int entryCount = weblog.getEntryDisplayCount();
+        
+        // But don't exceed installation-wide maxEntries settings
+        int maxEntries =
+                RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
+        int defaultEntries =
+                RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+        if (entryCount < 1) entryCount = defaultEntries;
+        if (entryCount > maxEntries) entryCount = maxEntries;
+        
         List results = new ArrayList();
         try {             
             Roller roller = RollerFactory.getRoller();
@@ -102,7 +112,7 @@ public class FeedModel implements Model {
                     "pubTime", 
                     feedRequest.getLocale(), 
                     0, 
-                    weblog.getEntryDisplayCount());
+                    entryCount);
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 WeblogEntryData entry = (WeblogEntryData) it.next();
                 results.add(WeblogEntryDataWrapper.wrap(entry));
