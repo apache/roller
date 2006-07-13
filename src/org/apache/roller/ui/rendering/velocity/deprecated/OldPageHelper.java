@@ -52,8 +52,6 @@ import org.apache.roller.ui.core.tags.menu.EditorNavigationBarTag;
 import org.apache.roller.ui.core.tags.menu.MenuTag;
 import org.apache.roller.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
-import org.apache.roller.ui.rendering.util.WeblogPageRequest;
-
 
 /**
  * Provides assistance to VelociMacros, filling in where Velocity falls.
@@ -66,7 +64,6 @@ public class OldPageHelper {
     private HttpServletRequest mRequest = null;
     private HttpServletResponse mResponse = null;
     
-    private WeblogPageRequest mPageRequest = null;
     private Map mPagePlugins = null;  // Plugins keyed by name
     private WebsiteData mWebsite = null;
     private Date mDate = null;
