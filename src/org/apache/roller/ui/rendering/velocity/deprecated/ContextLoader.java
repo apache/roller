@@ -117,26 +117,18 @@ public class ContextLoader {
         try {
             pageRequest = (WeblogPageRequest) weblogRequest;
             
-            UserManager uMgr = RollerFactory.getRoller().getUserManager();
-            WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
-            
             // lookup weblog
-            weblog = uMgr.getWebsiteByHandle(pageRequest.getWeblogHandle());
+            weblog = pageRequest.getWeblog();
             
             // lookup entry if specified
-            if(pageRequest.getWeblogAnchor() != null) {
-                entry = wMgr.getWeblogEntryByAnchor(weblog, pageRequest.getWeblogAnchor());
-            }
+            entry = pageRequest.getWeblogEntry();
             
             // lookup category if specified
-            if(pageRequest.getWeblogCategoryName() != null) {
-                category = wMgr.getWeblogCategoryByPath(weblog, pageRequest.getWeblogCategoryName());
-            }
+            category = pageRequest.getWeblogCategory();
             
             // lookup page if specified, otherwise lookup default
-            if(pageRequest.getWeblogPageName() != null) {
-                page = weblog.getPageByLink(pageRequest.getWeblogPageName());
-            } else {
+            page = pageRequest.getWeblogPage();
+            if(page == null) {
                 page = weblog.getDefaultPage();
             }
             
@@ -187,16 +179,11 @@ public class ContextLoader {
         if(pageRequest == null) try {
             searchRequest = (WeblogSearchRequest) weblogRequest;
             
-            UserManager uMgr = RollerFactory.getRoller().getUserManager();
-            WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
-            
             // lookup weblog
-            weblog = uMgr.getWebsiteByHandle(searchRequest.getWeblogHandle());
+            weblog = searchRequest.getWeblog();
             
             // lookup category if specified
-            if(searchRequest.getWeblogCategoryName() != null) {
-                category = wMgr.getWeblogCategoryByPath(weblog, searchRequest.getWeblogCategoryName());
-            }
+            category = searchRequest.getWeblogCategory();
             
             // lookup page if specified, otherwise lookup default
             page = weblog.getDefaultPage();
