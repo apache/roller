@@ -19,6 +19,11 @@
 package org.apache.roller.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 
 
@@ -26,6 +31,8 @@ import org.apache.roller.pojos.WeblogCategoryData;
  * Represents a request for a weblog preview.
  */
 public class WeblogSearchRequest extends WeblogRequest {
+    
+    private static Log log = LogFactory.getLog(WeblogSearchRequest.class);
     
     private static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
     
@@ -88,6 +95,11 @@ public class WeblogSearchRequest extends WeblogRequest {
         
         if(request.getParameter("cat") != null) {
             this.weblogCategoryName = request.getParameter("cat");
+            
+            // all categories must start with a /
+            if(!this.weblogCategoryName.startsWith("/")) {
+                this.weblogCategoryName = "/"+this.weblogCategoryName;
+            }
         }
     }
 
@@ -116,6 +128,16 @@ public class WeblogSearchRequest extends WeblogRequest {
     }
 
     public WeblogCategoryData getWeblogCategory() {
+        
+        if(weblogCategory == null && weblogCategoryName != null) {
+            try {
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                weblogCategory = wmgr.getWeblogCategoryByPath(getWeblog(), weblogCategoryName);
+            } catch (RollerException ex) {
+                log.error("Error getting weblog category "+weblogCategoryName, ex);
+            }
+        }
+        
         return weblogCategory;
     }
 
