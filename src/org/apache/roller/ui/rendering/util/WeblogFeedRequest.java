@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.pojos.WeblogCategoryData;
 
 
 /**
@@ -39,10 +40,14 @@ public class WeblogFeedRequest extends WeblogRequest {
     
     private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
     
+    // lightweight attributes
     private String type = null;
     private String format = null;
-    private String weblogCategory = null;
+    private String weblogCategoryName = null;
     private boolean excerpts = false;
+    
+    // heavyweight attributes
+    private WeblogCategoryData weblogCategory = null;
     
     
     public WeblogFeedRequest() {}
@@ -107,7 +112,7 @@ public class WeblogFeedRequest extends WeblogRequest {
          */
         if(request.getParameter("cat") != null) {
             try {
-                this.weblogCategory = 
+                this.weblogCategoryName = 
                         URLDecoder.decode(request.getParameter("cat"), "UTF-8");
             } catch (UnsupportedEncodingException ex) {
                 // should never happen, utf-8 is always supported by java
@@ -121,7 +126,7 @@ public class WeblogFeedRequest extends WeblogRequest {
         if(log.isDebugEnabled()) {
             log.debug("type = "+this.type);
             log.debug("format = "+this.format);
-            log.debug("weblogCategory = "+this.weblogCategory);
+            log.debug("weblogCategory = "+this.weblogCategoryName);
             log.debug("excerpts = "+this.excerpts);
         }
     }
@@ -142,12 +147,12 @@ public class WeblogFeedRequest extends WeblogRequest {
         this.format = format;
     }
 
-    public String getWeblogCategory() {
-        return weblogCategory;
+    public String getWeblogCategoryName() {
+        return weblogCategoryName;
     }
 
-    public void setWeblogCategory(String weblogCategory) {
-        this.weblogCategory = weblogCategory;
+    public void setWeblogCategoryName(String weblogCategory) {
+        this.weblogCategoryName = weblogCategory;
     }
 
     public boolean isExcerpts() {
@@ -156,6 +161,14 @@ public class WeblogFeedRequest extends WeblogRequest {
 
     public void setExcerpts(boolean excerpts) {
         this.excerpts = excerpts;
+    }
+
+    public WeblogCategoryData getWeblogCategory() {
+        return weblogCategory;
+    }
+
+    public void setWeblogCategory(WeblogCategoryData weblogCategory) {
+        this.weblogCategory = weblogCategory;
     }
     
 }

@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.pojos.WeblogEntryData;
 
 
 /**
@@ -34,11 +35,15 @@ public class WeblogTrackbackRequest extends WeblogRequest {
     
     private static final String TRACKBACK_SERVLET = "/roller-ui/rendering/trackback";
     
+    // lightweight attributes
     private String blogName = null;
     private String url = null;
     private String excerpt = null;
     private String title = null;
     private String weblogAnchor = null;
+    
+    // heavyweight attributes
+    private WeblogEntryData weblogEntry = null;
     
     
     public WeblogTrackbackRequest() {}
@@ -181,6 +186,14 @@ public class WeblogTrackbackRequest extends WeblogRequest {
 
     public void setWeblogAnchor(String weblogAnchor) {
         this.weblogAnchor = weblogAnchor;
+    }
+
+    public WeblogEntryData getWeblogEntry() {
+        return weblogEntry;
+    }
+
+    public void setWeblogEntry(WeblogEntryData weblogEntry) {
+        this.weblogEntry = weblogEntry;
     }
     
 }

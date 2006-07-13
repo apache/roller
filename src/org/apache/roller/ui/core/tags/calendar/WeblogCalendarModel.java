@@ -73,7 +73,7 @@ public class WeblogCalendarModel implements CalendarModel {
             UserManager uMgr = RollerFactory.getRoller().getUserManager();
             this.weblog = uMgr.getWebsiteByHandle(pageRequest.getWeblogHandle());
             
-            pageLink = pageRequest.getWeblogPage();
+            pageLink = pageRequest.getWeblogPageName();
 
             day = DateUtil.parseWeblogURLDateString(pageRequest.getWeblogDate(), 
                 weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
@@ -93,8 +93,8 @@ public class WeblogCalendarModel implements CalendarModel {
         // Category method argument overrides category from URL
         if (catArgument != null) {
             cat = catArgument;
-        } else if (pageRequest.getWeblogCategory() != null) {
-            cat = pageRequest.getWeblogCategory();
+        } else if (pageRequest.getWeblogCategoryName() != null) {
+            cat = pageRequest.getWeblogCategoryName();
         }
     }
 

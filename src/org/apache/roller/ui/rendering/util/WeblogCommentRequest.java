@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.pojos.WeblogEntryData;
 
 
 /**
@@ -34,12 +35,16 @@ public class WeblogCommentRequest extends WeblogRequest {
     
     private static final String COMMENT_SERVLET = "/roller-ui/rendering/comment";
     
+    // lightweight attributes
     private String name = null;
     private String email = null;
     private String url = null;
     private String content = null;
     private boolean notify = false;
     private String weblogAnchor = null;
+    
+    // heavyweight attributes
+    private WeblogEntryData weblogEntry = null;
     
     
     public WeblogCommentRequest() {}
@@ -188,6 +193,14 @@ public class WeblogCommentRequest extends WeblogRequest {
 
     public void setWeblogAnchor(String weblogAnchor) {
         this.weblogAnchor = weblogAnchor;
+    }
+
+    public WeblogEntryData getWeblogEntry() {
+        return weblogEntry;
+    }
+
+    public void setWeblogEntry(WeblogEntryData weblogEntry) {
+        this.weblogEntry = weblogEntry;
     }
     
 }

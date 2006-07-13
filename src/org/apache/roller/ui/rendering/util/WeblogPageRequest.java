@@ -24,6 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.pojos.WebsiteData;
 
 
 /**
@@ -40,12 +44,18 @@ public class WeblogPageRequest extends WeblogRequest {
     
     private static final String PAGE_SERVLET = "/roller-ui/rendering/page";
     
+    // lightweight attributes
     private String context = null;
     private String weblogAnchor = null;
-    private String weblogPage = null;
-    private String weblogCategory = null;
+    private String weblogPageName = null;
+    private String weblogCategoryName = null;
     private String weblogDate = null;
     private int pageNum = 0;
+    
+    // heavyweight attributes
+    private WeblogEntryData weblogEntry = null;
+    private WeblogTemplate weblogPage = null;
+    private WeblogCategoryData weblogCategory = null;
     
     
     public WeblogPageRequest() {}
@@ -97,7 +107,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 // category may have multiple path elements, so re-split with max 2
                 pathElements = pathInfo.split("/", 2);
                 this.context = pathElements[0];
-                this.weblogCategory = "/"+pathElements[1];
+                this.weblogCategoryName = "/"+pathElements[1];
                     
             } else if(pathElements.length == 2) {
                 
@@ -120,7 +130,7 @@ public class WeblogPageRequest extends WeblogRequest {
                     }
                     
                 } else if("page".equals(this.context)) {
-                    this.weblogPage = pathElements[1];
+                    this.weblogPageName = pathElements[1];
                     
                 } else {
                     throw new InvalidRequestException("context "+this.context+
@@ -160,7 +170,7 @@ public class WeblogPageRequest extends WeblogRequest {
             
             if(request.getParameter("cat") != null) {
                 try {
-                    this.weblogCategory = 
+                    this.weblogCategoryName = 
                             URLDecoder.decode(request.getParameter("cat"), "UTF-8");
                 } catch (UnsupportedEncodingException ex) {
                     // should never happen
@@ -183,8 +193,8 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("context = "+this.context);
             log.debug("weblogAnchor = "+this.weblogAnchor);
             log.debug("weblogDate = "+this.weblogDate);
-            log.debug("weblogCategory = "+this.weblogCategory);
-            log.debug("weblogPage = "+this.weblogPage);
+            log.debug("weblogCategory = "+this.weblogCategoryName);
+            log.debug("weblogPage = "+this.weblogPageName);
             log.debug("pageNum = "+this.pageNum);
         }
     }
@@ -212,20 +222,20 @@ public class WeblogPageRequest extends WeblogRequest {
         this.weblogAnchor = weblogAnchor;
     }
 
-    public String getWeblogPage() {
-        return weblogPage;
+    public String getWeblogPageName() {
+        return weblogPageName;
     }
 
-    public void setWeblogPage(String weblogPage) {
-        this.weblogPage = weblogPage;
+    public void setWeblogPageName(String weblogPage) {
+        this.weblogPageName = weblogPage;
     }
 
-    public String getWeblogCategory() {
-        return weblogCategory;
+    public String getWeblogCategoryName() {
+        return weblogCategoryName;
     }
 
-    public void setWeblogCategory(String weblogCategory) {
-        this.weblogCategory = weblogCategory;
+    public void setWeblogCategoryName(String weblogCategory) {
+        this.weblogCategoryName = weblogCategory;
     }
 
     public String getWeblogDate() {
@@ -242,6 +252,30 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public void setPageNum(int pageNum) {
         this.pageNum = pageNum;
+    }
+
+    public WeblogEntryData getWeblogEntry() {
+        return weblogEntry;
+    }
+
+    public void setWeblogEntry(WeblogEntryData weblogEntry) {
+        this.weblogEntry = weblogEntry;
+    }
+
+    public WeblogTemplate getWeblogPage() {
+        return weblogPage;
+    }
+
+    public void setWeblogPage(WeblogTemplate weblogPage) {
+        this.weblogPage = weblogPage;
+    }
+
+    public WeblogCategoryData getWeblogCategory() {
+        return weblogCategory;
+    }
+
+    public void setWeblogCategory(WeblogCategoryData weblogCategory) {
+        this.weblogCategory = weblogCategory;
     }
     
 }

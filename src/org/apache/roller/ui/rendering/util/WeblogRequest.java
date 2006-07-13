@@ -21,6 +21,7 @@ package org.apache.roller.ui.rendering.util;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.pojos.WebsiteData;
 
 
 /**
@@ -41,9 +42,13 @@ public class WeblogRequest extends ParsedRequest {
     
     private static Log log = LogFactory.getLog(WeblogRequest.class);
     
+    // lightweight attributes
     private String weblogHandle = null;
     private String locale = null;
     private String pathInfo = null;
+    
+    // heavyweight attributes
+    private WebsiteData weblog = null;
     
     
     public WeblogRequest() {}
@@ -160,6 +165,14 @@ public class WeblogRequest extends ParsedRequest {
 
     public void setPathInfo(String pathInfo) {
         this.pathInfo = pathInfo;
+    }
+
+    public WebsiteData getWeblog() {
+        return weblog;
+    }
+
+    public void setWeblog(WebsiteData weblog) {
+        this.weblog = weblog;
     }
     
 }
