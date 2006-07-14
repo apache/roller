@@ -30,6 +30,7 @@ import org.apache.roller.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.ui.core.LanguageUtil;
 import org.apache.roller.ui.core.tags.calendar.CalendarTag;
 import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 
 /**
@@ -42,6 +43,7 @@ public class CalendarModel implements Model {
     private static Log log = LogFactory.getLog(CalendarModel.class);
     
     private PageContext pageContext = null;
+    private WeblogPageRequest pageRequest = null;
     
     
     /** Template context name to be used for model */
@@ -55,6 +57,12 @@ public class CalendarModel implements Model {
         
         // extract page context
         this.pageContext = (PageContext) initData.get("pageContext");
+        
+        // we expect the init data to contain a pageRequest object
+        this.pageRequest = (WeblogPageRequest) initData.get("pageRequest");
+        if(this.pageRequest == null) {
+            throw new RollerException("expected pageRequest from init data");
+        }
     }
     
     
@@ -68,17 +76,16 @@ public class CalendarModel implements Model {
     }
     
     
-    private String showWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument, boolean big) {        
-        HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
-        HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();                        
+    private String showWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument, boolean big) {
+        
         if ("nil".equals(catArgument)) catArgument = null;        
         String ret = null;
         try {
             org.apache.roller.ui.core.tags.calendar.CalendarModel model = null;
             if (big) {
-                model = new BigWeblogCalendarModel(request, response, catArgument);
+                model = new BigWeblogCalendarModel(pageRequest, catArgument);
             } else {
-                model = new WeblogCalendarModel(request, response, catArgument);
+                model = new WeblogCalendarModel(pageRequest, catArgument);
             }
             
             // save model in JSP page context so CalendarTag can find it
@@ -88,7 +95,7 @@ public class CalendarModel implements Model {
             calTag.setPageContext(pageContext);
             calTag.setName("calendar");
             calTag.setModel("calendarModel");
-            calTag.setLocale(LanguageUtil.getViewLocale(request));
+            calTag.setLocale(pageRequest.getLocaleInstance());
             if (big) {
                 calTag.setClassSuffix("Big");
             }

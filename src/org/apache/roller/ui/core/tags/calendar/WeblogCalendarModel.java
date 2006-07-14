@@ -25,10 +25,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -41,15 +39,14 @@ import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 
+
 /**
  * Calendar model for calendar intended for use on view-weblog page.
  */
 public class WeblogCalendarModel implements CalendarModel {
-    private static Log log =
-            LogFactory.getFactory().getInstance(WeblogCalendarModel.class);
     
-    protected HttpServletRequest  request = null;
-    protected HttpServletResponse response = null;
+    private static Log log = LogFactory.getLog(WeblogCalendarModel.class);
+    
     protected Map                 monthMap;
     protected Date                day;
     protected String              cat = null;
@@ -58,20 +55,14 @@ public class WeblogCalendarModel implements CalendarModel {
     protected Calendar            calendar = null;
     protected WebsiteData         weblog = null;
     
+    protected WeblogPageRequest pageRequest = null;
     
-    public WeblogCalendarModel(
-            HttpServletRequest request, HttpServletResponse response, String catArgument) {
+    
+    public WeblogCalendarModel(WeblogPageRequest pRequest, String catArgument) {
 
-        this.request = request;
-        this.response = response;
-        this.weblog = weblog;        
-        WeblogPageRequest pageRequest = null;
+        this.pageRequest = pRequest;
         try {
-            pageRequest = new WeblogPageRequest(request);
-            
-            // lookup weblog specified by feed request
-            UserManager uMgr = RollerFactory.getRoller().getUserManager();
-            this.weblog = uMgr.getWebsiteByHandle(pageRequest.getWeblogHandle());
+            this.weblog = pageRequest.getWeblog();
             
             pageLink = pageRequest.getWeblogPageName();
 
@@ -98,6 +89,7 @@ public class WeblogCalendarModel implements CalendarModel {
         }
     }
 
+    
     private void initDay(Date month) {
         this.day = day;        
         calendar = Calendar.getInstance(
@@ -125,6 +117,7 @@ public class WeblogCalendarModel implements CalendarModel {
         
         loadWeblogEntries(startDate, endDate);
     }
+    
     
     /**
      * @param startDate
@@ -252,5 +245,5 @@ public class WeblogCalendarModel implements CalendarModel {
         }
         return url;
     }
+    
 }
-

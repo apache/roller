@@ -15,34 +15,30 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.core.tags.calendar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.authoring.tags.*;
 import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
+
 
 /**
  * Model for big calendar that displays titles for each day.
- * @author David M Johnson
  */
 public class BigWeblogCalendarModel extends WeblogCalendarModel {
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(BigWeblogCalendarModel.class);
+    
+    private static Log mLogger = LogFactory.getLog(BigWeblogCalendarModel.class);
     
     protected static final SimpleDateFormat mStarDateFormat =
             DateUtil.get8charDateFormat();
@@ -50,15 +46,17 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     protected static final SimpleDateFormat mSingleDayFormat =
             new SimpleDateFormat("dd");
     
+    
     /**
      * @param rreq
      * @param res
      * @param url
      * @param cat
      */
-    public BigWeblogCalendarModel(HttpServletRequest req, HttpServletResponse res, String cat) {
-        super(req, res, cat);
+    public BigWeblogCalendarModel(WeblogPageRequest pRequest, String cat) {
+        super(pRequest, cat);
     }
+    
     
     /**
      * @param startDate
@@ -80,7 +78,8 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             monthMap = new HashMap();
         }
     }
-        
+    
+    
     /**
      * @see org.apache.roller.presentation.tags.calendar.CalendarModel#getContent(Date, boolean)
      */
@@ -117,8 +116,8 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                 for ( int i=0; i<entries.size(); i++ ) {
                     sb.append("<div class=\"bCalendarDayContentBig\">");
                     sb.append("<a href=\"");
-                    sb.append(rctx.createEntryPermalink(
-                            (WeblogEntryData)entries.get(i),request,false));
+                    // TODO 3.0: this permalink used to be non-absolute
+                    sb.append(((WeblogEntryData)entries.get(i)).getPermalink());
                     sb.append("\">");
                     
                     String title = ((WeblogEntryData)entries.get(i)).getTitle().trim();

@@ -257,7 +257,8 @@ public class ContextLoader {
                 (date == null) ? new Date() : date, 
                 folder, 
                 page.getName(), 
-                pageContext);
+                pageContext,
+                pageRequest);
         ctx.put("pageHelper", pageHelper);
         
         // Load standard Roller objects and values into the context
