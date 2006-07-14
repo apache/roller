@@ -81,9 +81,9 @@ public class WeblogPageRequest extends WeblogRequest {
         // parse the request object and figure out what we've got
         log.debug("parsing path "+pathInfo);
         
-        // was this request bound for the page servlet?
-        if(servlet == null || !PAGE_SERVLET.equals(servlet)) {
-            throw new InvalidRequestException("not a weblog page request, "+
+        // was this request bound for the right servlet?
+        if(!isValidDestination(servlet)) {
+            throw new InvalidRequestException("invalid destination for request, "+
                     request.getRequestURL());
         }
         
@@ -161,10 +161,11 @@ public class WeblogPageRequest extends WeblogRequest {
          *   date - specifies a weblog date string
          *   cat - specifies a weblog category
          *
-         * we only allow request params if the path info is null.  this way
+         * we only allow request params if the path info is null or on user
+         * defined pages (for backwards compatability).  this way
          * we prevent mixing of path based and query param style urls.
          */
-        if(pathInfo == null) {
+        if(pathInfo == null || this.weblogPageName != null) {
             if(request.getParameter("date") != null) {
                 String date = request.getParameter("date");
                 if(this.isValidDateString(date)) {
@@ -210,6 +211,11 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("weblogPage = "+this.weblogPageName);
             log.debug("pageNum = "+this.pageNum);
         }
+    }
+    
+    
+    boolean isValidDestination(String servlet) {
+        return (servlet != null && PAGE_SERVLET.equals(servlet));
     }
     
     
