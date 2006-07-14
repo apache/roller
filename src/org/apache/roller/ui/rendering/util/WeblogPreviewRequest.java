@@ -24,7 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Represents a request for a weblog preview.
  */
-public class WeblogPreviewRequest extends WeblogRequest {
+public class WeblogPreviewRequest extends WeblogPageRequest {
+    
+    private static final String PREVIEW_SERVLET = "/roller-ui/authoring/preview";
     
     private String theme = null;
     
@@ -32,7 +34,7 @@ public class WeblogPreviewRequest extends WeblogRequest {
     public WeblogPreviewRequest(HttpServletRequest request) 
             throws InvalidRequestException {
         
-        // our parent will determine the weblog handle for us
+        // let parent go first
         super(request);
         
         // all we need to worry about is the query params
@@ -41,10 +43,29 @@ public class WeblogPreviewRequest extends WeblogRequest {
             this.theme = request.getParameter("theme");
         }
     }
-
+    
+    
+    boolean isValidDestination(String servlet) {
+        return (servlet != null && PREVIEW_SERVLET.equals(servlet));
+    }
+    
     
     public String getTheme() {
         return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+    
+    // override so that previews never show login status
+    public String getAuthenticUser() {
+        return null;
+    }
+    
+    // override so that previews never show login status
+    public boolean isLoggedIn() {
+        return false;
     }
     
 }
