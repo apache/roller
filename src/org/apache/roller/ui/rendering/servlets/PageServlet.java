@@ -431,8 +431,10 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         // add locale
         key.append("/").append(pageRequest.getLocale());
         
-        // add locale
-        key.append("/").append(pageRequest.getPageNum());
+        // add page number when applicable
+        if(pageRequest.getWeblogAnchor() == null) {
+            key.append("/page=").append(pageRequest.getPageNum());
+        }
         
         // add login state
         if(pageRequest.getAuthenticUser() != null) {
