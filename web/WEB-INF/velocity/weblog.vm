@@ -40,7 +40,7 @@ Shows weblog entries pager via default day template
         &laquo; <a href="$pager.prevLink">$pager.prevName</a> |  
     #end
     #if ($pager.prevLink || $pager.nextLink)
-        <a href="$model.weblog.URL/page/$model.weblogPage.link">$model.weblogPage.name</a>
+        <a href="$pager.getHomeLink()">$pager.getHomeName()</a>
     #end
     #if ($pager.nextLink)
         | <a href="$pager.nextLink">$pager.nextName</a> &raquo;
@@ -237,18 +237,15 @@ Show comments form for weblog entry
     <ul class="clearfix">
         #set($weblogUrl = $rawUrl)
         #set($selectedCat = "")
-
         #if($model.weblogCategory)
            #set($selectedCat = $model.weblogCategory)
            <li><a href="$weblogUrl">$text.get("macro.weblog.allcategories")</a></li>
         #else
            <li class="selected"><a href="$weblogUrl">$text.get("macro.weblog.allcategories")</a></li>
         #end
-
         #if($req.getParameter($PAGEID_KEY) )
             #set($pageParam = "&$PAGEID_KEY=$req.getParameter($PAGEID_KEY)")
         #end
-
         #set($cats = $weblog.getWeblogCategories($categoryPath))
         #foreach($cat in $cats)
             #set($catParam = "?cat=$utilities.encode($cat.path)")
@@ -263,8 +260,8 @@ Show comments form for weblog entry
 #end
 
 #** Show recent weblog entries in specified category *#
-#macro(showWeblogEntryLinksList $categoryPath $max)
-   #set($recentEntries = $model.getRecentWeblogEntries($categoryPath, $max))
+#macro(showWeblogEntryLinksList $weblog $categoryPath $max)
+   #set($recentEntries = $weblog.getRecentWeblogEntries($categoryPath, $max))
    <ul class="recentposts">
    #foreach ($var in $recentEntries)
        <li class="recentposts"><a href="$var.permalink">$var.title</a></li>

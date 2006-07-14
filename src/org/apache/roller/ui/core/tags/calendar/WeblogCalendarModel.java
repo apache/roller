@@ -76,17 +76,17 @@ public class WeblogCalendarModel implements CalendarModel {
                 throw new RollerException("unable to lookup weblog: "+
                         pageRequest.getWeblogHandle());
             }
+            // Category method argument overrides category from URL
+            if (catArgument != null) {
+                cat = catArgument;
+            } else if (pageRequest.getWeblogCategoryName() != null) {
+                cat = pageRequest.getWeblogCategoryName();
+            }
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
-            log.debug("ERROR: displaying calendar", e);
+            log.debug("ERROR: initializing calendar", e);
         }
               
-        // Category method argument overrides category from URL
-        if (catArgument != null) {
-            cat = catArgument;
-        } else if (pageRequest.getWeblogCategoryName() != null) {
-            cat = pageRequest.getWeblogCategoryName();
-        }
     }
 
     

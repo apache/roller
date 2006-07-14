@@ -37,7 +37,9 @@ import org.apache.roller.RollerException;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.util.DateUtil;
@@ -54,33 +56,35 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
      * Behavior of the pager is detemined by the mode, which is itself a pager.
      * The mode may be LatestMode, SingleEntryMode, DayMode or MonthMode.
      */
-    protected WeblogEntriesPager mode = null;
-    
-    protected Map            entries = null;
-    protected WebsiteData    weblog = null;
-    protected int            offset = 0;
-    protected int            page = 0;
-    protected int            length = 0;
-    protected String         cat = null; 
-    protected String         dateString = null; 
-    protected String         entryAnchor = null;
-    protected String         locale = null;
-    protected boolean        more = false;
+    protected WeblogEntriesPager mode = null;    
+    protected Map                entries = null;    
+    protected WebsiteData        weblog = null;
+    protected WeblogTemplate     weblogPage = null;
+    protected WeblogCategoryData cat = null; 
+    protected String             dateString = null; 
+    protected WeblogEntryData    entry = null;
+    protected String             locale = null;
+    protected boolean            more = false;
+    protected int                offset = 0;
+    protected int                page = 0;
+    protected int                length = 0;
         
     protected static Log log =
             LogFactory.getFactory().getInstance(WeblogEntriesPagerImpl.class); 
     
     public WeblogEntriesPagerImpl(
-            WebsiteData weblog, 
-            String dateString, 
-            String entryAnchor,
-            String cat,
-            String locale,
-            int page) { 
+            WebsiteData        weblog, 
+            WeblogTemplate     weblogPage,
+            WeblogEntryData    entry,
+            String             dateString, 
+            WeblogCategoryData cat,
+            String             locale,
+            int                page) { 
         
         this.weblog = weblog;
+        this.weblogPage = weblogPage;
+        this.entry = entry;
         this.dateString = dateString;
-        this.entryAnchor = entryAnchor;
         this.cat = cat;
         this.locale = locale;
         this.page = page;
@@ -92,7 +96,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         this.offset = length * page;
                 
         // determine which mode to use
-        if (entryAnchor != null) {
+        if (entry != null) {
             mode = new SingleEntryMode();
         } else if (dateString != null && dateString.length() == 8) {
             mode = new DayMode();
@@ -107,6 +111,14 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         return mode.getEntries();
     }
     
+    public String getHomeLink() {
+        return mode.getHomeLink();
+    }
+
+    public String getHomeName() {
+        return mode.getHomeName();
+    }
+
     public String getNextLink() {
         return mode.getNextLink();
     }
@@ -155,36 +167,40 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             return getEntriesImpl(null, new Date());
         }
 
+        public String getHomeLink() {
+            return createURL(page, 0, weblog, weblogPage, null, cat, null, locale); 
+        }
+        
+        public String getHomeName() {
+            return "Main"; // TODO: I18N
+        }
+        
         public String getNextLink() {
-            String ret = null;
             if (more) {
-                ret = weblog.getURL() + queryString(1);                
+                return createURL(page, 1, weblog, weblogPage, entry, cat, dateString, locale);              
             }
-            return ret;
+            return null;
         }
 
         public String getNextName() {
-            String ret = null;
             if (getNextLink() != null) {
-                ret = "Next"; // TODO: I18N
+                return "Next"; // TODO: I18N
             }
-            return ret;
+            return null;
         }
 
         public String getPrevLink() {
-            String ret = null;
             if (page > 0) {
-                ret = weblog.getURL() + queryString(-1);
+                return createURL(page, -1, weblog, weblogPage, entry, cat, dateString, locale); 
             }
-            return ret;
+            return null;
         }
 
         public String getPrevName() {
-            String ret = null;
             if (getNextLink() != null) {
-                ret = "Prev"; // TODO: I18N
+                return "Prev"; // TODO: I18N
             }
-            return ret;
+            return null;
         }
 
         public String getNextCollectionLink() {
@@ -202,9 +218,8 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         public String getPrevCollectionName() {
             return null;
         }
-       
-     }
-
+    }
+    
     //-------------------------------------------------------------------------
     
     /**
@@ -229,7 +244,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             if (entries == null) try {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
-                entry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
+                entry = wmgr.getWeblogEntryByAnchor(weblog, entry.getAnchor());
                 if (entry == null || !entry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
                     entry = null;
                 } else {
@@ -243,36 +258,40 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             return entries;
         }
 
+        public String getHomeLink() {
+            return createURL(page, 1, weblog, weblogPage, null, cat, null, locale); 
+        }
+        
+        public String getHomeName() {
+            return "Main"; // TODO: I18N
+        }
+                
         public String getNextLink() {
-            String ret = null;
             if (getNextEntry() != null) {
-                ret = getNextEntry().getPermalink() + queryString(0);
+                return createURL(page, 0, weblog, weblogPage, getNextEntry(), cat, dateString, locale);
             }
-            return ret;
+            return null;
         }
 
         public String getNextName() {
-            String ret = null;
             if (getNextEntry() != null) {
-                ret = getNextEntry().getTitle();
+                return getNextEntry().getTitle();
             }
-            return ret;
+            return null;
         }
 
         public String getPrevLink() {
-            String ret = null;
             if (getPrevEntry() != null) {
-                ret = getPrevEntry().getPermalink() + queryString(0);
+                return createURL(page, 0, weblog, weblogPage, getPrevEntry(), cat, dateString, locale); 
             }
-            return ret;
+            return null;
         }
 
         public String getPrevName() {
-            String ret = null;
             if (getPrevEntry() != null) {
-                ret = getPrevEntry().getTitle();
+                return getPrevEntry().getTitle();
             }
-            return ret;
+            return null;
         }
 
         public String getNextCollectionLink() {
@@ -295,7 +314,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             if (nextEntry == null) try {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
-                nextEntry = wmgr.getNextEntry(entry, cat);
+                nextEntry = wmgr.getNextEntry(entry, cat != null ? cat.getPath() : null);
                 // make sure that entry is published and not to future
                 if (nextEntry != null && nextEntry.getPubTime().after(new Date()) 
                     && nextEntry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
@@ -311,7 +330,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             if (prevEntry == null) try {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
-                prevEntry = wmgr.getPreviousEntry(entry, cat); 
+                prevEntry = wmgr.getPreviousEntry(entry, cat != null ? cat.getPath() : null); 
                 // make sure that entry is published and not to future
                 if (prevEntry != null && prevEntry.getPubTime().after(new Date()) 
                     && prevEntry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
@@ -370,70 +389,70 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             return getEntriesImpl(startDate, endDate);
         }
 
+        public String getHomeLink() {
+             return createURL(page, 0, weblog, weblogPage, null, cat, null, locale);
+        }
+        
+        public String getHomeName() {
+            return "Main"; // TODO: I18N
+        }
+        
         public String getNextLink() {
-            String ret = null;
             if (more) {
-                ret = weblog.getURL() + "/date/" + dateString  + queryString(1);
+                return createURL(page, 1, weblog, weblogPage, null, cat, dateString, locale);
             }
-            return ret;
+            return null;
         }
 
         public String getNextName() {
-            String ret = null;
             if (getNextLink() != null) {
-                ret = "Next"; // TODO: I18N
+                return "Next"; // TODO: I18N
             }
-            return ret;
+            return null;
         }
 
         public String getPrevLink() {
-            String ret = null;
             if (page > 0) {
-                ret = weblog.getURL() + "/date/" + dateString + queryString(-1);
+                return createURL(page, -1, weblog, weblogPage, null, cat, dateString, locale);
             }
-            return ret;
+            return null;
         }
 
         public String getPrevName() {
-            String ret = null;
             if (getNextLink() != null) {
-                ret = "Prev"; // TODO: I18N
+                return "Prev"; // TODO: I18N
             }
-            return ret;
+            return null;
         }
 
         public String getNextCollectionLink() {
-            String ret = null;
             if (nextDay != null) {
                 String next = DateUtil.format8chars(nextDay);
-                ret = weblog.getURL() + "/date/" + next + queryString(0);
+                return createURL(page, 0, weblog, weblogPage, null, cat, next, locale);
             }
-            return ret;
+            return null;
         }
 
         public String getNextCollectionName() {
-            String ret = null;
             if (nextDay != null) {
-                ret = DateUtil.format8chars(nextDay);
+                return DateUtil.format8chars(nextDay);
             }
-            return ret;
+            return null;
         }
 
         public String getPrevCollectionLink() {
-            String ret = null;
             if (prevDay != null) {
                 String prev = DateUtil.format8chars(prevDay);
-                ret = weblog.getURL() + "/date/" + prev + queryString(0);
+                return createURL(page, 0, weblog, weblogPage, null, cat, prev, locale);
             }
-            return ret;
+            return null;
         }
 
         public String getPrevCollectionName() {
-            String ret = null;
             if (prevDay != null) {
-                ret = DateUtil.format8chars(prevDay);
+                return DateUtil.format8chars(prevDay);
             }
-            return ret;
+            return null;
         }
     }
     
@@ -478,72 +497,72 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             return getEntriesImpl(startDate, endDate);
         }
 
+        public String getHomeLink() {
+            return createURL(page, 0, weblog, weblogPage, null, cat, null, locale);
+        }
+        
+        public String getHomeName() {
+            return "Main"; // TODO: I18N
+        }
+        
         public String getNextLink() {
-            String ret = null;
             if (more) {
-                ret = weblog.getURL() + "/date/" + dateString  + queryString(1);
+                 return createURL(page, 1, weblog, weblogPage, null, cat, dateString, locale);
             }
-            return ret;
+            return null;
         }
 
         public String getNextName() {
-            String ret = null;
             if (getNextLink() != null) {
-                ret = "Next"; // TODO: I18N
+                return "Next"; // TODO: I18N
             }
-            return ret;
+            return null;
         }
 
         public String getPrevLink() {
-            String ret = null;
             if (offset > 0) {
                 int prevOffset = offset + length;
                 prevOffset = (prevOffset < 0) ? 0 : prevOffset;
-                ret = weblog.getURL() + "/date/" + dateString + queryString(-1);
+                return createURL(page, -1, weblog, weblogPage, null, cat, dateString, locale); 
             }
-            return ret;
+            return null;
         }
 
         public String getPrevName() {
-            String ret = null;
             if (getNextLink() != null) {
-                ret = "Prev"; // TODO: I18N
+                return "Prev"; // TODO: I18N
             }
-            return ret;
+            return null;
         }
 
         public String getNextCollectionLink() {
-            String ret = null;
             if (nextMonth != null) {
                 String next = DateUtil.format6chars(nextMonth); 
-                ret = weblog.getURL() + "/date/" + next + queryString(0);
+                return createURL(page, 0, weblog, weblogPage, null, cat, next, locale);
             }
-            return ret;
+            return null;
         }
 
         public String getNextCollectionName() {
-            String ret = null;
             if (nextMonth != null) {
-                ret = DateUtil.format6chars(nextMonth);
+                return DateUtil.format6chars(nextMonth);
             }
-            return ret;
+            return null;
         }
 
         public String getPrevCollectionLink() {
-            String ret = null;
             if (prevMonth != null) {
                 String prev = DateUtil.format6chars(prevMonth);
-                ret = weblog.getURL() + "/date/" + prev + queryString(0);
-            }
-            return ret;
+                return createURL(page, 0, weblog, weblogPage, null, cat, prev, locale); 
+            } 
+            return null;
         }
 
         public String getPrevCollectionName() {
-            String ret = null;
             if (prevMonth != null) {
-                ret = DateUtil.format6chars(prevMonth);
+                return DateUtil.format6chars(prevMonth);
             }
-            return ret;
+            return null;
         }        
     }  
                 
@@ -564,7 +583,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
                         weblog,
                         startDate,
                         endDate,
-                        cat,
+                        cat != null ? cat.getPath() : null,
                         WeblogEntryData.PUBLISHED, 
                         locale,
                         offset,  
@@ -639,24 +658,67 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
     }
     
     /**
-     * Create query string to convey pager's state.
+     * Create URL that encodes pager state using most appropriate forms of URL.
      * @param pageAdd To be added to page number, or 0 for no page number
      */
-    private String queryString(int pageAdd) {
-        String ret = "";
+    protected static String createURL(
+            int                page, 
+            int                pageAdd, 
+            WebsiteData        website, 
+            WeblogTemplate     weblogPage, 
+            WeblogEntryData    entry, 
+            WeblogCategoryData cat, 
+            String             dateString, 
+            String             locale) {
+        
         Map params = new HashMap();
         if (pageAdd != 0) params.put("page", Integer.toString(page + pageAdd));
-        if (cat != null) params.put("cat", cat);
-        if (locale != null) params.put("lang", locale);
+
+        StringBuffer pathinfo = new StringBuffer();
+        pathinfo.append(website.getURL());
+        if (locale != null) {
+            pathinfo.append("/");
+            pathinfo.append(locale);
+        }
+        if (weblogPage != null) {
+            pathinfo.append("/page/");
+            pathinfo.append(weblogPage.getLink());
+            if (entry != null) params.put("entry", entry.getAnchor());
+            if (dateString != null) params.put("date", dateString);
+            if (cat != null) params.put("cat", cat.getPath());
+        } 
+        else if (entry != null) {
+            pathinfo.append("/entry/");
+            pathinfo.append(entry.getAnchor());
+            if (dateString != null) params.put("date", dateString);
+            if (cat != null) params.put("cat", cat.getPath());
+        } 
+        else if (cat != null && dateString == null) {
+            pathinfo.append("/category");
+            pathinfo.append(cat.getPath());                
+        } 
+        else if (dateString != null && cat == null) {
+            pathinfo.append("/date/");
+            pathinfo.append(dateString);                
+        } 
+        else {
+            if (dateString != null) params.put("date", dateString);
+            if (cat != null) params.put("cat", cat.getPath());
+        }
+
+        StringBuffer queryString = new StringBuffer();
         for (Iterator keys = params.keySet().iterator(); keys.hasNext();) {
             String key = (String) keys.next();
             String value = (String)params.get(key);
-            if (ret.length() == 0) {
-                ret = "?" + key + "=" + value;
+            if (queryString.length() == 0) {
+                queryString.append("?");
             } else {
-                ret += "&" + key + "=" + value;
+                queryString.append("&");
             }
+            queryString.append(key);
+            queryString.append("=");
+            queryString.append(value);
         }
-        return ret;
+        return pathinfo.toString() + queryString.toString();
     }
-}
+} 

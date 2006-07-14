@@ -151,13 +151,24 @@ public class PageModel implements Model {
      */
     public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {        
         // category specified by argument wins over request parameter
-        String chosenCat = (catArgument != null) ? catArgument : pageRequest.getWeblogCategoryName();            
-        return new WeblogEntriesPagerImpl(weblog, 
-                                          pageRequest.getWeblogDate(), 
-                                          pageRequest.getWeblogAnchor(), 
-                                          chosenCat, 
-                                          pageRequest.getLocale(), 
-                                          pageRequest.getPageNum());
+        WeblogCategoryData chosenCat = null;
+        if (catArgument != null) {
+            try {
+                Roller roller = RollerFactory.getRoller();
+                WeblogManager wmgr = roller.getWeblogManager();
+                chosenCat = wmgr.getWeblogCategoryByPath(weblog, catArgument);
+            } catch (Exception ignore) {
+                log.debug("Ignoring unknown category restriction");
+            }
+        }            
+        return new WeblogEntriesPagerImpl(  
+            weblog, 
+            pageRequest.getWeblogPage(), 
+            pageRequest.getWeblogEntry(),
+            pageRequest.getWeblogDate(), 
+            chosenCat != null ? chosenCat : pageRequest.getWeblogCategory(),  
+            pageRequest.getLocale(), 
+            pageRequest.getPageNum());
     }
     
     
@@ -169,82 +180,7 @@ public class PageModel implements Model {
     public WeblogEntriesPager getWeblogEntriesPager() {
         return getWeblogEntriesPager(null);
     }
-    
-    
-    /**
-     * Get up to 100 most recent published entries in weblog.
-     * @param cat Category path or null for no category restriction
-     * @param length Max entries to return (1-100)
-     * @return List of WeblogEntryDataWrapper objects.
-     */
-    public List getRecentWeblogEntries(String cat, int length) {  
-        if (cat != null && "nil".equals(cat)) cat = null;
-        if (length > 100) length = 100;
-        List recentEntries = new ArrayList();
-        if (length < 1) return recentEntries;
-        try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List recent = wmgr.getWeblogEntries(
-                    weblog, 
-                    null,       // user
-                    null,       // startDate
-                    new Date(), // endDate
-                    cat,        // cat or null
-                    WeblogEntryData.PUBLISHED, 
-                    "pubTime",  // sortby
-                    null, 
-                    0,
-                    length); 
-            
-            // wrap pojos
-            recentEntries = new ArrayList(recent.size());
-            Iterator it = recent.iterator();
-            while(it.hasNext()) {
-                recentEntries.add(WeblogEntryDataWrapper.wrap((WeblogEntryData) it.next()));
-            }
-        } catch (RollerException e) {
-            log.error("ERROR: getting comments", e);
-        }
-        return recentEntries;
-    }
-    
-    
-    /**
-     * Get up to 100 most recent approved and non-spam comments in weblog.
-     * @param length Max entries to return (1-100)
-     * @return List of CommentDataWrapper objects.
-     */
-    public List getRecentComments(int length) {   
-        if (length > 100) length = 100;
-        List recentComments = new ArrayList();
-        if (length < 1) return recentComments;
-        try {
-            WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List recent = wmgr.getComments(
-                    weblog,
-                    null,          // weblog entry
-                    null,          // search String
-                    null,          // startDate
-                    null,          // endDate
-                    null,          // pending
-                    Boolean.TRUE,  // approved only
-                    Boolean.FALSE, // no spam
-                    true,          // we want reverse chrono order
-                    0,             // offset
-                    length);       // length
-            
-            // wrap pojos
-            recentComments = new ArrayList(recent.size());
-            Iterator it = recent.iterator();
-            while(it.hasNext()) {
-                recentComments.add(CommentDataWrapper.wrap((CommentData) it.next()));
-            }
-        } catch (RollerException e) {
-            log.error("ERROR: getting comments", e);
-        }
-        return recentComments;
-    }
-    
+        
     
     /**
      * Get comment form to be displayed, may contain preview data. 
@@ -264,6 +200,7 @@ public class PageModel implements Model {
         return commentForm;
     }
         
+    
     /**
      * Get preview comment or null if none exists.
      */
