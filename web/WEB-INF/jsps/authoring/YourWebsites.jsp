@@ -78,8 +78,8 @@
                    <table cellpadding="0" cellspacing="0">
                        <tr>
                            <td class="mm_subtable_label"><fmt:message key='yourWebsites.weblog' /></td>
-                           <td><a href='<c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />'>
-                               <c:out value="${model.baseURL}" />/page/<c:out value="${perms.website.handle}" />
+                           <td><a href='<c:out value="${model.baseURL}" />/<c:out value="${perms.website.handle}" />'>
+                               <c:out value="${model.baseURL}" />/<c:out value="${perms.website.handle}" />
                            </a></td>                          
                        </tr>
                        <tr>

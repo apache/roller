@@ -34,31 +34,19 @@ public interface WeblogEntriesPager {
     public Map getEntries();
         
     /**
-     * Link value for next collection view
+     * Link value for returning to pager home
      */
-    public String getNextCollectionLink();
+    public String getHomeLink();
     /**
-     * Link name for next collection view
+     * Name of pager home.
      */
-    public String getNextCollectionName();    
-    /**
-     * Link value for prev collection view
-     */
-    public String getPrevCollectionLink(); 
-    /**
-     * Link name for prev collection view
-     */
-    public String getPrevCollectionName();  
-    /**
-     * Does this pager represent a multi-page collection?
-     */
-    //public boolean isMultiPage();
+    public String getHomeName();    
     /**
      * Link value for next page in current collection view
      */
     public String getNextLink();
     /**
-     * Link name for next page in current collection view
+     * Name for next page in current collection view
      */
     public String getNextName();    
     /**
@@ -69,5 +57,21 @@ public interface WeblogEntriesPager {
      * Link value for prev page in current collection view
      */
     public String getPrevName();  
+    /**
+     * Link value for next collection view
+     */
+    public String getNextCollectionLink();
+    /**
+     * Name for next collection view
+     */
+    public String getNextCollectionName();    
+    /**
+     * Link value for prev collection view
+     */
+    public String getPrevCollectionLink(); 
+    /**
+     * Name for prev collection view
+     */
+    public String getPrevCollectionName();  
 }
 
