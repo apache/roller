@@ -28,13 +28,18 @@ import javax.servlet.jsp.PageContext;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerRequest;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerSession;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.Utilities;
 
 
@@ -126,7 +131,6 @@ public abstract class BaseRollerMenu {
             }
         }
         RollerSession rses = RollerSession.getRollerSession(req);
-        RollerRequest rreq = RollerRequest.getRollerRequest(req);
         boolean ret = true;
         
         if (rses != null && rses.isGlobalAdminUser()) return true;
@@ -149,7 +153,7 @@ public abstract class BaseRollerMenu {
             UserData user = null;
             if (rses != null) user = rses.getAuthenticatedUser();
             
-            WebsiteData website = rreq.getWebsite();
+            WebsiteData website = getRequestedWeblog(req);
             BasePageModel pageModel = (BasePageModel)req.getAttribute("model");
             if (pageModel != null) {
                 website = pageModel.getWebsite();
@@ -186,8 +190,7 @@ public abstract class BaseRollerMenu {
         try {
             Hashtable params = RollerMenuModel.createParams(
                     (HttpServletRequest)pctx.getRequest());
-            params.put( RollerMenuModel.MENU_ITEM_KEY, getName() );
-            
+            params.put( RollerMenuModel.MENU_ITEM_KEY, getName() );            
             url = RequestUtils.computeURL(
                     pctx,
                     mForward, // forward
@@ -204,4 +207,43 @@ public abstract class BaseRollerMenu {
         return url;
     }
     
+    /**
+     * Currently, the menu tag can be used in both the authoring UI and the
+     * rendering system, so we have to check both forms of URL to determine
+     * the selected weblog.
+     * 
+     * TODO 3.0: more simple/consistent method for conveying weblog state across requests
+     */
+    protected static WebsiteData getRequestedWeblog(HttpServletRequest request) throws RollerException {
+        WebsiteData weblog = null;
+        Roller roller = RollerFactory.getRoller();
+        // first check authoring form of URL
+        if (request.getParameter(RequestConstants.WEBLOG) != null) {
+            String weblogHandle = request.getParameter(RequestConstants.WEBLOG);
+            weblog = roller.getUserManager().getWebsiteByHandle(weblogHandle);
+        } else if (request.getParameter(RequestConstants.WEBLOG_ID) != null) {
+            String weblogId = request.getParameter(RequestConstants.WEBLOG_ID);
+            weblog = roller.getUserManager().getWebsite(weblogId);
+        } else if (request.getParameter(RequestConstants.WEBLOGENTRY_ID) != null) {
+            String entryId = request.getParameter(RequestConstants.WEBLOGENTRY_ID);
+            WeblogEntryData entry = roller.getWeblogManager().getWeblogEntry(entryId);
+            weblog = entry.getWebsite();
+        } else if (request.getParameter(RequestConstants.WEBLOGCATEGORY_ID) != null) {
+            String catId = request.getParameter(RequestConstants.WEBLOGCATEGORY_ID);
+            WeblogCategoryData cat = roller.getWeblogManager().getWeblogCategory(catId);
+            weblog = cat.getWebsite();
+        } else if (request.getParameter(RequestConstants.FOLDER_ID) != null) {
+            String folderId = request.getParameter(RequestConstants.FOLDER_ID);
+            FolderData folder = roller.getBookmarkManager().getFolder(folderId);
+            weblog = folder.getWebsite();
+        } else if (request.getSession().getAttribute(RequestConstants.WEBLOG_SESSION_STASH) != null) {
+            String handle = (String)request.getSession().getAttribute(RequestConstants.WEBLOG_SESSION_STASH);
+            weblog = roller.getUserManager().getWebsiteByHandle(handle);
+        } else { 
+            // check rendering system form of URL
+            WeblogPageRequest pageRequest = new WeblogPageRequest(request);
+            weblog = pageRequest.getWeblog();
+        }
+        return weblog;
+    }  
 }

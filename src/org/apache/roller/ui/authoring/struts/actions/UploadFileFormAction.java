@@ -53,6 +53,7 @@ import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.UploadFileForm;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.RollerMessages;
 
 
@@ -64,7 +65,6 @@ import org.apache.roller.util.RollerMessages;
  * @struts.action-forward name="uploadFiles.page" path=".upload-file"
  */
 public final class UploadFileFormAction extends DispatchAction {
-    private static final String HANDLE = "fileupload.website.handle";
     private static Log mLogger =
             LogFactory.getFactory().getInstance(UploadFileFormAction.class);
     
@@ -259,9 +259,9 @@ public final class UploadFileFormAction extends DispatchAction {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WebsiteData website = rreq.getWebsite();
         if (website != null) {
-            request.getSession().setAttribute(HANDLE, website.getHandle());
+            request.getSession().setAttribute(RequestConstants.WEBLOG_SESSION_STASH, website.getHandle());
         } else {
-            String handle = (String)request.getSession().getAttribute(HANDLE);
+            String handle = (String)request.getSession().getAttribute(RequestConstants.WEBLOG_SESSION_STASH);
             Roller roller = RollerFactory.getRoller();
             website = roller.getUserManager().getWebsiteByHandle(handle);
         }

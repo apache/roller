@@ -31,6 +31,7 @@ import org.apache.roller.model.RefererManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
@@ -61,7 +62,7 @@ public class ToggleLinkbackDisplayAction extends Action
             if (rreq.getWebsite() != null 
                  && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
             {
-                String refid = req.getParameter(RollerRequest.REFERERID_KEY);
+                String refid = req.getParameter(RequestConstants.REFERRER_ID);
                 if ( refid != null )
                 {
                     RefererManager refmgr = 

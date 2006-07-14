@@ -6,7 +6,7 @@ Implemented:
       #showWeblogEntryComments($entry)
       #showWeblogEntryCommentForm($entry)
       #showCategoryLinksList()
-      #showWeblogEntriesLinkList()
+      #showWeblogEntryLinksList()
 
 To be implemented:
       #showBookmarkList()
@@ -232,7 +232,7 @@ Show comments form for weblog entry
 #end
 
 #** Show weblog's categories in specified parent category *#
-#macro(showCategoryLinkList $weblog $categoryPath)
+#macro(showCategoryLinksList $weblog $categoryPath)
     #set($rawUrl = "$config.contextURL/$weblog.handle")
     <ul class="clearfix">
         #set($weblogUrl = $rawUrl)
@@ -263,7 +263,7 @@ Show comments form for weblog entry
 #end
 
 #** Show recent weblog entries in specified category *#
-#macro(showWeblogEntriesLinkList $categoryPath $max)
+#macro(showWeblogEntryLinksList $categoryPath $max)
    #set($recentEntries = $model.getRecentWeblogEntries($categoryPath, $max))
    <ul class="recentposts">
    #foreach ($var in $recentEntries)

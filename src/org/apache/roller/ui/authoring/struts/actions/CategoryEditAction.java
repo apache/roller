@@ -32,11 +32,10 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
-import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogCategoryFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 
 /**
  * @struts.action path="/roller-ui/authoring/categoryEdit" name="weblogCategoryFormEx" validate="false"
@@ -89,7 +88,7 @@ public class CategoryEditAction extends Action
             // We are adding a new Category
             request.setAttribute("state","add");
             
-            String pid = request.getParameter(RollerRequest.PARENTID_KEY);
+            String pid = request.getParameter(RequestConstants.PARENT_ID);
             parentCat = wmgr.getWeblogCategory(pid);             
             form.setParentId(parentCat.getId()); 
             

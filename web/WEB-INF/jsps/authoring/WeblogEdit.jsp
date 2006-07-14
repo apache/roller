@@ -19,7 +19,6 @@
 <%@ page import="org.apache.roller.pojos.*" %>
 <%@ page import="org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx" %>
 <%@ page import="org.apache.roller.ui.authoring.struts.actions.WeblogEntryPageModel" %>
-<%@ page import="org.apache.roller.ui.core.RollerRequest" %>
 <%
 WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model");
 try {

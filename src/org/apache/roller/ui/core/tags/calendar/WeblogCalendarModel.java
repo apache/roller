@@ -139,7 +139,8 @@ public class WeblogCalendarModel implements CalendarModel {
                     endDate,                   // endDate
                     cat,                   // cat
                     WeblogEntryData.PUBLISHED, // status
-locale,                     0, -1);
+                    locale,
+                    0, -1);
         } catch (RollerException e) {
             log.error(e);
             monthMap = new HashMap();
@@ -155,12 +156,8 @@ locale,                     0, -1);
     public Date getDay() {
         return (Date)day.clone();
     }
-            
-    public String getParameterName() {
-        return RollerRequest.WEBLOGDAY_KEY;
-    }
     
-    public String getParameterValue( Date day ) {
+    public String getParameterValue(Date day) {
         return (String)monthMap.get( day );
     }
     
@@ -198,9 +195,6 @@ locale,                     0, -1);
         return url;
     }
     
-    /**
-     * @see org.apache.roller.presentation.tags.calendar.CalendarModel#getContent(Date, boolean)
-     */
     public String getContent(Date day) {
         return null;
     }

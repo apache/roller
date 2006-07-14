@@ -69,14 +69,14 @@
             </div>
 
             <h2>Recent Entries</h2>
-            #showWeblogEntryLinkList(20)
+            #showWeblogEntryLinksList(20)
 
         </div>
 
         <div id="nav">
             <div class="wrapper">
                 <h2 class="hide">Navigation</h2>
-                #showCategoryLinkList($model.weblog "nil")
+                #showCategoryLinksList($model.weblog "nil")
             </div>
         </div>
     </div><!-- end content -->

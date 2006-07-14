@@ -15,7 +15,6 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<%@ page import="org.apache.roller.ui.core.RollerRequest"%>
 <%@ include file="/taglibs.jsp" %>
 
 <!-- This page consists only of result messages from the ping -->

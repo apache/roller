@@ -29,7 +29,7 @@
 			<p>
             <img src='<c:url value="/images/folder_add.png"/>' border="0"alt="icon" />
 			<roller:link page="/roller-ui/authoring/categoryEdit.do">
-			    <roller:linkparam id="<%= RollerRequest.PARENTID_KEY %>"
+			    <roller:linkparam id="<%= RequestConstants.PARENT_ID %>"
 			         name="category" property="id" />
 			    <fmt:message key="categoriesForm.addCategory" />
 			</roller:link>

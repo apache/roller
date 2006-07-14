@@ -34,7 +34,6 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.authoring.tags.*;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.DateUtil;
 
 /**
@@ -74,7 +73,8 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                     endDate,                   // endDate
                     catName,                   // cat
                     WeblogEntryData.PUBLISHED, // status
-locale,                     0, -1);
+                    locale,
+                    0, -1);
         } catch (RollerException e) {
             mLogger.error(e);
             monthMap = new HashMap();
@@ -87,7 +87,6 @@ locale,                     0, -1);
     public String getContent(Date day) {
         String content = null;
         try {
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerContext rctx = RollerContext.getRollerContext();
             StringBuffer sb = new StringBuffer();
             
@@ -142,8 +141,7 @@ locale,                     0, -1);
             }
             content = sb.toString();
         } catch (Exception e) {
-            RollerRequest.getRollerRequest(request)
-            .getServletContext().log("ERROR: creating URL",e);
+            mLogger.error("ERROR: creating URL", e);
         }
         return content;
     }

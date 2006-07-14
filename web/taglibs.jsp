@@ -39,7 +39,7 @@
 <%@ page import="org.apache.roller.config.RollerRuntimeConfig" %>
 <%@ page import="org.apache.roller.config.RollerConfig" %>
 
-<%@ page import="org.apache.roller.ui.core.RollerRequest" %>
+<%@ page import="org.apache.roller.ui.core.RequestConstants" %>
 <%@ page import="org.apache.roller.ui.core.BasePageModel" %>
 <%@ page import="org.apache.roller.ui.core.RollerContext" %>
 <%@ page import="org.apache.roller.ui.core.RollerSession" %>

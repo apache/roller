@@ -52,8 +52,8 @@
     <html:hidden property="method" name="method" value="update"/>
     <html:hidden property="id" />
     
-    <input type="hidden" name="<%= RollerRequest.PARENTID_KEY %>" 
-    	value="<%= request.getAttribute(RollerRequest.PARENTID_KEY) %>" />
+    <input type="hidden" name="<%= RequestConstants.PARENT_ID %>" 
+    	value="<%= request.getAttribute(RequestConstants.PARENT_ID) %>" />
 
     <table>
 
@@ -72,7 +72,7 @@
     <input type="submit" value="<fmt:message key='folderForm.save' />" />
     <input type="button" value="<fmt:message key='folderForm.cancel' />" 
         onclick="window.location = 'bookmarks.do?method=selectFolder&amp;folderId=<%=
-        request.getAttribute(RollerRequest.PARENTID_KEY) %>'" />
+        request.getAttribute(RequestConstants.PARENT_ID) %>'" />
     </p>
 
 </html:form>

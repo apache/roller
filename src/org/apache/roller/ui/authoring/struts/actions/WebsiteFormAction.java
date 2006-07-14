@@ -58,6 +58,7 @@ import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WebsiteFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.Blacklist;
 
 
@@ -187,7 +188,7 @@ public final class WebsiteFormAction extends DispatchAction {
                         new ActionMessage("websiteSettings.savedChanges"));
                     
                     request.getSession().setAttribute(
-                        RollerRequest.WEBSITEID_KEY, form.getId());
+                        RequestConstants.WEBLOG_ID, form.getId());
                     
                     // Clear cache entries associated with website
                     CacheManager.invalidate(wd);

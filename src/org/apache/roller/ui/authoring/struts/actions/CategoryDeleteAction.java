@@ -31,7 +31,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -39,6 +38,7 @@ import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.CategoryDeleteForm;
+import org.apache.roller.ui.core.RequestConstants;
 
 /**
  * @struts.action path="/roller-ui/authoring/categoryDelete" name="categoryDeleteForm"
@@ -59,7 +59,7 @@ public class CategoryDeleteAction extends Action
         CategoryDeleteForm form = (CategoryDeleteForm)actionForm;
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
 
-        String catid = request.getParameter(RollerRequest.WEBLOGCATEGORYID_KEY);
+        String catid = request.getParameter(RequestConstants.WEBLOGCATEGORY_ID);
         WeblogCategoryData catToDelete = 
                 wmgr.getWeblogCategory(catid);
         RollerSession rses = RollerSession.getRollerSession(request);
@@ -105,7 +105,7 @@ public class CategoryDeleteAction extends Action
                     if (null != returnId) 
                     {
                         request.setAttribute(
-                                RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
+                                RequestConstants.WEBLOGCATEGORY_ID, returnId);
                     }               
                 }
             }
@@ -120,7 +120,7 @@ public class CategoryDeleteAction extends Action
                 CacheManager.invalidate(catToDelete);
                 
                 if (null != returnId) {
-                    request.setAttribute(RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
+                    request.setAttribute(RequestConstants.WEBLOGCATEGORY_ID, returnId);
                 }               
             }
             else 
@@ -129,7 +129,7 @@ public class CategoryDeleteAction extends Action
                 if (null != returnId) 
                 {
                     request.setAttribute(
-                       RollerRequest.WEBLOGCATEGORYID_KEY, returnId);
+                       RequestConstants.WEBLOGCATEGORY_ID, returnId);
                 }               
             }
         }
