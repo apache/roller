@@ -18,11 +18,11 @@
 
 package org.apache.roller.ui.rendering.util;
 
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.WebsiteData;
@@ -53,6 +53,7 @@ public class WeblogRequest extends ParsedRequest {
     
     // heavyweight attributes
     private WebsiteData weblog = null;
+    private Locale localeInstance = null;
     
     
     public WeblogRequest() {}
@@ -187,6 +188,32 @@ public class WeblogRequest extends ParsedRequest {
 
     public void setWeblog(WebsiteData weblog) {
         this.weblog = weblog;
+    }
+    
+    
+    /**
+     * Get the Locale instance to be used for this request.
+     *
+     * The Locale is determined via these rules ...
+     *   1. if a locale is explicitly specified, then it is used
+     *   2. if no locale is specified, then use the weblog default locale
+     */
+    public Locale getLocaleInstance() {
+        
+        if(localeInstance == null && locale != null) {
+            String[] langCountry = locale.split("_");
+            if(langCountry.length == 2) {
+                localeInstance = new Locale(langCountry[0], langCountry[1]);
+            }
+        } else if(localeInstance == null) {
+            localeInstance = getWeblog().getLocaleInstance();
+        }
+        
+        return localeInstance;
+    }
+
+    public void setLocaleInstance(Locale localeInstance) {
+        this.localeInstance = localeInstance;
     }
     
 }
