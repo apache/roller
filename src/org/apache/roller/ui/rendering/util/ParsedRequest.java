@@ -87,9 +87,4 @@ public abstract class ParsedRequest {
         return (this.authenticUser != null);
     }
     
-    
-    public HttpServletRequest getRequest() {
-        return this.request;
-    }
-    
 }
