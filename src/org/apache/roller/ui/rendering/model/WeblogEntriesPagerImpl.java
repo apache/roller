@@ -314,7 +314,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             if (nextEntry == null) try {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
-                nextEntry = wmgr.getNextEntry(entry, cat != null ? cat.getPath() : null);
+                nextEntry = wmgr.getNextEntry(entry, cat != null ? cat.getPath() : null, locale);
                 // make sure that entry is published and not to future
                 if (nextEntry != null && nextEntry.getPubTime().after(new Date()) 
                     && nextEntry.getStatus().equals(WeblogEntryData.PUBLISHED)) {
@@ -330,7 +330,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             if (prevEntry == null) try {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
-                prevEntry = wmgr.getPreviousEntry(entry, cat != null ? cat.getPath() : null); 
+                prevEntry = wmgr.getPreviousEntry(entry, cat != null ? cat.getPath() : null, locale); 
                 // make sure that entry is published and not to future
                 if (prevEntry != null && prevEntry.getPubTime().after(new Date()) 
                     && prevEntry.getStatus().equals(WeblogEntryData.PUBLISHED)) {

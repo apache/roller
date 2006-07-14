@@ -689,7 +689,7 @@ mLocale,                     0, maxEntries);
             }
             try {
                 WeblogEntryData nextEntry =
-                        mWeblogMgr.getNextEntry(currentEntry.getPojo(), catName);
+                        mWeblogMgr.getNextEntry(currentEntry.getPojo(), catName, mLocale);
                 
                 if(nextEntry != null)
                     mNextEntry = WeblogEntryDataWrapper.wrap(nextEntry);
@@ -721,7 +721,7 @@ mLocale,                     0, maxEntries);
             }
             try {
                 WeblogEntryData prevEntry =
-                        mWeblogMgr.getPreviousEntry(currentEntry.getPojo(), catName);
+                        mWeblogMgr.getPreviousEntry(currentEntry.getPojo(), catName, mLocale);
                 
                 if(prevEntry != null)
                     mPreviousEntry = WeblogEntryDataWrapper.wrap(prevEntry);
