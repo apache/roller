@@ -55,19 +55,23 @@ Note: this filter does nothing if an ip ban list is not configured. -->
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
+<!-- Init filter.  performs some initialization on first request -->
 <filter-mapping>
     <filter-name>InitFilter</filter-name>
     <url-pattern>/*</url-pattern>
 </filter-mapping>
 
+<!-- Request mapping.  this is what allows the urls to work -->
 <filter-mapping>
     <filter-name>RequestMappingFilter</filter-name>
     <url-pattern>/*</url-pattern>
 </filter-mapping>
 
+<!-- Referrer tracking.  only done for weblog pages -->
 <filter-mapping>
     <filter-name>RefererFilter</filter-name>
     <url-pattern>/roller-ui/rendering/page/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
 
@@ -75,10 +79,12 @@ Note: this filter does nothing if an ip ban list is not configured. -->
 <filter-mapping>
     <filter-name>CompressionFilter</filter-name>
     <url-pattern>/roller-ui/rendering/page/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 <filter-mapping>
     <filter-name>CompressionFilter</filter-name>
     <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 <filter-mapping>
     <filter-name>CompressionFilter</filter-name>
@@ -88,10 +94,10 @@ Note: this filter does nothing if an ip ban list is not configured. -->
 
 <!-- Planet Roller Caching -->
 <filter-mapping>
-	<filter-name>PlanetCacheFilter</filter-name>
-	<url-pattern>/planet.do</url-pattern>
-	<dispatcher>REQUEST</dispatcher>
-	<dispatcher>FORWARD</dispatcher>
+    <filter-name>PlanetCacheFilter</filter-name>
+    <url-pattern>/planet.do</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
 
