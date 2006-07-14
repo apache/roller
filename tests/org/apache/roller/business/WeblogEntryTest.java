@@ -245,27 +245,27 @@ public class WeblogEntryTest extends TestCase {
         
         // get next entries
         entries = null;
-        entries = mgr.getNextEntries(entry1, null, 5);
+        entries = mgr.getNextEntries(entry1, null, null, 5);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
         
         // get next entry
         entry = null;
-        entry = mgr.getNextEntry(entry1, null);
+        entry = mgr.getNextEntry(entry1, null, null);
         assertNotNull(entry);
         assertEquals(entry2, entry);
         
         // get previous entries
         entries = null;
-        entries = mgr.getPreviousEntries(entry2, null, 5);
+        entries = mgr.getPreviousEntries(entry2, null, null, 5);
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry1, entries.get(0));
         
         // get previous entry
         entry = null;
-        entry = mgr.getPreviousEntry(entry2, null);
+        entry = mgr.getPreviousEntry(entry2, null, null);
         assertNotNull(entry);
         assertEquals(entry1, entry);
         

@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.model;
 
@@ -28,6 +28,7 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+
 
 /**
  * Interface to weblog entry, category and comment management.
@@ -168,8 +169,8 @@ public interface WeblogManager {
      * @param current The "current" WeblogEntryData
      * @param catName The value of the requested Category Name
      */
-    public WeblogEntryData getNextEntry(WeblogEntryData current, String catName) 
-            throws RollerException;    
+    public WeblogEntryData getNextEntry(WeblogEntryData current, 
+            String catName, String locale) throws RollerException;    
     
     /**
      * Get the WeblogEntry prior to, chronologically, the current entry.
@@ -178,7 +179,7 @@ public interface WeblogManager {
      * @param catName The value of the requested Category Name.
      */
     public WeblogEntryData getPreviousEntry(WeblogEntryData current, 
-            String catName) throws RollerException;
+            String catName, String locale) throws RollerException;
         
     /**
      * Get entries next after current entry.
@@ -187,7 +188,7 @@ public interface WeblogManager {
      * @param maxEntries Maximum number of entries to return.
      */
     public List getNextEntries(WeblogEntryData entry, 
-            String catName, int maxEntries) throws RollerException;
+            String catName, String locale, int maxEntries) throws RollerException;
         
     /**
      * Get entries previous to current entry.
@@ -196,7 +197,7 @@ public interface WeblogManager {
      * @param maxEntries Maximum number of entries to return.
      */
     public List getPreviousEntries(WeblogEntryData entry, 
-            String catName, int maxEntries) throws RollerException;    
+            String catName, String locale, int maxEntries) throws RollerException;    
     
     /**
      * Get specified number of most recent pinned and published Weblog Entries.

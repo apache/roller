@@ -1,23 +1,21 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * Created on Jun 16, 2004
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
+
 package org.apache.roller.business.hibernate;
 
 import java.text.SimpleDateFormat;
@@ -31,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
@@ -60,6 +57,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+
 
 /**
  * Hibernate implementation of the WeblogManager.
@@ -293,12 +291,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public List getNextPrevEntries(
-            WeblogEntryData current, String catName, int maxEntries, boolean next)
+    public List getNextPrevEntries(WeblogEntryData current, String catName, 
+                                   String locale, int maxEntries, boolean next)
             throws RollerException {
-        if (catName != null && catName.trim().equals("/")) {
-            catName = null;
-        }
+        
         Junction conjunction = Expression.conjunction();
         conjunction.add(Expression.eq("website", current.getWebsite()));
         conjunction.add(Expression.eq("status", WeblogEntryData.PUBLISHED));
@@ -309,7 +305,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             conjunction.add(Expression.lt("pubTime", current.getPubTime()));
         }
         
-        if (catName != null) {
+        if (catName != null && !catName.trim().equals("/")) {
             WeblogCategoryData category =
                     getWeblogCategoryByPath(current.getWebsite(), null, catName);
             if (category != null) {
@@ -317,6 +313,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             } else {
                 throw new RollerException("Cannot find category: "+catName);
             }
+        }
+        
+        if(locale != null) {
+            conjunction.add(Expression.eq("locale", locale));
         }
         
         try {
@@ -1103,38 +1103,49 @@ locale,             offset,
         }
     }
     
-    public List getNextEntries(
-            WeblogEntryData current, String catName, int maxEntries)
+    
+    public List getNextEntries(WeblogEntryData current, String catName, 
+                               String locale, int maxEntries)
             throws RollerException {
-        return getNextPrevEntries(current, catName, maxEntries, true);
-    }
-    
-    public List getPreviousEntries(
-            WeblogEntryData current, String catName, int maxEntries)
-            throws RollerException {
-        return getNextPrevEntries(current, catName, maxEntries, false);
-    }
-    
-    public WeblogEntryData getNextEntry(WeblogEntryData current, String catName)
-    throws RollerException {
-        WeblogEntryData entry = null;
-        List entryList = getNextEntries(current, catName, 1);
-        if (entryList != null && entryList.size() > 0) {
-            entry = (WeblogEntryData)entryList.get(0);
-        }
-        return entry;
-    }
-    
-    public WeblogEntryData getPreviousEntry(WeblogEntryData current, String catName)
-    throws RollerException {
-        WeblogEntryData entry = null;
-        List entryList = getPreviousEntries(current, catName, 1);
-        if (entryList != null && entryList.size() > 0) {
-            entry = (WeblogEntryData)entryList.get(0);
-        }
-        return entry;
-    }
         
+        return getNextPrevEntries(current, catName, locale, maxEntries, true);
+    }
+    
+    
+    public List getPreviousEntries(WeblogEntryData current, String catName, 
+                                   String locale, int maxEntries)
+            throws RollerException {
+        
+        return getNextPrevEntries(current, catName, locale, maxEntries, false);
+    }
+    
+    
+    public WeblogEntryData getNextEntry(WeblogEntryData current, String catName,
+                                        String locale)
+            throws RollerException {
+        
+        WeblogEntryData entry = null;
+        List entryList = getNextEntries(current, catName, locale, 1);
+        if (entryList != null && entryList.size() > 0) {
+            entry = (WeblogEntryData)entryList.get(0);
+        }
+        return entry;
+    }
+    
+    
+    public WeblogEntryData getPreviousEntry(WeblogEntryData current, String catName,
+                                            String locale)
+            throws RollerException {
+        
+        WeblogEntryData entry = null;
+        List entryList = getPreviousEntries(current, catName, locale, 1);
+        if (entryList != null && entryList.size() > 0) {
+            entry = (WeblogEntryData)entryList.get(0);
+        }
+        return entry;
+    }
+    
+    
     public void release() {}
 
     /**
