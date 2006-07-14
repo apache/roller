@@ -19,6 +19,13 @@
 package org.apache.roller.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.ThemeNotFoundException;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.ThemeManager;
+import org.apache.roller.pojos.Theme;
 
 
 /**
@@ -26,9 +33,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class WeblogPreviewRequest extends WeblogPageRequest {
     
+    private static Log log = LogFactory.getLog(WeblogPreviewRequest.class);
+    
     private static final String PREVIEW_SERVLET = "/roller-ui/authoring/preview";
     
-    private String theme = null;
+    // lightweight attributes
+    private String themeName = null;
+    
+    // heavyweight attributes
+    private Theme theme = null;
     
     
     public WeblogPreviewRequest(HttpServletRequest request) 
@@ -40,7 +53,11 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         // all we need to worry about is the query params
         // the only param we expect is "theme"
         if(request.getParameter("theme") != null) {
-            this.theme = request.getParameter("theme");
+            this.themeName = request.getParameter("theme");
+        }
+        
+        if(log.isDebugEnabled()) {
+            log.debug("theme = "+this.themeName);
         }
     }
     
@@ -50,12 +67,12 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     }
     
     
-    public String getTheme() {
-        return theme;
+    public String getThemeName() {
+        return themeName;
     }
 
-    public void setTheme(String theme) {
-        this.theme = theme;
+    public void setThemeName(String theme) {
+        this.themeName = theme;
     }
     
     // override so that previews never show login status
@@ -66,6 +83,26 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     // override so that previews never show login status
     public boolean isLoggedIn() {
         return false;
+    }
+
+    public Theme getTheme() {
+        
+        if(theme == null && themeName != null) {
+            try {
+                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
+                theme = themeMgr.getTheme(themeName);
+            } catch(ThemeNotFoundException tnfe) {
+                // bogus theme specified ... don't worry about it
+            } catch(RollerException re) {
+                log.error("Error looking up theme "+themeName, re);
+            }
+        }
+        
+        return theme;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
     
 }

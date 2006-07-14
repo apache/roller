@@ -31,10 +31,6 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.ThemeNotFoundException;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.ThemeManager;
-import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WebsiteData;
@@ -43,7 +39,6 @@ import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.ModelLoader;
-import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.util.WeblogPreviewRequest;
 
 
@@ -81,7 +76,6 @@ public class PreviewServlet extends HttpServlet {
         
         log.debug("Entering");
         
-        Theme previewTheme = null;
         WebsiteData weblog = null;
         
         WeblogPreviewRequest previewRequest = null;
@@ -89,37 +83,22 @@ public class PreviewServlet extends HttpServlet {
             previewRequest = new WeblogPreviewRequest(request);
             
             // lookup weblog specified by preview request
-            UserManager uMgr = RollerFactory.getRoller().getUserManager();
-            weblog = uMgr.getWebsiteByHandle(previewRequest.getWeblogHandle());
+            weblog = previewRequest.getWeblog();
             
             if(weblog == null) {
                 throw new RollerException("unable to lookup weblog: "+
                         previewRequest.getWeblogHandle());
             }
         } catch (Exception e) {
-            // some kind of error parsing the request
+            // some kind of error parsing the request or getting weblog
             log.error("error creating preview request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         
         // try getting the preview theme
-        log.debug("preview theme = "+previewRequest.getTheme());
-        if(previewRequest.getTheme() != null) {
-            try {
-                ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
-                previewTheme = themeMgr.getTheme(previewRequest.getTheme());
-                
-            } catch(ThemeNotFoundException tnfe) {
-                // bogus theme specified ... don't worry about it
-                // possibly "custom", but we'll handle that below
-            } catch(RollerException re) {
-                
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                log.error("Error doing theme preview", re);
-                return;
-            }
-        }
+        log.debug("preview theme = "+previewRequest.getThemeName());
+        Theme previewTheme = previewRequest.getTheme();
         
         // construct a temporary Website object for this request
         // and set the EditorTheme to our previewTheme
@@ -127,7 +106,7 @@ public class PreviewServlet extends HttpServlet {
         tmpWebsite.setData(weblog);
         if(previewTheme != null && previewTheme.isEnabled()) {
             tmpWebsite.setEditorTheme(previewTheme.getName());
-        } else if(previewRequest.getTheme().equals(Theme.CUSTOM)) {
+        } else if(Theme.CUSTOM.equals(previewRequest.getThemeName())) {
             tmpWebsite.setEditorTheme(Theme.CUSTOM);
         }
         
@@ -159,11 +138,7 @@ public class PreviewServlet extends HttpServlet {
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
-            
-            // we need to add a simple page request to use weblog models
-            WeblogPageRequest pageRequest = new WeblogPageRequest();
-            pageRequest.setWeblogHandle(previewRequest.getWeblogHandle());
-            initData.put("pageRequest", pageRequest);
+            initData.put("pageRequest", previewRequest);
             
             // page context for helpers which use jsp tags :/
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
@@ -186,7 +161,7 @@ public class PreviewServlet extends HttpServlet {
             ModelLoader.loadCustomModels(tmpWebsite, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            ModelLoader.loadOldModels(model, request, response, pageContext, pageRequest);
+            ModelLoader.loadOldModels(model, request, response, pageContext, previewRequest);
             
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
@@ -247,7 +222,7 @@ public class PreviewServlet extends HttpServlet {
      * Post requests are not allowed, send a 404.
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
