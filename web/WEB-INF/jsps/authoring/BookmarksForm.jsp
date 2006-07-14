@@ -69,7 +69,7 @@ function onMove()
             <roller:link page="/roller-ui/authoring/bookmarks.do">
                 <roller:linkparam id="method" value="selectFolder" />
                 <roller:linkparam 
-                    id="<%= RollerRequest.FOLDERID_KEY %>" 
+                    id="<%= RequestConstants.FOLDER_ID %>" 
                     name="loopfolder" property="id" />
                 <c:out value="${loopfolder.name}" />
             </roller:link>
@@ -138,7 +138,7 @@ function onMove()
                <roller:link page="/roller-ui/authoring/bookmarks.do">
                    <roller:linkparam id="method" value="selectFolder" />
                    <roller:linkparam 
-                       id="<%= RollerRequest.FOLDERID_KEY %>" 
+                       id="<%= RequestConstants.FOLDER_ID %>" 
                        name="loopfolder" property="id" />
                    <str:truncateNicely lower="15" upper="20" ><c:out value="${loopfolder.name}" /></str:truncateNicely>
                </roller:link>
@@ -151,7 +151,7 @@ function onMove()
             <td class="rollertable" align="center">
                <roller:link forward="folderEdit">
                    <roller:linkparam 
-                       id="<%= RollerRequest.FOLDERID_KEY %>" 
+                       id="<%= RequestConstants.FOLDER_ID %>" 
                        name="loopfolder" property="id" />
                    <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" />
                </roller:link>
@@ -185,7 +185,7 @@ function onMove()
             <td class="rollertable" align="center">
                <roller:link page="/roller-ui/authoring/bookmarkEdit.do">
                    <roller:linkparam 
-                       id="<%= RollerRequest.BOOKMARKID_KEY %>" 
+                       id="<%= RequestConstants.BOOKMARK_ID %>" 
                        name="loopbookmark" property="id" />                   
                    <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" 
                        title="<fmt:message key='bookmarksForm.edit.tip' />" />

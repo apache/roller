@@ -15,7 +15,6 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<%@ page import="org.apache.roller.ui.core.RollerRequest"%>
 <%@ include file="/taglibs.jsp" %>
 
 <p class="subtitle">
@@ -65,7 +64,7 @@
               <c:when test="${pingTarget.autoEnabled}">
                  <roller:link page="/roller-ui/admin/commonPingTargets.do">
                      <roller:linkparam
-                        id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                        id="<%= RequestConstants.PINGTARGET_ID %>"
                         name="pingTarget" property="id" />
                      <roller:linkparam
                        id="method" value="disableSelected" />
@@ -75,7 +74,7 @@
               <c:otherwise >
                  <roller:link page="/roller-ui/admin/commonPingTargets.do">
                      <roller:linkparam
-                        id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                        id="<%= RequestConstants.PINGTARGET_ID %>"
                         name="pingTarget" property="id" />
                      <roller:linkparam
                        id="method" value="enableSelected" />
@@ -88,7 +87,7 @@
             <td class="rollertable" align="center">
                <roller:link page="/roller-ui/admin/commonPingTargets.do">
                    <roller:linkparam
-                       id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                       id="<%= RequestConstants.PINGTARGET_ID %>"
                        name="pingTarget" property="id" />
                    <roller:linkparam
 	                   id="method" value="editSelected" />
@@ -100,7 +99,7 @@
             <td class="rollertable" align="center">
                <roller:link page="/roller-ui/admin/commonPingTargets.do">
                    <roller:linkparam
-	                   id="<%= RollerRequest.PINGTARGETID_KEY %>"
+	                   id="<%= RequestConstants.PINGTARGET_ID %>"
 	                   name="pingTarget" property="id" />
                    <roller:linkparam
 	                   id="method" value="deleteSelected" />

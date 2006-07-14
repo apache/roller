@@ -36,6 +36,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.authoring.struts.forms.PingTargetForm;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerRequest;
 
 
@@ -329,7 +330,7 @@ public abstract class BasePingTargetsAction extends DispatchAction
      */
     protected PingTargetData select(RollerRequest rreq) throws RollerException
     {
-        String pingTargetId = rreq.getRequest().getParameter(RollerRequest.PINGTARGETID_KEY);
+        String pingTargetId = rreq.getRequest().getParameter(RequestConstants.PINGTARGET_ID);
         PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         if (pingTargetId == null || pingTargetId.length() == 0)
         {

@@ -17,7 +17,6 @@
 -->
 <%@ include file="/taglibs.jsp" %>
 <%@ page import="org.apache.roller.ui.authoring.struts.actions.CommentManagementAction" %>
-<%@ page import="org.apache.roller.ui.core.RollerRequest" %>
 <%
 CommentManagementAction.CommentManagementPageModel model = 
     (CommentManagementAction.CommentManagementPageModel)request.getAttribute("model");

@@ -30,7 +30,6 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,11 +45,11 @@ import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.CategoriesForm;
+import org.apache.roller.ui.core.RequestConstants;
 
 /**
  * Actions that are initiated from the CategoriesForm.
@@ -209,10 +208,10 @@ public class CategoriesAction extends DispatchAction
 
             // Find catid wherever it may be
             String catId = (String)
-                request.getAttribute(RollerRequest.WEBLOGCATEGORYID_KEY);
+                request.getAttribute(RequestConstants.WEBLOGCATEGORY_ID);
             if (null == catId) 
             {
-                catId = request.getParameter(RollerRequest.WEBLOGCATEGORYID_KEY);
+                catId = request.getParameter(RequestConstants.WEBLOGCATEGORY_ID);
             }  
             if (null == catId)
             {
@@ -246,7 +245,7 @@ public class CategoriesAction extends DispatchAction
                 //request.setAttribute("categoryPath", catPath);
 
                 request.setAttribute(
-                    RollerRequest.PARENTID_KEY, cat.getParent().getId());
+                    RequestConstants.PARENT_ID, cat.getParent().getId());
             }
 
             // Build collection of all Categories, except for current one, 

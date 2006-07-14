@@ -37,6 +37,7 @@ import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.BookmarkFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.cache.CacheManager;
 
 /**
@@ -69,7 +70,7 @@ public class BookmarkSaveAction extends Action
         {
             bd = new BookmarkData();
             FolderData fd = bmgr.getFolder(
-                request.getParameter(RollerRequest.FOLDERID_KEY));
+                request.getParameter(RequestConstants.FOLDER_ID));
             bd.setFolder(fd);
         }
         RollerSession rses = RollerSession.getRollerSession(request);
@@ -83,7 +84,7 @@ public class BookmarkSaveAction extends Action
             CacheManager.invalidate(bd);
             
             request.setAttribute(
-                RollerRequest.FOLDERID_KEY, bd.getFolder().getId());
+                RequestConstants.FOLDER_ID, bd.getFolder().getId());
         }
         else 
         {

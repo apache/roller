@@ -60,7 +60,7 @@ function onMove()
             <roller:link page="/roller-ui/authoring/categories.do">
                 <roller:linkparam id="method" value="selectCategory" />
                 <roller:linkparam 
-                    id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
+                    id="<%= RequestConstants.WEBLOGCATEGORY_ID %>" 
                     name="loopcategory" property="id" />
                 <c:out value="${loopcategory.name}" />
             </roller:link>
@@ -132,7 +132,7 @@ function onMove()
                <roller:link page="/roller-ui/authoring/categories.do">
                    <roller:linkparam id="method" value="selectCategory" />
                    <roller:linkparam 
-                       id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
+                       id="<%= RequestConstants.WEBLOGCATEGORY_ID %>" 
                        name="loopcategory" property="id" />
                    <str:truncateNicely lower="15" upper="20" ><c:out value="${loopcategory.name}" /></str:truncateNicely>
                </roller:link>
@@ -145,7 +145,7 @@ function onMove()
             <td class="rollertable" align="center">
                <roller:link page="/roller-ui/authoring/categoryEdit.do">
                    <roller:linkparam 
-                       id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
+                       id="<%= RequestConstants.WEBLOGCATEGORY_ID %>" 
                        name="loopcategory" property="id" />
                    <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon" />
                </roller:link>
@@ -154,7 +154,7 @@ function onMove()
             <td class="rollertable" align="center">
                <roller:link page="/roller-ui/authoring/categoryDelete.do">
                    <roller:linkparam 
-	                   id="<%= RollerRequest.WEBLOGCATEGORYID_KEY %>" 
+	                   id="<%= RequestConstants.WEBLOGCATEGORY_ID %>" 
 	                   name="loopcategory" property="id" />
                    <roller:linkparam 
 	                   id="method" value="deleteSelected" />

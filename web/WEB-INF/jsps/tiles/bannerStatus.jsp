@@ -19,9 +19,14 @@
 <%
 RollerContext rctx = RollerContext.getRollerContext();
 RollerSession rollerSession = RollerSession.getRollerSession(request);
-RollerRequest rreq = RollerRequest.getRollerRequest(request);
 UserData user = rollerSession.getAuthenticatedUser();
-WebsiteData website = rreq.getWebsite();
+
+WebsiteData website = null;
+String handle = request.getParameter(RequestConstants.WEBLOG);
+if (handle != null) {
+    Roller roller = RollerFactory.getRoller();
+    website = roller.getUserManager().getWebsiteByHandle(handle);
+}
 String absURL = rctx.getAbsoluteContextUrl(request);
 boolean allowNewUsers = RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
 String customRegUrl = RollerRuntimeConfig.getProperty("users.registration.url");

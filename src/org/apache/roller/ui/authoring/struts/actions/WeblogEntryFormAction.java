@@ -77,6 +77,7 @@ import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.roller.util.MailUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.Utilities;
 
 
@@ -322,7 +323,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 form.copyFrom(entry, request.getLocale());
                 
                 request.setAttribute(
-                        RollerRequest.WEBLOGENTRYID_KEY, entry.getId());
+                        RequestConstants.WEBLOGENTRY_ID, entry.getId());
                 
                 // Reindex entry, flush caches, etc.
                 reindexEntry(RollerFactory.getRoller(), entry);
@@ -631,7 +632,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
             String entryid = form.getId();
             if ( entryid == null ) {
                 entryid =
-                        request.getParameter(RollerRequest.WEBLOGENTRYID_KEY);
+                        request.getParameter(RequestConstants.WEBLOGENTRY_ID);
             }
             Roller roller = RollerFactory.getRoller();
             RollerContext rctx= RollerContext.getRollerContext();

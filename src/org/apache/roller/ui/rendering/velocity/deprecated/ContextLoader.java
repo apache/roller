@@ -77,7 +77,34 @@ import org.apache.velocity.tools.view.servlet.ServletToolboxManager;
  *       function properly.  This should only be used by weblog pages.
  */
 public class ContextLoader {
+
+    public static final String WEBLOG_KEY             = "weblog";
+    public static final String ANCHOR_KEY             = "entry";
+    public static final String ANCHOR_KEY_OLD         = "anchor";
+    public static final String USERNAME_KEY           = "username";
+
+    public static final String PAGELINK_KEY           = "pagelink";
+    public static final String EXCERPTS_KEY           = "excerpts";
+    public static final String WEBLOGENTRY_COUNT      = "count";
+    public static final String WEBLOGCATEGORYNAME_KEY = "cat";
+    public static final String WEBLOGENTRIES_KEY      = "entries";
+    public static final String WEBLOGDAY_KEY          = "day";
     
+    public static final String WEBLOGENTRYID_KEY      = "entryid";
+    
+    public static final String WEBLOGCATEGORYID_KEY   = "categoryId";
+    public static final String PINGTARGETID_KEY       = "pingtargetId";
+    public static final String REFERERID_KEY          = "refId";
+    public static final String WEBLOGCOMMENTID_KEY    = "commentId";
+    public static final String WEBSITEID_KEY          = "websiteId";
+    public static final String BOOKMARKID_KEY         = "bookmarkId";
+    public static final String FOLDERID_KEY           = "folderId";
+    public static final String PARENTID_KEY           = "parentId";
+    public static final String NEWSFEEDID_KEY         = "feedId";
+    public static final String PAGEID_KEY             = "pageId";
+    public static final String LOGIN_COOKIE           = "sessionId";    
+    public static final String OWNING_WEBSITE         = "OWNING_WEBSITE";    
+
     private static Log mLogger = LogFactory.getLog(ContextLoader.class);
     
     private static final String TOOLBOX_KEY =
@@ -525,22 +552,22 @@ public class ContextLoader {
         
         // Since Velocity *requires* accessor methods, these values from
         // RollerRequest are not available to it, put them into the context
-        ctx.put("USERNAME_KEY",           RollerRequest.USERNAME_KEY);
-        ctx.put("WEBSITEID_KEY",          RollerRequest.WEBSITEID_KEY);
-        ctx.put("FOLDERID_KEY",           RollerRequest.FOLDERID_KEY);
-        ctx.put("NEWSFEEDID_KEY",         RollerRequest.NEWSFEEDID_KEY);
-        ctx.put("PAGEID_KEY",             RollerRequest.PAGEID_KEY);
-        ctx.put("PAGELINK_KEY",           RollerRequest.PAGELINK_KEY);
-        ctx.put("ANCHOR_KEY",             RollerRequest.ANCHOR_KEY);
-        ctx.put("EXCERPTS_KEY",           RollerRequest.EXCERPTS_KEY);
-        ctx.put("BOOKMARKID_KEY",         RollerRequest.BOOKMARKID_KEY);
-        ctx.put("REFERERID_KEY",          RollerRequest.REFERERID_KEY);
-        ctx.put("WEBLOGENTRYID_KEY",      RollerRequest.WEBLOGENTRYID_KEY);
-        ctx.put("WEBLOGCATEGORYNAME_KEY", RollerRequest.WEBLOGCATEGORYNAME_KEY);
-        ctx.put("WEBLOGCATEGORYID_KEY",   RollerRequest.WEBLOGENTRIES_KEY);
-        ctx.put("WEBLOGENTRIES_KEY",      RollerRequest.WEBLOGENTRIES_KEY);
-        ctx.put("WEBLOGDAY_KEY",          RollerRequest.WEBLOGDAY_KEY);
-        ctx.put("WEBLOGCOMMENTID_KEY",    RollerRequest.WEBLOGCOMMENTID_KEY);
+        ctx.put("USERNAME_KEY",           USERNAME_KEY);
+        ctx.put("WEBSITEID_KEY",          WEBSITEID_KEY);
+        ctx.put("FOLDERID_KEY",           FOLDERID_KEY);
+        ctx.put("NEWSFEEDID_KEY",         NEWSFEEDID_KEY);
+        ctx.put("PAGEID_KEY",             PAGEID_KEY);
+        ctx.put("PAGELINK_KEY",           PAGELINK_KEY);
+        ctx.put("ANCHOR_KEY",             ANCHOR_KEY);
+        ctx.put("EXCERPTS_KEY",           EXCERPTS_KEY);
+        ctx.put("BOOKMARKID_KEY",         BOOKMARKID_KEY);
+        ctx.put("REFERERID_KEY",          REFERERID_KEY);
+        ctx.put("WEBLOGENTRYID_KEY",      WEBLOGENTRYID_KEY);
+        ctx.put("WEBLOGCATEGORYNAME_KEY", WEBLOGCATEGORYNAME_KEY);
+        ctx.put("WEBLOGCATEGORYID_KEY",   WEBLOGENTRIES_KEY);
+        ctx.put("WEBLOGENTRIES_KEY",      WEBLOGENTRIES_KEY);
+        ctx.put("WEBLOGDAY_KEY",          WEBLOGDAY_KEY);
+        ctx.put("WEBLOGCOMMENTID_KEY",    WEBLOGCOMMENTID_KEY);
     }
     
     

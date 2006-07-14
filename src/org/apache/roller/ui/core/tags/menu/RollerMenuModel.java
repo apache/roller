@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerRequest;
 import org.xml.sax.SAXException;
 
 
@@ -142,17 +141,16 @@ public class RollerMenuModel extends BaseRollerMenu implements MenuModel {
     
     
     /** Create params based on incoming request */
-    static Hashtable createParams( HttpServletRequest req ) {
+    static Hashtable createParams(HttpServletRequest req) {
         Hashtable params = new Hashtable();
-        RollerRequest rreq = RollerRequest.getRollerRequest(req);
         try {
-            WebsiteData website = rreq.getWebsite();
+            WebsiteData website = getRequestedWeblog(req);
             BasePageModel pageModel = (BasePageModel)req.getAttribute("model");
             if (website == null && pageModel != null) {
                 website = pageModel.getWebsite();
             }
             if (website != null) {
-                params.put(RollerRequest.WEBLOG_KEY, website.getHandle());
+                params.put("weblog", website.getHandle());
             }
         } catch (Exception e) {
             mLogger.error("ERROR getting user in menu model", e);

@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 
 
@@ -46,7 +45,6 @@ public class EditorNavigationBarTag extends MenuTag {
         try {
             HttpServletRequest request =
                     (HttpServletRequest)pageContext.getRequest();
-            RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             if ( rollerSession.isGlobalAdminUser() ) {
                 return super.doEndTag(pw);

@@ -43,6 +43,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.RefererDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.ui.core.LanguageUtil;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
@@ -130,10 +131,10 @@ public class OldPageHelper {
     /** Build the URL for editing an WeblogEntry **/
     public String getEntryEditUrl(WeblogEntryDataWrapper entry) {
         Hashtable params = new Hashtable();
-        params.put( RollerRequest.WEBLOGENTRYID_KEY, entry.getId());
-        params.put( RollerRequest.ANCHOR_KEY,        entry.getAnchor());
+        params.put( RequestConstants.WEBLOGENTRY_ID, entry.getId());
+        params.put( RequestConstants.ANCHOR,        entry.getAnchor());
         if (mWebsite != null) {
-            params.put( RollerRequest.USERNAME_KEY,  mWebsite.getHandle());
+            params.put( RequestConstants.USERNAME,  mWebsite.getHandle());
         }
         try {
             return RequestUtils.computeURL( mPageContext,
@@ -154,8 +155,8 @@ public class OldPageHelper {
             if (mWebsite != null
                     && rollerSession.isUserAuthorizedToAdmin(mWebsite)) {
                 Hashtable params = new Hashtable();
-                params.put( RollerRequest.REFERERID_KEY, referer.getId());
-                params.put( RollerRequest.WEBLOG_KEY, mWebsite.getHandle());
+                params.put( RequestConstants.REFERRER_ID, referer.getId());
+                params.put( RequestConstants.WEBLOG, mWebsite.getHandle());
                 link = RequestUtils.computeURL( mPageContext,
                         "toggleLinkback", null, null, null, params,null,false);
                 
@@ -330,11 +331,11 @@ public class OldPageHelper {
             String path, String val1, String val2, Hashtable params) {
         if (useIds) {
             if (mFolder != null) {
-                params.put(RollerRequest.FOLDERID_KEY,
+                params.put(RequestConstants.FOLDER_ID,
                         mFolder.getId());
             }
             if (mWebsite != null) {
-                params.put(RollerRequest.WEBLOG_KEY, mWebsite.getHandle());
+                params.put(RequestConstants.WEBLOG, mWebsite.getHandle());
             }
         }
         

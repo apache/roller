@@ -15,7 +15,6 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<%@ page import="org.apache.roller.ui.core.RollerRequest"%>
 <%@ include file="/taglibs.jsp" %>
 <%
 BasePageModel pageModel = (BasePageModel)request.getAttribute("model");
@@ -78,7 +77,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
               <c:when test="${isEnabled[pingTarget.id]}">
                  <roller:link page="/roller-ui/authoring/pingSetup.do">
                      <roller:linkparam
-                        id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                        id="<%= RequestConstants.PINGTARGET_ID %>"
                         name="pingTarget" property="id" />
                      <roller:linkparam
                        id="weblog" value="<%= websiteHandle %>" />
@@ -90,7 +89,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
               <c:otherwise >
                  <roller:link page="/roller-ui/authoring/pingSetup.do">
                      <roller:linkparam
-                        id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                        id="<%= RequestConstants.PINGTARGET_ID %>"
                         name="pingTarget" property="id" />
                      <roller:linkparam
                        id="weblog" value="<%= websiteHandle %>" />
@@ -105,7 +104,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
             <td class="rollertable">
                  <roller:link page="/roller-ui/authoring/pingSetup.do">
                      <roller:linkparam
-                        id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                        id="<%= RequestConstants.PINGTARGET_ID %>"
                         name="pingTarget" property="id" />
                      <roller:linkparam
                        id="weblog" value="<%= websiteHandle %>" />
@@ -175,7 +174,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
                     <c:when test="${isEnabled[pingTarget.id]}">
                        <roller:link page="/roller-ui/authoring/pingSetup.do">
                            <roller:linkparam
-                             id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                             id="<%= RequestConstants.PINGTARGET_ID %>"
                              name="pingTarget" property="id" />
                            <roller:linkparam
                              id="method" value="disableSelected" />
@@ -187,7 +186,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
                     <c:otherwise >
                        <roller:link page="/roller-ui/authoring/pingSetup.do">
                            <roller:linkparam
-                              id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                              id="<%= RequestConstants.PINGTARGET_ID %>"
                               name="pingTarget" property="id" />
                            <roller:linkparam
                              id="method" value="enableSelected" />
@@ -202,7 +201,7 @@ String websiteHandle = pageModel.getWebsite().getHandle();
                   <td class="rollertable">
                      <roller:link page="/roller-ui/authoring/pingSetup.do">
                          <roller:linkparam
-                            id="<%= RollerRequest.PINGTARGETID_KEY %>"
+                            id="<%= RequestConstants.PINGTARGET_ID %>"
                             name="pingTarget" property="id" />
                          <roller:linkparam
                             id="method" value="pingSelectedNow" />

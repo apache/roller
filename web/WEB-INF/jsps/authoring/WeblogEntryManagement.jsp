@@ -159,7 +159,7 @@ WeblogEntryManagementAction.PageModel model =
         <td>
             <roller:link page="/roller-ui/authoring/weblog.do">
                 <roller:linkparam
-                    id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
+                    id="<%= RequestConstants.WEBLOGENTRY_ID %>"
                     name="post" property="id" />
                 <roller:linkparam id="method" value="edit" />
                 <fmt:message key="weblogEntryQuery.edit" />

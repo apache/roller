@@ -49,6 +49,7 @@ import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
@@ -318,7 +319,7 @@ public class PingSetupAction extends DispatchAction
     // Private helper to get ping target specified by request
     private PingTargetData select(RollerRequest rreq) throws RollerException
     {
-        String pingTargetId = rreq.getRequest().getParameter(RollerRequest.PINGTARGETID_KEY);
+        String pingTargetId = rreq.getRequest().getParameter(RequestConstants.PINGTARGET_ID);
         PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
         if (pingTargetId == null || pingTargetId.length() == 0)
         {

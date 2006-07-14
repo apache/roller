@@ -37,6 +37,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.FolderFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.cache.CacheManager;
 
 /**
@@ -71,7 +72,7 @@ public class FolderSaveAction extends Action
         else 
         {
             fd = new FolderData();
-            String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
+            String parentId = request.getParameter(RequestConstants.PARENT_ID);
             FolderData parent = bmgr.getFolder(parentId);
             website = parent.getWebsite();
             fd.setParent(parent);
@@ -98,7 +99,7 @@ public class FolderSaveAction extends Action
         if (null != fd.getParent()) 
         {
             request.setAttribute(
-               RollerRequest.FOLDERID_KEY, fd.getParent().getId());
+               RequestConstants.FOLDER_ID, fd.getParent().getId());
         }         
         return forward;
     }

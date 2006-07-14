@@ -17,7 +17,6 @@
 -->
 <%@ include file="/taglibs.jsp" %>
 <%@ page import="org.apache.roller.ui.authoring.struts.actions.WeblogEntryPageModel" %>
-<%@ page import="org.apache.roller.ui.core.RollerRequest" %>
 <%
 WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model");
 %>
@@ -61,7 +60,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
 <c:forEach var="post" items="${model.recentPendingEntries}">
     <span class="entryEditSidebarLink"><roller:link page="/roller-ui/authoring/weblog.do">
        <roller:linkparam
-           id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
+           id="<%= RequestConstants.WEBLOGENTRY_ID %>"
            name="post" property="id" />
            <roller:linkparam id="method" value="edit" />
            <img src='<c:url value="/images/table_error.png"/>' 
@@ -83,7 +82,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
 <c:forEach var="post" items="${model.recentDraftEntries}">
     <span class="entryEditSidebarLink"><roller:link page="/roller-ui/authoring/weblog.do">
        <roller:linkparam
-           id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
+           id="<%= RequestConstants.WEBLOGENTRY_ID %>"
            name="post" property="id" />
            <roller:linkparam id="method" value="edit" />
            <img src='<c:url value="/images/table_edit.png"/>' 
@@ -107,7 +106,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
 <c:forEach var="post" items="${model.recentPublishedEntries}">
     <span class="entryEditSidebarLink"><roller:link page="/roller-ui/authoring/weblog.do">
        <roller:linkparam
-           id="<%= RollerRequest.WEBLOGENTRYID_KEY %>"
+           id="<%= RequestConstants.WEBLOGENTRY_ID %>"
            name="post" property="id" />
            <roller:linkparam id="method" value="edit" />
            <img src='<c:url value="/images/table_edit.png"/>' 
