@@ -213,6 +213,10 @@ public abstract class BaseRollerMenu {
      * the selected weblog.
      * 
      * TODO 3.0: more simple/consistent method for conveying weblog state across requests
+     * 
+     * NOTE: even better would be to separate this into 2 versions, one for
+     *       the authoring/admin UI and one for rendering.  it doesn't make
+     *       sense for this strange intermixing to be happening.
      */
     protected static WebsiteData getRequestedWeblog(HttpServletRequest request) throws RollerException {
         WebsiteData weblog = null;
@@ -241,8 +245,11 @@ public abstract class BaseRollerMenu {
             weblog = roller.getUserManager().getWebsiteByHandle(handle);
         } else { 
             // check rendering system form of URL
-            WeblogPageRequest pageRequest = new WeblogPageRequest(request);
-            weblog = pageRequest.getWeblog();
+            // TODO: hack.  we expect the parsed request as an HttpRequest attr
+            WeblogPageRequest pageRequest = (WeblogPageRequest) request.getAttribute("pageRequest");
+            if(pageRequest != null) {
+                weblog = pageRequest.getWeblog();
+            }
         }
         return weblog;
     }  

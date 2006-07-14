@@ -275,6 +275,9 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
             
+            // special hack for menu tag
+            request.setAttribute("pageRequest", pageRequest);
+            
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);

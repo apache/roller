@@ -134,15 +134,16 @@ public class PreviewServlet extends HttpServlet {
         Map model = new HashMap();
         try {
             RollerContext rollerContext = RollerContext.getRollerContext();
+            PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
+                    this, request, response,"", true, 8192, true);
+            
+            // special hack for menu tag
+            request.setAttribute("pageRequest", previewRequest);
             
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
             initData.put("pageRequest", previewRequest);
-            
-            // page context for helpers which use jsp tags :/
-            PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", true, 8192, true);
             initData.put("pageContext", pageContext);
             
             // standard weblog models
