@@ -393,7 +393,7 @@ ${entry.permalink}
  * or anything around it.
  *#
 #macro( showSearchForm )
-    <form id="searchForm" method="get" action="${ctxPath}/search/${website.handle}"
+    <form id="searchForm" method="get" action="${website.URL}/search"
         style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
         <p>
           <input type="text" id="q" name="q" size="20"
