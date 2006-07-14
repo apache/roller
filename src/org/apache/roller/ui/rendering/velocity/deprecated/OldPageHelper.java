@@ -45,7 +45,6 @@ import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.ui.core.LanguageUtil;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.ui.core.tags.calendar.CalendarTag;
@@ -53,6 +52,7 @@ import org.apache.roller.ui.core.tags.menu.EditorNavigationBarTag;
 import org.apache.roller.ui.core.tags.menu.MenuTag;
 import org.apache.roller.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 /**
  * Provides assistance to VelociMacros, filling in where Velocity falls.
@@ -70,7 +70,7 @@ public class OldPageHelper {
     private Date mDate = null;
     private FolderData mFolder = null;
     private String mPageName = null;
-    
+    private WeblogPageRequest mPageRequest = null;
     
     /**
      * Initialize VelocityHelper, setting the variables it will be hiding from
@@ -83,12 +83,14 @@ public class OldPageHelper {
                       Date date,
                       FolderData folder,
                       String pageName,
-                      PageContext pageContext) throws RollerException {
+                      PageContext pageContext,
+                      WeblogPageRequest pageRequest) throws RollerException {
         
         // general request objects
         mRequest = request;
         mResponse = response;
         mPageContext = pageContext;
+        mPageRequest = pageRequest;
         
         // data that we'll be reusing
         mWebsite = website;
@@ -274,11 +276,9 @@ public class OldPageHelper {
             CalendarModel model = null;
             Date date = mDate;
             if ( big ) {
-                model = new BigWeblogCalendarModel(
-                        mRequest, response, cat);
+                model = new BigWeblogCalendarModel(mPageRequest, cat);
             } else {
-                model = new WeblogCalendarModel(
-                        mRequest, response, cat);
+                model = new WeblogCalendarModel(mPageRequest, cat);
             }
             
             // save model in JSP page context so CalendarTag can find it
@@ -289,7 +289,7 @@ public class OldPageHelper {
             calTag.setPageContext(mPageContext);
             calTag.setName("calendar");
             calTag.setModel("calendarModel");
-            calTag.setLocale(LanguageUtil.getViewLocale(mRequest));
+            calTag.setLocale(mPageRequest.getLocaleInstance());
             if ( big ) {
                 calTag.setClassSuffix("Big");
             }
