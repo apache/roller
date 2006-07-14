@@ -69,7 +69,7 @@
                 <h2>Search This Site</h2>
 
                 <form id="search" method="get" 
-                    action="$config.contextURL/search/$model.weblog.handle" style="margin: 0; padding: 0">
+                    action="$model.weblog.handle/search" style="margin: 0; padding: 0">
                     <fieldset>
                         <input type="text" id="q" name="q" size="15" class="text small"
                             maxlength="255" value="" 
