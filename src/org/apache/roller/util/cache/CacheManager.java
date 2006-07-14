@@ -375,26 +375,6 @@ public class CacheManager {
     
     
     /**
-     * Get the date of the last time the specified weblog was invalidated.
-     *
-     * There is some potential for a performance hit to do this lookup, but
-     * we assume that our WebsiteData objects are cached up the @$$ ;)
-     */
-    public static Date getLastExpiredDate(String weblogHandle) {
-        
-        try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData weblog = userMgr.getWebsiteByHandle(weblogHandle);
-            return weblog.getLastModified();
-        } catch (RollerException ex) {
-            log.error("Error setting last modified date", ex);
-        }
-        
-        return null;
-    }
-    
-    
-    /**
      * Compile stats from all registered handlers.
      *
      * This is basically a hacky version of instrumentation which is being
