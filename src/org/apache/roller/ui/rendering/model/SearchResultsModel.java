@@ -83,12 +83,6 @@ public class SearchResultsModel extends PageModel {
             throw new RollerException("expected searchRequest from init data");
         }
         
-        // we need to add a simple page request to make our parent happy
-        WeblogPageRequest pageRequest = new WeblogPageRequest();
-        pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
-        pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
-        initData.put("pageRequest", pageRequest);
-        
         // let parent initialize
         super.init(initData);
         

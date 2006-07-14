@@ -41,7 +41,7 @@ import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.Model;
 import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.ui.rendering.model.SearchResultsModel;
-import org.apache.roller.ui.rendering.util.InvalidRequestException;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.cache.CachedContent;
 
@@ -122,6 +122,13 @@ public class SearchServlet extends HttpServlet {
             initData.put("searchRequest", searchRequest);
             initData.put("pageContext", pageContext);
             
+            // we need to add a simple page request because the search
+            // results are rendered like a weblog page
+            WeblogPageRequest pageRequest = new WeblogPageRequest();
+            pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
+            pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
+            initData.put("pageRequest", pageRequest);
+        
             // default weblog models
             ModelLoader.loadSearchModels(model, initData);
             
@@ -138,7 +145,7 @@ public class SearchServlet extends HttpServlet {
             ModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
-            ModelLoader.loadOldModels(model, request, response, pageContext, searchRequest);
+            ModelLoader.loadOldModels(model, request, response, pageContext, pageRequest);
             
             // manually add search model again to support pre-3.0 weblogs
             Model searchModel = new SearchResultsModel();

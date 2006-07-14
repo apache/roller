@@ -123,7 +123,7 @@ public class ContextLoader {
             HttpServletRequest  request,
             HttpServletResponse response,
             PageContext pageContext,
-            WeblogRequest weblogRequest) throws RollerException {
+            WeblogPageRequest pageRequest) throws RollerException {
         
         mLogger.debug("setupContext( ctx = "+ctx+")");
         
@@ -139,93 +139,43 @@ public class ContextLoader {
         boolean isMonth = false;
         String locale = null;
         
-        // if this is a weblog page request then parse it out
-        WeblogPageRequest pageRequest = null;
-        try {
-            pageRequest = (WeblogPageRequest) weblogRequest;
-            
-            // lookup weblog
-            weblog = pageRequest.getWeblog();
-            
-            // lookup entry if specified
-            entry = pageRequest.getWeblogEntry();
-            
-            // lookup category if specified
-            category = pageRequest.getWeblogCategory();
-            
-            // lookup page if specified, otherwise lookup default
-            page = pageRequest.getWeblogPage();
-            if(page == null) {
-                page = weblog.getDefaultPage();
-            }
-            
-            // setup date, isDay, and isMonth
-            if(pageRequest.getWeblogDate() != null) {
-                
-                Date now = new Date();
-                if(pageRequest.getWeblogDate().length() == 8) {
-                    isDay = true;
-                    try {
-                        date = DateUtil.get8charDateFormat().parse(pageRequest.getWeblogDate());
-                        if(date.after(now)) {
-                            date = now;
-                        }
-                    } catch(Exception e) {
-                        // bleh
-                    }
-                } else if(pageRequest.getWeblogDate().length() == 6) {
-                    isMonth = true;
-                    try {
-                        date = DateUtil.get6charDateFormat().parse(pageRequest.getWeblogDate());
-                        if(date.after(now)) {
-                            date = now;
-                        }
-                    } catch(Exception e) {
-                        // bleh
-                    }
-                } else {
-                    isMonth = true;
-                }
-            }
-            
-            // setup locale
-            locale = pageRequest.getLocale();
-            
-        } catch(ClassCastException cce) {
-            // ignore, just means this isn't a page request
-        } catch(InvalidRequestException ire) {
-            // ignore, must not be a page request
-        } catch(RollerException re) {
-            throw re;
-        } catch(Exception e) {
-            throw new RollerException(e);
+        // get data from page request
+        locale = pageRequest.getLocale();
+        weblog = pageRequest.getWeblog();
+        entry = pageRequest.getWeblogEntry();
+        category = pageRequest.getWeblogCategory();
+        page = pageRequest.getWeblogPage();
+        if(page == null) {
+            page = weblog.getDefaultPage();
         }
         
-        // if not a page request then try search request
-        WeblogSearchRequest searchRequest = null;
-        if(pageRequest == null) try {
-            searchRequest = (WeblogSearchRequest) weblogRequest;
+        // setup date, isDay, and isMonth
+        if(pageRequest.getWeblogDate() != null) {
             
-            // lookup weblog
-            weblog = searchRequest.getWeblog();
-            
-            // lookup category if specified
-            category = searchRequest.getWeblogCategory();
-            
-            // lookup page if specified, otherwise lookup default
-            page = weblog.getDefaultPage();
-            
-            // setup locale
-            locale = searchRequest.getLocale();
-            
-        } catch(ClassCastException cce) {
-            // ignore, just means this isn't a search request
-        } catch(InvalidRequestException ire) {
-            // ignore, must not be a search request
-        } catch(RollerException re) {
-            throw re;
-        } catch(Exception e) {
-            throw new RollerException(e);
+            Date now = new Date();
+            if(pageRequest.getWeblogDate().length() == 8) {
+                isDay = true;
+                try {
+                    date = DateUtil.get8charDateFormat().parse(pageRequest.getWeblogDate());
+                    if(date.after(now)) {
+                        date = now;
+                    }
+                } catch(Exception e) {
+                    // bleh
+                }
+            } else if(pageRequest.getWeblogDate().length() == 6) {
+                isMonth = true;
+                try {
+                    date = DateUtil.get6charDateFormat().parse(pageRequest.getWeblogDate());
+                    if(date.after(now)) {
+                        date = now;
+                    }
+                } catch(Exception e) {
+                    // bleh
+                }
+            } else {
+                isMonth = true;
+            }
         }
         
         try {

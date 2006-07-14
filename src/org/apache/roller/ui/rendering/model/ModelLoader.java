@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.rendering.util.WeblogRequest;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
 import org.apache.roller.util.Utilities;
 
@@ -77,13 +77,13 @@ public class ModelLoader {
             HttpServletRequest  request,
             HttpServletResponse response,
             PageContext pageContext,
-            WeblogRequest weblogRequest) throws RollerException {
+            WeblogPageRequest pageRequest) throws RollerException {
         
         // Only load old model if it's specified
         String useOldModel = 
             RollerConfig.getProperty("velocity.pagemodel.classname");        
         if (useOldModel != null && useOldModel.trim().length() > 0) { 
-            ContextLoader.setupContext(model, request, response, pageContext, weblogRequest);            
+            ContextLoader.setupContext(model, request, response, pageContext, pageRequest);            
         }
     }
     
