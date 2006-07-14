@@ -64,6 +64,9 @@ public class SearchResultsModel extends PageModel {
     // the actual search results mapped by Day -> Set of entries
     private TreeMap results = new TreeMap(new ReverseComparator());
     
+    // the pager used by the 3.0+ rendering system
+    private SearchResultsPager pager = null;
+    
     private int hits = 0;
     private int offset = 0;
     private int limit = 0;
@@ -119,9 +122,15 @@ public class SearchResultsModel extends PageModel {
             // Convert the Hits into WeblogEntryData instances.
             convertHitsToEntries(hits);
         }
+        
+        // search completed, setup pager based on results
+        pager = new SearchResultsPager(searchRequest, results, (hits > (offset+limit)));
     }
     
-    // TODO 3.0: need to override page model methods here
+    // override page model and return search results pager
+    public WeblogEntriesPager getWeblogEntriesPager() {
+        return pager;
+    }
     
     private void convertHitsToEntries(Hits hits) throws RollerException {
         
