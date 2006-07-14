@@ -112,8 +112,11 @@ public class PageModel implements Model {
     /**
      * Get weblog entry being displayed or null if none specified by request.
      */
-    public WeblogEntryDataWrapper getWeblogEntry() {  
-        return WeblogEntryDataWrapper.wrap(pageRequest.getWeblogEntry());
+    public WeblogEntryDataWrapper getWeblogEntry() {
+        if(pageRequest.getWeblogEntry() != null) {
+            return WeblogEntryDataWrapper.wrap(pageRequest.getWeblogEntry());
+        }
+        return null;
     }
     
     
@@ -139,7 +142,10 @@ public class PageModel implements Model {
      * found in the request does not exist in the current weblog.
      */
     public WeblogCategoryDataWrapper getWeblogCategory() {
-        return WeblogCategoryDataWrapper.wrap(pageRequest.getWeblogCategory());
+        if(pageRequest.getWeblogCategory() != null) {
+            return WeblogCategoryDataWrapper.wrap(pageRequest.getWeblogCategory());
+        }
+        return null;
     }
     
     
@@ -219,6 +225,5 @@ public class PageModel implements Model {
         }
         return commentWrapper;
     }
+    
 }
-
-
