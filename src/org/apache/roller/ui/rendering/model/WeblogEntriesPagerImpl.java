@@ -229,7 +229,6 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
      */
     class SingleEntryMode implements WeblogEntriesPager {
         String nextLink = null;
-        WeblogEntryData entry = null;
         WeblogEntryData nextEntry = null;
         WeblogEntryData prevEntry = null;
         
