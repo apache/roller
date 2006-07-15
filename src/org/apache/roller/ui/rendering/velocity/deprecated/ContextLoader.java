@@ -440,11 +440,11 @@ public class ContextLoader {
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
             url = OldUtilities.escapeHTML(website.getAbsoluteURL());
         } else {
-            url= OldUtilities.escapeHTML(rollerCtx.getAbsoluteContextUrl(request));
+            url= OldUtilities.escapeHTML(RollerRuntimeConfig.getAbsoluteContextURL());
         }
         ctx.put("websiteURL", url);
-        ctx.put("baseURL",    rollerCtx.getContextUrl( request ) );
-        ctx.put("absBaseURL", rollerCtx.getAbsoluteContextUrl( request ) );
+        ctx.put("baseURL",    RollerRuntimeConfig.getRelativeContextURL() );
+        ctx.put("absBaseURL", RollerRuntimeConfig.getAbsoluteContextURL() );
         ctx.put("ctxPath",    request.getContextPath() );
         ctx.put("uploadPath", ContextLoader.figureResourcePath());
         

@@ -31,11 +31,11 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.Model;
@@ -112,7 +112,6 @@ public class SearchServlet extends HttpServlet {
         // looks like we need to render content
         Map model = new HashMap();
         try {
-            RollerContext rollerContext = RollerContext.getRollerContext();
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
             
@@ -133,7 +132,7 @@ public class SearchServlet extends HttpServlet {
             ModelLoader.loadSearchModels(model, initData);
             
             // special site wide models
-            if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
+            if (RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 ModelLoader.loadSiteModels(model, initData);
             }
             

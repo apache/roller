@@ -27,7 +27,7 @@ if (handle != null) {
     Roller roller = RollerFactory.getRoller();
     website = roller.getUserManager().getWebsiteByHandle(handle);
 }
-String absURL = rctx.getAbsoluteContextUrl(request);
+String absURL = RollerRuntimeConfig.getAbsoluteContextURL();
 boolean allowNewUsers = RollerRuntimeConfig.getBooleanProperty("users.registration.enabled");
 String customRegUrl = RollerRuntimeConfig.getProperty("users.registration.url");
 if(customRegUrl != null && customRegUrl.trim().equals(""))

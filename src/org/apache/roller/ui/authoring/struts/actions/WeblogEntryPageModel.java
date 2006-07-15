@@ -28,17 +28,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.ui.authoring.struts.actions.WeblogEntryPageModel.PageMode;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.commons.lang.StringUtils;
@@ -47,9 +44,9 @@ import org.apache.commons.lang.StringUtils;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
-import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
 
 /**
  * All data needed to render the edit-weblog page.
@@ -287,9 +284,7 @@ null,                 0, 20);
     
     public String getPermaLink() throws RollerException
     {
-        String context = RollerContext
-            .getRollerContext()
-            .getAbsoluteContextUrl(rollerRequest.getRequest());
+        String context = RollerRuntimeConfig.getAbsoluteContextURL();
         return context + getWeblogEntry().getPermaLink();
     }
     

@@ -17,7 +17,6 @@
  */
 package org.apache.roller.webservices.adminapi;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.Document;
-import org.jdom.JDOMException;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.UserManager;
@@ -305,7 +303,7 @@ class RollerWeblogHandler extends Handler {
         we.setEmailAddress(wd.getEmailAddress());
         we.setDateCreated(wd.getDateCreated());
         try {
-            AppUrl appUrl = new AppUrl(getRollerContext().getAbsoluteContextUrl(getRequest()), wd.getHandle());
+            AppUrl appUrl = new AppUrl(RollerRuntimeConfig.getAbsoluteContextURL(), wd.getHandle());
             we.setAppEntriesUrl(appUrl.getEntryUrl().toString());
             we.setAppResourcesUrl(appUrl.getResourceUrl().toString());
         } catch (MalformedURLException mfue) {

@@ -45,8 +45,9 @@ public class RollerRuntimeConfig {
     private static String runtime_config = "/rollerRuntimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
     
-    // for properties that we are storing locally which aren't persisted
-    private static Properties localConfig = new Properties();
+    // special case for our context urls
+    private static String relativeContextURL = null;
+    private static String absoluteContextURL = null;
     
     
     // prevent instantiations
@@ -61,24 +62,15 @@ public class RollerRuntimeConfig {
         
         String value = null;
         
-        // try local config first
-        value = localConfig.getProperty(name);
-        
-        // next try db
-        // i don't like this special case for the absoluteurl, but right now
-        // i can't seem to see a better way.  at some point we should come
-        // back to this and see if there is a cleaner way to handle this  -- AG
-        if(value == null || "site.absoluteurl".equals(name)) {
-            try {
-                PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
-                value = pmgr.getProperty(name).getValue();
-            } catch(Exception e) {
-                log.warn("Trouble accessing property: "+name, e);
-            }
+        try {
+            PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+            value = pmgr.getProperty(name).getValue();
+        } catch(Exception e) {
+            log.warn("Trouble accessing property: "+name, e);
         }
         
         log.debug("fetched property ["+name+"="+value+"]");
-        
+
         return value;
     }
     
@@ -177,30 +169,71 @@ public class RollerRuntimeConfig {
     
     
     /**
-     * Set the "site.absoluteurl" property locally.
-     *
-     * Local properties are a kind of bastardized attempt to maintain some
-     * properties which can only be determined at runtime but which should
-     * not be persisted.
+     * Special method which sets the non-persisted absolute url to this site.
      *
      * This property is *not* persisted in any way.
      */
-    public static void setAbsoluteContextPath(String path) {
-        localConfig.setProperty("site.absoluteurl", path);
+    public static void setAbsoluteContextURL(String url) {
+        absoluteContextURL = url;
     }
     
     
     /**
-     * Set the "site.relativeurl" property locally.
+     * Get the absolute url to this site.
      *
-     * Local properties are a kind of bastardized attempt to maintain some
-     * properties which can only be determined at runtime but which should
-     * not be persisted.
+     * This method will just return the value of the "site.absoluteurl"
+     * property if it is set, otherwise it will return the non-persisted
+     * value which is set by the InitFilter.
+     */
+    public static String getAbsoluteContextURL() {
+        
+        // db prop takes priority if it exists
+        String absURL = getProperty("site.absoluteurl");
+        if(absURL != null && absURL.trim().length() > 0) {
+            return absURL;
+        }
+        
+        return absoluteContextURL;
+    }
+    
+    
+    /**
+     * Special method which sets the non-persisted relative url to this site.
      *
      * This property is *not* persisted in any way.
      */
-    public static void setRelativeContextPath(String path) {
-        localConfig.setProperty("site.relativeurl", path);
+    public static void setRelativeContextURL(String url) {
+        relativeContextURL = url;
+    }
+    
+    
+    public static String getRelativeContextURL() {
+        return relativeContextURL;
+    }
+    
+    
+    /**
+     * Convenience method for Roller classes trying to determine if a given
+     * weblog handle represents the front page blog.
+     */
+    public static boolean isFrontPageWeblog(String weblogHandle) {
+        
+        String frontPageHandle = getProperty("site.frontpage.weblog.handle");
+        
+        return (frontPageHandle.equals(weblogHandle));
+    }
+    
+    
+    /**
+     * Convenience method for Roller classes trying to determine if a given
+     * weblog handle represents the front page blog configured to render
+     * site-wide data.
+     */
+    public static boolean isSiteWideWeblog(String weblogHandle) {
+        
+        boolean siteWide = getBooleanProperty("site.frontpage.weblog.aggregated");
+        
+        return (isFrontPageWeblog(weblogHandle) && siteWide);
     }
     
 }

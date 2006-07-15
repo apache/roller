@@ -34,6 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.BookmarkData;
@@ -189,10 +190,8 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         HashMap model = new HashMap();
         String pageId = null;
         try {
-            RollerContext rollerContext = RollerContext.getRollerContext();
-            
             // determine what template to render with
-            if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
+            if (RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 pageId = "templates/feeds/site-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
             } else {
                 pageId = "templates/feeds/weblog-"+feedRequest.getType()+"-"+feedRequest.getFormat()+".vm";
@@ -207,7 +206,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             ModelLoader.loadFeedModels(model, initData);
             
             // special handling for site wide feed
-            if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
+            if (RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 ModelLoader.loadSiteModels(model, initData);
             }
             

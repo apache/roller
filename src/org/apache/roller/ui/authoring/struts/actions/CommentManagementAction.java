@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
@@ -227,7 +228,7 @@ public final class CommentManagementAction extends DispatchAction {
         HttpServletRequest req, List comments) throws RollerException {
         
         RollerContext rc = RollerContext.getRollerContext();                             
-        String rootURL = rc.getAbsoluteContextUrl(req);
+        String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
         try {
             if (rootURL == null || rootURL.trim().length()==0) {
                 rootURL = RequestUtils.serverURL(req) + req.getContextPath();

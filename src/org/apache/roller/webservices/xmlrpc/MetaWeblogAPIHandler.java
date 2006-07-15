@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.FileManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
@@ -444,7 +445,7 @@ null,                     0, numposts);
         HttpServletRequest request = rreq.getRequest();
         RollerContext rollerCtx = RollerContext.getRollerContext();
         String permalink =
-                rollerCtx.getAbsoluteContextUrl(request) + entry.getPermaLink();
+                RollerRuntimeConfig.getAbsoluteContextURL() + entry.getPermaLink();
         
         Hashtable struct = new Hashtable();
         struct.put("title", entry.getTitle());
@@ -473,7 +474,7 @@ null,                     0, numposts);
         
         RollerRequest rreq = RollerRequest.getRollerRequest();
         HttpServletRequest req = rreq.getRequest();
-        String contextUrl = RollerContext.getRollerContext().getAbsoluteContextUrl(req);
+        String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         
         Hashtable struct = new Hashtable();
         struct.put("description", category.getPath());

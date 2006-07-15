@@ -17,7 +17,6 @@
 */
 package org.apache.roller.ui.authoring.struts.actions;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -25,8 +24,6 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,6 +40,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
@@ -232,7 +230,7 @@ public class InviteMemberAction extends DispatchAction
                 
                 // Figure URL to entry edit page
                 RollerContext rc = RollerContext.getRollerContext();
-                String rootURL = rc.getAbsoluteContextUrl(request);
+                String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
                 if (rootURL == null || rootURL.trim().length()==0)
                 {
                     rootURL = RequestUtils.serverURL(request) 

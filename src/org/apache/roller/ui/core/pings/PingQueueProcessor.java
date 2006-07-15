@@ -32,6 +32,7 @@ import org.apache.roller.ui.core.RollerContext;
 
 import java.util.Iterator;
 import java.util.List;
+import org.apache.roller.config.RollerRuntimeConfig;
 
 /**
  * Ping Queue Processor.  Singleton encapsulating logic for processing the weblog update ping queue.
@@ -88,7 +89,7 @@ public class PingQueueProcessor
             return;
         }
 
-        String absoluteContextUrl = rollerContext.getAbsoluteContextUrl();
+        String absoluteContextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         if (absoluteContextUrl == null)
         {
             logger.warn("WARNING: Skipping current ping queue processing round because we cannot yet determine the site's absolute context url.");

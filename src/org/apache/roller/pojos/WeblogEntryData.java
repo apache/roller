@@ -752,7 +752,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getPermalink() {
-        String absPath = RollerRuntimeConfig.getProperty("site.absoluteurl");
+        String absPath = RollerRuntimeConfig.getAbsoluteContextURL();
         return absPath + getPermaLink();       
     }
     
@@ -792,7 +792,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getCommentLink() {
-        String absPath = RollerRuntimeConfig.getProperty("site.absoluteurl");
+        String absPath = RollerRuntimeConfig.getAbsoluteContextURL();
         return absPath + getCommentsLink(); 
     }
     /** to please XDoclet */

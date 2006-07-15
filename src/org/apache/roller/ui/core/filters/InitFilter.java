@@ -59,8 +59,8 @@ public class InitFilter implements Filter {
             String absPath = this.getAbsoluteUrl(request);
             
             // set them in our config
-            RollerRuntimeConfig.setAbsoluteContextPath(absPath);
-            RollerRuntimeConfig.setRelativeContextPath(relPath);
+            RollerRuntimeConfig.setAbsoluteContextURL(absPath);
+            RollerRuntimeConfig.setRelativeContextURL(relPath);
             
             log.debug("relPath = "+relPath);
             log.debug("absPath = "+absPath);

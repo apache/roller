@@ -1,25 +1,24 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.ui.core;
 
-
 import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +28,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.TimerTask;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
@@ -38,7 +36,6 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
-
 import org.acegisecurity.providers.ProviderManager;
 import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
@@ -66,6 +63,7 @@ import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
 
 /**
  * Responds to app init/destroy events and holds Roller instance.
@@ -441,65 +439,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         }
         return mAuthenticator;
     }
-       
-    /**
-     * Returns the full url for the website of the specified username.
-     */
-    public String getContextUrl(HttpServletRequest request, WebsiteData website) {
-        return website.getURL();
-    }       
-    
-    /** Get context path of Roller, drops trailing slash */
-    public String getContextUrl(HttpServletRequest request) {
-        String url = request.getContextPath();
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
-        }
-        return url;
-    }
-    
-    
-    /** Get absolute URL of Roller context */
-    public String getAbsoluteContextUrl(HttpServletRequest request) {
-        return RollerRuntimeConfig.getProperty("site.absoluteurl");
-    }
-    
-    
-    /**
-     * For use by MetaWeblog API.
-     *
-     * @return Context URL or null if not initialized yet.
-     */
-    public String getAbsoluteContextUrl() {
-        return RollerRuntimeConfig.getProperty("site.absoluteurl");
-    }
-    
-    
-    /**
-     * Convenience method for Roller classes trying to determine if a given
-     * weblog handle represents the front page blog.
-     */
-    public boolean isFrontPageWeblog(String weblogHandle) {
-        
-        String frontPageHandle = RollerRuntimeConfig.getProperty(
-                "site.frontpage.weblog.handle");
-        
-        return (frontPageHandle.equals(weblogHandle));
-    }
-    
-    
-    /**
-     * Convenience method for Roller classes trying to determine if a given
-     * weblog handle represents the front page blog configured to render
-     * site-wide data.
-     */
-    public boolean isSiteWideWeblog(String weblogHandle) {
-        
-        boolean siteWide = RollerRuntimeConfig.getBooleanProperty(
-                "site.frontpage.weblog.aggregated");
-        
-        return (isFrontPageWeblog(weblogHandle) && siteWide);
-    }
     
     
     public String createEntryPermalink(
@@ -510,9 +449,9 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         try {
             String baseUrl = null;
             if (absolute) {
-                baseUrl = getAbsoluteContextUrl(request);
+                baseUrl = RollerRuntimeConfig.getAbsoluteContextURL();
             } else {
-                baseUrl = getContextUrl(request);
+                baseUrl = RollerRuntimeConfig.getRelativeContextURL();
             }
             link = StringEscapeUtils.escapeHtml(baseUrl + entry.getPermaLink());
         } catch (Exception e) {

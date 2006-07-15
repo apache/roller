@@ -42,8 +42,7 @@ public class ConfigModel implements Model {
     
    private static Log log = LogFactory.getLog(ConfigModel.class); 
         
-    /** TODO 3.0: remove dependency on request and pageContext */
-    private HttpServletRequest request = null;
+    /** TODO 3.0: remove dependency on pageContext */
     private PageContext pageContext = null;
     
     /** Hand-picked list of runtime properties to be made available */
@@ -72,23 +71,21 @@ public class ConfigModel implements Model {
     }
     
     
-    /** Init page model based on request */
+    /** Init model */
     public void init(Map map) throws RollerException {
-        request = (HttpServletRequest)map.get("request");
         pageContext = (PageContext)map.get("pageContext");
     }
     
     
     /** Relative URL of Roller, e.g. /roller */
     public String getContextURL() {
-        // TODO 3.0: fix getContextUrl() to not require request object
-        return RollerContext.getRollerContext().getContextUrl(request);
+        return RollerRuntimeConfig.getRelativeContextURL();
     }
     
     
     /** Absolute URL of Roller, e.g. http://localhost:8080/roller */
     public String getAbsoluteContextURL() {
-        return RollerContext.getRollerContext().getAbsoluteContextUrl();
+        return RollerRuntimeConfig.getAbsoluteContextURL();
     }
     
     

@@ -95,7 +95,7 @@ public class ToggleLinkbackDisplayAction extends Action
             if (entry != null) {
                 url = rctx.createEntryPermalink(entry, req, true);
             } else {
-    			url = rctx.getContextUrl(req, rreq.getWebsite());
+    			url = rreq.getWebsite().getURL();
             }
             res.sendRedirect(url);
 		}

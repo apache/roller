@@ -173,7 +173,7 @@ public final class UploadFileFormAction extends DispatchAction {
             pageModel.setWebsite(website);
             
             RollerContext rctx = RollerContext.getRollerContext();
-		    String baseURL = rctx.getAbsoluteContextUrl(request);
+		    String baseURL = RollerRuntimeConfig.getAbsoluteContextURL();
             String resourcesBaseURL = baseURL + fmgr.getUploadUrl() + "/" + website.getHandle();
             Iterator uploads = lastUploads.iterator();
             if (uploads.hasNext()) {

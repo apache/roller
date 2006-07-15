@@ -31,10 +31,10 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
@@ -133,7 +133,6 @@ public class PreviewServlet extends HttpServlet {
         // looks like we need to render content
         Map model = new HashMap();
         try {
-            RollerContext rollerContext = RollerContext.getRollerContext();
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
             
@@ -150,7 +149,7 @@ public class PreviewServlet extends HttpServlet {
             ModelLoader.loadPageModels(model, initData);
             
             // special handling for site wide weblog
-            if (rollerContext.isSiteWideWeblog(tmpWebsite.getHandle())) {
+            if (RollerRuntimeConfig.isSiteWideWeblog(tmpWebsite.getHandle())) {
                 ModelLoader.loadSiteModels(model, initData);
             }
             
