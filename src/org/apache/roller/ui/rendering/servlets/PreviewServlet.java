@@ -72,7 +72,7 @@ public class PreviewServlet extends HttpServlet {
      * Handle GET requests for weblog pages.
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         
         log.debug("Entering");
         
@@ -84,7 +84,6 @@ public class PreviewServlet extends HttpServlet {
             
             // lookup weblog specified by preview request
             weblog = previewRequest.getWeblog();
-            
             if(weblog == null) {
                 throw new RollerException("unable to lookup weblog: "+
                         previewRequest.getWeblogHandle());

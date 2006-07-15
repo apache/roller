@@ -117,16 +117,14 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         
         log.debug("Entering");
         
-        WeblogFeedRequest feedRequest = null;
         WebsiteData weblog = null;
+        
+        WeblogFeedRequest feedRequest = null;
         try {
             // parse the incoming request and extract the relevant data
             feedRequest = new WeblogFeedRequest(request);
             
-            // lookup weblog specified by feed request
-            UserManager uMgr = RollerFactory.getRoller().getUserManager();
-            weblog = uMgr.getWebsiteByHandle(feedRequest.getWeblogHandle());
-            
+            weblog = feedRequest.getWeblog();
             if(weblog == null) {
                 throw new RollerException("unable to lookup weblog: "+
                         feedRequest.getWeblogHandle());
@@ -153,14 +151,11 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         
         // cached content checking
         String cacheKey = this.CACHE_ID+":"+this.generateKey(feedRequest);
-        
-        // we need the last expiration time for the given weblog
-        long lastExpiration = weblog.getLastModified().getTime();
-        
         LazyExpiringCacheEntry entry =
                 (LazyExpiringCacheEntry) this.contentCache.get(cacheKey);
         if(entry != null) {
-            CachedContent cachedContent = (CachedContent) entry.getValue(lastExpiration);
+            CachedContent cachedContent = 
+                    (CachedContent) entry.getValue(weblog.getLastModified().getTime());
             
             if(cachedContent != null) {
                 log.debug("HIT "+cacheKey);
