@@ -27,12 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.rendering.util.InvalidRequestException;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
@@ -110,9 +108,7 @@ public class RSDServlet extends HttpServlet {
         
         // populate the model
         model.put("website", weblog);
-        
-        RollerContext rollerContext = new RollerContext();
-        model.put("absBaseURL", rollerContext.getAbsoluteContextUrl(request));
+        model.put("absBaseURL", RollerRuntimeConfig.getAbsoluteContextURL());
 
         
         // lookup Renderer we are going to use

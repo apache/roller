@@ -53,7 +53,6 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.ui.rendering.util.CommentAuthenticator;
@@ -317,8 +316,7 @@ public class CommentServlet extends HttpServlet {
                 CacheManager.invalidate(comment);
                 
                 // Send email notifications
-                RollerContext rc = RollerContext.getRollerContext();
-                String rootURL = rc.getAbsoluteContextUrl(request);
+                String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
                 if (rootURL == null || rootURL.trim().length()==0) {
                     rootURL = RequestUtils.serverURL(request) + request.getContextPath();
                 }

@@ -77,6 +77,7 @@ import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.roller.util.MailUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.Utilities;
 
@@ -423,7 +424,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 
                 // Figure URL to entry edit page
                 RollerContext rc = RollerContext.getRollerContext();
-                String rootURL = rc.getAbsoluteContextUrl(request);
+                String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
                 if (rootURL == null || rootURL.trim().length()==0) {
                     rootURL = RequestUtils.serverURL(request)
                     + request.getContextPath();

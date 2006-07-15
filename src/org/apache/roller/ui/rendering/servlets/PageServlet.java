@@ -34,8 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.FolderData;
@@ -271,7 +270,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         // looks like we need to render content
         HashMap model = new HashMap();
         try {
-            RollerContext rollerContext = RollerContext.getRollerContext();
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", true, 8192, true);
             
@@ -288,7 +286,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             ModelLoader.loadPageModels(model, initData);
             
             // special handling for site wide weblog
-            if (rollerContext.isSiteWideWeblog(weblog.getHandle())) {
+            if (RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
                 ModelLoader.loadSiteModels(model, initData);
             }
             

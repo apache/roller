@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
@@ -42,7 +43,6 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
@@ -238,8 +238,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             
             RollerRequest rreq = RollerRequest.getRollerRequest();
             HttpServletRequest req = rreq.getRequest();
-            String contextUrl =
-                    RollerContext.getRollerContext().getAbsoluteContextUrl(req);
+            String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
             
             // populates user information to return as a result
             Hashtable result = new Hashtable();
@@ -281,8 +280,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             try {
                 RollerRequest rreq = RollerRequest.getRollerRequest();
                 HttpServletRequest req = rreq.getRequest();
-                String contextUrl =
-                        RollerContext.getRollerContext().getAbsoluteContextUrl(req);
+                String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
                 
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
                 UserData user = umgr.getUserByUserName(userid);

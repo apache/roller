@@ -42,6 +42,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.PingConfig;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.AutoPingManager;
 import org.apache.roller.model.PingTargetManager;
 import org.apache.roller.model.RollerFactory;
@@ -50,7 +51,6 @@ import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RequestConstants;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.core.pings.WeblogUpdatePinger;
@@ -244,7 +244,7 @@ public class PingSetupAction extends DispatchAction
         try
         {
             RollerRequest rreq = RollerRequest.getRollerRequest(req);
-            String absoluteUrl = RollerContext.getRollerContext().getAbsoluteContextUrl(req);
+            String absoluteUrl = RollerRuntimeConfig.getAbsoluteContextURL();
             PingTargetData pingTarget = select(rreq);
             WebsiteData website = rreq.getWebsite();
             try

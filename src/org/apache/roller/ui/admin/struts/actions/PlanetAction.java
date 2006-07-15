@@ -60,7 +60,7 @@ public class PlanetAction extends Action {
         RollerContext rctx = RollerContext.getRollerContext();
         req.setAttribute("version",rctx.getRollerVersion());
         req.setAttribute("buildTime",rctx.getRollerBuildTime());
-        req.setAttribute("baseURL", rctx.getContextUrl(req));
+        req.setAttribute("baseURL", RollerRuntimeConfig.getRelativeContextURL());
         req.setAttribute("data", new PlanetPageData(req));
         
         boolean allowNewUsers =

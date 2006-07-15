@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.roller.config.RollerRuntimeConfig;
 
 import org.apache.struts.action.ActionMapping;
 import org.apache.roller.pojos.WebsiteData;
@@ -80,8 +81,7 @@ public class BasePageModel
     
     public String getBaseURL()
     {
-        RollerContext rctx = RollerContext.getRollerContext();
-		return rctx.getAbsoluteContextUrl(request);
+        return RollerRuntimeConfig.getAbsoluteContextURL();
 	}
 
     public String getShortDateFormat()

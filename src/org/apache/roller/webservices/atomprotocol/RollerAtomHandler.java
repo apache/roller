@@ -53,6 +53,7 @@ import com.sun.syndication.feed.atom.Person;
 import javax.activation.FileTypeMap;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -132,7 +133,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public AtomService getIntrospection(String[] pathInfo) throws Exception {
         if (pathInfo.length == 0) {
-            String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
+            String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
             AtomService service = new AtomService();
             List perms = mRoller.getUserManager().getAllPermissions(user);
             if (perms != null) {
@@ -197,7 +198,7 @@ public class RollerAtomHandler implements AtomHandler {
     public Feed getCollectionOfEntries(
             String[] pathInfo, int start, int max) throws Exception {
         String handle = pathInfo[0];
-        String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
+        String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         List entries = null;
         if (canView(website)) {
@@ -249,7 +250,7 @@ null,                     start,             // offset (for range paging)
     public Feed getCollectionOfResources(
             String[] pathInfo, int start, int max) throws Exception {
         String handle = pathInfo[0];
-        String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
+        String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
         FileManager fmgr = mRoller.getFileManager();
         File[] files = fmgr.getFiles(website.getHandle());
@@ -704,7 +705,7 @@ null,                     start,             // offset (for range paging)
         List contents = new ArrayList();
         contents.add(content);
         
-        String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
+        String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         atomEntry.setId(        absUrl + entry.getPermaLink());
         atomEntry.setTitle(     entry.getTitle());
         atomEntry.setContents(  contents);
@@ -749,7 +750,7 @@ null,                     start,             // offset (for range paging)
     }
     
     private Entry createAtomResourceEntry(WebsiteData website, File file) { 
-        String absUrl = mRollerContext.getAbsoluteContextUrl(mRequest);
+        String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         String editURI = absUrl
                 + "/app/" + website.getHandle()
                 + "/resource/" + file.getName();

@@ -27,11 +27,10 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
-
 
 /**
  * Converts ascii emoticons into HTML image tags.
@@ -81,7 +80,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     public synchronized void init(WebsiteData website, Map model) throws RollerException {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1) {
-            String baseURL = RollerContext.getRollerContext().getAbsoluteContextUrl(null);
+            String baseURL = RollerRuntimeConfig.getAbsoluteContextURL();
             
             Pattern[] tempP = new Pattern[SmileysPlugin.smileyDefs.size()];
             String[] tempS = new String[SmileysPlugin.smileyDefs.size()];

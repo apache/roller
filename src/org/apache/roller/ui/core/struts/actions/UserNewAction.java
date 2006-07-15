@@ -169,14 +169,14 @@ public class UserNewAction extends UserBaseAction {
             } else {
                 // User registered, so go to welcome page
                 // TODO 3.0: this weblogURL doesn't make any sense
-                String weblogURL = rollerContext.getAbsoluteContextUrl(request)
+                String weblogURL = RollerRuntimeConfig.getAbsoluteContextURL()
                 + "/page/"+ud.getUserName();
                 request.setAttribute("weblogURL",weblogURL);
-                String rssURL = rollerContext.getAbsoluteContextUrl(request)
+                String rssURL = RollerRuntimeConfig.getAbsoluteContextURL()
                 + "/rss/"+ud.getUserName();
                 request.setAttribute("rssURL",rssURL);
                 request.setAttribute("contextURL",
-                        rollerContext.getAbsoluteContextUrl(request));
+                        RollerRuntimeConfig.getAbsoluteContextURL());
                 return mapping.findForward("welcome.page");
             }
         } catch (RollerException e) {

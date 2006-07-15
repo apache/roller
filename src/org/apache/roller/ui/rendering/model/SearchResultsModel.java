@@ -32,6 +32,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.business.search.operations.SearchOperation;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.IndexManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
@@ -39,8 +40,6 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryWrapperComparator;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.DateUtil;
 
@@ -92,8 +91,7 @@ public class SearchResultsModel extends PageModel {
         SearchOperation search = new SearchOperation(indexMgr);
         search.setTerm(searchRequest.getQuery());
         
-        RollerContext rollerContext = RollerContext.getRollerContext();
-        if(rollerContext.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
+        if(RollerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
             this.websiteSpecificSearch = false;
         } else {
             search.setWebsiteHandle(searchRequest.getWeblogHandle());
