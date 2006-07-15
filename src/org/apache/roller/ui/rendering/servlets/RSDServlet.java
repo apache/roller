@@ -27,9 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.ui.rendering.Renderer;
@@ -70,17 +69,18 @@ public class RSDServlet extends HttpServlet {
         
         log.debug("Entering");
         
-        HashMap model = new HashMap();
         WebsiteData weblog = null;
-        WeblogRequest weblogRequest = null;
         
-        // first off lets parse the incoming request and validate it
+        WeblogRequest weblogRequest = null;
         try {
             weblogRequest = new WeblogRequest(request);
             
             // now make sure the specified weblog really exists
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            weblog = userMgr.getWebsiteByHandle(weblogRequest.getWeblogHandle(), Boolean.TRUE);
+            weblog = weblogRequest.getWeblog();
+            if(weblog == null) {
+                throw new RollerException("Unable to lookup weblog: "+
+                        weblogRequest.getWeblogHandle());
+            }
             
         } catch(Exception e) {
             // invalid rsd request format or weblog doesn't exist
@@ -107,6 +107,7 @@ public class RSDServlet extends HttpServlet {
         
         
         // populate the model
+        HashMap model = new HashMap();
         model.put("website", weblog);
         model.put("absBaseURL", RollerRuntimeConfig.getAbsoluteContextURL());
 
