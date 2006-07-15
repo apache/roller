@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.referrers.IncomingReferrer;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.config.RollerConfig;
@@ -116,8 +117,8 @@ public class RefererFilter implements Filter {
             RollerContext rctx = RollerContext.getRollerContext();
             
             // Base page URLs, with and without www.
-            String basePageUrlWWW =
-                    rctx.getAbsoluteContextUrl(request)+"/"+weblog.getHandle();
+            String basePageUrlWWW = 
+               RollerRuntimeConfig.getAbsoluteContextURL() + "/" + weblog.getHandle();
             String basePageUrl = basePageUrlWWW;
             if ( basePageUrlWWW.startsWith("http://www.") ) {
                 // chop off the http://www.
