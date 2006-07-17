@@ -130,13 +130,18 @@ public class WeblogRequest extends ParsedRequest {
         
         boolean isLocale = false;
         
-        // we only support 5 character locale strings, so check that first
-        if(potentialLocale != null && potentialLocale.length() == 5) {
+        // we only support 2 or 5 character locale strings, so check that first
+        if(potentialLocale != null && 
+                (potentialLocale.length() == 2 || potentialLocale.length() == 5)) {
             
             // now make sure that the format is proper ... e.g. "en_US"
             // we are not going to be picky about capitalization
             String[] langCountry = potentialLocale.split("_");
-            if(langCountry.length == 2 && 
+            if(langCountry.length == 1 && 
+                    langCountry[0] != null && langCountry[0].length() == 2) {
+                isLocale = true;
+                
+            } else if(langCountry.length == 2 && 
                     langCountry[0] != null && langCountry[0].length() == 2 && 
                     langCountry[1] != null && langCountry[1].length() == 2) {
                 
@@ -202,7 +207,9 @@ public class WeblogRequest extends ParsedRequest {
         
         if(localeInstance == null && locale != null) {
             String[] langCountry = locale.split("_");
-            if(langCountry.length == 2) {
+            if(langCountry.length == 1) {
+                localeInstance = new Locale(langCountry[0]);
+            } else if(langCountry.length == 2) {
                 localeInstance = new Locale(langCountry[0], langCountry[1]);
             }
         } else if(localeInstance == null) {

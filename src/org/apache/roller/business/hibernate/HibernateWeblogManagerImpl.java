@@ -316,7 +316,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
         
         if(locale != null) {
-            conjunction.add(Expression.eq("locale", locale));
+            conjunction.add(Expression.ilike("locale", locale, MatchMode.START));
         }
         
         try {
@@ -450,7 +450,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             }
             
             if (locale != null) {
-                criteria.add(Expression.eq("locale", locale));
+                criteria.add(Expression.ilike("locale", locale, MatchMode.START));
             }
             
             if (sortby != null && sortby.equals("updateTime")) {
