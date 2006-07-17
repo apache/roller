@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.util.cache;
 
@@ -50,7 +50,7 @@ import org.apache.roller.pojos.WeblogEntryData;
  */
 public class FuturePostingsInvalidationJob implements Job {
     
-    private static Log mLogger = LogFactory.getLog(FuturePostingsInvalidationJob.class);
+    private static Log log = LogFactory.getLog(FuturePostingsInvalidationJob.class);
     
     // inputs from the user
     private Map inputs = null;
@@ -63,7 +63,7 @@ public class FuturePostingsInvalidationJob implements Job {
     
     public void execute() {
         
-        mLogger.debug("starting");
+        log.debug("starting");
         
         // notify the cache manager of an invalidation
         if(nextExpirations != null) {
@@ -72,7 +72,7 @@ public class FuturePostingsInvalidationJob implements Job {
             while(entries.hasNext()) {
                 entry = (WeblogEntryData) entries.next();
                 
-                mLogger.debug("expiring "+entry.getAnchor());
+                log.debug("expiring "+entry.getAnchor());
                 
                 CacheManager.invalidate(entry);
             }
@@ -92,7 +92,7 @@ public class FuturePostingsInvalidationJob implements Job {
             cal.add(Calendar.MINUTE, this.peerTime);
             Date end = cal.getTime();
             
-            mLogger.debug("looking up entries between "+start+" and "+end);
+            log.debug("looking up entries between "+start+" and "+end);
             
             // get all published entries between start and end date
             expiringEntries = mgr.getWeblogEntries(null, null, start, end, null, 
@@ -101,10 +101,10 @@ public class FuturePostingsInvalidationJob implements Job {
             this.nextExpirations = expiringEntries;
             
         } catch(Exception e) {
-            mLogger.error(e);
+            log.error(e);
         }
         
-        mLogger.debug("finished");
+        log.debug("finished");
     }
     
     
@@ -122,7 +122,7 @@ public class FuturePostingsInvalidationJob implements Job {
             this.peerTime = pTime.intValue();
         }
         
-        mLogger.info("Peeking "+this.peerTime+" minutes into the future each pass");
+        log.info("Peeking "+this.peerTime+" minutes into the future each pass");
     }
     
 }

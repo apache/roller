@@ -312,6 +312,7 @@ public class MainPageCacheFilter implements Filter, CacheHandler {
                 RollerConfig.getBooleanProperty("cache.mainpage.excludeOwnerEditPages");
         
         Map cacheProps = new HashMap();
+        cacheProps.put("id", CACHE_ID);
         Enumeration allProps = RollerConfig.keys();
         String prop = null;
         while(allProps.hasMoreElements()) {

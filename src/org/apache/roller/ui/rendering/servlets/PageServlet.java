@@ -75,13 +75,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
     private boolean excludeOwnerPages = false;
     private Cache contentCache = null;
     
-    // for metrics
-    private double hits = 0;
-    private double misses = 0;
-    private double purges = 0;
-    private double skips = 0;
-    private Date startTime = new Date();
-    
     
     /**
      * Init method for this servlet
@@ -96,6 +89,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
                 RollerConfig.getBooleanProperty(this.CACHE_ID+".excludeOwnerEditPages");
         
         Map cacheProps = new HashMap();
+        cacheProps.put("id", CACHE_ID);
         Enumeration allProps = RollerConfig.keys();
         String prop = null;
         while(allProps.hasMoreElements()) {
@@ -178,7 +172,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
                 
                 if(cachedContent != null) {
                     log.debug("HIT "+cacheKey);
-                    this.hits++;
                     
                     response.setContentLength(cachedContent.getContent().length);
                     response.getOutputStream().write(cachedContent.getContent());
@@ -190,7 +183,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
                 
             } else {
                 log.debug("MISS "+cacheKey);
-                this.misses++;
             }
         }
 
@@ -356,7 +348,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             this.contentCache.put(cacheKey, new LazyExpiringCacheEntry(rendererOutput));
         } else {
             log.debug("SKIPPED "+cacheKey);
-            this.skips++;
         }
         
         log.debug("Exiting");
@@ -506,40 +497,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
      * A weblog template has changed.
      */
     public void invalidate(WeblogTemplate template) {
-    }
-    
-    
-    /**
-     * Clear the entire cache.
-     */
-    public void clear() {
-        log.info("Clearing cache");
-        this.contentCache.clear();
-        this.startTime = new Date();
-        this.hits = 0;
-        this.misses = 0;
-        this.purges = 0;
-        this.skips = 0;
-    }
-    
-    
-    public Map getStats() {
-        
-        Map stats = new HashMap();
-        stats.put("cacheType", this.contentCache.getClass().getName());
-        stats.put("startTime", this.startTime);
-        stats.put("hits", new Double(this.hits));
-        stats.put("misses", new Double(this.misses));
-        stats.put("purges", new Double(this.purges));
-        stats.put("skips", new Double(this.skips));
-        
-        // calculate efficiency
-        if((misses - purges) > 0) {
-            double efficiency = hits / (misses + hits);
-            stats.put("efficiency", new Double(efficiency * 100));
-        }
-        
-        return stats;
     }
     
 }
