@@ -71,6 +71,7 @@ public class PlanetCache implements CacheHandler {
     private PlanetCache() {
         
         Map cacheProps = new HashMap();
+        cacheProps.put("id", CACHE_ID);
         Enumeration allProps = RollerConfig.keys();
         String prop = null;
         while(allProps.hasMoreElements()) {

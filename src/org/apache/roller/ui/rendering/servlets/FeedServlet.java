@@ -64,7 +64,7 @@ import org.apache.roller.util.cache.LazyExpiringCacheEntry;
  * @web.servlet name="FeedServlet" load-on-startup="5"
  * @web.servlet-mapping url-pattern="/roller-ui/rendering/feed/*"
  */ 
-public class FeedServlet extends HttpServlet implements CacheHandler {
+public class FeedServlet extends HttpServlet {
     
     private static Log log = LogFactory.getLog(FeedServlet.class);
     
@@ -73,12 +73,6 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
     private static final String CACHE_ID = "cache.feed";
     
     private Cache contentCache = null;
-    
-    // for metrics
-    private double hits = 0;
-    private double misses = 0;
-    private double purges = 0;
-    private Date startTime = new Date();
     
     
     /**
@@ -91,6 +85,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         log.info("Initializing FeedServlet");
         
         Map cacheProps = new HashMap();
+        cacheProps.put("id", CACHE_ID);
         Enumeration allProps = RollerConfig.keys();
         String prop = null;
         while(allProps.hasMoreElements()) {
@@ -105,7 +100,7 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         
         log.info("Feed cache = "+cacheProps);
         
-        contentCache = CacheManager.constructCache(this, cacheProps);
+        contentCache = CacheManager.constructCache(null, cacheProps);
     }
     
     
@@ -159,7 +154,6 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             
             if(cachedContent != null) {
                 log.debug("HIT "+cacheKey);
-                this.hits++;
                 
                 response.setContentLength(cachedContent.getContent().length);
                 response.getOutputStream().write(cachedContent.getContent());
@@ -171,7 +165,6 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
             
         } else {
             log.debug("MISS "+cacheKey);
-            this.misses++;
         }
 
         // set content type
@@ -309,110 +302,6 @@ public class FeedServlet extends HttpServlet implements CacheHandler {
         }
         
         return key.toString();
-    }
-    
-    
-    /**
-     * A weblog entry has changed.
-     */
-    public void invalidate(WeblogEntryData entry) {
-        // ignored
-    }
-    
-    
-    /**
-     * A weblog has changed.
-     */
-    public void invalidate(WebsiteData website) {
-        // ignored
-    }
-    
-    
-    /**
-     * A bookmark has changed.
-     */
-    public void invalidate(BookmarkData bookmark) {
-        // ignored
-    }
-    
-    
-    /**
-     * A folder has changed.
-     */
-    public void invalidate(FolderData folder) {
-        // ignored
-    }
-    
-    
-    /**
-     * A comment has changed.
-     */
-    public void invalidate(CommentData comment) {
-        // ignored
-    }
-    
-    
-    /**
-     * A referer has changed.
-     */
-    public void invalidate(RefererData referer) {
-        // ignored
-    }
-    
-    
-    /**
-     * A user profile has changed.
-     */
-    public void invalidate(UserData user) {
-        // ignored
-    }
-    
-    
-    /**
-     * A category has changed.
-     */
-    public void invalidate(WeblogCategoryData category) {
-        // ignored
-    }
-    
-    
-    /**
-     * Clear the entire cache.
-     */
-    public void clear() {
-        log.info("Clearing cache");
-        this.contentCache.clear();
-        this.startTime = new Date();
-        this.hits = 0;
-        this.misses = 0;
-        this.purges = 0;
-    }
-    
-    
-    /**
-     * A weblog template has changed.
-     */
-    public void invalidate(WeblogTemplate template) {
-        // ignored
-    }
-    
-    
-    public Map getStats() {
-        
-        Map stats = new HashMap();
-        stats.put("cacheType", this.contentCache.getClass().getName());
-        stats.put("startTime", this.startTime);
-        stats.put("hits", new Double(this.hits));
-        stats.put("misses", new Double(this.misses));
-        stats.put("purges", new Double(this.purges));
-        
-        // calculate efficiency
-        if((misses - purges) > 0) {
-            double efficiency = hits / (misses + hits);
-            stats.put("efficiency", new Double(efficiency * 100));
-        }
-        
-        return stats;
     }
     
 }
