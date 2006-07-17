@@ -53,7 +53,6 @@ import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
 import org.apache.roller.ui.core.LanguageUtil;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
 import org.apache.roller.ui.rendering.util.InvalidRequestException;
