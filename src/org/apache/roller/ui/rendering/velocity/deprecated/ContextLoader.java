@@ -180,10 +180,11 @@ public class ContextLoader {
         try {
             // Add default page model object to context
             // TODO 3.0: what to do about old PlanetPageModel?
-            String pageModelClassName =
-                    RollerConfig.getProperty("velocity.pagemodel.classname");
-            Class pageModelClass = Class.forName(pageModelClassName);
-            OldWeblogPageModel pageModel = (OldWeblogPageModel)pageModelClass.newInstance();
+            //String pageModelClassName =
+            //        RollerConfig.getProperty("velocity.pagemodel.classname");
+            //Class pageModelClass = Class.forName(pageModelClassName);
+            //OldWeblogPageModel pageModel = (OldWeblogPageModel)pageModelClass.newInstance();
+            OldWeblogPageModel pageModel = new OldWeblogPageModel();
             pageModel.init(request,
                     weblog,
                     entry,
