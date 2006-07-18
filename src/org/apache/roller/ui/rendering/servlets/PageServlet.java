@@ -234,7 +234,14 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         
         // validation
         boolean invalid = false;
-        if(pageRequest.getWeblogAnchor() != null) {
+        if(pageRequest.getLocale() != null) {
+            
+            // locale view only allowed if weblog has enabled it
+            if(!pageRequest.getWeblog().isEnableMultiLang()) {
+                invalid = true;
+            }
+            
+        } else if(pageRequest.getWeblogAnchor() != null) {
             
             // permalink specified.  entry must exist and locale must match
             if(pageRequest.getWeblogEntry() == null) {
