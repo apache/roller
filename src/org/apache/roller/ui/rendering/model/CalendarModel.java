@@ -66,17 +66,17 @@ public class CalendarModel implements Model {
     }
     
     
-    public String showWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument) {        
-        return showWeblogCalendar(websiteWrapper, catArgument, false);
+    public String showWeblogEntryCalendar(WebsiteDataWrapper websiteWrapper, String catArgument) {        
+        return showWeblogEntryCalendar(websiteWrapper, catArgument, false);
     }
     
     
-    public String showWeblogCalendarBig(WebsiteDataWrapper websiteWrapper, String catArgument) { 
-        return showWeblogCalendar(websiteWrapper, catArgument, true);
+    public String showWeblogEntryCalendarBig(WebsiteDataWrapper websiteWrapper, String catArgument) { 
+        return showWeblogEntryCalendar(websiteWrapper, catArgument, true);
     }
     
     
-    private String showWeblogCalendar(WebsiteDataWrapper websiteWrapper, String catArgument, boolean big) {
+    private String showWeblogEntryCalendar(WebsiteDataWrapper websiteWrapper, String catArgument, boolean big) {
         
         if ("nil".equals(catArgument)) catArgument = null;        
         String ret = null;

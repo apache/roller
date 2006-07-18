@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.ui.rendering.Renderer;
+import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
@@ -37,7 +38,8 @@ public class VelocityRenderer implements Renderer {
     
     private String resourceId = null;
     private Template resourceTemplate = null;
-    
+    private Exception exception = null;  
+    private String exceptionSource = null;
     
     public VelocityRenderer(String resource) throws Exception {
         
@@ -48,8 +50,20 @@ public class VelocityRenderer implements Renderer {
         resourceTemplate = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
     }
     
+    /** Construct rendering for displaying exception */
+    public VelocityRenderer(Exception exception, String exceptionSource, String resource) throws Exception {
+        this(resource);        
+        this.exception = exception;
+        this.exceptionSource = exceptionSource;
+    }
+    
     
     public void render(Map model, Writer out) throws Exception {
+        
+        if (exception != null) {
+            renderException(model, out);
+            return;
+        }
         
         long startTime = System.currentTimeMillis();
         
@@ -64,5 +78,20 @@ public class VelocityRenderer implements Renderer {
         
         log.debug("Rendered ["+this.resourceId+"] in "+renderTime+" secs");
     }
+        
     
+    private void renderException(Map model, Writer out) throws Exception { 
+                
+        // add exception to Velocity Context and utils for formatting
+        Context ctx = new VelocityContext(model);
+        ctx.put("exception", exception);
+        ctx.put("exceptionSource", exceptionSource);
+        ctx.put("utils", new UtilitiesModel()); 
+        
+        // render output to Writer
+        resourceTemplate.merge(ctx, out);
+    }
+    
+    
+
 }

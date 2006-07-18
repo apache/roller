@@ -601,7 +601,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
                     for(int i=0; i < unwrapped.size(); i++) {
                         wrapped.add(i, 
                             WeblogEntryDataWrapper.wrap((WeblogEntryData)unwrapped.get(i)));
-                        if (++count < length) {
+                        if (count++ < length) {
                             entries.put(key, wrapped);
                         } else {
                             more = true;

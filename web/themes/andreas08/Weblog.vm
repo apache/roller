@@ -1,38 +1,31 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+#set($themeDir = "$config.contextURL/themes/andreas08")
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>$model.weblog.name | #if (!$model.weblogCategory && $model.weblogPage.name == "Weblog") $model.weblogPage.name #elseif ($model.weblogCategory && $page.Name == "Weblog") $model.weblogCategory.name Category #elseif ($model.weblogPage.name == "Weblog") $title #else $model.weblogPage.name #end</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Language" content="en" />
-    <base href="$config.absoluteContextURL/$model.weblog.handle">
-    #includePage("_css")
-    #showRSSAutodiscoveryLink()
-    #showRSDLink()
-    <script type="text/javascript" src="$config.contextURL/themes/scripts/roller.js"></script>
-    <script type="text/javascript" src="$config.contextURL/themes/andreas08/scripts/prototype.js"></script>
-    <script type="text/javascript" 
-        src="$config.contextURL/themes/andreas08/scripts/scriptaculous.js?load=effects"></script>
-    <script type="text/javascript" src="$config.contextURL/themes/andreas08/scripts/lightbox.js"></script>
-    <link rel="stylesheet" type="text/css" href="$config.contextURL/themes/andreas08/styles/lightbox.css" />
+    <base href="$model.weblog.URL"> 
+    #includeTemplate($model.weblog "_css")
+    #showAutodiscoveryLinks($model.weblog)
+    ## import Javascript used by Roller's built-in macros
+    <script type="text/javascript" src="$config.getContextURL()/theme/scripts/roller.js"></script>
+    <script type="text/javascript" src="$themeDir/scripts/prototype.js"></script>
+    <script type="text/javascript" src="$themeDir/scripts/scriptaculous.js?load=effects"></script>
+    <script type="text/javascript" src="$themeDir/scripts/lightbox.js"></script>
+    <link rel="stylesheet" type="text/css" href="$themeDir/styles/lightbox.css" />
 </head>
 
-#if( $model.weblogCategory )
-    #set( $chosenCat = $model.weblogCategory.name )
-    #set( $chosenCat = $stringUtils.replace($chosenCat, " ", "").toLowerCase() )
-    #set( $chosenCat = $stringUtils.replace($chosenCat, "/", "") )
-#end
-
-<body id="page-$model.weblogPage.name"#if($chosenCat) class="$chosenCat"#end>
+<body>
     
 <div id="page">  
 
     <div id="header" class="clearfix">
-        <h1><a href="$config.contextURL/$model.weblog.handle">$model.weblog.name</a></h1>
+        <h1><a href="$model.weblog.URL">$model.weblog.name</a></h1>
 
         <h2><!-- Short tagline goes here --></h2>
-        <div id="branding"></div>
+        <div id="branding">$model.weblog.description</div>
     </div>
 
     <div id="content" class="clearfix">
@@ -42,7 +35,6 @@
         <div class="next-previous">
         #showNextPrevControl($pager)
         </div>
-
         <div class="entries">
         #showWeblogEntriesPager($pager)
         </div>
@@ -55,16 +47,17 @@
         </div><!-- end main -->
 
         <div id="sub">
-            #showCssNavBar()
-            <div class="editorMenu">$menuModel.showEditorNavBar(true)</div>
+            #showPageLinksList($model.weblog)
+            <div class="editorMenu">#showAuthorMenu(true)</div>
             <div class="small box" id="description">
                 <div id="feed">
-                    <a href="$config.contextURL/rss/${website.handle}"><img class="rssbadge"
-                        src="$config.contextURL/themes/$theme/images/feed-icon-16x16.jpg" alt="Click me to subscribe" /></a>
+                    <a href="$model.weblog.URL/feeds/rss"><img class="rssbadge"
+                        src="$themeDir/images/feed-icon-16x16.jpg" 
+                        alt="Click me to subscribe" /></a>
                 </div>
                 $model.weblog.description
             </div>
-            <div class="small" id="calendar">$calendarModel.showWeblogCalendar($model.weblog, "nil")</div>
+            <div class="small" id="calendar">#showWeblogEntryCalendar($model.weblog "nil")</div>
             <div id="searchbar">
                 <h2>Search This Site</h2>
 
@@ -88,13 +81,13 @@
         <div id="nav">
             <div class="wrapper">
                 <h2 class="hide">Navigation</h2>
-                #showCategoryLinksList($model.weblog "nil")
+                #showWeblogCategoryLinksList($model.weblog "nil" false false)
             </div>
         </div>
     </div><!-- end content -->
 
     <div id="footer" class="clearfix">
-        <p>&copy; $model.weblog.creator.fullName | Design by <a href="http://andreasviklund.com">Andreas Viklund</a></p>
+        <p>Design by <a href="http://andreasviklund.com">Andreas Viklund</a></p>
     </div>
 
 </div><!-- end page -->

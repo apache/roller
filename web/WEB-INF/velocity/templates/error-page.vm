@@ -1,6 +1,17 @@
 <html>
 <body>
+
 <h1>Velocity template error</h1>
-ERROR message [$!displayException.getMessage()]
+
+<p><b>EXCEPTION</b>: [$!exception.getClass().getName()]</p>
+
+<p><b>EXCEPTION SOURCE</b>: [$exceptionSource]</p> 
+
+<p><b>EXCEPTION MESSAGE</b>:</p> 
+
+#if ($exception.getMessage())
+    $utils.autoformat($exception.getMessage())
+#end
+
 </body>
 </html>

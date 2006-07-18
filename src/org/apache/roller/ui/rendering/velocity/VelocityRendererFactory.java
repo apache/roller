@@ -20,6 +20,7 @@ package org.apache.roller.ui.rendering.velocity;
 
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererFactory;
+import org.apache.velocity.exception.ParseErrorException;
 
 
 /**
@@ -37,23 +38,38 @@ public class VelocityRendererFactory implements RendererFactory {
             return null;
         }
         
-        if("velocity".equals(rendererType)) {
+        if("velocity".equals(rendererType)) { 
             
             // standard velocity template
             try {
-                renderer = new VelocityRenderer(resourceId);
-            } catch(Exception e) {
+               renderer = new VelocityRenderer(resourceId);
+            } catch (ParseErrorException pe) {            
+                // Author needs to see parsing error so display error page
+                try {
+                    renderer = new VelocityRenderer(pe, resourceId, "templates/error-page.vm");
+                } catch (Throwable t) {
+                    throw new RuntimeException("ERROR displaying error page", t);
+                }
+            } catch(Exception ignored) {
                 // couldn't find the given resource, can't render
-            }
+            }            
+            
         } else if("velocityWeblogPage".equals(rendererType)) {
             
             // special case for velocity weblog page templates
             // needed because of the way we do the decorator stuff
             try {
                 renderer = new VelocityWeblogPageRenderer(resourceId);
-            } catch(Exception e) {
+            } catch (ParseErrorException pe) {            
+                // Author needs to see parsing error so display error page
+                try {
+                    renderer = new VelocityRenderer(pe, resourceId, "templates/error-page.vm");
+                } catch (Throwable t) {
+                    throw new RuntimeException("ERROR displaying error page", t);
+                }
+            } catch(Exception ignored) {
                 // couldn't find the given resource, can't render
-            }
+            }   
         }
         
         return renderer;
