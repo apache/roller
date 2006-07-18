@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.ThemeNotFoundException;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.model.BookmarkManager;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.ThemeManager;
@@ -330,6 +331,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /**
      * Get a list of all pages that are part of this website.
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.Template"
      */
     public List getPages() {
         
@@ -1133,6 +1135,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     }
     
     /**
+     * Returns categories under the default category of the weblog.
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
      */
     public List getWeblogCategories() {
@@ -1162,17 +1165,35 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
             }
             ret = category.getWeblogCategories();
         } catch (RollerException e) {
-            log.error("ERROR: fetching categories", e);
+            log.error("ERROR: fetching categories for path: " + categoryPath, e);
         }
         return ret;
     }
 
-
+    /**
+     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojos.WeblogCategoryData"
+     */
+    public WeblogCategoryData getWeblogCategory(String categoryPath) {
+        WeblogCategoryData category = null;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            if (categoryPath != null && !categoryPath.equals("nil")) {
+                category = wmgr.getWeblogCategoryByPath(this, null, categoryPath);
+            } else {
+                category = this.getDefaultCategory();
+            }
+        } catch (RollerException e) {
+            log.error("ERROR: fetching category at path: " + categoryPath, e);
+        }
+        return category;
+    }
+    
     /**
      * Get up to 100 most recent published entries in weblog.
      * @param cat Category path or null for no category restriction
      * @param length Max entries to return (1-100)
-     * @return List of WeblogEntryDataWrapper objects.
+     * @return List of weblog entry objects.
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryData"
      */
@@ -1183,7 +1204,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         if (length < 1) return recentEntries;
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List recent = wmgr.getWeblogEntries(
+            recentEntries = wmgr.getWeblogEntries(
                     this, 
                     null,       // user
                     null,       // startDate
@@ -1204,7 +1225,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     /**
      * Get up to 100 most recent approved and non-spam comments in weblog.
      * @param length Max entries to return (1-100)
-     * @return List of CommentDataWrapper objects.
+     * @return List of comment objects.
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.CommentData"
      */
@@ -1231,6 +1252,28 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         return recentComments;
     }
-    
+
+    /**
+     * Get bookmark folder by name.
+     * @param folderName Name or path of bookmark folder to be returned (null for root)
+     * @return Folder object requested.
+     *
+     * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojos.FolderData"
+     */
+    public FolderData getFolder(String folderName) {
+        FolderData ret = null;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            BookmarkManager bmgr = roller.getBookmarkManager();
+            if (folderName == null && folderName.equals("nil") && folderName.trim().equals("/")) {
+                return bmgr.getRootFolder(this);
+            } else {
+                return bmgr.getFolder(this, folderName);
+            }
+        } catch (RollerException re) {
+            log.error("ERROR: fetching folder for weblog", re);
+        }
+        return ret;
+    }
 }
 

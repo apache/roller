@@ -53,11 +53,11 @@ public class MenuModel implements Model {
     
     
     /**
-     * Call hybrid EditorNavBarTag to render editor navbar.
+     * Display author menu.
      * @param vertical True for vertical navbar.
      * @return String HTML for navbar.
      */
-    public String showEditorNavBar(boolean vertical) {
+    public String showAuthorMenu(boolean vertical) {
         EditorNavigationBarTag editorTag = new EditorNavigationBarTag();
         editorTag.setPageContext(pageContext);
         if ( vertical ) {

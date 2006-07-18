@@ -112,7 +112,7 @@ public class UtilitiesModel implements Model {
     
     //---------------------------------------------------- Authentication utils 
     
-    public boolean getUserAuthorizedToAuthor(WebsiteDataWrapper weblog) {
+    public boolean isUserAuthorizedToAuthor(WebsiteDataWrapper weblog) {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rses.getAuthenticatedUser() != null) {
@@ -124,7 +124,7 @@ public class UtilitiesModel implements Model {
         return false;
     }
     
-    public boolean getUserAuthorizedToAdmin(WebsiteDataWrapper weblog) {
+    public boolean isUserAuthorizedToAdmin(WebsiteDataWrapper weblog) {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rses.getAuthenticatedUser() != null) {
