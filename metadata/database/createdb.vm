@@ -109,7 +109,9 @@ create table website (
     commentmod           $BOOLEAN_SQL_TYPE_FALSE not null,
     displaycnt           integer default 15 not null,
     lastmodified         $TIMESTAMP_SQL_TYPE,
-    pagemodels           varchar(512) default null
+    pagemodels           varchar(512) default null,
+    enablemultilang   $BOOLEAN_SQL_TYPE_FALSE not null,
+    showalllangs      $BOOLEAN_SQL_TYPE_TRUE not null
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
