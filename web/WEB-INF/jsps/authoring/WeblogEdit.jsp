@@ -149,7 +149,22 @@ function publish() {
        <html:optionsCollection name="model" property="categories" value="id" label="path"  />
        </html:select>
     </td></tr>
-        
+    
+    <c:choose>
+        <c:when test="${model.weblog.enableMultiLang}">
+            <tr><td class="entryEditFormLabel">
+                <label for="locale"><fmt:message key="weblogEdit.locale" /></label>
+            </td><td>
+                <html:select property="locale" size="1" tabindex="5">
+                    <html:options collection="locales" property="value" labelProperty="label"/>
+                </html:select>
+            </td></tr>
+        </c:when>
+        <c:otherwise>
+            <html:hidden property="locale"/>
+        </c:otherwise>
+    </c:choose>
+    
     <tr>
         <td class="entryEditFormLabel">
             <label for="link"><fmt:message key="weblogEdit.pubTime" /></label>

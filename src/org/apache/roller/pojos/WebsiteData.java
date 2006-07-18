@@ -87,6 +87,9 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     private int     entryDisplayCount = 15;
     private Date    lastModified     = new Date();
     private String  pageModels       = new String();
+    private boolean enableMultiLang = false;
+    private boolean showAllLangs = true;
+    
     
     // Associated objects
     private UserData           creator = null; 
@@ -1037,6 +1040,44 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         this.lastModified = lastModified;
     }
   
+    
+    /**
+     * Is multi-language blog support enabled for this weblog?
+     *
+     * If false then urls with various locale restrictions should fail.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="enablemultilang" not-null="true"
+     */
+    public boolean isEnableMultiLang() {
+        return enableMultiLang;
+    }
+
+    public void setEnableMultiLang(boolean enableMultiLang) {
+        this.enableMultiLang = enableMultiLang;
+    }
+    
+    
+    /**
+     * Should the default weblog view show entries from all languages?
+     *
+     * If false then the default weblog view only shows entry from the
+     * default locale chosen for this weblog.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     * @ejb:persistent-field
+     * @hibernate.property column="showalllangs" not-null="true"
+     */
+    public boolean isShowAllLangs() {
+        return showAllLangs;
+    }
+
+    public void setShowAllLangs(boolean showAllLangs) {
+        this.showAllLangs = showAllLangs;
+    }
+    
+    
     /** 
      * @roller.wrapPojoMethod type="simple"
      */
@@ -1190,5 +1231,6 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         return recentComments;
     }
+    
 }
 

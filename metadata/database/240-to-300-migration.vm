@@ -1,0 +1,14 @@
+#** 
+240-to-300-migration.vm: Velocity template that generates vendor-specific database scripts 
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
+
+-- Roller 3.0 schema changes
+
+alter table website add column pagemodels varchar(512) default null;
+
+#addColumnNotNull("website" "enablemultilang" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
+#addColumnNotNull("website" "showalllangs" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
+
+alter table weblogentry add column locale varchar(20) default null;
