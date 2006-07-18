@@ -40,6 +40,12 @@ WebsiteFormAction.WebsitePageModel model =
 
 <table class="formtableNoDesc">
 
+    <%-- ***** General settings ***** --%>
+    
+    <tr>
+        <td colspan="3"><h2><fmt:message key="websiteSettings.generalSettings" /></h2></td>
+    </tr>
+    
     <tr>
         <td class="label"><fmt:message key="websiteSettings.websiteTitle" />
         <td class="field"><html:text property="name" size="40"/></input></td>
@@ -55,6 +61,48 @@ WebsiteFormAction.WebsitePageModel model =
     <tr>
         <td class="label"><fmt:message key="websiteSettings.emailAddress" />
         <td class="field"><html:text property="emailAddress" size="40"/></input></td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.editor" /></td>
+        <td class="field">
+            <html:select property="editorPage" size="1">
+                <html:options name="editorPagesList" />
+            </html:select></p>
+       </td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.active" /></td>
+        <td class="field"><html:checkbox property="active" /></input></td>
+        <td class="description"></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.entryDisplayCount" /></td>
+        <td class="field"><html:text property="entryDisplayCount" size="4"/></input></td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
+
+    
+    <%-- ***** Language/i18n settings ***** --%>
+    
+    
+    <tr>
+        <td colspan="3"><h2><fmt:message key="websiteSettings.languageSettings" /></h2></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.enableMultiLang" /></td>
+        <td class="field"><html:checkbox property="enableMultiLang" /></td>
+        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+    </tr>
+    
+    <tr>
+        <td class="label"><fmt:message key="websiteSettings.showAllLangs" /></td>
+        <td class="field"><html:checkbox property="showAllLangs" /></td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
     
@@ -78,30 +126,9 @@ WebsiteFormAction.WebsitePageModel model =
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
     
-    <tr>
-        <td class="label"><fmt:message key="websiteSettings.editor" /></td>
-        <td class="field">
-            <html:select property="editorPage" size="1">
-                <html:options name="editorPagesList" />
-            </html:select></p>
-       </td>
-        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><fmt:message key="websiteSettings.entryDisplayCount" /></td>
-        <td class="field"><html:text property="entryDisplayCount" size="4"/></input></td>
-        <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
-    </tr>
-
-    <tr>
-        <td class="label"><fmt:message key="websiteSettings.active" /></td>
-        <td class="field"><html:checkbox property="active" /></input></td>
-        <td class="description"></td>
-    </tr>
-
     
     <%-- ***** Comment settings ***** --%>
+    
     
     <tr>
         <td colspan="3"><h2><fmt:message key="websiteSettings.commentSettings" /></h2></td>

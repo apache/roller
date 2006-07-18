@@ -47,6 +47,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
+import org.apache.roller.pojos.WebsiteData;
 
 /**
  * All data needed to render the edit-weblog page.
@@ -107,6 +108,10 @@ public class WeblogEntryPageModel extends BasePageModel
         getRequest().setAttribute("leftPage","/weblog/WeblogEditSidebar.jsp");
     }
     
+    public WebsiteData getWeblog() {
+        return this.rollerRequest.getWebsite();
+    }
+            
     public String getTitle() 
     {
         if (StringUtils.isEmpty(form.getId()))
