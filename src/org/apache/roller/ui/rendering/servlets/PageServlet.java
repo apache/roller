@@ -20,7 +20,6 @@ package org.apache.roller.ui.rendering.servlets;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletConfig;
@@ -35,14 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.Template;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
@@ -51,29 +43,25 @@ import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.ModelLoader;
-import org.apache.roller.util.Utilities;
-import org.apache.roller.util.cache.Cache;
-import org.apache.roller.util.cache.CacheHandler;
-import org.apache.roller.util.cache.CacheManager;
-import org.apache.roller.util.cache.LazyExpiringCacheEntry;
+import org.apache.roller.ui.rendering.util.SiteWideCache;
+import org.apache.roller.ui.rendering.util.WeblogPageCache;
+
  
 
 /**
- * Responsible for rendering weblog pages.
+ * Provides access to weblog pages.
  *
  * @web.servlet name="PageServlet" load-on-startup="5"
  * @web.servlet-mapping url-pattern="/roller-ui/rendering/page/*"
  */
-public class PageServlet extends HttpServlet implements CacheHandler {
+public class PageServlet extends HttpServlet {
     
     private static Log log = LogFactory.getLog(PageServlet.class);
     
-    // a unique identifier for our cache, this is used as the prefix for
-    // roller config properties that apply to this cache
-    private static final String CACHE_ID = "cache.weblogpage";
-    
     private boolean excludeOwnerPages = false;
-    private Cache contentCache = null;
+    
+    private WeblogPageCache weblogPageCache = null;
+    private SiteWideCache siteWideCache = null;
     
     
     /**
@@ -86,25 +74,13 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         log.info("Initializing PageServlet");
         
         this.excludeOwnerPages = 
-                RollerConfig.getBooleanProperty(this.CACHE_ID+".excludeOwnerEditPages");
+                RollerConfig.getBooleanProperty("cache.excludeOwnerEditPages");
         
-        Map cacheProps = new HashMap();
-        cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = RollerConfig.keys();
-        String prop = null;
-        while(allProps.hasMoreElements()) {
-            prop = (String) allProps.nextElement();
-            
-            // we are only interested in props for this cache
-            if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        RollerConfig.getProperty(prop));
-            }
-        }
+        // get a reference to the weblog page cache
+        this.weblogPageCache = WeblogPageCache.getInstance();
         
-        log.info("Page cache = "+cacheProps);
-        
-        contentCache = CacheManager.constructCache(this, cacheProps);
+        // get a reference to the site wide cache
+        this.siteWideCache = SiteWideCache.getInstance();
     }
     
     
@@ -117,6 +93,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         log.debug("Entering");
         
         WebsiteData weblog = null;
+        boolean isSiteWide = false;
         
         WeblogPageRequest pageRequest = null;
         try {
@@ -127,6 +104,10 @@ public class PageServlet extends HttpServlet implements CacheHandler {
                 throw new RollerException("unable to lookup weblog: "+
                         pageRequest.getWeblogHandle());
             }
+            
+            // is this the site-wide weblog?
+            isSiteWide = RollerRuntimeConfig.isSiteWideWeblog(pageRequest.getWeblogHandle());
+            
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
             log.debug("error creating page request", e);
@@ -135,14 +116,25 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         }
         
         
+        // determine the lastModified date for this content
+        long lastModified = 0;
+        if(isSiteWide) {
+            lastModified = siteWideCache.getLastModified().getTime();
+        } else {
+            lastModified = weblog.getLastModified().getTime();
+        }
+        
         // 304 if-modified-since checking
         long sinceDate = request.getDateHeader("If-Modified-Since");
         log.debug("since date = "+sinceDate);
-        if(weblog.getLastModified().getTime() <= sinceDate) {
+        if(lastModified <= sinceDate) {
             log.debug("NOT MODIFIED "+request.getRequestURL());
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
+        
+        // set last-modified date
+        response.setDateHeader("Last-Modified", lastModified);
         
         
         // set the content type
@@ -155,31 +147,32 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             response.setContentType("text/html; charset=utf-8");
         }
         
-        // set last-modified date
-        response.setDateHeader("Last-Modified", weblog.getLastModified().getTime());
         
+        // generate cache key
+        String cacheKey = null;
+        if(isSiteWide) {
+            cacheKey = siteWideCache.generateKey(pageRequest);
+        } else {
+            cacheKey = weblogPageCache.generateKey(pageRequest);
+        }
         
         // cached content checking
-        String cacheKey = this.CACHE_ID+":"+this.generateKey(pageRequest);
         if((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) &&
                 request.getAttribute("skipCache") == null) {
             
-            LazyExpiringCacheEntry entry =
-                    (LazyExpiringCacheEntry) this.contentCache.get(cacheKey);
-            if(entry != null) {
-                CachedContent cachedContent = 
-                        (CachedContent) entry.getValue(weblog.getLastModified().getTime());
+            CachedContent cachedContent = null;
+            if(isSiteWide) {
+                cachedContent = (CachedContent) siteWideCache.get(cacheKey);
+            } else {
+                cachedContent = (CachedContent) weblogPageCache.get(cacheKey, lastModified);
+            }
+            
+            if(cachedContent != null) {
+                log.debug("HIT "+cacheKey);
                 
-                if(cachedContent != null) {
-                    log.debug("HIT "+cacheKey);
-                    
-                    response.setContentLength(cachedContent.getContent().length);
-                    response.getOutputStream().write(cachedContent.getContent());
-                    return;
-
-                } else {
-                    log.debug("HIT-EXPIRED "+cacheKey);
-                }
+                response.setContentLength(cachedContent.getContent().length);
+                response.getOutputStream().write(cachedContent.getContent());
+                return;
                 
             } else {
                 log.debug("MISS "+cacheKey);
@@ -285,7 +278,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             ModelLoader.loadPageModels(model, initData);
             
             // special handling for site wide weblog
-            if (RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+            if(isSiteWide) {
                 ModelLoader.loadSiteModels(model, initData);
             }
             
@@ -322,7 +315,7 @@ public class PageServlet extends HttpServlet implements CacheHandler {
             return;
         }
         
-        // render content.  use default size of about 24K for a standard page
+        // render content.  use size of about 24K for a standard page
         CachedContent rendererOutput = new CachedContent(24567);
         try {
             log.debug("Doing rendering");
@@ -352,7 +345,13 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         if((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) &&
                 request.getAttribute("skipCache") == null) {
             log.debug("PUT "+cacheKey);
-            this.contentCache.put(cacheKey, new LazyExpiringCacheEntry(rendererOutput));
+            
+            // put it in the right cache
+            if(isSiteWide) {
+                siteWideCache.put(cacheKey, rendererOutput);
+            } else {
+                weblogPageCache.put(cacheKey, rendererOutput);
+            }
         } else {
             log.debug("SKIPPED "+cacheKey);
         }
@@ -377,133 +376,6 @@ public class PageServlet extends HttpServlet implements CacheHandler {
         
         // handle just like a GET request
         this.doGet(request, response);
-    }
-    
-    
-    /**
-     * Generate a cache key from a parsed weblog page request.
-     * This generates a key of the form ...
-     *
-     * weblog/<handle>/page/<type>[/anchor]/<weblogPage>/<language>[/user]
-     *   or
-     * weblog/<handle>/page/<type>[/date][/category]/<weblogPage>/<language>[/user]
-     *
-     *
-     * examples ...
-     *
-     * weblog/foo/page/main/Weblog/en
-     * weblog/foo/page/permalink/entry_anchor/Weblog/en
-     * weblog/foo/page/archive/20051110/Weblog/en
-     * weblog/foo/page/archive/MyCategory/Weblog/en/user=myname
-     *
-     */
-    private String generateKey(WeblogPageRequest pageRequest) {
-        
-        StringBuffer key = new StringBuffer();
-        key.append("weblog/page/");
-        key.append(pageRequest.getWeblogHandle().toLowerCase());
-        key.append("/").append(pageRequest.getContext());
-        
-        if(pageRequest.getWeblogAnchor() != null) {
-            // convert to base64 because there can be spaces in anchors :/
-            key.append("/").append(Utilities.toBase64(pageRequest.getWeblogAnchor().getBytes()));
-        } else {
-            
-            if(pageRequest.getWeblogDate() != null) {
-                key.append("/").append(pageRequest.getWeblogDate());
-            }
-            
-            if(pageRequest.getWeblogCategoryName() != null) {
-                String cat = pageRequest.getWeblogCategoryName();
-                if(cat.startsWith("/")) {
-                    cat = cat.substring(1);
-                }
-
-                // categories may contain spaces, which is not desired
-                key.append("/").append(org.apache.commons.lang.StringUtils.deleteWhitespace(cat));
-            }
-        }
-        
-        // add page name
-        key.append("/").append(pageRequest.getWeblogPageName());
-        
-        // add locale
-        key.append("/").append(pageRequest.getLocale());
-        
-        // add page number when applicable
-        if(pageRequest.getWeblogAnchor() == null) {
-            key.append("/page=").append(pageRequest.getPageNum());
-        }
-        
-        // add login state
-        if(pageRequest.getAuthenticUser() != null) {
-            key.append("/user=").append(pageRequest.getAuthenticUser());
-        }
-        
-        return key.toString();
-    }
-    
-    
-    /**
-     * A weblog entry has changed.
-     */
-    public void invalidate(WeblogEntryData entry) {
-    }
-    
-    
-    /**
-     * A weblog has changed.
-     */
-    public void invalidate(WebsiteData website) {
-    }
-    
-    
-    /**
-     * A bookmark has changed.
-     */
-    public void invalidate(BookmarkData bookmark) {
-    }
-    
-    
-    /**
-     * A folder has changed.
-     */
-    public void invalidate(FolderData folder) {
-    }
-    
-    
-    /**
-     * A comment has changed.
-     */
-    public void invalidate(CommentData comment) {
-    }
-    
-    
-    /**
-     * A referer has changed.
-     */
-    public void invalidate(RefererData referer) {
-    }
-    
-    
-    /**
-     * A user profile has changed.
-     */
-    public void invalidate(UserData user) {
-    }
-    
-    
-    /**
-     * A category has changed.
-     */
-    public void invalidate(WeblogCategoryData category) {
-    }
-    
-    
-    /**
-     * A weblog template has changed.
-     */
-    public void invalidate(WeblogTemplate template) {
     }
     
 }

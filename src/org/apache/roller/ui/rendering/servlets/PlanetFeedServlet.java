@@ -95,7 +95,7 @@ public class PlanetFeedServlet extends HttpServlet {
         }
         
         // figure planet last modified date
-        Date lastModified = planetCache.lastModified();
+        Date lastModified = planetCache.getLastModified();
         
         // 304 if-modified-since checking
         long sinceDate = request.getDateHeader("If-Modified-Since");

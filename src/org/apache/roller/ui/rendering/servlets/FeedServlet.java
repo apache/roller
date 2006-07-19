@@ -21,8 +21,6 @@ package org.apache.roller.ui.rendering.servlets;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletConfig;
@@ -33,29 +31,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.RefererData;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.ModelLoader;
-import org.apache.roller.util.cache.Cache;
-import org.apache.roller.util.cache.CacheHandler;
-import org.apache.roller.util.cache.CacheManager;
-import org.apache.roller.util.cache.LazyExpiringCacheEntry;
+import org.apache.roller.ui.rendering.util.SiteWideCache;
+import org.apache.roller.ui.rendering.util.WeblogFeedCache;
 
 
 /**
@@ -68,11 +52,8 @@ public class FeedServlet extends HttpServlet {
     
     private static Log log = LogFactory.getLog(FeedServlet.class);
     
-    // a unique identifier for our cache, this is used as the prefix for
-    // roller config properties that apply to this cache
-    private static final String CACHE_ID = "cache.feed";
-    
-    private Cache contentCache = null;
+    private WeblogFeedCache weblogFeedCache = null;
+    private SiteWideCache siteWideCache = null;
     
     
     /**
@@ -84,23 +65,11 @@ public class FeedServlet extends HttpServlet {
         
         log.info("Initializing FeedServlet");
         
-        Map cacheProps = new HashMap();
-        cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = RollerConfig.keys();
-        String prop = null;
-        while(allProps.hasMoreElements()) {
-            prop = (String) allProps.nextElement();
-            
-            // we are only interested in props for this cache
-            if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        RollerConfig.getProperty(prop));
-            }
-        }
+        // get a reference to the weblog feed cache
+        this.weblogFeedCache = WeblogFeedCache.getInstance();
         
-        log.info("Feed cache = "+cacheProps);
-        
-        contentCache = CacheManager.constructCache(null, cacheProps);
+        // get a reference to the site wide cache
+        this.siteWideCache = SiteWideCache.getInstance();
     }
     
     
@@ -113,6 +82,7 @@ public class FeedServlet extends HttpServlet {
         log.debug("Entering");
         
         WebsiteData weblog = null;
+        boolean isSiteWide = false;
         
         WeblogFeedRequest feedRequest = null;
         try {
@@ -124,6 +94,10 @@ public class FeedServlet extends HttpServlet {
                 throw new RollerException("unable to lookup weblog: "+
                         feedRequest.getWeblogHandle());
             }
+            
+            // is this the site-wide weblog?
+            isSiteWide = RollerRuntimeConfig.isSiteWideWeblog(feedRequest.getWeblogHandle());
+            
         } catch(Exception e) {
             // invalid feed request format or weblog doesn't exist
             log.debug("error creating weblog feed request", e);
@@ -132,47 +106,61 @@ public class FeedServlet extends HttpServlet {
         }
             
         
+        // determine the lastModified date for this content
+        long lastModified = 0;
+        if(isSiteWide) {
+            lastModified = siteWideCache.getLastModified().getTime();
+        } else {
+            lastModified = weblog.getLastModified().getTime();
+        }
+        
         // 304 if-modified-since checking
         long sinceDate = request.getDateHeader("If-Modified-Since");
         log.debug("since date = "+sinceDate);
-        if(weblog.getLastModified().getTime() <= sinceDate) {
+        if(lastModified <= sinceDate) {
             log.debug("NOT MODIFIED "+request.getRequestURL());
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
         
         // set last-modified date
-        response.setDateHeader("Last-Modified", weblog.getLastModified().getTime());
+        response.setDateHeader("Last-Modified", lastModified);
         
-        // cached content checking
-        String cacheKey = this.CACHE_ID+":"+this.generateKey(feedRequest);
-        LazyExpiringCacheEntry entry =
-                (LazyExpiringCacheEntry) this.contentCache.get(cacheKey);
-        if(entry != null) {
-            CachedContent cachedContent = 
-                    (CachedContent) entry.getValue(weblog.getLastModified().getTime());
-            
-            if(cachedContent != null) {
-                log.debug("HIT "+cacheKey);
-                
-                response.setContentLength(cachedContent.getContent().length);
-                response.getOutputStream().write(cachedContent.getContent());
-                return;
-                
-            } else {
-                log.debug("HIT-EXPIRED "+cacheKey);
-            }
-            
-        } else {
-            log.debug("MISS "+cacheKey);
-        }
-
         // set content type
         if("rss".equals(feedRequest.getFormat())) {
             response.setContentType("application/rss+xml; charset=utf-8");
         } else if("atom".equals(feedRequest.getFormat())) {
             response.setContentType("application/atom+xml; charset=utf-8");
         }
+        
+        
+        // generate cache key
+        String cacheKey = null;
+        if(isSiteWide) {
+            cacheKey = siteWideCache.generateKey(feedRequest);
+        } else {
+            cacheKey = weblogFeedCache.generateKey(feedRequest);
+        }
+        
+        // cached content checking
+        CachedContent cachedContent = null;
+        if(isSiteWide) {
+            cachedContent = (CachedContent) siteWideCache.get(cacheKey);
+        } else {
+            cachedContent = (CachedContent) weblogFeedCache.get(cacheKey, lastModified);
+        }
+        
+        if(cachedContent != null) {
+            log.debug("HIT "+cacheKey);
+            
+            response.setContentLength(cachedContent.getContent().length);
+            response.getOutputStream().write(cachedContent.getContent());
+            return;
+            
+        } else {
+            log.debug("MISS "+cacheKey);
+        }
+        
         
         // looks like we need to render content
         HashMap model = new HashMap();
@@ -255,53 +243,13 @@ public class FeedServlet extends HttpServlet {
         
         // cache rendered content.  only cache if user is not logged in?
         log.debug("PUT "+cacheKey);
-        this.contentCache.put(cacheKey, new LazyExpiringCacheEntry(rendererOutput));
+        if(isSiteWide) {
+            siteWideCache.put(cacheKey, rendererOutput);
+        } else {
+            weblogFeedCache.put(cacheKey, rendererOutput);
+        }
         
         log.debug("Exiting");
-    }
-
-    
-    /**
-     * Generate a cache key from a parsed weblog feed request.
-     * This generates a key of the form ...
-     *
-     * <context>[/handle]/<flavor>[/category]/<language>[/excerpts]
-     *
-     * examples ...
-     *
-     * main/rss/en
-     * weblog/foo/rss/MyCategory/en
-     * weblog/foo/atom/en/excerpts
-     *
-     */
-    private String generateKey(WeblogFeedRequest feedRequest) {
-        
-        StringBuffer key = new StringBuffer();
-        
-        key.append("weblog");
-        key.append("/").append(feedRequest.getWeblogHandle().toLowerCase());
-        key.append("/").append(feedRequest.getType());
-        key.append("/").append(feedRequest.getFormat());
-        
-        if(feedRequest.getWeblogCategoryName() != null) {
-            String cat = feedRequest.getWeblogCategoryName();
-            try {
-                cat = URLEncoder.encode(cat, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                // should never happen, utf-8 is always supported
-            }
-            
-            key.append("/").append(cat);
-        }
-        
-        // add locale
-        key.append("/").append(feedRequest.getLocale());
-        
-        if(feedRequest.isExcerpts()) {
-            key.append("/excerpts");
-        }
-        
-        return key.toString();
     }
     
 }
