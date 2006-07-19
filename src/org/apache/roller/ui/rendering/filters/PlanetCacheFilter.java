@@ -51,6 +51,20 @@ public class PlanetCacheFilter implements Filter {
     
     
     /**
+     * Init method for this filter
+     */
+    public void init(FilterConfig filterConfig) {
+        
+        log.info("Initializing planet cache filter");
+        
+        this.excludeOwnerPages = 
+                RollerConfig.getBooleanProperty("cache.excludeOwnerEditPages");
+        
+        this.planetCache = PlanetCache.getInstance();
+    }
+    
+    
+    /**
      * Process filter.
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
@@ -66,13 +80,12 @@ public class PlanetCacheFilter implements Filter {
             planetRequest = new PlanetRequest(request);
         } catch(Exception e) {
             // some kind of error parsing the request
-            log.error("error creating planet request", e);
+            log.debug("error creating planet request", e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         
-        String key = "planetCache:"+this.generateKey(planetRequest);
-        
+        String key = planetCache.generateKey(planetRequest);
         try {
             ResponseContent respContent = null;
             if(!this.excludeOwnerPages || !planetRequest.isLoggedIn()) {
@@ -131,68 +144,8 @@ public class PlanetCacheFilter implements Filter {
     
     
     /**
-     * Generate a cache key from a parsed planet request.
-     * This generates a key of the form ...
-     *
-     * <context>/<type>/<language>[/user]
-     *   or
-     * <context>/<type>[/flavor]/<language>[/excerpts]
-     *
-     *
-     * examples ...
-     *
-     * planet/page/en
-     * planet/feed/rss/en/excerpts
-     *
-     */
-    private String generateKey(PlanetRequest planetRequest) {
-        
-        StringBuffer key = new StringBuffer();
-        key.append(planetRequest.getContext());
-        key.append("/");
-        key.append(planetRequest.getType());
-        
-        if(planetRequest.getFlavor() != null) {
-            key.append("/").append(planetRequest.getFlavor());
-        }
-        
-        // add language
-        key.append("/").append(planetRequest.getLanguage());
-        
-        if(planetRequest.getFlavor() != null) {
-            // add excerpts
-            if(planetRequest.isExcerpts()) {
-                key.append("/excerpts");
-            }
-        } else {
-            // add login state
-            if(planetRequest.getAuthenticUser() != null) {
-                key.append("/user=").append(planetRequest.getAuthenticUser());
-            }
-        }
-        
-        return key.toString();
-    }
-    
-    
-    /**
      * Destroy method for this filter
      */
-    public void destroy() {
-    }
-    
-    
-    /**
-     * Init method for this filter
-     */
-    public void init(FilterConfig filterConfig) {
-        
-        log.info("Initializing planet cache");
-        
-        this.excludeOwnerPages = 
-                RollerConfig.getBooleanProperty("cache.planet.excludeOwnerEditPages");
-        
-        this.planetCache = PlanetCache.getInstance();
-    }
+    public void destroy() {}
     
 }

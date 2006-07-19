@@ -214,16 +214,4 @@ public class PreviewServlet extends HttpServlet {
         log.debug("Exiting");
     }
     
-    
-    /**
-     * Handle POST requests.
-     *
-     * Post requests are not allowed, send a 404.
-     */
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
-    
 }

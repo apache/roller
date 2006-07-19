@@ -27,27 +27,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.RefererData;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogTemplate;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.cache.Cache;
-import org.apache.roller.util.cache.CacheHandler;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.cache.ExpiringCacheEntry;
 
 
 /**
- * Special cache class for planet content.  We do this as it's own class instead
- * of in a servlet like elsewhere because this cache is shared between the
- * planetrss servlet and the planet.do struts action.
+ * Cache for planet content.
  */
-public class PlanetCache implements CacheHandler {
+public class PlanetCache {
     
     private static Log log = LogFactory.getLog(PlanetCache.class);
     
@@ -55,16 +43,14 @@ public class PlanetCache implements CacheHandler {
     // roller config properties that apply to this cache
     public static final String CACHE_ID = "cache.planet";
     
+    // keep cached content
     private Cache contentCache = null;
     
+    // keep a cached version of last expired time
     private ExpiringCacheEntry lastUpdateTime = null;
     private long timeout = 15 * 60 * 1000;
     
-    // for metrics
-    private double hits = 0;
-    private double misses = 0;
-    private Date startTime = new Date();
-    
+    // reference to our singleton instance
     private static PlanetCache singletonInstance = new PlanetCache();
     
     
@@ -86,7 +72,7 @@ public class PlanetCache implements CacheHandler {
         
         log.info("Planet cache = "+cacheProps);
         
-        contentCache = CacheManager.constructCache(this, cacheProps);
+        contentCache = CacheManager.constructCache(null, cacheProps);
         
         // lookup our timeout value
         String timeoutString = RollerConfig.getProperty("cache.planet.timeout");
@@ -109,10 +95,8 @@ public class PlanetCache implements CacheHandler {
         Object entry = contentCache.get(key);
         
         if(entry == null) {
-            this.misses++;
             log.debug("MISS "+key);
         } else {
-            this.hits++;
             log.debug("HIT "+key);
         }
         
@@ -126,7 +110,20 @@ public class PlanetCache implements CacheHandler {
     }
     
     
-    public Date lastModified() {
+    public void remove(String key) {
+        contentCache.remove(key);
+        log.debug("REMOVE "+key);
+    }
+    
+    
+    public void clear() {
+        contentCache.clear();
+        this.lastUpdateTime = null;
+        log.debug("CLEAR");
+    }
+    
+    
+    public Date getLastModified() {
         
         Date lastModified = null;
         
@@ -154,107 +151,52 @@ public class PlanetCache implements CacheHandler {
         
         return lastModified;
     }
-
-    
-    /**
-     * A weblog entry has changed.
-     */
-    public void invalidate(WeblogEntryData entry) {
-        // ignored
-    }
     
     
     /**
-     * A weblog has changed.
+     * Generate a cache key from a parsed planet request.
+     * This generates a key of the form ...
+     *
+     * <context>/<type>/<language>[/user]
+     *   or
+     * <context>/<type>[/flavor]/<language>[/excerpts]
+     *
+     *
+     * examples ...
+     *
+     * planet/page/en
+     * planet/feed/rss/en/excerpts
+     *
      */
-    public void invalidate(WebsiteData website) {
-        // ignored
-    }
-    
-    
-    /**
-     * A bookmark has changed.
-     */
-    public void invalidate(BookmarkData bookmark) {
-        // ignored
-    }
-    
-    
-    /**
-     * A folder has changed.
-     */
-    public void invalidate(FolderData folder) {
-        // ignored
-    }
-    
-    
-    /**
-     * A comment has changed.
-     */
-    public void invalidate(CommentData comment) {
-        // ignored
-    }
-    
-    
-    /**
-     * A referer has changed.
-     */
-    public void invalidate(RefererData referer) {
-        // ignored
-    }
-    
-    
-    /**
-     * A user profile has changed.
-     */
-    public void invalidate(UserData user) {
-        // ignored
-    }
-    
-    
-    /**
-     * A category has changed.
-     */
-    public void invalidate(WeblogCategoryData category) {
-        // ignored
-    }
-    
-    
-    /**
-     * A weblog template has changed.
-     */
-    public void invalidate(WeblogTemplate template) {
-        // ignored
-    }
-    
-    
-    /**
-     * Clear the entire cache.
-     */
-    public void clear() {
-        log.info("Clearing cache");
-        this.contentCache.clear();
-        this.startTime = new Date();
-        this.hits = 0;
-        this.misses = 0;
-    }
-    
-    
-    public Map getStats() {
+    public String generateKey(PlanetRequest planetRequest) {
         
-        Map stats = new HashMap();
-        stats.put("cacheType", this.contentCache.getClass().getName());
-        stats.put("startTime", this.startTime);
-        stats.put("hits", new Double(this.hits));
-        stats.put("misses", new Double(this.misses));
+        StringBuffer key = new StringBuffer();
         
-        // calculate efficiency
-        if(misses > 0) {
-            double efficiency = hits / (misses + hits);
-            stats.put("efficiency", new Double(efficiency * 100));
+        key.append(this.CACHE_ID).append(":");
+        key.append(planetRequest.getContext());
+        key.append("/");
+        key.append(planetRequest.getType());
+        
+        if(planetRequest.getFlavor() != null) {
+            key.append("/").append(planetRequest.getFlavor());
         }
         
-        return stats;
+        // add language
+        key.append("/").append(planetRequest.getLanguage());
+        
+        if(planetRequest.getFlavor() != null) {
+            // add excerpts
+            if(planetRequest.isExcerpts()) {
+                key.append("/excerpts");
+            }
+        } else {
+            // add login state
+            if(planetRequest.getAuthenticUser() != null) {
+                key.append("/user=").append(planetRequest.getAuthenticUser());
+            }
+        }
+        
+        return key.toString();
     }
     
 }
