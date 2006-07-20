@@ -1,25 +1,88 @@
 
 #** Set of essential macros needed in Roller velocity templates.
 
+    #includeTemplate($weblog $pageName)
+    #showAutodiscoveryLinks($weblog)
+    #showTrackbackAutodiscoveryRDF($entry)
+    #showCommonJavascript()
+
     #showWeblogEntriesPager($pager)
     #showNextPrevControl($pager)
+
     #showWeblogEntryComments($entry)
     #showWeblogEntryCommentForm($entry)
-    #showWeblogEntryLinksList($weblog $category $max)
-    #showBookmarkLinksList($weblog $folder $expanding $subfolders)
-    #showWeblogCategoryLinksList($weblog $category $expanding $subcats)
-    #showPageLinksList($weblog)
-    #showTrackbackAutodiscoveryRDF($entry)
-    #showAutodiscoveryLinks($weblog)
+
+    #showWeblogEntryLinksList($entries)
+    #showBookmarkLinksList($folderObj $expanding $subfolders)
+    #showWeblogCategoryLinksList($categoryObj $expanding $subcats)
+
     #showWeblogEntryCalendar($weblog $category)
+    #showPageMenu($weblog)
     #showAuthorMenu($vertical)
-    #includeTemplate($weblog $pageName)
+
 Todo:
     #showSearchForm()
     #showSearchAgainForm()
     #showSearchSummary()
     #showSearchPager()
 *#
+
+
+#** 
+Parse and include page template from weblog.
+*#
+#macro(includeTemplate $weblog $pageName)
+    #set($iPageId = false)## This is required for such constructs; see Velocity docs and ROL-689
+    #set($iPageId = $weblog.findPageIdByName($pageName))
+    #if (!$iPageId) ## no page found, parse pageName
+        #set($iPageId = $pageName)
+    #end
+    #parse($iPageId)
+#end
+
+
+#** 
+Show RSS, Atom and RSD auto-discovery links as HTML link elements.
+*#
+#macro(showAutodiscoveryLinks $weblog)
+    <link rel="alternate" type="application/atom+xml" title="Atom Entries"  href="$weblog.URL/feeds/entries/atom" />
+    <link rel="alternate" type="application/atom+xml" title="Atom Comments" href="$weblog.URL/feeds/comments/atom" />
+    <link rel="alternate" type="application/rss+xml"  title="RSS Entries"   href="$weblog.URL/feeds/entries/rss" />
+    <link rel="alternate" type="application/rss+xml"  title="RSS Comments"  href="$weblog.URL/feeds/comments/rss" />
+    #if ($weblog.enableBloggerApi)
+       <link rel="EditURI"   type="application/rsd+xml" title="RSD" href="$weblog.URL/rsd"/>
+    #end
+#end
+
+
+#** 
+Show trackback discovery code for one weblog entry, appears as an HTML comment.
+*#
+#macro(showTrackbackAutodiscoveryRDF $entry)
+<!--
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:Description
+    rdf:about="$entry.permalink"
+    trackback:ping="$entry.trackbackURL"
+    dc:title="$entry.title"
+    dc:identifier="$entry.permalink"
+    dc:subject="$entry.category.name"
+    dc:description="$entry.title"
+    dc:creator="$entry.creator.userName"
+    dc:date="$entry.pubTime" />
+</rdf:RDF>
+-->
+#end
+
+
+#**
+Include Javascript code needed for standard macros, for use in HTML head.
+*#
+#macro(showCommonJavascript)
+<script type="text/javascript" src="$config.getContextURL()/theme/scripts/roller.js"></script>
+#end
 
 
 #** 
@@ -37,14 +100,30 @@ Shows weblog entries pager via default day template
 
 #** Show next/prev control for specified pager *#
 #macro(showNextPrevControl $pager)
+    #set($prevLink = false)
+    #set($nextLink = false)
     #if ($pager.prevLink)
-        &laquo; <a href="$pager.prevLink">$pager.prevName</a> |  
-    #end
-    #if ($pager.prevLink || $pager.nextLink)
-        <a href="$pager.getHomeLink()">$pager.getHomeName()</a>
+        #set($prevLink = $pager.prevLink)
+        #set($prevName = $pager.prevName)
+    #elseif ($pager.prevCollectionLink)
+        #set($prevLink = $pager.prevCollectionLink)
+        #set($prevName = $pager.prevCollectionName)
     #end
     #if ($pager.nextLink)
-        | <a href="$pager.nextLink">$pager.nextName</a> &raquo;
+        #set($nextLink = $pager.nextLink)
+        #set($nextName = $pager.nextName)
+    #elseif ($pager.nextCollectionLink)
+        #set($nextLink = $pager.nextCollectionLink)
+        #set($nextName = $pager.nextCollectionName)
+    #end
+    #if ($prevLink)
+        &laquo; <a href="$prevLink">$prevName</a> |  
+    #end
+    #if ($prevLink || $nextLink)
+        <a href="$pager.getHomeLink()">$pager.getHomeName()</a>
+    #end
+    #if ($nextLink)
+        | <a href="$nextLink">$nextName</a> &raquo;
     #end
 #end
 
@@ -236,10 +315,9 @@ Show comments form for weblog entry.
 #** 
 Show recent weblog entries in specified category. 
 *#
-#macro(showWeblogEntryLinksList $weblog $category $max)
-   #set($recentEntries = $weblog.getRecentWeblogEntries($category, $max))
-   <ul class="recentposts">
-   #foreach ($var in $recentEntries)
+#macro(showWeblogEntryLinksList $entriesList)
+   <ul class="entriesList">
+   #foreach ($var in $entriesList)
        <li class="recentposts"><a href="$var.permalink">$var.title</a></li>
    #end
    </ul>
@@ -249,29 +327,30 @@ Show recent weblog entries in specified category.
 #** 
 Show bookmarks as a HTML ul list.
 *#
-#macro(showBookmarkLinksList $weblog $folder $expanding $subfolders)
-    #set($folderObj = $weblog.getFolder($folder))
-    #if ($folderObj)
-        #_showFolder($folderObj $expanding $subfolders)
-    #else
-        <span class="error">$text.get("macro.bookmark.error", [$folder])</span>
-    #end
+#macro(showBookmarkLinksList $folderObject $subfolders $expanding )
+<ul class="rFolder">
+#_showBookmarkLinksList($folderObject $subfolders $expanding)
+</ul>
 #end
 
-#**
-Show one bookmark folder as an HTML ul list, options for expanding and 
-recursion (private).
- *#
-#macro(_showFolder $folderObject $expanding $subfolders)
+
+#** 
+Show bookmarks as a HTML ul list (private).
+*#
+#macro(_showBookmarkLinksList $folderObject $subfolders $expanding )
     #set($bookmarks = $folderObject.getBookmarks())
+    #set($folders = $folderObject.getFolders())
     #set($divId = $utils.replace($folderObject.name, " ", "_" ))
-    #if ($expanding && $folderObject.name != "root")
-    <div class="rFolder">
+    #if ($folderObject.name != "root" && $expanding && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
+        <div class="rFolder">
         <li class="rFolderItem"><a href="javascript:toggleFolder('$divId')">
             <span id="i$divId">+</span></a>$folderObject.Name</li>
-        <ul id="$divId" style="display:none">
-    #else
+        <ul id="$divId" class="rFolder" style="display:none">
+    #elseif ($folderObject.name != "root" && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
+        <li class="rFolderItem">$folderObject.Name</li>
         <ul class="rFolder">
+    #elseif ($folderObject.name != "root")
+        <li class="rFolderItem">$folderObject.Name</li>
     #end
     #foreach($bookmark in $bookmarks)
         <li class="rFolderItem">
@@ -299,18 +378,20 @@ recursion (private).
     #end
     ## show sub-folders
     #if ($subfolders)
-        #foreach($sFolder in $folderObject.folders)
-            #_showFolder($sFolder $expanding $subfolders)
+        #foreach($sFolder in $folders)
+            #_showBookmarkLinksList($sFolder $subfolders $expanding )
         #end
     #end
+    #if ($folderObject.name != "root" && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
         </ul>
-    #if($expanding)
-    </div>
-    <script type="text/javascript">
-    <!-- 
-    folderPreference("$divId");
-    // -->
-    </script>
+    #end
+    #if ($folderObject.name != "root" && $expanding && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
+        </div>
+        <script type="text/javascript">
+        <!-- 
+        folderPreference("$divId");
+        // -->
+        </script>
     #end
 #end
 
@@ -318,67 +399,66 @@ recursion (private).
 #** 
 Show weblog's categories in specified parent category.
 *#
-#macro(showWeblogCategoryLinksList $weblog $category $expanding $subcats)
-    #set($categoryObject = $weblog.getWeblogCategory($category))
+#macro(showWeblogCategoryLinksList $categoryObject $subcats $expanding )
     #if(!$expanding && !$subcats)
         <ul class="rCategory">
-        #set($selectedCat = "")
-        #if($model.weblogCategory)
-           #set($selectedCat = $model.weblogCategory)
-           <li><a href="$weblog.URL">$text.get("macro.weblog.allcategories")</a></li>
+        #if ($model.weblogCategory)
+           <li><a href="$categoryObject.website.URL">$text.get("macro.weblog.allcategories")</a></li>
         #else
-           <li class="selected"><a href="$weblog.URL">$text.get("macro.weblog.allcategories")</a></li>
+           <li class="selected">$text.get("macro.weblog.allcategories")</li>
         #end
-        #set($cats = $weblog.getWeblogCategories($category))
+        #set($cats = $categoryObject.getWeblogCategories())
         #foreach($cat in $cats)
             #set($catParam = "?cat=$utilities.encode($cat.path)")
-            #set($weblogUrl = "$weblog.URL$catParam")
-            #if($selectedCat.path == $cat.path)
-                <li class="selected"><a href="$weblogUrl">$cat.name</a></li>
+            #set($catURL = "$cat.website.URL$catParam")
+            #if($model.weblogCategory && $model.weblogCategory.path == $cat.path)
+                <li class="selected"><a href="$categoryObject.website.URL/category$cat.path">$cat.name</a></li>
             #else
-                <li><a href="$weblogUrl">$cat.name</a></li>
+                <li><a href="$categoryObject.website.URL/category$cat.path">$cat.name</a></li>
             #end
         #end
         </ul>
-    #else 
+    #else
         <ul class="rCategory">
-        #_showWeblogCategory($categoryObject $expanding $subcats)
+        #_showWeblogCategoryLinksList($categoryObject $subcats $expanding )
         </ul>
     #end
 #end
 
 
-#** 
-Show one weblog category's links as an HTML ul list, options for expanding and 
-recursion (private).
+#**
 *#
-#macro(_showWeblogCategory $categoryObject $expanding $subcats)
-    #set($catParam = "?cat=$utils.encode($cat.path)")
-    #set($weblogUrl = "$categoryObject.website.URL$catParam")
-    #if ($expanding && $categoryObject.name != "root" && $categoryObject.weblogCategories.size() > 0)
-        #set($divId = "div_$categoryObject.name")
-        <div class="rCategory">
-        <li><a href="javascript:toggleFolder('$divId')">
-            <span id="i$divId">+</span></a><a href="$weblogUrl">$categoryObject.name</a></li>
-        <ul id="$divId" style="display:none">
-    #elseif ($categoryObject.name != "root" && $categoryObject.weblogCategories.size() > 0)
-        <ul class="rCategory">
-    #elseif ($categoryObject.name != "root")
-        #if($selectedCat.path == $categoryObject.path)
-        <li class="selected"><a href="$weblogUrl">categoryObject.name</a>
+#macro(_showWeblogCategoryLinksList $categoryObject $subcats $expanding )
+    #set($catParam = "?cat=$utils.encode($categoryObject.path)")
+    #set($catURL = "$categoryObject.website.URL$catParam")
+    #if ($categoryObject.name != "root")
+        #if ($expanding && $subcats && $categoryObject.weblogCategories.size() > 0)
+            #set($divId = "div_$categoryObject.name")
+            <div class="rCategory">
+            <li><a href="javascript:toggleFolder('$divId')">
+                <span id="i$divId">+</span></a><a href="$catURL">$categoryObject.name</a></li>
+            <ul id="$divId" class="rCategory" style="display:none">
+        #elseif ($subcats && $categoryObject.weblogCategories.size() > 0)
+            <li><a href="$catURL">$categoryObject.name</a></li>
+            <ul class="rCategory">
         #else
-        <li><a href="$weblogUrl">$categoryObject.name</a>
+            #if ($model.weblogCategory && $model.weblogCategory.path == $categoryObject.path)
+                <li class="selected"><a href="$catURL">categoryObject.name</a></li>
+            #else
+                <li><a href="$catURL">$categoryObject.name</a></li>
+            #end
         #end
-        </li>
     #end
-    #set($cats = $categoryObject.getWeblogCategories())
-    #foreach($cat in $cats)
-        #_showWeblogCategory($cat $expanding $subcats)
+    #if ($subcats || $categoryObject.name == "root") 
+        #set($cats = $categoryObject.getWeblogCategories())
+        #foreach($cat in $cats)
+            #_showWeblogCategoryLinksList($cat $subcats $expanding)
+        #end
     #end
-    #if ($categoryObject.name != "root" && $categoryObject.weblogCategories.size() > 0)
+    #if ($categoryObject.name != "root" && $subcats && $categoryObject.weblogCategories.size() > 0)
         </ul>
     #end
-    #if($expanding && $categoryObject.name != "root" && $categoryObject.weblogCategories.size() > 0)
+    #if ($expanding && $subcats && $categoryObject.weblogCategories.size() > 0)
     </div>
     <script type="text/javascript">
     <!-- 
@@ -392,7 +472,7 @@ recursion (private).
 #**
  * Show Roller Page Navigation Bar, includes links to all pages.
  *#
-#macro(showPageLinksList $weblog)
+#macro(showPageMenu $weblog)
     <ul class="rNavigationBar">
         <li class="rNavItem">
             <a href="$config.getContextURL()">$config.getProperty("site.shortName")</a>
@@ -402,10 +482,12 @@ recursion (private).
             #if (!$invisible)
                 #set($isSelected = false)
                 #if ($page && $iPage.Id == $page.Id) #set($isSelected = true) #end
-                #if (!$isSelected)
-                    <li class="rNavItem"><a href="$weblog.URL/page/$iPage.Link">$iPage.Name</a></li>
+                #if (!$isSelected && $iPage.name == "Weblog")
+                    <li class="rNavItem"><a href="$weblog.URL">$iPage.name</a></li>
+                #elseif (!$isSelected)
+                    <li class="rNavItem"><a href="$weblog.URL/page/$iPage.link">$iPage.name</a></li>
                 #else
-                    <li class="rNavItem">$iPage.Name</li>
+                    <li class="rNavItem">$iPage.name</li>
                 #end
             #end
         #end
@@ -437,42 +519,6 @@ recursion (private).
 
 
 #** 
-Show trackback discovery code for one weblog entry, appears as an HTML comment.
-*#
-#macro(showTrackbackAutodiscoveryRDF $entry)
-<!--
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
-         xmlns:dc="http://purl.org/dc/elements/1.1/">
-<rdf:Description
-    rdf:about="$entry.permalink"
-    trackback:ping="$entry.trackbackURL"
-    dc:title="$entry.title"
-    dc:identifier="$entry.permalink"
-    dc:subject="$entry.category.name"
-    dc:description="$entry.title"
-    dc:creator="$entry.creator.userName"
-    dc:date="$entry.pubTime" />
-</rdf:RDF>
--->
-#end
-
-
-#** 
-Show RSS, Atom and RSD auto-discovery links as HTML link elements.
-*#
-#macro(showAutodiscoveryLinks $weblog)
-    <link rel="alternate" type="application/atom+xml" title="Atom Entries"  href="$weblog.URL/feeds/entries/atom" />
-    <link rel="alternate" type="application/atom+xml" title="Atom Comments" href="$weblog.URL/feeds/comments/atom" />
-    <link rel="alternate" type="application/rss+xml"  title="RSS Entries"   href="$weblog.URL/feeds/entries/rss" />
-    <link rel="alternate" type="application/rss+xml"  title="RSS Comments"  href="$weblog.URL/feeds/comments/rss" />
-    #if ($weblog.enableBloggerApi)
-       <link rel="EditURI"   type="application/rsd+xml" title="RSD" href="$weblog.URL/rsd"/>
-    #end
-#end
-
-
-#** 
 Show weblog entry calendar, with optional category restriction.
 *#
 #macro(showWeblogEntryCalendar $weblog $category)
@@ -485,19 +531,6 @@ Show weblog author menu with vertical or horizontal orientation.
 *#
 #macro(showAuthorMenu $vertical)
 $menuModel.showAuthorMenu($vertical)
-#end
-
-
-#** 
-Parse and inlued page template from weblog.
-*#
-#macro(includeTemplate $weblog $pageName)
-    #set($iPageId = false )## This is required for such constructs; see Velocity docs and ROL-689
-    #set($iPageId = $weblog.findPageIdByName($pageName))
-    #if (!$iPageId) ## no page found, parse pageName
-        #set($iPageId = $pageName)
-    #end
-    #parse($iPageId)
 #end
 
 
