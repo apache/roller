@@ -140,9 +140,9 @@ public class PreviewServlet extends HttpServlet {
             
             // populate the rendering model
             Map initData = new HashMap();
-            initData.put("weblog", weblog);
             initData.put("request", request);
             initData.put("pageRequest", previewRequest);
+            initData.put("weblogRequest", previewRequest);
             initData.put("pageContext", pageContext);
             
             // standard weblog models

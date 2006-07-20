@@ -44,6 +44,7 @@ import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
 
 
@@ -691,26 +692,18 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             String             dateString, 
             String             locale) {
         
-        URLModel urlBuilder = new URLModel(website);
         int pageNum = page + pageAdd;
         String catPath = (cat != null) ? cat.getPath() : null;
-        String pageLink = (weblogPage != null) ? weblogPage.getLink() : null;    
+        String pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
+        String anchor = (entry != null) ? entry.getAnchor() : null;
         
         if (weblogPage != null) {
-            return urlBuilder.page(pageLink, dateString, catPath, pageNum);
+            return URLUtilities.getWeblogPageURL(website, locale, pageLink, anchor, dateString, catPath, pageNum, false);
         } 
         else if (entry != null) {
-            return urlBuilder.entry(entry.getAnchor(), catPath); 
+            return URLUtilities.getWeblogEntryURL(website, locale, anchor, true);
         } 
-        else if (cat != null && dateString == null) {
-            return urlBuilder.category(catPath, page + pageAdd);               
-        } 
-        else if (dateString != null && cat == null) {
-            return urlBuilder.date(dateString, page + pageAdd);          
-        } 
-        else if (dateString != null && cat != null) {
-            return urlBuilder.collection(dateString, catPath, pageNum);
-        }
-        return urlBuilder.home(pageNum);
+        return URLUtilities.getWeblogCollectionURL(website, locale, catPath, dateString, pageNum, false);            
     }
+    
 } 
