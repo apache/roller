@@ -3,7 +3,7 @@
 <div class="entry">
     <a href="$config.contextURL/$model.weblog.handle/$utils.formatDate($day, "yyyyMMdd")">
         <img class="daypermalink"
-            src="$config.contextURL/themes/andreas08/images/calendar.png"
+            src="$url.themeResource("andreas08", "images/calendar.png")"
             title="$text.get("macro.weblog.daypermalink.title")"
             alt='$utils.formatDate($day, "yyyyMMdd")' /></a>
 
