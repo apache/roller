@@ -27,6 +27,7 @@ import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.exception.ParseErrorException;
 
 
 /**
@@ -38,30 +39,41 @@ public class VelocityRenderer implements Renderer {
     
     private String resourceId = null;
     private Template resourceTemplate = null;
-    private Exception exception = null;  
-    private String exceptionSource = null;
+    private Exception parseException = null;
+    
     
     public VelocityRenderer(String resource) throws Exception {
         
         this.resourceId = resource;
         
-        // make sure that we can locate the template
-        // if we can't then this will throw an exception
-        resourceTemplate = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
-    }
-    
-    /** Construct rendering for displaying exception */
-    public VelocityRenderer(Exception exception, String exceptionSource, String resource) throws Exception {
-        this(resource);        
-        this.exception = exception;
-        this.exceptionSource = exceptionSource;
+        try {
+            // make sure that we can locate the template
+            // if we can't then this will throw an exception
+            resourceTemplate = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
+        } catch(ParseErrorException ex) {
+            // in the case of a parsing error we want to render an
+            // error page instead so the user knows what was wrong
+            parseException = ex;
+            
+            // need to lookup error page template
+            resourceTemplate = RollerVelocity.getTemplate("templates/error-page.vm");
+        }
     }
     
     
     public void render(Map model, Writer out) throws Exception {
         
-        if (exception != null) {
-            renderException(model, out);
+        if(parseException != null) {
+            
+            Context ctx = new VelocityContext(model);
+            ctx.put("exception", parseException);
+            ctx.put("exceptionSource", resourceId);
+            ctx.put("utils", new UtilitiesModel());
+            
+            // render output to Writer
+            resourceTemplate.merge(ctx, out);
+            
+            // and we're done
             return;
         }
         
@@ -78,20 +90,5 @@ public class VelocityRenderer implements Renderer {
         
         log.debug("Rendered ["+this.resourceId+"] in "+renderTime+" secs");
     }
-        
-    
-    private void renderException(Map model, Writer out) throws Exception { 
-                
-        // add exception to Velocity Context and utils for formatting
-        Context ctx = new VelocityContext(model);
-        ctx.put("exception", exception);
-        ctx.put("exceptionSource", exceptionSource);
-        ctx.put("utils", new UtilitiesModel()); 
-        
-        // render output to Writer
-        resourceTemplate.merge(ctx, out);
-    }
-    
-    
 
 }
