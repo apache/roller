@@ -36,33 +36,31 @@ import org.apache.struts.util.RequestUtils;
 
 
 /**
- * Model which provides access to application config data like site URLs and 
+ * Model which provides access to application config data like site
  * config properties.
  */
 public class ConfigModel implements Model {
     
-   private static Log log = LogFactory.getLog(ConfigModel.class); 
-        
-    /** TODO 3.0: remove dependency on pageContext */
-    private PageContext pageContext = null;
+    private static Log log = LogFactory.getLog(ConfigModel.class);
+    
     
     /** Hand-picked list of runtime properties to be made available */
-    private static List allowedProperties = 
-        Arrays.asList(new String[] {
-            "site.name",
-            "site.shortName",
-            "site.description",
-            "site.adminemail",
-            "users.registration.enabled",
-            "users.registration.url",
-            "users.comments.enabled",
-            "users.trackbacks.enabled",
-            "users.comments.autoformat",
-            "users.comments.escapehtml",
-            "users.comments.emailnotify",
-            "site.linkbacks.enabled",
-            "site.newsfeeds.defaultEntries",
-            "site.newsfeeds.maxEntries"
+    private static List allowedProperties =
+            Arrays.asList(new String[] {
+        "site.name",
+        "site.shortName",
+        "site.description",
+        "site.adminemail",
+        "users.registration.enabled",
+        "users.registration.url",
+        "users.comments.enabled",
+        "users.trackbacks.enabled",
+        "users.comments.autoformat",
+        "users.comments.escapehtml",
+        "users.comments.emailnotify",
+        "site.linkbacks.enabled",
+        "site.newsfeeds.defaultEntries",
+        "site.newsfeeds.maxEntries"
     });
     
     
@@ -74,25 +72,13 @@ public class ConfigModel implements Model {
     
     /** Init model */
     public void init(Map map) throws RollerException {
-        pageContext = (PageContext)map.get("pageContext");
+        // no-op
     }
     
     
-    /** Relative URL of Roller, e.g. /roller */
-    public String getContextURL() {
-        return RollerRuntimeConfig.getRelativeContextURL();
-    }
-    
-    
-    /** Absolute URL of Roller, e.g. http://localhost:8080/roller */
-    public String getAbsoluteContextURL() {
-        return RollerRuntimeConfig.getAbsoluteContextURL();
-    }
-    
-    
-    /** 
+    /**
      * Get Roller string runtime configuration property.
-     * @return Property value or null if not found 
+     * @return Property value or null if not found
      */
     public String getProperty(String name) {
         String ret = null;
@@ -103,9 +89,9 @@ public class ConfigModel implements Model {
     }
     
     
-    /** 
-     * Get Roller integer runtime configuration property 
-     * @return Property value or -999 if not found 
+    /**
+     * Get Roller integer runtime configuration property
+     * @return Property value or -999 if not found
      */
     public int getIntProperty(String name) {
         int ret = -999;
@@ -116,15 +102,15 @@ public class ConfigModel implements Model {
     }
     
     
-    /** 
+    /**
      * Get Roller boolean runtime configuration property.
-     * @return Property value or false if not found 
+     * @return Property value or false if not found
      */
     public boolean getBooleanProperty(String name) {
         boolean ret = false;
         if (allowedProperties.contains(name)) {
             return RollerRuntimeConfig.getBooleanProperty(name);
-        } 
+        }
         return ret;
     }
     
@@ -146,76 +132,5 @@ public class ConfigModel implements Model {
         return RollerContext.getRollerContext().getRollerBuildUser();
     }
     
-    
-    /** URL for editing a weblog entry */
-    public String getWeblogEntryEditURL(WeblogEntryDataWrapper entry) {
-        String ret = null;
-        Map params = new HashMap();
-        params.put(RequestConstants.WEBLOGENTRY_ID, entry.getId());
-        params.put(RequestConstants.ANCHOR, entry.getAnchor());
-        try {
-            ret = RequestUtils.computeURL(pageContext,
-                "weblogEdit", null, null, null, params, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
-        }
-        return ret;
-    } 
-    
-    
-    /** URL for creating a new weblog entry */
-    public String getWeblogEntryCreateURL(WebsiteDataWrapper weblog) {
-        String returnURL = null;
-        Map params = new HashMap();
-        params.put(RequestConstants.WEBLOG, weblog.getHandle());
-        try {
-            returnURL = RequestUtils.computeURL(pageContext,
-                "weblogCreate", null, null, null, params, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
-        }
-        return returnURL;
-    }
-    
-    
-    /** URL for editing weblog settings */
-    public String getWeblogSettingsURL(WebsiteDataWrapper weblog) {
-        String returnURL = null;
-        Map params = new HashMap();
-        params.put(RequestConstants.WEBLOG, weblog.getHandle());        
-        try {
-            returnURL = RequestUtils.computeURL(pageContext,
-                "editWebsite", null, null, null, params, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
-        }
-        return returnURL;
-    }
-    
-    
-    /** URL for logging in */  
-    public String getLoginURL() {
-        String returnURL = null;
-        try {
-            returnURL = RequestUtils.computeURL(pageContext,
-                "login-redirect", null, null, null, null, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
-        }
-        return returnURL;
-    }
-    
-    
-    /** URL for logging out */
-    public String getLogoutURL() {
-        String returnURL = null;
-        try {
-            returnURL = RequestUtils.computeURL(pageContext,
-                "logout-redirect", null, null, null, null, null, false);
-        } catch (MalformedURLException mue) {
-            log.error("ERROR forming Struts URL: ", mue);
-        }
-        return returnURL;
-    }    
 }
 

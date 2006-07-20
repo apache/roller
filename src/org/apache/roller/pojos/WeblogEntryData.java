@@ -787,16 +787,18 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      */
     public void setCommentsLink(String ignored) {}
     
+    
     /**
      * Get absolute URL of comment page.
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getCommentLink() {
+    public String getCommentsPermalink() {
         String absPath = RollerRuntimeConfig.getAbsoluteContextURL();
         return absPath + getCommentsLink(); 
     }
+    
     /** to please XDoclet */
-    public void setCommentLink(String ignored) {}
+    public void setCommentsPermalink(String ignored) {}
     
     
     /**
