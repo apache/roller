@@ -270,9 +270,9 @@ public class PageServlet extends HttpServlet {
             
             // populate the rendering model
             Map initData = new HashMap();
-            initData.put("weblog", weblog);
             initData.put("request", request);
             initData.put("pageRequest", pageRequest);
+            initData.put("weblogRequest", pageRequest);
             initData.put("pageContext", pageContext);
             
             // Feeds get the weblog specific page model

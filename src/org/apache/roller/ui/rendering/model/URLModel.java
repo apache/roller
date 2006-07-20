@@ -18,9 +18,7 @@
 
 package org.apache.roller.ui.rendering.model;
 
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.jsp.PageContext;
@@ -30,6 +28,8 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RequestConstants;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
+import org.apache.roller.util.URLUtilities;
 import org.apache.struts.util.RequestUtils;
 
 
@@ -51,16 +51,13 @@ public class URLModel implements Model {
     private static Log log = LogFactory.getLog(URLModel.class);
     
     private WebsiteData weblog = null;
+    private String locale = null;
     
     /** TODO 3.0: remove dependency on pageContext */
     private PageContext pageContext = null;
     
-    public URLModel() {        
-    }
-
-    public URLModel(WebsiteData weblog) {
-        this.weblog = weblog;
-    }
+    
+    public URLModel() {}
     
     public String getModelName() {
         return "url";
@@ -68,11 +65,14 @@ public class URLModel implements Model {
     
     public void init(Map initData) throws RollerException {
         
-        // need a weblog to base the weblog specific urls off of
-        weblog = (WebsiteData) initData.get("weblog");
-        if(weblog == null) {
-            throw new RollerException("Expected 'weblog' init param!");
+        // need a weblog request so that we can know the weblog and locale
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        if(weblogRequest == null) {
+            throw new RollerException("Expected 'weblogRequest' init param!");
         }
+        
+        this.weblog = weblogRequest.getWeblog();
+        this.locale = weblogRequest.getLocale();
         
         // need page context as well :(
         pageContext = (PageContext) initData.get("pageContext");
@@ -114,157 +114,101 @@ public class URLModel implements Model {
             log.error("ERROR forming Struts URL: ", mue);
         }
         return returnURL;
-    }    
+    }
+    
+    
+    public String themeResource(String theme, String filePath) {
+        return getSite()+RollerRuntimeConfig.getProperty("users.themes.path")+"/"+theme+"/"+filePath;
+    }
     
     
     public String getHome() {
-        return weblog.getURL();
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, -1, false);
     }
     
     
     public String home(int pageNum) {
-        String url = getHome();
-        if(pageNum > 0)
-            url += "?page="+pageNum;
-        return url;
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, pageNum, false);
     }
     
     
-    public String entry(String anchor, String catPath) {
-        String ret = weblog.getURL()+"/entry/"+anchor;
-        if (catPath != null) {
-            ret += "?cat="+catPath;
-        }
-        return ret;
+    public String entry(String anchor) {
+        return URLUtilities.getWeblogEntryURL(weblog, locale, anchor, true);
     }
+    
+    
+    public String comments(String anchor) {
+        return URLUtilities.getWeblogCommentsURL(weblog, locale, anchor, true);
+    }
+    
     
     public String trackback(String anchor) {
-        return weblog.getURL()+"/entry/"+anchor;
+        return URLUtilities.getWeblogEntryURL(weblog, locale, anchor, true);
     }
 
+    
     public String date(String dateString) {
-        return weblog.getURL()+"/date/"+dateString;
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, dateString, -1, false);
     }
     
     
     public String date(String dateString, int pageNum) {
-        String url = date(dateString);
-        if(pageNum > 0)
-            url += "?page="+pageNum;
-        return url;
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, dateString, pageNum, false);
     }
     
     
     public String category(String catPath) {
-        String cat = catPath;
-        if (cat.length() > 1 && cat.startsWith("/")) cat = cat.substring(1);
-        try {
-            cat = URLEncoder.encode(catPath, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            log.error("url encoding problem", ex);
-        }
-        return weblog.getURL()+"/category/"+cat;
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, null, -1, false);
     }
     
     
     public String category(String catPath, int pageNum) {
-        String url = category(catPath);
-        if(pageNum > 0)
-            url += "?page="+pageNum;
-        return url;
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, null, pageNum, false);
     }
     
     
     public String collection(String dateString, String catPath) {
-        String url = null;
-        if(dateString != null && catPath != null) {
-            url = weblog.getURL();
-            url += "?date="+dateString;
-            url += "&cat="+catPath;
-        } else if(dateString != null) {
-            url = date(dateString);
-        } else if(catPath != null) {
-            url = category(catPath);
-        }
-        return url;
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, dateString, -1, false);
     }
     
     
     public String collection(String dateString, String catPath, int pageNum) {
-        String url = null;
-        if(dateString != null && catPath != null) {
-            url = collection(dateString, catPath);
-            if(pageNum > 0)
-                url += "&page="+pageNum;
-        } else if(dateString != null) {
-            url = date(dateString, pageNum);
-        } else if(catPath != null) {
-            url = category(catPath, pageNum);
-        }
-        return url;
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, dateString, pageNum, false);
     }
     
     
     public String getSearch() {
-        return weblog.getURL()+"/search";
+        return URLUtilities.getWeblogSearchURL(weblog, locale, null, null, -1, false);
     }
+    
     
     public String search(String query, int pageNum) {
-        return weblog.getURL()+"/search?q="+query+"&page="+pageNum;
+        return URLUtilities.getWeblogSearchURL(weblog, locale, query, null, pageNum, false);
     }
+    
     
     public String search(String query, String catPath, int pageNum) {
-        String ret = weblog.getURL()+"/search?q="+query+"&page="+pageNum;
-        if (catPath != null) {
-            ret += "?cat="+catPath;
-        }
-        return ret;
+        return URLUtilities.getWeblogSearchURL(weblog, locale, query, catPath, pageNum, false);
     }
     
+    
     public String page(String pageLink) {
-        return weblog.getURL()+"/page/"+pageLink;
+        return URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, null, null, -1, false);
     }
     
     
     public String page(String pageLink, String dateString, String catPath, int pageNum) {
-        String url = page(pageLink);
-        String qString = "?";
-        if(dateString != null) {
-            qString += "date="+dateString;
-        }
-        if(catPath != null) {
-            if(!qString.endsWith("?"))
-                qString += "&";
-            qString += "cat="+catPath;
-        }
-        if(pageNum > 0) {
-            if(!qString.endsWith("?"))
-                qString += "&";
-            qString += "page="+pageNum;
-        }
-        return url;
+        return URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, catPath, dateString, pageNum, false);
     }
     
     
     public String resource(String filePath) {
-        return weblog.getURL()+"/resource/"+filePath;
-    }
-    
-    
-    public String themeResource(String filePath) {
-        return getSite()+RollerRuntimeConfig.getProperty("users.themes.path")+"/"+weblog.getEditorTheme()+"/"+filePath;
-    }
-    
-    /**
-     * TODO 3.0: eliminate the need for themeName
-     */
-    public String themeResource(String themeName, String filePath) {
-        return getSite()+RollerRuntimeConfig.getProperty("users.themes.path")+"/"+themeName+"/"+filePath;
+        return URLUtilities.getWeblogResourceURL(weblog, filePath, false);
     }
     
     
     public String getRsd() {
-        return weblog.getURL()+"/rsd";
+        return URLUtilities.getWeblogRsdURL(weblog, false);
     }
     
     
@@ -334,102 +278,38 @@ public class URLModel implements Model {
     public class EntryFeedURLS {
         
         public String getRss() {
-            return weblog.getURL()+"/feed/entries/rss";
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", null, false, false);
         }
         
         public String rss(String catPath, boolean excerpts) {
-            String url = getRss();
-            if(catPath != null) {
-                String cat = catPath;
-                try {
-                    cat = URLEncoder.encode(catPath, "UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    log.error("Error encoding url", ex);
-                }
-                url += "?cat="+cat;
-                
-                if(excerpts) {
-                    url += "&excerpts=true";
-                }
-            } else if(excerpts) {
-                url += "?excerpts=true";
-            }
-            return url;
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", catPath, excerpts, false);
         }
         
         public String getAtom() {
-            return weblog.getURL()+"/feed/entries/atom";
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, false, false);
         }
         
         public String atom(String catPath, boolean excerpts) {
-            String url = getAtom();
-            if(catPath != null) {
-                String cat = catPath;
-                try {
-                    cat = URLEncoder.encode(catPath, "UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    log.error("Error encoding url", ex);
-                }
-                url += "?cat="+cat;
-                
-                if(excerpts) {
-                    url += "&excerpts=true";
-                }
-            } else if(excerpts) {
-                url += "?excerpts=true";
-            }
-            return url;
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, excerpts, false);
         }
     }
     
     public class CommentFeedURLS {
         
         public String getRss() {
-            return weblog.getURL()+"/feed/comments/rss";
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", null, false, false);
         }
         
         public String rss(String catPath, boolean excerpts) {
-            String url = getRss();
-            if(catPath != null) {
-                String cat = catPath;
-                try {
-                    cat = URLEncoder.encode(catPath, "UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    log.error("Error encoding url", ex);
-                }
-                url += "?cat="+cat;
-                
-                if(excerpts) {
-                    url += "&excerpts=true";
-                }
-            } else if(excerpts) {
-                url += "?excerpts=true";
-            }
-            return url;
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", catPath, excerpts, false);
         }
         
         public String getAtom() {
-            return weblog.getURL()+"/feed/comments/atom";
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", null, false, false);
         }
         
         public String atom(String catPath, boolean excerpts) {
-            String url = getAtom();
-            if(catPath != null) {
-                String cat = catPath;
-                try {
-                    cat = URLEncoder.encode(catPath, "UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    log.error("Error encoding url", ex);
-                }
-                url += "?cat="+cat;
-                
-                if(excerpts) {
-                    url += "&excerpts=true";
-                }
-            } else if(excerpts) {
-                url += "?excerpts=true";
-            }
-            return url;
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", catPath, excerpts, false);
         }
         
     }

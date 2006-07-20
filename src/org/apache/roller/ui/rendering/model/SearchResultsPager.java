@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -37,7 +38,6 @@ public class SearchResultsPager implements WeblogEntriesPager {
     private String      category = null;
     private int         page = 0;
     private boolean     moreResults = false;
-    private URLModel    urlBuilder = null;
     
     private static ResourceBundle bundle =
             ResourceBundle.getBundle("ApplicationResources");
@@ -59,8 +59,6 @@ public class SearchResultsPager implements WeblogEntriesPager {
         
         // does this pager have more results?
         this.moreResults = more;
-        
-        urlBuilder = new URLModel(weblog);
     }
     
     
@@ -81,7 +79,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     public String getNextLink() {
         if(moreResults) {
-            return urlBuilder.search(query, category, page + 1);
+            return URLUtilities.getWeblogSearchURL(weblog, locale, query, category, page + 1, false);
         }
         return null;
     }
@@ -95,7 +93,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
 
     public String getPrevLink() {
         if(page > 0) {
-            return urlBuilder.search(query, category, page - 1);
+            return URLUtilities.getWeblogSearchURL(weblog, locale, query, category, page - 1, false);
         }
         return null;
     }
