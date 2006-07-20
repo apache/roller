@@ -18,6 +18,7 @@
 
 package org.apache.roller.ui.rendering.model;
 
+import java.text.MessageFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.TreeMap;
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +45,7 @@ import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.Utilities;
 
 
 /**
@@ -70,7 +73,14 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
     protected int                length = 0;
         
     protected static Log log =
-            LogFactory.getFactory().getInstance(WeblogEntriesPagerImpl.class); 
+            LogFactory.getFactory().getInstance(WeblogEntriesPagerImpl.class);
+    
+    private static ResourceBundle bundle =
+            ResourceBundle.getBundle("ApplicationResources");
+    private SimpleDateFormat dayFormat = new SimpleDateFormat(
+            bundle.getString("weblogEntriesPager.day.dateFormat"));
+    private SimpleDateFormat monthFormat = new SimpleDateFormat(
+            bundle.getString("weblogEntriesPager.month.dateFormat"));
     
     public WeblogEntriesPagerImpl(
             WebsiteData        weblog, 
@@ -172,7 +182,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         }
         
         public String getHomeName() {
-            return "Main"; // TODO: I18N
+            return bundle.getString("weblogEntriesPager.latest.home");
         }
         
         public String getNextLink() {
@@ -184,7 +194,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getNextName() {
             if (getNextLink() != null) {
-                return "Next"; // TODO: I18N
+                return bundle.getString("weblogEntriesPager.latest.next");
             }
             return null;
         }
@@ -198,7 +208,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getPrevName() {
             if (getNextLink() != null) {
-                return "Prev"; // TODO: I18N
+                return bundle.getString("weblogEntriesPager.latest.prev");
             }
             return null;
         }
@@ -262,7 +272,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         }
         
         public String getHomeName() {
-            return "Main"; // TODO: I18N
+            return bundle.getString("weblogEntriesPager.single.home");
         }
                 
         public String getNextLink() {
@@ -274,7 +284,9 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getNextName() {
             if (getNextEntry() != null) {
-                return getNextEntry().getTitle();
+                String title = Utilities.truncateNicely(getNextEntry().getTitle(), 15, 20, "...");
+                String msg = bundle.getString("weblogEntriesPager.singleEntry.next");
+                return MessageFormat.format(msg, new Object[] {title});
             }
             return null;
         }
@@ -288,7 +300,9 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getPrevName() {
             if (getPrevEntry() != null) {
-                return getPrevEntry().getTitle();
+                String title = Utilities.truncateNicely(getPrevEntry().getTitle(), 15, 20, "...");
+                String msg = bundle.getString("weblogEntriesPager.singleEntry.prev");
+                return MessageFormat.format(msg, new Object[] {title});
             }
             return null;
         }
@@ -393,7 +407,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         }
         
         public String getHomeName() {
-            return "Main"; // TODO: I18N
+            return bundle.getString("weblogEntriesPager.day.home");
         }
         
         public String getNextLink() {
@@ -405,7 +419,8 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getNextName() {
             if (getNextLink() != null) {
-                return "Next"; // TODO: I18N
+                String msg = bundle.getString("weblogEntriesPager.day.next");
+                return MessageFormat.format(msg, new Object[] {dayFormat.format(day)});
             }
             return null;
         }
@@ -418,8 +433,9 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         }
 
         public String getPrevName() {
-            if (getNextLink() != null) {
-                return "Prev"; // TODO: I18N
+            if (getPrevLink() != null) {
+                String msg = bundle.getString("weblogEntriesPager.day.prev");
+                return MessageFormat.format(msg, new Object[] {dayFormat.format(day)});
             }
             return null;
         }
@@ -434,7 +450,8 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getNextCollectionName() {
             if (nextDay != null) {
-                return DateUtil.format8chars(nextDay);
+                String msg = bundle.getString("weblogEntriesPager.day.prevCollection");
+                return MessageFormat.format(msg, new Object[] {dayFormat.format(nextDay)});
             }
             return null;
         }
@@ -449,7 +466,8 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getPrevCollectionName() {
             if (prevDay != null) {
-                return DateUtil.format8chars(prevDay);
+                String msg = bundle.getString("weblogEntriesPager.day.prevCollection");
+                return MessageFormat.format(msg, new Object[] {dayFormat.format(prevDay)});
             }
             return null;
         }
@@ -501,7 +519,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         }
         
         public String getHomeName() {
-            return "Main"; // TODO: I18N
+            return bundle.getString("weblogEntriesPager.month.home");
         }
         
         public String getNextLink() {
@@ -513,7 +531,8 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getNextName() {
             if (getNextLink() != null) {
-                return "Next"; // TODO: I18N
+                String msg = bundle.getString("weblogEntriesPager.month.next");
+                return MessageFormat.format(msg, new Object[] {monthFormat.format(month)});
             }
             return null;
         }
@@ -528,8 +547,9 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         }
 
         public String getPrevName() {
-            if (getNextLink() != null) {
-                return "Prev"; // TODO: I18N
+            if (getPrevLink() != null) {
+                String msg = bundle.getString("weblogEntriesPager.month.prev");
+                return MessageFormat.format(msg, new Object[] {monthFormat.format(month)});
             }
             return null;
         }
@@ -544,7 +564,8 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getNextCollectionName() {
             if (nextMonth != null) {
-                return DateUtil.format6chars(nextMonth);
+                String msg = bundle.getString("weblogEntriesPager.month.nextCollection");
+                return MessageFormat.format(msg, new Object[] {monthFormat.format(nextMonth)});
             }
             return null;
         }
@@ -559,7 +580,8 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
 
         public String getPrevCollectionName() {
             if (prevMonth != null) {
-                return DateUtil.format6chars(prevMonth);
+                String msg = bundle.getString("weblogEntriesPager.month.prevCollection");
+                return MessageFormat.format(msg, new Object[] {monthFormat.format(prevMonth)});
             }
             return null;
         }        

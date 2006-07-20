@@ -98,7 +98,7 @@ public class UtilitiesModel implements Model {
     
     /** Template context name to be used for model */
     public String getModelName() {
-        return "utilities";
+        return "utils";
     }
     
     

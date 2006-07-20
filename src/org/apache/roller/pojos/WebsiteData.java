@@ -1260,7 +1260,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
      *
      * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojos.FolderData"
      */
-    public FolderData getFolder(String folderName) {
+    public FolderData getBookmarkFolder(String folderName) {
         FolderData ret = null;
         try {
             Roller roller = RollerFactory.getRoller();
