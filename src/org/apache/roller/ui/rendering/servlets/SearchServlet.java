@@ -117,6 +117,7 @@ public class SearchServlet extends HttpServlet {
             
             // populate the rendering model
             Map initData = new HashMap();
+            initData.put("weblog", weblog);
             initData.put("request", request);
             initData.put("searchRequest", searchRequest);
             initData.put("pageContext", pageContext);
