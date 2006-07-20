@@ -3,14 +3,13 @@
 #set($themeDir = "$config.contextURL/themes/andreas08")
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>$model.weblog.name | #if (!$model.weblogCategory && $model.weblogPage.name == "Weblog") $model.weblogPage.name #elseif ($model.weblogCategory && $page.Name == "Weblog") $model.weblogCategory.name Category #elseif ($model.weblogPage.name == "Weblog") $title #else $model.weblogPage.name #end</title>
+    <title>$model.weblog.name</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Language" content="en" />
     <base href="$model.weblog.URL"> 
     #includeTemplate($model.weblog "_css")
     #showAutodiscoveryLinks($model.weblog)
-    ## import Javascript used by Roller's built-in macros
-    <script type="text/javascript" src="$config.getContextURL()/theme/scripts/roller.js"></script>
+    #showCommonJavascript()
     <script type="text/javascript" src="$themeDir/scripts/prototype.js"></script>
     <script type="text/javascript" src="$themeDir/scripts/scriptaculous.js?load=effects"></script>
     <script type="text/javascript" src="$themeDir/scripts/lightbox.js"></script>
@@ -47,7 +46,7 @@
         </div><!-- end main -->
 
         <div id="sub">
-            #showPageLinksList($model.weblog)
+            #showPageMenu($model.weblog)
             <div class="editorMenu">#showAuthorMenu(true)</div>
             <div class="small box" id="description">
                 <div id="feed">
@@ -74,14 +73,16 @@
             </div>
 
             <h2>Recent Entries</h2>
-            #showWeblogEntryLinksList($model.weblog "nil" 20)
+            #set($recentEntries = $weblog.getRecentWeblogEntries("nil", 20))
+            #showWeblogEntryLinksList($recentEntries)
 
         </div>
 
         <div id="nav">
             <div class="wrapper">
                 <h2 class="hide">Navigation</h2>
-                #showWeblogCategoryLinksList($model.weblog "nil" false false)
+                #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+                #showWeblogCategoryLinksList($rootCategory false false)
             </div>
         </div>
     </div><!-- end content -->
