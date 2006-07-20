@@ -1,9 +1,9 @@
-<link rel="stylesheet" type="text/css" href="$config.contextURL/themes/base.css" />
+<link rel="stylesheet" type="text/css" href="$url.site/themes/base.css" />
 <style type="text/css">
-@import url($config.contextURL/themes/andreas08/styles/tools.css);
-@import url($config.contextURL/themes/andreas08/styles/typo.css);
-@import url($config.contextURL/themes/andreas08/styles/forms.css);
-@import url($config.contextURL/themes/andreas08/styles/layout-navtop-subright.css);
-@import url($config.contextURL/themes/andreas08/styles/layout.css);
-@import url($config.contextURL/themes/andreas08/styles/andreas08.css);
+@import url($url.themeResource("andreas08", "styles/tools.css"));
+@import url($url.themeResource("andreas08", "styles/type.css"));
+@import url($url.themeResource("andreas08", "styles/forms.css"));
+@import url($url.themeResource("andreas08", "styles/layout-navtop-subright.css"));
+@import url($url.themeResource("andreas08", "styles/layout.css"));
+@import url($url.themeResource("andreas08", "styles/andreas08.css"));
 </style>

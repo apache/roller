@@ -10,10 +10,10 @@
     #includeTemplate($model.weblog "_css")
     #showAutodiscoveryLinks($model.weblog)
     #showCommonJavascript()
-    <script type="text/javascript" src="$themeDir/scripts/prototype.js"></script>
-    <script type="text/javascript" src="$themeDir/scripts/scriptaculous.js?load=effects"></script>
-    <script type="text/javascript" src="$themeDir/scripts/lightbox.js"></script>
-    <link rel="stylesheet" type="text/css" href="$themeDir/styles/lightbox.css" />
+    <script type="text/javascript" src="$url.themeResource("andreas08", "scripts/prototype.js")"></script>
+    <script type="text/javascript" src="$url.themeResource("andreas08", "scripts/scriptaculous.js?load=effects")"></script>
+    <script type="text/javascript" src="$url.themeResource("andreas08", "scripts/lightbox.js")"></script>
+    <link rel="stylesheet" type="text/css" href="$url.themeResource("andreas08", "styles/lightbox.css")" />
 </head>
 
 <body>
@@ -57,7 +57,7 @@
             <div class="small box" id="description">
                 <div id="feed">
                     <a href="$url.feed.rss"><img class="rssbadge"
-                        src="$themeDir/images/feed-icon-16x16.jpg" 
+                        src="$url.themeResource("andreas08", "images/feed-icon-16x16.jpg")"
                         alt="Click me to subscribe" /></a>
                 </div>
                 $model.weblog.description
