@@ -47,13 +47,20 @@ public class ModelLoader {
     public static void loadWeblogHelpers(Map model, Map initData) 
             throws RollerException {
         
+        // helps render the calendar
         CalendarModel calendarTag = new CalendarModel();
         calendarTag.init(initData);
         model.put(calendarTag.getModelName(), calendarTag);
         
+        // helps render menus
         MenuModel menuTag = new MenuModel();
         menuTag.init(initData);
         model.put(menuTag.getModelName(), menuTag);
+        
+        // helps url building
+        URLModel urlModel = new URLModel();
+        urlModel.init(initData);
+        model.put(urlModel.getModelName(), urlModel);
     }
     
     
@@ -63,9 +70,10 @@ public class ModelLoader {
     public static void loadUtilityHelpers(Map model, Map initData) 
             throws RollerException {
         
+        // general set of utilities
         UtilitiesModel utils = new UtilitiesModel();
         utils.init(initData);
-        model.put("utils", utils);
+        model.put(utils.getModelName(), utils);
     }
     
     
