@@ -29,6 +29,6 @@ Cookie terminate = new Cookie(TokenBasedRememberMeServices.ACEGI_SECURITY_HASHED
 terminate.setMaxAge(0);
 response.addCookie(terminate);
 
-response.sendRedirect(request.getContextPath()); 
+response.sendRedirect(request.getContextPath()+"/"); 
 %>
 
