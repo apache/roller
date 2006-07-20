@@ -39,6 +39,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.WeblogTrackbackRequest;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.SpamChecker;
+import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.struts.util.RequestUtils;
 
@@ -158,9 +159,8 @@ public class TrackbackServlet extends HttpServlet {
                         "site.trackbackVerification.enabled")) {
                     
                     // ...ensure trackbacker actually links to us
-                    String absurl = RollerRuntimeConfig.getAbsoluteContextURL();
                     LinkbackExtractor linkback = new LinkbackExtractor(
-                            comment.getUrl(), absurl + entry.getPermaLink());
+                            comment.getUrl(), URLUtilities.getWeblogEntryURL(weblog, null, entry.getAnchor(), true));
                     if (linkback.getExcerpt() == null) {
                         comment.setPending(Boolean.TRUE);
                         comment.setApproved(Boolean.FALSE);

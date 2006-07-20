@@ -61,6 +61,7 @@ import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
+import org.apache.roller.util.URLUtilities;
 import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.tools.view.context.ChainedContext;
@@ -438,9 +439,10 @@ public class ContextLoader {
         
         String url = null;
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
-            url = OldUtilities.escapeHTML(website.getAbsoluteURL());
+            // TODO 3.0: this should probably include locale from request
+            url = URLUtilities.getWeblogURL(website, null, true);
         } else {
-            url= OldUtilities.escapeHTML(RollerRuntimeConfig.getAbsoluteContextURL());
+            url= RollerRuntimeConfig.getAbsoluteContextURL();
         }
         ctx.put("websiteURL", url);
         ctx.put("baseURL",    RollerRuntimeConfig.getRelativeContextURL() );

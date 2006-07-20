@@ -262,19 +262,8 @@ public class OldPageHelper {
         if (OldWeblogPageModel.VELOCITY_NULL.equals(cat)) cat = null;
         String ret = null;
         try {
-            HttpServletResponse response = mResponse;
-            
-            String selfUrl = null;
-            String pageLink = mPageName;
-            if ( pageLink != null ) {
-                selfUrl = mWebsite.getURL() + "/" + pageLink;
-            } else {
-                selfUrl = mWebsite.getURL();
-            }
-            
             // setup weblog calendar model
             CalendarModel model = null;
-            Date date = mDate;
             if ( big ) {
                 model = new BigWeblogCalendarModel(mPageRequest, cat);
             } else {
@@ -282,7 +271,7 @@ public class OldPageHelper {
             }
             
             // save model in JSP page context so CalendarTag can find it
-            mPageContext.setAttribute("calendarModel",model);
+            mPageContext.setAttribute("calendarModel", model);
             
             // Create and setup calendar tag
             CalendarTag calTag = new CalendarTag();
@@ -408,6 +397,8 @@ public class OldPageHelper {
      * So, if English and Dutch are supported, and the current Locale is Dutch,
      * only English is returned. If the current Locale is Spanish, both English and Dutch are
      * returned.
+     *
+     * TODO 3.0: decide what to do with this method
      *
      * @return
      */

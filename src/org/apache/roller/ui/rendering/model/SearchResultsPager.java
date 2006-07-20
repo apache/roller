@@ -68,8 +68,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     
     public String getHomeLink() {
-        // TODO 3.0: url construction logic
-        return weblog.getURL();
+        return URLUtilities.getWeblogURL(weblog, locale, false);
     }
 
     public String getHomeName() {
