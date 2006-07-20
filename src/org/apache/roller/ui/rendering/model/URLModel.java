@@ -55,6 +55,12 @@ public class URLModel implements Model {
     /** TODO 3.0: remove dependency on pageContext */
     private PageContext pageContext = null;
     
+    public URLModel() {        
+    }
+
+    public URLModel(WebsiteData weblog) {
+        this.weblog = weblog;
+    }
     
     public String getModelName() {
         return "url";
@@ -124,6 +130,18 @@ public class URLModel implements Model {
     }
     
     
+    public String entry(String anchor, String catPath) {
+        String ret = weblog.getURL()+"/entry/"+anchor;
+        if (catPath != null) {
+            ret += "?cat="+catPath;
+        }
+        return ret;
+    }
+    
+    public String trackback(String anchor) {
+        return weblog.getURL()+"/entry/"+anchor;
+    }
+
     public String date(String dateString) {
         return weblog.getURL()+"/date/"+dateString;
     }
@@ -139,6 +157,7 @@ public class URLModel implements Model {
     
     public String category(String catPath) {
         String cat = catPath;
+        if (cat.length() > 1 && cat.startsWith("/")) cat = cat.substring(1);
         try {
             cat = URLEncoder.encode(catPath, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
@@ -190,6 +209,17 @@ public class URLModel implements Model {
         return weblog.getURL()+"/search";
     }
     
+    public String search(String query, int pageNum) {
+        return weblog.getURL()+"/search?q="+query+"&page="+pageNum;
+    }
+    
+    public String search(String query, String catPath, int pageNum) {
+        String ret = weblog.getURL()+"/search?q="+query+"&page="+pageNum;
+        if (catPath != null) {
+            ret += "?cat="+catPath;
+        }
+        return ret;
+    }
     
     public String page(String pageLink) {
         return weblog.getURL()+"/page/"+pageLink;
@@ -223,6 +253,13 @@ public class URLModel implements Model {
     
     public String themeResource(String filePath) {
         return getSite()+RollerRuntimeConfig.getProperty("users.themes.path")+"/"+weblog.getEditorTheme()+"/"+filePath;
+    }
+    
+    /**
+     * TODO 3.0: eliminate the need for themeName
+     */
+    public String themeResource(String themeName, String filePath) {
+        return getSite()+RollerRuntimeConfig.getProperty("users.themes.path")+"/"+themeName+"/"+filePath;
     }
     
     

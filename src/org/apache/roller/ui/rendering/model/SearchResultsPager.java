@@ -19,6 +19,7 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 
@@ -31,11 +32,15 @@ public class SearchResultsPager implements WeblogEntriesPager {
     private Map entries = null;
     
     private WebsiteData weblog = null;
-    private String locale = null;
-    private String query = null;
-    private String category = null;
-    private int page = 0;
-    private boolean moreResults = false;
+    private String      locale = null;
+    private String      query = null;
+    private String      category = null;
+    private int         page = 0;
+    private boolean     moreResults = false;
+    private URLModel    urlBuilder = null;
+    
+    private static ResourceBundle bundle =
+            ResourceBundle.getBundle("ApplicationResources");
     
     
     public SearchResultsPager() {}
@@ -54,6 +59,8 @@ public class SearchResultsPager implements WeblogEntriesPager {
         
         // does this pager have more results?
         this.moreResults = more;
+        
+        urlBuilder = new URLModel(weblog);
     }
     
     
@@ -68,36 +75,34 @@ public class SearchResultsPager implements WeblogEntriesPager {
     }
 
     public String getHomeName() {
-        return "Main"; // TODO: I18N
+        return bundle.getString("searchPager.home");
     }
 
     
     public String getNextLink() {
         if(moreResults) {
-            // TODO 3.0: url construction logic
-            return weblog.getURL()+"/search?q="+query+"&page="+page++;
+            return urlBuilder.search(query, category, page + 1);
         }
         return null;
     }
 
     public String getNextName() {
         if (getNextLink() != null) {
-            return "Next"; // TODO: I18N
+            return bundle.getString("searchPager.next");
         }
         return null;
     }
 
     public String getPrevLink() {
         if(page > 0) {
-            // TODO 3.0: url construction logic
-            return weblog.getURL()+"/search?q="+query+"&page="+page--;
+            return urlBuilder.search(query, category, page - 1);
         }
         return null;
     }
 
     public String getPrevName() {
-        if (getNextLink() != null) {
-            return "Prev"; // TODO: I18N
+        if (getPrevLink() != null) {
+            return bundle.getString("searchPager.prev");
         }
         return null;
     }

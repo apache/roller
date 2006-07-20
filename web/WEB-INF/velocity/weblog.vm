@@ -7,7 +7,7 @@
     #showCommonJavascript()
 
     #showWeblogEntriesPager($pager)
-    #showNextPrevControl($pager)
+    #showNextPrevEntriesControl($pager)
 
     #showWeblogEntryComments($entry)
     #showWeblogEntryCommentForm($entry)
@@ -17,14 +17,13 @@
     #showWeblogCategoryLinksList($categoryObj $expanding $subcats)
 
     #showWeblogEntryCalendar($weblog $category)
+
     #showPageMenu($weblog)
     #showAuthorMenu($vertical)
 
-Todo:
-    #showSearchForm()
-    #showSearchAgainForm()
-    #showSearchSummary()
-    #showSearchPager()
+    #showWeblogSearchForm($weblog)
+    #showWeblogSearchAgainForm($weblog)
+    #showNextPrevSearchControl($pager)
 *#
 
 
@@ -45,10 +44,10 @@ Parse and include page template from weblog.
 Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 *#
 #macro(showAutodiscoveryLinks $weblog)
-    <link rel="alternate" type="application/atom+xml" title="Atom Entries"  href="$weblog.URL/feeds/entries/atom" />
-    <link rel="alternate" type="application/atom+xml" title="Atom Comments" href="$weblog.URL/feeds/comments/atom" />
-    <link rel="alternate" type="application/rss+xml"  title="RSS Entries"   href="$weblog.URL/feeds/entries/rss" />
-    <link rel="alternate" type="application/rss+xml"  title="RSS Comments"  href="$weblog.URL/feeds/comments/rss" />
+    <link rel="alternate" type="application/atom+xml" title="Atom Entries"  href="$url.feed.entries.atom" />
+    <link rel="alternate" type="application/atom+xml" title="Atom Comments" href="$url.feed.comments.atom" />
+    <link rel="alternate" type="application/rss+xml"  title="RSS Entries"   href="$url.feed.entries.rss" />
+    <link rel="alternate" type="application/rss+xml"  title="RSS Comments"  href="$url.feed.comments.rss" />
     #if ($weblog.enableBloggerApi)
        <link rel="EditURI"   type="application/rsd+xml" title="RSD" href="$weblog.URL/rsd"/>
     #end
@@ -65,7 +64,7 @@ Show trackback discovery code for one weblog entry, appears as an HTML comment.
          xmlns:dc="http://purl.org/dc/elements/1.1/">
 <rdf:Description
     rdf:about="$entry.permalink"
-    trackback:ping="$entry.trackbackURL"
+    trackback:ping="$entry.permalink"
     dc:title="$entry.title"
     dc:identifier="$entry.permalink"
     dc:subject="$entry.category.name"
@@ -99,7 +98,7 @@ Shows weblog entries pager via default day template
 
 
 #** Show next/prev control for specified pager *#
-#macro(showNextPrevControl $pager)
+#macro(showNextPrevEntriesControl $pager)
     #set($prevLink = false)
     #set($nextLink = false)
     #if ($pager.prevLink)
@@ -493,24 +492,24 @@ Show weblog's categories in specified parent category.
         #end
         #if ($utils.isUserAuthorizedToAuthor($weblog))
             <li class="rNavItem">
-               <a href="$config.getWeblogEntryCreateURL($weblog)">$text.get("navigationBar.newEntry")</a>
+               <a href="$url.createEntry">$text.get("navigationBar.newEntry")</a>
             </li>
             #if($utils.isUserAuthorizedToAdmin($weblog))
                <li class="rNavItem">
-                   <a href="$config.getWeblogSettingsURL($weblog)">$text.get("navigationBar.settings")</a>
+                   <a href="$url.editSettings">$text.get("navigationBar.settings")</a>
                </li>
             #end
                 <li class="rNavItem">
-                    <a href="$config.getLogoutURL()">$text.get("navigationBar.logout")</a>
+                    <a href="$url.logout">$text.get("navigationBar.logout")</a>
                 </li>
         #else
             #if ($utils.isUserAuthenticated())
                 <li class="rNavItem">
-                    <a href="$config.getLogoutURL()">$text.get("navigationBar.logout")</a>
+                    <a href="$url.logout">$text.get("navigationBar.logout")</a>
                 </li>
             #else
                 <li class="rNavItem">
-                    <a href="$config.getLoginURL()">$text.get("navigationBar.login")</a>
+                    <a href="$url.login">$text.get("navigationBar.login")</a>
                 </li>
             #end
         #end
@@ -535,34 +534,101 @@ $menuModel.showAuthorMenu($vertical)
 
 
 #** 
-    TODO 3.0
+Show search form for a weblog.
 *#
-#macro(showSearchForm $weblog)
-$weblog
+#macro(showWeblogSearchForm $weblog)
+    <form id="searchForm" method="get" action="$url.search"
+        style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
+        <p>
+          <input type="text" id="q" name="q" size="20"
+              maxlength="255" value="#if($term)$term#end" />
+          #set( $cats = $model.weblog.getWeblogCategories("nil") )
+          <select name="c">
+          <option value="">- In Category -</option>
+          #foreach( $cat in $cats )
+              <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
+          #end
+          </select>
+          <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
+        </p>
+    </form>
+    <script type="text/javascript">
+        function validateSearch(form) {
+            if (form.q.value == "") {
+                alert("$text.get("macro.weblog.searchalert")");
+                form.q.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
 #end
 
 
 #** 
-    TODO 3.0
+Show search again form for a weblog.
 *#
-#macro(showSearchAgainForm $weblog)
-$weblog
+#macro(showWeblogSearchAgainForm $weblog)
+    <div id="searchAgain">
+        $text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
+        $text.get( "macro.weblog.searchhits", [$model.hits])
+        <form method="get" action="$url.search"
+            style="margin: 5px">
+            <input type="text" id="q" name="q" size="31"
+                maxlength="255" value="$searchResults.term"
+                style="padding-left: 1px" /><br />
+
+            #set( $cats = $model.weblog.getWeblogCategories("nil") )
+            <select name="c">
+            <option value="">- Restrict By Category -</option>
+            #foreach( $cat in $cats )
+              <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
+            #end
+            </select>
+
+            <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
+        </form>
+
+        $text.get( "macro.weblog.searchgoogle", [$searchResults.term, $absBaseURL, $ctxPath, ${website.handle}] )
+    </div>
+    <!-- searchhi script hangs firefox, commenting it out for now -->
+    <!-- script type="text/javascript" src="$config.getContextURL()/theme/scripts/searchhi.js"></script -->
 #end
 
 
 #** 
-    TODO 3.0
+Show next/prev pager for search results.
 *#
-#macro(showSearchSummary $weblog)
-$weblog
+#macro(showNextPrevSearchControl $pager)
+    #set( $min = $searchResults.offset + 1 )
+    #set( $max = $searchResults.offset + $searchResults.limit )
+    #if( $max > $searchResults.hits )#set( $max = $searchResults.hits )#end
+    <h3>
+       $text.get("searchSummary.text", [$min, $max, $model.hits])
+    </h3>
+
+    #set($prevLink = false)
+    #set($nextLink = false)
+    #if ($pager.prevLink)
+        #set($prevLink = $pager.prevLink)
+        #set($prevName = $pager.prevName)
+    #end
+    #if ($pager.nextLink)
+        #set($nextLink = $pager.nextLink)
+        #set($nextName = $pager.nextName)
+    #end
+    #if ($prevLink)
+        &laquo; <a href="$prevLink">$prevName</a> |  
+    #end
+    #if ($prevLink || $nextLink)
+        <a href="$pager.getHomeLink()">$pager.getHomeName()</a>
+    #end
+    #if ($nextLink)
+        | <a href="$nextLink">$nextName</a> &raquo;
+    #end
 #end
 
 
-#** 
-    TODO 3.0
-*#
-#macro(showSearchPager $pager)
-$pager
-#end
+
 
 

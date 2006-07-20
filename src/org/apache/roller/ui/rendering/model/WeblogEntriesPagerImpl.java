@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +70,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
     protected int                offset = 0;
     protected int                page = 0;
     protected int                length = 0;
-        
+    
     protected static Log log =
             LogFactory.getFactory().getInstance(WeblogEntriesPagerImpl.class);
     
@@ -207,7 +206,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         }
 
         public String getPrevName() {
-            if (getNextLink() != null) {
+            if (getPrevLink() != null) {
                 return bundle.getString("weblogEntriesPager.latest.prev");
             }
             return null;
@@ -692,54 +691,26 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
             String             dateString, 
             String             locale) {
         
-        Map params = new HashMap();
-        if (pageAdd != 0) params.put("page", Integer.toString(page + pageAdd));
-
-        StringBuffer pathinfo = new StringBuffer();
-        pathinfo.append(website.getURL());
-        if (locale != null) {
-            pathinfo.append("/");
-            pathinfo.append(locale);
-        }
+        URLModel urlBuilder = new URLModel(website);
+        int pageNum = page + pageAdd;
+        String catPath = (cat != null) ? cat.getPath() : null;
+        String pageLink = (weblogPage != null) ? weblogPage.getLink() : null;    
+        
         if (weblogPage != null) {
-            pathinfo.append("/page/");
-            pathinfo.append(weblogPage.getLink());
-            if (entry != null) params.put("entry", entry.getAnchor());
-            if (dateString != null) params.put("date", dateString);
-            if (cat != null) params.put("cat", cat.getPath());
+            return urlBuilder.page(pageLink, dateString, catPath, pageNum);
         } 
         else if (entry != null) {
-            pathinfo.append("/entry/");
-            pathinfo.append(entry.getAnchor());
-            if (dateString != null) params.put("date", dateString);
-            if (cat != null) params.put("cat", cat.getPath());
+            return urlBuilder.entry(entry.getAnchor(), catPath); 
         } 
         else if (cat != null && dateString == null) {
-            pathinfo.append("/category");
-            pathinfo.append(cat.getPath());                
+            return urlBuilder.category(catPath, page + pageAdd);               
         } 
         else if (dateString != null && cat == null) {
-            pathinfo.append("/date/");
-            pathinfo.append(dateString);                
+            return urlBuilder.date(dateString, page + pageAdd);          
         } 
-        else {
-            if (dateString != null) params.put("date", dateString);
-            if (cat != null) params.put("cat", cat.getPath());
+        else if (dateString != null && cat != null) {
+            return urlBuilder.collection(dateString, catPath, pageNum);
         }
-
-        StringBuffer queryString = new StringBuffer();
-        for (Iterator keys = params.keySet().iterator(); keys.hasNext();) {
-            String key = (String) keys.next();
-            String value = (String)params.get(key);
-            if (queryString.length() == 0) {
-                queryString.append("?");
-            } else {
-                queryString.append("&");
-            }
-            queryString.append(key);
-            queryString.append("=");
-            queryString.append(value);
-        }
-        return pathinfo.toString() + queryString.toString();
+        return urlBuilder.home(pageNum);
     }
 } 

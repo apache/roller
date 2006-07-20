@@ -60,7 +60,9 @@ public class ConfigModel implements Model {
         "users.comments.emailnotify",
         "site.linkbacks.enabled",
         "site.newsfeeds.defaultEntries",
-        "site.newsfeeds.maxEntries"
+        "site.newsfeeds.maxEntries",
+        "site.frontpage.weblog.handle",
+        "site.frontpage.weblog.aggregated"
     });
     
     
