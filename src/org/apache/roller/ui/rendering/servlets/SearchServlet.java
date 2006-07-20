@@ -141,7 +141,7 @@ public class SearchServlet extends HttpServlet {
             ModelLoader.loadUtilityHelpers(model, initData);
             ModelLoader.loadWeblogHelpers(model, initData);
 
-            // Feeds get weblog's custom models too
+            // Search gets weblog's custom models too
             ModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(

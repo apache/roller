@@ -21,7 +21,7 @@
 <div id="page">  
 
     <div id="header" class="clearfix">
-        <h1><a href="$model.weblog.URL">$model.weblog.name</a></h1>
+        <h1><a href="$url.home">$model.weblog.name</a></h1>
 
         <h2><!-- Short tagline goes here --></h2>
         <div id="branding">$model.weblog.description</div>
@@ -32,10 +32,16 @@
 
         #set($pager = $model.getWeblogEntriesPager()) 
         <div class="next-previous">
-        #showNextPrevControl($pager)
+            #if ($model.results)
+                #showWeblogSearchAgainForm($model.weblog)
+                #showNextPrevSearchControl($pager)
+            #else
+                #showNextPrevEntriesControl($pager)
+            #end
         </div>
+
         <div class="entries">
-        #showWeblogEntriesPager($pager)
+            #showWeblogEntriesPager($pager)
         </div>
 
         #if ($model.permalink)
@@ -50,7 +56,7 @@
             <div class="editorMenu">#showAuthorMenu(true)</div>
             <div class="small box" id="description">
                 <div id="feed">
-                    <a href="$model.weblog.URL/feeds/rss"><img class="rssbadge"
+                    <a href="$url.feed.rss"><img class="rssbadge"
                         src="$themeDir/images/feed-icon-16x16.jpg" 
                         alt="Click me to subscribe" /></a>
                 </div>
@@ -59,21 +65,11 @@
             <div class="small" id="calendar">#showWeblogEntryCalendar($model.weblog "nil")</div>
             <div id="searchbar">
                 <h2>Search This Site</h2>
-
-                <form id="search" method="get" 
-                    action="$model.weblog.handle/search" style="margin: 0; padding: 0">
-                    <fieldset>
-                        <input type="text" id="q" name="q" size="15" class="text small"
-                            maxlength="255" value="" 
-                            onfocus="this.style.backgroundColor='#ffd'" 
-                            onblur="this.style.backgroundColor='#fff'" />
-                        <input type="submit" value="Go!" id="searchbutton" />
-                    </fieldset>
-                </form>
+                #showWeblogSearchForm($model.weblog)
             </div>
 
             <h2>Recent Entries</h2>
-            #set($recentEntries = $weblog.getRecentWeblogEntries("nil", 20))
+            #set($recentEntries = $model.weblog.getRecentWeblogEntries("nil", 20))
             #showWeblogEntryLinksList($recentEntries)
 
         </div>
