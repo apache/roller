@@ -26,9 +26,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.rendering.Renderer;
+import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.exception.ParseErrorException;
 
 
 /**
@@ -43,19 +45,43 @@ public class VelocityWeblogPageRenderer implements Renderer {
     
     private String resourceId = null;
     private Template resourceTemplate = null;
+    private Exception parseException = null;
     
     
     public VelocityWeblogPageRenderer(String resource) throws Exception {
         
         this.resourceId = resource;
         
-        // make sure that we can locate the template
-        // if we can't then this will throw an exception
-        resourceTemplate = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
+        try {
+            // make sure that we can locate the template
+            // if we can't then this will throw an exception
+            resourceTemplate = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
+        } catch(ParseErrorException ex) {
+            // in the case of a parsing error we want to render an
+            // error page instead so the user knows what was wrong
+            parseException = ex;
+            
+            // need to lookup error page template
+            resourceTemplate = RollerVelocity.getTemplate("templates/error-page.vm");
+        }
     }
     
     
     public void render(Map model, Writer out) throws Exception {
+        
+        if(parseException != null) {
+            
+            Context ctx = new VelocityContext(model);
+            ctx.put("exception", parseException);
+            ctx.put("exceptionSource", resourceId);
+            ctx.put("utils", new UtilitiesModel());
+            
+            // render output to Writer
+            resourceTemplate.merge(ctx, out);
+            
+            // and we're done
+            return;
+        }
         
         long startTime = System.currentTimeMillis();
         

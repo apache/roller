@@ -43,15 +43,8 @@ public class VelocityRendererFactory implements RendererFactory {
             // standard velocity template
             try {
                renderer = new VelocityRenderer(resourceId);
-            } catch (ParseErrorException pe) {            
-                // Author needs to see parsing error so display error page
-                try {
-                    renderer = new VelocityRenderer(pe, resourceId, "templates/error-page.vm");
-                } catch (Throwable t) {
-                    throw new RuntimeException("ERROR displaying error page", t);
-                }
             } catch(Exception ignored) {
-                // couldn't find the given resource, can't render
+                // can't render
             }            
             
         } else if("velocityWeblogPage".equals(rendererType)) {
@@ -60,15 +53,8 @@ public class VelocityRendererFactory implements RendererFactory {
             // needed because of the way we do the decorator stuff
             try {
                 renderer = new VelocityWeblogPageRenderer(resourceId);
-            } catch (ParseErrorException pe) {            
-                // Author needs to see parsing error so display error page
-                try {
-                    renderer = new VelocityRenderer(pe, resourceId, "templates/error-page.vm");
-                } catch (Throwable t) {
-                    throw new RuntimeException("ERROR displaying error page", t);
-                }
             } catch(Exception ignored) {
-                // couldn't find the given resource, can't render
+                // can't render
             }   
         }
         
