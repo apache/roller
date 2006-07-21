@@ -29,28 +29,45 @@ import org.apache.roller.pojos.Template;
  */
 public class ThemeTemplate implements Template, Serializable {
     
-    private String id;
-    private String name;
-    private String description;
-    private String contents;
-    private String link;
-    private Date lastModified;
+    private String id = null;
+    private String name = null;
+    private String description = null;
+    private String contents = null;
+    private String link = null;
+    private Date lastModified = null;
+    private String templateLanguage = null;
+    private boolean hidden = false;
+    private String decoratorName = null;
+    
+    private Theme myTheme = null;
     
     
     public ThemeTemplate() {}
     
-    public ThemeTemplate(String id, String name, 
-                String desc, String contents, String link, Date date) {
+    public ThemeTemplate(Theme theme, String id, String name, String desc, 
+            String contents, String link, Date date, String tempLang, 
+            boolean hid, String decor) {
         
+        this.myTheme = theme;
         this.id = id;
         this.name = name;
         this.description = desc;
         this.contents = contents;
         this.link = link;
         this.lastModified = date;
+        this.templateLanguage = tempLang;
+        this.hidden = hid;
+        this.decoratorName = decor;
     }
     
-
+    
+    public Template getDecorator() {
+        if(decoratorName != null && !id.equals(decoratorName)) {
+            return myTheme.getTemplate(decoratorName);
+        }
+        return null;
+    }
+    
     public String getId() {
         return id;
     }
@@ -97,6 +114,30 @@ public class ThemeTemplate implements Template, Serializable {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getTemplateLanguage() {
+        return templateLanguage;
+    }
+
+    public void setTemplateLanguage(String templateLanguage) {
+        this.templateLanguage = templateLanguage;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean isHidden) {
+        this.hidden = isHidden;
+    }
+
+    public String getDecoratorName() {
+        return decoratorName;
+    }
+
+    public void setDecoratorName(String decorator) {
+        this.decoratorName = decorator;
     }
     
     public String toString() {

@@ -12,3 +12,11 @@ alter table website add column pagemodels varchar(512) default null;
 #addColumnNotNull("website" "showalllangs" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
 
 alter table weblogentry add column locale varchar(20) default null;
+
+#addColumnNotNull("webpage" "hidden" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
+
+alter table webpage add column templatelang varchar(20) default null;
+update webpage set templatelang = 'velocity';
+
+alter table webpage add column decorator varchar(255) default null;
+update webpage set decorator = '_decorator';

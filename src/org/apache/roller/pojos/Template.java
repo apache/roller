@@ -30,33 +30,64 @@ import java.util.Date;
 public interface Template {
     
     /**
+     * The unique identifier for this Template.
+     *
      * @roller.wrapPojoMethod type="simple"
      */
     public String getId();
     
     /**
+     * A simple name for this Template.
+     *
      * @roller.wrapPojoMethod type="simple"
      */
     public String getName();
     
     /**
+     * A description of the contents of this Template.
+     *
      * @roller.wrapPojoMethod type="simple"
      */
     public String getDescription();
     
     /**
+     * The contents or body of the Template.
+     *
      * @roller.wrapPojoMethod type="simple"
      */
     public String getContents();
     
     /**
+     * The url link value for this Template.  If this template is not
+     * private this is the url that it can be accessed at.
+     *
      * @roller.wrapPojoMethod type="simple"
      */
     public String getLink();
     
     /**
+     * The last time the template was modified.
+     *
      * @roller.wrapPojoMethod type="simple"
      */
     public Date getLastModified();
+    
+    /**
+     * Is the Template hidden?  A hidden template cannot be accessed directly.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public boolean isHidden();
+    
+    /**
+     * The templating language used by this template.
+     */
+    public String getTemplateLanguage();
+    
+    /**
+     * The decorator Template to apply.  This returns null if no decorator
+     * should be applied.
+     */
+    public Template getDecorator();
     
 }

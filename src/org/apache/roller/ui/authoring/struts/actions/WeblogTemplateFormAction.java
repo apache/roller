@@ -94,7 +94,15 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 data.setDescription("");
                 data.setContents("");
                 validateLink( data );
-
+                
+                // all templates start out as velocity templates
+                data.setTemplateLanguage("velocity");
+                
+                // for now, all templates just use _decorator
+                if(!"_decorator".equals(data.getName())) {
+                    data.setDecoratorName("_decorator");
+                }
+                
                 UserManager mgr = RollerFactory.getRoller().getUserManager();
                 mgr.savePage( data );
                 RollerFactory.getRoller().flush();

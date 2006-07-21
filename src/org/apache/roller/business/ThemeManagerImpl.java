@@ -280,21 +280,28 @@ public class ThemeManagerImpl implements ThemeManager {
                 if (mLogger.isDebugEnabled()) mLogger.debug(noprob);
                 continue;
             }
-
-            // Strip "_" from to form link
-            String template_link = template_name;
-            if (template_name.startsWith("_") && template_name.length() > 1) {
-                template_link = template_link.substring(1);
+            
+            String decorator = "_decorator";
+            if("_decorator".equals(template_name)) {
+                decorator = null;
             }
             
             // construct ThemeTemplate representing this file
+            // a few restrictions for now:
+            //   - we only allow "velocity" for the template language
+            //   - decorator is always "_decorator" or null
+            //   - all theme templates are considered hidden
             theme_template = new ThemeTemplate(
+                    theme,
                     theme_name+":"+template_name,
                     template_name,
                     template_name,
                     new String(chars),
-                    template_link,
-                    new Date(template_file.lastModified()));
+                    template_name,
+                    new Date(template_file.lastModified()),
+                    "velocity",
+                    true,
+                    decorator);
 
             // add it to the theme
             theme.setTemplate(template_name, theme_template);
@@ -350,13 +357,17 @@ public class ThemeManagerImpl implements ThemeManager {
                     
                 } else {
                     // User does not have page by that name, so create new page.
-                    template = new WeblogTemplate( null,
+                    template = new WeblogTemplate(
+                            null,                               // id
                             website,                            // website
                             theme_template.getName(),           // name
                             theme_template.getDescription(),    // description
                             theme_template.getName(),           // link
                             theme_template.getContents(),       // contents
-                            new Date()                          // last mod
+                            new Date(),                         // last mod
+                            theme_template.getTemplateLanguage(), // temp lang
+                            theme_template.isHidden(),          // hidden
+                            theme_template.getDecoratorName()   // decorator
                             );
                     userMgr.savePage( template );
                 }
