@@ -285,7 +285,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         public String getNextName() {
             if (getNextEntry() != null) {
                 String title = Utilities.truncateNicely(getNextEntry().getTitle(), 15, 20, "...");
-                String msg = bundle.getString("weblogEntriesPager.singleEntry.next");
+                String msg = bundle.getString("weblogEntriesPager.single.next");
                 return MessageFormat.format(msg, new Object[] {title});
             }
             return null;
@@ -301,7 +301,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         public String getPrevName() {
             if (getPrevEntry() != null) {
                 String title = Utilities.truncateNicely(getPrevEntry().getTitle(), 15, 20, "...");
-                String msg = bundle.getString("weblogEntriesPager.singleEntry.prev");
+                String msg = bundle.getString("weblogEntriesPager.single.prev");
                 return MessageFormat.format(msg, new Object[] {title});
             }
             return null;

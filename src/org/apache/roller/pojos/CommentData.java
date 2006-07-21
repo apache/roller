@@ -239,24 +239,7 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
     public void setRemoteHost(String remoteHost) {
         this.remoteHost = remoteHost;
     }
-    
-    /** 
-     * Get comment's permalink, suitable for use as an RSS guid or Atom id.
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getPermalink() {
-        String ret = null;
-        if (weblogEntry != null) {
-            ret = weblogEntry.getPermalink() + "#comment-" + postTime.getTime();
-        }
-        return ret;
-    }
-    
-    /**
-     * No-op to please XDoclet, permalink is read-only.
-     */
-    public void setPermalink(String permalink) {}
-    
+        
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
@@ -342,4 +325,17 @@ public class CommentData extends org.apache.roller.pojos.PersistentObject
         this.approved = otherComment.getApproved();
     }
     
+    /**
+     * Timestamp to be used to formulate comment permlink.
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getTimestamp() {
+        if (postTime != null) {
+            return Long.toString(postTime.getTime());
+        }
+        return null;
+    }
+    
+    /** No-op to please XDoclet */      
+    public void setTimestamp(String timeStamp) {}
 }

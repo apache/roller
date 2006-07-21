@@ -88,6 +88,18 @@ public final class URLUtilities {
         return getWeblogEntryURL(weblog, locale, entryAnchor, absolute)+"#comments";
     }
     
+    /**
+     * Get url for a single weblog entry comments on a given weblog.
+     */
+    public static final String getWeblogCommentURL( WebsiteData weblog,
+                                                    String locale,
+                                                    String entryAnchor,
+                                                    String timeStamp,
+                                                    boolean absolute) {
+        
+        return getWeblogEntryURL(weblog, locale, entryAnchor, absolute)+"#comment-"+timeStamp;
+    }
+    
     
     /**
      * Get url for a collection of entries on a given weblog.

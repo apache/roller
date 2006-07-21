@@ -118,6 +118,11 @@ public class ModelLoader {
     public static void loadFeedModels(Map model, Map initData)
             throws RollerException {
         
+        // feeds need url building too
+        URLModel urlModel = new URLModel();
+        urlModel.init(initData);
+        model.put(urlModel.getModelName(), urlModel);
+
         String weblogModels = 
                 RollerConfig.getProperty("rendering.feedRenderModels");
         loadModels(weblogModels, model, initData);
