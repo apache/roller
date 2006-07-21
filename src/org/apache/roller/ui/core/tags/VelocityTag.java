@@ -37,8 +37,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class VelocityTag extends HybridTag // TagSupport 
 {
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(VelocityTag.class);
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(VelocityTag.class);
 /*
     private String              title;
     private String              subtitle;

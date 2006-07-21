@@ -26,6 +26,7 @@
     <fmt:param value="${website.name}" />
 </fmt:message>
 <br/>
+<br/>
 <span class="warning">
     <fmt:message key="websiteSettings.removeWebsiteWarning" />
 </span>

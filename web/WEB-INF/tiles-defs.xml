@@ -142,23 +142,31 @@
     <put name="content" value="/WEB-INF/jsps/authoring/UploadFile.jsp" />
 </definition>
 
-<definition name=".WeblogEntryRemove" extends=".tiles-simplepage" >
+<!-- subpages -->
+
+<definition name=".WeblogEntryRemove" extends=".tiles-editorpage" >
     <put name="content" value="/WEB-INF/jsps/authoring/WeblogEntryRemove.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
-<definition name=".CategoryForm" extends=".tiles-simplepage" >
+<definition name=".CategoryForm" extends=".tiles-editorpage" >
     <put name="content" value="/WEB-INF/jsps/authoring/CategoryForm.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
-<definition name=".CategoryDeleteOK" extends=".tiles-simplepage" >
+<definition name=".CategoryDeleteOK" extends=".tiles-editorpage" >
     <put name="content" value="/WEB-INF/jsps/authoring/CategoryDeleteOK.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
-<definition name=".BookmarkForm" extends=".tiles-simplepage" >
+<definition name=".BookmarkForm" extends=".tiles-editorpage" >
     <put name="content" value="/WEB-INF/jsps/authoring/BookmarkForm.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
-<definition name=".FolderForm" extends=".tiles-simplepage" >
+<definition name=".FolderForm" extends=".tiles-editorpage" >
     <put name="content" value="/WEB-INF/jsps/authoring/FolderForm.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
 <definition name=".import" extends=".tiles-editorpage" >
     <put name="content" value="/WEB-INF/jsps/authoring/import.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
 
 <!-- weblog admin pages (and associates) -->
@@ -197,26 +205,35 @@
     <put name="content" value="/WEB-INF/jsps/authoring/Maintenance.jsp" />
 </definition>
 
-<definition name=".WebsiteRemove" extends=".tiles-simplepage" >
+<!-- subpages -->
+
+<definition name=".WebsiteRemove" extends=".tiles-editorpage" >
     <put name="content" value="/WEB-INF/jsps/authoring/WebsiteRemove.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
-<definition name=".CustomPingTargetDeleteOK" extends=".tiles-simplepage" >
-    <put name="content" value="/WEB-INF/jsps/authoring/CustomPingTargetDeleteOK.jsp" />
-</definition>
-<definition name=".CustomPingTargetEdit" extends=".tiles-simplepage" >
-    <put name="content" value="/WEB-INF/jsps/authoring/CustomPingTargetEdit.jsp" />
-</definition>
-<definition name=".InviteMember" extends=".tiles-simplepage" >
+<definition name=".InviteMember" extends=".tiles-editorpage" >
     <put name="content" value="/WEB-INF/jsps/authoring/InviteMember.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
-<definition name=".InviteMemberDone" extends=".tiles-simplepage" >
+<definition name=".InviteMemberDone" extends=".tiles-editorpage" >
     <put name="content" value="/WEB-INF/jsps/authoring/InviteMemberDone.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
-<definition name=".edit-page" extends=".tiles-simplepage"  >
+<definition name=".CustomPingTargetDeleteOK" extends=".tiles-editorpage" >
+    <put name="content" value="/WEB-INF/jsps/authoring/CustomPingTargetDeleteOK.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+</definition>
+<definition name=".CustomPingTargetEdit" extends=".tiles-editorpage" >
+    <put name="content" value="/WEB-INF/jsps/authoring/CustomPingTargetEdit.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+</definition>
+<definition name=".edit-page" extends=".tiles-editorpage"  >
     <put name="content" value="/WEB-INF/jsps/authoring/edit-page.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
-<definition name=".remove-page" extends=".tiles-simplepage"  >
+<definition name=".remove-page" extends=".tiles-editorpage"  >
     <put name="content" value="/WEB-INF/jsps/authoring/remove-page.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
 
 

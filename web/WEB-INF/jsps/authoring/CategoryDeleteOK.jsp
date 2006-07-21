@@ -46,6 +46,7 @@ function deleteNo()
 	<html:hidden property="confirmDelete" />
 
 	<c:if test="${categoryDeleteForm.inUse}" >
+                <br />
 		<span class="warning">
 		    <fmt:message key="categoryDeleteOK.warningCatInUse" />
 		</span>
