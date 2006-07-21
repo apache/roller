@@ -18,10 +18,9 @@
 
 package org.apache.roller.ui.rendering.velocity;
 
+import org.apache.roller.pojos.Template;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererFactory;
-import org.apache.velocity.exception.ParseErrorException;
-
 
 /**
  * Velocity RendererFactory for Roller.
@@ -29,33 +28,24 @@ import org.apache.velocity.exception.ParseErrorException;
 public class VelocityRendererFactory implements RendererFactory {
     
     
-    public Renderer getRenderer(String rendererType, String resourceId) {
+    public Renderer getRenderer(Template template) {
         
         Renderer renderer = null;
         
         // nothing we can do with null values
-        if(rendererType == null || resourceId == null) {
+        if(template.getTemplateLanguage() == null || template.getId() == null) {
             return null;
         }
         
-        if("velocity".equals(rendererType)) { 
+        if("velocity".equals(template.getTemplateLanguage())) { 
             
             // standard velocity template
             try {
-               renderer = new VelocityRenderer(resourceId);
+               renderer = new VelocityRenderer(template);
             } catch(Exception ignored) {
                 // can't render
             }            
             
-        } else if("velocityWeblogPage".equals(rendererType)) {
-            
-            // special case for velocity weblog page templates
-            // needed because of the way we do the decorator stuff
-            try {
-                renderer = new VelocityWeblogPageRenderer(resourceId);
-            } catch(Exception ignored) {
-                // can't render
-            }   
         }
         
         return renderer;

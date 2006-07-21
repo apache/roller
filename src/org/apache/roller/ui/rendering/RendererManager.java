@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.pojos.Template;
 
 
 /**
@@ -106,8 +107,7 @@ public class RendererManager {
      * instance and tries to find a Renderer for the content.  If no Renderer
      * can be found then we throw an exception.
      */
-    public static Renderer getRenderer(String rendererType, String resourceId) 
-            throws Exception {
+    public static Renderer getRenderer(Template template) throws Exception {
         
         Renderer renderer = null;
         
@@ -115,7 +115,7 @@ public class RendererManager {
         // wants to handle this content
         Iterator factories = rendererFactories.iterator();
         while(factories.hasNext()) {
-            renderer = ((RendererFactory)factories.next()).getRenderer(rendererType, resourceId);
+            renderer = ((RendererFactory)factories.next()).getRenderer(template);
             
             if(renderer != null) {
                 return renderer;

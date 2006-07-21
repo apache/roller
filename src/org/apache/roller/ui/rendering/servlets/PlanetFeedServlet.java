@@ -32,6 +32,8 @@ import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.PlanetManager;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.pojos.StaticTemplate;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.util.PlanetCache;
@@ -176,7 +178,8 @@ public class PlanetFeedServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer("velocity", "templates/planet/planetrss.vm");
+            Template template = new StaticTemplate("templates/planet/planetrss.vm", null, "velocity");
+            renderer = RendererManager.getRenderer(template);
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for planet rss", e);

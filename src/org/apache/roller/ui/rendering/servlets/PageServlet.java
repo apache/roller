@@ -306,7 +306,7 @@ public class PageServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer("velocityWeblogPage", page.getId());
+            renderer = RendererManager.getRenderer(page);
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+page.getId(), e);
