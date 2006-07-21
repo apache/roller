@@ -18,13 +18,14 @@
 
 package org.apache.roller.ui.rendering.velocity;
 
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ParseErrorException;
@@ -37,26 +38,40 @@ public class VelocityRenderer implements Renderer {
     
     private static Log log = LogFactory.getLog(VelocityRenderer.class);
     
-    private String resourceId = null;
-    private Template resourceTemplate = null;
+    // the original template we are supposed to render
+    private Template renderTemplate = null;
+    
+    // the velocity templates
+    private org.apache.velocity.Template velocityTemplate = null;
+    private org.apache.velocity.Template velocityDecorator = null;
+    
+    // a possible exception
     private Exception parseException = null;
     
     
-    public VelocityRenderer(String resource) throws Exception {
+    public VelocityRenderer(Template template) throws Exception {
         
-        this.resourceId = resource;
+        // the Template we are supposed to render
+        this.renderTemplate = template;
         
         try {
             // make sure that we can locate the template
             // if we can't then this will throw an exception
-            resourceTemplate = RollerVelocity.getTemplate(this.resourceId, "UTF-8");
+            velocityTemplate = RollerVelocity.getTemplate(template.getId(), "UTF-8");
+            
+            // if there is a decorator then look that up too
+            Template decorator = renderTemplate.getDecorator();
+            if(decorator != null) {
+                velocityDecorator = RollerVelocity.getTemplate(decorator.getId());
+            }
+            
         } catch(ParseErrorException ex) {
             // in the case of a parsing error we want to render an
             // error page instead so the user knows what was wrong
             parseException = ex;
             
             // need to lookup error page template
-            resourceTemplate = RollerVelocity.getTemplate("templates/error-page.vm");
+            velocityTemplate = RollerVelocity.getTemplate("templates/error-page.vm");
         }
     }
     
@@ -67,11 +82,11 @@ public class VelocityRenderer implements Renderer {
             
             Context ctx = new VelocityContext(model);
             ctx.put("exception", parseException);
-            ctx.put("exceptionSource", resourceId);
+            ctx.put("exceptionSource", renderTemplate.getId());
             ctx.put("utils", new UtilitiesModel());
             
             // render output to Writer
-            resourceTemplate.merge(ctx, out);
+            velocityTemplate.merge(ctx, out);
             
             // and we're done
             return;
@@ -82,13 +97,35 @@ public class VelocityRenderer implements Renderer {
         // convert model to Velocity Context
         Context ctx = new VelocityContext(model);
         
-        // render output to Writer
-        this.resourceTemplate.merge(ctx, out);
+        if(velocityDecorator != null) {
+            
+            /**
+             * We only allow decorating once, so the process isn't
+             * fully recursive.  This is just to keep it simple.
+             */
+            
+            // render base template to a temporary StringWriter
+            StringWriter sw = new StringWriter();
+            velocityTemplate.merge(ctx, sw);
+            
+            // put rendered template into context
+            ctx.put("decorator_body", sw.toString());
+            
+            log.debug("Applying decorator "+velocityDecorator.getName());
+            
+            // now render decorator to our output writer
+            velocityDecorator.merge(ctx, out);
+            
+        } else {
+            
+            // no decorator, so just merge template to our output writer
+            velocityTemplate.merge(ctx, out);
+        }
         
         long endTime = System.currentTimeMillis();
         long renderTime = (endTime - startTime)/1000;
         
-        log.debug("Rendered ["+this.resourceId+"] in "+renderTime+" secs");
+        log.debug("Rendered ["+renderTemplate.getId()+"] in "+renderTime+" secs");
     }
 
 }

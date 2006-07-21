@@ -29,6 +29,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.pojos.StaticTemplate;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.ui.rendering.Renderer;
@@ -116,7 +118,8 @@ public class RSDServlet extends HttpServlet {
         Renderer renderer = null;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer("velocity", "templates/weblog/rsd.vm");
+            Template template = new StaticTemplate("templates/weblog/rsd.vm", null, "velocity");
+            renderer = RendererManager.getRenderer(template);
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);

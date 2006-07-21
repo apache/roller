@@ -18,6 +18,8 @@
 
 package org.apache.roller.ui.rendering;
 
+import org.apache.roller.pojos.Template;
+
 
 /**
  * A factory for Renderer objects.
@@ -29,10 +31,10 @@ public interface RendererFactory {
     
     
     /**
-     * Get a Renderer that will handle the given rendererType and resource.
+     * Get a Renderer that will handle the given Template.
      * If a RendererFactory does not have a Renderer which can handle the
      * content then it may return null.
      */
-    public Renderer getRenderer(String rendererType, String resourceId);
+    public Renderer getRenderer(Template template);
     
 }
