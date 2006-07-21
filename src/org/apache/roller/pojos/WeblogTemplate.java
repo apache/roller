@@ -22,11 +22,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-
-
 
 /**
  * Pojo that represents a single user defined template page.
@@ -43,9 +41,9 @@ public class WeblogTemplate extends PersistentObject
         implements Serializable, Template {
     
     public static final long serialVersionUID = -613737191638263428L;
-    
     public static final String DEFAULT_PAGE = "Weblog";
     
+    private static Log log = LogFactory.getLog(WeblogTemplate.class);
     private static Set requiredTemplates = null;
     
     private String id = null;
@@ -54,6 +52,9 @@ public class WeblogTemplate extends PersistentObject
     private String link = null;
     private String contents = null;
     private Date lastModified = null;
+    private String templateLanguage = null;
+    private boolean hidden = false;
+    private String decoratorName = null;
     
     private WebsiteData weblog = null;
     
@@ -75,7 +76,10 @@ public class WeblogTemplate extends PersistentObject
             java.lang.String description,
             java.lang.String link,
             java.lang.String template,
-            java.util.Date updateTime ) {
+            java.util.Date updateTime,
+            String tempLang,
+            boolean hid,
+            String decorator) {
         this.id = id;
         this.weblog = website;
         this.name = name;
@@ -83,10 +87,26 @@ public class WeblogTemplate extends PersistentObject
         this.link = link;
         this.contents = template;
         this.lastModified = (Date)updateTime.clone();
+        this.templateLanguage = tempLang;
+        this.hidden = hid;
+        this.decoratorName = decorator;
     }
     
     public WeblogTemplate( WeblogTemplate otherData ) {
         setData(otherData);
+    }
+    
+    
+    public Template getDecorator() {
+        if(decoratorName != null && !id.equals(decoratorName)) {
+            try {
+                return weblog.getPageByName(decoratorName);
+            } catch (RollerException ex) {
+                log.error("Error getting decorator["+decoratorName+"] "+
+                        "for template "+id);
+            }
+        }
+        return null;
     }
     
     
@@ -191,6 +211,48 @@ public class WeblogTemplate extends PersistentObject
         } else {
             lastModified = null;
         }
+    }
+    
+    
+    /**
+     * @ejb:persistent-field
+     * @hibernate.property column="templatelang" non-null="true" unique="false"
+     */
+    public String getTemplateLanguage() {
+        return templateLanguage;
+    }
+
+    /** @ejb:persistent-field */
+    public void setTemplateLanguage(String templateLanguage) {
+        this.templateLanguage = templateLanguage;
+    }
+    
+    
+    /**
+     * @ejb:persistent-field
+     * @hibernate.property column="hidden" non-null="true" unique="false"
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /** @ejb:persistent-field */
+    public void setHidden(boolean isHidden) {
+        this.hidden = isHidden;
+    }
+    
+    
+    /**
+     * @ejb:persistent-field
+     * @hibernate.property column="decorator" non-null="true" unique="false"
+     */
+    public String getDecoratorName() {
+        return decoratorName;
+    }
+
+    /** @ejb:persistent-field */
+    public void setDecoratorName(String decorator) {
+        this.decoratorName = decorator;
     }
     
     
@@ -303,6 +365,9 @@ public class WeblogTemplate extends PersistentObject
         this.link =         other.getLink();
         this.contents =     other.getContents();
         this.lastModified = other.getLastModified()!=null ? (Date)other.getLastModified().clone() : null;
+        this.templateLanguage = other.getTemplateLanguage();
+        this.hidden = other.isHidden();
+        this.decoratorName = other.getDecoratorName();
     }
     
 }

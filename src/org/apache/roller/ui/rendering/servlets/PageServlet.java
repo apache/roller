@@ -196,7 +196,7 @@ public class PageServlet extends HttpServlet {
             if(page == null) {
                 page = new WeblogTemplate("templates/weblog/popupcomments.vm", weblog,
                         "Comments", "Comments", "dummy_link",
-                        "dummy_template", new Date());
+                        "dummy_template", new Date(), "velocity", true, null);
             }
             
         // If request specified the page, then go with that
