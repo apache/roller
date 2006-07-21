@@ -97,7 +97,7 @@ Show trackback discovery code for one weblog entry, appears as an HTML comment.
 Include Javascript code needed for standard macros, for use in HTML head.
 *#
 #macro(showCommonJavascript)
-<script type="text/javascript" src="$config.getContextURL()/theme/scripts/roller.js"></script>
+<script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
 #end
 
 
@@ -222,7 +222,7 @@ Show comments form for weblog entry.
         <span class="status">$model.statusMessage</span>
     #end
 
-    <form method="post" action="$config.getContextURL()/roller-ui/rendering/comment/$entry.website.handle/entry/$entry.anchor" 
+    <form method="post" action="$url.site/roller-ui/rendering/comment/$entry.website.handle/entry/$entry.anchor" 
         focus="name" name="form" onsubmit="fixURL(this); return validateComments(this)">    
         <input type="hidden" name="method" value="post" />
         <input type="hidden" name="entryid" value="$entry.id" />
@@ -266,7 +266,7 @@ Show comments form for weblog entry.
                 </span>
             </li>
             <li class="info">
-               <script type="text/javascript" src="$config.getContextURL()/theme/scripts/clientSideInclude.js"></script>
+               <script type="text/javascript" src="$url.site/theme/scripts/clientSideInclude.js"></script>
                <div id="commentAuthenticator"></div>
             </li>
             <li>
@@ -278,9 +278,9 @@ Show comments form for weblog entry.
 
     </form>
 
-    <script type="text/javascript" src="$config.getContextURL()/theme/scripts/roller.js"></script>
+    <script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
     <script type="text/javascript">
-    clientSideInclude('commentAuthenticator', '$config.getContextURL()/CommentAuthenticatorServlet');
+    clientSideInclude('commentAuthenticator', '$url.site)/CommentAuthenticatorServlet');
 
     var author = getCookie("commentAuthor");
     var email = getCookie("commentEmail");
@@ -383,7 +383,7 @@ Show bookmarks as a HTML ul list (private).
         #else
             #if($utils.isNotEmpty( $bookmark.FeedUrl))
             <a href="$bookmark.feedUrl"><img class="smrssbadge"
-               src="$config.getAbsoluteContextURL()/images/smrssbadge.gif"
+               src="$url.absoluteSite/images/smrssbadge.gif"
                alt="$text.get("macro.bookmark.urlFeed")"/></a>
             #end
             <a href="$bookmark.url"
@@ -491,7 +491,7 @@ Show weblog's categories in specified parent category.
 #macro(showPageMenu $weblog)
     <ul class="rNavigationBar">
         <li class="rNavItem">
-            <a href="$config.getContextURL()">$config.getProperty("site.shortName")</a>
+            <a href="$url.site">$config.getProperty("site.shortName")</a>
         </li>
         #foreach($iPage in $weblog.pages)
             #set($invisible = $iPage.Name.startsWith("_"))
@@ -609,7 +609,7 @@ Show search again form for a weblog.
         $text.get( "macro.weblog.searchgoogle", [$searchResults.term, $absBaseURL, $ctxPath, ${website.handle}] )
     </div>
     <!-- searchhi script hangs firefox, commenting it out for now -->
-    <!-- script type="text/javascript" src="$config.getContextURL()/theme/scripts/searchhi.js"></script -->
+    <!-- script type="text/javascript" src="$url.site/theme/scripts/searchhi.js"></script -->
 #end
 
 
