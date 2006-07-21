@@ -273,24 +273,24 @@ WebsiteFormAction.WebsitePageModel model =
     <input type="submit" value='<fmt:message key="websiteSettings.button.update" />' />
 </div>
         
-<c:if test="${model.website.adminUserCount == 1 && model.groupBloggingEnabled}">
-    <br />
-    <br />
-    <h2><fmt:message key="websiteSettings.removeWebsiteHeading" /></h2>
-    <p>
-        <fmt:message key="websiteSettings.removeWebsite" /><br/>
-        <span class="warning">
-            <fmt:message key="websiteSettings.removeWebsiteWarning" />
-        </span>
-    </p>
-    <br />
-    <input type="button" value='<fmt:message key="websiteSettings.button.remove" />'  
-        onclick='document.websiteFormEx.method.value="removeOk"; document.websiteFormEx.submit()' />
-    <br />
-    <br />
-</c:if>
-        
 <br />
+<br />
+
+<h2><fmt:message key="websiteSettings.removeWebsiteHeading" /></h2>
+<p>
+    <fmt:message key="websiteSettings.removeWebsite" /><br/><br/>
+    <span class="warning">
+        <fmt:message key="websiteSettings.removeWebsiteWarning" />
+    </span>
+</p>
+<br />
+<input type="button" value='<fmt:message key="websiteSettings.button.remove" />'  
+    onclick='document.websiteFormEx.method.value="removeOk"; document.websiteFormEx.submit()' />
+    
+<br />
+<br />    
+<br />
+
 </html:form>
 
 
