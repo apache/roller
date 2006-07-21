@@ -222,6 +222,7 @@ public class URLModel implements Model {
         String ret = null;
         Map params = new HashMap();
         params.put(RequestConstants.ANCHOR, anchor);
+        params.put(RequestConstants.WEBLOG, weblog.getHandle());
         try {
             ret = RequestUtils.computeURL(pageContext,
                 "weblogEdit", null, null, null, params, null, false);
