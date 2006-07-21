@@ -109,6 +109,11 @@ public class PreviewServlet extends HttpServlet {
             tmpWebsite.setEditorTheme(Theme.CUSTOM);
         }
         
+        // we've got to set the weblog in our previewRequest because that's
+        // the object that gets referenced during rendering operations
+        previewRequest.setWeblog(tmpWebsite);
+        
+        
         Template page = null;
         try {
             // we just want to show the default view
