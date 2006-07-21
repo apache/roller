@@ -1,3 +1,20 @@
+#**
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+*#
 
 #** macros for use by Roller's built-in feed templates
 
@@ -18,8 +35,8 @@
         <published>$utils.formatIso8601Date($entry.pubTime)</published>
         <updated>$utils.formatIso8601Date($entry.updateTime)</updated> 
         <category term="$utils.escapeHTML($entry.category.path)" label="$utils.escapeHTML($entry.category.name)" />
-        #if( $utils.isNotEmpty($entry.summary))<summary type="html">$utils.escapeHTML($plugins.render($entry, $entry.summary, false))</summary>#end
-        #if( $utils.isNotEmpty($entry.text) )<content type="html">$utils.escapeHTML($plugins.render($entry, $entry.text, false))</content>#end
+        #if( $utils.isNotEmpty($entry.summary))<summary type="html">$utils.escapeHTML($entry.transformedSummary)</summary>#end
+        #if( $utils.isNotEmpty($entry.text) )<content type="html">$utils.escapeHTML($entry.transformedText)</content>#end
         #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
         #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
         #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
@@ -43,9 +60,9 @@
     #end
     <pubDate>$utils.formatRfc822Date($entry.pubTime)</pubDate>
     <category>$utils.escapeHTML($entry.category.name)</category>
-    #if( $utils.isNotEmpty($entry.summary) && $utils.isNotEmpty($entry.text))<atom:summary type="html">$utils.escapeHTML($plugins.render($entry, $entry.summary, false))</atom:summary>#end
-    #if( $utils.isNotEmpty($entry.summary) && $utils.isEmpty($entry.text))<description>$utils.escapeHTML($plugins.render($entry, $entry.summary, false))</description>#end
-    #if( $utils.isNotEmpty($entry.text) )<description>$utils.escapeHTML($plugins.render($entry, $entry.text, false))</description>#end
+    #if( $utils.isNotEmpty($entry.summary) && $utils.isNotEmpty($entry.text))<atom:summary type="html">$utils.escapeHTML($entry.transformedSummary)</atom:summary>#end
+    #if( $utils.isNotEmpty($entry.summary) && $utils.isEmpty($entry.text))<description>$utils.escapeHTML($entry.transformedText)</description>#end
+    #if( $utils.isNotEmpty($entry.text) )<description>$utils.escapeHTML($entry.transformedText)</description>#end
     #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
     #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
     #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
@@ -63,10 +80,10 @@
 #macro(showCommentsAtom10 $comments)
     #foreach($comment in $comments)
     <entry>
-        <id>$comment.permalink</id> 
+        <id>$url.comment($comment.weblogEntry.anchor, $comment.timestamp)</id> 
         <title type="html">Re: $utils.escapeHTML($comment.weblogEntry.title)</title>
         <author><name>$utils.escapeHTML($utils.removeHTML($comment.name))</name></author>
-        <link rel="alternate" type="text/html" href="$comment.weblogEntry.permalink"/>
+        <link rel="alternate" type="text/html" href="$url.comment($comment.weblogEntry.anchor, $comment.timestamp)"/>
         <published>$utils.formatIso8601Date($comment.postTime)</published>
         <updated>$utils.formatIso8601Date($comment.postTime)</updated> 
         #if($config.getBooleanProperty("users.comments.escapehtml"))
@@ -86,7 +103,7 @@
 #macro(showCommentsRSS20 $comments)
     #foreach($comment in $comments)
     <item>
-        <guid isPermaLink="true">$comment.permalink</guid>
+        <guid isPermaLink="true">$url.comment($comment.weblogEntry.anchor, $comment.timestamp)</guid>
         <title>Re: $utils.escapeHTML($comment.weblogEntry.title)</title>
         <dc:creator>$utils.escapeHTML($utils.removeHTML($comment.name))</dc:creator>
         <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>

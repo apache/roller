@@ -79,6 +79,13 @@ public class FeedModel implements Model {
     /**
      * Get category path or name specified by request.
      */
+    public boolean getExcerpts() {
+        return feedRequest.isExcerpts();
+    }
+    
+    /**
+     * Get category path or name specified by request.
+     */
     public String getCategoryPath() {
         return feedRequest.getWeblogCategoryName();
     }

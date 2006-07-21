@@ -107,7 +107,18 @@ public class PlanetFeedServlet extends HttpServlet {
         }
         
         // set content type
-        response.setContentType("application/rss+xml; charset=utf-8");
+        // set content type
+        String accepts = request.getHeader("Accept");
+        String userAgent = request.getHeader("User-Agent");
+        if (accepts != null && userAgent != null 
+            && accepts.indexOf("*/*") != -1 && userAgent.startsWith("Mozilla")) {
+            // client is a browser and now that we offer styled feeds we want 
+            // browsers to load the page rather than popping up the download 
+            // dialog, so we provide a content-type that browsers will display
+            response.setContentType("text/xml");
+        } else {
+            response.setContentType("application/rss+xml; charset=utf-8");
+        }
         
         // set last-modified date
         // small hack here, we add 1 second (1000 ms) to the last mod time to

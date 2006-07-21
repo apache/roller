@@ -127,12 +127,19 @@ public class FeedServlet extends HttpServlet {
         response.setDateHeader("Last-Modified", lastModified);
         
         // set content type
-        if("rss".equals(feedRequest.getFormat())) {
+        String accepts = request.getHeader("Accept");
+        String userAgent = request.getHeader("User-Agent");
+        if (accepts != null && userAgent != null 
+            && accepts.indexOf("*/*") != -1 && userAgent.startsWith("Mozilla")) {
+            // client is a browser and now that we offer styled feeds we want 
+            // browsers to load the page rather than popping up the download 
+            // dialog, so we provide a content-type that browsers will display
+            response.setContentType("text/xml");
+        } else if("rss".equals(feedRequest.getFormat())) {
             response.setContentType("application/rss+xml; charset=utf-8");
         } else if("atom".equals(feedRequest.getFormat())) {
             response.setContentType("application/atom+xml; charset=utf-8");
-        }
-        
+        }        
         
         // generate cache key
         String cacheKey = null;

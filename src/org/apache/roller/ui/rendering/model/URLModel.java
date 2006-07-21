@@ -136,6 +136,10 @@ public class URLModel implements Model {
         return URLUtilities.getWeblogEntryURL(weblog, locale, anchor, true);
     }
     
+    public String comment(String anchor, String timeStamp) {
+        return URLUtilities.getWeblogCommentURL(weblog, locale, anchor, timeStamp, true);
+    }
+    
     
     public String comments(String anchor) {
         return URLUtilities.getWeblogCommentsURL(weblog, locale, anchor, true);
