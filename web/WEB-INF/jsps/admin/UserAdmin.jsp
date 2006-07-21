@@ -66,10 +66,7 @@ function cancel() {
             <p class="subtitle"><fmt:message key="userAdmin.subtitle.editUser" /></p>
             <p><fmt:message key="userAdmin.prompt.editUser" /></p>
         </c:when>
-        <c:otherwise>
-            <h1>
-                <fmt:message key="userAdmin.title.createNewUser" />
-            </h1>			
+        <c:otherwise>			
             <p class="subtitle"><fmt:message key="userAdmin.subtitle.createNewUser" /></p>
         </c:otherwise>
     </c:choose>
