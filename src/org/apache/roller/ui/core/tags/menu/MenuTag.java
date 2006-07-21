@@ -69,7 +69,7 @@ public class MenuTag extends VelocityTag {
     }
     
     
-    /** 
+    /**
      * Unique ID for this menu within the user's session.
      *
      * @jsp.attribute
@@ -79,7 +79,7 @@ public class MenuTag extends VelocityTag {
     public void setId( String v ) { mMenuId= v; }
     
     
-    /** 
+    /**
      * Name of the view to be used to render the menu.
      * The view is a Velocity template and it must be in the classpath.
      * Values: tabbed, vertical, horizontal.
@@ -91,7 +91,7 @@ public class MenuTag extends VelocityTag {
     public void setView( String v ) { mView = v; }
     
     
-    /** 
+    /**
      * Name of the model to be used.
      * Must correspond to name of XML file in WEB-INF directory.
      *

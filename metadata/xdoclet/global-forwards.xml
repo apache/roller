@@ -28,6 +28,8 @@
 <forward name="commentManagement"      path="/roller-ui/authoring/commentManagement.do?method=query"/>
 <forward name="commentQuery"           path="/roller-ui/authoring/commentQuery.do?method=query"/>
 <forward name="categories"             path="/roller-ui/authoring/categories.do?method=selectCategory"/>
+<forward name="categoryEdit"           path="/roller-ui/authoring/categoryEdit.do"/>
+<forward name="categoryDelete"         path="/roller-ui/authoring/categoryDelete.do"/>
 <forward name="bookmarks"              path="/roller-ui/authoring/bookmarks.do?method=selectFolder"/>
 <forward name="folderEdit"             path="/roller-ui/authoring/folderEdit.do"/>
 <forward name="importBookmarks"        path="/roller-ui/authoring/importBookmarks.do"/>
