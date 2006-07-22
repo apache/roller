@@ -1,4 +1,4 @@
-<!--
+<%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,14 +14,10 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
--->
+--%>
 <%@ include file="/taglibs.jsp" %>
 <script type="text/javascript">
 <!--
-function previewImage(theme) {
-    <% String ctxPath = request.getContextPath(); %>
-    document.preview.src="<%= ctxPath %>/images/preview/sm-theme-" + theme + ".png";
-}
 function cancel() {
     document.weblogTemplateForm.method.value="cancel"; 
     document.weblogTemplateForm.submit();
@@ -38,9 +34,10 @@ function cancel() {
         <bean:write name="weblogTemplateForm" property="name" />
 	</p>
 	
-    <table>
+    <table cellspacing="5">
         <tr>
-            <td><fmt:message key="pageForm.name" /><br />
+            <td class="label"><fmt:message key="pageForm.name" />&nbsp;</td>
+            <td class="field">
                 <c:choose>
                     <c:when test="${page.required}">
                         <html:text style="background: #e5e5e5" property="name" size="50" readonly="true"/>
@@ -50,9 +47,12 @@ function cancel() {
                     </c:otherwise>
                 </c:choose>
             </td>
+            <td class="description"></td>
         </tr>
+        
         <tr>
-            <td><fmt:message key="pageForm.link" /><br />
+            <td class="label"><fmt:message key="pageForm.link" />&nbsp;</td>
+            <td class="field">
                 <c:choose>
                     <c:when test="${page.required}">
                         <html:text style="background: #e5e5e5" property="link" size="50" readonly="true"/>
@@ -62,26 +62,46 @@ function cancel() {
                     </c:otherwise>
                 </c:choose>
             </td>
+            <td class="description"></td>
         </tr>
+        
         <tr>
-            <td><fmt:message key="pageForm.description" /><br />
+            <td class="label" valign="top" style="padding-top: 4px"><fmt:message key="pageForm.description" />&nbsp;</td>
+            <td class="field">
                 <c:choose>
                     <c:when test="${page.required}">
-                        <html:textarea style="background: #e5e5e5" property="description" rows="3" cols="50" readonly="true"/>
+                        <html:textarea style="background: #e5e5e5" property="description" cols="50" rows="2" readonly="true"/>
                     </c:when>
                     <c:otherwise>
-                        <html:textarea property="description" rows="3" cols="50"/>
+                        <html:textarea property="link" cols="50" rows="2" />
                     </c:otherwise>
                 </c:choose>
             </td>
+            <td class="description"></td>
         </tr>
+        
+        <c:choose>
+        <c:when test="${page.required}">
+            <html:hidden property="hidden" />
+        </c:when>
+        <c:otherwise>
+            <tr>
+                <td class="label"><fmt:message key="pageForm.hidden" />&nbsp;</td>
+                <td class="field"><html:checkbox property="hidden" /> (<fmt:message key="pageForm.hidden.tip" />)</td>
+                <td class="description"></td>
+            </tr>
+        </c:otherwise>
+        </c:choose>
     </table>
     
-    <fmt:message key="pageForm.template" /><br />
+    <br />
     <html:textarea property="contents" cols="80" rows="30" style="width: 100%" />
             
     <html:hidden property="id"/>
     <html:hidden property="name"/>
+    <html:hidden property="templateLanguage" />
+    <html:hidden property="decoratorName" />
+    
     <input type="hidden" name="method" value="update" />
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
 
