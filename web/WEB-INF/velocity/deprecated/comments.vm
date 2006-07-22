@@ -11,7 +11,7 @@
 #macro( showCommentsLink $entry )
     #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
     #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
-        #set( $link = "$ctxPath$entry.permaLink&popup=true#comments" )
+        #set( $link = "$url.comments($entry.anchor)?popup=true" )
         <a href="$link " onclick="window.open('$link', 'comments',
             'width=480,height=480,scrollbars=yes,status=yes,resizable'); return false;"
             class="entrycommentslink">$text.get( "macro.weblog.comments" ) [$commentCount]</a>
@@ -25,7 +25,7 @@
 #macro( showCommentsPageLink $entry )
     #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
     #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
-        #set( $link = "$ctxPath$entry.permaLink#comments" )
+        #set( $link = "$url.comments($entry.anchor)" )
         <a href="$link" class="entrycommentslink">$text.get( "macro.weblog.comments" ) [$commentCount]</a>
     #end
 #end
@@ -40,8 +40,8 @@
     #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
         <div class="comments" id="comments">
             <div id="commentTwisty$entry.Id" class="commentTwisty"
-                onclick="toggleComments('$entry.Id', '${website.URL}'); return false;">
-            <a href="$ctxPath$entry.permaLink" class="plain">
+                onclick="toggleComments('$entry.Id', '$url.home'); return false;">
+            <a href="$url.entry($entry.anchor)" class="plain">
             #if($commentCount == 0)
                 $text.get( "macro.weblog.addcomment" )
             #elseif($commentCount == 1)
@@ -72,7 +72,7 @@
         $text.get( "macro.weblog.postedbywebsite", [$comment.url, $comment.url] )
     #end
     #if( $showPermalink )
-    <a href="${ctxPath}${entry.permaLink}#comment${velocityCount}"
+    <a href="$url.comments($entry.anchor)${velocityCount}"
        class="entrypermalink"
        title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
     #end
@@ -135,7 +135,7 @@
         #set($content = $utilities.addNofollow($content))
         <div class="comment" style="border: 1px solid #dadada; padding-left: 3px; padding-right: 5px;" >
         <p>Commenting on <a class="entrypermalink"
-            href="${comment.weblogEntry.permaLink}">${comment.weblogEntry.title}</a>:</p>
+            href="$url.entry($comment.weblogEntry.anchor)">${comment.weblogEntry.title}</a>:</p>
         ${content}
         #showCommentDetails($comment false)
         </div>
@@ -158,7 +158,7 @@
         #set($content = $utilities.encodeEmail($comment.content))
         #set($content = $utilities.addNofollow($content))
         <li class="commentsListItem"><a
-           href="${ctxPath}${comment.weblogEntry.permaLink}#comments"
+           href="$url.comments($comment.weblogEntry.anchor)"
            class="entrypermalink"
            title="$text.get( "macro.weblog.commentpermalink.title" ) to
                '$utilities.removeHTML($comment.weblogEntry.title)'"
@@ -186,7 +186,7 @@
 
     #showStatusMessage()
 
-    <form method="post" action="$ctxPath$entry.permaLink" focus="name"
+    <form method="post" action="$url.entry($entry.anchor)" focus="name"
         name="form" onsubmit="fixURL(this); return validateComments(this)">
         
         #if($requestParameters.popup)
@@ -262,9 +262,9 @@
 
     </form>
 
-    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js"></script>
+    <script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
     <script type="text/javascript">
-    clientSideInclude('commentAuthenticator', '$ctxPath/CommentAuthenticatorServlet');
+    clientSideInclude('commentAuthenticator', '$url.site/CommentAuthenticatorServlet');
 
     var author = getCookie("commentAuthor");
     var email = getCookie("commentEmail");

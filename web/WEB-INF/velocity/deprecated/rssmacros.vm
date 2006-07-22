@@ -8,12 +8,12 @@
  * of the specified category.
  *#
 #macro( showRSSLinksForCategory $category )
-    <a href="${website.URL}">$text.get("macro.rss.all")</a>
-    [<a href="${ctxPath}/rss/${website.handle}?excerpts=true">$text.get("macro.rss.excerpts")</a>]<br />
+    <a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a>
+    [<a href="$url.feed.entries.rss">$text.get("macro.rss.excerpts")</a>]<br />
     #set( $categories = $pageModel.getWeblogCategories($category) )
     #foreach( $cat in $categories )
-        <a href="${ctxPath}/rss/${website.handle}?catname=$cat.path">$cat.path</a>
-        [<a href="${ctxPath}/rss/${website.handle}?catname=$cat.path&amp;excerpts=true">$text.get("macro.rss.excerpts")</a>]<br />
+        <a href="$url.feed.entries.rss">$cat.path</a>
+        [<a href="$url.feed.entries.rss">$text.get("macro.rss.excerpts")</a>]<br />
     #end
 #end
 
@@ -34,6 +34,6 @@
  * Show RSS badge with link to your weblog's main RSS feed.
  *#
 #macro( showRSSBadge )
-    <a href="${ctxPath}/rss/${website.handle}"><img class="rssbadge"
+    <a href="$url.feed.entries.rss"><img class="rssbadge"
         src="$ctxPath/images/rssbadge.gif" alt="XML" /></a>
 #end

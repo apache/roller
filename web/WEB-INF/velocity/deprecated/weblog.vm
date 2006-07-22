@@ -65,7 +65,7 @@
         #parse($dayTemplateId )
         #if($trackbacksEnabled && $website.allowComments && $entry.commentsStillAllowed)
            <div class="trackbackUrl">
-           $text.get("macro.weblog.trackback") #showTrackbackURL($entry)
+           $text.get("macro.weblog.trackback") $url.trackback($entry.anchor)
            </div>
         #end
         <div class="bottom-next-prev">#showNextPreviousControl()</div>
@@ -120,7 +120,7 @@
    #foreach( $day in $xmap.keySet() )
        #set( $recentEntries = $xmap.get($day) )
        #foreach ($var in $recentEntries)
-           <li class="recentposts"><a href="${ctxPath}/page/${website.handle}?entry=$utilities.encode($var.anchor)">$var.title</a></li>
+           <li class="recentposts"><a href="$url.entry($var.anchor)">$var.title</a></li>
        #end
    #end
    </ul>
@@ -236,7 +236,7 @@
           #if( $utilities.isNotEmpty($entry.summary) )
               #set( $sourceText = $entry.summary )
               #if( $utilities.isNotEmpty($entry.text) )
-                 #set( $readMore = "<a class='readmore' href='$baseURL$entry.permaLink'> ...</a>" )
+                 #set( $readMore = "<a class='readmore' href='$url.entry($entry.anchor)'> ...</a>" )
                  #set( $sourceText = "$sourceText$readMore")
               #end
           #else 
@@ -295,7 +295,7 @@
  * @param day Date object that specifies day (type java.util.Date).
  *#
 #macro( showDayPermalink $day )
-    <a href="${ctxPath}/page/${website.handle}/#formatDate($plainFormat $day )"><img
+    <a href="$url.date($utils.formatDate($day, $plainFormat))"><img
         class="daypermalink"
         src="$ctxPath/images/permalink.gif"
         title="$text.get( "macro.weblog.daypermalink.title" )"
@@ -335,11 +335,11 @@
  * @param entry WeblogEntry object.
  *#
 #macro( showEntryPermalink $entry )
-    <a href="$baseURL$entry.permaLink"
+    <a href="$url.entry($entry.anchor)"
         title="$text.get( "macro.weblog.entrypermalink.title" )"
         class="entrypermalink">Permalink</a>
     #if ($pageHelper.isUserAuthorizedToEdit())
-        [<a href="$pageHelper.getEntryEditUrl($entry)">$text.get( "macro.weblog.entrypermalink.edit" )</a>]
+        [<a href="$url.editEntry($entry.anchor)">$text.get( "macro.weblog.entrypermalink.edit" )</a>]
     #end
 #end
 
@@ -349,7 +349,7 @@
  * @param entry WeblogEntry object.
  *#
 #macro( showTrackbackURL $entry )
-${entry.permalink}
+$url.trackback($entry.anchor)
 #end
 
 
@@ -370,10 +370,10 @@ ${entry.permalink}
          xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
          xmlns:dc="http://purl.org/dc/elements/1.1/">
 <rdf:Description
-    rdf:about="$absBaseURL$entry.permaLink"
-    trackback:ping="#showTrackbackURL($entry)"
+    rdf:about="$url.entry($entry.anchor)"
+    trackback:ping="$url.trackback($entry.anchor)"
     dc:title="$entry.title"
-    dc:identifier="$absBaseURL$entry.permaLink"
+    dc:identifier="$url.entry($entry.anchor)"
     dc:subject="$entry.category.name"
     dc:description="$entry.title"
     dc:creator="$entry.creator.userName"
@@ -393,16 +393,16 @@ ${entry.permalink}
  * or anything around it.
  *#
 #macro( showSearchForm )
-    <form id="searchForm" method="get" action="${website.URL}/search"
+    <form id="searchForm" method="get" action="$url.search"
         style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
         <p>
           <input type="text" id="q" name="q" size="20"
               maxlength="255" value="#if($term)$term#end" />
           #set( $cats = $pageModel.getWeblogCategories("nil") )
-          <select name="c">
+          <select name="cat">
           <option value="">- In Category -</option>
           #foreach( $cat in $cats )
-              <option #if($cat.name == $req.getParameter('c'))selected="selected"#end>$cat.name</option>
+              <option #if($cat.name == $req.getParameter('cat'))selected="selected"#end>$cat.name</option>
           #end
           </select>
           <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" />
@@ -430,16 +430,16 @@ ${entry.permalink}
 
         $text.get( "macro.weblog.searchhits", [$searchResults.hits])
 
-        <form method="get" action="${ctxPath}/search/${website.handle}"
+        <form method="get" action="$url.search"
             style="margin: 5px">
             <input type="text" id="q" name="q" size="31"
                 maxlength="255" value="$searchResults.term"
                 style="padding-left: 1px" /><br />
             #set( $cats = $pageModel.getWeblogCategories("nil") )
-            <select name="c">
+            <select name="cat">
             <option value="">- Restrict By Category -</option>
             #foreach( $cat in $cats )
-              <option #if($cat.name == $req.getParameter('c'))selected="selected"#end>$cat.name</option>
+              <option #if($cat.name == $req.getParameter('cat'))selected="selected"#end>$cat.name</option>
             #end
             </select>
             <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />

@@ -16,12 +16,12 @@
          src="$bookmark.image" class="rBookmark" /></a>
       #else
       <a href="$bookmark.url"><img alt="$bookmark.description"
-         src="$baseURL#showResourcePath()/$bookmark.image" class="rBookmark" /></a>
+         src="$url.resource($bookmark.image)" class="rBookmark" /></a>
       #end
     #else
         #if( $utilities.isNotEmpty( $bookmark.FeedUrl ) )
         <a href="$bookmark.feedUrl"><img class="smrssbadge"
-           src="$baseURL/images/smrssbadge.gif"
+           src="$url.site/images/smrssbadge.gif"
            alt="$text.get( "macro.bookmark.urlFeed" )"/></a>
         #end
         <a href="$bookmark.url"
@@ -97,14 +97,7 @@
  * @param folderName Name of folder to be displayed (or / separated path)
  *#
 #macro( showOpmlLink $folderName )
-    #if ( $pageModel.getFolder( $folderName ) )
-        <a href="${ctxPath}/flavor/${website.handle}?flavor=opml&path=$folderName">
-            <img src="$ctxPath/images/opml.png" 
-               alt="OPML badge" title="OPML for $folderName" />
-        </a>
-    #else
-        <span class="error">$text.get( "macro.bookmark.error", [$folderName])</span>
-    #end
+    ## no longer supported since Roller 3.0
 #end
 
 #macro( showBlogroll )#showBookmarks("/" false false)#end
