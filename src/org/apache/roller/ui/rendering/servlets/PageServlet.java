@@ -223,7 +223,7 @@ public class PageServlet extends HttpServlet {
         
         // validation
         boolean invalid = false;
-        if(page.isHidden()) {
+        if(pageRequest.getWeblogPageName() != null && page.isHidden()) {
             invalid = true;
         }
         if(pageRequest.getLocale() != null) {
