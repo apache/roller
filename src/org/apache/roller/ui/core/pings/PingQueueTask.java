@@ -34,8 +34,7 @@ import java.util.TimerTask;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PingQueueTask extends TimerTask
-{
+public class PingQueueTask extends TimerTask {
     private static final Log logger = LogFactory.getLog(PingQueueTask.class);
 
     //  The periodic interval (in minutes) at which we are configured to run
@@ -47,8 +46,7 @@ public class PingQueueTask extends TimerTask
      * @param rc the Roller context.
      * @throws RollerException
      */
-    public void init(RollerContext rc, long intervalMins) throws RollerException
-    {
+    public void init(RollerContext rc, long intervalMins) throws RollerException {
         PingQueueProcessor.init(rc);
         this.intervalMins = intervalMins;
     }
@@ -58,31 +56,24 @@ public class PingQueueTask extends TimerTask
      *
      * @return the tasks configured interval (in minutes).
      */
-    public long getIntervalMins()
-    {
+    public long getIntervalMins() {
         return intervalMins;
     }
 
     /**
      * Run the task once.
      */
-    public void run()
-    {
+    public void run() {
         // Call the ping queue processor to process the queue
         Roller roller = null;
-        try
-        {
+        try {
             roller = RollerFactory.getRoller();
             PingQueueProcessor.getInstance().processQueue();
             roller.flush();
-        }
-        catch (RollerException e)
-        {
+        } catch (RollerException e) {
             // This is probably duplicate logging. May want to eliminate it, but should be rare.
             logger.error("Error while processing ping queuer", e);
-        }
-        finally
-        {
+        } finally {
             if (roller != null) roller.release();
         }
     }

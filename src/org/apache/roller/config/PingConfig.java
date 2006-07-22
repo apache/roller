@@ -38,14 +38,12 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PingConfig
-{
+public class PingConfig {
     private static final Log logger = LogFactory.getLog(PingConfig.class);
 
 
     // Inhibit construction
-    private PingConfig()
-    {
+    private PingConfig() {
     }
 
     // Config property for maximim ping attempts.
@@ -98,10 +96,8 @@ public class PingConfig
      *
      * @return the configured (or default) maximum number of ping attempts
      */
-    public static int getMaxPingAttempts()
-    {
-        return getIntegerProperty(MAX_PING_ATTEMPTS_PROP, MAX_PING_ATTEMPTS_DEFAULT,
-            MAX_PING_ATTEMPTS_MIN, MAX_PING_ATTEMPTS_MAX);
+    public static int getMaxPingAttempts() {
+        return getIntegerProperty(MAX_PING_ATTEMPTS_PROP, MAX_PING_ATTEMPTS_DEFAULT, MAX_PING_ATTEMPTS_MIN, MAX_PING_ATTEMPTS_MAX);
     }
 
     /**
@@ -109,10 +105,8 @@ public class PingConfig
      *
      * @return the configured (or default) queue processing interval in minutes.
      */
-    public static int getQueueProcessingIntervalMins()
-    {
-        return getIntegerProperty(QUEUE_PROCESSING_INTERVAL_PROP, QUEUE_PROCESSING_INTERVAL_DEFAULT,
-            QUEUE_PROCESSING_INTERVAL_MIN, QUEUE_PROCESSING_INTERVAL_MAX);
+    public static int getQueueProcessingIntervalMins() {
+        return getIntegerProperty(QUEUE_PROCESSING_INTERVAL_PROP, QUEUE_PROCESSING_INTERVAL_DEFAULT, QUEUE_PROCESSING_INTERVAL_MIN, QUEUE_PROCESSING_INTERVAL_MAX);
     }
 
 
@@ -122,8 +116,7 @@ public class PingConfig
      *
      * @return the configured (or default) value of the logs only setting.
      */
-    public static boolean getLogPingsOnly()
-    {
+    public static boolean getLogPingsOnly() {
         return getBooleanProperty(PINGS_LOG_ONLY_PROP, PINGS_LOG_ONLY_DEFAULT);
     }
 
@@ -133,8 +126,7 @@ public class PingConfig
      *
      * @return the configured (or default) value of the "disallow custom targets" setting.
      */
-    public static boolean getDisallowCustomTargets()
-    {
+    public static boolean getDisallowCustomTargets() {
         return getBooleanProperty(PINGS_DISALLOW_CUSTOM_TARGETS_PROP, PINGS_DISALLOW_CUSTOM_TARGETS_DEFAULT);
     }
 
@@ -145,8 +137,7 @@ public class PingConfig
      *
      * @return the configured (or default) value of the enable ping usage setting.
      */
-    public static boolean getDisablePingUsage()
-    {
+    public static boolean getDisablePingUsage() {
         return getBooleanProperty(PINGS_DISABLE_PING_USAGE_PROP, PINGS_DISABLE_PING_USAGE_DEFAULT);
     }
 
@@ -157,8 +148,7 @@ public class PingConfig
      *
      * @return the configured (or default) value of the suspend ping processing setting.
      */
-    public static boolean getSuspendPingProcessing()
-    {
+    public static boolean getSuspendPingProcessing() {
         return RollerRuntimeConfig.getBooleanProperty(PINGS_SUSPEND_PING_PROCESSING_PROP);
     }
 
@@ -175,42 +165,38 @@ public class PingConfig
      *
      * @see org.apache.roller.presentation.RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
      */
-    public static void initializeCommonTargets() throws RollerException
-    {
+    public static void initializeCommonTargets() throws RollerException {
         String configuredVal = RollerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
-        if (configuredVal == null || configuredVal.trim().length() == 0)
-        {
-            if (logger.isDebugEnabled()) logger.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
+        if (configuredVal == null || configuredVal.trim().length() == 0) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
+            }
             return;
         }
         PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
-        if (!pingTargetMgr.getCommonPingTargets().isEmpty())
-        {
-            if (logger.isDebugEnabled()) logger.debug("Some common ping targets are present in the database already.  Skipping initialization.");
+        if (!pingTargetMgr.getCommonPingTargets().isEmpty()) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Some common ping targets are present in the database already.  Skipping initialization.");
+            }
             return;
         }
 
         String[] configuredTargets = configuredVal.trim().split(",");
-        for (int i = 0; i < configuredTargets.length; i++)
-        {
+        for (int i = 0; i < configuredTargets.length; i++) {
             // Trim space around the target spec
             String thisTarget = configuredTargets[i].trim();
             // skip empty ones
             if (thisTarget.length() == 0) continue;
             // parse the ith target and store it
             Matcher m = PING_TARGET_SPEC.matcher(configuredTargets[i].trim());
-            if (m.matches() && m.groupCount() == 2)
-            {
+            if (m.matches() && m.groupCount() == 2) {
                 String name = m.group(1);
                 String url = m.group(2);
                 logger.info("Creating common ping target '" + name + "' from configuration properties.");
                 PingTargetData pingTarget = new PingTargetData(null, name, url, null, false);
                 pingTargetMgr.savePingTarget(pingTarget);
-            }
-            else
-            {
-                logger.error("Unable to parse configured initial ping target '" + configuredTargets[i] +
-                    "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
+            } else {
+                logger.error("Unable to parse configured initial ping target '" + configuredTargets[i] + "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
             }
         }
     }
@@ -228,28 +214,24 @@ public class PingConfig
      * @return the value as an integer; the default value if no configured value is present or if the configured value
      *         is out of the specified range.
      */
-    private static int getIntegerProperty(String propName, int defaultValue, int min, int max)
-    {
+    private static int getIntegerProperty(String propName, int defaultValue, int min, int max) {
         String configuredVal = RollerConfig.getProperty(propName);
-        if (configuredVal == null)
-        {
-            if (logger.isDebugEnabled()) logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+        if (configuredVal == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+            }
             return defaultValue;
         }
 
         int val;
-        try
-        {
+        try {
             val = Integer.parseInt(configuredVal);
-        }
-        catch (NumberFormatException ex)
-        {
+        } catch (NumberFormatException ex) {
             logger.error("ERROR: PingConfig property '" + propName + "' is not an integer value.  Using default value: " + defaultValue);
             return defaultValue;
         }
 
-        if (val < min || val > max)
-        {
+        if (val < min || val > max) {
             logger.error("ERROR: PingConfig property '" + propName + "' is outside the required range (" + min + ", " + max + ").  Using default value: " + defaultValue);
             return defaultValue;
         }
@@ -264,12 +246,12 @@ public class PingConfig
      * @param defaultValue the default value if the property is not present
      * @return the configured value or the default if it the configured value is not present.
      */
-    private static boolean getBooleanProperty(String propName, boolean defaultValue)
-    {
+    private static boolean getBooleanProperty(String propName, boolean defaultValue) {
         String configuredVal = RollerConfig.getProperty(propName);
-        if (configuredVal == null)
-        {
-            if (logger.isDebugEnabled()) logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+        if (configuredVal == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+            }
             return defaultValue;
         }
         return Boolean.valueOf(configuredVal).booleanValue();

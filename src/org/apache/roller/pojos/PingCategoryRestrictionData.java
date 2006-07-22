@@ -32,8 +32,7 @@ import java.io.Serializable;
  * @hibernate.class lazy="false" table="pingcategory"
  * @hibernate.cache usage="read-write"
  */
-public class PingCategoryRestrictionData extends PersistentObject implements Serializable
-{
+public class PingCategoryRestrictionData extends PersistentObject implements Serializable {
     private String id;
     private AutoPingData autoPing;
     private WeblogCategoryData weblogCategory;
@@ -43,8 +42,7 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
     /**
      * Default constructor.  Leaves all fields null.  Required for bean compliance.
      */
-    public PingCategoryRestrictionData()
-    {
+    public PingCategoryRestrictionData() {
     }
 
     /**
@@ -54,8 +52,7 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
      * @param autoPing       auto ping configuration being restricted
      * @param weblogCategory weblog category to which this auto ping configuration is restricted
      */
-    public PingCategoryRestrictionData(String id, AutoPingData autoPing, WeblogCategoryData weblogCategory)
-    {
+    public PingCategoryRestrictionData(String id, AutoPingData autoPing, WeblogCategoryData weblogCategory) {
         this.id = id;
         this.autoPing = autoPing;
         this.weblogCategory = weblogCategory;
@@ -64,9 +61,8 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
     /**
      * Setter needed by RollerImpl.storePersistentObject()
      */
-    public void setData(PersistentObject vo)
-    {
-        PingCategoryRestrictionData other = (PingCategoryRestrictionData)vo;
+    public void setData(PersistentObject vo) {
+        PingCategoryRestrictionData other = (PingCategoryRestrictionData) vo;
         id = other.getId();
         autoPing = other.getAutoping();
         weblogCategory = other.getWeblogCategory();
@@ -79,8 +75,7 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
      * @ejb:persistent-field
      * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
@@ -90,8 +85,7 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
      * @param id
      * @ejb:persistent-field
      */
-    public void setId(String id)
-    {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -102,8 +96,7 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
      * @ejb:persistent-field
      * @hibernate.many-to-one column="autopingid" cascade="none" not-null="true"
      */
-    public AutoPingData getAutoping()
-    {
+    public AutoPingData getAutoping() {
         return autoPing;
     }
 
@@ -113,8 +106,7 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
      * @param autoPing the auto ping configuration to which this category restriction applies.
      * @ejb:persistent-field
      */
-    public void setAutoping(AutoPingData autoPing)
-    {
+    public void setAutoping(AutoPingData autoPing) {
         this.autoPing = autoPing;
     }
 
@@ -125,8 +117,7 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
      * @ejb:persistent-field
      * @hibernate.many-to-one column="weblogcategoryid" cascade="none" not-null="true"
      */
-    public WeblogCategoryData getWeblogCategory()
-    {
+    public WeblogCategoryData getWeblogCategory() {
         return weblogCategory;
     }
 
@@ -136,24 +127,31 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
      * @param weblogCategory the weblog category to which pings should be restricted.
      * @ejb:persistent-field
      */
-    public void setWeblogCategory(WeblogCategoryData weblogCategory)
-    {
+    public void setWeblogCategory(WeblogCategoryData weblogCategory) {
         this.weblogCategory = weblogCategory;
     }
 
     /**
      * @see Object#equals(Object)
      */
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PingCategoryRestrictionData)) return false;
 
-        final PingCategoryRestrictionData pingCategoryRestrictionData = (PingCategoryRestrictionData)o;
+        final PingCategoryRestrictionData pingCategoryRestrictionData = (PingCategoryRestrictionData) o;
 
-        if (id != null ? !id.equals(pingCategoryRestrictionData.getId()) : pingCategoryRestrictionData.getId() != null) return false;
-        if (autoPing != null ? !autoPing.equals(pingCategoryRestrictionData.getAutoping()) : pingCategoryRestrictionData.getAutoping() != null) return false;
-        if (weblogCategory != null ? !weblogCategory.equals(pingCategoryRestrictionData.getWeblogCategory()) : pingCategoryRestrictionData.getWeblogCategory() != null) return false;
+        if (id != null ? !id.equals(pingCategoryRestrictionData.getId()) : pingCategoryRestrictionData.getId() != null)
+        {
+            return false;
+        }
+        if (autoPing != null ? !autoPing.equals(pingCategoryRestrictionData.getAutoping()) : pingCategoryRestrictionData.getAutoping() != null)
+        {
+            return false;
+        }
+        if (weblogCategory != null ? !weblogCategory.equals(pingCategoryRestrictionData.getWeblogCategory()) : pingCategoryRestrictionData.getWeblogCategory() != null)
+        {
+            return false;
+        }
 
         return true;
     }
@@ -161,8 +159,7 @@ public class PingCategoryRestrictionData extends PersistentObject implements Ser
     /**
      * @see Object#hashCode()
      */
-    public int hashCode()
-    {
+    public int hashCode() {
         return (id != null ? id.hashCode() : 0);
     }
 }

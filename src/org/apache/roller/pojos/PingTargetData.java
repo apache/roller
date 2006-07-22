@@ -34,13 +34,13 @@ import java.sql.Timestamp;
  * @hibernate.cache usage="read-write"
  */
 public class PingTargetData extends PersistentObject implements Serializable {
-    
+
     public static final long serialVersionUID = -6354583200913127874L;
-    
+
     public static final int CONDITION_OK = 0;           // last use (after possible retrials) was successful
     public static final int CONDITION_FAILING = 1;      // last use failed after retrials
     public static final int CONDITION_DISABLED = 2;     // disabled by failure policy after failures - editing resets
-    
+
     private String id = null;
     private String name = null;
     private String pingUrl = null;
@@ -48,15 +48,15 @@ public class PingTargetData extends PersistentObject implements Serializable {
     private int conditionCode = -1;
     private Timestamp lastSuccess = null;
     private boolean autoEnabled = false;
-    
-    
+
+
     /**
      * Default empty constructor.
      */
     public PingTargetData() {
     }
-    
-    
+
+
     /**
      * Constructor.
      *
@@ -74,14 +74,14 @@ public class PingTargetData extends PersistentObject implements Serializable {
         this.lastSuccess = null;
         this.autoEnabled = autoEnable;
     }
-    
-    
+
+
     /**
      * Setter needed by RollerImpl.storePersistentObject()
      */
     public void setData(PersistentObject vo) {
         PingTargetData other = (PingTargetData) vo;
-        
+
         id = other.getId();
         name = other.getName();
         pingUrl = other.getPingUrl();
@@ -90,8 +90,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
         lastSuccess = other.getLastSuccess();
         autoEnabled = other.isAutoEnabled();
     }
-    
-    
+
+
     /**
      * Get the unique id of this ping target.
      *
@@ -103,8 +103,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public java.lang.String getId() {
         return this.id;
     }
-    
-    
+
+
     /**
      * Set the unique id of this ping target
      *
@@ -114,8 +114,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public void setId(java.lang.String id) {
         this.id = id;
     }
-    
-    
+
+
     /**
      * get the name of this ping target.  This is a name assigned by the administrator or a user (for custom) targets.
      * It is deescriptive and is not necessarily unique.
@@ -127,8 +127,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public java.lang.String getName() {
         return this.name;
     }
-    
-    
+
+
     /**
      * Set the name of this ping target.
      *
@@ -138,8 +138,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public void setName(java.lang.String name) {
         this.name = name;
     }
-    
-    
+
+
     /**
      * Get the URL to ping.
      *
@@ -150,8 +150,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public String getPingUrl() {
         return pingUrl;
     }
-    
-    
+
+
     /**
      * Set the URL to ping.
      *
@@ -161,8 +161,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public void setPingUrl(String pingUrl) {
         this.pingUrl = pingUrl;
     }
-    
-    
+
+
     /**
      * Get the website (on this server) for which this ping target is a custom target.  This may be null, indicating
      * that it is a common ping target, not a custom one.
@@ -175,8 +175,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public WebsiteData getWebsite() {
         return website;
     }
-    
-    
+
+
     /**
      * Set the website (on this server) for which this ping target is a custom target.
      *
@@ -187,8 +187,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public void setWebsite(WebsiteData website) {
         this.website = website;
     }
-    
-    
+
+
     /**
      * Get the condition code value.  This code, in combination with the last success timestamp, provides a status
      * indicator on the ping target based on its  usage by the ping queue processor. It can be used to implement a
@@ -202,8 +202,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public int getConditionCode() {
         return conditionCode;
     }
-    
-    
+
+
     /**
      * Set the condition code value.
      *
@@ -213,8 +213,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public void setConditionCode(int conditionCode) {
         this.conditionCode = conditionCode;
     }
-    
-    
+
+
     /**
      * Get the timestamp of the last successful ping (UTC/GMT).
      *
@@ -225,8 +225,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public Timestamp getLastSuccess() {
         return lastSuccess;
     }
-    
-    
+
+
     /**
      * Set the timestamp of the last successful ping.
      *
@@ -236,8 +236,8 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public void setLastSuccess(Timestamp lastSuccess) {
         this.lastSuccess = lastSuccess;
     }
-    
-    
+
+
     /**
      * Is this ping target enabled by default for new weblogs?
      *
@@ -249,7 +249,7 @@ public class PingTargetData extends PersistentObject implements Serializable {
         return autoEnabled;
     }
 
-    
+
     /**
      * Set the auto enabled status for this ping target.  This field only
      * applies for common ping targets.
@@ -260,36 +260,43 @@ public class PingTargetData extends PersistentObject implements Serializable {
     public void setAutoEnabled(boolean autoEnabled) {
         this.autoEnabled = autoEnabled;
     }
-    
-    
+
+
     /**
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
         return id.hashCode();
     }
-    
-    
+
+
     /**
      * @see java.lang.Object#equals(Object o)
      */
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PingTargetData)) return false;
-        
+
         final PingTargetData pingTargetData = (PingTargetData) o;
-        
+
         if (conditionCode != pingTargetData.getConditionCode()) return false;
         if (id != null ? !id.equals(pingTargetData.getId()) : pingTargetData.getId() != null) return false;
-        if (lastSuccess != null ? !lastSuccess.equals(pingTargetData.getLastSuccess()) : pingTargetData.getLastSuccess() != null) return false;
+        if (lastSuccess != null ? !lastSuccess.equals(pingTargetData.getLastSuccess()) : pingTargetData.getLastSuccess() != null)
+        {
+            return false;
+        }
         if (name != null ? !name.equals(pingTargetData.getName()) : pingTargetData.getName() != null) return false;
-        if (pingUrl != null ? !pingUrl.equals(pingTargetData.getPingUrl()) : pingTargetData.getPingUrl() != null) return false;
-        if (website != null ? !website.equals(pingTargetData.getWebsite()) : pingTargetData.getWebsite() != null) return false;
-        
+        if (pingUrl != null ? !pingUrl.equals(pingTargetData.getPingUrl()) : pingTargetData.getPingUrl() != null) {
+            return false;
+        }
+        if (website != null ? !website.equals(pingTargetData.getWebsite()) : pingTargetData.getWebsite() != null) {
+            return false;
+        }
+
         return true;
     }
-    
-    
+
+
     /**
      * Generate a string form of the object appropriate for logging or debugging.
      *
@@ -297,14 +304,7 @@ public class PingTargetData extends PersistentObject implements Serializable {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return "PingTargetData{" +
-                "id='" + id + "'" +
-                ", name='" + name + "'" +
-                ", pingUrl='" + pingUrl + "'" +
-                ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") +
-                ", conditionCode=" + conditionCode +
-                ", lastSuccess=" + lastSuccess +
-                "}";
+        return "PingTargetData{" + "id='" + id + "'" + ", name='" + name + "'" + ", pingUrl='" + pingUrl + "'" + ", website= " + (website == null ? "null" : "{id='" + website.getId() + "'} ") + ", conditionCode=" + conditionCode + ", lastSuccess=" + lastSuccess + "}";
     }
-    
+
 }
