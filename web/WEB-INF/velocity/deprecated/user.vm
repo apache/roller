@@ -27,11 +27,11 @@
  * optionally surrounded with an 'A HREF' link tag 
  *#
 #macro( showResourceImage $fileName $linkUrl $alt $border $halign $valign )
-    #set( $imageUrl = $uploadPath/${website.handle}/$fileName )
+    #set( $imageUrl = $url.resource($fileName) )
     #showImage( $imageUrl $linkUrl $alt $border $halign $valign )
 #end
 
 #**
  * Show path to your file upload directory, for use in building URLs.
  *#
-#macro( showResourcePath )$uploadPath/${website.handle}#end
+#macro( showResourcePath )$url.home/resources#end

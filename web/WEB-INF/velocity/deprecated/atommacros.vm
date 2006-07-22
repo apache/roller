@@ -8,10 +8,10 @@
  * of the specified category.
  *#
 #macro( showAtomLinksForCategory $category )
-    <a href="${ctxPath}/atom/${website.handle}">$text.get("macro.rss.all")</a><br />
+    <a href="$url.feed.entries.atom">$text.get("macro.rss.all")</a><br />
     #set( $categories = $pageModel.getWeblogCategories($category) )
     #foreach( $cat in $categories )
-        <a href="${ctxPath}/atom/${website.handle}?catname=$cat.path">$cat.path</a><br />
+        <a href="$url.feed.entries.atom?cat=$cat.path">$cat.path</a><br />
     #end
 #end
 
@@ -32,6 +32,6 @@
  * Show RSS badge with link to your weblog's main RSS feed.
  *#
 #macro( showAtomBadge )
-    <a href="${ctxPath}/atom/${website.handle}"><img class="atombadge"
+    <a href="$url.feed.entries.atom"><img class="atombadge"
         src="$ctxPath/images/atombadge.jpeg" alt="XML" /></a>
 #end
