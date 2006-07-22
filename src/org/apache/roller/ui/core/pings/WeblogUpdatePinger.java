@@ -20,12 +20,11 @@ package org.apache.roller.ui.core.pings;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xmlrpc.XmlRpcClient;
-import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.xmlrpc.XmlRpcClient;
+import org.apache.xmlrpc.XmlRpcException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -39,56 +38,44 @@ import java.util.Vector;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @author llavandowska (for code refactored from the now-defunct <code>RollerXmlRpcClient</code>)
  */
-public class WeblogUpdatePinger
-{
+public class WeblogUpdatePinger {
     public static final Log logger = LogFactory.getLog(WeblogUpdatePinger.class);
 
     /**
      * Conveys a ping result.
      */
-    public static class PingResult
-    {
+    public static class PingResult {
         boolean error;
         String message;
 
-        public PingResult(Boolean error, String message)
-        {
+        public PingResult(Boolean error, String message) {
             this.error = error != null ? error.booleanValue() : false;
             this.message = message;
         }
 
-        public boolean isError()
-        {
+        public boolean isError() {
             return error;
         }
 
-        public void setError(boolean error)
-        {
+        public void setError(boolean error) {
             this.error = error;
         }
 
-        public String getMessage()
-        {
+        public String getMessage() {
             return message;
         }
 
-        public void setMessage(String message)
-        {
+        public void setMessage(String message) {
             this.message = message;
         }
 
-        public String toString()
-        {
-            return "PingResult{" +
-                "error=" + error +
-                ", message='" + message + "'" +
-                "}";
+        public String toString() {
+            return "PingResult{" + "error=" + error + ", message='" + message + "'" + "}";
         }
     }
 
     // Inhibit construction
-    private WeblogUpdatePinger()
-    {
+    private WeblogUpdatePinger() {
     }
 
     /**
@@ -102,9 +89,7 @@ public class WeblogUpdatePinger
      * @throws XmlRpcException
      * @throws RollerException
      */
-    public static PingResult sendPing(String absoluteContextUrl, PingTargetData pingTarget, WebsiteData website)
-        throws RollerException, IOException, XmlRpcException
-    {
+    public static PingResult sendPing(String absoluteContextUrl, PingTargetData pingTarget, WebsiteData website) throws RollerException, IOException, XmlRpcException {
         // Figure out the url of the user's website.
         String websiteUrl = website.getAbsoluteURL();
 
@@ -112,10 +97,8 @@ public class WeblogUpdatePinger
         Vector params = new Vector();
         params.addElement(website.getName());
         params.addElement(websiteUrl);
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("Executing ping to '" + pingTarget.getPingUrl() + "' for website '" +
-                websiteUrl + "' (" + website.getName() + ")");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Executing ping to '" + pingTarget.getPingUrl() + "' for website '" + websiteUrl + "' (" + website.getName() + ")");
         }
 
         // Send the ping
@@ -132,18 +115,14 @@ public class WeblogUpdatePinger
      * @param ex an exception thrown by the <coce>sendPing</code> operation
      * @return true if the error warrants retrial
      */
-    public static boolean shouldRetry(Exception ex)
-    {
+    public static boolean shouldRetry(Exception ex) {
         // Determine if error appears transient (warranting retrial)
         // We give most errors the "benefit of the doubt" by considering them transient
         // This picks out a few that we consider non-transient
-        if (ex instanceof UnknownHostException)
-        {
+        if (ex instanceof UnknownHostException) {
             // User probably mistyped the url in the custom target.
             return false;
-        }
-        else if (ex instanceof MalformedURLException)
-        {
+        } else if (ex instanceof MalformedURLException) {
             // This should never happen due to validations but if we get here, retrial won't fix it.
             return false;
         }
