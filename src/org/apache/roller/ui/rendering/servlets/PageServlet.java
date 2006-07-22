@@ -201,11 +201,7 @@ public class PageServlet extends HttpServlet {
             
         // If request specified the page, then go with that
         } else if (pageRequest.getWeblogPageName() != null) {
-            try {
-                page = weblog.getPageByLink(pageRequest.getWeblogPageName());
-            } catch(Exception e) {
-                log.error("Error getting page: "+pageRequest.getWeblogPageName(), e);
-            }
+            page = pageRequest.getWeblogPage();
             
         // If page not available from request, then use weblog's default
         } else {
@@ -227,6 +223,9 @@ public class PageServlet extends HttpServlet {
         
         // validation
         boolean invalid = false;
+        if(page.isHidden()) {
+            invalid = true;
+        }
         if(pageRequest.getLocale() != null) {
             
             // locale view only allowed if weblog has enabled it
@@ -234,7 +233,8 @@ public class PageServlet extends HttpServlet {
                 invalid = true;
             }
             
-        } else if(pageRequest.getWeblogAnchor() != null) {
+        }
+        if(pageRequest.getWeblogAnchor() != null) {
             
             // permalink specified.  entry must exist and locale must match
             if(pageRequest.getWeblogEntry() == null) {
