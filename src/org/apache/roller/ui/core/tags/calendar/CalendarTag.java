@@ -360,17 +360,15 @@ public class CalendarTag extends HybridTag
      * used to take place in the <code>CalendarTag</code> constructor,
      * but there, <code>mLocale</code> doesn't have the correct value yet.
      */
-    private void buildDayNames()
-    {
+    private void buildDayNames() {
         // build array of names of days of week
         mDayNames = new String[7];
-        Calendar dayNameCal = Calendar.getInstance();
+        Calendar dayNameCal = Calendar.getInstance(mLocale);
         SimpleDateFormat dayFormatter = new SimpleDateFormat("EEE", mLocale);
-        dayNameCal.set(Calendar.DAY_OF_WEEK, 0);
-        for (int dnum = 0; dnum < 7; dnum++)
-        {
-            dayNameCal.add(Calendar.DATE, 1);
+        dayNameCal.set(Calendar.DAY_OF_WEEK, dayNameCal.getFirstDayOfWeek());
+        for (int dnum = 0; dnum < 7; dnum++) {
             mDayNames[dnum] = dayFormatter.format(dayNameCal.getTime());
+            dayNameCal.add(Calendar.DATE, 1);
         }
     }
 
