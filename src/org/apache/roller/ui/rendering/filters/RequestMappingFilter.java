@@ -32,9 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.ui.rendering.RequestMapper;
-import org.apache.roller.ui.rendering.WeblogRequestMapper;
-
 
 /**
  * Provides generalized request mapping capablilites.
@@ -49,15 +48,60 @@ public class RequestMappingFilter implements Filter {
     private static Log log = LogFactory.getLog(RequestMappingFilter.class);
     
     // list of RequestMappers that want to inspect the request
-    List requestMappers = null;
+    private final List requestMappers = new ArrayList();
     
     
     public void init(FilterConfig filterConfig) {
         
-        this.requestMappers = new ArrayList();
+        // lookup set of request mappers we are going to use
+        String rollerMappers = RollerConfig.getProperty("rendering.rollerRequestMappers");
+        String userMappers = RollerConfig.getProperty("rendering.userRequestMappers");
         
-        // TODO 3.0: configurable set of request mappers
-        this.requestMappers.add(new WeblogRequestMapper());
+        // instantiate user defined request mapper classes
+        if(userMappers != null && userMappers.trim().length() > 0) {
+            
+            RequestMapper requestMapper = null;
+            String[] uMappers = userMappers.split(",");
+            for(int i=0; i < uMappers.length; i++) {
+                try {
+                    Class mapperClass = Class.forName(uMappers[i]);
+                    requestMapper = (RequestMapper) mapperClass.newInstance();
+                    requestMappers.add(requestMapper);
+                } catch(ClassCastException cce) {
+                    log.error("It appears that your mapper does not implement "+
+                            "the RequestMapper interface", cce);
+                } catch(Exception e) {
+                    log.error("Unable to instantiate request mapper ["+uMappers[i]+"]", e);
+                }
+            }
+        }
+        
+        // instantiate roller standard request mapper classes
+        if(rollerMappers != null && rollerMappers.trim().length() > 0) {
+            
+            RequestMapper requestMapper = null;
+            String[] rMappers = rollerMappers.split(",");
+            for(int i=0; i < rMappers.length; i++) {
+                try {
+                    Class mapperClass = Class.forName(rMappers[i]);
+                    requestMapper = (RequestMapper) mapperClass.newInstance();
+                    requestMappers.add(requestMapper);
+                } catch(ClassCastException cce) {
+                    log.error("It appears that your mapper does not implement "+
+                            "the RequestMapper interface", cce);
+                } catch(Exception e) {
+                    log.error("Unable to instantiate request mapper ["+rMappers[i]+"]", e);
+                }
+            }
+        }
+        
+        if(requestMappers.size() < 1) {
+            // hmm ... failed to load any request mappers?
+            log.warn("Failed to load any request mappers.  "+
+                    "Weblog urls probably won't function as you expect.");
+        }
+        
+        log.info("Request mapping filter initialized");
     }
     
     
