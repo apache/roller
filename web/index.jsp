@@ -14,21 +14,61 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
---%><%@ page import="org.apache.roller.config.RollerRuntimeConfig" %><%
+--%><%@ 
+page import="org.apache.roller.config.RollerRuntimeConfig" %><%
 
 // lets see if we have a frontpage blog
 String frontpageBlog =
         RollerRuntimeConfig.getProperty("site.frontpage.weblog.handle");
 
-if(frontpageBlog == null || frontpageBlog.equals("")) {
-    // not set yet, so show the new install page
-    response.setContentType("text/plain");
-    response.getWriter().println("frontpage blog not set");
-} else {
+if(frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
     // dispatch to frontpage blog
     RequestDispatcher homepage =
             request.getRequestDispatcher("/roller-ui/rendering/page/"+frontpageBlog);
     homepage.forward(request, response);
 }
 
-%>
+%><% response.setContentType("text/html; charset=UTF-8"); %><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ include file="/taglibs.jsp" %>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Welcome to Roller!</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+    
+<div id="wrapper">
+    <div id="leftcontent_wrap">
+        <div id="leftcontent"> 
+        </div>
+    </div>
+    
+    <div id="centercontent_wrap">
+        <div id="centercontent"> 
+            <h2>Welcome to Roller!</h2>
+        
+            <b>Installation needs:</b>
+            <ul>
+                <li>Register the first user account on the <a href="<c:url value="/roller-ui/user.do?method=registerUser"/>">registration page</a>.</li>
+                <li>Login with your new account and <a href="<c:url value="/roller-ui/createWebsite.do?method=create"/>">create a weblog</a></li>
+                <li>Use the admin config page to <a href="<c:url value="/roller-ui/admin/rollerConfig.do?method=edit"/>">set the frontpage blog</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div id="rightcontent_wrap">
+        <div id="rightcontent"> 
+        </div>
+    </div>
+ 
+</div>
+
+<div id="footer">
+</div> 
+        
+<div id="datetagdiv" 
+   style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
+</div>
+
+</body>
+</html>
