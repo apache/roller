@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.ui.core.RollerContext;
 
 import java.util.TimerTask;
 
@@ -43,11 +42,10 @@ public class PingQueueTask extends TimerTask {
     /**
      * Initialize the task.
      *
-     * @param rc the Roller context.
      * @throws RollerException
      */
-    public void init(RollerContext rc, long intervalMins) throws RollerException {
-        PingQueueProcessor.init(rc);
+    public void init(long intervalMins) throws RollerException {
+        PingQueueProcessor.init();
         this.intervalMins = intervalMins;
     }
 

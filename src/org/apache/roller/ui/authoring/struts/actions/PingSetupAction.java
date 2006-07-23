@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.PingConfig;
-import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.AutoPingManager;
 import org.apache.roller.model.PingTargetManager;
 import org.apache.roller.model.RollerFactory;
@@ -59,10 +58,6 @@ public class PingSetupAction extends DispatchAction {
     private static Log mLogger = LogFactory.getFactory().getInstance(PingSetupAction.class);
 
     private static final String PING_SETUP_PAGE = "pingSetup.page";
-
-    // Changing this to take your back to the pings setup page instead of
-    // ping result page, no need for extra page.
-    private static final String PING_RESULT_PAGE = "pingSetup.page"; // "pingResult.page";
 
     /* (non-Javadoc)
      * @see org.apache.struts.actions.DispatchAction#unspecified(
@@ -194,7 +189,6 @@ public class PingSetupAction extends DispatchAction {
     public ActionForward pingSelectedNow(ActionMapping mapping, ActionForm form, HttpServletRequest req, HttpServletResponse res) throws Exception {
         try {
             RollerRequest rreq = RollerRequest.getRollerRequest(req);
-            String absoluteUrl = RollerRuntimeConfig.getAbsoluteContextURL();
             PingTargetData pingTarget = select(rreq);
             WebsiteData website = rreq.getWebsite();
             try {
@@ -207,7 +201,7 @@ public class PingSetupAction extends DispatchAction {
                     errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("ping.pingProcessingIsSuspended"));
                     saveErrors(req, errors);
                 } else {
-                    WeblogUpdatePinger.PingResult pingResult = WeblogUpdatePinger.sendPing(absoluteUrl, pingTarget, website);
+                    WeblogUpdatePinger.PingResult pingResult = WeblogUpdatePinger.sendPing(pingTarget, website);
                     if (pingResult.isError()) {
                         if (mLogger.isDebugEnabled()) mLogger.debug("Ping Result: " + pingResult);
                         ActionMessages errors = new ActionMessages();

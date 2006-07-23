@@ -29,7 +29,6 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.PingQueueEntryData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
 
 import java.util.Iterator;
 import java.util.List;
@@ -45,30 +44,27 @@ public class PingQueueProcessor {
     private static PingQueueProcessor theInstance;
 
 
-    private RollerContext rollerContext;
     private PingQueueManager pingQueueMgr;
 
     public static PingQueueProcessor getInstance() {
         return theInstance;
     }
 
-    private PingQueueProcessor(RollerContext rc) throws RollerException {
-        rollerContext = rc;
+    private PingQueueProcessor() throws RollerException {
         pingQueueMgr = RollerFactory.getRoller().getPingQueueManager();
     }
 
     /**
      * Initialize the singleton.  This is called during <code>RollerContext</code> initialization.
      *
-     * @param rc the Roller context
      * @throws RollerException
      */
-    public static synchronized void init(RollerContext rc) throws RollerException {
+    public static synchronized void init() throws RollerException {
         if (theInstance != null) {
             logger.warn("Ignoring duplicate initialization of PingQueueProcessor!");
             return;
         }
-        theInstance = new PingQueueProcessor(rc);
+        theInstance = new PingQueueProcessor();
         if (logger.isDebugEnabled()) logger.debug("Ping queue processor initialized.");
     }
 
@@ -102,7 +98,7 @@ public class PingQueueProcessor {
             // Process each entry
             for (Iterator i = entries.iterator(); i.hasNext();) {
                 PingQueueEntryData pingQueueEntry = (PingQueueEntryData) i.next();
-                processQueueEntry(absoluteContextUrl, pingQueueEntry);
+                processQueueEntry(pingQueueEntry);
             }
             if (logger.isDebugEnabled()) logger.debug("Finished processing ping queue.");
         } catch (Exception ex) {
@@ -113,12 +109,11 @@ public class PingQueueProcessor {
     /**
      * Process an individual ping queue entry.
      *
-     * @param absoluteContextUrl absolute context URL of the Roller site
      * @param pingQueueEntry     the ping queue entry
      * @throws RollerException only if there are problems processing the queue.  Exceptions from sending pings are
      *                         handled, not thrown.
      */
-    private void processQueueEntry(String absoluteContextUrl, PingQueueEntryData pingQueueEntry) throws RollerException {
+    private void processQueueEntry(PingQueueEntryData pingQueueEntry) throws RollerException {
         if (logger.isDebugEnabled()) logger.debug("Processing ping queue entry: " + pingQueueEntry);
 
         PingTargetData pingTarget = pingQueueEntry.getPingTarget();
@@ -132,7 +127,7 @@ public class PingQueueProcessor {
             // Actually process the ping
             try {
                 // Send the ping
-                WeblogUpdatePinger.sendPing(absoluteContextUrl, pingTarget, website);
+                WeblogUpdatePinger.sendPing(pingTarget, website);
                 // Consider successful ping transmission if we didn't get an exception.  We don't care here
                 // about the result of the ping if it was transmitted.
                 pingSucceeded = true;
