@@ -22,8 +22,6 @@ import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -55,10 +53,8 @@ import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ScheduledTask;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.pings.PingQueueTask;
 import org.apache.roller.util.cache.CacheManager;
-import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
@@ -209,7 +205,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         Properties velocityProps = new Properties();
         
         try {
-            InputStream instream = this.mContext.getResourceAsStream("/WEB-INF/velocity.properties");
+            InputStream instream = mContext.getResourceAsStream("/WEB-INF/velocity.properties");
             
             velocityProps.load(instream);
             
@@ -302,7 +298,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         
         // Set up the task
         PingQueueTask pingQueueTask = new PingQueueTask();
-        pingQueueTask.init(this, intervalMins);
+        pingQueueTask.init(intervalMins);
         
         // Schedule it at the appropriate interval, delay start for one interval.
         mLogger.info("Scheduling ping queue task to run at " + intervalMins + " minute intervals.");

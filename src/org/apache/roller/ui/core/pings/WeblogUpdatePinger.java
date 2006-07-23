@@ -20,7 +20,6 @@ package org.apache.roller.ui.core.pings;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.config.PingConfig;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WebsiteData;
@@ -87,15 +86,13 @@ public class WeblogUpdatePinger {
     /**
      * Send a weblog update ping.
      *
-     * @param absoluteContextUrl the absolute context url of the Roller site.
      * @param pingTarget         the target site to ping
      * @param website            the website that changed (from which the ping originates)
      * @return the result message string sent by the server.
      * @throws IOException
      * @throws XmlRpcException
-     * @throws RollerException
      */
-    public static PingResult sendPing(String absoluteContextUrl, PingTargetData pingTarget, WebsiteData website) throws RollerException, IOException, XmlRpcException {
+    public static PingResult sendPing(PingTargetData pingTarget, WebsiteData website) throws IOException, XmlRpcException {
         String websiteUrl = website.getAbsoluteURL();
         String pingTargetUrl = pingTarget.getPingUrl();
         Set variantOptions = PingConfig.getVariantOptions(pingTargetUrl);
