@@ -244,7 +244,7 @@ public class WeblogTemplate extends PersistentObject
     
     /**
      * @ejb:persistent-field
-     * @hibernate.property column="decorator" non-null="true" unique="false"
+     * @hibernate.property column="decorator" non-null="false" unique="false"
      */
     public String getDecoratorName() {
         return decoratorName;
