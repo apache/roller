@@ -71,9 +71,12 @@ create table webpage (
     name            varchar(255)  not null,
     description     varchar(255),
     link            varchar(255),
-    websiteid       varchar(48)  not null,
+    websiteid       varchar(48) not null,
     template        $TEXT_SQL_TYPE not null,
-    updatetime      $TIMESTAMP_SQL_TYPE     not null
+    updatetime      $TIMESTAMP_SQL_TYPE not null,
+    hidden          $BOOLEAN_SQL_TYPE_FALSE not null,
+    templatelang    varchar(20) not null,
+    decorator       varchar(255) null
 );
 create index wp_name_idx on webpage( name$!INDEXSIZE );
 create index wp_link_idx on webpage( link$!INDEXSIZE );
