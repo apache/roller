@@ -21,6 +21,7 @@ package org.apache.roller.ui.core.pings;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.PingConfig;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.xmlrpc.XmlRpcClient;
@@ -29,11 +30,16 @@ import org.apache.xmlrpc.XmlRpcException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Utility for sending a weblog update ping.
+ *
+ * This implements the <code>WeblogUpdates.ping<code> XML-RPC call described at
+ * <a href="http://www.xmlrpc.com/weblogsCom">www.xmlrpc.com</a>
+ * as well as some variants required to interoperate with certain
+ * buggy but popular ping targets.
+ *
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @author llavandowska (for code refactored from the now-defunct <code>RollerXmlRpcClient</code>)
@@ -50,7 +56,7 @@ public class WeblogUpdatePinger {
 
         public PingResult(Boolean error, String message) {
             this.error = error != null ? error.booleanValue() : false;
-            this.message = message;
+            this.message = message != null ? message : "";
         }
 
         public boolean isError() {
@@ -90,23 +96,42 @@ public class WeblogUpdatePinger {
      * @throws RollerException
      */
     public static PingResult sendPing(String absoluteContextUrl, PingTargetData pingTarget, WebsiteData website) throws RollerException, IOException, XmlRpcException {
-        // Figure out the url of the user's website.
         String websiteUrl = website.getAbsoluteURL();
+        String pingTargetUrl = pingTarget.getPingUrl();
+        Set variantOptions = PingConfig.getVariantOptions(pingTargetUrl);
 
         // Set up the ping parameters.
         Vector params = new Vector();
-        params.addElement(website.getName());
+        if (!variantOptions.contains("noname")) {
+            // ping variant for icerocket and anyone with similar bug, where we must omit the blog name.
+            params.addElement(website.getName());
+        }
         params.addElement(websiteUrl);
         if (logger.isDebugEnabled()) {
-            logger.debug("Executing ping to '" + pingTarget.getPingUrl() + "' for website '" + websiteUrl + "' (" + website.getName() + ")");
+            logger.debug("Executing ping to '" + pingTargetUrl + "' for website '" + websiteUrl + "' (" + website.getName() + ")" + (variantOptions.isEmpty() ? "" : " with variant options " + variantOptions));
         }
 
-        // Send the ping
-        XmlRpcClient client = new XmlRpcClient(pingTarget.getPingUrl());
-        Hashtable result = (Hashtable) client.execute("weblogUpdates.ping", params);
-        PingResult pingResult = new PingResult((Boolean) result.get("flerror"), (String) result.get("message"));
+        // Send the ping.
+        XmlRpcClient client = new XmlRpcClient(pingTargetUrl);
+        PingResult pingResult = parseResult(client.execute("weblogUpdates.ping", params));
+
         if (logger.isDebugEnabled()) logger.debug("Ping result is: " + pingResult);
         return pingResult;
+    }
+
+    private static PingResult parseResult(Object obj) {
+        // Deal with the fact that some buggy ping targets may not respond with the proper struct type.
+        if (obj == null) return new PingResult(null,null);
+        try {
+            // normal case: response is a struct (represented as a Hashtable) with Boolean flerror and String fields.
+            Hashtable result = (Hashtable) obj;
+            return new PingResult((Boolean) result.get("flerror"), (String) result.get("message"));
+        } catch (Exception ex) {
+            // exception case:  The caller responded with an unexpected type, though parsed at the basic XML RPC level.
+            // This effectively assumes flerror = false, and sets message = obj.toString();
+            if (logger.isDebugEnabled()) logger.debug("Invalid ping result of type: " + obj.getClass().getName() + "; proceeding with stand-in representative.");
+            return new PingResult(null,obj.toString());
+        }
     }
 
     /**

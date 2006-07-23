@@ -272,7 +272,9 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         
         // Initialize common targets from the configuration
         PingConfig.initializeCommonTargets();
-        // Remove csutom ping targets if they have been disallowed
+        // Initialize ping variants
+        PingConfig.initializePingVariants();
+        // Remove custom ping targets if they have been disallowed
         if (PingConfig.getDisallowCustomTargets()) {
             mLogger.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
             roller.getPingTargetManager().removeAllCustomPingTargets();
