@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.util.ArrayList;
@@ -48,14 +48,13 @@ import org.apache.roller.ui.authoring.struts.formbeans.MemberPermissionsForm;
 
 /**
  * Allows website admin to change website member permissions.
- * 
+ *
  * @struts.action path="/roller-ui/authoring/memberPermissions" parameter="method" name="memberPermissionsForm"
  * @struts.action-forward name="memberPermissions.page" path=".MemberPermissions"
  */
-public class MemberPermissionsAction extends DispatchAction
-{
+public class MemberPermissionsAction extends DispatchAction {
     private static Log mLogger =
-        LogFactory.getFactory().getInstance(MemberPermissionsAction.class);
+            LogFactory.getFactory().getInstance(MemberPermissionsAction.class);
     
     /** If method param is not specified, use HTTP verb to pick method to call */
     public ActionForward unspecified(
@@ -63,10 +62,8 @@ public class MemberPermissionsAction extends DispatchAction
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
-            throws Exception
-    {
-        if (request.getMethod().equals("GET"))
-        {
+            throws Exception {
+        if (request.getMethod().equals("GET")) {
             return edit(mapping, actionForm, request, response);
         }
         return save(mapping, actionForm, request, response);
@@ -78,8 +75,7 @@ public class MemberPermissionsAction extends DispatchAction
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
-            throws Exception
-    {
+            throws Exception {
         return edit(mapping, actionForm, request, response);
     }
     
@@ -88,8 +84,7 @@ public class MemberPermissionsAction extends DispatchAction
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
-            throws Exception
-    {
+            throws Exception {
         return edit(mapping, actionForm, request, response);
     }
     
@@ -98,10 +93,10 @@ public class MemberPermissionsAction extends DispatchAction
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
-            throws Exception
-    {
-        MemberPermissionsPageModel pageModel = 
-           new MemberPermissionsPageModel(request, response, mapping);
+            throws Exception {
+        
+        MemberPermissionsPageModel pageModel =
+                new MemberPermissionsPageModel(request, response, mapping);
         request.setAttribute("model", pageModel);
         RollerSession rses = RollerSession.getRollerSession(request);
         
@@ -121,45 +116,36 @@ public class MemberPermissionsAction extends DispatchAction
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
-            throws Exception
-    {
+            throws Exception {
         ActionErrors errors = new ActionErrors();
         ActionMessages msgs = new ActionMessages();
         RollerSession rses = RollerSession.getRollerSession(request);
-        MemberPermissionsPageModel model = 
-            new MemberPermissionsPageModel(request, response, mapping);
+        MemberPermissionsPageModel model =
+                new MemberPermissionsPageModel(request, response, mapping);
         
         // Ensure use has admin perms for this weblog
         if (model.getWebsite() != null && rses.isUserAuthorizedToAdmin(model.getWebsite())) {
-
+            
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             
             Iterator iter = model.getPermissions().iterator();
             int removed = 0;
             int changed = 0;
-            while (iter.hasNext())
-            {
+            while (iter.hasNext()) {
                 PermissionsData perms = (PermissionsData)iter.next();
                 String sval = request.getParameter("perm-" + perms.getId());
-                if (sval != null)
-                {
+                if (sval != null) {
                     short val = Short.parseShort(sval);
                     UserData user = rses.getAuthenticatedUser();
-                    if (perms.getUser().getId().equals(user.getId()) 
-                            && val < perms.getPermissionMask())
-                    {
+                    if (perms.getUser().getId().equals(user.getId())
+                    && val < perms.getPermissionMask()) {
                         errors.add(null,new ActionError(
-                            "memberPermissions.noSelfDemotions"));
-                    }
-                    else if (val != perms.getPermissionMask()) 
-                    {
-                        if (val == -1) 
-                        {
+                                "memberPermissions.noSelfDemotions"));
+                    } else if (val != perms.getPermissionMask()) {
+                        if (val == -1) {
                             userMgr.removePermissions(perms);
                             removed++;
-                        }
-                        else
-                        {
+                        } else {
                             perms.setPermissionMask(val);
                             userMgr.savePermissions(perms);
                             changed++;
@@ -167,24 +153,21 @@ public class MemberPermissionsAction extends DispatchAction
                     }
                 }
             }
-            if (removed > 0 || changed > 0)
-            {
+            if (removed > 0 || changed > 0) {
                 RollerFactory.getRoller().flush();
             }
-            if (removed > 0) 
-            {
+            if (removed > 0) {
                 msgs.add(null,new ActionMessage(
-                    "memberPermissions.membersRemoved", new Integer(removed)));
+                        "memberPermissions.membersRemoved", new Integer(removed)));
             }
-            if (changed > 0)
-            {
+            if (changed > 0) {
                 msgs.add(null,new ActionMessage(
-                    "memberPermissions.membersChanged", new Integer(changed)));
+                        "memberPermissions.membersChanged", new Integer(changed)));
             }
             saveErrors(request, errors);
             saveMessages(request, msgs);
-            MemberPermissionsPageModel updatedModel = 
-                new MemberPermissionsPageModel(request, response, mapping);
+            MemberPermissionsPageModel updatedModel =
+                    new MemberPermissionsPageModel(request, response, mapping);
             request.setAttribute("model", updatedModel);
             ActionForward forward = mapping.findForward("memberPermissions.page");
             return forward;
@@ -194,12 +177,10 @@ public class MemberPermissionsAction extends DispatchAction
         }
     }
     
-    public static class MemberPermissionsPageModel extends BasePageModel
-    {
+    public static class MemberPermissionsPageModel extends BasePageModel {
         private List permissions = new ArrayList();
         public MemberPermissionsPageModel(HttpServletRequest request,
-          HttpServletResponse response, ActionMapping mapping) throws RollerException
-        {
+                HttpServletResponse response, ActionMapping mapping) throws RollerException {
             super("memberPermissions.title", request, response, mapping);
             Roller roller = RollerFactory.getRoller();
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
@@ -207,13 +188,11 @@ public class MemberPermissionsAction extends DispatchAction
             WebsiteData website = rreq.getWebsite();
             permissions = roller.getUserManager().getAllPermissions(website);
         }
-        public List getPermissions()
-        {
+        public List getPermissions() {
             return permissions;
         }
-        public void setWebsites(List permissions)
-        {
+        public void setWebsites(List permissions) {
             this.permissions = permissions;
         }
-    }    
+    }
 }

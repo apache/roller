@@ -19,6 +19,8 @@ package org.apache.roller.ui.authoring.struts.actions;
 
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -29,17 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
@@ -47,22 +44,26 @@ import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.authoring.struts.formbeans.InvitationsForm;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.authoring.struts.formbeans.InviteMemberForm;
 import org.apache.roller.util.MailUtil;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
- * Allows website admin to invite new members to website.
+ * Allow viewing and deletion of invitations.
  *
- * @struts.action path="/roller-ui/authoring/inviteMember" parameter="method" name="inviteMemberForm"
- * @struts.action-forward name="inviteMember.page" path=".InviteMember"
+ * @struts.action path="/roller-ui/authoring/invitations" parameter="method" name="invitationsForm"
+ * @struts.action-forward name="invitations.page" path=".Invitations"
  */
-public class InviteMemberAction extends DispatchAction {
+public class InvitationsAction extends DispatchAction {
     private static Log mLogger =
-            LogFactory.getFactory().getInstance(InviteMemberAction.class);
+            LogFactory.getFactory().getInstance(InvitationsAction.class);
     
     /** If method param is not specified, use HTTP verb to pick method to call */
     public ActionForward unspecified(
@@ -71,12 +72,27 @@ public class InviteMemberAction extends DispatchAction {
             HttpServletRequest  request,
             HttpServletResponse response)
             throws Exception {
-        if (request.getMethod().equals("GET")) {
-            return edit(mapping, actionForm, request, response);
-        }
-        return send(mapping, actionForm, request, response);
+        return view(mapping, actionForm, request, response);
     }
     
+    public ActionForward view(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws Exception {
+        InvitationsPageModel pageModel = 
+            new InvitationsPageModel(request, response, mapping);
+        RollerSession rses = RollerSession.getRollerSession(request);
+        if (pageModel.getWebsite() != null && 
+                rses.isUserAuthorizedToAdmin(pageModel.getWebsite())) {
+            request.setAttribute("model", pageModel);
+            return mapping.findForward("invitations.page");
+        }
+        return mapping.findForward("access-denied");
+    }
+    
+    /** Forwads back to the member permissions page */
     public ActionForward cancel(
             ActionMapping       mapping,
             ActionForm          actionForm,
@@ -84,109 +100,41 @@ public class InviteMemberAction extends DispatchAction {
             HttpServletResponse response)
             throws Exception {
         return mapping.findForward("memberPermissions");
-    }
+    }  
     
-    public ActionForward edit(
+    public ActionForward revoke(
             ActionMapping       mapping,
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
             throws Exception {
-        // if group blogging is disabled then you can't change permissions
-        if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
-            return mapping.findForward("access-denied");
-        }
         
-        BasePageModel pageModel = new BasePageModel(
-                "inviteMember.title", request, response, mapping);
-        RollerSession rses = RollerSession.getRollerSession(request);
-        
-        // Ensure use has admin perms for this weblog
-        if (pageModel.getWebsite() != null && rses.isUserAuthorizedToAdmin(pageModel.getWebsite())) {
-            request.setAttribute("model", pageModel);
-            InviteMemberForm form = (InviteMemberForm)actionForm;
-            form.setWebsiteId(pageModel.getWebsite().getId());
-            ActionForward forward = mapping.findForward("inviteMember.page");
-            return forward;
-        } else {
-            return mapping.findForward("access-denied");
-        }
-    }
-    
-    public ActionForward send(
-            ActionMapping       mapping,
-            ActionForm          actionForm,
-            HttpServletRequest  request,
-            HttpServletResponse response)
-            throws Exception {
-        // if group blogging is disabled then you can't change permissions
-        if (!RollerConfig.getBooleanProperty("groupblogging.enabled")) {
-            return mapping.findForward("access-denied");
-        }
-        
-        ActionForward forward = mapping.findForward("inviteMember.page");
-        ActionMessages msgs = new ActionMessages();
-        ActionMessages errors = new ActionErrors();
-        InviteMemberForm form = (InviteMemberForm)actionForm;
-        UserManager umgr = RollerFactory.getRoller().getUserManager();
-        UserData user = umgr.getUserByUserName(form.getUserName());
-        
-        BasePageModel pageModel = new BasePageModel(
-                "inviteMember.title", request, response, mapping);
-        RollerSession rses = RollerSession.getRollerSession(request);
-        
-        // Ensure use has admin perms for this weblog
-        if (pageModel.getWebsite() != null && rses.isUserAuthorizedToAdmin(pageModel.getWebsite())) {
-            
-            if (user == null) {
-                errors.add(ActionErrors.GLOBAL_ERROR,
-                        new ActionError("inviteMember.error.userNotFound"));
-            } else {
-                RollerRequest rreq = RollerRequest.getRollerRequest(request);
-                WebsiteData website = rreq.getWebsite();
-                PermissionsData perms = umgr.getPermissions(website, user);
-                if (perms != null && perms.isPending()) {
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                            new ActionError("inviteMember.error.userAlreadyInvited"));
-                    request.setAttribute("model", new BasePageModel(
-                            "inviteMember.title", request, response, mapping));
-                } else if (perms != null) {
-                    errors.add(ActionErrors.GLOBAL_ERROR,
-                            new ActionError("inviteMember.error.userAlreadyMember"));
-                    request.setAttribute("model", new BasePageModel(
-                            "inviteMember.title", request, response, mapping));
-                } else {
-                    String mask = request.getParameter("permissionsMask");
-                    umgr.inviteUser(website, user, Short.parseShort(mask));
-                    RollerFactory.getRoller().flush();
-                    
-                    request.setAttribute("user", user);
-                    try {
-                        notifyInvitee(request, website, user);
-                    } catch (RollerException e) {
-                        errors.add(ActionErrors.GLOBAL_ERROR,
-                                new ActionError("error.untranslated", e.getMessage()));
-                    }
-                    msgs.add(ActionMessages.GLOBAL_MESSAGE,
-                            new ActionMessage("inviteMember.userInvited"));
-                    
-                    request.setAttribute("model", new BasePageModel(
-                            "inviteMemberDone.title", request, response, mapping));
-                    
-                    forward = mapping.findForward("memberPermissions");
-                }
-            }
+        InvitationsForm invitationForm = (InvitationsForm)actionForm;
+        Roller roller = RollerFactory.getRoller();
+        UserManager umgr = roller.getUserManager();
+        PermissionsData perms = umgr.getPermissions(invitationForm.getPermissionId());
+        if (perms == null) {
+            ActionErrors errors = new ActionErrors();
+            errors.add(null, new ActionError("invitations.error.notFound"));
             saveErrors(request, errors);
-            saveMessages(request, msgs);
-            
-        } else {
-            return mapping.findForward("access-denied");
+            return view(mapping, actionForm, request, response);
         }
-        return forward;
+        RollerSession rses = RollerSession.getRollerSession(request);
+        if (rses.isUserAuthorizedToAdmin(perms.getWebsite())) {
+            umgr.removePermissions(perms);
+            roller.flush();
+            notifyInvitee(request, perms.getWebsite(), perms.getUser());
+            ActionMessages msgs = new ActionMessages();
+            msgs.add(ActionMessages.GLOBAL_MESSAGE, 
+                new ActionMessage("invitations.revoked"));
+            saveMessages(request, msgs);
+            return view(mapping, actionForm, request, response);
+        }      
+        return mapping.findForward("access-denied"); 
     }
     
     /**
-     * Inform invitee of new invitation.
+     * Inform invitee that invitation has been revoked.
      */
     private void notifyInvitee(
             HttpServletRequest request, WebsiteData website, UserData user)
@@ -214,14 +162,13 @@ public class InviteMemberAction extends DispatchAction {
                     rootURL = RequestUtils.serverURL(request)
                     + request.getContextPath();
                 }
-                String url = rootURL + "/roller-ui/yourWebsites.do";
                 
                 ResourceBundle resources = ResourceBundle.getBundle(
                         "ApplicationResources",
                         website.getLocaleInstance());
                 StringBuffer sb = new StringBuffer();
                 sb.append(MessageFormat.format(
-                        resources.getString("inviteMember.notificationSubject"),
+                        resources.getString("invitations.revokationSubject"),
                         new Object[] {
                     website.getName(),
                     website.getHandle()})
@@ -229,25 +176,24 @@ public class InviteMemberAction extends DispatchAction {
                 subject = sb.toString();
                 sb = new StringBuffer();
                 sb.append(MessageFormat.format(
-                        resources.getString("inviteMember.notificationContent"),
+                        resources.getString("invitations.revokationContent"),
                         new Object[] {
                     website.getName(),
                     website.getHandle(),
-                    user.getUserName(),
-                    url
+                    user.getUserName()
                 }));
                 content = sb.toString();
                 MailUtil.sendTextMessage(
                         mailSession, from, to, cc, bcc, subject, content);
             }
         } catch (NamingException e) {
-            throw new RollerException("ERROR: Notification email(s) not sent, "
+            throw new RollerException("ERROR: Revokation email(s) not sent, "
                     + "Roller's mail session not properly configured", e);
         } catch (MessagingException e) {
-            throw new RollerException("ERROR: Notification email(s) not sent, "
+            throw new RollerException("ERROR: Revokation email(s) not sent, "
                     + "due to Roller configuration or mail server problem.", e);
         } catch (MalformedURLException e) {
-            throw new RollerException("ERROR: Notification email(s) not sent, "
+            throw new RollerException("ERROR: Revokation email(s) not sent, "
                     + "Roller site URL is malformed?", e);
         } catch (RollerException e) {
             throw new RuntimeException(
@@ -255,5 +201,23 @@ public class InviteMemberAction extends DispatchAction {
         }
     }
     
-    
+    public static class InvitationsPageModel extends BasePageModel {
+        private List pendings = new ArrayList();
+        
+        public InvitationsPageModel(HttpServletRequest request,
+                HttpServletResponse response, ActionMapping mapping) throws RollerException {
+            super("invitations.title", request, response, mapping);
+            Roller roller = RollerFactory.getRoller();
+            RollerSession rollerSession = RollerSession.getRollerSession(request);
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            WebsiteData website = rreq.getWebsite();
+            pendings = roller.getUserManager().getPendingPermissions(website);
+        }
+        public List getPendings() {
+            return pendings;
+        }
+        public void setPendings(List pendings) {
+            this.pendings = pendings;
+        }
+    }    
 }

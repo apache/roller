@@ -49,7 +49,7 @@ Each menu or menu item is governed by four attrbibutes:
         <menu-item forward="memberPermissions" enabledProperty="groupblogging.enabled"
                                                name="tabbedmenu.website.members" 
                                                perms="admin" 
-                                               subforwards="inviteMember" />
+                                               subforwards="inviteMember,invitations" />
         <menu-item forward="pingSetup"         name="tabbedmenu.weblog.pingSetup" 
                                                disabledProperty="pings.disablePingUsage" 
                                                perms="admin" />

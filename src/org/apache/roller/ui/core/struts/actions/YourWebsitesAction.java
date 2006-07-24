@@ -42,6 +42,8 @@ import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.YourWebsitesForm;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 
 
 /**
@@ -89,21 +91,26 @@ public class YourWebsitesAction extends DispatchAction {
             HttpServletRequest  request,
             HttpServletResponse response)
             throws Exception {
-        YourWebsitesForm form = (YourWebsitesForm)actionForm;
         
+        YourWebsitesForm form = (YourWebsitesForm)actionForm;        
         UserManager userMgr = RollerFactory.getRoller().getUserManager();
         PermissionsData perms = userMgr.getPermissions(form.getInviteId());
-        
-        // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
-        // TODO EXCEPTIONS: better exception handling
-        perms.setPending(false);
-        userMgr.savePermissions(perms);
-        RollerFactory.getRoller().flush();
-        
-        ActionMessages msgs = new ActionMessages();
-        msgs.add(null, new ActionMessage(
-                "yourWebsites.accepted", perms.getWebsite().getHandle()));
-        saveMessages(request, msgs);
+        if (perms != null) {        
+            // TODO ROLLER_2.0: notify inviter that invitee has accepted invitation
+            // TODO EXCEPTIONS: better exception handling
+            perms.setPending(false);
+            userMgr.savePermissions(perms);
+            RollerFactory.getRoller().flush();
+
+            ActionMessages msgs = new ActionMessages();
+            msgs.add(null, new ActionMessage(
+                    "yourWebsites.accepted", perms.getWebsite().getHandle()));
+            saveMessages(request, msgs);
+        } else {
+            ActionErrors errs = new ActionErrors();
+            errs.add(null, new ActionError("yourWebsites.permNotFound"));
+            saveMessages(request, errs);            
+        }
         
         request.setAttribute("model",
                 new YourWebsitesPageModel(request, response, mapping));
@@ -118,20 +125,25 @@ public class YourWebsitesAction extends DispatchAction {
             HttpServletRequest  request,
             HttpServletResponse response)
             throws Exception {
-        YourWebsitesForm form = (YourWebsitesForm)actionForm;
-        
+
+        YourWebsitesForm form = (YourWebsitesForm)actionForm;        
         UserManager userMgr = RollerFactory.getRoller().getUserManager();
         PermissionsData perms = userMgr.getPermissions(form.getInviteId());
-        
-        // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
-        // TODO EXCEPTIONS: better exception handling here
-        userMgr.removePermissions(perms);
-        RollerFactory.getRoller().flush();
-        
-        ActionMessages msgs = new ActionMessages();
-        msgs.add(null, new ActionMessage(
-                "yourWebsites.declined", perms.getWebsite().getHandle()));
-        saveMessages(request, msgs);
+        if (perms != null) {
+            // TODO ROLLER_2.0: notify inviter that invitee has declined invitation
+            // TODO EXCEPTIONS: better exception handling here
+            userMgr.removePermissions(perms);
+            RollerFactory.getRoller().flush();
+
+            ActionMessages msgs = new ActionMessages();
+            msgs.add(null, new ActionMessage(
+                    "yourWebsites.declined", perms.getWebsite().getHandle()));
+            saveMessages(request, msgs);
+        } else {
+            ActionErrors errs = new ActionErrors();
+            errs.add(null, new ActionError("yourWebsites.permNotFound"));
+            saveMessages(request, errs);  
+        }
         
         request.setAttribute("model",
                 new YourWebsitesPageModel(request, response, mapping));
