@@ -21,6 +21,8 @@ import java.util.Locale;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang.StringUtils;
+import org.apache.roller.util.Utilities;
 
 import org.apache.struts.action.ActionMapping;
 import org.apache.roller.RollerException;
@@ -112,6 +114,15 @@ public class CommentFormEx extends CommentForm
     public void copyTo(org.apache.roller.pojos.CommentData dataHolder, Locale locale) 
         throws RollerException
     {
+        if (!StringUtils.isEmpty(name)) {
+            name = Utilities.removeHTML(name);
+        }
+        if (!StringUtils.isEmpty(url)) {
+            url = Utilities.removeHTML(url);
+        }
+        if (!StringUtils.isEmpty(email)) {
+            email = Utilities.removeHTML(email);
+        }
         super.copyTo(dataHolder, locale);
         if (getSpam() == null) dataHolder.setSpam(Boolean.FALSE);
         if (getNotify() == null) dataHolder.setNotify(Boolean.FALSE);
