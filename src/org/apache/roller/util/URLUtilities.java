@@ -237,7 +237,7 @@ public final class URLUtilities {
         
         Map params = new HashMap();
         if(query != null) {
-            params.put("query", encode(query));
+            params.put("q", encode(query));
             
             // other stuff only makes sense if there is a query
             if(category != null) {
