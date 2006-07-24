@@ -117,6 +117,11 @@ public class URLModel implements Model {
     }
     
     
+    public String getCommentAuthenticator() {
+        return getSite()+"/CommentAuthenticatorServlet";
+    }
+    
+    
     public String themeResource(String theme, String filePath) {
         return getSite()+RollerRuntimeConfig.getProperty("users.themes.path")+"/"+theme+"/"+filePath;
     }
