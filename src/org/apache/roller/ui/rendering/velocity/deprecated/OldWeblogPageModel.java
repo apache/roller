@@ -360,7 +360,7 @@ public class OldWeblogPageModel {
             } else {
                 cal = Calendar.getInstance();
             }
-            int limit = maxEntries;
+            int limit = mWebsite.getEntryDisplayCount();
             Date startDate = null;
             Date endDate = mDate;
             if (endDate == null) endDate = new Date();
@@ -380,7 +380,7 @@ public class OldWeblogPageModel {
                     endDate,                      // endDate
                     catParam,                     // catName
                     WeblogEntryData.PUBLISHED,    // status
-mLocale,                     0, -1);  
+                    mLocale, 0, limit);  
             
             // need to wrap pojos
             java.util.Date key = null;
@@ -483,7 +483,7 @@ mLocale,                     0, -1);
                     catParam,                    // catName
                     WeblogEntryData.PUBLISHED,   // status
                     null,                        // sortby (null for pubTime)
-mLocale,                     0, maxEntries);    
+                    mLocale, 0, mWebsite.getEntryDisplayCount());    
             
             // wrap pojos
             ret = new ArrayList(mEntries.size());
