@@ -101,7 +101,8 @@ public class RequestMappingFilter implements Filter {
                     "Weblog urls probably won't function as you expect.");
         }
         
-        log.info("Request mapping filter initialized");
+        log.info("Request mapping filter initialized, "+requestMappers.size()+
+                " mappers configured.");
     }
     
     
