@@ -71,19 +71,19 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 #end
 
 
-#** 
-Show trackback discovery code for one weblog entry, appears as an HTML comment.
-*#
-#macro(showTrackbackAutodiscoveryRDF $entry)
+#**
+ * Display a trackback auto-discovery RDF comment for a WeblogEntry.
+ **#
+#macro( showTrackbackAutodiscovery $entry )
 <!--
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
          xmlns:dc="http://purl.org/dc/elements/1.1/">
 <rdf:Description
-    rdf:about="$entry.permalink"
-    trackback:ping="$entry.permalink"
+    rdf:about="$url.entry($entry.anchor)"
+    trackback:ping="$url.trackback($entry.anchor)"
     dc:title="$entry.title"
-    dc:identifier="$entry.permalink"
+    dc:identifier="$url.entry($entry.anchor)"
     dc:subject="$entry.category.name"
     dc:description="$entry.title"
     dc:creator="$entry.creator.userName"
