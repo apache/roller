@@ -31,6 +31,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.Theme;
@@ -150,20 +151,18 @@ public class PreviewServlet extends HttpServlet {
             initData.put("weblogRequest", previewRequest);
             initData.put("pageContext", pageContext);
             
-            // standard weblog models
-            ModelLoader.loadPageModels(model, initData);
+            // Load models for pages
+            String pageModels = RollerConfig.getProperty("rendering.pageModels");
+            ModelLoader.loadModels(pageModels, model, initData, true);
             
-            // special handling for site wide weblog
-            if (RollerRuntimeConfig.isSiteWideWeblog(tmpWebsite.getHandle())) {
-                ModelLoader.loadSiteModels(model, initData);
+            // Load special models for site-wide blog
+            if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+                String siteModels = RollerConfig.getProperty("rendering.siteModels");
+                ModelLoader.loadModels(siteModels, model, initData, true);
             }
-            
-            // add helpers
-            ModelLoader.loadUtilityHelpers(model, initData);
-            ModelLoader.loadWeblogHelpers(model, initData);
-            
-            // weblog's custom models
-            ModelLoader.loadCustomModels(tmpWebsite, model, initData);
+
+            // Load weblog custom models
+            ModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
             ModelLoader.loadOldModels(model, request, response, pageContext, previewRequest);

@@ -33,48 +33,11 @@ import org.apache.roller.util.Utilities;
 
 
 /**
- * Loads page models (read-only data access objects which implement Model) 
- * and helpers (which "help" with HTML gen.) needed by page rendering process.
+ * Helps with model loading process.
  */
 public class ModelLoader {
     
     private static Log log = LogFactory.getLog(ModelLoader.class);
-    
-    
-    /** 
-     * Load helpers needed in weblog pages (e.g. calendar, menu).
-     */
-    public static void loadWeblogHelpers(Map model, Map initData) 
-            throws RollerException {
-        
-        // helps render the calendar
-        CalendarModel calendarTag = new CalendarModel();
-        calendarTag.init(initData);
-        model.put(calendarTag.getModelName(), calendarTag);
-        
-        // helps render menus
-        MenuModel menuTag = new MenuModel();
-        menuTag.init(initData);
-        model.put(menuTag.getModelName(), menuTag);
-        
-        // helps url building
-        URLModel urlModel = new URLModel();
-        urlModel.init(initData);
-        model.put(urlModel.getModelName(), urlModel);
-    }
-    
-    
-    /**
-     * Load generic utility helpers.
-     */
-    public static void loadUtilityHelpers(Map model, Map initData) 
-            throws RollerException {
-        
-        // general set of utilities
-        UtilitiesModel utils = new UtilitiesModel();
-        utils.init(initData);
-        model.put(utils.getModelName(), utils);
-    }
     
     
     /**
@@ -97,94 +60,18 @@ public class ModelLoader {
     
     
     /**
-     * Load set of common weblog models.
-     *
-     * This is the list of models defined by rendering.weblogPageModels
-     */
-    public static void loadPageModels(Map model, Map initData)
-            throws RollerException {
-        
-        String weblogModels = 
-                RollerConfig.getProperty("rendering.pageRenderModels");
-        loadModels(weblogModels, model, initData);
-    }
-    
-    
-    /**
-     * Load set of common feed models.
-     *
-     * This is the list of models defined by rendering.feedRendererModels
-     */
-    public static void loadFeedModels(Map model, Map initData)
-            throws RollerException {
-        
-        // feeds need url building too
-        URLModel urlModel = new URLModel();
-        urlModel.init(initData);
-        model.put(urlModel.getModelName(), urlModel);
-
-        String weblogModels = 
-                RollerConfig.getProperty("rendering.feedRenderModels");
-        loadModels(weblogModels, model, initData);
-    }
-    
-    
-    /**
-     * Load set of common search models.
-     *
-     * This is the list of models defined by rendering.searchRendererModels
-     */
-    public static void loadSearchModels(Map model, Map initData)
-            throws RollerException {
-        
-        String searchModels = 
-                RollerConfig.getProperty("rendering.searchRenderModels");
-        loadModels(searchModels, model, initData);
-    }
-    
-    
-    /**
-     * Load set of common site-wide models.
-     *
-     * This is the list of models defined by rendering.sitePageModels
-     */
-    public static void loadSiteModels(Map model, Map initData)
-            throws RollerException {
-        
-        String weblogModels = 
-                RollerConfig.getProperty("rendering.siteRenderModels");
-        loadModels(weblogModels, model, initData);
-    }
-    
-    
-    /**
-     * Load set of custom models allowed for the given weblog.
+     * Load set of custom models set for the given weblog.
      *
      * Does not fail if there is a problem with one of the models.
      */
-    public static void loadCustomModels(
-            WebsiteData weblog, 
-            Map model,
-            Map initData) {
+    public static void loadCustomModels(WebsiteData weblog, Map model, Map initData) {
         
         if (weblog.getPageModels() != null) {
-            String[] weblogModels = 
-                Utilities.stringToStringArray(weblog.getPageModels(), ",");
-            for (int i=0; i<weblogModels.length; i++) {
-                try { // don't die just because of one bad custom model
-                    Class modelClass = Class.forName(weblogModels[i]);
-                    Model pageModel = (Model)modelClass.newInstance();
-                    pageModel.init(initData);             
-                    model.put(pageModel.getModelName(), pageModel);
-                } catch (RollerException re) {
-                    log.warn("ERROR: initializing a plugin: " + weblogModels[i]);
-                } catch (ClassNotFoundException cnfe) {
-                    log.warn("ERROR: can't find model: " + weblogModels[i]);
-                } catch (InstantiationException ie) {
-                    log.warn("ERROR: insantiating model: " + weblogModels[i]);
-                } catch (IllegalAccessException iae) {
-                    log.warn("ERROR: access exception model: " + weblogModels[i]);
-                }
+            try {
+                loadModels(weblog.getPageModels(), model, initData, false);
+            } catch(RollerException ex) {
+                // shouldn't happen, but log it just in case
+                log.error("Error loading weblog custom models", ex);
             }
         }     
     }
@@ -192,29 +79,46 @@ public class ModelLoader {
     
     /**
      * Convenience method to load a comma-separated list of page models.
-     * If any of the models fail to load, throws an exception.
+     *
+     * Optionally fails if any exceptions are thrown when initializing
+     * the Model instances.
      */
-    private static void loadModels(
-            String modelsString,
-            Map model,
-            Map initData) throws RollerException {
+    public static void loadModels(String modelsString, Map model, 
+                                   Map initData, boolean fail) 
+            throws RollerException {
         
-        String currentModel = null;
-        try { // if we can't load a configued page models, then bail out
-            String[] models = Utilities.stringToStringArray(modelsString, ",");
-            for (int i=0; i<models.length; i++) {
-                currentModel = models[i];
-                Class modelClass = Class.forName(currentModel);
+        String[] models = Utilities.stringToStringArray(modelsString, ",");
+        for(int i=0; i < models.length; i++) {
+            try {
+                Class modelClass = Class.forName(models[i]);
                 Model pageModel = (Model) modelClass.newInstance();
-                pageModel.init(initData);            
+                pageModel.init(initData);
                 model.put(pageModel.getModelName(), pageModel);
+            } catch (RollerException re) {
+                if(fail) {
+                    throw re;
+                } else {
+                    log.warn("Error initializing model: " + models[i]);
+                }
+            } catch (ClassNotFoundException cnfe) {
+                if(fail) {
+                    throw new RollerException("Error finding model: " + models[i], cnfe);
+                } else {
+                    log.warn("Error finding model: " + models[i]);
+                }
+            } catch (InstantiationException ie) {
+                if(fail) {
+                    throw new RollerException("Error insantiating model: " + models[i], ie);
+                } else {
+                    log.warn("Error insantiating model: " + models[i]);
+                }
+            } catch (IllegalAccessException iae) {
+                if(fail) {
+                    throw new RollerException("Error accessing model: " + models[i], iae);
+                } else {
+                    log.warn("Error accessing model: " + models[i]);
+                }
             }
-        } catch (ClassNotFoundException cnfe) {
-            throw new RollerException("ERROR: can't find model: " + currentModel);
-        } catch (InstantiationException ie) {
-            throw new RollerException("ERROR: insantiating model: " + currentModel);
-        } catch (IllegalAccessException iae) {
-            throw new RollerException("ERROR: access exception model: " + currentModel);
         }
     }
     

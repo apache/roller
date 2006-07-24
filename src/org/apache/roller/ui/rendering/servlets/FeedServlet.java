@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.StaticTemplate;
 import org.apache.roller.pojos.Template;
@@ -186,18 +187,17 @@ public class FeedServlet extends HttpServlet {
             initData.put("feedRequest", feedRequest);
             initData.put("weblogRequest", feedRequest);
             
-            // Feeds get the weblog specific page model
-            ModelLoader.loadFeedModels(model, initData);
+            // Load models for feeds
+            String feedModels = RollerConfig.getProperty("rendering.feedModels");
+            ModelLoader.loadModels(feedModels, model, initData, true);
             
-            // special handling for site wide feed
-            if (RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-                ModelLoader.loadSiteModels(model, initData);
+            // Load special models for site-wide blog
+            if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+                String siteModels = RollerConfig.getProperty("rendering.siteModels");
+                ModelLoader.loadModels(siteModels, model, initData, true);
             }
-            
-            // utility helpers and plugin helpers
-            ModelLoader.loadUtilityHelpers(model, initData);
 
-            // Feeds get weblog's custom models too
+            // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
             
         } catch (RollerException ex) {
