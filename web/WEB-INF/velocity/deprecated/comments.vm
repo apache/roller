@@ -264,7 +264,7 @@
 
     <script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
     <script type="text/javascript">
-    clientSideInclude('commentAuthenticator', '$url.site/CommentAuthenticatorServlet');
+    clientSideInclude('commentAuthenticator', '$url.commentAuthenticator');
 
     var author = getCookie("commentAuthor");
     var email = getCookie("commentEmail");
