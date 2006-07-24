@@ -235,6 +235,10 @@
     <put name="content" value="/WEB-INF/jsps/authoring/remove-page.jsp" />
     <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
 </definition>
+<definition name=".Invitations" extends=".tiles-editorpage"  >
+    <put name="content" value="/WEB-INF/jsps/authoring/Invitations.jsp" />
+    <put name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+</definition>
 
 
 <!-- global admin pages (and associates) -->

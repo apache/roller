@@ -23,8 +23,9 @@
             
         <div class="sidebarInner">
 
-            <h3><fmt:message key="mainPage.actions" /></h3>
+            <h3><fmt:message key="mainPage.actions" /></h3>            
             <hr size="1" noshade="noshade" />
+            
             <img src='<c:url value="/images/email_edit.png"/>' alt="mail-icon" align="bottom" />
             <c:url value="/roller-ui/authoring/inviteMember.do" var="inviteUrl">
                <c:param name="weblog" value="${model.website.handle}" />
@@ -34,9 +35,22 @@
             </a>
             <br />
             <fmt:message key="memberPermissions.whyInvite" />       
-			<br />
-			<br />
-        </div>					
+            <br />
+            <br />
+            
+            <img src='<c:url value="/images/email_edit.png"/>' alt="mail-icon" align="bottom" />
+            <c:url value="/roller-ui/authoring/invitations.do" var="invitationsUrl">
+               <c:param name="weblog" value="${model.website.handle}" />
+            </c:url>
+            <a href='<c:out value="${invitationsUrl}" />'>
+                <fmt:message key="memberPermissions.manageInvitations" />
+            </a>
+            <br />
+            <fmt:message key="memberPermissions.whyManageInvitations" />       
+            <br />
+            <br />
+            
+        </div>                					
         </div>
     </div>
 </div>	
