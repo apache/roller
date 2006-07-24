@@ -53,7 +53,7 @@ public class SiteModel implements Model {
     
     
     public String getModelName() {
-        return "sitePageModel";
+        return "siteModel";
     }
     
     public void init(Map map) throws RollerException {
