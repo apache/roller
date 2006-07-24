@@ -31,6 +31,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
@@ -129,19 +130,17 @@ public class SearchServlet extends HttpServlet {
             pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
             initData.put("pageRequest", pageRequest);
         
-            // default weblog models
-            ModelLoader.loadSearchModels(model, initData);
+            // Load models for pages
+            String searchModels = RollerConfig.getProperty("rendering.searchModels");
+            ModelLoader.loadModels(searchModels, model, initData, true);
             
-            // special site wide models
-            if (RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-                ModelLoader.loadSiteModels(model, initData);
+            // Load special models for site-wide blog
+            if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+                String siteModels = RollerConfig.getProperty("rendering.siteModels");
+                ModelLoader.loadModels(siteModels, model, initData, true);
             }
-            
-            // add helpers
-            ModelLoader.loadUtilityHelpers(model, initData);
-            ModelLoader.loadWeblogHelpers(model, initData);
 
-            // Search gets weblog's custom models too
+            // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(

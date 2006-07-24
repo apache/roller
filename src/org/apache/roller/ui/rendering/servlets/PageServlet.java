@@ -275,19 +275,17 @@ public class PageServlet extends HttpServlet {
             initData.put("weblogRequest", pageRequest);
             initData.put("pageContext", pageContext);
             
-            // Feeds get the weblog specific page model
-            ModelLoader.loadPageModels(model, initData);
+            // Load models for pages
+            String pageModels = RollerConfig.getProperty("rendering.pageModels");
+            ModelLoader.loadModels(pageModels, model, initData, true);
             
-            // special handling for site wide weblog
-            if(isSiteWide) {
-                ModelLoader.loadSiteModels(model, initData);
+            // Load special models for site-wide blog
+            if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+                String siteModels = RollerConfig.getProperty("rendering.siteModels");
+                ModelLoader.loadModels(siteModels, model, initData, true);
             }
-            
-            // add helpers
-            ModelLoader.loadUtilityHelpers(model, initData);
-            ModelLoader.loadWeblogHelpers(model, initData);
 
-            // Feeds get weblog's custom models too
+            // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);
             
             // ick, gotta load pre-3.0 model stuff as well :(
