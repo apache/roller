@@ -126,7 +126,7 @@ Table of files, each with link, size and checkbox
            <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">
                 <td class="rollertable">
                     <img src='<c:url value="/images/image.png"/>' style="padding:0px" />
-                    <a href='<c:out value="${model.resourcesBaseURL}" />/<c:out value="${loopfile.name}" />'>
+                    <a href='<c:out value="${model.resourcesBaseURL}" /><c:out value="${loopfile.name}" />'>
                         <c:out value="${loopfile.name}" />
                     </a>
                 </td>

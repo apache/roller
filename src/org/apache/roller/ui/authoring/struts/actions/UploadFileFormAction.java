@@ -55,6 +55,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.UploadFileForm;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.RollerMessages;
+import org.apache.roller.util.URLUtilities;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -84,7 +85,7 @@ public final class UploadFileFormAction extends DispatchAction {
         
         if (rses.isUserAuthorizedToAuthor(website)) {
             UploadFilePageModel pageModel = new UploadFilePageModel(
-                request, response, mapping, website.getHandle());
+                request, response, mapping, website);
             pageModel.setWebsite(website);
             request.setAttribute("model", pageModel);
             fwd = mapping.findForward("uploadFiles.page");
@@ -168,7 +169,7 @@ public final class UploadFileFormAction extends DispatchAction {
                 }
             }        
             UploadFilePageModel pageModel = new UploadFilePageModel(
-                request, response, mapping, website.getHandle(), lastUploads);
+                request, response, mapping, website, lastUploads);
             request.setAttribute("model", pageModel);
             pageModel.setWebsite(website);
             
@@ -243,7 +244,7 @@ public final class UploadFileFormAction extends DispatchAction {
             saveMessages(request, messages);
             
             UploadFilePageModel pageModel = new UploadFilePageModel(
-                request, response, mapping, website.getHandle());
+                request, response, mapping, website);
             pageModel.setWebsite(website);
             request.setAttribute("model", pageModel);
         }
@@ -284,15 +285,15 @@ public final class UploadFileFormAction extends DispatchAction {
                 HttpServletRequest req, 
                 HttpServletResponse res, 
                 ActionMapping mapping,
-                String weblogHandle) throws RollerException {
-            this(req, res, mapping, weblogHandle, null);
+                WebsiteData weblog) throws RollerException {
+            this(req, res, mapping, weblog, null);
         }
        
         public UploadFilePageModel(
                 HttpServletRequest req, 
                 HttpServletResponse res, 
                 ActionMapping mapping,
-                String weblogHandle,
+                WebsiteData weblog,
                 List lastUploads) throws RollerException {
             
             super("uploadFiles.title", req, res, mapping);
@@ -302,18 +303,18 @@ public final class UploadFileFormAction extends DispatchAction {
             FileManager fmgr = roller.getFileManager();
             
             String dir = fmgr.getUploadDir();
-            resourcesBaseURL = getBaseURL() + fmgr.getUploadUrl() + "/" + weblogHandle;
+            resourcesBaseURL = URLUtilities.getWeblogResourceURL(weblog, "", false);
             
             RollerRequest rreq = RollerRequest.getRollerRequest(req);
             WebsiteData website = UploadFileFormAction.getWebsite(req);            
             maxDirMB = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
             maxFileMB = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
                      
-            overQuota = fmgr.overQuota(weblogHandle);
+            overQuota = fmgr.overQuota(weblog.getHandle());
             uploadEnabled = RollerRuntimeConfig.getBooleanProperty("uploads.enabled");  
             
             files = new ArrayList();
-            File[] rawFiles = fmgr.getFiles(weblogHandle);
+            File[] rawFiles = fmgr.getFiles(weblog.getHandle());
             for (int i=0; i<rawFiles.length; i++) {
                 files.add(new FileBean(rawFiles[i]));
                 totalSize += rawFiles[i].length();
