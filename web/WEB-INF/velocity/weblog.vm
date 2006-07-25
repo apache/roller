@@ -66,7 +66,7 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     <link rel="alternate" type="application/rss+xml"  title="RSS Entries"   href="$url.feed.entries.rss" />
     <link rel="alternate" type="application/rss+xml"  title="RSS Comments"  href="$url.feed.comments.rss" />
     #if ($weblog.enableBloggerApi)
-       <link rel="EditURI"   type="application/rsd+xml" title="RSD" href="$weblog.URL/rsd"/>
+       <link rel="EditURI"   type="application/rsd+xml" title="RSD" href="$url.rsd"/>
     #end
 #end
 
@@ -148,12 +148,11 @@ Shows weblog entries pager via default day template
 Show comments for weblog entry according to Roller configuration.
 *#
 #macro(showWeblogEntryComments $entry)
-    #set($commentPreview = $model.getCommentPreview())
     <a name="comments"></a>
     <div class="comments">
 
-    #if($commentPreview)
-        #set($comments = [$commentPreview])
+    #if($model.commentPreview)
+        #set($comments = [$model.commentPreview])
         <div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
     #else
         <div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
@@ -194,7 +193,7 @@ Show comments for weblog entry according to Roller configuration.
                 #if( $utils.isNotEmpty($comment.url) )
                     $text.get( "macro.weblog.postedbywebsite", [$comment.url, $comment.url] )
                 #end
-                <a href="${ctxPath}${entry.permaLink}#comment${velocityCount}"
+                <a href="$url.comment($entry.anchor, $velocityCount)"
                    class="entrypermalink"
                    title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
                 </p>
@@ -222,10 +221,9 @@ Show comments form for weblog entry.
         <span class="status">$model.statusMessage</span>
     #end
 
-    <form method="post" action="$url.site/roller-ui/rendering/comment/$entry.website.handle/entry/$entry.anchor" 
+    <form method="post" action="$url.entry($entry.anchor)" 
         focus="name" name="form" onsubmit="fixURL(this); return validateComments(this)">    
         <input type="hidden" name="method" value="post" />
-        <input type="hidden" name="entryid" value="$entry.id" />
 
         <ul>
             <li>
@@ -329,7 +327,7 @@ Show comments form for weblog entry.
 
 
 #** 
-Show recent weblog entries in specified category. 
+Show entries as a HTML ul list.
 *#
 #macro(showWeblogEntryLinksList $entriesList)
    <ul class="entriesList">
@@ -499,9 +497,9 @@ Show weblog's categories in specified parent category.
                 #set($isSelected = false)
                 #if ($page && $iPage.Id == $page.Id) #set($isSelected = true) #end
                 #if (!$isSelected && $iPage.name == "Weblog")
-                    <li class="rNavItem"><a href="$weblog.URL">$iPage.name</a></li>
+                    <li class="rNavItem"><a href="$url.home">$iPage.name</a></li>
                 #elseif (!$isSelected)
-                    <li class="rNavItem"><a href="$weblog.URL/page/$iPage.link">$iPage.name</a></li>
+                    <li class="rNavItem"><a href="$url.page($iPage.link)">$iPage.name</a></li>
                 #else
                     <li class="rNavItem">$iPage.name</li>
                 #end
@@ -606,7 +604,7 @@ Show search again form for a weblog.
             <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
         </form>
 
-        $text.get( "macro.weblog.searchgoogle", [$searchResults.term, $absBaseURL, $ctxPath, ${website.handle}] )
+        $text.get( "macro.weblog.searchgoogle", [$searchResults.term, $url.absoluteSite, $url.site, ${website.handle}] )
     </div>
     <!-- searchhi script hangs firefox, commenting it out for now -->
     <!-- script type="text/javascript" src="$url.site/theme/scripts/searchhi.js"></script -->
