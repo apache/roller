@@ -195,10 +195,10 @@ public class OldWeblogPageModel {
     
     /** Get number of approved non-spam comments for entry */
     public int getCommentCount(String entryId, boolean noSpam, boolean approvedOnly) {
-        /*try {
+        try {
             WeblogEntryData entry = mWeblogMgr.getWeblogEntry(entryId);
             return entry.getComments(noSpam, approvedOnly).size();
-        } catch (RollerException alreadyLogged) {}*/
+        } catch (RollerException alreadyLogged) {}
         return 0;
     }
     
