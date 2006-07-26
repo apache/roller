@@ -659,7 +659,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 String title = entry.getTitle();
                 String excerpt = StringUtils.left( Utilities.removeHTML(content),255 );
                 
-                String url = rctx.createEntryPermalink(entry, request, true);
+                String url = entry.getPermalink();
                 String blog_name = entry.getWebsite().getName();
                 
                 if (form.getTrackbackUrl() != null) {

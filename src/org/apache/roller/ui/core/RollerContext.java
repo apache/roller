@@ -439,27 +439,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
     
     
-    public String createEntryPermalink(
-            WeblogEntryData entry,
-            HttpServletRequest request,
-            boolean absolute) {
-        String link = null;
-        try {
-            String baseUrl = null;
-            if (absolute) {
-                baseUrl = RollerRuntimeConfig.getAbsoluteContextURL();
-            } else {
-                baseUrl = RollerRuntimeConfig.getRelativeContextURL();
-            }
-            link = StringEscapeUtils.escapeHtml(baseUrl + entry.getPermaLink());
-        } catch (Exception e) {
-            mLogger.error("Unexpected exception", e);
-        }
-        
-        return link;
-    }
-    
-    
     /**
      * Get the ServletContext.
      *
