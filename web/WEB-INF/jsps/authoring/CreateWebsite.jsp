@@ -65,7 +65,7 @@ function handlePreview() {
         <html:text property="handle" size="30" maxlength="30" onkeyup="handlePreview()" /><br />
         <span style="text-size:70%">
             <fmt:message key="createWebsite.weblogUrl" />:&nbsp;
-            <c:out value="${model.baseURL}" />/page/<span id="handlePreview" style="color:red">handle</span>
+            <c:out value="${model.absoluteURL}" />/<span id="handlePreview" style="color:red">handle</span>
         </span>
     </td>
     <td class="description"><fmt:message key="createWebsite.tip.handle" /></td>
