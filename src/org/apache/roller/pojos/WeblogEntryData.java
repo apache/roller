@@ -41,13 +41,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
 
 /**
@@ -752,8 +752,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getPermalink() {
-        String absPath = RollerRuntimeConfig.getAbsoluteContextURL();
-        return absPath + getPermaLink();       
+        return URLUtilities.getWeblogEntryURL(getWebsite(), null, anchor, true);
     }
     
     /**
