@@ -51,7 +51,6 @@ import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
-import org.apache.roller.ui.core.LanguageUtil;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
@@ -213,7 +212,7 @@ public class ContextLoader {
         ctx.put("pageHelper", pageHelper);
         
         // Load standard Roller objects and values into the context
-        loadWeblogValues(ctx, weblog, request);
+        loadWeblogValues(ctx, weblog, pageRequest.getLocaleInstance(), request);
         loadPathValues(ctx, request, rollerCtx, weblog);
         loadRssValues(ctx, request, weblog, category);
         loadUtilityObjects(ctx, request, rollerCtx, weblog, page);
@@ -236,6 +235,7 @@ public class ContextLoader {
     private static void loadWeblogValues(
             Map ctx,
             WebsiteData weblog,
+            Locale locale,
             HttpServletRequest request) throws RollerException {
         
         // weblog cannot be null
@@ -266,9 +266,8 @@ public class ContextLoader {
         String siteShortName = ((RollerPropertyData)props.get("site.shortName")).getValue();
         ctx.put("siteShortName", siteShortName);
         
-        // add language of the session (using locale of viewer set by Struts)
-        // TODO 3.0: this will probably need tweaking for multi-lang support
-        ctx.put("viewLocale", LanguageUtil.getViewLocale(request));
+        // add language of the session (using locale specified by request)
+        ctx.put("viewLocale", locale);
         mLogger.debug("context viewLocale = "+ctx.get( "viewLocale"));
         
         // alternative display pages - customization
