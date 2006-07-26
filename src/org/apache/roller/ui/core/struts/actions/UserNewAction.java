@@ -168,13 +168,6 @@ public class UserNewAction extends UserBaseAction {
                 return createUser(mapping, actionForm, request, response);
             } else {
                 // User registered, so go to welcome page
-                // TODO 3.0: this weblogURL doesn't make any sense
-                String weblogURL = RollerRuntimeConfig.getAbsoluteContextURL()
-                + "/page/"+ud.getUserName();
-                request.setAttribute("weblogURL",weblogURL);
-                String rssURL = RollerRuntimeConfig.getAbsoluteContextURL()
-                + "/rss/"+ud.getUserName();
-                request.setAttribute("rssURL",rssURL);
                 request.setAttribute("contextURL",
                         RollerRuntimeConfig.getAbsoluteContextURL());
                 return mapping.findForward("welcome.page");
