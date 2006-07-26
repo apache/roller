@@ -762,7 +762,6 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public String getPermaLink() {
-        // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
         String lAnchor = this.getAnchor();        
         try {
             lAnchor = URLEncoder.encode(anchor, "UTF-8");
@@ -770,7 +769,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
             // go with the "no encoding" version
         }        
         WebsiteData website = this.getWebsite();
-        return "/" + getWebsite().getHandle() + "/entry/" + lAnchor;        
+        return "/" + getWebsite().getHandle() + "/entry/" + lAnchor;
     }
     
     /**
@@ -781,24 +780,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     public String getCommentsLink() {
         return getPermaLink() + "#comments";
     }
+    
     /** 
      * to please XDoclet 
      * @deprecated Use commentLink() instead
      */
     public void setCommentsLink(String ignored) {}
-    
-    
-    /**
-     * Get absolute URL of comment page.
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getCommentsPermalink() {
-        String absPath = RollerRuntimeConfig.getAbsoluteContextURL();
-        return absPath + getCommentsLink(); 
-    }
-    
-    /** to please XDoclet */
-    public void setCommentsPermalink(String ignored) {}
     
     
     /**
