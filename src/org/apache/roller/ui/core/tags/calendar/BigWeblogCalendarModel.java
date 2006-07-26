@@ -31,6 +31,7 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -100,9 +101,9 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                 // append 8 char date string on end of selfurl
                 String dayUrl = null;
                 if (pageLink != null) {
-                    dayUrl = weblog.getURL() + "/page/" + "?date=" + dateString + "&cat="+ cat;
+                    dayUrl = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, -1, false);
                 } else {
-                    dayUrl = weblog.getURL() + "/date/" + dateString + "?cat="+ cat;
+                    dayUrl = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, -1, false);
                 }
                 
                 
@@ -116,7 +117,6 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                 for ( int i=0; i<entries.size(); i++ ) {
                     sb.append("<div class=\"bCalendarDayContentBig\">");
                     sb.append("<a href=\"");
-                    // TODO 3.0: this permalink used to be non-absolute
                     sb.append(((WeblogEntryData)entries.get(i)).getPermalink());
                     sb.append("\">");
                     

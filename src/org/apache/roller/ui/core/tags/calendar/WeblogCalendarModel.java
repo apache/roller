@@ -18,25 +18,22 @@
 
 package org.apache.roller.ui.core.tags.calendar;
 
-import java.net.URLEncoder;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -171,15 +168,9 @@ public class WeblogCalendarModel implements CalendarModel {
         }
         try {
             if (pageLink == null) { // create date URL
-                url = weblog.getURL() + "/date/" + dateString;
-                if (cat != null) { 
-                    url += "?cat=" + cat;
-                }
+                url = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, -1, false);
             } else { // create page URL
-                url = weblog.getURL() + "/page/" + pageLink;
-                if (cat != null) { 
-                    url += "?cat=" + cat;
-                }
+                url = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, -1, false);
             }
         } catch (Exception e) {
             log.error("ERROR: creating URL",e);
@@ -238,11 +229,7 @@ public class WeblogCalendarModel implements CalendarModel {
     }
     
     public String computeTodayMonthUrl() {
-        String url = weblog.getURL();
-        if (cat != null) { 
-            url += "?cat=" + cat;
-        }
-        return url;
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, cat, null, -1, false);
     }
     
 }
