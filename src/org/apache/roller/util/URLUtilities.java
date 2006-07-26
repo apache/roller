@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -44,19 +45,21 @@ public final class URLUtilities {
                                             String locale,
                                             boolean absolute) {
         
-        String url = null;
+        StringBuffer url = new StringBuffer();
         
         if(absolute) {
-            url = weblog.getAbsoluteURL();
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
         } else {
-            url = weblog.getURL();
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
         }
         
-        if (locale != null) {
-            url += "/"+locale;
+        url.append("/").append(weblog.getHandle()).append("/");
+        
+        if(locale != null) {
+            url.append(locale).append("/");
         }
         
-        return url;
+        return url.toString();
     }
     
     
@@ -71,7 +74,7 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         url.append(getWeblogURL(weblog, locale, absolute));
-        url.append("/entry/").append(encode(entryAnchor));
+        url.append("entry/").append(encode(entryAnchor));
         
         return url.toString();
     }
@@ -88,14 +91,15 @@ public final class URLUtilities {
         return getWeblogEntryURL(weblog, locale, entryAnchor, absolute)+"#comments";
     }
     
+    
     /**
-     * Get url for a single weblog entry comments on a given weblog.
+     * Get url for a single weblog entry comment on a given weblog.
      */
-    public static final String getWeblogCommentURL( WebsiteData weblog,
-                                                    String locale,
-                                                    String entryAnchor,
-                                                    String timeStamp,
-                                                    boolean absolute) {
+    public static final String getWeblogCommentURL(WebsiteData weblog,
+                                                   String locale,
+                                                   String entryAnchor,
+                                                   String timeStamp,
+                                                   boolean absolute) {
         
         return getWeblogEntryURL(weblog, locale, entryAnchor, absolute)+"#comment-"+timeStamp;
     }
@@ -122,10 +126,10 @@ public final class URLUtilities {
                 cat = category.substring(1);
             }
             
-            pathinfo.append("/category/").append(encode(cat));   
+            pathinfo.append("category/").append(encode(cat));   
             
         } else if(dateString != null && category == null) {
-            pathinfo.append("/date/").append(dateString);  
+            pathinfo.append("date/").append(dateString);  
             
         } else {
             if(dateString != null) params.put("date", dateString);
@@ -158,7 +162,7 @@ public final class URLUtilities {
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
         
         if(pageLink != null) {
-            pathinfo.append("/page/").append(pageLink);
+            pathinfo.append("page/").append(pageLink);
             
             // for custom pages we only allow query params
             if(dateString != null) {
@@ -167,25 +171,12 @@ public final class URLUtilities {
             if(category != null) {
                 params.put("cat", encode(category));
             }
-            
-        } else if(category != null && dateString == null) {
-            String cat = category;
-            if(category.startsWith("/")) {
-                cat = category.substring(1);
+            if(pageNum > 0) {
+                params.put("page", Integer.toString(pageNum));
             }
-            
-            pathinfo.append("/category/").append(encode(cat));   
-            
-        } else if(dateString != null && category == null) {
-            pathinfo.append("/date/").append(dateString);  
-            
         } else {
-            if(dateString != null) params.put("date", dateString);
-            if(category != null) params.put("cat", encode(category));
-        }
-
-        if(pageNum > 0) {
-            params.put("page", Integer.toString(pageNum));
+            // if there is no page link then this is just a typical collection url
+            return getWeblogCollectionURL(weblog, locale, category, dateString, pageNum, absolute);
         }
         
         return pathinfo.toString() + getQueryString(params);
@@ -206,7 +197,7 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         url.append(getWeblogURL(weblog, locale, absolute));
-        url.append("/feed/").append(type).append("/").append(format);
+        url.append("feed/").append(type).append("/").append(format);
         
         Map params = new HashMap();
         if(category != null) {
@@ -233,7 +224,7 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         url.append(getWeblogURL(weblog, locale, absolute));
-        url.append("/search");
+        url.append("search");
         
         Map params = new HashMap();
         if(query != null) {
@@ -262,7 +253,7 @@ public final class URLUtilities {
         StringBuffer url = new StringBuffer();
         
         url.append(getWeblogURL(weblog, null, absolute));
-        url.append("/resource/");
+        url.append("resource/");
         
         if(filePath.startsWith("/")) {
             url.append(filePath.substring(1));
@@ -279,7 +270,7 @@ public final class URLUtilities {
      */
     public static final String getWeblogRsdURL(WebsiteData weblog,
                                                boolean absolute) {
-        return getWeblogURL(weblog, null, absolute)+"/rsd";
+        return getWeblogURL(weblog, null, absolute)+"rsd";
     }
     
     
