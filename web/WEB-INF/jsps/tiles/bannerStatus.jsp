@@ -48,7 +48,7 @@ if(customRegUrl != null && customRegUrl.trim().equals(""))
         
         <c:if test="${!empty model.website}" >
            - <fmt:message key="mainPage.currentWebsite" />
-           <b><a href='<c:out value="${model.baseURL}" />/<c:out value="${model.website.handle}" />'>
+           <b><a href='<c:out value="${model.website.URL}" />'>
                <c:out value="${model.website.handle}" />
            </a></b>
    
