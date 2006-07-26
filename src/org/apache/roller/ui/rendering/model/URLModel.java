@@ -53,7 +53,7 @@ public class URLModel implements Model {
     private WebsiteData weblog = null;
     private String locale = null;
     
-    /** TODO 3.0: remove dependency on pageContext */
+    /** TODO: remove dependency on pageContext */
     private PageContext pageContext = null;
     
     
