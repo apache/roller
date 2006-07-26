@@ -93,7 +93,7 @@ public class ToggleLinkbackDisplayAction extends Action
 		{
 			RollerContext rctx = RollerContext.getRollerContext();
             if (entry != null) {
-                url = rctx.createEntryPermalink(entry, req, true);
+                url = entry.getPermalink();
             } else {
     			url = rreq.getWebsite().getURL();
             }
