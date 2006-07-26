@@ -42,7 +42,6 @@ import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.RefererDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.ui.core.LanguageUtil;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
@@ -390,43 +389,15 @@ public class OldPageHelper {
     
     
     /**
-     * This method returns an array of Locales for each supported
-     * language available, with the exeception of the language of the
-     * current locale, if that language is supported.
+     * This method used to return an array of supported locales based on some
+     * of the old i18n work done in Roller, however, as of Roller 3.0 there is
+     * no longer a list of supported languages.  The languages available to a
+     * weblog are unbounded and are purely determined by the weblog author.
      *
-     * So, if English and Dutch are supported, and the current Locale is Dutch,
-     * only English is returned. If the current Locale is Spanish, both English and Dutch are
-     * returned.
-     *
-     * TODO 3.0: decide what to do with this method
-     *
-     * @return
+     * This method always returns null.
      */
     public Locale[] getSupportedLanguages() {
-        Locale currentLocale =
-                (Locale) mRequest.getSession().getAttribute(Globals.LOCALE_KEY);
-        if (currentLocale==null) {
-            currentLocale = mRequest.getLocale();
-        }
-        
-        Locale[] supportedLanguages =
-                LanguageUtil.getSupportedLanguages(RollerContext.getServletContext());
-        if (supportedLanguages==null) {
-            return null;
-        }
-        
-        // filter out the current selected language
-        Vector result = new Vector();
-        for (int i = 0; i < supportedLanguages.length; i++) {
-            if (currentLocale == null
-                    || (!supportedLanguages[i].equals(currentLocale)
-                    && !supportedLanguages[i].equals(
-                    new Locale(currentLocale.getLanguage())))
-                    ) {
-                result.add(supportedLanguages[i]);
-            }
-        }
-        return (Locale[]) result.toArray(new Locale[result.size()]);
+        return null;
     }
     
     
