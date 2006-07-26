@@ -6,17 +6,26 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 
 -- Roller 3.0 schema changes
 
-alter table website add column pagemodels varchar(512) default null;
+-- add new column which holds the list of custom models for a weblog
+#addColumnNull("website" "pagemodels" "varchar(512)")
 
+-- add new columns which hold the multi-lang settings for a weblog
 #addColumnNotNull("website" "enablemultilang" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
 #addColumnNotNull("website" "showalllangs" $BOOLEAN_SQL_TYPE $BOOLEAN_TRUE)
 
-alter table weblogentry add column locale varchar(20) default null;
+-- add new column which holds the locale for a weblog entry
+-- then set the values and make column not null
+#addColumnNull("weblogentry" "locale" "varchar(20)")
 
+-- add new column which holds the hidden status for a page, default is false
 #addColumnNotNull("webpage" "hidden" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
 
-alter table webpage add column templatelang varchar(20) default null;
+-- add new column which holds the template language used for a page
+-- then set template language to velocity for all templates
+#addColumnNull("webpage" "templatelang" "varchar(20)")
 update webpage set templatelang = 'velocity';
 
-alter table webpage add column decorator varchar(255) default null;
-update webpage set decorator = '_decorator';
+-- add new column which holds the decorator for a page
+-- then set value to _decorator for all templates except decorators
+#addColumnNull("webpage" "decorator" "varchar(255)")
+update webpage set decorator = '_decorator' where name <> '_decorator';
