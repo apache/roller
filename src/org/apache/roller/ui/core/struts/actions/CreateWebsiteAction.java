@@ -249,6 +249,9 @@ public class CreateWebsiteAction extends DispatchAction {
                 website = wd;
             }
         }
+        public String getAbsoluteURL() {
+            return RollerRuntimeConfig.getAbsoluteContextURL();
+        }
         public String getContextURL() {
             return contextURL;
         }
