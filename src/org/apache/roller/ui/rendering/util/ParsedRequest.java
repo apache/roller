@@ -20,7 +20,6 @@ package org.apache.roller.ui.rendering.util;
 
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.roller.ui.core.LanguageUtil;
 
 
 /**
@@ -62,19 +61,6 @@ public abstract class ParsedRequest {
             this.authenticUser = prince.getName();
         }
         
-    }
-    
-    
-    public String getLanguage() {
-        if(this.language == null) {
-            // determine language
-            // this operation can possibly require a trip to the db, so we only
-            // do it when we know our user needs to know the language
-            Locale locale = LanguageUtil.getViewLocale(request);
-            this.language = locale.getLanguage();
-        }
-        
-        return this.language;
     }
     
     
