@@ -6,8 +6,8 @@
 <!-- unprotected actions -->
 
 <forward name="page"                   path="/page"/>
-<forward name="main"                   path="/main.do"/>
-<forward name="home.page"              path="/main.do"/>
+<forward name="main"                   path="/"/>
+<forward name="home.page"              path="/"/>
 <forward name="planet"                 path="/planet.do"/>
 
 <!--  core UI actions -->
