@@ -238,14 +238,11 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             
             RollerRequest rreq = RollerRequest.getRollerRequest();
             HttpServletRequest req = rreq.getRequest();
-            String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
             
             // populates user information to return as a result
             Hashtable result = new Hashtable();
             result.put("nickname", user.getUserName());
             result.put("userid", user.getUserName());
-            // TODO 3.0: this url does not work!!
-            result.put("url", contextUrl+"/page/"+userid);
             result.put("email", "");
             result.put("lastname", lastname);
             result.put("firstname", firstname);
