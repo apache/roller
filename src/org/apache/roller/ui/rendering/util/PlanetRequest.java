@@ -30,12 +30,13 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PlanetRequest extends ParsedRequest {
     
-    private static Log mLogger = LogFactory.getLog(PlanetRequest.class);
+    private static Log log = LogFactory.getLog(PlanetRequest.class);
     
     private String context = null;
     private String type = null;
     private String flavor = null;
     private boolean excerpts = false;
+    private String language = null;
     
     
     /**
@@ -46,7 +47,7 @@ public class PlanetRequest extends ParsedRequest {
         super(request);
         
         // parse the request object and figure out what we've got
-        mLogger.debug("parsing url "+request.getRequestURL());
+        log.debug("parsing url "+request.getRequestURL());
         
         String servlet = request.getServletPath();
         
@@ -83,6 +84,9 @@ public class PlanetRequest extends ParsedRequest {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
         }
         
+        
+        // language is always from the browser
+        language = request.getLocale().getLanguage();
     }
     
     
@@ -100,6 +104,14 @@ public class PlanetRequest extends ParsedRequest {
     
     public boolean isExcerpts() {
         return excerpts;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
     
 }
