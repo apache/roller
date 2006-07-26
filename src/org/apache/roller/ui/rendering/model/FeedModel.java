@@ -69,6 +69,14 @@ public class FeedModel implements Model {
     
     
     /**
+     * Get the weblog locale used to render this page, null if no locale.
+     */
+    public String getLocale() {
+        return feedRequest.getLocale();
+    }
+    
+    
+    /**
      * Get weblog being displayed.
      */
     public WebsiteDataWrapper getWeblog() {
