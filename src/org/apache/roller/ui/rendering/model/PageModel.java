@@ -46,9 +46,7 @@ import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 
 /**
- * Model provides information needed to render a weblog page. 
- * Includes methods for paging through a collection of entries restricted by category. 
- * The getEntries() method must be called first, before any pager methods will work.
+ * Model which provides information needed to render a weblog page.
  */
 public class PageModel implements Model {
     
