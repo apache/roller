@@ -40,7 +40,7 @@ import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 
 
 /**
- * Model provides information needed to render a feed.
+ * Model which provides information needed to render a feed.
  */
 public class FeedModel implements Model {
     
@@ -91,6 +91,7 @@ public class FeedModel implements Model {
         return feedRequest.isExcerpts();
     }
     
+    
     /**
      * Get category path or name specified by request.
      */
@@ -98,11 +99,13 @@ public class FeedModel implements Model {
         return feedRequest.getWeblogCategoryName();
     }
     
+    
     /**
      * Gets most recent entries limited by: weblog and category specified in 
      * request plus the weblog.entryDisplayCount.
      */
     public List getWeblogEntries() {
+        
         // Display same number of entries in feed as displayed on page
         int entryCount = weblog.getEntryDisplayCount();
         
@@ -138,11 +141,24 @@ public class FeedModel implements Model {
         return results;
     }
     
+    
     /**
-     * Gets most recent entries limited by: weblog specified in request and 
+     * Gets most recent comments limited by: weblog specified in request and 
      * the weblog.entryDisplayCount.
      */
-    public List getComments() {        
+    public List getComments() {
+        
+        // Display same number of entries in feed as displayed on page
+        int entryCount = weblog.getEntryDisplayCount();
+        
+        // But don't exceed installation-wide maxEntries settings
+        int maxEntries =
+                RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
+        int defaultEntries =
+                RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+        if (entryCount < 1) entryCount = defaultEntries;
+        if (entryCount > maxEntries) entryCount = maxEntries;
+        
         List recentComments = new ArrayList();
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
@@ -157,7 +173,7 @@ public class FeedModel implements Model {
                     Boolean.FALSE, // no spam
                     true,          // we want reverse chrono order
                     0,             // offset
-                    weblog.getEntryDisplayCount()); // length
+                    entryCount); // length
             
             // wrap pojos
             recentComments = new ArrayList(recent.size());
