@@ -178,12 +178,7 @@ public class ContextLoader {
         }
         
         try {
-            // Add default page model object to context
-            // TODO 3.0: what to do about old PlanetPageModel?
-            //String pageModelClassName =
-            //        RollerConfig.getProperty("velocity.pagemodel.classname");
-            //Class pageModelClass = Class.forName(pageModelClassName);
-            //OldWeblogPageModel pageModel = (OldWeblogPageModel)pageModelClass.newInstance();
+            // Add old page model object to context
             OldWeblogPageModel pageModel = new OldWeblogPageModel();
             pageModel.init(request,
                     weblog,
@@ -213,7 +208,7 @@ public class ContextLoader {
         
         // Load standard Roller objects and values into the context
         loadWeblogValues(ctx, weblog, pageRequest.getLocaleInstance(), request);
-        loadPathValues(ctx, request, rollerCtx, weblog);
+        loadPathValues(ctx, request, rollerCtx, weblog, locale);
         loadRssValues(ctx, request, weblog, category);
         loadUtilityObjects(ctx, request, rollerCtx, weblog, page);
         loadRequestParamKeys(ctx);
@@ -431,22 +426,21 @@ public class ContextLoader {
             Map ctx,
             HttpServletRequest request,
             RollerContext rollerCtx,
-            WebsiteData   website)
-            throws RollerException {
+            WebsiteData   website,
+            String locale) throws RollerException {
         
         mLogger.debug("Loading path values");
         
         String url = null;
         if (website != null  && !"zzz_none_zzz".equals(website.getHandle())) {
-            // TODO 3.0: this should probably include locale from request
-            url = URLUtilities.getWeblogURL(website, null, true);
+            url = URLUtilities.getWeblogURL(website, locale, true);
         } else {
             url= RollerRuntimeConfig.getAbsoluteContextURL();
         }
         ctx.put("websiteURL", url);
         ctx.put("baseURL",    RollerRuntimeConfig.getRelativeContextURL() );
         ctx.put("absBaseURL", RollerRuntimeConfig.getAbsoluteContextURL() );
-        ctx.put("ctxPath",    request.getContextPath() );
+        ctx.put("ctxPath",    RollerRuntimeConfig.getRelativeContextURL() );
         ctx.put("uploadPath", ContextLoader.figureResourcePath());
         
         try {
@@ -543,7 +537,6 @@ public class ContextLoader {
         }
         
         // load a toolbox context
-        // TODO 3.0: is this okay?
         ChainedContext chainedContext =
                 new ChainedContext(new VelocityContext(ctx), request, response, servletContext);
         ToolboxContext toolboxContext =
