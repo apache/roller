@@ -88,7 +88,7 @@ public final class PlanetConfigAction extends DispatchAction
                 {
                     form.setTitle("Planet Roller");
                     form.setAdminEmail(RollerRuntimeConfig.getProperty("site.adminemail"));
-                    form.setSiteUrl(RollerRuntimeConfig.getProperty("site.absoluteurl"));
+                    form.setSiteURL(RollerRuntimeConfig.getProperty("site.absoluteurl"));
                     form.setCacheDir("/tmp");
                 }
             }
