@@ -25,8 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.velocity.VelocityContext;
 import org.apache.roller.ui.core.tags.VelocityTag;
-import org.apache.roller.ui.rendering.velocity.deprecated.ContextLoader;
-
+import org.apache.roller.ui.rendering.model.MessageModel;
 
 /**
  * @jsp.tag name="Menu"
@@ -50,8 +49,11 @@ public class MenuTag extends VelocityTag {
         ctx.put("req", req );
         ctx.put("res", res );
         
+        MessageModel messageModel = new MessageModel();
+        ctx.put("text", messageModel);
+                
         Map mapCtx = new HashMap();
-        ContextLoader.loadToolboxContext(req, res, mapCtx);
+        //ContextLoader.loadToolboxContext(req, res, mapCtx);
         
         // hack.  put mapCtx info velocity ctx
         String key = null;

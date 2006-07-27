@@ -46,7 +46,7 @@ public class PlanetModel implements Model {
     
     
     public String getModelName() {
-        return "planetModel";
+        return "planet";
     }
     
     public void init(Map map) {
