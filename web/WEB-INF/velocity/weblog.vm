@@ -149,21 +149,19 @@ Show comments for weblog entry according to Roller configuration.
 *#
 #macro(showWeblogEntryComments $entry)
     <a name="comments"></a>
-    <div class="comments">
+    <div class="comments" id="comments">
 
-    #if($model.commentPreview)
-        #set($comments = [$model.commentPreview])
+    #if($model.commentForm.preview)
+        #set($comments = [$model.commentForm.previewComment])
         <div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
     #else
         <div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
-        #set($entry = $map.getValues().get(0))
         #set($comments = $entry.getComments(true, true))
     #end
 
     <br/>
     #foreach( $comment in $comments )
-        <!-- comment: $comment.id -->
-        #if($comment.approved || $commentPreview)
+        #if($comment.approved || $model.commentForm.preview)
             #set($content = $utils.encodeEmail($comment.content))
             #if($config.getBooleanProperty("users.comments.escapehtml"))
                 #set($content = $utils.escapeHTML($content))
@@ -176,27 +174,25 @@ Show comments for weblog entry according to Roller configuration.
             #set($content = $utils.addNofollow($content))
 
             <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
-                #if ($content.startsWith("<p>")) #set ($content = $content.substring(3)) #end
-                <strong>${velocityCount}.</strong> ${content}
+
+                ${content}
 
                 $dateFormatter.applyPattern($text.get( "macro.weblog.datepattern" ))
                 <p class="comment-details">
                 $text.get("macro.weblog.postedby")
-                #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.remoteHost))
-                    <b>$comment.name</b> ($comment.remoteHost)
+                #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
+                    <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
                 #elseif (!$utils.isEmpty($comment.name))
                     <b>$comment.name</b>
-                #elseif (!$utils.isEmpty($comment.remoteHost))
+                #else
                     <b>$comment.remoteHost</b>
                 #end
                 $text.get("macro.weblog.on") $dateFormatter.format($comment.postTime)
-                #if( $utils.isNotEmpty($comment.url) )
-                    $text.get( "macro.weblog.postedbywebsite", [$comment.url, $comment.url] )
-                #end
                 <a href="$url.comment($entry.anchor, $velocityCount)"
                    class="entrypermalink"
                    title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
                 </p>
+
             </div>
 
         #end
@@ -214,15 +210,17 @@ Show comments form for weblog entry.
     <div class="comments-form">
     <div class="comments-head">$text.get("macro.weblog.postcommentHeader")</div>
 
-    #if( $model.errorMessage )
-        <span class="error">$model.errorMessage</span>
+#if( $entry.commentsStillAllowed )
+
+    #if( $cform.error )
+        <span class="error">$cform.message</span>
     #end
-    #if( $model.statusMessage )
-        <span class="status">$model.statusMessage</span>
+    #if( !$cform.error && !$utils.isEmpty($cform.message) )
+        <span class="status">$cform.message</span>
     #end
 
-    <form method="post" action="$url.entry($entry.anchor)" 
-        focus="name" name="form" onsubmit="fixURL(this); return validateComments(this)">    
+    <form method="post" action="$url.entry($entry.anchor)" focus="name" 
+        name="form" onsubmit="fixURL(this); return validateComments(this)">    
         <input type="hidden" name="method" value="post" />
 
         <ul>
@@ -241,7 +239,7 @@ Show comments form for weblog entry.
             </li>
 
         #if ($config.getBooleanProperty("users.comments.emailnotify"))
-            <li><input type="checkbox" class="checkbox" id="notify" name="notify" />
+            <li><input type="checkbox" class="checkbox" id="notify" name="notify" #if($cform.notify)CHECKED #end/>
                 <label for="notify" class="choice">$text.get( "macro.weblog.notifyMeOfComments" )</label>
             </li>
         #end
@@ -322,6 +320,11 @@ Show comments form for weblog entry.
         }
     }
     </script>
+
+#else
+    <span class="status">$text.get( "comments.disabled" )</span>
+#end
+
     </div>
 #end
 

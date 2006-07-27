@@ -44,6 +44,7 @@ import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.ui.rendering.util.SiteWideCache;
+import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageCache;
 
  
@@ -274,6 +275,13 @@ public class PageServlet extends HttpServlet {
             initData.put("pageRequest", pageRequest);
             initData.put("weblogRequest", pageRequest);
             initData.put("pageContext", pageContext);
+            
+            // if this was a comment posting, check for comment form
+            WeblogEntryCommentForm commentForm = 
+                    (WeblogEntryCommentForm) request.getAttribute("commentForm");
+            if(commentForm != null) {
+                initData.put("commentForm", commentForm);
+            }
             
             // Load models for pages
             String pageModels = RollerConfig.getProperty("rendering.pageModels");
