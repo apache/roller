@@ -46,6 +46,7 @@
 <forward name="removePage.ok"          path="/roller-ui/authoring/page.do?method=removeOk"/>
 <forward name="memberPermissions"      path="/roller-ui/authoring/memberPermissions.do" />
 <forward name="inviteMember"           path="/roller-ui/authoring/inviteMember.do" />
+<forward name="invitations"            path="/roller-ui/authoring/invitations.do" />
 <forward name="pingSetup"              path="/roller-ui/authoring/pingSetup.do" />
 <forward name="customPingTargets"      path="/roller-ui/authoring/customPingTargets.do" />
 <forward name="maintenance"            path="/roller-ui/authoring/maintenance.do" />
