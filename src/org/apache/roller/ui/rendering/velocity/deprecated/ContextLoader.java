@@ -58,9 +58,6 @@ import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.URLUtilities;
 import org.apache.struts.util.RequestUtils;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.tools.view.context.ChainedContext;
-import org.apache.velocity.tools.view.context.ToolboxContext;
-import org.apache.velocity.tools.view.servlet.ServletToolboxManager;
 
 
 /**
@@ -100,12 +97,6 @@ public class ContextLoader {
     public static final String OWNING_WEBSITE         = "OWNING_WEBSITE";    
 
     private static Log mLogger = LogFactory.getLog(ContextLoader.class);
-    
-    private static final String TOOLBOX_KEY =
-            "org.apache.roller.presentation.velocity.toolbox";
-    
-    private static final String TOOLBOX_MANAGER_KEY =
-            "org.apache.roller.presentation.velocity.toolboxManager";
     
     
     /**
@@ -213,9 +204,6 @@ public class ContextLoader {
         if (entry != null) {
             loadCommentValues(ctx, request, entry);
         }
-        
-        // add Velocity Toolbox tools to context
-        loadToolboxContext(request, response, ctx);
     }
     
     
@@ -508,39 +496,5 @@ public class ContextLoader {
         ctx.put("WEBLOGDAY_KEY",          WEBLOGDAY_KEY);
         ctx.put("WEBLOGCOMMENTID_KEY",    WEBLOGCOMMENTID_KEY);
     }
-    
-    
-    public static ToolboxContext loadToolboxContext(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Map ctx) {
-        
-        mLogger.debug("Loading toolbox context");
-        
-        ServletContext servletContext = RollerContext.getServletContext();
-        
-        // get the toolbox manager
-        ServletToolboxManager toolboxManager =
-                (ServletToolboxManager)servletContext.getAttribute(TOOLBOX_MANAGER_KEY);
-        if (toolboxManager==null) {
-            String file = RollerConfig.getProperty("velocity.toolbox.file");
-            mLogger.debug("Creating new toolboxContext using config-file: "+file);
-            toolboxManager = ServletToolboxManager.getInstance(servletContext, file);
-            servletContext.setAttribute(TOOLBOX_MANAGER_KEY, toolboxManager);
-        }
-        
-        // load a toolbox context
-        ChainedContext chainedContext =
-                new ChainedContext(new VelocityContext(ctx), request, response, servletContext);
-        ToolboxContext toolboxContext =
-                toolboxManager.getToolboxContext(chainedContext);
-        
-        if (toolboxContext != null) {
-            // add MessageTool to VelocityContext
-            ctx.put("text", toolboxContext.internalGet("text"));
-        }
-        
-        return toolboxContext;
-    }
-    
+       
 }

@@ -102,7 +102,7 @@
     </table>
 
     <h2 class="pageTitle">Weblog users</h2>
-    #set($users = $siteModel.getWeblogsUsers($weblog.handle))
+    #set($users = $site.getWeblogsUsers($weblog.handle))
     <table class="rollertable">
         <thead>
             <tr>
@@ -119,7 +119,7 @@
     </table>
 
     <h2 class="pageTitle">Recent posts</h2>
-    #set($entries = $siteModel.getWeblogEntries($weblog.handle, 'nil', 'nil', 90, 0, 5)) 
+    #set($entries = $site.getWeblogEntries($weblog.handle, 'nil', 'nil', 90, 0, 5)) 
     #if($entries.size() > 0)  
         <table class="rollertable"> 
         <thead>
@@ -153,7 +153,7 @@
         #set($chosenLetter = "A")
     #end
 
-    #set($weblogLetterMap = $siteModel.getWeblogHandleLetterMap())
+    #set($weblogLetterMap = $site.getWeblogHandleLetterMap())
     <div class="letterMap">
     #foreach($letter in $weblogLetterMap.keySet())
         #set($letterCount = $weblogLetterMap.get($letter))
@@ -175,7 +175,7 @@
 
     #if($chosenLetter)
         <h2 class="pageTitle">Weblogs starting with $chosenLetter</h2>
-        #set($weblogs = $siteModel.getWeblogsByLetter($chosenLetter, $offset, $maxResults))
+        #set($weblogs = $site.getWeblogsByLetter($chosenLetter, $offset, $maxResults))
         <table class="rollertable">
             <thead>
                 <tr>
@@ -229,7 +229,7 @@
     </table>
 
     <h2 class="pageTitle">User's weblogs</h2>
-    #set($weblogs = $siteModel.getUsersWeblogs($user.userName))
+    #set($weblogs = $site.getUsersWeblogs($user.userName))
     #if($perms.size() > 0)
     <table class="rollertable">
         <thead>
@@ -250,7 +250,7 @@
     #end
 
     <h2 class="pageTitle">User's recent posts</h2>
-    #set($entries = $siteModel.getWeblogEntries('nil', $user.userName, 'nil', 90, 0, 5)) 
+    #set($entries = $site.getWeblogEntries('nil', $user.userName, 'nil', 90, 0, 5)) 
     #if($entries.size() > 0)  
         <table class="rollertable"> 
         <thead>
@@ -282,7 +282,7 @@
         #set($chosenLetter = "A")
     #end
 
-    #set($userLetterMap = $siteModel.getUserNameLetterMap())
+    #set($userLetterMap = $site.getUserNameLetterMap())
     <div class="letterMap">
     #foreach($letter in $userLetterMap.keySet())
         #set($letterCount = $userLetterMap.get($letter))
@@ -304,7 +304,7 @@
 
     #if($chosenLetter)
         <h2 class="pageTitle">Users starting with $chosenLetter</h2>
-        #set($users = $siteModel.getUsersByLetter($chosenLetter, $offset, $maxResults))
+        #set($users = $site.getUsersByLetter($chosenLetter, $offset, $maxResults))
         <table class="rollertable">
             <thead>
                 <tr>

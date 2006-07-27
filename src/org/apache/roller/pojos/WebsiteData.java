@@ -231,6 +231,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /**
      * Lookup a Template for this website by name.
+     * @roller.wrapPojoMethod type="pojo"
      */
     public Template getPageByName(String name) throws RollerException {
         
@@ -267,23 +268,6 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
             log.debug("returning template ["+template.getId()+"]");
         
         return template;
-    }
-    
-    /**
-     * Lookup a template id for this website by pageName.
-     * @roller.wrapPojoMethod type="simple"
-     */        
-    public String findPageIdByName(String pageName) {        
-        String template_id = null;        
-        try {
-            Template pd = this.getPageByName(pageName);
-            if(pd != null) {
-                template_id = pd.getId();
-            }
-        } catch(Exception e) {
-            log.error("ERROR: getting page ID by name", e);
-        }              
-        return template_id;
     }
     
     

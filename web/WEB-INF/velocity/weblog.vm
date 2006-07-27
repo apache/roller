@@ -20,7 +20,7 @@
 
     #includeTemplate($weblog $pageName)
     #showAutodiscoveryLinks($weblog)
-    #showTrackbackAutodiscoveryRDF($entry)
+    #showTrackbackAutodiscovery($entry)
     #showCommonJavascript()
 
     #showWeblogEntriesPager($pager)
@@ -48,12 +48,13 @@
 Parse and include page template from weblog.
 *#
 #macro(includeTemplate $weblog $pageName)
-    #set($iPageId = false)## This is required for such constructs; see Velocity docs and ROL-689
-    #set($iPageId = $weblog.findPageIdByName($pageName))
-    #if (!$iPageId) ## no page found, parse pageName
-        #set($iPageId = $pageName)
+    #set($pageArg = false)## This is required for such constructs; see Velocity docs and ROL-689
+    #set($pageArg = $weblog.getPageByName($pageName))
+    #if ($pageArg) 
+       #parse($pageArg.id)
+    #else ## no page found, use pageName as id
+        #parse($pageName)
     #end
-    #parse($iPageId)
 #end
 
 
@@ -105,11 +106,11 @@ Include Javascript code needed for standard macros, for use in HTML head.
 Shows weblog entries pager via default day template 
 *#
 #macro(showWeblogEntriesPager $pager)
-    #set($dayPage = $model.weblog.findPageIdByName("_day"))
+    #set($dayPage = $model.weblog.getPageByName("_day"))
     #set($map = $pager.getEntries())
     #foreach($day in $map.keySet())
         #set($entries = $map.get($day))   
-        #parse($dayPage)
+        #parse($dayPage.id)
     #end
 #end
 
@@ -174,10 +175,10 @@ Show comments for weblog entry according to Roller configuration.
             #set($content = $utils.addNofollow($content))
 
             <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
+                <span class="comment-count">${velocityCount}.</span> ${content}
 
                 ${content}
 
-                $dateFormatter.applyPattern($text.get( "macro.weblog.datepattern" ))
                 <p class="comment-details">
                 $text.get("macro.weblog.postedby")
                 #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
@@ -187,7 +188,9 @@ Show comments for weblog entry according to Roller configuration.
                 #else
                     <b>$comment.remoteHost</b>
                 #end
-                $text.get("macro.weblog.on") $dateFormatter.format($comment.postTime)
+
+                $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
+
                 <a href="$url.comment($entry.anchor, $velocityCount)"
                    class="entrypermalink"
                    title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
@@ -210,14 +213,7 @@ Show comments form for weblog entry.
     <div class="comments-form">
     <div class="comments-head">$text.get("macro.weblog.postcommentHeader")</div>
 
-#if( $entry.commentsStillAllowed )
-
-    #if( $cform.error )
-        <span class="error">$cform.message</span>
-    #end
-    #if( !$cform.error && !$utils.isEmpty($cform.message) )
-        <span class="status">$cform.message</span>
-    #end
+    #if( $entry.commentsStillAllowed )
 
     <form method="post" action="$url.entry($entry.anchor)" focus="name" 
         name="form" onsubmit="fixURL(this); return validateComments(this)">    
@@ -618,9 +614,9 @@ Show search again form for a weblog.
 Show next/prev pager for search results.
 *#
 #macro(showNextPrevSearchControl $pager)
-    #set( $min = $searchResults.offset + 1 )
-    #set( $max = $searchResults.offset + $searchResults.limit )
-    #if( $max > $searchResults.hits )#set( $max = $searchResults.hits )#end
+    #set( $min = $model.offset + 1 )
+    #set( $max = $model.offset + $model.limit )
+    #if( $max > $model.hits )#set( $max = $model.hits )#end
     <h3>
        $text.get("searchSummary.text", [$min, $max, $model.hits])
     </h3>
