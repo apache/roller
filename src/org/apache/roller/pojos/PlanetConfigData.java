@@ -33,7 +33,7 @@ public class PlanetConfigData extends PersistentObject implements Serializable
     protected PlanetGroupData defaultGroup;
     
     /** Base URL of planet */
-    protected String siteUrl;
+    protected String siteURL;
     
     /** Proxy port or null if none */
     protected String proxyHost; 
@@ -146,13 +146,13 @@ public class PlanetConfigData extends PersistentObject implements Serializable
     /** 
      * @hibernate.property column="site_url" non-null="false" unique="false"
      */
-    public String getSiteUrl()
+    public String getSiteURL()
     {
-        return siteUrl;
+        return siteURL;
     }
-    public void setSiteUrl(String siteUrl)
+    public void setSiteURL(String siteURL)
     {
-        this.siteUrl = siteUrl;
+        this.siteURL = siteURL;
     }
     
     /** 
