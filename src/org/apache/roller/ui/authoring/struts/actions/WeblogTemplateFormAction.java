@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.ui.authoring.struts.actions;
 
@@ -59,33 +59,29 @@ import org.apache.struts.actions.DispatchAction;
  * Page form action.
  * @struts.action name="weblogTemplateForm" path="/roller-ui/authoring/page"
  *  	scope="session" parameter="method"
- * 
+ *
  * @struts.action-forward name="removePage.page" path=".remove-page"
  * @struts.action-forward name="editPage.page" path=".edit-page"
  * @struts.action-forward name="editPages.page" path=".edit-pages"
  */
-public final class WeblogTemplateFormAction extends DispatchAction
-{
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(WeblogTemplateFormAction.class);
-        
+public final class WeblogTemplateFormAction extends DispatchAction {
+    private static Log mLogger =
+            LogFactory.getFactory().getInstance(WeblogTemplateFormAction.class);
+    
     public ActionForward add(
-        ActionMapping       mapping,
-        ActionForm          actionForm,
-        HttpServletRequest  request,
-        HttpServletResponse response)
-        throws IOException, ServletException
-    {
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
         ActionForward forward = mapping.findForward("editPages.page");
-        try
-        {
+        try {
             request.setAttribute("model", new BasePageModel(
-                "pagesForm.title", request, response, mapping));   
+                    "pagesForm.title", request, response, mapping));
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
             WebsiteData website = rreq.getWebsite();
-            if ( rses.isUserAuthorizedToAdmin(website) )
-            {
+            if ( rses.isUserAuthorizedToAdmin(website) ) {
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
@@ -108,131 +104,109 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 RollerFactory.getRoller().flush();
                 
                 ActionMessages uiMessages = new ActionMessages();
-                uiMessages.add(ActionMessages.GLOBAL_MESSAGE, 
-                        new ActionMessage("pagesForm.addNewPage.success", 
-                                data.getName()));
+                uiMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                        new ActionMessage("pagesForm.addNewPage.success",
+                        data.getName()));
                 saveMessages(request, uiMessages);
-                    
-                actionForm.reset(mapping,request);                
+                
+                actionForm.reset(mapping,request);
                 
                 addModelObjects(request, response, mapping, website);
-            }
-            else
-            {
+            } else {
                 forward = mapping.findForward("access-denied");
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mLogger.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
-
+    
     //-----------------------------------------------------------------------
     public ActionForward edit(
-        ActionMapping       mapping,
-        ActionForm          actionForm,
-        HttpServletRequest  request,
-        HttpServletResponse response)
-        throws IOException, ServletException
-    {
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
         ActionForward forward = mapping.findForward("editPage.page");
-        try
-        {            
+        try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             WeblogTemplate pd = (WeblogTemplate)rreq.getPage();
             
-            RollerSession rses = RollerSession.getRollerSession(request);            
-            if ( rses.isUserAuthorizedToAdmin(pd.getWebsite()) )
-            {
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if ( rses.isUserAuthorizedToAdmin(pd.getWebsite()) ) {
                 BasePageModel pageModel = new BasePageModel(
-                    "pageForm.title", request, response, mapping);
+                        "pageForm.title", request, response, mapping);
                 pageModel.setWebsite(pd.getWebsite());
-                request.setAttribute("model", pageModel); 
+                request.setAttribute("model", pageModel);
                 
                 WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
                 
                 addModelObjects(request, response, mapping, pd.getWebsite());
-            }
-            else
-            {
+            } else {
                 forward = mapping.findForward("access-denied");
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mLogger.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
-
+    
     //-----------------------------------------------------------------------
     public ActionForward editPages(
-        ActionMapping       mapping,
-        ActionForm          actionForm,
-        HttpServletRequest  request,
-        HttpServletResponse response)
-        throws IOException, ServletException
-    {
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
         ActionForward forward = mapping.findForward("editPages.page");
-        try
-        {
+        try {
             WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             RollerSession rses = RollerSession.getRollerSession(request);
             request.setAttribute("model", new BasePageModel(
-                "pagesForm.title", request, response, mapping)); 
+                    "pagesForm.title", request, response, mapping));
             
             WebsiteData website = rreq.getWebsite();
-            if (website == null && form.getId()!=null) 
-            {
-                UserManager mgr = RollerFactory.getRoller().getUserManager();                
+            if (website == null && form.getId()!=null) {
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
                 WeblogTemplate template = mgr.getPage(form.getId());
                 website = template.getWebsite();
             }
             
-            if ( rses.isUserAuthorizedToAdmin(website))
-            {
+            if ( rses.isUserAuthorizedToAdmin(website)) {
                 addModelObjects(request, response, mapping, website);
-            }
-            else
-            {
+            } else {
                 forward = mapping.findForward("access-denied");
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mLogger.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
-
+    
     //-----------------------------------------------------------------------
     public ActionForward remove(
-        ActionMapping       mapping,
-        ActionForm          actionForm,
-        HttpServletRequest  request,
-        HttpServletResponse response)
-        throws IOException, ServletException
-    {
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
         ActionForward forward = mapping.findForward("editPages");
         request.setAttribute("model", new BasePageModel(
-            "pagesForm.title", request, response, mapping));
-        try
-        {
+                "pagesForm.title", request, response, mapping));
+        try {
             UserManager mgr = RollerFactory.getRoller().getUserManager();
             WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
             WeblogTemplate template = mgr.getPage(form.getId());
             WebsiteData website = template.getWebsite();
             
-            RollerSession rses = RollerSession.getRollerSession(request);          
-            if ( rses.isUserAuthorizedToAdmin(website) )
-            {
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if ( rses.isUserAuthorizedToAdmin(website) ) {
                 if(!template.isRequired()) {
                     
                     mgr.removePage(template);
@@ -249,82 +223,67 @@ public final class WeblogTemplateFormAction extends DispatchAction
                 addModelObjects(
                         request, response, mapping, template.getWebsite());
                 actionForm.reset(mapping, request);
-            }
-            else
-            {
+            } else {
                 forward = mapping.findForward("access-denied");
             }
-        }
-        catch (RollerException e)
-        {
+        } catch (RollerException e) {
             ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError(
                     "error.internationalized",e.getRootCauseMessage()));
-            saveErrors(request, errors);       
-        }
-        catch (Exception e)
-        {
+            saveErrors(request, errors);
+        } catch (Exception e) {
             mLogger.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
-
+    
     //-----------------------------------------------------------------------
     /** Send user to remove confirmation page */
     public ActionForward removeOk(
-        ActionMapping       mapping,
-        ActionForm          actionForm,
-        HttpServletRequest  request,
-        HttpServletResponse response)
-        throws IOException, ServletException
-    {
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
         ActionForward forward = mapping.findForward("removePage.page");
-        try
-        {
+        try {
             RollerSession rses = RollerSession.getRollerSession(request);
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             WeblogTemplate page = (WeblogTemplate) rreq.getPage();
             WebsiteData website = page.getWebsite();
-            if ( rses.isUserAuthorizedToAdmin(website) )
-            {
+            if ( rses.isUserAuthorizedToAdmin(website) ) {
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 form.copyFrom(page, request.getLocale());
-
+                
                 addModelObjects(request, response, mapping, page.getWebsite());
                 
                 BasePageModel pageModel = new BasePageModel(
-                    "editPages.title.removeOK", request, response, mapping);
+                        "editPages.title.removeOK", request, response, mapping);
                 pageModel.setWebsite(website);
                 request.setAttribute("model", pageModel);
-
+                
                 UserData ud = rses.getAuthenticatedUser();
                 request.setAttribute("user",ud);
-            }
-            else
-            {
+            } else {
                 forward = mapping.findForward("access-denied");
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mLogger.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
-
+    
     //-----------------------------------------------------------------------
     public ActionForward update(
-        ActionMapping       mapping,
-        ActionForm          actionForm,
-        HttpServletRequest  request,
-        HttpServletResponse response)
-        throws IOException, ServletException
-    {
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
         ActionForward forward = mapping.findForward("editPage.page");
-        try
-        {
+        try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
             WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
             UserManager mgr = RollerFactory.getRoller().getUserManager();
@@ -332,55 +291,48 @@ public final class WeblogTemplateFormAction extends DispatchAction
             WebsiteData website = data.getWebsite();
             
             RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses.isUserAuthorizedToAdmin(website))
-            {
+            if (rses.isUserAuthorizedToAdmin(website)) {
                 form.copyTo(data, request.getLocale());
                 data.setLastModified( new Date() );
-
+                
                 validateLink( data );
-
+                
                 mgr.savePage( data );
                 RollerFactory.getRoller().flush();
                 
                 // set the (possibly) new link back into the Form bean
                 ((WeblogTemplateForm)actionForm).setLink( data.getLink() );
-
+                
                 ActionMessages uiMessages = new ActionMessages();
-                uiMessages.add(ActionMessages.GLOBAL_MESSAGE, 
-                        new ActionMessage("pageForm.save.success", 
-                                data.getName()));
+                uiMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                        new ActionMessage("pageForm.save.success",
+                        data.getName()));
                 saveMessages(request, uiMessages);
-
+                
                 CacheManager.invalidate(data);
                 
                 BasePageModel pageModel = new BasePageModel(
-                    "pageForm.title", request, response, mapping);
+                        "pageForm.title", request, response, mapping);
                 pageModel.setWebsite(website);
                 request.setAttribute("model", pageModel);
-            }
-            else
-            {
+            } else {
                 forward = mapping.findForward("access-denied");
             }
-              
-            // Don't reset this form. Allow user to keep on tweaking.        
+            
+            // Don't reset this form. Allow user to keep on tweaking.
             //actionForm.reset(mapping,request);
-        }
-        catch (RollerPermissionsException e)
-        {
+        } catch (RollerPermissionsException e) {
             ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError("error.permissions.deniedSave"));
             saveErrors(request, errors);
             forward = mapping.findForward("access-denied");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mLogger.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
-
+    
     //-----------------------------------------------------------------------
     /**
      * Ensures that the page has a safe value for the link
@@ -390,21 +342,18 @@ public final class WeblogTemplateFormAction extends DispatchAction
      * characters that are web-safe), this is a much easier
      * test-and-correct.  Otherwise we would need a RegEx package.
      */
-    private void validateLink( WeblogTemplate data )
-    {
+    private void validateLink( WeblogTemplate data ) {
         // if data.getLink() is null or empty
         // use the title ( data.getName() )
-        if ( StringUtils.isEmpty( data.getLink() ) )
-        {
+        if ( StringUtils.isEmpty( data.getLink() ) ) {
             data.setLink( data.getName() );
         }
-
+        
         // if link contains any nonAlphanumeric, strip them
         // first we must remove any html, as this is
         // non-instructional markup.  Then do a straight
         // removeNonAlphanumeric.
-        if ( !StringUtils.isAlphanumeric( data.getLink() ) )
-        {
+        if ( !StringUtils.isAlphanumeric( data.getLink() ) ) {
             String link = Utilities.removeHTML( data.getLink() );
             link = Utilities.removeNonAlphanumeric( link );
             data.setLink( link );
@@ -413,35 +362,33 @@ public final class WeblogTemplateFormAction extends DispatchAction
     
     //-----------------------------------------------------------------------
     public ActionForward cancel(
-        ActionMapping       mapping,
-        ActionForm          actionForm,
-        HttpServletRequest  request,
-        HttpServletResponse response)
-        throws IOException, ServletException
-    {
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response)
+            throws IOException, ServletException {
         request.setAttribute("model", new BasePageModel(
-            "pagesForm.title", request, response, mapping));
+                "pagesForm.title", request, response, mapping));
         return (mapping.findForward("editPages"));
     }
     
     //-----------------------------------------------------------------------
-    private void addModelObjects( 
-        HttpServletRequest  request,
-        HttpServletResponse response,
-        ActionMapping mapping, 
-        WebsiteData website)
-    throws RollerException 
-    {             
-        UserManager mgr = RollerFactory.getRoller().getUserManager();        
+    private void addModelObjects(
+            HttpServletRequest  request,
+            HttpServletResponse response,
+            ActionMapping mapping,
+            WebsiteData website)
+            throws RollerException {
+        UserManager mgr = RollerFactory.getRoller().getUserManager();
         RollerSession rses = RollerSession.getRollerSession(request);
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
-                
+        
         UserData user = rses.getAuthenticatedUser();
         request.setAttribute("user", user);
-
+        
         WebsiteData wd = rreq.getWebsite();
         request.setAttribute("website", website);
-
+        
         List pages = mgr.getPages(website);
         request.setAttribute("pages", pages);
         
