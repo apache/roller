@@ -37,8 +37,6 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.RollerPropertyData;
@@ -50,14 +48,11 @@ import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
-import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
-import org.apache.roller.ui.rendering.util.InvalidRequestException;
+import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.ui.rendering.util.WeblogRequest;
-import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.URLUtilities;
@@ -308,10 +303,10 @@ public class ContextLoader {
         ctx.put("autoformat",        new Boolean(autoFormat) );
         
         // Make sure comment form object is available in context
-        CommentFormEx commentForm =
-                (CommentFormEx) request.getAttribute("commentForm");
+        WeblogEntryCommentForm commentForm =
+                (WeblogEntryCommentForm) request.getAttribute("commentForm");
         if ( commentForm == null ) {
-            commentForm = new CommentFormEx();
+            commentForm = new WeblogEntryCommentForm();
             
             // Set fields to spaces to please Velocity
             commentForm.setName("");
@@ -322,12 +317,10 @@ public class ContextLoader {
         ctx.put("commentForm",commentForm);
         
         // Either put a preview comment in to context
-        if ( request.getAttribute("previewComments")!=null ) {
+        if(commentForm.isPreview()) {
             ArrayList list = new ArrayList();
-            CommentData cd = new CommentData();
-            commentForm.copyTo(cd, request.getLocale());
-            list.add(CommentDataWrapper.wrap(cd));
-            ctx.put("previewComments",list);
+            list.add(commentForm.getPreviewComment());
+            ctx.put("previewComments", list);
         }
         
         if (entry.getStatus().equals(WeblogEntryData.PUBLISHED)) {

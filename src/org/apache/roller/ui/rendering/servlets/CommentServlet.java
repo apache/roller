@@ -37,7 +37,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,12 +51,11 @@ import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
-import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.ui.rendering.util.CommentAuthenticator;
 import org.apache.roller.ui.rendering.util.DefaultCommentAuthenticator;
 import org.apache.roller.ui.rendering.util.WeblogCommentRequest;
+import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.util.GenericThrottle;
 import org.apache.roller.util.IPBanList;
 import org.apache.roller.util.MailUtil;
@@ -226,31 +224,6 @@ public class CommentServlet extends HttpServlet {
         
         log.debug("Doing comment posting for entry = "+entry.getPermaLink());
         
-        // check if site is allowing comments
-        if(!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled")) {
-            error = "Comments are disabled for this site.";
-        
-        // check if weblog and entry are allowing comments
-        } else if(!weblog.getAllowComments().booleanValue() ||
-                !entry.getCommentsStillAllowed()) {
-            error = "Comments not allowed on this entry";
-        
-        // make sure comment authentication passed
-        } else if(!this.authenticator.authenticate(request)) {
-            error = bundle.getString("error.commentAuthFailed");
-            log.debug("Comment failed authentication");
-        }
-        
-        // bail now if we have already found an error
-        if(error != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute(RollerSession.ERROR_MESSAGE, error);
-            RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
-            dispatcher.forward(request, response);
-            return;
-        }
-        
-        
         // collect input from request params and construct new comment object
         // fields: name, email, url, content, notify
         // TODO: data validation on collected comment data
@@ -264,18 +237,40 @@ public class CommentServlet extends HttpServlet {
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(new Timestamp(System.currentTimeMillis()));
         
-        // this is legacy stuff, but still used by ContextLoader
-        // we can probably switch this to a CommentData without problems
-        CommentFormEx cf = new CommentFormEx();
-        RequestUtils.populate(cf, request);
-        cf.setWeblogEntry(entry);
-        cf.setPostTime(comment.getPostTime());
-        request.setAttribute("commentForm", cf);
-        request.setAttribute("blogEntry", entry);
+        WeblogEntryCommentForm cf = new WeblogEntryCommentForm();
+        cf.setData(comment);
+        
+        // check if site is allowing comments
+        if(!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled")) {
+            // TODO: i18n
+            error = "Comments are disabled for this site.";
+        
+        // check if weblog and entry are allowing comments
+        } else if(!weblog.getAllowComments().booleanValue() ||
+                !entry.getCommentsStillAllowed()) {
+            // TODO: i18n
+            error = "Comments not allowed on this entry";
+        
+        // make sure comment authentication passed
+        } else if(!this.authenticator.authenticate(request)) {
+            error = bundle.getString("error.commentAuthFailed");
+            log.debug("Comment failed authentication");
+        }
+        
+        // bail now if we have already found an error
+        if(error != null) {
+            cf.setError(error);
+            request.setAttribute("commentForm", cf);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(dispatch_url);
+            dispatcher.forward(request, response);
+            return;
+        }
         
         
         if (preview) {
+            // TODO: i18n
             message = "This is a comment preview only";
+            cf.setPreview(comment);
             
             // If comment contains blacklisted text, warn commenter
             SpamChecker checker = new SpamChecker();
@@ -283,7 +278,6 @@ public class CommentServlet extends HttpServlet {
                 error = bundle.getString("commentServlet.previewMarkedAsSpam");
                 log.debug("Comment marked as spam");
             }
-            request.setAttribute("previewComments", "dummy");
             log.debug("Comment is a preview");
             
         } else {
@@ -323,7 +317,7 @@ public class CommentServlet extends HttpServlet {
                 sendEmailNotification(comment, rootURL);
                 
                 // comment was successful, clear the comment form
-                request.removeAttribute("commentForm");
+                cf = new WeblogEntryCommentForm();
                 
             } catch (RollerException re) {
                 log.error("Error saving comment", re);
@@ -333,11 +327,11 @@ public class CommentServlet extends HttpServlet {
         
 
         // the work has been done, now send the user back to the entry page
-        HttpSession session = request.getSession();
         if (error != null)
-            session.setAttribute(RollerSession.ERROR_MESSAGE, error);
+            cf.setError(error);
         if (message != null)
-            session.setAttribute(RollerSession.STATUS_MESSAGE, message);
+            cf.setMessage(message);
+        request.setAttribute("commentForm", cf);
         
         log.debug("comment processed, forwarding to "+dispatch_url);
         RequestDispatcher dispatcher =

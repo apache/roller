@@ -18,10 +18,6 @@
 
 package org.apache.roller.ui.rendering.model; 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
@@ -29,19 +25,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
+import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 
@@ -52,8 +44,9 @@ public class PageModel implements Model {
     
     private static Log log = LogFactory.getLog(PageModel.class);
     
-    private HttpServletRequest request = null;
     private WeblogPageRequest pageRequest = null;
+    private WeblogEntryCommentForm commentForm = null;
+    
     private WebsiteData weblog = null;
     
     
@@ -77,14 +70,14 @@ public class PageModel implements Model {
      */
     public void init(Map initData) throws RollerException {
         
-        HttpServletRequest request = (HttpServletRequest) initData.get("request");
-        this.request = request;
-        
         // we expect the init data to contain a pageRequest object
         this.pageRequest = (WeblogPageRequest) initData.get("pageRequest");
         if(this.pageRequest == null) {
             throw new RollerException("expected pageRequest from init data");
         }
+        
+        // see if there is a comment form
+        this.commentForm = (WeblogEntryCommentForm) initData.get("commentForm");
         
         // extract weblog object
         weblog = pageRequest.getWeblog();
@@ -195,41 +188,16 @@ public class PageModel implements Model {
         
     
     /**
-     * Get comment form to be displayed, may contain preview data. 
-     * @return Comment form object or null if not on a comment page.
+     * Get comment form to be displayed, may contain preview data.
+     *
+     * @return Comment form object
      */
-    public CommentFormEx getCommentForm() {
-        CommentFormEx commentForm =
-                (CommentFormEx) request.getAttribute("commentForm");
-        if (commentForm == null) {
-            commentForm = new CommentFormEx();
-            // Set fields to spaces to please Velocity
-            commentForm.setName("");
-            commentForm.setEmail("");
-            commentForm.setUrl("");
-            commentForm.setContent("");
+    public WeblogEntryCommentForm getCommentForm() {
+        
+        if(commentForm == null) {
+            commentForm = new WeblogEntryCommentForm();
         }
         return commentForm;
-    }
-        
-    
-    /**
-     * Get preview comment or null if none exists.
-     */
-    public CommentDataWrapper getCommentPreview() {
-        CommentDataWrapper commentWrapper = null;
-        try {
-            if (request.getAttribute("previewComments") != null) {
-                ArrayList list = new ArrayList();
-                CommentData comment = new CommentData();
-                CommentFormEx commentForm = getCommentForm();
-                commentForm.copyTo(comment, request.getLocale());
-                commentWrapper = CommentDataWrapper.wrap(comment);
-            }
-        } catch (RollerException e) {
-            log.warn("ERROR: creating comment form", e);
-        }
-        return commentWrapper;
     }
     
 }
