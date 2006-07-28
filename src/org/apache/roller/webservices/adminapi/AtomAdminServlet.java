@@ -35,7 +35,7 @@ import org.apache.roller.webservices.adminapi.sdk.EntrySet;
  * This servlet simply delegates work to a particular handler object.
  *
  * @web.servlet name="AtomAdminServlet"
- * @web.servlet-mapping url-pattern="/aapp/*"
+ * @web.servlet-mapping url-pattern="/roller-services/aapp/*"
  *
  * @author jtb
  */

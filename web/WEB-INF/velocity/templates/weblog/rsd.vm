@@ -3,13 +3,13 @@
   <service>
     <engineName>Roller Weblogger</engineName>
     <engineLink>http://www.rollerweblogger.org/</engineLink>
-    <homePageLink>${website.absoluteURL}</homePageLink>
+    <homePageLink>${absBaseURL}/${website.handle}</homePageLink>
     <apis>
       <api name="blogger" preferred="false"
-         apiLink="${absBaseURL}/xmlrpc"
+         apiLink="${absBaseURL}/roller-services/xmlrpc"
          blogID="${website.handle}"/> 
       <api name="metaWeblog" preferred="true"
-         apiLink="${absBaseURL}/xmlrpc"
+         apiLink="${absBaseURL}/roller-services/xmlrpc"
          blogID="${website.handle}"/>
     </apis>
   </service>

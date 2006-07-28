@@ -38,7 +38,7 @@ import org.apache.xmlrpc.XmlRpcServer;
  * Roller's XML RPC Servlet sets up XmlRpcHandler for Blogger & MetaWeblog API.
  *
  * @web.servlet name="RollerXMLRPCServlet"
- * @web.servlet-mapping url-pattern="/roller-ui/services/xmlrpc"
+ * @web.servlet-mapping url-pattern="/roller-services/xmlrpc"
  */
 public class RollerXMLRPCServlet extends HttpServlet {
     
