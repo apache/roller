@@ -47,20 +47,11 @@ public class ConfigModel implements Model {
     /** Hand-picked list of runtime properties to be made available */
     private static List allowedProperties =
             Arrays.asList(new String[] {
-        "site.name",
-        "site.shortName",
-        "site.description",
-        "site.adminemail",
         "users.registration.enabled",
         "users.registration.url",
         "users.comments.enabled",
         "users.trackbacks.enabled",
-        "users.comments.autoformat",
-        "users.comments.escapehtml",
-        "users.comments.emailnotify",
         "site.linkbacks.enabled",
-        "site.newsfeeds.defaultEntries",
-        "site.newsfeeds.maxEntries",
         "site.frontpage.weblog.handle",
         "site.frontpage.weblog.aggregated"
     });
@@ -78,42 +69,40 @@ public class ConfigModel implements Model {
     }
     
     
-    /**
-     * Get Roller string runtime configuration property.
-     * @return Property value or null if not found
-     */
-    public String getProperty(String name) {
-        String ret = null;
-        if (allowedProperties.contains(name)) {
-            ret = RollerRuntimeConfig.getProperty(name);
-        }
-        return ret;
+    public String getSiteName() {
+        return getProperty("site.name");
     }
     
-    
-    /**
-     * Get Roller integer runtime configuration property
-     * @return Property value or -999 if not found
-     */
-    public int getIntProperty(String name) {
-        int ret = -999;
-        if (allowedProperties.contains(name)) {
-            ret = RollerRuntimeConfig.getIntProperty(name);
-        }
-        return ret;
+    public String getSiteShortName() {
+        return getProperty("site.shortName");
     }
     
+    public String getSiteDescription() {
+        return getProperty("site.description");
+    }
     
-    /**
-     * Get Roller boolean runtime configuration property.
-     * @return Property value or false if not found
-     */
-    public boolean getBooleanProperty(String name) {
-        boolean ret = false;
-        if (allowedProperties.contains(name)) {
-            return RollerRuntimeConfig.getBooleanProperty(name);
-        }
-        return ret;
+    public String getSiteEmail() {
+        return getProperty("site.adminemail");
+    }
+    
+    public int getFeedSize() {
+        return getIntProperty("site.newsfeeds.defaultEntries");
+    }
+    
+    public int getFeedMaxSize() {
+        return getIntProperty("site.newsfeeds.maxEntries");
+    }
+    
+    public boolean getCommentAutoFormat() {
+        return getBooleanProperty("users.comments.autoformat");
+    }
+    
+    public boolean getCommentEscapeHtml() {
+        return getBooleanProperty("users.comments.escapehtml");
+    }
+    
+    public boolean getCommentEmailNotify() {
+        return getBooleanProperty("users.comments.emailnotify");
     }
     
     
@@ -132,6 +121,21 @@ public class ConfigModel implements Model {
     /** Get username who created Roller build */
     public String getRollerBuildUser() {
         return RollerContext.getRollerContext().getRollerBuildUser();
+    }
+    
+    
+    private String getProperty(String name) {
+        return RollerRuntimeConfig.getProperty(name);
+    }
+    
+    
+    private int getIntProperty(String name) {
+        return RollerRuntimeConfig.getIntProperty(name);
+    }
+    
+    
+    private boolean getBooleanProperty(String name) {
+        return RollerRuntimeConfig.getBooleanProperty(name);
     }
     
 }
