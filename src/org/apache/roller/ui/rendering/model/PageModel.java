@@ -46,7 +46,7 @@ public class PageModel implements Model {
     
     private WeblogPageRequest pageRequest = null;
     private WeblogEntryCommentForm commentForm = null;
-    
+    private Map requestParameters = null;
     private WebsiteData weblog = null;
     
     
@@ -78,6 +78,8 @@ public class PageModel implements Model {
         
         // see if there is a comment form
         this.commentForm = (WeblogEntryCommentForm) initData.get("commentForm");
+        
+        this.requestParameters = (Map)initData.get("requestParameters");
         
         // extract weblog object
         weblog = pageRequest.getWeblog();
@@ -200,4 +202,14 @@ public class PageModel implements Model {
         return commentForm;
     }
     
+    /**
+     * Get request parameter by name.
+     */
+    public String getRequestParameter(String paramName) {
+        String[] values = (String[])requestParameters.get(paramName);
+        if (values != null && values.length > 0) {
+            return values[0];
+        }
+        return null;
+    }
 }

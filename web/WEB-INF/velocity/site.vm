@@ -147,8 +147,8 @@
 
 ##-----------------------------------------------------------------------------
 #macro(showWeblogDirectory $pageLength)
-    #if($pageModel.getRequestParameter("letter"))
-        #set($chosenLetter = $pageModel.getRequestParameter("letter"))
+    #if($model.getRequestParameter("letter"))
+        #set($chosenLetter = $model.getRequestParameter("letter"))
     #else
         #set($chosenLetter = "A")
     #end
@@ -268,8 +268,8 @@
 
 ##-----------------------------------------------------------------------------
 #macro(showUserDirectory $pageLength)
-    #if($pageModel.getRequestParameter("letter"))
-        #set($chosenLetter = $pageModel.getRequestParameter("letter"))
+    #if($model.getRequestParameter("letter"))
+        #set($chosenLetter = $model.getRequestParameter("letter"))
     #else
         #set($chosenLetter = "A")
     #end
