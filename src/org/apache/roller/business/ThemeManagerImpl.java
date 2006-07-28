@@ -281,6 +281,14 @@ public class ThemeManagerImpl implements ThemeManager {
                 continue;
             }
             
+            // Strip "_" from name to form link
+            boolean navbar = true;
+            String template_link = template_name;
+            if (template_name.startsWith("_") && template_name.length() > 1) {
+                navbar = false;
+                template_link = template_link.substring(1);
+            }
+            
             String decorator = "_decorator";
             if("_decorator".equals(template_name)) {
                 decorator = null;
@@ -295,12 +303,13 @@ public class ThemeManagerImpl implements ThemeManager {
                     theme,
                     theme_name+":"+template_name,
                     template_name,
-                    template_name,
+                    template_link,
                     new String(chars),
                     template_name,
                     new Date(template_file.lastModified()),
                     "velocity",
                     true,
+                    navbar,
                     decorator);
 
             // add it to the theme
@@ -367,6 +376,7 @@ public class ThemeManagerImpl implements ThemeManager {
                             new Date(),                         // last mod
                             theme_template.getTemplateLanguage(), // temp lang
                             theme_template.isHidden(),          // hidden
+                            theme_template.isNavbar(),          // navbar
                             theme_template.getDecoratorName()   // decorator
                             );
                     userMgr.savePage( template );

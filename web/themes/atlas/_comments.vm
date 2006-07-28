@@ -1,10 +1,11 @@
 #includePage("_header")
-#tabbedMenu("comments")
+#set($selected = "comments") 
+#includePage("_tabbedMenu") 
 #set($maxResults = 7)
 
 <div class="entriesBox">
    <div class="entriesBoxInner">
-      <div class="entryBox">
+      <div class="entryBox"> 
 
     <h2 class="pageTitle">Most recent comments posted to site</h2>
 
@@ -14,8 +15,8 @@
         #set($offset = 0)
     #end
     
-    #set($comments = $sitePageModel.getComments(7, $offset, $maxResults))
-    #showCommentsPager($comments $maxResults)
+    #set($commentsPager = $site.getCommentsPager($since, $maxResults))
+    #showCommentsPager($commentsPager)
 
       </div>
    </div>

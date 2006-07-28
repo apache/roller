@@ -20,19 +20,19 @@
 
    Contents
       #showEntry($entry)
-      #showEnriesPager($entries $maxResults)
+      #showEnriesPager($pager)
       #showWeblogProfile($weblog)
       #showWeblogDirectory()
       #showUserProfile($user)
       #showUserDirectory()
-      #showCommentsPager($comments $maxResults)
+      #showCommentsPager($pager)
 *#
 ##-----------------------------------------------------------------------------
 #macro( showEntry $entry )
 <div class="entry">
     <span class="entryDetails">
-        <a href="$utilities.textToHTML($entry.permaLink)">
-        <b>$utilities.removeHTML($entry.title)</b></a><br /> 
+        <a href="$utils.escapeHTML($entry.permalink)">
+        <b>$utils.removeHTML($entry.title)</b></a><br /> 
         $entry.website.name 
         #if($entry.category.name)| $entry.category.name #end
         #if($entry.pubTime)| #formatDate($text.get("macro.weblog.date.toStringFormat") $entry.pubTime) #end
@@ -40,33 +40,33 @@
         <br/> 
     </span>
     <span class="entryDescription">
-        #set($content = $utilities.removeHTML($entry.text))
-        $utilities.truncateNicely($content, 240, 260, "...")
+        #set($content = $utils.removeHTML($entry.text))
+        $utils.truncateNicely($content, 240, 260, "...")
     </span>
 </div>
 #end
 
 ##-----------------------------------------------------------------------------
-#macro(showEntriesPager $entries $maxResults)
-    #if($entries.size() > 0)
-        #set($entryCount = $entries.size() - 1)
-        #set($startDate = $entries.get(0).pubTime)
+#macro(showEntriesPager $pager)
+    #if($pager.entries.size() > 0)
+        #set($entryCount = $pager.entries.size() - 1)
+        #set($startDate = $pager.entries.get(0).pubTime)
         #set($endDate = $entries.get($entryCount).pubTime)
     #end
-    #foreach($entry in $entries)
+    #foreach($entry in $pager.entries)
         #if($velocityCount < $maxResults)
             #showEntry($entry)
         #end
     #end
     <div class="nextPrev">
-    #if($offset >= $maxResults - 1)
-       #set($prevOffset = $offset - ($maxResults - 1))
-       <a href="?offset=$prevOffset">&lt; Newer</a>
+    #if($pager.nextLink)
+       <a href="$pager.nextLink">&lt; $pager.nextName</a>
     #end
-    &nbsp;
-    #if($entries.size() > $maxResults - 1)
-       #set($nextOffset = $offset + $maxResults - 1)
-       <a href="?offset=$nextOffset">Older &gt;</a>
+    #if($pager.nextLink && $pager.prevLink())
+       &nbsp;|&nbsp;
+    #end
+    #if($pager.prevLink)
+       <a href="$pager.prevLink">$pager.prevName &gt;</a>
     #end
     </div>
 #end
@@ -119,8 +119,8 @@
     </table>
 
     <h2 class="pageTitle">Recent posts</h2>
-    #set($entries = $site.getWeblogEntries($weblog.handle, 'nil', 'nil', 90, 0, 5)) 
-    #if($entries.size() > 0)  
+    #set($entriesPager = $site.getWeblogEntriesPager($weblog, $null, $null, 90, 5)) 
+    #if($entriesPager.entries.size() > 0)  
         <table class="rollertable"> 
         <thead>
             <tr>
@@ -129,12 +129,12 @@
                 <th>Title</th>
             </tr>
         </thead>  
-        #foreach($entry in $entries)
+        #foreach($entry in $entriesPager.entries)
             <tr>
                 <td>$entry.creator.userName</td>
                 <td>#formatDate($text.get("macro.weblog.date.toStringFormat") $entry.pubTime)</td>
-                <td><a href="$utilities.textToHTML($entry.permaLink)">
-                    $utilities.removeHTML($entry.title)</a></td>
+                <td><a href="$utils.escapeHTML($entry.permaLink)">
+                    $utils.removeHTML($entry.title)</a></td>
             </tr>
         #end
         </table>
@@ -146,7 +146,7 @@
 
 
 ##-----------------------------------------------------------------------------
-#macro(showWeblogDirectory)
+#macro(showWeblogDirectory $pageLength)
     #if($pageModel.getRequestParameter("letter"))
         #set($chosenLetter = $pageModel.getRequestParameter("letter"))
     #else
@@ -167,15 +167,9 @@
     #end
     </div>
 
-    #if($pageModel.getRequestParameter("offset"))
-        #set($offset = $pageModel.getIntRequestParameter("offset"))
-    #else
-        #set($offset = 0)
-    #end
-
     #if($chosenLetter)
         <h2 class="pageTitle">Weblogs starting with $chosenLetter</h2>
-        #set($weblogs = $site.getWeblogsByLetter($chosenLetter, $offset, $maxResults))
+        #set($weblogsPager = $site.getWeblogsByLetterPager($chosenLetter, $since, $pageLength))
         <table class="rollertable">
             <thead>
                 <tr>
@@ -184,24 +178,22 @@
                     <th>Name</th>
                 </tr>
             </thead>
-        #foreach($weblog in $weblogs)
-            #if($velocityCount < $maxResults)
+        #foreach($weblog in $weblogsPager.weblogs)
                <tr>
-                  <td><a href="$baseURL/page/$weblog.handle">$weblog.handle</a></td>
+                  <td><a href="$baseURL/$weblog.handle">$weblog.handle</a></td>
                   <td><a href="?weblog=$weblog.handle">Profile</a></td>
                   <td>$weblog.name</td>
                </tr>
-            #end
         #end 
         </table>
-        #if($offset >= $maxResults - 1)
-           #set($prevOffset = $offset - ($maxResults - 1))
-           <a href="?letter=$chosenLetter&offset=$prevOffset">&lt;prev</a>
+        #if($weblogsPager.prevLink)
+           <a href="$weblogsPager.prevLink?letter=$chosenLetter">&lt; $weblogsPager.prevName</a>
         #end
-        #if(($offset >= $maxResults - 1) && ($weblogs.size() > $maxResults - 1)) &nbsp;|&nbsp; #end
-        #if($weblogs.size() > $maxResults - 1)
-           #set($nextOffset = $offset + $maxResults - 1)
-           <a href="?letter=$chosenLetter&offset=$nextOffset">next &gt;</a>
+        #if($pager.nextLink && $pager.prevLink())
+           &nbsp;|&nbsp;
+        #end
+        #if($weblogsPager.nextLink)
+           <a href="$weblogsPager.nextLink?letter=$chosenLetter">$weblogsPager.nextLink &gt;</a>
         #end
     #end
 #end
@@ -250,8 +242,8 @@
     #end
 
     <h2 class="pageTitle">User's recent posts</h2>
-    #set($entries = $site.getWeblogEntries('nil', $user.userName, 'nil', 90, 0, 5)) 
-    #if($entries.size() > 0)  
+    #set($entriesPager = $site.getWeblogEntriesPager($null, $user, $null, 90, 5)) 
+    #if($entriesPager.entries.size() > 0)  
         <table class="rollertable"> 
         <thead>
             <tr>
@@ -260,12 +252,12 @@
                 <th>Title</th>
             </tr>
         </thead>  
-        #foreach($entry in $entries)
+        #foreach($entry in $entriesPager.entries)
             <tr>
                 <td><a href="$entry.website.url">$entry.website.handle</a></td>
                 <td>#formatDate($text.get("macro.weblog.date.toStringFormat") $entry.pubTime)</td>
-                <td><a href="$utilities.textToHTML($entry.permaLink)">
-                    $utilities.removeHTML($entry.title)</a></td>
+                <td><a href="$utils.textToHTML($entry.permaLink)">
+                    $utils.removeHTML($entry.title)</a></td>
             </tr>
         #end
         </table>
@@ -275,7 +267,7 @@
 #end
 
 ##-----------------------------------------------------------------------------
-#macro(showUserDirectory)
+#macro(showUserDirectory $pageLength)
     #if($pageModel.getRequestParameter("letter"))
         #set($chosenLetter = $pageModel.getRequestParameter("letter"))
     #else
@@ -296,15 +288,9 @@
     #end
     </div>
 
-    #if($pageModel.getRequestParameter("offset"))
-        #set($offset = $pageModel.getIntRequestParameter("offset"))
-    #else
-        #set($offset = 0)
-    #end
-
     #if($chosenLetter)
         <h2 class="pageTitle">Users starting with $chosenLetter</h2>
-        #set($users = $site.getUsersByLetter($chosenLetter, $offset, $maxResults))
+        #set($usersPager= $site.getUsersByLetterPager($chosenLetter, $since, $pageLength))
         <table class="rollertable">
             <thead>
                 <tr>
@@ -313,64 +299,60 @@
                     <th>Full name</th>
                 </tr>
             </thead>
-        #foreach($u in $users)
-            #if($velocityCount < $maxResults)
+        #foreach($u in $usersPager.users)
                <tr>
                   <td>$u.userName</td>
                   <td><a href="?userName=$u.userName">Profile</a></td>
                   <td>$u.fullName</td>
                </tr>
-            #end
         #end 
         </table>
-        #if($offset >= $maxResults - 1)
-           #set($prevOffset = $offset - ($maxResults - 1))
-           <a href="?letter=$chosenLetter&offset=$prevOffset">&lt;prev</a>
+        #if($usersPager.prevLink)
+           <a href="$usersPager.prevLink?letter=$chosenLetter">&lt;$usersPager.prevName</a>
         #end
-        #if(($offset >= $maxResults - 1) && ($weblogs.size() > $maxResults - 1)) &nbsp;|&nbsp; #end
-        #if($users.size() > $maxResults - 1)
-           #set($nextOffset = $offset + $maxResults - 1)
-           <a href="?letter=$chosenLetter&offset=$nextOffset">next &gt;</a>
+        #if($pager.nextLink && $pager.prevLink())
+           &nbsp;|&nbsp;
+        #end
+        #if($usersPager.nextLink)
+           <a href="$usersPager.nextLink?letter=$chosenLetter">$usersPager.nextName &gt;</a>
         #end
     #end
 #end
 
 ##-----------------------------------------------------------------------------
-#macro(showCommentsPager $comments $maxResults)
-    #if($comments.size() > 0)
-        #set($commentCount = $comments.size() - 1)
-        #set($startDate = $comments.get(0).postTime)
-        #set($endDate = $comments.get($commentCount).postTime)
+#macro(showCommentsPager $commentsPager)
+    #if($commentsPager.comments.size() > 0)
+        #set($commentCount = $commentsPager.comments.size() - 1)
+        #set($startDate = $commentsPager.comments.get(0).postTime)
+        #set($endDate = $commentsPager.comments.get($commentCount).postTime)
     #end
 
-    #foreach($comment in $comments)
-        #if($velocityCount < $maxResults)
+    #foreach($comment in $commentsPager.comments)
             <div class="entry">
                 <span class="entryDetails">
-                    <a href="${baseURL}$utilities.textToHTML($comment.weblogEntry.permaLink)">
-                        <b>Re: $utilities.removeHTML($comment.weblogEntry.title)</b></a><br /> 
+                    <a href="${baseURL}$utils.escapeHTML($comment.weblogEntry.permaLink)">
+                        <b>Re: $utils.removeHTML($comment.weblogEntry.title)</b></a><br /> 
                     Posted on <a href="$baseURL/$comment.weblogEntry.website.handle">
-                        $utilities.removeHTML($comment.weblogEntry.website.name)</a> 
+                        $utils.removeHTML($comment.weblogEntry.website.name)</a> 
                     #if($comment.name) | Posted by $comment.name #end
                     | $comment.postTime<br/> 
                 </span>
                 <span class="entryDescription">
-                    #set($content = $utilities.removeHTML($comment.content))
-                    $utilities.truncateNicely($content, 240, 260, "...")
+                    #set($content = $utils.removeHTML($comment.content))
+                    $utils.truncateNicely($content, 240, 260, "...")
                 </span>
             </div>
-        #end
     #end
  
     <div class="nextPrev">
-    #if($offset >= $maxResults - 1)
-       #set($prevOffset = $offset - ($maxResults - 1))
-       <a href="?offset=$prevOffset">&lt; Newer</a>
+    #if($commentsPager.nextLink)
+       <a href="$commentsPager.nextLink">&lt; $commentsPager.nextName</a>
     #end
-    &nbsp;
-    #if($comments.size() > $maxResults - 1)
-       #set($nextOffset = $offset + $maxResults - 1)
-       <a href="?offset=$nextOffset">Older &gt;</a>
+    #if($pager.nextLink && $pager.prevLink())
+       &nbsp;|&nbsp;
+    #end
+    #if($commentsPager.nextLink)
+       <a href="$commentsPager.nextLink">$commentsPager.nextName &gt;</a>
     #end
     </div>
 

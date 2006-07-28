@@ -19,86 +19,81 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.pojos.wrapper.UserDataWrapper;
+import org.apache.roller.util.URLUtilities;
 
 /**
- * Simple pager for list of weblog entries.
+ * Paging for users.
  */
-public class WeblogEntriesPager extends AbstractPager {
-    private WebsiteData queryWeblog;
-    private UserData    queryUser;
-    private String      queryCat;
-    private List        entries;    
+public class UsersPager extends AbstractPager {
+    private List users;    
+    private String letter = null;
     protected static Log log =
-            LogFactory.getFactory().getInstance(PlanetEntriesPager.class);
+            LogFactory.getFactory().getInstance(UsersPager.class);
     
-    public WeblogEntriesPager(            
-            WebsiteData    weblog,
-            WebsiteData    queryWeblog,
-            UserData       queryUser,
-            String         queryCat,
+    /** Creates a new instance of CommentPager */
+    public UsersPager(            
+            WebsiteData    weblog,             
             WeblogTemplate weblogPage,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
         super(weblog, weblogPage, locale, sinceDays, page, length);
-        this.queryWeblog = queryWeblog;
-        this.queryUser = queryUser;
-        this.queryCat = queryCat;
-        getEntries();
+        getUsers();
     }
     
-    public List getEntries() {
-        if (entries == null) {
+    /** Creates a new instance of CommentPager */
+    public UsersPager(   
+            String letter,
+            WebsiteData    weblog,             
+            WeblogTemplate weblogPage,
+            String         locale,
+            int            sinceDays,
+            int            page,
+            int            length) {
+        super(weblog, weblogPage, locale, sinceDays, page, length);
+        this.letter = letter;
+        getUsers();
+    }
+    
+    public List getUsers() {
+        if (users == null) {
             List results = new ArrayList();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1 * sinceDays);
-            Date startDate = cal.getTime();
             try {            
                 Roller roller = RollerFactory.getRoller();
-                WeblogManager wmgr = roller.getWeblogManager();
                 UserManager umgr = roller.getUserManager();
-                List rawEntries = wmgr.getWeblogEntries( 
-                    queryWeblog, 
-                    queryUser, 
-                    startDate, 
-                    new Date(), 
-                    queryCat, 
-                    WeblogEntryData.PUBLISHED, 
-                    "pubTime", 
-                    locale, 
-                    offset, 
-                    length + 1);
+                List rawUsers = null;
+                if (letter == null) {
+                    rawUsers = umgr.getUsers(offset, length + 1);
+                } else {
+                    rawUsers = umgr.getUsersByLetter(letter.charAt(0), offset, length);
+                }
                 int count = 0;
-                for (Iterator it = rawEntries.iterator(); it.hasNext();) {
-                    WeblogEntryData entry = (WeblogEntryData) it.next();
+                for (Iterator it = rawUsers.iterator(); it.hasNext();) {
+                    UserData user = (UserData) it.next();
                     if (count++ < length) {
-                        results.add(WeblogEntryDataWrapper.wrap(entry));
+                        results.add(UserDataWrapper.wrap(user));
                     } else {
                         more = true;
-                    }                      
+                    }                    
                 }
             } catch (Exception e) {
-                log.error("ERROR: fetching weblog entries list", e);
+                log.error("ERROR: fetching user list", e);
             }
-            entries = results;
+            users = results;
         }
-        return entries;
+        return users;
     }   
 }

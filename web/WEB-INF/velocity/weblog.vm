@@ -497,8 +497,7 @@ Show weblog's categories in specified parent category.
             <a href="$url.site">$config.siteName</a>
         </li>
         #foreach($iPage in $weblog.pages)
-            #set($invisible = $iPage.Name.startsWith("_"))
-            #if (!$invisible)
+            #if (!$iPage.hidden && $iPage.navbar)
                 #set($isSelected = false)
                 #if ($page && $iPage.Id == $page.Id) #set($isSelected = true) #end
                 #if (!$isSelected && $iPage.name == "Weblog")

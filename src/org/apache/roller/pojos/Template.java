@@ -77,7 +77,15 @@ public interface Template {
      *
      * @roller.wrapPojoMethod type="simple"
      */
+    
     public boolean isHidden();
+    
+    /**
+     * Is the Template to be included in the navbar?
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public boolean isNavbar();
     
     /**
      * The templating language used by this template.

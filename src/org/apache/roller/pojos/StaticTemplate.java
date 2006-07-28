@@ -39,6 +39,7 @@ public class StaticTemplate implements Template, Serializable {
     private Date lastModified = new Date();
     private String templateLanguage = null;
     private boolean hidden = false;
+    private boolean navbar = false;
     
     
     public StaticTemplate() {}
@@ -119,6 +120,14 @@ public class StaticTemplate implements Template, Serializable {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public void setNavbar(boolean navbar) {
+        this.navbar = navbar;
+    }
+    
+    public boolean isNavbar() {
+        return navbar; 
     }
     
     

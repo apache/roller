@@ -37,6 +37,7 @@ public class ThemeTemplate implements Template, Serializable {
     private Date lastModified = null;
     private String templateLanguage = null;
     private boolean hidden = false;
+    private boolean navbar = false;
     private String decoratorName = null;
     
     private Theme myTheme = null;
@@ -46,7 +47,7 @@ public class ThemeTemplate implements Template, Serializable {
     
     public ThemeTemplate(Theme theme, String id, String name, String desc, 
             String contents, String link, Date date, String tempLang, 
-            boolean hid, String decor) {
+            boolean hid, boolean navbar, String decor) {
         
         this.myTheme = theme;
         this.id = id;
@@ -57,6 +58,7 @@ public class ThemeTemplate implements Template, Serializable {
         this.lastModified = date;
         this.templateLanguage = tempLang;
         this.hidden = hid;
+        this.navbar = navbar;
         this.decoratorName = decor;
     }
     
@@ -130,6 +132,14 @@ public class ThemeTemplate implements Template, Serializable {
 
     public void setHidden(boolean isHidden) {
         this.hidden = isHidden;
+    }
+
+    public boolean isNavbar() {
+        return hidden;
+    }
+
+    public void setNavbar(boolean navbar) {
+        this.navbar = navbar;
     }
 
     public String getDecoratorName() {

@@ -1,20 +1,14 @@
-#includePage("_header")
-#tabbedMenu("frontpage") 
-#set($maxResults = 7)
-
+#includePage("_header") 
+#set($selected = "frontpage") 
+#includePage("_tabbedMenu") 
+  
 <div class="entriesBox">
    <div class="entriesBoxInner">
       <div class="entryBox">
 
-    <h2 class="pageTitle">Most recent posts on site</h2>
-    #if($pageModel.getRequestParameter("offset"))
-        #set($offset = $pageModel.getIntRequestParameter("offset"))
-    #else
-        #set($offset = 0)
-    #end
-    
-    #set($entries = $sitePageModel.getWeblogEntries('nil', 'nil', 'nil', 30, $offset, $maxResults))
-    #showEntriesPager($entries $maxResults)
+    <h2 class="pageTitle">Most recent posts on SITE</h2>   
+    #set($pager = $site.getWeblogEntriesPager($since, $maxResults))
+    #showEntriesPager($pager)
 
       </div>
    </div>
@@ -30,7 +24,7 @@
 
                     <h3>Hot blogs (today's hits)</h3>
                     <hr size="1" noshade="noshade" />
-                    #set($hotblogs = $sitePageModel.getHotWeblogs(7, 0, 20))
+                    #set($hotblogs = $site.getHotWeblogs($since, 20))
                     <ul>
                         #foreach($blog in $hotblogs)
                         <li>$blog.subjectNameShort | $blog.count</li>

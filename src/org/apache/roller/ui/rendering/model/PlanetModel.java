@@ -19,28 +19,28 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.model.PlanetManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.PlanetEntryData;
-import org.apache.roller.pojos.PlanetGroupData;
 import org.apache.roller.pojos.PlanetSubscriptionData;
-import org.apache.roller.pojos.wrapper.PlanetEntryDataWrapper;
+import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.PlanetSubscriptionDataWrapper;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 
 /**
  * Model that provides access to planet aggregations, feeds and subscriptions.
  */
 public class PlanetModel implements Model {
+    
+    private WeblogPageRequest pageRequest = null;
+    protected WebsiteData  weblog = null;  
     
     private static Log log = LogFactory.getLog(PlanetModel.class);
     
@@ -49,84 +49,72 @@ public class PlanetModel implements Model {
         return "planet";
     }
     
-    public void init(Map map) {
-        // no-op for now
+    public void init(Map initData) throws RollerException {
+        // we expect the init data to contain a pageRequest object
+        this.pageRequest = (WeblogPageRequest) initData.get("pageRequest");
+        if(this.pageRequest == null) {
+            throw new RollerException("expected pageRequest from init data");
+        }
+        
+        // extract weblog object
+        weblog = pageRequest.getWeblog();
     } 
     
     
     /**
-     * Get move recent PlanetEntry objects from 'all' and
+     * Get pager for PlanetEntry objects from 'all' and
      * 'exernal' Planet groups. in reverse chrono order.
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getAggregation(int sinceDays, int offset, int len) {
-        List results = new ArrayList();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();        
-        try {
-            Roller roller = RollerFactory.getRoller();
-            PlanetManager planetManager = roller.getPlanetManager();
-            List entries = planetManager.getAggregation(startDate, null, offset, len);
-            for (Iterator it = entries.iterator(); it.hasNext();) {
-                PlanetEntryData entry = (PlanetEntryData) it.next();
-                PlanetEntryDataWrapper wrapped = PlanetEntryDataWrapper.wrap(entry);
-                results.add(wrapped);
-            }
-        } catch (Exception e) {
-            log.error("ERROR: get aggregation", e);
-        }
-        return results;
+    public Pager getAggregationPager(int sinceDays, int length) {
+        return new PlanetEntriesPager(
+            null,
+            null,    
+            weblog, 
+            pageRequest.getWeblogPage(),
+            pageRequest.getLocale(),
+            sinceDays,
+            pageRequest.getPageNum(), 
+            length);
     }
     
     
     /**
-     * Get move recent WeblogEntry objects from specified
+     * Get pager for WeblogEntry objects from specified
      * Planet groups in reverse chrono order.
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getAggregation(String groupHandle, int sinceDays, int offset, int len) {
-        List list = new ArrayList();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
-        try {
-            Roller roller = RollerFactory.getRoller();
-            PlanetManager planetManager = roller.getPlanetManager();
-            PlanetGroupData group = planetManager.getGroup(groupHandle);
-            if (group != null) {
-                list = planetManager.getAggregation(group, startDate, null, offset, len);
-            }
-        } catch (Exception e) {
-            log.error("ERROR: get aggregation", e);
-        }
-        return list;
+    public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
+        return new PlanetEntriesPager(
+            null,
+            groupHandle,
+            weblog, 
+            pageRequest.getWeblogPage(),
+            pageRequest.getLocale(),
+            sinceDays,
+            pageRequest.getPageNum(), 
+            length);
     }
     
     
     /**
-     * Get move recent WeblogEntry objects from specified
-     * Planet subscription in reverse chrono order.
+     * Get pager for WeblogEntry objects from specified
+     * Planet feed in reverse chrono order.
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getFeed(String feedUrl, int offset, int len) {
-        List list = new ArrayList();
-        try {
-            Roller roller = RollerFactory.getRoller();
-            PlanetManager planetManager = roller.getPlanetManager();
-            PlanetSubscriptionData sub = planetManager.getSubscription(feedUrl);
-            if (sub != null) {
-                list = sub.getEntries();
-            }
-        } catch (Exception e) {
-            log.error("ERROR: get feed", e);
-        }
-        return list;
+    public Pager getFeedPager(String feedURL, int length) {
+        return new PlanetEntriesPager(
+            feedURL,
+            null,
+            weblog, 
+            pageRequest.getWeblogPage(),
+            pageRequest.getLocale(),
+            -1,
+            pageRequest.getPageNum(), 
+            length);
     }
     
     
@@ -136,8 +124,8 @@ public class PlanetModel implements Model {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public List getRankedSubscriptions(int sinceDays, int offset, int length) {
-        return getRankedSubscriptions(null, sinceDays, offset, length);
+    public List getRankedSubscriptions(int sinceDays, int length) {
+        return getRankedSubscriptions(null, sinceDays, length);
     }
     
     
@@ -148,12 +136,12 @@ public class PlanetModel implements Model {
      * @param offset      Offset into results (for paging)
      * @param len         Max number of results to return
      */
-    public List getRankedSubscriptions(String groupHandle, int sinceDays, int offset, int length) {
+    public List getRankedSubscriptions(String groupHandle, int sinceDays, int length) {
         List list = new ArrayList();
         try {
             Roller roller = RollerFactory.getRoller();
             PlanetManager planetManager = roller.getPlanetManager();
-            List subs = planetManager.getTopSubscriptions(groupHandle, offset, length);
+            List subs = planetManager.getTopSubscriptions(groupHandle, 0, length);
             for (Iterator it = subs.iterator(); it.hasNext();) {
                 PlanetSubscriptionData sub = (PlanetSubscriptionData) it.next();
                 list.add(PlanetSubscriptionDataWrapper.wrap(sub)); 

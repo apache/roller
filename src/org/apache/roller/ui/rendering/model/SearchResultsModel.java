@@ -120,7 +120,7 @@ public class SearchResultsModel extends PageModel {
     }
     
     // override page model and return search results pager
-    public WeblogEntriesPager getWeblogEntriesPager() {
+    public WeblogEntriesMapPager getWeblogEntriesPager() {
         return pager;
     }
     
