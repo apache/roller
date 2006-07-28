@@ -16,19 +16,20 @@
   directory of this distribution.
 
 *#<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/theme/styles/rss-xsl.jsp" media="screen"?>
 <rss version="2.0" 
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:atom="http://www.w3.org/2005/Atom" >
 <channel>
-  <title>$utils.escapeHTML($config.getConfigProperty("site.name")) (Comments)</title>
+  <title>$utils.escapeHTML($config.siteName) (Comments)</title>
   <link>$url.absoluteSite</link>
   <atom:link rel="self" type="application/rss+xml" href="$url.feed.comments.atom($model.categoryPath, $model.excerpts)" />
-  <description>$utils.escapeHTML($model.weblog.description)</description>
+  <description>$utils.escapeHTML($config.siteDescription)</description>
   <language>en-us</language>
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
   <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
-    #set($comments = $site.getComments(0, $model.weblog.entryDisplayCount))
-    #showCommentsAtom10($comments)
+  #set($comments = $site.getComments(60, 0, $config.feedSize))
+  #showCommentsAtom10($comments)
 </channel>
 </rss>
