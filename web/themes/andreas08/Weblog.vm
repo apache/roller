@@ -56,7 +56,7 @@
             <div class="editorMenu">#showAuthorMenu(true)</div>
             <div class="small box" id="description">
                 <div id="feed">
-                    <a href="$url.feed.rss"><img class="rssbadge"
+                    <a href="$url.feed.entries.rss"><img class="rssbadge"
                         src="$url.themeResource("andreas08", "images/feed-icon-16x16.jpg")"
                         alt="Click me to subscribe" /></a>
                 </div>
