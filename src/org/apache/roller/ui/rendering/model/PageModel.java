@@ -154,7 +154,7 @@ public class PageModel implements Model {
      * date they were published.
      * @param catArgument Category restriction (null or "nil" for no restriction)
      */
-    public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {        
+    public WeblogEntriesMapPager getWeblogEntriesPager(String catArgument) {        
         // category specified by argument wins over request parameter
         WeblogCategoryData chosenCat = null;
         if (catArgument != null) {
@@ -166,7 +166,7 @@ public class PageModel implements Model {
                 log.debug("Ignoring unknown category restriction");
             }
         }            
-        return new WeblogEntriesPagerImpl(  
+        return new WeblogEntriesMapPagerImpl(  
             weblog, 
             pageRequest.getWeblogPage(), 
             pageRequest.getWeblogEntry(),
@@ -182,7 +182,7 @@ public class PageModel implements Model {
      * days of entries.  Each value is a list of entry objects keyed by the 
      * date they were published.
      */
-    public WeblogEntriesPager getWeblogEntriesPager() {
+    public WeblogEntriesMapPager getWeblogEntriesPager() {
         return getWeblogEntriesPager(null);
     }
         

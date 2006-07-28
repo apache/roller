@@ -185,6 +185,18 @@ public class PageServlet extends HttpServlet {
             cacheKey = weblogPageCache.generateKey(pageRequest);
         }
         
+        // TODO 3.0: this is a hack, but we need to provide some way for 
+        // templates to use arbitrary request parameters.
+        if (request.getParameter("letter") != null) {
+            cacheKey += "_" + request.getParameter("letter");
+        }
+        if (request.getParameter("weblog") != null) {
+            cacheKey += "_" + request.getParameter("weblog");
+        }
+        if (request.getParameter("userName") != null) {
+            cacheKey += "_" + request.getParameter("userName");
+        }
+        
         // cached content checking
         if((!this.excludeOwnerPages || !pageRequest.isLoggedIn()) &&
                 request.getAttribute("skipCache") == null) {
@@ -225,7 +237,7 @@ public class PageServlet extends HttpServlet {
             if(page == null) {
                 page = new WeblogTemplate("templates/weblog/popupcomments.vm", weblog,
                         "Comments", "Comments", "dummy_link",
-                        "dummy_template", new Date(), "velocity", true, null);
+                        "dummy_template", new Date(), "velocity", true, false, null);
             }
             
         // If request specified the page, then go with that

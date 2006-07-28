@@ -1,8 +1,9 @@
 #includePage("_header")
-#tabbedMenu("users")  
-#set($maxResults = 15)
+#set($selected = "users") 
+#includePage("_tabbedMenu")   
+#set($maxResults = 15) 
 
-<div class="entriesBox">
+<div class="entriesBox"> 
    <div class="entriesBoxInner">
       <div class="entryBox">
 
@@ -12,10 +13,10 @@
 #if($pageModel.getRequestParameter("userName"))
     #set($userName = $pageModel.getRequestParameter("userName"))
     <a href="?letter=$stringUtils.left($userName,1)">Back to user directory</a>
-    #set($user = $sitePageModel.getUser($userName))
+    #set($user = $site.getUser($userName))
     #showUserProfile($user)
 #else 
-    #showUserDirectory()    
+    #showUserDirectory($maxResults)    
 #end
 
       </div>
@@ -34,9 +35,9 @@
         <div class="menu-tl">
             <div class="sidebarBody">
 
-             <h3>Newest users</h3>
+             <h3>Newest XXX users</h3>
              <hr size="1" noshade="noshade" />	
-             #set($newusers = $sitePageModel.getUsers(30, 0, 20))
+             #set($newusers = $site.getNewUsers($since, 20))
              <ul>
              #foreach($user in $newusers)
                 <li>$user.fullName (<a href="?userName=$user.userName" title="$user.dateCreated">$user.userName</a>)</li>

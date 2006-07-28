@@ -1,6 +1,7 @@
 #includePage("_header")
-#tabbedMenu("blogs")
-#set($maxResults = 15)
+#set($selected = "blogs") 
+#includePage("_tabbedMenu") 
+#set($maxResults = 15) 
 
 <div class="entriesBox">
     <div class="entriesBoxInner">  
@@ -9,10 +10,10 @@
         #if($pageModel.getRequestParameter("weblog"))
             #set($handle = $pageModel.getRequestParameter("weblog"))
             <a href="?letter=$stringUtils.left($handle,1)">Back to blog directory</a>
-            #set($weblog = $sitePageModel.getWeblog($handle))
+            #set($weblog = $site.getWeblog($handle))
             #showWeblogProfile($weblog)
         #else 
-            #showWeblogDirectory()    
+            #showWeblogDirectory($maxResults)    
         #end
         </div>
     </div>
@@ -28,7 +29,7 @@
              <h3>Newest blogs</h3>
              <hr size="1" noshade="noshade" />	
 
-             #set($newblogs = $sitePageModel.getWeblogs(30, 0, 20))
+             #set($newblogs = $site.getWeblogs(30, 20))
              <ul>
              #foreach($blog in $newblogs)
                 <li>$blog.name (<a href="?weblog=$blog.handle" title="$blog.dateCreated">$blog.handle</a>)</li>

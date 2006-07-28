@@ -28,43 +28,47 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 
 /**
- * Simple pager for list of weblog entries.
+ * Paging for weblogs.
  */
-public class WeblogEntriesPager extends AbstractPager {
-    private WebsiteData queryWeblog;
-    private UserData    queryUser;
-    private String      queryCat;
-    private List        entries;    
+public class WeblogsPager extends AbstractPager {
+    private List weblogs;    
+    private String letter = null;
     protected static Log log =
-            LogFactory.getFactory().getInstance(PlanetEntriesPager.class);
+            LogFactory.getFactory().getInstance(UsersPager.class);
     
-    public WeblogEntriesPager(            
-            WebsiteData    weblog,
-            WebsiteData    queryWeblog,
-            UserData       queryUser,
-            String         queryCat,
+    /** Creates a new instance of CommentPager */
+    public WeblogsPager(            
+            WebsiteData    weblog,             
             WeblogTemplate weblogPage,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
         super(weblog, weblogPage, locale, sinceDays, page, length);
-        this.queryWeblog = queryWeblog;
-        this.queryUser = queryUser;
-        this.queryCat = queryCat;
-        getEntries();
+        getWeblogs();
     }
     
-    public List getEntries() {
-        if (entries == null) {
+    /** Creates a new instance of CommentPager */
+    public WeblogsPager( 
+            String letter,
+            WebsiteData    weblog,             
+            WeblogTemplate weblogPage,
+            String         locale,
+            int            sinceDays,
+            int            page,
+            int            length) {
+        super(weblog, weblogPage, locale, sinceDays, page, length);
+        this.letter = letter;
+        getWeblogs();
+    }
+    
+    public List getWeblogs() {
+        if (weblogs == null) {
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
@@ -72,33 +76,27 @@ public class WeblogEntriesPager extends AbstractPager {
             Date startDate = cal.getTime();
             try {            
                 Roller roller = RollerFactory.getRoller();
-                WeblogManager wmgr = roller.getWeblogManager();
                 UserManager umgr = roller.getUserManager();
-                List rawEntries = wmgr.getWeblogEntries( 
-                    queryWeblog, 
-                    queryUser, 
-                    startDate, 
-                    new Date(), 
-                    queryCat, 
-                    WeblogEntryData.PUBLISHED, 
-                    "pubTime", 
-                    locale, 
-                    offset, 
-                    length + 1);
+                List weblogs = null;
+                if (letter == null) {
+                    weblogs = umgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length);
+                } else {
+                    weblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length);
+                }
                 int count = 0;
-                for (Iterator it = rawEntries.iterator(); it.hasNext();) {
-                    WeblogEntryData entry = (WeblogEntryData) it.next();
+                for (Iterator it = weblogs.iterator(); it.hasNext();) {
+                    WebsiteData website = (WebsiteData) it.next();
                     if (count++ < length) {
-                        results.add(WeblogEntryDataWrapper.wrap(entry));
+                        results.add(WebsiteDataWrapper.wrap(website));
                     } else {
                         more = true;
-                    }                      
+                    }                       
                 }
             } catch (Exception e) {
-                log.error("ERROR: fetching weblog entries list", e);
+                log.error("ERROR: fetching weblog list", e);
             }
-            entries = results;
+            weblogs = results;
         }
-        return entries;
-    }   
+        return weblogs;
+    }
 }

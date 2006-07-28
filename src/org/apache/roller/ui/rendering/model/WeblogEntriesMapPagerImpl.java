@@ -53,13 +53,13 @@ import org.apache.roller.util.Utilities;
  * Collection returned is a list of lists of entries, where each list of 
  * entries represents one day.
  */
-public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
+public class WeblogEntriesMapPagerImpl implements WeblogEntriesMapPager {
     
     /**
      * Behavior of the pager is detemined by the mode, which is itself a pager.
      * The mode may be LatestMode, SingleEntryMode, DayMode or MonthMode.
      */
-    protected WeblogEntriesPager mode = null;    
+    protected WeblogEntriesMapPager mode = null;    
     protected Map                entries = null;    
     protected WebsiteData        weblog = null;
     protected WeblogTemplate     weblogPage = null;
@@ -73,16 +73,17 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
     protected int                length = 0;
     
     protected static Log log =
-            LogFactory.getFactory().getInstance(WeblogEntriesPagerImpl.class);
+            LogFactory.getFactory().getInstance(WeblogEntriesMapPagerImpl.class);
     
     private static ResourceBundle bundle =
             ResourceBundle.getBundle("ApplicationResources");
+    
     private SimpleDateFormat dayFormat = new SimpleDateFormat(
             bundle.getString("weblogEntriesPager.day.dateFormat"));
     private SimpleDateFormat monthFormat = new SimpleDateFormat(
             bundle.getString("weblogEntriesPager.month.dateFormat"));
     
-    public WeblogEntriesPagerImpl(
+    public WeblogEntriesMapPagerImpl(
             WebsiteData        weblog, 
             WeblogTemplate     weblogPage,
             WeblogEntryData    entry,
@@ -167,7 +168,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
      * We're paging through the latest entries in the blog.
      * In this mode there's no prev/next collection.
      */
-    class LatestMode implements WeblogEntriesPager {
+    class LatestMode implements WeblogEntriesMapPager {
         
         public LatestMode() {
             LatestMode.this.getEntries();
@@ -237,7 +238,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
      * Next/prev return permalinks of next and previous weblog entries.
      * In this mode there's no prev/next collection.
      */
-    class SingleEntryMode implements WeblogEntriesPager {
+    class SingleEntryMode implements WeblogEntriesMapPager {
         String nextLink = null;
         WeblogEntryData nextEntry = null;
         WeblogEntryData prevEntry = null;
@@ -363,7 +364,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
      * Next/prev methods return links to offsets within day's entries.
      * Next/prev collection methods return links to next and previous days.
      */
-    class DayMode implements WeblogEntriesPager {
+    class DayMode implements WeblogEntriesMapPager {
         private Date day;
         private Date nextDay;
         private Date prevDay;
@@ -480,7 +481,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
      * Next/prev methods return links to offsets within month's entries.
      * Next/prev collection methods return links to next and previous months.
      */
-    class MonthMode implements WeblogEntriesPager {
+    class MonthMode implements WeblogEntriesMapPager {
         private Date month;
         private Date nextMonth;
         private Date prevMonth;

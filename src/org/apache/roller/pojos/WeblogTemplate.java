@@ -54,6 +54,7 @@ public class WeblogTemplate extends PersistentObject
     private Date lastModified = null;
     private String templateLanguage = null;
     private boolean hidden = false;
+    private boolean navbar = false;
     private String decoratorName = null;
     
     private WebsiteData weblog = null;
@@ -79,6 +80,7 @@ public class WeblogTemplate extends PersistentObject
             java.util.Date updateTime,
             String tempLang,
             boolean hid,
+            boolean navbar,
             String decorator) {
         this.id = id;
         this.weblog = website;
@@ -230,6 +232,19 @@ public class WeblogTemplate extends PersistentObject
     
     /**
      * @ejb:persistent-field
+     * @hibernate.property column="navbar" non-null="true" unique="false"
+     */
+    public boolean isNavbar() {
+        return navbar;
+    }
+
+    /** @ejb:persistent-field */
+    public void setNavbar(boolean navbar) {
+        this.navbar = navbar;
+    }
+    
+    /**
+     * @ejb:persistent-field
      * @hibernate.property column="hidden" non-null="true" unique="false"
      */
     public boolean isHidden() {
@@ -240,8 +255,7 @@ public class WeblogTemplate extends PersistentObject
     public void setHidden(boolean isHidden) {
         this.hidden = isHidden;
     }
-    
-    
+        
     /**
      * @ejb:persistent-field
      * @hibernate.property column="decorator" non-null="false" unique="false"

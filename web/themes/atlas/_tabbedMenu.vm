@@ -1,13 +1,12 @@
+## expects $selected to be set
 
-##-----------------------------------------------------------------------------
-#macro( tabbedMenu $selected )
 #set($menus = ["frontpage", "planet", "comments", "users", "blogs"])
 <table class="menuTabTable" cellspacing="0"><tbody><tr>
 #foreach($menu in $menus)
    #if($menu == "frontpage")
-      #set($link = "")
+      #set($link = "$url.home")
    #else
-      #set($link = $menu)
+      #set($link = "$url.home/page/$menu")
    #end
    #if($menu == $selected)
    <td class="menuTabSelected">
@@ -16,7 +15,7 @@
    #end
       <div class="menu-tr">
          <div class="menu-tl">
-            &nbsp;&nbsp;<a href="$baseURL/page/frontpage/$link">$menu</a>&nbsp;&nbsp; 
+            &nbsp;&nbsp;<a href="$link">$menu</a>&nbsp;&nbsp; 
          </div>
       </div>
    </td>	    
@@ -30,5 +29,5 @@
 </td>
 </tr>
 </tbody></table>
-#end 
+
 
