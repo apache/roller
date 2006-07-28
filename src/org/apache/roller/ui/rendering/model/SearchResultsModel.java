@@ -124,6 +124,11 @@ public class SearchResultsModel extends PageModel {
         return pager;
     }
     
+    // override page model and return search results pager
+    public WeblogEntriesMapPager getWeblogEntriesPager(String category) {
+        return pager;
+    }
+    
     private void convertHitsToEntries(Hits hits) throws RollerException {
         
         // determine offset
