@@ -196,7 +196,6 @@ public class WeblogPageCache {
             String queryString = paramsToString(pageRequest.getCustomParams());
             
             key.append("/qp=").append(queryString);
-            log.info(queryString);
         }
         
         return key.toString();

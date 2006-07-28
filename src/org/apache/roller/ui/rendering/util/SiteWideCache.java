@@ -222,7 +222,6 @@ public class SiteWideCache implements CacheHandler {
             String queryString = paramsToString(pageRequest.getCustomParams());
             
             key.append("/qp=").append(queryString);
-            log.info(queryString);
         }
 
         return key.toString();
