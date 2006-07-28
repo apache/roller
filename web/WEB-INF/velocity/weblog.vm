@@ -164,12 +164,12 @@ Show comments for weblog entry according to Roller configuration.
     #foreach( $comment in $comments )
         #if($comment.approved || $model.commentForm.preview)
             #set($content = $utils.encodeEmail($comment.content))
-            #if($config.getBooleanProperty("users.comments.escapehtml"))
+            #if($config.commentEscapeHtml)
                 #set($content = $utils.escapeHTML($content))
             #else 
                 #set($content = $utils.transformToHTMLSubset($utils.escapeHTML($content)))
             #end
-            #if($config.getBooleanProperty("users.comments.autoformat"))
+            #if($config.commentAutoFormat)
                 #set($content = $utils.autoformat($content))
             #end
             #set($content = $utils.addNofollow($content))
@@ -213,7 +213,13 @@ Show comments form for weblog entry.
     <div class="comments-form">
     <div class="comments-head">$text.get("macro.weblog.postcommentHeader")</div>
 
-    #if( $entry.commentsStillAllowed )
+#if( $entry.commentsStillAllowed )
+
+    #if( $cform.error )
+        <span class="error">$cform.message</span>
+    #elsif( !$cform.error && !$utils.isEmpty($cform.message) )
+        <span class="status">$cform.message</span>
+    #end
 
     <form method="post" action="$url.entry($entry.anchor)" focus="name" 
         name="form" onsubmit="fixURL(this); return validateComments(this)">    
@@ -234,7 +240,7 @@ Show comments form for weblog entry.
                 <input type="text" name="url" class="text large" value="$cform.url" size="50" maxlength="255" />
             </li>
 
-        #if ($config.getBooleanProperty("users.comments.emailnotify"))
+        #if ($config.commentEmailNotify)
             <li><input type="checkbox" class="checkbox" id="notify" name="notify" #if($cform.notify)CHECKED #end/>
                 <label for="notify" class="choice">$text.get( "macro.weblog.notifyMeOfComments" )</label>
             </li>
@@ -250,7 +256,7 @@ Show comments form for weblog entry.
             <li class="info">
                 <span class="comments-syntax-indicator">
                 $text.get( "macro.weblog.htmlsyntax" )
-                #if($config.getBooleanProperty("users.comments.escapehtml"))
+                #if($config.commentEscapeHtml)
                     <span class="disabled">$text.get( "macro.weblog.htmldisabled" )</span>
                 #else
                     <span class="enabled">$text.get( "macro.weblog.htmlenabled" )</span>
@@ -488,7 +494,7 @@ Show weblog's categories in specified parent category.
 #macro(showPageMenu $weblog)
     <ul class="rNavigationBar">
         <li class="rNavItem">
-            <a href="$url.site">$config.getProperty("site.shortName")</a>
+            <a href="$url.site">$config.siteName</a>
         </li>
         #foreach($iPage in $weblog.pages)
             #set($invisible = $iPage.Name.startsWith("_"))

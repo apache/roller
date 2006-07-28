@@ -191,7 +191,7 @@
             <td><input type="text" name="url" value="$cform.url" size="50" maxlength="255" /></td>
         </tr>
 
-        #if ($config.getBooleanProperty("users.comments.emailnotify"))
+        #if ($config.commentEmailNotify)
         <tr>
             <td></td>
             <td>
@@ -218,7 +218,7 @@
             <textarea name="content" cols="50" rows="10">$cform.content</textarea><br />
             <span class="comments-syntax-indicator">
             $text.get( "macro.weblog.htmlsyntax" )
-            #if($config.getBooleanProperty("users.comments.escapehtml"))
+            #if($config.commentEscapeHtml)
                 <span class="disabled">$text.get( "macro.weblog.htmldisabled" )</span>
             #else
                 <span class="enabled">$text.get( "macro.weblog.htmlenabled" )</span>

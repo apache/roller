@@ -86,12 +86,12 @@
         <link rel="alternate" type="text/html" href="$url.comment($comment.weblogEntry.anchor, $comment.timestamp)"/>
         <published>$utils.formatIso8601Date($comment.postTime)</published>
         <updated>$utils.formatIso8601Date($comment.postTime)</updated> 
-        #if($config.getBooleanProperty("users.comments.escapehtml"))
+        #if($config.commentEscapeHtml)
             #set($content = $utils.escapeHTML($utils.removeHTML($comment.content)))
         #else 
             #set($content = $utils.escapeHTML($utils.transformToHTMLSubset($utils.escapeHTML($comment.content))))
         #end
-        #if($config.getBooleanProperty("users.comments.autoformat"))
+        #if($config.commentAutoFormat)
             #set($content = $utils.autoformat($content))
         #end
         #set($content = $utils.addNofollow($content))
@@ -107,12 +107,12 @@
         <title>Re: $utils.escapeHTML($comment.weblogEntry.title)</title>
         <dc:creator>$utils.escapeHTML($utils.removeHTML($comment.name))</dc:creator>
         <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>
-        #if($config.getBooleanProperty("users.comments.escapehtml"))
+        #if($config.commentEscapeHtml)
             #set($content = $utils.escapeHTML($utils.removeHTML($comment.content)))
         #else 
             #set($content = $utils.escapeHTML($utils.transformToHTMLSubset($utils.escapeHTML($comment.content))))
         #end
-        #if($config.getBooleanProperty("users.comments.autoformat"))
+        #if($config.commentAutoFormat)
             #set($content = $utils.autoformat($content))
         #end
         #set($content = $utils.addNofollow($content))
