@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,8 +33,11 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.referrers.IncomingReferrer;
+import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
@@ -46,6 +50,7 @@ import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.ui.rendering.util.SiteWideCache;
 import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageCache;
+import org.apache.roller.util.SpamChecker;
 
  
 
@@ -59,8 +64,12 @@ public class PageServlet extends HttpServlet {
     
     private static Log log = LogFactory.getLog(PageServlet.class);
     
-    private boolean excludeOwnerPages = false;
+    // for referrer processing
+    private boolean processReferrers = true;
+    private static Pattern robotPattern = null;
     
+    // for caching
+    private boolean excludeOwnerPages = false;
     private WeblogPageCache weblogPageCache = null;
     private SiteWideCache siteWideCache = null;
     
@@ -82,6 +91,25 @@ public class PageServlet extends HttpServlet {
         
         // get a reference to the site wide cache
         this.siteWideCache = SiteWideCache.getInstance();
+        
+        // see if built-in referrer processing is enabled
+        this.processReferrers = 
+                RollerConfig.getBooleanProperty("referrers.processing.enabled");
+        
+        log.info("Referrer processing enabled = "+this.processReferrers);
+        
+        // check for possible robot pattern
+        String robotPatternStr = RollerConfig.getProperty("referrer.robotCheck.userAgentPattern");
+        if (robotPatternStr != null && robotPatternStr.length() > 0) {
+            // Parse the pattern, and store the compiled form.
+            try {
+                robotPattern = Pattern.compile(robotPatternStr);
+            } catch (Exception e) {
+                // Most likely a PatternSyntaxException; log and continue as if it is not set.
+                log.error("Error parsing referrer.robotCheck.userAgentPattern value '" +
+                        robotPatternStr + "'.  Robots will not be filtered. ", e);
+            }
+        }
     }
     
     
@@ -260,6 +288,17 @@ public class PageServlet extends HttpServlet {
         }
         
         
+        // do referrer processing, if it's enabled
+        if(this.processReferrers) {
+            boolean spam = this.processReferrer(request, pageRequest);
+            if(spam) {
+                if(!response.isCommitted()) response.reset();
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+        }
+        
+        
         // looks like we need to render content
         HashMap model = new HashMap();
         try {
@@ -383,6 +422,95 @@ public class PageServlet extends HttpServlet {
         
         // handle just like a GET request
         this.doGet(request, response);
+    }
+    
+    
+    /**
+     * Process the incoming request to extract referrer info and pass it on
+     * to the referrer processing queue for tracking.
+     *
+     * @returns true if referrer was spam, false otherwise
+     */
+    private boolean processReferrer(HttpServletRequest request,
+                                    WeblogPageRequest pageRequest) {
+        
+        // if this came from a robot then don't process it
+        if (robotPattern != null) {
+            String userAgent = request.getHeader("User-Agent");
+            if (userAgent != null && userAgent.length() > 0 && 
+                    robotPattern.matcher(userAgent).matches()) {
+                return false;
+            }
+        }
+        
+        // if this came from persons own blog then don't process it
+        String selfSiteFragment = "/"+pageRequest.getWeblogHandle();
+        if (request.getRequestURI().indexOf(selfSiteFragment) != -1) {
+            return false;
+        }
+        
+        String referrerUrl = request.getHeader("Referer");
+        StringBuffer reqsb = request.getRequestURL();
+        if (request.getQueryString() != null) {
+            reqsb.append("?");
+            reqsb.append(request.getQueryString());
+        }
+        String requestUrl = reqsb.toString();
+        
+        // validate the referrer
+        if (pageRequest != null && pageRequest.getWeblogHandle() != null) {
+            
+            // Base page URLs, with and without www.
+            String basePageUrlWWW =
+                    RollerRuntimeConfig.getAbsoluteContextURL() + "/" + pageRequest.getWeblogHandle();
+            String basePageUrl = basePageUrlWWW;
+            if ( basePageUrlWWW.startsWith("http://www.") ) {
+                // chop off the http://www.
+                basePageUrl = "http://"+basePageUrlWWW.substring(11);
+            }
+            
+            // ignore referrers coming from users own blog
+            if (referrerUrl == null ||
+                    (!referrerUrl.startsWith(basePageUrl) &&
+                    !referrerUrl.startsWith(basePageUrlWWW))) {
+                
+                // validate the referrer
+                if ( referrerUrl != null ) {
+                    // treat editor referral as direct
+                    int lastSlash = requestUrl.indexOf("/", 8);
+                    if (lastSlash == -1) lastSlash = requestUrl.length();
+                    String requestSite = requestUrl.substring(0, lastSlash);
+                    
+                    if (referrerUrl.matches(requestSite + ".*\\.do.*")) {
+                        referrerUrl = null;
+                    } else if(SpamChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
+                        return true;
+                    }
+                }
+
+            } else {
+                log.debug("Ignoring referer = "+referrerUrl);
+                return false;
+            }
+        }
+        
+        // referrer is valid, lets record it
+        try {
+            IncomingReferrer referrer = new IncomingReferrer();
+            referrer.setReferrerUrl(referrerUrl);
+            referrer.setRequestUrl(requestUrl);
+            referrer.setWeblogHandle(pageRequest.getWeblogHandle());
+            referrer.setWeblogAnchor(pageRequest.getWeblogAnchor());
+            referrer.setWeblogDateString(pageRequest.getWeblogDate());
+            
+            ReferrerQueueManager refQueue =
+                    RollerFactory.getRoller().getReferrerQueueManager();
+            refQueue.processReferrer(referrer);
+        } catch(Exception e) {
+            log.error("Error processing referrer", e);
+        }
+        
+        return false;
     }
     
 }

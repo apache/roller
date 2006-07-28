@@ -67,13 +67,6 @@ Note: this filter does nothing if an ip ban list is not configured. -->
     <url-pattern>/*</url-pattern>
 </filter-mapping>
 
-<!-- Referrer tracking.  only done for weblog pages -->
-<filter-mapping>
-    <filter-name>RefererFilter</filter-name>
-    <url-pattern>/roller-ui/rendering/page/*</url-pattern>
-    <dispatcher>FORWARD</dispatcher>
-</filter-mapping>
-
 
 <!-- Compression Filter -->
 <filter-mapping>
