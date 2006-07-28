@@ -217,7 +217,7 @@ public class URLModel implements Model {
     
     
     public String getRsd() {
-        return URLUtilities.getWeblogRsdURL(weblog, false);
+        return URLUtilities.getWeblogRsdURL(weblog, true);
     }
     
     
