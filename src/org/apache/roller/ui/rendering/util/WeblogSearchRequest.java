@@ -93,7 +93,8 @@ public class WeblogSearchRequest extends WeblogRequest {
             }
         }
         
-        if(request.getParameter("cat") != null) {
+        if(request.getParameter("cat") != null &&
+                request.getParameter("cat").trim().length() > 0) {
             this.weblogCategoryName = request.getParameter("cat");
             
             // all categories must start with a /
