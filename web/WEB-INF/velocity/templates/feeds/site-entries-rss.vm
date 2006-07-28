@@ -16,20 +16,20 @@
   directory of this distribution.
 
 *#<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/theme/styles/rss-xsl.jsp" media="screen"?>
 <rss version="2.0" 
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:atom="http://www.w3.org/2005/Atom" >
 <channel>
-  <title>$utils.escapeHTML($config.getConfigProperty("site.name"))</title>
-  <atom:subtitle type="html">$utils.escapeHTML($config.getConfigProperty("site.description"))</subtitle>
+  <title>$utils.escapeHTML($config.siteName)</title>
   <link>$url.absoluteSite</link>
   <atom:link rel="self" type="application/rss+xml" href="$url.feed.entries.rss($model.categoryPath, $model.excerpts)" />
-  <description>$utils.escapeHTML($config.getConfigProperty("site.description"))</description>
+  <description>$utils.escapeHTML($config.siteDescription)</description>
   <language>en-us</language>
-  <copyright>Copyright #formatDate("yyyy" $model.now)</copyright>
-  <lastBuildDate>$utilities.formatRfc822Date($model.now)</lastBuildDate>
+  <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
+  <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
   <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
-  #set($entries = $site.getWeblogEntries($null, $null, $cat, -1, 0, $config.getConfigProperty("site.newsfeeds.maxEntries")) )
+  #set($entries = $site.getWeblogEntries("nil", "nil", $model.categoryPath, 60, 0, $config.feedSize) )
   #showEntriesRSS20($entries)
 </channel>
 </rss>
