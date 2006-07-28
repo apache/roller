@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -189,7 +190,40 @@ public class WeblogPageCache {
             key.append("/user=").append(pageRequest.getAuthenticUser());
         }
         
+        // we allow for arbitrary query params for custom pages
+        if(pageRequest.getWeblogPageName() != null &&
+                pageRequest.getCustomParams().size() > 0) {
+            String queryString = paramsToString(pageRequest.getCustomParams());
+            
+            key.append("/qp=").append(queryString);
+            log.info(queryString);
+        }
+        
         return key.toString();
+    }
+    
+    
+    private String paramsToString(Map map) {
+        
+        if(map == null) {
+            return null;
+        }
+        
+        StringBuffer string = new StringBuffer();
+        
+        String key = null;
+        String[] value = null;
+        Iterator keys = map.keySet().iterator();
+        while(keys.hasNext()) {
+            key = (String) keys.next();
+            value = (String[]) map.get(key);
+            
+            if(value != null) {
+                string.append(",").append(key).append("=").append(value[0]);
+            }
+        }
+        
+        return Utilities.toBase64(string.toString().substring(1).getBytes());
     }
     
 }

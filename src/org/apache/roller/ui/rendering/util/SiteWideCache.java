@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +37,7 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.util.Utilities;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheHandler;
 import org.apache.roller.util.cache.CacheManager;
@@ -215,6 +217,14 @@ public class SiteWideCache implements CacheHandler {
             key.append("/user=").append(pageRequest.getAuthenticUser());
         }
         
+        // we allow for arbitrary query params for custom pages
+        if(pageRequest.getCustomParams().size() > 0) {
+            String queryString = paramsToString(pageRequest.getCustomParams());
+            
+            key.append("/qp=").append(queryString);
+            log.info(queryString);
+        }
+
         return key.toString();
     }
     
@@ -337,6 +347,30 @@ public class SiteWideCache implements CacheHandler {
      */
     public void invalidate(WeblogTemplate template) {
         // ignored
+    }
+    
+    
+    private String paramsToString(Map map) {
+        
+        if(map == null) {
+            return null;
+        }
+        
+        StringBuffer string = new StringBuffer();
+        
+        String key = null;
+        String[] value = null;
+        Iterator keys = map.keySet().iterator();
+        while(keys.hasNext()) {
+            key = (String) keys.next();
+            value = (String[]) map.get(key);
+            
+            if(value != null) {
+                string.append(",").append(key).append("=").append(value[0]);
+            }
+        }
+        
+        return Utilities.toBase64(string.toString().substring(1).getBytes());
     }
     
 }

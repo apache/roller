@@ -20,6 +20,8 @@ package org.apache.roller.ui.rendering.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -31,6 +33,7 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
+
 
 /**
  * Represents a request for a Roller weblog page.
@@ -53,6 +56,7 @@ public class WeblogPageRequest extends WeblogRequest {
     private String weblogCategoryName = null;
     private String weblogDate = null;
     private int pageNum = 0;
+    private Map customParams = new HashMap();
     
     // heavyweight attributes
     private WeblogEntryData weblogEntry = null;
@@ -203,6 +207,12 @@ public class WeblogPageRequest extends WeblogRequest {
             }
         }
         
+        // build customParams Map, we remove built-in params
+        customParams = new HashMap(request.getParameterMap());
+        customParams.remove("date");
+        customParams.remove("cat");
+        customParams.remove("page");
+            
         if(log.isDebugEnabled()) {
             log.debug("context = "+this.context);
             log.debug("weblogAnchor = "+this.weblogAnchor);
@@ -273,6 +283,14 @@ public class WeblogPageRequest extends WeblogRequest {
         this.pageNum = pageNum;
     }
 
+    public Map getCustomParams() {
+        return customParams;
+    }
+
+    public void setCustomParams(Map customParams) {
+        this.customParams = customParams;
+    }
+    
     public WeblogEntryData getWeblogEntry() {
         
         if(weblogEntry == null && weblogAnchor != null) {
