@@ -232,7 +232,7 @@ public final class URLUtilities {
             
             // other stuff only makes sense if there is a query
             if(category != null) {
-                params.put("cat", encode("cat"));
+                params.put("cat", encode(category));
             }
             if(pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
