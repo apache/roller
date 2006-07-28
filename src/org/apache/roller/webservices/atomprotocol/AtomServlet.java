@@ -51,7 +51,7 @@ import org.apache.roller.config.RollerConfig;
 /**
  * Atom Servlet implements Atom by calling a Roller independent handler.
  * @web.servlet name="AtomServlet"
- * @web.servlet-mapping url-pattern="/app/*"
+ * @web.servlet-mapping url-pattern="/roller-services/app/*"
  * @author David M Johnson
  */
 public class AtomServlet extends HttpServlet {
