@@ -65,7 +65,7 @@
             <div class="small" id="calendar">#showWeblogEntryCalendar($model.weblog "nil")</div>
             <div id="searchbar">
                 <h2>Search This Site</h2>
-                #showWeblogSearchForm($model.weblog)
+                #showWeblogSearchForm($model.weblog false)
             </div>
 
             <h2>Recent Entries</h2>
