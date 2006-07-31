@@ -30,19 +30,19 @@
 ##-----------------------------------------------------------------------------
 #macro( showEntry $entry )
 <div class="entry">
-    <span class="entryDetails">
+    <p class="entryDetails">
         <a href="$utils.escapeHTML($entry.permalink)">
         <b>$utils.removeHTML($entry.title)</b></a><br /> 
-        $entry.website.name 
+        <a href="$utils.escapeHTML($entry.website.URL)">$entry.website.name</a>
         #if($entry.category.name)| $entry.category.name #end
         #if($entry.pubTime)| #formatDate($text.get("macro.weblog.date.toStringFormat") $entry.pubTime) #end
         #if($entry.creator.userName)| By $entry.creator.userName #end
         <br/> 
-    </span>
-    <span class="entryDescription">
+    </p>
+    <p class="entryDescription">
         #set($content = $utils.removeHTML($entry.text))
         $utils.truncateNicely($content, 240, 260, "...")
-    </span>
+    </p>
 </div>
 #end
 
@@ -58,7 +58,7 @@
             #showEntry($entry)
         #end
     #end
-    <div class="nextPrev">
+    <div class="pagingcontrols">
     #if($pager.nextLink)
        <a href="$pager.nextLink">&lt; $pager.nextName</a>
     #end
@@ -155,7 +155,11 @@
 
     #set($weblogLetterMap = $site.getWeblogHandleLetterMap())
     <div class="letterMap">
+    <p>
+    #set($firstLetterDone = 0)
     #foreach($letter in $weblogLetterMap.keySet())
+        #if($firstLetterDone == 1) - #end
+        #set($firstLetterDone = 1)
         #set($letterCount = $weblogLetterMap.get($letter))
         #if($letter == $chosenLetter)<span style="font-size:120%; font-weight:bold">#end
         #if($letterCount > 0)
@@ -165,57 +169,64 @@
         #end
         #if($letter == $chosenLetter)</span>#end
     #end
+    </p>
     </div>
 
     #if($chosenLetter)
-        <h2 class="pageTitle">Weblogs starting with $chosenLetter</h2>
-        #set($weblogsPager = $site.getWeblogsByLetterPager($chosenLetter, $since, $pageLength))
-        <table class="rollertable">
+        #set($weblogsPager = $site.getWeblogsByLetterPager($chosenLetter, -1, $pageLength))
+        <table class="blogdirectory data">
             <thead>
                 <tr>
-                    <th>Handle</th>
-                    <th>Profile</th>
-                    <th>Name</th>
+                   <th scope="col" class="name">Blog Name</th>
+                   <th scope="col" class="description">Description</th>
                 </tr>
             </thead>
-        #foreach($weblog in $weblogsPager.weblogs)
+           <tbody>
+              #foreach($weblog in $weblogsPager.weblogs)
                <tr>
-                  <td><a href="$baseURL/$weblog.handle">$weblog.handle</a></td>
-                  <td><a href="?weblog=$weblog.handle">Profile</a></td>
-                  <td>$weblog.name</td>
+                  <th scope="row" class="name"><a href="$baseURL/$weblog.handle">$weblog.handle</a></th>
+                  <td class="description">$weblog.name</td>
                </tr>
-        #end 
+              #end 
+           </tbody>
+            <tfoot>
+               <tr class="pagingcontrols">
+                 <td class="pagingtext"></td>
+                 <td class="paginglinks">
+                    #if($weblogsPager.prevLink)
+                       <a href="$weblogsPager.prevLink?letter=$chosenLetter">&lt; $weblogsPager.prevName</a>
+                    #end
+                    #if($pager.nextLink && $pager.prevLink())
+                       &nbsp;|&nbsp;
+                    #end
+                    #if($weblogsPager.nextLink)
+                       <a href="$weblogsPager.nextLink?letter=$chosenLetter">$weblogsPager.nextLink &gt;</a>
+                    #end
+                 </td>
+              </tr>
+           </tfoot>
         </table>
-        #if($weblogsPager.prevLink)
-           <a href="$weblogsPager.prevLink?letter=$chosenLetter">&lt; $weblogsPager.prevName</a>
-        #end
-        #if($pager.nextLink && $pager.prevLink())
-           &nbsp;|&nbsp;
-        #end
-        #if($weblogsPager.nextLink)
-           <a href="$weblogsPager.nextLink?letter=$chosenLetter">$weblogsPager.nextLink &gt;</a>
-        #end
     #end
 #end
 
 ##-----------------------------------------------------------------------------
 #macro(showUserProfile $user)
     <h2 class="pageTitle">User: $user.fullName</h2>
-    <table>
+    <table class="blogprofile data">
         <tr>
-            <td>Username</td>
+            <th scope="row">Username</td>
             <td>$user.userName</td>
         </tr>
         <tr>
-            <td>Created</td>
+            <th scope="row">Created</td>
             <td>$user.dateCreated</td>
         </tr>
         <tr>
-            <td>Locale</td>
+            <th scope="row">Locale</td>
             <td>$user.locale</td>
         </tr>
         <tr>
-            <td>Timezone</td>
+            <th scope="row">Timezone</td>
             <td>$user.timeZone</td>
         </tr>
     </table>
@@ -290,7 +301,7 @@
 
     #if($chosenLetter)
         <h2 class="pageTitle">Users starting with $chosenLetter</h2>
-        #set($usersPager= $site.getUsersByLetterPager($chosenLetter, $since, $pageLength))
+        #set($usersPager= $site.getUsersByLetterPager($chosenLetter, -1, $pageLength))
         <table class="rollertable">
             <thead>
                 <tr>
