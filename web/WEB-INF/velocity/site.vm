@@ -48,12 +48,12 @@
 
 ##-----------------------------------------------------------------------------
 #macro(showEntriesPager $pager)
-    #if($pager.entries.size() > 0)
-        #set($entryCount = $pager.entries.size() - 1)
-        #set($startDate = $pager.entries.get(0).pubTime)
+    #if($pager.items.size() > 0)
+        #set($entryCount = $pager.items.size() - 1)
+        #set($startDate = $pager.items.get(0).pubTime)
         #set($endDate = $entries.get($entryCount).pubTime)
     #end
-    #foreach($entry in $pager.entries)
+    #foreach($entry in $pager.items)
         #if($velocityCount < $maxResults)
             #showEntry($entry)
         #end
@@ -120,7 +120,7 @@
 
     <h2 class="pageTitle">Recent posts</h2>
     #set($entriesPager = $site.getWeblogEntriesPager($weblog, $null, $null, 90, 5)) 
-    #if($entriesPager.entries.size() > 0)  
+    #if($entriesPager.items.size() > 0)  
         <table class="rollertable"> 
         <thead>
             <tr>
@@ -129,7 +129,7 @@
                 <th>Title</th>
             </tr>
         </thead>  
-        #foreach($entry in $entriesPager.entries)
+        #foreach($entry in $entriesPager.items)
             <tr>
                 <td>$entry.creator.userName</td>
                 <td>#formatDate($text.get("macro.weblog.date.toStringFormat") $entry.pubTime)</td>
@@ -182,7 +182,7 @@
                 </tr>
             </thead>
            <tbody>
-              #foreach($weblog in $weblogsPager.weblogs)
+              #foreach($weblog in $weblogsPager.items)
                <tr>
                   <th scope="row" class="name"><a href="$baseURL/$weblog.handle">$weblog.handle</a></th>
                   <td class="description">$weblog.name</td>
@@ -254,7 +254,7 @@
 
     <h2 class="pageTitle">User's recent posts</h2>
     #set($entriesPager = $site.getWeblogEntriesPager($null, $user, $null, 90, 5)) 
-    #if($entriesPager.entries.size() > 0)  
+    #if($entriesPager.items.size() > 0)  
         <table class="rollertable"> 
         <thead>
             <tr>
@@ -263,7 +263,7 @@
                 <th>Title</th>
             </tr>
         </thead>  
-        #foreach($entry in $entriesPager.entries)
+        #foreach($entry in $entriesPager.items)
             <tr>
                 <td><a href="$entry.website.url">$entry.website.handle</a></td>
                 <td>#formatDate($text.get("macro.weblog.date.toStringFormat") $entry.pubTime)</td>
@@ -310,7 +310,7 @@
                     <th>Full name</th>
                 </tr>
             </thead>
-        #foreach($u in $usersPager.users)
+        #foreach($u in $usersPager.items)
                <tr>
                   <td>$u.userName</td>
                   <td><a href="?userName=$u.userName">Profile</a></td>
@@ -332,13 +332,13 @@
 
 ##-----------------------------------------------------------------------------
 #macro(showCommentsPager $commentsPager)
-    #if($commentsPager.comments.size() > 0)
-        #set($commentCount = $commentsPager.comments.size() - 1)
-        #set($startDate = $commentsPager.comments.get(0).postTime)
-        #set($endDate = $commentsPager.comments.get($commentCount).postTime)
+    #if($commentsPager.items.size() > 0)
+        #set($commentCount = $commentsPager.items.size() - 1)
+        #set($startDate = $commentsPager.items.get(0).postTime)
+        #set($endDate = $commentsPager.items.get($commentCount).postTime)
     #end
 
-    #foreach($comment in $commentsPager.comments)
+    #foreach($comment in $commentsPager.items)
             <div class="entry">
                 <span class="entryDetails">
                     <a href="${baseURL}$utils.escapeHTML($comment.weblogEntry.permaLink)">

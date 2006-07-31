@@ -50,7 +50,7 @@ public class WeblogsPager extends AbstractPager {
             int            page,
             int            length) {
         super(weblog, weblogPage, locale, sinceDays, page, length);
-        getWeblogs();
+        getItems();
     }
     
     /** Creates a new instance of CommentPager */
@@ -64,10 +64,10 @@ public class WeblogsPager extends AbstractPager {
             int            length) {
         super(weblog, weblogPage, locale, sinceDays, page, length);
         this.letter = letter;
-        getWeblogs();
+        getItems();
     }
     
-    public List getWeblogs() {
+    public List getItems() {
         if (weblogs == null) {
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();

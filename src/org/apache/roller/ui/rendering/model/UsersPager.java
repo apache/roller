@@ -51,7 +51,7 @@ public class UsersPager extends AbstractPager {
             int            page,
             int            length) {
         super(weblog, weblogPage, locale, sinceDays, page, length);
-        getUsers();
+        getItems();
     }
     
     /** Creates a new instance of CommentPager */
@@ -65,10 +65,10 @@ public class UsersPager extends AbstractPager {
             int            length) {
         super(weblog, weblogPage, locale, sinceDays, page, length);
         this.letter = letter;
-        getUsers();
+        getItems();
     }
     
-    public List getUsers() {
+    public List getItems() {
         if (users == null) {
             List results = new ArrayList();
             try {            
