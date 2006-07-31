@@ -60,10 +60,10 @@ public class WeblogEntriesListPager extends AbstractPager {
         this.queryWeblog = queryWeblog;
         this.queryUser = queryUser;
         this.queryCat = queryCat;
-        getEntries();
+        getItems();
     }
     
-    public List getEntries() {
+    public List getItems() {
         if (entries == null) {
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();

@@ -52,10 +52,10 @@ public class CommentsPager extends AbstractPager {
             int            page,
             int            length) {
         super(weblog, weblogPage, locale, sinceDays, page, length);
-        getComments();
+        getItems();
     }
     
-    public List getComments() {
+    public List getItems() {
         if (comments == null) {
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();

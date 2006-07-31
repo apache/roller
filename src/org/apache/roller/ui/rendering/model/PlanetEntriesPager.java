@@ -57,10 +57,10 @@ public class PlanetEntriesPager extends AbstractPager {
         super(weblog, weblogPage, locale, sinceDays, page, length);
         this.feedURL = feedURL;
         this.groupHandle = groupHandle;
-        getEntries();
+        getItems();
     }
     
-    public List getEntries() {
+    public List getItems() {
         if (entries == null) {
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();
