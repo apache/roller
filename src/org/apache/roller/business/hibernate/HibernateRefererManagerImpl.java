@@ -277,7 +277,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             Query query = session.createQuery(
                 "select sum(r.dayHits) as s, w.id, w.name, w.handle  "
                +"from WebsiteData w, RefererData r "
-               +"where r.website=w and w.enabled=true and w.active=true and w.lastModified > :startDate"
+               +"where r.website=w and w.enabled=true and w.active=true and w.lastModified > :startDate "
                +"group by w.name, w.handle, w.id order by col_0_0_ desc"); 
             query.setParameter("startDate", startDate);
             
