@@ -73,7 +73,7 @@ public class SiteModel implements Model {
      * @param length    Max number of results to return
      */
     public Pager getWeblogEntriesPager(int sinceDays, int length) {
-        return new WeblogEntriesPager(
+        return new WeblogEntriesListPager(
             weblog, null, null, null,
             pageRequest.getWeblogPage(),
             pageRequest.getLocale(),
@@ -93,7 +93,7 @@ public class SiteModel implements Model {
      * @param length      Max number of results to return
      */   
     public Pager getWeblogEntriesPager(WebsiteData queryWeblog, UserData user, String cat, int sinceDays, int length) {
-        return new WeblogEntriesPager(
+        return new WeblogEntriesListPager(
             weblog, queryWeblog, user, cat,
             pageRequest.getWeblogPage(),
             pageRequest.getLocale(),

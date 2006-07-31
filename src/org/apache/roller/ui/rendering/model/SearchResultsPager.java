@@ -28,7 +28,7 @@ import org.apache.roller.util.URLUtilities;
 /**
  * Pager for navigating through search results.
  */
-public class SearchResultsPager implements WeblogEntriesMapPager {
+public class SearchResultsPager implements WeblogEntriesPager {
     
     private Map entries = null;
     

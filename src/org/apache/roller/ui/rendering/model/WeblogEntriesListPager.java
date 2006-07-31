@@ -38,7 +38,7 @@ import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 /**
  * Simple pager for list of weblog entries.
  */
-public class WeblogEntriesPager extends AbstractPager {
+public class WeblogEntriesListPager extends AbstractPager {
     private WebsiteData queryWeblog;
     private UserData    queryUser;
     private String      queryCat;
@@ -46,7 +46,7 @@ public class WeblogEntriesPager extends AbstractPager {
     protected static Log log =
             LogFactory.getFactory().getInstance(PlanetEntriesPager.class);
     
-    public WeblogEntriesPager(            
+    public WeblogEntriesListPager(            
             WebsiteData    weblog,
             WebsiteData    queryWeblog,
             UserData       queryUser,
