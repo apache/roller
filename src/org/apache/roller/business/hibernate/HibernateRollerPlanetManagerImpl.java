@@ -101,7 +101,7 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                 // figure website last update time
                 WeblogManager blogmgr = RollerFactory.getRoller().getWeblogManager();
                 
-                Date siteUpdated = blogmgr.getWeblogLastPublishTime(website);
+                Date siteUpdated = website.getLastModified();
                 if (siteUpdated == null) { // Site never updated, skip it
                     log.warn("Last-publish time null, skipping local feed ["
                             + website.getHandle() + "]");
