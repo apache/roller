@@ -217,7 +217,7 @@ Show comments form for weblog entry.
 
     #if( $cform.error )
         <span class="error">$cform.message</span>
-    #elsif( !$cform.error && !$utils.isEmpty($cform.message) )
+    #elseif( !$cform.error && !$utils.isEmpty($cform.message) )
         <span class="status">$cform.message</span>
     #end
 
