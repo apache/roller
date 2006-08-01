@@ -10,7 +10,7 @@
  *#
 #macro( showOneBookmark $bookmark)
     <li class="rFolderItem">
-    #if( $utilities.isNotEmpty( $bookmark.Image ))
+    #if( $utils.isNotEmpty( $bookmark.Image ))
       #if( $bookmark.Image.startsWith("http://") )
       <a href="$bookmark.url"><img alt="$bookmark.description"
          src="$bookmark.image" class="rBookmark" /></a>
@@ -19,7 +19,7 @@
          src="$url.resource($bookmark.image)" class="rBookmark" /></a>
       #end
     #else
-        #if( $utilities.isNotEmpty( $bookmark.FeedUrl ) )
+        #if( $utils.isNotEmpty( $bookmark.FeedUrl ) )
         <a href="$bookmark.feedUrl"><img class="smrssbadge"
            src="$url.site/images/smrssbadge.gif"
            alt="$text.get( "macro.bookmark.urlFeed" )"/></a>
@@ -39,7 +39,7 @@
  *#
 #macro( showFolder $folder $showFolderName $expandingFolder )
     #set( $bookmarks = $pageModel.getBookmarks($folder) )
-    #set( $divId = $utilities.stringReplace( $folder.Name, " ", "_" ) )
+    #set( $divId = $utils.replace( $folder.Name, " ", "_" ) )
     #if ( $showFolderName && $expandingFolder )
     <div class="rFolder">
        <a href="javascript:toggleFolder('$divId')">
