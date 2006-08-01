@@ -16,34 +16,34 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.pagers;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.wrapper.UserDataWrapper;
-import org.apache.roller.util.URLUtilities;
+import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.ui.rendering.model.*;
 
 /**
- * Paging for users.
+ * Paging for weblogs.
  */
-public class UsersPager extends AbstractPager {
-    private List users;    
+public class WeblogsPager extends AbstractPager {
+    private List weblogs;    
     private String letter = null;
     protected static Log log =
             LogFactory.getFactory().getInstance(UsersPager.class);
     
     /** Creates a new instance of CommentPager */
-    public UsersPager(            
+    public WeblogsPager(            
             WebsiteData    weblog,             
             WeblogTemplate weblogPage,
             String         locale,
@@ -55,7 +55,7 @@ public class UsersPager extends AbstractPager {
     }
     
     /** Creates a new instance of CommentPager */
-    public UsersPager(   
+    public WeblogsPager( 
             String letter,
             WebsiteData    weblog,             
             WeblogTemplate weblogPage,
@@ -69,31 +69,35 @@ public class UsersPager extends AbstractPager {
     }
     
     public List getItems() {
-        if (users == null) {
+        if (weblogs == null) {
             List results = new ArrayList();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DATE, -1 * sinceDays);
+            Date startDate = cal.getTime();
             try {            
                 Roller roller = RollerFactory.getRoller();
                 UserManager umgr = roller.getUserManager();
-                List rawUsers = null;
+                List weblogs = null;
                 if (letter == null) {
-                    rawUsers = umgr.getUsers(offset, length + 1);
+                    weblogs = umgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length);
                 } else {
-                    rawUsers = umgr.getUsersByLetter(letter.charAt(0), offset, length);
+                    weblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length);
                 }
                 int count = 0;
-                for (Iterator it = rawUsers.iterator(); it.hasNext();) {
-                    UserData user = (UserData) it.next();
+                for (Iterator it = weblogs.iterator(); it.hasNext();) {
+                    WebsiteData website = (WebsiteData) it.next();
                     if (count++ < length) {
-                        results.add(UserDataWrapper.wrap(user));
+                        results.add(WebsiteDataWrapper.wrap(website));
                     } else {
                         more = true;
-                    }                    
+                    }                       
                 }
             } catch (Exception e) {
-                log.error("ERROR: fetching user list", e);
+                log.error("ERROR: fetching weblog list", e);
             }
-            users = results;
+            weblogs = results;
         }
-        return users;
-    }   
+        return weblogs;
+    }
 }

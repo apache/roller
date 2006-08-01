@@ -16,25 +16,14 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.pagers;
 
-import java.util.Map;
+import java.util.List;
 
 /**
- * Pager for weblog entries, handles latest, single-entry, month and day views.
- * Collection returned is a list of lists of entries, where each list of 
- * entries represents one day.
+ * Common pager interface.
  */
-public interface WeblogEntriesPager {  
-        
-    /**
-     * A map of entries representing this collection.
-     *
-     * The collection is grouped by days of entries.  Each value is a list of
-     * entry objects keyed by the date they were published.
-     */
-    public Map getEntries();
-        
+public interface Pager {
     /**
      * Link value for returning to pager home
      */
@@ -65,25 +54,9 @@ public interface WeblogEntriesPager {
      */
     public String getPrevName();
     
-        /**
-     * Link value for next collection view
-     */
-    public String getNextCollectionLink();
-    
     /**
-     * Name for next collection view
+     * Get current list of items available from the pager.
      */
-    public String getNextCollectionName();  
-    
-    /**
-     * Link value for prev collection view
-     */
-    public String getPrevCollectionLink(); 
-    
-    /**
-     * Name for prev collection view
-     */
-    public String getPrevCollectionName(); 
+    public List getItems();
     
 }
-
