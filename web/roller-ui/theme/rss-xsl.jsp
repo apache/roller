@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  The ASF licenses this file to You
@@ -15,37 +16,73 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
   
---%><%@page contentType="text/xsl"%><%@page pageEncoding="UTF-8"%><?xml version="1.0" encoding="UTF-8"?>
+--%>
 <xsl:stylesheet 
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
    xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.0">
 <xsl:output method="xml"  />
 <xsl:template match="/">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
-<%@ page import="org.apache.roller.config.RollerConfig" %>
 <head>
 <title><xsl:value-of select="rss/channel/title"/></title>
-<link rel="stylesheet" type="text/css" media="all" 
-    href='<c:url value="/roller-ui/styles/layout.css"/>' />
-<link rel="stylesheet" type="text/css" media="all" 
-    href='<c:url value="/roller-ui/styles/roller.css"/>' />      
-<%
-String theme = theme = RollerConfig.getProperty("editor.theme");
-if (theme == null && session != null) {
-    theme = (String)session.getAttribute("look");
-}
-if (theme == null) {
-    theme = RollerConfig.getProperty("editor.theme");
-}
-if (session !=null) session.setAttribute("look", theme);
-%>
-<link rel="stylesheet" type="text/css" media="all" 
-    href="<%= request.getContextPath() %>/roller-ui/theme/<%= theme %>/colors.css" /> 
 <style type="text/css">
-#centercontent_wrap {
+#banner {
+    margin: 0px;
+    padding: 0px 0px 0px 0px;
+}
+.bannerBox {
     width: 100%;
+}
+.bannerStatusBox {
+    width: 100%;
+}
+.sidebarBodyHead {
+    height: 25px;
+}
+.searchSidebarHead {
+   height: 5px;
+}
+.searchSidebarBody {
+   margin: 0px 0px 0px 0px;
+}
+.searchSidebarBody input {
+   margin: 5px;
+}
+#menu {
+    padding: 0px 10px 0px 10px;
+}
+#content {
+}
+#centercontent_wrap {
+    float: left;
+    display: inline;
+    width: 100%;
+}
+#centercontent {
+    margin: 10px;
+}
+#rightcontent_wrap {
+    float: right;
+    display: inline;
+}
+#rightcontent {
+    margin: 10px;
+}
+#footer {
+    clear: both;
+    padding: 15px 0px 15px 0px;
+    font-size: smaller;
+    text-align: center;
+}
+.prop {
+    height: 300px;
+    float: right;
+    width: 1px;
+}
+.clear {
+    clear: both;
+    height: 1px;
+    overflow: hidden;
 }
 </style>
 </head>
@@ -78,10 +115,11 @@ if (session !=null) session.setAttribute("look", theme);
             
             <h1>RSS newsfeed</h1>
 
-<p>This page is an <a href="http://blogs.law.harvard.edu/tech/rss">RSS</a> newsfeed, an XML data representation of the latest entries
-from a Roller weblog. If you have a newsfeed reader or aggregator, you can 
-subscribe to this newsfeed. To subscribe, copy the URL from your browser's 
-address bar above and copy it into your newsfeed reader.</p>
+            <p>This page is an <a href="http://blogs.law.harvard.edu/tech/rss">RSS</a> 
+            newsfeed, an XML data representation of the latest entries
+            from a Roller weblog. If you have a newsfeed reader or aggregator, you can 
+            subscribe to this newsfeed. To subscribe, copy the URL from your browser's 
+            address bar above and copy it into your newsfeed reader.</p>
             
             <h1>Latest items in newsfeed [<xsl:value-of select="rss/channel/title"/>]</h1>
 
@@ -93,9 +131,9 @@ address bar above and copy it into your newsfeed reader.</p>
                 </li>
                 </xsl:for-each>
             </ol>
-<br />      
-<hr />
-<p>To learn more about RSS visit <a href="http://blogs.law.harvard.edu/tech/rss">http://blogs.law.harvard.edu/tech/rss</a></p>
+            <br />      
+            <hr />
+            <p>To learn more about RSS visit <a href="http://blogs.law.harvard.edu/tech/rss">http://blogs.law.harvard.edu/tech/rss</a></p>
 
         </div>
     </div>
