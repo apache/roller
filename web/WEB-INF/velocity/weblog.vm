@@ -175,7 +175,7 @@ Show comments for weblog entry according to Roller configuration.
             #set($content = $utils.addNofollow($content))
 
             <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
-                <span class="comment-count">${velocityCount}.</span> ${content}
+                <span class="comment-count">${velocityCount}.</span>
 
                 ${content}
 
