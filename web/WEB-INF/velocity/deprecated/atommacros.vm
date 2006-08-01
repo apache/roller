@@ -1,6 +1,5 @@
 #**
  * Atom feed links and badges.
- * @author  Dave Johnson 
  *#
 
 #**
@@ -9,9 +8,9 @@
  *#
 #macro( showAtomLinksForCategory $category )
     <a href="$url.feed.entries.atom">$text.get("macro.rss.all")</a><br />
-    #set( $categories = $pageModel.getWeblogCategories($category) )
+    #set( $categories = $model.weblog.getWeblogCategory($category).weblogCategories )
     #foreach( $cat in $categories )
-        <a href="$url.feed.entries.atom?cat=$cat.path">$cat.path</a><br />
+        <a href="$url.feed.entries.atom($cat.path, false)">$cat.path</a><br />
     #end
 #end
 
@@ -24,8 +23,7 @@
  * Show Atom Autodiscovery link for your weblog.
  *#
 #macro( showAtomAutodiscoveryLink )
-    <link rel="alternate" type="application/atom+xml"
-        title="Atom" href="$absBaseURL/atom/${website.handle}" />
+    <link rel="alternate" type="application/atom+xml" title="Atom" href="$url.feed.entries.atom" />
 #end
 
 #**
@@ -33,5 +31,5 @@
  *#
 #macro( showAtomBadge )
     <a href="$url.feed.entries.atom"><img class="atombadge"
-        src="$ctxPath/images/atombadge.jpeg" alt="XML" /></a>
+        src="$url.site/images/atombadge.jpeg" alt="XML" /></a>
 #end

@@ -1,6 +1,5 @@
 #**
  * RSS feed links and badges.
- * @author  Lance Lavandowska (conversion to Velocimacros)
  *#
 
 #**
@@ -8,12 +7,10 @@
  * of the specified category.
  *#
 #macro( showRSSLinksForCategory $category )
-    <a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a>
-    [<a href="$url.feed.entries.rss">$text.get("macro.rss.excerpts")</a>]<br />
-    #set( $categories = $pageModel.getWeblogCategories($category) )
+    <a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a><br />
+    #set( $categories = $model.weblog.getWeblogCategory($category).weblogCategories )
     #foreach( $cat in $categories )
-        <a href="$url.feed.entries.rss">$cat.path</a>
-        [<a href="$url.feed.entries.rss">$text.get("macro.rss.excerpts")</a>]<br />
+        <a href="$url.feed.entries.rss($cat.path, false)">$cat.path</a><br />
     #end
 #end
 
@@ -26,8 +23,7 @@
  * Show RSS Autodiscovery link for your weblog.
  *#
 #macro( showRSSAutodiscoveryLink )
-    <link rel="alternate" type="application/rss+xml"
-        title="RSS" href="$absBaseURL/rss/${website.handle}" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="$url.feed.entries.rss" />
 #end
 
 #**
@@ -35,5 +31,5 @@
  *#
 #macro( showRSSBadge )
     <a href="$url.feed.entries.rss"><img class="rssbadge"
-        src="$ctxPath/images/rssbadge.gif" alt="XML" /></a>
+        src="$url.site/images/rssbadge.gif" alt="XML" /></a>
 #end
