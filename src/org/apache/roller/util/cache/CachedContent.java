@@ -52,7 +52,8 @@ public class CachedContent implements Serializable {
     
     
     /**
-     * Get the content cached in this object as a byte array.
+     * Get the content cached in this object as a byte array.  If you convert
+     * this back to a string yourself, be sure to re-encode in "UTF-8".
      *
      * NOTE: the content is only a representation of the data written to the
      *       enclosed Writer up until the last call to flush().
@@ -69,7 +70,12 @@ public class CachedContent implements Serializable {
      *       enclosed Writer up until the last call to flush().
      */
     public String getContentAsString() {
-        return new String(this.content);
+        try {
+            return new String(this.content,"UTF-8");
+        } catch (UnsupportedEncodingException uex) {
+            // shouldn't ever happen - violates Java Spec.
+            throw new RuntimeException(uex);
+        }
     }
     
     
