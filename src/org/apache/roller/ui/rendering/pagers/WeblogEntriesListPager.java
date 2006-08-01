@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.pagers;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,38 +25,42 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.model.PlanetManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.PlanetEntryData;
-import org.apache.roller.pojos.PlanetGroupData;
+import org.apache.roller.model.UserManager;
+import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.wrapper.PlanetEntryDataWrapper;
+import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.ui.rendering.model.*;
 
 /**
- * Paging for planet entries.
+ * Simple pager for list of weblog entries.
  */
-public class PlanetEntriesPager extends AbstractPager {
-    private String feedURL;
-    private String groupHandle;
-    private List entries;    
+public class WeblogEntriesListPager extends AbstractPager {
+    private WebsiteData queryWeblog;
+    private UserData    queryUser;
+    private String      queryCat;
+    private List        entries;    
     protected static Log log =
             LogFactory.getFactory().getInstance(PlanetEntriesPager.class);
     
-    /** Creates a new instance of CommentPager */
-    public PlanetEntriesPager(   
-            String         feedURL,
-            String         groupHandle,  
+    public WeblogEntriesListPager(            
             WebsiteData    weblog,
+            WebsiteData    queryWeblog,
+            UserData       queryUser,
+            String         queryCat,
             WeblogTemplate weblogPage,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
         super(weblog, weblogPage, locale, sinceDays, page, length);
-        this.feedURL = feedURL;
-        this.groupHandle = groupHandle;
+        this.queryWeblog = queryWeblog;
+        this.queryUser = queryUser;
+        this.queryCat = queryCat;
         getItems();
     }
     
@@ -66,31 +70,33 @@ public class PlanetEntriesPager extends AbstractPager {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DATE, -1 * sinceDays);
-            Date startDate = cal.getTime();        
-            try {
+            Date startDate = cal.getTime();
+            try {            
                 Roller roller = RollerFactory.getRoller();
-                PlanetManager planetManager = roller.getPlanetManager();
-                PlanetGroupData group = planetManager.getGroup(groupHandle);
-                List rawEntries = null; 
-                if (feedURL != null) {
-                    rawEntries = planetManager.getFeedEntries(feedURL, offset, length);
-                } else if (groupHandle == null) {
-                    rawEntries = planetManager.getAggregation(startDate, null, offset, length);
-                } else {
-                    rawEntries = planetManager.getAggregation(group, startDate, null, offset, length); 
-                }
+                WeblogManager wmgr = roller.getWeblogManager();
+                UserManager umgr = roller.getUserManager();
+                List rawEntries = wmgr.getWeblogEntries( 
+                    queryWeblog, 
+                    queryUser, 
+                    startDate, 
+                    new Date(), 
+                    queryCat, 
+                    WeblogEntryData.PUBLISHED, 
+                    "pubTime", 
+                    locale, 
+                    offset, 
+                    length + 1);
                 int count = 0;
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
-                    PlanetEntryData entry = (PlanetEntryData) it.next();
+                    WeblogEntryData entry = (WeblogEntryData) it.next();
                     if (count++ < length) {
-                        PlanetEntryDataWrapper wrapped = PlanetEntryDataWrapper.wrap(entry);
-                        results.add(wrapped);
+                        results.add(WeblogEntryDataWrapper.wrap(entry));
                     } else {
                         more = true;
-                    }    
+                    }                      
                 }
             } catch (Exception e) {
-                log.error("ERROR: get aggregation", e);
+                log.error("ERROR: fetching weblog entries list", e);
             }
             entries = results;
         }

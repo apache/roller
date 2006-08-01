@@ -40,6 +40,8 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryWrapperComparator;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.ui.rendering.pagers.SearchResultsPager;
+import org.apache.roller.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.util.DateUtil;
 

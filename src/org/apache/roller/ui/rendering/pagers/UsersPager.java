@@ -16,11 +16,9 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.pagers;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -28,23 +26,24 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.CommentData;
+import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.wrapper.CommentDataWrapper;
+import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.util.URLUtilities;
 
 /**
- * Provides paging for comments.
+ * Paging for users.
  */
-public class CommentsPager extends AbstractPager {
-    private List comments = null;
+public class UsersPager extends AbstractPager {
+    private List users;    
+    private String letter = null;
     protected static Log log =
-            LogFactory.getFactory().getInstance(CommentsPager.class);
+            LogFactory.getFactory().getInstance(UsersPager.class);
     
     /** Creates a new instance of CommentPager */
-    public CommentsPager(            
+    public UsersPager(            
             WebsiteData    weblog,             
             WeblogTemplate weblogPage,
             String         locale,
@@ -55,33 +54,46 @@ public class CommentsPager extends AbstractPager {
         getItems();
     }
     
+    /** Creates a new instance of CommentPager */
+    public UsersPager(   
+            String letter,
+            WebsiteData    weblog,             
+            WeblogTemplate weblogPage,
+            String         locale,
+            int            sinceDays,
+            int            page,
+            int            length) {
+        super(weblog, weblogPage, locale, sinceDays, page, length);
+        this.letter = letter;
+        getItems();
+    }
+    
     public List getItems() {
-        if (comments == null) {
+        if (users == null) {
             List results = new ArrayList();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1 * sinceDays);
-            Date startDate = cal.getTime();
             try {            
                 Roller roller = RollerFactory.getRoller();
-                WeblogManager wmgr = roller.getWeblogManager();
-                List entries = wmgr.getComments( 
-                    null, null, null, startDate, new Date(), 
-                    Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, true, offset, length + 1);
+                UserManager umgr = roller.getUserManager();
+                List rawUsers = null;
+                if (letter == null) {
+                    rawUsers = umgr.getUsers(offset, length + 1);
+                } else {
+                    rawUsers = umgr.getUsersByLetter(letter.charAt(0), offset, length);
+                }
                 int count = 0;
-                for (Iterator it = entries.iterator(); it.hasNext();) {
-                    CommentData comment = (CommentData) it.next();
+                for (Iterator it = rawUsers.iterator(); it.hasNext();) {
+                    UserData user = (UserData) it.next();
                     if (count++ < length) {
-                        results.add(CommentDataWrapper.wrap(comment));
+                        results.add(UserDataWrapper.wrap(user));
                     } else {
                         more = true;
-                    }                                
+                    }                    
                 }
             } catch (Exception e) {
-                log.error("ERROR: fetching comment list", e);
+                log.error("ERROR: fetching user list", e);
             }
-            comments = results;
+            users = results;
         }
-        return comments;
+        return users;
     }   
 }

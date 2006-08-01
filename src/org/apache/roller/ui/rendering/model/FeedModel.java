@@ -41,6 +41,7 @@ import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 
 /**
  * Model which provides information needed to render a feed.
+ * Returns site-wide feeds when weblog is a
  */
 public class FeedModel implements Model {
     
@@ -121,7 +122,8 @@ public class FeedModel implements Model {
         try {             
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
-            List entries = wmgr.getWeblogEntries(weblog,
+            List entries = wmgr.getWeblogEntries(
+                    RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle()) ? null : weblog,
                     null, 
                     null, 
                     new Date(), 
@@ -147,7 +149,7 @@ public class FeedModel implements Model {
      * the weblog.entryDisplayCount.
      */
     public List getComments() {
-        
+            
         // Display same number of entries in feed as displayed on page
         int entryCount = weblog.getEntryDisplayCount();
         
@@ -163,7 +165,7 @@ public class FeedModel implements Model {
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
             List recent = wmgr.getComments(
-                    weblog,
+                    RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle()) ? null : weblog,
                     null,          // weblog entry
                     null,          // search String
                     null,          // startDate

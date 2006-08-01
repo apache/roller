@@ -31,6 +31,8 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.PlanetSubscriptionDataWrapper;
+import org.apache.roller.ui.rendering.pagers.Pager;
+import org.apache.roller.ui.rendering.pagers.PlanetEntriesPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 

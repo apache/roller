@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.pagers;
 
 import java.util.List;
 import org.apache.roller.pojos.WeblogTemplate;

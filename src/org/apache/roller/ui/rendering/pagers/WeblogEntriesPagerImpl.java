@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.pagers;
 
 import java.text.MessageFormat;
 import java.text.ParsePosition;
@@ -43,6 +43,7 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.ui.rendering.model.*;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;

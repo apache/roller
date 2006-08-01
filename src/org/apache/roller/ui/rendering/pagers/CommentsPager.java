@@ -16,33 +16,35 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.model;
+package org.apache.roller.ui.rendering.pagers;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.pojos.wrapper.CommentDataWrapper;
+import org.apache.roller.util.URLUtilities;
 
 /**
- * Paging for weblogs.
+ * Provides paging for comments.
  */
-public class WeblogsPager extends AbstractPager {
-    private List weblogs;    
-    private String letter = null;
+public class CommentsPager extends AbstractPager {
+    private List comments = null;
     protected static Log log =
-            LogFactory.getFactory().getInstance(UsersPager.class);
+            LogFactory.getFactory().getInstance(CommentsPager.class);
     
     /** Creates a new instance of CommentPager */
-    public WeblogsPager(            
+    public CommentsPager(            
             WebsiteData    weblog,             
             WeblogTemplate weblogPage,
             String         locale,
@@ -50,25 +52,11 @@ public class WeblogsPager extends AbstractPager {
             int            page,
             int            length) {
         super(weblog, weblogPage, locale, sinceDays, page, length);
-        getItems();
-    }
-    
-    /** Creates a new instance of CommentPager */
-    public WeblogsPager( 
-            String letter,
-            WebsiteData    weblog,             
-            WeblogTemplate weblogPage,
-            String         locale,
-            int            sinceDays,
-            int            page,
-            int            length) {
-        super(weblog, weblogPage, locale, sinceDays, page, length);
-        this.letter = letter;
         getItems();
     }
     
     public List getItems() {
-        if (weblogs == null) {
+        if (comments == null) {
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
@@ -76,27 +64,24 @@ public class WeblogsPager extends AbstractPager {
             Date startDate = cal.getTime();
             try {            
                 Roller roller = RollerFactory.getRoller();
-                UserManager umgr = roller.getUserManager();
-                List weblogs = null;
-                if (letter == null) {
-                    weblogs = umgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length);
-                } else {
-                    weblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length);
-                }
+                WeblogManager wmgr = roller.getWeblogManager();
+                List entries = wmgr.getComments( 
+                    null, null, null, startDate, new Date(), 
+                    Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, true, offset, length + 1);
                 int count = 0;
-                for (Iterator it = weblogs.iterator(); it.hasNext();) {
-                    WebsiteData website = (WebsiteData) it.next();
+                for (Iterator it = entries.iterator(); it.hasNext();) {
+                    CommentData comment = (CommentData) it.next();
                     if (count++ < length) {
-                        results.add(WebsiteDataWrapper.wrap(website));
+                        results.add(CommentDataWrapper.wrap(comment));
                     } else {
                         more = true;
-                    }                       
+                    }                                
                 }
             } catch (Exception e) {
-                log.error("ERROR: fetching weblog list", e);
+                log.error("ERROR: fetching comment list", e);
             }
-            weblogs = results;
+            comments = results;
         }
-        return weblogs;
-    }
+        return comments;
+    }   
 }
