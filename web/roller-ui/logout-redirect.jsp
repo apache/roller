@@ -25,7 +25,7 @@ request.getSession().removeAttribute(RollerSession.ROLLER_SESSION);
 request.getSession().invalidate(); 
 
 Cookie terminate = new Cookie(TokenBasedRememberMeServices.ACEGI_SECURITY_HASHED_REMEMBER_ME_COOKIE_KEY, null);
-
+terminate.setPath(request.getContextPath());
 terminate.setMaxAge(0);
 response.addCookie(terminate);
 
