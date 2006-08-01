@@ -8,7 +8,7 @@
  * @param dateFormat Date format to be used (see java.text.SimpleDateFormat).
  * @param date Date object to be formatted (see java.util.Date).
  *#
-#macro( formatDate $dateFormat $date )$dateFormatter.applyPattern($dateFormat)#if ($date)$dateFormatter.format( $date )#else$dateFormat#end#end
+#macro( formatDate $dateFormat $date ) $utils.formatDate($date, $dateFormat) #end
 
 #**
  * Show Roller version number string.
@@ -92,5 +92,5 @@
  * Evaluate string as a Velocity template.
  * @param str String to be evaluated.
  *#
-#macro( evaluateString $str )$pageHelper.evaluateString( $str )#end
+#macro( evaluateString $str ) $str #end
 
