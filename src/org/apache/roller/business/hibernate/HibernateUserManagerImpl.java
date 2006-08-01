@@ -814,9 +814,7 @@ public class HibernateUserManagerImpl implements UserManager {
                     "select count(user) from UserData user where upper(user.userName) like '"+lc.charAt(i)+"%'");
                 List row = query.list();
                 Integer count = (Integer)row.get(0);
-                if (count.intValue() > 0) {
-                    results.put(new String(new char[]{lc.charAt(i)}), count);
-                }
+                results.put(new String(new char[]{lc.charAt(i)}), count);
             }
             return results;
         } catch (Throwable pe) {
