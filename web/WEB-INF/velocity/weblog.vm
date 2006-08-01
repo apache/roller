@@ -191,7 +191,7 @@ Show comments for weblog entry according to Roller configuration.
 
                 $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
 
-                <a href="$url.comment($entry.anchor, $velocityCount)"
+                <a href="$url.comment($entry.anchor, $comment.timestamp)"
                    class="entrypermalink"
                    title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
                 </p>
