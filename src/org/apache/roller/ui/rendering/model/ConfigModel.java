@@ -93,6 +93,10 @@ public class ConfigModel implements Model {
         return getIntProperty("site.newsfeeds.maxEntries");
     }
     
+    public boolean getFeedStyle() {
+        return getBooleanProperty("site.newsfeeds.styledFeeds");
+    }
+            
     public boolean getCommentAutoFormat() {
         return getBooleanProperty("users.comments.autoformat");
     }

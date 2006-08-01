@@ -26,6 +26,14 @@
 <title><xsl:value-of select="atom:feed/atom:title"/></title>
 
 <style type="text/css">
+body {
+    background: white;
+    margin: 0px;
+    padding: 0px;
+    font: small Verdana,Arial,Sans-serif;
+    font: small/1.5em Verdana, Arial, Helvetica, sans-serif;
+    line-height: 1.2em;
+}
 #banner {
     margin: 0px;
     padding: 0px 0px 0px 0px;
@@ -83,6 +91,65 @@
     clear: both;
     height: 1px;
     overflow: hidden;
+}
+.bannerStatusBox a, .bannerStatusBox a {
+    font-weight: bold;
+}
+.bannerLeft {
+    padding: 4px 15px 4px 10px;
+}
+.bannerRight {
+    padding: 4px 10px 4px 15px;
+    text-align: right;
+}
+.bannerBox {
+    width: 100%;
+    background: #f00;
+}
+.bannerBox {
+    background: url("two-banner.gif") repeat-x top;
+}
+.bannerStatusBox {
+    background: #ad3431;
+    color: white;
+}
+.bannerStatusBox a {
+    color: white;
+}
+.bannerStatusBox a:link {
+    color: white;
+}
+.bannerStatusBox a:visited {
+    color: white;
+}
+h1 {
+    color: #ad3537;
+}
+h2 {
+    color: #ad3537;
+}
+h3 {
+    background: transparent;
+    color: #ad3537;
+    font-weight: bold;
+}
+a:link {
+    color: #ad3537;
+}
+a:visited {
+    color: #ad3537;
+}
+.subtitle span {
+    color: #ad3431;
+}
+table.rollertable th, table.rollertable th {
+    background: #c6ab74;
+}
+table.rollertable td, table.rollertable tbody td {
+    border: 1px solid #c6ab74;
+}
+a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
+   color: #ad3537;
 }
 </style>
 </head>

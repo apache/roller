@@ -38,6 +38,11 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
+import org.apache.roller.ui.rendering.pagers.CommentsPager;
+import org.apache.roller.ui.rendering.pagers.Pager;
+import org.apache.roller.ui.rendering.pagers.UsersPager;
+import org.apache.roller.ui.rendering.pagers.WeblogEntriesListPager;
+import org.apache.roller.ui.rendering.pagers.WeblogsPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
 
