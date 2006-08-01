@@ -52,7 +52,6 @@ import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageCache;
 import org.apache.roller.util.SpamChecker;
 
- 
 
 /**
  * Provides access to weblog pages.
@@ -177,24 +176,24 @@ public class PageServlet extends HttpServlet {
         }
         
         
+        // do referrer processing, if it's enabled
+        if(this.processReferrers) {
+            boolean spam = this.processReferrer(request, pageRequest);
+            if(spam) {
+                log.debug("spammer, giving 'em a 403");
+                if(!response.isCommitted()) response.reset();
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+        }
+        
+        
         // generate cache key
         String cacheKey = null;
         if(isSiteWide) {
             cacheKey = siteWideCache.generateKey(pageRequest);
         } else {
             cacheKey = weblogPageCache.generateKey(pageRequest);
-        }
-        
-        // TODO 3.0: this is a hack, but we need to provide some way for 
-        // templates to use arbitrary request parameters.
-        if (request.getParameter("letter") != null) {
-            cacheKey += "_" + request.getParameter("letter");
-        }
-        if (request.getParameter("weblog") != null) {
-            cacheKey += "_" + request.getParameter("weblog");
-        }
-        if (request.getParameter("userName") != null) {
-            cacheKey += "_" + request.getParameter("userName");
         }
         
         // cached content checking
@@ -297,17 +296,6 @@ public class PageServlet extends HttpServlet {
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
-        }
-        
-        
-        // do referrer processing, if it's enabled
-        if(this.processReferrers) {
-            boolean spam = this.processReferrer(request, pageRequest);
-            if(spam) {
-                if(!response.isCommitted()) response.reset();
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
         }
         
         
@@ -447,19 +435,16 @@ public class PageServlet extends HttpServlet {
     private boolean processReferrer(HttpServletRequest request,
                                     WeblogPageRequest pageRequest) {
         
+        log.debug("processing referrer for "+request.getRequestURI());
+        
         // if this came from a robot then don't process it
         if (robotPattern != null) {
             String userAgent = request.getHeader("User-Agent");
             if (userAgent != null && userAgent.length() > 0 && 
                     robotPattern.matcher(userAgent).matches()) {
+                log.debug("skipping referrer from robot");
                 return false;
             }
-        }
-        
-        // if this came from persons own blog then don't process it
-        String selfSiteFragment = "/"+pageRequest.getWeblogHandle();
-        if (request.getRequestURI().indexOf(selfSiteFragment) != -1) {
-            return false;
         }
         
         String referrerUrl = request.getHeader("Referer");
@@ -469,6 +454,15 @@ public class PageServlet extends HttpServlet {
             reqsb.append(request.getQueryString());
         }
         String requestUrl = reqsb.toString();
+        
+        log.debug("referrer = "+referrerUrl);
+        
+        // if this came from persons own blog then don't process it
+        String selfSiteFragment = "/"+pageRequest.getWeblogHandle();
+        if (referrerUrl != null && referrerUrl.indexOf(selfSiteFragment) != -1) {
+            log.debug("skipping referrer from own blog");
+            return false;
+        }
         
         // validate the referrer
         if (pageRequest != null && pageRequest.getWeblogHandle() != null) {
