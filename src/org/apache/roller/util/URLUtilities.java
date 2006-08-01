@@ -200,7 +200,7 @@ public final class URLUtilities {
         url.append("feed/").append(type).append("/").append(format);
         
         Map params = new HashMap();
-        if(category != null) {
+        if(category != null && category.trim().length() > 0) {
             params.put("cat", encode(category));
         }
         if(excerpts) {
