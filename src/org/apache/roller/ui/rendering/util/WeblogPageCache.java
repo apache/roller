@@ -123,9 +123,9 @@ public class WeblogPageCache {
      * Generate a cache key from a parsed weblog page request.
      * This generates a key of the form ...
      *
-     * <handle>[/anchor][/language][/user]
+     * <handle>/<ctx>[/anchor][/language][/user]
      *   or
-     * <handle>[/weblogPage][/date][/category][/language][/user]
+     * <handle>/<ctx>[/weblogPage][/date][/category][/language][/user]
      *
      *
      * examples ...
@@ -144,6 +144,7 @@ public class WeblogPageCache {
         key.append(pageRequest.getWeblogHandle());
         
         if(pageRequest.getWeblogAnchor() != null) {
+            
             String anchor = null;
             try {
                 // may contain spaces or other bad chars
@@ -152,11 +153,11 @@ public class WeblogPageCache {
                 // ignored
             }
             
-            key.append("/").append(anchor);
+            key.append("/entry/").append(anchor);
         } else {
             
             if(pageRequest.getWeblogPageName() != null) {
-                key.append("/").append(pageRequest.getWeblogPageName());
+                key.append("/page/").append(pageRequest.getWeblogPageName());
             }
             
             if(pageRequest.getWeblogDate() != null) {
