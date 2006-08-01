@@ -130,9 +130,10 @@ public class FeedServlet extends HttpServlet {
         // set content type
         String accepts = request.getHeader("Accept");
         String userAgent = request.getHeader("User-Agent");
-        if (accepts != null && userAgent != null 
-            && accepts.indexOf("*/*") != -1 && userAgent.startsWith("Mozilla")) {
-            // client is a browser and now that we offer styled feeds we want 
+        if (RollerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds") && 
+            accepts != null && accepts.indexOf("*/*") != -1 && 
+            userAgent != null && userAgent.startsWith("Mozilla")) {
+            // client is a browser and feed style is enabled so we want 
             // browsers to load the page rather than popping up the download 
             // dialog, so we provide a content-type that browsers will display
             response.setContentType("text/xml");

@@ -16,7 +16,7 @@
   directory of this distribution.
 
 *#<?xml version="1.0" encoding='utf-8'?>
-<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/theme/styles/atom-xsl.jsp" media="screen"?>
+#if($config.feedStyle)<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/roller-ui/styles/atom.xsl" media="screen"?>#end
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title type="html">$utils.escapeHTML($model.weblog.name) (Comments)</title>
     <id>$url.feed.comments.atom</id>

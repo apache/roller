@@ -155,6 +155,10 @@
          <type>string</type>
          <default-value>50</default-value>
       </property-def>
+      <property-def  name="site.newsfeeds.styledFeeds"  key="configForm.styledFeeds">
+         <type>boolean</type>
+         <default-value>true</default-value>
+      </property-def>
    </display-group>
    
    <!-- File Upload Settings Group -->
