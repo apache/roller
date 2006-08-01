@@ -34,4 +34,4 @@
 #**
  * Show path to your file upload directory, for use in building URLs.
  *#
-#macro( showResourcePath )$url.home/resources#end
+#macro( showResourcePath )${url.home}resource#end
