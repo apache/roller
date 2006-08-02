@@ -1,47 +1,74 @@
 #includePage("_header")
-#set($selected = "blogs") 
-#includePage("_tabbedMenu") 
-#set($maxResults = 15) 
 
-<div class="entriesBox">
-    <div class="entriesBoxInner">  
-        <div class="entryBox">
-        <h2 class="pageTitle">Blog directory</h2>
-        #if($pageModel.getRequestParameter("weblog"))
-            #set($handle = $pageModel.getRequestParameter("weblog"))
-            <a href="?letter=$stringUtils.left($handle,1)">Back to blog directory</a>
-            #set($weblog = $site.getWeblog($handle))
-            #showWeblogProfile($weblog)
-        #else 
-            #showWeblogDirectory($maxResults)    
-        #end
-        </div>
-    </div>
-</div>
+#set($maxResults = 25) 
+#set($since = 365) 
 
-<br />
-<div id="rightcontent">
-<div class="sidebarfade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            <div class="sidebarBody">
+    <div id="centercontent_wrap">
+        <div id="centercontent">  
+            <h1>$config.siteName</h1>
+            <p class="subtitle">$config.siteDescription</p> 
 
-             <h3>Newest blogs</h3>
-             <hr size="1" noshade="noshade" />	
+            <table class="menuTabTable" cellspacing="0"><tbody><tr>
+               <td class="menuTabUnselected">
+                  <div class="menu-tr">
+                     <div class="menu-tl">
+                        &nbsp;&nbsp;<a href="$url.home">Recent Entries</a>&nbsp;&nbsp; 
+                     </div>
+                  </div>
+               </td>	
+               <td class="menuTabSeparator"></td>
+               <td class="menuTabSelected">
+                  <div class="menu-tr">
+                     <div class="menu-tl">
+                        &nbsp;&nbsp;<a href="$url.home/page/blogs">Weblog Directory</a>&nbsp;&nbsp; 
+                     </div>
+                  </div>
+               </td>	    
+               <td class="menuTabSeparator"></td>
+            </tr></tbody></table>
+            <table class="menuItemTable" cellspacing="0"><tbody><tr>
+            <td class="padleft"></td></tr></tbody></table>
 
-             #set($newblogs = $site.getWeblogs(30, 20))
-             <ul>
-             #foreach($blog in $newblogs)
-                <li>$blog.name (<a href="?weblog=$blog.handle" title="$blog.dateCreated">$blog.handle</a>)</li>
-             #end
-             </ul>	
-
+            <div id="tabContent">
+                <div id="directory">
+                #if($pageModel.getRequestParameter("weblog"))
+                    #set($handle = $pageModel.getRequestParameter("weblog"))
+                    <a href="?letter=$stringUtils.left($handle,1)">Back to blog directory</a>
+                    #set($weblog = $site.getWeblog($handle))
+                    #showWeblogProfile($weblog)
+                #else 
+                    #showWeblogDirectory($maxResults)    
+                #end
+                </div>
             </div>
+
+        </div>
+    </div>
+
+    <div id="rightcontent_wrap">
+        <div id="rightcontent"> 
+
+            <div class="sidebarBodyHead">
+                <div class="menu-tr">
+                    <div class="menu-tl">
+                       <h3>New blogs</h3>		
+                    </div>
+                </div>
+            </div>	
+
+            <div class="sidebarBody">  
+               #set($newblogs = $site.getNewWeblogs($since, $maxResults))
+               <ul>
+               #foreach($blog in $newblogs)
+                  <li>$blog.name (<a href="?weblog=$blog.handle" title="$blog.dateCreated">$blog.handle</a>)</li>
+               #end
+               </ul>	
+            </div>
+
         </div>
     </div>
 </div>
 
 </div>
 </div>
-</body>
-</html>
+#includeTemplate($model.weblog "_footer")
