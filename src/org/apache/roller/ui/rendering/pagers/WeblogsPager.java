@@ -71,10 +71,13 @@ public class WeblogsPager extends AbstractPager {
     public List getItems() {
         if (weblogs == null) {
             List results = new ArrayList();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new Date());
-            cal.add(Calendar.DATE, -1 * sinceDays);
-            Date startDate = cal.getTime();
+            Date startDate = null;
+            if (sinceDays != -1) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.DATE, -1 * sinceDays);
+                startDate = cal.getTime();
+            }
             try {            
                 Roller roller = RollerFactory.getRoller();
                 UserManager umgr = roller.getUserManager();

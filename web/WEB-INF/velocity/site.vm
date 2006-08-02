@@ -149,8 +149,6 @@
 #macro(showWeblogDirectory $pageLength)
     #if($model.getRequestParameter("letter"))
         #set($chosenLetter = $model.getRequestParameter("letter"))
-    #else
-        #set($chosenLetter = "A")
     #end
 
     #set($weblogLetterMap = $site.getWeblogHandleLetterMap())
@@ -173,40 +171,58 @@
     </div>
 
     #if($chosenLetter)
-        #set($weblogsPager = $site.getWeblogsByLetterPager($chosenLetter, -1, $pageLength))
-        <table class="blogdirectory data">
-            <thead>
-                <tr>
-                   <th scope="col" class="name">Blog Name</th>
-                   <th scope="col" class="description">Description</th>
-                </tr>
-            </thead>
-           <tbody>
-              #foreach($weblog in $weblogsPager.items)
-               <tr>
-                  <th scope="row" class="name"><a href="$baseURL/$weblog.handle">$weblog.handle</a></th>
-                  <td class="description">$weblog.name</td>
-               </tr>
-              #end 
-           </tbody>
-            <tfoot>
-               <tr class="pagingcontrols">
-                 <td class="pagingtext"></td>
-                 <td class="paginglinks">
-                    #if($weblogsPager.prevLink)
-                       <a href="$weblogsPager.prevLink?letter=$chosenLetter">&lt; $weblogsPager.prevName</a>
-                    #end
-                    #if($pager.nextLink && $pager.prevLink())
-                       &nbsp;|&nbsp;
-                    #end
-                    #if($weblogsPager.nextLink)
-                       <a href="$weblogsPager.nextLink?letter=$chosenLetter">$weblogsPager.nextLink &gt;</a>
-                    #end
-                 </td>
-              </tr>
-           </tfoot>
-        </table>
+       <h2 class="pageTitle">Weblogs starting with $chosenLetter</h2>
+    #else
+       <h2 class="pageTitle">All weblogs</h2>
     #end
+
+    #set($weblogsPager = $site.getWeblogsByLetterPager($chosenLetter, -1, $pageLength))
+    <table class="blogdirectory data">
+        <thead>
+            <tr>
+               <th scope="col" class="name">Blog Name</th>
+               <th scope="col" class="description">Description</th>
+            </tr>
+        </thead>
+       <tbody>
+          #foreach($weblog in $weblogsPager.items)
+           <tr>
+              <th scope="row" class="name"><a href="$url.absoluteSite/$weblog.handle">$weblog.handle</a></th>
+              <td class="description">$weblog.name</td>
+           </tr>
+          #end 
+       </tbody>
+        <tfoot>
+           <tr class="pagingcontrols">
+             <td class="pagingtext"></td>
+             <td class="paginglinks">
+
+             #if($chosenLetter)
+                #if($weblogsPager.prevLink)
+                   <a href="$weblogsPager.prevLink?letter=$chosenLetter">&lt; $weblogsPager.prevName</a>
+                #end
+                #if($pager.nextLink && $pager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($weblogsPager.nextLink)
+                   <a href="$weblogsPager.nextLink?letter=$chosenLetter">$weblogsPager.nextLink &gt;</a>
+                #end
+             #else
+                #if($weblogsPager.prevLink)
+                   <a href="$weblogsPager.prevLink">&lt; $weblogsPager.prevName</a>
+                #end
+                #if($pager.nextLink && $pager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($weblogsPager.nextLink)
+                   <a href="$weblogsPager.nextLink">$weblogsPager.nextLink &gt;</a>
+                #end
+             #end
+
+             </td>
+          </tr>
+       </tfoot>
+    </table>
 #end
 
 ##-----------------------------------------------------------------------------
@@ -281,13 +297,13 @@
 #macro(showUserDirectory $pageLength)
     #if($model.getRequestParameter("letter"))
         #set($chosenLetter = $model.getRequestParameter("letter"))
-    #else
-        #set($chosenLetter = "A")
     #end
 
     #set($userLetterMap = $site.getUserNameLetterMap())
     <div class="letterMap">
     #foreach($letter in $userLetterMap.keySet())
+        #if($firstLetterDone == 1) - #end
+        #set($firstLetterDone = 1)
         #set($letterCount = $userLetterMap.get($letter))
         #if($letter == $chosenLetter)<span style="font-size:120%; font-weight:bold">#end
         #if($letterCount > 0)
@@ -300,34 +316,60 @@
     </div>
 
     #if($chosenLetter)
-        <h2 class="pageTitle">Users starting with $chosenLetter</h2>
-        #set($usersPager= $site.getUsersByLetterPager($chosenLetter, -1, $pageLength))
-        <table class="rollertable">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Profile</th>
-                    <th>Full name</th>
-                </tr>
-            </thead>
-        #foreach($u in $usersPager.items)
+       <h2 class="pageTitle">Users starting with $chosenLetter</h2>
+    #else
+       <h2 class="pageTitle">All users</h2>
+    #end
+
+    #set($usersPager= $site.getUsersByLetterPager($chosenLetter, -1, $pageLength))
+    <table class="blogdirectory data">
+        <thead>
+            <tr>
+               <th scope="col" class="username">Username</th>
+               <th scope="col" class="profile">Profile</th>
+               <th scope="col" class="fullname">Full name</th>
+            </tr>
+        </thead>
+        <tbody>
+            #foreach($u in $usersPager.items)
                <tr>
-                  <td>$u.userName</td>
+                  <th scope="row" class="name">$u.userName</th>
                   <td><a href="?userName=$u.userName">Profile</a></td>
                   <td>$u.fullName</td>
                </tr>
-        #end 
-        </table>
-        #if($usersPager.prevLink)
-           <a href="$usersPager.prevLink?letter=$chosenLetter">&lt;$usersPager.prevName</a>
-        #end
-        #if($pager.nextLink && $pager.prevLink())
-           &nbsp;|&nbsp;
-        #end
-        #if($usersPager.nextLink)
-           <a href="$usersPager.nextLink?letter=$chosenLetter">$usersPager.nextName &gt;</a>
-        #end
-    #end
+            #end 
+        </tbody>
+        <tfoot>
+           <tr class="pagingcontrols">
+             <td class="pagingtext"></td>
+             <td class="paginglinks">
+
+            #if($chosenLetter)
+                #if($usersPager.prevLink)
+                   <a href="$usersPager.prevLink?letter=$chosenLetter">&lt;$usersPager.prevName</a>
+                #end
+                #if($pager.nextLink && $pager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($usersPager.nextLink)
+                   <a href="$usersPager.nextLink?letter=$chosenLetter">$usersPager.nextName &gt;</a>
+                #end
+            #else
+                #if($usersPager.prevLink)
+                   <a href="$usersPager.prevLink">&lt;$usersPager.prevName</a>
+                #end
+                #if($pager.nextLink && $pager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($usersPager.nextLink)
+                   <a href="$usersPager.nextLink">$usersPager.nextName &gt;</a>
+                #end
+            #end
+
+             </td>
+          </tr>
+       </tfoot>
+    </table>
 #end
 
 ##-----------------------------------------------------------------------------
