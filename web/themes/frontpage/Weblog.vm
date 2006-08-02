@@ -1,43 +1,107 @@
-#includePage("_header") 
-#set($selected = "frontpage") 
-#includePage("_tabbedMenu") 
-  
-<div class="entriesBox">
-   <div class="entriesBoxInner">
-      <div class="entryBox">
+#includeTemplate($model.weblog "_header") 
 
-    <h2 class="pageTitle">Most recent posts on SITE</h2>   
-    #set($pager = $site.getWeblogEntriesPager($since, $maxResults))
-    #showEntriesPager($pager)
+#set($maxResults = 25)
+#set($since = 365)
 
-      </div>
-   </div>
-</div>
-<br />
-</div>
+    <div id="centercontent_wrap">
+        <div id="centercontent">  
+            <h1>$config.siteName</h1>
+            <p class="subtitle">$config.siteDescription</p> 
 
-<div id="rightcontent">
-    <div class="sidebarfade">
-        <div class="menu-tr">
-            <div class="menu-tl">
-                <div class="sidebarBody">
+            <table class="menuTabTable" cellspacing="0"><tbody><tr>
+               <td class="menuTabSelected">
+                  <div class="menu-tr">
+                     <div class="menu-tl">
+                        &nbsp;&nbsp;<a href="$url.home">Recent Entries</a>&nbsp;&nbsp; 
+                     </div>
+                  </div>
+               </td>	
+               <td class="menuTabSeparator"></td>
+               <td class="menuTabUnselected">
+                  <div class="menu-tr">
+                     <div class="menu-tl">
+                        &nbsp;&nbsp;<a href="$url.home/page/blogs">Weblog Directory</a>&nbsp;&nbsp; 
+                     </div>
+                  </div>
+               </td>	    
+               <td class="menuTabSeparator"></td>
+            </tr></tbody></table>
+            <table class="menuItemTable" cellspacing="0"><tbody><tr>
+            <td class="padleft"></td></tr></tbody></table>
 
-                    <h3>Hot blogs (today's hits)</h3>
-                    <hr size="1" noshade="noshade" />
-                    #set($hotblogs = $site.getHotWeblogs($since, 20))
-                    <ul>
-                        #foreach($blog in $hotblogs)
-                        <li>$blog.subjectNameShort | $blog.count</li>
-                        #end
-                    </ul>   
-                   <br />
-		
+            <div id="tabContent">
+                <div id="recentEntries">
+                   #set($pager = $site.getWeblogEntriesPager($since, $maxResults))
+                   #showEntriesPager($pager)
+                </div>
             </div>
+            
+            <br />
+            <a href='$url.feed.entries.rss' title='Combined RSS feed for site.'>
+            <img src='$url.absoluteSite/images/rssbadge.gif' border="0" alt='Combined RSS feed for site.' />
+            </a>
+            Right-click, copy link and paste into your newsfeed reader
+
+        </div> 
+    </div> 
+
+    <div id="rightcontent_wrap">
+        <div id="rightcontent"> 
+
+           <div class="searchSidebarHead">
+               <div class="menu-tr">
+                   <div class="menu-tl">
+                      <h3>&nbsp;</h3>
+                   </div>
+
+               </div>
+           </div>
+
+           <div class="searchSidebarBody">
+                <h3>Search for blogs</h3>
+                <form id="searchForm" method="get"
+                   action="/sitesearch.do"
+                   style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
+                   <input type="text" id="q" name="q" size="20"
+                       maxlength="255" value="" />
+                   <input value="&nbsp;?&nbsp;" class="searchButton" type="submit">
+                </form>
+                <script type="text/javascript"> 
+                   // <!--
+                   function validateSearch(form) {
+                       if (form.q.value == "") {
+                           alert("Please enter a search term to continue.");
+                           form.q.focus();
+                           return false;
+                       }
+                       return true;
+                   } 
+                   // -->
+                </script>
+            </div>
+
+            <br />
+            <div class="sidebarBodyHead">
+                <div class="menu-tr">
+                    <div class="menu-tl">
+                       <h3>Hot blogs (today's hits)</h3>		
+                    </div>
+                </div>
+            </div>	
+
+            <div class="sidebarBody">  
+                #set($hotblogs = $site.getHotWeblogs($since, $maxResults))
+                <ul>
+                   #foreach($blog in $hotblogs)
+                   <li>$blog.subjectNameShort | $blog.count</li>
+                   #end
+                </ul>   
+                <br />		
+            </div>
+
         </div>
     </div>
-</div>
 
-</div>
-</div>
-</body>
-</html>
+</div> <!-- wrapper -->
+
+#includeTemplate($model.weblog "_footer")

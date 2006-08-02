@@ -2,41 +2,45 @@
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-#includePage("_macros")
 <head>
   <title>#showWebsiteTitle()</title>
-  <link rel="stylesheet" type="text/css" 
-     href="#showThemePath("atlas")/roller.css" />
-  <link rel="stylesheet" type="text/css" 
-     href="#showThemePath("atlas")/layout.css" />
-  <link rel="stylesheet" type="text/css" 
-     href="#showThemePath("atlas")/menu.css" /> 
-  <link rel="stylesheet" type="text/css" 
-     href="#showThemePath("atlas")/tan/colors.css" />
-
   <style type="text/css">
-  #includePage("_css")
+  #includeTemplate($model.weblog "_css")
   </style>
-
 </head>
 <body class="view" bgcolor="#FFFFFF">
 
-<div id="wrapper">
-
-    <div id="banner">
-        <div class="bannerBox">
-           <img class="bannerlogo" 
-              src='#showThemePath("atlas")/tan/logo.gif' />
-        </div>
-        <div class="bannerStatusBox">
-           <div class="bannerLeft">          
-           </div>
-           <div class="bannerRight">
-           </div>
+<div id="banner">
+    <div class="bannerBox">
+        <div id="logo">
+            <!-- Transparent PNG fix for IE, thanks to Kenneth M. Kolano -->
+            <div id="logoshadow" style="_background-image:none;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$url.absoluteSite/roller-ui/images/logo-shadow.png',sizingMethod='crop');">
+                <div id="logobackground">
+                    <a href='$url.absoluteSite' id="logoimage" style="_background-image:none;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='$url.absoluteSite/roller-ui/images/transparent-logo.png',sizingMethod='crop');">
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="leftcontent">
+    <div id="bannerStatusBox">
+        <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="bannerLeft"></td>
+                <td class="bannerRight">
+                   <a href="$url.absoluteSite">$config.siteName</a> |
+                   <a href="$url.absoluteSite/roller-ui/yourWebsites.do">Main Menu</a> |
+                   <a href="$url.login">Login</a>
+                </td>
+            </tr>
+        </table>
     </div>
+</div>
 
-    <div id="centercontent">
+<div id="wrapper"> 
+
+    <div id="leftcontent_wrap">
+        <div id="leftcontent"> 
+        </div>
+    </div>
+    
