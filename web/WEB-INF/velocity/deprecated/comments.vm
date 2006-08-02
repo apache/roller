@@ -9,8 +9,8 @@
  * @param entry WeblogEntryData object for which link is to be displayed.
  *#
 #macro( showCommentsLink $entry )
-    #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
-    #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
+    #set( $commentCount = $entry.commentCount )
+    #if ($entry.commentsStillAllowed || $commentCount > 0)
         #set( $link = "$url.comments($entry.anchor)?popup=true" )
         <a href="$link " onclick="window.open('$link', 'comments',
             'width=480,height=480,scrollbars=yes,status=yes,resizable'); return false;"
@@ -23,8 +23,8 @@
  * @param entry WeblogEntryData object for which link is to be displayed.
  *#
 #macro( showCommentsPageLink $entry )
-    #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
-    #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
+    #set( $commentCount = $entry.commentCount )
+    #if ($entry.commentsStillAllowed || $commentCount > 0)
         #set( $link = "$url.comments($entry.anchor)" )
         <a href="$link" class="entrycommentslink">$text.get( "macro.weblog.comments" ) [$commentCount]</a>
     #end
@@ -36,8 +36,8 @@
  * @param entry WeblogEntryData object for which link is to be displayed.
  *#
 #macro( showCommentsDiv $entry )
-    #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
-    #if (($commentsEnabled && $entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0)
+    #set( $commentCount = $entry.commentCount )
+    #if ($entry.commentsStillAllowed || $commentCount > 0)
         <div class="comments" id="comments">
             <div id="commentTwisty$entry.Id" class="commentTwisty"
                 onclick="toggleComments('$entry.Id', '$url.home'); return false;">
@@ -57,25 +57,21 @@
  * PRIVATE. Macro for displaying Comment details (not content).
 **#
 #macro( showCommentDetails $comment $showPermalink )
-    $dateFormatter.applyPattern($text.get( "macro.weblog.datepattern" ))
     <p class="comment-details">
     $text.get("macro.weblog.postedby")
-    #if (!$stringUtils.isEmpty($comment.name) && !$stringUtils.isEmpty($comment.remoteHost))
-        <b>$comment.name</b> ($comment.remoteHost)
-    #elseif (!$stringUtils.isEmpty($comment.name))
+    #if (!$utils.isEmpty($comment.name) && !$utils.isEmpty($comment.url))
+        <a rel="nofollow" href="$comment.url"><b>$comment.name</b></a>
+    #elseif (!$utils.isEmpty($comment.name))
         <b>$comment.name</b>
-    #elseif (!$stringUtils.isEmpty($comment.remoteHost))
+    #else
         <b>$comment.remoteHost</b>
     #end
-    $text.get("macro.weblog.on") $dateFormatter.format($comment.postTime)
-    #if( $stringUtils.isNotEmpty($comment.url) )
-        $text.get( "macro.weblog.postedbywebsite", [$comment.url, $comment.url] )
-    #end
-    #if( $showPermalink )
-    <a href="$url.comments($entry.anchor)${velocityCount}"
+
+    $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
+
+    <a href="$url.comment($comment.weblogEntry.anchor, $comment.timestamp)"
        class="entrypermalink"
        title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
-    #end
     </p>
 #end
 
@@ -95,17 +91,17 @@
 #macro( showRecentComments $numComments )
     #if( !$numComments ) #set( $numComments = 20 ) #end
     #if( $numComments > 100 ) #set( $numComments = 50 ) #end
-    #set( $comments = $pageModel.getRecentComments($numComments) )
+    #set( $comments = $model.weblog.getRecentComments($numComments) )
     <div class="comments" id="comments">
     #foreach( $comment in $comments )
-        #set($content = $utilities.encodeEmail($comment.content))
+        #set($content = $utils.encodeEmail($comment.content))
         #if($escapeHtml)
-            #set($content = $utilities.escapeHTML($content))
+            #set($content = $utils.escapeHTML($content))
         #end
         #if($autoformat)
-            #set($content = $stringUtils.replace($content,"\n","<br />"))
+            #set($content = $utils.replace($content,"\n","<br />"))
         #end
-        #set($content = $utilities.addNofollow($content))
+        #set($content = $utils.addNofollow($content))
         <div class="comment" style="border: 1px solid #dadada; padding-left: 3px; padding-right: 5px;" >
         <p>Commenting on <a class="entrypermalink"
             href="$url.entry($comment.weblogEntry.anchor)">${comment.weblogEntry.title}</a>:</p>
@@ -125,17 +121,17 @@
     #if( !$numComments ) #set( $numComments = 20 ) #end
     #if( $numComments > 100 ) #set( $numComments = 100 ) #end
     #set( $minWidth = $maxWidth - 5 )
-    #set( $comments = $pageModel.getRecentComments($numComments) )
+    #set( $comments = $model.weblog.getRecentComments($numComments) )
     <ul class="commentsList">Recent Comments
     #foreach( $comment in $comments )
-        #set($content = $utilities.encodeEmail($comment.content))
-        #set($content = $utilities.addNofollow($content))
+        #set($content = $utils.encodeEmail($comment.content))
+        #set($content = $utils.addNofollow($content))
         <li class="commentsListItem"><a
            href="$url.comments($comment.weblogEntry.anchor)"
            class="entrypermalink"
            title="$text.get( "macro.weblog.commentpermalink.title" ) to
-               '$utilities.removeHTML($comment.weblogEntry.title)'"
-           >$utilities.truncateNicely($utilities.removeHTML($content), $minWidth, $maxWidth, "...")</a>
+               '$utils.removeHTML($comment.weblogEntry.title)'"
+           >$utils.truncateNicely($utils.removeHTML($content), $minWidth, $maxWidth, "...")</a>
         </li>
     #end
     </ul>
@@ -303,6 +299,9 @@
 
 #**
  * Display hidden comment form for a weblog entry.
+ *
+ * NOTE: this is semi-broken because it doesn't accept an entry as an argument :/
+ *
  * @param entry WeblogEntry object for which form is to be shown,
  *#
 #macro( showHiddenCommentForm )
