@@ -1071,6 +1071,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
         String relPath = RollerRuntimeConfig.getRelativeContextURL();
         return relPath + "/" + getHandle();
+        //return URLUtilities.getWeblogURL(this, null, false);
     }
     public void setURL(String url) {
         // noop
@@ -1083,6 +1084,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         // TODO: ATLAS reconcile entry.getPermaLink() with new URLs
         String relPath = RollerRuntimeConfig.getAbsoluteContextURL();
         return relPath + "/" + getHandle();
+        //return URLUtilities.getWeblogURL(this, null, true);
     }
     public void setAbsoluteURL(String url) {
         // noop
@@ -1219,7 +1221,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         if (length < 1) return recentComments;
         try {
             WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-            List recent = wmgr.getComments(
+            recentComments = wmgr.getComments(
                     this,
                     null,          // weblog entry
                     null,          // search String
