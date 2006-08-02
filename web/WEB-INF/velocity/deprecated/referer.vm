@@ -8,8 +8,8 @@
  *#
 #macro( refererDisplayUrl $ref $maxWidth $includeHits )
     #set( $qq = '"' )
-    #set( $url = $utilities.escapeHTML( $ref.RefererUrl ) )
-    #set( $displayUrl = $url )
+    #set( $myUrl = $utils.escapeHTML( $ref.RefererUrl ) )
+    #set( $displayUrl = $myUrl )
     #set( $restOfUrl = "" )
     #set( $displayLink = "" )
     #if ( $displayUrl.startsWith("http://") )
@@ -19,8 +19,8 @@
         #set( $restOfUrl = "...$displayUrl.substring($maxWidth, $displayUrl.length())" )
         #set( $displayUrl = $displayUrl.substring(0, $maxWidth) )
     #end
-    #if ( $url.startsWith("http://") )
-        #set( $displayLink = "<a rel=${qq}nofollow${qq} href=${qq}$url${qq}" )
+    #if ( $myUrl.startsWith("http://") )
+        #set( $displayLink = "<a rel=${qq}nofollow${qq} href=${qq}$myUrl${qq}" )
         #if ( $restOfUrl )
             #set( $displayLink = "$displayLink title=${qq}$restOfUrl${qq}" )
         #end
@@ -30,7 +30,7 @@
     #if ( $includeHits )
         #set( $displayLink = "$displayLink ($ref.DayHits)" )
     #end
-    #if ( $url.startsWith("http://") )
+    #if ( $myUrl.startsWith("http://") )
         #set( $displayLink = "$displayLink</a>" )
     #end
     $displayLink
@@ -66,11 +66,11 @@
        <b>$text.get( "macro.referer.furtherReading" )</b></p>
        <ul>
        #foreach( $ref in $refs )
-          #set( $url = $utilities.escapeHTML( $ref.getUrl() ) )
+          #set( $url = $utils.escapeHTML( $ref.getUrl() ) )
           <li> $pageHelper.getToggleLinkbackDisplayHTML($ref)
              <a class="linkback" href="$url">$ref.getTitle()</a>
           #if( $ref.getVisible() )
-             : $utilities.removeHTML( $ref.getExcerpt() )
+             : $utils.removeHTML( $ref.getExcerpt() )
           #end
           </li>
        #end
