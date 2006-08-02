@@ -38,10 +38,12 @@ import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.ui.rendering.util.InvalidRequestException;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
@@ -120,6 +122,20 @@ public class PageServlet extends HttpServlet {
         
         log.debug("Entering");
         
+        // do referrer processing, if it's enabled
+        // NOTE: this *must* be done first because it triggers a hibernate flush
+        // which will close the active session and cause lazy init exceptions otherwise
+        if(this.processReferrers) {
+            boolean spam = this.processReferrer(request);
+            if(spam) {
+                log.debug("spammer, giving 'em a 403");
+                if(!response.isCommitted()) response.reset();
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+        }
+        
+        
         WebsiteData weblog = null;
         boolean isSiteWide = false;
         
@@ -173,18 +189,6 @@ public class PageServlet extends HttpServlet {
             response.setContentType(mimeType+"; charset=utf-8");
         } else {
             response.setContentType("text/html; charset=utf-8");
-        }
-        
-        
-        // do referrer processing, if it's enabled
-        if(this.processReferrers) {
-            boolean spam = this.processReferrer(request, pageRequest);
-            if(spam) {
-                log.debug("spammer, giving 'em a 403");
-                if(!response.isCommitted()) response.reset();
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
         }
         
         
@@ -432,10 +436,20 @@ public class PageServlet extends HttpServlet {
      *
      * @returns true if referrer was spam, false otherwise
      */
-    private boolean processReferrer(HttpServletRequest request,
-                                    WeblogPageRequest pageRequest) {
+    private boolean processReferrer(HttpServletRequest request) {
         
         log.debug("processing referrer for "+request.getRequestURI());
+        
+        // bleh!  because ref processing does a flush it will close
+        // our hibernate session and cause lazy init exceptions on
+        // objects we have fetched, so we need to use a separate
+        // page request object for this
+        WeblogPageRequest pageRequest;
+        try {
+            pageRequest = new WeblogPageRequest(request);
+        } catch (InvalidRequestException ex) {
+            return false;
+        }
         
         // if this came from a robot then don't process it
         if (robotPattern != null) {
