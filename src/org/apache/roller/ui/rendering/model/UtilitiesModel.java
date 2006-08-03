@@ -152,6 +152,9 @@ public class UtilitiesModel implements Model {
      * Format date using SimpleDateFormat format string.
      */
     public static String formatDate(Date d, String fmt) {
+        if(d == null || fmt == null)
+            return fmt;
+        
         SimpleDateFormat format = new SimpleDateFormat(fmt);
         return format.format(d);
     }
