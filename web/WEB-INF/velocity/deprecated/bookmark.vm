@@ -38,7 +38,7 @@
  * @param expandingFolder True to show expandable folder
  *#
 #macro( showFolder $folder $showFolderName $expandingFolder )
-    #set( $bookmarks = $pageModel.getBookmarks($folder) )
+    #set( $bookmarks = $folder.bookmarks )
     #set( $divId = $utils.replace( $folder.Name, " ", "_" ) )
     #if ( $showFolderName && $expandingFolder )
     <div class="rFolder">
@@ -75,8 +75,9 @@
  * @param expandingFolder True to show expandable folder
  *#
 #macro( showBookmarks $folderName $showFolderName $expandingFolder )
-    #if ( $pageModel.getFolder($folderName) )
-        #showFolder($pageModel.getFolder($folderName) $showFolderName $expandingFolder)
+    #set( $myFolder = $model.weblog.getBookmarkFolder($folderName) )
+    #if ( $myFolder )
+        #showFolder($myFolder $showFolderName $expandingFolder)
     #elseif ($showFolderName)
         <span class="error">$text.get( "macro.bookmark.error", [$folderName])</span>
         <!--p class="rFolder">$folderName</p-->
@@ -88,7 +89,7 @@
  * @param expandingFolder True to show expandable folder
 **#
 #macro( showAllBookmarks $expandingFolder )
-    #set( $root = $pageModel.getFolderByPath("/") )
+    #set( $root = $model.weblog.getBookmarkFolder("/") )
     #showFolder($root true $expandingFolder)
 #end
 
