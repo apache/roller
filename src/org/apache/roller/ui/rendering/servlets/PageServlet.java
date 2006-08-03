@@ -228,6 +228,7 @@ public class PageServlet extends HttpServlet {
         Template page = null;
         
         // If this is a popup request, then deal with it specially
+        // TODO: do we really need to keep supporting this?
         if (request.getParameter("popup") != null) {
             try {
                 // Does user have a popupcomments page?
@@ -448,6 +449,11 @@ public class PageServlet extends HttpServlet {
         try {
             pageRequest = new WeblogPageRequest(request);
         } catch (InvalidRequestException ex) {
+            return false;
+        }
+        
+        // if this came from site-wide frontpage then skip it
+        if(RollerRuntimeConfig.isSiteWideWeblog(pageRequest.getWeblogHandle())) {
             return false;
         }
         
