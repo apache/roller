@@ -56,16 +56,14 @@
     ## updated for roller 3.0 to use new models & macros
     #set($pager = $model.getWeblogEntriesPager($category))
 
-    #if ($model.results)
+    #if ($model.searchResults)
         <div class="next-previous">
             #showWeblogSearchAgainForm($model.weblog)
             #showNextPrevSearchControl($pager)
         </div>
-    #elseif ($model.permalink)
-        <div class="top-next-prev">
+    #else
         <div class="next-previous">
             #showNextPrevEntriesControl($pager)
-        </div>
         </div>
     #end
 
@@ -82,12 +80,6 @@
         #showEntryLinkbacks($entry)
         #showWeblogEntryComments($entry)
         #showCommentForm($entry)
-    #elseif (!$model.results)
-        <div class="bottom-next-prev">
-        <div class="next-previous">
-            #showNextPrevEntriesControl($pager)
-        </div>
-        </div>
     #end
 #end
 
@@ -172,7 +164,7 @@
     #set($nextPager = $model.getWeblogEntriesPager($category))
     <span class="nextEntry">
     #if( $nextPager.nextLink )
-        <a href="$prevPager.nextLink">$nextPager.nextName</a>
+        <a href="$nextPager.nextLink">$nextPager.nextName</a>
     #end
     </span>
 #end
@@ -257,7 +249,7 @@
         class="daypermalink"
         src="$ctxPath/images/permalink.gif"
         title="$text.get( "macro.weblog.daypermalink.title" )"
-        alt="#formatDate( $plainFormat $day )" /></a>
+        alt="$utils.formatDate($day, $plainFormat)" /></a>
 #end
 
 
@@ -296,7 +288,7 @@
     <a href="$url.entry($entry.anchor)"
         title="$text.get( "macro.weblog.entrypermalink.title" )"
         class="entrypermalink">Permalink</a>
-    #if ($pageHelper.isUserAuthorizedToEdit())
+    #if ($utls.isUserAuthorizedToAuthor($entry.website))
         [<a href="$url.editEntry($entry.anchor)">$text.get( "macro.weblog.entrypermalink.edit" )</a>]
     #end
 #end
@@ -432,7 +424,7 @@ $url.trackback($entry.anchor)
  * @param cat        Category to be displayed 
 **#
 #macro( showRecentEntryLinksInCategory $numEntries $cat)
-   #set( $xmap = $pageModel.getRecentWeblogEntries($numEntries, $cat) )
+   #set( $xmap = $model.weblog.getRecentWeblogEntries($cat, $numEntries) )
    <ul class="linkblog">
    #foreach( $day in $xmap.keySet() )
        #set( $recentEntries = $xmap.get($day) )
@@ -443,8 +435,8 @@ $url.trackback($entry.anchor)
            #else
               $var.title
            #end
-           #if ($pageHelper.isUserAuthorizedToEdit())
-              &nbsp;[<a href="$pageHelper.getEntryEditUrl($var)">$text.get( "macro.weblog.editentry" )</a>]
+           #if ($utils.isUserAuthorizedToAuthor($model.weblog))
+              &nbsp;[<a href="$url.editEntry($var.anchor)">$text.get( "macro.weblog.editentry" )</a>]
            #end
            </li>
        #end
