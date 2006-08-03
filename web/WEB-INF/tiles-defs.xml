@@ -21,18 +21,6 @@
        "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
 <tiles-definitions>
 
-<definition name=".tiles-frontpage" path="/WEB-INF/jsps/tiles/tiles-frontpage.jsp">
-   <put name="banner"       value="/WEB-INF/jsps/tiles/banner.jsp" />
-   <put name="title"        value="/WEB-INF/jsps/tiles/title.jsp" />
-   <put name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
-   <put name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
-   <put name="styles"       value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
-   <put name="content"      value="${content}" />
-   <put name="search"       value="/WEB-INF/jsps/tiles/search.jsp" />
-   <put name="sidebar"      value="/WEB-INF/jsps/tiles/empty.jsp" />
-   <put name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
-</definition>
-
 <definition name=".tiles-mainmenupage" path="/WEB-INF/jsps/tiles/tiles-mainmenupage.jsp">
    <put name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
    <put name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
@@ -70,12 +58,6 @@
 
 <definition name=".tiles-adminpage" extends=".tiles-tabbedpage" >
    <put name="menu" value="/WEB-INF/jsps/tiles/menu-admin.jsp" />
-</definition>
-
-<definition name=".planet" extends=".tiles-frontpage" >
-    <put name="content" value="/WEB-INF/jsps/admin/planet.jsp" />
-    <put name="head"    value="/WEB-INF/jsps/admin/head-planet.jsp" />
-    <put name="sidebar" value="/WEB-INF/jsps/admin/planet-sidebar.jsp" />
 </definition>
 
 
