@@ -61,32 +61,32 @@
 </definition>
 
 
-<!-- main menu pages (and associates) -->
+<!-- core pages (and associates) -->
 
 <definition name=".login" extends=".tiles-simplepage" >
-    <put name="banner" value="/WEB-INF/jsps/tiles/banner.jsp" />
-    <put name="content" value="/WEB-INF/jsps/loginBody.jsp" />
+    <put name="content" value="/WEB-INF/jsps/core/login.jsp" />
+</definition>
+
+<definition name=".UserNew" extends=".tiles-simplepage" >
+    <put name="content" value="/WEB-INF/jsps/core/UserNew.jsp" />
+</definition>
+
+<definition name=".welcome" extends=".tiles-simplepage" >
+    <put name="content" value="/WEB-INF/jsps/core/welcome.jsp" />
 </definition>
 
 <definition name=".YourWebsites" extends=".tiles-mainmenupage" >
-    <put name="content" value="/WEB-INF/jsps/authoring/YourWebsites.jsp" />
-    <put name="sidebar" value="/WEB-INF/jsps/authoring/YourWebsitesSidebar.jsp" />
+    <put name="content" value="/WEB-INF/jsps/core/YourWebsites.jsp" />
+    <put name="sidebar" value="/WEB-INF/jsps/core/YourWebsitesSidebar.jsp" />
     <put name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
 </definition>
 
 <definition name=".YourProfile" extends=".tiles-simplepage" >
-    <put name="content" value="/WEB-INF/jsps/authoring/YourProfile.jsp" />
+    <put name="content" value="/WEB-INF/jsps/core/YourProfile.jsp" />
 </definition>
 
 <definition name=".CreateWebsite" extends=".tiles-simplepage" >
-    <put name="content" value="/WEB-INF/jsps/authoring/CreateWebsite.jsp" />
-</definition>
-<definition name=".CreateWebsiteDone" extends=".tiles-simplepage" >
-    <put name="content" value="/WEB-INF/jsps/authoring/CreateWebsiteDone.jsp" />
-</definition>
-
-<definition name=".welcome" extends=".tiles-simplepage" >
-    <put name="content" value="/WEB-INF/jsps/authoring/welcome.jsp" />
+    <put name="content" value="/WEB-INF/jsps/core/CreateWebsite.jsp" />
 </definition>
 
 
@@ -243,10 +243,6 @@
 </definition>
 <definition name=".CommonPingTargetEdit" extends=".tiles-simplepage" >
     <put name="content" value="/WEB-INF/jsps/admin/CommonPingTargetEdit.jsp" />
-</definition>
-
-<definition name=".UserNew" extends=".tiles-simplepage" >
-    <put name="content" value="/WEB-INF/jsps/authoring/UserNew.jsp" />
 </definition>
 
 <definition name=".PlanetSubscriptions" extends=".tiles-adminpage" >
