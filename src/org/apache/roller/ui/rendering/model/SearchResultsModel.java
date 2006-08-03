@@ -121,6 +121,13 @@ public class SearchResultsModel extends PageModel {
         pager = new SearchResultsPager(searchRequest, results, (hits > (offset+limit)));
     }
     
+    /**
+     * Is this page showing search results?
+     */
+    public boolean isSearchResults() {
+        return true;
+    }
+    
     // override page model and return search results pager
     public WeblogEntriesPager getWeblogEntriesPager() {
         return pager;
