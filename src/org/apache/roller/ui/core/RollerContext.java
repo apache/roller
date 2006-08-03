@@ -209,6 +209,15 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             
             velocityProps.load(instream);
             
+            // need to dynamically add old macro libraries if they are enabled
+            if(RollerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
+                String macroLibraries = (String) velocityProps.get("velocimacro.library");
+                String oldLibraries = RollerConfig.getProperty("velocity.oldMacroLibraries");
+                
+                // set the new value
+                velocityProps.setProperty("velocimacro.library", oldLibraries+","+macroLibraries);
+            }
+            
             mLogger.debug("Velocity props = "+velocityProps);
             
             // init velocity
