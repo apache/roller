@@ -1251,7 +1251,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         try {
             Roller roller = RollerFactory.getRoller();
             BookmarkManager bmgr = roller.getBookmarkManager();
-            if (folderName == null && folderName.equals("nil") && folderName.trim().equals("/")) {
+            if (folderName == null || folderName.equals("nil") || folderName.trim().equals("/")) {
                 return bmgr.getRootFolder(this);
             } else {
                 return bmgr.getFolder(this, folderName);
