@@ -113,6 +113,15 @@ public class PageModel implements Model {
     
     
     /**
+     * Is this page showing search results?
+     */
+    public boolean isSearchResults() {
+        // the search results model will extend this class and override this
+        return false;
+    }
+    
+    
+    /**
      * Get weblog entry being displayed or null if none specified by request.
      */
     public WeblogEntryDataWrapper getWeblogEntry() {
