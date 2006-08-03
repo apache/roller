@@ -15,15 +15,14 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.admin.struts.actions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
@@ -41,14 +40,17 @@ import org.apache.roller.ui.core.RollerContext;
 
 /**
  * Main page action for Roller Planet.
+ *
  * @struts.action name="main" path="/planet" scope="request"
  * @struts.action-forward name="planet.page" path=".planet"
  */
 public class PlanetAction extends Action {
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(PlanetAction.class);
+    
+    private static Log mLogger = LogFactory.getLog(PlanetAction.class);
+    
     private static ResourceBundle bundle =
             ResourceBundle.getBundle("ApplicationResources");
+    
     
     /**
      * Loads model and forwards to planet.page.
@@ -57,6 +59,7 @@ public class PlanetAction extends Action {
             ActionMapping mapping, ActionForm form,
             HttpServletRequest req, HttpServletResponse res)
             throws Exception {
+        
         RollerContext rctx = RollerContext.getRollerContext();
         req.setAttribute("version",rctx.getRollerVersion());
         req.setAttribute("buildTime",rctx.getRollerBuildTime());
@@ -77,6 +80,7 @@ public class PlanetAction extends Action {
         
         return mapping.findForward("planet.page");
     }
+    
     
     /**
      * Page model.
@@ -170,5 +174,5 @@ public class PlanetAction extends Action {
             return roller.getRefererManager().getDaysPopularWebsites(0, num);
         }
     }
+    
 }
-
