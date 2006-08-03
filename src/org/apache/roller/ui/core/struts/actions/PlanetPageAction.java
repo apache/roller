@@ -37,7 +37,7 @@ import org.apache.struts.action.ActionMapping;
  * @struts.action name="planet" path="/planet" scope="request"
  * @struts.action-forward name="planet.page" path="/WEB-INF/jsps/core/planet.jsp"
  */
-public class PlanetAction extends Action {
+public class PlanetPageAction extends Action {
     
     
     public ActionForward execute(ActionMapping mapping, ActionForm form,
