@@ -13,18 +13,18 @@
 #**
  * Show Roller version number string.
  *#
-#macro( showVersion )$rollerVersion#end
+#macro( showVersion )$config.rollerVersion#end
 
 #**
  * Show path to common images directory.
  *#
-#macro( showImagePath )$ctxPath/images#end
+#macro( showImagePath )$url.site/images#end
 
 #**
  * Show path to a theme directory.
  * @param theme Name of the theme.
  *#
-#macro( showThemePath $theme )$ctxPath/themes/$theme#end
+#macro( showThemePath $theme )$url.site/themes/$theme#end
 
 #**
  * Show path to a theme image.
