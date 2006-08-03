@@ -95,10 +95,10 @@
     <div class="comments" id="comments">
     #foreach( $comment in $comments )
         #set($content = $utils.encodeEmail($comment.content))
-        #if($escapeHtml)
+        #if($config.commentEscapeHtml)
             #set($content = $utils.escapeHTML($content))
         #end
-        #if($autoformat)
+        #if($config.commentAutoFormat)
             #set($content = $utils.replace($content,"\n","<br />"))
         #end
         #set($content = $utils.addNofollow($content))
@@ -300,7 +300,7 @@
 #**
  * Display hidden comment form for a weblog entry.
  *
- * NOTE: this is semi-broken because it doesn't accept an entry as an argument :/
+ * NOTE: this was EOLed a while ago and is totally broken.  
  *
  * @param entry WeblogEntry object for which form is to be shown,
  *#
