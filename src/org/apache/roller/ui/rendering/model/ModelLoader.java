@@ -41,7 +41,7 @@ public class ModelLoader {
     
     
     /**
-     * Load old page models, but only if velocity.pagemodel.classname defined.
+     * Load old page models, but only if they are enabled.
      */
     public static void loadOldModels(
             Map model,
@@ -50,10 +50,8 @@ public class ModelLoader {
             PageContext pageContext,
             WeblogPageRequest pageRequest) throws RollerException {
         
-        // Only load old model if it's specified
-        String useOldModel = 
-            RollerConfig.getProperty("velocity.pagemodel.classname");        
-        if (useOldModel != null && useOldModel.trim().length() > 0) { 
+        // Only load old models if it's enabled     
+        if (RollerConfig.getBooleanProperty("rendering.legacyModels.enabled")) { 
             ContextLoader.setupContext(model, request, response, pageContext, pageRequest);            
         }
     }
