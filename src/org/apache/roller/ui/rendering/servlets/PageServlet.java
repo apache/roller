@@ -285,7 +285,7 @@ public class PageServlet extends HttpServlet {
             if(pageRequest.getWeblogEntry() == null) {
                 invalid = true;
             } else if (pageRequest.getLocale() != null && 
-                    !pageRequest.getLocale().equals(pageRequest.getWeblogEntry().getLocale())) {
+                    !pageRequest.getWeblogEntry().getLocale().startsWith(pageRequest.getLocale())) {
                 invalid = true;
             }
             
