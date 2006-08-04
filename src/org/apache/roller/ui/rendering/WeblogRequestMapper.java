@@ -64,8 +64,19 @@ public class WeblogRequestMapper implements RequestMapper {
         
         this.restricted = new HashSet();
         
-        // build restricted list
-        String restrictList = RollerConfig.getProperty("weblogurls.restricted");
+        // build roller restricted list
+        String restrictList = 
+                RollerConfig.getProperty("rendering.weblogMapper.rollerProtectedUrls");
+        if(restrictList != null && restrictList.trim().length() > 0) {
+            String[] restrict = restrictList.split(",");
+            for(int i=0; i < restrict.length; i++) {
+                this.restricted.add(restrict[i]);
+            }
+        }
+        
+        // add user restricted list
+        restrictList = 
+                RollerConfig.getProperty("rendering.weblogMapper.userProtectedUrls");
         if(restrictList != null && restrictList.trim().length() > 0) {
             String[] restrict = restrictList.split(",");
             for(int i=0; i < restrict.length; i++) {
@@ -322,6 +333,8 @@ public class WeblogRequestMapper implements RequestMapper {
      * TODO 3.0: some kind of caching
      */
     private boolean isWeblog(String potentialHandle) {
+        
+        log.debug("checking weblog handle "+potentialHandle);
         
         boolean isWeblog = false;
         
