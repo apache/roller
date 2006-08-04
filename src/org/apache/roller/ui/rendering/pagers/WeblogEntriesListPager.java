@@ -45,7 +45,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     private String      queryCat;
     private List        entries;    
     protected static Log log =
-            LogFactory.getFactory().getInstance(PlanetEntriesPager.class);
+            LogFactory.getFactory().getInstance(WeblogEntriesListPager.class);
     
     public WeblogEntriesListPager(            
             WebsiteData    weblog,
