@@ -50,7 +50,7 @@ import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.rendering.newsfeeds.NewsfeedCache;
+import org.apache.roller.ui.rendering.velocity.deprecated.NewsfeedCache;
 import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
