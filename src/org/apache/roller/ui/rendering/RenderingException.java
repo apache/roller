@@ -18,22 +18,24 @@
 
 package org.apache.roller.ui.rendering;
 
-import java.io.Writer;
-import java.util.Map;
+import org.apache.roller.RollerException;
 
 
 /**
- * Interface representing a content renderer in Roller.
+ * A generic Roller rendering exception.
  */
-public interface Renderer {
+public class RenderingException extends RollerException {
     
+    public RenderingException(String s) {
+        super(s);
+    }
     
-    /**
-     * Render the content for this Renderer to the given Writer using
-     * the given set of model objects.
-     *
-     * Throws an exception if there is a problem during rendering.
-     */
-    public void render(Map model, Writer writer) throws RenderingException;
+    public RenderingException(String s, Throwable t) {
+        super(s, t);
+    }
+    
+    public RenderingException(Throwable t) {
+        super(t);
+    }
     
 }

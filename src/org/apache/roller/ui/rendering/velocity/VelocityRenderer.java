@@ -25,10 +25,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.ui.rendering.Renderer;
+import org.apache.roller.ui.rendering.RenderingException;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 
 
 /**
@@ -76,56 +79,62 @@ public class VelocityRenderer implements Renderer {
     }
     
     
-    public void render(Map model, Writer out) throws Exception {
+    public void render(Map model, Writer out) throws RenderingException {
         
-        if(parseException != null) {
+        try {
+            if(parseException != null) {
+                
+                Context ctx = new VelocityContext(model);
+                ctx.put("exception", parseException);
+                ctx.put("exceptionSource", renderTemplate.getId());
+                ctx.put("utils", new UtilitiesModel());
+                
+                // render output to Writer
+                velocityTemplate.merge(ctx, out);
+                
+                // and we're done
+                return;
+            }
             
+            long startTime = System.currentTimeMillis();
+            
+            // convert model to Velocity Context
             Context ctx = new VelocityContext(model);
-            ctx.put("exception", parseException);
-            ctx.put("exceptionSource", renderTemplate.getId());
-            ctx.put("utils", new UtilitiesModel());
             
-            // render output to Writer
-            velocityTemplate.merge(ctx, out);
+            if(velocityDecorator != null) {
+                
+                /**
+                 * We only allow decorating once, so the process isn't
+                 * fully recursive.  This is just to keep it simple.
+                 */
+                
+                // render base template to a temporary StringWriter
+                StringWriter sw = new StringWriter();
+                velocityTemplate.merge(ctx, sw);
+                
+                // put rendered template into context
+                ctx.put("decorator_body", sw.toString());
+                
+                log.debug("Applying decorator "+velocityDecorator.getName());
+                
+                // now render decorator to our output writer
+                velocityDecorator.merge(ctx, out);
+                
+            } else {
+                
+                // no decorator, so just merge template to our output writer
+                velocityTemplate.merge(ctx, out);
+            }
             
-            // and we're done
-            return;
+            long endTime = System.currentTimeMillis();
+            long renderTime = (endTime - startTime)/1000;
+            
+            log.debug("Rendered ["+renderTemplate.getId()+"] in "+renderTime+" secs");
+            
+        } catch (Exception ex) {
+            // wrap and rethrow so caller can deal with it
+            throw new RenderingException("Error during rendering", ex);
         }
-        
-        long startTime = System.currentTimeMillis();
-        
-        // convert model to Velocity Context
-        Context ctx = new VelocityContext(model);
-        
-        if(velocityDecorator != null) {
-            
-            /**
-             * We only allow decorating once, so the process isn't
-             * fully recursive.  This is just to keep it simple.
-             */
-            
-            // render base template to a temporary StringWriter
-            StringWriter sw = new StringWriter();
-            velocityTemplate.merge(ctx, sw);
-            
-            // put rendered template into context
-            ctx.put("decorator_body", sw.toString());
-            
-            log.debug("Applying decorator "+velocityDecorator.getName());
-            
-            // now render decorator to our output writer
-            velocityDecorator.merge(ctx, out);
-            
-        } else {
-            
-            // no decorator, so just merge template to our output writer
-            velocityTemplate.merge(ctx, out);
-        }
-        
-        long endTime = System.currentTimeMillis();
-        long renderTime = (endTime - startTime)/1000;
-        
-        log.debug("Rendered ["+renderTemplate.getId()+"] in "+renderTime+" secs");
     }
 
 }
