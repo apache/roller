@@ -194,11 +194,10 @@ public class FeedServlet extends HttpServlet {
             
             // Load special models for site-wide blog
             
-            // TODO 3.0 decide what do do about site models in feeds   
-            //if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-            //    String siteModels = RollerConfig.getProperty("rendering.siteModels");
-            //    ModelLoader.loadModels(siteModels, model, initData, true);
-            //}
+            if(RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
+                String siteModels = RollerConfig.getProperty("rendering.siteModels");
+                ModelLoader.loadModels(siteModels, model, initData, true);
+            }
 
             // Load weblog custom models
             ModelLoader.loadCustomModels(weblog, model, initData);

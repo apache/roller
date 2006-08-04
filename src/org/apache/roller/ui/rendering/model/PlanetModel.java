@@ -29,11 +29,13 @@ import org.apache.roller.model.PlanetManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.PlanetSubscriptionData;
+import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.PlanetSubscriptionDataWrapper;
 import org.apache.roller.ui.rendering.pagers.Pager;
 import org.apache.roller.ui.rendering.pagers.PlanetEntriesPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
 
 
 /**
@@ -41,7 +43,9 @@ import org.apache.roller.ui.rendering.util.WeblogPageRequest;
  */
 public class PlanetModel implements Model {
     
-    private WeblogPageRequest pageRequest = null;
+    private WeblogRequest  weblogRequest = null;
+    private WeblogTemplate weblogPage = null;
+    private int            pageNum = 0;
     protected WebsiteData  weblog = null;  
     
     private static Log log = LogFactory.getLog(PlanetModel.class);
@@ -53,13 +57,17 @@ public class PlanetModel implements Model {
     
     public void init(Map initData) throws RollerException {
         // we expect the init data to contain a pageRequest object
-        this.pageRequest = (WeblogPageRequest) initData.get("pageRequest");
-        if(this.pageRequest == null) {
+        this.weblogRequest = (WeblogPageRequest) initData.get("pageRequest");
+        if(this.weblogRequest == null) {
             throw new RollerException("expected pageRequest from init data");
         }
-        
+        // TODO 3.0: is it better to reparse URL to get these?
+        if (weblogRequest instanceof WeblogPageRequest) {
+            weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
+        }  
         // extract weblog object
-        weblog = pageRequest.getWeblog();
+        weblog = weblogRequest.getWeblog();
     } 
     
     
@@ -74,10 +82,10 @@ public class PlanetModel implements Model {
             null,
             null,    
             weblog, 
-            pageRequest.getWeblogPage(),
-            pageRequest.getLocale(),
+            weblogPage,
+            weblogRequest.getLocale(),
             sinceDays,
-            pageRequest.getPageNum(), 
+            pageNum, 
             length);
     }
     
@@ -93,10 +101,10 @@ public class PlanetModel implements Model {
             null,
             groupHandle,
             weblog, 
-            pageRequest.getWeblogPage(),
-            pageRequest.getLocale(),
+            weblogPage,
+            weblogRequest.getLocale(),
             sinceDays,
-            pageRequest.getPageNum(), 
+            pageNum, 
             length);
     }
     
@@ -112,10 +120,10 @@ public class PlanetModel implements Model {
             feedURL,
             null,
             weblog, 
-            pageRequest.getWeblogPage(),
-            pageRequest.getLocale(),
+            weblogPage,
+            weblogRequest.getLocale(),
             -1,
-            pageRequest.getPageNum(), 
+            pageNum, 
             length);
     }
     
