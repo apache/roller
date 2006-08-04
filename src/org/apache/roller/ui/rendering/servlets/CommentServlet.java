@@ -60,6 +60,7 @@ import org.apache.roller.util.GenericThrottle;
 import org.apache.roller.util.IPBanList;
 import org.apache.roller.util.MailUtil;
 import org.apache.roller.util.SpamChecker;
+import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.struts.util.RequestUtils;
@@ -212,7 +213,11 @@ public class CommentServlet extends HttpServlet {
             }
             
             // we know what the weblog entry is, so setup our urls
-            dispatch_url = "/roller-ui/rendering/page"+entry.getPermaLink();
+            dispatch_url = "/roller-ui/rendering/page/"+weblog.getHandle();
+            if(commentRequest.getLocale() != null) {
+                dispatch_url += "/"+commentRequest.getLocale();
+            }
+            dispatch_url += "/entry/"+URLUtilities.encode(commentRequest.getWeblogAnchor());
             
         } catch (Exception e) {
             // some kind of error parsing the request or looking up weblog
