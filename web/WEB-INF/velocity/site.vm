@@ -19,7 +19,6 @@
 #** macros for use with SitePageModel
 
    Contents
-      #showEntry($entry)
       #showEnriesPager($pager)
       #showWeblogProfile($weblog)
       #showWeblogDirectory()
@@ -27,27 +26,12 @@
       #showUserDirectory()
       #showCommentsPager($pager)
 *#
-##-----------------------------------------------------------------------------
-#macro( showEntry $entry )
-<div class="entry">
-    <p class="entryDetails">
-        <a href="$utils.escapeHTML($entry.permalink)">
-        <b>$utils.removeHTML($entry.title)</b></a><br /> 
-        <a href="$utils.escapeHTML($entry.website.URL)">$entry.website.name</a>
-        #if($entry.category.name)| $entry.category.name #end
-        #if($entry.pubTime)| #formatDate($text.get("macro.weblog.date.toStringFormat") $entry.pubTime) #end
-        #if($entry.creator.userName)| By $entry.creator.userName #end
-        <br/> 
-    </p>
-    <p class="entryDescription">
-        #set($content = $utils.removeHTML($entry.text))
-        $utils.truncateNicely($content, 240, 260, "...")
-    </p>
-</div>
-#end
 
-##-----------------------------------------------------------------------------
-#macro(showEntriesPager $pager)
+
+#**
+Show pager and next/prev control for site-wide or planet entries.
+*#
+#macro(showSiteEntriesPager $pager)
     #if($pager.items.size() > 0)
         #set($entryCount = $pager.items.size() - 1)
         #set($startDate = $pager.items.get(0).pubTime)
@@ -55,14 +39,33 @@
     #end
     #foreach($entry in $pager.items)
         #if($velocityCount < $maxResults)
-            #showEntry($entry)
+
+            <div class="entry">
+                <p class="entryDetails">
+                    <a href="$utils.escapeHTML($entry.permalink)">
+                    <b>$utils.truncateNicely($utils.removeHTML($entry.title), 50, 50, "...")</b></a><br /> 
+                    <a href="$utils.escapeHTML($entry.website.URL)">$entry.website.name</a>
+                    #if($entry.category.name)| $entry.category.name #end
+                    #if($entry.pubTime)| $utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
+                    #if($entry.creator.userName)| By $entry.creator.userName #end
+                    <br/> 
+                </p>
+                <p class="entryDescription">
+                    #if(!$utils.isEmpty($entry.summary))
+                         $utils.truncateNicely($utils.removeHTML($entry.transformedSummary), 240, 260, "...")
+                    #else
+                         $utils.truncateNicely($utils.removeHTML($entry.transformedText), 240, 260, "...")
+                    #end
+                </p>
+            </div>
+
         #end
     #end
     <div class="pagingcontrols">
     #if($pager.nextLink)
        <a href="$pager.nextLink">&lt; $pager.nextName</a>
     #end
-    #if($pager.nextLink && $pager.prevLink())
+    #if($pager.nextLink && $pager.prevLink)
        &nbsp;|&nbsp;
     #end
     #if($pager.prevLink)
@@ -71,7 +74,10 @@
     </div>
 #end
 
-##-----------------------------------------------------------------------------
+
+#**
+Show weblog profile for specified weblog
+*#
 #macro(showWeblogProfile $weblog)
     <h2 class="pageTitle">Weblog: $weblog.name</h2> 
     <table>
@@ -132,7 +138,7 @@
         #foreach($entry in $entriesPager.items)
             <tr>
                 <td>$entry.creator.userName</td>
-                <td>#formatDate($text.get("macro.weblog.date.toStringFormat") $entry.pubTime)</td>
+                <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
                 <td><a href="$utils.escapeHTML($entry.permaLink)">
                     $utils.removeHTML($entry.title)</a></td>
             </tr>
@@ -145,7 +151,9 @@
 #end
 
 
-##-----------------------------------------------------------------------------
+#**
+Show weblog directory, sensitive to letter specified in request.
+*#
 #macro(showWeblogDirectory $pageLength)
     #if($model.getRequestParameter("letter"))
         #set($chosenLetter = $model.getRequestParameter("letter"))
@@ -225,7 +233,10 @@
     </table>
 #end
 
-##-----------------------------------------------------------------------------
+
+#**
+Show user profile of specified user.
+*#
 #macro(showUserProfile $user)
     <h2 class="pageTitle">User: $user.fullName</h2>
     <table class="blogprofile data">
@@ -282,7 +293,7 @@
         #foreach($entry in $entriesPager.items)
             <tr>
                 <td><a href="$entry.website.url">$entry.website.handle</a></td>
-                <td>#formatDate($text.get("macro.weblog.date.toStringFormat") $entry.pubTime)</td>
+                <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
                 <td><a href="$utils.textToHTML($entry.permaLink)">
                     $utils.removeHTML($entry.title)</a></td>
             </tr>
@@ -293,7 +304,10 @@
     #end
 #end
 
-##-----------------------------------------------------------------------------
+
+#**
+Show user directory, sensitive to letter specified in request.
+*#
 #macro(showUserDirectory $pageLength)
     #if($model.getRequestParameter("letter"))
         #set($chosenLetter = $model.getRequestParameter("letter"))
@@ -372,7 +386,10 @@
     </table>
 #end
 
-##-----------------------------------------------------------------------------
+
+#**
+Show pager and next/prev control for a collection of comments
+*#
 #macro(showCommentsPager $commentsPager)
     #if($commentsPager.items.size() > 0)
         #set($commentCount = $commentsPager.items.size() - 1)

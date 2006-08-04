@@ -32,6 +32,9 @@
     #showWeblogEntryLinksList($entries)
     #showBookmarkLinksList($folderObj $expanding $subfolders)
     #showWeblogCategoryLinksList($categoryObj $expanding $subcats)
+    #showReferrersList($weblog)
+    #showAtomFeedsList($weblog)
+    #showRSSFeedsList($weblog)
 
     #showWeblogEntryCalendar($weblog $category)
 
@@ -142,6 +145,32 @@ Shows weblog entries pager via default day template
     #if ($nextLink)
         | <a href="$nextLink">$nextName</a> &raquo;
     #end
+#end
+
+
+#**
+Show either weblog entry text or summary as appropriate for 
+normal page or a permalink page with plugins applied.
+*#
+#macro(showWeblogEntryContent $entry $isPermalink)
+    #if($isPermalink) 
+        #if($utils.isNotEmpty($entry.text))
+            #set($sourceText = $entry.transformedText)
+        #else 
+            #set($sourceText = $entry.transformedSummary)
+        #end
+    #else
+        #if($utils.isNotEmpty($entry.summary))
+            #set($sourceText = $entry.transformedSummary)
+            #if($utils.isNotEmpty($entry.text))
+               #set($readMore = "[<a class='readmore' href='$url.entry($entry.anchor)'>$text.get('macro.weblog.readMore')</a>]" )
+               #set($sourceText = "$sourceText$readMore")
+            #end
+        #else 
+            #set($sourceText = $entry.transformedText)
+        #end
+    #end
+    $sourceText
 #end
 
 
@@ -489,12 +518,82 @@ Show weblog's categories in specified parent category.
 
 
 #**
+ * Display list of referrers.
+ *#
+#macro(showReferrersList $refs $max $maxWidth)
+    <ul class="rReferersList">
+    #foreach( $ref in $refs )
+        #if ($velocityCount <= $max)
+        <li class="rReferersListItem">
+
+            #set( $qq = '"' )
+            #set( $myUrl = $utils.escapeHTML( $ref.RefererUrl ) )
+            #set( $displayUrl = $myUrl )
+            #set( $restOfUrl = "" )
+            #set( $displayLink = "" )
+            #if ( $displayUrl.startsWith("http://") )
+                #set( $displayUrl = $displayUrl.substring( 7 ) )
+            #end
+            #if ( $displayUrl.length() > $maxWidth )
+                #set( $restOfUrl = "...$displayUrl.substring($maxWidth, $displayUrl.length())" )
+                #set( $displayUrl = $displayUrl.substring(0, $maxWidth) )
+            #end
+            #if ( $myUrl.startsWith("http://") )
+                #set( $displayLink = "<a rel=${qq}nofollow${qq} href=${qq}$myUrl${qq}" )
+                #if ( $restOfUrl )
+                    #set( $displayLink = "$displayLink title=${qq}$restOfUrl${qq}" )
+                #end
+                #set( $displayLink = "$displayLink >" )
+            #end
+            #set( $displayLink = "$displayLink$displayUrl" )
+            #if ( $includeHits )
+                #set( $displayLink = "$displayLink ($ref.DayHits)" )
+            #end
+            #if ( $myUrl.startsWith("http://") )
+                #set( $displayLink = "$displayLink</a>" )
+            #end
+            $displayLink
+
+        </li>
+        #end
+    #end
+    </ul>
+#end
+
+
+#**
+ * Show list of all RSS feeds available for weblog.
+ *#
+#macro(showAtomFeedsList $weblog)
+    <a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a><br />
+    #set($categories = $weblog.weblogCategories )
+    #foreach( $cat in $categories )
+        <a href="$url.feed.entries.rss($cat.path, false)">$cat.path</a><br />
+    #end
+    <a href="$url.feed.comments.atom">Comments</a><br />
+#end
+
+
+#**
+ * Show list of all Atom feeds available for weblog.
+ *#
+#macro(showRSSFeedsList $weblog)
+    <a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a><br />
+    #set($categories = $weblog.weblogCategories )
+    #foreach( $cat in $categories )
+        <a href="$url.feed.entries.atom($cat.path, false)">$cat.path</a><br />
+    #end
+    <a href="$url.feed.comments.atom">Comments</a><br />
+#end
+
+
+#**
  * Show Roller Page Navigation Bar, includes links to all pages.
  *#
 #macro(showPageMenu $weblog)
     <ul class="rNavigationBar">
         <li class="rNavItem">
-            <a href="$url.site">$config.siteName</a>
+            <a href="$url.site">$config.siteShortName</a>
         </li>
         #foreach($iPage in $weblog.pages)
             #if (!$iPage.hidden && $iPage.navbar)

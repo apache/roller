@@ -20,6 +20,7 @@ package org.apache.roller.pojos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.RollerException;
+import org.apache.roller.model.RefererManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.util.PojoUtil;
 import org.apache.commons.logging.Log;
@@ -41,6 +43,7 @@ import org.apache.roller.model.Roller;
 import org.apache.roller.model.ThemeManager;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.wrapper.RefererDataWrapper;
 
 
 /**
@@ -1077,6 +1080,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         // noop
     }
     
+    
     /** 
      * @roller.wrapPojoMethod type="simple"
      */
@@ -1089,6 +1093,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     public void setAbsoluteURL(String url) {
         // noop
     }
+    
     
     /**
      * Comma-separated list of additional page models to be created when this
@@ -1104,6 +1109,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         this.pageModels = pageModels;
     }
 
+    
     /**
      * Get initialized plugins for use during rendering process.
      */
@@ -1120,6 +1126,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         return initializedPlugins;
     }
     
+    
     /**
      * Returns categories under the default category of the weblog.
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
@@ -1134,6 +1141,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         return ret;
     }
+    
     
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
@@ -1156,6 +1164,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         return ret;
     }
 
+    
     /**
      * @roller.wrapPojoMethod type="pojo" class="org.apache.roller.pojos.WeblogCategoryData"
      */
@@ -1174,6 +1183,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         return category;
     }
+    
     
     /**
      * Get up to 100 most recent published entries in weblog.
@@ -1239,6 +1249,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         return recentComments;
     }
 
+    
     /**
      * Get bookmark folder by name.
      * @param folderName Name or path of bookmark folder to be returned (null for root)
@@ -1261,5 +1272,44 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         return ret;
     }
+
+    
+    /** 
+     * Return collection of referrers for current day.
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.RefererData"
+     */
+    public List getTodaysReferrers() {
+        List referers = null;
+        try {
+            Roller roller = RollerFactory.getRoller();
+            RefererManager rmgr = roller.getRefererManager();
+            return rmgr.getTodaysReferers(this);
+            
+        } catch (RollerException e) {
+            log.error("PageModel getTodaysReferers()", e);
+        }
+        return (referers == null ? Collections.EMPTY_LIST : referers);        
+    }
+    
+    /** No-op method to please XDoclet */
+    public void setTodaysReferrers(List ignored) {}
+    
+    /**
+     * Get number of hits counted today.
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public int getTodaysHits() {
+        try {
+            Roller roller = RollerFactory.getRoller();
+            RefererManager rmgr = roller.getRefererManager();
+            return rmgr.getDayHits(this);
+        } catch (RollerException e) {
+            log.error("PageModel getTotalHits()", e);
+        }
+        return 0;
+    }
+    
+    /** No-op method to please XDoclet */
+    public void setTodaysHits(int ignored) {}
 }
 
