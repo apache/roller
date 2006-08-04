@@ -36,6 +36,7 @@ Note: this filter does nothing if an ip ban list is not configured. -->
 <filter-mapping>
     <filter-name>SchemeEnforcementFilter</filter-name>
     <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
 </filter-mapping>
 
 <!-- Acegi Security filters - controls secure access to different parts of Roller -->
@@ -77,19 +78,6 @@ Note: this filter does nothing if an ip ban list is not configured. -->
 <filter-mapping>
     <filter-name>CompressionFilter</filter-name>
     <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
-    <dispatcher>FORWARD</dispatcher>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/planet.do</url-pattern>
-</filter-mapping>
-
-
-<!-- Planet Roller Caching -->
-<filter-mapping>
-    <filter-name>PlanetCacheFilter</filter-name>
-    <url-pattern>/planet.do</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
