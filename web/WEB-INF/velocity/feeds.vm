@@ -29,14 +29,14 @@
     #foreach($entry in $entries)
     <entry>
         <id>$entry.permalink</id>
-        <title type="html">$utils.escapeHTML($entry.title)</title>
+        <title type="html">$utils.escapeXML($entry.title)</title>
         <author><name>$entry.creator.fullName</name></author>
         <link rel="alternate" type="text/html" href="$entry.permalink"/>
         <published>$utils.formatIso8601Date($entry.pubTime)</published>
         <updated>$utils.formatIso8601Date($entry.updateTime)</updated> 
-        <category term="$utils.escapeHTML($entry.category.path)" label="$utils.escapeHTML($entry.category.name)" />
-        #if( $utils.isNotEmpty($entry.summary))<summary type="html">$utils.escapeHTML($entry.transformedSummary)</summary>#end
-        #if( $utils.isNotEmpty($entry.text) )<content type="html">$utils.escapeHTML($entry.transformedText)</content>#end
+        <category term="$utils.escapeXML($entry.category.path)" label="$utils.escapeXML($entry.category.name)" />
+        #if( $utils.isNotEmpty($entry.summary))<summary type="html">$utils.escapeXML($entry.transformedSummary)</summary>#end
+        #if( $utils.isNotEmpty($entry.text) )<content type="html">$utils.escapeXML($entry.transformedText)</content>#end
         #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
         #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
         #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
@@ -52,17 +52,17 @@
   #foreach($entry in $entries)
   <item>
     <guid isPermaLink="true">$entry.permalink</guid>
-    <title>$utils.escapeHTML($utils.removeHTML($entry.title))</title>
-    <dc:creator>$utils.escapeHTML($entry.creator.fullName)</dc:creator>
+    <title>$utils.escapeXML($utils.removeHTML($entry.title))</title>
+    <dc:creator>$utils.escapeXML($entry.creator.fullName)</dc:creator>
     <link>$entry.permalink</link>
     #if( $entry.link && !$entry.link.trim().equals("") )
-    <source url="$utils.escapeHTML($entry.link)">$utils.escapeHTML($entry.link)</source>
+    <source url="$utils.escapeXML($entry.link)">$utils.escapeXML($entry.link)</source>
     #end
     <pubDate>$utils.formatRfc822Date($entry.pubTime)</pubDate>
-    <category>$utils.escapeHTML($entry.category.name)</category>
-    #if( $utils.isNotEmpty($entry.summary) && $utils.isNotEmpty($entry.text))<atom:summary type="html">$utils.escapeHTML($entry.transformedSummary)</atom:summary>#end
-    #if( $utils.isNotEmpty($entry.summary) && $utils.isEmpty($entry.text))<description>$utils.escapeHTML($entry.transformedText)</description>#end
-    #if( $utils.isNotEmpty($entry.text) )<description>$utils.escapeHTML($entry.transformedText)</description>#end
+    <category>$utils.escapeXML($entry.category.name)</category>
+    #if( $utils.isNotEmpty($entry.summary) && $utils.isNotEmpty($entry.text))<atom:summary type="html">$utils.escapeXML($entry.transformedSummary)</atom:summary>#end
+    #if( $utils.isNotEmpty($entry.summary) && $utils.isEmpty($entry.text))<description>$utils.escapeXML($entry.transformedText)</description>#end
+    #if( $utils.isNotEmpty($entry.text) )<description>$utils.escapeXML($entry.transformedText)</description>#end
     #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
     #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
     #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
@@ -81,15 +81,15 @@
     #foreach($comment in $comments)
     <entry>
         <id>$url.comment($comment.weblogEntry.anchor, $comment.timestamp)</id> 
-        <title type="html">Re: $utils.escapeHTML($comment.weblogEntry.title)</title>
-        <author><name>$utils.escapeHTML($utils.removeHTML($comment.name))</name></author>
+        <title type="html">Re: $utils.escapeXML($comment.weblogEntry.title)</title>
+        <author><name>$utils.escapeXML($utils.removeHTML($comment.name))</name></author>
         <link rel="alternate" type="text/html" href="$url.comment($comment.weblogEntry.anchor, $comment.timestamp)"/>
         <published>$utils.formatIso8601Date($comment.postTime)</published>
         <updated>$utils.formatIso8601Date($comment.postTime)</updated> 
-        #if($config.commentEscapeHtml)
-            #set($content = $utils.escapeHTML($utils.removeHTML($comment.content)))
+        #if($config.commentescapeXML)
+            #set($content = $utils.escapeXML($utils.removeHTML($comment.content)))
         #else 
-            #set($content = $utils.escapeHTML($utils.transformToHTMLSubset($utils.escapeHTML($comment.content))))
+            #set($content = $utils.escapeXML($utils.transformToHTMLSubset($utils.escapeXML($comment.content))))
         #end
         #if($config.commentAutoFormat)
             #set($content = $utils.autoformat($content))
@@ -104,13 +104,13 @@
     #foreach($comment in $comments)
     <item>
         <guid isPermaLink="true">$url.comment($comment.weblogEntry.anchor, $comment.timestamp)</guid>
-        <title>Re: $utils.escapeHTML($comment.weblogEntry.title)</title>
-        <dc:creator>$utils.escapeHTML($utils.removeHTML($comment.name))</dc:creator>
+        <title>Re: $utils.escapeXML($comment.weblogEntry.title)</title>
+        <dc:creator>$utils.escapeXML($utils.removeHTML($comment.name))</dc:creator>
         <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>
-        #if($config.commentEscapeHtml)
-            #set($content = $utils.escapeHTML($utils.removeHTML($comment.content)))
+        #if($config.commentescapeXML)
+            #set($content = $utils.escapeXML($utils.removeHTML($comment.content)))
         #else 
-            #set($content = $utils.escapeHTML($utils.transformToHTMLSubset($utils.escapeHTML($comment.content))))
+            #set($content = $utils.escapeXML($utils.transformToHTMLSubset($utils.escapeXML($comment.content))))
         #end
         #if($config.commentAutoFormat)
             #set($content = $utils.autoformat($content))

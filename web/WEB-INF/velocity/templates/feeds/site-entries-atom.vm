@@ -18,8 +18,8 @@
 *#<?xml version="1.0" encoding='utf-8'?>
 #if($config.feedStyle)<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/roller-ui/styles/atom.xsl" media="screen"?>#end
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <title type="html">$utils.escapeHTML($config.siteName)</title>
-    <subtitle type="html">$utils.escapeHTML($config.siteDescription)</subtitle>
+    <title type="html">$utils.escapeXML($config.siteName)</title>
+    <subtitle type="html">$utils.escapeXML($config.siteDescription)</subtitle>
     <id>$url.absoluteSite</id>
     <link rel="alternate" type="text/html" href="$url.absoluteSite" />
     <link rel="self" type="application/atom+xml" href="$url.feed.entries.atom($model.categoryPath, $model.excerpts)" />
