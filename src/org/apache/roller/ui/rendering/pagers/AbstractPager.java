@@ -19,7 +19,7 @@
 package org.apache.roller.ui.rendering.pagers;
 
 import java.util.List;
-import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.URLUtilities;
 
@@ -30,7 +30,7 @@ public abstract class AbstractPager implements Pager {
     
     protected List           users;
     protected WebsiteData    weblog;
-    protected WeblogTemplate weblogPage;
+    protected Template       weblogPage;
     protected String         locale;
     protected int            sinceDays;
     protected int            page;
@@ -38,10 +38,11 @@ public abstract class AbstractPager implements Pager {
     protected int            offset;
     protected boolean        more = false;   
     
+    
     /** Creates a new instance of AbstractPager */
     public AbstractPager(            
             WebsiteData    weblog,             
-            WeblogTemplate weblogPage,
+            Template       weblogPage,
             String         locale,
             int            sinceDays,
             int            page,
@@ -100,7 +101,7 @@ public abstract class AbstractPager implements Pager {
         int                page, 
         int                pageAdd, 
         WebsiteData        weblog, 
-        WeblogTemplate     weblogPage, 
+        Template           weblogPage, 
         String             locale) {
 
         int pageNum = page + pageAdd;
@@ -111,5 +112,6 @@ public abstract class AbstractPager implements Pager {
         } 
         return URLUtilities.getWeblogCollectionURL(
                 weblog, locale, null, null, pageNum, false);
-    }  
+    }
+    
 }

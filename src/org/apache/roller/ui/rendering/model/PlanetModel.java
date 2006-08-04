@@ -29,7 +29,7 @@ import org.apache.roller.model.PlanetManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.PlanetSubscriptionData;
-import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.PlanetSubscriptionDataWrapper;
 import org.apache.roller.ui.rendering.pagers.Pager;
@@ -43,12 +43,12 @@ import org.apache.roller.ui.rendering.util.WeblogRequest;
  */
 public class PlanetModel implements Model {
     
-    private WeblogRequest  weblogRequest = null;
-    private WeblogTemplate weblogPage = null;
-    private int            pageNum = 0;
-    protected WebsiteData  weblog = null;  
-    
     private static Log log = LogFactory.getLog(PlanetModel.class);
+    
+    private WeblogRequest  weblogRequest = null;
+    private Template       weblogPage = null;
+    private int            pageNum = 0;
+    private WebsiteData    weblog = null;
     
     
     public String getModelName() {

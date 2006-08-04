@@ -23,22 +23,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
-import org.apache.roller.util.URLUtilities;
 
 /**
  * Provides paging for comments.
  */
 public class CommentsPager extends AbstractPager {
+    
     private List comments = null;
     protected static Log log =
             LogFactory.getFactory().getInstance(CommentsPager.class);
@@ -46,7 +45,7 @@ public class CommentsPager extends AbstractPager {
     /** Creates a new instance of CommentPager */
     public CommentsPager(            
             WebsiteData    weblog,             
-            WeblogTemplate weblogPage,
+            Template       weblogPage,
             String         locale,
             int            sinceDays,
             int            page,

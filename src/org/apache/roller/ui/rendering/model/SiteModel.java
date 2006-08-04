@@ -34,8 +34,8 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
@@ -53,11 +53,13 @@ import org.apache.roller.ui.rendering.util.WeblogRequest;
  */
 public class SiteModel implements Model {
     
-    protected WebsiteData  weblog = null;
-    private WeblogRequest  weblogRequest = null;
-    private WeblogTemplate weblogPage = null;
-    private int            pageNum = 0;
-    private static Log     log = LogFactory.getLog(SiteModel.class);   
+    private static Log log = LogFactory.getLog(SiteModel.class);   
+    
+    private WebsiteData weblog = null;
+    private WeblogRequest weblogRequest = null;
+    private Template weblogPage = null;
+    private int pageNum = 0;
+    
     
     public String getModelName() {
         return "site";
