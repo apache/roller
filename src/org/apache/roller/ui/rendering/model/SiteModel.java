@@ -35,6 +35,7 @@ import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
@@ -44,6 +45,7 @@ import org.apache.roller.ui.rendering.pagers.UsersPager;
 import org.apache.roller.ui.rendering.pagers.WeblogEntriesListPager;
 import org.apache.roller.ui.rendering.pagers.WeblogsPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
 
 
 /**
@@ -51,9 +53,11 @@ import org.apache.roller.ui.rendering.util.WeblogPageRequest;
  */
 public class SiteModel implements Model {
     
-    private WeblogPageRequest pageRequest = null;
     protected WebsiteData  weblog = null;
-    private static Log log = LogFactory.getLog(SiteModel.class);    
+    private WeblogRequest  weblogRequest = null;
+    private WeblogTemplate weblogPage = null;
+    private int            pageNum = 0;
+    private static Log     log = LogFactory.getLog(SiteModel.class);   
     
     public String getModelName() {
         return "site";
@@ -61,13 +65,17 @@ public class SiteModel implements Model {
     
     public void init(Map initData) throws RollerException {        
         // we expect the init data to contain a pageRequest object
-        this.pageRequest = (WeblogPageRequest) initData.get("pageRequest");
-        if(this.pageRequest == null) {
+        this.weblogRequest = (WeblogPageRequest) initData.get("weblogRequest");
+        if(this.weblogRequest == null) {
             throw new RollerException("expected pageRequest from init data");
         }
-        
+        // TODO 3.0: is it better to reparse URL to get these?
+        if (weblogRequest instanceof WeblogPageRequest) {
+            weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
+        }        
         // extract weblog object
-        weblog = pageRequest.getWeblog();
+        weblog = weblogRequest.getWeblog();
     }
     
     //----------------------------------------------------------------- Pagers
@@ -80,10 +88,10 @@ public class SiteModel implements Model {
     public Pager getWeblogEntriesPager(int sinceDays, int length) {
         return new WeblogEntriesListPager(
             weblog, null, null, null,
-            pageRequest.getWeblogPage(),
-            pageRequest.getLocale(),
+            weblogPage,
+            weblogRequest.getLocale(),
             sinceDays,
-            pageRequest.getPageNum(), 
+            pageNum, 
             length);
     }
     
@@ -100,10 +108,10 @@ public class SiteModel implements Model {
     public Pager getWeblogEntriesPager(WebsiteData queryWeblog, UserData user, String cat, int sinceDays, int length) {
         return new WeblogEntriesListPager(
             weblog, queryWeblog, user, cat,
-            pageRequest.getWeblogPage(),
-            pageRequest.getLocale(),
+            weblogPage,
+            weblogRequest.getLocale(),
             sinceDays,
-            pageRequest.getPageNum(), 
+            pageNum, 
             length);
     }    
     
@@ -117,10 +125,10 @@ public class SiteModel implements Model {
     public Pager getCommentsPager(int sinceDays, int length) {
         return new CommentsPager(
             weblog, 
-            pageRequest.getWeblogPage(),
-            pageRequest.getLocale(),
+            weblogPage,
+            weblogRequest.getLocale(),
             sinceDays,
-            pageRequest.getPageNum(), 
+            pageNum, 
             length);
     }     
     
@@ -130,10 +138,10 @@ public class SiteModel implements Model {
         return new UsersPager(
             letter,
             weblog, 
-            pageRequest.getWeblogPage(),
-            pageRequest.getLocale(),
+            weblogPage,
+            weblogRequest.getLocale(),
             sinceDays,
-            pageRequest.getPageNum(), 
+            pageNum, 
             length);
     }      
     
@@ -143,10 +151,10 @@ public class SiteModel implements Model {
         return new WeblogsPager(
             letter,
             weblog, 
-            pageRequest.getWeblogPage(),
-            pageRequest.getLocale(),
+            weblogPage,
+            weblogRequest.getLocale(),
             sinceDays,
-            pageRequest.getPageNum(), 
+            pageNum, 
             length);
     }   
     

@@ -41,7 +41,6 @@ import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 
 /**
  * Model which provides information needed to render a feed.
- * Returns site-wide feeds when weblog is a
  */
 public class FeedModel implements Model {
     
@@ -123,7 +122,7 @@ public class FeedModel implements Model {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
             List entries = wmgr.getWeblogEntries(
-                    RollerRuntimeConfig.isSiteWideWeblog(weblog.getHandle()) ? null : weblog,
+                    weblog,
                     null, 
                     null, 
                     new Date(), 
