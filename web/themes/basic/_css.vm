@@ -1,8 +1,548 @@
-#set( $theme = "basic" )
-#parse("/WEB-INF/classes/themes/css.vm")
+/*-------------------------------------------------------------
+Base styles
+--------------------------------------------------------------*/
 
-<style type="text/css" media="print">
-    .rWeblogCategoryChooser{ visibility: hidden; }
-    .entries{ width: 100%; float: none; }
-    .rightbar{ visibility: hidden; }
-</style>
+a {
+    font-weight: normal;
+    text-decoration: underline;
+}
+a:active {}
+a:link {}
+a:visited {}
+a:hover {}
+body {
+    font-family: verdana, sans-serif;
+    font-size: small;
+}
+pre {
+    margin:0px 10px 0px 10px;
+    overflow: auto;
+}
+.code {
+    margin:10px 10px 10px 20px;
+    padding: 3px 3px;
+}
+.quote {
+    margin-left: 10%;
+    text-align: justify;
+    font-style: italic;
+}
+img {
+    border: 0px;
+    margin: 0px; 
+}
+
+/* bookmarks ----------------------------------------------- */
+
+.rFolder {
+    font-size: small;
+    font-weight: bold;
+}
+li.rFolderItem {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+    font-size : small;
+    font-weight: normal;
+}
+.rBookmark0 {
+  margin-left: 10px;
+  font-size: small;
+}
+img.rBookmark {
+    margin-left: 10px;
+    border: 0;
+}
+img.smrssbadge {
+    margin-left: 10px;
+    border: 0;
+}
+
+/* navbar ----------------------------------------------- */
+
+.rNavigationBar {
+    margin-left: 0;
+    padding-left: 0;
+}
+li.rNavItem {
+    list-style: none;
+    font-size : small;
+    font-weight: normal;
+}
+
+ul.rMenu {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+li.rMenuItem {
+    font-size : small;
+    font-weight: normal;
+}
+
+/* referrers ----------------------------------------------- */
+
+ul.rReferersList {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+li.rReferersListItem {
+    font-size : small;
+    font-weight: normal;
+}
+a.linkback {
+    border-style: double;
+}
+
+/* comments ----------------------------------------------- */
+
+a.entrycommentslink {
+    background: transparent;
+}
+/* master containing div or ul */
+.comments {
+  margin: 10px 5px 10px 5px;
+}
+/* Preview / Comments Header */
+div.comments-head {
+  font-weight:bold;
+  margin-top:10px;
+  text-transform:uppercase;
+}
+/* actual comment content */
+.comment {
+    margin: 5px 10px 10px 5px; 
+}
+/* commenter info */
+p.comment-details {
+    background: transparent;
+    font-size: .95em;
+    margin: 10px 0px 10px 10px !important;
+}
+div.comments-form {
+  font-weight:normal;
+  margin: 15px 15px 15px 15px;
+}
+span.comments-syntax-indicator {
+    display: block;
+}
+ul.commentsList {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+li.commentsListItem {
+    font-size : small;
+    font-weight: normal;
+}
+label.rememberInfo{
+    font-size: small;
+}
+label.notify{
+    font-size: small;
+}
+/* Begin Hidden Comment Form */
+form.commentFormBox {
+    margin-top: 10px;
+}
+tr.commentFormRow {
+    font-size: 12px;
+    padding-bottom: 6px;
+}
+input.commentFormInput {
+    font-size: 1em;
+}
+textarea.commentFormTextarea {
+    font-size: 12px;
+    width: 90% !important;
+}
+.comments-syntax-indicator {
+    font-weight: bold;
+}
+.comments-syntax-indicator span.enabled {
+    background: transparent;
+    color: green;
+    font-style: italic;
+}
+.comments-syntax-indicator span.disabled {
+    background: transparent;
+    color: red;
+    font-style: italic;
+}
+div.commentBody {}
+div.commentByline {}
+div.commentAuthor {
+    border: none;
+}
+
+/* weblog ----------------------------------------------- */
+
+a.daypermalink {
+    border-style : none;
+}
+a.entrypermalink {
+    background: transparent;
+}
+span.disabled {
+    color: red;
+}
+span.enabled {
+    color: green;
+}
+form#searchForm {
+}
+div#searchAgain {
+  border: 1px solid #999;
+  font-size: 1em;
+}
+div.trackbackUrl {
+    background: transparent;
+    margin: 0px 10px 10px 10px;
+    text-align: left;
+}
+#nextEntry {
+    text-align: right;
+}
+#previousEntry {
+    text-align: left;
+}
+.next-previous {
+    text-align: center;
+    padding: 1em 0 1em 0;
+}
+
+/* sidebar ----------------------------------------------- */
+
+ul.recentposts {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+li.recentposts {
+    font-size : small;
+    font-weight: normal;
+}
+ul.linkblog {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+li.linkblog {
+    font-size : small;
+    font-weight: normal;
+}
+.error {
+    display: block;
+    background-color: #ffcccc;
+    border: 1px solid red;
+    color: #aa0000;
+    font-size: 0.9em;
+    font-weight: normal;
+    margin: 5px 10px 5px 0px;
+    padding: 3px;
+    width: 95%;
+}
+.status {
+    display: block;
+    background-color: #CCFFCC;
+    border: 1px solid green;
+    color: #000000;
+    font-size: .9em;
+    font-weight: normal;
+    margin: 5px 10px 5px 0px;
+    padding: 3px;
+    width: 95%;
+}
+
+/* categories ----------------------------------------------- */
+
+div.rWeblogCategoryChooser {
+    background: transparent;
+    margin-bottom: 10px;
+}
+a.rUnchosenCategory {
+    font-size: medium;
+    font-weight: normal;
+}
+span.rChosenCategory {
+    font-size: medium;
+    font-weight: bolder;
+}
+
+/* calendar ----------------------------------------------- */
+
+table.hCalendarTable {
+    text-align : center;
+}
+td.hCalendarMonthYearRow {
+    font-weight: bold;
+}
+a.hCalendarNavBar {
+}
+th.hCalendarDayNameRow {
+    text-align : center;
+    font-size : x-small;
+    font-weight : bolder;
+}
+tr.hCalendarNextPrev {
+    text-align : center;
+    font-size : x-small;
+    font-style : italic;
+}
+td.hCalendarDayNotInMonth {
+    font-size : x-small;
+    color: gray;
+}
+td.hCalendarDayCurrent {
+    text-align : center;
+    font-size  : x-small;
+    font-weight: bolder;
+}
+td.hCalendarDayLinked {
+    text-align : center;
+    font-size  : x-small;
+    font-weight: bolder;
+}
+div.hCalendarDayTitle {
+    font-size:  .9em;
+    text-align: center;
+}
+td.hCalendarDay {
+    text-align: center;
+    font-size : x-small;
+}
+
+/* big calendar ----------------------------------------------- */
+
+div.hCalendarDayTitleBig {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 25%;
+  padding: 3px 0 3px 0;
+  background: transparent;
+  color: #050505;
+  border-right: 1px solid #050505;
+  border-bottom: 1px solid #050505;
+  font-size: small;
+  text-align: center;
+  font-size: small;
+}
+div.bCalendarDayContentBig {
+  font-size: x-small;
+  padding: 3px 0px 3px 0px;
+}
+
+
+/*-------------------------------------------------------------
+Basic theme styles
+--------------------------------------------------------------*/
+
+.entries{
+    width: 80%;
+    float: left;
+}
+.entries h1 {
+	text-align: center;
+}
+.entryTitle {
+    font-weight: bold;
+    font-size: %120;
+}
+.entryInfo {
+  font-size: 80%;
+  color: #999; 
+}
+div.rWeblogCategoryChooser {
+	text-align: center;
+}
+.rightbar{ 
+	width: 20%;
+	float: right;
+}
+.sidebar{
+	margin-left: 6;
+	padding-left: 5;
+}
+div.dayTitle {
+  font-family:verdana, arial, sans-serif; 
+  font-size: 140%;
+  color: #999; 
+  font-weight:bold;
+  margin-top:10px;
+  text-transform:uppercase;
+  border-bottom:1px dotted #666;		
+}
+
+div.day {
+  border-style: dotted;
+  border-width: thin;
+  font-family: verdana, sans-serif;
+  font-size: small;
+  color: black;
+  color : #000000;
+}
+
+div.box {
+  margin: 15px 15px 15px 15px;
+}
+
+h1 {
+  color:#CC9933;
+}
+h2 {
+  font-family:verdana, arial, sans-serif;
+  color:#999;
+  font-size:12px;
+  font-weight:bold;
+  background:#FFF;
+  line-height:14px;
+  padding:2px;
+  margin-top:10px;
+  border-bottom:1px dotted #666;
+  text-transform:uppercase;
+  letter-spacing: .2em;  					
+}
+
+p {
+  font-family: verdana, sans-serif;
+  font-size: small;
+  color: black;
+  color : #000000;
+}
+
+body {
+  font-family: verdana, sans-serif;
+  font-size: small;
+  color: black;
+  background-color: white;
+}
+a {
+  text-decoration: none;
+}
+a:link { 
+  color: blue;
+  font-weight: medium;
+}
+a:visited {
+  color: purple;
+  font-weight: medium;
+}
+
+a:hover {
+  text-decoration: underline overline;
+}
+img {
+  border: 0px;
+  margin: 0px; 
+}
+
+.dateStamp {
+  color : gray;
+  font-size: small;
+}
+
+.rFolder {
+	margin-left: 0;
+	padding-left: 0;
+}
+.rBookmark1 {
+  margin-left: 10px;
+  font-size: small;
+  font-weight: bold;
+}
+.rBookmark2 {
+  margin-left: 10px;
+  font-weight: bold;
+  font-size: large
+}
+.rBookmark3 {
+  margin-left: 10px;
+  font-size: x-large
+}
+
+.hCalendarTable {
+  text-align : center;
+}
+.hCalendarTitle {
+  text-align : center;
+  font-weight : bolder;
+  font-size: large;
+}
+.hCalendarDayNameRow {
+  text-align : center;
+  font-weight : bolder;
+  font-size : x-small;
+}
+.hCalendarDay {
+  text-align : center;
+  font-size : x-small;
+}
+.hCalendarDayCurrent {
+  text-align : center;
+  font-size : x-small;
+  font-weight : bolder ;
+}
+.hCalendarDayLinked {
+  font-size : x-small;
+  font-weight : bolder ;
+  text-align : center;
+}
+.hCalendarDayNotInMonth {
+  font-size : x-small;
+  background-color: white;
+  color: gray;
+}
+.hCalendarNextPrev {
+  font-size : x-small;
+  text-align : center;
+  font-style : italic;
+}
+
+.rChosenCategory {
+    font-weight: bolder;
+}
+.rUnchosenCategory {
+    font-size: medium;
+}
+
+ul.rReferersList {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+  font-size : x-small;
+}
+li.rReferersListItem {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+  font-size : x-small;
+}
+    
+.comments {
+  margin: 15px 15px 15px 15px;
+}		
+.comment {
+	margin: 5px 0px 10px 5px;
+	border: 1px solid #ddd;
+  	background:#eee;	
+}
+.comments-form {
+  font-family:verdana, arial, sans-serif;
+  color:#999;
+  font-size:10px;
+  font-weight:normal;
+  background:#FFF;	
+  margin: 15px 15px 15px 15px;
+}	
+			
+.comments-head	{ 
+  font-family:verdana, arial, sans-serif; 
+  font-size: 10px; 
+  color: #999; 
+  font-weight:bold;
+  margin-top:10px;
+  text-transform:uppercase;
+  border-bottom:1px dotted #666;		
+}
