@@ -39,6 +39,8 @@ import org.apache.roller.pojos.WebsiteData;
  * This request mapper is used to map all weblog specific urls of the form
  * /<weblog handle>/* to the appropriate servlet for handling the actual
  * request.
+ *
+ * TODO: we should try and make this class easier to extend and build upon
  */
 public class WeblogRequestMapper implements RequestMapper {
     
@@ -197,6 +199,10 @@ public class WeblogRequestMapper implements RequestMapper {
                     forwardUrl.append(TRACKBACK_SERVLET);
                     forwardUrl.append("/");
                     forwardUrl.append(handle);
+                    if(locale != null) {
+                        forwardUrl.append("/");
+                        forwardUrl.append(locale);
+                    }
                     forwardUrl.append("/");
                     forwardUrl.append(context);
                     if(data != null) {
@@ -210,6 +216,10 @@ public class WeblogRequestMapper implements RequestMapper {
                     forwardUrl.append(COMMENT_SERVLET);
                     forwardUrl.append("/");
                     forwardUrl.append(handle);
+                    if(locale != null) {
+                        forwardUrl.append("/");
+                        forwardUrl.append(locale);
+                    }
                     forwardUrl.append("/");
                     forwardUrl.append(context);
                     if(data != null) {
