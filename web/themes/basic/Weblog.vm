@@ -1,40 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="$url.home/page/theme.css" />
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+    <title>$utils.escapeHTML($model.weblog.name) : $model.weblogPage.name</title>
+</head>
+<body>
 <div class="entries">
-    <h1>#showWebsiteDescription()</h1>
+    <h1>$utils.escapeHTML($model.weblog.description)</h1>
 
-    #showWeblogCategoryChooser()
+        #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+        #showWeblogCategoryLinksList($rootCategory false false)
 
-    #displayWeblogEntries()
+        #set($pager = $model.getWeblogEntriesPager()) 
+        <div class="next-previous">
+            #if ($model.results)
+                #showWeblogSearchAgainForm($model.weblog)
+                #showNextPrevSearchControl($pager)
+            #else
+                #showNextPrevEntriesControl($pager)
+            #end
+        </div>
+
+        #showWeblogEntriesPager($pager)
+
+        #if ($model.permalink)
+           #showWeblogEntryComments($entry)
+           #showWeblogEntryCommentForm($entry)
+        #end
+
 </div>
 <div class="rightbar">
     <h2>Calendar</h2>
     <div class="sidebar">
-    #showWeblogCalendar()
+    #showWeblogEntryCalendar($model.weblog "nil")
     </div>
 
     <h2>RSS Feeds</h2>
     <div class="sidebar">
-    #showRSSBadge()<br>
-    #showRSSLinks()
+    #showRSSFeedsList($model.weblog)
     </div>
 
     <h2>Search</h2>
     <div class="sidebar">
-    #showSearchForm()
+    #showWeblogSearchForm($model.weblog false)
     </div>
 
     <h2>Links</h2>
     <div class="sidebar">
-    #showBlogroll()
+    #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+    #showBookmarkLinksList($rootFolder false false) 
     </div>
 
     <h2>Navigation</h2>
     <div class="sidebar">
-    #showCssNavBar()
-    #showEditorMenu()
+    #showPageMenu($model.weblog)
+    #showAuthorMenu(true)
     </div>
 
     <h2>Referers</h2>
     <div class="sidebar">
-    #showReferers(30 20)
+    #set($refs = $model.weblog.getTodaysReferrers())
+    #showReferrersList($refs 30 20)
     </div>
 </div>
+
+</body>
+</html>
+
