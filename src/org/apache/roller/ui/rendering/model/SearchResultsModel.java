@@ -87,6 +87,12 @@ public class SearchResultsModel extends PageModel {
         // let parent initialize
         super.init(initData);
         
+        // if there is no query, then we are done
+        if(searchRequest.getQuery() == null) {
+            pager = new SearchResultsPager(searchRequest, results, false);
+            return;
+        }
+        
         // setup the search
         IndexManager indexMgr = RollerFactory.getRoller().getIndexManager();
         
@@ -217,7 +223,7 @@ public class SearchResultsModel extends PageModel {
     
     
     public String getTerm() {
-        return searchRequest.getQuery();
+        return (searchRequest.getQuery() == null) ? "" : searchRequest.getQuery();
     }
 
     public int getHits() {
