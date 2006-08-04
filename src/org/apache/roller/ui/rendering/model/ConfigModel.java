@@ -44,19 +44,6 @@ public class ConfigModel implements Model {
     private static Log log = LogFactory.getLog(ConfigModel.class);
     
     
-    /** Hand-picked list of runtime properties to be made available */
-    private static List allowedProperties =
-            Arrays.asList(new String[] {
-        "users.registration.enabled",
-        "users.registration.url",
-        "users.comments.enabled",
-        "users.trackbacks.enabled",
-        "site.linkbacks.enabled",
-        "site.frontpage.weblog.handle",
-        "site.frontpage.weblog.aggregated"
-    });
-    
-    
     /** Template context name to be used for model */
     public String getModelName() {
         return "config";
@@ -83,6 +70,14 @@ public class ConfigModel implements Model {
     
     public String getSiteEmail() {
         return getProperty("site.adminemail");
+    }
+    
+    public boolean registrationEnabled() {
+        return getBooleanProperty("users.registration.enabled");
+    }
+    
+    public String registrationURL() {
+        return getProperty("users.registration.url");
     }
     
     public int getFeedSize() {
