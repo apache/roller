@@ -30,7 +30,7 @@ import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.PlanetEntryData;
 import org.apache.roller.pojos.PlanetGroupData;
-import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.PlanetEntryDataWrapper;
 
@@ -49,7 +49,7 @@ public class PlanetEntriesPager extends AbstractPager {
             String         feedURL,
             String         groupHandle,  
             WebsiteData    weblog,
-            WeblogTemplate weblogPage,
+            Template       weblogPage,
             String         locale,
             int            sinceDays,
             int            page,

@@ -28,10 +28,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
-import org.apache.roller.ui.rendering.model.*;
 
 /**
  * Paging for weblogs.
@@ -45,7 +44,7 @@ public class WeblogsPager extends AbstractPager {
     /** Creates a new instance of CommentPager */
     public WeblogsPager(            
             WebsiteData    weblog,             
-            WeblogTemplate weblogPage,
+            Template       weblogPage,
             String         locale,
             int            sinceDays,
             int            page,
@@ -58,7 +57,7 @@ public class WeblogsPager extends AbstractPager {
     public WeblogsPager( 
             String letter,
             WebsiteData    weblog,             
-            WeblogTemplate weblogPage,
+            Template       weblogPage,
             String         locale,
             int            sinceDays,
             int            page,

@@ -21,17 +21,16 @@ package org.apache.roller.ui.rendering.pagers;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
-import org.apache.roller.util.URLUtilities;
+import org.apache.roller.util.Technorati.Weblog;
 
 /**
  * Paging for users.
@@ -45,7 +44,7 @@ public class UsersPager extends AbstractPager {
     /** Creates a new instance of CommentPager */
     public UsersPager(            
             WebsiteData    weblog,             
-            WeblogTemplate weblogPage,
+            Template       weblogPage,
             String         locale,
             int            sinceDays,
             int            page,
@@ -58,7 +57,7 @@ public class UsersPager extends AbstractPager {
     public UsersPager(   
             String letter,
             WebsiteData    weblog,             
-            WeblogTemplate weblogPage,
+            Template       weblogPage,
             String         locale,
             int            sinceDays,
             int            page,

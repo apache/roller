@@ -29,12 +29,11 @@ import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
-import org.apache.roller.ui.rendering.model.*;
 
 /**
  * Simple pager for list of weblog entries.
@@ -52,7 +51,7 @@ public class WeblogEntriesListPager extends AbstractPager {
             WebsiteData    queryWeblog,
             UserData       queryUser,
             String         queryCat,
-            WeblogTemplate weblogPage,
+            Template       weblogPage,
             String         locale,
             int            sinceDays,
             int            page,
