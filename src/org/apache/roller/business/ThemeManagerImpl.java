@@ -284,7 +284,10 @@ public class ThemeManagerImpl implements ThemeManager {
             // Strip "_" from name to form link
             boolean navbar = true;
             String template_link = template_name;
-            if (template_name.startsWith("_") && template_name.length() > 1) {
+            if ("_css".equals(template_name)) {
+                navbar = false;
+                template_link = "theme.css";
+            } else if (template_name.startsWith("_") && template_name.length() > 1) {
                 navbar = false;
                 template_link = template_link.substring(1);
             }
