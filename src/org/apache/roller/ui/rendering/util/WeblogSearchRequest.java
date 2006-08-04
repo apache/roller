@@ -80,7 +80,8 @@ public class WeblogSearchRequest extends WeblogRequest {
          *   pageNum - specifies what pageNum # to display
          *   cat - limit results to a certain weblogCategoryName
          */
-        if(request.getParameter("q") != null) {
+        if(request.getParameter("q") != null &&
+                request.getParameter("q").trim().length() > 0) {
             this.query = request.getParameter("q");
         }
         
