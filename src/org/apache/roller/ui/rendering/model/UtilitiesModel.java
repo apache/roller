@@ -227,6 +227,14 @@ public class UtilitiesModel implements Model {
         return StringEscapeUtils.unescapeHtml(str);
     }
     
+    public static String escapeXML(String str) {
+        return StringEscapeUtils.escapeXml(str);
+    }
+    
+    public static String unescapeXML(String str) {
+        return StringEscapeUtils.unescapeXml(str);
+    }
+    
     public static String replace(String src, String target, String rWith) {
         return StringUtils.replace(src, target, rWith);
     }

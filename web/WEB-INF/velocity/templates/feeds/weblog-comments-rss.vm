@@ -21,10 +21,10 @@
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:atom="http://www.w3.org/2005/Atom" >
 <channel>
-  <title>$utils.escapeHTML($utils.removeHTML($model.weblog.name)) (Comments)</title>
+  <title>$utils.escapeXML($utils.removeHTML($model.weblog.name)) (Comments)</title>
   <link>$url.home</link>
   <atom:link rel="self" type="application/rss+xml" href="$url.feed.comments.rss($model.categoryPath, $model.excerpts)" />
-  <description>$utils.escapeHTML($model.weblog.description)</description>
+  <description>$utils.escapeXML($model.weblog.description)</description>
   <language>en-us</language>
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
