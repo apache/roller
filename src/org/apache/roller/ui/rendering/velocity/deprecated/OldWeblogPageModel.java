@@ -563,35 +563,14 @@ public class OldWeblogPageModel {
     
     /** Encapsulates RefererManager */
     public List getTodaysReferers() {
-        List referers = null;
-        try {
-            List mReferers = mRefererMgr.getTodaysReferers(mWebsite);
-            
-            // wrap pojos
-            referers = new ArrayList(mReferers.size());
-            Iterator it = mReferers.iterator();
-            int i=0;
-            while(it.hasNext()) {
-                referers.add(i, RefererDataWrapper.wrap((RefererData) it.next()));
-                i++;
-            }
-            
-        } catch (RollerException e) {
-            mLogger.error("PageModel getTodaysReferers()", e);
-        }
-        return (referers == null ? Collections.EMPTY_LIST : referers);
+         return mWebsite.getTodaysReferrers();
     }
     
     //------------------------------------------------------------------------
     
     /** Encapsulates RefererManager */
     public int getTotalHits() {
-        try {
-            return mRefererMgr.getTotalHits(mWebsite);
-        } catch (RollerException e) {
-            mLogger.error("PageModel getTotalHits()", e);
-        }
-        return 0;
+        return mWebsite.getTodaysHits();
     }
     
     //------------------------------------------------------------------------
