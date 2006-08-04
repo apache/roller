@@ -38,6 +38,22 @@ public final class URLUtilities {
     private URLUtilities() {}
     
     
+    public static final String getXmlrpcURL(boolean absolute) {
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-services/xmlrpc");
+        
+        return url.toString();
+    }
+    
+    
     /**
      * Get root url for a given weblog.  Optionally for a certain locale.
      */
