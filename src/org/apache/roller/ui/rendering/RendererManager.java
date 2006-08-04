@@ -107,7 +107,8 @@ public class RendererManager {
      * instance and tries to find a Renderer for the content.  If no Renderer
      * can be found then we throw an exception.
      */
-    public static Renderer getRenderer(Template template) throws Exception {
+    public static Renderer getRenderer(Template template) 
+            throws RenderingException {
         
         Renderer renderer = null;
         
@@ -122,7 +123,8 @@ public class RendererManager {
             }
         }
         
-        throw new Exception("No renderer found!");
+        throw new RenderingException("No renderer found for template "+
+                template.getId()+"!");
     }
     
 }
