@@ -7,13 +7,19 @@
     <title>$utils.escapeHTML($model.weblog.name) : $model.weblogPage.name</title>
 </head>
 <body>
-<div class="entries">
-    <h1>$utils.escapeHTML($model.weblog.description)</h1>
 
+<div class="content_wrapper">
+  <div class="content">
+    <h1 class="weblogName">$utils.escapeHTML($model.weblog.name)</h1>
+    <p class="weblogDescription">$utils.escapeHTML($model.weblog.description)</p>
+
+        <center>
         #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
         #showWeblogCategoryLinksList($rootCategory false false)
+        </center>
 
         #set($pager = $model.getWeblogEntriesPager()) 
+
         <div class="next-previous">
             #if ($model.results)
                 #showWeblogSearchAgainForm($model.weblog)
@@ -29,9 +35,11 @@
            #showWeblogEntryComments($entry)
            #showWeblogEntryCommentForm($entry)
         #end
-
+  </div>
 </div>
-<div class="rightbar">
+
+<div class="rightbar_wrapper">
+  <div class="rightbar">
     <h2>Calendar</h2>
     <div class="sidebar">
     #showWeblogEntryCalendar($model.weblog "nil")
@@ -64,6 +72,7 @@
     #set($refs = $model.weblog.getTodaysReferrers())
     #showReferrersList($refs 30 20)
     </div>
+  </div>
 </div>
 
 </body>

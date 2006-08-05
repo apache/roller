@@ -565,12 +565,14 @@ Show weblog's categories in specified parent category.
  * Show list of all RSS feeds available for weblog.
  *#
 #macro(showAtomFeedsList $weblog)
-    <a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a><br />
+    <ul class="rFeeds">
+    <li><a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a></li>
     #set($categories = $weblog.weblogCategories )
     #foreach( $cat in $categories )
-        <a href="$url.feed.entries.rss($cat.path, false)">$cat.path</a><br />
+        <li><a href="$url.feed.entries.rss($cat.path, false)">$cat.path</a></li>
     #end
-    <a href="$url.feed.comments.atom">Comments</a><br />
+    <li><a href="$url.feed.comments.atom">Comments</a></li>
+    </ul>
 #end
 
 
@@ -578,12 +580,14 @@ Show weblog's categories in specified parent category.
  * Show list of all Atom feeds available for weblog.
  *#
 #macro(showRSSFeedsList $weblog)
-    <a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a><br />
+    <ul class="rFeeds">
+    <li><a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a></li>
     #set($categories = $weblog.weblogCategories )
     #foreach( $cat in $categories )
-        <a href="$url.feed.entries.atom($cat.path, false)">$cat.path</a><br />
+        <li><a href="$url.feed.entries.atom($cat.path, false)">$cat.path</a></li>
     #end
-    <a href="$url.feed.comments.atom">Comments</a><br />
+    <li><a href="$url.feed.comments.atom">Comments</a></li>
+    </ul>
 #end
 
 

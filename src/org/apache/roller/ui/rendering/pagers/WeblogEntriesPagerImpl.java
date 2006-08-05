@@ -270,7 +270,7 @@ public class WeblogEntriesPagerImpl implements WeblogEntriesPager {
         }
 
         public String getHomeLink() {
-            return createURL(page, 1, weblog, weblogPage, null, cat, null, locale); 
+            return createURL(page, 0, weblog, weblogPage, null, cat, null, locale); 
         }
         
         public String getHomeName() {

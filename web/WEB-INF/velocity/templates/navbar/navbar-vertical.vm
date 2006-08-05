@@ -1,16 +1,12 @@
 #foreach( $menu in $menuModel.getMenus() )
     #if ($menu.isPermitted($req))
+        <ul class="rMenu">
         #foreach( $item in $menu.getMenuItems() )
             #if ($menu.isPermitted($req))
-                #if( $item.isSelected( $req ) )
-                <b>
-                #end
-                <a href="$item.getUrl( $ctx )">$text.get( $menu.getName() ):$text.get( $item.getName() )</a> <br />
-                #if( $item.isSelected( $req ) )
-                </b>
-                #end
+                <li><a href="$item.getUrl( $ctx )">$text.get( $menu.getName() ):$text.get( $item.getName() )</a></li>
             #end
         #end
+        </ul>
     #end
 #end
 
