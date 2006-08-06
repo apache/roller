@@ -1,19 +1,21 @@
 /*
- * Copyright 2005 David M Johnson (For RSS and Atom In Action)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.apache.roller.webservices.atomprotocol;
+* Licensed to the Apache Software Foundation (ASF) under one or more
+*  contributor license agreements.  The ASF licenses this file to You
+* under the Apache License, Version 2.0 (the "License"); you may not
+* use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.  For additional information regarding
+* copyright in this work, please see the NOTICE file in the top level
+* directory of this distribution.
+*/
+package org.apache.roller.webservices.atomprotocol; 
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -80,7 +82,7 @@ public class AtomServlet extends HttpServlet {
      * Handles an Atom GET by calling handler and writing results to response.
      */
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
-    throws ServletException, IOException {
+    throws ServletException, IOException { 
         AtomHandler handler = createAtomRequestHandler(req);
         String userName = handler.getAuthenticatedUsername();
         if (userName != null) {
@@ -88,16 +90,17 @@ public class AtomServlet extends HttpServlet {
             try {
                 if (handler.isIntrospectionURI(pathInfo)) {
                     // return an Atom Service document
-                    AtomService service = handler.getIntrospection(pathInfo);
+                    AtomService service = handler.getIntrospection();
                     Document doc = AtomService.serviceToDocument(service);
-                    res.setContentType("application/xml; charset=utf-8");
+                    res.setContentType("application/atomserv+xml; charset=utf-8");
                     Writer writer = res.getWriter();
                     XMLOutputter outputter = new XMLOutputter();
                     outputter.setFormat(Format.getPrettyFormat());
                     outputter.output(doc, writer);
                     writer.close();
                     res.setStatus(HttpServletResponse.SC_OK);
-                } else if (handler.isCollectionURI(pathInfo)) {
+                } 
+                else if (handler.isCollectionURI(pathInfo)) {
                     // return a collection
                     Feed col = handler.getCollection(pathInfo);
                     col.setFeedType(FEED_TYPE);
@@ -110,20 +113,10 @@ public class AtomServlet extends HttpServlet {
                     outputter.output(feedDoc, writer);
                     writer.close();
                     res.setStatus(HttpServletResponse.SC_OK);
-                } else if (handler.isEntryURI(pathInfo)) {
+                } 
+                else if (handler.isEntryURI(pathInfo)) {
                     // return an entry
                     Entry entry = handler.getEntry(pathInfo);
-                    if (entry != null) {
-                        Writer writer = res.getWriter();
-                        res.setContentType("application/atom+xml; charset=utf-8");
-                        serializeEntry(entry, writer);
-                        writer.close();
-                    } else {
-                        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    }
-                } else if (handler.isMediaURI(pathInfo)) {
-                    // return a resource entry
-                    Entry entry = handler.getMedia(pathInfo);
                     if (entry != null) {
                         Writer writer = res.getWriter();
                         res.setContentType("application/atom+xml; charset=utf-8");
@@ -135,10 +128,12 @@ public class AtomServlet extends HttpServlet {
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            } catch (Throwable e) {
+            } catch (AtomException ae) {
+                res.setStatus(ae.getStatus());
+                mLogger.debug(ae);
+            } catch (Exception ae) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                e.printStackTrace(res.getWriter());
-                mLogger.error(e);
+                mLogger.debug(ae);
             }
         } else {
             res.setHeader("WWW-Authenticate", "BASIC realm=\"Roller\"");
@@ -158,51 +153,70 @@ public class AtomServlet extends HttpServlet {
         if (userName != null) {
             String[] pathInfo = getPathInfo(req);
             try {
-                if (handler.isEntryCollectionURI(pathInfo)) {
-                            
-                    // parse incoming entry
-                    Entry unsavedEntry = parseEntry(
-                        new InputStreamReader(req.getInputStream()));
-                     
-                    // call handler to post it
-                    Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
-                    Iterator links = savedEntry.getAlternateLinks().iterator();
-                     
-                    // return alternate link as Location header
-                    while (links.hasNext()) {
-                        Link link = (Link) links.next();
-                        if (link.getRel().equals("alternate") || link.getRel() == null) {
-                            res.addHeader("Location", link.getHref());
-                            break;
-                        }
-                    }
-                    // write entry back out to response
-                    res.setStatus(HttpServletResponse.SC_CREATED);
-                    res.setContentType("application/atom+xml; charset=utf-8");
-                    Writer writer = res.getWriter();
-                    serializeEntry(savedEntry, writer);
-                    writer.close(); 
-                } else if (handler.isMediaCollectionURI(pathInfo)) {
-                    // get incoming file name from HTTP header
-                    String name = req.getHeader("Title");
+                if (handler.isCollectionURI(pathInfo)) {
                     
-                    // hand input stream of to hander to post file
-                    Entry resource = handler.postMedia(
-                        pathInfo, name, req.getContentType(), req.getInputStream());
-                    res.setStatus(HttpServletResponse.SC_CREATED);
-                    com.sun.syndication.feed.atom.Content content = 
-                        (com.sun.syndication.feed.atom.Content)resource.getContents().get(0);
-                    res.setHeader("Location", content.getSrc());
-                    Writer writer = res.getWriter();
-                    serializeEntry(resource, writer);
-                    writer.close(); 
+                    if (req.getContentType().startsWith("application/atom+xml")) {
+
+                        // parse incoming entry
+                        Entry unsavedEntry = parseEntry(
+                            new InputStreamReader(req.getInputStream()));
+
+                        // call handler to post it
+                        Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
+                        
+                        // return alternate link as Location header
+                        Iterator links = savedEntry.getAlternateLinks().iterator();
+                        while (links.hasNext()) {
+                            Link link = (Link) links.next();
+                            if (link.getRel().equals("alternate") || link.getRel() == null) {
+                                res.addHeader("Location", link.getHref());
+                                break;
+                            }
+                        }
+                        // write entry back out to response
+                        res.setStatus(HttpServletResponse.SC_CREATED);
+                        res.setContentType("application/atom+xml; charset=utf-8");
+                        Writer writer = res.getWriter();
+                        serializeEntry(savedEntry, writer);
+                        writer.close(); 
+                    
+                    } else if (req.getContentType() != null) {
+                        // get incoming file name from HTTP header
+                        String name = req.getHeader("Title");
+
+                        // hand input stream of to hander to post file
+                        Entry resource = handler.postMedia(
+                            pathInfo, name, req.getContentType(), req.getInputStream());
+                        
+                        res.setStatus(HttpServletResponse.SC_CREATED);
+                        com.sun.syndication.feed.atom.Content content = 
+                            (com.sun.syndication.feed.atom.Content)resource.getContents().get(0);
+
+                        // return alternate link as Location header
+                        Iterator links = resource.getAlternateLinks().iterator();
+                        while (links.hasNext()) {
+                            Link link = (Link) links.next();
+                            if (link.getRel().equals("alternate") || link.getRel() == null) {
+                                res.addHeader("Location", link.getHref());
+                                break;
+                            }
+                        }
+                        Writer writer = res.getWriter();
+                        serializeEntry(resource, writer);
+                        writer.close(); 
+                    } else {
+                        res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+                    }
+                    
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            } catch (Throwable e) {
+            } catch (AtomException ae) {
+                res.setStatus(ae.getStatus());
+                mLogger.debug(ae);
+            } catch (Exception ae) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                e.printStackTrace(res.getWriter());
-                mLogger.error(e);
+                mLogger.debug(ae);
             }
         } else {
             res.setHeader("WWW-Authenticate", "BASIC realm=\"Roller\"");
@@ -223,6 +237,7 @@ public class AtomServlet extends HttpServlet {
             String[] pathInfo = getPathInfo(req);
             try {
                 if (handler.isEntryURI(pathInfo)) {
+                    
                     // parse incoming entry
                     Entry unsavedEntry = parseEntry(
                             new InputStreamReader(req.getInputStream()));
@@ -236,7 +251,9 @@ public class AtomServlet extends HttpServlet {
                     serializeEntry(updatedEntry, writer);
                     res.setStatus(HttpServletResponse.SC_OK);
                     writer.close();
-                } else if (handler.isMediaURI(pathInfo)) {
+                    
+                } else if (handler.isMediaEditURI(pathInfo)) {
+                    
                     // hand input stream to handler
                     Entry updatedEntry = handler.putMedia(
                         pathInfo, req.getContentType(), req.getInputStream());
@@ -247,13 +264,16 @@ public class AtomServlet extends HttpServlet {
                     serializeEntry(updatedEntry, writer);
                     writer.close();
                     res.setStatus(HttpServletResponse.SC_OK);
+                    
                 } else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            } catch (Throwable e) {
+            } catch (AtomException ae) {
+                res.setStatus(ae.getStatus());
+                mLogger.debug(ae);
+            } catch (Exception ae) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                e.printStackTrace(res.getWriter());
-                mLogger.error(e);
+                mLogger.debug(ae);
             }
         } else {
             res.setHeader("WWW-Authenticate", "BASIC realm=\"Roller\"");
@@ -275,16 +295,16 @@ public class AtomServlet extends HttpServlet {
                 if (handler.isEntryURI(pathInfo)) {
                     handler.deleteEntry(pathInfo);
                     res.setStatus(HttpServletResponse.SC_OK);
-                } else if (handler.isMediaURI(pathInfo)) {
-                    handler.deleteMedia(pathInfo);
-                    res.setStatus(HttpServletResponse.SC_OK);
-                } else {
+                } 
+                else {
                     res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
-            } catch (Throwable e) {
+            } catch (AtomException ae) {
+                res.setStatus(ae.getStatus());
+                mLogger.debug(ae);
+            } catch (Exception ae) {
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                e.printStackTrace(res.getWriter());
-                mLogger.error(e);
+                mLogger.debug(ae);
             }
         } else {
             res.setHeader("WWW-Authenticate", "BASIC realm=\"Roller\"");
@@ -325,7 +345,7 @@ public class AtomServlet extends HttpServlet {
         // count on client to preserve foreign markup as it should.
         Element rollerElement = new Element("atom-draft", 
             "http://rollerweblogger.org/namespaces/app");
-        rollerElement.setText("8");
+        rollerElement.setText("9");
         entryElement.addContent(rollerElement);
         
         XMLOutputter outputter = new XMLOutputter();
@@ -344,8 +364,8 @@ public class AtomServlet extends HttpServlet {
     /**
      * Parse entry from reader.
      */
-    public static Entry parseEntry(Reader rd)
-    throws JDOMException, IOException, IllegalArgumentException, FeedException {
+    public static Entry parseEntry(Reader rd) 
+        throws JDOMException, IOException, IllegalArgumentException, FeedException {
         // Parse entry into JDOM tree
         SAXBuilder builder = new SAXBuilder();
         Document entryDoc = builder.build(rd);
