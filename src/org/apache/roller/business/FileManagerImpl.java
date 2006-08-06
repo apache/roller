@@ -93,7 +93,7 @@ public class FileManagerImpl implements FileManager {
      * Determine if file can be saved given current RollerConfig settings.
      */
     public boolean canSave(
-            String weblogHandle, String name, long size, RollerMessages messages)
+            String weblogHandle, String name, String contentType, long size, RollerMessages messages)
             throws RollerException {
         Roller mRoller = RollerFactory.getRoller();
         Map config = mRoller.getPropertiesManager().getProperties();
@@ -107,7 +107,7 @@ public class FileManagerImpl implements FileManager {
         String forbids = ((RollerPropertyData)config.get("uploads.types.forbid")).getValue();
         String[] allowFiles = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         String[] forbidFiles = StringUtils.split(StringUtils.deleteWhitespace(forbids), ",");
-        if (!checkFileType(allowFiles, forbidFiles, name)) {
+        if (!checkFileType(allowFiles, forbidFiles, name, contentType)) {
             messages.addError("error.upload.forbiddenFile", allows);
             return false;
         }
@@ -187,9 +187,9 @@ public class FileManagerImpl implements FileManager {
      * @param size Size of file to be saved
      * @param is Read file from input stream
      */
-    public void saveFile(String weblogHandle, String name, long size, InputStream is)
+    public void saveFile(String weblogHandle, String name, String contentType, long size, InputStream is)
     throws RollerException {
-        if (!canSave(weblogHandle, name, size, new RollerMessages())) {
+        if (!canSave(weblogHandle, name, contentType, size, new RollerMessages())) {
             throw new RollerException("ERROR: upload denied");
         }
         
@@ -252,18 +252,37 @@ public class FileManagerImpl implements FileManager {
      * @return True if file is allowed to be uploaded
      */
     private boolean checkFileType(
-            String[] allowFiles, String[] forbidFiles, String fileName) {
+        String[] allowFiles, String[] forbidFiles, 
+            String fileName, String contentType) {
+        
+        // TODO: Atom Publushing Protocol figure out how to handle file 
+        // allow/forbid using contentType.        
+        // TEMPORARY SOLUTION: In the allow/forbid lists we will continue to 
+        // allow user to specify file extensions (e.g. gif, png, jpeg) but will
+        // now also allow them to specify content-type rules (e.g. */*, image/*, 
+        // text/xml, etc.).
+        
+        // if content type is invalid, reject file
+        if (contentType.indexOf("/") == -1)  {
+            return false;
+        }
+        
         // default to false
         boolean allowFile = false;
         
         // if this person hasn't listed any allows, then assume they want
         // to allow *all* filetypes, except those listed under forbid
-        if(allowFiles == null || allowFiles.length < 1)
+        if(allowFiles == null || allowFiles.length < 1) {
             allowFile = true;
+        }
         
-        // check for allowed types
+        // First check against what is ALLOWED
+        
+        // check file against allowed file extensions
         if (allowFiles != null && allowFiles.length > 0) {
-            for (int y=0; y<allowFiles.length; y++) {
+            for (int y=0; y<allowFiles.length; y++) {                
+                // oops, this allowed rule is a content-type, skip it
+                if (allowFiles[y].indexOf("/") != -1) continue;               
                 if (fileName.toLowerCase().endsWith(
                         allowFiles[y].toLowerCase())) {
                     allowFile = true;
@@ -272,9 +291,25 @@ public class FileManagerImpl implements FileManager {
             }
         }
         
-        // check for forbidden types ... this overrides any allows
+        // check file against allowed contentTypes
+        if (allowFiles != null && allowFiles.length > 0) {
+            for (int y=0; y<allowFiles.length; y++) {                
+                // oops, this allowed rule is NOT a content-type, skip it
+                if (allowFiles[y].indexOf("/") == -1) continue;               
+                if (matchContentType(allowFiles[y], contentType)) {
+                    allowFile = true;
+                    break;
+                }
+            }
+        }
+        
+        // First check against what is FORBIDDEN
+        
+       // check file against forbidden file extensions, overrides any allows
         if (forbidFiles != null && forbidFiles.length > 0) {
             for (int x=0; x<forbidFiles.length; x++) {
+                // oops, this forbid rule is a content-type, skip it
+                if (allowFiles[x].indexOf("/") != -1) continue;               
                 if (fileName.toLowerCase().endsWith(
                         forbidFiles[x].toLowerCase())) {
                     allowFile = false;
@@ -283,7 +318,32 @@ public class FileManagerImpl implements FileManager {
             }
         }
         
+        
+         // check file against forbidden contentTypes, overrides any allows
+        if (forbidFiles != null && forbidFiles.length > 0) {
+            for (int x=0; x<forbidFiles.length; x++) {
+                // oops, this forbid rule is NOT a content-type, skip it
+                if (forbidFiles[x].indexOf("/") == -1) continue;               
+                if (matchContentType(forbidFiles[x], contentType)) {
+                    allowFile = false;
+                    break;
+                }
+            }
+        }
+                
         return allowFile;
+    }
+    
+    /**
+     * Super simple contentType range rule matching
+     */
+    private boolean matchContentType(String rangeRule, String contentType) {
+        if (rangeRule.equals("*/*")) return true;
+        if (rangeRule.equals(contentType)) return true;
+        String ruleParts[] = rangeRule.split("/");
+        String typeParts[] = contentType.split("/");
+        if (ruleParts[0].equals(typeParts[0]) && ruleParts[1].equals("*")) return true;
+        return false;
     }
     
     public void release() {

@@ -358,10 +358,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             RollerMessages msgs = new RollerMessages();
             
             // If save is allowed by Roller system-wide policies
-            if (fmgr.canSave(website.getHandle(), name, bits.length, msgs)) {
+            if (fmgr.canSave(website.getHandle(), name, type, bits.length, msgs)) {
                 // Then save the file
-                fmgr.saveFile(
-                        website.getHandle(), name, bits.length, new ByteArrayInputStream(bits));
+                fmgr.saveFile(website.getHandle(), name, type, bits.length, new ByteArrayInputStream(bits));
                 
                 RollerRequest rreq = RollerRequest.getRollerRequest();
                 HttpServletRequest request = rreq.getRequest();

@@ -153,9 +153,11 @@ public final class UploadFileFormAction extends DispatchAction {
                         fileSize = files[i].getFileSize();
 
                         //retrieve the file data
-                        if (fmgr.canSave(website.getHandle(), fileName, fileSize, rollerMessages)) {
+                        if (fmgr.canSave(website.getHandle(), fileName, 
+                                files[i].getContentType(), fileSize, rollerMessages)) {
                             InputStream stream = files[i].getInputStream();
-                            fmgr.saveFile(website.getHandle(), fileName, fileSize, stream);
+                            fmgr.saveFile(website.getHandle(), fileName, 
+                                files[i].getContentType(), fileSize, stream);
                             lastUploads.add(fileName);
                         }
                         

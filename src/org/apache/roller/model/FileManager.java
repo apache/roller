@@ -39,7 +39,7 @@ public interface FileManager extends Serializable
 {
     /** Determine if file can be saved in website's file space. */
     public boolean canSave(
-        String weblogHandle, String name, long size, RollerMessages msgs) 
+        String weblogHandle, String name, String contentType, long size, RollerMessages msgs) 
         throws RollerException;
     
     /** Get website's files */
@@ -51,7 +51,7 @@ public interface FileManager extends Serializable
         throws RollerException;
 
     /** Save file in website's file space or throw exception if rules violated. */
-    public void saveFile(String weblogHandle, String name, long size, InputStream is) 
+    public void saveFile(String weblogHandle, String name, String contentType, long size, InputStream is) 
         throws RollerException;
 
     /** Return true if weblog is over the file-upload limit */

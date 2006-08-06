@@ -17,25 +17,26 @@
 */
 package org.apache.roller.webservices.atomprotocol;
 
-import com.sun.syndication.feed.module.ModuleImpl;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.roller.RollerException; 
 
-public class PubControlModuleImpl extends ModuleImpl implements PubControlModule {
-    private boolean _draft = false;
-
-    public PubControlModuleImpl() {
-        super(PubControlModule.class,PubControlModule.URI);
+/**
+ * Exception thrown by AtomHandler.
+ */
+public class AtomException extends Exception {
+    public AtomException() {
+        super();
     }
-    public boolean getDraft() {
-        return _draft;
+    public AtomException(String msg) {
+        super(msg);
     }
-    public void setDraft(boolean draft) {
-        _draft = draft;
+    public AtomException(String msg, Throwable t) {
+        super(msg, t);
     }
-    public Class getInterface() {
-        return PubControlModule.class;
+    public AtomException(Throwable t) {
+        super(t);
     }
-    public void copyFrom(Object obj) {
-        PubControlModule m = (PubControlModule)obj;
-        setDraft(m.getDraft());
+    public int getStatus() {
+        return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
 }

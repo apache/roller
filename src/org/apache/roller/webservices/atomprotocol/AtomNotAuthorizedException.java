@@ -17,25 +17,25 @@
 */
 package org.apache.roller.webservices.atomprotocol;
 
-import com.sun.syndication.feed.module.ModuleImpl;
+import javax.servlet.http.HttpServletResponse;
 
-public class PubControlModuleImpl extends ModuleImpl implements PubControlModule {
-    private boolean _draft = false;
-
-    public PubControlModuleImpl() {
-        super(PubControlModule.class,PubControlModule.URI);
+/**
+ * Exception thrown by AtomHandler in case of 403.
+ */
+public class AtomNotAuthorizedException extends AtomException {
+    public AtomNotAuthorizedException() {
+        super();
     }
-    public boolean getDraft() {
-        return _draft;
+    public AtomNotAuthorizedException(String msg) {
+        super(msg);
     }
-    public void setDraft(boolean draft) {
-        _draft = draft;
+    public AtomNotAuthorizedException(String msg, Throwable t) {
+        super(msg, t);
     }
-    public Class getInterface() {
-        return PubControlModule.class;
+    public AtomNotAuthorizedException(Throwable t) {
+        super(t);
     }
-    public void copyFrom(Object obj) {
-        PubControlModule m = (PubControlModule)obj;
-        setDraft(m.getDraft());
+    public int getStatus() {
+        return HttpServletResponse.SC_UNAUTHORIZED;
     }
 }
