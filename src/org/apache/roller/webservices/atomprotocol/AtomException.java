@@ -15,33 +15,28 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.business.jdo;
+package org.apache.roller.webservices.atomprotocol;
 
-import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.roller.RollerException; 
 
-import org.apache.roller.RollerException;
-import org.apache.roller.business.PersistenceStrategy;
-import org.apache.roller.business.PingTargetManagerImpl;
-import org.apache.roller.pojos.WebsiteData;
-
-public class JDOPingTargetManagerImpl extends PingTargetManagerImpl {
-    public JDOPingTargetManagerImpl(PersistenceStrategy persistenceStrategy) {
-        super(persistenceStrategy);
+/**
+ * Exception thrown by AtomHandler.
+ */
+public class AtomException extends Exception {
+    public AtomException() {
+        super();
     }
-
-    public List getCommonPingTargets() throws RollerException {
-        return null;
+    public AtomException(String msg) {
+        super(msg);
     }
-
-    public List getCustomPingTargets(WebsiteData website)
-            throws RollerException {
-        return null;
+    public AtomException(String msg, Throwable t) {
+        super(msg, t);
     }
-
-    public void removeCustomPingTargets(WebsiteData website)
-            throws RollerException {
+    public AtomException(Throwable t) {
+        super(t);
     }
-
-    public void removeAllCustomPingTargets() throws RollerException {
+    public int getStatus() {
+        return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
 }

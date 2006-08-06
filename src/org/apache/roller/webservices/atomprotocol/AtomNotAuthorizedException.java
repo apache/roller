@@ -15,30 +15,27 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.business.jdo;
+package org.apache.roller.webservices.atomprotocol;
 
-import java.util.Map;
-
-import org.apache.roller.RollerException;
-import org.apache.roller.business.PersistenceStrategy;
-import org.apache.roller.business.PropertiesManagerImpl;
-import org.apache.roller.pojos.RollerPropertyData;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author Dave Johnson
+ * Exception thrown by AtomHandler in case of 403.
  */
-public class JDOPropertiesManagerImpl extends PropertiesManagerImpl {
-
-    public JDOPropertiesManagerImpl(PersistenceStrategy strategy) {
-        super(strategy);
+public class AtomNotAuthorizedException extends AtomException {
+    public AtomNotAuthorizedException() {
+        super();
     }
-
-    public RollerPropertyData getProperty(String name) throws RollerException {
-        return null;
+    public AtomNotAuthorizedException(String msg) {
+        super(msg);
     }
-
-    public Map getProperties() throws RollerException {
-        return null;
+    public AtomNotAuthorizedException(String msg, Throwable t) {
+        super(msg, t);
     }
-
+    public AtomNotAuthorizedException(Throwable t) {
+        super(t);
+    }
+    public int getStatus() {
+        return HttpServletResponse.SC_UNAUTHORIZED;
+    }
 }

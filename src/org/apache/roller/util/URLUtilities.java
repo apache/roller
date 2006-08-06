@@ -53,6 +53,21 @@ public final class URLUtilities {
         return url.toString();
     }
     
+    public static final String getAtomProtocolURL(boolean absolute) {
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-services/app");
+        
+        return url.toString();
+    }
+    
     
     /**
      * Get root url for a given weblog.  Optionally for a certain locale.

@@ -1,18 +1,20 @@
 /*
- * Copyright 2005 David M Johnson (For RSS and Atom In Action)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Licensed to the Apache Software Foundation (ASF) under one or more
+*  contributor license agreements.  The ASF licenses this file to You
+* under the Apache License, Version 2.0 (the "License"); you may not
+* use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.  For additional information regarding
+* copyright in this work, please see the NOTICE file in the top level
+* directory of this distribution.
+*/
 package org.apache.roller.webservices.atomprotocol;
 
 import java.util.ArrayList;
@@ -26,10 +28,11 @@ import org.jdom.filter.Filter;
 
 /**
  * This class models an Atom workspace.
- * @author Dave Johnson
- */
-/* Based on: draft-ietf-atompub-protocol-08.txt
- * 
+ * <p />
+ * Based on: draft-ietf-atompub-protocol-08.txt + PaceMediaEntries5
+ * <p />
+ * Designed to be Roller independent.
+ *//* 
  * appService =
  *    element app:service {
  *       appCommonAttributes,
@@ -45,12 +48,12 @@ import org.jdom.filter.Filter;
  *     <collection
  *       title="My Blog Entries"
  *       href="http://example.org/reilly/main" >
- *       <member-type>entry</member-type>
+ *       <accept>entry</accept>
  *     </collection>
  *     <collection
  *       title="Pictures"
  *       href="http://example.org/reilly/pic" >
- *       <member-type>media</member-type>
+ *       <accept>*</accept>
  *     </collection>
  *   </workspace>
  * </service>
@@ -78,10 +81,8 @@ public class AtomService {
     
     /**
      * This class models an Atom workspace.
-     *
      * @author Dave Johnson
-     */
-    /*
+     *//*
      * appWorkspace = element app:workspace { attribute title { text }, (
      * appCollection* & anyElement* ) }
      */
@@ -117,20 +118,19 @@ public class AtomService {
     /**
      * This class models an Atom workspace collection.    
      * @author Dave Johnson
-     */
-    /* appCollection =
+     *//* 
+     * appCollection =
      *       element app:collection {
      *          appCommonAttributes,
      *          attribute title { text },
      *          attribute href { text },
-     *          ( appMemberType
-     *            & appListTemplate
+     *          ( appAccept?
      *            & extensionElement* )
      *       }
      */
     public static class Collection {
         private String title = null;
-        private String memberType = "entry"; // or "media"
+        private String accept = "entry";
         private String listTemplate = null;
         private String href = null;
         
@@ -138,14 +138,16 @@ public class AtomService {
         }
         
         /**
-         * Member type May be "entry" or "media".
+         * Comma separated list of media-ranges accepted by collection
+         * or "entry" to indicate Atom entries only. Leaving null will 
+         * default to entries only.
          */
-        public String getMemberType() {
-            return memberType;
+        public String getAccept() {
+            return accept;
         }
         
-        public void setMemberType(String memberType) {
-            this.memberType = memberType;
+        public void setAccept(String accept) {
+            this.accept = accept;
         }
         
         /** The URI of the collection */
@@ -224,9 +226,9 @@ public class AtomService {
         AtomService.Collection collection = new AtomService.Collection();
         collection.setTitle(element.getAttribute("title").getValue());
         collection.setHref(element.getAttribute("href").getValue());
-        Element memberType = element.getChild("member-type",  ns);
+        Element memberType = element.getChild("accept",  ns);
         if (memberType != null) {
-            collection.setMemberType(memberType.getText());
+            collection.setAccept(memberType.getText());
         }
         return collection;
     }
@@ -238,8 +240,8 @@ public class AtomService {
         element.setAttribute("title", collection.getTitle());
         element.setAttribute("href", collection.getHref());
         
-        Element memberType = new Element("member-type", ns);
-        memberType.setText(collection.getMemberType());
+        Element memberType = new Element("accept", ns);
+        memberType.setText(collection.getAccept());
         element.addContent(memberType);
         
         return element;
