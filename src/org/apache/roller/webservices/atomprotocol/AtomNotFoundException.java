@@ -15,26 +15,27 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * Created on Dec 13, 2005
- */
-package org.apache.roller.business.jdo;
+package org.apache.roller.webservices.atomprotocol;
 
-import org.apache.roller.RollerException;
-import org.apache.roller.business.ConfigManagerImpl;
-import org.apache.roller.business.PersistenceStrategy;
-import org.apache.roller.pojos.RollerConfigData;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author Dave Johnson
+ * Exception thrown by AtomHandler in case of 404.
  */
-public class JDOConfigManagerImpl extends ConfigManagerImpl {
-    public JDOConfigManagerImpl(PersistenceStrategy strategy) {
-        super(strategy);
+public class AtomNotFoundException extends AtomException {
+    public AtomNotFoundException() {
+        super();
     }
-
-    public RollerConfigData getRollerConfig() throws RollerException {
-        return null;
+    public AtomNotFoundException(String msg) {
+        super(msg);
     }
-
+    public AtomNotFoundException(String msg, Throwable t) {
+        super(msg, t);
+    }
+    public AtomNotFoundException(Throwable t) {
+        super(t);
+    }
+    public int getStatus() {
+        return HttpServletResponse.SC_NOT_FOUND;
+    }
 }
