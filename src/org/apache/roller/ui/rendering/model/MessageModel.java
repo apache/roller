@@ -18,23 +18,18 @@
 
 package org.apache.roller.ui.rendering.model;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.util.MessageUtilities;
+
 
 /**
  * Provides access to application resources required for I18N.
  * Uses model name 'text' because that's what the Velocity Tools did.
  */
-public class MessageModel implements Model {
+public class MessageModel implements Model {  
     
-    private static Log logger = LogFactory.getLog(MessageModel.class);
-    private static ResourceBundle bundle =
-            ResourceBundle.getBundle("ApplicationResources");        
     
     /** Template context name to be used for model */
     public String getModelName() {
@@ -44,25 +39,27 @@ public class MessageModel implements Model {
     
     /** Init page model based on request */
     public void init(Map initData) throws RollerException {
-        
+        // no-op
     }
+    
     
     /** Return message string */
     public String get(String key) {
         try {
-            return bundle.getString(key);
+            return MessageUtilities.getString(key);
         } catch (Exception e) {
             return key;
         }
     }
     
+    
     /** Return parameterized message string */
     public String get(String key, List args) {
         try {
-            String msg = bundle.getString(key);
-            return MessageFormat.format(msg, args.toArray());
+            return MessageUtilities.getString(key, args);
         } catch (Exception e) {
             return key;
         }
-    }    
+    }
+    
 }
