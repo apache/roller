@@ -29,7 +29,7 @@
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
   <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
-  #set($entries = $model.weblogEntries)
+  #set($entries = $site.getWeblogEntriesPager(90, $config.feedSize).items )
   #showEntriesRSS20($entries)
 </channel>
 </rss>

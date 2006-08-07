@@ -29,7 +29,7 @@
   <copyright>Copyright $utils.formatDate($model.weblog.lastModified, "yyyy")</copyright>
   <lastBuildDate>$utils.formatRfc822Date($model.weblog.lastModified)</lastBuildDate>
   <generator>Roller Weblogger $config.rollerVersion ($config.rollerBuildTimestamp:$config.rollerBuildUser)</generator>
-  #set($comments = $model.comments)
-  #showCommentsAtom10($comments)
+  #set($comments = $site.getCommentsPager(90, $config.feedSize).items )
+  #showCommentsRSS20($comments)
 </channel>
 </rss>
