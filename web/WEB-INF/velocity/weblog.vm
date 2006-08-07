@@ -566,10 +566,10 @@ Show weblog's categories in specified parent category.
  *#
 #macro(showAtomFeedsList $weblog)
     <ul class="rFeeds">
-    <li><a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a></li>
+    <li><a href="$url.feed.entries.atom">$text.get("macro.rss.all")</a></li>
     #set($categories = $weblog.weblogCategories )
     #foreach( $cat in $categories )
-        <li><a href="$url.feed.entries.rss($cat.path, false)">$cat.path</a></li>
+        <li><a href="$url.feed.entries.atom($cat.path, false)">$cat.path</a></li>
     #end
     <li><a href="$url.feed.comments.atom">Comments</a></li>
     </ul>
@@ -584,9 +584,9 @@ Show weblog's categories in specified parent category.
     <li><a href="$url.feed.entries.rss">$text.get("macro.rss.all")</a></li>
     #set($categories = $weblog.weblogCategories )
     #foreach( $cat in $categories )
-        <li><a href="$url.feed.entries.atom($cat.path, false)">$cat.path</a></li>
+        <li><a href="$url.feed.entries.rss($cat.path, false)">$cat.path</a></li>
     #end
-    <li><a href="$url.feed.comments.atom">Comments</a></li>
+    <li><a href="$url.feed.comments.rss">Comments</a></li>
     </ul>
 #end
 
