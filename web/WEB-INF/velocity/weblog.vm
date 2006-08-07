@@ -55,8 +55,6 @@ Parse and include page template from weblog.
     #set($pageArg = $weblog.getPageByName($pageName))
     #if ($pageArg) 
        #parse($pageArg.id)
-    #else ## no page found, use pageName as id
-        #parse($pageName)
     #end
 #end
 
