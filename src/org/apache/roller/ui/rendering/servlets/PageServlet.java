@@ -38,7 +38,6 @@ import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
@@ -176,22 +175,11 @@ public class PageServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
-        
+                
         // set last-modified date
         response.setDateHeader("Last-Modified", lastModified);
         
-        
-        // set the content type
-        String pageLink = pageRequest.getWeblogPageName();
-        String mimeType = RollerContext.getServletContext().getMimeType(pageLink);
-        if(mimeType != null) {
-            // we found a match ... set the content type
-            response.setContentType(mimeType+"; charset=utf-8");
-        } else {
-            response.setContentType("text/html; charset=utf-8");
-        }
-        
-        
+                
         // generate cache key
         String cacheKey = null;
         if(isSiteWide) {
@@ -215,6 +203,7 @@ public class PageServlet extends HttpServlet {
                 log.debug("HIT "+cacheKey);
                 
                 response.setContentLength(cachedContent.getContent().length);
+                response.setContentType(cachedContent.getContentType());
                 response.getOutputStream().write(cachedContent.getContent());
                 return;
                 
@@ -296,6 +285,7 @@ public class PageServlet extends HttpServlet {
                 invalid = true;
             }
         }
+       
         
         if(invalid) {
             if(!response.isCommitted()) response.reset();
@@ -305,6 +295,18 @@ public class PageServlet extends HttpServlet {
         
         
         // looks like we need to render content
+        
+        // set the content type
+        String mimeType = RollerContext.getServletContext().getMimeType(page.getLink());
+        String contentType = "text/html; charset=utf-8";
+        if(mimeType != null) {
+            // we found a match ... set the content type
+            contentType = mimeType+"; charset=utf-8";
+        } else if ("_css".equals(page.getName())) {
+            // TODO: store content-type for each page so this hack is unnecessary
+            contentType = "text/css; charset=utf-8";
+        }
+
         HashMap model = new HashMap();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
@@ -368,7 +370,7 @@ public class PageServlet extends HttpServlet {
         }
         
         // render content.  use size of about 24K for a standard page
-        CachedContent rendererOutput = new CachedContent(24567);
+        CachedContent rendererOutput = new CachedContent(24567, contentType);
         try {
             log.debug("Doing rendering");
             renderer.render(model, rendererOutput.getCachedWriter());

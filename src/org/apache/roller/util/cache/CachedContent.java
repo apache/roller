@@ -24,6 +24,9 @@ public class CachedContent implements Serializable {
     // the byte array we use to maintain the cached content
     private byte[] content = new byte[0];
     
+    // content-type of data in byte array
+    private String contentType = null;
+    
     // Use a byte array output stream to cached the output bytes
     private transient ByteArrayOutputStream outstream = null;
     
@@ -48,6 +51,11 @@ public class CachedContent implements Serializable {
             // shouldn't be possible, java always supports utf-8
             throw new RuntimeException("Encoding problem", e);
         }
+    }
+    
+    public CachedContent(int size, String contentType) {
+        this(size);
+        this.contentType = contentType;
     }
     
     
@@ -81,6 +89,11 @@ public class CachedContent implements Serializable {
     
     public PrintWriter getCachedWriter() {
         return cachedWriter;
+    }
+    
+    
+    public String getContentType() {
+        return contentType;
     }
     
     

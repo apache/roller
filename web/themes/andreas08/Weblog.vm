@@ -1,13 +1,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
 #set($themeDir = "$config.contextURL/themes/andreas08")
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">  
 <head>
     <title>$model.weblog.name</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Language" content="en" />
-    <base href="$model.weblog.URL"> 
-    #includeTemplate($model.weblog "_css")
+
+    <link rel="stylesheet" type="text/css" href="$url.home/page/css" />
+    <link rel="stylesheet" type="text/css" href='$url.themeResource("andreas08", "styles/tools.css")' />
+    <link rel="stylesheet" type="text/css" href="$url.themeResource("andreas08", "styles/typo.css")' />
+    <link rel="stylesheet" type="text/css" href='$url.themeResource("andreas08", "styles/lightbox.css")' />
+    <link rel="stylesheet" type="text/css" href='$url.themeResource("andreas08", "styles/nav-horizontal.css")' />
+    <link rel="stylesheet" type="text/css" href='$url.themeResource("andreas08", "styles/layout-navtop-subright.css")' />
+    <link rel="stylesheet" type="text/css" href='$url.themeResource("andreas08", "styles/layout.css")' />
+    <link rel="stylesheet" type="text/css" href='$url.themeResource("andreas08", "styles/andreas08.css")' />
+
     #showAutodiscoveryLinks($model.weblog)
     #showCommonJavascript()
     <script type="text/javascript" src="$url.themeResource("andreas08", "scripts/prototype.js")"></script>

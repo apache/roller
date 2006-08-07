@@ -284,12 +284,10 @@ public class ThemeManagerImpl implements ThemeManager {
             // Strip "_" from name to form link
             boolean navbar = true;
             String template_link = template_name;
-            if ("_css".equals(template_name)) {
-                navbar = false;
-                template_link = "theme.css";
-            } else if (template_name.startsWith("_") && template_name.length() > 1) {
+            if (template_name.startsWith("_") && template_name.length() > 1) {
                 navbar = false;
                 template_link = template_link.substring(1);
+                mLogger.debug("--- " + template_link);
             }
             
             String decorator = "_decorator";
@@ -306,9 +304,9 @@ public class ThemeManagerImpl implements ThemeManager {
                     theme,
                     theme_name+":"+template_name,
                     template_name,
-                    template_link,
-                    new String(chars),
                     template_name,
+                    new String(chars),
+                    template_link,
                     new Date(template_file.lastModified()),
                     "velocity",
                     true,
@@ -366,6 +364,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 if (template != null) {
                     // User already has page by that name, so overwrite it.
                     template.setContents(theme_template.getContents());
+                    template.setLink(theme_template.getLink());
                     
                 } else {
                     // User does not have page by that name, so create new page.
@@ -374,7 +373,7 @@ public class ThemeManagerImpl implements ThemeManager {
                             website,                            // website
                             theme_template.getName(),           // name
                             theme_template.getDescription(),    // description
-                            theme_template.getName(),           // link
+                            theme_template.getLink(),           // link
                             theme_template.getContents(),       // contents
                             new Date(),                         // last mod
                             theme_template.getTemplateLanguage(), // temp lang
