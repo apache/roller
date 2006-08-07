@@ -65,17 +65,20 @@ public class SiteModel implements Model {
         return "site";
     }
     
-    public void init(Map initData) throws RollerException {        
+    public void init(Map initData) throws RollerException {
+        
         // we expect the init data to contain a pageRequest object
-        this.weblogRequest = (WeblogPageRequest) initData.get("weblogRequest");
+        this.weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(this.weblogRequest == null) {
             throw new RollerException("expected pageRequest from init data");
         }
+        
         // TODO 3.0: is it better to reparse URL to get these?
         if (weblogRequest instanceof WeblogPageRequest) {
             weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
-        }        
+        }
+        
         // extract weblog object
         weblog = weblogRequest.getWeblog();
     }
