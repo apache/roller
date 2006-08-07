@@ -1,10 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="$url.home/page/theme.css" />
+    <link rel="stylesheet" type="text/css" href="$url.home/page/css.css" />
     #showAutodiscoveryLinks($model.weblog)
     #showCommonJavascript()
-    <title>$utils.escapeHTML($model.weblog.name) : $model.weblogPage.name</title>
+    <title>$utils.removeHTML($model.weblog.name) : $model.weblogPage.name</title>
 </head>
 <body>
 
@@ -19,7 +19,6 @@
         </center>
 
         #set($pager = $model.getWeblogEntriesPager()) 
-
         <div class="next-previous">
             #if ($model.results)
                 #showWeblogSearchAgainForm($model.weblog)
@@ -28,13 +27,12 @@
                 #showNextPrevEntriesControl($pager)
             #end
         </div>
-
         #showWeblogEntriesPager($pager)
-
         #if ($model.permalink)
            #showWeblogEntryComments($entry)
            #showWeblogEntryCommentForm($entry)
         #end
+
   </div>
 </div>
 
