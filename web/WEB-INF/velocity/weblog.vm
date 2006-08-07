@@ -148,32 +148,6 @@ Shows weblog entries pager via default day template
 #end
 
 
-#**
-Show either weblog entry text or summary as appropriate for 
-normal page or a permalink page with plugins applied.
-*#
-#macro(showWeblogEntryContent $entry $isPermalink)
-    #if($isPermalink) 
-        #if($utils.isNotEmpty($entry.text))
-            #set($sourceText = $entry.transformedText)
-        #else 
-            #set($sourceText = $entry.transformedSummary)
-        #end
-    #else
-        #if($utils.isNotEmpty($entry.summary))
-            #set($sourceText = $entry.transformedSummary)
-            #if($utils.isNotEmpty($entry.text))
-               #set($readMore = "[<a class='readmore' href='$url.entry($entry.anchor)'>$text.get('macro.weblog.readMore')</a>]" )
-               #set($sourceText = "$sourceText$readMore")
-            #end
-        #else 
-            #set($sourceText = $entry.transformedText)
-        #end
-    #end
-    $sourceText
-#end
-
-
 #** 
 Show comments for weblog entry according to Roller configuration.
 *#

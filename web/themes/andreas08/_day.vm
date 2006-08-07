@@ -20,24 +20,11 @@
         #end
     </span>
 
-    #if($model.permalink) 
-        #if($utils.isNotEmpty($entry.text))
-            #set($sourceText = $entry.transformedText)
-        #else 
-            #set($sourceText = $entry.transformedSummary)
-        #end
+    #if($model.permalink)
+        $entry.displayContent
     #else
-        #if($utils.isNotEmpty($entry.summary))
-            #set($sourceText = $entry.transformedSummary)
-            #if($utils.isNotEmpty($entry.text))
-               #set($readMore = "[<a class='readmore' href='$url.entry($entry.anchor)'>$text.get('macro.weblog.readMore')</a>]" )
-               #set($sourceText = "$sourceText$readMore")
-            #end
-        #else 
-            #set($sourceText = $entry.transformedText)
-        #end
+        $entry.displayContent($url.entry($entry.anchor))
     #end
-    $sourceText
 
     <span class="info">
         #if ($utils.isUserAuthorizedToAuthor($entry.website))
