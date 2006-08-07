@@ -106,16 +106,9 @@ public class FeedModel implements Model {
      */
     public List getWeblogEntries() {
         
-        // Display same number of entries in feed as displayed on page
-        int entryCount = weblog.getEntryDisplayCount();
-        
-        // But don't exceed installation-wide maxEntries settings
-        int maxEntries =
-                RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
-        int defaultEntries =
+        // all feeds get the site-wide default # of entries
+        int entryCount =
                 RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
-        if (entryCount < 1) entryCount = defaultEntries;
-        if (entryCount > maxEntries) entryCount = maxEntries;
         
         List results = new ArrayList();
         try {             
@@ -149,16 +142,9 @@ public class FeedModel implements Model {
      */
     public List getComments() {
             
-        // Display same number of entries in feed as displayed on page
-        int entryCount = weblog.getEntryDisplayCount();
-        
-        // But don't exceed installation-wide maxEntries settings
-        int maxEntries =
-                RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
-        int defaultEntries =
+        // all feeds get the site-wide default # of entries
+        int entryCount =
                 RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
-        if (entryCount < 1) entryCount = defaultEntries;
-        if (entryCount > maxEntries) entryCount = maxEntries;
         
         List recentComments = new ArrayList();
         try {
