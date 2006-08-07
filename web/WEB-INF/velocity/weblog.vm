@@ -636,7 +636,7 @@ Show search form for a weblog.
     <form id="searchForm" method="get" action="$url.search"
         style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
         <p>
-          <input type="text" id="q" name="q" size="20"
+          <input type="text" id="q" name="q" size="10"
               maxlength="255" value="#if($term)$term#end" />
           #if( $showCatChooser )
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
@@ -671,13 +671,13 @@ Show search again form for a weblog.
         $text.get( "macro.weblog.searchdictionary", [$model.term, $model.term, $model.term] )
         $text.get( "macro.weblog.searchhits", [$model.hits])
         <form method="get" action="$url.search" style="margin: 5px">
-            <input type="text" id="q" name="q" size="31"
+            <input type="text" id="q" name="q" size="10"
                 maxlength="255" value="$model.term"
                 style="padding-left: 1px" /><br />
 
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
             <select name="cat">
-            <option value="">- Restrict By Category -</option>
+            <option value="">- In Category -</option>
             #foreach( $cat in $cats )
               <option #if($cat.name == $model.term)selected="selected"#end>$cat.name</option>
             #end
