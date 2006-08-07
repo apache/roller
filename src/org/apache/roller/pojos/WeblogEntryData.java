@@ -47,6 +47,7 @@ import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.util.DateUtil;
+import org.apache.roller.util.MessageUtilities;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
 
@@ -1138,5 +1139,67 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         }        
         return ret;
     }
+    
+    
+    /**
+     * Get the right transformed display content depending on the situation.
+     *
+     * If the readMoreLink is specified then we assume the caller wants to
+     * prefer summary over content and we include a "Read More" link at the
+     * end of the summary if it exists.  Otherwise, if the readMoreLink is
+     * empty or null then we assume the caller prefers content over summary.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String displayContent(String readMoreLink) {
+        
+        String displayContent = null;
+        
+        if(readMoreLink == null || readMoreLink.trim().length() < 1 || 
+                "nil".equals(readMoreLink)) {
+            
+            // no readMore link means permalink, so prefer text over summary
+            if(StringUtils.isNotEmpty(this.getText())) {
+                displayContent = this.getTransformedText();
+            } else {
+                displayContent = this.getTransformedSummary();
+            }
+        } else {
+            // not a permalink, so prefer summary over text
+            // include a "read more" link if needed
+            if(StringUtils.isNotEmpty(this.getSummary())) {
+                displayContent = this.getTransformedSummary();
+                if(StringUtils.isNotEmpty(this.getText())) {
+                    // add read more
+                    List args = new ArrayList();
+                    args.add(readMoreLink);
+                    try {
+                        String readMore = MessageUtilities.getString("macro.weblog.readMoreLink", args);
+                        displayContent += readMore;
+                    } catch (RollerException ex) {
+                        mLogger.error("trouble with message utils", ex);
+                    }
+                }
+            } else {
+                displayContent = this.getTransformedText();
+            }
+        }
+        
+        return displayContent;
+    }
+    
+    
+    /**
+     * Get the right transformed display content.
+     *
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getDisplayContent() { 
+        return displayContent(null);
+    }
+    
+    
+    /** No-op method to please XDoclet */
+    public void setDisplayContent(String ignored) {}
     
 }
