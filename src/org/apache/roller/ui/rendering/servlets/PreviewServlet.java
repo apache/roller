@@ -36,6 +36,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
@@ -133,7 +134,16 @@ public class PreviewServlet extends HttpServlet {
         log.debug("preview page found, dealing with it");
         
         // set the content type
-        response.setContentType("text/html; charset=utf-8");
+        String pageLink = previewRequest.getWeblogPageName();
+        String mimeType = RollerContext.getServletContext().getMimeType(pageLink);
+        String contentType = "text/html; charset=utf-8";
+        if(mimeType != null) {
+            // we found a match ... set the content type
+            contentType = mimeType+"; charset=utf-8";
+        } else if ("_css".equals(previewRequest.getWeblogPageName())) {
+            // TODO: store content-type for each page so this hack is unnecessary
+            contentType = "text/css; charset=utf-8";
+        }
         
         // looks like we need to render content
         Map model = new HashMap();
@@ -213,6 +223,7 @@ public class PreviewServlet extends HttpServlet {
         
         // flush rendered content to response
         log.debug("Flushing response output");
+        response.setContentType(contentType);
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
         
