@@ -8,7 +8,13 @@
     <div class="entryBox">
         <a name="$utils.encode($entry.anchor)" id="$utils.encode($entry.anchor)"></a>
         <p class="entryTitle">$entry.title</p>
-        <p class="entryContent">#showWeblogEntryContent($entry $model.permalink)</p>
+        <p class="entryContent"> 
+            #if($model.permalink)
+                $entry.displayContent
+            #else
+                $entry.displayContent($url.entry($entry.anchor))
+            #end
+        </p>
         <p class="entryInfo">
             Posted at <a href="$url.entry($entry.anchor)">$utils.formatDate($entry.pubTime, "hh:mma MMM dd, yyyy")</a>
             by $entry.creator.fullName in <span class="category">$entry.category.name</span> &nbsp;|&nbsp;
