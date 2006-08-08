@@ -1,25 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
 <html>
 <head>
-    <title>#showWebsiteTitle()</title>
-
-    #showContentType("text/html; charset=utf-8")
-    #showContentLanguage($locale.language)
-    #showRSSAutodiscoveryLink()
-    #showRSDLink()
-
-    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js"></script>
-    #showThemeScript("x2" "global.js")
-
-    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
-    <link rel="stylesheet" type="text/css" href="#showThemePath("rolling")/theme.css" />
-    <style type="text/css">
-    #includePage("_css")
-    #includePage("_bigCalendarCSS")
-    </style>
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
-
 <body>
-
-

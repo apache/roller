@@ -3,25 +3,34 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        #showContentLanguage($locale.language)
-        <title>#showWebsiteTitle()</title>
-        <base href="$absBaseURL" />
-        #showRSSAutodiscoveryLink()
-        #showRSDLink()
-        <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
-        <link rel="stylesheet" type="text/css" media="all"
-            href="#showThemeStylePath("sunsets" "cherryeve.css")" />
-        <link rel="alternate stylesheet" type="text/css"
-            media="all" title="Capricorn"
-            href="#showThemeStylePath("sunsets" "capricorn.css")" />
-        #showThemeStyle("x2" "comments.css" false)
-        #showThemeScript("x2" "global.js")
-        #showThemeScript("x2" "xmlextras.js")
-        #showThemeScript("x2" "comments.js")
-        #showThemeScript("sunsets" "styleswitcher.js")
-        #showThemeScript("sunsets" "calendar.js")
-        <script type="text/javascript">
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+
+    <link rel="stylesheet" type="text/css" 
+        href='$url.themeResource("sunsets", "styles/theme.css")' />
+    <link rel="stylesheet" type="text/css" media="all"
+        href='$url.themeResource("sunsets", "styles/cherryeve.css", true)' />
+    <link rel="alternate stylesheet" type="text/css"
+        media="all" title="Capricorn"
+        href='$url.themeResource("sunsets", "styles/capricorn.css", true)' />
+
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
+    <style type="text/css">
+        @import url($url.themeResource("x2", "styles/comments.css", true));
+    </style>
+
+    <script type="text/javascript" 
+        src='$url.themeResource("x2", "scripts/global.js", true)'></script>
+    <script type="text/javascript" 
+        src='$url.themeResource("x2", "scripts/xmlextras.js", true)'></script>
+    <script type="text/javascript" 
+        src='$url.themeResource("x2", "scripts/comments.js", true)'></script>
+    <script type="text/javascript" 
+        src='$url.themeResource("sunsets", "scripts/styleswitcher.js", true)'></script>
+    <script type="text/javascript" 
+        src='$url.themeResource("sunsets", "scripts/calendar.js", true)'></script>
+
+    <script type="text/javascript">
             var cal = new CalendarPopup("calDiv");
             cal.setReturnFunction("showDate");
 
@@ -34,11 +43,11 @@
             }
         </script>
         <link rel="stylesheet" type="text/css" media="print"
-            href="#showThemeStylePath("sunsets" "print.css")" />
+            href="$url.themeResource("sunsets","styles/print.css")" />
     </head>
 <body>
 
-#showHiddenCommentForm()
+<!-- showHiddenCommentForm() -->
 
 <script type="text/javascript">
     initComments();
@@ -48,37 +57,51 @@
     <a href="#" onclick="setActiveStyleSheet('default'); return false;"
         onkeypress="setActiveStyleSheet('default'); return false;" accesskey="d"
         title="Default style (Cherry Eve)."><img width="25" height="16"
-        src="#showThemeImagePath("sunsets" "cherryeve.gif")"
+        src="$url.themeResource("sunsets","images/cherryeve.gif")"
         alt="Default style (Cherry Eve)."/></a>
 
     <a href="#" onclick="setActiveStyleSheet('Capricorn'); return false;"
         onkeypress="setActiveStyleSheet('Capricorn'); return false;"
         title="Switch styles (Capricorn)." accesskey="c"><img
-        src="#showThemeImagePath("sunsets" "capricorn.gif")"
+        src="$url.themeResource("sunsets","images/capricorn.gif")"
         width="25" height="16" alt="Switch styles (Capricorn)." /></a>
 
-    <a href="$ctxPath/rss/$website.handle" accesskey="x" title="RSS Feed"><img
-        src="#showThemeImagePath("sunsets" "xml.gif")"
-        width="25" height="16" alt="XML Feed" /></a>
+    <a href="$url.feeds.entries.atom" accesskey="x" title="Atom Feed"><img
+        src="$url.themeResource("sunsets","images/xml.gif")"
+        width="25" height="16" alt="Atom Feed" /></a>
 
     <a href="?" onmouseover="window.status='View Calendar'; return false"
         onmouseout="window.status=''; return false" name="calAnchor"
         id="calAnchor" onclick="cal.showCalendar(this.id); return false">
-        <img src="#showThemeImagePath("sunsets" "cal.gif")"
+        <img src="$url.themeResource("sunsets","images/cal.gif")"
             width="25" height="16" alt="Calendar" /></a>
 
 </div>
 
 <div id="content">
     <div id="header">
-        <h1><a href="$ctxPath/page/$website.handle" title="Home">#showWebsiteTitle()</a></h1>
-        #showBasicNavBar( false )
+        <h1><a href="$ctxPath/page/$website.handle" title="Home">$model.weblog.name</a></h1>
+        #showPageMenu($model.weblog)
     </div>
 
-    #showWeblogCategoryChooser()
+        #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+        #showWeblogCategoryLinksList($rootCategory false false)
 
     <div id="entries">
-    #displayWeblogEntries()
+        #set($pager = $model.getWeblogEntriesPager()) 
+        <div class="next-previous">
+            #if ($model.results)
+                #showWeblogSearchAgainForm($model.weblog)
+                #showNextPrevSearchControl($pager)
+            #else
+                #showNextPrevEntriesControl($pager)
+            #end
+        </div>
+        #showWeblogEntriesPager($pager)
+        #if ($model.permalink)
+           #showWeblogEntryComments($entry)
+           #showWeblogEntryCommentForm($entry)
+        #end
     </div>
 </div>
 

@@ -153,7 +153,7 @@ div.entry {
     padding: 4px;
 }
 
-div.rNavigationBar {
+ul.rNavigationBar {
     background-color: transparent;
     color: #ffffff;
     float: left;
@@ -162,7 +162,7 @@ div.rNavigationBar {
     margin-top: 135px;
 }
 
-div.rWeblogCategoryChooser {
+ul.rCategory {
     background: transparent;
     color: #ffffff;
     float: right;

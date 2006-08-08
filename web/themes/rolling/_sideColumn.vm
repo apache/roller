@@ -2,34 +2,35 @@
 
 <div class="box">
 <h2 class="box">calendar</h2>
-<center>#showWeblogCalendar()</center>
+<center>#showWeblogEntryCalendar($model.weblog "nil")</center>
 </div>
 
 <div class="box"><h2 class="box">search</h2>
-#showSearchForm()
+#showWeblogSearchForm($model.weblog false)
 </div>
 
 <div class="box"><h2 class="box">navigation</h2>
-#showBasicNavBar(true)
+#showPageMenu($model.weblog)
 <br/>
 <br/>
-#showEditorNavBar(true)
+#showAuthorMenu(true)
 </div>
 
 <div class="box"><h2 class="box">links</h2>
 <br/>
-#showBlogroll()
+#set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+#showBookmarkLinksList($rootFolder false false)
 <br/>
 </div>
 
-<div class="box"><h2 class="box">rss feeds</h2>
-#showRSSBadge()<br/>
-#showRSSLinks()<br/>
+<div class="box"><h2 class="box">feeds</h2>
+#showAtomFeedsList($model.weblog)<br/>
 </div>
 
 <div class="box"><h2 class="box">referers</h2>
 Today's top referers<br/>
-#showReferers(20 25)
+#set($refs = $model.weblog.getTodaysReferrers())
+#showReferrersList($refs 30 20)
 </div>
 
 <br/>

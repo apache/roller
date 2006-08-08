@@ -1,4 +1,4 @@
-#includePage("_header")
+#includeTemplate($model.weblog "_header")
 
 #set($maxResults = 25) 
 #set($since = 365) 
@@ -20,7 +20,7 @@
                <td class="menuTabSelected">
                   <div class="menu-tr">
                      <div class="menu-tl">
-                        &nbsp;&nbsp;<a href="$url.home/page/blogs">Weblog Directory</a>&nbsp;&nbsp; 
+                        &nbsp;&nbsp;<a href='$url.page("blogs")'>Weblog Directory</a>&nbsp;&nbsp; 
                      </div>
                   </div>
                </td>	    

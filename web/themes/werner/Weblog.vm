@@ -1,25 +1,37 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-  #showContentType("text/html; charset=utf-8")
-  #showContentLanguage($locale.language)
-  #showRSSAutodiscoveryLink()
-  #showRSDLink()
-  <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
-  <link rel="stylesheet" type="text/css" href="#showThemePath("werner")/theme.css" />
-  <style type="text/css">
-    #includePage("_css")
-  </style>
-  <title>#showWebsiteTitle()</title>
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
+    <link rel="stylesheet" type="text/css" href='$url.themeResource("werner", "theme.css")' />
 </head>
 
 <body>
 <div id="MainColumn">
    <div align="center">
-       <h2>#showWebsiteTitle()</h2>
-       #showWeblogCategoryChooser()
+       <h2>$model.weblog.name</h2>
+        #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+        #showWeblogCategoryLinksList($rootCategory false false)
    </div>
-   #displayWeblogEntries()<br/>
+
+    #set($pager = $model.getWeblogEntriesPager()) 
+    <div class="next-previous">
+        #if ($model.results)
+            #showWeblogSearchAgainForm($model.weblog)
+            #showNextPrevSearchControl($pager)
+        #else
+            #showNextPrevEntriesControl($pager)
+        #end
+    </div>
+    #showWeblogEntriesPager($pager)
+    #if ($model.permalink)
+       #showWeblogEntryComments($entry)
+       #showWeblogEntryCommentForm($entry)
+    #end
+
+<br/>
 </div>
 
 <div id="SideBar">
@@ -27,48 +39,44 @@
    <br/>
    A blog by
    <br/>
-   $website.handle
-   <br/>
-   $obfuscatedEmail
+   $model.weblog.creator.fullName
    <br/><br/>
  </div>
  <div class="menubox">
  <h2 class="box">calendar</h2>
- <center>#showWeblogCalendar()</center>
+ <center>#showWeblogEntryCalendar($model.weblog 'nil')</center>
  </div>
 
  <div class="menubox"><h2 class="box">search</h2>
-  #showSearchForm()
+  #showWeblogSearchForm($model.weblog false)
  </div>
 
  <div class="menubox"><h2 class="box">navigation</h2>
-  #showBasicNavBar(true)
+  #showPageMenu($model.weblog)
   <br/>
-  #showEditorNavBar(true)
+  #showAuthorMenu(true)
  </div>
 
  <div class="menubox"><h2 class="box">links</h2>
   <br/>
-  #showBlogroll()
+  #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+         #showBookmarkLinksList($rootFolder false false)
   <br/>
  </div>
 
- <div class="menubox"><h2 class="box">rss feeds</h2>
-   #showRSSBadge()<br/>
-   #showRSSLinks()<br/>
+ <div class="menubox"><h2 class="box">atom feeds</h2>
+   #showAtomFeedsList($model.weblog)<br/>
  </div>
 
  <div class="menubox"><h2 class="box">referers</h2>
-   #showReferers(20 25)
+    #set($refs = $model.weblog.getTodaysReferrers())
+    #showReferrersList($refs 30 20)
  </div>
 
-<!-- Commented out as Werner could just have temporary problems.
-     Currently the DNS aliases to a bad DNS.
-     bayard 20051015
  <div class="menubox"><h2 class="box">design by</h2>
-   <a href="http://www.shiftat.com/blog/page/werner/">Werner Ramaeker</a>
+   Werner Ramaeker
  </div>
--->
+
 </div>
 
 </body>

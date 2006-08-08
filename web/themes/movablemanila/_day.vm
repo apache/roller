@@ -1,25 +1,33 @@
 <div class="date">
-    <a href="$baseURL/page/$website.handle/#formatDate($plainFormat $day )">
-        <img
-           class="daypermalink"
-           src="#showThemeImagePath("movablemanila" "dateArrow.gif")"
-           title="$text.get( "macro.weblog.daypermalink.title" )"
-           alt="#formatDate( $plainFormat $day )" /></a>
-   #showEntryDate( $day ) 
+    <a href='$url.date($utils.formatDate($day,"yyyyMMdd"))'>
+        <img class="daypermalink" border="0"
+           src='$url.themeResource("movablemanila", "images/dateArrow.gif")'
+           title='$text.get("macro.weblog.daypermalink.title")'
+           alt='$url.date($utils.formatDate($day, "yyyyMMdd"))' /></a>
+   #set($format = $text.get("macro.weblog.date.toStringFormat"))
+   $utils.formatDate($day, $format)
 </div>
 
 #foreach( $entry in $entries )
    <div class="blogbody">
-   <p class="title"><a href="$entry.link">$entry.title</a></p>
-   #showEntryText( $entry )
+   <p class="title">$entry.title</p>
+    
+            #if($model.permalink)
+                $entry.displayContent
+            #else
+                $entry.displayContent($url.entry($entry.anchor))
+            #end
+        
+   <br />
+   <br />
    <span style="color:gray; font-size:10px;">
-      $dateFormatter.applyPattern("MMMMM dd, yyyy hh:mm aa")
-      #set( $fmtDate = $dateFormatter.format( $entry.pubTime ) )
       $text.get("macro.weblog.postedby") $entry.creator.userName
-      [$entry.category.name] ( $fmtDate )
-      #showEntryPermalink( $entry )
-      #if (($entry.commentsStillAllowed && $website.allowComments) || $commentCount > 0) | #end
-      #showCommentsPageLink( $entry )
+      [$entry.category.name] ( $utils.formatDate($entry.pubTime, "MMMMM dd, yyyy hh:mm aa") )
+      <a href="$url.entry($entry.anchor)">Permalink</a>
+      #if($entry.commentsStillAllowed || $commentCount > 0)  
+          | #set($link = "$url.comments($entry.anchor)" )
+          <a href="$link" class="commentsLink">$text.get("macro.weblog.comments")[$entry.commentCount]</a>
+      #end
    </span>
 </div>
 #end

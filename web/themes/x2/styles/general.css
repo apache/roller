@@ -25,7 +25,7 @@ body {
 	background: #FFFFFF; 
 	color: #000000;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
-	font-size: 70%;
+	font-size: 90%;
     margin: 0px;
 }
 
@@ -126,12 +126,6 @@ a:active {
 div.trackbackUrl {
     background: transparent;
     color: blue;
-}
-
-.rssbadge {
-	border: 0px;
-	height: 14px;
-	width: 36px;
 }
 
 /* class definition for W3C Images */

@@ -1,12 +1,12 @@
-#includePage("_header")
+#includeTemplate($model.weblog "_header") 
 
 <div id="ArchivesColumn">
   <center>
-    <h2>#showWebsiteTitle()</h2>
-    #showBasicNavBar(false)<br />
+    <h2>$model.weblog.name</h2>
+    #showPageMenu(false)<br />
   </center>
-  #showBigWeblogCalendar()<br />
-  #includePage("_badges")
-</div>
+  #showWeblogEntryCalendarBig($model.weblog 'nil')<br /> 
+  #includeTemplate($model.weblog("_badges") 
+</div> 
 
-#includePage("_footer")
+#includeTemplate($model.weblog "_footer") 

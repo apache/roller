@@ -1,10 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="$url.home/page/css" />
+    <style type="text/css">
+    #includeTemplate($model.weblog "_css")
+    </style>
     #showAutodiscoveryLinks($model.weblog)
     #showCommonJavascript()
-   <title>$utils.removeHTML($model.weblog.name) : $model.weblogPage.name</title>
+   <title>$model.weblog.name : $model.weblogPage.name</title>
 </head>
 <body>
 <div id="block">&nbsp;
@@ -28,7 +30,7 @@
          #showBookmarkLinksList($rootFolder false false) 
 
          <h3>Newsfeeds</h3>
-         #showRSSFeedsList($model.weblog)
+         #showAtomFeedsList($model.weblog)
  
          <h3>Controls</h3>
          #showPageMenu($model.weblog)

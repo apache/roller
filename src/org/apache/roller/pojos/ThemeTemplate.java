@@ -135,7 +135,7 @@ public class ThemeTemplate implements Template, Serializable {
     }
 
     public boolean isNavbar() {
-        return hidden;
+        return navbar;
     }
 
     public void setNavbar(boolean navbar) {

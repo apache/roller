@@ -15,7 +15,7 @@ body {
 
 .entryTitle {
     font-weight: bold;
-    font-size: %150;
+    font-size: 130%;
 }
 .entryInfo {
     font-size: 80%;
@@ -51,7 +51,7 @@ li.selected {
 
 /* other lists ----------------------------------------------- */
 
-ul.rNavigationBar, ul.rMenu, ul.rFolder, ul.rFeeds, ul.rReferersList {
+ul.rNavigationBar, ul.rMenu, ul.rFolder, ul.rFeeds, ul.rReferersList, ul.rEntriesList {
     list-style-type: none;
     padding: 0;
     margin: 0;

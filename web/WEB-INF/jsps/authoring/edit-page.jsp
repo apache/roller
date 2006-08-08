@@ -82,6 +82,19 @@ function cancel() {
         
         <c:choose>
         <c:when test="${page.required}">
+            <html:hidden property="navbar" />
+        </c:when>
+        <c:otherwise>
+            <tr>
+                <td class="label"><fmt:message key="pageForm.navbar" />&nbsp;</td>
+                <td class="field"><html:checkbox property="navbar" /> (<fmt:message key="pageForm.navbar.tip" />)</td>
+                <td class="description"></td>
+            </tr>
+        </c:otherwise>
+        </c:choose>
+        
+        <c:choose>
+        <c:when test="${page.required}">
             <html:hidden property="hidden" />
         </c:when>
         <c:otherwise>

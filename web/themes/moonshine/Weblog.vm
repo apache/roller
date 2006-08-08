@@ -19,56 +19,52 @@ your blog page, if you put them somwhere else, just adjust the paths for those f
 -->
 <html>
 <head>
-    #showContentType("text/html; charset=utf-8")
-    #showContentLanguage($locale.language)
-    #showRSSAutodiscoveryLink()
-    #showRSDLink()
-    <title>#showWebsiteTitle()</title>
-    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
-    <link rel="stylesheet" type="text/css" href="#showThemePath("moonshine")/theme.css" />
-    <style type="text/css">
-    #includePage("_css")
-    </style>
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
 <body id="body" class="all">
 <div id="banner">
-<h1>#showWebsiteTitle()</h1>
-<h2>#showWebsiteDescription()</h2></div>
+<h1>$model.weblog.name</h1>
+<h2>$model.weblog.description</h2></div>
 
 <div id="rightcontent">
     <div class="padded">
-    #showWeblogCalendar()
+    #showWeblogEntryCalendar($model.weblog "nil")
     </div>
 
     <div class="padded">
-    #showRSSBadge()
+    #showAtomFeedsList($model.weblog)
     </div>
 
     <div class="padded">
-    #showSearchForm()
+    #showWeblogSearchForm($model.weblog false)
     </div>
 
     <!-- This section is optional and can be removed if
          you do not have other pages on your site -->
     <h2>Blog::Navigation</h2>
     <div class="padded">
-    #showBasicNavBar(true)
+    #showPageMenu($model.weblog)
     </div>
 
     <h2>Blog::Editing</h2>
     <div class="padded">
-    #showEditorNavBar(true)
+    #showAuthorMenu(true)
     </div>
 
     <h2>Bookmarks::Blogroll</h2>
     <div class="padded">
-    #showBlogroll()
+    #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+         #showBookmarkLinksList($rootFolder false false)
     </div>
 
     <h2>Blog::Referers</h2>
     <div class="padded">
     <!-- Referrers -->
-    #showReferers(30 20)
+    #set($refs = $model.weblog.getTodaysReferrers())
+    #showReferrersList($refs 30 20)
     </div>
 
     <!--
@@ -97,21 +93,39 @@ your blog page, if you put them somwhere else, just adjust the paths for those f
     -->
 
     <div class="padded">
-    Powered by <a href="http://www.rollerweblogger.org/">Roller Weblogger</a>.
+    Powered by <a href="http://rollerweblogger.org/">Roller Weblogger</a>.
     </div>
 
 </div>
 
 <div id="centercontent">
     <div class="padded">
-    #showWeblogCategoryChooser()
+        <div class="catChooser">
+            #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+            #showWeblogCategoryLinksList($rootCategory false false)
+        </div>
     </div>
 
-    #displayWeblogEntries()
+    #set($pager = $model.getWeblogEntriesPager()) 
+    <div class="next-previous">
+        #if ($model.results)
+            #showWeblogSearchAgainForm($model.weblog)
+            #showNextPrevSearchControl($pager)
+        #else
+            #showNextPrevEntriesControl($pager)
+        #end
+    </div>
+    #showWeblogEntriesPager($pager)
+    #if ($model.permalink)
+       #showWeblogEntryComments($entry)
+       #showWeblogEntryCommentForm($entry)
+    #end
+
+
 </div>
 
 <div id="copyrightnotice">
-Copyright (C) 2003, <a href="mailto:$encodedEmail">$fullName</a>
+Copyright (C) 2003, <a href="mailto:$encodedEmail">$model.weblog.creator.fullName</a>
 </div>
 
 </body>

@@ -25,8 +25,8 @@ body
   background: #faf0e6;
   /*background: #f88506;*/
   color: #000;
-  font-size: 70%;
   font-weight: 400;
+  font-size: 85%;
   font-family: Verdana, sans-serif;
   text-align: center;
   /*padding: 25px;
@@ -266,20 +266,20 @@ label.styled, div.styled
  * ADMINBAR
  */
 
-#adminBar
+ul.rNavigationBar
 {
   border-bottom: 1px dotted #ddd;
   padding: 0px;
   height: 23px;
 }
 
-#adminBar li
+ul.rNavigationBar li
 {
   display: inline;
   text-align: center;
 }
 
-#adminBar li a, #adminBar a
+ul.rNavigationBar li a, ul.rNavigationBar a
 {
   color: #999;
   padding: 5px;
@@ -289,7 +289,7 @@ label.styled, div.styled
   text-decoration: none;
 }
 
-#adminBar li a:hover
+ul.rNavigationBar li a:hover
 {
   background: #ddd url(../images/buttonBackground.gif) repeat-x;
   border-right: 1px dashed #ccc;
@@ -415,6 +415,7 @@ label.styled, div.styled
 .story
 {
   font-family: Verdana, sans-serif;
+  font-size: 12px;
   line-height: 2em;
   text-align: justify;
   /*color: #222;*/

@@ -1,14 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-    #showContentType("text/html; charset=utf-8")
-    #showContentLanguage($locale.language)
-    #showRSSAutodiscoveryLink()
-    #showRSDLink()
-    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
-    <link rel="stylesheet" type="text/css" href="#showThemePath("clean")/theme.css" />
-    <style type="text/css">#includePage("_css")</style>
-    <title>#showWebsiteTitle()</title>
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
 <body>
     <table cellpadding="5" cellspacing="15" border="0" align="center" width="95%">
@@ -16,19 +12,47 @@
             <tr>
                 <td width="5%" valign="top" bgcolor="#ffffff">&nbsp;</td>
                 <td width="75%" valign="top" bgcolor="#ffffff">
-                    <h2>#showWebsiteTitle()</h2>
-                    <h3>#showWebsiteDescription()</h3>
-                    #showWeblogCategoryChooser()<br>
-                    #displayWeblogEntries()
+                    <h2>$model.weblog.name</h2>
+                    <h3>$utils.removeHTML($model.weblog.description)</h3>
+                    #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+                    #showWeblogCategoryLinksList($rootCategory false false)
+
+                    #set($pager = $model.getWeblogEntriesPager()) 
+                    <div class="next-previous">
+                        #if ($model.results)
+                            #showWeblogSearchAgainForm($model.weblog)
+                            #showNextPrevSearchControl($pager)
+                        #else
+                            #showNextPrevEntriesControl($pager)
+                        #end
+                    </div>
+                    #showWeblogEntriesPager($pager)
+                    #if ($model.permalink)
+                       #showWeblogEntryComments($entry)
+                       #showWeblogEntryCommentForm($entry)
+                    #end
+
                 </td>
                 <td valign="top" bgcolor="#ffffff" width="20%">
-                    <br>#showWeblogCalendar()<br><br>
-                    #showRSSBadge()<br><br><br>
-                    #showBasicNavBar(true)<br>
-                    #showSearchForm()<br>
-                    #showBlogroll()<br>
-                    #showEditorNavBar(true)<br>
-                    #showReferers(30 20)
+                    <br>#showWeblogEntryCalendar($model.weblog "nil")
+
+                    <h3>Feeds</h3>
+                    #showAtomFeedsList($model.weblog)
+
+                    <h3>Search this blog</h3>
+                    #showWeblogSearchForm($model.weblog false)
+
+                    <h3>Search this blog</h3>
+                    #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+                    #showBookmarkLinksList($rootFolder false false)
+
+                    <h3>Weblog menu</h3>
+                    #showPageMenu($model.weblog)
+                    #showAuthorMenu(true)
+
+                    <h3>Today's referrers</h3>
+                    #set($refs = $model.weblog.getTodaysReferrers())
+                    #showReferrersList($refs 30 20)
                 </td>
             </tr>
         </tbody>

@@ -1,49 +1,59 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 "http://www.w3.org/TR/html4/strict.dtd">
-
 <html>
-
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    #showContentLanguage($locale.language)
-    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
-    <link rel="stylesheet" type="text/css" href="#showThemePath("robot")/theme.css" />
-    <style type="text/css">#includePage("_css")</style>
-    #showRSSAutodiscoveryLink()
-    #showRSDLink()
-
-    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js">
-    </script>
-    <title>#showWebsiteTitle()</title>
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
-
 <body>
-
 <div id="Header"><a href="http://bluerobot.com/" title="BlueRobot Home">BLUEROBOT.COM</a></div>
 
 <div id="Content">
     <center>
-      <h1>#showWebsiteTitle()</h1>
-      <p class="descrip">#showWebsiteDescription()</p>
-      #showWeblogCategoryChooser()<br>
+      <h1>$model.weblog.name</h1>
+      <p class="descrip">$model.weblog.description</p>
+        #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+        #showWeblogCategoryLinksList($rootCategory false false)<br>
     </center>
-    #displayWeblogEntries()
+
+    #set($pager = $model.getWeblogEntriesPager()) 
+    <div class="next-previous">
+        #if ($model.results)
+            #showWeblogSearchAgainForm($model.weblog)
+            #showNextPrevSearchControl($pager)
+        #else
+            #showNextPrevEntriesControl($pager)
+        #end
+    </div>
+    #showWeblogEntriesPager($pager)
+    #if ($model.permalink)
+       #showWeblogEntryComments($entry)
+       #showWeblogEntryCommentForm($entry)
+    #end
+
     <hr />
-    #showReferers( 40 25 )
+    #set($refs = $model.weblog.getTodaysReferrers())
+    #showReferrersList($refs 30 20)
 </div>
 
 <div id="Menu">
+
     <h2>Calendar</h2>
-    #showWeblogCalendar()<br>
-    #showSearchForm()
+    #showWeblogEntryCalendar($model.weblog "nil")<br>
+    #showWeblogSearchForm($model.weblog false)
+
     <h2>RSS Feeds</h2>
-    #showRSSBadge()<br>
-    #showRSSLinks()
+    #showAtomFeedsList($model.weblog)<br>
+
     <h2>Links</h2>
-    #showBlogroll()
+    #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+    #showBookmarkLinksList($rootFolder false false)
+
     <h2>Navigation</h2>
-    #showBasicNavBar(true)<br>
-    #showEditorNavBar(true)<br>
+    #showPageMenu($model.weblog)<br>
+    #showAuthorMenu(true)<br>
 
 <!-- BlueRobot was here. -->
 
