@@ -1,10 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="$url.home/page/css" />
+    <title>$model.weblog.name : $model.weblogPage.name</title>
     #showAutodiscoveryLinks($model.weblog)
     #showCommonJavascript()
-    <title>$utils.removeHTML($model.weblog.name) : $model.weblogPage.name</title>
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
 <body>
 
@@ -45,7 +45,7 @@
 
     <h2>RSS Feeds</h2>
     <div class="sidebar">
-    #showRSSFeedsList($model.weblog)
+    #showAtomFeedsList($model.weblog)
     </div>
 
     <h2>Search</h2>

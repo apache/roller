@@ -336,7 +336,7 @@ Show comments form for weblog entry.
 Show entries as a HTML ul list.
 *#
 #macro(showWeblogEntryLinksList $entriesList)
-   <ul class="entriesList">
+   <ul class="rEntriesList">
    #foreach ($var in $entriesList)
        <li class="recentposts"><a href="$var.permalink">$var.title</a></li>
    #end
@@ -616,6 +616,13 @@ Show weblog entry calendar, with optional category restriction.
 *#
 #macro(showWeblogEntryCalendar $weblog $category)
 $calendarModel.showWeblogEntryCalendar($weblog, $category)
+#end
+
+#** 
+Show large format weblog entry calendar, with optional category restriction.
+*#
+#macro(showWeblogEntryCalendarBig $weblog $category)
+$calendarModel.showWeblogEntryCalendarBig($weblog, $category)
 #end
 
 

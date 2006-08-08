@@ -91,6 +91,7 @@ public class WeblogTemplate extends PersistentObject
         this.lastModified = (Date)updateTime.clone();
         this.templateLanguage = tempLang;
         this.hidden = hid;
+        this.navbar = navbar;
         this.decoratorName = decorator;
     }
     
@@ -377,6 +378,7 @@ public class WeblogTemplate extends PersistentObject
         this.name =         other.getName();
         this.description =  other.getDescription();
         this.link =         other.getLink();
+        this.navbar =         other.isNavbar();
         this.contents =     other.getContents();
         this.lastModified = other.getLastModified()!=null ? (Date)other.getLastModified().clone() : null;
         this.templateLanguage = other.getTemplateLanguage();

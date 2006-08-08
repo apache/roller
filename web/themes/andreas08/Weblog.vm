@@ -6,8 +6,9 @@
     <title>$model.weblog.name</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Language" content="en" />
-
-    <link rel="stylesheet" type="text/css" href="$url.home/page/css" />
+    <style type="text/css">
+    #includeTemplate($model.weblog "_css")
+    </style>
     <link rel="stylesheet" type="text/css" href='$url.themeResource("andreas08", "styles/tools.css")' />
     <link rel="stylesheet" type="text/css" href="$url.themeResource("andreas08", "styles/typo.css")' />
     <link rel="stylesheet" type="text/css" href='$url.themeResource("andreas08", "styles/lightbox.css")' />
@@ -64,7 +65,7 @@
             <div class="editorMenu">#showAuthorMenu(true)</div>
             <div class="small box" id="description">
                 <div id="feed">
-                    <a href="$url.feed.entries.rss"><img class="rssbadge"
+                    <a href="$url.feed.entries.atom"><img class="rssbadge"
                         src="$url.themeResource("andreas08", "images/feed-icon-16x16.jpg")"
                         alt="Click me to subscribe" /></a>
                 </div>

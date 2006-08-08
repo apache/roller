@@ -2,11 +2,10 @@
 
 <html>
 <head>
-    #showContentType("text/html; charset=utf-8")
-    #showContentLanguage($locale.language)
-    #showRSSAutodiscoveryLink()
-    #showRSDLink()
-    <title>#showWebsiteTitle()</title>
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
     <script type="text/javascript" language="JavaScript">
     <!--
     if (!((navigator.appVersion.indexOf('MSIE')!=-1) || (parseInt(navigator.appVersion)!=4)))
@@ -17,19 +16,10 @@
     };
     // -->
     </script>
-
-    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
-    <link rel="stylesheet" type="text/css" href="#showThemePath("currency")/theme.css" />
-    <style type="text/css">
-      #includePage("_css")
-    </style>
-    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js">
-    </script>
 </head>
 
 <body>
-  <table border="0" cellspacing="0" cellpadding="0" width=
-  "100%">
+  <table border="0" cellspacing="0" cellpadding="0" width= "100%">
      <tbody>
         <tr>
            <td width="100%" bgcolor="#666666">
@@ -42,9 +32,9 @@
         </tr>
 
         <tr>
-           <td class="title" width="100%" bgcolor="#cccc99"
-             valign="top">#showWebsiteTitle()<br>
-             <font class="descrip">#showWebsiteDescription()</font>
+           <td class="title" width="100%" bgcolor="#cccc99" valign="top">
+             <h1 class="title">$model.weblog.name</h1>
+             <font class="descrip">$model.weblog.description</font>
            </td>
         </tr>
 
@@ -59,9 +49,25 @@
      <tbody>
         <tr>
            <td valign="top" width="555" class="body">
-              #showWeblogCategoryChooser()<br />
+                    <div class="catChooser">
+                    #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+                    #showWeblogCategoryLinksList($rootCategory false false)
+                    </div>
 
-              #displayWeblogEntries()
+                    #set($pager = $model.getWeblogEntriesPager()) 
+                    <div class="next-previous">
+                        #if ($model.results)
+                            #showWeblogSearchAgainForm($model.weblog)
+                            #showNextPrevSearchControl($pager)
+                        #else
+                            #showNextPrevEntriesControl($pager)
+                        #end
+                    </div>
+                    #showWeblogEntriesPager($pager)
+                    #if ($model.permalink)
+                       #showWeblogEntryComments($entry)
+                       #showWeblogEntryCommentForm($entry)
+                    #end
 
               <hr size="1">
            </td>
@@ -95,8 +101,8 @@
                     <tr>
                        <td class="links">
 
-                       #showWeblogCalendar()<br>
-                       #showRSSBadge()<br>
+                       #showWeblogEntryCalendar($model.weblog "nil")<br>
+                       #showAtomFeedsList($model.weblog)<br>
 
                        </td>
                     </tr>
@@ -107,24 +113,7 @@
                     </tr>
                     <tr>
                        <td class="search">
-                       #showSearchForm()<br/>
-                       </td>
-                    </tr>
-                    <tr>
-                       <td bgcolor="#000000">
-                       </td>
-                    </tr>
-                    <tr>
-                       <td bgcolor="#cccccc"><font class=
-                       "subhead">$text.get("weblogMain.language")</font></td>
-                    </tr>
-                    <tr>
-                       <td bgcolor="#000000">
-                       </td>
-                    </tr>
-                    <tr>
-                       <td class="search">
-                        #showLanguageForm()<br/>
+                       #showWeblogSearchForm($model.weblog false)<br/>
                        </td>
                     </tr>
                     <tr>
@@ -142,9 +131,10 @@
                     <tr>
                        <td class="links">
 
-                       #showBlogroll()<br>
-                       #showBasicNavBar(true)<br>
-                       #showEditorNavBar(true)<br>
+                       #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+                       #showBookmarkLinksList($rootFolder false false)<br>
+                       #showPageMenu($model.weblog)<br>
+                       #showAuthorMenu(true)<br>
 
                        </td>
                     </tr>
@@ -163,7 +153,8 @@
                     <tr>
                        <td class="links">
 
-                        #showReferers(30 20)<br>
+                        #set($refs = $model.weblog.getTodaysReferrers())
+                        #showReferrersList($refs 30 20)<br>
 
                        </td>
                     </tr>

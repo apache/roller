@@ -3,54 +3,70 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    #showContentType("text/html; charset=utf-8")
-    #showContentLanguage($locale.language)
-    #showRSSAutodiscoveryLink()
-    #showRSDLink()
-    <title>#showWebsiteTitle()</title>
-    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
-    <link rel="stylesheet" type="text/css" href="#showThemePath("cheb")/theme.css" />
-    <style type="text/css">
-    #includePage("_css")
-    </style>
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
 <body>
   <div id="content">
-    <h1>#showWebsiteTitle()</h1>
-    #showWeblogCategoryChooser()
+    <h1>$model.weblog.name</h1>
+    <center>
+        #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+        #showWeblogCategoryLinksList($rootCategory false false)
+    </center>
 
     <div id="entries">
-        #displayWeblogEntries()
+        #set($pager = $model.getWeblogEntriesPager()) 
+        <div class="next-previous">
+            #if ($model.results)
+                #showWeblogSearchAgainForm($model.weblog)
+                #showNextPrevSearchControl($pager)
+            #else
+                #showNextPrevEntriesControl($pager)
+            #end
+        </div>
+        #showWeblogEntriesPager($pager)
+        #if ($model.permalink)
+           #showWeblogEntryComments($entry)
+           #showWeblogEntryCommentForm($entry)
+        #end
     </div>
   </div>
 
   <div id="menu">
-    #showRSSBadge()
+    <a href="$url.feed.entries.atom">
+        <img class="rssbadge"
+            src="$url.site/images/feed-icon-12x12.gif" border="0"
+            title="To subscribe: right-click, copy link and past into your newsreader" />Subscribe!</a>
     <div id="calendar">
-        #showWeblogCalendar()
+        #showWeblogEntryCalendar($model.weblog "nil")
     </div>
     <div class="item">
-        #showSearchForm()
+        #showWeblogSearchForm($model.weblog false)
     </div>
     <div class="item">
-        #showBlogroll()
+        #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+        #showBookmarkLinksList($rootFolder false false) 
     </div>
     <div class="item">
-        #showEditorNavBar(true)
+        #showAuthorMenu(true)
     </div>
     <div class="item">
-        #showBasicNavBar(false)
+        #showPageMenu($model.weblog)
     </div>
     <div class="item">
         <a href="http://validator.w3.org/check/referer">
-          <img class="w3" src="$ctxPath/images/vcss.png"
+          <img class="w3" src="$url.absoluteSite/images/vcss.png"
             alt="Valid CSS!"/></a>
         <a href="http://validator.w3.org/check/referer"><img
-            src="$ctxPath/images/valid-xhtml10.png"
+            src="$url.absoluteSite/images/valid-xhtml10.png"
             alt="Valid XHTML 1.0!" class="w3"/></a>
     </div>
     <div class="item">
-        #showReferers(20 25)
+        Today's referrers
+        #set($refs = $model.weblog.getTodaysReferrers())
+        #showReferrersList($refs 30 20)
     </div>
 
      <div class="item">design by

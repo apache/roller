@@ -125,8 +125,14 @@ public class URLModel implements Model {
     public String themeResource(String theme, String filePath) {
         return getSite()+RollerRuntimeConfig.getProperty("users.themes.path")+"/"+theme+"/"+filePath;
     }
-    
-    
+        
+    public String themeResource(String theme, String filePath, boolean absolute) {
+        if (absolute) {
+            return getAbsoluteSite()+RollerRuntimeConfig.getProperty("users.themes.path")+"/"+theme+"/"+filePath;
+        }
+        return themeResource(theme, filePath);
+    }
+        
     public String getHome() {
         return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, -1, false);
     }

@@ -302,9 +302,6 @@ public class PageServlet extends HttpServlet {
         if(mimeType != null) {
             // we found a match ... set the content type
             contentType = mimeType+"; charset=utf-8";
-        } else if ("_css".equals(page.getName())) {
-            // TODO: store content-type for each page so this hack is unnecessary
-            contentType = "text/css; charset=utf-8";
         }
 
         HashMap model = new HashMap();

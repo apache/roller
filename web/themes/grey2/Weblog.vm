@@ -1,132 +1,91 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-    #showContentType("text/html; charset=utf-8")
-    #showContentLanguage($locale.language)
-    #showRSSAutodiscoveryLink()
-    #showRSDLink()
-
-    <title>#showWebsiteTitle()</title>
-
-    <script type="text/javascript" src="$ctxPath/theme/scripts/roller.js">
-    </script>
-
-    <link rel="stylesheet" type="text/css" href="$ctxPath/themes/base.css" />
-    <link rel="stylesheet" type="text/css" href="#showThemePath("grey2")/theme.css" />
-    <style type="text/css">#includePage("_css")</style>
+    <title>$model.weblog.name : $model.weblogPage.name</title>
+    #showAutodiscoveryLinks($model.weblog)
+    #showCommonJavascript()
+    <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
 <body bgcolor="#c0c0c0" link="#404f64" vlink="#404f64" alink="#404f64">
 
 <div align="center">
-<table border="0" cellpadding="5" cellspacing="0" width="550"
- height="235" valign="middle">
-   <tbody>
+<table border="0" cellpadding="5" cellspacing="0" width="750" height="235" valign="middle">
+<tbody>
    <tr>
-   <td width="538" height="1" valign="bottom" colspan="2">
-      <p align="right"><b><font face="arial" size="5" color="#404f64">#showWebsiteTitle()
- </font></b></p>
-   </td>
+      <td width="538" height="1" valign="bottom" colspan="2">
+         <p class="weblogTitle">$model.weblog.name</p>
+      </td>
    </tr>
-    <tr>
-   <td width="138" height="277" valign="top">
-      <table border="0" cellspacing="1" width="100%" cellpadding="3">
-   <tbody>
    <tr>
-   <td bgcolor="#404f64">
-            <p align="right"><font style="font-size: 8pt;"
- face="Verdana"><font color="#ffffff" face="Verdana">the</font> <font
- color="#ffffff">soul</font></font></p>
-   </td>
-   </tr>
-    <tr>
-   <td bgcolor="#ffffff"><font face="Verdana" style="font-size: 8pt;">I am..</font></td>
-   </tr>
-    <tr>
-   <td bgcolor="#ffffff">#showWeblogCalendar()<br>
-    #showRSSBadge()<br>
-    #showSearchForm()
-    </td>
-   </tr>
+      <td width="138" height="277" valign="top">
 
-        </tbody>
-      </table>
-    <font size="1"> </font>
-      <table border="0" cellspacing="1" width="100%" cellpadding="3">
-   <tbody>
-   <tr>
-   <td bgcolor="#476378">
-            <p align="right"><font color="#ffffff"
- style="font-size: 8pt;" face="Verdana">the journal</font></p>
-   </td>
-   </tr>
-    <tr>
-   <td bgcolor="#ffffff"><font face="Verdana" style="font-size: 8pt;">write
- about the journal/diary.</font></td>
-   </tr>
-    <tr>
-   <td bgcolor="#ffffff" align="center"><br>
-    <br>
-    </td>
-   </tr>
-    <tr>
-   <td bgcolor="#ffffff"><font style="font-size: 8pt;" face="Verdana">webrings?</font></td>
-   </tr>
-
-        </tbody>
-      </table>
-    <font size="1"> </font>
-      <table border="0" cellspacing="1" width="100%" cellpadding="3">
-   <tbody>
-   <tr>
-   <td bgcolor="#657185" height="15">
-            <p align="right"><font color="#ffffff"
- style="font-size: 8pt;" face="Verdana">the links</font></p>
-   </td>
-   </tr>
-    <tr>
-   <td width="100%" bgcolor="#ffffff" height="15"><font
- style="font-size: 8pt;" face="Verdana">links</font></td>
-   </tr>
-    <tr>
-   <td bgcolor="#ffffff" height="15">
-    #showBlogroll()<br>
-    #showBasicNavBar(true)<br>
-   <!-- Use the basic format to add as many links as you like --> #showEditorNavBar(true)<br>
-   </td>
-   </tr>
-
-        </tbody>
-      </table>
-
-      <p><br>
-   </p>
-   </td>
-   <td width="388" height="277" valign="top">
-      <div align="center">
-      <table border="0" cellpadding="5" cellspacing="1" width="100%" height="100%">
+         <table border="0" cellspacing="1" width="100%" cellpadding="3">
          <tbody>
-         <tr>
-         <td bgcolor="#ffffff" height="280" width="100%" valign="top">
+            <tr>
+               <td class="sidebarbox">The soul...</td>
+            </tr>
+            <tr>
+                <td>
+                    #showWeblogEntryCalendar($model.weblog "nil")<br>
+                    #showWeblogSearchForm($model.weblog false)
+                </td>
+            </tr>
+            <tr>
+               <td class="sidebarbox">The feeds...</td>
+            </tr>
+            <tr>
+                <td>
+                    #showAtomFeedsList($model.weblog)<br>
+                </td>
+            </tr>
+            <tr>
+               <td class="sidebarbox">The links...</td>
+            </tr>
+            <tr>
+               <td>
+                   #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
+                   #showBookmarkLinksList($rootFolder false false)<br>
+                   #showPageMenu($model.weblog)<br>
+                   #showAuthorMenu(true)<br>
+               </td>
+           </tr>
+       </tbody>
+       </table>
 
-         <p><font style="font-size: 8pt;" face="Verdana" color="#404f64">
-         #showWeblogCategoryChooser()<br>
-         #displayWeblogEntries()
-         </font></p>
-
-         </td>
-         </tr>
-        </tbody>
-      </table>
-   </div>
    </td>
-   </tr>
+   <td width="500" height="277" valign="top">
+       <div align="center">
+           <table border="0" cellpadding="5" cellspacing="1" width="100%" height="100%">
+           <tbody>
+               <tr>
+                   <td bgcolor="#ffffff" height="280" width="100%" valign="top">
+                       #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
+                       #showWeblogCategoryLinksList($rootCategory false false)
 
-  </tbody>
+                       #set($pager = $model.getWeblogEntriesPager()) 
+                       <div class="next-previous">
+                           #if ($model.results)
+                               #showWeblogSearchAgainForm($model.weblog)
+                               #showNextPrevSearchControl($pager)
+                           #else
+                               #showNextPrevEntriesControl($pager)
+                           #end
+                       </div>
+                       #showWeblogEntriesPager($pager)
+                       #if ($model.permalink)
+                          #showWeblogEntryComments($entry)
+                          #showWeblogEntryCommentForm($entry)
+                       #end
+                   </td>
+               </tr>
+           </tbody>
+           </table>
+       </div>
+   </td>
+</tr>
+
+</tbody>
 </table>
-   </div>
-    <br>
-    <br>
-   <br>
-   <br>
+</div>
 </body>
 </html>
