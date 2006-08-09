@@ -32,7 +32,7 @@
             <div id="tabContent">
                 <div id="recentEntries">
                    #set($pager = $site.getWeblogEntriesPager($since, $maxResults))
-                   #showEntriesPager($pager)
+                   #showSiteEntriesPager($pager)
                 </div>
             </div>
             
