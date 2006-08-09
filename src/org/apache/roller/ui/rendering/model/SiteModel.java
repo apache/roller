@@ -59,7 +59,8 @@ public class SiteModel implements Model {
     
     private WebsiteData weblog = null;
     private WeblogRequest weblogRequest = null;
-    private Template weblogPage = null;
+    //private Template weblogPage = null;
+    private String pageLink = null;
     private int pageNum = 0;
     
     
@@ -77,7 +78,8 @@ public class SiteModel implements Model {
         
         // TODO 3.0: is it better to reparse URL to get these?
         if (weblogRequest instanceof WeblogPageRequest) {
-            weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
         }
         
@@ -95,7 +97,7 @@ public class SiteModel implements Model {
     public Pager getWeblogEntriesPager(int sinceDays, int length) {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), weblogPage.getLink(), 
+                weblogRequest.getLocale(), pageLink, 
                 null, null, null, 0, false);
         
         return new WeblogEntriesListPager(
@@ -119,7 +121,7 @@ public class SiteModel implements Model {
     public Pager getWeblogEntriesPager(WebsiteData queryWeblog, UserData user, String cat, int sinceDays, int length) {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), weblogPage.getLink(), 
+                weblogRequest.getLocale(), pageLink, 
                 null, null, null, 0, false);
         
         return new WeblogEntriesListPager(
@@ -140,7 +142,7 @@ public class SiteModel implements Model {
     public Pager getCommentsPager(int sinceDays, int length) {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), weblogPage.getLink(), 
+                weblogRequest.getLocale(), pageLink, 
                 null, null, null, 0, false);
         
         return new CommentsPager(
@@ -156,7 +158,7 @@ public class SiteModel implements Model {
     public Pager getUsersByLetterPager(String letter, int sinceDays, int length) {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), weblogPage.getLink(), 
+                weblogRequest.getLocale(), pageLink, 
                 null, null, null, 0, false);
         
         if(letter != null && StringUtils.isEmpty(letter)) {
@@ -177,7 +179,7 @@ public class SiteModel implements Model {
     public Pager getWeblogsByLetterPager(String letter, int sinceDays, int length) {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), weblogPage.getLink(), 
+                weblogRequest.getLocale(), pageLink, 
                 null, null, null, 0, false);
         
         if(letter != null && StringUtils.isEmpty(letter)) {
