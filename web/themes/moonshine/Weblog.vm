@@ -126,7 +126,7 @@ your blog page, if you put them somwhere else, just adjust the paths for those f
 </div>
 
 <div id="copyrightnotice">
-Copyright (C) 2003, <a href="mailto:$encodedEmail">$model.weblog.creator.fullName</a>
+Copyright (C) 2003, <a href="mailto:$utils.encodeEmail($model.weblog.emailAddress)">$model.weblog.creator.fullName</a>
 </div>
 
 </body>
