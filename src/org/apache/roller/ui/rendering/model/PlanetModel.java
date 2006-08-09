@@ -36,6 +36,7 @@ import org.apache.roller.ui.rendering.pagers.Pager;
 import org.apache.roller.ui.rendering.pagers.PlanetEntriesPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -61,11 +62,13 @@ public class PlanetModel implements Model {
         if(this.weblogRequest == null) {
             throw new RollerException("expected pageRequest from init data");
         }
+        
         // TODO 3.0: is it better to reparse URL to get these?
         if (weblogRequest instanceof WeblogPageRequest) {
             weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
         }  
+        
         // extract weblog object
         weblog = weblogRequest.getWeblog();
     } 
@@ -78,11 +81,15 @@ public class PlanetModel implements Model {
      * @param len      Max number of results to return
      */
     public Pager getAggregationPager(int sinceDays, int length) {
+        
+        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+                weblogRequest.getLocale(), weblogPage.getLink(), 
+                null, null, null, 0, false);
+        
         return new PlanetEntriesPager(
             null,
             null,    
-            weblog, 
-            weblogPage,
+            pagerUrl,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
@@ -97,11 +104,15 @@ public class PlanetModel implements Model {
      * @param len      Max number of results to return
      */
     public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
+        
+        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+                weblogRequest.getLocale(), weblogPage.getLink(), 
+                null, null, null, 0, false);
+        
         return new PlanetEntriesPager(
             null,
             groupHandle,
-            weblog, 
-            weblogPage,
+            pagerUrl,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
@@ -116,11 +127,15 @@ public class PlanetModel implements Model {
      * @param len      Max number of results to return
      */
     public Pager getFeedPager(String feedURL, int length) {
+        
+        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+                weblogRequest.getLocale(), weblogPage.getLink(), 
+                null, null, null, 0, false);
+        
         return new PlanetEntriesPager(
             feedURL,
             null,
-            weblog, 
-            weblogPage,
+            pagerUrl,
             weblogRequest.getLocale(),
             -1,
             pageNum, 

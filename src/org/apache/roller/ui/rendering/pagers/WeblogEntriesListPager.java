@@ -35,70 +35,106 @@ import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
+
 /**
  * Simple pager for list of weblog entries.
  */
 public class WeblogEntriesListPager extends AbstractPager {
-    private WebsiteData queryWeblog;
-    private UserData    queryUser;
-    private String      queryCat;
-    private List        entries;    
-    protected static Log log =
-            LogFactory.getFactory().getInstance(WeblogEntriesListPager.class);
     
-    public WeblogEntriesListPager(            
-            WebsiteData    weblog,
+    private static Log log = LogFactory.getLog(WeblogEntriesListPager.class);
+    
+    private String locale = null;
+    private int sinceDays = -1;
+    private int length = 0;
+    
+    private WebsiteData queryWeblog = null;
+    private UserData queryUser = null;
+    private String queryCat = null;
+    
+    // entries for the pager
+    private List entries;
+    
+    // are there more entries?
+    private boolean more = false;
+    
+    
+    public WeblogEntriesListPager(
+            String         baseUrl,
             WebsiteData    queryWeblog,
             UserData       queryUser,
             String         queryCat,
-            Template       weblogPage,
             String         locale,
             int            sinceDays,
-            int            page,
+            int            pageNum,
             int            length) {
-        super(weblog, weblogPage, locale, sinceDays, page, length);
+        
+        super(baseUrl, pageNum);
+        
+        // store the data
         this.queryWeblog = queryWeblog;
         this.queryUser = queryUser;
         this.queryCat = queryCat;
+        this.locale = locale;
+        this.sinceDays = sinceDays;
+        this.length = length;
+        
+        // initialize the pager collection
         getItems();
     }
     
+    
     public List getItems() {
+        
         if (entries == null) {
+            // calculate offset
+            int offset = (getPage() * length) + 1;
+            
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DATE, -1 * sinceDays);
             Date startDate = cal.getTime();
-            try {            
+            try {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
                 UserManager umgr = roller.getUserManager();
-                List rawEntries = wmgr.getWeblogEntries( 
-                    queryWeblog, 
-                    queryUser, 
-                    startDate, 
-                    new Date(), 
-                    queryCat, 
-                    WeblogEntryData.PUBLISHED, 
-                    "pubTime", 
-                    locale, 
-                    offset, 
-                    length + 1);
-                int count = 0;
+                List rawEntries = wmgr.getWeblogEntries(
+                        queryWeblog,
+                        queryUser,
+                        startDate,
+                        new Date(),
+                        queryCat,
+                        WeblogEntryData.PUBLISHED,
+                        "pubTime",
+                        locale,
+                        offset,
+                        length + 1);
+                
+                // check if there are more results for paging
+                if(rawEntries.size() > length) {
+                    more = true;
+                    rawEntries.remove(rawEntries.size() - 1);
+                }
+                
+                // wrap the results
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
                     WeblogEntryData entry = (WeblogEntryData) it.next();
-                    if (count++ < length) {
-                        results.add(WeblogEntryDataWrapper.wrap(entry));
-                    } else {
-                        more = true;
-                    }                      
+                    results.add(WeblogEntryDataWrapper.wrap(entry));
                 }
+                
             } catch (Exception e) {
                 log.error("ERROR: fetching weblog entries list", e);
             }
+            
             entries = results;
         }
+        
         return entries;
-    }   
+    }
+    
+    
+    public boolean hasMoreItems() {
+        return more;
+    }
+
 }
