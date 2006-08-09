@@ -1,11 +1,12 @@
 <div class="day">
 
 <div class="entry">
-    <a href="$config.contextURL/$model.weblog.handle/$utils.formatDate($day, "yyyyMMdd")">
+    #set( $dateString = $utils.formatDate($day, "yyyyMMdd") )
+    <a href="$url.date($dateString)">
         <img class="daypermalink"
             src="$url.themeResource("andreas08", "images/calendar.png")"
             title="$text.get("macro.weblog.daypermalink.title")"
-            alt='$utils.formatDate($day, "yyyyMMdd")' /></a>
+            alt="$dateString" /></a>
 
    #set($format = $text.get("macro.weblog.date.toStringFormat"))
    $utils.formatDate($day, $format)
@@ -34,8 +35,7 @@
         <span class="dateStamp">at <a href="$url.entry($entry.anchor)">$utils.formatDate($entry.pubTime, "yyyyMMdd")</a></span>
         #set($commentCount = $entry.commentCount)
         #if($entry.commentsStillAllowed || $commentCount > 0)  
-            #set($link = "$url.comments($entry.anchor)" )
-            <a href="$link" class="commentsLink">$text.get("macro.weblog.comments")[$commentCount]</a>
+            <a href="$url.comments($entry.anchor)" class="commentsLink">$text.get("macro.weblog.comments")[$commentCount]</a>
         #end
     </span>
 
