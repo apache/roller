@@ -16,12 +16,13 @@
   directory of this distribution.
 *#
 
-#** Set of essential macros needed in Roller velocity templates.
+#** 
+Set of essential macros needed in Roller velocity templates.
+These are the documented macros in order defined in this file:
 
     #includeTemplate($weblog $pageName)
     #showAutodiscoveryLinks($weblog)
     #showTrackbackAutodiscovery($entry)
-    #showCommonJavascript()
 
     #showWeblogEntriesPager($pager)
     #showNextPrevEntriesControl($pager)
@@ -92,14 +93,6 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     dc:date="$entry.pubTime" />
 </rdf:RDF>
 -->
-#end
-
-
-#**
-Include Javascript code needed for standard macros, for use in HTML head.
-*#
-#macro(showCommonJavascript)
-<script type="text/javascript" src="$url.site/theme/scripts/roller.js"></script>
 #end
 
 
@@ -355,9 +348,10 @@ Show bookmarks as a HTML ul list.
 
 
 #** 
-Show bookmarks as a HTML ul list (private).
+Recursively display a bookmark folder and children as HTML ul list (undocumented).
 *#
 #macro(_showBookmarkLinksList $folderObject $subfolders $expanding )
+    #if ($expanding) #_showCommonJavascript() #end
     #set($bookmarks = $folderObject.getBookmarks())
     #set($folders = $folderObject.getFolders())
     #set($divId = $utils.replace($folderObject.name, " ", "_" ))
@@ -420,6 +414,7 @@ Show bookmarks as a HTML ul list (private).
 Show weblog's categories in specified parent category.
 *#
 #macro(showWeblogCategoryLinksList $categoryObject $subcats $expanding )
+    #if ($expanding) #_showCommonJavascript() #end
     #if(!$expanding && !$subcats)
         <ul class="rCategory">
         #if ($model.weblogCategory)
@@ -447,6 +442,7 @@ Show weblog's categories in specified parent category.
 
 
 #**
+Recursively display a bookmark folder and children as HTML ul list (undocumented).
 *#
 #macro(_showWeblogCategoryLinksList $categoryObject $subcats $expanding )
     #set($catParam = "?cat=$utils.encode($categoryObject.path)")
@@ -726,6 +722,76 @@ Show next/prev pager for search results.
     #if ($nextLink)
         | <a href="$nextLink">$nextName</a> &raquo;
     #end
+#end
+
+
+#**
+Include Javascript code needed for expanding folder macros (undocumented).
+*#
+#macro(_showCommonJavascript)
+#if (!$zzz__incudedCommonJavaScript__zzz)
+    <script type="text/javascript">
+    function setCookie(name,value,expires,path,domain,secure) {
+      document.cookie = name + "=" + escape (value) +
+        ((expires) ? "; expires=" + expires.toGMTString() : "") +
+        ((path) ? "; path=" + path : "") +
+        ((domain) ? "; domain=" + domain : "") + ((secure) ? "; secure" : "");
+    }
+    function getCookie(name) {
+        var prefix = name + "=" 
+        var start = document.cookie.indexOf(prefix) 
+        if (start==-1) return null;
+        var end = document.cookie.indexOf(";", start+prefix.length) 
+        if (end==-1) end=document.cookie.length;
+        var value=document.cookie.substring(start+prefix.length, end) 
+        return unescape(value);
+    }
+    /* The toggleFolder and togglePlusMinus functions are for expanding/contracting folders */
+    function toggleFolder(targetId) {
+        var expanded;
+        if (document.getElementById) {
+            target = document.getElementById(targetId);
+            if (target.style.display == "none") {
+                target.style.display = "";    
+                expanded = true;        
+            } else {
+                target.style.display = "none";
+                expanded = false;
+            }
+            togglePlusMinus("i" + targetId);        
+            // set a cookie to remember this preference
+            var expires = new Date();
+            expires.setTime(expires.getTime() + 24 * 365 * 60 * 60 * 1000); // sets it for approx 365 days.
+            setCookie("rfolder-"+targetId,expanded,expires,"/");
+        }
+    }
+    function togglePlusMinus(targetId) {
+        if (document.getElementById) {
+            target = document.getElementById(targetId);
+            if (target.innerHTML == "+") {
+                target.innerHTML = "-";
+            } else {
+                target.innerHTML = "+";
+            }
+        }
+    }
+    function folderPreference(folderId) {
+        var folderCookie = getCookie("rfolder-"+folderId);
+        if (folderCookie != null) { // we have user's last setting
+            folder = document.getElementById(folderId);
+            plusMinus = document.getElementById("i"+folderId);
+            if (folderCookie == "true") { // show
+                folder.style.display = "";
+                plusMinus.innerHTML = "-";
+            } else { // hide
+                folder.style.display = "none";
+                plusMinus.innerHTML = "+"; 
+            }
+        }
+    }
+    </script>
+    #set($zzz__incudedCommonJavaScript__zzz = true)
+#end
 #end
 
 

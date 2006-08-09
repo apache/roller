@@ -4,7 +4,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
     #showAutodiscoveryLinks($model.weblog)
-    #showCommonJavascript()
 
     <link rel="stylesheet" type="text/css" 
         href='$url.themeResource("sunsets", "styles/theme.css")' />

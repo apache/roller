@@ -21,7 +21,6 @@ your blog page, if you put them somwhere else, just adjust the paths for those f
 <head>
     <title>$model.weblog.name : $model.weblogPage.name</title>
     #showAutodiscoveryLinks($model.weblog)
-    #showCommonJavascript()
     <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
 <body id="body" class="all">
