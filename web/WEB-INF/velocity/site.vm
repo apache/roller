@@ -207,25 +207,25 @@ Show weblog directory, sensitive to letter specified in request.
 
              #if($chosenLetter)
                 #if($weblogsPager.prevLink)
-                   <a href="$weblogsPager.prevLink?letter=$chosenLetter">&lt; $weblogsPager.prevName</a>
+                   <a href="$weblogsPager.prevLink">&lt;$weblogsPager.prevName</a>
                 #end
-                #if($pager.nextLink && $pager.prevLink())
+                #if($weblogsPager.nextLink && $weblogsPager.prevLink())
                    &nbsp;|&nbsp;
                 #end
                 #if($weblogsPager.nextLink)
-                   <a href="$weblogsPager.nextLink?letter=$chosenLetter">$weblogsPager.nextLink &gt;</a>
+                   <a href="$weblogsPager.nextLink">$weblogsPager.nextName &gt;</a>
                 #end
-             #else
+            #else
                 #if($weblogsPager.prevLink)
-                   <a href="$weblogsPager.prevLink">&lt; $weblogsPager.prevName</a>
+                   <a href="$weblogsPager.prevLink">&lt;$weblogsPager.prevName</a>
                 #end
-                #if($pager.nextLink && $pager.prevLink())
+                #if($weblogsPager.nextLink && $weblogsPager.prevLink())
                    &nbsp;|&nbsp;
                 #end
                 #if($weblogsPager.nextLink)
-                   <a href="$weblogsPager.nextLink">$weblogsPager.nextLink &gt;</a>
+                   <a href="$weblogsPager.nextLink">$weblogsPager.nextName &gt;</a>
                 #end
-             #end
+            #end
 
              </td>
           </tr>
@@ -360,19 +360,19 @@ Show user directory, sensitive to letter specified in request.
 
             #if($chosenLetter)
                 #if($usersPager.prevLink)
-                   <a href="$usersPager.prevLink?letter=$chosenLetter">&lt;$usersPager.prevName</a>
+                   <a href="$usersPager.prevLink">&lt;$usersPager.prevName</a>
                 #end
-                #if($pager.nextLink && $pager.prevLink())
+                #if($usersPager.nextLink && $usersPager.prevLink())
                    &nbsp;|&nbsp;
                 #end
                 #if($usersPager.nextLink)
-                   <a href="$usersPager.nextLink?letter=$chosenLetter">$usersPager.nextName &gt;</a>
+                   <a href="$usersPager.nextLink">$usersPager.nextName &gt;</a>
                 #end
             #else
                 #if($usersPager.prevLink)
                    <a href="$usersPager.prevLink">&lt;$usersPager.prevName</a>
                 #end
-                #if($pager.nextLink && $pager.prevLink())
+                #if($usersPager.nextLink && $usersPager.prevLink())
                    &nbsp;|&nbsp;
                 #end
                 #if($usersPager.nextLink)
@@ -415,10 +415,10 @@ Show pager and next/prev control for a collection of comments
     #end
  
     <div class="nextPrev">
-    #if($commentsPager.nextLink)
-       <a href="$commentsPager.nextLink">&lt; $commentsPager.nextName</a>
+    #if($commentsPager.prevLink)
+       <a href="$commentsPager.prevLink">&lt; $commentsPager.prevName</a>
     #end
-    #if($pager.nextLink && $pager.prevLink())
+    #if($commentsPager.nextLink && $commentsPager.prevLink)
        &nbsp;|&nbsp;
     #end
     #if($commentsPager.nextLink)
