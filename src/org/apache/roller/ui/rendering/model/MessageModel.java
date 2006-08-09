@@ -45,21 +45,13 @@ public class MessageModel implements Model {
     
     /** Return message string */
     public String get(String key) {
-        try {
-            return MessageUtilities.getString(key);
-        } catch (Exception e) {
-            return key;
-        }
+        return MessageUtilities.getString(key);
     }
     
     
     /** Return parameterized message string */
     public String get(String key, List args) {
-        try {
-            return MessageUtilities.getString(key, args);
-        } catch (Exception e) {
-            return key;
-        }
+        return MessageUtilities.getString(key, args);
     }
-    
+
 }
