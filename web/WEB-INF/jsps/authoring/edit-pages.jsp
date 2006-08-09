@@ -88,7 +88,6 @@ request.setAttribute("customTheme", org.apache.roller.pojos.Theme.CUSTOM); %>
     </logic:iterate>
 </table>
 
-<p><fmt:message key="pagesForm.hiddenNote" /></p>
 
 
 
