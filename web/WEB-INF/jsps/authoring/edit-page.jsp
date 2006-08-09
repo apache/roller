@@ -33,7 +33,6 @@ function cancel() {
         <fmt:message key="pageForm.editPage" />:
         <bean:write name="weblogTemplateForm" property="name" />
 	</p>
-	
     <table cellspacing="5">
         <tr>
             <td class="label"><fmt:message key="pageForm.name" />&nbsp;</td>
@@ -114,6 +113,7 @@ function cancel() {
     <html:hidden property="name"/>
     <html:hidden property="templateLanguage" />
     <html:hidden property="decoratorName" />
+    <html:hidden property="required" />
     
     <input type="hidden" name="method" value="update" />
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />

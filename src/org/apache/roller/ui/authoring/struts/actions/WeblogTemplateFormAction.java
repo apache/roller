@@ -20,8 +20,6 @@ package org.apache.roller.ui.authoring.struts.actions;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -36,6 +34,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
@@ -111,7 +110,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 
                 actionForm.reset(mapping,request);
                 
-                addModelObjects(request, response, mapping, website);
+                addModelObjects(request, response, mapping, website, data);
             } else {
                 forward = mapping.findForward("access-denied");
             }
@@ -144,7 +143,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 WeblogTemplateForm pf = (WeblogTemplateForm)actionForm;
                 pf.copyFrom(pd, request.getLocale());
                 
-                addModelObjects(request, response, mapping, pd.getWebsite());
+                addModelObjects(request, response, mapping, pd.getWebsite(), pd);
             } else {
                 forward = mapping.findForward("access-denied");
             }
@@ -178,7 +177,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             }
             
             if ( rses.isUserAuthorizedToAdmin(website)) {
-                addModelObjects(request, response, mapping, website);
+                addModelObjects(request, response, mapping, website, null);
             } else {
                 forward = mapping.findForward("access-denied");
             }
@@ -221,7 +220,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 }
                 
                 addModelObjects(
-                        request, response, mapping, template.getWebsite());
+                   request, response, mapping, template.getWebsite(), template);
                 actionForm.reset(mapping, request);
             } else {
                 forward = mapping.findForward("access-denied");
@@ -256,7 +255,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
                 form.copyFrom(page, request.getLocale());
                 
-                addModelObjects(request, response, mapping, page.getWebsite());
+                addModelObjects(request, response, mapping, page.getWebsite(), page);
                 
                 BasePageModel pageModel = new BasePageModel(
                         "editPages.title.removeOK", request, response, mapping);
@@ -311,10 +310,13 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 
                 CacheManager.invalidate(data);
                 
+                addModelObjects(request, response, mapping, data.getWebsite(), data);
+
                 BasePageModel pageModel = new BasePageModel(
                         "pageForm.title", request, response, mapping);
                 pageModel.setWebsite(website);
                 request.setAttribute("model", pageModel);
+                
             } else {
                 forward = mapping.findForward("access-denied");
             }
@@ -377,7 +379,8 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             HttpServletRequest  request,
             HttpServletResponse response,
             ActionMapping mapping,
-            WebsiteData website)
+            WebsiteData website,
+            WeblogTemplate page)
             throws RollerException {
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         RollerSession rses = RollerSession.getRollerSession(request);
@@ -392,7 +395,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
         List pages = mgr.getPages(website);
         request.setAttribute("pages", pages);
         
-        request.setAttribute("page", rreq.getPage());
+        if (page != null) request.setAttribute("page", page);
     }
 }
 
