@@ -38,7 +38,7 @@
             // Function to get input back from calendar popup
             function showDate(y,m,d) {
                 var day = y+LZ(m)+LZ(d);
-                location.href = "$ctxPath/page/$website.handle/" + day;
+                location.href = "$url.home" + day;
             }
         </script>
         <link rel="stylesheet" type="text/css" media="print"
@@ -65,7 +65,7 @@
         src="$url.themeResource("sunsets","images/capricorn.gif")"
         width="25" height="16" alt="Switch styles (Capricorn)." /></a>
 
-    <a href="$url.feeds.entries.atom" accesskey="x" title="Atom Feed"><img
+    <a href="$url.feed.entries.atom" accesskey="x" title="Atom Feed"><img
         src="$url.themeResource("sunsets","images/xml.gif")"
         width="25" height="16" alt="Atom Feed" /></a>
 
