@@ -5,7 +5,6 @@
     #includeTemplate($model.weblog "_css")
     </style>
     #showAutodiscoveryLinks($model.weblog)
-    #showCommonJavascript()
    <title>$model.weblog.name : $model.weblogPage.name</title>
 </head>
 <body>

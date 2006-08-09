@@ -18,7 +18,6 @@
     <link rel="stylesheet" type="text/css" href='$url.themeResource("andreas08", "styles/andreas08.css")' />
 
     #showAutodiscoveryLinks($model.weblog)
-    #showCommonJavascript()
     <script type="text/javascript" src="$url.themeResource("andreas08", "scripts/prototype.js")"></script>
     <script type="text/javascript" src="$url.themeResource("andreas08", "scripts/scriptaculous.js?load=effects")"></script>
     <script type="text/javascript" src="$url.themeResource("andreas08", "scripts/lightbox.js")"></script>

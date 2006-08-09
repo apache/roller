@@ -3,7 +3,6 @@
 <head>
     <title>$model.weblog.name : $model.weblogPage.name</title>
     #showAutodiscoveryLinks($model.weblog)
-    #showCommonJavascript()
     <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
 <body>
