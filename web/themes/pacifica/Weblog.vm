@@ -61,7 +61,7 @@
 
                   <span class="label">CONTACT</span><br>
 
-                  $model.weblog.creator.fullName/a>
+                  <a href="mailto:$utils.encodeEmail($model.weblog.emailAddress)">$model.weblog.creator.fullName</a>
 
                   <br>
                   <span class="credit">Template by<br>
