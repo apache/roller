@@ -37,8 +37,10 @@ request.setAttribute("customTheme", org.apache.roller.pojos.Theme.CUSTOM); %>
 <table class="rollertable">
     <tr>
         <th width="10%"><fmt:message key="pagesForm.name" /></th>
+        <th width="60%"><fmt:message key="pagesForm.description" /></th>
         <th width="10%"><fmt:message key="pagesForm.link" /></th>
-        <th width="70%"><fmt:message key="pagesForm.description" /></th>
+        <th width="5%"><fmt:message key="pagesForm.column.navbar" /></th>
+        <th width="5%"><fmt:message key="pagesForm.column.hidden" /></th>
         <th width="5%"><fmt:message key="pagesForm.edit" /></th>
         <th width="5%"><fmt:message key="pagesForm.remove" /></th>
     </tr>
@@ -46,10 +48,19 @@ request.setAttribute("customTheme", org.apache.roller.pojos.Theme.CUSTOM); %>
         <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">
 
             <td><bean:write name="p" property="name" /></td>
-            <td><bean:write name="p" property="link" /></td>
             <td><bean:write name="p" property="description" /></td>
+            <td><bean:write name="p" property="link" /></td>
+            <td class="center">
+                <logic:equal name="p" property="navbar" value="true">
+                    <fmt:message key="application.true" />
+                </logic:equal>
+            </td>
+            <td class="center">
+                <logic:equal name="p" property="hidden" value="true">
+                    <fmt:message key="application.true" />
+                </logic:equal>
+            </td>
 
-            <%-- links to edit and remove page actions --%>
             <td class="center">
                <roller:link forward="editPage">
                   <roller:linkparam id="username" name="user" property="userName" />

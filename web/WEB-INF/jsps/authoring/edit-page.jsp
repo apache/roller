@@ -87,7 +87,7 @@ function cancel() {
         <c:otherwise>
             <tr>
                 <td class="label"><fmt:message key="pageForm.navbar" />&nbsp;</td>
-                <td class="field"><html:checkbox property="navbar" /> (<fmt:message key="pageForm.navbar.tip" />)</td>
+                <td class="field"><html:checkbox property="navbar" /> <fmt:message key="pageForm.navbar.tip" /></td>
                 <td class="description"></td>
             </tr>
         </c:otherwise>
@@ -100,7 +100,7 @@ function cancel() {
         <c:otherwise>
             <tr>
                 <td class="label"><fmt:message key="pageForm.hidden" />&nbsp;</td>
-                <td class="field"><html:checkbox property="hidden" /> (<fmt:message key="pageForm.hidden.tip" />)</td>
+                <td class="field"><html:checkbox property="hidden" /> <fmt:message key="pageForm.hidden.tip" /></td>
                 <td class="description"></td>
             </tr>
         </c:otherwise>
