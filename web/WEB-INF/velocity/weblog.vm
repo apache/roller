@@ -418,18 +418,16 @@ Show weblog's categories in specified parent category.
     #if(!$expanding && !$subcats)
         <ul class="rCategory">
         #if ($model.weblogCategory)
-           <li><a href="$categoryObject.website.URL">$text.get("macro.weblog.allcategories")</a></li>
+           <li><a href="$url.category($categoryObject.path)">$text.get("macro.weblog.allcategories")</a></li>
         #else
            <li class="selected">$text.get("macro.weblog.allcategories")</li>
         #end
         #set($cats = $categoryObject.getWeblogCategories())
         #foreach($cat in $cats)
-            #set($catParam = "?cat=$utilities.encode($cat.path)")
-            #set($catURL = "$cat.website.URL$catParam")
             #if($model.weblogCategory && $model.weblogCategory.path == $cat.path)
-                <li class="selected"><a href="$categoryObject.website.URL/category$cat.path">$cat.name</a></li>
+                <li class="selected"><a href="$url.category($cat.path)">$cat.name</a></li>
             #else
-                <li><a href="$categoryObject.website.URL/category$cat.path">$cat.name</a></li>
+                <li><a href="$url.category($cat.path)">$cat.name</a></li>
             #end
         #end
         </ul>
@@ -445,23 +443,21 @@ Show weblog's categories in specified parent category.
 Recursively display a bookmark folder and children as HTML ul list (undocumented).
 *#
 #macro(_showWeblogCategoryLinksList $categoryObject $subcats $expanding )
-    #set($catParam = "?cat=$utils.encode($categoryObject.path)")
-    #set($catURL = "$categoryObject.website.URL$catParam")
     #if ($categoryObject.name != "root")
         #if ($expanding && $subcats && $categoryObject.weblogCategories.size() > 0)
             #set($divId = "div_$categoryObject.name")
             <div class="rCategory">
             <li><a href="javascript:toggleFolder('$divId')">
-                <span id="i$divId">+</span></a><a href="$catURL">$categoryObject.name</a></li>
+                <span id="i$divId">+</span></a><a href="$url.category($categoryObject.path)">$categoryObject.name</a></li>
             <ul id="$divId" class="rCategory" style="display:none">
         #elseif ($subcats && $categoryObject.weblogCategories.size() > 0)
-            <li><a href="$catURL">$categoryObject.name</a></li>
+            <li><a href="$url.category($categoryObject.path)">$categoryObject.name</a></li>
             <ul class="rCategory">
         #else
             #if ($model.weblogCategory && $model.weblogCategory.path == $categoryObject.path)
-                <li class="selected"><a href="$catURL">categoryObject.name</a></li>
+                <li class="selected"><a href="$url.category($categoryObject.path)">categoryObject.name</a></li>
             #else
-                <li><a href="$catURL">$categoryObject.name</a></li>
+                <li><a href="$url.category($categoryObject.path)">$categoryObject.name</a></li>
             #end
         #end
     #end
@@ -570,7 +566,7 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
         #foreach($iPage in $weblog.pages)
             #if (!$iPage.hidden && $iPage.navbar)
                 #set($isSelected = false)
-                #if ($page && $iPage.Id == $page.Id) #set($isSelected = true) #end
+                #if ($model.weblogPage && $iPage.Id == $model.weblogPage.Id) #set($isSelected = true) #end
                 #if (!$isSelected && $iPage.name == "Weblog")
                     <li class="rNavItem"><a href="$url.home">$iPage.name</a></li>
                 #elseif (!$isSelected)
@@ -638,7 +634,7 @@ Show search form for a weblog.
         style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
         <p>
           <input type="text" id="q" name="q" size="10"
-              maxlength="255" value="#if($term)$term#end" />
+              maxlength="255" value="#if($model.term)$model.term#end" />
           #if( $showCatChooser )
             #set( $cats = $model.weblog.getWeblogCategories("nil") )
             <select name="cat">
@@ -687,7 +683,7 @@ Show search again form for a weblog.
             <input type="submit" value="$text.get( "macro.weblog.searchagain" )" />
         </form>
 
-        $text.get( "macro.weblog.searchgoogle", [$searchResults.term, $url.absoluteSite, $url.site, ${website.handle}] )
+        $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${website.handle}] )
     </div>
 #end
 
