@@ -26,7 +26,9 @@
                 #showNextPrevEntriesControl($pager)
             #end
         </div>
+
         #showWeblogEntriesPager($pager)
+
         #if ($model.permalink)
            #showWeblogEntryComments($entry)
            #showWeblogEntryCommentForm($entry)
@@ -42,7 +44,7 @@
     #showWeblogEntryCalendar($model.weblog "nil")
     </div>
 
-    <h2>RSS Feeds</h2>
+    <h2>Feeds</h2>
     <div class="sidebar">
     #showAtomFeedsList($model.weblog)
     </div>
