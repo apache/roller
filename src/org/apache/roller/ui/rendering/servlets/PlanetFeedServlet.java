@@ -38,7 +38,7 @@ import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.util.PlanetCache;
 import org.apache.roller.ui.rendering.util.PlanetRequest;
-import org.apache.roller.util.Utilities;
+import org.apache.roller.ui.rendering.velocity.deprecated.OldUtilities;
 import org.apache.roller.util.cache.CachedContent;
 
 
@@ -147,7 +147,7 @@ public class PlanetFeedServlet extends HttpServlet {
             }
             model.put("planet", planet);
             model.put("date", new Date());
-            model.put("utilities", new Utilities());
+            model.put("utilities", new OldUtilities());
             
             int entryCount =
                     RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");

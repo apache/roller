@@ -28,16 +28,16 @@
   <lastBuildDate>$utilities.formatRfc822Date($planet.lastUpdated)</lastBuildDate>
   <generator>Roller</generator>
   #if($group)
-     #set($entries = $planet.getAggregation($group, $entryCount))
+     #set($entries = $planet.getAggregation($group, "nil", "nil", 0, $entryCount))
   #else
-     #set($entries = $planet.getAggregation($entryCount))
+     #set($entries = $planet.getAggregation("nil", "nil", 0, $entryCount))
   #end
   #foreach( $entry in $entries )
   <item>
     #if($entry.title)<title>$utilities.textToHTML($entry.title,true)</title> #end
-    #if($entry.content)
+    #if($entry.text)
        <description>
-       $utilities.escapeHTML($utilities.truncate($entry.content,300,320,"...")) [&lt;a href="$utilities.textToHTML($entry.permalink,true)"&gt;Read More&lt;/a&gt;]
+       $utilities.escapeHTML($utilities.truncate($entry.text,300,320,"...")) [&lt;a href="$utilities.textToHTML($entry.permalink,true)"&gt;Read More&lt;/a&gt;]
        </description> 
     #end
     #if($entry.categories)
