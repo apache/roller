@@ -34,50 +34,70 @@ import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.PlanetEntryDataWrapper;
 
+
 /**
- * Paging for planet entries.
+ * Paging through a collection of planet entries.
  */
 public class PlanetEntriesPager extends AbstractPager {
-    private String feedURL;
-    private String groupHandle;
-    private List entries;    
-    protected static Log log =
-            LogFactory.getFactory().getInstance(PlanetEntriesPager.class);
     
-    /** Creates a new instance of CommentPager */
-    public PlanetEntriesPager(   
+    private static Log log = LogFactory.getLog(PlanetEntriesPager.class);
+    
+    private String feedURL = null;
+    private String groupHandle = null;
+    private String locale = null;
+    private int sinceDays = -1;
+    private int length = 0;
+    
+    // the collection for the pager
+    private List entries = null;
+    
+    // are there more items?
+    private boolean more = false;
+    
+    
+    public PlanetEntriesPager(
             String         feedURL,
-            String         groupHandle,  
-            WebsiteData    weblog,
-            Template       weblogPage,
+            String         groupHandle,
+            String         baseUrl,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
-        super(weblog, weblogPage, locale, sinceDays, page, length);
+        
+        super(baseUrl, page);
+        
         this.feedURL = feedURL;
         this.groupHandle = groupHandle;
+        this.locale = locale;
+        this.sinceDays = sinceDays;
+        this.length = length;
+        
+        // initialize the collection
         getItems();
     }
     
+    
     public List getItems() {
         if (entries == null) {
+            // calculate offset
+            int offset = (getPage() * length) + 1;
+            
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DATE, -1 * sinceDays);
-            Date startDate = cal.getTime();        
+            Date startDate = cal.getTime();
             try {
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planetManager = roller.getPlanetManager();
                 PlanetGroupData group = planetManager.getGroup(groupHandle);
-                List rawEntries = null; 
+                List rawEntries = null;
                 if (feedURL != null) {
                     rawEntries = planetManager.getFeedEntries(feedURL, offset, length);
                 } else if (groupHandle == null) {
                     rawEntries = planetManager.getAggregation(startDate, null, offset, length);
                 } else {
-                    rawEntries = planetManager.getAggregation(group, startDate, null, offset, length); 
+                    rawEntries = planetManager.getAggregation(group, startDate, null, offset, length);
                 }
                 int count = 0;
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
@@ -87,7 +107,7 @@ public class PlanetEntriesPager extends AbstractPager {
                         results.add(wrapped);
                     } else {
                         more = true;
-                    }    
+                    }
                 }
             } catch (Exception e) {
                 log.error("ERROR: get aggregation", e);
@@ -95,5 +115,11 @@ public class PlanetEntriesPager extends AbstractPager {
             entries = results;
         }
         return entries;
-    }   
+    }
+    
+    
+    public boolean hasMoreItems() {
+        return more;
+    }
+    
 }

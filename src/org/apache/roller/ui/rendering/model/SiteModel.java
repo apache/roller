@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -46,6 +47,7 @@ import org.apache.roller.ui.rendering.pagers.WeblogEntriesListPager;
 import org.apache.roller.ui.rendering.pagers.WeblogsPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -91,9 +93,13 @@ public class SiteModel implements Model {
      * @param length    Max number of results to return
      */
     public Pager getWeblogEntriesPager(int sinceDays, int length) {
+        
+        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+                weblogRequest.getLocale(), weblogPage.getLink(), 
+                null, null, null, 0, false);
+        
         return new WeblogEntriesListPager(
-            weblog, null, null, null,
-            weblogPage,
+            pagerUrl, null, null, null,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
@@ -111,9 +117,13 @@ public class SiteModel implements Model {
      * @param length      Max number of results to return
      */   
     public Pager getWeblogEntriesPager(WebsiteData queryWeblog, UserData user, String cat, int sinceDays, int length) {
+        
+        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+                weblogRequest.getLocale(), weblogPage.getLink(), 
+                null, null, null, 0, false);
+        
         return new WeblogEntriesListPager(
-            weblog, queryWeblog, user, cat,
-            weblogPage,
+            pagerUrl, queryWeblog, user, cat,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
@@ -128,9 +138,13 @@ public class SiteModel implements Model {
      * @param len      Max number of results to return
      */
     public Pager getCommentsPager(int sinceDays, int length) {
+        
+        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+                weblogRequest.getLocale(), weblogPage.getLink(), 
+                null, null, null, 0, false);
+        
         return new CommentsPager(
-            weblog, 
-            weblogPage,
+            pagerUrl,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
@@ -140,10 +154,18 @@ public class SiteModel implements Model {
     
     /* Get pager of users whose names begin with specified letter */
     public Pager getUsersByLetterPager(String letter, int sinceDays, int length) {
+        
+        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+                weblogRequest.getLocale(), weblogPage.getLink(), 
+                null, null, null, 0, false);
+        
+        if(letter != null && StringUtils.isEmpty(letter)) {
+            letter = null;
+        }
+        
         return new UsersPager(
+            pagerUrl,
             letter,
-            weblog, 
-            weblogPage,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
@@ -153,10 +175,18 @@ public class SiteModel implements Model {
     
     /** Get pager of weblogs whose handles begin with specified letter */
     public Pager getWeblogsByLetterPager(String letter, int sinceDays, int length) {
+        
+        String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
+                weblogRequest.getLocale(), weblogPage.getLink(), 
+                null, null, null, 0, false);
+        
+        if(letter != null && StringUtils.isEmpty(letter)) {
+            letter = null;
+        }
+        
         return new WeblogsPager(
+            pagerUrl,
             letter,
-            weblog, 
-            weblogPage,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 

@@ -19,80 +19,152 @@
 package org.apache.roller.ui.rendering.pagers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
-import org.apache.roller.util.Technorati.Weblog;
+
 
 /**
- * Paging for users.
+ * Paging through a collection of users.
  */
 public class UsersPager extends AbstractPager {
-    private List users;    
+    
+    private static Log log = LogFactory.getLog(UsersPager.class);
+    
     private String letter = null;
-    protected static Log log =
-            LogFactory.getFactory().getInstance(UsersPager.class);
+    private String locale = null;
+    private int sinceDays = -1;
+    private int length = 0;
     
-    /** Creates a new instance of CommentPager */
-    public UsersPager(            
-            WebsiteData    weblog,             
-            Template       weblogPage,
+    // collection for the pager
+    private List users;
+    
+    // are there more items?
+    private boolean more = false;
+    
+    
+    public UsersPager(
+            String         baseUrl,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
-        super(weblog, weblogPage, locale, sinceDays, page, length);
+        
+        super(baseUrl, page);
+        
+        this.locale = locale;
+        this.sinceDays = sinceDays;
+        this.length = length;
+        
+        // initialize the collection
         getItems();
     }
     
-    /** Creates a new instance of CommentPager */
-    public UsersPager(   
-            String letter,
-            WebsiteData    weblog,             
-            Template       weblogPage,
+    
+    public UsersPager(
+            String         baseUrl,
+            String         letter,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
-        super(weblog, weblogPage, locale, sinceDays, page, length);
+        
+        super(baseUrl, page);
+        
         this.letter = letter;
+        this.locale = locale;
+        this.sinceDays = sinceDays;
+        this.length = length;
+        
+        // initialize the collection
         getItems();
     }
+    
+    
+    public String getNextLink() {
+        // need to add letter param if it exists
+        if(letter != null) {
+            int page = getPage() + 1;
+            if(hasMoreItems()) {
+                Map params = new HashMap();
+                params.put("page", ""+page);
+                params.put("letter", letter);
+                return createURL(getUrl(), params);
+            }
+            return null;
+        } else {
+            return super.getNextLink();
+        }
+    }
+    
+    
+    public String getPrevLink() {
+        // need to add letter param if it exists
+        if(letter != null) {
+            int page = getPage() - 1;
+            if (page >= 0) {
+                Map params = new HashMap();
+                params.put("page", ""+page);
+                params.put("letter", letter);
+                return createURL(getUrl(), params);
+            }
+            return null;
+        } else {
+            return super.getPrevLink();
+        }
+    }
+    
     
     public List getItems() {
+        
         if (users == null) {
+            // calculate offset
+            int offset = (getPage() * length) + 1;
+            
             List results = new ArrayList();
-            try {            
+            try {
                 Roller roller = RollerFactory.getRoller();
                 UserManager umgr = roller.getUserManager();
                 List rawUsers = null;
                 if (letter == null) {
                     rawUsers = umgr.getUsers(offset, length + 1);
                 } else {
-                    rawUsers = umgr.getUsersByLetter(letter.charAt(0), offset, length);
+                    rawUsers = umgr.getUsersByLetter(letter.charAt(0), offset, length + 1);
                 }
-                int count = 0;
+                
+                // check if there are more results for paging
+                if(rawUsers.size() > length) {
+                    more = true;
+                    rawUsers.remove(rawUsers.size() - 1);
+                }
+                
+                // wrap the results
                 for (Iterator it = rawUsers.iterator(); it.hasNext();) {
                     UserData user = (UserData) it.next();
-                    if (count++ < length) {
-                        results.add(UserDataWrapper.wrap(user));
-                    } else {
-                        more = true;
-                    }                    
+                    results.add(UserDataWrapper.wrap(user));
                 }
+                
             } catch (Exception e) {
                 log.error("ERROR: fetching user list", e);
             }
+            
             users = results;
         }
+        
         return users;
-    }   
+    }
+    
+    
+    public boolean hasMoreItems() {
+        return more;
+    }
+    
 }

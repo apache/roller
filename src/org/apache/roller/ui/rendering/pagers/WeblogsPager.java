@@ -21,54 +21,116 @@ package org.apache.roller.ui.rendering.pagers;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 
+
 /**
- * Paging for weblogs.
+ * Paging through a collection of weblogs.
  */
 public class WeblogsPager extends AbstractPager {
-    private List weblogs;    
+    
+    private static Log log = LogFactory.getLog(WeblogsPager.class);
+    
     private String letter = null;
-    protected static Log log =
-            LogFactory.getFactory().getInstance(UsersPager.class);
+    private String locale = null;
+    private int sinceDays = -1;
+    private int length = 0;
     
-    /** Creates a new instance of CommentPager */
-    public WeblogsPager(            
-            WebsiteData    weblog,             
-            Template       weblogPage,
+    // collection for the pager
+    private List weblogs;
+    
+    // are there more items?
+    private boolean more = false;
+    
+    
+    public WeblogsPager(
+            String         baseUrl,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
-        super(weblog, weblogPage, locale, sinceDays, page, length);
+        
+        super(baseUrl, page);
+        
+        this.locale = locale;
+        this.sinceDays = sinceDays;
+        this.length = length;
+        
+        // initialize the collection
         getItems();
     }
     
-    /** Creates a new instance of CommentPager */
-    public WeblogsPager( 
-            String letter,
-            WebsiteData    weblog,             
-            Template       weblogPage,
+    
+    public WeblogsPager(
+            String         baseUrl,
+            String         letter,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
-        super(weblog, weblogPage, locale, sinceDays, page, length);
+        
+        super(baseUrl, page);
+        
         this.letter = letter;
+        this.locale = locale;
+        this.sinceDays = sinceDays;
+        this.length = length;
+        
+        // initialize the collection
         getItems();
     }
+    
+    
+    public String getNextLink() {
+        // need to add letter param if it exists
+        if(letter != null) {
+            int page = getPage() + 1;
+            if(hasMoreItems()) {
+                Map params = new HashMap();
+                params.put("page", ""+page);
+                params.put("letter", letter);
+                return createURL(getUrl(), params);
+            }
+            return null;
+        } else {
+            return super.getNextLink();
+        }
+    }
+    
+    
+    public String getPrevLink() {
+        // need to add letter param if it exists
+        if(letter != null) {
+            int page = getPage() - 1;
+            if (page >= 0) {
+                Map params = new HashMap();
+                params.put("page", ""+page);
+                params.put("letter", letter);
+                return createURL(getUrl(), params);
+            }
+            return null;
+        } else {
+            return super.getPrevLink();
+        }
+    }
+    
     
     public List getItems() {
+        
         if (weblogs == null) {
+            // calculate offset
+            int offset = getPage() * length;
+            
             List results = new ArrayList();
             Date startDate = null;
             if (sinceDays != -1) {
@@ -77,29 +139,41 @@ public class WeblogsPager extends AbstractPager {
                 cal.add(Calendar.DATE, -1 * sinceDays);
                 startDate = cal.getTime();
             }
-            try {            
+            try {
                 Roller roller = RollerFactory.getRoller();
                 UserManager umgr = roller.getUserManager();
                 List weblogs = null;
                 if (letter == null) {
-                    weblogs = umgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length);
+                    weblogs = umgr.getWebsites(null, Boolean.TRUE, Boolean.TRUE, startDate, null, offset, length + 1);
                 } else {
-                    weblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length);
+                    weblogs = umgr.getWeblogsByLetter(letter.charAt(0), offset, length + 1);
                 }
-                int count = 0;
+                
+                // check if there are more results for paging
+                if(weblogs.size() > length) {
+                    more = true;
+                    weblogs.remove(weblogs.size() - 1);
+                }
+                
+                // wrap the results
                 for (Iterator it = weblogs.iterator(); it.hasNext();) {
                     WebsiteData website = (WebsiteData) it.next();
-                    if (count++ < length) {
-                        results.add(WebsiteDataWrapper.wrap(website));
-                    } else {
-                        more = true;
-                    }                       
+                    results.add(WebsiteDataWrapper.wrap(website));
                 }
+                
             } catch (Exception e) {
                 log.error("ERROR: fetching weblog list", e);
             }
+            
             weblogs = results;
         }
+        
         return weblogs;
     }
+    
+    
+    public boolean hasMoreItems() {
+        return more;
+    }
+    
 }

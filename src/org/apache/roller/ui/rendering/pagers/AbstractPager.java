@@ -18,100 +18,102 @@
 
 package org.apache.roller.ui.rendering.pagers;
 
-import java.util.List;
-import org.apache.roller.pojos.Template;
-import org.apache.roller.pojos.WebsiteData;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.roller.util.URLUtilities;
+
 
 /**
  * Abstract base for simple pagers.
  */
 public abstract class AbstractPager implements Pager {
     
-    protected List           users;
-    protected WebsiteData    weblog;
-    protected Template       weblogPage;
-    protected String         locale;
-    protected int            sinceDays;
-    protected int            page;
-    protected int            length;
-    protected int            offset;
-    protected boolean        more = false;   
+    private String url = null;
+    private int page = 0;
     
     
-    /** Creates a new instance of AbstractPager */
-    public AbstractPager(            
-            WebsiteData    weblog,             
-            Template       weblogPage,
-            String         locale,
-            int            sinceDays,
-            int            page,
-            int            length) {
+    public AbstractPager(String baseUrl, int pageNum) {
         
-        this.weblog =     weblog;
-        this.weblogPage = weblogPage;
-        this.locale =     locale;
-        this.sinceDays =  sinceDays;
-        this.page =       page;
-        this.length =     length;
-
-        if(page > 0) {
-            this.page = page;
+        this.url = baseUrl;
+        if(pageNum > 0) {
+            this.page = pageNum;
         }
-        this.offset = length * page;
     }
-
+    
+    
     public String getHomeLink() {
-        return createURL(page, 0, weblog, weblogPage, locale);
+        return url;
     }
-
+    
+    
     public String getHomeName() {
         return "Home";
     }
-
+    
+    
     public String getNextLink() {
-        if (page > 0) {
-            return createURL(page, -1, weblog, weblogPage, locale);
+        if(hasMoreItems()) {
+            int nextPage = page + 1;
+            Map params = new HashMap();
+            params.put("page", ""+nextPage);
+            return createURL(url, params);
         }
         return null;
     }
-
+    
+    
     public String getNextName() {
-        if (page > 0) {
+        if(hasMoreItems()) {
             return "Next";
         }
         return null;
     }
-
+    
+    
     public String getPrevLink() {
-        if (more) {        
-            return createURL(page, 1, weblog, weblogPage, locale);
+        if (page > 0) {
+            int prevPage = page - 1;
+            Map params = new HashMap();
+            params.put("page", ""+prevPage);
+            return createURL(url, params);
         }
         return null;
     }
-
+    
+    
     public String getPrevName() {
-        if (more) {
+        if (page > 0) {
             return "Previous";
         }
         return null;
     }
     
-    protected static String createURL(
-        int                page, 
-        int                pageAdd, 
-        WebsiteData        weblog, 
-        Template           weblogPage, 
-        String             locale) {
+    
+    public boolean hasMoreItems() {
+        return false;
+    }
+    
+    
+    protected String createURL(String url, Map params) {
+        
+        return url + URLUtilities.getQueryString(params);
+    }
 
-        int pageNum = page + pageAdd;
-        String pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
-        if (weblogPage != null) {
-            return URLUtilities.getWeblogPageURL(
-                weblog, locale, pageLink, null, null, null, pageNum, false);
-        } 
-        return URLUtilities.getWeblogCollectionURL(
-                weblog, locale, null, null, pageNum, false);
+    
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
     
 }

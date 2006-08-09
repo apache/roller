@@ -33,54 +33,86 @@ import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.CommentDataWrapper;
 
+
 /**
- * Provides paging for comments.
+ * Paging through a collection of comments.
  */
 public class CommentsPager extends AbstractPager {
     
-    private List comments = null;
-    protected static Log log =
-            LogFactory.getFactory().getInstance(CommentsPager.class);
+    private static Log log = LogFactory.getLog(CommentsPager.class);
     
-    /** Creates a new instance of CommentPager */
-    public CommentsPager(            
-            WebsiteData    weblog,             
-            Template       weblogPage,
+    private String locale = null;
+    private int sinceDays = -1;
+    private int length = 0;
+    
+    // the collection for the pager
+    private List comments = null;
+    
+    // are there more items?
+    private boolean more = false;
+    
+    
+    public CommentsPager(
+            String         baseUrl,
             String         locale,
             int            sinceDays,
             int            page,
             int            length) {
-        super(weblog, weblogPage, locale, sinceDays, page, length);
+        
+        super(baseUrl, page);
+        
+        this.locale = locale;
+        this.sinceDays = sinceDays;
+        this.length = length;
+        
+        // initialize the collection
         getItems();
     }
     
+    
     public List getItems() {
+        
         if (comments == null) {
+            // calculate offset
+            int offset = (getPage() * length) + 1;
+            
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DATE, -1 * sinceDays);
             Date startDate = cal.getTime();
-            try {            
+            try {
                 Roller roller = RollerFactory.getRoller();
                 WeblogManager wmgr = roller.getWeblogManager();
-                List entries = wmgr.getComments( 
-                    null, null, null, startDate, new Date(), 
-                    Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, true, offset, length + 1);
-                int count = 0;
+                List entries = wmgr.getComments(
+                        null, null, null, startDate, new Date(),
+                        Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, true, offset, length + 1);
+                
+                // check if there are more results for paging
+                if(entries.size() > length) {
+                    more = true;
+                    entries.remove(entries.size() - 1);
+                }
+                
+                // wrap the results
                 for (Iterator it = entries.iterator(); it.hasNext();) {
                     CommentData comment = (CommentData) it.next();
-                    if (count++ < length) {
-                        results.add(CommentDataWrapper.wrap(comment));
-                    } else {
-                        more = true;
-                    }                                
+                    results.add(CommentDataWrapper.wrap(comment));
                 }
+                
             } catch (Exception e) {
                 log.error("ERROR: fetching comment list", e);
             }
+            
             comments = results;
         }
+        
         return comments;
-    }   
+    }
+    
+    
+    public boolean hasMoreItems() {
+        return more;
+    }
+    
 }
