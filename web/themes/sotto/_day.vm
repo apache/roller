@@ -31,11 +31,10 @@
         <div class="entryInfo">
             $text.get("macro.weblog.postedby") $entry.creator.userName
             <em class="smallText">@ $utils.formatDate($entry.pubTime, "hh:mm aa z")</em>
-            #if($entry.website.allowComments)
+            #set($commentCount = $entry.commentCount)
+            #if($entry.commentsStillAllowed || $commentCount > 0)
                 <span class="noDisplay">[</span>
-                    #set( $commentCount = $entry.commentCount )
-                    #set( $link = "$url.entry($entry.anchor)" )
-                    <a href="$link" class="storyLink">Comments [$entry.commentCount]</a>
+                    <a href="$url.entry($entry.anchor)" class="storyLink">Comments [$commentCount]</a>
                 <span class="noDisplay">]</span> 
             #if ($utils.isUserAuthorizedToAuthor())
                 &nbsp;&nbsp;[<a href="$url.editEntry($entry.anchor)">Edit</a>]

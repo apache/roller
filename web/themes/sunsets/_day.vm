@@ -25,6 +25,7 @@
                 $entry.displayContent($url.entry($entry.anchor))
             #end
         </p>
+
         <p class="entryInfo">
             Posted at <a href="$url.entry($entry.anchor)">
                $utils.formatDate($entry.pubTime, "hh:mma MMM dd, yyyy")</a>
@@ -35,8 +36,7 @@
             #end
             #set($commentCount = $entry.commentCount)
             #if($entry.commentsStillAllowed || $commentCount > 0)  
-                #set($link = "$url.comments($entry.anchor)" )
-                <a href="$link" class="commentsLink">$text.get("macro.weblog.comments")[$commentCount]</a>
+                <a href="$url.comments($entry.anchor)" class="commentsLink">$text.get("macro.weblog.comments")[$commentCount]</a>
             #end
         </p>
     </div>
