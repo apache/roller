@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WebsiteData;
 
@@ -151,20 +152,20 @@ public final class URLUtilities {
         
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
         
-        if(category != null && dateString == null) {
-            String cat = category;
-            if(category.startsWith("/")) {
-                cat = category.substring(1);
-            }
-            
+        String cat = (StringUtils.isNotEmpty(category)) ? category : null;
+        if(cat != null && cat.startsWith("/")) {
+            cat = cat.substring(1);
+        }
+        
+        if(cat != null && dateString == null) {
             pathinfo.append("category/").append(encode(cat));   
             
-        } else if(dateString != null && category == null) {
+        } else if(dateString != null && cat == null) {
             pathinfo.append("date/").append(dateString);  
             
         } else {
             if(dateString != null) params.put("date", dateString);
-            if(category != null) params.put("cat", encode(category));
+            if(category != null) params.put("cat", encode(cat));
         }
 
         if(pageNum > 0) {
