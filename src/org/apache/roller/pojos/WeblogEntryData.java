@@ -1173,12 +1173,9 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
                     // add read more
                     List args = new ArrayList();
                     args.add(readMoreLink);
-                    try {
-                        String readMore = MessageUtilities.getString("macro.weblog.readMoreLink", args);
-                        displayContent += readMore;
-                    } catch (RollerException ex) {
-                        mLogger.error("trouble with message utils", ex);
-                    }
+                    String readMore = MessageUtilities.getString("macro.weblog.readMoreLink", args);
+                    
+                    displayContent += readMore;
                 }
             } else {
                 displayContent = this.getTransformedText();
