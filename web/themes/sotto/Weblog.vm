@@ -34,7 +34,9 @@
             #showNextPrevEntriesControl($pager)
         #end
     </div>
+
     #showWeblogEntriesPager($pager)
+
     #if ($model.permalink)
        #showWeblogEntryComments($entry)
        #showWeblogEntryCommentForm($entry)
@@ -52,7 +54,7 @@
             #showWeblogEntryCalendar($model.weblog "nil")
         </div>
 
-        #if( $req.getUserPrincipal() )
+        #if( $utils.isUserAuthenticated() )
         <div class="sidebarBox">
             <div class="links">
                 <div class="rFolder">Editor Menu</div>
@@ -75,9 +77,9 @@
         <p class="sidebarBox">
             Valid
             <a title="Valid XHTML?"
-                href="http://validator.w3.org/check?uri=$url.absoluteSite/$model.weblog.handle">XHTML</a>
+                href="http://validator.w3.org/check?uri=$model.weblog.absoluteURL">XHTML</a>
             or <a title="Valid CSS?"
-                href="http://jigsaw.w3.org/css-validator/validator?uri=$url.absoluteSite/$model.weblog.handle">CSS</a>?
+                href="http://jigsaw.w3.org/css-validator/validator?uri=$model.weblog.absoluteURL">CSS</a>?
         </p>
 
         <div class="sidebarBox">

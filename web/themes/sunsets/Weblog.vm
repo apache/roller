@@ -79,7 +79,7 @@
 
 <div id="content">
     <div id="header">
-        <h1><a href="$ctxPath/page/$website.handle" title="Home">$model.weblog.name</a></h1>
+        <h1><a href="$url.home" title="Home">$model.weblog.name</a></h1>
         #showPageMenu($model.weblog)
     </div>
 
@@ -96,7 +96,9 @@
                 #showNextPrevEntriesControl($pager)
             #end
         </div>
+
         #showWeblogEntriesPager($pager)
+
         #if ($model.permalink)
            #showWeblogEntryComments($entry)
            #showWeblogEntryCommentForm($entry)
@@ -106,7 +108,7 @@
 
 
 <div id="footer">
-    <a href="$ctxPath/page/$website.handle" title="View most recent posts">Home</a>
+    <a href="$url.home" title="View most recent posts">Home</a>
     &middot; Sunsets Theme by <a href="http://raibledesigns.com">Matt Raible</a>
 </div>
 
