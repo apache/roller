@@ -130,7 +130,9 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                     }
                     
                     // done with that day, put it in the map
-                    entries.put(key, wrapped);
+                    if(wrapped.size() > 0) {
+                        entries.put(key, wrapped);
+                    }
                 }
                 
                 

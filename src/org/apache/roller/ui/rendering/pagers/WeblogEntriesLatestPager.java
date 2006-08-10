@@ -95,7 +95,9 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                     }
                     
                     // done with that day, put it in the map
-                    entries.put(key, wrapped);
+                    if(wrapped.size() > 0) {
+                        entries.put(key, wrapped);
+                    }
                 }
             } catch (Exception e) {
                 log.error("ERROR: getting entry month map", e);
