@@ -137,6 +137,12 @@ public interface PlanetManager extends Serializable {
             PlanetGroupData group, Date startDate, Date endDate,
             int offset, int len) throws RollerException;
     
+    public List getAggregation(
+            int offset, int len) throws RollerException;
+    
+    public List getAggregation(
+            PlanetGroupData group, int offset, int len) throws RollerException;
+    
     /**
      * Get agggration from cache, enries in reverse chonological order.
      * @param offset    Offset into results (for paging)
