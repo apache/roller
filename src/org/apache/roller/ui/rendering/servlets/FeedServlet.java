@@ -111,6 +111,13 @@ public class FeedServlet extends HttpServlet {
         long lastModified = 0;
         if(isSiteWide) {
             lastModified = siteWideCache.getLastModified().getTime();
+            
+            // this is needed because the if-modified-since header truncates
+            // the last 3 digits of the value, presumably because it can't
+            // handle the high precision and that causes our last mod data to 
+            // always be up to 1 second more than the one from the header
+            lastModified = lastModified - (lastModified % 1000);
+            
         } else {
             lastModified = weblog.getLastModified().getTime();
         }
