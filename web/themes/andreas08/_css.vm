@@ -5,6 +5,7 @@ Base styles
 body {
     background: white;
     font-family:"Lucida Grande", lucida, Geneva, Arial, sans-serif;
+    font-size: 0.9em;
 }
 .img {
     border: 0px;
