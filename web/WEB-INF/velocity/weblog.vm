@@ -425,7 +425,7 @@ Show weblog's categories in specified parent category.
         #set($cats = $categoryObject.getWeblogCategories())
         #foreach($cat in $cats)
             #if($model.weblogCategory && $model.weblogCategory.path == $cat.path)
-                <li class="selected"><a href="$url.category($cat.path)">$cat.name</a></li>
+                <li class="selected">$cat.name</li>
             #else
                 <li><a href="$url.category($cat.path)">$cat.name</a></li>
             #end
@@ -455,7 +455,7 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
             <ul class="rCategory">
         #else
             #if ($model.weblogCategory && $model.weblogCategory.path == $categoryObject.path)
-                <li class="selected"><a href="$url.category($categoryObject.path)">categoryObject.name</a></li>
+                <li class="selected">categoryObject.name</li>
             #else
                 <li><a href="$url.category($categoryObject.path)">$categoryObject.name</a></li>
             #end
