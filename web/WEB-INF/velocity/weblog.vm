@@ -561,7 +561,7 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
 #macro(showPageMenu $weblog)
     <ul class="rNavigationBar">
         <li class="rNavItem">
-            <a href="$url.site">$config.siteShortName</a>
+            <a href="$url.site/">$config.siteShortName</a>
         </li>
         #foreach($iPage in $weblog.pages)
             #if (!$iPage.hidden && $iPage.navbar)
