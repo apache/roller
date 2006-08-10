@@ -105,7 +105,7 @@ function handlePreview() {
        </html:select>
        <br />
        <br />
-       <img name="preview" src="<%= request.getContextPath() %>/roller-ui/authoring/images/sm-theme-<c:out value="${model.themes[0]}"/>.png" height="268" width="322" />
+       <img name="preview" src="<%= request.getContextPath() %>/roller-ui/authoring/images/sm-theme-<c:out value="${model.themes[0]}"/>.png" />
     </td>
     <td class="description"><fmt:message key="createWebsite.tip.theme" /></td>
 </tr>
