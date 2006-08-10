@@ -39,7 +39,7 @@ import org.apache.roller.util.URLUtilities;
  * @web.servlet name="RedirectServlet" load-on-startup="9"
  * @web.servlet-mapping url-pattern="/language/*"
  * @web.servlet-mapping url-pattern="/comments/*"
- * @web.servlet-mapping url-pattern="/resource/*"
+ * @web.servlet-mapping url-pattern="/resources/*"
  * @web.servlet-mapping url-pattern="/rsd/*"
  * @web.servlet-mapping url-pattern="/flavor/*"
  * @web.servlet-mapping url-pattern="/rss/*"
@@ -56,7 +56,7 @@ public class RedirectServlet extends HttpServlet {
     
     public static final String LanguageServlet = "language";
     public static final String CommentsServlet = "comments";
-    public static final String ResourceServlet = "resource";
+    public static final String ResourceServlet = "resources";
     public static final String RsdServlet = "rsd";
     public static final String FlavorServlet = "flavor";
     public static final String RssServlet = "rss";
