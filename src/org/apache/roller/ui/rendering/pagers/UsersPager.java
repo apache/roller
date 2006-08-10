@@ -127,7 +127,7 @@ public class UsersPager extends AbstractPager {
         
         if (users == null) {
             // calculate offset
-            int offset = (getPage() * length) + 1;
+            int offset = getPage() * length;
             
             List results = new ArrayList();
             try {
