@@ -152,9 +152,11 @@ public final class URLUtilities {
         
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
         
-        String cat = (StringUtils.isNotEmpty(category)) ? category : null;
-        if(cat != null && cat.startsWith("/")) {
-            cat = cat.substring(1);
+        String cat = null;
+        if(category != null && "/".equals(category)) {
+            cat = null;
+        } else if(category != null && category.startsWith("/")) {
+            cat = category.substring(1);
         }
         
         if(cat != null && dateString == null) {
@@ -165,7 +167,7 @@ public final class URLUtilities {
             
         } else {
             if(dateString != null) params.put("date", dateString);
-            if(category != null) params.put("cat", encode(cat));
+            if(cat != null) params.put("cat", encode(cat));
         }
 
         if(pageNum > 0) {
