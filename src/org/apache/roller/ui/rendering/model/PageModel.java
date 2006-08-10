@@ -19,22 +19,20 @@
 package org.apache.roller.ui.rendering.model; 
 
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
-import org.apache.roller.ui.authoring.struts.formbeans.CommentFormEx;
+import org.apache.roller.ui.rendering.pagers.WeblogEntriesDayPager;
+import org.apache.roller.ui.rendering.pagers.WeblogEntriesLatestPager;
+import org.apache.roller.ui.rendering.pagers.WeblogEntriesMonthPager;
 import org.apache.roller.ui.rendering.pagers.WeblogEntriesPager;
-import org.apache.roller.ui.rendering.pagers.WeblogEntriesPagerImpl;
+import org.apache.roller.ui.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 
@@ -167,26 +165,55 @@ public class PageModel implements Model {
      * date they were published.
      * @param catArgument Category restriction (null or "nil" for no restriction)
      */
-    public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {        
+    public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {
+        
         // category specified by argument wins over request parameter
-        WeblogCategoryData chosenCat = null;
-        if (catArgument != null) {
-            try {
-                Roller roller = RollerFactory.getRoller();
-                WeblogManager wmgr = roller.getWeblogManager();
-                chosenCat = wmgr.getWeblogCategoryByPath(weblog, catArgument);
-            } catch (Exception ignore) {
-                log.debug("Ignoring unknown category restriction");
-            }
-        }            
-        return new WeblogEntriesPagerImpl(  
-            weblog, 
-            pageRequest.getWeblogPage(), 
-            pageRequest.getWeblogEntry(),
-            pageRequest.getWeblogDate(), 
-            chosenCat != null ? chosenCat : pageRequest.getWeblogCategory(),  
-            pageRequest.getLocale(), 
-            pageRequest.getPageNum());
+        String cat = pageRequest.getWeblogCategoryName();
+        if(catArgument != null && !StringUtils.isEmpty(catArgument) &&
+                !"nil".equals(catArgument)) {
+            cat = catArgument;
+        }
+        
+        String dateString = pageRequest.getWeblogDate();
+        
+        // determine which mode to use
+        if (pageRequest.getWeblogAnchor() != null) {
+            return new WeblogEntriesPermalinkPager(
+                    weblog,
+                    pageRequest.getLocale(),
+                    pageRequest.getWeblogPageName(),
+                    pageRequest.getWeblogAnchor(),
+                    pageRequest.getWeblogDate(),
+                    pageRequest.getWeblogCategoryName(),
+                    pageRequest.getPageNum());
+        } else if (dateString != null && dateString.length() == 8) {
+            return new WeblogEntriesDayPager(
+                    weblog,
+                    pageRequest.getLocale(),
+                    pageRequest.getWeblogPageName(),
+                    pageRequest.getWeblogAnchor(),
+                    pageRequest.getWeblogDate(),
+                    pageRequest.getWeblogCategoryName(),
+                    pageRequest.getPageNum());
+        } else if (dateString != null && dateString.length() == 6) {
+            return new WeblogEntriesMonthPager(
+                    weblog,
+                    pageRequest.getLocale(),
+                    pageRequest.getWeblogPageName(),
+                    pageRequest.getWeblogAnchor(),
+                    pageRequest.getWeblogDate(),
+                    pageRequest.getWeblogCategoryName(),
+                    pageRequest.getPageNum());
+        } else {
+            return new WeblogEntriesLatestPager(
+                    weblog,
+                    pageRequest.getLocale(),
+                    pageRequest.getWeblogPageName(),
+                    pageRequest.getWeblogAnchor(),
+                    pageRequest.getWeblogDate(),
+                    pageRequest.getWeblogCategoryName(),
+                    pageRequest.getPageNum());
+        }
     }
     
     
