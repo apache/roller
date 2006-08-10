@@ -186,39 +186,10 @@ input.searchButton {
 }
 .sidebarBody li {
    list-style-position: inside;
-   list-style-image: url(images/dash.gif);
+   list-style-image: url($url.absoluteSite/roller-ui/images/dash.gif);
    margin-left: 0em;
    padding-left: 0.5em;  
    padding-top: 3px;
-}
-
-/* ----------------------------------------------------------------------
-Logo
----------------------------------------------------------------------- */
-
-#logo {
-    padding: 15px 0px 10px 15px;
-}
-
-/* Transparent PNG fix for IE, thanks to Kenneth M. Kolano */
-#logoshadow {
-    top: 15px;
-    left: 15px;
-    width: 165px;
-    height: 50px;
-    _background: transparent !important;
-    background-image: url($url.absoluteSite/roller-ui/images/logo-shadow.png); 
-}
-#logobackground {
-    width: 159px;
-    height: 44px;
-}
-#logoimage {
-    width: 159px;
-    height: 44px;
-    display: block;
-    cursor: pointer; /* Make IE show correct cursor for link */
-    background-image: url($url.absoluteSite/roller-ui/images/transparent-logo.png);
 }
 
 /* --------------------------------------------------------
@@ -284,7 +255,7 @@ Colors
     background: #ad3431 !important; 
 }
 .bannerBox {
-    background: url("$url.absoluteSite/roller-ui/theme/tan/two-banner.gif") repeat-x top;
+    background: url("$url.themeResource("frontpage", "tan-banner.gif")") repeat-x top;
 }
 .bannerStatusBox {
     background: #ad3431;
