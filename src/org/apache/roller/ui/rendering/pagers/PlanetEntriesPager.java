@@ -80,7 +80,7 @@ public class PlanetEntriesPager extends AbstractPager {
     public List getItems() {
         if (entries == null) {
             // calculate offset
-            int offset = (getPage() * length) + 1;
+            int offset = getPage() * length;
             
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();

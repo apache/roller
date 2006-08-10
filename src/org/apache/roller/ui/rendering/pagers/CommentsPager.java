@@ -74,7 +74,7 @@ public class CommentsPager extends AbstractPager {
         
         if (comments == null) {
             // calculate offset
-            int offset = (getPage() * length) + 1;
+            int offset = getPage() * length;
             
             List results = new ArrayList();
             Calendar cal = Calendar.getInstance();
