@@ -163,7 +163,7 @@ public class PageServlet extends HttpServlet {
         long lastModified = 0;
         if(isSiteWide) {
             lastModified = siteWideCache.getLastModified().getTime();
-        } else {
+        } else if (weblog.getLastModified() != null) {
             lastModified = weblog.getLastModified().getTime();
         }
         
