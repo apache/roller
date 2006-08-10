@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.FolderData;
@@ -297,7 +298,9 @@ public class SiteWideCache implements CacheHandler {
      * A bookmark has changed.
      */
     public void invalidate(BookmarkData bookmark) {
-        // ignored
+        if(RollerRuntimeConfig.isSiteWideWeblog(bookmark.getWebsite().getHandle())) {
+            invalidate(bookmark.getWebsite());
+        }
     }
     
     
@@ -305,7 +308,9 @@ public class SiteWideCache implements CacheHandler {
      * A folder has changed.
      */
     public void invalidate(FolderData folder) {
-        // ignored
+        if(RollerRuntimeConfig.isSiteWideWeblog(folder.getWebsite().getHandle())) {
+            invalidate(folder.getWebsite());
+        }
     }
     
     
@@ -313,7 +318,9 @@ public class SiteWideCache implements CacheHandler {
      * A comment has changed.
      */
     public void invalidate(CommentData comment) {
-        // ignored
+        if(RollerRuntimeConfig.isSiteWideWeblog(comment.getWeblogEntry().getWebsite().getHandle())) {
+            invalidate(comment.getWeblogEntry().getWebsite());
+        }
     }
     
     
@@ -337,7 +344,9 @@ public class SiteWideCache implements CacheHandler {
      * A category has changed.
      */
     public void invalidate(WeblogCategoryData category) {
-        // ignored
+        if(RollerRuntimeConfig.isSiteWideWeblog(category.getWebsite().getHandle())) {
+            invalidate(category.getWebsite());
+        }
     }
     
     
@@ -345,7 +354,9 @@ public class SiteWideCache implements CacheHandler {
      * A weblog template has changed.
      */
     public void invalidate(WeblogTemplate template) {
-        // ignored
+        if(RollerRuntimeConfig.isSiteWideWeblog(template.getWebsite().getHandle())) {
+            invalidate(template.getWebsite());
+        }
     }
     
     

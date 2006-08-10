@@ -163,6 +163,13 @@ public class PageServlet extends HttpServlet {
         long lastModified = 0;
         if(isSiteWide) {
             lastModified = siteWideCache.getLastModified().getTime();
+            
+            // this is needed because the if-modified-since header truncates
+            // the last 3 digits of the value, presumably because it can't
+            // handle the high precision and that causes our last mod data to 
+            // always be up to 1 second more than the one from the header
+            lastModified = lastModified - (lastModified % 1000);
+            
         } else if (weblog.getLastModified() != null) {
             lastModified = weblog.getLastModified().getTime();
         }
@@ -170,6 +177,7 @@ public class PageServlet extends HttpServlet {
         // 304 if-modified-since checking
         long sinceDate = request.getDateHeader("If-Modified-Since");
         log.debug("since date = "+sinceDate);
+        log.debug("last mod date = "+lastModified);
         if(lastModified <= sinceDate) {
             log.debug("NOT MODIFIED "+request.getRequestURL());
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
