@@ -36,9 +36,10 @@ import org.apache.roller.pojos.StaticTemplate;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
+import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.ui.rendering.util.PlanetCache;
 import org.apache.roller.ui.rendering.util.PlanetRequest;
-import org.apache.roller.ui.rendering.velocity.deprecated.OldUtilities;
+import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.cache.CachedContent;
 
 
@@ -109,7 +110,6 @@ public class PlanetFeedServlet extends HttpServlet {
         }
         
         // set content type
-        // set content type
         String accepts = request.getHeader("Accept");
         String userAgent = request.getHeader("User-Agent");
         if (accepts != null && userAgent != null 
@@ -147,8 +147,10 @@ public class PlanetFeedServlet extends HttpServlet {
             }
             model.put("planet", planet);
             model.put("date", new Date());
-            model.put("utilities", new OldUtilities());
-            
+            model.put("utils", new UtilitiesModel());
+            model.put("absoluteSite", RollerRuntimeConfig.getAbsoluteContextURL());
+            model.put("feedStyle", new Boolean(RollerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds")));
+
             int entryCount =
                     RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
             int maxEntries =
