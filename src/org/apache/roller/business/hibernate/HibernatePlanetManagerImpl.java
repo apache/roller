@@ -282,9 +282,19 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         }
     }    
    
+    public synchronized List getAggregation(int offset, int len) 
+        throws RollerException {
+        return getAggregation(null, null, null, offset, len);
+    } 
+    
     public synchronized List getAggregation(Date startDate, Date endDate, int offset, int len) 
         throws RollerException {
         return getAggregation(null, startDate, endDate, offset, len);
+    } 
+    
+    public synchronized List getAggregation(PlanetGroupData group, int offset, int len) 
+        throws RollerException {
+        return getAggregation(group, null, null, offset, len);
     } 
     
     public synchronized List getAggregation(
