@@ -231,15 +231,21 @@ public abstract class BaseRollerMenu {
         } else if (request.getParameter(RequestConstants.WEBLOGENTRY_ID) != null) {
             String entryId = request.getParameter(RequestConstants.WEBLOGENTRY_ID);
             WeblogEntryData entry = roller.getWeblogManager().getWeblogEntry(entryId);
-            weblog = entry.getWebsite();
+            if(entry != null) {
+                weblog = entry.getWebsite();
+            }
         } else if (request.getParameter(RequestConstants.WEBLOGCATEGORY_ID) != null) {
             String catId = request.getParameter(RequestConstants.WEBLOGCATEGORY_ID);
             WeblogCategoryData cat = roller.getWeblogManager().getWeblogCategory(catId);
-            weblog = cat.getWebsite();
+            if(cat != null) {
+                weblog = cat.getWebsite();
+            }
         } else if (request.getParameter(RequestConstants.FOLDER_ID) != null) {
             String folderId = request.getParameter(RequestConstants.FOLDER_ID);
             FolderData folder = roller.getBookmarkManager().getFolder(folderId);
-            weblog = folder.getWebsite();
+            if(folder != null) {
+                weblog = folder.getWebsite();
+            }
         } else if (request.getSession().getAttribute(RequestConstants.WEBLOG_SESSION_STASH) != null) {
             String handle = (String)request.getSession().getAttribute(RequestConstants.WEBLOG_SESSION_STASH);
             weblog = roller.getUserManager().getWebsiteByHandle(handle);
