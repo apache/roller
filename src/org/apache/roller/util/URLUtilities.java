@@ -19,11 +19,11 @@
 package org.apache.roller.util;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WebsiteData;
 
@@ -345,6 +345,20 @@ public final class URLUtilities {
             // ignored
         }
         return encodedStr;
+    }
+    
+    
+    /**
+     * URL decode a string using UTF-8.
+     */
+    public static final String decode(String str) {
+        String decodedStr = str;
+        try {
+            decodedStr = URLDecoder.decode(str, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            // ignored
+        }
+        return decodedStr;
     }
     
 }
