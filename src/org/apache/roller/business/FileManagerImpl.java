@@ -271,7 +271,7 @@ public class FileManagerImpl implements FileManager {
         // text/xml, etc.).
         
         // if content type is invalid, reject file
-        if (contentType.indexOf("/") == -1)  {
+        if (contentType == null || contentType.indexOf("/") == -1)  {
             return false;
         }
         
@@ -317,7 +317,7 @@ public class FileManagerImpl implements FileManager {
         if (forbidFiles != null && forbidFiles.length > 0) {
             for (int x=0; x<forbidFiles.length; x++) {
                 // oops, this forbid rule is a content-type, skip it
-                if (allowFiles[x].indexOf("/") != -1) continue;
+                if (forbidFiles[x].indexOf("/") != -1) continue;
                 if (fileName.toLowerCase().endsWith(
                         forbidFiles[x].toLowerCase())) {
                     allowFile = false;
