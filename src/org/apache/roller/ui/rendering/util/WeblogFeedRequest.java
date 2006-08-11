@@ -18,8 +18,6 @@
 
 package org.apache.roller.ui.rendering.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +25,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -114,17 +113,12 @@ public class WeblogFeedRequest extends WeblogRequest {
          *
          */
         if(request.getParameter("cat") != null) {
-            try {
-                this.weblogCategoryName = 
-                        URLDecoder.decode(request.getParameter("cat"), "UTF-8");
-                
-                // all categories must start with a /
-                if(!this.weblogCategoryName.startsWith("/")) {
-                    this.weblogCategoryName = "/"+this.weblogCategoryName;
-                }
-
-            } catch (UnsupportedEncodingException ex) {
-                // should never happen, utf-8 is always supported by java
+            this.weblogCategoryName =
+                    URLUtilities.decode(request.getParameter("cat"));
+            
+            // all categories must start with a /
+            if(!this.weblogCategoryName.startsWith("/")) {
+                this.weblogCategoryName = "/"+this.weblogCategoryName;
             }
         }
         

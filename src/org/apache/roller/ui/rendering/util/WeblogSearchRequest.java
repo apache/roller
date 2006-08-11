@@ -25,6 +25,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -96,7 +97,8 @@ public class WeblogSearchRequest extends WeblogRequest {
         
         if(request.getParameter("cat") != null &&
                 request.getParameter("cat").trim().length() > 0) {
-            this.weblogCategoryName = request.getParameter("cat");
+            this.weblogCategoryName = 
+                    URLUtilities.decode(request.getParameter("cat"));
             
             // all categories must start with a /
             if(!this.weblogCategoryName.startsWith("/")) {

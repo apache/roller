@@ -33,6 +33,7 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -113,7 +114,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 // category may have multiple path elements, so re-split with max 2
                 pathElements = pathInfo.split("/", 2);
                 this.context = pathElements[0];
-                this.weblogCategoryName = "/"+pathElements[1];
+                this.weblogCategoryName = "/"+URLUtilities.decode(pathElements[1]);
                 
                 // all categories must start with a /
                 if(!this.weblogCategoryName.startsWith("/")) {
@@ -124,13 +125,7 @@ public class WeblogPageRequest extends WeblogRequest {
                 
                 this.context = pathElements[0];
                 if("entry".equals(this.context)) {
-                    try {
-                        this.weblogAnchor = 
-                                URLDecoder.decode(pathElements[1], "UTF-8");
-                    } catch (UnsupportedEncodingException ex) {
-                        // should never happen
-                        log.error(ex);
-                    }
+                    this.weblogAnchor = URLUtilities.decode(pathElements[1]);
                     
                 } else if("date".equals(this.context)) {
                     if(this.isValidDateString(pathElements[1])) {
@@ -181,18 +176,12 @@ public class WeblogPageRequest extends WeblogRequest {
             }
             
             if(request.getParameter("cat") != null) {
-                try {
-                    this.weblogCategoryName = 
-                            URLDecoder.decode(request.getParameter("cat"), "UTF-8");
-                    
-                    // all categories must start with a /
-                    if(!this.weblogCategoryName.startsWith("/")) {
-                        this.weblogCategoryName = "/"+this.weblogCategoryName;
-                    }
-                    
-                } catch (UnsupportedEncodingException ex) {
-                    // should never happen
-                    log.error(ex);
+                this.weblogCategoryName = 
+                        URLUtilities.decode(request.getParameter("cat"));
+                
+                // all categories must start with a /
+                if(!this.weblogCategoryName.startsWith("/")) {
+                    this.weblogCategoryName = "/"+this.weblogCategoryName;
                 }
             }
         }
