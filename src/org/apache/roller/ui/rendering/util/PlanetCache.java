@@ -44,6 +44,7 @@ public class PlanetCache {
     public static final String CACHE_ID = "cache.planet";
     
     // keep cached content
+    private boolean cacheEnabled = true;
     private Cache contentCache = null;
     
     // keep a cached version of last expired time
@@ -55,6 +56,8 @@ public class PlanetCache {
     
     
     private PlanetCache() {
+        
+        cacheEnabled = RollerConfig.getBooleanProperty(CACHE_ID+".enabled");
         
         Map cacheProps = new HashMap();
         cacheProps.put("id", CACHE_ID);
@@ -72,7 +75,11 @@ public class PlanetCache {
         
         log.info("Planet cache = "+cacheProps);
         
-        contentCache = CacheManager.constructCache(null, cacheProps);
+        if(cacheEnabled) {
+            contentCache = CacheManager.constructCache(null, cacheProps);
+        } else {
+            log.warn("Caching has been DISABLED");
+        }
         
         // lookup our timeout value
         String timeoutString = RollerConfig.getProperty("cache.planet.timeout");
@@ -92,6 +99,9 @@ public class PlanetCache {
     
     public Object get(String key) {
         
+        if(!cacheEnabled)
+            return null;
+        
         Object entry = contentCache.get(key);
         
         if(entry == null) {
@@ -105,18 +115,30 @@ public class PlanetCache {
     
     
     public void put(String key, Object value) {
+        
+        if(!cacheEnabled)
+            return;
+        
         contentCache.put(key, value);
         log.debug("PUT "+key);
     }
     
     
     public void remove(String key) {
+        
+        if(!cacheEnabled)
+            return;
+        
         contentCache.remove(key);
         log.debug("REMOVE "+key);
     }
     
     
     public void clear() {
+        
+        if(!cacheEnabled)
+            return;
+        
         contentCache.clear();
         this.lastUpdateTime = null;
         log.debug("CLEAR");

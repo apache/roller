@@ -45,6 +45,7 @@ public class WeblogPageCache {
     public static final String CACHE_ID = "cache.weblogpage";
     
     // keep cached content
+    private boolean cacheEnabled = true;
     private Cache contentCache = null;
     
     // reference to our singleton instance
@@ -52,6 +53,8 @@ public class WeblogPageCache {
     
     
     private WeblogPageCache() {
+        
+        cacheEnabled = RollerConfig.getBooleanProperty(CACHE_ID+".enabled");
         
         Map cacheProps = new HashMap();
         cacheProps.put("id", CACHE_ID);
@@ -69,7 +72,11 @@ public class WeblogPageCache {
         
         log.info(cacheProps);
         
-        contentCache = CacheManager.constructCache(null, cacheProps);
+        if(cacheEnabled) {
+            contentCache = CacheManager.constructCache(null, cacheProps);
+        } else {
+            log.warn("Caching has been DISABLED");
+        }
     }
     
     
@@ -79,6 +86,9 @@ public class WeblogPageCache {
     
     
     public Object get(String key, long lastModified) {
+        
+        if(!cacheEnabled)
+            return null;
         
         Object entry = null;
         
@@ -102,18 +112,30 @@ public class WeblogPageCache {
     
     
     public void put(String key, Object value) {
+        
+        if(!cacheEnabled)
+            return;
+        
         contentCache.put(key, new LazyExpiringCacheEntry(value));
         log.debug("PUT "+key);
     }
     
     
     public void remove(String key) {
+        
+        if(!cacheEnabled)
+            return;
+        
         contentCache.remove(key);
         log.debug("REMOVE "+key);
     }
     
     
     public void clear() {
+        
+        if(!cacheEnabled)
+            return;
+        
         contentCache.clear();
         log.debug("CLEAR");
     }
