@@ -1,20 +1,21 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.business;
 
 import java.io.File;
@@ -24,7 +25,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -36,19 +36,17 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.util.RollerMessages;
 
+
 /**
  * Responsible for managing website resources.  This base implementation
  * writes resources to a filesystem.
- *
- * @author David M Johnson
- * @author Allen Gilliland
  */
 public class FileManagerImpl implements FileManager {
+    
     private String upload_dir = null;
     private String upload_url = null;
     
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(FileManagerImpl.class);
+    private static Log mLogger = LogFactory.getLog(FileManagerImpl.class);
     
     
     /**
@@ -81,6 +79,7 @@ public class FileManagerImpl implements FileManager {
         return this.upload_dir;
     }
     
+    
     /**
      * Get the upload path being used by this file manager
      **/
@@ -92,9 +91,10 @@ public class FileManagerImpl implements FileManager {
     /**
      * Determine if file can be saved given current RollerConfig settings.
      */
-    public boolean canSave(
-            String weblogHandle, String name, String contentType, long size, RollerMessages messages)
+    public boolean canSave(String weblogHandle, String name, String contentType,
+                           long size, RollerMessages messages)
             throws RollerException {
+        
         Roller mRoller = RollerFactory.getRoller();
         Map config = mRoller.getPropertiesManager().getProperties();
         
@@ -134,18 +134,19 @@ public class FileManagerImpl implements FileManager {
         return true;
     }
     
+    
     public boolean overQuota(String weblogHandle) throws RollerException {
         
         String maxDir = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
         String maxFile = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
         BigDecimal maxDirSize = new BigDecimal(maxDir); // in megabytes
         BigDecimal maxFileSize = new BigDecimal(maxFile); // in megabytes
-
+        
         // determine the number of bytes in website's directory
         int maxDirBytes = (int)(1024000 * maxDirSize.doubleValue());
         int userDirSize = 0;
-         String dir = getUploadDir();
-         File d = new File(dir + weblogHandle);
+        String dir = getUploadDir();
+        File d = new File(dir + weblogHandle);
         if (d.mkdirs() || d.exists()) {
             File[] files = d.listFiles();
             long dirSize = 0l;
@@ -159,6 +160,7 @@ public class FileManagerImpl implements FileManager {
         return userDirSize > maxDirBytes;
     }
     
+    
     /**
      * Get collection files in website's resource directory.
      * @param site Website
@@ -170,15 +172,17 @@ public class FileManagerImpl implements FileManager {
         return uploadDir.listFiles();
     }
     
+    
     /**
      * Delete named file from website's resource area.
      */
-    public void deleteFile(String weblogHandle, String name)
-    throws RollerException {
+    public void deleteFile(String weblogHandle, String name) 
+            throws RollerException {
         String dir = this.upload_dir + weblogHandle;
         File f = new File(dir + File.separator + name);
         f.delete();
     }
+    
     
     /**
      * Save file to website's resource directory.
@@ -187,8 +191,10 @@ public class FileManagerImpl implements FileManager {
      * @param size Size of file to be saved
      * @param is Read file from input stream
      */
-    public void saveFile(String weblogHandle, String name, String contentType, long size, InputStream is)
-    throws RollerException {
+    public void saveFile(String weblogHandle, String name, String contentType, 
+                         long size, InputStream is)
+            throws RollerException {
+        
         if (!canSave(weblogHandle, name, contentType, size, new RollerMessages())) {
             throw new RollerException("ERROR: upload denied");
         }
@@ -221,6 +227,7 @@ public class FileManagerImpl implements FileManager {
         }
     }
     
+    
     /**
      * Returns current size of file uploads owned by specified weblog handle.
      * @param username User
@@ -228,6 +235,7 @@ public class FileManagerImpl implements FileManager {
      * @return Size of user's uploaded files in bytes.
      */
     private int getWebsiteDirSize(String weblogHandle, String dir) {
+        
         int userDirSize = 0;
         File d = new File(dir + File.separator + weblogHandle);
         if (d.mkdirs() || d.exists()) {
@@ -243,6 +251,7 @@ public class FileManagerImpl implements FileManager {
         return userDirSize;
     }
     
+    
     /**
      * Return true if file is allowed to be uplaoded given specified allowed and
      * forbidden file types.
@@ -251,15 +260,14 @@ public class FileManagerImpl implements FileManager {
      * @param fileName    Name of file to be uploaded
      * @return True if file is allowed to be uploaded
      */
-    private boolean checkFileType(
-        String[] allowFiles, String[] forbidFiles, 
-            String fileName, String contentType) {
+    private boolean checkFileType(String[] allowFiles, String[] forbidFiles,
+                                  String fileName, String contentType) {
         
-        // TODO: Atom Publushing Protocol figure out how to handle file 
-        // allow/forbid using contentType.        
-        // TEMPORARY SOLUTION: In the allow/forbid lists we will continue to 
+        // TODO: Atom Publushing Protocol figure out how to handle file
+        // allow/forbid using contentType.
+        // TEMPORARY SOLUTION: In the allow/forbid lists we will continue to
         // allow user to specify file extensions (e.g. gif, png, jpeg) but will
-        // now also allow them to specify content-type rules (e.g. */*, image/*, 
+        // now also allow them to specify content-type rules (e.g. */*, image/*,
         // text/xml, etc.).
         
         // if content type is invalid, reject file
@@ -280,9 +288,9 @@ public class FileManagerImpl implements FileManager {
         
         // check file against allowed file extensions
         if (allowFiles != null && allowFiles.length > 0) {
-            for (int y=0; y<allowFiles.length; y++) {                
+            for (int y=0; y<allowFiles.length; y++) {
                 // oops, this allowed rule is a content-type, skip it
-                if (allowFiles[y].indexOf("/") != -1) continue;               
+                if (allowFiles[y].indexOf("/") != -1) continue;
                 if (fileName.toLowerCase().endsWith(
                         allowFiles[y].toLowerCase())) {
                     allowFile = true;
@@ -293,9 +301,9 @@ public class FileManagerImpl implements FileManager {
         
         // check file against allowed contentTypes
         if (allowFiles != null && allowFiles.length > 0) {
-            for (int y=0; y<allowFiles.length; y++) {                
+            for (int y=0; y<allowFiles.length; y++) {
                 // oops, this allowed rule is NOT a content-type, skip it
-                if (allowFiles[y].indexOf("/") == -1) continue;               
+                if (allowFiles[y].indexOf("/") == -1) continue;
                 if (matchContentType(allowFiles[y], contentType)) {
                     allowFile = true;
                     break;
@@ -305,11 +313,11 @@ public class FileManagerImpl implements FileManager {
         
         // First check against what is FORBIDDEN
         
-       // check file against forbidden file extensions, overrides any allows
+        // check file against forbidden file extensions, overrides any allows
         if (forbidFiles != null && forbidFiles.length > 0) {
             for (int x=0; x<forbidFiles.length; x++) {
                 // oops, this forbid rule is a content-type, skip it
-                if (allowFiles[x].indexOf("/") != -1) continue;               
+                if (allowFiles[x].indexOf("/") != -1) continue;
                 if (fileName.toLowerCase().endsWith(
                         forbidFiles[x].toLowerCase())) {
                     allowFile = false;
@@ -319,20 +327,21 @@ public class FileManagerImpl implements FileManager {
         }
         
         
-         // check file against forbidden contentTypes, overrides any allows
+        // check file against forbidden contentTypes, overrides any allows
         if (forbidFiles != null && forbidFiles.length > 0) {
             for (int x=0; x<forbidFiles.length; x++) {
                 // oops, this forbid rule is NOT a content-type, skip it
-                if (forbidFiles[x].indexOf("/") == -1) continue;               
+                if (forbidFiles[x].indexOf("/") == -1) continue;
                 if (matchContentType(forbidFiles[x], contentType)) {
                     allowFile = false;
                     break;
                 }
             }
         }
-                
+        
         return allowFile;
     }
+    
     
     /**
      * Super simple contentType range rule matching
@@ -342,10 +351,14 @@ public class FileManagerImpl implements FileManager {
         if (rangeRule.equals(contentType)) return true;
         String ruleParts[] = rangeRule.split("/");
         String typeParts[] = contentType.split("/");
-        if (ruleParts[0].equals(typeParts[0]) && ruleParts[1].equals("*")) return true;
+        if (ruleParts[0].equals(typeParts[0]) && ruleParts[1].equals("*")) 
+            return true;
+        
         return false;
     }
     
+    
     public void release() {
     }
+    
 }
