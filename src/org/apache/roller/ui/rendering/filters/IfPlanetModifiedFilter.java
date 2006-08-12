@@ -18,7 +18,6 @@
 package org.apache.roller.ui.rendering.filters;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -51,8 +50,7 @@ public class IfPlanetModifiedFilter implements Filter {
     private long timeout = 15 * 60 * 1000;
     private ExpiringCacheEntry lastUpdateTime = null;
     
-    SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy");
-    
+
     
     /**
      * Filter processing.
@@ -98,16 +96,10 @@ public class IfPlanetModifiedFilter implements Filter {
             request.setAttribute("updateTime", updateTime);
             
             // Check the incoming if-modified-since header
-            Date sinceDate =
-                    new Date(request.getDateHeader("If-Modified-Since"));
+            long sinceDate = request.getDateHeader("If-Modified-Since");
             
             if (updateTime != null) {
-                // convert date (JDK 1.5 workaround)
-                synchronized (dateFormatter) {
-                    String date = dateFormatter.format(updateTime);
-                    updateTime = new Date(date);
-                }
-                if (updateTime.compareTo(sinceDate) <= 0) {
+                if (updateTime.getTime() <= sinceDate) {
                     response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                     return;
                 }

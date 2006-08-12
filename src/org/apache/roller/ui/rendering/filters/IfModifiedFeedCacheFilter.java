@@ -24,14 +24,10 @@
 package org.apache.roller.ui.rendering.filters;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -87,10 +83,7 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
     
     // the last time we expired our main feeds
     private Date mainLastExpiredDate = new Date();
-    
-    SimpleDateFormat dateFormatter =
-            new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy");
-    
+
     
     /**
      * Process filter.
@@ -165,14 +158,10 @@ public class IfModifiedFeedCacheFilter implements Filter, CacheHandler {
             }
             
             // Check the incoming if-modified-since header
-            Date sinceDate =
-                    new Date(request.getDateHeader("If-Modified-Since"));
+            long sinceDate = request.getDateHeader("If-Modified-Since");
             
             if (updateTime != null) {
-                // convert date (JDK 1.5 workaround)
-                String date = dateFormatter.format(updateTime);
-                updateTime = new Date(date);
-                if (updateTime.compareTo(sinceDate) <= 0) {
+                if (updateTime.getTime() <= sinceDate) {
                     mLogger.debug("NOT_MODIFIED "+key);
                     response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                     return;
