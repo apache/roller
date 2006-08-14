@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.roller.business;
 
 import java.io.File;
@@ -81,11 +82,11 @@ public class PlanetManagerTest extends TestCase {
             assertNotNull(config);
             assertEquals("test_title", config.getTitle());
             assertEquals("test_admin_email", config.getAdminEmail());
-            assertNull(config.getSiteUrl());
+            assertNull(config.getSiteURL());
         }
         {   // save config
             PlanetConfigData config = planet.getConfiguration();
-            config.setSiteUrl("http://footest/lskdf/null");
+            config.setSiteURL("http://footest/lskdf/null");
             planet.saveConfiguration(config);
             TestUtils.endSession(true);
         }
@@ -93,7 +94,7 @@ public class PlanetManagerTest extends TestCase {
             // make sure config was saved
             PlanetConfigData config = planet.getConfiguration();
             assertNotNull(config);
-            assertEquals("http://footest/lskdf/null", config.getSiteUrl());
+            assertEquals("http://footest/lskdf/null", config.getSiteURL());
         }
     }
     
