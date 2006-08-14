@@ -75,6 +75,7 @@ create table webpage (
     template        $TEXT_SQL_TYPE not null,
     updatetime      $TIMESTAMP_SQL_TYPE not null,
     hidden          $BOOLEAN_SQL_TYPE_FALSE not null,
+    navbar          $BOOLEAN_SQL_TYPE_FALSE not null,
     templatelang    varchar(20) not null,
     decorator       varchar(255) null
 );
