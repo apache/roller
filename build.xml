@@ -883,8 +883,6 @@ ro.buildUser=${user.name}
         tofile="${build.tests}/WEB-INF/velocity.properties" />
     <copy file="${basedir}/web/WEB-INF/classes/rome.properties"
         tofile="${build.tests}/WEB-INF/classes/rome.properties" />
-    <copy file="${basedir}/web/WEB-INF/toolbox.xml"
-        tofile="${build.tests}/WEB-INF/toolbox.xml" />
     <copy file="${basedir}/web/WEB-INF/classes/blacklist.txt"
         tofile="${build.tests}/WEB-INF/classes/blacklist.txt" />
         	
