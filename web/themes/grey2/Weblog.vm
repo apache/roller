@@ -24,7 +24,7 @@
                <td class="sidebarbox">The soul...</td>
             </tr>
             <tr>
-                <td>
+                <td class="sidebar">
                     #showWeblogEntryCalendar($model.weblog "nil")<br>
                     #showWeblogSearchForm($model.weblog false)
                 </td>
@@ -33,7 +33,7 @@
                <td class="sidebarbox">The feeds...</td>
             </tr>
             <tr>
-                <td>
+                <td class="sidebar">
                     #showAtomFeedsList($model.weblog)<br>
                 </td>
             </tr>
@@ -41,7 +41,7 @@
                <td class="sidebarbox">The links...</td>
             </tr>
             <tr>
-               <td>
+               <td class="sidebar">
                    #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
                    #showBookmarkLinksList($rootFolder false false)<br>
                    #showPageMenu($model.weblog)<br>
