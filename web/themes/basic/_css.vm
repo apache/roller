@@ -2,10 +2,19 @@
 Base styles
 --------------------------------------------------------------*/
 
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline overline;
+}
+
 body {
     background: white;
     font-family:"Lucida Grande", lucida, Geneva, Arial, sans-serif;
 }
+
 .img {
     border: 0px;
     margin: 0px; 
@@ -193,7 +202,7 @@ h1 {
 }
 h2, .comments-head {
     color:#CC9933;
-    font-size:120%;
+    font-size:90%;
     font-weight:bold;
     border-bottom:1px dotted #666;
     text-transform:uppercase;
@@ -208,6 +217,7 @@ p.weblogDescription {
 }
 div.dayTitle {
     color:#CC9933;
+    font-size:90%;
     text-transform:uppercase;
     border-bottom:1px dotted #666;		
 }
@@ -219,7 +229,7 @@ div.dayTitle {
     float: left;
 }
 .content {
-    padding: 2em;
+    padding: 0em 2em 2em 2em;
 }
 .rightbar_wrapper { 
     width: 20%;

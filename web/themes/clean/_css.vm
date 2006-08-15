@@ -187,8 +187,6 @@ Clean theme styles
 --------------------------------------------------------------*/
 
 body  {
-    margin:  0;
-    padding:  0;
     color:  black;
     background-color: white;
 }
@@ -254,4 +252,21 @@ div.codeblock {
     border-color:white;
     border-style:solid;
     border-width:1px;
+}
+
+/* layout ----------------------------------------------- */
+
+.content_wrapper {
+    width: 80%;
+    float: left;
+}
+.content {
+    padding: 0em 2em 2em 2em;
+}
+.rightbar_wrapper { 
+    width: 20%;
+    float: right;
+}
+.rightbar {
+    padding: 0em 0em 2em 0em;
 }

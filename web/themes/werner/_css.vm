@@ -13,24 +13,37 @@ body {
 
 /* entries ----------------------------------------------- */
 
+div.entryBox {
+    margin-left: 10px;
+    margin-right: 10px;
+}
 .entryTitle {
     font-weight: bold;
-    font-size: 130%;
 }
 .entryInfo {
     font-size: 80%;
     color: #999;
 }
 div.dayTitle {
-    font-size: 120%;
-    font-weight:bold;	
-    padding: .5em 0 0 0;
+    background-color: #eee;
+    border-top: 1px dotted black;
+    border-bottom: 1px dotted black;
+    padding: .5em;
+    font-family: verdana,arial,sans-serif;
+    font-weight: bold;
+    color: #333;
+    text-transform: uppercase;
 }
 div.next-previous {
     font-size: 80%;
     text-align: center;
     padding: .5em 0 .5em 0;
 
+}
+div.dayBox {
+    border: 1px dashed grey;
+    padding: 2px;
+    margin-bottom: 10px;
 }
 
 /* category chooser ----------------------------------------------- */

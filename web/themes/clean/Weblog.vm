@@ -6,13 +6,11 @@
     <style type="text/css">#includeTemplate($model.weblog "_css")</style>
 </head>
 <body>
-    <table cellpadding="5" cellspacing="15" border="0" align="center" width="95%">
-        <tbody>
-            <tr>
-                <td width="5%" valign="top" bgcolor="#ffffff">&nbsp;</td>
-                <td width="75%" valign="top" bgcolor="#ffffff">
+
+<div class="content_wrapper">
+  <div class="content">
+
                     <h2>$model.weblog.name</h2>
-                    <h3>$utils.removeHTML($model.weblog.description)</h3>
                     #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
                     #showWeblogCategoryLinksList($rootCategory false false)
 
@@ -33,8 +31,12 @@
                        #showWeblogEntryCommentForm($entry)
                     #end
 
-                </td>
-                <td valign="top" bgcolor="#ffffff" width="20%">
+  </div>
+</div>
+
+<div class="rightbar_wrapper">
+  <div class="rightbar">
+
                     <br>#showWeblogEntryCalendar($model.weblog "nil")
 
                     <h3>Feeds</h3>
@@ -43,7 +45,7 @@
                     <h3>Search this blog</h3>
                     #showWeblogSearchForm($model.weblog false)
 
-                    <h3>Search this blog</h3>
+                    <h3>Links</h3>
                     #set($rootFolder = $model.weblog.getBookmarkFolder("/"))
                     #showBookmarkLinksList($rootFolder false false)
 
@@ -54,9 +56,8 @@
                     <h3>Today's referrers</h3>
                     #set($refs = $model.weblog.getTodaysReferrers())
                     #showReferrersList($refs 30 20)
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  </div>
+</div>
+
 </body>
 </html>

@@ -22,9 +22,19 @@ body {
     color: #ccc;
 }
 div.dayTitle {
-    font-size: 120%;
-    font-weight:bold;	
-    padding: .5em 0 0 0;
+    font-size:12px;
+    font-weight:bold;
+    text-align:left;
+    line-height:120%;
+    padding:3px 5px 4px 5px;
+    margin-top:10px;
+    margin-bottom:22px;
+    color:#FFF;
+    background:#5A5A5A;
+    border:1px solid #A3A3A3;
+}
+div.dayBox {
+    margin-bottom: 10px;
 }
 div.next-previous {
     font-size: 80%;
