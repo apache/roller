@@ -2,8 +2,14 @@
 Base styles
 --------------------------------------------------------------*/
 
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
 body {
-    background: white;
+    background: #c0c0c0;
     font-family:"Lucida Grande", lucida, Geneva, Arial, sans-serif;
 }
 .img {
@@ -20,6 +26,11 @@ body {
 .entryInfo {
     font-size: 80%;
     color: #999;
+}
+div.entryBox {
+    color: #404f64;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 div.dayTitle {
     font-size: 120%;
@@ -187,13 +198,15 @@ Grey2 theme styles
 --------------------------------------------------------------*/
 
 td.sidebarbox {
-    background: grey;
+    background: #404f64;
     color: white;
 }
-
+td.sidebar {
+    background: white;
+}
 p.weblogTitle {
-   text-align: right;
-   color: grey;
+   text-align: left;
+   color: #404f64;
    font-size: 160%;
 }
 
