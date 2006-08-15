@@ -15,7 +15,6 @@ body {
 
 .entryTitle {
     font-weight: bold;
-    font-size: 130%;
 }
 .entryInfo {
     font-size: 80%;
@@ -24,12 +23,11 @@ body {
 div.dayTitle {
     font-size: 120%;
     font-weight:bold;	
-    padding: .5em 0 0 0;
 }
 div.next-previous {
     font-size: 80%;
     text-align: center;
-    padding: .5em 0 .5em 0;
+    padding: .5em 0 0 0;
 
 }
 
@@ -206,7 +204,6 @@ a {
 a:visited {
 	color:blue;
 	background:none;
-	text-decoration:underline;
 }
 	
 a:hover {
@@ -395,8 +392,17 @@ div#copyrightnotice {
   border-bottom:1px dotted #666;		
 }
 
+.entryBox {
+  border: 1px solid #6666cc;
+  padding: 4px;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
 .dayBox {
-    padding: 15px;
+    padding: 0px 15px 15px 15px;
 }
 
 div.catChooser {

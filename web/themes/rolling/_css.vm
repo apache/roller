@@ -186,29 +186,20 @@ label.choice{
 Rolling base styles
 --------------------------------------------------------------*/
 
-#set( $bgcolor = "white" )
-#set( $fgcolor = "black" )
-#set( $linkcolor = "blue" )
-#set( $visitedcolor = "purple" )
-#set( $boxcolor = "#9191cd" )
-#set( $bordercolor = "gray" )
-#set( $background = $url.themeResource("rolling","images/newbluebg.jpg", true) )
-
 p {
   font-family: verdana, sans-serif;
   font-size: small;
-  color: $fgcolor;
+  color: black;
   color : #000000;
 }
 h1, h2 {
-    color: $boxcolor;
+    color: #9191cd;
 }
 body {
   font-family: verdana, sans-serif;
   font-size: small;
-  color: $fgcolor;
-  background-color: $bgcolor;
-  background-image: url($background);
+  color: black;
+  background-color: white;
 }
 a {
   text-decoration: none;
@@ -233,10 +224,6 @@ img.photo {
    padding: 12px;
 }
 
-.banner {
-  background-image: url($banner);
-  background-repeat: no-repeat;
-}
 #MainColumn {
   margin-top:      5px;
   margin-left:    65px;
@@ -346,7 +333,7 @@ img.photo {
 
 div.box, .comments, .comments-form {
   margin: 5px 5px 5px 5px;
-  border: dashed 1px $bordercolor;
+  border: dashed 1px gray;
   padding: 2px;
 }
 h2.box, .comments-head {
@@ -355,7 +342,7 @@ h2.box, .comments-head {
   text-transform : uppercase;
   letter-spacing : 0.3em;
   border-style : none;
-  background-color : $boxcolor;
+  background-color : #9191cd;
   color : white;
 }
 h2.daybox {
@@ -365,7 +352,7 @@ h2.daybox {
   text-transform : uppercase;
   letter-spacing : 0.3em;
   border-style : none;
-  background-color : $boxcolor;
+  background-color : #9191cd;
   color : white;
 }
 h2 {
