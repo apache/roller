@@ -72,11 +72,11 @@ public class ConfigModel implements Model {
         return getProperty("site.adminemail");
     }
     
-    public boolean registrationEnabled() {
+    public boolean getRegistrationEnabled() {
         return getBooleanProperty("users.registration.enabled");
     }
     
-    public String registrationURL() {
+    public String getRegistrationURL() {
         return getProperty("users.registration.url");
     }
     
