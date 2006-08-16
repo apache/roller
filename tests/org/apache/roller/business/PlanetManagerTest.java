@@ -203,14 +203,14 @@ public class PlanetManagerTest extends TestCase {
             assertNotNull(sub);
             
             PlanetEntryData entry1 = new PlanetEntryData();
-            entry1.setPermaLink("test_entry1");
+            entry1.setPermalink("test_entry1");
             entry1.setCategoriesString("test,test2");
             entry1.setSubscription(sub);
             entry1.setPubTime(new Timestamp(System.currentTimeMillis()));
             sub.addEntry(entry1);
             
             PlanetEntryData entry2 = new PlanetEntryData();
-            entry2.setPermaLink("test_entry2");
+            entry2.setPermalink("test_entry2");
             entry2.setCategoriesString("test_cat1,test_cat2,test_cat3");
             entry2.setSubscription(sub);
             entry2.setPubTime(new Timestamp(System.currentTimeMillis()));
@@ -230,7 +230,7 @@ public class PlanetManagerTest extends TestCase {
             assertNotNull(sub);
             
             PlanetEntryData entry3 = new PlanetEntryData();
-            entry3.setPermaLink("test_entry3");
+            entry3.setPermalink("test_entry3");
             entry3.setCategoriesString("test,test3");
             entry3.setSubscription(sub);
             entry3.setPubTime(new Timestamp(System.currentTimeMillis()));

@@ -59,7 +59,6 @@ public class SiteModel implements Model {
     
     private WebsiteData weblog = null;
     private WeblogRequest weblogRequest = null;
-    //private Template weblogPage = null;
     private String pageLink = null;
     private int pageNum = 0;
     
@@ -109,6 +108,29 @@ public class SiteModel implements Model {
     }
     
        
+    /**
+     * Get pager ofWeblogEntry objects across all weblogs,
+     * in reverse chrono order by pubTime.
+     * @param queryWeblog Restrict to this weblog
+     * @param sinceDays   Limit to past X days in past (or -1 for no limit)
+     * @param length      Max number of results to return
+     */   
+    public Pager getWeblogEntriesPager(WebsiteData queryWeblog, int sinceDays, int length) {
+        return getWeblogEntriesPager(queryWeblog, null, null, sinceDays, length);
+    }
+
+    /**
+     * Get pager ofWeblogEntry objects across all weblogs,
+     * in reverse chrono order by pubTime.
+     * @param queryWeblog Restrict to this weblog
+     * @param user        Restrict to this user
+     * @param sinceDays   Limit to past X days in past (or -1 for no limit)
+     * @param length      Max number of results to return
+     */   
+    public Pager getWeblogEntriesPager(WebsiteData queryWeblog, UserData user, int sinceDays, int length) {
+        return getWeblogEntriesPager(queryWeblog, user, null, sinceDays, length);
+    }
+
     /**
      * Get pager ofWeblogEntry objects across all weblogs,
      * in reverse chrono order by pubTime.
