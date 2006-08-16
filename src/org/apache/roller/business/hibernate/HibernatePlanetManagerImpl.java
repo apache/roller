@@ -553,7 +553,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                             "No published date, assigning fake date for "+feedURL);
                     entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
                 }
-                if (entry.getPermaLink() == null) {
+                if (entry.getPermalink() == null) {
                     log.warn("No permalink, rejecting entry from "+feedURL);
                 } else {
                     newEntries.add(entry);

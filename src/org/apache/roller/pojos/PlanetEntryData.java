@@ -97,7 +97,7 @@ public class PlanetEntryData extends PersistentObject
      */
     private void initFromRomeEntry(SyndFeed romeFeed, SyndEntry romeEntry) {
         setTitle(romeEntry.getTitle());
-        setPermaLink(romeEntry.getLink());
+        setPermalink(romeEntry.getLink());
         
         // Play some games to get the author
         DCModule entrydc = (DCModule)romeEntry.getModule(DCModule.URI);
@@ -163,11 +163,11 @@ public class PlanetEntryData extends PersistentObject
         
         setAuthor(    rollerEntry.getCreator().getFullName());
         setTitle(     rollerEntry.getTitle());
-        setPermaLink( rollerEntry.getLink());
+        setPermalink( rollerEntry.getLink());
         setPubTime(   rollerEntry.getPubTime());
         setText(      content);
         
-        setPermaLink(RollerRuntimeConfig.getProperty("site.absoluteurl")
+        setPermalink(RollerRuntimeConfig.getProperty("site.absoluteurl")
         + rollerEntry.getPermaLink());
         
         List cats = new ArrayList();
@@ -261,10 +261,10 @@ public class PlanetEntryData extends PersistentObject
      * @hibernate.property column="permalink" non-null="true" unique="false"
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getPermaLink() {
+    public String getPermalink() {
         return permalink;
     }
-    public void setPermaLink(String permalink) {
+    public void setPermalink(String permalink) {
         this.permalink = permalink;
     }
     /**
@@ -376,7 +376,7 @@ public class PlanetEntryData extends PersistentObject
      */
     public int compareTo(Object o) {
         PlanetEntryData other = (PlanetEntryData)o;
-        return getPermaLink().compareTo(other.getPermaLink());
+        return getPermalink().compareTo(other.getPermalink());
     }
     
     /**
@@ -386,7 +386,7 @@ public class PlanetEntryData extends PersistentObject
         if(this == other) return true;
         if(!(other instanceof PlanetEntryData)) return false;        
         final PlanetEntryData that = (PlanetEntryData) other;
-        return this.permalink.equals(that.getPermaLink());
+        return this.permalink.equals(that.getPermalink());
     }
     
     /**

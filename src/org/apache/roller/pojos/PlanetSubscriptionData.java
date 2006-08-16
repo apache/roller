@@ -198,10 +198,10 @@ public class PlanetSubscriptionData extends PersistentObject
     /** 
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getUrl() {
+    public String getURL() {
         return siteUrl;
     }
-    public void setUrl(String url) {
+    public void setURL(String url) {
         siteUrl = url;
     }
     

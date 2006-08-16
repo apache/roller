@@ -20,7 +20,7 @@
                <td class="menuTabSelected">
                   <div class="menu-tr">
                      <div class="menu-tl">
-                        &nbsp;&nbsp;<a href='$url.page("blogs")'>Weblog Directory</a>&nbsp;&nbsp; 
+                        &nbsp;&nbsp;<a href='$url.page("directory")'>Weblog Directory</a>&nbsp;&nbsp; 
                      </div>
                   </div>
                </td>	    
@@ -31,10 +31,10 @@
 
             <div id="tabContent">
                 <div id="directory">
-                #if($pageModel.getRequestParameter("weblog"))
-                    #set($handle = $pageModel.getRequestParameter("weblog"))
-                    <a href="?letter=$stringUtils.left($handle,1)">Back to blog directory</a>
-                    #set($weblog = $site.getWeblog($handle))
+                #if($model.getRequestParameter("weblog"))
+                    #set($handle = $model.getRequestParameter("weblog"))
+                    <a href="?letter=$utils.left($handle,1)">Back to blog directory</a>
+                    #set($profileWeblog = $site.getWeblog($handle))
                     #includeTemplate($model.weblog "_blogprofile")
                 #else                 
                    #set($pageLength = $maxResults)

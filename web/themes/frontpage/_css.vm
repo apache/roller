@@ -98,10 +98,10 @@ div.entry {
     border: 1px solid #f1ebdf;
 }
 #directory {
-    padding: 5px;
+    padding: 15px;
 }
 #recentEntries{
-    padding: 5px;
+    padding: 10px;
 }
 
 

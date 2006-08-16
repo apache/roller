@@ -47,7 +47,7 @@ public class PlanetModel implements Model {
     private static Log log = LogFactory.getLog(PlanetModel.class);
     
     private WeblogRequest  weblogRequest = null;
-    private Template       weblogPage = null;
+    private String pageLink = null;
     private int            pageNum = 0;
     private WebsiteData    weblog = null;
     
@@ -65,7 +65,8 @@ public class PlanetModel implements Model {
         
         // TODO 3.0: is it better to reparse URL to get these?
         if (weblogRequest instanceof WeblogPageRequest) {
-            weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
+            pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
         }  
         
@@ -83,7 +84,7 @@ public class PlanetModel implements Model {
     public Pager getAggregationPager(int sinceDays, int length) {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), weblogPage.getLink(), 
+                weblogRequest.getLocale(), pageLink, 
                 null, null, null, 0, false);
         
         return new PlanetEntriesPager(
@@ -106,7 +107,7 @@ public class PlanetModel implements Model {
     public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), weblogPage.getLink(), 
+                weblogRequest.getLocale(), pageLink, 
                 null, null, null, 0, false);
         
         return new PlanetEntriesPager(
@@ -129,7 +130,7 @@ public class PlanetModel implements Model {
     public Pager getFeedPager(String feedURL, int length) {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
-                weblogRequest.getLocale(), weblogPage.getLink(), 
+                weblogRequest.getLocale(), pageLink, 
                 null, null, null, 0, false);
         
         return new PlanetEntriesPager(
