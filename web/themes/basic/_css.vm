@@ -22,12 +22,15 @@ body {
 
 /* entries ----------------------------------------------- */
 
+.entryBox {
+    font-size: 90%;
+}
 .entryTitle {
     font-weight: bold;
-    font-size: 130%;
 }
+
 .entryInfo {
-    font-size: 80%;
+    font-size: 90%;
     color: #999;
 }
 div.dayTitle {
