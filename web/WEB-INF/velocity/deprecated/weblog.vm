@@ -67,14 +67,12 @@
         </div>
     #end
 
-    <div class="entries">
-        #set($dayPage = $model.weblog.getPageByName($pageName))
-        #set($map = $pager.getEntries())
-        #foreach($day in $map.keySet())
-            #set($entries = $map.get($day))   
-            #parse($dayPage.id)
-        #end
-    </div>
+    #set($dayPage = $model.weblog.getPageByName($pageName))
+    #set($map = $pager.getEntries())
+    #foreach($day in $map.keySet())
+        #set($entries = $map.get($day))   
+        #parse($dayPage.id)
+    #end
 
     #if ($model.permalink)
         #showEntryLinkbacks($entry)
