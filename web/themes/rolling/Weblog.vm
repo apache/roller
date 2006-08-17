@@ -3,7 +3,7 @@
 <div id="MainColumn">
    <div align="center">
        <h1>$model.weblog.name</h1>
-       $model.weblog.description 
+
         #set($rootCategory = $model.weblog.getWeblogCategory("nil"))
         #showWeblogCategoryLinksList($rootCategory false false)
    </div>
