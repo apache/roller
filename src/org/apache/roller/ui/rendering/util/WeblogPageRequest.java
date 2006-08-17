@@ -159,29 +159,48 @@ public class WeblogPageRequest extends WeblogRequest {
          * the only params we currently allow are:
          *   date - specifies a weblog date string
          *   cat - specifies a weblog category
+         *   anchor - specifies a weblog entry (old way)
+         *   entry - specifies a weblog entry
          *
          * we only allow request params if the path info is null or on user
          * defined pages (for backwards compatability).  this way
          * we prevent mixing of path based and query param style urls.
          */
         if(pathInfo == null || this.weblogPageName != null) {
-            if(request.getParameter("date") != null) {
-                String date = request.getParameter("date");
-                if(this.isValidDateString(date)) {
-                    this.weblogDate = date;
-                } else {
-                    throw new InvalidRequestException("invalid date, "+
-                            request.getRequestURL());
+            
+            // check for entry/anchor params which indicate permalink
+            if(request.getParameter("entry") != null) {
+                String anchor = request.getParameter("entry");
+                if(StringUtils.isNotEmpty(anchor)) {
+                    this.weblogAnchor = anchor;
+                }
+            } else if(request.getParameter("anchor") != null) {
+                String anchor = request.getParameter("anchor");
+                if(StringUtils.isNotEmpty(anchor)) {
+                    this.weblogAnchor = anchor;
                 }
             }
             
-            if(request.getParameter("cat") != null) {
-                this.weblogCategoryName = 
-                        URLUtilities.decode(request.getParameter("cat"));
+            // only check for other params if we didn't find an anchor above
+            if(this.weblogAnchor == null) {
+                if(request.getParameter("date") != null) {
+                    String date = request.getParameter("date");
+                    if(this.isValidDateString(date)) {
+                        this.weblogDate = date;
+                    } else {
+                        throw new InvalidRequestException("invalid date, "+
+                                request.getRequestURL());
+                    }
+                }
                 
-                // all categories must start with a /
-                if(!this.weblogCategoryName.startsWith("/")) {
-                    this.weblogCategoryName = "/"+this.weblogCategoryName;
+                if(request.getParameter("cat") != null) {
+                    this.weblogCategoryName =
+                            URLUtilities.decode(request.getParameter("cat"));
+                    
+                    // all categories must start with a /
+                    if(!this.weblogCategoryName.startsWith("/")) {
+                        this.weblogCategoryName = "/"+this.weblogCategoryName;
+                    }
                 }
             }
         }
@@ -196,8 +215,11 @@ public class WeblogPageRequest extends WeblogRequest {
             }
         }
         
-        // build customParams Map, we remove built-in params
+        // build customParams Map, we remove built-in params because we only
+        // want this map to represent params defined by the template author
         customParams = new HashMap(request.getParameterMap());
+        customParams.remove("entry");
+        customParams.remove("anchor");
         customParams.remove("date");
         customParams.remove("cat");
         customParams.remove("page");
