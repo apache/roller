@@ -176,6 +176,9 @@ public class ContextLoader {
                     locale);
             ctx.put("pageModel", pageModel);
             
+            // along with old pages list :/
+            ctx.put("pages", pageModel.getPages());
+            
         } catch (Exception e) {
             throw new RollerException("ERROR creating Page Model",e);
         }
