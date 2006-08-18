@@ -186,7 +186,7 @@ public final class UploadFileFormAction extends DispatchAction {
             while (uploads.hasNext()) {
                 messages.add(ActionMessages.GLOBAL_MESSAGE,
                         new ActionMessage("uploadFiles.uploadedFile",
-                        URLUtilities.getWeblogResourceURL(website, (String)uploads.next(), false)));
+                        URLUtilities.getWeblogResourceURL(website, (String)uploads.next(), true)));
             }
             saveMessages(request, messages);
             
