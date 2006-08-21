@@ -78,42 +78,50 @@ public class PlanetEntriesPager extends AbstractPager {
     
     
     public List getItems() {
+        
         if (entries == null) {
             // calculate offset
             int offset = getPage() * length;
             
-            List results = new ArrayList();
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             cal.add(Calendar.DATE, -1 * sinceDays);
             Date startDate = cal.getTime();
+            
+            List results = new ArrayList();
             try {
                 Roller roller = RollerFactory.getRoller();
                 PlanetManager planetManager = roller.getPlanetManager();
-                PlanetGroupData group = planetManager.getGroup(groupHandle);
+                
                 List rawEntries = null;
                 if (feedURL != null) {
-                    rawEntries = planetManager.getFeedEntries(feedURL, offset, length);
-                } else if (groupHandle == null) {
-                    rawEntries = planetManager.getAggregation(startDate, null, offset, length);
+                    rawEntries = planetManager.getFeedEntries(feedURL, offset, length+1);
+                } else if (groupHandle != null) {
+                    PlanetGroupData group = planetManager.getGroup(groupHandle);
+                    rawEntries = planetManager.getAggregation(group, startDate, null, offset, length+1);
                 } else {
-                    rawEntries = planetManager.getAggregation(group, startDate, null, offset, length);
+                    rawEntries = planetManager.getAggregation(startDate, null, offset, length+1);
                 }
-                int count = 0;
+                
+                // check if there are more results for paging
+                if(rawEntries.size() > length) {
+                    more = true;
+                    rawEntries.remove(rawEntries.size() - 1);
+                }
+                
+                // wrap 'em
                 for (Iterator it = rawEntries.iterator(); it.hasNext();) {
                     PlanetEntryData entry = (PlanetEntryData) it.next();
-                    if (count++ < length) {
-                        PlanetEntryDataWrapper wrapped = PlanetEntryDataWrapper.wrap(entry);
-                        results.add(wrapped);
-                    } else {
-                        more = true;
-                    }
+                    results.add(PlanetEntryDataWrapper.wrap(entry));
                 }
+                
             } catch (Exception e) {
                 log.error("ERROR: get aggregation", e);
             }
+            
             entries = results;
         }
+        
         return entries;
     }
     
