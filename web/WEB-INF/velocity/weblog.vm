@@ -169,8 +169,6 @@ Show comments for weblog entry according to Roller configuration.
             #set($content = $utils.addNofollow($content))
 
             <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
-                <span class="comment-count">${velocityCount}.</span>
-
                 ${content}
 
                 <p class="comment-details">
@@ -186,8 +184,7 @@ Show comments for weblog entry according to Roller configuration.
                 $text.get("macro.weblog.on") $utils.formatDate($comment.postTime, $text.get( "macro.weblog.datepattern" ))
 
                 <a href="$url.comment($entry.anchor, $comment.timestamp)"
-                   class="entrypermalink"
-                   title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
+                   class="entrypermalink" title="$text.get( "macro.weblog.commentpermalink.title" )">#</a>
                 </p>
 
             </div>
