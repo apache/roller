@@ -19,6 +19,7 @@
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.io.IOException;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.IndexManager;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
@@ -130,7 +132,19 @@ public class MaintenanceAction extends DispatchAction {
             RollerSession rses = RollerSession.getRollerSession(request);
             
             if ( rses.isUserAuthorizedToAdmin(website) ) {
-                //PageCacheFilter.removeFromCache(request, website);
+                
+                // some caches are based on weblog last-modified, so update it
+                website.setLastModified(new Date());
+                
+                try {
+                    UserManager umgr = RollerFactory.getRoller().getUserManager();
+                    umgr.saveWebsite(website);
+                    RollerFactory.getRoller().flush();
+                } catch (RollerException ex) {
+                    mLogger.error("Error saving website", ex);
+                }
+                
+                // also notify cache manager
                 CacheManager.invalidate(website);
                 
                 ActionMessages messages = new ActionMessages();
