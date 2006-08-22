@@ -1,20 +1,21 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.ui.core.tasks;
 
 import java.io.IOException;
@@ -24,7 +25,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -42,16 +42,17 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.Technorati;
 
+
 /**
  * Ensure that every user is represented by a subscription in Planet Roller
  * database. Also "ranks" each subscription by populating Technorati inbound
  * blogs and links counts.
- * @author Dave Johnson
  */
 public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
-    private static Log logger =
-            LogFactory.getFactory().getInstance(SyncWebsitesTask.class);
+    
+    private static Log logger = LogFactory.getLog(SyncWebsitesTask.class);
     private Roller roller = null;
+    
     
     /** Task may be run from the command line */
     public static void main(String[] args) {
@@ -67,13 +68,19 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
             System.exit(-1);
         }
     }
+    
+    
     public void init(Roller roller, String realPath) throws RollerException {
         this.roller = roller;
     }
+    
+    
     public void run() {
         syncWebsites();
         rankSubscriptions();
     }
+    
+    
     /**
      * Ensure there's a subscription in the "all" group for every Roller user.
      */
@@ -100,7 +107,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                     String baseSiteURL = baseURL + "/page/";
                     // get list of all enabled and active weblogs
                     Iterator websites =
-                        roller.getUserManager().getWebsites(null, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1).iterator();
+                            roller.getUserManager().getWebsites(null, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1).iterator();
                     while (websites.hasNext()) {
                         WebsiteData website = (WebsiteData)websites.next();
                         
@@ -158,6 +165,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
         }
     }
     
+    
     /**
      * Loop through all subscriptions get get Technorati rankings for each
      */
@@ -177,17 +185,17 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                 }
             } catch (IOException e) {
                 logger.error("Aborting collection of Technorati rankings.\n"
-                +"technorati.license not found at root of classpath.\n"
-                +"Get license at http://technorati.com/developers/apikey.html\n"
-                +"Put the license string in a file called technorati.license.\n"
-                +"And place that file at the root of Roller's classpath.\n"
-                +"For example, in the /WEB-INF/classes directory.");
+                        +"technorati.license not found at root of classpath.\n"
+                        +"Get license at http://technorati.com/developers/apikey.html\n"
+                        +"Put the license string in a file called technorati.license.\n"
+                        +"And place that file at the root of Roller's classpath.\n"
+                        +"For example, in the /WEB-INF/classes directory.");
                 return;
             }
             UserManager userManager = roller.getUserManager();
             try {
                 int limit = RollerConfig.getIntProperty(
-                    "planet.aggregator.technorati.limit", 500);
+                        "planet.aggregator.technorati.limit", 500);
                 int userCount = planet.getSubscriptionCount();
                 int mod = (userCount / limit) + 1;
                 
@@ -245,5 +253,5 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
             logger.error("ERROR ranking subscriptions", e);
         }
     }
+    
 }
-
