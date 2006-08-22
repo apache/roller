@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * HibernateRollerPlanetManagerImpl.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on April 17, 2006, 1:53 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.business.hibernate;
@@ -52,7 +47,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * An extended version of the base PlanetManager implementation.
- * 
+ *
  * This is meant for use by Roller installations that are running the planet
  * aggregator in the same application instance and want to fetch feeds from
  * their local Roller blogs in a more efficient manner.
@@ -85,18 +80,20 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
             return super.getNewEntries(sub, feedFetcher, feedInfoCache);
         }
         
-        // url must be local, lets deal with it
-        Set newEntries = new TreeSet();
         try {
             // for local feeds, sub.author = website.handle
-            if (sub.getAuthor()!=null && sub.getFeedURL().endsWith(sub.getAuthor())) {
+            // feed is from our domain and we have a handle, lets deal with it
+            if(sub.getAuthor() != null) {
                 
                 log.debug("Getting LOCAL feed "+sub.getFeedURL());
+                
+                Set newEntries = new TreeSet();
                 
                 // get corresponding website object
                 UserManager usermgr = RollerFactory.getRoller().getUserManager();
                 WebsiteData website = usermgr.getWebsiteByHandle(sub.getAuthor());
-                if (website == null) return newEntries;
+                if (website == null) 
+                    return newEntries;
                 
                 // figure website last update time
                 WeblogManager blogmgr = RollerFactory.getRoller().getWeblogManager();
@@ -115,14 +112,15 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                             "site.newsfeeds.defaultEntries");
                     entries = blogmgr.getWeblogEntries(
                             website,
-                            null,                             
+                            null,
                             null,                        // startDate
                             new Date(),                  // endDate
                             null,                        // catName
                             WeblogEntryData.PUBLISHED,   // status
                             null,                        // sortby (null means pubTime)
-null,                             0,                           // offset
-                            entryCount);                       // locale
+                            null,                        // locale
+                            0,                           // offset
+                            entryCount);                 
                     
                     sub.setLastUpdated(siteUpdated);
                     saveSubscription(sub);
@@ -152,6 +150,7 @@ null,                             0,                           // offset
                         log.error("ERROR processing subscription entry", e);
                     }
                 }
+                
                 return newEntries;
             }
         } catch (Exception e) {

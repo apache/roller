@@ -34,10 +34,11 @@ import org.apache.roller.pojos.UserData;
 public class RefreshEntriesTask extends TimerTask implements ScheduledTask {
     
     private static Log logger = LogFactory.getLog(RefreshEntriesTask.class);
-    private Roller roller = null;
     
     
-    /** Task may be run from the command line */
+    /** 
+     * Task may be run from the command line 
+     */
     public static void main(String[] args) {
         try {
             RollerFactory.setRoller(
@@ -54,12 +55,13 @@ public class RefreshEntriesTask extends TimerTask implements ScheduledTask {
     
     
     public void init(Roller roller, String realPath) throws RollerException {
-        this.roller = (Roller)roller;
+        // no-op
     }
     
     
     public void run() {
         try {
+            Roller roller = RollerFactory.getRoller();
             roller.getPlanetManager().refreshEntries();
             roller.flush();
             roller.release();
