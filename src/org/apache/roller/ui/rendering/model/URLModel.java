@@ -143,6 +143,16 @@ public class URLModel implements Model {
     }
     
     
+    public String home(String customLocale) {
+        return URLUtilities.getWeblogCollectionURL(weblog, customLocale, null, null, -1, false);
+    }
+    
+    
+    public String home(String customLocale, int pageNum) {
+        return URLUtilities.getWeblogCollectionURL(weblog, customLocale, null, null, pageNum, false);
+    }
+    
+    
     public String entry(String anchor) {
         return URLUtilities.getWeblogEntryURL(weblog, locale, anchor, true);
     }
