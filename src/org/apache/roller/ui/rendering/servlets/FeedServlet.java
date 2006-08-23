@@ -226,7 +226,7 @@ public class FeedServlet extends HttpServlet {
             renderer = RendererManager.getRenderer(template);
         } catch(Exception e) {
             // nobody wants to render my content :(
-            log.error("Couldn't find renderer for page "+pageId, e);
+            log.warn("Couldn't find renderer for page "+pageId);
             
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
