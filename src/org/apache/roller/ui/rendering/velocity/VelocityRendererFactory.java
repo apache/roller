@@ -18,14 +18,19 @@
 
 package org.apache.roller.ui.rendering.velocity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererFactory;
+
 
 /**
  * Velocity RendererFactory for Roller.
  */
 public class VelocityRendererFactory implements RendererFactory {
+    
+    private static Log log = LogFactory.getLog(VelocityRendererFactory.class);
     
     
     public Renderer getRenderer(Template template) {
@@ -42,8 +47,9 @@ public class VelocityRendererFactory implements RendererFactory {
             // standard velocity template
             try {
                renderer = new VelocityRenderer(template);
-            } catch(Exception ignored) {
-                // can't render
+            } catch(Exception ex) {
+                // some kind of problem creating renderer
+                log.error("Error creating renderer for "+template.getId(), ex);
             }            
             
         }
