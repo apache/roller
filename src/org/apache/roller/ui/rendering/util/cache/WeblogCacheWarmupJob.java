@@ -1,0 +1,165 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
+package org.apache.roller.ui.rendering.util.cache;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.business.runnable.Job;
+import org.apache.roller.config.RollerConfig;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.StaticTemplate;
+import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.rendering.Renderer;
+import org.apache.roller.ui.rendering.RendererManager;
+import org.apache.roller.ui.rendering.model.ModelLoader;
+import org.apache.roller.ui.rendering.util.WeblogFeedCache;
+import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
+import org.apache.roller.util.cache.CachedContent;
+
+
+/**
+ * EXPERIMENTAL!!
+ *
+ * A job which will "warm up" some of the rendering layer caches by iterating
+ * over all weblogs in the system and rendering a set of their content to put
+ * in the caches for later use.
+ *
+ * Currently only supports warming up the feed cache.
+ */
+public class WeblogCacheWarmupJob implements Job {
+    
+    private static Log log = LogFactory.getLog(WeblogCacheWarmupJob.class);
+    
+    // inputs from the user
+    private Map inputs = null;
+    
+    
+    public void execute() {
+        
+        log.debug("starting");
+        
+        // check inputs to see what work we are going to do
+        if(inputs != null) {
+            
+            // should we do rss entries feeds?
+            if("true".equals((String)inputs.get("feed-entries-rss"))) {
+                this.warmupFeedCache("entries", "rss");
+            }
+            
+            // should we do atom entries feeds?
+            if("true".equals((String)inputs.get("feed-entries-atom"))) {
+                this.warmupFeedCache("entries", "atom");
+            }
+        }
+        
+        log.debug("finished");
+    }
+    
+    
+    public Map output() {
+       return null; 
+    }
+    
+    
+    public void input(Map input) {
+        this.inputs = input;
+    }
+    
+    
+    private void warmupFeedCache(String type, String format) {
+        
+        // we are working on the feed cache
+        WeblogFeedCache feedCache = WeblogFeedCache.getInstance();
+        
+        List weblogs = null;
+        try {
+            // get all weblogs
+            UserManager umgr = RollerFactory.getRoller().getUserManager();
+            weblogs = umgr.getWebsites(null, Boolean.TRUE, null, null, null, 0, -1);
+        } catch (RollerException ex) {
+            log.error("Unable to get weblogs list", ex);
+            return;
+        }
+        
+        Iterator allWeblogs = weblogs.iterator();
+        WebsiteData weblog = null;
+        while(allWeblogs.hasNext()) {
+            weblog = (WebsiteData) allWeblogs.next();
+            
+            try {
+                // we need a feed request to represent the data
+                WeblogFeedRequest feedRequest = new WeblogFeedRequest();
+                feedRequest.setWeblogHandle(weblog.getHandle());
+                feedRequest.setWeblog(weblog);
+                feedRequest.setType(type);
+                feedRequest.setFormat(format);
+                
+                
+                // populate the rendering model
+                HashMap model = new HashMap();
+                Map initData = new HashMap();
+                initData.put("request", null);
+                initData.put("feedRequest", feedRequest);
+                initData.put("weblogRequest", feedRequest);
+                
+                // Load models for feeds
+                String feedModels = RollerConfig.getProperty("rendering.feedModels");
+                ModelLoader.loadModels(feedModels, model, initData, true);
+                
+                // Load weblog custom models
+                ModelLoader.loadCustomModels(weblog, model, initData);
+                
+                
+                // lookup Renderer we are going to use
+                Renderer renderer = null;
+                log.debug("Looking up renderer");
+                Template template = new StaticTemplate("templates/feeds/weblog-"+type+"-"+format+".vm", null, "velocity");
+                renderer = RendererManager.getRenderer(template);
+                
+                
+                // render content.  use default size of about 24K for a standard page
+                CachedContent rendererOutput = new CachedContent(24567);
+                log.debug("Doing rendering");
+                renderer.render(model, rendererOutput.getCachedWriter());
+                
+                
+                // flush rendered output and close
+                rendererOutput.flush();
+                rendererOutput.close();
+                
+                // now just put it in the cache
+                String key = feedCache.generateKey(feedRequest);
+                feedCache.put(key, rendererOutput);
+                
+            } catch(Exception e) {
+                // bummer, error during rendering
+                log.error("Error rendering for weblog "+weblog.getHandle(), e);
+            }
+        }
+        
+    }
+    
+}
