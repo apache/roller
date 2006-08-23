@@ -240,7 +240,7 @@ public final class URLUtilities {
             params.put("cat", encode(category));
         }
         if(excerpts) {
-            params.put("excerpts", Boolean.TRUE);
+            params.put("excerpts", "true");
         }
         
         return url.toString() + getQueryString(params);
