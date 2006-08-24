@@ -77,6 +77,10 @@ public final class URLUtilities {
                                             String locale,
                                             boolean absolute) {
         
+        if(weblog == null) {
+            return null;
+        }
+        
         StringBuffer url = new StringBuffer();
         
         if(absolute) {
@@ -102,6 +106,10 @@ public final class URLUtilities {
                                                  String locale,
                                                  String entryAnchor,
                                                  boolean absolute) {
+        
+        if(weblog == null) {
+            return null;
+        }
         
         StringBuffer url = new StringBuffer();
         
@@ -146,6 +154,10 @@ public final class URLUtilities {
                                                       String dateString,
                                                       int pageNum,
                                                       boolean absolute) {
+        
+        if(weblog == null) {
+            return null;
+        }
         
         StringBuffer pathinfo = new StringBuffer();
         Map params = new HashMap();
@@ -192,6 +204,10 @@ public final class URLUtilities {
                                                 int pageNum,
                                                 boolean absolute) {
         
+        if(weblog == null) {
+            return null;
+        }
+        
         StringBuffer pathinfo = new StringBuffer();
         Map params = new HashMap();
         
@@ -230,6 +246,10 @@ public final class URLUtilities {
                                                 boolean excerpts,
                                                 boolean absolute) {
         
+        if(weblog == null) {
+            return null;
+        }
+        
         StringBuffer url = new StringBuffer();
         
         url.append(getWeblogURL(weblog, locale, absolute));
@@ -256,6 +276,10 @@ public final class URLUtilities {
                                                   String category,
                                                   int pageNum,
                                                   boolean absolute) {
+        
+        if(weblog == null) {
+            return null;
+        }
         
         StringBuffer url = new StringBuffer();
         
@@ -286,6 +310,10 @@ public final class URLUtilities {
                                                     String filePath,
                                                     boolean absolute) {
         
+        if(weblog == null) {
+            return null;
+        }
+        
         StringBuffer url = new StringBuffer();
         
         url.append(getWeblogURL(weblog, null, absolute));
@@ -306,6 +334,11 @@ public final class URLUtilities {
      */
     public static final String getWeblogRsdURL(WebsiteData weblog,
                                                boolean absolute) {
+        
+        if(weblog == null) {
+            return null;
+        }
+        
         return getWeblogURL(weblog, null, absolute)+"rsd";
     }
     
@@ -314,6 +347,10 @@ public final class URLUtilities {
      * Compose a map of key=value params into a query string.
      */
     public static final String getQueryString(Map params) {
+        
+        if(params == null) {
+            return null;
+        }
         
         StringBuffer queryString = new StringBuffer();
         
