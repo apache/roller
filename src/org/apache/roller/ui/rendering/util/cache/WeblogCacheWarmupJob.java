@@ -64,14 +64,20 @@ public class WeblogCacheWarmupJob implements Job {
         // check inputs to see what work we are going to do
         if(inputs != null) {
             
+            // what weblogs will we handle?
+            List weblogs = (List) inputs.get("weblogs");
+            if(weblogs == null) {
+                return;
+            }
+            
             // should we do rss entries feeds?
-            if("true".equals((String)inputs.get("feed-entries-rss"))) {
-                this.warmupFeedCache("entries", "rss");
+            if("true".equals((String) inputs.get("feed-entries-rss"))) {
+                this.warmupFeedCache(weblogs, "entries", "rss");
             }
             
             // should we do atom entries feeds?
-            if("true".equals((String)inputs.get("feed-entries-atom"))) {
-                this.warmupFeedCache("entries", "atom");
+            if("true".equals((String) inputs.get("feed-entries-atom"))) {
+                this.warmupFeedCache(weblogs, "entries", "atom");
             }
         }
         
@@ -89,31 +95,27 @@ public class WeblogCacheWarmupJob implements Job {
     }
     
     
-    private void warmupFeedCache(String type, String format) {
+    private void warmupFeedCache(List weblogs, String type, String format) {
+        
+        if(weblogs == null) {
+            return;
+        }
         
         // we are working on the feed cache
         WeblogFeedCache feedCache = WeblogFeedCache.getInstance();
         
-        List weblogs = null;
-        try {
-            // get all weblogs
-            UserManager umgr = RollerFactory.getRoller().getUserManager();
-            weblogs = umgr.getWebsites(null, Boolean.TRUE, null, null, null, 0, -1);
-        } catch (RollerException ex) {
-            log.error("Unable to get weblogs list", ex);
-            return;
-        }
+        long start = System.currentTimeMillis();
         
         Iterator allWeblogs = weblogs.iterator();
-        WebsiteData weblog = null;
+        String weblogHandle = null;
         while(allWeblogs.hasNext()) {
-            weblog = (WebsiteData) allWeblogs.next();
+            weblogHandle = (String) allWeblogs.next();
+            log.debug("doing weblog "+weblogHandle);
             
             try {
                 // we need a feed request to represent the data
                 WeblogFeedRequest feedRequest = new WeblogFeedRequest();
-                feedRequest.setWeblogHandle(weblog.getHandle());
-                feedRequest.setWeblog(weblog);
+                feedRequest.setWeblogHandle(weblogHandle);
                 feedRequest.setType(type);
                 feedRequest.setFormat(format);
                 
@@ -129,20 +131,19 @@ public class WeblogCacheWarmupJob implements Job {
                 String feedModels = RollerConfig.getProperty("rendering.feedModels");
                 ModelLoader.loadModels(feedModels, model, initData, true);
                 
+                // TODO: re-enable custom models when they are actually used
                 // Load weblog custom models
-                ModelLoader.loadCustomModels(weblog, model, initData);
+                //ModelLoader.loadCustomModels(weblog, model, initData);
                 
                 
                 // lookup Renderer we are going to use
                 Renderer renderer = null;
-                log.debug("Looking up renderer");
                 Template template = new StaticTemplate("templates/feeds/weblog-"+type+"-"+format+".vm", null, "velocity");
                 renderer = RendererManager.getRenderer(template);
                 
                 
                 // render content.  use default size of about 24K for a standard page
                 CachedContent rendererOutput = new CachedContent(24567);
-                log.debug("Doing rendering");
                 renderer.render(model, rendererOutput.getCachedWriter());
                 
                 
@@ -156,9 +157,14 @@ public class WeblogCacheWarmupJob implements Job {
                 
             } catch(Exception e) {
                 // bummer, error during rendering
-                log.error("Error rendering for weblog "+weblog.getHandle(), e);
+                log.error("Error rendering for weblog "+weblogHandle, e);
             }
         }
+        
+        long end = System.currentTimeMillis();
+        long time = (end-start)*1000;
+        
+        log.info("Completed warmup for "+type+"/"+format+" in "+time+" secs.");
         
     }
     
