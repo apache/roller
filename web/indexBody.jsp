@@ -20,9 +20,9 @@
 try {
     Roller roller = RollerFactory.getRoller();
     pageContext.setAttribute("userCount", 
-        roller.getUserManager().getUsers(0,-1).size()); 
+        new Integer(roller.getUserManager().getUsers(0,-1).size())); 
     pageContext.setAttribute("blogCount", 
-        roller.getUserManager().getWebsites(null, null, null, null, null, 0, -1).size());
+        new Integer(roller.getUserManager().getWebsites(null, null, null, null, null, 0, -1).size()));
     pageContext.setAttribute("setupError", Boolean.FALSE);
 } catch (Throwable t) {
     pageContext.setAttribute("setupError", Boolean.TRUE);
