@@ -66,9 +66,9 @@
        <b>$text.get( "macro.referer.furtherReading" )</b></p>
        <ul>
        #foreach( $ref in $refs )
-          #set( $url = $utils.escapeHTML( $ref.getUrl() ) )
+          #set( $linkbackurl = $utils.escapeHTML( $ref.getUrl() ) )
           <li> $pageHelper.getToggleLinkbackDisplayHTML($ref)
-             <a class="linkback" href="$url">$ref.getTitle()</a>
+             <a class="linkback" href="$linkbackurl">$ref.getTitle()</a>
           #if( $ref.getVisible() )
              : $utils.removeHTML( $ref.getExcerpt() )
           #end
@@ -89,9 +89,9 @@
         #if ( $refs.size() > 0)
            <ul class="linkbacks">
            #foreach( $ref in $refs )
-              #set( $url = $utilities.escapeHTML( $ref.getUrl() ) )
+              #set( $linkbackurl = $utilities.escapeHTML( $ref.getUrl() ) )
               <li class="linkbacks"> $pageHelper.getToggleLinkbackDisplayHTML($ref)
-                 <a class="linkback" href="$url">$ref.getTitle()</a> : $utilities.removeHTML( $ref.getExcerpt() )
+                 <a class="linkback" href="$linkbackurl">$ref.getTitle()</a> : $utilities.removeHTML( $ref.getExcerpt() )
               </li>
            #end
            </ul>
