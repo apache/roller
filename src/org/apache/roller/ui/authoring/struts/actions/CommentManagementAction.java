@@ -128,7 +128,14 @@ public final class CommentManagementAction extends DispatchAction {
         }        
         else if (rreq.getWebsite() != null) {
             queryForm.setWeblog(rreq.getWebsite().getHandle());
-        }    
+        } 
+        else {
+            // user needs Global Admin rights to access site-wide comments
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if (!rses.isGlobalAdminUser()) {
+                return mapping.findForward("access-denied");
+            }
+        }
         RollerSession rses = RollerSession.getRollerSession(request);
         try {
             if (rses.isGlobalAdminUser() 
