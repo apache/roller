@@ -134,22 +134,22 @@ public class URLModel implements Model {
     }
         
     public String getHome() {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, -1, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, -1, true);
     }
     
     
     public String home(int pageNum) {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, pageNum, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, pageNum, true);
     }
     
     
     public String home(String customLocale) {
-        return URLUtilities.getWeblogCollectionURL(weblog, customLocale, null, null, -1, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, customLocale, null, null, -1, true);
     }
     
     
     public String home(String customLocale, int pageNum) {
-        return URLUtilities.getWeblogCollectionURL(weblog, customLocale, null, null, pageNum, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, customLocale, null, null, pageNum, true);
     }
     
     
@@ -173,32 +173,32 @@ public class URLModel implements Model {
 
     
     public String date(String dateString) {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, dateString, -1, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, dateString, -1, true);
     }
     
     
     public String date(String dateString, int pageNum) {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, dateString, pageNum, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, dateString, pageNum, true);
     }
     
     
     public String category(String catPath) {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, null, -1, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, null, -1, true);
     }
     
     
     public String category(String catPath, int pageNum) {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, null, pageNum, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, null, pageNum, true);
     }
     
     
     public String collection(String dateString, String catPath) {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, dateString, -1, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, dateString, -1, true);
     }
     
     
     public String collection(String dateString, String catPath, int pageNum) {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, dateString, pageNum, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, dateString, pageNum, true);
     }
     
     
@@ -218,17 +218,17 @@ public class URLModel implements Model {
     
     
     public String page(String pageLink) {
-        return URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, null, null, -1, false);
+        return URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, null, null, -1, true);
     }
     
     
     public String page(String pageLink, String dateString, String catPath, int pageNum) {
-        return URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, catPath, dateString, pageNum, false);
+        return URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, catPath, dateString, pageNum, true);
     }
     
     
     public String resource(String filePath) {
-        return URLUtilities.getWeblogResourceURL(weblog, filePath, false);
+        return URLUtilities.getWeblogResourceURL(weblog, filePath, true);
     }
     
     
