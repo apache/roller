@@ -16,7 +16,6 @@
   directory of this distribution.
 --%><%@ 
 page import="org.apache.roller.config.RollerRuntimeConfig" %><%
-
 // lets see if we have a frontpage blog
 String frontpageBlog =
         RollerRuntimeConfig.getProperty("site.frontpage.weblog.handle");
@@ -29,47 +28,16 @@ if(frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
     return;
 }
 
+// otherwise, show the "Here's how to finish your Roller install page"
+
 %><% response.setContentType("text/html; charset=UTF-8"); %><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ include file="/taglibs.jsp" %>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title>Welcome to Roller!</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-</head>
-<body>
-    
-<div id="wrapper">
-    <div id="leftcontent_wrap">
-        <div id="leftcontent"> 
-        </div>
-    </div>
-    
-    <div id="centercontent_wrap">
-        <div id="centercontent"> 
-            <h2>Welcome to Roller!</h2>
-        
-            <b>Installation needs:</b>
-            <ul>
-                <li>Register the first user account on the <a href="<c:url value="/roller-ui/user.do?method=registerUser"/>">registration page</a>.</li>
-                <li>Login with your new account and <a href="<c:url value="/roller-ui/createWebsite.do?method=create"/>">create a weblog</a></li>
-                <li>Use the admin config page to <a href="<c:url value="/roller-ui/admin/rollerConfig.do?method=edit"/>">set the frontpage blog</a></li>
-            </ul>
-        </div>
-    </div>
-    
-    <div id="rightcontent_wrap">
-        <div id="rightcontent"> 
-        </div>
-    </div>
- 
-</div>
-
-<div id="footer">
-</div> 
-        
-<div id="datetagdiv" 
-   style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
-</div>
-
-</body>
-</html>
+<tiles:insert page="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
+   <tiles:put name="banner"       value="/WEB-INF/jsps/tiles/banner.jsp" />
+   <tiles:put name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+   <tiles:put name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+   <tiles:put name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+   <tiles:put name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+   <tiles:put name="content"      value="/indexBody.jsp" />
+   <tiles:put name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+</tiles:insert>
