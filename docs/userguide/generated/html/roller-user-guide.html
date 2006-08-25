@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20051209;11500200">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060822;15114000">
+	<META NAME="CHANGED" CONTENT="20060825;12065200">
 	<META NAME="SDFOOTNOTE" CONTENT=";;;;P">
 	<META NAME="SDENDNOTE" CONTENT="ARABIC">
 	<STYLE>
@@ -38,13 +38,19 @@
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 40pt"><B>User
 		Guide</B></FONT></P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT COLOR="#ff0000"><FONT SIZE=7 STYLE="font-size: 40pt"><B>DRAFT
-		#20060822</B></FONT></FONT></P>
+		#20060825</B></FONT></FONT></P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
 		</P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 32pt"><B>Apache
 		Roller</B></FONT></P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=5 STYLE="font-size: 20pt"><B>Version
 		3.0 (incubating)</B></FONT></P>
+		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
+		</P>
+		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
+		</P>
+		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
+		</P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
 		</P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
@@ -874,44 +880,54 @@
 		possible because Roller supports the standard Blogger and
 		MetaWeblog APIs. 
 		</P>
+		<P CLASS="western"><BR><BR>
+		</P>
 		<P CLASS="western"><B>Configuring a blog client for use with Roller</B></P>
 		<P CLASS="western">First, make sure to enable Blogger API support
 		in your weblog via the <B>Preferences:Settings</B> page. Next,
 		start your blogging client, find the preferences or account setup
 		dialog. You'll need to set the following parameters:</P>
-		<P CLASS="western">	Username: your Roller username</P>
-		<P CLASS="western">	Password: your Roller password</P>
-		<P CLASS="western">	BlogID: the handle of your Roller weblog</P>
-		<P CLASS="western">	URL: the URL of Roller's XML-RPC endpoint</P>
+		<P CLASS="western">	<B>Username</B>: 	your Roller username</P>
+		<P CLASS="western">	<B>Password</B>: 	your Roller password</P>
+		<P CLASS="western">	<B>BlogID</B>: 	the handle of your Roller
+		weblog</P>
+		<P CLASS="western">	<B>URL</B>:		the URL of Roller's XML-RPC
+		endpoint</P>
 		<P CLASS="western" STYLE="font-weight: medium">Note that you may
 		not need to enter your BlogID because some blog clients will login
 		to Roller and then present you with a list of the weblogs that are
 		available to your user. 
 		</P>
+		<P CLASS="western" STYLE="font-weight: medium"><BR><BR>
+		</P>
 		<P CLASS="western"><B>A blogs.sun.com example</B></P>
 		<P CLASS="western">For example, if you have an account on
 		blogs.sun.com, your username is fred and your blog's handle is
 		fredsblog (i.e. your weblog's URL is
-		<I>http://blogs.sun.com/roller/fredsblog</I>), then your paramters
-		would be:</P>
-		<P CLASS="western">	Username: fred</P>
-		<P CLASS="western">	Password: (your password)</P>
-		<P CLASS="western">	BlogID: fredsblog</P>
-		<P CLASS="western">	URL: http://blogs.sun.com/roller/xmlrpc 
+		<I>http://blogs.sun.com/fredsblog</I>), then your paramrters would
+		be:</P>
+		<P CLASS="western">	<B>Username</B>: 	fred</P>
+		<P CLASS="western">	<B>Password</B>: 	(your password)</P>
+		<P CLASS="western">	<B>BlogID</B>: 	fredsblog</P>
+		<P CLASS="western"><A NAME="DDE_LINK1"></A>	<B>URL</B>:
+				http://blogs.sun.com/roller-services/xmlrpc 
 		</P>
 		<P CLASS="western">You may not need to enter your BlogID because
 		some blog clients will login to Roller and then present you with a
 		list of the weblogs that are available to your user. 
+		</P>
+		<P CLASS="western"><BR><BR>
 		</P>
 		<P CLASS="western"><B>A jroller.com example</B></P>
 		<P CLASS="western">If you have an account on jroller.com, your
 		username is fred and your blog's handle is fredsblog (i.e. your
 		weblog's URL is <I>http://jroller.com/fredsblog</I>), then your
 		paramters would be:</P>
-		<P CLASS="western">	Username: fred</P>
-		<P CLASS="western">	Password: (your password)</P>
-		<P CLASS="western">	BlogID: fredsblog</P>
-		<P CLASS="western">            URL: http://jroller.com/xmlrpc 
+		<P CLASS="western">	<B>Username</B>: 	fred</P>
+		<P CLASS="western">	<B>Password</B>: 	(your password)</P>
+		<P CLASS="western">	<B>BlogID</B>: 	fredsblog</P>
+		<P CLASS="western">            <B>URL</B>:
+				http://jroller.com/roller-services/xmlrpc 
 		</P>
 		<P CLASS="western"><BR><BR>
 		</P>
@@ -1328,23 +1344,6 @@
 			you. To thwart spammers, your email address will be obfuscated
 			when displayed on your blog. Please enter a valid address,
 			otherwise Roller's email features will not work.</FONT></P>
-			<LI><P CLASS="western"><FONT SIZE=2><B>Locale</B>: Choose the
-			language and country for this weblog.  (Which is used how?)  (See
-			section x.x for setting the locale for your user account.)</FONT></P>
-			<LI><P CLASS="western"><FONT SIZE=2><B>Timezone</B>: Choose  the
-			timezone for this weblog.  (Which is used when displaying
-			entries?)</FONT></P>
-		</UL>
-		<UL>
-			<LI><P CLASS="western"><FONT SIZE=2><B>Default from address</B>:
-			Enter the email address that should be used as the <I>from address</I>
-			for emails sent by Roller.  (Removed from Roller 2.1?)</FONT></P>
-		</UL>
-		<UL>
-			<LI><P CLASS="western"><FONT SIZE=2><B>Page to be used as the
-			homepage</B> - Choose a page template to be used as the main page
-			of your weblog.  (Removed from Roller 2.1?)</FONT></P>
-			<LI><P CLASS="western"><FONT SIZE=2>Weblog is active</FONT></P>
 		</UL>
 		<UL>
 			<LI><P CLASS="western"><FONT SIZE=2><B>Weblog editor page to be
@@ -1363,6 +1362,13 @@
 		<P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 		</P>
 		<UL>
+			<LI><P CLASS="western"><FONT SIZE=2><B>Weblog is active: </B><SPAN STYLE="font-weight: medium">un-check
+			this box to indicate that your weblog is no longer active and
+			should not appear in hot-blog and other weblog  listing on the
+			site. You might want to do this if you take a very long vacation
+			or if you have decided  to stop updating  your weblog for some
+			other reason. </SPAN></FONT>
+			</P>
 			<LI><P CLASS="western"><FONT SIZE=2><B>Number of entries to
 			display on weblog</B>: Enter the maximum number of entries to be
 			displayed on your weblog.</FONT></P>
@@ -1412,19 +1418,18 @@
 			Choose the default amount of time to allow comments for new blog
 			entries.  This setting may also be overridden using the Comment
 			Settings section of the New Entry page.</SPAN></FONT></P>
-			<LI><P CLASS="western" STYLE="font-weight: medium"><FONT SIZE=2><B>Apply
+			<LI><P CLASS="western"><SPAN STYLE="font-weight: medium"><FONT SIZE=2><B>Apply
 			comment defaults to all existing entries? </B>- If you check this
 			box, when you click the Save button the comment defaults you have
-			set will be applied to all existing comments.</FONT></P>
+			set will be applied to all existing comments.</FONT></SPAN></P>
 		</UL>
 		<P CLASS="western" STYLE="font-weight: medium"><BR><BR>
 		</P>
-		<P CLASS="western"><BR><BR>
+		<P CLASS="western" STYLE="font-weight: medium"><BR><BR>
 		</P>
-		<P CLASS="western"><BR><BR>
-		</P>
-		<P CLASS="western" STYLE="font-weight: medium">Settings on the
-		weblog <B>Preferences:Settings</B> page (continued):</P>
+		<P CLASS="western" STYLE="font-weight: medium; page-break-before: always">
+		Settings on the weblog <B>Preferences:Settings</B> page
+		(continued):</P>
 		<P CLASS="western"><B>Weblog client API</B> 
 		</P>
 		<UL>
@@ -2069,63 +2074,67 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P CLASS=
 				</P>
 				<P CLASS="western"> 
 				</P>
-				<P CLASS="western"><SPAN ID="Frame29" DIR="LTR" STYLE="float: left; width: 6.44in; height: 2.3in; border: none; padding: 0in; background: #ffffff">
-					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_m4fe3f61b.png" NAME="graphics20" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
+				<P CLASS="western"><SPAN ID="Frame29" DIR="LTR" STYLE="float: left; width: 6.87in; height: 3.21in; border: none; padding: 0in; background: #ffffff">
+					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_e709bea.png" NAME="graphics20" ALIGN=LEFT WIDTH=660 HEIGHT=282 BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
 					26: Config page: site settings</I></FONT></P>
 				</SPAN><BR CLEAR=LEFT><BR><BR>
 				</P>
 				<UL>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Site name</B>:
-					name of the site, to be included in site-wide newsfeeds (RSS and
-					Atom) and on the default front page of the Roller.</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Short name</B>:
-					short name of the site, to be included as the link in the banner
-					that appears at the top of every page in the Roller editor/admin
-					UI.</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Site
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Site
+					name</B>: name of the site, to be included in site-wide
+					newsfeeds (RSS and Atom) and on the default front page of the
+					Roller.</P>
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Short
+					name</B>: short name of the site, to be included as the link in
+					the banner that appears at the top of every page in the Roller
+					editor/admin UI.</P>
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Site
 					description</B>: description of site, to be included in
 					site-wide newsfeeds (RSS and Atom) and on the default front page
 					of the site.</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Site
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Site
 					Administrator's email Address</B>: admin's email address, to be
 					include in side-side newsfeeds (RSS and Atom)</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Absolute
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Handle
+					of weblog to serve as frontpage blog</B>: specify the weblog
+					that is to be displayed as the frontpage fo this Roller site.</P>
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Enable
+					aggregated frontpage feeds</B>: Set this to true if you would
+					like the frontpage weblog's RSS and Atom feeds to be an
+					aggregation of all weblogs on the Roller site.</P>
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Absolute
 					URL to this site</B>: to be used as basis for creating absolute
 					URLs. Required for Roller's Planet aggregator feature.</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Suspend all
-					ping processing</B>: Allows you to turn off all (outgoing)
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Suspend
+					all ping processing</B>: Allows you to turn off all (outgoing)
 					weblogs pings for all weblogs in the system.</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Enable
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Enable
 					debug mode</B>: currently not used.</P>
 					<P CLASS="western"></P>
 				</UL>
-				<P CLASS="western"><SPAN ID="Frame30" DIR="LTR" STYLE="float: left; width: 6.49in; height: 1.86in; border: none; padding: 0in; background: #ffffff">
-					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_m3a18f583.png" NAME="graphics23" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-					27: Config page: user settings</I></FONT></P>
-				</SPAN><BR CLEAR=LEFT> 
+				<P CLASS="western" STYLE="page-break-before: always"><BR><BR>
+				</P>
+				<P CLASS="western"><SPAN ID="Frame37" DIR="LTR" STYLE="float: left; width: 6.33in; height: 2.4in; border: none; padding: 0in; background: #ffffff">
+					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_6aedbe24.png" NAME="graphics39" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
+					27: Config: comments</I></FONT></P>
+				</SPAN><BR CLEAR=LEFT><BR><BR>
 				</P>
 				<UL>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Allow New
-					Users</B>: Set this to enable the <I>register as new user</I>
-					link on the main page. If you turnoff user creation, you'll only
-					be able to create new users via the <B>Global Admin-&gt;User
-					Admin</B> page.</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>External
+					<LI><P CLASS="western"><B>Allow New Users</B>: Set this to
+					enable the <I>register as new user</I> link on the main page. If
+					you turnoff user creation, you'll only be able to create new
+					users via the <B>Global Admin-&gt;User Admin</B> page.</P>
+				</UL>
+				<UL>
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>External
 					registration URL</B>: Controls the URL of Roller's &ldquo;Register
 					as new users&rdquo; link. If you use an external system to
 					create Roller users and blogs, set the URL of that system here. 
 					</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Editor
-					pages</B>: this is the list of weblog editors to be provided to
-					users.</P>
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Editor
+					pages: this is the list of weblog editors to be provided to
+					users.</B></P>
 				</UL>
-				<P CLASS="western"><BR><BR>
-				</P>
-				<P CLASS="western"><SPAN ID="Frame37" DIR="LTR" STYLE="float: left; width: 6.33in; height: 2.4in; border: none; padding: 0in; background: #ffffff">
-					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_6aedbe24.png" NAME="graphics39" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-					28: Config: comments</I></FONT></P>
-				</SPAN><BR CLEAR=LEFT><BR><BR>
-				</P>
 				<UL>
 					<LI><P CLASS="western"><B>Allow weblog comments</B>: By
 					un-setting this  you can turn off weblog comments on all weblogs
@@ -2154,6 +2163,27 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P CLASS=
 				</UL>
 				<P CLASS="western"><BR><BR>
 				</P>
+				<P CLASS="western" STYLE="page-break-before: always"><SPAN ID="Frame17" DIR="LTR" STYLE="float: left; width: 6.72in; height: 1.5in; border: none; padding: 0in; background: #ffffff">
+					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_6e65aee4.png" NAME="graphics22" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
+					28: Newsfeed settings</I></FONT></P>
+				</SPAN><BR CLEAR=LEFT><BR><BR>
+				</P>
+				<P CLASS="western" STYLE="margin-bottom: 0.08in"><BR><BR>
+				</P>
+				<UL>
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Default
+					number of entries</B>: default number of entries to appear in
+					each newsfeed (RSS and Atom).</P>
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Maximum
+					number of entries</B>: maximum number of entries to be allowed
+					in each newsfeed (RSS and Atom).</P>
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Display
+					styled newsfeeds for browsers</B>: Set to true to enable
+					user-friendly RSS and Atom feed display, so that users don't see
+					raw XML when they load the feed in their browsers.</P>
+				</UL>
+				<P CLASS="western"><BR><BR>
+				</P>
 				<P CLASS="western"><SPAN ID="Frame31" DIR="LTR" STYLE="float: left; width: 6.38in; height: 1.94in; border: none; padding: 0in; background: #ffffff">
 					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_m5eead6e8.png" NAME="graphics24" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
 					29: Config page: file upload settings</I></FONT></P>
@@ -2162,40 +2192,27 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P CLASS=
 				<P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 				</P>
 				<UL>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Enable File
-					Uploads</B>: Are users allowed to upload files? 
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Enable
+					File Uploads</B>: Are users allowed to upload files? 
 					</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Allowed
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Allowed
 					Extensions</B>: Comma-separated list of file extensions that
 					users are allowed to upload. 
 					</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Forbidden
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Forbidden
 					Extensions</B>: Comma-separated list of file extensions that
 					users are NOT allowed to upload. 
 					</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Max File
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Max File
 					Size (MB)</B>: Maximum size of file that users are allowed to
 					upload. 
 					</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Max
+					<LI><P CLASS="western" STYLE="margin-bottom: 0.08in"><B>Max
 					Directory Size (MB)</B>: Total upload directory size per user. 
 					</P>
-					<P CLASS="western" STYLE="margin-bottom: 0in"></P>
 				</UL>
-				<P CLASS="western"> 
-				</P>
-				<P CLASS="western"><SPAN ID="Frame32" DIR="LTR" STYLE="float: left; width: 6.43in; height: 1.2in; border: none; padding: 0in; background: #ffffff">
-					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_m6046b9c9.png" NAME="graphics25" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-					30: Config  page: newsfeed settings</I></FONT></P>
-				</SPAN><BR CLEAR=LEFT><BR><BR>
-				</P>
 				<UL>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Default
-					number of entries</B>: default number of entries to appear in
-					each newsfeed (RSS and Atom).</P>
-					<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>Maximum
-					number of entries</B>: maximum number of entries to be allowed
-					in each newsfeed (RSS and Atom).</P>
+					<P CLASS="western" STYLE="margin-bottom: 0in"></P>
 				</UL>
 				<H1 CLASS="western" STYLE="page-break-before: always">9 - Weblog
 				update ping administration</H1>
@@ -2211,7 +2228,7 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P CLASS=
 				</P>
 				<P CLASS="western"><SPAN ID="Frame33" DIR="LTR" STYLE="float: left; width: 6.39in; height: 3.53in; border: none; padding: 0in; background: #ffffff">
 					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_mf310db2.png" NAME="graphics28" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-					31: Common weblog  ping  targets</I></FONT></P>
+					30: Common weblog  ping  targets</I></FONT></P>
 				</SPAN><BR CLEAR=LEFT><BR><BR>
 				</P>
 				<P CLASS="western">You can create and edit common ping in the
@@ -2462,7 +2479,7 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P CLASS=
 				Admin-&gt;Configuration</B> page, shown below.</P>
 				<P CLASS="western"><SPAN ID="Frame34" DIR="LTR" STYLE="float: left; width: 6.48in; height: 3.71in; border: none; padding: 0in; background: #ffffff">
 					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_62ac32cd.png" NAME="graphics36" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-					32: Planet config  page</I></FONT></P>
+					31: Planet config  page</I></FONT></P>
 				</SPAN><BR CLEAR=LEFT><BR><BR>
 				</P>
 				<P CLASS="western"><A NAME="section-AdministrationGuide_120-ToConfigurePlanetRollerYouMust"></A>
@@ -2528,7 +2545,7 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P CLASS=
 				Admin-&gt;Subscriptions</B> page, shown below.</P>
 				<P CLASS="western"><SPAN ID="Frame35" DIR="LTR" STYLE="float: left; width: 5.65in; height: 4.39in; border: none; padding: 0in; background: #ffffff">
 					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_4879cc9c.png" NAME="graphics38" ALIGN=LEFT WIDTH=97% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-					33: Planet subscriptions page</I></FONT></P>
+					32: Planet subscriptions page</I></FONT></P>
 				</SPAN><BR CLEAR=LEFT><BR><BR>
 				</P>
 				<P CLASS="western" STYLE="margin-bottom: 0in"><B>Adding an
@@ -2572,7 +2589,7 @@ You are invited to join weblog [dotSunNews] -  accept  |  decline</PRE><P CLASS=
 				<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium">
 				<SPAN ID="Frame38" DIR="LTR" STYLE="float: left; width: 6.39in; height: 4.27in; border: none; padding: 0in; background: #ffffff">
 					<P STYLE="margin-top: 0.08in"><IMG SRC="roller-user-guide_html_m5327a1d1.png" NAME="graphics41" ALIGN=LEFT WIDTH=100% BORDER=0><BR CLEAR=LEFT><FONT SIZE=2><I>Illustration
-					34: Planet custom groups page</I></FONT></P>
+					33: Planet custom groups page</I></FONT></P>
 				</SPAN><BR CLEAR=LEFT><BR>
 				</P>
 				<P CLASS="western"><B>To create a custom group</B></P>
