@@ -101,7 +101,7 @@ div.entry {
     padding: 15px;
 }
 #recentEntries{
-    padding: 10px;
+    padding: 5px;
 }
 
 
@@ -120,10 +120,6 @@ div.entry h2 {
     font-size:12px;
 }
 
-div.entry p {
-    margin:0px;
-}
-
 div.entries div.pagingcontrols {
     margin-top:20px;
     text-align:right;
@@ -131,11 +127,6 @@ div.entries div.pagingcontrols {
 
 div.entriesBoxInner {
    padding: 5px;
-}
-div.entryTitleBox {
-   padding: 4px;
-   margin: 4px 0px 4px 0px;
-   font-size: medium;
 }
 div.entriesBox {
    font-family: Arial, Helvetica, sans-serif;
@@ -149,15 +140,23 @@ div.entryBoxPinned {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     text-decoration: none;
+    font-size:130%;
+    margin:0px;
+    padding:0px;
 }
 .entryDetails {
     font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
+    color: #777;
+    font-size:80%;
+    margin:0px;
+    padding:0px;
 }
 .entryDescription {
     font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
 }
+
 span.hotBlogs, a.hotBlogs, a:active.hotBlogs, a:visited.hotBlogs, ul.hotBlogs {
    font-size: small;
    padding-left: 0px;

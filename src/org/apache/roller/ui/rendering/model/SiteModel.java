@@ -37,8 +37,10 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.UserDataWrapper;
+import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.ui.rendering.pagers.Pager;
@@ -444,6 +446,27 @@ public class SiteModel implements Model {
                     null, startDate, new Date(), 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching commented weblog entries list", e);
+        }
+        return results;
+    }
+    
+    /**
+     * Get pinned entries.
+     * @param sinceDays Only consider weblogs updated in the last sinceDays
+     * @param length    Max number of results to return
+     */
+    public List getPinnedWeblogEntries(int length) {
+        List results = new ArrayList();
+        try {            
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            List weblogs = wmgr.getWeblogEntriesPinnedToMain(new Integer(length));
+            for (Iterator it = weblogs.iterator(); it.hasNext();) {
+                WeblogEntryData entry = (WeblogEntryData) it.next();
+                results.add(WeblogEntryDataWrapper.wrap(entry));
+            }
+        } catch (Exception e) {
+            log.error("ERROR: fetching pinned weblog entries", e);
         }
         return results;
     }
