@@ -197,7 +197,7 @@ public class RollerSession
     private boolean hasPermissions(WebsiteData website, short mask) 
     {
         UserData user = getAuthenticatedUser();
-        if (user != null) 
+        if (website != null && user != null) 
         {
             return website.hasUserPermissions(user, mask);
         }
