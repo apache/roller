@@ -47,13 +47,36 @@
                         #set($startDate = $pager.items.get(0).pubTime)
                         #set($endDate = $entries.get($entryCount).pubTime)
                     #end
+                    
+                    #if(!$pager.nextLink)
+                        #set($pinnedEntries = $site.getPinnedWeblogEntries(5))
+                        #foreach($pinnedEntry in $pinnedEntries)
+                            <div class="entry">
+                                <a class="entryTitle" href="$utils.escapeHTML($pinnedEntry.permalink)">
+                                    $utils.truncateNicely($utils.removeHTML($pinnedEntry.title), 50, 50, "...")
+                                </a><br /> 
+                                <p class="entryDetails">
+                                    <a href="$utils.escapeHTML($pinnedEntry.website.URL)">$pinnedEntry.website.name</a>
+                                    #if($pinnedEntry.category.name)| $pinnedEntry.category.name #end
+                                    #if($pinnedEntry.pubTime) | $utils.formatDate($pinnedEntry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
+                                    #if($pinnedEntry.creator.userName)| By $pinnedEntry.creator.userName #end
+                                    <br/> 
+                                </p>
+                                <p class="entryDescription">                    
+                                    $pinnedEntry.displayContent
+                                </p>
+                            </div>
+                        #end
+                    #end                    
+
                     #foreach($entry in $pager.items)
                         #if($velocityCount < $maxResults)
 
                             <div class="entry">
+                                <a class="entryTitle" href="$utils.escapeHTML($entry.permalink)">
+                                    $utils.truncateNicely($utils.removeHTML($entry.title), 50, 50, "...")
+                                </a><br /> 
                                 <p class="entryDetails">
-                                    <a href="$utils.escapeHTML($entry.permalink)">
-                                    <b>$utils.truncateNicely($utils.removeHTML($entry.title), 50, 50, "...")</b></a><br /> 
                                     <a href="$utils.escapeHTML($entry.website.URL)">$entry.website.name</a>
                                     #if($entry.category.name)| $entry.category.name #end
                                     #if($entry.pubTime) | $utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end

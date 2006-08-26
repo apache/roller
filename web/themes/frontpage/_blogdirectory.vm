@@ -1,75 +1,76 @@
-#includeTemplate($model.weblog "_header")
+#if($model.getRequestParameter("letter"))
+        #set($chosenLetter = $model.getRequestParameter("letter"))
+    #end
 
-#set($maxResults = 25) 
-#set($since = 365) 
+    #set($weblogLetterMap = $site.getWeblogHandleLetterMap())
+    <div class="letterMap">
+    <p>
+    #set($firstLetterDone = 0)
+    #foreach($letter in $weblogLetterMap.keySet())
+        #if($firstLetterDone == 1) - #end
+        #set($firstLetterDone = 1)
+        #set($letterCount = $weblogLetterMap.get($letter))
+        #if($letter == $chosenLetter)<span style="font-size:120%; font-weight:bold">#end
+        #if($letterCount > 0)
+           <a href="?letter=$letter" title="$letterCount weblogs">$letter</a>         
+        #else
+           $letter
+        #end
+        #if($letter == $chosenLetter)</span>#end
+    #end
+    </p>
+    </div>
 
-    <div id="centercontent_wrap">
-        <div id="centercontent">  
-            <h1>$config.siteName</h1>
-            <p class="subtitle">$config.siteDescription</p> 
+    #if($chosenLetter)
+       <h2 class="pageTitle">Weblogs starting with $chosenLetter</h2>
+    #else
+       <h2 class="pageTitle">All weblogs</h2>
+    #end
 
-            <table class="menuTabTable" cellspacing="0"><tbody><tr>
-               <td class="menuTabUnselected">
-                  <div class="menu-tr">
-                     <div class="menu-tl">
-                        &nbsp;&nbsp;<a href="$url.home">Recent Entries</a>&nbsp;&nbsp; 
-                     </div>
-                  </div>
-               </td>	
-               <td class="menuTabSeparator"></td>
-               <td class="menuTabSelected">
-                  <div class="menu-tr">
-                     <div class="menu-tl">
-                        &nbsp;&nbsp;<a href='$url.page("directory")'>Weblog Directory</a>&nbsp;&nbsp; 
-                     </div>
-                  </div>
-               </td>	    
-               <td class="menuTabSeparator"></td>
-            </tr></tbody></table>
-            <table class="menuItemTable" cellspacing="0"><tbody><tr>
-            <td class="padleft"></td></tr></tbody></table>
+    #set($weblogsPager = $site.getWeblogsByLetterPager($chosenLetter, -1, $pageLength))
+    <table class="blogdirectory data">
+        <thead>
+            <tr>
+               <th scope="col" class="name">Blog Name</th>
+               <th scope="col" class="description">Description</th>
+            </tr>
+        </thead>
+       <tbody>
+          #foreach($loopblog in $weblogsPager.items)
+           <tr>
+              <th scope="row" class="name"><a href="$url.absoluteSite/$loopblog.handle">$loopblog.handle</a></th>
+              <td class="description">$loopblog.name</td>
+           </tr>
+          #end 
+       </tbody>
+        <tfoot>
+           <tr class="pagingcontrols">
+             <td class="pagingtext"></td>
+             <td class="paginglinks">
 
-            <div id="tabContent">
-                <div id="directory">
-                #if($model.getRequestParameter("weblog"))
-                    #set($handle = $model.getRequestParameter("weblog"))
-                    <a href="?letter=$utils.left($handle,1)">Back to blog directory</a>
-                    #set($profileWeblog = $site.getWeblog($handle))
-                    #includeTemplate($model.weblog "_blogprofile")
-                #else                 
-                   #set($pageLength = $maxResults)
-                   #includeTemplate($model.weblog "_blogdirectory")
+             #if($chosenLetter)
+                #if($weblogsPager.prevLink)
+                   <a href="$weblogsPager.prevLink">&lt;$weblogsPager.prevName</a>
                 #end
-                </div>
-            </div>
+                #if($weblogsPager.nextLink && $weblogsPager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($weblogsPager.nextLink)
+                   <a href="$weblogsPager.nextLink">$weblogsPager.nextName &gt;</a>
+                #end
+            #else
+                #if($weblogsPager.prevLink)
+                   <a href="$weblogsPager.prevLink">&lt;$weblogsPager.prevName</a>
+                #end
+                #if($weblogsPager.nextLink && $weblogsPager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($weblogsPager.nextLink)
+                   <a href="$weblogsPager.nextLink">$weblogsPager.nextName &gt;</a>
+                #end
+            #end
 
-        </div>
-    </div>
-
-    <div id="rightcontent_wrap">
-        <div id="rightcontent"> 
-
-            <div class="sidebarBodyHead">
-                <div class="menu-tr">
-                    <div class="menu-tl">
-                       <h3>New blogs</h3>		
-                    </div>
-                </div>
-            </div>	
-
-            <div class="sidebarBody">  
-               #set($newblogs = $site.getNewWeblogs($since, $maxResults))
-               <ul>
-               #foreach($blog in $newblogs)
-                  <li>$blog.name (<a href="?weblog=$blog.handle" title="$blog.dateCreated">$blog.handle</a>)</li>
-               #end
-               </ul>	
-            </div>
-
-        </div>
-    </div>
-</div>
-
-</div>
-</div>
-#includeTemplate($model.weblog "_footer")
+             </td>
+          </tr>
+       </tfoot>
+    </table> 
