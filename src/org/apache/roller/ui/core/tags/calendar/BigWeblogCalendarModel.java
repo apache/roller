@@ -48,21 +48,11 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             new SimpleDateFormat("dd");
     
     
-    /**
-     * @param rreq
-     * @param res
-     * @param url
-     * @param cat
-     */
     public BigWeblogCalendarModel(WeblogPageRequest pRequest, String cat) {
         super(pRequest, cat);
     }
     
-
-    /**
-     * @param startDate
-     * @param endDate
-     */
+    
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
@@ -81,9 +71,6 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     }
     
     
-    /**
-     * @see org.apache.roller.presentation.tags.calendar.CalendarModel#getContent(Date, boolean)
-     */
     public String getContent(Date day) {
         String content = null;
         try {
@@ -145,21 +132,19 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         return content;
     }
     
-    /** 
+    /**
      * Create URL for use on view-weblog page
      * @param day       Day for URL or null if no entries on that day
      * @param alwaysURL Always return a URL, never return null
      * @return          URL for day, or null if no weblog entry on that day
      */
-    public String computeUrl(Date day, boolean monthURL, boolean alwaysURL)
-    {
+    public String computeUrl(Date day, boolean monthURL, boolean alwaysURL) {
         String url = null;
-        // get the 8 char YYYYMMDD datestring for day, returns null 
+        // get the 8 char YYYYMMDD datestring for day, returns null
         // if no weblog entry on that day
         String dateString = null;
         List entries = (List)monthMap.get( day );
-        if ( entries != null && day != null )
-        {
+        if ( entries != null && day != null ) {
             WeblogEntryData entry = (WeblogEntryData)entries.get(0);
             dateString = mStarDateFormat.format(entry.getPubTime());
         }
@@ -179,5 +164,5 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             mLogger.error("ERROR: creating URL",e);
         }
         return url;
-    } 
+    }
 }
