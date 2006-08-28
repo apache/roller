@@ -86,7 +86,7 @@ public class WeblogCalendarModel implements CalendarModel {
     }
 
     
-    private void initDay(Date month) {
+    protected void initDay(Date month) {
         this.day = day;        
         calendar = Calendar.getInstance(
                 weblog.getTimeZoneInstance(),
@@ -111,7 +111,7 @@ public class WeblogCalendarModel implements CalendarModel {
         cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
         Date endDate = cal.getTime();
         
-        loadWeblogEntries(startDate, endDate);
+        loadWeblogEntries(startDate, endDate, cat);
     }
     
     
@@ -119,14 +119,14 @@ public class WeblogCalendarModel implements CalendarModel {
      * @param startDate
      * @param endDate
      */
-    protected void loadWeblogEntries(Date startDate, Date endDate) {
+    protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
             monthMap = mgr.getWeblogEntryStringMap(
                     weblog,                  // website
                     startDate,                 // startDate
                     endDate,                   // endDate
-                    cat,                   // cat
+                    catName,                   // cat
                     WeblogEntryData.PUBLISHED, // status
                     locale,
                     0, -1);
