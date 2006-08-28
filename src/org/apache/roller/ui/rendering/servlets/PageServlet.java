@@ -397,6 +397,7 @@ public class PageServlet extends HttpServlet {
         
         // flush rendered content to response
         log.debug("Flushing response output");
+        response.setContentType(contentType);
         response.setContentLength(rendererOutput.getContent().length);
         response.getOutputStream().write(rendererOutput.getContent());
         
