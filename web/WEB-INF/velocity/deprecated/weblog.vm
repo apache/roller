@@ -286,7 +286,7 @@
     <a href="$url.entry($entry.anchor)"
         title="$text.get( "macro.weblog.entrypermalink.title" )"
         class="entrypermalink">Permalink</a>
-    #if ($utls.isUserAuthorizedToAuthor($entry.website))
+    #if ($utils.isUserAuthorizedToAuthor($entry.website))
         [<a href="$url.editEntry($entry.anchor)">$text.get( "macro.weblog.entrypermalink.edit" )</a>]
     #end
 #end
