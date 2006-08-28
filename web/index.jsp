@@ -38,6 +38,6 @@ if(frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
    <tiles:put name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
    <tiles:put name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
    <tiles:put name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
-   <tiles:put name="content"      value="/indexBody.jsp" />
+   <tiles:put name="content"      value="/WEB-INF/jsps/setupBody.jsp" />
    <tiles:put name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
 </tiles:insert>
