@@ -58,7 +58,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         super(pRequest, cat);
     }
     
-    
+
     /**
      * @param startDate
      * @param endDate
@@ -144,4 +144,40 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         }
         return content;
     }
+    
+    /** 
+     * Create URL for use on view-weblog page
+     * @param day       Day for URL or null if no entries on that day
+     * @param alwaysURL Always return a URL, never return null
+     * @return          URL for day, or null if no weblog entry on that day
+     */
+    public String computeUrl(Date day, boolean monthURL, boolean alwaysURL)
+    {
+        String url = null;
+        // get the 8 char YYYYMMDD datestring for day, returns null 
+        // if no weblog entry on that day
+        String dateString = null;
+        List entries = (List)monthMap.get( day );
+        if ( entries != null && day != null )
+        {
+            WeblogEntryData entry = (WeblogEntryData)entries.get(0);
+            dateString = mStarDateFormat.format(entry.getPubTime());
+        }
+        if (dateString == null && !alwaysURL) return null;
+        else if (dateString == null && !monthURL) {
+            dateString = DateUtil.format8chars(day);
+        } else if (dateString == null && monthURL) {
+            dateString = DateUtil.format6chars(day);
+        }
+        try {
+            if (pageLink == null) { // create date URL
+                url = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, -1, false);
+            } else { // create page URL
+                url = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, -1, false);
+            }
+        } catch (Exception e) {
+            mLogger.error("ERROR: creating URL",e);
+        }
+        return url;
+    } 
 }
