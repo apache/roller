@@ -55,15 +55,15 @@ public class WeblogCalendarModel implements CalendarModel {
     
     
     public WeblogCalendarModel(WeblogPageRequest pRequest, String catArgument) {
-
+        
         this.pageRequest = pRequest;
         try {
             this.weblog = pageRequest.getWeblog();
             
             pageLink = pageRequest.getWeblogPageName();
-
-            day = DateUtil.parseWeblogURLDateString(pageRequest.getWeblogDate(), 
-                weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
+            
+            day = DateUtil.parseWeblogURLDateString(pageRequest.getWeblogDate(),
+                    weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
             initDay(day);
             
             locale = pageRequest.getLocale();
@@ -82,12 +82,12 @@ public class WeblogCalendarModel implements CalendarModel {
             // some kind of error parsing the request or looking up weblog
             log.debug("ERROR: initializing calendar", e);
         }
-              
+        
     }
-
+    
     
     protected void initDay(Date month) {
-        this.day = day;        
+        this.day = day;
         calendar = Calendar.getInstance(
                 weblog.getTimeZoneInstance(),
                 weblog.getLocaleInstance());
@@ -114,11 +114,6 @@ public class WeblogCalendarModel implements CalendarModel {
         loadWeblogEntries(startDate, endDate, cat);
     }
     
-    
-    /**
-     * @param startDate
-     * @param endDate
-     */
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
             WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
