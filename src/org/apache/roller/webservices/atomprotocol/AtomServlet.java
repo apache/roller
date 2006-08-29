@@ -168,7 +168,7 @@ public class AtomServlet extends HttpServlet {
                         Iterator links = savedEntry.getAlternateLinks().iterator();
                         while (links.hasNext()) {
                             Link link = (Link) links.next();
-                            if (link.getRel().equals("alternate") || link.getRel() == null) {
+                            if (link.getRel().equals("edit") || link.getRel() == null) {
                                 res.addHeader("Location", link.getHref());
                                 break;
                             }
@@ -182,21 +182,21 @@ public class AtomServlet extends HttpServlet {
                     
                     } else if (req.getContentType() != null) {
                         // get incoming file name from HTTP header
-                        String name = req.getHeader("Title");
+                        String title = req.getHeader("Title");
 
                         // hand input stream of to hander to post file
                         Entry resource = handler.postMedia(
-                            pathInfo, name, req.getContentType(), req.getInputStream());
+                            pathInfo, title, req.getContentType(), req.getInputStream());
                         
                         res.setStatus(HttpServletResponse.SC_CREATED);
                         com.sun.syndication.feed.atom.Content content = 
                             (com.sun.syndication.feed.atom.Content)resource.getContents().get(0);
 
                         // return alternate link as Location header
-                        Iterator links = resource.getAlternateLinks().iterator();
+                        Iterator links = resource.getOtherLinks().iterator();
                         while (links.hasNext()) {
                             Link link = (Link) links.next();
-                            if (link.getRel().equals("alternate") || link.getRel() == null) {
+                            if (link.getRel().equals("edit") || link.getRel() == null) {
                                 res.addHeader("Location", link.getHref());
                                 break;
                             }
