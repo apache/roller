@@ -58,17 +58,19 @@
     #if ( $useCSS ) #set( $container = "ul" ) #end
     #set( $rawUrl = "$website.URL" )
     <$container class="rNavigationBar">
-    #printNavLink( "$ctxPath/" $siteShortName $useCSS $vertical "" )
+    #printNavLink( "$url.site" $siteShortName $useCSS $vertical "" )
+    #if(!$useCSS) $delimiter #end
+    #printNavLink( "$url.home" "Weblog" $useCSS $vertical "" )
     #if( $website )
         #foreach( $iPage in $pages )
             #set( $invisible = $iPage.Name.startsWith("_") )
             ## Again, there is no "break" in Velocity
-            #if( !$invisible )
+            #if( !$invisible && $iPage.link != "Weblog")
                 #set( $isSelected = false )
                 #if( $page && $iPage.Id == $page.Id && !$editorui) #set($isSelected = true) #end
 
                 #if( !$isSelected )
-                    #printNavLink( "$rawUrl/$iPage.Link" $iPage.Name $useCSS $vertical $delimiter )
+                    #printNavLink( $url.page("$iPage.link") $iPage.Name $useCSS $vertical $delimiter )
                 #else
                     #if( $useCSS )<li class="rNavItem">
                     #elseif( $vertical ) <br />
@@ -76,6 +78,7 @@
                     #end
                     $iPage.Name
                 #end
+
             #end
         #end
     #end
