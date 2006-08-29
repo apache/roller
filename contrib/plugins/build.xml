@@ -27,17 +27,17 @@
    <target name="plugins" description="Build Roller Page Plugins">
        <javac debug="${build.debug}" 
              srcdir="./src" 
-            destdir="${ro.build}/compile_contrib">
+            destdir="${build.compile.contrib}">
            <classpath>
                <path refid="presentation.path"/>
-               <path location="${ro.build}/compile_beans"/>
-               <path location="${ro.build}/compile_web"/>
+               <path location="${build.compile.business}"/>
+               <path location="${build.compile.web}"/>
                <fileset dir="../lib">
                   <include name="*.jar"/>
                </fileset>
            </classpath>
        </javac>
-       <copy todir="${ro.build}/compile_contrib">
+       <copy todir="${build.compile.contrib}">
            <fileset dir="./src" includes="**/*.properties"/>
        </copy>
    </target>

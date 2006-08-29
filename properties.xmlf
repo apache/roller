@@ -18,17 +18,38 @@
 <!-- ================================================ -->
 <!-- Properties and classpaths -->
 <!-- ================================================ -->
-<property file="ant.properties"/>
 
+<property file="ant.properties" />
+
+<!-- core properties -->
+<property name="ro.build"            value="${basedir}/build" />
+<property name="ro.dist"             value="${basedir}/dist" />
+<property name="ro.src"              value="${basedir}/src" />
+<property name="ro.tools"            value="${basedir}/tools" />
+<property name="ro.tests"            value="${basedir}/tests" />
+
+<!-- build properties -->
 <property name="build.generated"     value="${ro.build}/generated"/>
-<property name="build.compile_beans" value="${ro.build}/compile_beans"/>
-<property name="build.compile_web"   value="${ro.build}/compile_web"/>
-<property name="build.stage_web"     value="${ro.build}/roller"/>
+<property name="build.generated.business"       value="${build.generated}/business"/>
+<property name="build.generated.web"            value="${build.generated}/web"/>
+<property name="build.compile"       value="${ro.build}/compile"/>
+<property name="build.compile.business"         value="${build.compile}/business"/>
+<property name="build.compile.web"              value="${build.compile}/web"/>
+<property name="build.compile.contrib"          value="${build.compile}/contrib"/>
+<property name="build.lib"           value="${ro.build}/lib"/>
+<property name="build.webapp"        value="${ro.build}/webapp"/>
+<property name="build.dist"          value="${ro.build}/release"/>
+<property name="build.dist.apache"   value="${build.dist}/apache"/>
+<property name="build.dist.binary"   value="${build.dist}/apache-roller-${ro.version}"/>
+<property name="build.dist.sources"  value="${build.dist}/apache-roller-src-${ro.version}"/>
 <property name="build.tests"         value="${ro.build}/tests"/>
-<property name="build.javadoc"       value="${ro.build}/javadoc"/>
-<property name="build.velocidoc"     value="${ro.build}/velocidoc"/>
+<property name="build.docs"          value="${ro.build}/docs"/>
+<property name="build.javadoc"       value="${build.docs}/javadoc"/>
+<property name="build.velocidoc"     value="${build.docs}/velocidoc"/>
 <property name="build.jspc"          value="${ro.build}/jspc"/>
 <property name="build.reports"       value="${ro.build}/reports"/>
+
+<!-- various libraries used by Roller -->
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
 <property name="tools.hibernate"     value="${ro.tools}/hibernate-3.1" />
 <property name="tools.spring"        value="${ro.tools}/spring-1.2" />
@@ -178,7 +199,7 @@ in the "base.path" definition.
        </fileset>
     </path>
     <path>
-       <fileset dir="${build.stage_web}/WEB-INF/lib">
+       <fileset dir="${build.webapp}/WEB-INF/lib">
           <include name="*.jar"/>
        </fileset>
     </path>
@@ -203,7 +224,7 @@ in the "base.path" definition.
 </path>
 <path id="jsp.compile.path">
     <pathelement location="${java.home}/../lib/tools.jar"/> 
-    <fileset dir="${build.stage_web}/WEB-INF/lib"> 
+    <fileset dir="${build.webapp}/WEB-INF/lib"> 
         <include name="*.jar"/> 
     </fileset>     
     <fileset dir="${catalina.home}/bin"> 
