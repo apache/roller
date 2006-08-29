@@ -54,6 +54,7 @@ import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.feed.atom.Person;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedSet;
@@ -277,7 +278,14 @@ public class RollerAtomHandler implements AtomHandler {
                 Feed feed = new Feed();
                 feed.setId(URLUtilities.getAtomProtocolURL(true)
                     +"/"+website.getHandle() + "/entries/" + start);
-                feed.setTitle("Entries for blog[" + handle + "]");
+                feed.setTitle(website.getName());
+                
+                Link link = new Link();
+                link.setHref(absUrl + "/" + website.getHandle());
+                link.setRel("alternate");
+                link.setType("text/html");
+                feed.setAlternateLinks(Collections.singletonList(link));
+                
                 List atomEntries = new ArrayList();
                 int count = 0;
                 for (Iterator iter = entries.iterator(); iter.hasNext() && count < mMaxEntries; count++) {
@@ -340,7 +348,15 @@ public class RollerAtomHandler implements AtomHandler {
             if (canView(website)) {
                 Feed feed = new Feed();
                 feed.setId(URLUtilities.getAtomProtocolURL(true)
-                    +"/"+website.getHandle() + "/entries/" + start);
+                    +"/"+website.getHandle() + "/entries/" + start);                
+                feed.setTitle(website.getName());
+                
+                Link link = new Link();
+                link.setHref(absUrl + "/" + website.getHandle());
+                link.setRel("alternate");
+                link.setType("text/html");
+                feed.setAlternateLinks(Collections.singletonList(link));
+                
                 SortedSet sortedSet = new TreeSet(new Comparator() {
                     public int compare(Object o1, Object o2) {
                         File f1 = (File)o1;
@@ -583,7 +599,7 @@ public class RollerAtomHandler implements AtomHandler {
      * TODO: use Jakarta Commons File-upload?
      */
     public Entry postMedia(String[] pathInfo,
-            String name, String contentType, InputStream is)
+            String title, String contentType, InputStream is)
             throws AtomException {
         try {
             // authenticated client posted a weblog entry
@@ -594,25 +610,22 @@ public class RollerAtomHandler implements AtomHandler {
                 mRoller.getUserManager().getWebsiteByHandle(handle);
             if (canEdit(website) && pathInfo.length > 1) {
                 // save to temp file
-                if (name == null) {
-                    throw new AtomException(
-                        "ERROR: No 'Title' present in HTTP headers");
-                }
+                String fileName = createFileName(website, title, contentType);
                 try {
                     FileManager fmgr = mRoller.getFileManager();
-                    tempFile = File.createTempFile(name,"tmp");
+                    tempFile = File.createTempFile(fileName,"tmp");
                     FileOutputStream fos = new FileOutputStream(tempFile);
                     Utilities.copyInputToOutput(is, fos);
                     fos.close();
 
                     // If save is allowed by Roller system-wide policies
-                    if (fmgr.canSave(website.getHandle(), name, contentType, tempFile.length(), msgs)) {
+                    if (fmgr.canSave(website.getHandle(), fileName, contentType, tempFile.length(), msgs)) {
                         // Then save the file
                         FileInputStream fis = new FileInputStream(tempFile);
-                        fmgr.saveFile(website.getHandle(), name, contentType, tempFile.length(), fis);
+                        fmgr.saveFile(website.getHandle(), fileName, contentType, tempFile.length(), fis);
                         fis.close();
 
-                        File resource = new File(fmgr.getUploadDir() + File.separator + name);
+                        File resource = new File(fmgr.getUploadDir() + File.separator + fileName);
                         return createAtomResourceEntry(website, resource);
                     }
 
@@ -631,6 +644,93 @@ public class RollerAtomHandler implements AtomHandler {
             throw new AtomException("ERROR: posting media");
         }
     }
+    
+    /**
+     * Creates a file name for a file based on a weblog, title string and a 
+     * content-type. 
+     * 
+     * @param weblog      Weblog for which file name is being created
+     * @param title       Title to be used for file name (or null)
+     * @param contentType Content type of file (must not be null)
+     * 
+     * If a title is specified, the method will apply the same create-anchor 
+     * logic we use for weblog entries to create a file name based on that
+     * title.
+     *
+     * If title is null, the base file name will be the weblog handle plus a 
+     * YYYYMMDDHHSS timestamp. 
+     *
+     * The extension will be formed by using the part of content type that
+     * comes after he slash. 
+     *
+     * For example:
+     *    weblog.handle = "daveblog"
+     *    title         = "Port Antonio"
+     *    content-type  = "image/jpg"
+     * Would result in port_antonio.jpg
+     *
+     * Another example:
+     *    weblog.handle = "daveblog"
+     *    title         = null
+     *    content-type  = "image/jpg"
+     * Might result in daveblog-200608201034.jpg
+     */
+    private String createFileName(WebsiteData weblog, String title, String contentType) {
+        
+        if (weblog == null) throw new IllegalArgumentException("weblog cannot be null");
+        if (contentType == null) throw new IllegalArgumentException("contentType cannot be null");
+        
+        String fileName = null;
+        
+        // Determine the extension based on the contentType
+        String[] typeTokens = contentType.split("/");
+        String ext = typeTokens[1];
+        
+        if (title != null && !title.trim().equals("")) {
+            
+            // Some clients pass file name as title and if that's the case then
+            // we should use the title as our file name. But we only want to do
+            // that if the title does not obviously lie about the content type.
+            MimetypesFileTypeMap mimeMap = new MimetypesFileTypeMap();
+            String titleType = mimeMap.getContentType(title);
+            String titleExt = null;
+            // So first, we determine extension based on title
+            // If we can determine the content type from the title, then the
+            // title is a valid file name. Now let's figure out the extension.
+            if (titleType != null && !titleType.equals("application/octet-stream")) {
+                String[] titleTypeTokens = titleType.split("/");
+                titleExt = "."+titleTypeTokens[1];
+            }
+            
+            // If title's extension matches contentType extension
+            if (titleExt != null && ext != null && titleExt.equals(ext)) {
+                // Then title doesn't lie, so use it verbatim as filename
+                fileName = title;
+            } else {
+                // Else build file name based on title
+                String base = Utilities.replaceNonAlphanumeric(title, ' ');
+                StringTokenizer toker = new StringTokenizer(base);
+                String tmp = null;
+                int count = 0;
+                while (toker.hasMoreTokens() && count < 5) {
+                    String s = toker.nextToken();
+                    s = s.toLowerCase();
+                    tmp = (tmp == null) ? s : tmp + "_" + s;
+                    count++;
+                }
+                fileName = tmp + "." + ext;
+            }
+            // No title or text, so instead we will use the items date
+            // in YYYYMMDD format as the base anchor
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat();
+            sdf.applyPattern("yyyyMMddHHSS");
+            fileName = weblog.getHandle()+"-"+sdf.format(new Date())+"."+ext;
+        }
+        
+        return fileName;
+    }
+    
     
     /**
      * Update resource specified by pathInfo using data from input stream.
