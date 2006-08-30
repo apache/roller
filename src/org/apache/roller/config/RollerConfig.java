@@ -140,7 +140,21 @@ public class RollerConfig {
         log.debug("Fetching property ["+key+"="+mConfig.getProperty(key)+"]");
         return mConfig.getProperty(key);
     }
-
+    
+    /**
+     * Retrieve a property value
+     * @param     key Name of the property
+     * @param     defaultValue Default value of property if not found     
+     * @return    String Value of property requested or defaultValue
+     */
+    public static String getProperty(String key, String defaultValue) {
+        log.debug("Fetching property ["+key+"="+mConfig.getProperty(key)+",defaultValue="+defaultValue+"]");
+        String value = mConfig.getProperty(key);
+        if(value == null)
+          return defaultValue;
+        
+        return value;
+    }
 
     /**
      * Retrieve a property as a boolean ... defaults to false if not present.
