@@ -86,14 +86,8 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                         ((WeblogEntryData)entries.get(0)).getPubTime());
                 
                 // append 8 char date string on end of selfurl
-                String dayUrl = null;
-                if (pageLink != null) {
-                    dayUrl = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, -1, false);
-                } else {
-                    dayUrl = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, -1, false);
-                }
-                
-                
+                String dayUrl = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, -1, false);
+                              
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
                 sb.append("<a href=\"");
                 sb.append( dayUrl );
