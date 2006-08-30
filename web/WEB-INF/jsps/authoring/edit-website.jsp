@@ -266,6 +266,23 @@ WebsiteFormAction.WebsitePageModel model =
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
     </tr>
 
+    <%-- ***** Global admin only settings ***** --%>
+    <c:choose>
+        <c:when test="${model.globalAdminUser}">
+            <tr>
+                <td colspan="3"><h2><fmt:message key="websiteSettings.adminSettings" /></h2></td>
+            </tr>
+            <tr>
+                <td class="label"><fmt:message key="websiteSettings.pageModels" /></td>
+                <td class="field"><html:textarea property="pageModels" rows="7" cols="40"/></td>
+                <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>
+            </tr>
+        </c:when>
+        <c:otherwise>
+            <html:hidden property="pageModels" />
+        </c:otherwise>
+    </c:choose>
+
 </table>
 
 <br />
