@@ -67,6 +67,54 @@
     <!-- Log failed authentication attempts to commons-logging -->
     <bean id="loggerListener" class="org.acegisecurity.event.authentication.LoggerListener"/> 
     
+    <!-- Sample LDAP/RollerDB hybrid security configuration -->
+    <!--
+    
+	<bean id="initialDirContextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+      <constructor-arg value="ldap://server:389/basedn"/>
+    </bean>
+   
+    <bean id="ldapUserSearch" class="org.acegisecurity.ldap.search.FilterBasedLdapUserSearch">
+      <constructor-arg index="0">
+        <value></value>
+      </constructor-arg>
+      <constructor-arg index="1">
+        <value>mail={0}</value>
+      </constructor-arg>
+      <constructor-arg index="2">
+        <ref local="initialDirContextFactory" />
+      </constructor-arg>            
+      <property name="searchSubtree">
+        <value>true</value>
+      </property>            
+    </bean>     
+    
+    <bean id="ldapAuthProvider" 
+            class="org.acegisecurity.providers.ldap.LdapAuthenticationProvider">
+      <constructor-arg>
+        <bean class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator">
+           <constructor-arg><ref local="initialDirContextFactory"/></constructor-arg>
+		   <property name="userSearch"><ref bean="ldapUserSearch"/></property>
+        </bean>
+      </constructor-arg>
+      <constructor-arg><ref local="jdbcAuthoritiesPopulator"/></constructor-arg>
+      <property name="userCache" ref="userCache"/>
+    </bean>    
+    
+    <bean id="jdbcAuthoritiesPopulator" class="org.apache.roller.ui.core.security.AuthoritiesPopulator">
+        <property name="dataSource">
+            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
+                <property name="jndiName" value="java:comp/env/jdbc/rollerdb"/>
+            </bean>
+        </property>
+        <property name="authoritiesByUsernameQuery">
+            <value>SELECT username,rolename FROM userrole WHERE username = ?</value>
+        </property>
+	   <property name="defaultRole"><value>register</value></property>        
+    </bean>
+    -->
+     
+    
     <bean id="daoAuthenticationProvider" class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
          <property name="userDetailsService" ref="jdbcAuthenticationDao"/>
          <property name="userCache" ref="userCache"/>

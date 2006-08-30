@@ -50,12 +50,23 @@ function cancel() {
     <td class="description"><fmt:message key="userRegister.tip.fullName" /></td>
 </tr>
 
+<c:choose>
+<c:when test="${userFormEx.dataFromSSO == true}">
+<tr>
+    <td class="label"><label for="userName" /><fmt:message key="userSettings.username" /></label></td>
+    <td class="field"><strong><c:out value="${userFormEx.userName}" /></strong></td>
+    <td class="description"><fmt:message key="userRegister.tip.userName" /></td>
+</tr>
+</c:when>
+<c:otherwise>
 <tr>
     <td class="label"><label for="userName" /><fmt:message key="userSettings.username" /></label></td>
     <td class="field"><html:text property="userName" size="30" maxlength="30" /></td>
     <td class="description"><fmt:message key="userRegister.tip.userName" /></td>
 </tr>
-
+</c:otherwise>
+</c:choose>
+<c:if test="${userFormEx.dataFromSSO == false}">
 <tr>
     <td class="label"><label for="passwordText" /><fmt:message key="userSettings.password" /></label></td>
     <td class="field">
@@ -70,6 +81,7 @@ function cancel() {
     <td class="field"><html:password property="passwordConfirm" size="20" maxlength="20" /></td>
     <td class="description"><fmt:message key="userRegister.tip.passwordConfirm" /></td>
 </tr>
+</c:if>
 
 <tr>
     <td class="label"><label for="emailAddress" /><fmt:message key="userSettings.email" /></label></td>

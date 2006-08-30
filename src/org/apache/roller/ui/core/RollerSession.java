@@ -35,6 +35,7 @@ import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.core.security.AutoProvisioningHelper;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,8 +82,18 @@ public class RollerSession
                 {
                     UserManager umgr = RollerFactory.getRoller().getUserManager();
                     UserData user = umgr.getUserByUserName(principal.getName());
+
+                    // try one time to auto-provision, only happens if user==null
+                    // which means installation has SSO-enabled in security.xml
+                    if(user == null) 
+                    {
+                        if(AutoProvisioningHelper.executeAutoProvisioning()) {
+                          user = umgr.getUserByUserName(principal.getName());
+                        }
+                    } 
+                    
                     // only set authenticated user if user is enabled
-                    if (user.getEnabled().booleanValue()) 
+                    if(user != null && user.getEnabled().booleanValue()) 
                     {
                         rollerSession.setAuthenticatedUser(user);  
                     }                    

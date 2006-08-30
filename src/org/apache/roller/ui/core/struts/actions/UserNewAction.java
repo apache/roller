@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
@@ -45,6 +46,7 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
+import org.apache.roller.ui.core.security.CustomUserRegistry;
 import org.apache.roller.ui.authoring.struts.formbeans.UserFormEx;
 import org.apache.commons.lang.StringUtils;
 
@@ -101,6 +103,18 @@ public class UserNewAction extends UserBaseAction {
             
             userForm.setLocale(Locale.getDefault().toString());
             userForm.setTimeZone(TimeZone.getDefault().getID());
+            userForm.setDataFromSSO(false);
+            
+            // Let's see if there's any user-authentication available from Acegi
+            // and retrieve custom user data to pre-populate form.
+            boolean usingSSO = RollerConfig.getBooleanProperty("users.sso.enabled");
+            if(usingSSO) {            
+              UserData fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
+              if(fromSSO != null) {
+                userForm.copyFrom(fromSSO, request.getLocale());
+                userForm.setDataFromSSO(true);
+              }
+            }
             
             userForm.setPasswordText(null);
             userForm.setPasswordConfirm(null);
@@ -190,6 +204,25 @@ public class UserNewAction extends UserBaseAction {
     
     /** Validate user form. TODO: replace with Struts validation. */
     protected ActionMessages validate( UserFormEx form, ActionMessages errors ) {
+      
+        // if usingSSO, we don't want to error on empty password/username from HTML form.
+        form.setDataFromSSO(false);
+        boolean usingSSO = RollerConfig.getBooleanProperty("users.sso.enabled");
+        if(usingSSO) {
+          boolean storePassword = RollerConfig.getBooleanProperty("users.sso.passwords.saveInRollerDb");
+          UserData fromSSO = CustomUserRegistry.getUserDetailsFromAuthentication();
+          if(fromSSO != null) {
+            String password = RollerConfig.getProperty("users.sso.passwords.defaultValue", "<unknown>");
+            if(storePassword) {
+              password = fromSSO.getPassword();
+            }
+            form.setPasswordText(password);
+            form.setPasswordConfirm(password);
+            form.setUserName(fromSSO.getUserName());
+            form.setDataFromSSO(true);
+          }
+        }
+      
         super.validate(form, errors);
         if (    StringUtils.isEmpty(form.getPasswordText())
         && StringUtils.isEmpty(form.getPasswordConfirm())) {
