@@ -375,6 +375,10 @@ public final class WebsiteFormAction extends DispatchAction {
             }
             return list;
         }
+        
+        public boolean isGlobalAdminUser() throws RollerException {
+            return getRollerSession().isGlobalAdminUser();
+        }
     }
 }
 
