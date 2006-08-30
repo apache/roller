@@ -360,8 +360,6 @@ Recursively display a bookmark folder and children as HTML ul list (undocumented
     #elseif ($folderObject.name != "root" && $subfolders && ($folderObject.getBookmarks().size() > 0 || $folderObject.getFolders().size() > 0))
         <li class="rFolderItem">$folderObject.Name</li>
         <ul class="rFolder">
-    #elseif ($folderObject.name != "root")
-        <li class="rFolderItem">$folderObject.Name</li>
     #end
     #foreach($bookmark in $bookmarks)
         <li class="rFolderItem">
