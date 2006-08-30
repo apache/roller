@@ -561,16 +561,18 @@ public class RollerAtomHandler implements AtomHandler {
                         mRoller.getIndexManager().removeEntryIndexOperation(rollerEntry);
                         return;
                     } 
-                } else if (pathInfo[1].equals("resource") && pathInfo[2].endsWith(".media-link")) {
+                } else if (pathInfo[1].equals("resource")) {
                     String handle = pathInfo[0];
                     WebsiteData website = mRoller.getUserManager().getWebsiteByHandle(handle);
                     if (website == null) {
                         throw new AtomNotFoundException("ERROR: cannot find specified weblog");
                     }
                     if (canEdit(website) && pathInfo.length > 1) {
-                        try {
-                            String fileName = 
-                                pathInfo[2].substring(0, pathInfo[2].length() - ".media-link".length());
+                        try {                            
+                            String fileName = pathInfo[2];
+                            if (pathInfo[2].endsWith(".media-link")) {
+                                fileName = fileName.substring(0, pathInfo[2].length() - ".media-link".length());
+                            }
                             FileManager fmgr = mRoller.getFileManager();
                             fmgr.deleteFile(website.getHandle(), fileName);
                         } catch (Exception e) {
@@ -760,7 +762,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     public boolean isEntryURI(String[] pathInfo) {
         if (pathInfo.length > 2 && pathInfo[1].equals("entry")) return true;
-        if (pathInfo.length > 2 && pathInfo[1].equals("resource") && pathInfo[2].endsWith(".media-link")) return true;
+        if (pathInfo.length > 2 && pathInfo[1].equals("resource")) return true;
         return false;
     }
         
