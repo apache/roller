@@ -30,12 +30,13 @@ import org.apache.commons.collections.ArrayStack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.security.AutoProvisioningHelper;
+import org.apache.roller.ui.core.security.AutoProvision;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -85,13 +86,19 @@ public class RollerSession
 
                     // try one time to auto-provision, only happens if user==null
                     // which means installation has SSO-enabled in security.xml
-                    if(user == null) 
-                    {
-                        if(AutoProvisioningHelper.executeAutoProvisioning()) {
-                          user = umgr.getUserByUserName(principal.getName());
-                        }
-                    } 
-                    
+                     if(user == null && RollerConfig.getBooleanProperty("users.sso.autoProvision.enabled")) {                    
+                       // provisioning enabled, get provisioner and execute
+                       AutoProvision provisioner = RollerContext.getAutoProvision();
+                       if(provisioner != null) 
+                       {
+                           boolean userProvisioned = provisioner.execute();
+                           if(userProvisioned) 
+                           {
+                               // try lookup again real quick
+                               user = umgr.getUserByUserName(principal.getName());
+                           }
+                       }
+                     }
                     // only set authenticated user if user is enabled
                     if(user != null && user.getEnabled().booleanValue()) 
                     {
