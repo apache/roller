@@ -68,6 +68,14 @@ public class VelocityRenderer implements Renderer {
                 velocityDecorator = RollerVelocity.getTemplate(decorator.getId());
             }
             
+        } catch(ResourceNotFoundException ex) {
+            // velocity couldn't find the resource so lets log a warning
+            log.warn("Error creating renderer for "+template.getId()+
+                    " due to ["+ex.getMessage()+"]");
+            
+            // then just rethrow so that the caller knows this instantiation failed
+            throw ex;
+            
         } catch(ParseErrorException ex) {
             // in the case of a parsing error we want to render an
             // error page instead so the user knows what was wrong
@@ -75,6 +83,13 @@ public class VelocityRenderer implements Renderer {
             
             // need to lookup error page template
             velocityTemplate = RollerVelocity.getTemplate("templates/error-page.vm");
+            
+        } catch(Exception ex) {
+            // some kind of generic/unknown exception, dump it to the logs
+            log.error("Unknown exception creatting renderer for "+template.getId(), ex);
+            
+            // throw if back to the caller
+            throw ex;
         }
     }
     

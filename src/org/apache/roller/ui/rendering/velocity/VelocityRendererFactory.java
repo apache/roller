@@ -48,8 +48,9 @@ public class VelocityRendererFactory implements RendererFactory {
             try {
                renderer = new VelocityRenderer(template);
             } catch(Exception ex) {
-                // some kind of problem creating renderer
-                log.error("Error creating renderer for "+template.getId(), ex);
+                // some kind of exception so we don't have a renderer
+                // we do catching/logging in VelocityRenderer constructor
+                return null;
             }            
             
         }
