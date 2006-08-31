@@ -2,6 +2,27 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 3.0: major release with new URL structure and new template syste
+
+Please refer to the What's New page for an overview of the changes:
+http://rollerweblogger.org/wiki/Wiki.jsp?page=Roller_3.0_WhatsNew
+
+Here are the JIRA issues we used to track the new features in development:
+
+    * [ROL-786] - Multi Language Blogs
+    * [ROL-796] - Front Page Improvement: blogger directory
+    * [ROL-1191] - RSS feed style sheets
+    * [ROL-790] - Better URLs
+    * [ROL-856] - Front Page Improvements
+    * [ROL-962] - Performance: Optionally eliminate language specific cache keys
+    * [ROL-973] - All forms shown within tabbed UI
+    * [ROL-975] - Velocity cleanup
+    * [ROL-1006] - Group blog administration improvements
+    * [ROL-1161] - Always enable 'remove a weblog' for site admins
+
+
+-------------------------------------------------------------------------------
+
 Roller 2.3: improvements and bug fixes, no major new features
 
 Apache policy compliance 

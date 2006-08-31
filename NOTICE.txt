@@ -27,18 +27,17 @@ COPYRIGHT NOTICES
 
 CREDITS
 
-Roller committers: 
+Roller committers (in chronological order): 
 
 David M Johnson
 Lance Lanvandowska 
 Matt Raible 
+Mindaguas Idzelis (retired)
+Jaap Van Der Molen (retired)
 Anil Gangolli
 Henri Yandell
 Allen Gilliland
 Elias Torres
 Matt Schmidt
-
-Past comitters:
-
-Mindaguas Idzelis 
-Jaap Van Der Molen 
+Jeff Blattman
+Craig Russell
