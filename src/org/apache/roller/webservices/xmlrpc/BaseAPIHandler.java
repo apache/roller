@@ -31,7 +31,6 @@ import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.Utilities;
 
@@ -120,10 +119,7 @@ public class BaseAPIHandler implements Serializable
         WebsiteData website = null;
         UserData user = null;
         try
-        {
-            // Get Roller request object for current thread
-            RollerRequest rreq = RollerRequest.getRollerRequest();
-            
+        {        
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             user = userMgr.getUserByUserName(username);
             userEnabled = user.getEnabled().booleanValue();
@@ -148,12 +144,7 @@ public class BaseAPIHandler implements Serializable
                 	password = Utilities.encodePassword(password, 
                       RollerConfig.getProperty("passwds.encryption.algorithm"));
                 }
-                //System.out.println("is now [" + password + "]");
-    			   authenticated= user.getPassword().equals(password);
-                if (authenticated)
-                {
-                    //RollerFactory.getRoller().setUser(user);
-                }
+                authenticated = password.equals(user.getPassword());
             }
         }
         catch (Exception e)
@@ -203,8 +194,6 @@ public class BaseAPIHandler implements Serializable
         UserData user = null;
         try
         {
-            // Get Roller request object for current thread
-            RollerRequest rreq = RollerRequest.getRollerRequest();
             
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
             user = userMgr.getUserByUserName(username);
@@ -253,8 +242,6 @@ public class BaseAPIHandler implements Serializable
     //------------------------------------------------------------------------
     protected void flushPageCache(WebsiteData website) throws Exception
     {
-        RollerRequest rreq = RollerRequest.getRollerRequest();
-        //PageCacheFilter.removeFromCache( rreq.getRequest(), website);
         CacheManager.invalidate(website);
     }
 }

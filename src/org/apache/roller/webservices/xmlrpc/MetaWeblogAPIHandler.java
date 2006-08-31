@@ -42,8 +42,8 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.RollerMessages;
+import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
 import org.apache.struts.util.RequestUtils;
 import org.apache.xmlrpc.XmlRpcException;
@@ -83,7 +83,6 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         
         WebsiteData website = validate(blogid, userid,password);
-        RollerRequest rreq = RollerRequest.getRollerRequest();
         Roller roller = RollerFactory.getRoller();
         try {
             Hashtable result = new Hashtable();
@@ -361,16 +360,12 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             // If save is allowed by Roller system-wide policies
             if (fmgr.canSave(website.getHandle(), name, type, bits.length, msgs)) {
                 // Then save the file
-                fmgr.saveFile(website.getHandle(), name, type, bits.length, new ByteArrayInputStream(bits));
-                
-                RollerRequest rreq = RollerRequest.getRollerRequest();
-                HttpServletRequest request = rreq.getRequest();
+                fmgr.saveFile(website.getHandle(), name, type, bits.length, new ByteArrayInputStream(bits));              
                 
                 // TODO: build URL to uploaded file should be done in FileManager
                 String uploadPath = RollerFactory.getRoller().getFileManager().getUploadUrl();
                 uploadPath += "/" + website.getHandle() + "/" + name;
-                String fileLink = RequestUtils.printableURL(
-                        RequestUtils.absoluteURL(request, uploadPath));
+                String fileLink = URLUtilities.getWeblogResourceURL(website, name, true);
                 
                 Hashtable returnStruct = new Hashtable(1);
                 returnStruct.put("url", fileLink);
@@ -440,9 +435,6 @@ null,                     0, numposts);
     
     private Hashtable createPostStruct(WeblogEntryData entry, String userid) {
         
-        RollerRequest rreq = RollerRequest.getRollerRequest();
-        HttpServletRequest request = rreq.getRequest();
-        RollerContext rollerCtx = RollerContext.getRollerContext();
         String permalink =
                 RollerRuntimeConfig.getAbsoluteContextURL() + entry.getPermaLink();
         
@@ -471,8 +463,6 @@ null,                     0, numposts);
     
     private Hashtable createCategoryStruct(WeblogCategoryData category, String userid) {
         
-        RollerRequest rreq = RollerRequest.getRollerRequest();
-        HttpServletRequest req = rreq.getRequest();
         String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         
         Hashtable struct = new Hashtable();

@@ -43,7 +43,6 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -236,9 +235,6 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 lastname += toker.nextToken();
             }
             
-            RollerRequest rreq = RollerRequest.getRollerRequest();
-            HttpServletRequest req = rreq.getRequest();
-            
             // populates user information to return as a result
             Hashtable result = new Hashtable();
             result.put("nickname", user.getUserName());
@@ -275,8 +271,6 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         Vector result = new Vector();
         if (validateUser(userid, password)) {
             try {
-                RollerRequest rreq = RollerRequest.getRollerRequest();
-                HttpServletRequest req = rreq.getRequest();
                 String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
                 
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
@@ -397,7 +391,6 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         }
         
         try {
-            RollerRequest rreq = RollerRequest.getRollerRequest();
             Roller roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
             
