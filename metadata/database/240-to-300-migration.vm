@@ -16,6 +16,7 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 -- add new column which holds the locale for a weblog entry
 -- then set the values and make column not null
 #addColumnNull("weblogentry" "locale" "varchar(20)")
+create index we_locale_idx on weblogentry(locale);
 
 -- add new column which holds the hidden status for a page, default is false
 #addColumnNotNull("webpage" "hidden" $BOOLEAN_SQL_TYPE $BOOLEAN_FALSE)
