@@ -123,14 +123,6 @@ public abstract class RollerImpl implements Roller {
     }
     
     
-    /**
-     * @see org.apache.roller.model.Roller#upgradeDatabase(java.sql.Connection)
-     */
-    public void upgradeDatabase(Connection con) throws RollerException {
-        UpgradeDatabase.upgradeDatabase(con);
-    }
-    
-    
     public void release() {
         try {
             if (fileManager != null) fileManager.release();

@@ -127,12 +127,6 @@ public interface Roller {
     
     
     /**
-     * Upgrade database if needed.
-     */
-    public void upgradeDatabase(Connection con) throws RollerException;
-    
-    
-    /**
      * Flush object states.
      */
     public void flush() throws RollerException;
