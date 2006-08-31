@@ -652,12 +652,11 @@ public class RollerAtomHandler implements AtomHandler {
      * content-type. 
      * 
      * @param weblog      Weblog for which file name is being created
-     * @param title       Title to be used for file name (or null)
+     * @param title       Title to be used as basis for file name (or null)
      * @param contentType Content type of file (must not be null)
      * 
      * If a title is specified, the method will apply the same create-anchor 
-     * logic we use for weblog entries to create a file name based on that
-     * title.
+     * logic we use for weblog entries to create a file name based on the title.
      *
      * If title is null, the base file name will be the weblog handle plus a 
      * YYYYMMDDHHSS timestamp. 
@@ -684,47 +683,30 @@ public class RollerAtomHandler implements AtomHandler {
         
         String fileName = null;
         
-        // Determine the extension based on the contentType
+        // Determine the extension based on the contentType. This is a hack.
+        // The info we need to map from contentType to file extension is in 
+        // JRE/lib/content-type.properties, but Java Activation doesn't provide 
+        // a way to do a reverse mapping or to get at the data.
         String[] typeTokens = contentType.split("/");
         String ext = typeTokens[1];
         
-        if (title != null && !title.trim().equals("")) {
-            
-            // Some clients pass file name as title and if that's the case then
-            // we should use the title as our file name. But we only want to do
-            // that if the title does not obviously lie about the content type.
-            MimetypesFileTypeMap mimeMap = new MimetypesFileTypeMap();
-            String titleType = mimeMap.getContentType(title);
-            String titleExt = null;
-            // So first, we determine extension based on title
-            // If we can determine the content type from the title, then the
-            // title is a valid file name. Now let's figure out the extension.
-            if (titleType != null && !titleType.equals("application/octet-stream")) {
-                String[] titleTypeTokens = titleType.split("/");
-                titleExt = "."+titleTypeTokens[1];
+        if (title != null && !title.trim().equals("")) {              
+            // We've got a title, so use it to build file name
+            String base = Utilities.replaceNonAlphanumeric(title, ' ');
+            StringTokenizer toker = new StringTokenizer(base);
+            String tmp = null;
+            int count = 0;
+            while (toker.hasMoreTokens() && count < 5) {
+                String s = toker.nextToken();
+                s = s.toLowerCase();
+                tmp = (tmp == null) ? s : tmp + "_" + s;
+                count++;
             }
+            fileName = tmp + "." + ext;
             
-            // If title's extension matches contentType extension
-            if (titleExt != null && ext != null && titleExt.equals(ext)) {
-                // Then title doesn't lie, so use it verbatim as filename
-                fileName = title;
-            } else {
-                // Else build file name based on title
-                String base = Utilities.replaceNonAlphanumeric(title, ' ');
-                StringTokenizer toker = new StringTokenizer(base);
-                String tmp = null;
-                int count = 0;
-                while (toker.hasMoreTokens() && count < 5) {
-                    String s = toker.nextToken();
-                    s = s.toLowerCase();
-                    tmp = (tmp == null) ? s : tmp + "_" + s;
-                    count++;
-                }
-                fileName = tmp + "." + ext;
-            }
-            // No title or text, so instead we will use the items date
-            // in YYYYMMDD format as the base anchor
-        } else {
+        } else {            
+            // No title or text, so instead we'll use the item's date
+            // in YYYYMMDD format to form the file name
             SimpleDateFormat sdf = new SimpleDateFormat();
             sdf.applyPattern("yyyyMMddHHSS");
             fileName = weblog.getHandle()+"-"+sdf.format(new Date())+"."+ext;
