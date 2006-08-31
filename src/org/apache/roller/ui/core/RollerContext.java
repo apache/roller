@@ -54,6 +54,7 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ScheduledTask;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.pings.PingQueueTask;
+import org.apache.roller.ui.core.security.AutoProvision;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.context.ApplicationContext;
@@ -473,6 +474,49 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     /** Get username that built Roller */
     public String getRollerBuildUser() {
         return mBuildUser;
+    }
+    
+    /**
+     * Get an instance of AutoProvision, if available in roller.properties
+     * 
+     * @return AutoProvision
+     */
+    public static AutoProvision getAutoProvision() {
+      
+      String clazzName = RollerConfig.getProperty("users.sso.autoProvision.className");
+      
+      if(null == clazzName) {
+        return null;
+      }
+      
+      Class clazz;
+      try {
+        clazz = Class.forName(clazzName);
+      } catch (ClassNotFoundException e) {
+        mLogger.warn("Unable to found specified Auto Provision class.", e);
+        return null;
+      }
+      
+      if(null == clazz) {
+        return null;
+      }
+      
+      Class[] interfaces = clazz.getInterfaces();
+      for (int i = 0; i < interfaces.length; i++) {
+          if (interfaces[i].equals(AutoProvision.class))
+          {
+            try {
+              return (AutoProvision) clazz.newInstance();
+            } catch (InstantiationException e) {
+              mLogger.warn("InstantiationException while creating: " + clazzName, e);
+            } catch (IllegalAccessException e) {
+              mLogger.warn("IllegalAccessException while creating: " + clazzName, e);
+            }
+          }
+      }
+      
+      return null;
+      
     }
 
 }
