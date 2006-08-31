@@ -268,9 +268,11 @@ class RollerMemberHandler extends Handler {
                 MemberEntry entry = (MemberEntry)c.getEntries()[i];
                 PermissionsData pd = toPermissionsData(entry);
                 mgr.savePermissions(pd);
+                getRoller().flush();
+                CacheManager.invalidate(pd.getUser());
+                CacheManager.invalidate(pd.getWebsite());
                 permissionsDatas.add(pd);
             }
-            getRoller().flush();
             return toMemberEntrySet((PermissionsData[])permissionsDatas.toArray(new PermissionsData[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create members", re);
@@ -312,22 +314,17 @@ class RollerMemberHandler extends Handler {
     }
     
     private MemberEntrySet updateMembers(MemberEntrySet c) throws HandlerException {
-        try {
-            List permissionsDatas= new ArrayList();
-            for (int i = 0; i < c.getEntries().length; i++) {
-                MemberEntry entry = (MemberEntry)c.getEntries()[i];
-                PermissionsData pd = getPermissionsData(entry);
-                if (pd == null) {
-                    throw new NotFoundException("ERROR: Permissions do not exist for weblog handle: " + entry.getHandle() + ", user name: " + entry.getName());
-                }
-                updatePermissionsData(pd, entry);
-                permissionsDatas.add(pd);
+        List permissionsDatas= new ArrayList();
+        for (int i = 0; i < c.getEntries().length; i++) {
+            MemberEntry entry = (MemberEntry)c.getEntries()[i];
+            PermissionsData pd = getPermissionsData(entry);
+            if (pd == null) {
+                throw new NotFoundException("ERROR: Permissions do not exist for weblog handle: " + entry.getHandle() + ", user name: " + entry.getName());
             }
-            getRoller().flush();
-            return toMemberEntrySet((PermissionsData[])permissionsDatas.toArray(new PermissionsData[0]));
-        } catch (RollerException re) {
-            throw new InternalException("ERROR: Could not update members", re);
+            updatePermissionsData(pd, entry);
+            permissionsDatas.add(pd);
         }
+        return toMemberEntrySet((PermissionsData[])permissionsDatas.toArray(new PermissionsData[0]));
     }
     
     private void updatePermissionsData(PermissionsData pd, MemberEntry entry) throws HandlerException {
@@ -341,13 +338,13 @@ class RollerMemberHandler extends Handler {
         
         try {
             UserData ud = getRoller().getUserManager().getUserByUsername(entry.getName());
-            CacheManager.invalidate(ud);
             WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(entry.getHandle());
-            CacheManager.invalidate(wd);
             
             UserManager mgr = getRoller().getUserManager();
             mgr.savePermissions(pd);
-            
+            getRoller().flush();
+            CacheManager.invalidate(ud);
+            CacheManager.invalidate(wd);
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update permissions data", re);
         }
