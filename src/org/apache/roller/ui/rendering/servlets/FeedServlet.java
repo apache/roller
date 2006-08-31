@@ -227,7 +227,15 @@ public class FeedServlet extends HttpServlet {
             renderer = RendererManager.getRenderer(template);
         } catch(Exception e) {
             // nobody wants to render my content :(
-            log.warn("Couldn't find renderer for page "+pageId);
+            
+            // TODO: this log message has been disabled because it fills up
+            // the logs with useless errors due to the fact that the way these
+            // template ids are formed comes directly from the request and it
+            // often gets bunk data causing invalid template ids.
+            // at some point we should have better validation on the input so
+            // that we can quickly dispatch invalid feed requests and only
+            // get this far if we expect the template to be found
+            //log.error("Couldn't find renderer for page "+pageId, e);
             
             if(!response.isCommitted()) response.reset();
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
