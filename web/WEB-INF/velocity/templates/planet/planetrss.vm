@@ -38,7 +38,7 @@
     #if($entry.title)<title>$utils.escapeXML($entry.title)</title> #end
     #if($entry.text)
        <description>
-       $utils.escapeXML($utils.truncate($entry.text,300,320,"...")) [&lt;a href="$utils.escapeXML($entry.permaLink)"&gt;Read More&lt;/a&gt;]
+       $utils.escapeXML($utils.truncate($entry.text,300,320,"...")) [&lt;a href="$utils.escapeXML($entry.permalink)"&gt;Read More&lt;/a&gt;]
        </description> 
     #end
     #if($entry.categories)
