@@ -92,7 +92,7 @@ public class CustomUserRegistry {
       password = RollerConfig.getProperty("users.sso.passwords.defaultValue","<unknown>");
     }
     ud.setPassword(password);
-    ud.setEnabled(enabled);
+    ud.setEnabled(enabled ? Boolean.TRUE : Boolean.FALSE);
     ud.setLocale(Locale.getDefault().toString());
     ud.setTimeZone(TimeZone.getDefault().getID());
     ud.setDateCreated(new java.util.Date());
