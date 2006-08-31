@@ -69,8 +69,8 @@ public class RollerXMLRPCServlet extends HttpServlet {
     }
     
     
-    protected void service(HttpServletRequest request, 
-                           HttpServletResponse response)
+    protected void service(HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
         
         InputStream is = request.getInputStream();
