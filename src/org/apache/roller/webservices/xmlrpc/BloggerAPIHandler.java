@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.webservices.xmlrpc;
 
@@ -77,7 +77,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @return
      */
     public boolean deletePost(String appkey, String postid, String userid,
-                            String password, boolean publish) throws Exception {
+            String password, boolean publish) throws Exception {
         
         mLogger.debug("deletePost() Called =====[ SUPPORTED ]=====");
         mLogger.debug("     Appkey: " + appkey);
@@ -121,8 +121,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @return
      */
     public boolean setTemplate(String appkey, String blogid, String userid,
-                                String password, String templateData,
-                                String templateType) throws Exception {
+            String password, String templateData,
+            String templateType) throws Exception {
         
         mLogger.debug("setTemplate() Called =====[ SUPPORTED ]=====");
         mLogger.debug("     Appkey: " + appkey);
@@ -168,7 +168,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @return
      */
     public String getTemplate(String appkey, String blogid, String userid,
-                                String password, String templateType)
+            String password, String templateType)
             throws Exception {
         
         mLogger.debug("getTemplate() Called =====[ SUPPORTED ]=====");
@@ -207,7 +207,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @return
      */
     public Object getUserInfo(String appkey, String userid, String password)
-            throws Exception {
+    throws Exception {
         
         mLogger.debug("getUserInfo() Called =====[ SUPPORTED ]=====");
         mLogger.debug("     Appkey: " + appkey);
@@ -262,7 +262,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @return
      */
     public Object getUsersBlogs(String appkey, String userid, String password)
-            throws Exception {
+    throws Exception {
         
         mLogger.debug("getUsersBlogs() Called ===[ SUPPORTED ]=======");
         mLogger.debug("     Appkey: " + appkey);
@@ -309,7 +309,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @return
      */
     public boolean editPost(String appkey, String postid, String userid,
-                            String password, String content, boolean publish)
+            String password, String content, boolean publish)
             throws Exception {
         
         mLogger.debug("editPost() Called ========[ SUPPORTED ]=====");
@@ -365,7 +365,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @return
      */
     public String newPost(String appkey, String blogid, String userid,
-                            String password, String content, boolean publish)
+            String password, String content, boolean publish)
             throws Exception {
         
         mLogger.debug("newPost() Called ===========[ SUPPORTED ]=====");
@@ -386,7 +386,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                     content.indexOf("</title>"));
             content = StringUtils.replace(content, "<title>"+title+"</title>", "");
         }
-        if (StringUtils.isEmpty(title)) { 
+        if (StringUtils.isEmpty(title)) {
             title = Utilities.truncateNicely(content, 15, 15, "...");
         }
         
@@ -417,7 +417,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             
             // notify cache
             flushPageCache(entry.getWebsite());
-
+            
             return entry.getId();
         } catch (Exception e) {
             String msg = "ERROR in BlooggerAPIHander.newPost";
@@ -440,8 +440,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @throws XmlRpcException
      * @return Vector of Hashtables, each containing dateCreated, userid, postid, content
      */
-    public Object getRecentPosts(String appkey, String blogid, String userid, 
-                                    String password, int numposts)
+    public Object getRecentPosts(String appkey, String blogid, String userid,
+            String password, int numposts)
             throws Exception {
         
         mLogger.debug("getRecentPosts() Called ===========[ SUPPORTED ]=====");
@@ -474,7 +474,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                         Hashtable result = new Hashtable();
                         if (entry.getPubTime() != null) {
                             result.put("dateCreated", entry.getPubTime());
-                        } 
+                        }
                         result.put("userid", userid);
                         result.put("postid", entry.getId());
                         result.put("content", entry.getText());
