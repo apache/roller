@@ -94,7 +94,7 @@ public class FileManagerTest extends TestCase {
         // test quota functionality
         FileManager fmgr = RollerFactory.getRoller().getFileManager();
         RollerMessages msgs = new RollerMessages();
-        assertFalse(fmgr.canSave(testWeblog.getHandle(), "test.gif", 2500000, msgs));
+        assertFalse(fmgr.canSave(testWeblog.getHandle(), "test.gif", "image/gif", 2500000, msgs));
     }
     
     
@@ -116,7 +116,7 @@ public class FileManagerTest extends TestCase {
         
         // store a file
         InputStream is = getClass().getResourceAsStream("/bookmarks.opml");
-        fmgr.saveFile(testWeblog.getHandle(), "bookmarks.opml", 1545, is);
+        fmgr.saveFile(testWeblog.getHandle(), "bookmarks.opml", "text/xml", 1545, is);
         
         // make sure file was stored successfully
         assertEquals(1, fmgr.getFiles(testWeblog.getHandle()).length);
