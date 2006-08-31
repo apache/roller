@@ -1,25 +1,22 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-package org.apache.roller.business.utils;
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
+package org.apache.roller.business.utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,6 +24,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.pojos.PermissionsData;
 
 
@@ -35,21 +35,17 @@ import org.apache.roller.pojos.PermissionsData;
  */
 public class UpgradeDatabase {
     
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(UpgradeDatabase.class);
+    private static Log mLogger = LogFactory.getLog(UpgradeDatabase.class);
     
     // the name of the property which holds the dbversion value
     private static final String DBVERSION_PROP = "roller.database.version";
-    
-    // old version ... does nothing
-    public static void upgradeDatabase(Connection con) throws RollerException {}
     
     
     /**
      * Upgrade database if dbVersion is older than desiredVersion.
      */
-    public static void upgradeDatabase(Connection con, String desiredVersion) 
-        throws RollerException {
+    public static void upgradeDatabase(Connection con, String desiredVersion)
+            throws RollerException {
         
         int myVersion = 0;
         int dbversion = -1;
@@ -104,7 +100,7 @@ public class UpgradeDatabase {
         
         mLogger.debug("Database version = "+dbversion);
         mLogger.debug("Desired version = "+myVersion);
-            
+        
         if(dbversion < 0) {
             mLogger.info("New installation found, setting db version to "+myVersion);
             UpgradeDatabase.setDatabaseVersion(con, myVersion);
@@ -119,13 +115,11 @@ public class UpgradeDatabase {
         // iterate through each upgrade as needed
         // to add to the upgrade sequence simply add a new "if" statement
         // for whatever version needed and then define a new method upgradeXXX()
-        if(dbversion < 130) 
-        {
+        if(dbversion < 130) {
             UpgradeDatabase.upgradeTo130(con);
             dbversion = 130;
         }
-        if (dbversion < 200)
-        {
+        if (dbversion < 200) {
             UpgradeDatabase.upgradeTo200(con);
             dbversion = 200;
         }
@@ -180,7 +174,7 @@ public class UpgradeDatabase {
         // for the first time.  Normally we would just updateDatabaseVersion()
         UpgradeDatabase.setDatabaseVersion(con, 130);
     }
-
+    
     /**
      * Upgrade database for Roller 2.0.0
      */
@@ -190,19 +184,19 @@ public class UpgradeDatabase {
             mLogger.info("Populating roller_user_permissions table");
             
             PreparedStatement websitesQuery = con.prepareStatement(
-                "select w.id as wid, u.id as uid, u.username as uname from "
-              + "website as w, rolleruser as u where u.id=w.userid");
+                    "select w.id as wid, u.id as uid, u.username as uname from "
+                    + "website as w, rolleruser as u where u.id=w.userid");
             PreparedStatement websiteUpdate = con.prepareStatement(
-                "update website set handle=? where id=?");         
+                    "update website set handle=? where id=?");
             PreparedStatement entryUpdate = con.prepareStatement(
-                "update weblogentry set userid=?, status=?, "
-              + "pubtime=pubtime, updatetime=updatetime "
-              + "where publishentry=? and websiteid=?");            
+                    "update weblogentry set userid=?, status=?, "
+                    + "pubtime=pubtime, updatetime=updatetime "
+                    + "where publishentry=? and websiteid=?");
             PreparedStatement permsInsert = con.prepareStatement(
-                "insert into roller_user_permissions "
-              + "(id, website_id, user_id, permission_mask, pending) "
-              + "values (?,?,?,?,?)");
-             
+                    "insert into roller_user_permissions "
+                    + "(id, website_id, user_id, permission_mask, pending) "
+                    + "values (?,?,?,?,?)");
+            
             // loop through websites, each has a user
             ResultSet websiteSet = websitesQuery.executeQuery();
             while (websiteSet.next()) {
@@ -210,7 +204,7 @@ public class UpgradeDatabase {
                 String userid = websiteSet.getString("uid");
                 String handle = websiteSet.getString("uname");
                 mLogger.info("Processing website: " + handle);
-                       
+                
                 // use website user's username as website handle
                 websiteUpdate.clearParameters();
                 websiteUpdate.setString(1, handle);
@@ -223,7 +217,7 @@ public class UpgradeDatabase {
                 entryUpdate.setString( 2, "PUBLISHED");
                 entryUpdate.setBoolean(3, true);
                 entryUpdate.setString( 4, websiteid);
-                entryUpdate.executeUpdate();                               
+                entryUpdate.executeUpdate();
                 
                 // update all of draft entries to include userid and status
                 entryUpdate.clearParameters();
@@ -231,7 +225,7 @@ public class UpgradeDatabase {
                 entryUpdate.setString( 2, "DRAFT");
                 entryUpdate.setBoolean(3, false);
                 entryUpdate.setString( 4, websiteid);
-                entryUpdate.executeUpdate();                               
+                entryUpdate.executeUpdate();
                 
                 // add  permission for user in website
                 permsInsert.clearParameters();
@@ -254,8 +248,8 @@ public class UpgradeDatabase {
         
         UpgradeDatabase.updateDatabaseVersion(con, 200);
     }
-
-
+    
+    
     /**
      * Upgrade database for Roller 2.1.0
      */
@@ -367,8 +361,8 @@ public class UpgradeDatabase {
      *
      * This should only be called once for new installations
      */
-    private static void setDatabaseVersion(Connection con, int version) 
-        throws RollerException {
+    private static void setDatabaseVersion(Connection con, int version)
+            throws RollerException {
         
         try {
             Statement stmt = con.createStatement();
@@ -385,8 +379,8 @@ public class UpgradeDatabase {
     /**
      * Update the existing database.version property
      */
-    private static void updateDatabaseVersion(Connection con, int version) 
-        throws RollerException {
+    private static void updateDatabaseVersion(Connection con, int version)
+            throws RollerException {
         
         try {
             Statement stmt = con.createStatement();
