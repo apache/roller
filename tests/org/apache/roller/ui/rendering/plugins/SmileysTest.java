@@ -15,34 +15,40 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-/*
- * Created on Jun 8, 2004
- */
-package org.apache.roller.ui.rendering.velocity.plugins.smileys;
 
-
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockServletContext;
+package org.apache.roller.ui.rendering.plugins;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.presentation.velocity.plugins.smileys.SmileysPlugin;
 import org.apache.roller.ui.authoring.struts.actions.WeblogEntryActionTest;
 import org.apache.roller.ui.ServletTestBase;
 
+
 /**
- * @author lance.lavandowska
+ * Test smileys plugin.
  */
 public class SmileysTest extends ServletTestBase {
+    
+    private static Log log = LogFactory.getLog(WeblogEntryActionTest.class);
+    
     private WebsiteData testWeblog = null;
     private UserData testUser = null;
-    public static Log log = LogFactory.getLog(WeblogEntryActionTest.class);
+    
+    
+    public SmileysTest() {
+        super();
+    }
+    
+    
+    public static Test suite() {
+        return new TestSuite(SmileysTest.class);
+    }
+    
     
     /**
      * All tests in this suite require a user and a weblog.
@@ -59,6 +65,7 @@ public class SmileysTest extends ServletTestBase {
         }
     }
     
+    
     public void tearDown() throws Exception {
         super.tearDown();
         try {
@@ -70,6 +77,7 @@ public class SmileysTest extends ServletTestBase {
             throw new Exception("Test teardown failed", ex);
         }
     }
+    
     
     public void testSmileEmoticon() throws Exception {
         doFilters();
@@ -86,11 +94,4 @@ public class SmileysTest extends ServletTestBase {
         assertEquals(expected, result);
     }
     
-    public SmileysTest() {
-        super();
-    }
-    
-    public static Test suite() {
-        return new TestSuite(SmileysTest.class);
-    }
 }
