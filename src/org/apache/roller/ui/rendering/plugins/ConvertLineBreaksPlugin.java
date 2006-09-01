@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.presentation.velocity.plugins.convertbreaks;
+package org.apache.roller.ui.rendering.plugins;
 
 import java.io.BufferedReader;
 import java.io.StringReader;

@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.presentation.velocity.plugins.email;
+package org.apache.roller.ui.rendering.plugins;
 
 import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;

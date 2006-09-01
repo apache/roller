@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.presentation.velocity.plugins.search;
+package org.apache.roller.ui.rendering.plugins;
 
 import org.apache.commons.logging.Log;
 import org.apache.roller.RollerException;
