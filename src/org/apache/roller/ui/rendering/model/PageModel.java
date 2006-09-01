@@ -184,7 +184,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
-                    pageRequest.getWeblogCategoryName(),
+                    cat,
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 8) {
             return new WeblogEntriesDayPager(
@@ -193,7 +193,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
-                    pageRequest.getWeblogCategoryName(),
+                    cat,
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 6) {
             return new WeblogEntriesMonthPager(
@@ -202,7 +202,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
-                    pageRequest.getWeblogCategoryName(),
+                    cat,
                     pageRequest.getPageNum());
         } else {
             return new WeblogEntriesLatestPager(
@@ -211,7 +211,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogPageName(),
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
-                    pageRequest.getWeblogCategoryName(),
+                    cat,
                     pageRequest.getPageNum());
         }
     }
