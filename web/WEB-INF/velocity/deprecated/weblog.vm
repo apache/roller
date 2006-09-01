@@ -75,6 +75,11 @@
     #end
 
     #if ($model.permalink)
+        #if($config.trackbacksEnabled && $model.weblog.allowComments && $entry.commentsStillAllowed)
+            <div class="trackbackUrl">
+                $text.get("macro.weblog.trackback") $url.trackback($entry.anchor)
+            </div>
+        #end
         #showEntryLinkbacks($entry)
         #showWeblogEntryComments($entry)
         #showCommentForm($entry)
