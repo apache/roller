@@ -41,7 +41,7 @@
             #end
         #end
         </div>
-
+        #showTrackbackAutodiscovery($entry)
 	</div>
 #end
   <div class="floatSpacer">&nbsp;</div>

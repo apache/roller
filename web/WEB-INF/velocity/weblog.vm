@@ -75,9 +75,11 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 
 
 #**
- * Display a trackback auto-discovery RDF comment for a WeblogEntry.
+ * Display a trackback auto-discovery RDF comment for a WeblogEntry, but only
+ * if trackbacks are enabled and comments are allowed for the entry.
  **#
 #macro( showTrackbackAutodiscovery $entry )
+#if($config.trackbacksEnabled && $model.weblog.allowComments && $entry.commentsStillAllowed)
 <!--
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
@@ -93,6 +95,7 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
     dc:date="$entry.pubTime" />
 </rdf:RDF>
 -->
+#end
 #end
 
 

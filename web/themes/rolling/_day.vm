@@ -35,6 +35,7 @@
                 <a href="$url.comments($entry.anchor)" class="commentsLink">$text.get("macro.weblog.comments")[$commentCount]</a>
             #end
         </p>
+        #showTrackbackAutodiscovery($entry)
     </div>
     #end
 
