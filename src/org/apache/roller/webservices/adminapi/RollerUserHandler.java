@@ -167,16 +167,17 @@ class RollerUserHandler extends Handler {
                 }
                 UserData ud = toUserData(entry);
                 mgr.addUser(ud);
+                getRoller().flush();
+                CacheManager.invalidate(ud);
                 userDatas.add(ud);
             }
-            getRoller().flush();
             return toUserEntrySet((UserData[])userDatas.toArray(new UserData[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create users: " + c, re);
         }
     }
     
-    private UserEntrySet updateUsers(UserEntrySet c) throws NotFoundException, InternalException {
+    private UserEntrySet updateUsers(UserEntrySet c) throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
             
@@ -188,19 +189,15 @@ class RollerUserHandler extends Handler {
                     throw new NotFoundException("ERROR: Unknown user: " + entry.getName());
                 }
                 updateUserData(ud, entry);
-                
-                mgr.saveUser(ud);
-                CacheManager.invalidate(ud);
                 userDatas.add(ud);
             }
-            getRoller().flush();
             return toUserEntrySet((UserData[])userDatas.toArray(new UserData[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update users: " + c, re);
         }
     }
     
-    private void updateUserData(UserData ud, UserEntry entry) {
+    private void updateUserData(UserData ud, UserEntry entry) throws HandlerException {
         // user name cannot be updated
         
         if (entry.getFullName() != null) {
@@ -217,6 +214,15 @@ class RollerUserHandler extends Handler {
         }
         if (entry.getEmailAddress() != null) {
             ud.setEmailAddress(entry.getEmailAddress());
+        }
+        
+        try {
+            UserManager mgr = getRoller().getUserManager();
+            mgr.saveUser(ud);
+            getRoller().flush();
+            CacheManager.invalidate(ud);
+        } catch (RollerException re) {
+            throw new InternalException("ERROR: could not update user data", re);
         }
     }
     
@@ -235,9 +241,9 @@ class RollerUserHandler extends Handler {
             
             UserData[] uds = new UserData[] { ud };
             mgr.removeUser(ud);
-            
+            getRoller().flush();            
             CacheManager.invalidate(ud);
-            getRoller().flush();
+
             EntrySet es = toUserEntrySet(uds);
             return es;
         } catch (RollerException re) {

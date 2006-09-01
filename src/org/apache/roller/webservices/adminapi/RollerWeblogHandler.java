@@ -202,12 +202,12 @@ class RollerWeblogHandler extends Handler {
                 }
                 
                 mgr.addWebsite(wd);
+                getRoller().flush();
+                CacheManager.invalidate(wd);                
                 websiteDatas.add(wd);
             }
             
-            getRoller().flush();
-            return toWeblogEntrySet((WebsiteData[])websiteDatas.toArray(new WebsiteData[0]));
-            
+            return toWeblogEntrySet((WebsiteData[])websiteDatas.toArray(new WebsiteData[0]));            
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not create weblogs: " + c, re);
         }
@@ -231,7 +231,6 @@ class RollerWeblogHandler extends Handler {
                 updateWebsiteData(wd, entry);
                 websiteDatas.add(wd);
             }
-            getRoller().flush();
             return toWeblogEntrySet((WebsiteData[])websiteDatas.toArray(new WebsiteData[0]));
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update weblogs: " + c, re);
@@ -258,7 +257,7 @@ class RollerWeblogHandler extends Handler {
         try {
             UserManager mgr = getRoller().getUserManager();
             mgr.saveWebsite(wd);
-            
+            getRoller().flush();            
             CacheManager.invalidate(wd);
         } catch (RollerException re) {
             throw new InternalException("ERROR: Could not update website data", re);
@@ -280,9 +279,8 @@ class RollerWeblogHandler extends Handler {
             EntrySet es = toWeblogEntrySet(wds);
             
             mgr.removeWebsite(wd);
-            
+            getRoller().flush();            
             CacheManager.invalidate(wd);
-            getRoller().flush();
             
             return es;
         } catch (RollerException re) {
