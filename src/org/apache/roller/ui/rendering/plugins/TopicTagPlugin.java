@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.presentation.velocity.plugins.topictag;
+package org.apache.roller.ui.rendering.plugins;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -307,8 +307,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
     protected Map buildBookmarkMap(WebsiteData website) throws RollerException
     {
         Map bookmarkMap = new HashMap();
-        if (RollerConfig.getBooleanProperty(
-            "org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.ignoreBookmarks")) {
+        if (RollerConfig.getBooleanProperty("plugins.topictag.ignoreBookmarks")) {
             return bookmarkMap;
         }
         if (website == null)
@@ -340,11 +339,9 @@ public class TopicTagPlugin implements WeblogEntryPlugin
         setLinkFormatString(getSetting("linkFormatString", getLinkFormatString()));
     }
 
-    private static final String thisClassnameDot = TopicTagPlugin.class.getName() + ".";
-
     private String getSetting(String propName, String defaultValue)
     {
-        String fullPropName = thisClassnameDot + propName;
+        String fullPropName = "plugins.topictag." + propName;
         String val = (String) RollerConfig.getProperty(fullPropName);
         return (val != null) ? val : defaultValue;
     }

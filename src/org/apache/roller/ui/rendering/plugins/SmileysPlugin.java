@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.presentation.velocity.plugins.smileys;
+package org.apache.roller.ui.rendering.plugins;
 
 import java.util.Enumeration;
 import java.util.Map;

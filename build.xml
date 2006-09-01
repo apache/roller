@@ -354,9 +354,6 @@ ro.buildUser=${user.name}
         <fileset dir="${build.compile.web}" excludes="**/tomcat/**"/>
     </jar>
     
-    <!-- build contributions as well -->
-    <ant inheritAll="false" dir="contrib" />
-    
 </target>
 
 

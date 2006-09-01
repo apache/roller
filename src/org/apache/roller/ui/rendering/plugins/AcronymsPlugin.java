@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.presentation.velocity.plugins.acronyms;
+package org.apache.roller.ui.rendering.plugins;
 
 import java.util.Iterator;
 import java.util.Map;
