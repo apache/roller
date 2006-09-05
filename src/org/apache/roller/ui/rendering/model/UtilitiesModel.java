@@ -19,13 +19,12 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
@@ -37,11 +36,10 @@ import org.apache.roller.RollerException;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerSession;
+import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.Utilities;
-import org.apache.struts.util.RequestUtils;
-
 
 /**
  * Model which provides access to a set of general utilities.
@@ -94,6 +92,7 @@ public class UtilitiesModel implements Model {
             Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
     
     private HttpServletRequest request = null;
+    private TimeZone tz = null;
     
     
     /** Template context name to be used for model */
@@ -106,9 +105,16 @@ public class UtilitiesModel implements Model {
     public void init(Map initData) throws RollerException {
         
         // extract request object
-        this.request = (HttpServletRequest) initData.get("request");
+        this.request = (HttpServletRequest) initData.get("request");        
+
+        // extract timezone if available
+        WeblogPageRequest pageRequest = 
+            (WeblogPageRequest)initData.get("pageRequest");
+        if (pageRequest != null && pageRequest.getWeblog() != null) {
+            tz = pageRequest.getWeblog().getTimeZoneInstance();
+        }
     }
-    
+     
     
     //---------------------------------------------------- Authentication utils 
     
@@ -151,11 +157,26 @@ public class UtilitiesModel implements Model {
     /**
      * Format date using SimpleDateFormat format string.
      */
-    public static String formatDate(Date d, String fmt) {
+    public String formatDate(Date d, String fmt) {
         if(d == null || fmt == null)
             return fmt;
         
         SimpleDateFormat format = new SimpleDateFormat(fmt);
+        if (tz != null) {
+            format.setTimeZone(tz);
+        }
+        return format.format(d);
+    }
+    
+    /**
+     * Format date using SimpleDateFormat format string.
+     */
+    public static String formatDate(Date d, String fmt, TimeZone tzOverride) {
+        if(d == null || fmt == null)
+            return fmt;
+        
+        SimpleDateFormat format = new SimpleDateFormat(fmt);
+        format.setTimeZone(tzOverride);
         return format.format(d);
     }
     
