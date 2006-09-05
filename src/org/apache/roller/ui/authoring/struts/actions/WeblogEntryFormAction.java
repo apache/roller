@@ -645,8 +645,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 // Run entry through registered PagePlugins
                 PluginManager ppmgr = roller.getPagePluginManager();
                 Map plugins = ppmgr.getWeblogEntryPlugins(
-                        entry.getWebsite(),
-                        new HashMap());
+                        entry.getWebsite());
                 
                 String content = "";
                 if (!StringUtils.isEmpty(entry.getText())) {

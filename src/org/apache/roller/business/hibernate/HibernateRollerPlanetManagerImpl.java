@@ -136,7 +136,7 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                 
                 // Populate subscription object with new entries
                 PluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
-                Map pagePlugins = ppmgr.getWeblogEntryPlugins(website, new HashMap());
+                Map pagePlugins = ppmgr.getWeblogEntryPlugins(website);
                 Iterator entryIter = entries.iterator();
                 while (entryIter.hasNext()) {
                     try {

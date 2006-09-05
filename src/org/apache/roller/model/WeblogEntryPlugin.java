@@ -50,7 +50,7 @@ public interface WeblogEntryPlugin {
      * @param weblog     Weblog being processed
      * @param model      Rendering model where objects can be placed
      */
-    public void init(WebsiteData weblog, Map model) throws RollerException;
+    public void init(WebsiteData weblog) throws RollerException;
     
     
     /**

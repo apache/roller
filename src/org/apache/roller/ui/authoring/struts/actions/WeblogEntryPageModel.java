@@ -231,8 +231,7 @@ null,                 0, 20);
                 Roller roller = RollerFactory.getRoller();
                 PluginManager ppmgr = roller.getPagePluginManager();
                 Map plugins = ppmgr.getWeblogEntryPlugins(
-                    getWebsite(),
-                    new HashMap());
+                    getWebsite());
                 Iterator it = plugins.values().iterator();
                 while (it.hasNext()) list.add(it.next());
             }

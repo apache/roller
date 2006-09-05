@@ -1118,7 +1118,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
             try {
                 Roller roller = RollerFactory.getRoller();
                 PluginManager ppmgr = roller.getPagePluginManager();
-                initializedPlugins = ppmgr.getWeblogEntryPlugins(this, new HashMap()); 
+                initializedPlugins = ppmgr.getWeblogEntryPlugins(this); 
             } catch (Exception e) {
                 this.log.error("ERROR: initializing plugins");
             }
