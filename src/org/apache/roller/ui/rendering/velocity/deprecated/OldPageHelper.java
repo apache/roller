@@ -99,7 +99,7 @@ public class OldPageHelper {
         // init plugins
         Roller roller = RollerFactory.getRoller();
         PluginManager ppmgr = roller.getPagePluginManager();
-        mPagePlugins = ppmgr.getWeblogEntryPlugins(mWebsite, ctx);
+        mPagePlugins = ppmgr.getWeblogEntryPlugins(mWebsite);
     }
     
     

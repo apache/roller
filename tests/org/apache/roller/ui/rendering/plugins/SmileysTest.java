@@ -83,7 +83,7 @@ public class SmileysTest extends ServletTestBase {
         doFilters();
         
         SmileysPlugin plugin = new SmileysPlugin();
-        plugin.init(testWeblog, null);
+        plugin.init(testWeblog);
         assertTrue( SmileysPlugin.smileyPatterns.length > 0 );
         
         String test = "put on a happy :-) face";

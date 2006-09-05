@@ -72,7 +72,7 @@ public class AcronymsPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(WebsiteData website, Map model) throws RollerException {}
+    public void init(WebsiteData website) throws RollerException {}
     
     
     public String render(WeblogEntryData entry, String str) {

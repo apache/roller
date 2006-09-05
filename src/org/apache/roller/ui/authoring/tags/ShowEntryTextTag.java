@@ -78,8 +78,7 @@ public class ShowEntryTextTag extends TagSupport {
                     try {
                         PluginManager ppmgr = roller.getPagePluginManager();
                         Map plugins = ppmgr.getWeblogEntryPlugins(
-                                entry.getWebsite(),
-                                new HashMap());
+                                entry.getWebsite());
 
                         xformed = ppmgr.applyWeblogEntryPlugins(plugins, entry, sourceText);
 
