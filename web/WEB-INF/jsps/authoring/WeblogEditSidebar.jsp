@@ -34,7 +34,7 @@ WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model")
     <c:url value="/roller-ui/authoring/commentManagement.do" var="commentManagement">
        <c:param name="method" value="query" />
        <c:param name="weblog" value="${model.website.handle}" />
-       <c:param name="entryid" value="${model.weblogEntry.id}" />
+       <c:param name="entryId" value="${model.weblogEntry.id}" />
     </c:url>
     <span class="entryEditSidebarLink">
         <a href='<c:out value="${commentManagement}" />'>

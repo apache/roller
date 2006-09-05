@@ -430,7 +430,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                     + request.getContextPath();
                 }
                 String editURL = rootURL
-                        + "/roller-ui/authoring/weblog.do?method=edit&entryid=" + entry.getId();
+                        + "/roller-ui/authoring/weblog.do?method=edit&entryId=" + entry.getId();
                 
                 ResourceBundle resources = ResourceBundle.getBundle(
                         "ApplicationResources", request.getLocale());
