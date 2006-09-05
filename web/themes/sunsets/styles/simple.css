@@ -171,6 +171,15 @@ ul.rCategory {
     margin-top: -26px;
 }
 
+div.rWeblogCategoryChooser {
+    background: transparent;
+    color: #ffffff;
+    float: right;
+    font-size: .9em;
+    margin-right: 5px;
+    margin-top: -26px;
+}
+
 div.standardsNote {
     display: none;
 }
