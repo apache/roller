@@ -16,63 +16,64 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.presentation.velocity.plugins.readmore;
+package org.apache.roller.ui.rendering.plugins;
 
-import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.model.WeblogEntryPlugin;
 import org.apache.roller.util.Utilities;
 
 
 /**
- * DEPRECATED. Truncates entry text and displays a link to read more.
- *
- * This plugin is no longer functional.  It now just returns the orginal
- * text without performing any transformation.
+ * Truncates the string passed in and applies a "Read More" link if the
+ * text is longer than the truncation limit.
  */
 public class ReadMorePlugin implements WeblogEntryPlugin {
     
-    private static Log mLogger = LogFactory.getLog(ReadMorePlugin.class);
+    private static Log log = LogFactory.getLog(ReadMorePlugin.class);
     
-    protected String name = "Read More Summary";
-    protected String description = "This plugin is no longer functional.  "+
-            "Please use Roller's entry summary field instead.";
-    
-    private String baseURL = "";
+    private String name = "Read More Summary";
+    private String description = "Stops entry after 250 characters and creates " +
+            "a link to the full entry.";
     
     
     public ReadMorePlugin() {
-        mLogger.debug("ReadMorePlugin instantiated.");
+        log.debug("ReadMorePlugin instantiated.");
     }
     
     
-    public String getName() {
-        return name;
+    public String getName() { 
+        return name; 
+    }
+    
+    public String getDescription() { 
+        return StringEscapeUtils.escapeJavaScript(description); 
     }
     
     
-    public String getDescription() {
-        return StringEscapeUtils.escapeJavaScript(description);
+    public void init(WebsiteData website) throws RollerException {
+        // no-op
     }
-    
-    
-    public void init(WebsiteData website, Map model) throws RollerException {}
     
     
     public String render(WeblogEntryData entry, String str) {
         
-        // this plugin has been deprecated now that Roller supports multiple
-        // entry text fields (summary & content).  this plugin now just returns
-        // the text it is passed in.
-        return str;
+        String result = Utilities.removeHTML(str, true);
+        result = Utilities.truncateText(result, 240, 260, "...");
+        
+        // if the result is shorter, we need to add "Read More" link
+        if (result.length() < str.length()) {
+            String link = "<div class=\"readMore\"><a href=\"" +
+                    entry.getPermalink() + "\">Read More</a></div>";
+            
+            result += link;
+        }
+        
+        return result;
     }
     
 }

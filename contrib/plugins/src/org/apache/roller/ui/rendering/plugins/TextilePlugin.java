@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.presentation.velocity.plugins.textile;
+package org.apache.roller.ui.rendering.plugins;
 
 import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -57,17 +57,17 @@ public class TextilePlugin implements WeblogEntryPlugin {
     
     
     /**
-     * Put plugin into the page context so templates may access it.
+     * Init.
      */
-    public void init(WebsiteData website, Map model) {
-        // TODO: we probably shouldn't allow plugins access to the model
-        model.put("textileRenderer",this);
+    public void init(WebsiteData website) {
+        // no-op
     }
     
     
     /**
      * Convert an input string that contains text that uses the Textile
      * syntax to an output string in HTML format.
+     *
      * @param src Input string that uses Textile syntax
      * @return Output string in HTML format.
      */
