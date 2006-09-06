@@ -312,7 +312,6 @@ public class PageServlet extends HttpServlet {
             Map initData = new HashMap();
             initData.put("request", request);
             initData.put("requestParameters", request.getParameterMap());
-            initData.put("pageRequest", pageRequest);
             initData.put("weblogRequest", pageRequest);
             initData.put("pageContext", pageContext);
             

@@ -35,6 +35,7 @@ import org.apache.roller.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.ui.rendering.pagers.WeblogEntriesPermalinkPager;
 import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
 
 
 /**
@@ -70,15 +71,25 @@ public class PageModel implements Model {
      */
     public void init(Map initData) throws RollerException {
         
-        // we expect the init data to contain a pageRequest object
-        this.pageRequest = (WeblogPageRequest) initData.get("pageRequest");
-        if(this.pageRequest == null) {
-            throw new RollerException("expected pageRequest from init data");
+        // we expect the init data to contain a weblogRequest object
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        if(weblogRequest == null) {
+            throw new RollerException("expected weblogRequest from init data");
+        }
+        
+        // PageModel only works on page requests, so cast weblogRequest
+        // into a WeblogPageRequest and if it fails then throw exception
+        if(weblogRequest instanceof WeblogPageRequest) {
+            this.pageRequest = (WeblogPageRequest) weblogRequest;
+        } else {
+            throw new RollerException("weblogRequest is not a WeblogPageRequest."+
+                    "  PageModel only supports page requests.");
         }
         
         // see if there is a comment form
         this.commentForm = (WeblogEntryCommentForm) initData.get("commentForm");
         
+        // custom request parameters
         this.requestParameters = (Map)initData.get("requestParameters");
         
         // extract weblog object
