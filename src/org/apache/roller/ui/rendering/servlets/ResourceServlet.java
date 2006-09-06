@@ -131,6 +131,7 @@ public class ResourceServlet extends HttpServlet {
         // set the content type based on whatever is in our web.xml mime defs
         response.addDateHeader("Last-Modified", (new Date()).getTime());
         response.setContentType(this.context.getMimeType(resource.getAbsolutePath()));
+        response.setDateHeader("Expires", 0);
         
         // ok, lets serve up the file
         byte[] buf = new byte[8192];

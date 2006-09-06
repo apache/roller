@@ -126,6 +126,7 @@ public class PlanetFeedServlet extends HttpServlet {
         // small hack here, we add 1 second (1000 ms) to the last mod time to
         // account for some lost precision when converting request date headers
         response.setDateHeader("Last-Modified", lastModified.getTime()+1000);
+        response.setDateHeader("Expires",0);
         
         // cached content checking
         String cacheKey = PlanetCache.CACHE_ID+":"+this.generateKey(planetRequest);

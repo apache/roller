@@ -133,6 +133,7 @@ public class FeedServlet extends HttpServlet {
         
         // set last-modified date
         response.setDateHeader("Last-Modified", lastModified);
+        response.setDateHeader("Expires", 0);
         
         // set content type
         String accepts = request.getHeader("Accept");

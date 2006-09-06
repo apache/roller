@@ -106,7 +106,7 @@ public class RSDServlet extends HttpServlet {
         
         // set last-modified date
         response.setDateHeader("Last-Modified", weblog.getLastModified().getTime());
-        
+        response.setDateHeader("Expires", 0);
         
         // populate the model
         HashMap model = new HashMap();
