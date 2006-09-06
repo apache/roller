@@ -89,10 +89,6 @@ public class ResponseContent implements Serializable {
             response.setContentType(contentType);
         }
 
-        //if (response instanceof HttpServletResponse) {
-            //((HttpServletResponse) response).setDateHeader("Last-Modified", lastModified);
-        //}
-
         response.setContentLength(content.length);
 
         if (locale != null) {
