@@ -78,6 +78,9 @@ public class ModDateHeaderUtil {
     public static void setLastModifiedHeader(HttpServletResponse response, long lastModifiedTimeMillis) {
         response.setDateHeader("Last-Modified", lastModifiedTimeMillis);
         // Force clients to revalidate each time
+        // See RFC 2616 (HTTP 1.1 spec) secs 14.21, 13.2.1
         response.setDateHeader("Expires", 0);
+        // We may also want this (See 13.2.1 and 14.9.4)
+        // response.setHeader("Cache-Control","must-revalidate");
     }
 }
