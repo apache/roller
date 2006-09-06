@@ -118,8 +118,8 @@ public class AtomServlet extends HttpServlet {
                     // return an entry
                     Entry entry = handler.getEntry(pathInfo);
                     if (entry != null) {
-                        Writer writer = res.getWriter();
                         res.setContentType("application/atom+xml; charset=utf-8");
+                        Writer writer = res.getWriter();
                         serializeEntry(entry, writer);
                         writer.close();
                     } else {
