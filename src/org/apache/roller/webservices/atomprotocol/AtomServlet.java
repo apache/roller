@@ -46,6 +46,7 @@ import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.WireFeedOutput;
+import java.io.BufferedReader;
 import java.io.StringWriter;
 import org.jdom.Namespace;
 import org.apache.roller.config.RollerConfig;
@@ -158,8 +159,9 @@ public class AtomServlet extends HttpServlet {
                     if (req.getContentType().startsWith("application/atom+xml")) {
 
                         // parse incoming entry
-                        Entry unsavedEntry = parseEntry(
-                            new InputStreamReader(req.getInputStream()));
+                        Entry unsavedEntry = parseEntry(new BufferedReader(
+                            new InputStreamReader(
+                                req.getInputStream(), "UTF-8")));
 
                         // call handler to post it
                         Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
@@ -239,8 +241,9 @@ public class AtomServlet extends HttpServlet {
                 if (handler.isEntryURI(pathInfo)) {
                     
                     // parse incoming entry
-                    Entry unsavedEntry = parseEntry(
-                            new InputStreamReader(req.getInputStream()));
+                    Entry unsavedEntry = parseEntry(new BufferedReader(
+                        new InputStreamReader(
+                            req.getInputStream(), "UTF-8")));
                     
                     // call handler to put entry
                     Entry updatedEntry = handler.putEntry(pathInfo, unsavedEntry);
