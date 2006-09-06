@@ -51,6 +51,7 @@ import org.apache.roller.ui.rendering.model.ModelLoader;
 import org.apache.roller.ui.rendering.util.SiteWideCache;
 import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.ui.rendering.util.WeblogPageCache;
+import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.util.SpamChecker;
 
 
@@ -163,30 +164,17 @@ public class PageServlet extends HttpServlet {
         long lastModified = 0;
         if(isSiteWide) {
             lastModified = siteWideCache.getLastModified().getTime();
-
-            // this is needed because the if-modified-since header truncates
-            // the last 3 digits of the value, presumably because it can't
-            // handle the high precision and that causes our last mod data to
-            // always be up to 1 second more than the one from the header
-            lastModified = lastModified - (lastModified % 1000);
-
-        } else if (weblog.getLastModified() != null) {
+        } else {
             lastModified = weblog.getLastModified().getTime();
         }
 
-        // 304 if-modified-since checking
-        long sinceDate = request.getDateHeader("If-Modified-Since");
-        log.debug("since date = "+sinceDate);
-        log.debug("last mod date = "+lastModified);
-        if(lastModified <= sinceDate) {
-            log.debug("NOT MODIFIED "+request.getRequestURL());
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        // Respond with 304 Not Modified if it is not modified.
+        if (ModDateHeaderUtil.respondIfNotModified(request,response,lastModified)) {
             return;
         }
-                
+
         // set last-modified date
-        response.setDateHeader("Last-Modified", lastModified);
-        response.setDateHeader("Expires", 0);
+        ModDateHeaderUtil.setLastModifiedHeader(response,lastModified);
                 
         // generate cache key
         String cacheKey = null;
