@@ -36,7 +36,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.Utilities;
@@ -108,10 +108,9 @@ public class UtilitiesModel implements Model {
         this.request = (HttpServletRequest) initData.get("request");        
 
         // extract timezone if available
-        WeblogPageRequest pageRequest = 
-            (WeblogPageRequest)initData.get("pageRequest");
-        if (pageRequest != null && pageRequest.getWeblog() != null) {
-            tz = pageRequest.getWeblog().getTimeZoneInstance();
+        WeblogRequest weblogRequest = (WeblogRequest)initData.get("weblogRequest");
+        if (weblogRequest != null && weblogRequest.getWeblog() != null) {
+            tz = weblogRequest.getWeblog().getTimeZoneInstance();
         }
     }
      

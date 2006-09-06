@@ -182,7 +182,6 @@ public class FeedServlet extends HttpServlet {
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
-            initData.put("feedRequest", feedRequest);
             initData.put("weblogRequest", feedRequest);
 
             // Load models for feeds

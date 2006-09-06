@@ -19,8 +19,6 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +28,7 @@ import org.apache.roller.ui.core.tags.calendar.BigWeblogCalendarModel;
 import org.apache.roller.ui.core.tags.calendar.CalendarTag;
 import org.apache.roller.ui.core.tags.calendar.WeblogCalendarModel;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
+import org.apache.roller.ui.rendering.util.WeblogRequest;
 
 
 /**
@@ -57,10 +56,19 @@ public class CalendarModel implements Model {
         // extract page context
         this.pageContext = (PageContext) initData.get("pageContext");
         
-        // we expect the init data to contain a pageRequest object
-        this.pageRequest = (WeblogPageRequest) initData.get("pageRequest");
-        if(this.pageRequest == null) {
-            throw new RollerException("expected pageRequest from init data");
+        // we expect the init data to contain a weblogRequest object
+        WeblogRequest weblogRequest = (WeblogRequest) initData.get("weblogRequest");
+        if(weblogRequest == null) {
+            throw new RollerException("expected weblogRequest from init data");
+        }
+        
+        // CalendarModel only works on page requests, so cast weblogRequest
+        // into a WeblogPageRequest and if it fails then throw exception
+        if(weblogRequest instanceof WeblogPageRequest) {
+            this.pageRequest = (WeblogPageRequest) weblogRequest;
+        } else {
+            throw new RollerException("weblogRequest is not a WeblogPageRequest."+
+                    "  CalendarModel only supports page requests.");
         }
     }
     
