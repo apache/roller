@@ -33,6 +33,7 @@ import org.apache.roller.pojos.StaticTemplate;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
+import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.util.cache.CachedContent;
@@ -92,21 +93,18 @@ public class RSDServlet extends HttpServlet {
         }
         
         
-        // 304 if-modified-since checking
-        long sinceDate = request.getDateHeader("If-Modified-Since");
-        log.debug("since date = "+sinceDate);
-        if(weblog.getLastModified().getTime() <= sinceDate) {
-            log.debug("NOT MODIFIED "+request.getRequestURL());
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+
+        // Respond with 304 Not Modified if it is not modified.
+        long lastModified = weblog.getLastModified().getTime();
+        if (ModDateHeaderUtil.respondIfNotModified(request,response,lastModified)) {
             return;
         }
-        
+
+        // set last-modified date
+        ModDateHeaderUtil.setLastModifiedHeader(response,lastModified);
+
         // set the content type
         response.setContentType("application/rsd+xml; charset=utf-8");
-        
-        // set last-modified date
-        response.setDateHeader("Last-Modified", weblog.getLastModified().getTime());
-        response.setDateHeader("Expires", 0);
         
         // populate the model
         HashMap model = new HashMap();

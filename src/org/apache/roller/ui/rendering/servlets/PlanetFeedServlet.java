@@ -39,7 +39,7 @@ import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.ui.rendering.util.PlanetCache;
 import org.apache.roller.ui.rendering.util.PlanetRequest;
-import org.apache.roller.util.URLUtilities;
+import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.util.cache.CachedContent;
 
 
@@ -100,15 +100,11 @@ public class PlanetFeedServlet extends HttpServlet {
         // figure planet last modified date
         Date lastModified = planetCache.getLastModified();
         
-        // 304 if-modified-since checking
-        long sinceDate = request.getDateHeader("If-Modified-Since");
-        log.debug("since date = "+sinceDate);
-        if(lastModified.getTime() <= sinceDate) {
-            log.debug("NOT MODIFIED "+request.getRequestURL());
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        // Respond with 304 Not Modified if it is not modified.
+        if (ModDateHeaderUtil.respondIfNotModified(request,response,lastModified.getTime())) {
             return;
         }
-        
+
         // set content type
         String accepts = request.getHeader("Accept");
         String userAgent = request.getHeader("User-Agent");
@@ -121,13 +117,10 @@ public class PlanetFeedServlet extends HttpServlet {
         } else {
             response.setContentType("application/rss+xml; charset=utf-8");
         }
-        
+
         // set last-modified date
-        // small hack here, we add 1 second (1000 ms) to the last mod time to
-        // account for some lost precision when converting request date headers
-        response.setDateHeader("Last-Modified", lastModified.getTime()+1000);
-        response.setDateHeader("Expires",0);
-        
+        ModDateHeaderUtil.setLastModifiedHeader(response,lastModified.getTime());
+
         // cached content checking
         String cacheKey = PlanetCache.CACHE_ID+":"+this.generateKey(planetRequest);
         CachedContent entry = (CachedContent) planetCache.get(cacheKey);
