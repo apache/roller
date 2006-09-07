@@ -31,81 +31,81 @@
 
             <div id="tabContent">
                 <div id="recentEntries">
+                  
+                    #if (!$model.results)
+                        ## 1) SITE-WIDE entries (the default)
+                        #set($pager = $site.getWeblogEntriesPager($since, $maxResults))
 
-                   
-                    ## The below pager code should work against either:
+                        ## 2) PLANET-entries
+                        ## set($pager = $planet.getAggregationPager($since, $maxResults))
+                        ## The below pager code should work against either:
 
-                    ## 1) SITE-WIDE entries (the default)
-                    #set($pager = $site.getWeblogEntriesPager($since, $maxResults))
-
-                    ## 2) PLANET-entries
-                    ## set($pager = $planet.getAggregationPager($since, $maxResults))
-
-
-                    #if($pager.items.size() > 0)
-                        #set($entryCount = $pager.items.size() - 1)
-                        #set($startDate = $pager.items.get(0).pubTime)
-                        #set($endDate = $entries.get($entryCount).pubTime)
-                    #end
-                    
-                    #if(!$pager.nextLink)
-                        #set($pinnedEntries = $site.getPinnedWeblogEntries(5))
-                        #foreach($pinnedEntry in $pinnedEntries)
-                            <div class="entry">
-                                <a class="entryTitle" href="$utils.escapeHTML($pinnedEntry.permalink)">
-                                    $utils.truncateNicely($utils.removeHTML($pinnedEntry.title), 50, 50, "...")
-                                </a><br /> 
-                                <p class="entryDetails">
-                                    <a href="$utils.escapeHTML($pinnedEntry.website.URL)">$pinnedEntry.website.name</a>
-                                    #if($pinnedEntry.category.name)| $pinnedEntry.category.name #end
-                                    #if($pinnedEntry.pubTime) | $utils.formatDate($pinnedEntry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
-                                    #if($pinnedEntry.creator.userName)| By $pinnedEntry.creator.userName #end
-                                    <br/> 
-                                </p>
-                                <p class="entryDescription">                    
-                                    $pinnedEntry.displayContent
-                                </p>
-                            </div>
+                        #if($pager.items.size() > 0)
+                            #set($entryCount = $pager.items.size() - 1)
+                            #set($startDate = $pager.items.get(0).pubTime)
+                            #set($endDate = $entries.get($entryCount).pubTime)
                         #end
-                    #end                    
 
-                    #foreach($entry in $pager.items)
-                        #if($velocityCount < $maxResults)
+                         #if(!$pager.nextLink)
+                            #set($pinnedEntries = $site.getPinnedWeblogEntries(5))
+                            #foreach($pinnedEntry in $pinnedEntries)
+                                <div class="entry">
+                                    <a class="entryTitle" href="$utils.escapeHTML($pinnedEntry.permalink)">
+                                        $utils.truncateNicely($utils.removeHTML($pinnedEntry.title), 50, 50, "...")
+                                    </a><br /> 
+                                    <p class="entryDetails">
+                                        <a href="$utils.escapeHTML($pinnedEntry.website.URL)">$pinnedEntry.website.name</a>
+                                        #if($pinnedEntry.category.name)| $pinnedEntry.category.name #end
+                                        #if($pinnedEntry.pubTime) | $utils.formatDate($pinnedEntry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
+                                        #if($pinnedEntry.creator.userName)| By $pinnedEntry.creator.userName #end
+                                        <br/> 
+                                    </p>
+                                    <p class="entryDescription">                    
+                                        $pinnedEntry.displayContent
+                                   </p>
+                                </div>
+                            #end
+                        #end 
 
-                            <div class="entry">
-                                <a class="entryTitle" href="$utils.escapeHTML($entry.permalink)">
-                                    $utils.truncateNicely($utils.removeHTML($entry.title), 50, 50, "...")
-                                </a><br /> 
-                                <p class="entryDetails">
-                                    <a href="$utils.escapeHTML($entry.website.URL)">$entry.website.name</a>
-                                    #if($entry.category.name)| $entry.category.name #end
-                                    #if($entry.pubTime) | $utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
-                                    #if($entry.creator.userName)| By $entry.creator.userName #end
-                                    <br/> 
-                                </p>
-                                <p class="entryDescription">                    
-                                    #if($entry.displayContent)
-                                         $utils.truncateNicely($utils.removeHTML($entry.displayContent), 240, 260, "...")
-                                    #else ## planet entries don't have displayContent
-                                         $utils.truncateNicely($utils.removeHTML($entry.text), 240, 260, "...")
-                                    #end
-                                </p>
-                            </div>
-
+                        #foreach($entry in $pager.items)
+                            #if($velocityCount < $maxResults)
+                                #includeTemplate($model.weblog "_entry")
+                            #end
                         #end
-                    #end
-                    <div class="pagingcontrols">
-                    #if($pager.nextLink)
-                       <a href="$pager.nextLink">&lt; $pager.nextName</a>
-                    #end
-                    #if($pager.nextLink && $pager.prevLink)
-                       &nbsp;|&nbsp;
-                    #end
-                    #if($pager.prevLink)
-                       <a href="$pager.prevLink">$pager.prevName &gt;</a>
-                    #end
-                    </div>
 
+                        <div class="pagingcontrols">
+                        #if($pager.nextLink)
+                           <a href="$pager.nextLink">&lt; $pager.nextName</a>
+                        #end
+                        #if($pager.nextLink && $pager.prevLink)
+                           &nbsp;|&nbsp;
+                        #end
+                        #if($pager.prevLink)
+                           <a href="$pager.prevLink">$pager.prevName &gt;</a>
+                        #end
+                        </div>
+
+                    #else
+                        ## We've got search results to display
+                        #set($pager = $model.getWeblogEntriesPager())
+
+                        <h2>Search results</h2>
+                        <div class="next-previous">
+                            #showWeblogSearchAgainForm($model.weblog)
+                            #showNextPrevSearchControl($pager)
+                        </div>
+                        <br />
+                        <br />
+
+                        #set($map = $pager.getEntries())
+                        #foreach($day in $map.keySet())
+                            #set($entries = $map.get($day))   
+                            #foreach($entry in $entries)
+                                #includeTemplate($model.weblog "_entry")
+                            #end
+                        #end
+
+                    #end
 
                 </div>
             </div>
@@ -133,25 +133,7 @@
 
            <div class="searchSidebarBody">
                 <h3>Search for blogs</h3>
-                <form id="searchForm" method="get"
-                   action="/sitesearch.do"
-                   style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
-                   <input type="text" id="q" name="q" size="20"
-                       maxlength="255" value="" />
-                   <input value="&nbsp;?&nbsp;" class="searchButton" type="submit">
-                </form>
-                <script type="text/javascript"> 
-                   // <!--
-                   function validateSearch(form) {
-                       if (form.q.value == "") {
-                           alert("Please enter a search term to continue.");
-                           form.q.focus();
-                           return false;
-                       }
-                       return true;
-                   } 
-                   // -->
-                </script>
+                #showWeblogSearchForm($model.weblog false)
             </div>
 
             <br />
