@@ -299,7 +299,7 @@ public class ThemeManagerImpl implements ThemeManager {
             // a few restrictions for now:
             //   - we only allow "velocity" for the template language
             //   - decorator is always "_decorator" or null
-            //   - all theme templates are considered hidden
+            //   - all theme templates are considered not hidden
             theme_template = new ThemeTemplate(
                     theme,
                     theme_name+":"+template_name,
@@ -309,7 +309,7 @@ public class ThemeManagerImpl implements ThemeManager {
                     template_link,
                     new Date(template_file.lastModified()),
                     "velocity",
-                    true,
+                    false,
                     navbar,
                     decorator);
 
