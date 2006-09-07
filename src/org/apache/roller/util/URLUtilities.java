@@ -107,7 +107,7 @@ public final class URLUtilities {
                                                  String entryAnchor,
                                                  boolean absolute) {
         
-        if(weblog == null) {
+        if(weblog == null || entryAnchor == null) {
             return null;
         }
         
