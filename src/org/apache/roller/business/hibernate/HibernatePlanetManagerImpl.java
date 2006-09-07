@@ -356,7 +356,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             lastUpdatedByGroup.put(groupHandle, retLastUpdated);
             
             long endTime = System.currentTimeMillis();
-            log.info("Generated aggregation in "
+            log.debug("Generated aggregation in "
                     +((endTime-startTime)/1000.0)+" seconds");
             
         } catch (Throwable e) {
