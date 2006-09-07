@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.datamapper.DatamapperPersistenceStrategy;
 import org.apache.roller.business.datamapper.DatamapperQuery;
+import org.apache.roller.business.datamapper.DatamapperRemoveQuery;
 import org.apache.roller.pojos.PersistentObject;
 import org.apache.roller.pojos.UserData;
 
@@ -302,5 +303,18 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
         PersistenceManager pm = getPersistenceManager(false, false);
         return new JDOQueryImpl(pm, clazz, queryName);
     }
+
+    /**
+     * Create query used for bulk remove operations.
+     * @param clazz the class of instances to remove
+     * @param queryName the name of the query
+     * @throws org.apache.roller.RollerException on any error
+     */
+    public DatamapperRemoveQuery newRemoveQuery(Class clazz, String queryName)
+            throws RollerException {
+        PersistenceManager pm = getPersistenceManager(false, false);
+        return new JDORemoveQueryImpl(pm, clazz, queryName);
+    }
+
 }
 

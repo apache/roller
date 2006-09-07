@@ -58,16 +58,16 @@ public class DatamapperPingTargetManagerImpl implements PingTargetManager {
     public void removePingTarget(PingTargetData pingTarget)
             throws RollerException {
         // remove queued ping entries that refer to this ping target
-        strategy.newQuery(PingQueueEntryData.class, "getByPingTarget")
+        strategy.newRemoveQuery(PingQueueEntryData.class, "getByPingTarget")
             .removeAll(pingTarget);
         // remove autopings that refer to this ping target
-        strategy.newQuery(AutoPingData.class, "getByPingTarget")
+        strategy.newRemoveQuery(AutoPingData.class, "getByPingTarget")
             .removeAll(pingTarget);
     }
 
     public void removeAllCustomPingTargets()
             throws RollerException {
-        strategy.newQuery(PingTargetData.class, "getByWebsiteNotNull")
+        strategy.newRemoveQuery(PingTargetData.class, "getByWebsiteNotNull")
             .removeAll();
     }
 

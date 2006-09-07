@@ -17,6 +17,7 @@
 package org.apache.roller.business.datamapper;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -296,6 +297,46 @@ public class DatamapperUserManagerImpl implements UserManager {
             .execute(new Object[]{user, enabled, active});
     }
 
+    /**
+     * Get websites optionally restricted by user, enabled and active status.
+     * @param user    Get all websites for this user (or null for all)
+     * @param offset  Offset into results (for paging)
+     * @param len     Maximum number of results to return (for paging)
+     * @param enabled Get all with this enabled state (or null or all)
+     * @param active  Get all with this active state (or null or all)
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
+     * @returns List of WebsiteData objects.
+     */
+    public List getWebsites(
+            UserData user, 
+            Boolean  enabled, 
+            Boolean  active, 
+            Date     startDate, 
+            Date     endDate, 
+            int      offset, 
+            int      length) 
+            throws RollerException {
+        return null;
+    }
+    
+    /**
+     * Get websites ordered by descending number of comments.
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
+     * @param offset    Offset into results (for paging)
+     * @param len       Maximum number of results to return (for paging)
+     * @returns List of WebsiteData objects.
+     */
+    public List getMostCommentedWebsites(
+            Date startDate, 
+            Date endDate, 
+            int  offset, 
+            int  length) 
+            throws RollerException {
+        return null;
+    }
+    
     public void savePermissions(PermissionsData perms) 
             throws RollerException {
         strategy.store(perms);

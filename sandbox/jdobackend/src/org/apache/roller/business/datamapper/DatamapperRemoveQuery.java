@@ -21,42 +21,35 @@ import java.util.List;
 /**
  *
  */
-public interface DatamapperQuery {
+public interface DatamapperRemoveQuery {
 
-    /** Execute the query with no parameters.
+    /** Remove instances selected by the query with no parameters.
      * @return the results of the query
      */
-    Object execute();
+    void removeAll();
 
-    /** Execute the query with one parameter.
+    /** Remove instances selected by the query with one parameter.
      * @param param the parameter
      * @return the results of the query
      */
-    Object execute(Object param);
+    void removeAll(Object param);
 
-    /** Execute the query with parameters.
+    /** Remove instances selected by the query with parameters.
      * @param params the parameters
      * @return the results of the query
      */
-    Object execute(Object[] params);
+    void removeAll(Object[] params);
 
     /** Set the result to be a single instance (not a List).
      * @result the instance on which this method is called
      */
-    DatamapperQuery setUnique();
+    DatamapperRemoveQuery setUnique();
 
     /** Set the types of the parameters. This is only needed if the 
      * parameter types are temporal types, e.g. Date, Time, Calendar.
      * @param the types of the parameters in corresponding positions.
      * @result the instance on which this method is called
      */
-    DatamapperQuery setTypes(Object[] types);
-
-    /** Set the range of results for this query.
-     * @fromIncl the beginning row number
-     * @toExcl the ending row number
-     * @return the instance on which this method is called
-     */
-    DatamapperQuery setRange(long fromIncl, long toExcl);
+    DatamapperRemoveQuery setTypes(Object[] types);
 
 }

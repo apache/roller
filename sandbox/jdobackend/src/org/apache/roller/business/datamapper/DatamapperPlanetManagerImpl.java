@@ -32,9 +32,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.VelocityContext;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PagePluginManager;
 import org.apache.roller.model.PlanetManager;
-import org.apache.roller.model.Roller;
+import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.PlanetConfigData;
@@ -92,7 +91,7 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
 
     public void saveSubscription(PlanetSubscriptionData sub)
             throws RollerException {
-        PlanetSubscriptionData existing = getSubscription(sub.getFeedUrl());
+        PlanetSubscriptionData existing = getSubscription(sub.getFeedURL());
         if (existing == null || (existing.getId().equals(sub.getId()))) {
             strategy.store(sub);
         }
@@ -137,17 +136,40 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
     public PlanetGroupData getGroupById(String id) throws RollerException {
         return (PlanetGroupData) strategy.load(PlanetGroupData.class, id);
     }
-
-    public synchronized List getAggregation(int maxEntries)
-            throws RollerException {
-        return getAggregation(null, maxEntries);
-    }
-
-    public synchronized List getAggregation(PlanetGroupData group,
-            int maxEntries) throws RollerException {
+    /**
+     * Get agggration for group from cache, enries in reverse chonological order.
+     * Respects category constraints of group.
+     * @param group Restrict to entries from one subscription group.
+     * @param offset    Offset into results (for paging)
+     * @param len       Maximum number of results to return (for paging)
+     */
+    public List getAggregation(
+            PlanetGroupData group, Date startDate, Date endDate,
+            int offset, int len) throws RollerException {
         return null;
     }
-
+    
+    public List getAggregation(
+            int offset, int len) throws RollerException {
+        return null;
+    }
+    
+    public List getAggregation(
+            PlanetGroupData group, int offset, int len) throws RollerException {
+        return null;
+    }
+    
+    /**
+     * Get agggration from cache, enries in reverse chonological order.
+     * @param offset    Offset into results (for paging)
+     * @param len       Maximum number of results to return (for paging)
+     */
+    public List getAggregation(Date startDate, Date endDate,
+            int offset, int len) throws RollerException {
+        return null;
+    }
+    
+    
     public void deleteEntry(PlanetEntryData entry) throws RollerException {
         strategy.remove(entry);
     }
@@ -174,8 +196,31 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
         return null;
     }
 
+    /**
+     * Get top X subscriptions.
+     */
+    public List getTopSubscriptions(int offset, int len) throws RollerException {
+        return null;
+    }
+    
     public synchronized List getTopSubscriptions(PlanetGroupData group, int max)
             throws RollerException {
+        return null;
+    }
+
+    /**
+     * Get top X subscriptions, restricted by group.
+     */
+    public List getTopSubscriptions(
+            String groupHandle, int offset, int len) throws RollerException {
+        return null;
+    }
+    
+    /**
+     * Get entries in a single feed as list of PlanetEntryData objects.
+     */
+    public List getFeedEntries(
+            String feedUrl, int offset, int len) throws RollerException {
         return null;
     }
 
@@ -199,9 +244,9 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
         try {
             // for local feeds, sub.author = website.handle
             if (sub.getAuthor() != null
-                    && sub.getFeedUrl().endsWith(sub.getAuthor())) {
+                    && sub.getFeedURL().endsWith(sub.getAuthor())) {
 
-                logger.debug("Getting LOCAL feed " + sub.getFeedUrl());
+                logger.debug("Getting LOCAL feed " + sub.getFeedURL());
 
                 // get corresponding website object
                 WebsiteData website = (WebsiteData)strategy.newQuery(
@@ -211,7 +256,7 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
                     return newEntries;
 
                 // figure website last update time
-                WeblogManager blogmgr = roller.getWeblogManager();
+                WeblogManager blogmgr = RollerFactory.getRoller().getWeblogManager();
 
                 Date siteUpdated = blogmgr.getWeblogLastPublishTime(website);
                 if (siteUpdated == null) { // Site never updated, skip it
@@ -244,26 +289,7 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
                         logger.debug(msg);
                     }
                 }
-                // Populate subscription object with new entries
-                PagePluginManager ppmgr = roller.getPagePluginManager();
-                Map pagePlugins = ppmgr.createAndInitPagePlugins(website, null,
-                        RollerRuntimeConfig.getProperty("site.absoluteurl"),
-                        new VelocityContext());
-                Iterator entryIter = entries.iterator();
-                while (entryIter.hasNext()) {
-                    try {
-                        WeblogEntryData rollerEntry = (WeblogEntryData) entryIter
-                                .next();
-                        PlanetEntryData entry = new PlanetEntryData(
-                                rollerEntry, sub, pagePlugins);
-                        saveEntry(entry);
-                        newEntries.add(entry);
-                    }
-                    catch (Exception e) {
-                        logger.error("ERROR processing subscription entry", e);
-                    }
-                }
-                return newEntries;
+                return null;
             }
         }
         catch (Exception e) {

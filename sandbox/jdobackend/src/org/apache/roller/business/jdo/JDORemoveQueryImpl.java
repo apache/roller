@@ -19,13 +19,12 @@ package org.apache.roller.business.jdo;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-import org.apache.roller.business.datamapper.DatamapperQuery;
 import org.apache.roller.business.datamapper.DatamapperRemoveQuery;
 
 /**
  *
  */
-public class JDOQueryImpl implements DatamapperQuery {
+public class JDORemoveQueryImpl implements DatamapperRemoveQuery {
 
     /** */
     protected PersistenceManager pm;
@@ -34,36 +33,31 @@ public class JDOQueryImpl implements DatamapperQuery {
     protected Query q;
     
     /** Creates a new instance of JDOQueryImpl */
-    public JDOQueryImpl(PersistenceManager pm,
+    public JDORemoveQueryImpl(PersistenceManager pm,
             Class clazz, String queryName) {
         this.pm = pm;
         q = pm.newQuery(clazz, queryName);
     }
 
-    public Object execute() {
-        return q.execute();
+    public void removeAll() {
+        q.deletePersistentAll();
     }
 
-    public Object execute(Object param) {
-        return q.execute(param);
+    public void removeAll(Object param) {
+        q.deletePersistentAll(new Object[]{param});
     }
 
-    public Object execute(Object[] params) {
-        return q.execute(params);
+    public void removeAll(Object[] params) {
+        q.deletePersistentAll(params);
     }
 
-    public DatamapperQuery setUnique() {
+    public DatamapperRemoveQuery setUnique() {
         q.setUnique(true);
         return this;
     }
 
-    public DatamapperQuery setTypes(Object[] types) {
+    public DatamapperRemoveQuery setTypes(Object[] types) {
         return this;
     }
 
-    public DatamapperQuery setRange(long fromIncl, long toExcl) {
-        q.setRange(fromIncl, toExcl);
-        return this;
-    }
-    
 }

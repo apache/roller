@@ -63,7 +63,7 @@ public class DatamapperAutoPingManagerImpl implements AutoPingManager {
 
     public void removeAutoPing(PingTargetData pingTarget, WebsiteData website) 
             throws RollerException {
-        strategy.newQuery(AutoPingData.class, "getByPingTarget&Website")
+        strategy.newRemoveQuery(AutoPingData.class, "getByPingTarget&Website")
                 .removeAll(new Object[]{pingTarget, website});
     }
 
