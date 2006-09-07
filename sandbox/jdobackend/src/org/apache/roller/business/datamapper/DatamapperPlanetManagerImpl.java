@@ -43,6 +43,7 @@ import org.apache.roller.pojos.PlanetGroupSubscriptionAssoc;
 import org.apache.roller.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.pojos.UserData;
 
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
@@ -271,11 +272,16 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
                         || siteUpdated.after(sub.getLastUpdated())) {
                     int entryCount = RollerRuntimeConfig
                             .getIntProperty("site.newsfeeds.defaultEntries");
-                    entries = blogmgr.getWeblogEntries(website, null, // startDate
+                    entries = blogmgr.getWeblogEntries(website,
+                            null, //user,
+                            null, // startDate
                             new Date(), // endDate
                             null, // catName
                             WeblogEntryData.PUBLISHED, // status
-                            new Integer(entryCount)); // maxEntries
+                            null,  // sortBy
+                            null, // locale
+                            0,    // offset
+                            entryCount); // maxEntries
 
                     sub.setLastUpdated(siteUpdated);
                     saveSubscription(sub);
@@ -295,7 +301,8 @@ public class DatamapperPlanetManagerImpl implements PlanetManager {
         catch (Exception e) {
             logger.warn("Problem reading local feed", e);
         }
-        return getNewEntriesRemote(sub, feedFetcher, feedInfoCache);
+        //return getNewEntriesRemote(sub, feedFetcher, feedInfoCache);
+        return null;
     }
 
     public void refreshEntries() throws RollerException {

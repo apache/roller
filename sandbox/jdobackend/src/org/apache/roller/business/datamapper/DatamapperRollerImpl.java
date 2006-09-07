@@ -98,7 +98,7 @@ public abstract class DatamapperRollerImpl extends RollerImpl {
 
     
     /**
-     * @see org.apache.roller.model.Roller#getAutoPingManager()
+     * @see org.apache.roller.model.Roller#getAutopingManager()
      */
     public AutoPingManager getAutopingManager() throws RollerException {
         if (autoPingManager == null) {

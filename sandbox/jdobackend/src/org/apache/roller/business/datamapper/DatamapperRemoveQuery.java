@@ -23,32 +23,30 @@ import java.util.List;
  */
 public interface DatamapperRemoveQuery {
 
-    /** Remove instances selected by the query with no parameters.
-     * @return the results of the query
+    /**
+     * Remove instances selected by the query with no parameters.
      */
     void removeAll();
 
     /** Remove instances selected by the query with one parameter.
      * @param param the parameter
-     * @return the results of the query
      */
     void removeAll(Object param);
 
     /** Remove instances selected by the query with parameters.
      * @param params the parameters
-     * @return the results of the query
      */
     void removeAll(Object[] params);
 
     /** Set the result to be a single instance (not a List).
-     * @result the instance on which this method is called
+     * @return the instance on which this method is called
      */
     DatamapperRemoveQuery setUnique();
 
     /** Set the types of the parameters. This is only needed if the 
      * parameter types are temporal types, e.g. Date, Time, Calendar.
-     * @param the types of the parameters in corresponding positions.
-     * @result the instance on which this method is called
+     * @param types types of the parameters in corresponding positions.
+     * @return the instance on which this method is called
      */
     DatamapperRemoveQuery setTypes(Object[] types);
 

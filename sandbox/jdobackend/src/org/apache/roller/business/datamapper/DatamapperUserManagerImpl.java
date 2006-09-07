@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -76,6 +78,95 @@ public class DatamapperUserManagerImpl implements UserManager {
     public UserData getUser(String id) 
             throws RollerException {
         return (UserData)strategy.load(UserData.class, id);
+    }
+
+    /**
+     * Get user object by user name (only enabled users)
+     */
+    public UserData getUserByUserName(String userName) throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get user object by user name, optionally include dis-enabled users
+     */
+    public UserData getUserByUserName(String userName, Boolean enabled)
+            throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get all enabled users
+     */
+    public List getUsers(int offset, int length) throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get all users, optionally include dis-enabled users.
+     * @param enabled True for enabled only, false for disabled only, null for
+     * all
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
+     */
+    public List getUsers(Boolean enabled, Date startDate, Date endDate,
+            int offset, int length) throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get all users or a website.
+     * @param website Get all users of this website (or null for all)
+     * @returns List of UserData objects.
+     */
+    public List getUsers(WebsiteData website, Boolean enabled, int offset,
+            int length) throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Returns users whose usernames or email addresses start with a string.
+     * @param startsWith String to match userNames and emailAddresses against
+     * @param offset Offset into results (for paging)
+     * @param length Max to return (for paging)
+     * @param enabled True for only enalbed, false for disabled, null for all
+     * @return List of (up to length) users that match startsWith string
+     */
+    public List getUsersStartingWith(String startsWith, Boolean enabled,
+            int offset, int length) throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get map with 26 entries, one for each letter A-Z and containing integers
+     * reflecting the number of users whose names start with each letter.
+     */
+    public Map getUserNameLetterMap() throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get collection of users whose names begin with specified letter
+     */
+    public List getUsersByLetter(char letter, int offset, int length)
+            throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get map with 26 entries, one for each letter A-Z and containing integers
+     * reflecting the number of weblogs whose names start with each letter.
+     */
+    public Map getWeblogHandleLetterMap() throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get collection of weblogs whose handles begin with specified letter
+     */
+    public List getWeblogsByLetter(char letter, int offset, int length)
+            throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public UserData getUserByUsername(String userName) 
@@ -326,7 +417,7 @@ public class DatamapperUserManagerImpl implements UserManager {
      * @param endDate Restrict to those created before (or null for all)
      * @param offset    Offset into results (for paging)
      * @param len       Maximum number of results to return (for paging)
-     * @returns List of WebsiteData objects.
+     * @return List of WebsiteData objects.
      */
     public List getMostCommentedWebsites(
             Date startDate, 

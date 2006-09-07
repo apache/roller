@@ -39,54 +39,146 @@ public class DatamapperReferrerManagerImpl implements RefererManager {
         this.strategy = strategy;
     }
 
+    /**
+     * Store the referer.
+     */
     public void saveReferer(RefererData referer) throws RollerException {
-        strategy.store(referer);
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Remove a single referer.
+     */
     public void removeReferer(RefererData referer) throws RollerException {
-        strategy.remove(referer);
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Clear referrer dayhits and remove referrers without excerpts.
+     */
     public void clearReferrers() throws RollerException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Clear referrer dayhits and remove referrers without excerpts.
+     */
     public void clearReferrers(WebsiteData website) throws RollerException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Retrieve referer by id.
+     */
     public RefererData getReferer(String id) throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Get all referers for specified weblog.
+     * @param weblog
+     * @return List of type RefererData
+     */
     public List getReferers(WebsiteData weblog) throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Get all referers for specified user that were made today.
+     * @param userName Name of user.
+     * @return List of type RefererData
+     */
     public List getTodaysReferers(WebsiteData website) throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public List getReferersToDate(WebsiteData website, String date) throws RollerException {
+    /**
+     * Get referers for a specified date.
+     * @param userName Name of user.
+     * @param date YYYYMMDD format of day's date.
+     * @return List of type RefererData.
+     * @throws org.apache.roller.RollerException
+     */
+    public List getReferersToDate(WebsiteData website, String date)
+            throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public List getDaysPopularWebsites(int max) throws RollerException {
+    /**
+     * Get most popular websites based on referer day hits.
+     * @param offset Offset into results (for paging)
+     * @param len Maximum number of results to return (for paging)
+     * @return List of WebsiteDisplayData objects.
+     */
+    public List getDaysPopularWebsites(int offset, int length)
+            throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Returns hot weblogs as StatCount objects, in descending order by today's
+     * hits.
+     * @param sinceDays Restrict to last X days (or -1 for all)
+     * @param offset Offset into results (for paging)
+     * @param len Maximum number of results to return (for paging)
+     * @return List of StatCount objects.
+     */
+    public List getHotWeblogs(int sinceDays, int offset, int length)
+            throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get referers that refer to a specific weblog entry.
+     * @param entryid Weblog entry ID
+     * @return List of RefererData objects.
+     * @throws org.apache.roller.RollerException
+     */
     public List getReferersToEntry(String entryid) throws RollerException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Get user's day hits
+     */
     public int getDayHits(WebsiteData website) throws RollerException {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Get user's all-time total hits
+     */
     public int getTotalHits(WebsiteData website) throws RollerException {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Apply ignoreWord/spam filters to all referers in system.
+     */
     public void applyRefererFilters() throws RollerException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void applyRefererFilters(WebsiteData website) throws RollerException {
+    /**
+     * Apply ignoreWord/spam filters to all referers in website.
+     */
+    public void applyRefererFilters(WebsiteData website)
+            throws RollerException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void processReferrer(String requestUrl, String referrerUrl, String weblogHandle, String weblogAnchor, String weblogDateString) {
+    /**
+     * Process an incoming referer.
+     */
+    public void processReferrer(String requestUrl, String referrerUrl,
+            String weblogHandle, String weblogAnchor, String weblogDateString) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    /**
+     * Release all resources held by manager.
+     */
     public void release() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
-    
 }
