@@ -41,20 +41,20 @@ public interface DatamapperQuery {
     Object execute(Object[] params);
 
     /** Set the result to be a single instance (not a List).
-     * @result the instance on which this method is called
+     * @return the instance on which this method is called
      */
     DatamapperQuery setUnique();
 
     /** Set the types of the parameters. This is only needed if the 
      * parameter types are temporal types, e.g. Date, Time, Calendar.
-     * @param the types of the parameters in corresponding positions.
-     * @result the instance on which this method is called
+     * @param types types of the parameters in corresponding positions.
+     * @return the instance on which this method is called
      */
     DatamapperQuery setTypes(Object[] types);
 
     /** Set the range of results for this query.
-     * @fromIncl the beginning row number
-     * @toExcl the ending row number
+     * @param fromIncl the beginning row number
+     * @param toExcl the ending row number
      * @return the instance on which this method is called
      */
     DatamapperQuery setRange(long fromIncl, long toExcl);

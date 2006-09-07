@@ -187,7 +187,6 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      * @param clazz the class of instances to find
      * @param queryName the name of the query
      * @param arg the argument to the query
-     * @param types the types of the arguments to the query
      * @return the results of the query
      * @throws org.apache.roller.RollerException on any error
      */
