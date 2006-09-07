@@ -103,4 +103,13 @@ public interface DatamapperPersistenceStrategy {
     public DatamapperQuery newQuery(Class clazz, String queryName)
             throws RollerException;
 
+    /**
+     * Create query used for bulk remove operations.
+     * @param clazz the class of instances to remove
+     * @param queryName the name of the query
+     * @throws org.apache.roller.RollerException on any error
+     */
+    public DatamapperRemoveQuery newRemoveQuery(Class clazz, String queryName)
+            throws RollerException;
+
 }
