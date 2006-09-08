@@ -3,6 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>$model.weblog.name : $model.weblogPage.name</title>
     #showAutodiscoveryLinks($model.weblog)
     <style type="text/css">#includeTemplate($model.weblog "_css")</style>
