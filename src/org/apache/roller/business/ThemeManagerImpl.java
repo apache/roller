@@ -24,10 +24,12 @@
 package org.apache.roller.business;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -271,10 +273,13 @@ public class ThemeManagerImpl implements ThemeManager {
                 continue;
             }
             char[] chars = null;
+            int length;
             try {
-                FileReader reader = new FileReader(template_file);
+//                FileReader reader = new FileReader(template_file);
                 chars = new char[(int) template_file.length()];
-                reader.read(chars);            
+            	FileInputStream stream = new FileInputStream(template_file);
+            	InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
+                length = reader.read(chars);            
             } catch (Exception noprob) {
                 mLogger.error("Exception while attempting to " + msg);
                 if (mLogger.isDebugEnabled()) mLogger.debug(noprob);
@@ -305,7 +310,7 @@ public class ThemeManagerImpl implements ThemeManager {
                     theme_name+":"+template_name,
                     template_name,
                     template_name,
-                    new String(chars),
+                    new String(chars, 0, length),
                     template_link,
                     new Date(template_file.lastModified()),
                     "velocity",
