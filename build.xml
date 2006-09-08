@@ -57,9 +57,9 @@ Key Targets:
 
               tests - Build and run all JUnit tests
         build-tests - Build all JUnit tests
-     tests-business - Start DB, run business layer tests, stop DB 
- tests-presentation - Run presentation layer tests 
-        tests-utils - Run utility tests 
+      test-business - Start DB, run business layer tests, stop DB 
+  test-presentation - Run presentation layer tests 
+         test-utils - Run utility tests 
 
            start-db - Start test DB
             init-db - Initialize a running test DB
