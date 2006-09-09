@@ -40,7 +40,8 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
     /**
      * The thread local PersistenceManager.
      */
-    private static final ThreadLocal pmTLS = new ThreadLocal();
+    private static final ThreadLocal threadLocalPersistenceManager = 
+            new ThreadLocal();
 
     /**
      * The PersistenceManagerFactory for this Roller instance.
@@ -70,16 +71,21 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public void flush() 
             throws RollerException {
-        PersistenceManager pm = getPersistenceManager(false, false);
-        if (!isTransactionActive(pm))
-            return;
-        pm.currentTransaction().commit();
+        PersistenceManager pm = getPersistenceManager(false);
+        if (isTransactionActive(pm))
+            pm.currentTransaction().commit();
+        pm.close();
     }
 
     /**
      * Release database session, rolls back any uncommitted changes.
      */
     public void release() {
+        PersistenceManager pm = getPersistenceManager(false);
+        if (isTransactionActive(pm))
+            pm.currentTransaction().rollback();
+        pm.close();
+        setThreadLocalPersistenceManager(null);
     }
 
     /**
@@ -90,6 +96,8 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public PersistentObject store(PersistentObject obj) 
             throws RollerException {
+        PersistenceManager pm = getPersistenceManager(true);
+        pm.makePersistent(obj);
         return obj;
     }
 
@@ -101,6 +109,9 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public void remove(Class clazz, String id) 
             throws RollerException {
+        PersistenceManager pm = getPersistenceManager(true);
+        Object po = pm.getObjectById(clazz, id);
+        pm.deletePersistent(po);
     }
 
     /**
@@ -110,6 +121,8 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public void remove(PersistentObject po) 
             throws RollerException {
+        PersistenceManager pm = getPersistenceManager(true);
+        pm.deletePersistent(po);
     }
 
     /**
@@ -119,46 +132,8 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public void removeAll(Collection pos) 
             throws RollerException {
-    }
-
-    /**
-     * Remove instances based on query with query parameters
-     * @param clazz the class of instances to delete
-     * @param queryName the name of the query
-     * @param arg the argument to the query
-     * @return the number of instances removed
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public int removeAll(Class clazz, String queryName, Object arg) 
-            throws RollerException {
-        return 0;
-    }
-
-    /**
-     * Remove instances based on query with query parameters
-     * @param clazz the class of instances to delete
-     * @param queryName the name of the query
-     * @param arg the argument to the query
-     * @param types the types of the arguments to the query
-     * @return the number of instances removed
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public int removeAll(Class clazz, String queryName, 
-            Object arg, Object[] types)
-            throws RollerException {
-        return 0;
-    }
-
-    /**
-     * Remove instances based on query with no query parameters
-     * @param clazz the class of instances to delete
-     * @param queryName the name of the query
-     * @return the number of instances removed
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public int removeAll(Class clazz, String queryName)
-            throws RollerException {
-        return 0;
+        PersistenceManager pm = getPersistenceManager(true);
+        pm.deletePersistent(pos);
     }
 
     /**
@@ -168,6 +143,8 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public void removeAll(Class clazz) 
             throws RollerException {
+        DatamapperRemoveQuery rq = newRemoveQuery(clazz, null);
+        rq.removeAll();
     }
 
     /**
@@ -179,89 +156,8 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public PersistentObject load(Class clazz, String id) 
             throws RollerException {
-        return null;
-    }
-
-    /**
-     * Execute query with one query parameter.
-     * @param clazz the class of instances to find
-     * @param queryName the name of the query
-     * @param arg the argument to the query
-     * @return the results of the query
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public Object query(Class clazz, String queryName, Object arg)
-            throws RollerException {
-        return null;
-    }
-
-    /**
-     * Execute query with one query parameter.
-     * @param clazz the class of instances to find
-     * @param queryName the name of the query
-     * @param arg the argument to the query
-     * @param types the types of the arguments to the query
-     * @return the results of the query
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public Object query(Class clazz, String queryName, 
-            Object arg, Object[] types)
-            throws RollerException {
-        return null;
-    }
-
-    /**
-     * Execute query with query parameters.
-     * @param clazz the class of instances to find
-     * @param queryName the name of the query
-     * @param args the arguments to the query
-     * @return the results of the query
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public Object query(Class clazz, String queryName, Object[] args) 
-            throws RollerException {
-        return null;
-    }
-
-    /**
-     * Execute query with query parameters.
-     * @param clazz the class of instances to find
-     * @param queryName the name of the query
-     * @param args the arguments to the query
-     * @param types the types of the arguments to the query
-     * @return the results of the query
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public Object query(Class clazz, String queryName, 
-            Object[] args, Object[] types)
-            throws RollerException {
-        return null;
-    }
-
-    /**
-     * Execute query with no query parameters.
-     * @param queryName the name of the query
-     * @return the results of the query
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public Object query(Class clazz, String queryName) 
-            throws RollerException {
-        return query(clazz, queryName, null, null);
-    }
-
-    /**
-     * Remove instances based on query with query parameters.
-     * @param clazz the class of instances to delete
-     * @param queryName the name of the query
-     * @param args the arguments to the query
-     * @param types the types of the arguments to the query
-     * @return the number of instances removed
-     * @throws org.apache.roller.RollerException on any error
-     */
-    public int removeAll(Class clazz, String queryName, 
-            Object[] args, Object[] types)
-            throws RollerException {
-        return 0;
+        PersistenceManager pm = getPersistenceManager(false);
+        return (PersistentObject)pm.getObjectById(clazz, id);
     }
 
     /**
@@ -274,21 +170,43 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
     private boolean isTransactionActive(PersistenceManager pm) {
         if (pm == null)
             return false;
-        return pm.currentTransaction().isActive()?true:false;
+        return pm.currentTransaction().isActive();
     }
 
     /**
      * Get the PersistenceManager associated with the 
      * current thread of control.
-     * @param isPMRequired true if a PersistenceManager is created 
-     * if not already associated with the thread of control
      * @param isTransactionRequired true if a transaction is begun 
      * if not already active
      * @return the PersistenceManager
      */
     private PersistenceManager getPersistenceManager
-            (boolean isPMRequired, boolean isTransactionRequired) {
-        return null;
+            (boolean isTransactionRequired) {
+        PersistenceManager pm = getThreadLocalPersistenceManager();
+        if (isTransactionRequired && !pm.currentTransaction().isActive()) {
+             pm.currentTransaction().begin();
+        }
+        return pm;
+    }
+
+    /** 
+     * Get the current ThreadLocal PersistenceManager
+     */
+    private PersistenceManager getThreadLocalPersistenceManager() {
+        PersistenceManager pm = (PersistenceManager) 
+            threadLocalPersistenceManager.get();
+        if (pm == null) {
+            pm = pmf.getPersistenceManager();
+            threadLocalPersistenceManager.set(pm);
+        }
+        return pm;
+    }
+
+    /** 
+     * Set the current ThreadLocal PersistenceManager
+     */
+    private void setThreadLocalPersistenceManager(Object pm) {
+            threadLocalPersistenceManager.set(pm);
     }
 
     /**
@@ -299,7 +217,7 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public DatamapperQuery newQuery(Class clazz, String queryName)
             throws RollerException {
-        PersistenceManager pm = getPersistenceManager(false, false);
+        PersistenceManager pm = getPersistenceManager(false);
         return new JDOQueryImpl(pm, clazz, queryName);
     }
 
@@ -311,7 +229,7 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
      */
     public DatamapperRemoveQuery newRemoveQuery(Class clazz, String queryName)
             throws RollerException {
-        PersistenceManager pm = getPersistenceManager(false, false);
+        PersistenceManager pm = getPersistenceManager(false);
         return new JDORemoveQueryImpl(pm, clazz, queryName);
     }
 
