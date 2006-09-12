@@ -7,19 +7,30 @@ Roller 3.0: major release with new URL structure and new template syste
 Please refer to the What's New page for an overview of the changes:
 http://rollerweblogger.org/wiki/Wiki.jsp?page=Roller_3.0_WhatsNew
 
-Here are the JIRA issues we used to track the new features in development:
+Enhancements tracked in JIRA
 
-    * [ROL-786] - Multi Language Blogs
-    * [ROL-796] - Front Page Improvement: blogger directory
-    * [ROL-1191] - RSS feed style sheets
     * [ROL-790] - Better URLs
-    * [ROL-856] - Front Page Improvements
+    * [ROL-856] - Front Page Improvement: 'Show More' or 'Show Post Since: xxxxx' feature on main page
     * [ROL-962] - Performance: Optionally eliminate language specific cache keys
     * [ROL-973] - All forms shown within tabbed UI
     * [ROL-975] - Velocity cleanup
     * [ROL-1006] - Group blog administration improvements
+    * [ROL-1032] - Confirmation message when moderated comment is submitted
+    * [ROL-1129] - Do not render commentors email addresses
+    * [ROL-1131] - Improve comments form to be more CSS-Friendy.
+    * [ROL-1137] - Throttle support for comments
+    * [ROL-1138] - Technorati ping config auto enabled for new blogs
+    * [ROL-1139] - Packaging reorg
+    * [ROL-1140] - Blog last change date property
+    * [ROL-1141] - Apache license compliance
+    * [ROL-1154] - Upgrade to Acegi Security 1.0
     * [ROL-1161] - Always enable 'remove a weblog' for site admins
-
+    * [ROL-1174] - Better Derby support in Installation Guide
+    * [ROL-1192] - Support IceRocket ping variant (Roller pings to icerocket fail)
+    * [ROL-786] - Multi Language Blogs
+    * [ROL-796] - Front Page Improvement: blogger directory
+    * [ROL-1050] - Support global comment setting updates of existing entries
+    * [ROL-1191] - RSS feed style sheets
 
 -------------------------------------------------------------------------------
 
