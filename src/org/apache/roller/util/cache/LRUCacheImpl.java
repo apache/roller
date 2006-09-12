@@ -38,11 +38,11 @@ public class LRUCacheImpl implements Cache {
     private Map cache = null;
     
     // for metrics
-    double hits = 0;
-    double misses = 0;
-    double puts = 0;
-    double removes = 0;
-    Date startTime = new Date();
+    protected double hits = 0;
+    protected double misses = 0;
+    protected double puts = 0;
+    protected double removes = 0;
+    protected Date startTime = new Date();
     
     
     protected LRUCacheImpl(String id) {
