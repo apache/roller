@@ -43,11 +43,11 @@ public class DatamapperPingQueueManagerImpl implements PingQueueManager {
     public void addQueueEntry(AutoPingData autoPing) 
             throws RollerException {
         // first, determine if an entry already exists
-        int count = (Integer)strategy.newQuery(PingQueueEntryData.class,
+        Integer count = (Integer)strategy.newQuery(PingQueueEntryData.class,
                 "countGetByPingTarget&&website")
                 .execute(new Object[]
                     {autoPing.getPingTarget(), autoPing.getWebsite()});
-        if (count > 0)
+        if (count.intValue() > 0)
             return;
 
         // create and store a new entry
