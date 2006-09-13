@@ -56,8 +56,4 @@ public class JDORemoveQueryImpl implements DatamapperRemoveQuery {
         return this;
     }
 
-    public DatamapperRemoveQuery setTypes(Object[] types) {
-        return this;
-    }
-
 }
