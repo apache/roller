@@ -74,7 +74,6 @@ public class JDOPersistenceStrategy implements DatamapperPersistenceStrategy {
         PersistenceManager pm = getPersistenceManager(false);
         if (isTransactionActive(pm))
             pm.currentTransaction().commit();
-        pm.close();
     }
 
     /**
