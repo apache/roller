@@ -57,10 +57,6 @@ public class JDOQueryImpl implements DatamapperQuery {
         return this;
     }
 
-    public DatamapperQuery setTypes(Object[] types) {
-        return this;
-    }
-
     public DatamapperQuery setRange(long fromIncl, long toExcl) {
         q.setRange(fromIncl, toExcl);
         return this;

@@ -43,11 +43,4 @@ public interface DatamapperRemoveQuery {
      */
     DatamapperRemoveQuery setUnique();
 
-    /** Set the types of the parameters. This is only needed if the 
-     * parameter types are temporal types, e.g. Date, Time, Calendar.
-     * @param types types of the parameters in corresponding positions.
-     * @return the instance on which this method is called
-     */
-    DatamapperRemoveQuery setTypes(Object[] types);
-
 }
