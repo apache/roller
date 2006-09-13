@@ -295,6 +295,7 @@ ro.buildUser=${user.name}
     </echo>
 
     <javac debug="${build.debug}" 
+        source="1.4"
         destdir="${build.compile.business}"
         excludes="org/apache/roller/ui/**, org/apache/roller/webservices/**" >
         
@@ -327,7 +328,9 @@ ro.buildUser=${user.name}
 
     <mkdir dir="${build.compile.web}" />
     
-    <javac debug="${build.debug}" destdir="${build.compile.web}"
+    <javac debug="${build.debug}" 
+        source="1.4"
+        destdir="${build.compile.web}"
         includes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/util/rome/**" >
         
         <src path="${ro.src}"  />
@@ -780,6 +783,7 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.tests}/WEB-INF/classes/themes" />
     
     <javac srcdir="${ro.tests}"
+        source="1.4"
         destdir="${build.tests}/WEB-INF/classes"
         includeantruntime="false"
         debug="true" optimize="false" verbose="false" deprecation="false">
