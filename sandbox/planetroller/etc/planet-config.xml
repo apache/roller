@@ -22,9 +22,9 @@
    <admin-name>Your name</admin-name>
    <admin-email>Your email address</admin-email>
    <site-url>http://rollerweblogger.org/planet</site-url>
-   <output-dir>./testdata/output</output-dir>
+   <output-dir>./output</output-dir>
    <template-dir>./templates</template-dir>
-   <cache-dir>./testdata/cache</cache-dir>
+   <cache-dir>./cache</cache-dir>
    <subscription id="dave">
       <title>Blogging Roller</title>
       <feed-url>http://rollerweblogger.org/rss/roller</feed-url>
