@@ -16,6 +16,18 @@
 # copyright in this work, please see the NOTICE file in the top level
 # directory of this distribution.
 
-export ROLLERJARS=../../build/roller/WEB-INF/lib
-export PLANETCLASSES=./build/planet-roller/lib/planet-roller-1.1-dev.jar
-export FETCHERJARS=./web/WEB-INF/lib
+PLANETJARS=./lib
+_CP=.
+_CP=${_CP}:${PLANETJARS}/roller-planet.jar
+_CP=${_CP}:${PLANETJARS}/rome-0.8.jar
+_CP=${_CP}:${PLANETJARS}/rome-fetcher-0.8.jar
+_CP=${_CP}:${PLANETJARS}/roller-business.jar
+_CP=${_CP}:${PLANETJARS}/commons-logging.jar
+_CP=${_CP}:${PLANETJARS}/commons-lang-2.0.jar
+_CP=${_CP}:${PLANETJARS}/jaxen-full.jar
+_CP=${_CP}:${PLANETJARS}/saxpath.jar
+_CP=${_CP}:${PLANETJARS}/jdom.jar
+_CP=${_CP}:${PLANETJARS}/dom4j-1.6.1.jar
+_CP=${_CP}:${PLANETJARS}/velocity-1.4.jar
+_CP=${_CP}:${PLANETJARS}/velocity-dep-1.4.jar
+java -classpath ${_CP} org.apache.roller.tools.PlanetTool $1 
