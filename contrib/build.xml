@@ -26,18 +26,13 @@
     
     <target name="build-contrib" description="Build Roller contributions">
    
-        <echo message="making ${ro.build}/compile_contrib" />
-        <mkdir dir="${ro.build}/compile_contrib" />
+        <mkdir dir="${build.compile.contrib}" />
         
 	<ant dir="plugins" inheritAll="false" />
-        
-        <copy todir="${ro.build}/roller/WEB-INF/lib" flatten="true">
-            <fileset dir="./" includes="**/*.jar"/>
-        </copy>
 
         <!-- Jar up web classes -->
-        <jar jarfile="${ro.build}/roller/WEB-INF/lib/rollercontrib.jar">
-            <fileset dir="${ro.build}/compile_contrib" />
+        <jar jarfile="${build.lib}/roller-contrib.jar">
+            <fileset dir="${build.compile.contrib}" />
         </jar>
         
     </target>  

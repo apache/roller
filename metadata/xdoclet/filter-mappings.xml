@@ -10,13 +10,6 @@
      commented out for Servlet API 2.3 containers, like Tomcat 4.x and Resin 2.x.
 -->
 
-<!--
-<filter-mapping>
-    <filter-name>UrlRewriteFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-</filter-mapping>
--->
-
 <!-- Ensures character encoding set to UTF-8 and JSTL and Struts locales are in sync.
 Note: Any filters preceding this one MUST not cause request parsing. -->
 <filter-mapping>
@@ -26,10 +19,24 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
+<!-- Ip Banning is mapped for comment and trackbacks only.
+Note: this filter does nothing if an ip ban list is not configured. -->
+<filter-mapping>
+    <filter-name>IPBanFilter</filter-name>
+    <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>IPBanFilter</filter-name>
+    <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+
 <!-- Scheme enforcement.  Only here until we get Acegi scheme enforcement working -->
 <filter-mapping>
     <filter-name>SchemeEnforcementFilter</filter-name>
     <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
 </filter-mapping>
 
 <!-- Acegi Security filters - controls secure access to different parts of Roller -->
@@ -46,139 +53,37 @@ Note: Any filters preceding this one MUST not cause request parsing. -->
     <filter-name>PersistenceSessionFilter</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
+</filter-mapping>
+
+<!-- Init filter.  performs some initialization on first request -->
+<filter-mapping>
+    <filter-name>InitFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+</filter-mapping>
+
+<!-- Request mapping.  this is what allows the urls to work -->
+<filter-mapping>
+    <filter-name>RequestMappingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+</filter-mapping>
+
+
+<!-- Compression Filter -->
+<filter-mapping>
+    <filter-name>CompressionFilter</filter-name>
+    <url-pattern>/roller-ui/rendering/page/*</url-pattern>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>CompressionFilter</filter-name>
+    <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
 
-<filter-mapping>
-    <filter-name>RefererFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
-</filter-mapping>
-
-<filter-mapping>
-    <filter-name>BreadCrumbFilter</filter-name>
-    <url-pattern>*.do</url-pattern>
-</filter-mapping>
-
-
-<!-- cache lastModified dates used for HTTP 304 responses -->
-<filter-mapping>
-    <filter-name>IfModifiedWeblogPageCacheFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
-</filter-mapping>
-
-<filter-mapping>
-    <filter-name>IfModifiedFeedCacheFilter</filter-name>
-    <url-pattern>/rss/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>IfModifiedFeedCacheFilter</filter-name>
-    <url-pattern>/atom/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>IfModifiedFeedCacheFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-
-<filter-mapping>
-    <filter-name>IfPlanetModifiedFilter</filter-name>
-    <url-pattern>/planetrss/*</url-pattern>
-</filter-mapping>
-
-
-<!-- Compression Filters -->
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/planet.do</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/main.do</url-pattern>
-</filter-mapping>
-
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/atom/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/rss/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>CompressionFilter</filter-name>
-    <url-pattern>/foaf/*</url-pattern>
-</filter-mapping>
-
-
-<!-- Feed Caching (rss, atom, etc) -->
-<filter-mapping>
-    <filter-name>FeedCacheFilter</filter-name>
-    <url-pattern>/rss/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>FeedCacheFilter</filter-name>
-    <url-pattern>/atom/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>FeedCacheFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-
-
-<!-- Weblog Page Caching -->
-<filter-mapping>
-	<filter-name>WeblogPageCacheFilter</filter-name>
-	<url-pattern>/page/*</url-pattern>
-</filter-mapping>
-
-
-<!-- Main Page Caching -->
-<filter-mapping>
-	<filter-name>MainPageCacheFilter</filter-name>
-	<url-pattern>/main.do</url-pattern>
-	<dispatcher>REQUEST</dispatcher>
-	<dispatcher>FORWARD</dispatcher>
-</filter-mapping>
-
-
-<!-- Planet Roller Caching -->
-<filter-mapping>
-	<filter-name>PlanetCacheFilter</filter-name>
-	<url-pattern>/planet.do</url-pattern>
-	<dispatcher>REQUEST</dispatcher>
-	<dispatcher>FORWARD</dispatcher>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>PlanetCacheFilter</filter-name>
-    <url-pattern>/planetrss</url-pattern>
-</filter-mapping>
-
-
 <!-- Do we still need the RequestFilter? -->
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/page/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/preview/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/flavor/*</url-pattern>
-</filter-mapping>
-<filter-mapping>
-    <filter-name>RequestFilter</filter-name>
-    <url-pattern>/xmlrpc/*</url-pattern>
-</filter-mapping>
 <filter-mapping>
     <filter-name>RequestFilter</filter-name>
     <url-pattern>*.do</url-pattern>

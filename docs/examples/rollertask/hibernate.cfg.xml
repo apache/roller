@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+
+        <!-- use thread local Session context -->
+        <property name="hibernate.current_session_context_class">thread</property>
+    
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://YOUR_DBHOSTNAME/YOUR_DBNAME?user=Y&amp;password=YOUR_PASSWORD&amp;autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;mysqlEncoding=utf8</property>
+        <property name="hibernate.connection.username">YOUR_USERNAME</property>
+        <property name="hibernate.connection.password">YOUR_PASSWORD</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property> 
+        <mapping resource="org/apache/roller/pojos/BookmarkData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/CommentData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/EntryAttributeData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/FolderAssoc.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/FolderData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogTemplate.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/PingCategoryRestrictionData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/AutoPingData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/PingQueueEntryData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/PingTargetData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/RefererData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/RoleData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/RollerConfigData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/UserData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogCategoryData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogCategoryAssoc.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogEntryData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WebsiteData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/RollerPropertyData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/PermissionsData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/PlanetConfigData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/PlanetGroupData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/PlanetEntryData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/PlanetSubscriptionData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/PlanetGroupSubscriptionAssoc.hbm.xml" />
+    </session-factory>
+</hibernate-configuration>

@@ -58,7 +58,7 @@ import org.apache.roller.ui.core.RollerSession;
  *
  * @author Allen Gilliland
  *
- * @struts.action path="/admin/rollerConfig"
+ * @struts.action path="/roller-ui/admin/rollerConfig"
  *  scope="request" parameter="method"
  *
  * @struts.action-forward name="rollerProperties.page"

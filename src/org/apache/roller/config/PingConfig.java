@@ -25,6 +25,7 @@ import org.apache.roller.model.PingTargetManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.PingTargetData;
 
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,15 +39,9 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PingConfig
-{
+public class PingConfig {
     private static final Log logger = LogFactory.getLog(PingConfig.class);
 
-
-    // Inhibit construction
-    private PingConfig()
-    {
-    }
 
     // Config property for maximim ping attempts.
     static final String MAX_PING_ATTEMPTS_PROP = "pings.maxPingAttempts";
@@ -91,6 +86,24 @@ public class PingConfig
     // commenting out this property in the config file.
     private static final String PINGS_INITIAL_COMMON_TARGETS_PROP = "pings.initialCommonTargets";
 
+
+    // PingConfig property determining the known WeblogUpdates.ping variants/bugs
+    // in popular ping targets, which we are used when invoking pings on those targets.
+    // The value takes the form of a comma separated list of ping target urls and
+    // variant options, where each one is in the form {{pingurl}{option[[,option]...]}}.
+    private static final String PINGS_VARIANT_OPTIONS_PROP = "pings.variantOptions";
+    // Map of configured ping variants.  Maps a ping target hostname to a set of
+    // Strings representing variant options to be used when pinging this target.
+    // This was introduced in order to support certain buggy (but popular) ping
+    // targets that implement minor variants of the WeblogUpdates.ping call.
+    // This is initialized once at startup, and referenced when pings are made.
+    private static final Map configuredVariants = new HashMap();
+
+
+    // Inhibit construction
+    private PingConfig() {
+    }
+
     /**
      * Get the maximum number of ping attempts that should be made for each ping queue entry before we give up. If we
      * get apparently transient failures while trying to perform the ping, the entry is requeued for processing on later
@@ -98,10 +111,8 @@ public class PingConfig
      *
      * @return the configured (or default) maximum number of ping attempts
      */
-    public static int getMaxPingAttempts()
-    {
-        return getIntegerProperty(MAX_PING_ATTEMPTS_PROP, MAX_PING_ATTEMPTS_DEFAULT,
-            MAX_PING_ATTEMPTS_MIN, MAX_PING_ATTEMPTS_MAX);
+    public static int getMaxPingAttempts() {
+        return getIntegerProperty(MAX_PING_ATTEMPTS_PROP, MAX_PING_ATTEMPTS_DEFAULT, MAX_PING_ATTEMPTS_MIN, MAX_PING_ATTEMPTS_MAX);
     }
 
     /**
@@ -109,10 +120,8 @@ public class PingConfig
      *
      * @return the configured (or default) queue processing interval in minutes.
      */
-    public static int getQueueProcessingIntervalMins()
-    {
-        return getIntegerProperty(QUEUE_PROCESSING_INTERVAL_PROP, QUEUE_PROCESSING_INTERVAL_DEFAULT,
-            QUEUE_PROCESSING_INTERVAL_MIN, QUEUE_PROCESSING_INTERVAL_MAX);
+    public static int getQueueProcessingIntervalMins() {
+        return getIntegerProperty(QUEUE_PROCESSING_INTERVAL_PROP, QUEUE_PROCESSING_INTERVAL_DEFAULT, QUEUE_PROCESSING_INTERVAL_MIN, QUEUE_PROCESSING_INTERVAL_MAX);
     }
 
 
@@ -122,8 +131,7 @@ public class PingConfig
      *
      * @return the configured (or default) value of the logs only setting.
      */
-    public static boolean getLogPingsOnly()
-    {
+    public static boolean getLogPingsOnly() {
         return getBooleanProperty(PINGS_LOG_ONLY_PROP, PINGS_LOG_ONLY_DEFAULT);
     }
 
@@ -133,8 +141,7 @@ public class PingConfig
      *
      * @return the configured (or default) value of the "disallow custom targets" setting.
      */
-    public static boolean getDisallowCustomTargets()
-    {
+    public static boolean getDisallowCustomTargets() {
         return getBooleanProperty(PINGS_DISALLOW_CUSTOM_TARGETS_PROP, PINGS_DISALLOW_CUSTOM_TARGETS_DEFAULT);
     }
 
@@ -145,8 +152,7 @@ public class PingConfig
      *
      * @return the configured (or default) value of the enable ping usage setting.
      */
-    public static boolean getDisablePingUsage()
-    {
+    public static boolean getDisablePingUsage() {
         return getBooleanProperty(PINGS_DISABLE_PING_USAGE_PROP, PINGS_DISABLE_PING_USAGE_DEFAULT);
     }
 
@@ -157,13 +163,14 @@ public class PingConfig
      *
      * @return the configured (or default) value of the suspend ping processing setting.
      */
-    public static boolean getSuspendPingProcessing()
-    {
+    public static boolean getSuspendPingProcessing() {
         return RollerRuntimeConfig.getBooleanProperty(PINGS_SUSPEND_PING_PROCESSING_PROP);
     }
 
+    // Pattern used to parse common ping targets as well as ping variants.
     // Each initial commmon ping target is specified in the format {{name}{url}}
-    private static final Pattern PING_TARGET_SPEC = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
+    // Ping variants are also specified in a nested brace format {{url}{options}}
+    private static final Pattern NESTED_BRACE_PAIR = Pattern.compile("\\{\\{(.*?)\\}\\{(.*?)\\}\\}");
 
     /**
      * Initialize the common ping targets from the configuration properties. If the current list of common ping targets
@@ -173,46 +180,95 @@ public class PingConfig
      * Note: this is expected to be called during initialization  with transaction demarcation being handled by the
      * caller.
      *
-     * @see org.apache.roller.presentation.RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
+     * @see org.apache.roller.ui.core.RollerContext#contextInitialized(javax.servlet.ServletContextEvent)
      */
-    public static void initializeCommonTargets() throws RollerException
-    {
+    public static void initializeCommonTargets() throws RollerException {
         String configuredVal = RollerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
-        if (configuredVal == null || configuredVal.trim().length() == 0)
-        {
-            if (logger.isDebugEnabled()) logger.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
+        if (configuredVal == null || configuredVal.trim().length() == 0) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
+            }
             return;
         }
         PingTargetManager pingTargetMgr = RollerFactory.getRoller().getPingTargetManager();
-        if (!pingTargetMgr.getCommonPingTargets().isEmpty())
-        {
-            if (logger.isDebugEnabled()) logger.debug("Some common ping targets are present in the database already.  Skipping initialization.");
+        if (!pingTargetMgr.getCommonPingTargets().isEmpty()) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Some common ping targets are present in the database already.  Skipping initialization.");
+            }
             return;
         }
 
         String[] configuredTargets = configuredVal.trim().split(",");
-        for (int i = 0; i < configuredTargets.length; i++)
-        {
+        for (int i = 0; i < configuredTargets.length; i++) {
             // Trim space around the target spec
             String thisTarget = configuredTargets[i].trim();
             // skip empty ones
             if (thisTarget.length() == 0) continue;
             // parse the ith target and store it
-            Matcher m = PING_TARGET_SPEC.matcher(configuredTargets[i].trim());
-            if (m.matches() && m.groupCount() == 2)
-            {
-                String name = m.group(1);
-                String url = m.group(2);
+            Matcher m = NESTED_BRACE_PAIR.matcher(thisTarget);
+            if (m.matches() && m.groupCount() == 2) {
+                String name = m.group(1).trim();
+                String url = m.group(2).trim();
                 logger.info("Creating common ping target '" + name + "' from configuration properties.");
                 PingTargetData pingTarget = new PingTargetData(null, name, url, null, false);
                 pingTargetMgr.savePingTarget(pingTarget);
-            }
-            else
-            {
-                logger.error("Unable to parse configured initial ping target '" + configuredTargets[i] +
-                    "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
+            } else {
+                logger.error("Unable to parse configured initial ping target '" + thisTarget + "'. Skipping this target. Check your setting of the property " + PINGS_INITIAL_COMMON_TARGETS_PROP);
             }
         }
+    }
+
+    /**
+     * Initialize known ping variants from the configuration.
+     */
+    public static void initializePingVariants() {
+        String configuredVal = RollerConfig.getProperty(PINGS_VARIANT_OPTIONS_PROP);
+        if (configuredVal == null || configuredVal.trim().length() == 0) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("No (or empty) value of " + PINGS_VARIANT_OPTIONS_PROP + " present in the configuration.  Skipping initialization of ping variants.");
+            }
+            return;
+        }
+        String[] variants = configuredVal.trim().split(",");
+        for (int i = 0; i < variants.length; i++) {
+            String thisVariant = variants[i].trim();
+            if (thisVariant.length() == 0) continue;
+            Matcher m = NESTED_BRACE_PAIR.matcher(thisVariant);
+            if (m.matches() && m.groupCount() == 2) {
+                String url = m.group(1).trim();
+                String optionsList = m.group(2).trim();
+                Set variantOptions = new HashSet();
+                String[] options = optionsList.split(",");
+                for (int j = 0; j < options.length; j++) {
+                    String option = options[j].trim().toLowerCase();
+                    if (option.length() > 0) {
+                        variantOptions.add(option);
+                    }
+                }
+                if (!variantOptions.isEmpty()) {
+                    configuredVariants.put(url, variantOptions);
+                } else {
+                    logger.warn("Ping variant entry for url '" + url + "' has an empty variant options list.  Ignored.");
+                }
+            } else {
+                logger.error("Unable to parse configured ping variant '" + thisVariant + "'. Skipping this variant. Check your setting of the property " + PINGS_VARIANT_OPTIONS_PROP);
+            }
+        }
+    }
+
+    /**
+     * Get the set of variant options configured for the given ping target url.
+     *
+     * @param pingTargetUrl
+     * @return the set of variant options configured for the given ping target url, or
+     *         the empty set if there are no variants configured.
+     */
+    public static Set getVariantOptions(String pingTargetUrl) {
+        Set variantOptions = (Set) configuredVariants.get(pingTargetUrl);
+        if (variantOptions == null) {
+            variantOptions = Collections.EMPTY_SET;
+        }
+        return variantOptions;
     }
 
 
@@ -228,28 +284,24 @@ public class PingConfig
      * @return the value as an integer; the default value if no configured value is present or if the configured value
      *         is out of the specified range.
      */
-    private static int getIntegerProperty(String propName, int defaultValue, int min, int max)
-    {
+    private static int getIntegerProperty(String propName, int defaultValue, int min, int max) {
         String configuredVal = RollerConfig.getProperty(propName);
-        if (configuredVal == null)
-        {
-            if (logger.isDebugEnabled()) logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+        if (configuredVal == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+            }
             return defaultValue;
         }
 
         int val;
-        try
-        {
+        try {
             val = Integer.parseInt(configuredVal);
-        }
-        catch (NumberFormatException ex)
-        {
+        } catch (NumberFormatException ex) {
             logger.error("ERROR: PingConfig property '" + propName + "' is not an integer value.  Using default value: " + defaultValue);
             return defaultValue;
         }
 
-        if (val < min || val > max)
-        {
+        if (val < min || val > max) {
             logger.error("ERROR: PingConfig property '" + propName + "' is outside the required range (" + min + ", " + max + ").  Using default value: " + defaultValue);
             return defaultValue;
         }
@@ -264,12 +316,12 @@ public class PingConfig
      * @param defaultValue the default value if the property is not present
      * @return the configured value or the default if it the configured value is not present.
      */
-    private static boolean getBooleanProperty(String propName, boolean defaultValue)
-    {
+    private static boolean getBooleanProperty(String propName, boolean defaultValue) {
         String configuredVal = RollerConfig.getProperty(propName);
-        if (configuredVal == null)
-        {
-            if (logger.isDebugEnabled()) logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+        if (configuredVal == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+            }
             return defaultValue;
         }
         return Boolean.valueOf(configuredVal).booleanValue();

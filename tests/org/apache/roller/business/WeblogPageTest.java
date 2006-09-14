@@ -80,6 +80,7 @@ public class WeblogPageTest extends TestCase {
         testPage.setContents("a test weblog template.");
         testPage.setLastModified(new java.util.Date());
         testPage.setWebsite(testWeblog);
+        testPage.setTemplateLanguage("velocity");
     }
     
     public void tearDown() throws Exception {

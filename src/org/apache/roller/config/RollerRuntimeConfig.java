@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * RollerRuntimeConfig.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on May 4, 2005, 3:00 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.config;
@@ -26,12 +21,14 @@ package org.apache.roller.config;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.config.runtime.RuntimeConfigDefsParser;
 import org.apache.roller.model.PropertiesManager;
 import org.apache.roller.model.RollerFactory;
+
 
 /**
  * This class acts as a convenience gateway for getting property values
@@ -40,16 +37,17 @@ import org.apache.roller.model.RollerFactory;
  * thus the caller doesn't need the full RollerPropertyData object.
  *
  * We also provide some methods for converting to different data types.
- *
- * @author Allen Gilliland
  */
 public class RollerRuntimeConfig {
+    
+    private static Log log = LogFactory.getLog(RollerRuntimeConfig.class);
     
     private static String runtime_config = "/rollerRuntimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
     
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(RollerRuntimeConfig.class);
+    // special case for our context urls
+    private static String relativeContextURL = null;
+    private static String absoluteContextURL = null;
     
     
     // prevent instantiations
@@ -63,15 +61,16 @@ public class RollerRuntimeConfig {
     public static String getProperty(String name) {
         
         String value = null;
+        
         try {
             PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
             value = pmgr.getProperty(name).getValue();
         } catch(Exception e) {
-            mLogger.warn("Trouble accessing property: "+name, e);
+            log.warn("Trouble accessing property: "+name, e);
         }
         
-        mLogger.debug("fetched property ["+name+"="+value+"]");
-        
+        log.debug("fetched property ["+name+"="+value+"]");
+
         return value;
     }
     
@@ -106,7 +105,7 @@ public class RollerRuntimeConfig {
         try {
             intval = Integer.parseInt(value);
         } catch(Exception e) {
-            mLogger.warn("Trouble converting to int: "+name, e);
+            log.warn("Trouble converting to int: "+name, e);
         }
         
         return intval;
@@ -127,7 +126,7 @@ public class RollerRuntimeConfig {
                 
             } catch(Exception e) {
                 // error while parsing :(
-                mLogger.error("Error parsing runtime config defs", e);
+                log.error("Error parsing runtime config defs", e);
             }
             
         }
@@ -146,7 +145,7 @@ public class RollerRuntimeConfig {
      */
     public static String getRuntimeConfigDefsAsString() {
         
-        mLogger.debug("Trying to load runtime config defs file");
+        log.debug("Trying to load runtime config defs file");
         
         try {
             InputStreamReader reader =
@@ -162,10 +161,79 @@ public class RollerRuntimeConfig {
             
             return configString.toString();
         } catch(Exception e) {
-            mLogger.error("Error loading runtime config defs file", e);
+            log.error("Error loading runtime config defs file", e);
         }
         
         return "";
+    }
+    
+    
+    /**
+     * Special method which sets the non-persisted absolute url to this site.
+     *
+     * This property is *not* persisted in any way.
+     */
+    public static void setAbsoluteContextURL(String url) {
+        absoluteContextURL = url;
+    }
+    
+    
+    /**
+     * Get the absolute url to this site.
+     *
+     * This method will just return the value of the "site.absoluteurl"
+     * property if it is set, otherwise it will return the non-persisted
+     * value which is set by the InitFilter.
+     */
+    public static String getAbsoluteContextURL() {
+        
+        // db prop takes priority if it exists
+        String absURL = getProperty("site.absoluteurl");
+        if(absURL != null && absURL.trim().length() > 0) {
+            return absURL;
+        }
+        
+        return absoluteContextURL;
+    }
+    
+    
+    /**
+     * Special method which sets the non-persisted relative url to this site.
+     *
+     * This property is *not* persisted in any way.
+     */
+    public static void setRelativeContextURL(String url) {
+        relativeContextURL = url;
+    }
+    
+    
+    public static String getRelativeContextURL() {
+        return relativeContextURL;
+    }
+    
+    
+    /**
+     * Convenience method for Roller classes trying to determine if a given
+     * weblog handle represents the front page blog.
+     */
+    public static boolean isFrontPageWeblog(String weblogHandle) {
+        
+        String frontPageHandle = getProperty("site.frontpage.weblog.handle");
+        
+        return (frontPageHandle.equals(weblogHandle));
+    }
+    
+    
+    /**
+     * Convenience method for Roller classes trying to determine if a given
+     * weblog handle represents the front page blog configured to render
+     * site-wide data.
+     */
+    public static boolean isSiteWideWeblog(String weblogHandle) {
+        
+        boolean siteWide = getBooleanProperty("site.frontpage.weblog.aggregated");
+        
+        return (isFrontPageWeblog(weblogHandle) && siteWide);
     }
     
 }

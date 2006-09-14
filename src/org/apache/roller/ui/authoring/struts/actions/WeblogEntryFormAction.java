@@ -25,16 +25,14 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
@@ -47,6 +45,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -58,17 +57,15 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.VelocityContext;
 import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.IndexManager;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -79,7 +76,9 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.roller.util.MailUtil;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.Utilities;
 
 
@@ -88,7 +87,7 @@ import org.apache.roller.util.Utilities;
 /**
  * Supports Weblog Entry form actions edit, remove, update, etc.
  *
- * @struts.action name="weblogEntryFormEx" path="/editor/weblog"
+ * @struts.action name="weblogEntryFormEx" path="/roller-ui/authoring/weblog"
  *     scope="request" parameter="method"
  *
  * @struts.action-forward name="weblogEdit.page" path=".WeblogEdit"
@@ -325,7 +324,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 form.copyFrom(entry, request.getLocale());
                 
                 request.setAttribute(
-                        RollerRequest.WEBLOGENTRYID_KEY, entry.getId());
+                        RequestConstants.WEBLOGENTRY_ID, entry.getId());
                 
                 // Reindex entry, flush caches, etc.
                 reindexEntry(RollerFactory.getRoller(), entry);
@@ -408,8 +407,8 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 
                 // list of enabled website authors and admins
                 ArrayList reviewers = new ArrayList();
-                List websiteUsers =
-                        umgr.getUsers(entry.getWebsite(), Boolean.TRUE);
+                List websiteUsers = umgr.getUsers(
+                     entry.getWebsite(), Boolean.TRUE, 0, -1);
                 
                 // build list of reviewers (website users with author permission)
                 Iterator websiteUserIter = websiteUsers.iterator();
@@ -425,13 +424,13 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 
                 // Figure URL to entry edit page
                 RollerContext rc = RollerContext.getRollerContext();
-                String rootURL = rc.getAbsoluteContextUrl(request);
+                String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
                 if (rootURL == null || rootURL.trim().length()==0) {
                     rootURL = RequestUtils.serverURL(request)
                     + request.getContextPath();
                 }
                 String editURL = rootURL
-                        + "/editor/weblog.do?method=edit&entryid=" + entry.getId();
+                        + "/roller-ui/authoring/weblog.do?method=edit&entryId=" + entry.getId();
                 
                 ResourceBundle resources = ResourceBundle.getBundle(
                         "ApplicationResources", request.getLocale());
@@ -634,7 +633,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
             String entryid = form.getId();
             if ( entryid == null ) {
                 entryid =
-                        request.getParameter(RollerRequest.WEBLOGENTRYID_KEY);
+                        request.getParameter(RequestConstants.WEBLOGENTRY_ID);
             }
             Roller roller = RollerFactory.getRoller();
             RollerContext rctx= RollerContext.getRollerContext();
@@ -644,12 +643,9 @@ public final class WeblogEntryFormAction extends DispatchAction {
             RollerSession rses = RollerSession.getRollerSession(request);
             if (rses.isUserAuthorizedToAuthor(entry.getWebsite())) {
                 // Run entry through registered PagePlugins
-                PagePluginManager ppmgr = roller.getPagePluginManager();
-                Map plugins = ppmgr.createAndInitPagePlugins(
-                        entry.getWebsite(),
-                        RollerContext.getRollerContext().getServletContext(),
-                        RollerContext.getRollerContext().getAbsoluteContextUrl(request),
-                        new VelocityContext());
+                PluginManager ppmgr = roller.getPagePluginManager();
+                Map plugins = ppmgr.getWeblogEntryPlugins(
+                        entry.getWebsite());
                 
                 String content = "";
                 if (!StringUtils.isEmpty(entry.getText())) {
@@ -657,12 +653,12 @@ public final class WeblogEntryFormAction extends DispatchAction {
                 } else {
                     content = entry.getSummary();
                 }
-                content = ppmgr.applyPagePlugins(entry, plugins, content, true);
+                content = ppmgr.applyWeblogEntryPlugins(plugins, entry, content);
 
                 String title = entry.getTitle();
                 String excerpt = StringUtils.left( Utilities.removeHTML(content),255 );
                 
-                String url = rctx.createEntryPermalink(entry, request, true);
+                String url = entry.getPermalink();
                 String blog_name = entry.getWebsite().getName();
                 
                 if (form.getTrackbackUrl() != null) {
@@ -731,7 +727,7 @@ public final class WeblogEntryFormAction extends DispatchAction {
                                     StringBuffer resultBuff = new StringBuffer();
                                     while ((line = rd.readLine()) != null) {
                                         resultBuff.append(
-                                                Utilities.escapeHTML(line, true));
+                                            StringEscapeUtils.escapeHtml(line));
                                         resultBuff.append("<br />");
                                     }
                                     resultMsg.add(ActionMessages.GLOBAL_MESSAGE,

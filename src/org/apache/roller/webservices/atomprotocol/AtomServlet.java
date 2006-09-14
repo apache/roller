@@ -46,6 +46,7 @@ import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.WireFeedInput;
 import com.sun.syndication.io.WireFeedOutput;
+import java.io.BufferedReader;
 import java.io.StringWriter;
 import org.jdom.Namespace;
 import org.apache.roller.config.RollerConfig;
@@ -53,7 +54,7 @@ import org.apache.roller.config.RollerConfig;
 /**
  * Atom Servlet implements Atom by calling a Roller independent handler.
  * @web.servlet name="AtomServlet"
- * @web.servlet-mapping url-pattern="/app/*"
+ * @web.servlet-mapping url-pattern="/roller-services/app/*"
  * @author David M Johnson
  */
 public class AtomServlet extends HttpServlet {
@@ -118,8 +119,8 @@ public class AtomServlet extends HttpServlet {
                     // return an entry
                     Entry entry = handler.getEntry(pathInfo);
                     if (entry != null) {
-                        Writer writer = res.getWriter();
                         res.setContentType("application/atom+xml; charset=utf-8");
+                        Writer writer = res.getWriter();
                         serializeEntry(entry, writer);
                         writer.close();
                     } else {
@@ -158,17 +159,18 @@ public class AtomServlet extends HttpServlet {
                     if (req.getContentType().startsWith("application/atom+xml")) {
 
                         // parse incoming entry
-                        Entry unsavedEntry = parseEntry(
-                            new InputStreamReader(req.getInputStream()));
+                        Entry unsavedEntry = parseEntry(new BufferedReader(
+                            new InputStreamReader(
+                                req.getInputStream(), "UTF-8")));
 
                         // call handler to post it
                         Entry savedEntry = handler.postEntry(pathInfo, unsavedEntry);
                         
                         // return alternate link as Location header
-                        Iterator links = savedEntry.getAlternateLinks().iterator();
+                        Iterator links = savedEntry.getOtherLinks().iterator();
                         while (links.hasNext()) {
                             Link link = (Link) links.next();
-                            if (link.getRel().equals("alternate") || link.getRel() == null) {
+                            if (link.getRel().equals("edit") || link.getRel() == null) {
                                 res.addHeader("Location", link.getHref());
                                 break;
                             }
@@ -182,21 +184,21 @@ public class AtomServlet extends HttpServlet {
                     
                     } else if (req.getContentType() != null) {
                         // get incoming file name from HTTP header
-                        String name = req.getHeader("Title");
+                        String title = req.getHeader("Title");
 
                         // hand input stream of to hander to post file
                         Entry resource = handler.postMedia(
-                            pathInfo, name, req.getContentType(), req.getInputStream());
+                            pathInfo, title, req.getContentType(), req.getInputStream());
                         
                         res.setStatus(HttpServletResponse.SC_CREATED);
                         com.sun.syndication.feed.atom.Content content = 
                             (com.sun.syndication.feed.atom.Content)resource.getContents().get(0);
 
                         // return alternate link as Location header
-                        Iterator links = resource.getAlternateLinks().iterator();
+                        Iterator links = resource.getOtherLinks().iterator();
                         while (links.hasNext()) {
                             Link link = (Link) links.next();
-                            if (link.getRel().equals("alternate") || link.getRel() == null) {
+                            if (link.getRel().equals("edit") || link.getRel() == null) {
                                 res.addHeader("Location", link.getHref());
                                 break;
                             }
@@ -239,8 +241,9 @@ public class AtomServlet extends HttpServlet {
                 if (handler.isEntryURI(pathInfo)) {
                     
                     // parse incoming entry
-                    Entry unsavedEntry = parseEntry(
-                            new InputStreamReader(req.getInputStream()));
+                    Entry unsavedEntry = parseEntry(new BufferedReader(
+                        new InputStreamReader(
+                            req.getInputStream(), "UTF-8")));
                     
                     // call handler to put entry
                     Entry updatedEntry = handler.putEntry(pathInfo, unsavedEntry);

@@ -21,6 +21,7 @@ package org.apache.roller.ui.authoring.struts.actions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.BooleanUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -42,12 +42,11 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.apache.velocity.VelocityContext;
 import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
@@ -55,11 +54,11 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WebsiteFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.Blacklist;
 
 
@@ -67,7 +66,7 @@ import org.apache.roller.util.Blacklist;
 /**
  * Website Settings action.
  *
- * @struts.action name="websiteFormEx" path="/editor/website"
+ * @struts.action name="websiteFormEx" path="/roller-ui/authoring/website"
  * 		scope="session" parameter="method"
  *
  * @struts.action-forward name="editWebsite.page" path=".edit-website"
@@ -189,7 +188,7 @@ public final class WebsiteFormAction extends DispatchAction {
                         new ActionMessage("websiteSettings.savedChanges"));
                     
                     request.getSession().setAttribute(
-                        RollerRequest.WEBSITEID_KEY, form.getId());
+                        RequestConstants.WEBLOG_ID, form.getId());
                     
                     // Clear cache entries associated with website
                     CacheManager.invalidate(wd);
@@ -351,7 +350,7 @@ public final class WebsiteFormAction extends DispatchAction {
             boolean ret = false;
             try {
                 Roller roller = RollerFactory.getRoller();
-                PagePluginManager ppmgr = roller.getPagePluginManager();
+                PluginManager ppmgr = roller.getPagePluginManager();
                 ret = ppmgr.hasPagePlugins();
             } catch (RollerException e) {
                 mLogger.error(e);
@@ -364,12 +363,9 @@ public final class WebsiteFormAction extends DispatchAction {
             try {
                 if (getHasPagePlugins()) {
                     Roller roller = RollerFactory.getRoller();
-                    PagePluginManager ppmgr = roller.getPagePluginManager();
-                    Map plugins = ppmgr.createAndInitPagePlugins(
-                            getWebsite(),
-                            RollerContext.getRollerContext().getServletContext(),
-                            RollerContext.getRollerContext().getAbsoluteContextUrl(request),
-                            new VelocityContext());
+                    PluginManager ppmgr = roller.getPagePluginManager();
+                    Map plugins = ppmgr.getWeblogEntryPlugins(
+                            getWebsite());
                     Iterator it = plugins.values().iterator();
                     while (it.hasNext()) list.add(it.next());
                 }
@@ -377,6 +373,10 @@ public final class WebsiteFormAction extends DispatchAction {
                 mLogger.error(e);
             }
             return list;
+        }
+        
+        public boolean isGlobalAdminUser() throws RollerException {
+            return getRollerSession().isGlobalAdminUser();
         }
     }
 }

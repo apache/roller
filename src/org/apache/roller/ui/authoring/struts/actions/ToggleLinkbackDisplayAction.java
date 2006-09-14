@@ -31,6 +31,7 @@ import org.apache.roller.model.RefererManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
@@ -38,7 +39,7 @@ import org.apache.roller.util.cache.CacheManager;
 
 /**
  * Toggle display of a linkback.
- * @struts.action path="/editor/toggleLinkback" name="toggleLinkback"
+ * @struts.action path="/roller-ui/authoring/toggleLinkback" name="toggleLinkback"
  */
 public class ToggleLinkbackDisplayAction extends Action
 {
@@ -61,7 +62,7 @@ public class ToggleLinkbackDisplayAction extends Action
             if (rreq.getWebsite() != null 
                  && rollerSession.isUserAuthorizedToAuthor(rreq.getWebsite()) )
             {
-                String refid = req.getParameter(RollerRequest.REFERERID_KEY);
+                String refid = req.getParameter(RequestConstants.REFERRER_ID);
                 if ( refid != null )
                 {
                     RefererManager refmgr = 
@@ -92,9 +93,9 @@ public class ToggleLinkbackDisplayAction extends Action
 		{
 			RollerContext rctx = RollerContext.getRollerContext();
             if (entry != null) {
-                url = rctx.createEntryPermalink(entry, req, true);
+                url = entry.getPermalink();
             } else {
-    			url = rctx.getContextUrl(req, rreq.getWebsite());
+    			url = rreq.getWebsite().getURL();
             }
             res.sendRedirect(url);
 		}

@@ -49,7 +49,7 @@ import org.apache.roller.ui.authoring.struts.forms.PlanetGroupForm;
 /**
  * Add, remove, and view user defined groups.
  * 
- * @struts.action name="planetGroupForm" path="/admin/planetGroups"
+ * @struts.action name="planetGroupForm" path="/roller-ui/admin/planetGroups"
  *                scope="request" parameter="method"
  * 
  * @struts.action-forward name="planetGroups.page" 

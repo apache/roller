@@ -30,11 +30,13 @@ import org.apache.commons.collections.ArrayStack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.core.security.AutoProvision;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -53,7 +55,6 @@ public class RollerSession
         LogFactory.getFactory().getInstance(RollerSession.class);
 
     public static final String ROLLER_SESSION = "org.apache.roller.rollersession";
-    public static final String BREADCRUMB = "org.apache.roller.breadcrumb";
     public static final String ERROR_MESSAGE   = "rollererror_message";
     public static final String STATUS_MESSAGE  = "rollerstatus_message";
 
@@ -81,9 +82,25 @@ public class RollerSession
                 try 
                 {
                     UserManager umgr = RollerFactory.getRoller().getUserManager();
-                    UserData user = umgr.getUserByUsername(principal.getName());
+                    UserData user = umgr.getUserByUserName(principal.getName());
+
+                    // try one time to auto-provision, only happens if user==null
+                    // which means installation has SSO-enabled in security.xml
+                     if(user == null && RollerConfig.getBooleanProperty("users.sso.autoProvision.enabled")) {                    
+                       // provisioning enabled, get provisioner and execute
+                       AutoProvision provisioner = RollerContext.getAutoProvision();
+                       if(provisioner != null) 
+                       {
+                           boolean userProvisioned = provisioner.execute();
+                           if(userProvisioned) 
+                           {
+                               // try lookup again real quick
+                               user = umgr.getUserByUserName(principal.getName());
+                           }
+                       }
+                     }
                     // only set authenticated user if user is enabled
-                    if (user.getEnabled().booleanValue()) 
+                    if(user != null && user.getEnabled().booleanValue()) 
                     {
                         rollerSession.setAuthenticatedUser(user);  
                     }                    
@@ -129,60 +146,6 @@ public class RollerSession
    {
        clearSession(se);
    }
-
-    //----------------------------------------------------------------- Breadcrumbs
-    
-    // TODO: eliminate breadcrumb stuff?
-    
-    /**
-     * Clear bread crumb trail.
-     * @param req the request
-     */
-    public static void clearBreadCrumbTrail( HttpServletRequest req )
-    { 
-        HttpSession ses = req.getSession(false);
-        if (ses != null && ses.getAttribute(BREADCRUMB) != null)
-        {
-            ArrayStack stack = (ArrayStack)ses.getAttribute(BREADCRUMB);
-            stack.clear();
-        }
-    }
-    
-    /**
-     * Store the url of the latest request stored in the session.
-     * @param useReferer If true try to return the "referer" header.
-     */
-    public static String getBreadCrumb( 
-        HttpServletRequest req, boolean useReferer )
-    {
-        String crumb = null;
-        
-        HttpSession ses = req.getSession(false);
-        if (ses != null && ses.getAttribute(BREADCRUMB) != null)
-        {
-            ArrayStack stack = (ArrayStack) ses.getAttribute(BREADCRUMB);
-            if (stack != null && !stack.empty())
-            {
-                crumb = (String)stack.peek();
-            }
-        }
-
-        if ( crumb == null && useReferer )
-        {
-            crumb = req.getHeader("referer");
-        }
-        
-        return crumb;
-    }
-    
-    /**
-     * Store the url of the latest request stored in the session.
-     * Else try to return the "referer" header.
-     */
-    public static String getBreadCrumb( HttpServletRequest req )
-    {
-        return getBreadCrumb(req,true);
-    }
 
     //-------------------------------------------------------- Authentication, etc.
     
@@ -252,7 +215,7 @@ public class RollerSession
     private boolean hasPermissions(WebsiteData website, short mask) 
     {
         UserData user = getAuthenticatedUser();
-        if (user != null) 
+        if (website != null && user != null) 
         {
             return website.hasUserPermissions(user, mask);
         }
@@ -266,7 +229,6 @@ public class RollerSession
         HttpSession session = se.getSession();
         try
         {
-            session.removeAttribute(BREADCRUMB);
             session.removeAttribute(ROLLER_SESSION);
         }
         catch (Throwable e)

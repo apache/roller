@@ -52,7 +52,7 @@ import org.apache.roller.util.cache.CacheManager;
  *
  * @author Allen Gilliland
  *
- * @struts.action name="themeEditorForm" path="/editor/themeEditor"
+ * @struts.action name="themeEditorForm" path="/roller-ui/authoring/themeEditor"
  *    scope="session" parameter="method"
  *
  * @struts.action-forward name="editTheme.page" path=".theme-editor"

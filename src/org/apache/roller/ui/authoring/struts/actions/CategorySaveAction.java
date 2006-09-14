@@ -37,10 +37,11 @@ import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogCategoryFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 
 /**
- * @struts.action path="/editor/categorySave" name="weblogCategoryFormEx"
- *    validate="true" input="/editor/categoryEdit.do"
+ * @struts.action path="/roller-ui/authoring/categorySave" name="weblogCategoryFormEx"
+ *    validate="true" input="/roller-ui/authoring/categoryEdit.do"
  * 
  * @author Dave Johnson
  */
@@ -91,7 +92,7 @@ public class CategorySaveAction extends Action
             forward = mapping.findForward("access-denied");
         }
         request.setAttribute(
-            RollerRequest.WEBLOGCATEGORYID_KEY, cd.getParent().getId());         
+            RequestConstants.WEBLOGCATEGORY_ID, cd.getParent().getId());         
         return forward;
     }
 }

@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
@@ -55,16 +56,16 @@ import org.apache.roller.util.Utilities;
 /**
  * Action for quering, approving, marking as spam and deleting comments.
  *
- * @struts.action path="/editor/commentManagement" name="commentManagementForm" 
+ * @struts.action path="/roller-ui/authoring/commentManagement" name="commentManagementForm" 
  *     scope="request" parameter="method"
  *
- * @struts.action path="/editor/commentQuery" name="commentQueryForm" 
+ * @struts.action path="/roller-ui/authoring/commentQuery" name="commentQueryForm" 
  *     scope="request" parameter="method"
  *
- * @struts.action path="/admin/commentManagement" name="commentManagementForm" 
+ * @struts.action path="/roller-ui/admin/commentManagement" name="commentManagementForm" 
  *     scope="request" parameter="method"
  *
- * @struts.action path="/admin/commentQuery" name="commentQueryForm" 
+ * @struts.action path="/roller-ui/admin/commentQuery" name="commentQueryForm" 
  *     scope="request" parameter="method"
  *
  * @struts.action-forward name="commentManagement.page" path=".CommentManagement"
@@ -127,7 +128,14 @@ public final class CommentManagementAction extends DispatchAction {
         }        
         else if (rreq.getWebsite() != null) {
             queryForm.setWeblog(rreq.getWebsite().getHandle());
-        }    
+        } 
+        else {
+            // user needs Global Admin rights to access site-wide comments
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if (!rses.isGlobalAdminUser()) {
+                return mapping.findForward("access-denied");
+            }
+        }
         RollerSession rses = RollerSession.getRollerSession(request);
         try {
             if (rses.isGlobalAdminUser() 
@@ -227,7 +235,7 @@ public final class CommentManagementAction extends DispatchAction {
         HttpServletRequest req, List comments) throws RollerException {
         
         RollerContext rc = RollerContext.getRollerContext();                             
-        String rootURL = rc.getAbsoluteContextUrl(req);
+        String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
         try {
             if (rootURL == null || rootURL.trim().length()==0) {
                 rootURL = RequestUtils.serverURL(req) + req.getContextPath();
@@ -371,12 +379,12 @@ public final class CommentManagementAction extends DispatchAction {
             StringBuffer sb = new StringBuffer();
             sb.append(request.getContextPath());
             if (getWebsite() != null) {
-                sb.append("/editor/commentManagement.do"); // TODO: get path from Struts
+                sb.append("/roller-ui/authoring/commentManagement.do"); // TODO: get path from Struts
                 sb.append("?method=query");
                 sb.append("&weblog=");
                 sb.append(getWebsite().getHandle());
             } else {
-                sb.append("/admin/commentManagement.do"); // TODO: get path from Struts
+                sb.append("/roller-ui/admin/commentManagement.do"); // TODO: get path from Struts
                 sb.append("?method=query");
             }
             sb.append("&count=");

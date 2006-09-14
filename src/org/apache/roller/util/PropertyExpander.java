@@ -29,15 +29,12 @@ import java.util.regex.Pattern;
  *         ROL-613)
  * @since Roller 1.3
  */
-public class PropertyExpander
-{
-    private PropertyExpander()
-    {
+public class PropertyExpander {
+    private PropertyExpander() {
     }
 
     // The pattern for a system property.  Matches ${property.name}, with the interior matched reluctantly.
-    private static final Pattern EXPANSION_PATTERN =
-        Pattern.compile("(\\$\\{([^}]+?)\\})", java.util.regex.Pattern.MULTILINE);
+    private static final Pattern EXPANSION_PATTERN = Pattern.compile("(\\$\\{([^}]+?)\\})", java.util.regex.Pattern.MULTILINE);
 
     /**
      * Expand property expressions in the input.  Expands property expressions of the form <code>${propertyname}</code>
@@ -55,15 +52,13 @@ public class PropertyExpander
      * @return the result of replacing property expressions with the values of the corresponding properties from the
      *         supplied property map, null if the input string is null.
      */
-    public static String expandProperties(String input, Map props)
-    {
+    public static String expandProperties(String input, Map props) {
         if (input == null) return null;
 
         Matcher matcher = EXPANSION_PATTERN.matcher(input);
 
         StringBuffer expanded = new StringBuffer(input.length());
-        while (matcher.find())
-        {
+        while (matcher.find()) {
             String propName = matcher.group(2);
             String value = (String) props.get(propName);
             // if no value is found, use a value equal to the original expression
@@ -85,8 +80,7 @@ public class PropertyExpander
      * @return the result of replacing property expressions with the values of the corresponding system properties.
      * @see System#getProperties()
      */
-    public static String expandSystemProperties(String input)
-    {
+    public static String expandSystemProperties(String input) {
         return expandProperties(input, System.getProperties());
     }
 }

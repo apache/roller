@@ -1,46 +1,47 @@
 <div class="storyBox">
+
 	<div class="storyDateBox">
         <h2>
-            $dateFormatter.applyPattern("MMMMM dd, yyyy")
-            <a title="Stories for $dateFormatter.format($day)" 
-               href="$baseURL/page/$website.handle/#formatDate($plainFormat $day )">
-            $dateFormatter.applyPattern("dd")
-            $dateFormatter.format($day)
+            <a title='Stories for $utils.formatDate($day, "MMMMM dd, yyyy")'
+               href='$url.date($utils.formatDate($day, "yyyyMMdd"))'>
+            $utils.formatDate($day, "dd")
             </a>
-            $dateFormatter.applyPattern("MMM")
-            <span>$dateFormatter.format($day)</span>
+            <span>$utils.formatDate($day, "MMM")</span>
             <span class="blockDisplay">
             <span class="noDisplay">&middot;</span>
-            $dateFormatter.applyPattern("EEE")
-            $dateFormatter.format($day)
-            $dateFormatter.applyPattern("yyyy")
-            $dateFormatter.format($day)
+            $utils.formatDate($day, "EEE")
+            $utils.formatDate($day, "yyyy")
             </span>
         </h2>
     </div>    
 
 #foreach( $entry in $entries )
+        <p class="entryTitle">$entry.title</p><br />
 	<div class="story">
-        <a name="$utilities.encode($entry.anchor)" id="$utilities.encode($entry.anchor)" 
+        <a name="$utils.encode($entry.anchor)" id="$utils.encode($entry.anchor)" 
             style="margin:0px;padding:0px"></a>
-        <strong>$entry.title</strong><br />
-        #showEntryText( $entry ) 
-        $dateFormatter.applyPattern("hh:mm aa z")
-        <div>
+         
+            #if($model.permalink)
+                $entry.displayContent
+            #else
+                $entry.displayContent($url.entry($entry.anchor))
+            #end
+        
+
+        <div class="entryInfo">
             $text.get("macro.weblog.postedby") $entry.creator.userName
-            <em class="smallText">@ $dateFormatter.format($entry.pubTime)</em>
-            #if($website.allowComments)
+            <em class="smallText">@ $utils.formatDate($entry.pubTime, "hh:mm aa z")</em>
+            #set($commentCount = $entry.commentCount)
+            #if($entry.commentsStillAllowed || $commentCount > 0)
                 <span class="noDisplay">[</span>
-                    #set( $commentCount = $pageModel.getCommentCount($entry.Id) )
-                    #set( $link = "$ctxPath$entry.permaLink" )
-                    <a href="$link" class="storyLink">
-                        Comments [$commentCount]</a>
+                    <a href="$url.entry($entry.anchor)" class="storyLink">Comments [$commentCount]</a>
                 <span class="noDisplay">]</span> 
-            #if ($pageHelper.isUserAuthorizedToAuthor())
-                &nbsp;&nbsp;[<a href="$pageHelper.getEntryEditUrl($entry)">Edit</a>]
+            #if ($utils.isUserAuthorizedToAuthor())
+                &nbsp;&nbsp;[<a href="$url.editEntry($entry.anchor)">Edit</a>]
             #end
         #end
         </div>
+        #showTrackbackAutodiscovery($entry)
 	</div>
 #end
   <div class="floatSpacer">&nbsp;</div>

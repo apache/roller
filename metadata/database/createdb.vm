@@ -71,9 +71,13 @@ create table webpage (
     name            varchar(255)  not null,
     description     varchar(255),
     link            varchar(255),
-    websiteid       varchar(48)  not null,
+    websiteid       varchar(48) not null,
     template        $TEXT_SQL_TYPE not null,
-    updatetime      $TIMESTAMP_SQL_TYPE     not null
+    updatetime      $TIMESTAMP_SQL_TYPE not null,
+    hidden          $BOOLEAN_SQL_TYPE_FALSE not null,
+    navbar          $BOOLEAN_SQL_TYPE_FALSE not null,
+    templatelang    varchar(20) not null,
+    decorator       varchar(255) null
 );
 create index wp_name_idx on webpage( name$!INDEXSIZE );
 create index wp_link_idx on webpage( link$!INDEXSIZE );
@@ -102,13 +106,16 @@ create table website (
     defaultplugins    varchar(255),
     isenabled         $BOOLEAN_SQL_TYPE_TRUE not null,
     isactive          $BOOLEAN_SQL_TYPE_TRUE not null,
-    datecreated      $TIMESTAMP_SQL_TYPE not null,
+    datecreated          $TIMESTAMP_SQL_TYPE not null,
     blacklist            $TEXT_SQL_TYPE,
     defaultallowcomments $BOOLEAN_SQL_TYPE_TRUE not null,
     defaultcommentdays   integer default 7 not null,
     commentmod           $BOOLEAN_SQL_TYPE_FALSE not null,
-    displaycnt        integer default 15 not null,
-    lastmodified       $TIMESTAMP_SQL_TYPE
+    displaycnt           integer default 15 not null,
+    lastmodified         $TIMESTAMP_SQL_TYPE,
+    pagemodels           varchar(512) default null,
+    enablemultilang   $BOOLEAN_SQL_TYPE_FALSE not null,
+    showalllangs      $BOOLEAN_SQL_TYPE_TRUE not null
 );
 create index ws_userid_idx    on website(userid);
 create index ws_isenabled_idx on website(isenabled);
@@ -199,6 +206,7 @@ create index we_pinnedtom_idx on weblogentry(pinnedtomain);
 create index we_pubentry_idx on weblogentry(publishentry);
 create index we_userid_idx on weblogentry(userid);
 create index we_status_idx on weblogentry(status);
+create index we_locale_idx on weblogentry(locale);
 
 create table newsfeed (
     id              varchar(48) not null primary key,

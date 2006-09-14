@@ -121,15 +121,9 @@ public interface Roller {
     
     
     /**
-     * Get PagePluginManager associated with this Roller instance.
+     * Get PluginManager associated with this Roller instance.
      */
-    public PagePluginManager getPagePluginManager() throws RollerException;
-    
-    
-    /**
-     * Upgrade database if needed.
-     */
-    public void upgradeDatabase(Connection con) throws RollerException;
+    public PluginManager getPagePluginManager() throws RollerException;
     
     
     /**

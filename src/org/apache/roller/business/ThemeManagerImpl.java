@@ -24,10 +24,12 @@
 package org.apache.roller.business;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -195,7 +197,7 @@ public class ThemeManagerImpl implements ThemeManager {
         Map themes = new HashMap();
         
         // NOTE: we need to figure out how to get the roller context path
-        String themespath = RollerConfig.getProperty("context.realpath");
+        String themespath = RollerConfig.getProperty("context.realPath");
         if(themespath.endsWith(File.separator))
             themespath += "themes";
         else
@@ -271,24 +273,50 @@ public class ThemeManagerImpl implements ThemeManager {
                 continue;
             }
             char[] chars = null;
+            int length;
             try {
-                FileReader reader = new FileReader(template_file);
+//                FileReader reader = new FileReader(template_file);
                 chars = new char[(int) template_file.length()];
-                reader.read(chars);            
+            	FileInputStream stream = new FileInputStream(template_file);
+            	InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
+                length = reader.read(chars);            
             } catch (Exception noprob) {
                 mLogger.error("Exception while attempting to " + msg);
                 if (mLogger.isDebugEnabled()) mLogger.debug(noprob);
                 continue;
             }
-
+            
+            // Strip "_" from name to form link
+            boolean navbar = true;
+            String template_link = template_name;
+            if (template_name.startsWith("_") && template_name.length() > 1) {
+                navbar = false;
+                template_link = template_link.substring(1);
+                mLogger.debug("--- " + template_link);
+            }
+            
+            String decorator = "_decorator";
+            if("_decorator".equals(template_name)) {
+                decorator = null;
+            }
+            
             // construct ThemeTemplate representing this file
+            // a few restrictions for now:
+            //   - we only allow "velocity" for the template language
+            //   - decorator is always "_decorator" or null
+            //   - all theme templates are considered not hidden
             theme_template = new ThemeTemplate(
+                    theme,
                     theme_name+":"+template_name,
                     template_name,
                     template_name,
-                    new String(chars),
-                    template_name,
-                    new Date(template_file.lastModified()));
+                    new String(chars, 0, length),
+                    template_link,
+                    new Date(template_file.lastModified()),
+                    "velocity",
+                    false,
+                    navbar,
+                    decorator);
 
             // add it to the theme
             theme.setTemplate(template_name, theme_template);
@@ -341,16 +369,22 @@ public class ThemeManagerImpl implements ThemeManager {
                 if (template != null) {
                     // User already has page by that name, so overwrite it.
                     template.setContents(theme_template.getContents());
+                    template.setLink(theme_template.getLink());
                     
                 } else {
                     // User does not have page by that name, so create new page.
-                    template = new WeblogTemplate( null,
+                    template = new WeblogTemplate(
+                            null,                               // id
                             website,                            // website
                             theme_template.getName(),           // name
                             theme_template.getDescription(),    // description
-                            theme_template.getName(),           // link
+                            theme_template.getLink(),           // link
                             theme_template.getContents(),       // contents
-                            new Date()                          // last mod
+                            new Date(),                         // last mod
+                            theme_template.getTemplateLanguage(), // temp lang
+                            theme_template.isHidden(),          // hidden
+                            theme_template.isNavbar(),          // navbar
+                            theme_template.getDecoratorName()   // decorator
                             );
                     userMgr.savePage( template );
                 }

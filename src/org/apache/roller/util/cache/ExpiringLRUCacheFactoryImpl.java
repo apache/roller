@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.util.cache;
 
@@ -28,8 +28,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ExpiringLRUCacheFactoryImpl implements CacheFactory {
     
-    private static Log mLogger = 
-            LogFactory.getLog(ExpiringLRUCacheFactoryImpl.class);
+    private static Log log = LogFactory.getLog(ExpiringLRUCacheFactoryImpl.class);
     
     
     // protected so only the CacheManager can instantiate us
@@ -43,6 +42,7 @@ public class ExpiringLRUCacheFactoryImpl implements CacheFactory {
         
         int size = 100;
         long timeout = 15 * 60;
+        String id = "unknown";
         
         try {
             size = Integer.parseInt((String) properties.get("size"));
@@ -56,9 +56,14 @@ public class ExpiringLRUCacheFactoryImpl implements CacheFactory {
             // ignored
         }
         
-        Cache cache = new ExpiringLRUCacheImpl(size, timeout);
+        String cacheId = (String) properties.get("id");
+        if(cacheId != null) {
+            id = cacheId;
+        }
         
-        mLogger.debug("new cache constructed. size="+size+", timeout="+timeout);
+        Cache cache = new ExpiringLRUCacheImpl(id, size, timeout);
+        
+        log.debug("new cache constructed. size="+size+", timeout="+timeout);
         
         return cache;
     }

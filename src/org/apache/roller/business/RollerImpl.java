@@ -31,7 +31,7 @@ import org.apache.roller.business.referrers.ReferrerQueueManagerImpl;
 import org.apache.roller.business.utils.UpgradeDatabase;
 import org.apache.roller.model.FileManager;
 import org.apache.roller.model.IndexManager;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.ThemeManager;
 import org.apache.roller.model.ThreadManager;
@@ -52,7 +52,7 @@ public abstract class RollerImpl implements Roller {
     private IndexManager indexManager = null;
     private ThreadManager threadManager = null;
     private ThemeManager themeManager = null;
-    private PagePluginManager pluginManager = null;
+    private PluginManager pluginManager = null;
     
     
     public RollerImpl() {
@@ -115,19 +115,11 @@ public abstract class RollerImpl implements Roller {
     /**
      * @see org.apache.roller.model.Roller#getPluginManager()
      */
-    public PagePluginManager getPagePluginManager() throws RollerException {
+    public PluginManager getPagePluginManager() throws RollerException {
         if (pluginManager == null) {
-            pluginManager = new PagePluginManagerImpl();
+            pluginManager = new PluginManagerImpl();
         }
         return pluginManager;
-    }
-    
-    
-    /**
-     * @see org.apache.roller.model.Roller#upgradeDatabase(java.sql.Connection)
-     */
-    public void upgradeDatabase(Connection con) throws RollerException {
-        UpgradeDatabase.upgradeDatabase(con);
     }
     
     

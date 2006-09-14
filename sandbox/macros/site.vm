@@ -1,0 +1,429 @@
+#**
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+*#
+
+#** macros for use with SitePageModel
+
+   Contents
+      #showEnriesPager($pager)
+      #showWeblogProfile($weblog)
+      #showWeblogDirectory()
+      #showUserProfile($user)
+      #showUserDirectory()
+      #showCommentsPager($pager)
+*#
+
+
+#**
+Show pager and next/prev control for site-wide or planet entries.
+*#
+#macro(showSiteEntriesPager $pager)
+    #if($pager.items.size() > 0)
+        #set($entryCount = $pager.items.size() - 1)
+        #set($startDate = $pager.items.get(0).pubTime)
+        #set($endDate = $entries.get($entryCount).pubTime)
+    #end
+    #foreach($entry in $pager.items)
+        #if($velocityCount < $maxResults)
+
+            <div class="entry">
+                <p class="entryDetails">
+                    <a href="$utils.escapeHTML($entry.permalink)">
+                    <b>$utils.truncateNicely($utils.removeHTML($entry.title), 50, 50, "...")</b></a><br /> 
+                    <a href="$utils.escapeHTML($entry.website.URL)">$entry.website.name</a>
+                    #if($entry.category.name)| $entry.category.name #end
+                    #if($entry.pubTime)| $utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
+                    #if($entry.creator.userName)| By $entry.creator.userName #end
+                    <br/> 
+                </p>
+                <p class="entryDescription">
+                    #if(!$utils.isEmpty($entry.summary))
+                         $utils.truncateNicely($utils.removeHTML($entry.transformedSummary), 240, 260, "...")
+                    #else
+                         $utils.truncateNicely($utils.removeHTML($entry.transformedText), 240, 260, "...")
+                    #end
+                </p>
+            </div>
+
+        #end
+    #end
+    <div class="pagingcontrols">
+    #if($pager.nextLink)
+       <a href="$pager.nextLink">&lt; $pager.nextName</a>
+    #end
+    #if($pager.nextLink && $pager.prevLink)
+       &nbsp;|&nbsp;
+    #end
+    #if($pager.prevLink)
+       <a href="$pager.prevLink">$pager.prevName &gt;</a>
+    #end
+    </div>
+#end
+
+
+#**
+Show weblog profile for specified weblog
+*#
+#macro(showWeblogProfile $weblog)
+    <h2 class="pageTitle">Weblog: $weblog.name</h2> 
+    <table>
+        <tr>
+            <td>Handle</td>
+            <td>$weblog.handle</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>$weblog.description</td>
+        </tr>
+        <tr>
+            <td>Created by</td>
+            <td><$weblog.creator.fullName/td>
+        </tr>
+        <tr>
+            <td>Last modified</td>
+            <td>$weblog.lastModified</td>
+        </tr>
+        <tr>
+            <td>Locale</td>
+            <td>$!weblog.locale</td>
+        </tr>
+        <tr>
+            <td>Timezone</td>
+            <td>$weblog.timeZone</td>
+        </tr>
+    </table>
+
+    <h2 class="pageTitle">Weblog users</h2>
+    #set($users = $site.getWeblogsUsers($weblog.handle))
+    <table class="rollertable">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Full name</th>
+            </tr>
+        </thead>    
+        #foreach($user in $users) 
+        <tr>
+            <td>$user.userName</td>
+            <td>$user.fullName</td>
+        </tr>
+        #end
+    </table>
+
+    <h2 class="pageTitle">Recent posts</h2>
+    #set($entriesPager = $site.getWeblogEntriesPager($weblog, $null, $null, 90, 5)) 
+    #if($entriesPager.items.size() > 0)  
+        <table class="rollertable"> 
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Pub. time</th>
+                <th>Title</th>
+            </tr>
+        </thead>  
+        #foreach($entry in $entriesPager.items)
+            <tr>
+                <td>$entry.creator.userName</td>
+                <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
+                <td><a href="$utils.escapeHTML($entry.permaLink)">
+                    $utils.removeHTML($entry.title)</a></td>
+            </tr>
+        #end
+        </table>
+    #else
+        No posts in past 90 days
+    #end
+
+#end
+
+
+#**
+Show weblog directory, sensitive to letter specified in request.
+*#
+#macro(showWeblogDirectory $pageLength)
+    #if($model.getRequestParameter("letter"))
+        #set($chosenLetter = $model.getRequestParameter("letter"))
+    #end
+
+    #set($weblogLetterMap = $site.getWeblogHandleLetterMap())
+    <div class="letterMap">
+    <p>
+    #set($firstLetterDone = 0)
+    #foreach($letter in $weblogLetterMap.keySet())
+        #if($firstLetterDone == 1) - #end
+        #set($firstLetterDone = 1)
+        #set($letterCount = $weblogLetterMap.get($letter))
+        #if($letter == $chosenLetter)<span style="font-size:120%; font-weight:bold">#end
+        #if($letterCount > 0)
+           <a href="?letter=$letter" title="$letterCount weblogs">$letter</a>         
+        #else
+           $letter
+        #end
+        #if($letter == $chosenLetter)</span>#end
+    #end
+    </p>
+    </div>
+
+    #if($chosenLetter)
+       <h2 class="pageTitle">Weblogs starting with $chosenLetter</h2>
+    #else
+       <h2 class="pageTitle">All weblogs</h2>
+    #end
+
+    #set($weblogsPager = $site.getWeblogsByLetterPager($chosenLetter, -1, $pageLength))
+    <table class="blogdirectory data">
+        <thead>
+            <tr>
+               <th scope="col" class="name">Blog Name</th>
+               <th scope="col" class="description">Description</th>
+            </tr>
+        </thead>
+       <tbody>
+          #foreach($weblog in $weblogsPager.items)
+           <tr>
+              <th scope="row" class="name"><a href="$url.absoluteSite/$weblog.handle">$weblog.handle</a></th>
+              <td class="description">$weblog.name</td>
+           </tr>
+          #end 
+       </tbody>
+        <tfoot>
+           <tr class="pagingcontrols">
+             <td class="pagingtext"></td>
+             <td class="paginglinks">
+
+             #if($chosenLetter)
+                #if($weblogsPager.prevLink)
+                   <a href="$weblogsPager.prevLink">&lt;$weblogsPager.prevName</a>
+                #end
+                #if($weblogsPager.nextLink && $weblogsPager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($weblogsPager.nextLink)
+                   <a href="$weblogsPager.nextLink">$weblogsPager.nextName &gt;</a>
+                #end
+            #else
+                #if($weblogsPager.prevLink)
+                   <a href="$weblogsPager.prevLink">&lt;$weblogsPager.prevName</a>
+                #end
+                #if($weblogsPager.nextLink && $weblogsPager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($weblogsPager.nextLink)
+                   <a href="$weblogsPager.nextLink">$weblogsPager.nextName &gt;</a>
+                #end
+            #end
+
+             </td>
+          </tr>
+       </tfoot>
+    </table>
+#end
+
+
+#**
+Show user profile of specified user.
+*#
+#macro(showUserProfile $user)
+    <h2 class="pageTitle">User: $user.fullName</h2>
+    <table class="blogprofile data">
+        <tr>
+            <th scope="row">Username</td>
+            <td>$user.userName</td>
+        </tr>
+        <tr>
+            <th scope="row">Created</td>
+            <td>$user.dateCreated</td>
+        </tr>
+        <tr>
+            <th scope="row">Locale</td>
+            <td>$user.locale</td>
+        </tr>
+        <tr>
+            <th scope="row">Timezone</td>
+            <td>$user.timeZone</td>
+        </tr>
+    </table>
+
+    <h2 class="pageTitle">User's weblogs</h2>
+    #set($weblogs = $site.getUsersWeblogs($user.userName))
+    #if($perms.size() > 0)
+    <table class="rollertable">
+        <thead>
+            <tr>
+                <th>Handle</th>
+                <th>Name</th>
+            </tr>
+        </thead>    
+        #foreach($weblog in $weblogs) 
+        <tr>
+            <td><a href="$baseURL/page/$weblog.handle">$weblog.handle</a></td>
+            <td>$weblog.name</td>
+        </tr>
+        #end
+    </table>
+    #else
+       User does not belong to any weblogs
+    #end
+
+    <h2 class="pageTitle">User's recent posts</h2>
+    #set($entriesPager = $site.getWeblogEntriesPager($null, $user, $null, 90, 5)) 
+    #if($entriesPager.items.size() > 0)  
+        <table class="rollertable"> 
+        <thead>
+            <tr>
+                <th>Blog</th>
+                <th>Pub. time</th>
+                <th>Title</th>
+            </tr>
+        </thead>  
+        #foreach($entry in $entriesPager.items)
+            <tr>
+                <td><a href="$entry.website.url">$entry.website.handle</a></td>
+                <td>$utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat"))</td>
+                <td><a href="$utils.textToHTML($entry.permaLink)">
+                    $utils.removeHTML($entry.title)</a></td>
+            </tr>
+        #end
+        </table>
+    #else
+        No posts in past 90 days
+    #end
+#end
+
+
+#**
+Show user directory, sensitive to letter specified in request.
+*#
+#macro(showUserDirectory $pageLength)
+    #if($model.getRequestParameter("letter"))
+        #set($chosenLetter = $model.getRequestParameter("letter"))
+    #end
+
+    #set($userLetterMap = $site.getUserNameLetterMap())
+    <div class="letterMap">
+    #foreach($letter in $userLetterMap.keySet())
+        #if($firstLetterDone == 1) - #end
+        #set($firstLetterDone = 1)
+        #set($letterCount = $userLetterMap.get($letter))
+        #if($letter == $chosenLetter)<span style="font-size:120%; font-weight:bold">#end
+        #if($letterCount > 0)
+           <a href="?letter=$letter" title="$letterCount users">$letter</a>
+        #else
+           $letter
+        #end
+        </span>
+    #end
+    </div>
+
+    #if($chosenLetter)
+       <h2 class="pageTitle">Users starting with $chosenLetter</h2>
+    #else
+       <h2 class="pageTitle">All users</h2>
+    #end
+
+    #set($usersPager= $site.getUsersByLetterPager($chosenLetter, -1, $pageLength))
+    <table class="blogdirectory data">
+        <thead>
+            <tr>
+               <th scope="col" class="username">Username</th>
+               <th scope="col" class="profile">Profile</th>
+               <th scope="col" class="fullname">Full name</th>
+            </tr>
+        </thead>
+        <tbody>
+            #foreach($u in $usersPager.items)
+               <tr>
+                  <th scope="row" class="name">$u.userName</th>
+                  <td><a href="?userName=$u.userName">Profile</a></td>
+                  <td>$u.fullName</td>
+               </tr>
+            #end 
+        </tbody>
+        <tfoot>
+           <tr class="pagingcontrols">
+             <td class="pagingtext"></td>
+             <td class="paginglinks">
+
+            #if($chosenLetter)
+                #if($usersPager.prevLink)
+                   <a href="$usersPager.prevLink">&lt;$usersPager.prevName</a>
+                #end
+                #if($usersPager.nextLink && $usersPager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($usersPager.nextLink)
+                   <a href="$usersPager.nextLink">$usersPager.nextName &gt;</a>
+                #end
+            #else
+                #if($usersPager.prevLink)
+                   <a href="$usersPager.prevLink">&lt;$usersPager.prevName</a>
+                #end
+                #if($usersPager.nextLink && $usersPager.prevLink())
+                   &nbsp;|&nbsp;
+                #end
+                #if($usersPager.nextLink)
+                   <a href="$usersPager.nextLink">$usersPager.nextName &gt;</a>
+                #end
+            #end
+
+             </td>
+          </tr>
+       </tfoot>
+    </table>
+#end
+
+
+#**
+Show pager and next/prev control for a collection of comments
+*#
+#macro(showCommentsPager $commentsPager)
+    #if($commentsPager.items.size() > 0)
+        #set($commentCount = $commentsPager.items.size() - 1)
+        #set($startDate = $commentsPager.items.get(0).postTime)
+        #set($endDate = $commentsPager.items.get($commentCount).postTime)
+    #end
+
+    #foreach($comment in $commentsPager.items)
+            <div class="entry">
+                <span class="entryDetails">
+                    <a href="${baseURL}$utils.escapeHTML($comment.weblogEntry.permaLink)">
+                        <b>Re: $utils.removeHTML($comment.weblogEntry.title)</b></a><br /> 
+                    Posted on <a href="$baseURL/$comment.weblogEntry.website.handle">
+                        $utils.removeHTML($comment.weblogEntry.website.name)</a> 
+                    #if($comment.name) | Posted by $comment.name #end
+                    | $comment.postTime<br/> 
+                </span>
+                <span class="entryDescription">
+                    #set($content = $utils.removeHTML($comment.content))
+                    $utils.truncateNicely($content, 240, 260, "...")
+                </span>
+            </div>
+    #end
+ 
+    <div class="nextPrev">
+    #if($commentsPager.prevLink)
+       <a href="$commentsPager.prevLink">&lt; $commentsPager.prevName</a>
+    #end
+    #if($commentsPager.nextLink && $commentsPager.prevLink)
+       &nbsp;|&nbsp;
+    #end
+    #if($commentsPager.nextLink)
+       <a href="$commentsPager.nextLink">$commentsPager.nextName &gt;</a>
+    #end
+    </div>
+
+#end

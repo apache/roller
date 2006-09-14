@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.util.cache;
 
@@ -55,8 +55,6 @@ import org.apache.roller.pojos.WebsiteData;
  * changes in the system we often need to notify all caches that some part of
  * their cached data needs to be invalidated, and the CacheManager makes that
  * process easier.
- *
- * @author Allen Gilliland
  */
 public class CacheManager {
     
@@ -68,8 +66,11 @@ public class CacheManager {
     // a reference to the cache factory in use
     private static CacheFactory cacheFactory = null;
     
-    // a list of all cache handlers who have obtained a cache
+    // a set of all registered cache handlers
     private static Set cacheHandlers = new HashSet();
+    
+    // a map of all registered caches
+    private static Map caches = new HashMap();
     
     private static ContinuousWorkerThread futureInvalidationsThread = null;
     
@@ -97,6 +98,7 @@ public class CacheManager {
             cacheFactory = (CacheFactory) factoryClass.newInstance();
         } catch(Exception e) {
             log.fatal("Failed to instantiate a cache factory", e);
+            throw new RuntimeException(e);
         }
         
         log.info("Cache Manager Initialized.");
@@ -207,11 +209,15 @@ public class CacheManager {
             cache = cacheFactory.constructCache(properties);
         }
         
-        // register the handler for this new cache
-        if(handler != null) {
-            cacheHandlers.add(handler);
+        if(cache != null) {
+            caches.put(cache.getId(), cache);
+            
+            // register the handler for this new cache
+            if(handler != null) {
+                cacheHandlers.add(handler);
+            }
         }
-        
+
         return cache;
     }
     
@@ -345,57 +351,31 @@ public class CacheManager {
      */
     public static void clear() {
         
-        // loop through all handlers and trigger a clear
-        CacheHandler handler = null;
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            handler = (CacheHandler) handlers.next();
+        // loop through all caches and trigger a clear
+        Cache cache = null;
+        Iterator cachesIT = caches.values().iterator();
+        while(cachesIT.hasNext()) {
+            cache = (Cache) cachesIT.next();
             
-            handler.clear();
+            cache.clear();
         }
     }
     
     
     /**
-     * Flush a single cache handler.
+     * Flush a single cache.
      */
-    public static void clear(String handlerClass) {
+    public static void clear(String cacheId) {
         
-        // loop through all handlers to find the one we want
-        CacheHandler handler = null;
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            handler = (CacheHandler) handlers.next();
-            
-            if(handler.getClass().getName().equals(handlerClass)) {
-                handler.clear();
-            }
+        Cache cache = (Cache) caches.get(cacheId);
+        if(cache != null) {
+            cache.clear();
         }
     }
     
     
     /**
-     * Get the date of the last time the specified weblog was invalidated.
-     *
-     * There is some potential for a performance hit to do this lookup, but
-     * we assume that our WebsiteData objects are cached up the @$$ ;)
-     */
-    public static Date getLastExpiredDate(String weblogHandle) {
-        
-        try {
-            UserManager userMgr = RollerFactory.getRoller().getUserManager();
-            WebsiteData weblog = userMgr.getWebsiteByHandle(weblogHandle);
-            return weblog.getLastModified();
-        } catch (RollerException ex) {
-            log.error("Error setting last modified date", ex);
-        }
-        
-        return null;
-    }
-    
-    
-    /**
-     * Compile stats from all registered handlers.
+     * Compile stats from all registered caches.
      *
      * This is basically a hacky version of instrumentation which is being
      * thrown in because we don't have a full instrumentation strategy yet.
@@ -406,12 +386,12 @@ public class CacheManager {
         
         Map allStats = new HashMap();
         
-        CacheHandler handler = null;
-        Iterator handlers = cacheHandlers.iterator();
-        while(handlers.hasNext()) {
-            handler = (CacheHandler) handlers.next();
+        Cache cache = null;
+        Iterator cachesIT = caches.values().iterator();
+        while(cachesIT.hasNext()) {
+            cache = (Cache) cachesIT.next();
             
-            allStats.put(handler.getClass().getName(), handler.getStats());
+            allStats.put(cache.getId(), cache.getStats());
         }
         
         return allStats;

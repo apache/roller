@@ -1,0 +1,17 @@
+<div id="footer">
+Powered by <a href="http://www.rollerweblogger.org">Roller Weblogger</a> $config.rollerVersion |
+<a href="http://opensource2.atlassian.com/projects/roller/">
+Report an Issue</a> | 
+<a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide_2.x">
+    User Guide</a> | 
+<a href="http://www.rollerweblogger.org/velocidoc/">
+    Macros</a> | 
+<a href="http://rollerweblogger.org/wiki/Wiki.jsp?page=RollerMailingLists">
+    Mailing Lists</a>
+</div>
+       
+<div id="datetagdiv" 
+   style="position:absolute;visibility:hidden;background-color:white;layer-background-color:white;">
+</div>
+</body>
+</html>

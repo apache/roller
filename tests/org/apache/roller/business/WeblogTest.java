@@ -17,8 +17,6 @@
 */
 package org.apache.roller.business;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -28,7 +26,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -179,16 +180,22 @@ public class WeblogTest extends TestCase {
         
         // get all weblogs for user
         weblog = null;
-        List weblogs1 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE);
+        List weblogs1 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
         assertEquals(2, weblogs1.size());
         weblog = (WebsiteData) weblogs1.get(0);
         assertNotNull(weblog);
+        
+        // testing paging
+        List weblogs11 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, 1);
+        assertEquals(1, weblogs11.size());     
+        List weblogs12 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 1, 1);
+        assertEquals(1, weblogs11.size());     
         
         // make sure disabled weblogs are not returned
         weblog.setEnabled(Boolean.FALSE);
         mgr.saveWebsite(weblog);
         TestUtils.endSession(true);
-        List weblogs2 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE);
+        List weblogs2 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
         assertEquals(1, weblogs2.size());
         weblog = (WebsiteData) weblogs2.get(0);
         assertNotNull(weblog);
@@ -197,7 +204,7 @@ public class WeblogTest extends TestCase {
         weblog.setActive(Boolean.FALSE);
         mgr.saveWebsite(weblog);
         TestUtils.endSession(true);
-        List weblogs3 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE);
+        List weblogs3 = mgr.getWebsites(testUser, Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
         assertEquals(0, weblogs3.size());
         
         // remove test weblogs
@@ -214,5 +221,6 @@ public class WeblogTest extends TestCase {
     public void testRemoveLoadedWeblog() throws Exception {
         // TODO: implement testRemoveLoadedWeblog
     }
-    
 }
+
+

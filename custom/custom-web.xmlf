@@ -1,11 +1,19 @@
-<copy todir="${build.stage_web}" overwrite="true">
+<copy todir="${build.webapp}" overwrite="true">
    <fileset dir="${basedir}/custom/web">
       <include name="**/**" />
    </fileset>
 </copy>
 
+<!-- copy jdo web resources
+<copy todir="${build.webapp}" overwrite="true">
+   <fileset dir="${basedir}/sandbox/jdobackend/web">
+      <include name="**/**" />
+   </fileset>
+</copy>
+-->
+
 <!-- Example: copy custom files into the Roller web context
-<copy todir="${build.stage_web}" overwrite="true">
+<copy todir="${build.webapp}" overwrite="true">
    <fileset dir="${basedir}/sandbox/planetroller/web">
       <include name="**/**" />
    </fileset>

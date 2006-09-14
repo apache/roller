@@ -18,26 +18,21 @@
 /* Created on April 14, 2006 */
 package org.apache.roller.ui.authoring.tags;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Map;
-import java.io.IOException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.VelocityContext;
 
 import org.apache.roller.model.Roller;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.Utilities;
-import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
 /**
  * Shows either entry summary or text, as appropriate and with plugins applied.
@@ -65,8 +60,8 @@ public class ShowEntryTextTag extends TagSupport {
             RequestUtils.lookup(pageContext, name, property, scope);  
         
         String sourceText = null;
-        boolean hasSummary = Utilities.isNotEmpty(entry.getSummary());
-        boolean hasText= Utilities.isNotEmpty(entry.getText());
+        boolean hasSummary = StringUtils.isNotEmpty(entry.getSummary());
+        boolean hasText= StringUtils.isNotEmpty(entry.getText());
         if (singleEntry) {
             if (hasText) sourceText = entry.getText();
             else if (hasSummary) sourceText = entry.getSummary();
@@ -74,20 +69,18 @@ public class ShowEntryTextTag extends TagSupport {
             if (hasSummary) sourceText = entry.getSummary();
             else if (hasText) sourceText = entry.getText();
         }
-        if (Utilities.isNotEmpty(sourceText)) {
+        if (StringUtils.isNotEmpty(sourceText)) {
             try {
                 String xformed = sourceText;        
                 if (entry.getPlugins() != null) {
                     RollerContext rctx = 
                         RollerContext.getRollerContext();
                     try {
-                        PagePluginManager ppmgr = roller.getPagePluginManager();
-                        Map plugins = ppmgr.createAndInitPagePlugins(
-                                entry.getWebsite(), rctx.getServletContext(),
-                                rctx.getAbsoluteContextUrl((HttpServletRequest)pageContext.getRequest()),
-                                new VelocityContext());
+                        PluginManager ppmgr = roller.getPagePluginManager();
+                        Map plugins = ppmgr.getWeblogEntryPlugins(
+                                entry.getWebsite());
 
-                        xformed = ppmgr.applyPagePlugins(entry, plugins, sourceText, true);
+                        xformed = ppmgr.applyWeblogEntryPlugins(plugins, entry, sourceText);
 
                     } catch (Exception e) {
                         mLogger.error(e);
@@ -105,7 +98,7 @@ public class ShowEntryTextTag extends TagSupport {
 
                 // somehow things (&#8220) are getting double-escaped
                 // but I cannot seem to track it down
-                xformed = Utilities.stringReplace(xformed, "&amp#", "&#");
+                xformed = StringUtils.replace(xformed, "&amp#", "&#");
 
                 pageContext.getOut().println(xformed);
                 

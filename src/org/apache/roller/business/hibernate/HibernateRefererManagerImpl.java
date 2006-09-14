@@ -20,11 +20,9 @@
  */
 package org.apache.roller.business.hibernate;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -47,9 +45,6 @@ import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.WebsiteDisplayData;
-import org.hibernate.dialect.DB2Dialect;
-import org.hibernate.dialect.DerbyDialect;
-import org.hibernate.dialect.HSQLDialect;
 import org.hibernate.dialect.OracleDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.SessionFactoryImplementor;
@@ -58,6 +53,7 @@ import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.StatCount;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.LinkbackExtractor;
 import org.apache.roller.util.Utilities;
@@ -78,8 +74,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
     private HibernatePersistenceStrategy strategy = null;
     private Date mRefDate = new Date();
     private SimpleDateFormat mDateFormat = DateUtil.get8charDateFormat();
-    
-    
+        
     public HibernateRefererManagerImpl(HibernatePersistenceStrategy strat) {
         
         log.debug("Instantiating Hibernate Referer Manager");
@@ -87,22 +82,14 @@ public class HibernateRefererManagerImpl implements RefererManager {
         strategy = strat;
     }
     
-    
-    /**
-     * 
-     * 
-     * @see org.apache.roller.pojos.RefererManager#saveReferer(org.apache.roller.pojos.RefererData)
-     */
     public void saveReferer(RefererData referer) throws RollerException {
         strategy.store(referer);
     }
-    
-    
+        
     public void removeReferer(RefererData referer) throws RollerException {
         strategy.remove(referer);
     }
-    
-    
+        
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      *
@@ -129,8 +116,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             log.error("EXCEPTION resetting referers",e);
         }
     }
-    
-    
+        
     /**
      * Clear referrer dayhits and remove referrers without excerpts.
      *
@@ -159,8 +145,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             log.error("EXCEPTION resetting referers",e);
         }
     }
-    
-    
+        
     /**
      * Apply ignoreWord/spam filters to all referers in system.
      */
@@ -196,8 +181,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * Apply ignoreWord/spam filters to all referers in website.
      */
@@ -233,8 +217,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
-    }
-    
+    }    
     
     /**
      * Use Hibernate directly because Roller's Query API does too much allocation.
@@ -255,8 +238,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * Use Hibernate directly because Roller's Query API does too much allocation.
      */
@@ -276,114 +258,109 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+       
     /**
-     * Use raw SQL because Hibernate can't handle sorting by sum.
-     *
-     * TODO: do we really need raw sql?  can't hibernate do this?
+     * Returns hot weblogs as StatCount objects, in descending order by today's hits.
      */
-    public List getDaysPopularWebsites(int max) throws RollerException {
-        // TODO Move to full use of mSupport
-        String msg = "Getting popular websites";
-        Session ses = null; // the session will eventually be release by RequestFilter
-        Connection con = null;
-        try {
-            List list = new ArrayList();
+    public List getHotWeblogs(int sinceDays, int offset, int length)
+        throws RollerException {
+        // TODO: ATLAS getDaysPopularWebsites DONE TESTED
+        String msg = "Getting hot weblogs";
+        ArrayList result = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
+        try {      
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();            
+            Query query = session.createQuery(
+                "select sum(r.dayHits) as s, w.id, w.name, w.handle  "
+               +"from WebsiteData w, RefererData r "
+               +"where r.website=w and w.enabled=true and w.active=true and w.lastModified > :startDate "
+               +"group by w.name, w.handle, w.id order by col_0_0_ desc"); 
+            query.setParameter("startDate", startDate);
             
-            ses = ((HibernatePersistenceStrategy)strategy).getSession();
-            con = ses.connection();
+              // +"group by w.name, w.handle, w.id order by s desc");
+              // The above would be *much* better but "HQL parser does not   
+              // resolve alias in ORDER BY clause" (See Hibernate issue HHH-892)
             
-            final PreparedStatement stmt;
-            
-            Dialect currentDialect = ((SessionFactoryImplementor)ses.getSessionFactory()).getDialect();
-            
-            if (currentDialect instanceof HSQLDialect) {
-                // special handling for HSQLDB
-                stmt = con.prepareStatement(
-                        "select top ? w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
-                        "group by w.name, w.handle, w.id order by s desc");
-                stmt.setInt(1, max);
-                stmt.setBoolean(2, true);
-                stmt.setBoolean(3, true);
-            } else if(currentDialect instanceof DerbyDialect) {
-                // special handling for Derby
-                stmt = con.prepareStatement(
-                        "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
-                        "group by w.name, w.handle, w.id order by s desc");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-                stmt.setMaxRows(max);
-            } else if(currentDialect instanceof DB2Dialect) {
-                // special handling for IBM DB2
-                stmt = con.prepareStatement(
-                        "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
-                        "group by w.name, w.handle, w.id order by s desc fetch first " +
-                        Integer.toString(max) + " rows only");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-            } else if (currentDialect instanceof OracleDialect) {
-                stmt = con.prepareStatement(
-                        "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website w, referer r "+
-                        "where r.websiteid=w.id and w.isenabled=? and w.isactive=? and rownum <= ? " +
-                        "group by w.name, w.handle, w.id order by s desc");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-                stmt.setInt(3, max );
-            } else if (currentDialect instanceof SQLServerDialect) {
-                stmt = con.prepareStatement("select top " + max + " w.id, w.name, w.handle, sum(r.dayhits) as s " +
-                        "from website as w, referer as r where r.websiteid=w.id and w.isenabled=? and w.isactive=? " +
-                        "group by w.name, w.handle, w.id order by s desc");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-            } else { // for MySQL and PostgreSQL
-                stmt = con.prepareStatement(
-                        "select w.id, w.name, w.handle, sum(r.dayhits) as s "+
-                        "from website as w, referer as r "+
-                        "where r.websiteid=w.id and w.isenabled= ? and w.isactive=? " +
-                        // Ben Walding (a Postgres SQL user): Basically, you have
-                        // to have all non-aggregated columns that exist in your
-                        // 'SELECT' section, in the 'GROUP BY' section as well:
-                        "group by w.name, w.handle, w.id order by s desc limit ?");
-                stmt.setBoolean(1, true);
-                stmt.setBoolean(2, true);
-                stmt.setInt(3, max);
+            if (offset != 0) {
+                query.setFirstResult(offset);
             }
-            ResultSet rs = stmt.executeQuery();
-            if ( rs.next() ) {
-                do
-                {
-                    String websiteId = rs.getString(1);
-                    String websiteName = rs.getString(2);
-                    String websiteHandle = rs.getString(3);
-                    Integer hits = new Integer(rs.getInt(4));
-                    list.add(new WebsiteDisplayData(
-                            websiteId,
-                            websiteName,
-                            websiteHandle,
-                            hits));
-                    if(list.size() >= max) {
-                        rs.close();
-                        break;
-                    }
-                }
-                while ( rs.next() );
+            if (length != -1) {
+                query.setMaxResults(length);
             }
-            return list;
+            Iterator rawResults = query.list().iterator();
+            for (Iterator it = query.list().iterator(); it.hasNext();) {
+                Object[] row = (Object[])it.next();
+                Integer hits = (Integer)row[0];
+                String websiteId = (String)row[1];
+                String websiteName = (String)row[2];
+                String websiteHandle = (String)row[3];
+                result.add(new StatCount(
+                    websiteId,
+                    websiteHandle,
+                    websiteName,
+                    "statCount.weblogDayHits",
+                    hits.longValue()));              
+            }
+            return result;
+            
         } catch (Throwable pe) {
             log.error(msg, pe);
             throw new RollerException(msg, pe);
         }
     }
     
-    
+    /**
+     * @deprecated Replaced by getHotWeblogs().
+     */
+    public List getDaysPopularWebsites(int offset, int length) 
+        throws RollerException {
+        // TODO: ATLAS getDaysPopularWebsites DONE TESTED
+        String msg = "Getting popular websites";
+        ArrayList result = new ArrayList();
+        try {      
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();            
+            Query query = session.createQuery(
+                "select sum(r.dayHits) as s, w.id, w.name, w.handle  "
+               +"from WebsiteData w, RefererData r "
+               +"where r.website=w and w.enabled=true and w.active=true "
+               +"group by w.name, w.handle, w.id order by col_0_0_ desc"); 
+            
+              // +"group by w.name, w.handle, w.id order by s desc");
+              // The above would be *much* better but "HQL parser does not   
+              // resolve alias in ORDER BY clause" (See Hibernate issue HHH-892)
+            
+            if (offset != 0) {
+                query.setFirstResult(offset);
+            }
+            if (length != -1) {
+                query.setMaxResults(length);
+            }
+            Iterator rawResults = query.list().iterator();
+            for (Iterator it = query.list().iterator(); it.hasNext();) {
+                Object[] row = (Object[])it.next();
+                Integer hits = (Integer)row[0];
+                String websiteId = (String)row[1];
+                String websiteName = (String)row[2];
+                String websiteHandle = (String)row[3];
+                result.add(new WebsiteDisplayData(
+                    websiteId,
+                    websiteName,
+                    websiteHandle,
+                    hits));              
+            }
+            return result;
+            
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
+    }
+        
     /**
      * Use raw SQL because Hibernate can't handle the query.
      */
@@ -428,8 +405,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         
         return hits;
     }
-    
-    
+        
     /**
      * @see org.apache.roller.pojos.RefererManager#getReferers(java.lang.String)
      */
@@ -448,8 +424,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * @see org.apache.roller.pojos.RefererManager#getTodaysReferers(String)
      */
@@ -469,8 +444,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+       
     /**
      * Returns referers for a specified day. Duplicate enties are not
      * included in this list so the hit counts may not be accurate.
@@ -498,8 +472,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * @see org.apache.roller.pojos.RefererManager#getReferersToEntry(
      * java.lang.String, java.lang.String)
@@ -524,8 +497,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * Query for collection of referers.
      */
@@ -543,8 +515,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * Query for collection of referers.
      */
@@ -574,18 +545,15 @@ public class HibernateRefererManagerImpl implements RefererManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     public int getDayHits(WebsiteData website) throws RollerException {
         return getHits(website, DAYHITS);
     }
-    
-    
+        
     public int getTotalHits(WebsiteData website) throws RollerException {
         return getHits(website, TOTALHITS);
     }
-    
-    
+        
     /**
      * @see org.apache.roller.pojos.RefererManager#retrieveReferer(java.lang.String)
      */
@@ -606,7 +574,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
         if (weblogHandle == null)
             return;
         
-        String selfSiteFragment = "/page/"+weblogHandle;
+        String selfSiteFragment = "/"+weblogHandle;
         WebsiteData weblog = null;
         WeblogEntryData entry = null;
         
@@ -730,8 +698,7 @@ public class HibernateRefererManagerImpl implements RefererManager {
             log.error(npe);
         }
     }
-    
-    
+        
     /**
      * Use LinkbackExtractor to parse title and excerpt from referer
      */
@@ -856,10 +823,8 @@ public class HibernateRefererManagerImpl implements RefererManager {
         }
         
     }
-    
-    
-    public void release() {}
-    
+       
+    public void release() {}    
 }
 
 

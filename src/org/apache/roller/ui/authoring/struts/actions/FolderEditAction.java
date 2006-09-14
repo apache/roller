@@ -33,9 +33,10 @@ import org.apache.roller.pojos.FolderData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.authoring.struts.formbeans.FolderFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 
 /**
- * @struts.action path="/editor/folderEdit" name="folderFormEx" validate="false"
+ * @struts.action path="/roller-ui/authoring/folderEdit" name="folderFormEx" validate="false"
  * @struts.action-forward name="FolderForm" path=".FolderForm"
  * 
  * @author Dave Johnson
@@ -74,7 +75,7 @@ public class FolderEditAction extends Action
             // We are correcting a previously submtted form.
             request.setAttribute("state","correcting"); 
             
-            String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
+            String parentId = request.getParameter(RequestConstants.PARENT_ID);
             parentFolder = bmgr.getFolder(parentId);
             
             BasePageModel pageModel = new BasePageModel(
@@ -87,7 +88,7 @@ public class FolderEditAction extends Action
             // We are adding a new bookmark
             request.setAttribute("state","add");
             
-            String parentId = request.getParameter(RollerRequest.PARENTID_KEY);
+            String parentId = request.getParameter(RequestConstants.PARENT_ID);
             parentFolder = bmgr.getFolder(parentId);
             
             BasePageModel pageModel = new BasePageModel(
@@ -96,7 +97,7 @@ public class FolderEditAction extends Action
             request.setAttribute("model", pageModel);
         }
         
-        request.setAttribute(RollerRequest.PARENTID_KEY, parentFolder.getId());
+        request.setAttribute(RequestConstants.PARENT_ID, parentFolder.getId());
         request.setAttribute("parentFolder", parentFolder);
         
         return mapping.findForward("FolderForm");

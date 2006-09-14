@@ -18,6 +18,7 @@
 
 package org.apache.roller.pojos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -43,7 +44,7 @@ import org.apache.roller.util.Utilities;
  */
 public class UserData
         extends org.apache.roller.pojos.PersistentObject
-        implements java.io.Serializable {
+        implements Serializable {
     public static final UserData SYSTEM_USER = new UserData(
             "n/a","systemuser","n/a","systemuser","n/a",
             "en_US_WIN", "America/Los_Angeles", new Date(), Boolean.TRUE);
@@ -137,6 +138,7 @@ public class UserData
     /** User name of the user.
      * @ejb:persistent-field
      * @hibernate.property column="username" non-null="true" unique="true"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getUserName() {
         return this.userName;
@@ -220,6 +222,7 @@ public class UserData
      * Locale of the user.
      * @ejb:persistent-field
      * @hibernate.property column="locale" non-null="true" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getLocale() {
         return this.locale;
@@ -234,6 +237,7 @@ public class UserData
      * Timezone of the user.
      * @ejb:persistent-field
      * @hibernate.property column="timeZone" non-null="true" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getTimeZone() {
         return this.timeZone;

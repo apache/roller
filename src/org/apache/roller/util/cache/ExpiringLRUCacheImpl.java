@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.util.cache;
 
@@ -24,26 +24,24 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * An LRU cache where entries expire after a given timeout period.
- *
- * @author Allen Gilliland
  */
 public class ExpiringLRUCacheImpl extends LRUCacheImpl {
     
-    private static Log mLogger = LogFactory.getLog(ExpiringLRUCacheImpl.class);
+    private static Log log = LogFactory.getLog(ExpiringLRUCacheImpl.class);
     
     private long timeout = 0;
     
     
-    protected ExpiringLRUCacheImpl() {
+    protected ExpiringLRUCacheImpl(String id) {
         
-        super();
+        super(id);
         this.timeout = 60 * 60 * 1000;
     }
     
     
-    protected ExpiringLRUCacheImpl(int maxsize, long timeout) {
+    protected ExpiringLRUCacheImpl(String id, int maxsize, long timeout) {
         
-        super(maxsize);
+        super(id, maxsize);
         
         // timeout is specified in seconds; only positive values allowed
         if(timeout > 0) {
@@ -86,7 +84,8 @@ public class ExpiringLRUCacheImpl extends LRUCacheImpl {
             
             // if the value is null then that means this entry expired
             if (value == null) {
-                mLogger.debug("entry expired ["+key+"]");
+                log.debug("EXPIRED ["+key+"]");
+                hits--;
                 super.remove(key);
             }
         }

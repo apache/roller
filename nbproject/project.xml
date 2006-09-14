@@ -4,7 +4,7 @@
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
             <!--Do not use Project Properties customizer when editing this file manually.-->
-            <name>roller_trunk</name>
+            <name>roller_3.0</name>
             <!--
             <properties>
                 <property name="src.dir">../src</property>
@@ -24,11 +24,6 @@
                     <location>src</location>
                 </source-folder>
                 <source-folder>
-                    <label>tests</label>
-                    <type>java</type>
-                    <location>tests</location>
-                </source-folder>
-                <source-folder>
                     <label>sandbox/standalone/src</label>
                     <type>java</type>
                     <location>sandbox/standalone/src</location>
@@ -39,39 +34,24 @@
                     <location>contrib/plugins/src</location>
                 </source-folder>
                 <source-folder>
-                    <label>build/generated/src.business</label>
+                    <label>tests</label>
                     <type>java</type>
-                    <location>build/generated/src.business</location>
+                    <location>tests</location>
                 </source-folder>
                 <source-folder>
-                    <label>build/generated/src.presentation</label>
+                    <label>generated/web</label>
                     <type>java</type>
-                    <location>build/generated/src.presentation</location>
+                    <location>build/generated/web</location>
                 </source-folder>
                 <source-folder>
-                    <label>sandbox/atomprotocol/src</label>
+                    <label>generated/business</label>
                     <type>java</type>
-                    <location>sandbox/atomprotocol/src</location>
-                </source-folder>
-                <source-folder>
-                    <label>sandbox/atomprotocol/tests</label>
-                    <type>java</type>
-                    <location>sandbox/atomprotocol/tests</location>
-                </source-folder>
-                <source-folder>
-                    <label>sandbox/atomadminprotocol/src</label>
-                    <type>java</type>
-                    <location>sandbox/atomadminprotocol/src</location>
-                </source-folder>
-                <source-folder>
-                    <label>sandbox/jdobackend/src</label>
-                    <type>java</type>
-                    <location>sandbox/jdobackend/src</location>
+                    <location>build/generated/business</location>
                 </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
-                    <target>stage-web</target>
+                    <target>stage-webapp</target>
                 </action>
                 <action name="clean">
                     <target>clean</target>
@@ -86,7 +66,7 @@
                 <action name="rebuild">
                     <target>clean</target>
                     <target>all</target>
-                    <target>stage-web</target>
+                    <target>stage-webapp</target>
                 </action>
                 <action name="debug.single">
                     <target>debug-selected-files</target>
@@ -128,10 +108,6 @@
                         <location>src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>tests</label>
-                        <location>tests</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>sandbox/standalone/src</label>
                         <location>sandbox/standalone/src</location>
                     </source-folder>
@@ -140,28 +116,16 @@
                         <location>contrib/plugins/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>build/generated/src.business</label>
-                        <location>build/generated/src.business</location>
+                        <label>tests</label>
+                        <location>tests</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>build/generated/src.presentation</label>
-                        <location>build/generated/src.presentation</location>
+                        <label>generated/web</label>
+                        <location>build/generated/web</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>sandbox/atomprotocol/src</label>
-                        <location>sandbox/atomprotocol/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>sandbox/atomprotocol/tests</label>
-                        <location>sandbox/atomprotocol/tests</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>sandbox/atomadminprotocol/src</label>
-                        <location>sandbox/atomadminprotocol/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>sandbox/jdobackend/src</label>
-                        <location>sandbox/jdobackend/src</location>
+                        <label>generated/business</label>
+                        <location>build/generated/business</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -181,20 +145,15 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src</package-root>
-                <package-root>tests</package-root>
                 <package-root>sandbox/standalone/src</package-root>
                 <package-root>contrib/plugins/src</package-root>
-                <package-root>build/generated/src.business</package-root>
-                <package-root>build/generated/src.presentation</package-root>
-                <package-root>sandbox/atomprotocol/src</package-root>
-                <package-root>sandbox/atomprotocol/tests</package-root>
-                <package-root>sandbox/atomadminprotocol/src</package-root>
-                <package-root>sandbox/jdobackend/src</package-root>
-                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/activation.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/mail.jar:tools/lib/mm.mysql-2.0.14-bin.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:sandbox/atomprotocol/lib/rome-0.8.jar:sandbox/atomprotocol/lib/rome-fetcher-0.8.jar:tools/lib/jdom.jar:contrib/lib/ecs.jar:contrib/lib/jrcs-diff.jar:contrib/lib/JSPWiki.jar:contrib/lib/jython.jar:contrib/lib/oscache.jar:contrib/lib/radeox.jar:contrib/lib/textile4j-1.20.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar</classpath>
-                <source-level>1.5</source-level>
+                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/activation.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/mail.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:sandbox/atomprotocol/lib/rome-0.8.jar:sandbox/atomprotocol/lib/rome-fetcher-0.8.jar:tools/lib/jdom.jar:contrib/lib/ecs.jar:contrib/lib/jrcs-diff.jar:contrib/lib/JSPWiki.jar:contrib/lib/jython.jar:contrib/lib/oscache.jar:contrib/lib/radeox.jar:contrib/lib/textile4j-1.20.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar</classpath>
+                <source-level>1.4</source-level>
             </compilation-unit>
             <compilation-unit>
-                <package-root>sandbox/atomadminprotocol/src</package-root>
+                <package-root>tests</package-root>
+                <unit-tests/>
+                <classpath mode="compile">tools/buildtime/junit-3.8.1.jar:tools/lib/activation.jar:tools/lib/commons-betwixt-1.0-beta-1.jar:tools/lib/commons-httpclient-2.0.2.jar:tools/lib/concurrent-1.3.2.jar:tools/lib/ekitapplet.jar:tools/lib/jazzy-core.jar:tools/lib/log4j-1.2.4.jar:tools/lib/lucene-1.4.3.jar:tools/lib/mail.jar:tools/lib/taglibs-string.jar:tools/lib/velocity-1.4.jar:tools/lib/velocity-dep-1.4.jar:tools/lib/velocity-tools-1.1.jar:tools/lib/xmlrpc-1.2-b1.jar:tools/struts-1.2.4/lib/antlr.jar:tools/struts-1.2.4/lib/commons-beanutils.jar:tools/struts-1.2.4/lib/commons-collections.jar:tools/struts-1.2.4/lib/commons-digester.jar:tools/struts-1.2.4/lib/commons-fileupload.jar:tools/struts-1.2.4/lib/commons-lang-2.0.jar:tools/struts-1.2.4/lib/commons-logging.jar:tools/struts-1.2.4/lib/commons-validator.jar:tools/struts-1.2.4/lib/jakarta-oro.jar:tools/struts-1.2.4/lib/struts-el.jar:tools/struts-1.2.4/lib/struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-servlet.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner-struts.jar:tools/buildtime/mockrunner-0.35/lib/mockrunner.jar:tools/buildtime/mockrunner-0.35/lib/nekohtml.jar:tools/standard-1.0.3/lib/jaxen-full.jar:tools/standard-1.0.3/lib/jstl.jar:tools/standard-1.0.3/lib/standard.jar:tools/buildtime/tomcat-5.0.28/servlet-api.jar:tools/buildtime/tomcat-5.0.28/jsp-api.jar:sandbox/atomprotocol/lib/rome-0.8.jar:sandbox/atomprotocol/lib/rome-fetcher-0.8.jar:tools/lib/jdom.jar:contrib/lib/ecs.jar:contrib/lib/jrcs-diff.jar:contrib/lib/JSPWiki.jar:contrib/lib/jython.jar:contrib/lib/oscache.jar:contrib/lib/radeox.jar:contrib/lib/textile4j-1.20.jar:tools/spring-1.2/acegi-security-0.9.0.jar:tools/spring-1.2/spring.jar:tools/lib/rome-0.8.jar:tools/lib/rome-fetcher-0.8.jar:tools/lib/commons-codec-1.3.jar:tools/hibernate-3.1/hibernate3.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
         </java-data>

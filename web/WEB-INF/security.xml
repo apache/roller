@@ -27,7 +27,7 @@
             <value>
                 CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
                 PATTERN_TYPE_APACHE_ANT
-                /**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,channelProcessingFilter,remoteUserFilter,anonymousProcessingFilter,securityEnforcementFilter
+                /**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,rememberMeProcessingFilter,channelProcessingFilter,remoteUserFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
             </value>
         </property>
     </bean>
@@ -43,10 +43,13 @@
          <property name="objectDefinitionSource">
             <value>
                 PATTERN_TYPE_APACHE_ANT
-                /editor/**=admin,editor
-                /admin/**=admin
+                /roller-ui/login-redirect.jsp=admin,editor
+                /roller-ui/yourProfile**=admin,editor
+                /roller-ui/createWebsite**=admin,editor
+                /roller-ui/yourWebsites**=admin,editor
+                /roller-ui/authoring/**=admin,editor
+                /roller-ui/admin/**=admin
                 /rewrite-status*=admin
-                /login-redirect.jsp=admin,editor
             </value>
         </property>
     </bean>
@@ -63,6 +66,54 @@
   
     <!-- Log failed authentication attempts to commons-logging -->
     <bean id="loggerListener" class="org.acegisecurity.event.authentication.LoggerListener"/> 
+    
+    <!-- Sample LDAP/RollerDB hybrid security configuration -->
+    <!--
+    
+	<bean id="initialDirContextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+      <constructor-arg value="ldap://server:389/basedn"/>
+    </bean>
+   
+    <bean id="ldapUserSearch" class="org.acegisecurity.ldap.search.FilterBasedLdapUserSearch">
+      <constructor-arg index="0">
+        <value></value>
+      </constructor-arg>
+      <constructor-arg index="1">
+        <value>mail={0}</value>
+      </constructor-arg>
+      <constructor-arg index="2">
+        <ref local="initialDirContextFactory" />
+      </constructor-arg>            
+      <property name="searchSubtree">
+        <value>true</value>
+      </property>            
+    </bean>     
+    
+    <bean id="ldapAuthProvider" 
+            class="org.acegisecurity.providers.ldap.LdapAuthenticationProvider">
+      <constructor-arg>
+        <bean class="org.acegisecurity.providers.ldap.authenticator.BindAuthenticator">
+           <constructor-arg><ref local="initialDirContextFactory"/></constructor-arg>
+		   <property name="userSearch"><ref bean="ldapUserSearch"/></property>
+        </bean>
+      </constructor-arg>
+      <constructor-arg><ref local="jdbcAuthoritiesPopulator"/></constructor-arg>
+      <property name="userCache" ref="userCache"/>
+    </bean>    
+    
+    <bean id="jdbcAuthoritiesPopulator" class="org.apache.roller.ui.core.security.AuthoritiesPopulator">
+        <property name="dataSource">
+            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
+                <property name="jndiName" value="java:comp/env/jdbc/rollerdb"/>
+            </bean>
+        </property>
+        <property name="authoritiesByUsernameQuery">
+            <value>SELECT username,rolename FROM userrole WHERE username = ?</value>
+        </property>
+	   <property name="defaultRole"><value>register</value></property>        
+    </bean>
+    -->
+     
     
     <bean id="daoAuthenticationProvider" class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
          <property name="userDetailsService" ref="jdbcAuthenticationDao"/>
@@ -117,7 +168,7 @@
     
     <bean id="authenticationProcessingFilter" class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="authenticationFailureUrl" value="/login.jsp?error=true"/>
+        <property name="authenticationFailureUrl" value="/roller-ui/login.do?error=true"/>
         <property name="defaultTargetUrl" value="/"/>
         <property name="filterProcessesUrl" value="/j_security_check"/>
         <property name="rememberMeServices" ref="rememberMeServices"/>
@@ -128,20 +179,20 @@
         <property name="userAttribute" value="anonymous,ROLE_ANONYMOUS"/>
     </bean>
     
-    <bean id="securityEnforcementFilter" class="org.acegisecurity.intercept.web.SecurityEnforcementFilter">
-        <property name="filterSecurityInterceptor" ref="filterInvocationInterceptor"/>
+    <bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
         <property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint"/>
     </bean>
     
     <bean id="remoteUserFilter" class="org.acegisecurity.wrapper.SecurityContextHolderAwareRequestFilter"/>
 
     <bean id="authenticationProcessingFilterEntryPoint" class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
-        <property name="loginFormUrl" value="/login.jsp"/>
+        <property name="loginFormUrl" value="/roller-ui/login.do"/>
         <property name="forceHttps" value="false"/>
     </bean>
 
     <!-- ===================== REMEMBER ME ==================== -->
-    <bean id="rememberMeProcessingFilter" class="org.acegisecurity.ui.rememberme.RememberMeProcessingFilter"> 
+    <bean id="rememberMeProcessingFilter" class="org.acegisecurity.ui.rememberme.RememberMeProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
         <property name="rememberMeServices" ref="rememberMeServices"/>
     </bean>
  
