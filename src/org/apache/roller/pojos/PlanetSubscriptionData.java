@@ -78,6 +78,7 @@ public class PlanetSubscriptionData extends PersistentObject
     /** 
      * @hibernate.id column="id" 
      *     generator-class="uuid.hex" unsaved-value="null"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getId()
     {
@@ -102,17 +103,19 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="feed_url" non-null="true" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
-    public String getFeedUrl()
+    public String getFeedURL()
     {
         return feedUrl;
     }
-    public void setFeedUrl(String feedUrl)
+    public void setFeedURL(String feedUrl)
     {
         this.feedUrl = feedUrl;
     }
     /** 
      * @hibernate.property column="last_updated" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public Date getLastUpdated()
     {
@@ -124,17 +127,19 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="site_url" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
-    public String getSiteUrl()
+    public String getSiteURL()
     {
         return siteUrl;
     }
-    public void setSiteUrl(String siteUrl)
+    public void setSiteURL(String siteUrl)
     {
         this.siteUrl = siteUrl;
     }
     /** 
      * @hibernate.property column="title" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getTitle()
     {
@@ -146,6 +151,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="author" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public String getAuthor()
     {
@@ -157,6 +163,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="inbound_links" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public int getInboundlinks()
     {
@@ -168,6 +175,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
     /** 
      * @hibernate.property column="inbound_blogs" non-null="false" unique="false"
+     * @roller.wrapPojoMethod type="simple"
      */
     public int getInboundblogs()
     {
@@ -178,6 +186,25 @@ public class PlanetSubscriptionData extends PersistentObject
         this.inboundblogs = inboundblogs;
     }
 
+    /** 
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getName() {
+        return title;
+    }
+    public void setName(String name) {
+        title = name;
+    }
+    /** 
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getURL() {
+        return siteUrl;
+    }
+    public void setURL(String url) {
+        siteUrl = url;
+    }
+    
     //-------------------------------------------------------------- implementation
    
     /**
@@ -191,7 +218,7 @@ public class PlanetSubscriptionData extends PersistentObject
     public int compareTo(Object o)
     {
         PlanetSubscriptionData other = (PlanetSubscriptionData)o;
-        return getFeedUrl().compareTo(other.getFeedUrl());
+        return getFeedURL().compareTo(other.getFeedURL());
     }
 
     public boolean equals(Object other) {
@@ -200,7 +227,7 @@ public class PlanetSubscriptionData extends PersistentObject
         if(!(other instanceof PlanetSubscriptionData)) return false;
         
         final PlanetSubscriptionData that = (PlanetSubscriptionData) other;
-        return this.feedUrl.equals(that.getFeedUrl());
+        return this.feedUrl.equals(that.getFeedURL());
     }
     
     public int hashCode() {

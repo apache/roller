@@ -18,25 +18,23 @@
 /* Created on April 14, 2006 */
 package org.apache.roller.ui.authoring.tags;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.util.Map;
-import java.io.IOException;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
-import org.apache.velocity.VelocityContext;
+import org.apache.roller.model.PluginManager;
 
 import org.apache.roller.model.Roller;
-import org.apache.roller.model.PagePluginManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.util.Utilities;
-import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.struts.util.RequestUtils;
 
 /**
  * Shows entry text with plugins applied.
@@ -62,20 +60,18 @@ public class ShowEntryContentTag extends TagSupport {
         Roller roller = RollerFactory.getRoller();
         WeblogEntryData entry = (WeblogEntryData)
             RequestUtils.lookup(pageContext, name, property, scope);
-        if (Utilities.isNotEmpty(entry.getText())) {
+        if (StringUtils.isNotEmpty(entry.getText())) {
             String xformed = entry.getText();;        
             try {
                 if (entry.getPlugins() != null) {
                     RollerContext rctx = 
                         RollerContext.getRollerContext();
                     try {
-                        PagePluginManager ppmgr = roller.getPagePluginManager();
-                        Map plugins = ppmgr.createAndInitPagePlugins(
-                            entry.getWebsite(), rctx.getServletContext(),
-                            rctx.getAbsoluteContextUrl((HttpServletRequest)pageContext.getRequest()),
-                            new VelocityContext());
-                        xformed = ppmgr.applyPagePlugins(
-                            entry, plugins, entry.getText(), singleEntry);
+                        PluginManager ppmgr = roller.getPagePluginManager();
+                        Map plugins = ppmgr.getWeblogEntryPlugins(
+                            entry.getWebsite());
+                        xformed = ppmgr.applyWeblogEntryPlugins(
+                            plugins, entry, entry.getText());
                     } catch (Exception e) {
                         mLogger.error(e);
                     }
@@ -92,7 +88,7 @@ public class ShowEntryContentTag extends TagSupport {
 
                 // somehow things (&#8220) are getting double-escaped
                 // but I cannot seem to track it down
-                xformed = Utilities.stringReplace(xformed, "&amp#", "&#");
+                xformed = StringUtils.replace(xformed, "&amp#", "&#");
 
                 pageContext.getOut().println(xformed);
 

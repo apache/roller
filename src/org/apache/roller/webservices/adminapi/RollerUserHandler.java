@@ -88,7 +88,7 @@ class RollerUserHandler extends Handler {
     
     private EntrySet getCollection() throws HandlerException {
         try {
-            List users = getRoller().getUserManager().getUsers();
+            List users = getRoller().getUserManager().getUsers(0, -1);
             if (users == null) {
                 users = java.util.Collections.EMPTY_LIST;
             }
@@ -102,7 +102,7 @@ class RollerUserHandler extends Handler {
     
     private EntrySet getEntry() throws HandlerException {
         try {
-            UserData ud = getRoller().getUserManager().getUserByUsername(getUri().getEntryId());
+            UserData ud = getRoller().getUserManager().getUserByUserName(getUri().getEntryId());
             if (ud == null) {
                 throw new NotFoundException("ERROR: Unknown user: " + getUri().getEntryId());
             }
@@ -167,8 +167,8 @@ class RollerUserHandler extends Handler {
                 }
                 UserData ud = toUserData(entry);
                 mgr.addUser(ud);
-                CacheManager.invalidate(ud);
                 getRoller().flush();
+                CacheManager.invalidate(ud);
                 userDatas.add(ud);
             }
             return toUserEntrySet((UserData[])userDatas.toArray(new UserData[0]));
@@ -184,7 +184,7 @@ class RollerUserHandler extends Handler {
             List userDatas = new ArrayList();
             for (int i = 0; i < c.getEntries().length; i++) {
                 UserEntry entry = (UserEntry)c.getEntries()[i];
-                UserData ud = mgr.getUserByUsername(entry.getName());
+                UserData ud = mgr.getUserByUserName(entry.getName());
                 if (ud == null) {
                     throw new NotFoundException("ERROR: Unknown user: " + entry.getName());
                 }
@@ -229,7 +229,7 @@ class RollerUserHandler extends Handler {
     private EntrySet deleteEntry() throws HandlerException {
         try {
             UserManager mgr = getRoller().getUserManager();
-            UserData ud = mgr.getUserByUsername(getUri().getEntryId());
+            UserData ud = mgr.getUserByUserName(getUri().getEntryId());
             
             if (ud == null) {
                 throw new NotFoundException("ERROR: Unknown user: " + getUri().getEntryId());
@@ -241,9 +241,9 @@ class RollerUserHandler extends Handler {
             
             UserData[] uds = new UserData[] { ud };
             mgr.removeUser(ud);
-            
+            getRoller().flush();            
             CacheManager.invalidate(ud);
-            getRoller().flush();
+
             EntrySet es = toUserEntrySet(uds);
             return es;
         } catch (RollerException re) {

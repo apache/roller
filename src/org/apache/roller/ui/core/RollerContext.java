@@ -1,32 +1,31 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.ui.core;
 
+import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.TimerTask;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
@@ -35,20 +34,16 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
-
-import org.acegisecurity.ConfigAttributeDefinition;
-import org.acegisecurity.SecurityConfig;
-import org.acegisecurity.intercept.web.PathBasedFilterInvocationDefinitionMap;
 import org.acegisecurity.providers.ProviderManager;
 import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
 import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
-import org.acegisecurity.securechannel.ChannelProcessingFilter;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.utils.UpgradeDatabase;
 import org.apache.roller.config.PingConfig;
@@ -57,18 +52,14 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ScheduledTask;
-import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.pings.PingQueueTask;
-import org.apache.roller.util.StringUtils;
-import org.apache.roller.util.Utilities;
+import org.apache.roller.ui.core.security.AutoProvision;
+import org.apache.roller.util.cache.CacheManager;
+import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
-import org.apache.roller.util.cache.CacheManager;
 
 
 /**
@@ -189,6 +180,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             
             initializeSecurityFeatures(mContext);
             
+            setupVelocity();
             roller.getThemeManager();
             setupIndexManager(roller);
             initializePingFeatures(roller);
@@ -203,6 +195,39 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         }
         
         mLogger.debug("RollerContext initialization complete");
+    }
+    
+    
+    private void setupVelocity() throws RollerException {
+        
+        mLogger.info("Initializing Velocity");
+        
+        // initialize the Velocity engine
+        Properties velocityProps = new Properties();
+        
+        try {
+            InputStream instream = mContext.getResourceAsStream("/WEB-INF/velocity.properties");
+            
+            velocityProps.load(instream);
+            
+            // need to dynamically add old macro libraries if they are enabled
+            if(RollerConfig.getBooleanProperty("rendering.legacyModels.enabled")) {
+                String macroLibraries = (String) velocityProps.get("velocimacro.library");
+                String oldLibraries = RollerConfig.getProperty("velocity.oldMacroLibraries");
+                
+                // set the new value
+                velocityProps.setProperty("velocimacro.library", oldLibraries+","+macroLibraries);
+            }
+            
+            mLogger.debug("Velocity props = "+velocityProps);
+            
+            // init velocity
+            RuntimeSingleton.init(velocityProps);
+            
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+        
     }
     
     
@@ -253,7 +278,9 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         
         // Initialize common targets from the configuration
         PingConfig.initializeCommonTargets();
-        // Remove csutom ping targets if they have been disallowed
+        // Initialize ping variants
+        PingConfig.initializePingVariants();
+        // Remove custom ping targets if they have been disallowed
         if (PingConfig.getDisallowCustomTargets()) {
             mLogger.info("Custom ping targets have been disallowed.  Removing any existing custom targets.");
             roller.getPingTargetManager().removeAllCustomPingTargets();
@@ -281,7 +308,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         
         // Set up the task
         PingQueueTask pingQueueTask = new PingQueueTask();
-        pingQueueTask.init(this, intervalMins);
+        pingQueueTask.init(intervalMins);
         
         // Schedule it at the appropriate interval, delay start for one interval.
         mLogger.info("Scheduling ping queue task to run at " + intervalMins + " minute intervals.");
@@ -420,82 +447,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         }
         return mAuthenticator;
     }
-       
-    /**
-     * Returns the full url for the website of the specified username.
-     */
-    public String getContextUrl(HttpServletRequest request, WebsiteData website) {
-        String url = this.getContextUrl(request);
-        if (website != null) {
-            url = url + "/page/" + website.getHandle();
-        }
-        return url;
-    }
-    
-    
-    /** Get absolute URL of Roller context */
-    public String getContextUrl(HttpServletRequest request) {
-        String url = request.getContextPath();
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
-        }
-        return url;
-    }
-    
-    
-    /** Get absolute URL of Roller context */
-    public String getAbsoluteContextUrl(HttpServletRequest request) {
-        
-        String url = RollerRuntimeConfig.getProperty("site.absoluteurl");
-        
-        if (url == null || url.trim().length() == 0) {
-            try {
-                URL absURL = RequestUtils.absoluteURL(request, "/");
-                url = absURL.toString();
-            } catch (MalformedURLException e) {
-                url = "/";
-                mLogger.error("ERROR: forming absolute URL", e);
-            }
-        }
-        
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
-        }
-        
-        mContext.setAttribute("org.apache.roller.absoluteContextURL", url);
-        return url;
-    }
-    
-    
-    /**
-     * For use by MetaWeblog API.
-     *
-     * @return Context URL or null if not initialized yet.
-     */
-    public String getAbsoluteContextUrl() {
-        return (String) mContext.getAttribute("org.apache.roller.absoluteContextURL");
-    }
-    
-    
-    public String createEntryPermalink(
-            WeblogEntryData entry,
-            HttpServletRequest request,
-            boolean absolute) {
-        String link = null;
-        try {
-            String baseUrl = null;
-            if (absolute) {
-                baseUrl = getAbsoluteContextUrl(request);
-            } else {
-                baseUrl = getContextUrl(request);
-            }
-            link = Utilities.escapeHTML(baseUrl + entry.getPermaLink());
-        } catch (Exception e) {
-            mLogger.error("Unexpected exception", e);
-        }
-        
-        return link;
-    }
     
     
     /**
@@ -523,6 +474,49 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     /** Get username that built Roller */
     public String getRollerBuildUser() {
         return mBuildUser;
+    }
+    
+    /**
+     * Get an instance of AutoProvision, if available in roller.properties
+     * 
+     * @return AutoProvision
+     */
+    public static AutoProvision getAutoProvision() {
+      
+      String clazzName = RollerConfig.getProperty("users.sso.autoProvision.className");
+      
+      if(null == clazzName) {
+        return null;
+      }
+      
+      Class clazz;
+      try {
+        clazz = Class.forName(clazzName);
+      } catch (ClassNotFoundException e) {
+        mLogger.warn("Unable to found specified Auto Provision class.", e);
+        return null;
+      }
+      
+      if(null == clazz) {
+        return null;
+      }
+      
+      Class[] interfaces = clazz.getInterfaces();
+      for (int i = 0; i < interfaces.length; i++) {
+          if (interfaces[i].equals(AutoProvision.class))
+          {
+            try {
+              return (AutoProvision) clazz.newInstance();
+            } catch (InstantiationException e) {
+              mLogger.warn("InstantiationException while creating: " + clazzName, e);
+            } catch (IllegalAccessException e) {
+              mLogger.warn("IllegalAccessException while creating: " + clazzName, e);
+            }
+          }
+      }
+      
+      return null;
+      
     }
 
 }

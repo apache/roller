@@ -1,69 +1,75 @@
 <global-forwards>
+    
 <forward name="access-denied"          path=".denied"/>
 <forward name="error"                  path="/error.jsp"/>
-<forward name="login-redirect"         path="/login-redirect.jsp"/>
-<forward name="logout-redirect"        path="/logout-redirect.jsp"/>
 
 <!-- unprotected actions -->
+
 <forward name="page"                   path="/page"/>
-<forward name="main"                   path="/main.do"/>
-<forward name="home.page"              path="/main.do"/>
+<forward name="main"                   path="/"/>
+<forward name="home.page"              path="/"/>
 <forward name="planet"                 path="/planet.do"/>
-<forward name="createUser"             path="/user.do?method=createUser"/>
-<forward name="registerUser"           path="/user.do?method=registerUser"/>
 
-<!--  landing page actions -->
+<!--  core UI actions -->
 
-<forward name="yourProfile"            path="/editor/yourProfile.do?method=edit" />
-<forward name="yourWebsites"           path="/editor/yourWebsites.do?method=edit" />
-<forward name="createWebsite"          path="/editor/createWebsite.do?method=create" />
+<forward name="login-redirect"         path="/roller-ui/login-redirect.jsp"/>
+<forward name="logout-redirect"        path="/roller-ui/logout-redirect.jsp"/>
+<forward name="createUser"             path="/roller-ui/user.do?method=createUser"/>
+<forward name="registerUser"           path="/roller-ui/user.do?method=registerUser"/>
+<forward name="yourProfile"            path="/roller-ui/yourProfile.do?method=edit" />
+<forward name="createWebsite"          path="/roller-ui/createWebsite.do?method=create" />
+<forward name="yourWebsites"           path="/roller-ui/yourWebsites.do?method=edit" />
 
-<!--  editor/author actions -->
+<!--  LIMITED/AUTHOR weblog UI actions -->
 
-<forward name="weblogEdit"             path="/editor/weblog.do?method=edit"/>
-<forward name="weblogCreate"           path="/editor/weblog.do?method=create"/>
-<forward name="weblogEntryManagement"  path="/editor/weblogEntryManagement.do?method=query"/>
-<forward name="commentManagement"      path="/editor/commentManagement.do?method=query"/>
-<forward name="commentQuery"           path="/editor/commentQuery.do?method=query"/>
-<forward name="categories"             path="/editor/categories.do?method=selectCategory"/>
-<forward name="bookmarks"              path="/editor/bookmarks.do?method=selectFolder"/>
-<forward name="importBookmarks"        path="/editor/importBookmarks.do"/>
-<forward name="uploadFiles"            path="/editor/uploadFiles.do"/>
-<forward name="referers"               path="/editor/referers.do"/>
+<forward name="weblogEdit"             path="/roller-ui/authoring/weblog.do?method=edit"/>
+<forward name="weblogCreate"           path="/roller-ui/authoring/weblog.do?method=create"/>
+<forward name="weblogEntryManagement"  path="/roller-ui/authoring/weblogEntryManagement.do?method=query"/>
+<forward name="commentManagement"      path="/roller-ui/authoring/commentManagement.do?method=query"/>
+<forward name="commentQuery"           path="/roller-ui/authoring/commentQuery.do?method=query"/>
+<forward name="categories"             path="/roller-ui/authoring/categories.do?method=selectCategory"/>
+<forward name="categoryEdit"           path="/roller-ui/authoring/categoryEdit.do"/>
+<forward name="categoryDelete"         path="/roller-ui/authoring/categoryDelete.do"/>
+<forward name="bookmarks"              path="/roller-ui/authoring/bookmarks.do?method=selectFolder"/>
+<forward name="folderEdit"             path="/roller-ui/authoring/folderEdit.do"/>
+<forward name="importBookmarks"        path="/roller-ui/authoring/importBookmarks.do"/>
+<forward name="uploadFiles"            path="/roller-ui/authoring/uploadFiles.do"/>
+<forward name="referers"               path="/roller-ui/authoring/referers.do"/>
 
-<!-- manage weblog actions -->
+<!-- ADMIN weblog UI actions -->
 
-<forward name="editWebsite"            path="/editor/website.do?method=edit"/>
-<forward name="editTheme"              path="/editor/themeEditor.do?method=edit"/>
-<forward name="editPages"              path="/editor/page.do?method=editPages"/>
-<forward name="editPage"               path="/editor/page.do?method=edit"/>
-<forward name="removePage"             path="/editor/page.do?method=remove"/>
-<forward name="removePage.ok"          path="/editor/page.do?method=removeOk"/>
-<forward name="memberPermissions"      path="/editor/memberPermissions.do" />
-<forward name="inviteMember"           path="/editor/inviteMember.do" />
-<forward name="pingSetup"              path="/editor/pingSetup.do" />
-<forward name="customPingTargets"      path="/editor/customPingTargets.do" />
-<forward name="maintenance"            path="/editor/maintenance.do" />
+<forward name="editWebsite"            path="/roller-ui/authoring/website.do?method=edit"/>
+<forward name="editTheme"              path="/roller-ui/authoring/themeEditor.do?method=edit"/>
+<forward name="editPages"              path="/roller-ui/authoring/page.do?method=editPages"/>
+<forward name="editPage"               path="/roller-ui/authoring/page.do?method=edit"/>
+<forward name="removePage"             path="/roller-ui/authoring/page.do?method=remove"/>
+<forward name="removePage.ok"          path="/roller-ui/authoring/page.do?method=removeOk"/>
+<forward name="memberPermissions"      path="/roller-ui/authoring/memberPermissions.do" />
+<forward name="inviteMember"           path="/roller-ui/authoring/inviteMember.do" />
+<forward name="invitations"            path="/roller-ui/authoring/invitations.do" />
+<forward name="pingSetup"              path="/roller-ui/authoring/pingSetup.do" />
+<forward name="customPingTargets"      path="/roller-ui/authoring/customPingTargets.do" />
+<forward name="maintenance"            path="/roller-ui/authoring/maintenance.do" />
 
-<forward name="trackback"              path="/editor/trackback.do?method=send"/>
-<forward name="toggleLinkback"         path="/editor/toggleLinkback.do"/>
+<forward name="trackback"              path="/roller-ui/authoring/trackback.do?method=send"/>
+<forward name="toggleLinkback"         path="/roller-ui/authoring/toggleLinkback.do"/>
 
-<!-- global admin actions -->
+<!-- global admin UI actions -->
 
-<forward name="rollerConfig"            path="/admin/rollerConfig.do?method=edit"/>
-<forward name="adminUser"               path="/admin/user.do?method=edit"/>
-<forward name="commentManagementGlobal" path="/admin/commentManagement.do?method=query"/>
-<forward name="commentQueryGlobal"      path="/admin/commentQuery.do?method=query"/>
-<forward name="addUser"                 path="/admin/user.do?method=add"/>
-<forward name="commonPingTargets"       path="/admin/commonPingTargets.do"/>
-<forward name="cacheInfo"		path="/admin/cacheInfo.do"/>
+<forward name="rollerConfig"            path="/roller-ui/admin/rollerConfig.do?method=edit"/>
+<forward name="adminUser"               path="/roller-ui/admin/user.do?method=edit"/>
+<forward name="commentManagementGlobal" path="/roller-ui/admin/commentManagement.do?method=query"/>
+<forward name="commentQueryGlobal"      path="/roller-ui/admin/commentQuery.do?method=query"/>
+<forward name="addUser"                 path="/roller-ui/admin/user.do?method=add"/>
+<forward name="commonPingTargets"       path="/roller-ui/admin/commonPingTargets.do"/>
+<forward name="cacheInfo"		path="/roller-ui/admin/cacheInfo.do"/>
 
-<!-- planet admin actions -->
+<!-- planet admin UI actions -->
 
-<forward name="planetConfig"             path="/admin/planetConfig.do?method=getConfig"/>
-<forward name="planetSubscriptions"      path="/admin/planetSubscriptions.do?method=getSubscriptions"/>
-<forward name="planetGroups"             path="/admin/planetGroups.do?method=getGroups"/>
-<forward name="planetGroupSubscriptions" path="/admin/planetGroupSubscriptions.do?method=getGroupSubscriptions"/>
+<forward name="planetConfig"             path="/roller-ui/admin/planetConfig.do?method=getConfig"/>
+<forward name="planetSubscriptions"      path="/roller-ui/admin/planetSubscriptions.do?method=getSubscriptions"/>
+<forward name="planetGroups"             path="/roller-ui/admin/planetGroups.do?method=getGroups"/>
+<forward name="planetGroupSubscriptions" path="/roller-ui/admin/planetGroupSubscriptions.do?method=getGroupSubscriptions"/>
 
 </global-forwards>
 

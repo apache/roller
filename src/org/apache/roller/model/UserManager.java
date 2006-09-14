@@ -18,13 +18,14 @@
 
 package org.apache.roller.model;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-
 
 /**
  * Manages users, weblogs, permissions, and weblog pages.
@@ -34,50 +35,54 @@ public interface UserManager {
     /**
      * Add new user object to Roller. User will be given the global editor role,
      * unless it's the first user, who will get the global admin role.
-     *
      * @param user User object to be added, initialized with name, password, etc.
-     * @throws RollerException
      */
     public void addUser(UserData newUser) throws RollerException;
-    
-    
+        
     /**
      * Store a single user.
      */
     public void saveUser(UserData data) throws RollerException;
     
-    
+    /** 
+     * Remove user.
+     */
     public void removeUser(UserData user) throws RollerException;
     
-    
-    public UserData getUser(String id)throws RollerException;
+    /**
+     * Get user by id.
+     */
+    public UserData getUser(String id) throws RollerException;
     
     
     /** 
      * Get user object by user name (only enabled users) 
      */
-    public UserData getUserByUsername(String userName) throws RollerException;
-    
+    public UserData getUserByUserName(String userName) throws RollerException;    
     
     /** 
      * Get user object by user name, optionally include dis-enabled users 
      */
-    public UserData getUserByUsername(String userName, Boolean enabled) throws RollerException;
-    
+    public UserData getUserByUserName(String userName, Boolean enabled) 
+            throws RollerException;    
     
     /** 
      * Get all enabled users 
      */
-    public List getUsers() throws RollerException;
-    
+    public List getUsers(int offset, int length) throws RollerException;    
     
     /**
      * Get all users, optionally include dis-enabled users.
-     *
      * @param enabled True for enabled only, false for disabled only, null for all
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
      */
-    public List getUsers(Boolean enabled) throws RollerException;
-    
+    public List getUsers(
+        Boolean enabled, 
+        Date    startDate,
+        Date    endDate,
+        int     offset, 
+        int     length) throws RollerException;    
     
     /**
      * Get all users or a website.
@@ -85,9 +90,12 @@ public interface UserManager {
      * @param website Get all users of this website (or null for all)
      * @returns List of UserData objects.
      */
-    public List getUsers(WebsiteData website, Boolean enabled) throws RollerException;
-    
-    
+    public List getUsers(
+        WebsiteData website, 
+        Boolean enabled, 
+        int offset, 
+        int length) throws RollerException;
+        
     /**
      * Returns users whose usernames or email addresses start with a string.
      * @param startsWith String to match userNames and emailAddresses against
@@ -97,162 +105,204 @@ public interface UserManager {
      * @return List of (up to length) users that match startsWith string
      */
     public List getUsersStartingWith(String startsWith,
-            int offset, int length, Boolean enabled) throws RollerException;
+            Boolean enabled, int offset, int length) throws RollerException;    
     
+    /**
+     * Get map with 26 entries, one for each letter A-Z and
+     * containing integers reflecting the number of users whose
+     * names start with each letter.
+     */
+    public Map getUserNameLetterMap() throws RollerException;
     
-    public void addWebsite(WebsiteData newWebsite) throws RollerException;
+    /** Get collection of users whose names begin with specified letter */
+    public List getUsersByLetter(char letter, int offset, int length) throws RollerException;
     
+    /**
+     * Get map with 26 entries, one for each letter A-Z and
+     * containing integers reflecting the number of weblogs whose
+     * names start with each letter.
+     */
+    public Map getWeblogHandleLetterMap() throws RollerException;
+    
+    /** Get collection of weblogs whose handles begin with specified letter */
+    public List getWeblogsByLetter(char letter, int offset, int length) throws RollerException;
+    
+    /**
+     * Add new website, give creator admin permission, creates blogroll,
+     * creates categories and other objects required for new website.
+     * @param newWebsite New website to be created, must have creator.
+     */
+    public void addWebsite(WebsiteData newWebsite) throws RollerException;    
     
     /**
      * Store a single weblog.
      */
     public void saveWebsite(WebsiteData data) throws RollerException;
     
-    
+    /**
+     * Remove website object.
+     */
     public void removeWebsite(WebsiteData website) throws RollerException;
     
-    
+    /**
+     * Get website object by name.
+     */
     public WebsiteData getWebsite(String id) throws RollerException;
-    
-    
+       
     /**
      * Get website specified by handle (or null if enabled website not found).
-     *
      * @param handle  Handle of website
      */
-    public WebsiteData getWebsiteByHandle(String handle) throws RollerException;
-    
+    public WebsiteData getWebsiteByHandle(String handle) throws RollerException;    
     
     /**
      * Get website specified by handle with option to return only enabled websites.
-     *
      * @param handle  Handle of website
      */
-    public WebsiteData getWebsiteByHandle(String handle, Boolean enabled) throws RollerException;
-    
-    
+    public WebsiteData getWebsiteByHandle(String handle, Boolean enabled) 
+            throws RollerException;
+        
     /**
-     * Get all websites of which user is a member
-     *
+     * Get websites optionally restricted by user, enabled and active status.
      * @param user    Get all websites for this user (or null for all)
+     * @param offset  Offset into results (for paging)
+     * @param len     Maximum number of results to return (for paging)
      * @param enabled Get all with this enabled state (or null or all)
      * @param active  Get all with this active state (or null or all)
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
      * @returns List of WebsiteData objects.
      */
-    public List getWebsites(UserData user, Boolean enabled, Boolean active) throws RollerException;
-    
-    
-    public void savePermissions(PermissionsData perms) throws RollerException;
-    
-    
-    public void removePermissions(PermissionsData perms) throws RollerException;
-    
-    
-    public PermissionsData getPermissions(String id) throws RollerException;
-    
+    public List getWebsites(
+        UserData user, 
+        Boolean  enabled, 
+        Boolean  active, 
+        Date     startDate, 
+        Date     endDate, 
+        int      offset, 
+        int      length) 
+        throws RollerException;
     
     /**
-     * Get pending permissions for user
-     *
+     * Get websites ordered by descending number of comments.
+     * @param startDate Restrict to those created after (or null for all)
+     * @param endDate Restrict to those created before (or null for all)
+     * @param offset    Offset into results (for paging)
+     * @param len       Maximum number of results to return (for paging)
+     * @returns List of WebsiteData objects.
+     */
+    public List getMostCommentedWebsites(
+        Date startDate, 
+        Date endDate, 
+        int  offset, 
+        int  length) 
+        throws RollerException;
+    
+    /**
+     * Save permissions object.
+     */
+    public void savePermissions(PermissionsData perms) throws RollerException;
+    
+    /**
+     * Remove permissions object.
+     */
+    public void removePermissions(PermissionsData perms) throws RollerException;
+    
+    /**
+     * Get permissions object by id.
+     */
+    public PermissionsData getPermissions(String id) throws RollerException;    
+    
+    /**
+     * Get pending permissions for user.
      * @param user User (not null)
      * @returns List of PermissionsData objects.
      */
-    public List getPendingPermissions(UserData user) throws RollerException;
-    
+    public List getPendingPermissions(UserData user) throws RollerException;    
     
     /**
-     * Get pending permissions for website
-     *
+     * Get pending permissions for website.
      * @param website Website (not null)
      * @returns List of PermissionsData objects.
      */
-    public List getPendingPermissions(WebsiteData user) throws RollerException;
-    
+    public List getPendingPermissions(WebsiteData user) throws RollerException;    
     
     /**
-     * Get permissions of user in website
-     *
+     * Get permissions of user in website.
      * @param website Website (not null)
      * @param user    User (not null)
      * @return        PermissionsData object
      */
-    public PermissionsData getPermissions(WebsiteData website, UserData user) throws RollerException;
-    
+    public PermissionsData getPermissions(WebsiteData website, UserData user) 
+            throws RollerException;    
     
     /**
      * Get all permissions in website
-     *
      * @param website Website (not null)
      * @return        PermissionsData object
      */
-    public List getAllPermissions(WebsiteData website) throws RollerException;
-    
+    public List getAllPermissions(WebsiteData website) throws RollerException;    
     
     /**
      * Get all permissions of user
-     *
      * @param user User (not null)
      * @return     PermissionsData object
      */
-    public List getAllPermissions(UserData user) throws RollerException;
-    
+    public List getAllPermissions(UserData user) throws RollerException;    
     
     /**
      * Invite user to join a website with specific permissions
-     *
      * @param website Website to be joined (persistent instance)
      * @param user    User to be invited (persistent instance)
      * @param perms   Permissions mask (see statics in PermissionsData)
      * @return        New PermissionsData object, with pending=true
      */
-    public PermissionsData inviteUser(WebsiteData website, UserData user, short perms) throws RollerException;
-    
-    
+    public PermissionsData inviteUser(
+            WebsiteData website, UserData user, short perms) 
+            throws RollerException;
+        
     /**
      * Retire user from a website
-     *
      * @param website Website to be retired from (persistent instance)
      * @param user    User to be retired (persistent instance)
      */
-    public void retireUser(WebsiteData website, UserData user) throws RollerException;
-    
+    public void retireUser(WebsiteData website, UserData user) 
+            throws RollerException;
+        
+    /**
+     * Store page.
+     */
+    public void savePage(WeblogTemplate data) throws RollerException;    
     
     /**
-     * Store page
+     * Remove page.
      */
-    public void savePage(WeblogTemplate data) throws RollerException;
-    
+    public void removePage(WeblogTemplate page) throws RollerException;    
     
     /**
-     * Remove page
+     * Get page by id.
      */
-    public void removePage(WeblogTemplate page) throws RollerException;
-    
-    
-    /**
-     * Get page by ID
-     */
-    public WeblogTemplate getPage(String id) throws RollerException;
-    
+    public WeblogTemplate getPage(String id) throws RollerException;    
     
     /** 
-     * Get user's page by name 
+     * Get user's page by name.
      */
     public WeblogTemplate getPageByName(WebsiteData w, String p) throws RollerException;
     
-    
     /** 
-     * Get user's page by link 
+     * Get website's page by link.
      */
-    public WeblogTemplate getPageByLink(WebsiteData w, String p) throws RollerException;
-    
+    public WeblogTemplate getPageByLink(WebsiteData w, String p) 
+        throws RollerException;    
     
     /** 
-     * Get users pages 
+     * Get website's pages 
      */
     public List getPages(WebsiteData w) throws RollerException;
     
-    
+    /**
+     * Release any resources held by manager.
+     */
     public void release();
     
 }

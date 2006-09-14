@@ -45,7 +45,7 @@ abstract class Authenticator {
      */
     protected void verifyUser() throws HandlerException {
         try {
-            UserData user = getRoller().getUserManager().getUserByUsername(getUserName());
+            UserData user = getRoller().getUserManager().getUserByUserName(getUserName());
             if (user != null && user.hasRole("admin") && user.getEnabled().booleanValue()) {
                 // success! no exception
             } else {

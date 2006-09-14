@@ -20,7 +20,7 @@
  */
 package org.apache.roller.pojos;
 
-import org.apache.roller.util.Utilities;
+import org.apache.commons.lang.StringEscapeUtils;
 
 
 /**
@@ -305,7 +305,7 @@ public class RefererData extends PersistentObject
     {
         StringBuffer sb = new StringBuffer();
 
-        String url = Utilities.escapeHTML(getUrl());
+        String url = StringEscapeUtils.escapeHtml(getUrl());
         String displayUrl = url.trim();
         String restOfUrl = null;
 

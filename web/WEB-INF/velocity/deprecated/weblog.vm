@@ -1,0 +1,484 @@
+#**
+ * Weblog entries, comments, and related links.
+ * @author Lance Lavandowska (conversion to Velocimacros)
+ * @author David M Johnson (comment macros)
+ *#
+
+#**
+ * Shows weblog entries from specified category using specified page as a "day 
+ * template" for the display of each day. The maxEntries argument is ignored
+ * because now the number of entries to display is controlled by the 
+ * entryDisplayCount property on the Preferences:Settings page.
+ * <p>
+ * This macro allows Roller to support five different types of blog displays:
+ * <p>
+ * Current day page<br />
+ *     /page/&lt;handle&gt;/<br>
+ * On the current day page, Roller will show the most recent N blog  
+ * entries (not just those for the day).
+ * At the end of the page, a previous link points to day page of entries  
+ * before the ones shown (and the link is displayed as the day's date).  
+ * This works exactly as before.
+ * <p>
+ * Day page<br>
+ *     /page/&lt;handle&gt;/YYYYMMDD<br>
+ * <p>On a day page, Roller will show all of the entries for a specific  
+ * day. At the end of the page, a next/previous link allows navigation  
+ * to next and previous day of entries (and the links are displayed as  
+ * the day's dates). Before, day pages always showed N entries (where  
+ * usually N=15), but now they'll show only a day's worth (e.g. 1-3  
+ * entries).
+ * <p>
+ * Month page<br>
+ *     /page/&lt;handle&gt;/YYYYMM<br>
+ * <p>On a month page, Roller will show the most recent N blog entries in  
+ * the month. At the end of the page, a previous link points to day page  
+ * of entries before the ones shown. This is new; we didn't have month  
+ * pages before.
+ * <p>
+ * Entry page<br>
+ *     /page/&lt;handle&gt;?entry=&lt;anchor&gt;<br>
+ * <p>On an entry page, one entry is shown. The next/prev links link to the  
+ * next and previous entries (and the links are displayed as the entry  
+ * titles, nicely truncated). This one also works exactly as before.
+ * <p>
+ * Search page<br>
+ *     /page/<handle>?q=<search terms><br>
+ * <p>If there are search results, then this macro will show them using the 
+ * current weblog's day template.
+ * <br>
+ *
+ * @param pageName   Page name of page to serve as day template.
+ * @param maxEntries (ignored)
+ * @param category   Only display weblog entries from this category.
+ *#
+#macro( showWeblogEntriesInCategory $pageName $maxEntries $category)
+    ## updated for roller 3.0 to use new models & macros
+    #set($pager = $model.getWeblogEntriesPager($category))
+
+    #if ($model.searchResults)
+        <div class="next-previous">
+            #showWeblogSearchAgainForm($model.weblog)
+            #showNextPrevSearchControl($pager)
+        </div>
+    #else
+        <div class="next-previous">
+            #showNextPrevEntriesControl($pager)
+        </div>
+    #end
+
+    #set($dayPage = $model.weblog.getPageByName($pageName))
+    #set($map = $pager.getEntries())
+    #foreach($day in $map.keySet())
+        #set($entries = $map.get($day))   
+        #parse($dayPage.id)
+    #end
+
+    #if ($model.permalink)
+        #if($config.trackbacksEnabled && $model.weblog.allowComments && $entry.commentsStillAllowed)
+            <div class="trackbackUrl">
+                $text.get("macro.weblog.trackback") $url.trackback($entry.anchor)
+            </div>
+        #end
+        #showEntryLinkbacks($entry)
+        #showWeblogEntryComments($entry)
+        #showCommentForm($entry)
+    #end
+#end
+
+
+#**
+ * Shows weblog entries by calling showWeblogEntriesInCategory() and passing
+ * 'nil' to indicate that all categories are to be included.
+ *#
+#macro( displayWeblogEntries )
+    #showWeblogEntriesInCategory("_day" 15 'nil')
+#end
+
+
+#**
+ * Shows list of links to recent weblog entries in one category.
+ * @param entryCount Maximum number of entry links to display
+**#
+#macro( showRecentEntriesInCategory $entryCount $catPath )
+    ## updated for roller 3.0
+    #set($recentEntries = $model.weblog.getRecentWeblogEntries($catPath, $entryCount))
+    <ul class="recentposts">
+        #foreach ($var in $recentEntries)
+            <li class="recentposts"><a href="$var.permalink">$var.title</a></li>
+        #end
+    </ul>
+#end
+
+
+#**
+ * Shows list of links to recent weblog entries in one category.
+ *
+ * @param numEntries Maximum number of entries to display
+**#
+#macro( showRecentEntries $entryCount )
+    #showRecentEntriesInCategory($entryCount "nil")
+#end
+
+
+## ======================================================================== 
+## Next / previous links macros 
+## ======================================================================== 
+
+
+#**
+ * Displays next previous links, called by #showWeblogEntries().
+ * On the today page: show prev link day before earliest entry on page.
+ * On an entry page: show next/prev entry links.
+ * On a day page: show next prev day links.
+**#
+#macro( showNextPreviousControl )
+    ## this macro is supposedly only called from another macro, but if that
+    ## isn't the case then it's tough to really say how this should work in
+    ## roller 3.0 since everything is dependent on a pager now.  the best
+    ## we can do is just offer this up based off the default pager.
+    #set($nextPrevPager = $model.getWeblogEntriesPager())
+    <div class="next-previous">
+        #showNextPrevEntriesControl($nextPrevPager)
+    </div>
+#end
+
+
+#**
+ * Display link to chronologically previous entry or day in the
+ * same category (if specified).
+**#
+#macro( showPrevWeblogLink $category)
+    ## updated for roller 3.0
+    #set($prevPager = $model.getWeblogEntriesPager($category))
+    <span class="previousEntry">
+    #if( $prevPager.prevLink )
+        <a href="$prevPager.prevLink">$prevPager.prevName</a>
+    #end
+    </span>
+#end
+
+#**
+ * Display link to chronologically next entry or day in the
+ * same category (if specified).
+**#
+#macro( showNextWeblogLink $category)
+    ## updated for roller 3.0
+    #set($nextPager = $model.getWeblogEntriesPager($category))
+    <span class="nextEntry">
+    #if( $nextPager.nextLink )
+        <a href="$nextPager.nextLink">$nextPager.nextName</a>
+    #end
+    </span>
+#end
+
+
+## ======================================================================== 
+## Individual weblog entry display macros 
+## ======================================================================== 
+
+
+#**
+ * Use this to show entry summary or text as appropriate on your blog pages.
+ * On single-entry pages, text is prefered. Everywhere else, summary is 
+ * preferred. Also, applies all plugins configured by entry.
+ *#
+#macro( showEntryText $entry )
+    ## updated for roller 3.0
+   #if( $entryPage )
+      #parse($entryPage.id)
+   #elseif($model.permalink) 
+        #if($utils.isNotEmpty($entry.text))
+            $entry.transformedText
+        #else 
+            $entry.transformedSummary
+        #end
+   #else
+        #if($utils.isNotEmpty($entry.summary))
+            $entry.transformedSummary
+            #if($utils.isNotEmpty($entry.text))
+               [<a class='readmore' href='$url.entry($entry.anchor)'>$text.get('macro.weblog.readMore')</a>]
+            #end
+        #else 
+            $entry.transformedText
+        #end
+   #end
+#end
+
+
+#**
+ * Roller uses this macro to display entry.summary in RSS and Atom feeds.
+ *#
+#macro( showEntrySummary $entry )
+  #if( $entry.plugins)
+     #set( $displayText = $pageHelper.renderPlugins($entry, $entry.summary))
+  #else
+     #set( $displayText = $entry.summary )
+  #end
+  #if( $entryLength == -1 )
+     $utilities.textToXML($displayText)
+  #else
+     #set( $displayText = $stringUtils.left( $displayText, $entryLength ) )
+     #set( $displayText = $utilities.textToXML($utilities.removeHTML($displayText)) )
+     $displayText... [$entry.text.length() characters]
+  #end
+#end
+
+#**
+ * Roller uses this macro to display entry.text in RSS and Atom feeds.
+ *#
+#macro( showEntryContent $entry )
+  #if( $entry.plugins)
+     #set( $displayText = $pageHelper.renderPlugins( $entry, $entry.text))
+  #else
+     #set( $displayText = $entry.text )
+  #end
+  #if( $entryLength == -1 )
+    $utilities.textToXML($displayText)
+  #else
+    #set( $displayText = $stringUtils.left( $displayText, $entryLength ) )
+    #set( $displayText = $utilities.textToXML($utilities.removeHTML($displayText)) )
+    $displayText... [$entry.text.length() characters]
+  #end
+#end
+
+
+#**
+ * Display Permalink for Date.
+ * @param day Date object that specifies day (type java.util.Date).
+ *#
+#macro( showDayPermalink $day )
+    <a href="$url.date($utils.formatDate($day, $plainFormat))"><img
+        class="daypermalink"
+        src="$ctxPath/images/permalink.gif"
+        title="$text.get( "macro.weblog.daypermalink.title" )"
+        alt="$utils.formatDate($day, $plainFormat)" /></a>
+#end
+
+
+#**
+ * Display the default Date.toString for date using the 'macro.weblog.date.toStringFormat'
+ * format as defined in the resource bundle.
+ * @param toStringFormat Format string (see java.text.SimpleDateFormat).
+ * @param day Date object that specifies day (type java.util.Date).
+ *#
+#macro( showEntryDate $day )
+    #set( $format=$text.get("macro.weblog.date.toStringFormat") )
+    #formatDate( $format $day )
+    ##formatDate( $toStringFormat $day )
+#end
+
+
+#**
+ * Display the timestamp for the $day using the 'macro.weblog.date.timestampFormat'
+ * format as defined in the resource bundle.
+ *
+ * @param timestampFormat Format string (see java.text.SimpleDateFormat).
+ * @param day Date object that specifies day (type java.util.Date).
+ *#
+#macro( showTimestamp $day )
+    #set( $format = $text.get("macro.weblog.date.timestampFormat") )
+    #formatDate( $format $day )
+    ##formatDate( $timestampFormat $day )
+#end
+
+
+#**
+ * Display the Permalink for a weblog entry.
+ * @param entry WeblogEntry object.
+ *#
+#macro( showEntryPermalink $entry )
+    <a href="$url.entry($entry.anchor)"
+        title="$text.get( "macro.weblog.entrypermalink.title" )"
+        class="entrypermalink">Permalink</a>
+    #if ($utils.isUserAuthorizedToAuthor($entry.website))
+        [<a href="$url.editEntry($entry.anchor)">$text.get( "macro.weblog.entrypermalink.edit" )</a>]
+    #end
+#end
+
+
+#**
+ * Display the Trackback URL for a weblog entry.
+ * @param entry WeblogEntry object.
+ *#
+#macro( showTrackbackURL $entry )
+$url.trackback($entry.anchor)
+#end
+
+
+#**
+ * Method to retrieve a full encoded anchor tag for a WeblogEntry.
+**#
+#macro( showAnchorTag $entry )
+    <a name="$utils.encode($entry.anchor)" id="$utils.encode($entry.anchor)"></a>
+#end
+
+
+## ======================================================================== 
+## Search form and results macros 
+## ======================================================================== 
+
+
+#**
+ * Display search form for searching a weblog.  This is only a form, no div
+ * or anything around it.
+ *#
+#macro( showSearchForm )
+    ## replaced by Roller 3.0 version
+    #showWeblogSearchForm($model.weblog true)
+#end
+
+
+#**
+ * Display search again form
+ *#
+#macro( showSearchAgainForm )
+    ## replaced by Roller 3.0 version
+    #showWeblogSearchAgainForm($model.weblog)
+#end
+
+
+#**
+ * Displays header like "1 - 10 of 20 found.".
+**#
+#macro( showSearchSummary )
+    #set( $min = $searchResults.offset + 1 )
+    #set( $max = $searchResults.offset + $searchResults.limit )
+    #if( $max > $searchResults.hits )#set( $max = $searchResults.hits )#end
+    <h3>
+        $min - $max of $searchResults.hits found.
+    </h3>
+#end
+
+
+#**
+ * Display list of search result pages (for pagination).
+**#
+#macro( showSearchPager )
+    <h3 style="text-align:center;">
+    #set( $numPages = $model.hits / $model.limit )
+    #set( $remainder = $model.hits % $model.limit )
+    #if( $remainder > 0 )#set( $numPages = $numPages + 1 )#end
+    #if( $numPages > 1 )
+        #foreach( $pageNum in [1..$numPages] )
+            #set( $i = $pageNum - 1 )
+            #set( $start = $model.limit * $i )
+            <a href="$url.search($model.query, "nil", $pageNum)">$pageNum</a>
+            #if( $pageNum != $numPages) | #end
+        #end
+    #end
+    </h3>
+#end
+
+
+## ======================================================================== 
+## Other macros 
+## ======================================================================== 
+
+
+#**
+ * Print status/error message if exists.
+ * Note: "error" and "status" styles should be moved out into
+ * invididual Themes' theme.css files.
+ **#
+#macro( showStatusMessage )
+    #if( $errorMessage )
+        <span class="error">$errorMessage</span>
+    #end
+    #if( $statusMessage )
+        <span class="status">$statusMessage</span>
+    #end
+#end
+
+
+
+
+#**
+ * Set the META tag for ContentLanguage.  We do this rather than
+ * setting the Response header because the header does not get
+ * cached.  So in order to maintain the ContentType we must present
+ * it inside the rendered page itself.
+**#
+#macro( showContentLanguage $lang )
+    <meta http-equiv="Content-Language" content="$lang">
+#end
+
+
+#**
+ * Display language form for selection a different language.  This is only a form, no div
+ * or anything around it.
+ *#
+#macro( showLanguageForm )
+    ## this macro no longer makes sense in roller 3.0, so it does nothing
+#end
+
+
+## ======================================================================== 
+## Deprecated macros 
+## ======================================================================== 
+
+
+#**
+ * (DEPRECATED) Shows list of links for recent weblog entries in one category
+ * using the link field (which is no longer exposed in the editor UI).
+ * You should use showRecentEntriesInCategory() instead.
+ *
+ * @param numEntries Maximum number of entries to display
+ * @param cat        Category to be displayed 
+**#
+#macro( showRecentEntryLinksInCategory $numEntries $cat)
+   #set( $xmap = $model.weblog.getRecentWeblogEntries($cat, $numEntries) )
+   <ul class="linkblog">
+   #foreach( $day in $xmap.keySet() )
+       #set( $recentEntries = $xmap.get($day) )
+       #foreach ($var in $recentEntries)
+           <li class="linkblog">
+           #if ($var.link)
+              <a href="$var.link" title="$utilities.removeAndEscapeHTML($var.text)">$var.title</a>
+           #else
+              $var.title
+           #end
+           #if ($utils.isUserAuthorizedToAuthor($model.weblog))
+              &nbsp;[<a href="$url.editEntry($var.anchor)">$text.get( "macro.weblog.editentry" )</a>]
+           #end
+           </li>
+       #end
+   #end
+   </ul>
+#end
+
+
+#**
+ * (DEPRECATED) Shows list of links for recent weblog entries in all categories
+ * using the link field (which is no longer exposed in the editor UI). 
+ * You should use showRecentEntries() instead.
+**#
+#macro( showRecentEntryLinks $numEntries )
+#showRecentEntryLinksInCategory($numEntries "nil")
+#end
+
+
+#**
+ * (DEPRECATED) Shows weblog entries by calling showWeblogEntriesInCategory(), 
+ * but passes category of 'nil' to indicate that all categories are to be 
+ * included. You should use displayWeblogEntries() instead.
+ * 
+ * @param pageName   Page name of page to serve as day template.
+ * @param maxEntries (ignored)
+ *#
+#macro( showWeblogEntries $pageName $maxEntries )
+#showWeblogEntriesInCategory($pageName $maxEntries 'nil')
+#end
+
+
+#**
+ * (DEPRECATED) This macro does nothing because now, next/prev links are 
+ * built-into the showWeblogEntries() macro. 
+ *#
+#macro( showNextPreviousLinks )
+   <!-- 
+   showNextPreviousLinks() is no longer needed as next/prev links are 
+   built-into the #showRecentEntries() macro.
+   -->
+#end
+

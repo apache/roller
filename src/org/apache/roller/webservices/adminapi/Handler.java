@@ -30,6 +30,7 @@ import org.apache.roller.webservices.adminapi.sdk.EntrySet;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.webservices.adminapi.sdk.MissingElementException;
 import org.apache.roller.webservices.adminapi.sdk.UnexpectedRootElementException;
 import org.jdom.Document;
@@ -132,7 +133,7 @@ abstract class Handler {
         this.uri = new URI(request);
         this.rollerContext = RollerContext.getRollerContext();
         this.roller = RollerFactory.getRoller();
-        this.urlPrefix = getRollerContext().getAbsoluteContextUrl(getRequest()) + ENDPOINT;
+        this.urlPrefix = RollerRuntimeConfig.getAbsoluteContextURL() + ENDPOINT;
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         //Authenticator auth = new WSSEAuthenticator(request);

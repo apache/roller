@@ -33,14 +33,14 @@ import org.apache.roller.model.BookmarkManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
-import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.BookmarkFormEx;
+import org.apache.roller.ui.core.RequestConstants;
 
 /**
- * @struts.action path="/editor/bookmarkEdit" name="bookmarkFormEx" validate="false"
+ * @struts.action path="/roller-ui/authoring/bookmarkEdit" name="bookmarkFormEx" validate="false"
  * @struts.action-forward name="BookmarkForm" path=".BookmarkForm"
  * 
  * @author Dave Johnson
@@ -101,7 +101,7 @@ public class BookmarkEditAction extends Action
         if (null != parentFolder)
         {
             request.setAttribute(
-                RollerRequest.FOLDERID_KEY, parentFolder.getId());
+                RequestConstants.FOLDER_ID, parentFolder.getId());
             
             LinkedList folderPath = new LinkedList();
             folderPath.add(0, parentFolder);

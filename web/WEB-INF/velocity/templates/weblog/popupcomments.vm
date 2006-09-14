@@ -1,0 +1,65 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>#showWebsiteTitle() :: $text.get("comments.title") ::
+        $utilities.removeHTML($entry.title)
+    </title>
+    <script type="text/javascript"
+        src="$ctxPath/theme/scripts/roller.js"></script>
+    <link rel="stylesheet" type="text/css" media="all"
+         href="$ctxPath/themes/base.css" />
+    <style type="text/css">
+    body {
+        background-color: #FFFFFF;
+        background-image: none;
+        color: #000000;
+        font-family: verdana, sans-serif;
+        font-size: small;
+    }
+    h3 {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+    #footer {
+        display: none;
+    }
+    th {
+        vertical-align: middle;
+        text-align: right;
+        padding-right: 5px;
+        font-size: 12px;
+    }
+    </style>
+    <!-- Edit your _css Page Template -->
+    <link rel="stylesheet" type="text/css"
+         href="${ctxPath}/page/${website.handle}/_css" />
+</head>
+<body>
+
+<div class="commentTitle">
+    $utilities.removeHTML($entry.title)
+</div>
+
+<div class="comments">
+#showComments($entry)
+#if($commentsEnabled && $website.allowComments && $entry.commentsStillAllowed)
+    #showCommentForm($entry)
+#else
+    $text.get("comments.disabled")
+#end
+</div>
+
+<div id="footer">       
+<a href="http://opensource.atlassian.com/projects/roller/">
+   <fmt:message key="footer.reportIssue" /></a> | 
+<a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide">
+   <fmt:message key="footer.userGuide" /></a> | 
+<a href="http://www.rollerweblogger.org/wiki/Wiki.jsp?page=RollerMacros">
+   <fmt:message key="footer.macros" /></a> | 
+<a href="http://sourceforge.net/mail/?group_id=47722">
+   <fmt:message key="footer.mailingLists" /></a>
+</div>      
+</div>  
+</body>
+</html>

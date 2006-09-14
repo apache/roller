@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.roller.business;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -26,7 +28,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.PlanetManager;
@@ -81,11 +82,11 @@ public class PlanetManagerTest extends TestCase {
             assertNotNull(config);
             assertEquals("test_title", config.getTitle());
             assertEquals("test_admin_email", config.getAdminEmail());
-            assertNull(config.getSiteUrl());
+            assertNull(config.getSiteURL());
         }
         {   // save config
             PlanetConfigData config = planet.getConfiguration();
-            config.setSiteUrl("http://footest/lskdf/null");
+            config.setSiteURL("http://footest/lskdf/null");
             planet.saveConfiguration(config);
             TestUtils.endSession(true);
         }
@@ -93,7 +94,7 @@ public class PlanetManagerTest extends TestCase {
             // make sure config was saved
             PlanetConfigData config = planet.getConfiguration();
             assertNotNull(config);
-            assertEquals("http://footest/lskdf/null", config.getSiteUrl());
+            assertEquals("http://footest/lskdf/null", config.getSiteURL());
         }
     }
     
@@ -134,7 +135,7 @@ public class PlanetManagerTest extends TestCase {
         
         {   // save subscription
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
-            sub.setFeedUrl("test_url");
+            sub.setFeedURL("test_url");
             planet.saveSubscription(sub);
             TestUtils.endSession(true);
         }
@@ -150,7 +151,7 @@ public class PlanetManagerTest extends TestCase {
             group.addSubscription(sub);
             
             PlanetSubscriptionData sub1 = new PlanetSubscriptionData();
-            sub1.setFeedUrl("test_url1");
+            sub1.setFeedURL("test_url1");
             planet.saveSubscription(sub1);
             
             List subs = new ArrayList();
@@ -193,7 +194,7 @@ public class PlanetManagerTest extends TestCase {
         
         {   // save subscription
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
-            sub.setFeedUrl("test_url");
+            sub.setFeedURL("test_url");
             planet.saveSubscription(sub);
             TestUtils.endSession(true);
         }
@@ -205,14 +206,14 @@ public class PlanetManagerTest extends TestCase {
             entry1.setPermalink("test_entry1");
             entry1.setCategoriesString("test,test2");
             entry1.setSubscription(sub);
-            entry1.setPublished(new Date());
+            entry1.setPubTime(new Timestamp(System.currentTimeMillis()));
             sub.addEntry(entry1);
             
             PlanetEntryData entry2 = new PlanetEntryData();
             entry2.setPermalink("test_entry2");
             entry2.setCategoriesString("test_cat1,test_cat2,test_cat3");
             entry2.setSubscription(sub);
-            entry2.setPublished(new Date());
+            entry2.setPubTime(new Timestamp(System.currentTimeMillis()));
             sub.addEntry(entry2);
             
             // save entries
@@ -232,7 +233,7 @@ public class PlanetManagerTest extends TestCase {
             entry3.setPermalink("test_entry3");
             entry3.setCategoriesString("test,test3");
             entry3.setSubscription(sub);
-            entry3.setPublished(new Date());
+            entry3.setPubTime(new Timestamp(System.currentTimeMillis()));
             planet.saveEntry(entry3);
             TestUtils.endSession(true);
             
@@ -278,7 +279,7 @@ public class PlanetManagerTest extends TestCase {
             planet.saveGroup(group);
             
             PlanetSubscriptionData sub = new PlanetSubscriptionData();
-            sub.setFeedUrl(feed_url1);
+            sub.setFeedURL(feed_url1);
             planet.saveSubscription(sub);
             
             group.addSubscription(sub);
@@ -300,6 +301,9 @@ public class PlanetManagerTest extends TestCase {
             TestUtils.endSession(true);
             
             assertTrue(entriesSize > 0);
+            
+            Object feed = planet.getSubscription(feed_url1);
+            assertNull(feed);
         }
     }
     
@@ -320,11 +324,11 @@ public class PlanetManagerTest extends TestCase {
                 planet.saveGroup(group);
                 
                 PlanetSubscriptionData sub1 = new PlanetSubscriptionData();
-                sub1.setFeedUrl(feed_url1);
+                sub1.setFeedURL(feed_url1);
                 planet.saveSubscription(sub1);
                 
                 PlanetSubscriptionData sub2 = new PlanetSubscriptionData();
-                sub2.setFeedUrl(feed_url2);
+                sub2.setFeedURL(feed_url2);
                 planet.saveSubscription(sub2);
                 
                 group.addSubscription(sub1);
@@ -351,10 +355,10 @@ public class PlanetManagerTest extends TestCase {
                 PlanetGroupData group = planet.getGroup("test_handle");
                 assertNotNull(group);
                 
-                List bigag = planet.getAggregation(group, 30);
+                List bigag = planet.getAggregation(group, null, null, 0, 30);
                 assertEquals(30, bigag.size());
                 
-                List littleag = planet.getAggregation(group, 10);
+                List littleag = planet.getAggregation(group, null, null, 0, 10);
                 assertEquals(10, littleag.size());
                 
                 planet.deleteGroup(group);
@@ -379,10 +383,10 @@ public class PlanetManagerTest extends TestCase {
             
             {
                 PlanetSubscriptionData sub1 = new PlanetSubscriptionData();
-                sub1.setFeedUrl(feed_url1);
+                sub1.setFeedURL(feed_url1);
                 planet.saveSubscription(sub1);
                 PlanetSubscriptionData sub2 = new PlanetSubscriptionData();
-                sub2.setFeedUrl(feed_url2);
+                sub2.setFeedURL(feed_url2);
                 planet.saveSubscription(sub2);
                 TestUtils.endSession(true);
                 

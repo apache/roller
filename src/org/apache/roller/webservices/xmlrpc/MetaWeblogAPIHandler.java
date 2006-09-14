@@ -1,38 +1,38 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.webservices.xmlrpc;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.util.RequestUtils;
-import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.FileManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
@@ -42,10 +42,11 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
-import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.util.RollerMessages;
+import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.Utilities;
-
+import org.apache.struts.util.RequestUtils;
+import org.apache.xmlrpc.XmlRpcException;
 
 /**
  * Roller XML-RPC Handler for the MetaWeblog API.
@@ -75,14 +76,13 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * @return
      */
     public Object getCategories(String blogid, String userid, String password)
-            throws Exception {
+    throws Exception {
         
         mLogger.debug("getCategories() Called =====[ SUPPORTED ]=====");
         mLogger.debug("     BlogId: " + blogid);
         mLogger.debug("     UserId: " + userid);
         
         WebsiteData website = validate(blogid, userid,password);
-        RollerRequest rreq = RollerRequest.getRollerRequest();
         Roller roller = RollerFactory.getRoller();
         try {
             Hashtable result = new Hashtable();
@@ -114,7 +114,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * @return
      */
     public boolean editPost(String postid, String userid, String password,
-                            Hashtable struct, int publish) throws Exception {
+            Hashtable struct, int publish) throws Exception {
         
         return editPost(postid, userid, password, struct, publish > 0);
     }
@@ -205,15 +205,15 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * @throws org.apache.xmlrpc.XmlRpcException
      * @return
      */
-    public String newPost(String blogid, String userid, String password, 
-                            Hashtable struct, int publish) throws Exception {
+    public String newPost(String blogid, String userid, String password,
+            Hashtable struct, int publish) throws Exception {
         
         return newPost(blogid, userid, password, struct, publish > 0);
     }
     
     
-    public String newPost(String blogid, String userid, String password, 
-                            Hashtable struct, boolean publish) throws Exception {
+    public String newPost(String blogid, String userid, String password,
+            Hashtable struct, boolean publish) throws Exception {
         
         mLogger.debug("newPost() Called ===========[ SUPPORTED ]=====");
         mLogger.debug("     BlogId: " + blogid);
@@ -225,11 +225,11 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Hashtable postcontent = struct;
         String description = (String)postcontent.get("description");
         String title = (String)postcontent.get("title");
-        if (Utilities.isEmpty(title) && Utilities.isEmpty(description)) {
+        if (StringUtils.isEmpty(title) && StringUtils.isEmpty(description)) {
             throw new XmlRpcException(
-              BLOGGERAPI_INCOMPLETE_POST, "Must specify title or description");
+                    BLOGGERAPI_INCOMPLETE_POST, "Must specify title or description");
         }
-        if (Utilities.isEmpty(title)) { 
+        if (StringUtils.isEmpty(title)) {
             title = Utilities.truncateNicely(description, 15, 15, "...");
         }
         
@@ -241,7 +241,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager weblogMgr = roller.getWeblogManager();
-            UserData user = roller.getUserManager().getUserByUsername(userid);
+            UserData user = roller.getUserManager().getUserByUserName(userid);
             Timestamp current =
                     new Timestamp(System.currentTimeMillis());
             
@@ -257,7 +257,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             } else {
                 entry.setStatus(WeblogEntryData.DRAFT);
             }
-                        
+            
             // MetaWeblog supports multiple cats, Roller supports one/entry
             // so here we take accept the first category that exists
             WeblogCategoryData rollerCat = null;
@@ -274,7 +274,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                     }
                 }
             }
-            if (rollerCat == null) { 
+            if (rollerCat == null) {
                 // or we fall back to the default Blogger API category
                 entry.setCategory(website.getBloggerCategory());
             }
@@ -308,7 +308,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * @throws Exception
      */
     public Object getPost(String postid, String userid, String password)
-            throws Exception {
+    throws Exception {
         
         mLogger.debug("getPost() Called =========[ SUPPORTED ]=====");
         mLogger.debug("     PostId: " + postid);
@@ -335,8 +335,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * allowed by the RollerConfig file-upload settings, then the file will be
      * placed in the user's upload diretory.
      */
-    public Object newMediaObject(String blogid, String userid, String password, 
-                                    Hashtable struct) throws Exception {
+    public Object newMediaObject(String blogid, String userid, String password,
+            Hashtable struct) throws Exception {
         
         mLogger.debug("newMediaObject() Called =[ SUPPORTED ]=====");
         mLogger.debug("     BlogId: " + blogid);
@@ -362,14 +362,10 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                 // Then save the file
                 fmgr.saveFile(website.getHandle(), name, type, bits.length, new ByteArrayInputStream(bits));
                 
-                RollerRequest rreq = RollerRequest.getRollerRequest();
-                HttpServletRequest request = rreq.getRequest();
-                
                 // TODO: build URL to uploaded file should be done in FileManager
                 String uploadPath = RollerFactory.getRoller().getFileManager().getUploadUrl();
                 uploadPath += "/" + website.getHandle() + "/" + name;
-                String fileLink = RequestUtils.printableURL(
-                        RequestUtils.absoluteURL(request, uploadPath));
+                String fileLink = URLUtilities.getWeblogResourceURL(website, name, true);
                 
                 Hashtable returnStruct = new Hashtable(1);
                 returnStruct.put("url", fileLink);
@@ -395,8 +391,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * @throws XmlRpcException
      * @return
      */
-    public Object getRecentPosts(String blogid, String userid, String password, 
-                                    int numposts) throws Exception {
+    public Object getRecentPosts(String blogid, String userid, String password,
+            int numposts) throws Exception {
         
         mLogger.debug("getRecentPosts() Called ===========[ SUPPORTED ]=====");
         mLogger.debug("     BlogId: " + blogid);
@@ -412,18 +408,19 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             WeblogManager weblogMgr = roller.getWeblogManager();
             if (website != null) {
                 List entries = weblogMgr.getWeblogEntries(
-                    website,           // website
-                    null,              // startDate
-                    null,              // endDate
-                    null,              // catName
-                    null,              // status
-                    "updateTime",      // sortby
-                    new Integer(numposts));  // maxEntries
+                        website,           // website
+                        null,
+                        null,              // startDate
+                        null,              // endDate
+                        null,              // catName
+                        null,              // status
+                        "updateTime",      // sortby
+                        null,                     0, numposts);
                 
                 Iterator iter = entries.iterator();
                 while (iter.hasNext()) {
-                     WeblogEntryData entry = (WeblogEntryData)iter.next();
-                     results.addElement(createPostStruct(entry, userid));
+                    WeblogEntryData entry = (WeblogEntryData)iter.next();
+                    results.addElement(createPostStruct(entry, userid));
                 }
             }
             return results;
@@ -438,11 +435,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     
     private Hashtable createPostStruct(WeblogEntryData entry, String userid) {
         
-        RollerRequest rreq = RollerRequest.getRollerRequest();
-        HttpServletRequest request = rreq.getRequest();
-        RollerContext rollerCtx = RollerContext.getRollerContext();
         String permalink =
-                rollerCtx.getAbsoluteContextUrl(request) + entry.getPermaLink();
+                RollerRuntimeConfig.getAbsoluteContextURL() + entry.getPermaLink();
         
         Hashtable struct = new Hashtable();
         struct.put("title", entry.getTitle());
@@ -469,19 +463,17 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     
     private Hashtable createCategoryStruct(WeblogCategoryData category, String userid) {
         
-        RollerRequest rreq = RollerRequest.getRollerRequest();
-        HttpServletRequest req = rreq.getRequest();
-        String contextUrl = RollerContext.getRollerContext().getAbsoluteContextUrl(req);
+        String contextUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         
         Hashtable struct = new Hashtable();
         struct.put("description", category.getPath());
         
         String catUrl = contextUrl+"/page/"+userid+"?catname="+category.getPath();
-        catUrl = Utilities.stringReplace(catUrl," ","%20");
+        catUrl = StringUtils.replace(catUrl," ","%20");
         struct.put("htmlUrl", catUrl);
         
         String rssUrl = contextUrl+"/rss/"+userid+"?catname="+category.getPath();
-        rssUrl = Utilities.stringReplace(catUrl," ","%20");
+        rssUrl = StringUtils.replace(catUrl," ","%20");
         struct.put("rssUrl",rssUrl);
         
         return struct;

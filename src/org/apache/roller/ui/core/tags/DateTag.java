@@ -80,7 +80,7 @@ public class DateTag extends TagSupport {
         
         // dispatch to view page
         try {
-            pageContext.include("/tags/date.jsp");
+            pageContext.include("/roller-ui/widgets/date.jsp");
         } catch (Exception e) {
             // can't handle this here
             throw new JspException("ERROR including date.jsp");

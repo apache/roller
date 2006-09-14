@@ -30,7 +30,7 @@
         <property name="hibernate.current_session_context_class">thread</property>
         
         
-        <!-- select SQL dialect, MySQL by default -->
+        <!-- select SQL dialect, MySQL 3.X or 4.X by default -->
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         <!--
         If you want to use HSQLDB, PostgreSQL, DB2 or Derby, Oracle, SQLServer then use the right dialect   
@@ -40,6 +40,9 @@
         <property name="dialect">org.hibernate.dialect.DerbyDialect</property>
         <property name="dialect">org.hibernate.dialect.Oracle9Dialect</property>
         <property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
+
+        For MySQL 5.X, use the MySQL5 dialect and J/Connector 3.1.X
+        <property name="dialect">org.hibernate.dialect.MySQL5Dialect</property>
         -->
 
         <!--

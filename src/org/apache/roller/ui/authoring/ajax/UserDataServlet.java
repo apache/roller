@@ -46,7 +46,7 @@ import org.apache.roller.pojos.UserData;
  *     usernameN, emailaddressN <br/>
  * 
  * @web.servlet name="UserDataServlet" 
- * @web.servlet-mapping url-pattern="/editor/userdata/*"
+ * @web.servlet-mapping url-pattern="/roller-ui/authoring/userdata/*"
  * @author David M Johnson
  */
 public class UserDataServlet extends HttpServlet {
@@ -69,7 +69,7 @@ public class UserDataServlet extends HttpServlet {
         try {
             UserManager umgr = roller.getUserManager();
             List users = 
-             umgr.getUsersStartingWith(startsWith, offset, length, enabledOnly);
+             umgr.getUsersStartingWith(startsWith, enabledOnly, offset, length);
             Iterator userIter = users.iterator();
             while (userIter.hasNext()) {
                 UserData user = (UserData)userIter.next();

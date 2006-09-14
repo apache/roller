@@ -36,6 +36,7 @@ public class UserFormEx extends UserForm
     private String mPasswordText = null;
     private String mPasswordConfirm = null;
     private boolean adminCreated = false;
+    private boolean dataFromSSO = false;
 
 	public UserFormEx()
 	{
@@ -141,5 +142,15 @@ public class UserFormEx extends UserForm
     public boolean getAdminCreated() {
         return adminCreated;
     }
+    
+    /** True if user data originally came from SSO */
+    public void setDataFromSSO(boolean b) {
+      dataFromSSO = b;
+    }
+    
+    /** True if user data originally came from SSO */
+    public boolean getDataFromSSO() {
+        return dataFromSSO;
+    }    
 }
 

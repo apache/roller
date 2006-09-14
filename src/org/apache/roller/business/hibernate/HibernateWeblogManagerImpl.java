@@ -1,45 +1,24 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * Created on Jun 16, 2004
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
+
 package org.apache.roller.business.hibernate;
 
 import java.text.SimpleDateFormat;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Order;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.Assoc;
-import org.apache.roller.pojos.CommentData;
-import org.apache.roller.pojos.RefererData;
-import org.apache.roller.pojos.WeblogCategoryAssoc;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -51,11 +30,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.collections.comparators.ReverseComparator;
-import org.hibernate.Query;
-import org.hibernate.criterion.MatchMode;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
+import org.apache.roller.model.Roller;
+import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.Assoc;
+import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.RefererData;
+import org.apache.roller.pojos.StatCount;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogCategoryAssoc;
+import org.apache.roller.pojos.WeblogCategoryData;
+import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.DateUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.util.Utilities;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 
 
 /**
@@ -290,12 +291,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public List getNextPrevEntries(
-            WeblogEntryData current, String catName, int maxEntries, boolean next)
+    public List getNextPrevEntries(WeblogEntryData current, String catName, 
+                                   String locale, int maxEntries, boolean next)
             throws RollerException {
-        if (catName != null && catName.trim().equals("/")) {
-            catName = null;
-        }
+        
         Junction conjunction = Expression.conjunction();
         conjunction.add(Expression.eq("website", current.getWebsite()));
         conjunction.add(Expression.eq("status", WeblogEntryData.PUBLISHED));
@@ -306,7 +305,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             conjunction.add(Expression.lt("pubTime", current.getPubTime()));
         }
         
-        if (catName != null) {
+        if (catName != null && !catName.trim().equals("/")) {
             WeblogCategoryData category =
                     getWeblogCategoryByPath(current.getWebsite(), null, catName);
             if (category != null) {
@@ -314,6 +313,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             } else {
                 throw new RollerException("Cannot find category: "+catName);
             }
+        }
+        
+        if(locale != null) {
+            conjunction.add(Expression.ilike("locale", locale, MatchMode.START));
         }
         
         try {
@@ -394,12 +397,16 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     public List getWeblogEntries(
             WebsiteData website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            String  status,
-            String  sortby,
-            Integer maxEntries) throws RollerException {
+            UserData    user,
+            Date        startDate,
+            Date        endDate,
+            String      catName,
+            String      status,
+            String      sortby,
+            String      locale,
+            int         offset,
+            int         length) throws RollerException {
+        
         WeblogCategoryData cat = null;
         if (StringUtils.isNotEmpty(catName) && website != null) {
             cat = getWeblogCategoryByPath(website, catName);
@@ -420,6 +427,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 criteria.add(Expression.eq("w.enabled", Boolean.TRUE));
             }
             
+            if (user != null) {
+                criteria.add(Expression.eq("creator", user));
+            }
+
             if (startDate != null) {
                 criteria.add(
                         Expression.ge("pubTime", startDate));
@@ -438,16 +449,24 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 criteria.add(Expression.eq("status", status));
             }
             
+            if (locale != null) {
+                criteria.add(Expression.ilike("locale", locale, MatchMode.START));
+            }
+            
             if (sortby != null && sortby.equals("updateTime")) {
                 criteria.addOrder(Order.desc("updateTime"));
             } else {
                 criteria.addOrder(Order.desc("pubTime"));
             }
             
-            if (maxEntries != null) {
-                criteria.setMaxResults(maxEntries.intValue());
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != -1) {
+                criteria.setMaxResults(length);
             }
             return criteria.list();
+            
         } catch (HibernateException e) {
             log.error(e);
             throw new RollerException(e);
@@ -564,9 +583,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throw new RollerException(e);
         }
     }
-    
-    
-    
+        
     public List getWeblogEntries(WeblogCategoryData cat, boolean subcats)
     throws RollerException {
         try {
@@ -607,9 +624,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throw new RollerException(e);
         }
     }
-    
-    
-    
+        
     public String createAnchor(WeblogEntryData entry) throws RollerException {
         try {
             // Check for uniqueness of anchor
@@ -914,47 +929,17 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         // The category did not match and neither did any sub-categories
         return null;
     }
-    
-    
+        
     public CommentData getComment(String id) throws RollerException {
         return (CommentData) this.strategy.load(id, CommentData.class);
     }
-    
-    
+        
     public WeblogEntryData getWeblogEntry(String id)
     throws RollerException {
         return (WeblogEntryData) this.strategy.load(
                 id, WeblogEntryData.class);
     }
-    
-    
-    public List getWeblogEntries(
-            WebsiteData website,
-            Date    startDate,
-            Date    endDate,
-            String  catName,
-            String  status,
-            String  sortby,
-            int     offset,
-            int     range) throws RollerException {
-        List filtered = new ArrayList();
-        List entries = getWeblogEntries(
-                website,
-                startDate,
-                endDate,
-                catName,
-                status,
-                sortby,
-                new Integer(offset + range));
-        if (entries.size() < offset) {
-            return entries;
-        }
-        for (int i=offset; i<entries.size(); i++) {
-            filtered.add(entries.get(i));
-        }
-        return filtered;
-    }
-    
+            
     /**
      * Gets the Date of the latest Entry publish time, before the end of today,
      * for all WeblogEntries
@@ -970,15 +955,19 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    endDate,
             String  catName,
             String  status,
-            Integer maxEntries) throws RollerException {
+            String  locale,
+            int     offset,
+            int     length) throws RollerException {
         return getWeblogEntryMap(
-                website,
-                startDate,
-                endDate,
-                catName,
-                status,
-                maxEntries,
-                false);
+            website,
+            startDate,
+            endDate,
+            catName,
+            status,
+            false,
+            locale,
+            offset,
+            length);
     }
     
     public Map getWeblogEntryStringMap(
@@ -987,15 +976,21 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    endDate,
             String  catName,
             String  status,
-            Integer maxEntries) throws RollerException {
+            String  locale,
+            int     offset,
+            int     length
+            ) throws RollerException {
         return getWeblogEntryMap(
-                website,
-                startDate,
-                endDate,
-                catName,
-                status,
-                maxEntries,
-                true);
+            website,
+            startDate,
+            endDate,
+            catName,
+            status,
+            true,
+            locale,
+            offset,
+            length
+            );
     }
     
     private Map getWeblogEntryMap(
@@ -1004,18 +999,24 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    endDate,
             String  catName,
             String  status,
-            Integer maxEntries,
-            boolean stringsOnly) throws RollerException {
+            boolean stringsOnly,
+            String  locale,
+            int     offset,
+            int     length
+            ) throws RollerException {
+        
         TreeMap map = new TreeMap(reverseComparator);
         
         List entries = getWeblogEntries(
-                website,
-                startDate,
-                endDate,
-                catName,
-                status,
-                null,
-                maxEntries);
+            website,                 
+            null,
+            startDate,
+            endDate,
+            catName,
+            status,
+            null,
+locale,             offset,
+            length);
         
         Calendar cal = Calendar.getInstance();
         if (website != null) {
@@ -1040,46 +1041,108 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         return map;
     }
     
-    public List getNextEntries(
-            WeblogEntryData current, String catName, int maxEntries)
+    public List getMostCommentedWeblogEntries(
+            WebsiteData website, Date startDate, Date endDate, int offset, int length) 
             throws RollerException {
-        return getNextPrevEntries(current, catName, maxEntries, true);
+        // TODO: ATLAS getMostCommentedWeblogEntries DONE
+        String msg = "Getting most commented weblog entres";
+        if (endDate == null) endDate = new Date();
+        try {      
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();            
+            Query query = null;
+            if (website != null) {
+                StringBuffer sb = new StringBuffer();
+                sb.append("select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title from CommentData c ");
+                sb.append("where c.weblogEntry.website=:website and c.weblogEntry.pubTime < :endDate ");
+                if (startDate != null) {
+                    sb.append("and c.weblogEntry.pubTime > :startDate ");
+                }                   
+                sb.append("group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("order by col_0_0_ desc");
+                query = session.createQuery(sb.toString());
+                query.setParameter("website", website);
+                query.setParameter("endDate", endDate);
+                if (startDate != null) {
+                    query.setParameter("startDate", startDate);
+                }   
+            } else {
+                StringBuffer sb = new StringBuffer();
+                sb.append("select count(distinct c), c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("from CommentData c group by c.weblogEntry.id, c.weblogEntry.anchor, c.weblogEntry.title ");
+                sb.append("where c.weblogEntry.pubTime < :endDate ");
+                if (startDate != null) {
+                    sb.append("and c.weblogEntry.pubTime > :startDate ");
+                } 
+                sb.append("order by col_0_0_ desc");
+                query = session.createQuery(sb.toString());
+                if (startDate != null) {
+                    query.setParameter("startDate", startDate);
+                }   
+            }
+            if (offset != 0) {
+                query.setFirstResult(offset);
+            }
+            if (length != -1) {
+                query.setMaxResults(length);
+            }
+            List results = new ArrayList();
+            for (Iterator iter = query.list().iterator(); iter.hasNext();) {
+                Object[] row = (Object[]) iter.next();
+                results.add(new StatCount(
+                    (String)row[1], 
+                    (String)row[2], 
+                    (String)row[3], 
+                    "statCount.weblogEntryCommentCountType", 
+                    new Long(((Integer)row[0]).intValue()).longValue()));
+            }
+            return results;
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
     }
     
-    public List getPreviousEntries(
-            WeblogEntryData current, String catName, int maxEntries)
+    
+    public List getNextEntries(WeblogEntryData current, String catName, 
+                               String locale, int maxEntries)
             throws RollerException {
-        return getNextPrevEntries(current, catName, maxEntries, false);
+        
+        return getNextPrevEntries(current, catName, locale, maxEntries, true);
     }
     
-    public WeblogEntryData getNextEntry(WeblogEntryData current, String catName)
-    throws RollerException {
+    
+    public List getPreviousEntries(WeblogEntryData current, String catName, 
+                                   String locale, int maxEntries)
+            throws RollerException {
+        
+        return getNextPrevEntries(current, catName, locale, maxEntries, false);
+    }
+    
+    
+    public WeblogEntryData getNextEntry(WeblogEntryData current, String catName,
+                                        String locale)
+            throws RollerException {
+        
         WeblogEntryData entry = null;
-        List entryList = getNextEntries(current, catName, 1);
+        List entryList = getNextEntries(current, catName, locale, 1);
         if (entryList != null && entryList.size() > 0) {
             entry = (WeblogEntryData)entryList.get(0);
         }
         return entry;
     }
     
-    public WeblogEntryData getPreviousEntry(WeblogEntryData current, String catName)
-    throws RollerException {
+    
+    public WeblogEntryData getPreviousEntry(WeblogEntryData current, String catName,
+                                            String locale)
+            throws RollerException {
+        
         WeblogEntryData entry = null;
-        List entryList = getPreviousEntries(current, catName, 1);
+        List entryList = getPreviousEntries(current, catName, locale, 1);
         if (entryList != null && entryList.size() > 0) {
             entry = (WeblogEntryData)entryList.get(0);
         }
         return entry;
-    }
-    
-    /**
-     * Get absolute URL to this website.
-     * @return Absolute URL to this website.
-     */
-    public String getUrl(WebsiteData site, String contextUrl) {
-        String url =
-                Utilities.escapeHTML(contextUrl + "/page/" + site.getHandle());
-        return url;
     }
     
     
@@ -1109,4 +1172,5 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             log.error("EXCEPTION applying comment defaults",e);
         }
     }     
+
 }

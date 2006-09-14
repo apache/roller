@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.ui.authoring.struts.actions;
 
@@ -25,11 +25,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -53,20 +51,20 @@ import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.UploadFileForm;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.RollerMessages;
+import org.apache.roller.util.URLUtilities;
 
 
-/////////////////////////////////////////////////////////////////////////////
 /**
- * @struts.action name="uploadFiles" path="/editor/uploadFiles"
+ * @struts.action name="uploadFiles" path="/roller-ui/authoring/uploadFiles"
  *  	parameter="method" scope="request" validate="false"
  *
  * @struts.action-forward name="uploadFiles.page" path=".upload-file"
  */
 public final class UploadFileFormAction extends DispatchAction {
-    private static final String HANDLE = "fileupload.website.handle";
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(UploadFileFormAction.class);
+    
+    private static Log mLogger = LogFactory.getLog(UploadFileFormAction.class);
     
     /**
      * Display upload file page.
@@ -84,14 +82,15 @@ public final class UploadFileFormAction extends DispatchAction {
         
         if (rses.isUserAuthorizedToAuthor(website)) {
             UploadFilePageModel pageModel = new UploadFilePageModel(
-                request, response, mapping, website.getHandle());
+                    request, response, mapping, website);
             pageModel.setWebsite(website);
             request.setAttribute("model", pageModel);
             fwd = mapping.findForward("uploadFiles.page");
-        }        
+        }
         return fwd;
     }
-
+    
+    
     /**
      * Request to upload files
      */
@@ -102,7 +101,7 @@ public final class UploadFileFormAction extends DispatchAction {
             HttpServletResponse response)
             throws Exception {
         
-        ActionForward fwd = mapping.findForward("access-denied"); 
+        ActionForward fwd = mapping.findForward("access-denied");
         WebsiteData website = getWebsite(request);
         RollerMessages rollerMessages = new RollerMessages();
         RollerSession rses = RollerSession.getRollerSession(request);
@@ -117,31 +116,31 @@ public final class UploadFileFormAction extends DispatchAction {
             UploadFileForm theForm = (UploadFileForm)actionForm;
             if (theForm.getUploadedFiles().length > 0) {
                 ServletContext app = servlet.getServletConfig().getServletContext();
-
+                
                 boolean uploadEnabled =
                         RollerRuntimeConfig.getBooleanProperty("uploads.enabled");
-
+                
                 if ( !uploadEnabled ) {
                     errors.add(ActionErrors.GLOBAL_ERROR,
                             new ActionError("error.upload.disabled", ""));
                     saveErrors(request, errors);
                     return fwd;
                 }
-
+                
                 //this line is here for when the input page is upload-utf8.jsp,
                 //it sets the correct character encoding for the response
                 String encoding = request.getCharacterEncoding();
                 if ((encoding != null) && (encoding.equalsIgnoreCase("utf-8"))) {
                     response.setContentType("text/html; charset=utf-8");
                 }
-
+                
                 //retrieve the file representation
                 FormFile[] files = theForm.getUploadedFiles();
                 int fileSize = 0;
                 try {
                     for (int i=0; i<files.length; i++) {
                         if (files[i] == null) continue;
-
+                        
                         // retrieve the file name
                         String fileName= files[i].getFileName();
                         int terminated = fileName.indexOf("\000");
@@ -149,15 +148,15 @@ public final class UploadFileFormAction extends DispatchAction {
                             // disallow sneaky null terminated strings
                             fileName = fileName.substring(0, terminated).trim();
                         }
-
+                        
                         fileSize = files[i].getFileSize();
-
+                        
                         //retrieve the file data
-                        if (fmgr.canSave(website.getHandle(), fileName, 
+                        if (fmgr.canSave(website.getHandle(), fileName,
                                 files[i].getContentType(), fileSize, rollerMessages)) {
                             InputStream stream = files[i].getInputStream();
-                            fmgr.saveFile(website.getHandle(), fileName, 
-                                files[i].getContentType(), fileSize, stream);
+                            fmgr.saveFile(website.getHandle(), fileName,
+                                    files[i].getContentType(), fileSize, stream);
                             lastUploads.add(fileName);
                         }
                         
@@ -166,40 +165,43 @@ public final class UploadFileFormAction extends DispatchAction {
                     }
                 } catch (Exception e) {
                     errors.add(ActionErrors.GLOBAL_ERROR,
-                        new ActionError("error.upload.file",e.toString()));
+                            new ActionError("error.upload.file",e.toString()));
+                    mLogger.error("Error saving uploaded file", e);
                 }
-            }        
+            }
+            
             UploadFilePageModel pageModel = new UploadFilePageModel(
-                request, response, mapping, website.getHandle(), lastUploads);
+                    request, response, mapping, website, lastUploads);
             request.setAttribute("model", pageModel);
             pageModel.setWebsite(website);
             
             RollerContext rctx = RollerContext.getRollerContext();
-		    String baseURL = rctx.getAbsoluteContextUrl(request);
+            String baseURL = RollerRuntimeConfig.getAbsoluteContextURL();
             String resourcesBaseURL = baseURL + fmgr.getUploadUrl() + "/" + website.getHandle();
             Iterator uploads = lastUploads.iterator();
             if (uploads.hasNext()) {
-                messages.add(ActionMessages.GLOBAL_MESSAGE, 
-                    new ActionMessage("uploadFiles.uploadedFiles"));
+                messages.add(ActionMessages.GLOBAL_MESSAGE,
+                        new ActionMessage("uploadFiles.uploadedFiles"));
             }
-            while (uploads.hasNext()) {                
-                messages.add(ActionMessages.GLOBAL_MESSAGE, 
-                    new ActionMessage("uploadFiles.uploadedFile", 
-                        resourcesBaseURL + "/" + (String)uploads.next()));
+            while (uploads.hasNext()) {
+                messages.add(ActionMessages.GLOBAL_MESSAGE,
+                        new ActionMessage("uploadFiles.uploadedFile",
+                        URLUtilities.getWeblogResourceURL(website, (String)uploads.next(), true)));
             }
             saveMessages(request, messages);
-
+            
             Iterator iter = rollerMessages.getErrors();
             while (iter.hasNext()) {
                 RollerMessages.RollerMessage error =
-                    (RollerMessages.RollerMessage)iter.next();
+                        (RollerMessages.RollerMessage)iter.next();
                 errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError(error.getKey(), error.getArgs()));
+                        new ActionError(error.getKey(), error.getArgs()));
             }
             saveErrors(request, errors);
         }
         return fwd;
     }
+    
     
     /**
      * Request to delete files
@@ -210,23 +212,23 @@ public final class UploadFileFormAction extends DispatchAction {
             HttpServletRequest  request,
             HttpServletResponse response)
             throws Exception {
-
+        
         ActionMessages messages = new ActionMessages();
         ActionErrors errors = new ActionErrors();
         UploadFileForm theForm = (UploadFileForm)actionForm;
-        ActionForward fwd = mapping.findForward("access-denied");        
+        ActionForward fwd = mapping.findForward("access-denied");
         WebsiteData website = getWebsite(request);
-
+        
         int count = 0;
         RollerSession rses = RollerSession.getRollerSession(request);
         if (rses.isUserAuthorizedToAuthor(website)) {
-            fwd = mapping.findForward("uploadFiles.page"); 
+            fwd = mapping.findForward("uploadFiles.page");
             try {
                 FileManager fmgr = RollerFactory.getRoller().getFileManager();
                 String[] deleteFiles = theForm.getDeleteFiles();
                 for (int i=0; i<deleteFiles.length; i++) {
                     if (    deleteFiles[i].trim().startsWith("/")
-                    || deleteFiles[i].trim().startsWith("\\") 
+                    || deleteFiles[i].trim().startsWith("\\")
                     || deleteFiles[i].indexOf("..") != -1) {
                         // ignore absolute paths, or paths that contiain '..'
                     } else {
@@ -240,18 +242,19 @@ public final class UploadFileFormAction extends DispatchAction {
                 saveErrors(request,errors);
             }
             
-            messages.add(ActionMessages.GLOBAL_MESSAGE, 
-                new ActionMessage("uploadFiles.deletedFiles", new Integer(count)));
+            messages.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("uploadFiles.deletedFiles", new Integer(count)));
             saveMessages(request, messages);
             
             UploadFilePageModel pageModel = new UploadFilePageModel(
-                request, response, mapping, website.getHandle());
+                    request, response, mapping, website);
             pageModel.setWebsite(website);
             request.setAttribute("model", pageModel);
         }
         return fwd;
     }
-        
+    
+    
     /**
      * Other actions can get the website handle from request params, but
      * request params don't come accross in a file-upload post so we have to
@@ -261,9 +264,9 @@ public final class UploadFileFormAction extends DispatchAction {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WebsiteData website = rreq.getWebsite();
         if (website != null) {
-            request.getSession().setAttribute(HANDLE, website.getHandle());
+            request.getSession().setAttribute(RequestConstants.WEBLOG_SESSION_STASH, website.getHandle());
         } else {
-            String handle = (String)request.getSession().getAttribute(HANDLE);
+            String handle = (String)request.getSession().getAttribute(RequestConstants.WEBLOG_SESSION_STASH);
             Roller roller = RollerFactory.getRoller();
             website = roller.getUserManager().getWebsiteByHandle(handle);
         }
@@ -283,18 +286,18 @@ public final class UploadFileFormAction extends DispatchAction {
         private List lastUploads = null;
         
         public UploadFilePageModel(
-                HttpServletRequest req, 
-                HttpServletResponse res, 
+                HttpServletRequest req,
+                HttpServletResponse res,
                 ActionMapping mapping,
-                String weblogHandle) throws RollerException {
-            this(req, res, mapping, weblogHandle, null);
+                WebsiteData weblog) throws RollerException {
+            this(req, res, mapping, weblog, null);
         }
-       
+        
         public UploadFilePageModel(
-                HttpServletRequest req, 
-                HttpServletResponse res, 
+                HttpServletRequest req,
+                HttpServletResponse res,
                 ActionMapping mapping,
-                String weblogHandle,
+                WebsiteData weblog,
                 List lastUploads) throws RollerException {
             
             super("uploadFiles.title", req, res, mapping);
@@ -304,18 +307,18 @@ public final class UploadFileFormAction extends DispatchAction {
             FileManager fmgr = roller.getFileManager();
             
             String dir = fmgr.getUploadDir();
-            resourcesBaseURL = getBaseURL() + fmgr.getUploadUrl() + "/" + weblogHandle;
+            resourcesBaseURL = URLUtilities.getWeblogResourceURL(weblog, "", false);
             
             RollerRequest rreq = RollerRequest.getRollerRequest(req);
-            WebsiteData website = UploadFileFormAction.getWebsite(req);            
+            WebsiteData website = UploadFileFormAction.getWebsite(req);
             maxDirMB = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
             maxFileMB = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
-                     
-            overQuota = fmgr.overQuota(weblogHandle);
-            uploadEnabled = RollerRuntimeConfig.getBooleanProperty("uploads.enabled");  
+            
+            overQuota = fmgr.overQuota(weblog.getHandle());
+            uploadEnabled = RollerRuntimeConfig.getBooleanProperty("uploads.enabled");
             
             files = new ArrayList();
-            File[] rawFiles = fmgr.getFiles(weblogHandle);
+            File[] rawFiles = fmgr.getFiles(weblog.getHandle());
             for (int i=0; i<rawFiles.length; i++) {
                 files.add(new FileBean(rawFiles[i]));
                 totalSize += rawFiles[i].length();
@@ -348,9 +351,10 @@ public final class UploadFileFormAction extends DispatchAction {
         }
     }
     
-    /** 
-     * If java.io.File followed bean conventions we wouldn't need this. (perhaps 
-     * we shouldn't be using files directly here in the presentation layer) 
+    
+    /**
+     * If java.io.File followed bean conventions we wouldn't need this. (perhaps
+     * we shouldn't be using files directly here in the presentation layer)
      */
     public class FileBean {
         private File file;
@@ -360,6 +364,7 @@ public final class UploadFileFormAction extends DispatchAction {
         public String getName() { return file.getName(); }
         public long getLength() { return file.length(); }
     }
+    
     
     public class FileBeanNameComparator implements Comparator {
         public int compare(Object o1, Object o2) {
@@ -373,11 +378,5 @@ public final class UploadFileFormAction extends DispatchAction {
             return fb1.getName().equals(fb2.getName());
         }
     }
+    
 }
-
-
-
-
-
-
-

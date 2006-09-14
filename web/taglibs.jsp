@@ -39,11 +39,10 @@
 <%@ page import="org.apache.roller.config.RollerRuntimeConfig" %>
 <%@ page import="org.apache.roller.config.RollerConfig" %>
 
-<%@ page import="org.apache.roller.ui.core.RollerRequest" %>
+<%@ page import="org.apache.roller.ui.core.RequestConstants" %>
 <%@ page import="org.apache.roller.ui.core.BasePageModel" %>
 <%@ page import="org.apache.roller.ui.core.RollerContext" %>
 <%@ page import="org.apache.roller.ui.core.RollerSession" %>
-<%@ page import="org.apache.roller.ui.core.LanguageUtil" %>
 
 <%   
 // see if we have an authenticated user so we can set the display locale
@@ -56,8 +55,7 @@ if(rSession != null) {
 if(mUser != null) {
     request.setAttribute("mLocale", mUser.getLocale());
 } else {
-    request.setAttribute("mLocale", 
-            LanguageUtil.getViewLocale(request).getDisplayName());
+    request.setAttribute("mLocale", request.getLocale());
 }
 %>
 <fmt:setLocale value="${mLocale}" />

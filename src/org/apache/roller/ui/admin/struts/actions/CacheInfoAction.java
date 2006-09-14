@@ -43,7 +43,7 @@ import org.apache.roller.util.cache.CacheManager;
 /**
  * Struts Action class which handles requests to the System Info page.
  *
- * @struts.action path="/admin/cacheInfo" scope="request" parameter="method"
+ * @struts.action path="/roller-ui/admin/cacheInfo" scope="request" parameter="method"
  *
  * @struts.action-forward name="cacheInfo.page" path=".cacheInfo"
  *

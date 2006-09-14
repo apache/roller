@@ -1,30 +1,32 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * Created on Jun 16, 2004
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
+/* Created on Jun 16, 2004 */
 package org.apache.roller.business.hibernate;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import org.apache.roller.pojos.StatCount;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -54,17 +56,15 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-
+import org.hibernate.Query;
 
 /**
  * Hibernate implementation of the UserManager.
  */
 public class HibernateUserManagerImpl implements UserManager {
     
-    static final long serialVersionUID = -5128460637997081121L;
-    
-    private static Log log = LogFactory.getLog(HibernateUserManagerImpl.class);
-    
+    static final long serialVersionUID = -5128460637997081121L;    
+    private static Log log = LogFactory.getLog(HibernateUserManagerImpl.class);    
     private HibernatePersistenceStrategy strategy = null;
     
     // cached mapping of weblogHandles -> weblogIds
@@ -72,17 +72,13 @@ public class HibernateUserManagerImpl implements UserManager {
     
     // cached mapping of userNames -> userIds
     private Map userNameToIdMap = new Hashtable();
-    
-    
-    /**
-     * @param strategy
-     */
+        
     public HibernateUserManagerImpl(HibernatePersistenceStrategy strat) {
         log.debug("Instantiating Hibernate User Manager");
         
         this.strategy = strat;
     }
-   
+    
     /**
      * Update existing website.
      */
@@ -90,7 +86,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         website.setLastModified(new java.util.Date());
         strategy.store(website);
-    }    
+    }
     
     public void removeWebsite(WebsiteData weblog) throws RollerException {
         
@@ -101,15 +97,13 @@ public class HibernateUserManagerImpl implements UserManager {
         // remove entry from cache mapping
         this.weblogHandleToIdMap.remove(weblog.getHandle());
     }
-    
-
+        
     /**
      * convenience method for removing contents of a weblog.
-     *
      * TODO BACKEND: use manager methods instead of queries here
      */
-    private void removeWebsiteContents(WebsiteData website) 
-            throws HibernateException, RollerException {
+    private void removeWebsiteContents(WebsiteData website)
+    throws HibernateException, RollerException {
         
         Session session = this.strategy.getSession();
         
@@ -156,7 +150,7 @@ public class HibernateUserManagerImpl implements UserManager {
             this.strategy.remove(referer);
         }
         
-                
+        
         // remove associated pages
         Criteria pageQuery = session.createCriteria(WeblogTemplate.class);
         pageQuery.add(Expression.eq("website", website));
@@ -187,31 +181,26 @@ public class HibernateUserManagerImpl implements UserManager {
         }
         
     }
-    
-    
+        
     public void saveUser(UserData data) throws RollerException {
         this.strategy.store(data);
     }
-    
-    
+        
     public void removeUser(UserData user) throws RollerException {
         this.strategy.remove(user);
         
         // remove entry from cache mapping
         this.userNameToIdMap.remove(user.getUserName());
     }
-    
-    
+        
     public void savePermissions(PermissionsData perms) throws RollerException {
         this.strategy.store(perms);
     }
-    
-    
+        
     public void removePermissions(PermissionsData perms) throws RollerException {
         this.strategy.remove(perms);
     }
-    
-    
+        
     /**
      * @see org.apache.roller.model.UserManager#storePage(org.apache.roller.pojos.WeblogTemplate)
      */
@@ -221,13 +210,11 @@ public class HibernateUserManagerImpl implements UserManager {
         // update weblog last modified date.  date updated by saveWebsite()
         RollerFactory.getRoller().getUserManager().saveWebsite(page.getWebsite());
     }
-    
-    
+        
     public void removePage(WeblogTemplate page) throws RollerException {
         this.strategy.remove(page);
     }
-    
-    
+        
     public void addUser(UserData newUser) throws RollerException {
         
         if(newUser == null)
@@ -235,14 +222,14 @@ public class HibernateUserManagerImpl implements UserManager {
         
         // TODO BACKEND: we must do this in a better fashion, like getUserCnt()?
         boolean adminUser = false;
-        List existingUsers = this.getUsers();
+        List existingUsers = this.getUsers(0, 1);
         if(existingUsers.size() == 0) {
             // Make first user an admin
             adminUser = true;
         }
         
-        if(getUserByUsername(newUser.getUserName()) != null ||
-                getUserByUsername(newUser.getUserName().toLowerCase()) != null) {
+        if(getUserByUserName(newUser.getUserName()) != null ||
+                getUserByUserName(newUser.getUserName().toLowerCase()) != null) {
             throw new RollerException("error.add.user.userNameInUse");
         }
         
@@ -253,15 +240,13 @@ public class HibernateUserManagerImpl implements UserManager {
         
         this.strategy.store(newUser);
     }
-    
-    
+        
     public void addWebsite(WebsiteData newWeblog) throws RollerException {
         
         this.strategy.store(newWeblog);
         this.addWeblogContents(newWeblog);
     }
-    
-    
+        
     private void addWeblogContents(WebsiteData newWeblog) throws RollerException {
         
         UserManager umgr = RollerFactory.getRoller().getUserManager();
@@ -286,17 +271,17 @@ public class HibernateUserManagerImpl implements UserManager {
         this.strategy.store(rootCat);
         
         String cats = RollerConfig.getProperty("newuser.categories");
-        WeblogCategoryData firstCat = rootCat; 
+        WeblogCategoryData firstCat = rootCat;
         if (cats != null) {
             String[] splitcats = cats.split(",");
             for (int i=0; i<splitcats.length; i++) {
                 WeblogCategoryData c = new WeblogCategoryData(
-                    null,            // id
-                    newWeblog,       // newWeblog
-                    rootCat,         // parent
-                    splitcats[i],    // name
-                    splitcats[i],    // description
-                    null );          // image
+                        null,            // id
+                        newWeblog,       // newWeblog
+                        rootCat,         // parent
+                        splitcats[i],    // name
+                        splitcats[i],    // description
+                        null );          // image
                 if (i == 0) firstCat = c;
                 this.strategy.store(c);
             }
@@ -306,7 +291,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         // But default category for weblog itself should be  root
         newWeblog.setDefaultCategory(rootCat);
-
+        
         this.strategy.store(newWeblog);
         
         // add default bookmarks
@@ -350,11 +335,9 @@ public class HibernateUserManagerImpl implements UserManager {
             }
         }
     }
-    
-    
+        
     /**
      * Creates and stores a pending PermissionsData for user and website specified.
-     *
      * TODO BACKEND: do we really need this?  can't we just use storePermissions()?
      */
     public PermissionsData inviteUser(WebsiteData website,
@@ -371,8 +354,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         return perms;
     }
-    
-    
+        
     /**
      * Remove user permissions from a website.
      *
@@ -397,23 +379,20 @@ public class HibernateUserManagerImpl implements UserManager {
         website.removePermission(target);
         this.strategy.remove(target);
     }
-    
-    
+        
     public WebsiteData getWebsite(String id) throws RollerException {
         return (WebsiteData) this.strategy.load(id,WebsiteData.class);
     }
-    
-    
+        
     public WebsiteData getWebsiteByHandle(String handle) throws RollerException {
         return getWebsiteByHandle(handle, Boolean.TRUE);
     }
-    
-    
+        
     /**
      * Return website specified by handle.
      */
     public WebsiteData getWebsiteByHandle(String handle, Boolean enabled)
-            throws RollerException {
+    throws RollerException {
         
         if (handle==null )
             throw new RollerException("Handle cannot be null");
@@ -464,13 +443,16 @@ public class HibernateUserManagerImpl implements UserManager {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     /**
      * Get websites of a user
      */
-    public List getWebsites(UserData user, Boolean enabled, Boolean active)  throws RollerException {
-        
+    public List getWebsites(
+        UserData user, Boolean enabled, Boolean active, 
+        Date startDate, Date endDate, int offset, int length)  
+        throws RollerException {
+        // TODO: ATLAS getWebsites DONE TESTED
+        if (endDate == null) endDate = new Date();
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
@@ -478,32 +460,39 @@ public class HibernateUserManagerImpl implements UserManager {
                 criteria.createAlias("permissions","permissions");
                 criteria.add(Expression.eq("permissions.user", user));
                 criteria.add(Expression.eq("permissions.pending", Boolean.FALSE));
-            }
+            }            criteria.add(Expression.lt("dateCreated", endDate));
+            if (startDate != null) {
+                criteria.add(Expression.gt("dateCreated", startDate));
+            }            
             if (enabled != null) {
                 criteria.add(Expression.eq("enabled", enabled));
             }
             if (active != null) {
                 criteria.add(Expression.eq("active", active));
             }
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != -1) {
+                criteria.setMaxResults(length);
+            }
+            criteria.addOrder(Order.desc("dateCreated"));
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
     }
-    
-    
+        
     public UserData getUser(String id) throws RollerException {
         return (UserData)this.strategy.load(id,UserData.class);
     }
-    
-    
-    public UserData getUserByUsername(String userName) throws RollerException {
-        return getUserByUsername(userName, Boolean.TRUE);
+        
+    public UserData getUserByUserName(String userName) throws RollerException {
+        return getUserByUserName(userName, Boolean.TRUE);
     }
     
-    
-    public UserData getUserByUsername(String userName, Boolean enabled)
-            throws RollerException {
+    public UserData getUserByUserName(String userName, Boolean enabled)
+    throws RollerException {
         
         if (userName==null )
             throw new RollerException("userName cannot be null");
@@ -555,32 +544,39 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    
-    public List getUsers() throws RollerException {
-        return getUsers(Boolean.TRUE);
+    public List getUsers(int offset, int length) throws RollerException {
+        return getUsers(Boolean.TRUE, null, null, offset, length);
     }
     
-    
-    public List getUsers(Boolean enabled) throws RollerException {
-        
+    public List getUsers(Boolean enabled, Date startDate, Date endDate, int offset, int length) throws RollerException {
+        if (endDate == null) endDate = new Date();
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(UserData.class);
+            criteria.add(Expression.lt("dateCreated", endDate));
+            if (startDate != null) {
+                criteria.add(Expression.gt("dateCreated", startDate));
+            }
             if (enabled != null) {
                 criteria.add(Expression.eq("enabled", enabled));
             }
-            
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != -1) {
+                criteria.setMaxResults(length);
+            }
+            criteria.addOrder(Order.desc("dateCreated"));
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
     }
     
-    
     /**
      * Get users of a website
      */
-    public List getUsers(WebsiteData website, Boolean enabled) throws RollerException {
+    public List getUsers(WebsiteData website, Boolean enabled, int offset, int length) throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
@@ -592,17 +588,21 @@ public class HibernateUserManagerImpl implements UserManager {
             if (enabled != null) {
                 criteria.add(Expression.eq("enabled", enabled));
             }
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != -1) {
+                criteria.setMaxResults(length);
+            }
             return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
     }
-    
-    
-    public List getUsersStartingWith(String startsWith,
-            int offset, int length, Boolean enabled) throws RollerException {
         
-        List rawresults = new ArrayList();
+    public List getUsersStartingWith(String startsWith, Boolean enabled,
+            int offset, int length) throws RollerException {
+        
         List results = new ArrayList();
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
@@ -616,24 +616,18 @@ public class HibernateUserManagerImpl implements UserManager {
                 .add(Expression.like("userName", startsWith, MatchMode.START))
                 .add(Expression.like("emailAddress", startsWith, MatchMode.START)));
             }
-            
-            rawresults = criteria.list();
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != -1) {
+                criteria.setMaxResults(length);
+            }
+            results = criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
-        int pos = 0;
-        int count = 0;
-        Iterator iter = rawresults.iterator();
-        while (iter.hasNext() && count < length) {
-            UserData user = (UserData)iter.next();
-            if (pos++ >= offset) {
-                results.add(user);
-                count++;
-            }
-        }
         return results;
     }
-    
     
     public WeblogTemplate getPage(String id) throws RollerException {
         // Don't hit database for templates stored on disk
@@ -641,7 +635,6 @@ public class HibernateUserManagerImpl implements UserManager {
         
         return (WeblogTemplate)this.strategy.load(id,WeblogTemplate.class);
     }
-    
     
     /**
      * Use Hibernate directly because Roller's Query API does too much allocation.
@@ -669,7 +662,6 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    
     /**
      * @see org.apache.roller.model.UserManager#getPageByName(WebsiteData, java.lang.String)
      */
@@ -696,7 +688,6 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    
     /**
      * @see org.apache.roller.model.UserManager#getPages(WebsiteData)
      */
@@ -717,11 +708,9 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    
     public PermissionsData getPermissions(String inviteId) throws RollerException {
         return (PermissionsData)this.strategy.load(inviteId, PermissionsData.class);
     }
-    
     
     /**
      * Return permissions for specified user in website
@@ -742,7 +731,6 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    
     /**
      * Get pending permissions for user
      */
@@ -759,7 +747,6 @@ public class HibernateUserManagerImpl implements UserManager {
             throw new RollerException(e);
         }
     }
-    
     
     /**
      * Get pending permissions for website
@@ -778,7 +765,6 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    
     /**
      * Get all permissions of a website (pendings not including)
      */
@@ -795,7 +781,6 @@ public class HibernateUserManagerImpl implements UserManager {
             throw new RollerException(e);
         }
     }
-    
     
     /**
      * Get all permissions of a user.
@@ -814,16 +799,141 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    
     public void release() {}
     
+    public Map getUserNameLetterMap() throws RollerException {
+        // TODO: ATLAS getUserNameLetterMap DONE TESTED
+        String msg = "Getting username letter map";
+        try {      
+            String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            Map results = new TreeMap();
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();
+            for (int i=0; i<26; i++) {
+                Query query = session.createQuery(
+                    "select count(user) from UserData user where upper(user.userName) like '"+lc.charAt(i)+"%'");
+                List row = query.list();
+                Integer count = (Integer)row.get(0);
+                results.put(new String(new char[]{lc.charAt(i)}), count);
+            }
+            return results;
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
+    }
     
+    public List getUsersByLetter(char letter, int offset, int length) 
+        throws RollerException { 
+        // TODO: ATLAS getUsersByLetter DONE
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            Criteria criteria = session.createCriteria(UserData.class);
+            criteria.add(Expression.like("userName", new String(new char[]{letter}) + "%", MatchMode.START));
+            criteria.addOrder(Order.asc("userName"));
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != -1) {
+                criteria.setMaxResults(length);
+            }
+            return criteria.list();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
+    
+    public Map getWeblogHandleLetterMap() throws RollerException {
+        // TODO: ATLAS getWeblogHandleLetterMap DONE
+        String msg = "Getting weblog letter map";
+        try {      
+            String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            Map results = new TreeMap();
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();
+            for (int i=0; i<26; i++) {
+                Query query = session.createQuery(
+                    "select count(website) from WebsiteData website where upper(website.handle) like '"+lc.charAt(i)+"%'");
+                List row = query.list();
+                Integer count = (Integer)row.get(0);
+                results.put(new String(new char[]{lc.charAt(i)}), count);
+            }
+            return results;
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
+    }
+    
+    public List getWeblogsByLetter(char letter, int offset, int length) 
+        throws RollerException {
+        // TODO: ATLAS getWeblogsByLetter DONE
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            Criteria criteria = session.createCriteria(WebsiteData.class);
+            criteria.add(Expression.like("handle", new String(new char[]{letter}) + "%", MatchMode.START));
+            criteria.addOrder(Order.asc("handle"));
+            if (offset != 0) {
+                criteria.setFirstResult(offset);
+            }
+            if (length != -1) {
+                criteria.setMaxResults(length);
+            }
+            return criteria.list();
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
+        
+    public List getMostCommentedWebsites(Date startDate, Date endDate, int offset, int length) 
+        throws RollerException {
+        // TODO: ATLAS getMostCommentedWebsites DONE TESTED
+        String msg = "Getting most commented websites";
+        if (endDate == null) endDate = new Date();
+        try {      
+            Session session = 
+                ((HibernatePersistenceStrategy)strategy).getSession();            
+            StringBuffer sb = new StringBuffer();
+            sb.append("select count(distinct c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name ");
+            sb.append("from CommentData c where c.weblogEntry.pubTime < :endDate ");
+            if (startDate != null) {
+                sb.append("and c.weblogEntry.pubTime > :startDate ");
+            }  
+            sb.append("group by c.weblogEntry.website.id, c.weblogEntry.website.name, c.weblogEntry.website.description order by col_0_0_ desc");
+            Query query = session.createQuery(sb.toString());
+            query.setParameter("endDate", endDate);
+            if (startDate != null) {
+                query.setParameter("startDate", startDate);
+            }   
+            if (offset != 0) {
+                query.setFirstResult(offset);
+            }
+            if (length != -1) {
+                query.setMaxResults(length);
+            }
+            List results = new ArrayList();
+            for (Iterator iter = query.list().iterator(); iter.hasNext();) {
+                Object[] row = (Object[]) iter.next();
+                results.add(new StatCount(
+                    (String)row[1], 
+                    (String)row[2], 
+                    (String)row[3], 
+                    "statCount.weblogCommentCountType", 
+                    new Long(((Integer)row[0]).intValue()).longValue()));
+            }
+            return results;
+        } catch (Throwable pe) {
+            log.error(msg, pe);
+            throw new RollerException(msg, pe);
+        }
+    }
+     
     /** Doesn't seem to be any other way to get ignore case w/o QBE */
     class IgnoreCaseEqExpression extends SimpleExpression {
         public IgnoreCaseEqExpression(String property, Object value) {
             super(property, value, "=", true);
         }
-    } 
+    }
 }
 
 

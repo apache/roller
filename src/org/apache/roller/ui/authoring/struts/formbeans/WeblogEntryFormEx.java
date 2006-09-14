@@ -102,6 +102,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         }
         status = WeblogEntryData.DRAFT;
         allowComments = Boolean.TRUE;
+        locale = rreq.getWebsite().getLocale();
         
         // we want pubTime and updateTime to be empty for new entries -- AG
         //updateTime = new Timestamp(new Date().getTime());

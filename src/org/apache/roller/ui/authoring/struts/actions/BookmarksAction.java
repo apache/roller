@@ -52,12 +52,13 @@ import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.ui.authoring.struts.formbeans.BookmarksForm;
+import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.util.cache.CacheManager;
 
 /**
  * Actions that are initiated from the BookmarksForm.
  *
- * @struts.action name="bookmarksForm" path="/editor/bookmarks" parameter="method"
+ * @struts.action name="bookmarksForm" path="/roller-ui/authoring/bookmarks" parameter="method"
  * @struts.action-forward name="BookmarksForm" path=".BookmarksForm"
  *
  * @author Dave Johnson
@@ -295,10 +296,10 @@ public class BookmarksAction extends DispatchAction
 
             // Find folderid wherever it may be
             String folderId = (String)
-                request.getAttribute(RollerRequest.FOLDERID_KEY);
+                request.getAttribute(RequestConstants.FOLDER_ID);
             if (null == folderId)
             {
-                folderId = request.getParameter(RollerRequest.FOLDERID_KEY);
+                folderId = request.getParameter(RequestConstants.FOLDER_ID);
             }
             if (null == folderId)
             {
@@ -329,7 +330,7 @@ public class BookmarksAction extends DispatchAction
                     parent = parent.getParent();
                 }
                 request.setAttribute(
-                    RollerRequest.PARENTID_KEY, folder.getParent().getId());
+                    RequestConstants.PARENT_ID, folder.getParent().getId());
             }
 
             // Build list of all folders, except for current one, sorted by path.

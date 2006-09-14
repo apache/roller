@@ -19,38 +19,35 @@
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.BasePageModel;
-import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.core.tags.calendar.CalendarModel;
 import org.apache.roller.ui.authoring.struts.actions.WeblogEntryPageModel.PageMode;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
-import org.apache.roller.ui.authoring.tags.EditWeblogCalendarModel;
-import org.apache.roller.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 //import com.swabunga.spell.event.SpellCheckEvent;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.VelocityContext;
-import org.apache.roller.model.PagePluginManager;
+import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
+import org.apache.roller.pojos.WebsiteData;
 
 /**
  * All data needed to render the edit-weblog page.
@@ -111,6 +108,10 @@ public class WeblogEntryPageModel extends BasePageModel
         getRequest().setAttribute("leftPage","/weblog/WeblogEditSidebar.jsp");
     }
     
+    public WebsiteData getWeblog() {
+        return this.rollerRequest.getWebsite();
+    }
+            
     public String getTitle() 
     {
         if (StringUtils.isEmpty(form.getId()))
@@ -132,12 +133,13 @@ public class WeblogEntryPageModel extends BasePageModel
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
                 getWeblogEntry().getWebsite(), // userName
+                null,
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
                 WeblogEntryData.PUBLISHED, // status
                 null,              // sortby (null for pubTime)
-                new Integer(20));  // maxEntries
+null,                 0, 20);   
     }
 
     /**
@@ -152,12 +154,13 @@ public class WeblogEntryPageModel extends BasePageModel
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
                 getWeblogEntry().getWebsite(), 
+                null,
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
                 WeblogEntryData.DRAFT, // status
                 "updateTime",      // sortby 
-                new Integer(20));  // maxEntries
+null,                 0, 20);  // maxEntries
     }
     
     /**
@@ -172,12 +175,13 @@ public class WeblogEntryPageModel extends BasePageModel
         return RollerFactory.getRoller().getWeblogManager()
             .getWeblogEntries(
                 getWeblogEntry().getWebsite(), 
+                null,
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
                 WeblogEntryData.PENDING, // status
                 "updateTime",      // sortby
-                new Integer(20));  // maxEntries
+null,                 0, 20);  
     }
  
     public List getHoursList()
@@ -210,7 +214,7 @@ public class WeblogEntryPageModel extends BasePageModel
         boolean ret = false;
         try {
             Roller roller = RollerFactory.getRoller();
-            PagePluginManager ppmgr = roller.getPagePluginManager();
+            PluginManager ppmgr = roller.getPagePluginManager();
             ret = ppmgr.hasPagePlugins();
         } catch (RollerException e) {
             logger.error(e);
@@ -225,12 +229,9 @@ public class WeblogEntryPageModel extends BasePageModel
             if (getHasPagePlugins()) 
             {
                 Roller roller = RollerFactory.getRoller();
-                PagePluginManager ppmgr = roller.getPagePluginManager();
-                Map plugins = ppmgr.createAndInitPagePlugins(
-                    getWebsite(),
-                    RollerContext.getRollerContext().getServletContext(),
-                    RollerContext.getRollerContext().getAbsoluteContextUrl(request),
-                    new VelocityContext());
+                PluginManager ppmgr = roller.getPagePluginManager();
+                Map plugins = ppmgr.getWeblogEntryPlugins(
+                    getWebsite());
                 Iterator it = plugins.values().iterator();
                 while (it.hasNext()) list.add(it.next());
             }
@@ -251,18 +252,6 @@ public class WeblogEntryPageModel extends BasePageModel
             editorPage = "editor-text.jsp";
         }
         return editorPage;
-    }
-
-    public CalendarModel getCalendarModel() throws Exception
-    {
-        // Determine URL to self
-        ActionForward selfForward = getMapping().findForward("editWeblog");
-        String selfUrl= getRequest().getContextPath()+selfForward.getPath();
-
-        // Setup weblog calendar model
-        CalendarModel model = new EditWeblogCalendarModel(
-                rollerRequest, getResponse(), selfUrl );
-        return model;
     }
 
     public UserData getUser()
@@ -299,9 +288,7 @@ public class WeblogEntryPageModel extends BasePageModel
     
     public String getPermaLink() throws RollerException
     {
-        String context = RollerContext
-            .getRollerContext()
-            .getAbsoluteContextUrl(rollerRequest.getRequest());
+        String context = RollerRuntimeConfig.getAbsoluteContextURL();
         return context + getWeblogEntry().getPermaLink();
     }
     
