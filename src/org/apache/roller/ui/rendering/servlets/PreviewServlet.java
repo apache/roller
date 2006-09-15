@@ -122,7 +122,7 @@ public class PreviewServlet extends HttpServlet {
             page = tmpWebsite.getDefaultPage();
             
             if(page == null) {
-                throw new RollerException("Weblog's default page was null");
+                throw new RollerException("No default page for weblog: "+tmpWebsite.getHandle());
             }
         } catch(RollerException re) {
             // couldn't get page
