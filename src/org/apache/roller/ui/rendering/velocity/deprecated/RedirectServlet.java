@@ -104,9 +104,7 @@ public class RedirectServlet extends HttpServlet {
             
         // comments servlet
         } else if(CommentsServlet.equals(servlet)) {
-            // old comments page was an extension of page servlet
-            // so redirects are the same
-            redirectUrl = figurePageRedirect(request);
+            redirectUrl = figureCommentsRedirect(request);
             
         // resource servlet
         } else if(ResourceServlet.equals(servlet)) {
@@ -176,6 +174,35 @@ public class RedirectServlet extends HttpServlet {
         
         String[] pathElements = pathInfo.split("/", 2);
         return newUrl+"/"+pathElements[0]+"/";
+    }
+    
+    
+    // old comments were a form of permalink, so redirect to new permalinks
+    private String figureCommentsRedirect(HttpServletRequest request) {
+        
+        OldCommentsRequest commentsRequest = null;
+        try {
+            // get parsed version of old page request
+            commentsRequest = new OldCommentsRequest(request);
+        } catch (Exception ex) {
+            return null;
+        }
+        
+        StringBuffer url = new StringBuffer();
+        
+        url.append(RollerRuntimeConfig.getRelativeContextURL());
+        url.append("/").append(commentsRequest.getWeblogHandle()).append("/");
+        
+        if(commentsRequest.getWeblogAnchor() != null) {
+            
+            // permalink url
+            url.append("entry/").append(URLUtilities.encode(commentsRequest.getWeblogAnchor()));
+            
+        } else {
+            return null;
+        }
+        
+        return url.toString();
     }
     
     
