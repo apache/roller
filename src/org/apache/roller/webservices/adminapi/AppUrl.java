@@ -34,8 +34,9 @@ public class AppUrl {
     private String handle;
     
     public AppUrl(String urlPrefix, String handle) throws MalformedURLException {
-        entryUrl = new URL(urlPrefix + ENDPOINT + "/" + handle + "/entries");
-        resourceUrl = new URL(urlPrefix + ENDPOINT + "/" + handle + "/resources");        
+        //TODO: is this the right thing to do? hardcode roller-services?
+        entryUrl = new URL(urlPrefix + "/roller-services" + ENDPOINT + "/" + handle + "/entries");
+        resourceUrl = new URL(urlPrefix + "/roller-services" + ENDPOINT + "/" + handle + "/resources");        
     }    
 
     public AppUrl(URL url) throws MalformedURLException {

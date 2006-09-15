@@ -4,7 +4,7 @@
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
             <!--Do not use Project Properties customizer when editing this file manually.-->
-            <name>roller_3.0</name>
+            <name>roller</name>
             <!--
             <properties>
                 <property name="src.dir">../src</property>
