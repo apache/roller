@@ -19,7 +19,6 @@ package org.apache.roller.ui.authoring.struts.formbeans;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;

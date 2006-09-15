@@ -101,9 +101,8 @@ public class UserFormEx extends UserForm
             }
             catch (java.text.ParseException pe)
             {
-                // wasn't proper format, try others
-                Date pubDate = DateUtil.parseFromFormats(value);
-                this.setDateCreated( new Timestamp(pubDate.getTime()) );
+                // wasn't properly formatted
+                throw new RuntimeException("improperly formatted date", pe);
             }
         }
     }

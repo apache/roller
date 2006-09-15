@@ -118,9 +118,8 @@ public class WebsiteFormEx extends WebsiteForm {
                         value, DateUtil.friendlyTimestampFormat());
                 this.setDateCreated(new Timestamp(pubDate.getTime()));
             } catch (java.text.ParseException pe) {
-                // wasn't proper format, try others
-                Date pubDate = DateUtil.parseFromFormats(value);
-                this.setDateCreated( new Timestamp(pubDate.getTime()) );
+                // wasn't properly formatted
+                throw new RuntimeException("improperly formatted date", pe);
             }
         }
     }

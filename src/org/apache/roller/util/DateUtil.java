@@ -31,65 +31,24 @@ import org.apache.commons.lang.StringUtils;
 /**
  * General purpose date utilities.
  */
-public abstract class DateUtil extends Object {
+public abstract class DateUtil {
     
     public static final long millisInDay = 86400000;
     
-    // some static date formats
-    private static SimpleDateFormat[] mDateFormats = loadDateFormats();
+    // a bunch of date formats
+    private static final String formatDefaultDate = "dd.MM.yyyy";
+    private static final String formatDefaultDateMinimal = "d.M.yy";
+    private static final String formatDefaultTimestamp = "yyyy-MM-dd HH:mm:ss.SSS";
     
-    private static final SimpleDateFormat mFormat8chars =
-            new SimpleDateFormat("yyyyMMdd");
+    private static final String formatFriendlyTimestamp = "dd.MM.yyyy HH:mm:ss";
     
-    private static final SimpleDateFormat mFormat6chars =
-            new SimpleDateFormat("yyyyMM");
+    private static final String format6chars = "yyyyMM";
+    private static final String format8chars = "yyyyMMdd";
     
-    private static final SimpleDateFormat mFormatIso8601Day =
-            new SimpleDateFormat("yyyy-MM-dd");
+    private static final String formatIso8601 = "yyyy-MM-dd'T'HH:mm:ssZ";
+    private static final String formatIso8601Day = "yyyy-MM-dd";
     
-    private static final SimpleDateFormat mFormatIso8601 =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-    
-    // http://www.w3.org/Protocols/rfc822/Overview.html#z28
-    // Using Locale.US to fix ROL-725 and ROL-628
-    private static final SimpleDateFormat mFormatRfc822 =
-            new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
-    
-    
-    private static SimpleDateFormat[] loadDateFormats() {
-        SimpleDateFormat[] temp = {
-            //new SimpleDateFormat("MM/dd/yyyy hh:mm:ss.SSS a"),
-            new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy"), // standard Date.toString() results
-            new SimpleDateFormat("M/d/yy hh:mm:ss"),
-            new SimpleDateFormat("M/d/yyyy hh:mm:ss"),
-            new SimpleDateFormat("M/d/yy hh:mm a"),
-            new SimpleDateFormat("M/d/yyyy hh:mm a"),
-            new SimpleDateFormat("M/d/yy HH:mm"),
-            new SimpleDateFormat("M/d/yyyy HH:mm"),
-            new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"),
-            new SimpleDateFormat("yy-MM-dd HH:mm:ss.SSS"),
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"), // standard Timestamp.toString() results
-            new SimpleDateFormat("M-d-yy HH:mm"),
-            new SimpleDateFormat("M-d-yyyy HH:mm"),
-            new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS"),
-            new SimpleDateFormat("M/d/yy"),
-            new SimpleDateFormat("M/d/yyyy"),
-            new SimpleDateFormat("M-d-yy"),
-            new SimpleDateFormat("M-d-yyyy"),
-            new SimpleDateFormat("MMMM d, yyyyy"),
-            new SimpleDateFormat("MMM d, yyyyy")
-        };
-        
-        return temp;
-    }
-    
-    
-    /**
-     * Gets the array of SimpleDateFormats that DateUtil knows about.
-     **/
-    private static SimpleDateFormat[] getFormats() {
-        return mDateFormats;
-    }
+    private static final String formatRfc822 = "EEE, d MMM yyyy HH:mm:ss Z";
     
     
     /**
@@ -215,40 +174,6 @@ public abstract class DateUtil extends Object {
     }
     
     
-    public static Date parseFromFormats(String aValue) {
-        if (StringUtils.isEmpty(aValue)) return null;
-        
-        // get DateUtil's formats
-        SimpleDateFormat formats[] = DateUtil.getFormats();
-        if (formats == null) return null;
-        
-        // iterate over the array and parse
-        Date myDate = null;
-        for (int i = 0; i <formats.length; i++) {
-            try {
-                myDate = DateUtil.parse(aValue, formats[i]);
-                //if (myDate instanceof Date)
-                return myDate;
-            } catch (Exception e) {
-                // do nothing because we want to try the next
-                // format if current one fails
-            }
-        }
-        // haven't returned so couldn't parse
-        return null;
-    }
-    
-    
-    public static java.sql.Timestamp parseTimestampFromFormats(String aValue) {
-        if (StringUtils.isEmpty(aValue)) return null;
-        
-        // call the regular Date formatter
-        Date myDate = DateUtil.parseFromFormats(aValue);
-        if (myDate != null) return new java.sql.Timestamp(myDate.getTime());
-        return null;
-    }
-    
-    
     /**
      * Returns a java.sql.Timestamp equal to the current time
      **/
@@ -271,24 +196,6 @@ public abstract class DateUtil extends Object {
     
     
     /**
-     * Tries to take the passed-in String and format it as a date string in the
-     * the passed-in format.
-     **/
-    public static String formatDateString(String aString, SimpleDateFormat aFormat) {
-        if (StringUtils.isEmpty(aString) || aFormat == null)  return "";
-        try {
-            java.sql.Timestamp aDate = parseTimestampFromFormats(aString);
-            if (aDate != null) {
-                return DateUtil.format(aDate, aFormat);
-            }
-        } catch (Exception e) {
-            // Could not parse aString.
-        }
-        return "";
-    }
-    
-    
-    /**
      * Returns a Date using the passed-in string and format.  Returns null if the string
      * is null or empty or if the format is null.  The string must match the format.
      **/
@@ -296,8 +203,9 @@ public abstract class DateUtil extends Object {
         if (StringUtils.isEmpty(aValue) || aFormat == null) {
             return null;
         }
-        
-        return aFormat.parse(aValue);
+        synchronized(aFormat) {
+            return aFormat.parse(aValue);
+        }
     }
     
     
@@ -331,74 +239,145 @@ public abstract class DateUtil extends Object {
     }
     
     
-    // returns full timestamp format
-    public static java.text.SimpleDateFormat defaultTimestampFormat() {
-        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    }
-    
-    
     // convenience method returns minimal date format
-    public static java.text.SimpleDateFormat get8charDateFormat() {
-        return DateUtil.mFormat8chars;
-    }
-    
-    
-    // convenience method returns minimal date format
-    public static java.text.SimpleDateFormat get6charDateFormat() {
-        return DateUtil.mFormat6chars;
-    }
-    
-    
-    // convenience method returns minimal date format
-    public static java.text.SimpleDateFormat defaultDateFormat() {
+    public static SimpleDateFormat defaultDateFormat() {
         return DateUtil.friendlyDateFormat(true);
     }
     
     
-    // convenience method
-    public static String defaultTimestamp(Date date) {
-        return DateUtil.format(date, DateUtil.defaultTimestampFormat());
+    // convenience method returns minimal date format
+    public static java.text.SimpleDateFormat minimalDateFormat() {
+        return friendlyDateFormat(true);
+    }
+    
+    
+    // convenience method that returns friendly data format
+    // using full month, day, year digits.
+    public static SimpleDateFormat fullDateFormat() {
+        return friendlyDateFormat(false);
+    }
+    
+    
+    /** 
+     * Returns a "friendly" date format.
+     * @param mimimalFormat Should the date format allow single digits.
+     **/
+    public static SimpleDateFormat friendlyDateFormat(boolean minimalFormat) {
+        if (minimalFormat) {
+            return new SimpleDateFormat(formatDefaultDateMinimal);
+        }
+        
+        return new SimpleDateFormat(formatDefaultDate);
+    }
+    
+    
+    // returns full timestamp format
+    public static SimpleDateFormat defaultTimestampFormat() {
+        return new SimpleDateFormat(formatDefaultTimestamp);
+    }
+    
+    
+    // convenience method returns long friendly timestamp format
+    public static SimpleDateFormat friendlyTimestampFormat() {
+        return new SimpleDateFormat(formatFriendlyTimestamp);
+    }
+    
+    
+    // convenience method returns minimal date format
+    public static SimpleDateFormat get8charDateFormat() {
+        return new SimpleDateFormat(format8chars);
+    }
+    
+    
+    // convenience method returns minimal date format
+    public static SimpleDateFormat get6charDateFormat() {
+        return new SimpleDateFormat(format6chars);
+    }
+    
+    
+    // convenience method returns minimal date format
+    public static SimpleDateFormat getIso8601DateFormat() {
+        return new SimpleDateFormat(formatIso8601);
+    }
+    
+    
+    // convenience method returns minimal date format
+    public static SimpleDateFormat getIso8601DayDateFormat() {
+        return new SimpleDateFormat(formatIso8601Day);
+    }
+    
+    
+    // convenience method returns minimal date format
+    public static SimpleDateFormat getRfc822DateFormat() {
+        // http://www.w3.org/Protocols/rfc822/Overview.html#z28
+        // Using Locale.US to fix ROL-725 and ROL-628
+        return new SimpleDateFormat(formatRfc822, Locale.US);
     }
     
     
     // convenience method
     public static String defaultDate(Date date) {
-        return DateUtil.format(date, DateUtil.defaultDateFormat());
+        return format(date, defaultDateFormat());
     }
     
     
-    // convenience method returns long friendly timestamp format
-    public static java.text.SimpleDateFormat friendlyTimestampFormat() {
-        return new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    // convenience method using minimal date format
+    public static String minimalDate(Date date) {
+        return format(date, DateUtil.minimalDateFormat());
+    }
+    
+    
+    public static String fullDate(Date date) {
+        return format(date, DateUtil.fullDateFormat());
+    }
+    
+    
+    /**
+     * Format the date using the "friendly" date format.
+     */
+    public static String friendlyDate(Date date, boolean minimalFormat) {
+        return format(date, friendlyDateFormat(minimalFormat));
+    }
+    
+    
+    // convenience method
+    public static String friendlyDate(Date date) {
+        return format(date, friendlyDateFormat(true));
+    }
+    
+    
+    // convenience method
+    public static String defaultTimestamp(Date date) {
+        return format(date, defaultTimestampFormat());
     }
     
     
     // convenience method returns long friendly formatted timestamp
     public static String friendlyTimestamp(Date date) {
-        return DateUtil.format(date, DateUtil.friendlyTimestampFormat());
+        return format(date, friendlyTimestampFormat());
     }
     
     
     // convenience method returns 8 char day stamp YYYYMMDD
     public static String format8chars(Date date) {
-        return DateUtil.format(date, mFormat8chars);
+        return format(date, get8charDateFormat());
     }
     
     
     // convenience method returns 6 char month stamp YYYYMM
     public static String format6chars(Date date) {
-        return DateUtil.format(date, mFormat6chars);
+        return format(date, get6charDateFormat());
     }
     
     
     // convenience method returns long friendly formatted timestamp
     public static String formatIso8601Day(Date date) {
-        return DateUtil.format(date, mFormatIso8601Day);
+        return format(date, getIso8601DayDateFormat());
     }
     
     
     public static String formatRfc822(Date date) {
-        return DateUtil.format(date,mFormatRfc822);
+        return format(date, getRfc822DateFormat());
     }
     
     
@@ -409,62 +388,12 @@ public abstract class DateUtil extends Object {
         // Add a colon 2 chars before the end of the string
         // to make it a valid ISO-8601 date.
         
-        String str = DateUtil.format(date,mFormatIso8601);
+        String str = format(date, getIso8601DateFormat());
         StringBuffer sb = new StringBuffer();
         sb.append( str.substring(0,str.length()-2) );
         sb.append( ":" );
         sb.append( str.substring(str.length()-2) );
         return sb.toString();
-    }
-    
-    
-    // convenience method returns minimal date format
-    public static java.text.SimpleDateFormat minimalDateFormat() {
-        return DateUtil.friendlyDateFormat(true);
-    }
-    
-    
-    // convenience method using minimal date format
-    public static String minimalDate(Date date) {
-        return DateUtil.format(date, DateUtil.minimalDateFormat());
-    }
-    
-    
-    // convenience method that returns friendly data format
-    // using full month, day, year digits.
-    public static java.text.SimpleDateFormat fullDateFormat() {
-        return DateUtil.friendlyDateFormat(false);
-    }
-    
-    
-    public static String fullDate(Date date) {
-        return DateUtil.format(date, DateUtil.fullDateFormat());
-    }
-    
-    
-    /** Returns a "friendly" date format.
-     *  @param mimimalFormat Should the date format allow single digits.
-     **/
-    public static java.text.SimpleDateFormat friendlyDateFormat(boolean minimalFormat) {
-        if (minimalFormat) {
-            return new java.text.SimpleDateFormat("d.M.yy");
-        }
-        
-        return new java.text.SimpleDateFormat("dd.MM.yyyy");
-    }
-    
-    
-    /**
-     * Format the date using the "friendly" date format.
-     */
-    public static String friendlyDate(Date date, boolean minimalFormat) {
-        return DateUtil.format(date, DateUtil.friendlyDateFormat(minimalFormat));
-    }
-    
-    
-    // convenience method
-    public static String friendlyDate(Date date) {
-        return DateUtil.format(date, DateUtil.friendlyDateFormat(true));
     }
     
     

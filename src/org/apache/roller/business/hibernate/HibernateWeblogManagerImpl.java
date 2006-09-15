@@ -76,8 +76,6 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     /* inline creation of reverse comparator, anonymous inner class */
     private Comparator reverseComparator = new ReverseComparator();
     
-    private SimpleDateFormat formatter = DateUtil.get8charDateFormat();
-    
     
     public HibernateWeblogManagerImpl(HibernatePersistenceStrategy strat) {
         log.debug("Instantiating Hibernate Weblog Manager");
@@ -1023,6 +1021,7 @@ locale,             offset,
             cal.setTimeZone(website.getTimeZoneInstance());
         }
         
+        SimpleDateFormat formatter = DateUtil.get8charDateFormat();
         for (Iterator wbItr = entries.iterator(); wbItr.hasNext();) {
             WeblogEntryData entry = (WeblogEntryData) wbItr.next();
             Date sDate = DateUtil.getNoonOfDay(entry.getPubTime(), cal);
