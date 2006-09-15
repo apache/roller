@@ -133,7 +133,8 @@ abstract class Handler {
         this.uri = new URI(request);
         this.rollerContext = RollerContext.getRollerContext();
         this.roller = RollerFactory.getRoller();
-        this.urlPrefix = RollerRuntimeConfig.getAbsoluteContextURL() + ENDPOINT;
+        //TODO: is this the right thing to do? hardcode roller-services?
+        this.urlPrefix = RollerRuntimeConfig.getAbsoluteContextURL() + "/roller-services" + ENDPOINT;
         
         // TODO: decide what to do about authentication, is WSSE going to fly?
         //Authenticator auth = new WSSEAuthenticator(request);
