@@ -17,18 +17,18 @@
   directory of this distribution.-
 -->
 <!DOCTYPE project [
-    <!ENTITY properties         SYSTEM "properties.xmlf"> 
-    <!ENTITY custom-gen-web     SYSTEM "custom/custom-gen-web.xmlf">
-    <!ENTITY custom-gen-beans   SYSTEM "custom/custom-gen-beans.xmlf">
-    <!ENTITY custom-jars        SYSTEM "custom/custom-jars.xmlf">
-    <!ENTITY custom-src-beans   SYSTEM "custom/custom-src-beans.xmlf">
-    <!ENTITY custom-src-web     SYSTEM "custom/custom-src-web.xmlf">
-    <!ENTITY custom-src-tests   SYSTEM "custom/custom-src-tests.xmlf">
-    <!ENTITY custom-web         SYSTEM "custom/custom-web.xmlf">
-    <!ENTITY custom-dbscripts   SYSTEM "custom/custom-dbscripts.xmlf">
-    <!ENTITY custom-pre-dbtest  SYSTEM "custom/custom-pre-dbtest.xmlf">
-    <!ENTITY custom-post-dbtest SYSTEM "custom/custom-post-dbtest.xmlf">
-    <!ENTITY custom-ant         SYSTEM "custom/custom-ant.xmlf"> 
+    <!ENTITY properties            SYSTEM "properties.xmlf"> 
+    <!ENTITY custom-ant            SYSTEM "custom/custom-ant.xmlf">
+    <!ENTITY custom-jars           SYSTEM "custom/custom-jars.xmlf">
+    <!ENTITY custom-gen-business   SYSTEM "custom/custom-gen-business.xmlf">
+    <!ENTITY custom-build-business SYSTEM "custom/custom-build-business.xmlf">
+    <!ENTITY custom-gen-web        SYSTEM "custom/custom-gen-web.xmlf">
+    <!ENTITY custom-src-web        SYSTEM "custom/custom-src-web.xmlf">
+    <!ENTITY custom-web            SYSTEM "custom/custom-web.xmlf">
+    <!ENTITY custom-src-tests      SYSTEM "custom/custom-src-tests.xmlf">
+    <!ENTITY custom-dbscripts      SYSTEM "custom/custom-dbscripts.xmlf">
+    <!ENTITY custom-pre-dbtest     SYSTEM "custom/custom-pre-dbtest.xmlf">
+    <!ENTITY custom-post-dbtest    SYSTEM "custom/custom-post-dbtest.xmlf">
 ]>
 <!-- ********************************************************************* -->
 <!-- Ant build script for Roller main branch -->
@@ -98,8 +98,8 @@ Key Targets:
 </target>
 
 <!-- ============================================== -->
-<!-- generate Hibernate mappings -->
-<target name="gen-hibernate" description="XDoclet Generate Hibernate mappings">
+<!-- generate code/files for the business layer -->
+<target name="gen-business" description="Generate business layer resources">
 
     <taskdef name="hibernatedoclet"
         classname="xdoclet.modules.hibernate.HibernateDocletTask"
@@ -112,13 +112,17 @@ Key Targets:
         excludedtags="@version,@author"
         addedtags="@xdoclet-generated at ${TODAY}"
         force="true">
+        
 	<fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
         <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
         <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Assoc.java" />
-        <fileset dir="${ro.src}" includes="org/apache/roller/business/*Data.java" />
-        &custom-gen-beans;
+        
         <hibernate validatexml="true" version="3.0"/>
+        
     </hibernatedoclet>
+    
+    <!-- allow for custom generation work -->
+    &custom-gen-business;
     
 </target>
 
@@ -278,7 +282,7 @@ Key Targets:
 <!-- Compile and jar Business Tier classes -->
 <!-- ********************************************************************* -->
 
-<target name="build-business" depends="gen-hibernate">
+<target name="build-business" depends="gen-business">
     
     <mkdir dir="${build.generated.business}"/>
     <mkdir dir="${build.compile.business}"/>
@@ -293,25 +297,32 @@ ro.version=${ro.version}
 ro.buildTime=${ro.buildTime}
 ro.buildUser=${user.name}
     </echo>
-
-    <javac debug="${build.debug}" 
-        source="1.4"
-        destdir="${build.compile.business}"
-        excludes="org/apache/roller/ui/**, org/apache/roller/webservices/**" >
+    
+    <!-- compile roller business classes -->
+    <javac destdir="${build.compile.business}"
+        excludes="org/apache/roller/ui/**, org/apache/roller/webservices/**"
+        debug="${build.debug}" 
+        source="${build.sourcelevel}"
+        deprecation="${build.deprecation}">
         
         <src path="${ro.src}" />
         <src path="${build.generated.business}"/>
-        &custom-src-beans;
+        
         <classpath>
             <path refid="business.path"/>
             &custom-jars;
         </classpath>
     </javac>
     
-    <!-- Copy class resources -->
-    <copy todir="${build.compile.business}/org/apache/roller/model">
-        <fileset dir="${build.generated.business}" includes="*.hbm.xml"/>
+    <!-- Copy resources -->
+    <copy todir="${build.compile.business}">
+        <fileset dir="${ro.src}" 
+            excludes="**/*.java, **/*.html, **/*.png, org/apache/roller/ui/**, org/apache/roller/webservices/**" />
+        <fileset dir="${build.generated.business}" excludes="**/*.java" />
     </copy>
+    
+    <!-- allow for custom build work -->
+    &custom-build-business;
     
     <!-- Jar up the business layer -->
     <jar basedir="${build.compile.business}"
@@ -329,7 +340,7 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.compile.web}" />
     
     <javac debug="${build.debug}" 
-        source="1.4"
+        source="${build.sourcelevel}"
         destdir="${build.compile.web}"
         includes="org/apache/roller/ui/**, org/apache/roller/webservices/**, org/apache/roller/util/rome/**" >
         
@@ -783,7 +794,7 @@ ro.buildUser=${user.name}
     <mkdir dir="${build.tests}/WEB-INF/classes/themes" />
     
     <javac srcdir="${ro.tests}"
-        source="1.4"
+        source="${build.sourcelevel}"
         destdir="${build.tests}/WEB-INF/classes"
         includeantruntime="false"
         debug="true" optimize="false" verbose="false" deprecation="false">
@@ -1087,7 +1098,7 @@ Use -Dverbose=1 to get verbose output.
         webXmlFragment="${build.webapp}/WEB-INF/generated_web.xml" 
         outputDir="${ro.build}/jspc" /> 		
     <mkdir dir="${ro.build}/jspc.classes"/>
-    <javac source="1.4" debug="true" srcdir="${ro.build}/jspc" excludes="**/header_jsp.*"
+    <javac source="${build.sourcelevel}" debug="true" srcdir="${ro.build}/jspc" excludes="**/header_jsp.*"
        destdir="${ro.build}/jspc.classes" fork="true">
        <classpath refid="jsp.compile.path"/>
     </javac>

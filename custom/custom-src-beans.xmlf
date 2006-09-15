@@ -1,8 +1,0 @@
-<!-- 
-Custom classes to include in back-end compilation (rollerbeans.jar)
-NOTE: your classes MUST NOT be under the package org.roller.presentation.
--->
-
-<!-- Uncomment this to compile experimental JDO backend
-<src path="${basedir}/sandbox/jdobackend/src" />
- -->

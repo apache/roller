@@ -1,0 +1,23 @@
+
+<!--  Do custom code/resource generation for business layer -->
+    
+<!-- EXAMPLE: generate JDO mappings 
+<taskdef name="jdodoclet"
+    classname="xdoclet.modules.jdo.JdoDocletTask"
+    classpathref="xdoclet.path" />
+
+<jdodoclet
+    destdir="${build.compile.business}"
+    mergedir="./metadata/xdoclet"
+    excludedtags="@version,@author"
+    addedtags="@xdoclet-generated at ${TODAY}"
+    force="true">
+
+    <fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
+    <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
+    <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Assoc.java" />
+
+    <jdometadata jdoSpec="2.0" />
+
+</jdodoclet>
+-->
