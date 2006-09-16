@@ -165,6 +165,7 @@ public class RollerAtomHandler implements AtomHandler {
         List perms = null;
         try {
             perms = mRoller.getUserManager().getAllPermissions(user);
+
         } catch (RollerException re) {
             throw new AtomException("ERROR: getting user's weblogs", re);
         }
@@ -186,9 +187,24 @@ public class RollerAtomHandler implements AtomHandler {
                 entryCol.setTitle("Weblog Entries");
                 entryCol.setAccept("entry");
                 entryCol.setHref(URLUtilities.getAtomProtocolURL(true)+"/"+handle+"/entries");
+                try {                    
+                    AtomService.Categories cats = new AtomService.Categories();
+                    cats.setFixed(true);
+                    cats.setScheme(URLUtilities.getWeblogURL(perm.getWebsite(), null, true));
+                    List rollerCats = mRoller.getWeblogManager().getWeblogCategories(perm.getWebsite());
+                    for (Iterator it = rollerCats.iterator(); it.hasNext();) {
+                        WeblogCategoryData rollerCat = (WeblogCategoryData)it.next();
+                        AtomService.Category cat = new AtomService.Category();
+                        cat.setTerm(rollerCat.getPath());
+                        cat.setLabel(rollerCat.getName());
+                        cats.addCategory(cat);
+                    } 
+                    entryCol.addCategories(cats);
+                } catch (Exception e) {
+                    throw new AtomException("ERROR fetching weblog categories");
+                }                               
                 workspace.addCollection(entryCol);
-                
-                
+                                
                 AtomService.Collection uploadCol = new AtomService.Collection();
                 uploadCol.setTitle("Media Files");
                 uploadCol.setAccept(accept);
@@ -601,7 +617,7 @@ public class RollerAtomHandler implements AtomHandler {
      * TODO: use Jakarta Commons File-upload?
      */
     public Entry postMedia(String[] pathInfo,
-            String title, String contentType, InputStream is)
+            String title, String slug, String contentType, InputStream is)
             throws AtomException {
         try {
             // authenticated client posted a weblog entry
@@ -612,10 +628,10 @@ public class RollerAtomHandler implements AtomHandler {
                 mRoller.getUserManager().getWebsiteByHandle(handle);
             if (canEdit(website) && pathInfo.length > 1) {
                 // save to temp file
-                String fileName = createFileName(website, title, contentType);
+                String fileName = createFileName(website, (slug != null) ? slug : title, contentType);
                 try {
                     FileManager fmgr = mRoller.getFileManager();
-                    tempFile = File.createTempFile(fileName,"tmp");
+                    tempFile = File.createTempFile(fileName, "tmp");
                     FileOutputStream fos = new FileOutputStream(tempFile);
                     Utilities.copyInputToOutput(is, fos);
                     fos.close();
@@ -724,7 +740,7 @@ public class RollerAtomHandler implements AtomHandler {
             String contentType, InputStream is) throws AtomException {
         if (pathInfo.length > 2) {
             String name = pathInfo[2];
-            return postMedia(pathInfo, name, contentType, is);
+            return postMedia(pathInfo, name, name, contentType, is);
         }
         throw new AtomException("ERROR: bad pathInfo");
     }
