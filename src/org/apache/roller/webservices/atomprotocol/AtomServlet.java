@@ -183,12 +183,13 @@ public class AtomServlet extends HttpServlet {
                         writer.close(); 
                     
                     } else if (req.getContentType() != null) {
-                        // get incoming file name from HTTP header
+                        // get incoming title and slug from HTTP header
                         String title = req.getHeader("Title");
+                        String slug = req.getHeader("Slug");
 
                         // hand input stream of to hander to post file
                         Entry resource = handler.postMedia(
-                            pathInfo, title, req.getContentType(), req.getInputStream());
+                            pathInfo, title, slug, req.getContentType(), req.getInputStream());
                         
                         res.setStatus(HttpServletResponse.SC_CREATED);
                         com.sun.syndication.feed.atom.Content content = 

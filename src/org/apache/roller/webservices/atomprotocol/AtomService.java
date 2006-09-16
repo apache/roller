@@ -19,17 +19,18 @@ package org.apache.roller.webservices.atomprotocol;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.jdom.filter.Filter;
 
 /**
- * This class models an Atom workspace.
+ * This class models an Atom Ublishing Protocol Service Document.
  * <p />
- * Based on: draft-ietf-atompub-protocol-08.txt + PaceMediaEntries5
+ * Based on: draft-ietf-atompub-protocol-10.txt
  * <p />
  * Designed to be Roller independent.
  *//* 
@@ -40,8 +41,6 @@ import org.jdom.filter.Filter;
  *         & extensionElement* )
  *    }
  *
- * Here is an example Atom workspace:
- * 
  * <?xml version="1.0" encoding='utf-8'?>
  * <service xmlns="http://purl.org/atom/app#">
  *   <workspace title="Main Site" >
@@ -60,8 +59,10 @@ import org.jdom.filter.Filter;
  */
 public class AtomService {
     public static final Namespace ns =
-            Namespace.getNamespace("http://purl.org/atom/app#");
-    
+            Namespace.getNamespace("app","http://purl.org/atom/app#");
+    public static final Namespace atomns =
+            Namespace.getNamespace("atom","http://www.w3.org/2005/atom");
+
     private List workspaces = new ArrayList();
     
     public AtomService() {
@@ -88,19 +89,18 @@ public class AtomService {
      */
     public static class Workspace {
         private String title       = null;
-        private List   collections = new ArrayList();
+        private String titleType   = null; // may be TEXT, HTML, XHTML
+        private Set    collections = new LinkedHashSet();
         
         public Workspace() {
         }
         
-        public List getCollections() {
-            return collections;
+        /** Iterate over collections in workspace */
+        public Iterator getCollections() {
+            return collections.iterator();
         }
         
-        public void setCollections(List collections) {
-            this.collections = collections;
-        }
-        
+        /** Add new collection to workspace */
         public void addCollection(AtomService.Collection col) {
             collections.add(col);
         }
@@ -112,6 +112,14 @@ public class AtomService {
         
         public void setTitle(String title) {
             this.title = title;
+        }
+
+        public String getTitleType() {
+            return titleType;
+        }
+
+        public void setTitleType(String titleType) {
+            this.titleType = titleType;
         }
     }
     
@@ -130,9 +138,11 @@ public class AtomService {
      */
     public static class Collection {
         private String title = null;
+        private String titleType =null; // may be TEXT, HTML, XHTML
         private String accept = "entry";
         private String listTemplate = null;
         private String href = null;
+        private Set categories = new LinkedHashSet(); // of Categories objects
         
         public Collection() {
         }
@@ -167,6 +177,93 @@ public class AtomService {
         public void setTitle(String title) {
             this.title = title;
         }
+
+        public String getTitleType() {
+            return titleType;
+        }
+
+        public void setTitleType(String titleType) {
+            this.titleType = titleType;
+        }
+
+        /** Workspace can have multiple Categories objects */
+        public void addCategories(Categories cats) {
+            categories.add(cats);
+        }
+        
+        /** Iterate over Categories objects in Collection */
+        public Iterator getCategories() {
+            return categories.iterator();
+        }
+    }
+    
+    /** Categories object contains Category objects */
+    public static class Categories {
+        private Set categories = new LinkedHashSet(); // of Category objects
+        private String scheme = null;
+        private boolean fixed = false;
+        
+        /** Add category list of those specified*/
+        public void addCategory(Category cat) {
+            categories.add(cat);
+        }
+        
+        /** Iterate over Category objects */
+        public Iterator getCategories() {
+            return categories.iterator();
+        }
+
+        /** True if clients MUST use one of the categories specified */
+        public boolean isFixed() {
+            return fixed;
+        }
+
+        /** True if clients MUST use one of the categories specified */
+        public void setFixed(boolean fixed) {
+            this.fixed = fixed;
+        }
+
+        /** Category URI scheme to use for Categories without a scheme */
+        public String getScheme() {
+            return scheme;
+        }
+
+        /** Category URI scheme to use for Categories without a scheme */
+        public void setScheme(String scheme) {
+            this.scheme = scheme;
+        }        
+    }
+    
+      
+    /** Represents an <atom:category> object */
+    public static class Category {
+        private String term;
+        private String scheme;
+        private String label;                
+
+        public String getTerm() {
+            return term;
+        }
+
+        public void setTerm(String term) {
+            this.term = term;
+        }
+
+        public String getScheme() {
+            return scheme;
+        }
+
+        public void setScheme(String scheme) {
+            this.scheme = scheme;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
     }
     
     /** Deserialize an Atom service XML document into an object */
@@ -198,7 +295,13 @@ public class AtomService {
     /** Deserialize a Atom workspace XML element into an object */
     public static AtomService.Workspace elementToWorkspace(Element element) {
         AtomService.Workspace space = new AtomService.Workspace();
-        space.setTitle(element.getAttribute("title").getValue());
+        
+        Element titleElem = element.getChild("title", atomns);
+        space.setTitle(titleElem.getText());
+        if (titleElem.getAttribute("type", atomns) != null) {
+            space.setTitleType(titleElem.getAttribute("type", atomns).getValue());
+        }
+        
         List collections = element.getChildren("collection", ns);
         Iterator iter = collections.iterator();
         while (iter.hasNext()) {
@@ -210,10 +313,16 @@ public class AtomService {
     
     /** Serialize an AtomService.Workspace object into an XML element */
     public static Element workspaceToElement(Workspace space) {
-        Namespace ns = Namespace.getNamespace("http://purl.org/atom/app#");
         Element element = new Element("workspace", ns);
-        element.setAttribute("title", space.getTitle());
-        Iterator iter = space.getCollections().iterator();
+        
+        Element title = new Element("title", atomns);
+        title.setText(space.getTitle());
+        element.addContent(title);
+        if (space.getTitleType() != null && !space.getTitleType().equals("TEXT")) {
+            element.setAttribute("type", space.getTitleType(), atomns);
+        }
+        
+        Iterator iter = space.getCollections();
         while (iter.hasNext()) {
             AtomService.Collection col = (AtomService.Collection) iter.next();
             element.addContent(collectionToElement(col));
@@ -224,21 +333,79 @@ public class AtomService {
     /** Deserialize an Atom service collection XML element into an object */
     public static AtomService.Collection elementToCollection(Element element) {
         AtomService.Collection collection = new AtomService.Collection();
-        collection.setTitle(element.getAttribute("title").getValue());
         collection.setHref(element.getAttribute("href").getValue());
+        
+        Element titleElem = element.getChild("title", atomns);
+        if (titleElem != null) {
+            collection.setTitle(titleElem.getText());
+            if (titleElem.getAttribute("type", atomns) != null) {
+                collection.setTitleType(titleElem.getAttribute("type", atomns).getValue());
+            }
+        }
+                
         Element memberType = element.getChild("accept",  ns);
         if (memberType != null) {
             collection.setAccept(memberType.getText());
+        }
+        
+        // Loop to parse <app:categories> element to Categories objects
+        List catsElems = element.getChildren("categories", ns);
+        for (Iterator catsIter = catsElems.iterator(); catsIter.hasNext();) {
+            Element catsElem = (Element) catsIter.next();  
+            Categories cats = new Categories();
+            if ("yes".equals(catsElem.getAttribute("fixed", ns))) {
+                cats.setFixed(true);
+            }
+            // Loop to parse <atom:category> elemenents to Category objects
+            List catElems = catsElem.getChildren("category", atomns);
+            for (Iterator catIter = catElems.iterator(); catIter.hasNext();) {                
+                Element catElem = (Element) catIter.next();
+                Category cat = new Category();
+                cat.setTerm(catElem.getAttributeValue("term", atomns));                
+                cat.setLabel(catElem.getAttributeValue("label", atomns)); 
+                cat.setScheme(catElem.getAttributeValue("scheme", atomns));
+                cats.addCategory(cat);
+            }
+            collection.addCategories(cats);
         }
         return collection;
     }
     
     /** Serialize an AtomService.Collection object into an XML element */
     public static Element collectionToElement(AtomService.Collection collection) {
-        Namespace ns = Namespace.getNamespace("http://purl.org/atom/app#");
         Element element = new Element("collection", ns);
-        element.setAttribute("title", collection.getTitle());
         element.setAttribute("href", collection.getHref());
+                       
+        Element title = new Element("title", atomns);
+        title.setText(collection.getTitle());
+        element.addContent(title);
+        if (collection.getTitleType() != null && !collection.getTitleType().equals("TEXT")) {
+            element.setAttribute("type", collection.getTitleType(), atomns);
+        }
+                    
+        // Loop to create <app:categories> elements            
+        for (Iterator it = collection.getCategories(); it.hasNext();) {
+            Categories cats = (Categories)it.next();
+            Element catsElem = new Element("categories", ns);
+            catsElem.setAttribute("fixed", cats.isFixed() ? "yes" : "no", ns);
+            if (cats.getScheme() != null) {
+                catsElem.setAttribute("scheme", cats.getScheme(), ns);
+            }
+            // Loop to create <atom:category> elements
+            for (Iterator catIter = cats.getCategories(); catIter.hasNext();) {
+                Category cat = (Category) catIter.next();
+                Element catElem = new Element("category", atomns);
+                catElem.setAttribute("term", cat.getTerm(), atomns);
+                if (cat.getScheme() != null) { // optional
+                    catElem.setAttribute("scheme", cat.getScheme(), atomns);
+                }
+                if (cat.getLabel() != null) { // optional
+                    catElem.setAttribute("label", cat.getLabel(), atomns);
+                }
+                catsElem.addContent(catElem);
+            }
+            element.addContent(catsElem);
+        }
         
         Element memberType = new Element("accept", ns);
         memberType.setText(collection.getAccept());
@@ -247,3 +414,4 @@ public class AtomService {
         return element;
     }
 }
+
