@@ -191,7 +191,7 @@ public class RollerAtomHandler implements AtomHandler {
                     AtomService.Categories cats = new AtomService.Categories();
                     cats.setFixed(true);
                     cats.setScheme(URLUtilities.getWeblogURL(perm.getWebsite(), null, true));
-                    List rollerCats = mRoller.getWeblogManager().getWeblogCategories(perm.getWebsite());
+                    List rollerCats = mRoller.getWeblogManager().getWeblogCategories(perm.getWebsite(), false);
                     for (Iterator it = rollerCats.iterator(); it.hasNext();) {
                         WeblogCategoryData rollerCat = (WeblogCategoryData)it.next();
                         AtomService.Category cat = new AtomService.Category();
