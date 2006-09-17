@@ -34,28 +34,53 @@ import org.jdom.Namespace;
  * <p />
  * Designed to be Roller independent.
  *//* 
- * appService =
- *    element app:service {
- *       appCommonAttributes,
- *       ( appWorkspace+ 
- *         & extensionElement* )
- *    }
- *
- * <?xml version="1.0" encoding='utf-8'?>
- * <service xmlns="http://purl.org/atom/app#">
- *   <workspace title="Main Site" >
- *     <collection
- *       title="My Blog Entries"
- *       href="http://example.org/reilly/main" >
- *       <accept>entry</accept>
- *     </collection>
- *     <collection
- *       title="Pictures"
- *       href="http://example.org/reilly/pic" >
- *       <accept>*</accept>
- *     </collection>
- *   </workspace>
- * </service>
+
+	namespace app = "http://purl.org/atom/app#"
+	start = appService
+	             
+	appService =
+	   element app:service {
+	      appCommonAttributes,
+	      ( appWorkspace+
+	        & extensionElement* )
+	   }
+	   
+	For example:
+	 
+	<?xml version="1.0" encoding='utf-8'?>
+	<service xmlns="http://purl.org/atom/app#"
+	         xmlns:atom="http://www.w3.org/2005/Atom">
+	  <workspace>
+	    <atom:title>Main Site</atom:title>
+	    <collection
+	        href="http://example.org/reilly/main" >
+	      <atom:title>My Blog Entries</atom:title>
+	      <categories
+	         href="http://example.com/cats/forMain.cats" />
+	    </collection>
+	    <collection
+	        href="http://example.org/reilly/pic" >
+	      <atom:title>Pictures</atom:title>
+	      <accept>image/*</accept>
+	    </collection>
+	  </workspace>
+	  <workspace>
+	    <atom:title>Side Bar Blog</atom:title>
+	    <collection
+	        href="http://example.org/reilly/list" >
+	      <atom:title>Remaindered Links</atom:title>
+	      <accept>entry</accept>
+	      <categories fixed="yes">
+	        <atom:category
+	          scheme="http://example.org/extra-cats/"
+	          term="joke" />
+	        <atom:category
+	          scheme="http://example.org/extra-cats/"
+	          term="serious" />
+	      </categories>
+	    </collection>
+	  </workspace>
+	</service>
  */
 public class AtomService {
     public static final Namespace ns =
@@ -84,8 +109,13 @@ public class AtomService {
      * This class models an Atom workspace.
      * @author Dave Johnson
      *//*
-     * appWorkspace = element app:workspace { attribute title { text }, (
-     * appCollection* & anyElement* ) }
+	appWorkspace =
+	   element app:workspace {
+	      appCommonAttributes,
+	      ( appCollection*
+	        & extensionElement* )
+	   }
+	atomTitle = element atom:title { atomTextConstruct }
      */
     public static class Workspace {
         private String title       = null;
@@ -125,16 +155,15 @@ public class AtomService {
     
     /**
      * This class models an Atom workspace collection.    
-     * @author Dave Johnson
      *//* 
-     * appCollection =
-     *       element app:collection {
-     *          appCommonAttributes,
-     *          attribute title { text },
-     *          attribute href { text },
-     *          ( appAccept?
-     *            & extensionElement* )
-     *       }
+	appCollection =
+	   element app:collection {
+	      appCommonAttributes,
+	      attribute href { atomURI  },
+	      ( appAccept?	
+	        & appCategories*
+	        & extensionElement* )
+	   }
      */
     public static class Collection {
         private String title = null;
@@ -197,7 +226,16 @@ public class AtomService {
         }
     }
     
-    /** Categories object contains Category objects */
+    /** 
+     * Categories object contains Category objects 
+     *//*
+	 appInlineCategories =
+	    element app:categories {
+	        attribute fixed { "yes" | "no" }?,
+	        attribute scheme { atomURI }?,
+	        (atomCategory*)
+	    }
+     */
     public static class Categories {
         private Set categories = new LinkedHashSet(); // of Category objects
         private String scheme = null;
@@ -235,7 +273,18 @@ public class AtomService {
     }
     
       
-    /** Represents an <atom:category> object */
+    /** 
+     * Represents an <atom:category> object 
+     *//*
+	    atomCategory =
+	    element atom:category {
+	       atomCommonAttributes,
+	       attribute term { text },
+	       attribute scheme { atomURI }?,
+	       attribute label { text }?,
+	       undefinedContent
+	    }
+     */
     public static class Category {
         private String term;
         private String scheme;
