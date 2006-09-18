@@ -32,7 +32,7 @@ alter table $table add column $column $type default $default not null;
 #elseif ($DBTYPE == "DERBY" || $DBTYPE == "DB2")
 alter table $table add column $column $type with default $default not null;
 #elseif ($DBTYPE == "ORACLE")
-alter table $table add column $column $type default $default not null;  
+alter table $table add $column $type default $default not null;  
 #end
 #end
 
