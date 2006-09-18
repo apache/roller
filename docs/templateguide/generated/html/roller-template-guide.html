@@ -3,11 +3,11 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
 	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="StarOffice 8  (Solaris x86)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Solaris x86)">
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20051209;11500200">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060822;15271100">
+	<META NAME="CHANGED" CONTENT="20060918;15194300">
 	<META NAME="SDFOOTNOTE" CONTENT=";;;;P">
 	<META NAME="SDENDNOTE" CONTENT="ARABIC">
 	<STYLE>
@@ -19,6 +19,12 @@
 		P.ctl { font-weight: medium }
 		H1.cjk { font-family: "Andale Sans UI" }
 		H1.ctl { font-family: "Lucidasans" }
+		H2.western { font-family: "Thorndale", serif }
+		H2.cjk { font-family: "Andale Sans UI" }
+		H2.ctl { font-family: "Lucidasans" }
+		H3.western { font-family: "Thorndale", serif }
+		H3.cjk { font-family: "Andale Sans UI" }
+		H3.ctl { font-family: "Lucidasans" }
 		TD P { margin-bottom: 0in }
 		TD P.western { font-family: "Times New Roman" }
 		TH P { margin-bottom: 0in }
@@ -54,15 +60,18 @@
 		<BR>
 		</P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
-		<FONT COLOR="#ff0000"><FONT SIZE=7 STYLE="font-size: 40pt"><B>DRAFT
-		#20060822</B></FONT></FONT></P>
-		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
 		<BR>
 		</P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
 		<FONT SIZE=7 STYLE="font-size: 32pt"><B>Apache Roller</B></FONT></P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
 		<FONT SIZE=5 STYLE="font-size: 20pt"><B>Version 3.0 (incubating) </B></FONT>
+		</P>
+		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent; font-weight: medium">
+		<BR>
+		</P>
+		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent; font-weight: medium">
+		<BR>
 		</P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent; font-weight: medium">
 		<BR>
@@ -288,7 +297,7 @@
 		can edit to customize the content, layout and appearance of your
 		weblog. 
 		</P>
-		<H2>2.1 - Page templates</H2>
+		<H2 CLASS="western">2.1 - Page templates</H2>
 		<P CLASS="western">When you create a new Roller weblog you must
 		pick a theme to define the new weblog's appearance and layout. A
 		theme is just a small set of templates, where each template
@@ -312,7 +321,7 @@
 		page templates. In the example above, we see only the $model
 		object, but here are others. You'll learn more about models in
 		Section 4 and Section 5 provides a complete reference.</P>
-		<H2>2.2 - The Velocity template language</H2>
+		<H2 CLASS="western">2.2 - The Velocity template language</H2>
 		<P CLASS="western">The simple template language that we use inside
 		Roller page templates is called Velocity. It's designed to be
 		simple and easy for even non-programmers, but it's also a simple
@@ -395,7 +404,7 @@
 		the CSS style code used by the weblog.</P>
 		<P CLASS="western">First, let's look at a simple Weblog template. 
 		</P>
-		<H2>3.1 - The Weblog template</H2>
+		<H2 CLASS="western">3.1 - The Weblog template</H2>
 		<P CLASS="western">Below is a simple Weblog page that displays all
 		of the data that weblog typically contains including recent entries
 		with paging to past entries, category link, feed links, a calendar
@@ -610,7 +619,7 @@
 		Note in point #9 that the display of the weblog entries is
 		controlled by another template, the _day template. So next let's
 		take a look at that _day template.</P>
-		<H2>3.2 - The _day template</H2>
+		<H2 CLASS="western">3.2 - The _day template</H2>
 		<P CLASS="western">A theme's _day template is responsible for
 		displaying one day's worth of weblog entries. Here's a typical _day
 		template, one that corresponds to the above Weblog template.</P>
@@ -720,7 +729,7 @@
 		<P CLASS="western">Now you've seen the required templates and
 		you've seen most of the commonly used macros in action, let's
 		discuss the mechanics of customizing your theme.</P>
-		<H2>3.3 - Customizing your theme</H2>
+		<H2 CLASS="western">3.3 - Customizing your theme</H2>
 		<P CLASS="western">When you start a Roller weblog and you pick a
 		theme, your weblog uses a <I>shared</I> copy of that theme. The
 		page templates that define your theme are shared by all of the
@@ -757,7 +766,7 @@
 		just use the <B>Preferences-&gt;Theme</B> page to switch back to a
 		shared theme &ndash; or pick another one to customize. Now let's
 		discuss editing and creating templates.</P>
-		<H2>3.4 - Editing and creating page templates</H2>
+		<H2 CLASS="western">3.4 - Editing and creating page templates</H2>
 		<P CLASS="western">Once you've got the page templates copied into
 		your weblog, you can do just about anything you want to your theme.
 		You can use the <B>Preferences-&gt;Templates</B> page, shown below,
@@ -837,12 +846,12 @@
 		</UL>
 		<P CLASS="western">Let's discuss how to access data via models and
 		data objects.</P>
-		<H2>4.1 - Accessing data via models and objects</H2>
+		<H2 CLASS="western">4.1 - Accessing data via models and objects</H2>
 		<P CLASS="western">Models and data objects are objects and there
 		are two ways to access data from objects. One way is to access an
 		objects properties. Another is to call the object's methods. Let's
 		talk about these two techniques.</P>
-		<H3>4.1.1 - Accessing object properties</H3>
+		<H3 CLASS="western">4.1.1 - Accessing object properties</H3>
 		<P CLASS="western">To access an objects properties, you use a
 		simple dot-notation. For example, if you want to display the Roller
 		version number property of the <B>$config</B> model object, you do
@@ -863,7 +872,7 @@
 		like so:</P>
 		<P STYLE="margin-bottom: 0in; background: transparent"><FONT FACE="Courier New"><FONT SIZE=2>	&lt;p&gt;<B>$model.weblog.name</B>&lt;/a&gt;</FONT></FONT></P>
 		<P STYLE="margin-bottom: 0in; background: transparent"><FONT FACE="Courier New"><FONT SIZE=2>	&lt;p&gt;<B>$model.weblog.description</B>&lt;/a&gt;</FONT></FONT></P>
-		<H3>4.1.2 - Calling object methods</H3>
+		<H3 CLASS="western">4.1.2 - Calling object methods</H3>
 		<P CLASS="western">Another way to access an object's data is to
 		call an objects's methods. Methods are different from properties
 		because they require parameters. You use the same simple
@@ -877,7 +886,7 @@
 		<P CLASS="western">Argument one is the name of the theme and
 		argument two is the name of a file that exists in the theme's
 		directory. Note that a comma is used to separate the arguments.</P>
-		<H2>4.2 - Calling macros</H2>
+		<H2 CLASS="western">4.2 - Calling macros</H2>
 		<P CLASS="western">In page templates, you get data from objects and
 		you use template code to display that data as HTML. To help you
 		along, Roller includes some macros which can be used to generate
@@ -898,7 +907,7 @@
 		that no category is specified. Note that the arguments for a macro
 		are separated by a space and NOT a comma as was the case for
 		methods.</P>
-		<H2>4.3 - A word about pagers</H2>
+		<H2 CLASS="western">4.3 - A word about pagers</H2>
 		<P CLASS="western">There are many cases in a weblog when we want to
 		display a large collection of values and we want that collection to
 		be page-able &ndash; that is, we want a Next link to go to the next
@@ -998,10 +1007,10 @@
 		</UL>
 		<P CLASS="western">For each model, we'll cover properties and
 		methods.</P>
-		<H2>5.1 - $config</H2>
+		<H2 CLASS="western">5.1 - $config</H2>
 		<P CLASS="western">The $config model provides access to the Roller
 		configuration data that you'll need in your weblog.</P>
-		<H3>5.1.1 - $config Properties</H3>
+		<H3 CLASS="western">5.1.1 - $config Properties</H3>
 		<TABLE WIDTH=720 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=186>
 			<COL WIDTH=57>
@@ -1165,7 +1174,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H3>5.1.2 - $config Methods</H3>
+		<H3 CLASS="western">5.1.2 - $config Methods</H3>
 		<P CLASS="western">The <B>$config</B> model also provides a set of
 		methods for accessing properties by name. Generally, you  should be
 		able to get the configuration data you need from the properties
@@ -1182,7 +1191,7 @@
 			propertyName)</B><BR>Returns the named runtime property as an
 			integer.</P>
 		</UL>
-		<H2>5.2 - $model</H2>
+		<H2 CLASS="western">5.2 - $model</H2>
 		<P CLASS="western">The <B>$model </B>object provides you with
 		access to all of the data objects that make up your weblog. You can
 		get a pager object to access your weblog entries, the weblog entry
@@ -1194,13 +1203,13 @@
 		get from those. See Section 6 for a complete reference to the data
 		objects and their properties.</P>
 		<P CLASS="western"><SPAN ID="Frame1" DIR="LTR" STYLE="float: left; width: 7.06in; height: 3.96in; border: none; padding: 0in; background: #ffffff">
-			<P CLASS="frame-contents-western"><IMG SRC="roller-template-guide_html_23f6e71e.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_41cae8f2.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_54c83831.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m52909c75.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m5a7105a.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m1fb04575.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m5542aee0.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m3506fd0f.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m610b5f75.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m452b7d95.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m3add420.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_6d3d7e5b.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_4b83d79d.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_7b24c4cc.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_a408ed3.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m7027fa92.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m8246857.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m4f869ae1.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_dac7346.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m316a6705.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m415f93a1.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_70922ad5.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_2eeff179.gif" ALIGN=LEFT><BR><BR>
+			<P CLASS="frame-contents-western"><IMG SRC="roller-template-guide_html_1e560987.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m202e3c46.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m5695ffaf.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_59438386.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m637f673c.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m2b0639f5.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_745e10ce.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_mf2d7980.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_2d61cb4e.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m610b5f75.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m452b7d95.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m3add420.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_6d3d7e5b.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_4b83d79d.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_7b24c4cc.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_a408ed3.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m7027fa92.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m8246857.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m4f869ae1.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_dac7346.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_731c768.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_m4b8ab955.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_6d79f29e.gif" ALIGN=LEFT><IMG SRC="roller-template-guide_html_3e97bead.gif" ALIGN=LEFT><BR><BR>
 			</P>
 		</SPAN><BR CLEAR=LEFT><BR><BR>
 		</P>
 		<P CLASS="western">Now let's the details of the $model object,
 		starting with properties.</P>
-		<H3>5.2.1 - $model Properties</H3>
+		<H3 CLASS="western">5.2.1 - $model Properties</H3>
 		<TABLE WIDTH=719 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=181>
 			<COL WIDTH=116>
@@ -1331,7 +1340,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H3>5.2.2 - $model Search Properties</H3>
+		<H3 CLASS="western">5.2.2 - $model Search Properties</H3>
 		<P CLASS="western">If the URL indicates a search, then the pager
 		returned by <B>$model.weblogEntriesPager</B> will return entries
 		from the search and some additional properties will be available on
@@ -1420,7 +1429,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H3>5.2.3 - $model methods</H3>
+		<H3 CLASS="western">5.2.3 - $model methods</H3>
 		<P CLASS="western">The <B>$model</B> object also provides a couple
 		of methods:</P>
 		<UL>
@@ -1433,7 +1442,7 @@
 		</UL>
 		<P CLASS="western"><BR><BR>
 		</P>
-		<H2 STYLE="page-break-before: always">5.3 - $url</H2>
+		<H2 CLASS="western" STYLE="page-break-before: always">5.3 - $url</H2>
 		<P CLASS="western">To ensure that your URLs are formed correctly,
 		you should use the <B>$url</B> model to form all URLs that point to
 		the Roller site or to your weblog. Every possible type of Roller
@@ -1833,7 +1842,7 @@
 		</P>
 		<P CLASS="western"><BR><BR>
 		</P>
-		<H2 STYLE="page-break-before: always">5.4 - $utils</H2>
+		<H2 CLASS="western" STYLE="page-break-before: always">5.4 - $utils</H2>
 		<P CLASS="western">The <B>$utils </B>object provides all of the
 		string manipulation methods you'll ever need for your weblog,
 		including methods for formatting dates, escapeing HTML, encoding
@@ -1927,7 +1936,7 @@
 			<LI><P CLASS="western"><B>Weblog Category</B>: A category within a
 			weblog, categories in Roller are hierarchical</P>
 		</UL>
-		<H2>6.1 - Bookmark</H2>
+		<H2 CLASS="western">6.1 - Bookmark</H2>
 		<P CLASS="western"><BR><BR>
 		</P>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
@@ -2025,7 +2034,7 @@
 		<P CLASS="western" STYLE="margin-bottom: 0in; background: transparent; font-weight: medium">
 		<BR>
 		</P>
-		<H2>6.2 - BookmarkFolder</H2>
+		<H2 CLASS="western">6.2 - BookmarkFolder</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=149>
 			<COL WIDTH=167>
@@ -2146,7 +2155,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H2>6.3 - Comment</H2>
+		<H2 CLASS="western">6.3 - Comment</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=157>
 			<COL WIDTH=93>
@@ -2310,7 +2319,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H2>6.4 - PageTemplate</H2>
+		<H2 CLASS="western">6.4 - PageTemplate</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=157>
 			<COL WIDTH=92>
@@ -2416,7 +2425,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H2>6.5 - Referrer</H2>
+		<H2 CLASS="western">6.5 - Referrer</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=164>
 			<COL WIDTH=85>
@@ -2568,7 +2577,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H2>6.6 - User</H2>
+		<H2 CLASS="western">6.6 - User</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=188>
 			<COL WIDTH=172>
@@ -2662,7 +2671,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H2>6.7 - Weblog</H2>
+		<H2 CLASS="western">6.7 - Weblog</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=190>
 			<COL WIDTH=172>
@@ -2971,7 +2980,7 @@
 				link.</P>
 			</UL>
 		</UL>
-		<H2>6.8 - WeblogCategory</H2>
+		<H2 CLASS="western">6.8 - WeblogCategory</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=195>
 			<COL WIDTH=168>
@@ -3091,7 +3100,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H2>6.9 - WeblogEntry</H2>
+		<H2 CLASS="western">6.9 - WeblogEntry</H2>
 		<TABLE WIDTH=719 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=193>
 			<COL WIDTH=167>
@@ -3375,7 +3384,7 @@
 				or null if no such attribute</P>
 			</UL>
 		</UL>
-		<H2>6.10 - WeblogEntryAttribute</H2>
+		<H2 CLASS="western">6.10 - WeblogEntryAttribute</H2>
 		<P CLASS="western">Weblog entry attributes are name/value pairs
 		that can be assigned to weblog entries. Currently, they're only
 		used to add podcasts to blog entries.</P>
@@ -3439,7 +3448,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H3></H3>
+		<H3 CLASS="western"></H3>
 		<P CLASS="western"><BR><BR>
 		</P>
 		<H1 CLASS="western" STYLE="page-break-before: always">7 - Macro
@@ -3447,14 +3456,14 @@
 		<P CLASS="western">This section lists the macros that are available
 		for use in Roller page templates and a brief description of how
 		each works.</P>
-		<H2>7.1 - Entry macros</H2>
+		<H2 CLASS="western">7.1 - Entry macros</H2>
 		<UL>
 			<LI><P CLASS="western"><B>#showWeblogEntriesPager($pager)</B><BR>Displays
 			the weblog entries contained in the specified $pager object.</P>
 			<LI><P CLASS="western"><B>#showNextPrevEntriesControl($pager)</B><BR>Display
 			the next/prev links of the specified $pager object.</P>
 		</UL>
-		<H2>7.2 - Comment macros</H2>
+		<H2 CLASS="western">7.2 - Comment macros</H2>
 		<UL>
 			<LI><P CLASS="western"><B>#showWeblogEntryComments($entry)</B><BR>Display
 			the comments associated with the specified entry, not including
@@ -3463,7 +3472,7 @@
 			<LI><P CLASS="western"><B>#showWeblogEntryCommentForm($entry)</B><BR>Display
 			a comment form for adding a comment to the specified entry.</P>
 		</UL>
-		<H2>7.3 - List macros</H2>
+		<H2 CLASS="western">7.3 - List macros</H2>
 		<UL>
 			<LI><P CLASS="western"><B>#showWeblogEntryLinksList($entries)</B><BR>Display
 			a simple list of entries, with a title and link for each.</P>
@@ -3477,7 +3486,7 @@
 			specified category object. If $expanding and $subcats are set to
 			true, then display the categories as an expandable tree view.</P>
 		</UL>
-		<H2>7.4 - Menu macros</H2>
+		<H2 CLASS="western">7.4 - Menu macros</H2>
 		<UL>
 			<LI><P CLASS="western"><B>#showPageMenu($weblog)</B><BR>Display a
 			page navigation menu that lists all pages in the weblog.</P>
@@ -3485,7 +3494,7 @@
 			an authoring menu for the current weblog. If $vertical is true,
 			then display a menu suitable for use in a narrow sidebar.</P>
 		</UL>
-		<H2>7.5 - Search macros</H2>
+		<H2 CLASS="western">7.5 - Search macros</H2>
 		<UL>
 			<LI><P CLASS="western"><B>#showWeblogSearchForm($weblog
 			$withCats)</B><BR>Show a search form for searching the weblog and,
@@ -3496,7 +3505,7 @@
 			<LI><P CLASS="western"><B>#showNextPrevSearchControl($pager)</B><BR>Show
 			special pager designed for paging through search results.</P>
 		</UL>
-		<H2>7.6 - Misc. macros</H2>
+		<H2 CLASS="western">7.6 - Misc. macros</H2>
 		<UL>
 			<LI><P CLASS="western"><B>#showWeblogEntryCalendar($weblog
 			$category)</B><BR>Show weblog entry calendar, optionally
@@ -3524,13 +3533,13 @@
 		the <B>$site </B>for accessing site-wide data,and the <B>$planet
 		</B>model for accessing Planet Roller data. Let's start with the
 		$site model.</P>
-		<H2>8.1 - $site</H2>
+		<H2 CLASS="western">8.1 - $site</H2>
 		<P CLASS="western">The <B>$site </B>model provides access to
 		site-wide data: aggregations of webog entries from all weblogs,
 		comments from all weblogs, lists of users, lists of weblogs, etc.
 		-- in short, everything you need to build an interesting community
 		front page for Roller.</P>
-		<H3>8.1.1 - $site Objects</H3>
+		<H3 CLASS="western">8.1.1 - $site Objects</H3>
 		<P CLASS="western">For some SiteModel methods (e.g. hot-blogs, most
 		commented, etc.) return a special type of object use to expressing
 		a count with a short name, a long name and an internationalized
@@ -3605,7 +3614,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H3>8.1.2 - $site Methods</H3>
+		<H3 CLASS="western">8.1.2 - $site Methods</H3>
 		<UL>
 			<LI><P CLASS="western"><B>Pager getWeblogEntriesPager(int
 			sinceDays, int max)</B><BR>Get pager that returns WeblogEntry
@@ -3669,12 +3678,12 @@
 			WeblogEntries in the form of StatCount objects, but only those
 			updated in last sinceDays number of days.</P>
 		</UL>
-		<H2>8.2 - $planet</H2>
+		<H2 CLASS="western">8.2 - $planet</H2>
 		<P CLASS="western">The <B>$planet</B> model makes Planet Roller
 		data available to weblog pages. It allows you to display the main
 		aggregation (i.e. the one named &ldquo;external&rdquo;), any custom
 		group aggregation, a feed and ranked subscriptions.</P>
-		<H3>8.2.1 - $planet Objects</H3>
+		<H3 CLASS="western">8.2.1 - $planet Objects</H3>
 		<P CLASS="western">The $planet model returns two types of objects
 		that we haven't seen before: the PlanetSubscription object, which
 		represents a feed subscription, and PlanetEntry, which represents
@@ -3959,7 +3968,7 @@
 		</TABLE>
 		<P CLASS="western"><BR><BR>
 		</P>
-		<H3>8.2.2 - $planet Methods</H3>
+		<H3 CLASS="western">8.2.2 - $planet Methods</H3>
 		<UL>
 			<LI><P CLASS="western"><B>Pager getAggregationPager(int sinceDays,
 			int max)</B><BR>Get pager that returns PlanetEntry objects from
