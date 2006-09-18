@@ -20,7 +20,7 @@
 <!--
 function previewImage(theme) {
     <% String ctxPath = request.getContextPath(); %>
-    document.preview.src="<%= ctxPath %>/roller-ui/authoring/images/sm-theme-" + theme + ".png";
+    document.preview.src="<%= ctxPath %>/themes/" + theme + "/sm-theme-" + theme + ".png";
 }
 function cancel() {
     document.createWebsiteForm.method.value="cancel"; 
