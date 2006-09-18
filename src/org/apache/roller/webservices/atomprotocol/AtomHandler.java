@@ -79,7 +79,7 @@ public interface AtomHandler
      * @param data Binary data representing uploaded content
      */
     public Entry postMedia(
-        String[] pathInfo, String name, String contentType, InputStream is) throws AtomException;
+        String[] pathInfo, String title, String slug, String contentType, InputStream is) throws AtomException;
 
     /**
      * Update the media file part of a media-link entry.

@@ -4,6 +4,14 @@
    </fileset>
 </copy>
 
+<!-- copy jdo web resources
+<copy todir="${build.webapp}" overwrite="true">
+   <fileset dir="${basedir}/sandbox/jdobackend/web">
+      <include name="**/**" />
+   </fileset>
+</copy>
+-->
+
 <!-- Example: copy custom files into the Roller web context
 <copy todir="${build.webapp}" overwrite="true">
    <fileset dir="${basedir}/sandbox/planetroller/web">

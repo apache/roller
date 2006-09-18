@@ -132,7 +132,7 @@ public class TopicTagPlugin implements WeblogEntryPlugin
      * @param ctx  Plugins may place objects into the Velocity Context.
      * @see PagWeblogEntryPluginit(org.apache.roller.presentation.RollerRequest, org.apache.velocity.context.Context)
      */
-    public void init(WebsiteData website, Map model) throws RollerException
+    public void init(WebsiteData website) throws RollerException
     {
         if (mLogger.isDebugEnabled())
         {

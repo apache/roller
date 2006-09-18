@@ -77,7 +77,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
      * later use.  Need an HttpServletRequest though so that we can
      * get the ServletContext Path.  But only do it once.
      */
-    public synchronized void init(WebsiteData website, Map model) throws RollerException {
+    public synchronized void init(WebsiteData website) throws RollerException {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1) {
             String baseURL = RollerRuntimeConfig.getAbsoluteContextURL();

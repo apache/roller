@@ -67,7 +67,7 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
     }
     
     
-    public void init(WebsiteData website, Map model) throws RollerException {
+    public void init(WebsiteData website) throws RollerException {
         // we don't need to do any init.
         mLogger.debug("initing");
     }

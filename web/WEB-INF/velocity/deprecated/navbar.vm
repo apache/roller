@@ -58,8 +58,8 @@
     #if ( $useCSS ) #set( $container = "ul" ) #end
     #set( $rawUrl = "$website.URL" )
     <$container class="rNavigationBar">
-    #printNavLink( "$url.site" $siteShortName $useCSS $vertical "" )
-    #if(!$useCSS) $delimiter #end
+    #printNavLink( "$url.site/" $siteShortName $useCSS $vertical "" )
+    #if(!$vertical) $delimiter #end
     #printNavLink( "$url.home" "Weblog" $useCSS $vertical "" )
     #if( $website )
         #foreach( $iPage in $pages )

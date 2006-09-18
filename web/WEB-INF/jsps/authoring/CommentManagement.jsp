@@ -52,7 +52,7 @@ function setChecked(val, name) {
             <c:url value="/roller-ui/authoring/weblog.do" var="entryLink">
                <c:param name="method" value="edit" />
                <c:param name="weblog" value="${model.website.handle}" />
-               <c:param name="entryid" value="${model.weblogEntry.id}" />
+               <c:param name="entryId" value="${model.weblogEntry.id}" />
             </c:url>
             <a href='<c:out value="${entryLink}" />'>
                 <fmt:message key="commentManagement.returnToEntry"/>
@@ -168,7 +168,7 @@ function setChecked(val, name) {
                     value='<c:out value="${model.website.handle}" />' />
             </c:if>
             <c:if test="${!empty model.weblogEntry}">
-                <input name="entryid" type="hidden" 
+                <input name="entryId" type="hidden" 
                     value='<c:out value="${model.weblogEntry.id}" />' />
             </c:if>
             <html:hidden property="ids" />

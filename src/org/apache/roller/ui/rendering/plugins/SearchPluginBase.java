@@ -53,7 +53,7 @@ public abstract class SearchPluginBase {
      *
      * @see org.apache.roller.model.PagePlugin#init(WebsiteData, Object, String baseUrl, org.apache.velocity.context.Context)
      */
-    public void init(WebsiteData website, Map model) throws RollerException {
+    public void init(WebsiteData website) throws RollerException {
         if (mLogger.isDebugEnabled()) {
             mLogger.debug(getClass().getName() + "; version:  " + getVersion() + "; base version " + baseVersion);
         }

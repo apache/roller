@@ -14,18 +14,14 @@ Makes the following assumptions:
 You must download Tomcat and JSPWiki yourself and ensure that the three 
 properties below point to the downloaded files.
 -->
-<property name="tomcat.filename" value="./components/jakarta-tomcat-5.5.7.tar.gz" />	
-<property name="tomcat.basename" value="jakarta-tomcat-5.5.7" />	
-<property name="jspwiki.filename" value="./components/jspwiki-2.2.33-bin.zip" />
 
-<property name="roller.srcdir" value="../.." />
+<property file="ant.properties" />
 
-<target name="roller_demo" depends="create_bundle" >
-</target>
+<target name="roller_demo" depends="create_bundle" ></target>
 
-<!-- unzip JSPWiki, unjar its WAR into ./build/roller-demo/webapps -->
+<!-- unzip JSPWiki, unjar its WAR into ./build/${release.fileName}/webapps -->
 <mkdir  dir="./build/wiki" />
-<unzip  src="${jspwiki.filename}" dest="./build" />
+<unzip  src="${jspwiki.fileName}" dest="./build" />
 <unjar  src="./build/JSPWiki/JSPWiki.war" 
        dest="./build/wiki" />
    
@@ -57,78 +53,89 @@ properties below point to the downloaded files.
 <target name="create_bundle" depends="plugins"
    description="Copy in Tomcat, JSPWiki, Roller, and plugin jars">
 
-   <!-- untar Tomcat, put it in ./build/roller-demo -->
-   <untar src="${tomcat.filename}" dest="./build" compression="gzip" />
-   <rename src="./build/${tomcat.basename}" dest="./build/roller-demo" />
-   <move todir="./build/roller-demo/webapps">
+   <!-- untar Tomcat, put it in ./build/${release.fileName} -->
+   <untar src="${tomcat.fileName}" dest="./build" compression="gzip" />
+   <rename src="./build/${tomcat.baseName}" dest="./build/${release.fileName}" />
+   <move todir="./build/${release.fileName}/webapps">
       <fileset dir="./build" includes="wiki/**" />
    </move>
 	
    <!--
-   <delete dir="./build/roller-demo/webapps/tomcat-docs" />
-   <delete dir="./build/roller-demo/webapps/servlets-examples" />
-   <delete dir="./build/roller-demo/webapps/jsp-examples" />
-   <delete dir="./build/roller-demo/webapps/webdav" />
+   <delete dir="./build/${release.fileName}/webapps/tomcat-docs" />
+   <delete dir="./build/${release.fileName}/webapps/servlets-examples" />
+   <delete dir="./build/${release.fileName}/webapps/jsp-examples" />
+   <delete dir="./build/${release.fileName}/webapps/webdav" />
    -->
 
    <!-- Standalone demo wiki plugin goes in JSPWiki webapp -->
    <copy file="./build/roller-jspwiki.jar" 
-        todir="./build/roller-demo/webapps/wiki/WEB-INF/lib" />
+        todir="./build/${release.fileName}/webapps/wiki/WEB-INF/lib" />
 
    <!-- Copy Roller from its build directory -->       
-   <mkdir dir="./build/roller-demo/webapps/roller" />
-   <copy todir="./build/roller-demo/webapps/roller" >
-       <fileset dir="${roller.srcdir}/build/roller" includes="**/**" />
+   <mkdir dir="./build/${release.fileName}/webapps/roller" />
+   <copy todir="./build/${release.fileName}/webapps/roller" >
+       <fileset dir="${roller.srcdir}/build/webapp" includes="**/**" />
+   </copy>
+
+   <mkdir dir="./build/${release.fileName}/webapps/roller/docs" />
+   <copy todir="./build/${release.fileName}/webapps/roller/docs" >
+       <fileset dir="${roller.srcdir}/docs/" includes="**/*guide/**" />
    </copy>
    	   
    <!-- Roller HSQLDB starter goes into Tomcat -->
    <copy file="./build/roller-hsqldb.jar" 
-        todir="./build/roller-demo/server/lib" />
+        todir="./build/${release.fileName}/server/lib" />
    <copy file="${roller.srcdir}/tools/buildtime/hsqldb.jar" 
-        todir="./build/roller-demo/common/lib" />
+        todir="./build/${release.fileName}/common/lib" />
    <copy file="${roller.srcdir}/tools/lib/mail.jar" 
-        todir="./build/roller-demo/common/lib" />
+        todir="./build/${release.fileName}/common/lib" />
    <copy file="${roller.srcdir}/tools/lib/activation.jar" 
-        todir="./build/roller-demo/common/lib" />
+        todir="./build/${release.fileName}/common/lib" />
 	
    <!-- Copy copy-over files for Tomcat -->
-   <copy todir="./build/roller-demo" overwrite="true">
+   <copy todir="./build/${release.fileName}" overwrite="true">
        <fileset dir="./tomcat" includes="**/**" />
    </copy>
    <!-- Copy copy-over files for JSPWiki -->
-   <copy todir="./build/roller-demo/webapps/wiki" overwrite="true">
+   <copy todir="./build/${release.fileName}/webapps/wiki" overwrite="true">
        <fileset dir="./jspwiki" includes="**/**" />
    </copy>
 	
    <!-- Copy over custom files -->        
-   <copy todir="./build/roller-demo" overwrite="true" failonerror="false">
+   <copy todir="./build/${release.fileName}" overwrite="true" failonerror="false">
        <fileset dir="./custom" includes="**/**" />
    </copy>
         
    <chmod perm="+x">
-       <fileset dir="./build/roller-demo/bin" includes="*.sh" />
+       <fileset dir="./build/${release.fileName}/bin" includes="*.sh" />
    </chmod>
+   
+   <mkdir dir="./dist" />
+   <tar basedir="./build" destfile="./build/${release.fileName}.tar" includes="${release.fileName}/**" />
+   <gzip zipfile="./dist/${release.fileName}.tar.gz" src="./build/${release.fileName}.tar"/>
+   <delete file="./build/${release.fileName}.tar" />      
+   <zip basedir="./build" destfile="./dist/${release.fileName}.zip" includes="${release.fileName}/**" />      
     
 </target>
 	
 <target name="init_database" depends="create_bundle"
 	description="Create fresh new Roller database in the bundle" >
 
-	<!-- assumes that build/roller-demo/blogdata/ directory is empty -->
+	<!-- assumes that build/${release.fileName}/blogdata/ directory is empty -->
 	
     <!-- Start HSQLDB with Roller's custom startdb task -->
     <taskdef name="startdb" classname="org.apache.roller.ant.StartHsqldbTask" 
-        classpath="./build/roller-demo/common/lib/hsqldb.jar;${roller.srcdir}/build/tests/WEB-INF/classes" />
+        classpath="./build/${release.fileName}/common/lib/hsqldb.jar;${roller.srcdir}/build/tests/WEB-INF/classes" />
     <taskdef name="stopdb" classname="org.apache.roller.ant.StopHsqldbTask" 
-        classpath="./build/roller-demo/common/lib/hsqldb.jar;${roller.srcdir}/build/tests/WEB-INF/classes" />
-    <startdb database="./build/roller-demo/blogdata/rollerdb" port="3219" />
+        classpath="./build/${release.fileName}/common/lib/hsqldb.jar;${roller.srcdir}/build/tests/WEB-INF/classes" />
+    <startdb database="./build/${release.fileName}/blogdata/rollerdb" port="3219" />
         
     <!-- Create standard Roller database tables -->
     <sql driver="org.hsqldb.jdbcDriver"
         url="jdbc:hsqldb:hsql://localhost:3219"
         userid="sa" password=""
-        src="./build/roller-demo/webapps/roller/WEB-INF/dbscripts/hsqldb/createdb.sql"
-        classpath="./build/roller-demo/common/lib/hsqldb.jar" />
+        src="./build/${release.fileName}/webapps/roller/WEB-INF/dbscripts/hsqldb/createdb.sql"
+        classpath="./build/${release.fileName}/common/lib/hsqldb.jar" />
         
     <!-- Shutdown HSQLDB --> 
     <stopdb port="3219"/>

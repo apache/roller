@@ -166,7 +166,7 @@ in the "base.path" definition.
     <path refid="base.path"/>
     <fileset refid="hibernate.jar" />
     <fileset refid="hibernate.jars" />
-    <path location="${build.compile_beans}"/>
+    <path location="${build.compile.business}"/>
 </path>
 
 <path id="javadoc.path">
@@ -184,9 +184,9 @@ in the "base.path" definition.
 
 <path id="webdoclet.path">
     <path refid="xdoclet.path"/>
-    <path location="${ro.build}/generated/src.presentation"/>
-    <path location="${ro.build}/compile_beans"/>
-    <path location="${ro.build}/compile_web"/>
+    <path location="${build.generated.web}"/>
+    <path location="${build.compile.business}"/>
+    <path location="${build.compile.web}"/>
 </path>
 
 <path id="junit.path">
