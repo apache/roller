@@ -1,0 +1,18 @@
+
+<!--  Do custom build work for business layer -->
+
+<!-- EXAMPLE: compile jdobackend from sandbox 
+<javac destdir="${build.compile.business}"
+    debug="${build.debug}" 
+    source="${build.sourcelevel}"
+    deprecation="${build.deprecation}">
+        
+    <src path="sandbox/jdobackend/src" />
+        
+    <classpath>
+        <path refid="business.path"/>
+        &custom-jars;
+    </classpath>
+
+</javac>
+-->

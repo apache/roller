@@ -20,7 +20,7 @@
 <!--
 function previewImage(theme) {
     <% String ctxPath = request.getContextPath(); %>
-    document.preview.src="<%= ctxPath %>/roller-ui/authoring/images/sm-theme-" + theme + ".png";
+    document.preview.src="<%= ctxPath %>/themes/" + theme + "/sm-theme-" + theme + ".png";
 }
 function cancel() {
     document.createWebsiteForm.method.value="cancel"; 
@@ -105,7 +105,7 @@ function handlePreview() {
        </html:select>
        <br />
        <br />
-       <img name="preview" src="<%= request.getContextPath() %>/roller-ui/authoring/images/sm-theme-<c:out value="${model.themes[0]}"/>.png" />
+       <img name="preview" src='<%= request.getContextPath() %>/themes/<c:out value="${model.themes[0]}"/>/sm-theme-<c:out value="${model.themes[0]}" />.png' />
     </td>
     <td class="description"><fmt:message key="createWebsite.tip.theme" /></td>
 </tr>

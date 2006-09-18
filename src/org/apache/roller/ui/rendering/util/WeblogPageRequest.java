@@ -18,8 +18,6 @@
 
 package org.apache.roller.ui.rendering.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +28,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
@@ -61,7 +60,7 @@ public class WeblogPageRequest extends WeblogRequest {
     
     // heavyweight attributes
     private WeblogEntryData weblogEntry = null;
-    private WeblogTemplate weblogPage = null;
+    private Template weblogPage = null;
     private WeblogCategoryData weblogCategory = null;
     
     
@@ -320,12 +319,12 @@ public class WeblogPageRequest extends WeblogRequest {
         this.weblogEntry = weblogEntry;
     }
 
-    public WeblogTemplate getWeblogPage() {
+    public Template getWeblogPage() {
         
         if(weblogPage == null && weblogPageName != null) {
             try {
                 UserManager umgr = RollerFactory.getRoller().getUserManager();
-                weblogPage = umgr.getPageByLink(getWeblog(), weblogPageName);
+                weblogPage = getWeblog().getPageByLink(weblogPageName);                
             } catch (RollerException ex) {
                 log.error("Error getting weblog page "+weblogPageName, ex);
             }

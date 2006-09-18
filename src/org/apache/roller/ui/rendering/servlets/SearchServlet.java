@@ -119,17 +119,19 @@ public class SearchServlet extends HttpServlet {
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
-            initData.put("searchRequest", searchRequest);
-            initData.put("weblogRequest", searchRequest);
             initData.put("pageContext", pageContext);
             
-            // we need to add a simple page request because the search
-            // results are rendered like a weblog page
+            // this is a little hacky, but nothing we can do about it
+            // we need the 'weblogRequest' to be a pageRequest so other models
+            // are properly loaded, which means that searchRequest needs its
+            // own custom initData property aside from the standard weblogRequest.
+            // possible better approach is make searchRequest extend pageRequest.
             WeblogPageRequest pageRequest = new WeblogPageRequest();
             pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
             pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
-            initData.put("pageRequest", pageRequest);
-        
+            initData.put("weblogRequest", pageRequest);
+            initData.put("searchRequest", searchRequest);
+            
             // Load models for pages
             String searchModels = RollerConfig.getProperty("rendering.searchModels");
             ModelLoader.loadModels(searchModels, model, initData, true);

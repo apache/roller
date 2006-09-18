@@ -53,19 +53,20 @@ Note: this filter does nothing if an ip ban list is not configured. -->
     <filter-name>PersistenceSessionFilter</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
-    <dispatcher>FORWARD</dispatcher>
 </filter-mapping>
 
 <!-- Init filter.  performs some initialization on first request -->
 <filter-mapping>
     <filter-name>InitFilter</filter-name>
     <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
 </filter-mapping>
 
 <!-- Request mapping.  this is what allows the urls to work -->
 <filter-mapping>
     <filter-name>RequestMappingFilter</filter-name>
     <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
 </filter-mapping>
 
 

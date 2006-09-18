@@ -127,6 +127,10 @@ public class UpgradeDatabase {
             UpgradeDatabase.upgradeTo210(con);
             dbversion = 210;
         }
+        if(dbversion < 300) {
+            UpgradeDatabase.upgradeTo300(con);
+            dbversion = 300;
+        }
         
         // make sure the database version is the exact version
         // we are upgrading too.
@@ -353,6 +357,77 @@ public class UpgradeDatabase {
         }
         
         UpgradeDatabase.updateDatabaseVersion(con, 210);
+    }
+    
+    
+    /**
+     * Upgrade database for Roller 3.0.0
+     */
+    private static void upgradeTo300(Connection con) throws RollerException {
+        try {
+            /*
+             * For Roller 3.0.0 we are allowing each weblogentry to track a
+             * locale now so that we can support multi-lingual blogs.  As part
+             * of the upgrade process we want to do 2 things ..
+             *
+             * 1. make sure all weblogs have a locale
+             * 2. set the locale on all entries to the locale for the weblog
+             */
+            
+            mLogger.info("Doing upgrade to 300 ...");
+            
+            // get system default language
+            String locale = java.util.Locale.getDefault().getLanguage();
+            
+            mLogger.info("Setting website locale to "+locale+" for websites with no locale");
+            
+            // update all weblogs where locale is "null"
+            PreparedStatement updateNullWeblogLocale = con.prepareStatement(
+                    "update website set locale = ? where locale is NULL");
+            // update all weblogs where locale is empty string ""
+            PreparedStatement updateEmptyWeblogLocale = con.prepareStatement(
+                    "update website set locale = ? where locale = ''");
+            updateNullWeblogLocale.setString( 1, locale);
+            updateEmptyWeblogLocale.setString( 1, locale);
+            updateNullWeblogLocale.executeUpdate();
+            updateEmptyWeblogLocale.executeUpdate();
+
+            
+            mLogger.info("Setting weblogentry locales to website locale");
+            
+            // get all entries and the locale of its website
+            PreparedStatement selectWeblogsLocale = con.prepareStatement(
+                    "select weblogentry.id,website.locale "+
+                    "from weblogentry,website "+
+                    "where weblogentry.websiteid = website.id");
+            
+            // set the locale for an entry
+            PreparedStatement updateWeblogLocale = con.prepareStatement(
+                    "update weblogentry set locale = ? where id = ?");
+            
+            ResultSet websiteSet = selectWeblogsLocale.executeQuery();
+            while (websiteSet.next()) {
+                String entryid = websiteSet.getString(1);
+                String entrylocale = websiteSet.getString(2);
+                
+                // update entry locale
+                updateWeblogLocale.clearParameters();
+                updateWeblogLocale.setString( 1, entrylocale);
+                updateWeblogLocale.setString( 2, entryid);
+                updateWeblogLocale.executeUpdate();
+            }
+            
+            
+            if (!con.getAutoCommit()) con.commit();
+            
+            mLogger.info("Upgrade to 300 complete.");
+            
+        } catch (SQLException e) {
+            mLogger.error("Problem upgrading database to version 300", e);
+            throw new RollerException("Problem upgrading database to version 300", e);
+        }
+        
+        UpgradeDatabase.updateDatabaseVersion(con, 300);
     }
     
     

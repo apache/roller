@@ -57,13 +57,13 @@ public class PlanetModel implements Model {
     }
     
     public void init(Map initData) throws RollerException {
-        // we expect the init data to contain a pageRequest object
-        this.weblogRequest = (WeblogPageRequest) initData.get("pageRequest");
+        
+        // we expect the init data to contain a weblogRequest object
+        this.weblogRequest = (WeblogRequest) initData.get("weblogRequest");
         if(this.weblogRequest == null) {
-            throw new RollerException("expected pageRequest from init data");
+            throw new RollerException("expected weblogRequest from init data");
         }
         
-        // TODO 3.0: is it better to reparse URL to get these?
         if (weblogRequest instanceof WeblogPageRequest) {
             Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
             pageLink = (weblogPage != null) ? weblogPage.getLink() : null;

@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060831;11013700">
+	<META NAME="CHANGED" CONTENT="20060912;13352900">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.5in }
@@ -31,11 +31,12 @@
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 40pt"><B>Installation
 Guide</B></FONT></P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT COLOR="#ff0000"><FONT SIZE=7 STYLE="font-size: 40pt"><B>DRAFT
-#20060831</B></FONT></FONT></P>
+#20060912</B></FONT></FONT></P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
 </P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 32pt"><B>Apache
-Roller</B></FONT></P>
+Roller </B></FONT>
+</P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><A NAME="DDE_LINK1"></A>
 <FONT SIZE=5 STYLE="font-size: 20pt"><B>Version 3.0 (incubating)</B></FONT></P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
@@ -346,10 +347,10 @@ application server. For example, assuming Tomcat and MySQL, you'd
 download the J/Connector JDBC driver from mysql.com and you'd place
 it in the Tomcat common/lib directory.</FONT></P>
 <H4 CLASS="western">UNIX example</H4>
-<P CLASS="western" STYLE="margin-bottom: 0in"><FONT SIZE=3><FONT FACE="Courier New">	%
+<P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=3>	%
 cp mysql-connector.jar $CATALINA_HOME/common/lib</FONT></FONT></P>
 <H4 CLASS="western">Windows example</H4>
-<P CLASS="western" STYLE="margin-bottom: 0in"><FONT SIZE=3><FONT FACE="Courier New">	C&gt;
+<P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=3>	C&gt;
 copy mysql-connector.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
 <H4 CLASS="western">NOTES</H4>
 <UL>
@@ -733,7 +734,7 @@ this is how you might do it for tomcat</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=3>	JAVA_OPTS=&quot;-Droller.custom.config=/path/to/properties/file&quot;</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=3>	export
 $JAVA_OPTS</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in"><FONT SIZE=3><FONT FACE="Courier New">	$TOMCAT_HOME/bin/startup.sh</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=3>	$TOMCAT_HOME/bin/startup.sh</FONT></FONT></P>
 <H4 CLASS="western"><A NAME="section-ConfigurationGuide_2.x-WhatPropertiesYouShouldSet"></A>
 <B>What properties you should set</B></H4>
 <P CLASS="western" STYLE="margin-bottom: 0in">We are going to assume
@@ -890,9 +891,7 @@ Upgrading an existing Roller installation</H2>
 installation to the latest release of Roller by upgrading the Roller
 database and replacing the old Roller files (which are typically
 found in <FONT FACE="Courier New">tomcat/webapps/roller</FONT>) with
-the new release. 
-</P>
-<P CLASS="western">The steps are:</P>
+the new release. The steps are:</P>
 <UL>
 	<LI><P CLASS="western" STYLE="margin-bottom: 0in">STEP 1: Shutdown
 	and backup your old Roller</P>
@@ -906,12 +905,12 @@ the new release.
 	Tomcat 
 	</P>
 </UL>
-<H3 CLASS="western"><SPAN STYLE="background: transparent">An
-important note about Roller 3.0</SPAN></H3>
-<P CLASS="western"><SPAN STYLE="background: transparent">Roller 3.0
-is a major release and makes some big changes to the way that Roller
-works. If you're upgrading you need to be aware of the new URL
-structure and the new template system.</SPAN></P>
+<H3 CLASS="western"><SPAN STYLE="background: transparent">Important
+notes about Roller 3.0</SPAN></H3>
+<P CLASS="western"><SPAN STYLE="background: transparent"><B>WARNING!</B>
+Roller 3.0 is a major release and makes some big changes to the way
+that Roller works. If you're upgrading you need to be aware of the
+new URL structure and the new template system.</SPAN></P>
 <P CLASS="western"><I><B><SPAN STYLE="background: transparent">The
 new URL structure</SPAN></B></I></P>
 <P CLASS="western"><SPAN STYLE="background: transparent">The most
@@ -946,6 +945,29 @@ system to work:</SPAN></P>
 <P CLASS="western"><FONT FACE="Courier New"><SPAN STYLE="background: transparent">	rendering.legacyModels.enabled=true</SPAN></FONT></P>
 <P CLASS="western"><SPAN STYLE="background: transparent">See section
 8 for information on overriding Roller startup properties.</SPAN></P>
+<P CLASS="western"><I><B><SPAN STYLE="background: transparent">Non-core
+themes removed</SPAN></B></I></P>
+<P CLASS="western"><SPAN STYLE="background: transparent">The Roller
+project is establishing a community site for sharing and maintaining
+of themes and plugins. </SPAN>
+</P>
+<P CLASS="western"><SPAN STYLE="background: transparent">From now
+only, Roller will ship with only a core set of four themes (Basic,
+BrushedMetal, Sotto and a new Frontpage themes, which is just for
+site-wide front-page weblogs) . All other themes have been removed
+from Roller and moved to the Roller Support project at Java.net
+(<A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>).
+If you or your users use any other themes, then you'll need to
+download and install them according to the instructions on that site.</SPAN></P>
+<P CLASS="western"><I><B><SPAN STYLE="background: transparent">Non-core
+plugins removed</SPAN></B></I></P>
+<P CLASS="western"><SPAN STYLE="background: transparent">The same
+applies to plugins. The JSPWiki, Textile and Read More plugins have
+also been moved to the Roller Support project at Java.net
+(<A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>)
+to become part of a community maintained repository. If you or your
+users use any other themes, then you'll need to download and install
+them according to the instructions on that site.</SPAN></P>
 <H3 CLASS="western"><A NAME="DDE_LINK2"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller1"></A><A NAME="ref-UpgradeGuide_2.1-1"></A>
 UPGRADE STEP 1: Shutdown and backup your old Roller 
 </H3>
@@ -1124,8 +1146,6 @@ messages in the log files, send those along too.
 <P CLASS="western">This file defines the default start-up properties
 for Roller. See step 8 for instructions on how to override the
 properties in this file.</P>
-<P CLASS="western"><BR><BR>
-</P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 Licensed to the Apache Software Foundation (ASF) under one or more</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
@@ -1495,25 +1515,26 @@ Enabled plugins ... remember, order does matter!!</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
-Weblog entry editor plugins</FONT></FONT></P>
+Weblog entry plugins</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>plugins.page=\</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.convertbreaks.ConvertLineBreaksPlugin
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.ui.rendering.plugins.ConvertLineBreaksPlugin
 \</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.ui.rendering.plugins.TopicTagPlugin
 \</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.search.WikipediaLinkPlugin
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.ui.rendering.plugins.ObfuscateEmailPlugin
 \</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.search.GoogleLinkPlugin
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.ui.rendering.plugins.SmileysPlugin
+</FONT></FONT>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#,org.apache.roller.ui.rendering.plugins.WikipediaLinkPlugin
 \</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.textile.TextilePlugin
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#,org.apache.roller.ui.rendering.plugins.GoogleLinkPlugin
 \</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.acronyms.AcronymsPlugin
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#,org.apache.roller.ui.rendering.plugins.AcronymsPlugin
 \</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.bookmarks.BookmarkPlugin
-\</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.email.ObfuscateEmailPlugin
-\</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>,org.apache.roller.presentation.velocity.plugins.smileys.SmileysPlugin</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#,org.apache.roller.ui.rendering.plugins.BookmarkPlugin</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1832,8 +1853,7 @@ admins to </FONT></FONT>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 Planet cache must exist and must be writable by Roller process</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><A NAME="DDE_LINK5"></A>
-<FONT FACE="Courier New"><FONT SIZE=2>planet.aggregator.cache.dir=/var/roller/planetcache</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>planet.aggregator.cache.dir=/var/roller/planetcache</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
@@ -1860,8 +1880,12 @@ Raible|http://raibledesigns.com/page/rd,\</FONT></FONT></P>
 Lavandowska|http://brainopolis.dnsalias.com/roller/page/lance,\</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>Henri
 Yandell|http://blog.generationjava.com/roller/page/bayard,\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>Elias
+Torres|http://torrez.us/,\</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>Jeff
+Blattman|http://blogs.sun.com/jtb,\</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>blogs.sun.com|http://blogs.sun.com,\</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>jroller.com|http://jroller.com</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>jroller.com|http://jroller.com,\</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
@@ -1876,6 +1900,49 @@ Default weblog editor</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 The list of available editors is in rollerRuntimeConfigDefs.xml</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>newweblog.editor=editor-text.jsp</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Single-Sign-On</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Enables Roller to behave differently when registering new users</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+in an SSO-enabled environment. You must configure security.xml
+appropriately.</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>users.sso.enabled=false</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+Set these properties for a custom LDAP schema (optional)</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#users.sso.registry.ldap.attributes.name=cn</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#users.sso.registry.ldap.attributes.email=mail</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#users.sso.registry.ldap.attributes.locale=locale</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#users.sso.registry.ldap.attributes.timezone=timezone</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+If you don't want user credentials from LDAP/etc to be stored in
+Roller</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+(possibly in clear-text) leave this alone, otherwise set to true.</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+i.e. you would like a backup auth mechanism in case LDAP is down.</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>users.sso.passwords.save=false</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
+if you don't want passwords stored in DB, set this to the default
+value.</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>users.sso.passwords.defaultValue=&lt;unknown&gt;</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>users.sso.autoProvision.enabled=false</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>users.sso.autoProvision.className=org.apache.roller.ui.core.security.BasicUserAutoProvision</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#----------------------------------</FONT></FONT></P>
@@ -1906,19 +1973,19 @@ be </FONT></FONT>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 applied if these were omitted.</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicBookmarkName=Default
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>plugins.topictag.defaultTopicBookmarkName=Default
 Topic Site</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicSite=http://www.technorati.com/tag</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithoutBookmark=topic:\\[(.*?)\\]</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.linkFormatString=&lt;a
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>plugins.topictag.defaultTopicSite=http://www.technorati.com/tag</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>plugins.topictag.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>plugins.topictag.tagRegexWithoutBookmark=topic:\\[(.*?)\\]</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>plugins.topictag.linkFormatString=&lt;a
 rel=\&quot;tag\&quot; href=\&quot;{0}{1}\&quot;&gt;{2}&lt;/a&gt;</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#
 Set to true to allow only default topic tag site (and avoid costly
 bookmark queries)</FONT></FONT></P>
-<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.ignoreBookmarks=true</FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>plugins.topictag.ignoreBookmarks=true</FONT></FONT></P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in; font-weight: medium"><FONT FACE="Courier New"><FONT SIZE=2>#---------------------------------</FONT></FONT></P>

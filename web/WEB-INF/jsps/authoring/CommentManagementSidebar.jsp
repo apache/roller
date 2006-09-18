@@ -41,7 +41,7 @@ CommentManagementAction.CommentManagementPageModel model =
         <input name="weblog" type="hidden" value='<c:out value="${model.website.handle}" />' />
     </c:if>
     <c:if test="${!empty model.weblogEntry}">
-        <input name="entryid" type="hidden" value='<c:out value="${model.weblogEntry.id}" />' />
+        <input name="entryId" type="hidden" value='<c:out value="${model.weblogEntry.id}" />' />
     </c:if>
         
     <div class="sideformrow">

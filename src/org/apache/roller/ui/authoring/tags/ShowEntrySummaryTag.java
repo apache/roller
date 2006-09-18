@@ -63,8 +63,7 @@ public class ShowEntrySummaryTag extends TagSupport {
                         RollerContext.getRollerContext();
                     PluginManager ppmgr = roller.getPagePluginManager();
                     Map plugins = ppmgr.getWeblogEntryPlugins(
-                        entry.getWebsite(),
-                        new HashMap());
+                        entry.getWebsite());
                     xformed = ppmgr.applyWeblogEntryPlugins(
                         plugins, entry, entry.getSummary());
                 }               
