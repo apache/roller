@@ -198,6 +198,6 @@ function handleTable($page) {
 // -->
 </script>
 
-(<a href="help-wiki-js.html" alt="Wiki-js help" target="_blank">wiki-js help</a>)
+(<a href="editors/help-wiki-js.html" alt="Wiki-js help" target="_blank">wiki-js help</a>)
 
 <html:textarea property="text" cols="75" rows="20" style="width: 100%" tabindex="2" onchange="convertTextArea(this)"/>

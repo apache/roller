@@ -277,33 +277,33 @@ properly on a 1.3b build dated after January 26, 2003. Thanks.</h2>
 
 <%-- DMJ_MOD change image paths to add images/midas --%>
 
-<div class="imagebutton" id="cut"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/cut.gif"/>' alt="Cut" title="Cut"></div>
+<div class="imagebutton" id="cut"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/cut.gif"/>' alt="Cut" title="Cut"></div>
 </td>
 <td>
-<div class="imagebutton" id="copy"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/copy.gif"/>' alt="Copy" title="Copy"></div>
+<div class="imagebutton" id="copy"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/copy.gif"/>' alt="Copy" title="Copy"></div>
 </td>
 <td>
-<div class="imagebutton" id="paste"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/paste.gif"/>' alt="Paste" title="Paste"></div>
+<div class="imagebutton" id="paste"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/paste.gif"/>' alt="Paste" title="Paste"></div>
 <td>
 </td>
 <td>
 </td>
 <td>
-<div class="imagebutton" id="undo"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/undo.gif"/>' alt="Undo" title="Undo"></div>
+<div class="imagebutton" id="undo"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/undo.gif"/>' alt="Undo" title="Undo"></div>
 </td>
 <td>
-<div class="imagebutton" id="redo"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/redo.gif"/>' alt="Redo" title="Redo"></div>
+<div class="imagebutton" id="redo"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/redo.gif"/>' alt="Redo" title="Redo"></div>
 </td>
 
 <td>
 </td>
 <td>
-<div style="left: 10;" class="imagebutton" id="createlink"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/link.gif"/>' alt="Insert Link" title="Insert Link"></div>
+<div style="left: 10;" class="imagebutton" id="createlink"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/link.gif"/>' alt="Insert Link" title="Insert Link"></div>
 </td>
 <td>
 </td>
 <td>
-<div style="left: 10;" class="imagebutton" id="createtable"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/table.gif"/>' alt="Insert Table" title="Insert Table"></div>
+<div style="left: 10;" class="imagebutton" id="createtable"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/table.gif"/>' alt="Insert Table" title="Insert Table"></div>
 </td>
 </tr>
 </table>
@@ -353,50 +353,50 @@ properly on a 1.3b build dated after January 26, 2003. Thanks.</h2>
 <%-- DMJ_MOD change image paths to add images/midas --%>
 
 <td>
-<div class="imagebutton" id="bold"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/bold.gif"/>' alt="Bold" title="Bold"></div>
+<div class="imagebutton" id="bold"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/bold.gif"/>' alt="Bold" title="Bold"></div>
 </td>
 <td>
-<div class="imagebutton" id="italic"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/italic.gif"/>' alt="Italic" title="Italic"></div>
+<div class="imagebutton" id="italic"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/italic.gif"/>' alt="Italic" title="Italic"></div>
 </td>
 <td>
-<div class="imagebutton" id="underline"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/underline.gif"/>' alt="Underline" title="Underline"></div>
+<div class="imagebutton" id="underline"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/underline.gif"/>' alt="Underline" title="Underline"></div>
 </td>
 <td>
 </td>
 <td>
-<div style="left: 10;" class="imagebutton" id="forecolor"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/forecolor.gif"/>' alt="Text Color" title="Text Color"></div>
+<div style="left: 10;" class="imagebutton" id="forecolor"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/forecolor.gif"/>' alt="Text Color" title="Text Color"></div>
 </td>
 <td>
 
-<div style="left: 40;" class="imagebutton" id="hilitecolor"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/backcolor.gif"/>' alt="Background Color" title="Background Color"></div>
+<div style="left: 40;" class="imagebutton" id="hilitecolor"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/backcolor.gif"/>' alt="Background Color" title="Background Color"></div>
 </td>
 <td>
 </td>
 <td>
-<div style="left: 10;" class="imagebutton" id="justifyleft"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/justifyleft.gif"/>' alt="Align Left" title="Align Left"></div>
+<div style="left: 10;" class="imagebutton" id="justifyleft"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/justifyleft.gif"/>' alt="Align Left" title="Align Left"></div>
 </td>
 <td>
-<div style="left: 40;" class="imagebutton" id="justifycenter"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/justifycenter.gif"/>' alt="Center" title="Center"></div>
+<div style="left: 40;" class="imagebutton" id="justifycenter"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/justifycenter.gif"/>' alt="Center" title="Center"></div>
 </td>
 <td>
-<div style="left: 70;" class="imagebutton" id="justifyright"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/justifyright.gif"/>' alt="Align Right" title="Align Right"></div>
+<div style="left: 70;" class="imagebutton" id="justifyright"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/justifyright.gif"/>' alt="Align Right" title="Align Right"></div>
 </td>
 <td>
 </td>
 <td>
-<div style="left: 10;" class="imagebutton" id="insertorderedlist"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/orderedlist.gif"/>' alt="Ordered List" title="Ordered List"></div>
+<div style="left: 10;" class="imagebutton" id="insertorderedlist"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/orderedlist.gif"/>' alt="Ordered List" title="Ordered List"></div>
 
 </td>
 <td>
-<div style="left: 40;" class="imagebutton" id="insertunorderedlist"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/unorderedlist.gif"/>' alt="Unordered List" title="Unordered List"></div>
+<div style="left: 40;" class="imagebutton" id="insertunorderedlist"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/unorderedlist.gif"/>' alt="Unordered List" title="Unordered List"></div>
 </td>
 <td>
 </td>
 <td>
-<div style="left: 10;" class="imagebutton" id="outdent"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/outdent.gif"/>' alt="Outdent" title="Outdent"></div>
+<div style="left: 10;" class="imagebutton" id="outdent"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/outdent.gif"/>' alt="Outdent" title="Outdent"></div>
 </td>
 <td>
-<div style="left: 40;" class="imagebutton" id="indent"><img class="image" src='<c:url value="/roller-ui/authoring/editor/midas/indent.gif"/>' alt="Indent" title="Indent"></div>
+<div style="left: 40;" class="imagebutton" id="indent"><img class="image" src='<c:url value="/roller-ui/authoring/editors/midas/indent.gif"/>' alt="Indent" title="Indent"></div>
 </td>
 </tr>
 </table>
