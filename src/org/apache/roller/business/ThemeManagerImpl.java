@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * ThemeManagerImpl.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on June 27, 2005, 1:33 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.business;
@@ -57,25 +52,22 @@ import org.apache.roller.pojos.WebsiteData;
  * 
  * This particular implementation reads theme data off the filesystem 
  * and assumes that those themes are not changable at runtime.
- *
- * @author Allen Gilliland
  */
 public class ThemeManagerImpl implements ThemeManager {
     
-    private static Log mLogger = 
-        LogFactory.getFactory().getInstance(ThemeManagerImpl.class);
+    private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
     
-    private Map themes;
+    private Map themes = null;
     
     
     protected ThemeManagerImpl() {
         
         // rather than be lazy we are going to load all themes from
         // the disk preemptively during initialization and cache them
-        mLogger.debug("Initializing ThemeManagerImpl");
+        log.debug("Initializing ThemeManagerImpl");
         
         this.themes = this.loadAllThemesFromDisk();
-        mLogger.info("Loaded "+this.themes.size()+" themes from disk.");
+        log.info("Loaded "+this.themes.size()+" themes from disk.");
     }
     
     
@@ -226,7 +218,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 themes.put(theme.getName(), theme);
             } catch (Throwable unexpected) {
                 // shouldn't happen, so let's learn why it did
-                mLogger.error("Problem reading theme " + themenames[i], unexpected);
+                log.error("Problem reading theme " + themenames[i], unexpected);
             }
         }
         
@@ -239,7 +231,7 @@ public class ThemeManagerImpl implements ThemeManager {
      */
     private Theme loadThemeFromDisk(String theme_name, String themepath) {
         
-        mLogger.info("Loading theme "+theme_name);  
+        log.info("Loading theme "+theme_name);  
         
         Theme theme = new Theme();
         theme.setName(theme_name);
@@ -269,7 +261,7 @@ public class ThemeManagerImpl implements ThemeManager {
             // Continue reading theme even if problem encountered with one file
             String msg = "read theme template file ["+template_file+"]";
             if(!template_file.exists() && !template_file.canRead()) {
-                mLogger.error("Couldn't " + msg);
+                log.error("Couldn't " + msg);
                 continue;
             }
             char[] chars = null;
@@ -281,8 +273,8 @@ public class ThemeManagerImpl implements ThemeManager {
             	InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
                 length = reader.read(chars);            
             } catch (Exception noprob) {
-                mLogger.error("Exception while attempting to " + msg);
-                if (mLogger.isDebugEnabled()) mLogger.debug(noprob);
+                log.error("Exception while attempting to " + msg);
+                if (log.isDebugEnabled()) log.debug(noprob);
                 continue;
             }
             
@@ -292,7 +284,7 @@ public class ThemeManagerImpl implements ThemeManager {
             if (template_name.startsWith("_") && template_name.length() > 1) {
                 navbar = false;
                 template_link = template_link.substring(1);
-                mLogger.debug("--- " + template_link);
+                log.debug("--- " + template_link);
             }
             
             String decorator = "_decorator";
@@ -340,7 +332,7 @@ public class ThemeManagerImpl implements ThemeManager {
     public void saveThemePages(WebsiteData website, Theme theme)
         throws RollerException {
         
-        mLogger.debug("Setting custom templates for website: "+website.getName());
+        log.debug("Setting custom templates for website: "+website.getName());
         
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
@@ -401,7 +393,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 // we have to go back to the db to figure out the id
                 WeblogTemplate template = userMgr.getPageByName(website, "Weblog");
                 if(template != null) {
-                    mLogger.debug("Setting default page to "+template.getId());
+                    log.debug("Setting default page to "+template.getId());
                     website.setDefaultPageId(template.getId());
                 }
             }
@@ -409,7 +401,7 @@ public class ThemeManagerImpl implements ThemeManager {
             // we also want to set the weblogdayid
             WeblogTemplate dayTemplate = userMgr.getPageByName(website, "_day");
             if(dayTemplate != null) {
-                mLogger.debug("Setting default day page to "+dayTemplate.getId());
+                log.debug("Setting default day page to "+dayTemplate.getId());
                 website.setWeblogDayPageId(dayTemplate.getId());
             }
             
@@ -417,7 +409,7 @@ public class ThemeManagerImpl implements ThemeManager {
             userMgr.saveWebsite(website);
             
         } catch (Exception e) {
-            mLogger.error("ERROR in action",e);
+            log.error("ERROR in action",e);
             throw new RollerException( e );
         }       
     }
