@@ -76,6 +76,11 @@ properties below point to the downloaded files.
    <copy todir="./build/${release.fileName}/webapps/roller" >
        <fileset dir="${roller.srcdir}/build/webapp" includes="**/**" />
    </copy>
+
+   <mkdir dir="./build/${release.fileName}/webapps/roller/docs" />
+   <copy todir="./build/${release.fileName}/webapps/roller/docs" >
+       <fileset dir="${roller.srcdir}/docs/" includes="**/*guide/**" />
+   </copy>
    	   
    <!-- Roller HSQLDB starter goes into Tomcat -->
    <copy file="./build/roller-hsqldb.jar" 
