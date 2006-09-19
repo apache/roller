@@ -48,13 +48,34 @@
         <property name="build.web.dir.real" value="${build.ear.web.dir}"/>
     </target>
     <target name="-do-init" depends="-pre-init,-init-private,-init-user,-init-project,-init-macrodef-property, -do-ear-init">
+        <webproject1:property name="platform.home" value="platforms.${platform.active}.home"/>
+        <webproject1:property name="platform.bootcp" value="platforms.${platform.active}.bootclasspath"/>
+        <webproject1:property name="platform.compiler" value="platforms.${platform.active}.compile"/>
+        <webproject1:property name="platform.javac.tmp" value="platforms.${platform.active}.javac"/>
+        <condition property="platform.javac" value="${platform.home}/bin/javac">
+            <equals arg1="${platform.javac.tmp}" arg2="$${platforms.${platform.active}.javac}"/>
+        </condition>
+        <property name="platform.javac" value="${platform.javac.tmp}"/>
+        <webproject1:property name="platform.java.tmp" value="platforms.${platform.active}.java"/>
+        <condition property="platform.java" value="${platform.home}/bin/java">
+            <equals arg1="${platform.java.tmp}" arg2="$${platforms.${platform.active}.java}"/>
+        </condition>
+        <property name="platform.java" value="${platform.java.tmp}"/>
+        <webproject1:property name="platform.javadoc.tmp" value="platforms.${platform.active}.javadoc"/>
+        <condition property="platform.javadoc" value="${platform.home}/bin/javadoc">
+            <equals arg1="${platform.javadoc.tmp}" arg2="$${platforms.${platform.active}.javadoc}"/>
+        </condition>
+        <property name="platform.javadoc" value="${platform.javadoc.tmp}"/>
+        <fail unless="platform.home">Must set platform.home</fail>
+        <fail unless="platform.bootcp">Must set platform.bootcp</fail>
+        <fail unless="platform.java">Must set platform.java</fail>
+        <fail unless="platform.javac">Must set platform.javac</fail>
+        <fail if="platform.invalid">Platform is not correctly set up</fail>
         <condition property="have.tests">
             <or/>
         </condition>
         <condition property="have.sources">
-            <or>
-                <available file="${src.dir}"/>
-            </or>
+            <or/>
         </condition>
         <condition property="netbeans.home+have.tests">
             <and>
@@ -108,7 +129,6 @@
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target name="-init-check" depends="-pre-init,-init-private,-init-user,-init-project,-do-init">
-        <fail unless="src.dir">Must set src.dir</fail>
         <fail unless="build.dir">Must set build.dir</fail>
         <fail unless="build.web.dir">Must set build.web.dir</fail>
         <fail unless="build.generated.dir">Must set build.generated.dir</fail>
@@ -131,13 +151,13 @@
     </target>
     <target name="-init-macrodef-javac">
         <macrodef name="javac" uri="http://www.netbeans.org/ns/web-project/2">
-            <attribute name="srcdir" default="${src.dir}"/>
+            <attribute name="srcdir" default=""/>
             <attribute name="destdir" default="${build.classes.dir.real}"/>
             <attribute name="classpath" default="${javac.classpath}:${j2ee.platform.classpath}"/>
             <attribute name="debug" default="${javac.debug}"/>
             <element name="customize" optional="true"/>
             <sequential>
-                <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" deprecation="${javac.deprecation}" source="${javac.source}" target="${javac.target}" includeantruntime="false">
+                <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" deprecation="${javac.deprecation}" source="${javac.source}" target="${javac.target}" fork="yes" executable="${platform.javac}" tempdir="${java.io.tmpdir}" includeantruntime="false">
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
@@ -151,7 +171,7 @@
         <macrodef name="junit" uri="http://www.netbeans.org/ns/web-project/2">
             <attribute name="includes" default="**/*Test.java"/>
             <sequential>
-                <junit showoutput="true" fork="true" dir="${basedir}" failureproperty="tests.failed" errorproperty="tests.failed">
+                <junit showoutput="true" fork="true" dir="${basedir}" failureproperty="tests.failed" errorproperty="tests.failed" jvm="${platform.java}">
                     <batchtest todir="${build.test.results.dir}"/>
                     <classpath>
                         <path path="${run.test.classpath}"/>
@@ -171,7 +191,7 @@
             <attribute name="classname" default="${main.class}"/>
             <element name="customize" optional="true"/>
             <sequential>
-                <java fork="true" classname="@{classname}">
+                <java fork="true" classname="@{classname}" jvm="${platform.java}">
                     <jvmarg line="${runmain.jvmargs}"/>
                     <classpath>
                         <path path="${build.classes.dir.real}:${javac.classpath}:${j2ee.platform.classpath}"/>
@@ -194,6 +214,9 @@
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
+                    <bootclasspath>
+                        <path path="${platform.bootcp}"/>
+                    </bootclasspath>
                 </nbjpdastart>
             </sequential>
         </macrodef>
@@ -212,7 +235,7 @@
             <attribute name="classpath" default="${debug.classpath}"/>
             <attribute name="args" default="${application.args}"/>
             <sequential>
-                <java fork="true" classname="@{classname}">
+                <java fork="true" classname="@{classname}" jvm="${platform.java}">
                     <jvmarg value="-Xdebug"/>
                     <jvmarg value="-Xnoagent"/>
                     <jvmarg value="-Djava.compiler=none"/>
@@ -284,9 +307,7 @@
     </target>
     <target name="-do-compile" depends="init, deps-jar, -pre-pre-compile, -pre-compile, -copy-manifest, -copy-persistence-xml, -copy-webdir, library-inclusion-in-archive,library-inclusion-in-manifest" if="have.sources">
         <webproject2:javac destdir="${build.classes.dir.real}"/>
-        <copy todir="${build.classes.dir.real}">
-            <fileset dir="${src.dir}" excludes="${build.classes.excludes}"/>
-        </copy>
+        <copy todir="${build.classes.dir.real}"/>
     </target>
     <target name="-copy-manifest" if="has.custom.manifest">
         <mkdir dir="${build.meta.inf.dir}"/>
@@ -384,41 +405,68 @@
     </target>
     <target name="do-dist" depends="init,compile,compile-jsps,-pre-dist,-do-dist-with-manifest,-do-dist-without-manifest"/>
     <target name="library-inclusion-in-manifest" depends="init" if="dist.ear.dir">
+        <basename property="included.lib.file.reference.asm-attrs.jar" file="${file.reference.asm-attrs.jar}"/>
+        <copy-ear-war file="${file.reference.asm-attrs.jar}" propname="included.lib.file.reference.asm-attrs.jar.X"/>
+        <basename property="included.lib.file.reference.asm.jar" file="${file.reference.asm.jar}"/>
+        <copy-ear-war file="${file.reference.asm.jar}" propname="included.lib.file.reference.asm.jar.X"/>
+        <basename property="included.lib.file.reference.cglib-2.1.3.jar" file="${file.reference.cglib-2.1.3.jar}"/>
+        <copy-ear-war file="${file.reference.cglib-2.1.3.jar}" propname="included.lib.file.reference.cglib-2.1.3.jar.X"/>
         <basename property="included.lib.file.reference.commons-lang-2.0.jar" file="${file.reference.commons-lang-2.0.jar}"/>
         <copy-ear-war file="${file.reference.commons-lang-2.0.jar}" propname="included.lib.file.reference.commons-lang-2.0.jar.X"/>
         <basename property="included.lib.file.reference.commons-logging.jar" file="${file.reference.commons-logging.jar}"/>
         <copy-ear-war file="${file.reference.commons-logging.jar}" propname="included.lib.file.reference.commons-logging.jar.X"/>
         <basename property="included.lib.file.reference.dom4j-1.6.1.jar" file="${file.reference.dom4j-1.6.1.jar}"/>
         <copy-ear-war file="${file.reference.dom4j-1.6.1.jar}" propname="included.lib.file.reference.dom4j-1.6.1.jar.X"/>
+        <basename property="included.lib.file.reference.ehcache-1.1.jar" file="${file.reference.ehcache-1.1.jar}"/>
+        <copy-ear-war file="${file.reference.ehcache-1.1.jar}" propname="included.lib.file.reference.ehcache-1.1.jar.X"/>
+        <basename property="included.lib.file.reference.hibernate3.jar" file="${file.reference.hibernate3.jar}"/>
+        <copy-ear-war file="${file.reference.hibernate3.jar}" propname="included.lib.file.reference.hibernate3.jar.X"/>
         <basename property="included.lib.file.reference.jaxen-full.jar" file="${file.reference.jaxen-full.jar}"/>
         <copy-ear-war file="${file.reference.jaxen-full.jar}" propname="included.lib.file.reference.jaxen-full.jar.X"/>
+        <basename property="included.lib.file.reference.jdbc2_0-stdext.jar" file="${file.reference.jdbc2_0-stdext.jar}"/>
+        <copy-ear-war file="${file.reference.jdbc2_0-stdext.jar}" propname="included.lib.file.reference.jdbc2_0-stdext.jar.X"/>
         <basename property="included.lib.file.reference.jdom.jar" file="${file.reference.jdom.jar}"/>
         <copy-ear-war file="${file.reference.jdom.jar}" propname="included.lib.file.reference.jdom.jar.X"/>
+        <basename property="included.lib.file.reference.jta.jar" file="${file.reference.jta.jar}"/>
+        <copy-ear-war file="${file.reference.jta.jar}" propname="included.lib.file.reference.jta.jar.X"/>
+        <basename property="included.lib.file.reference.log4j-1.2.11.jar" file="${file.reference.log4j-1.2.11.jar}"/>
+        <copy-ear-war file="${file.reference.log4j-1.2.11.jar}" propname="included.lib.file.reference.log4j-1.2.11.jar.X"/>
         <basename property="included.lib.file.reference.roller-business.jar" file="${file.reference.roller-business.jar}"/>
         <copy-ear-war file="${file.reference.roller-business.jar}" propname="included.lib.file.reference.roller-business.jar.X"/>
         <basename property="included.lib.file.reference.rome-0.8.jar" file="${file.reference.rome-0.8.jar}"/>
         <copy-ear-war file="${file.reference.rome-0.8.jar}" propname="included.lib.file.reference.rome-0.8.jar.X"/>
         <basename property="included.lib.file.reference.rome-fetcher-0.8.jar" file="${file.reference.rome-fetcher-0.8.jar}"/>
         <copy-ear-war file="${file.reference.rome-fetcher-0.8.jar}" propname="included.lib.file.reference.rome-fetcher-0.8.jar.X"/>
+        <basename property="included.lib.file.reference.saxpath.jar" file="${file.reference.saxpath.jar}"/>
+        <copy-ear-war file="${file.reference.saxpath.jar}" propname="included.lib.file.reference.saxpath.jar.X"/>
         <basename property="included.lib.file.reference.velocity-1.4.jar" file="${file.reference.velocity-1.4.jar}"/>
         <copy-ear-war file="${file.reference.velocity-1.4.jar}" propname="included.lib.file.reference.velocity-1.4.jar.X"/>
         <basename property="included.lib.file.reference.velocity-dep-1.4.jar" file="${file.reference.velocity-dep-1.4.jar}"/>
         <copy-ear-war file="${file.reference.velocity-dep-1.4.jar}" propname="included.lib.file.reference.velocity-dep-1.4.jar.X"/>
         <mkdir dir="${build.web.dir.real}/META-INF"/>
         <manifest file="${build.web.dir.real}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value="${included.lib.file.reference.commons-lang-2.0.jar} ${included.lib.file.reference.commons-logging.jar} ${included.lib.file.reference.dom4j-1.6.1.jar} ${included.lib.file.reference.jaxen-full.jar} ${included.lib.file.reference.jdom.jar} ${included.lib.file.reference.roller-business.jar} ${included.lib.file.reference.rome-0.8.jar} ${included.lib.file.reference.rome-fetcher-0.8.jar} ${included.lib.file.reference.velocity-1.4.jar} ${included.lib.file.reference.velocity-dep-1.4.jar} "/>
+            <attribute name="Class-Path" value="${included.lib.file.reference.asm-attrs.jar} ${included.lib.file.reference.asm.jar} ${included.lib.file.reference.cglib-2.1.3.jar} ${included.lib.file.reference.commons-lang-2.0.jar} ${included.lib.file.reference.commons-logging.jar} ${included.lib.file.reference.dom4j-1.6.1.jar} ${included.lib.file.reference.ehcache-1.1.jar} ${included.lib.file.reference.hibernate3.jar} ${included.lib.file.reference.jaxen-full.jar} ${included.lib.file.reference.jdbc2_0-stdext.jar} ${included.lib.file.reference.jdom.jar} ${included.lib.file.reference.jta.jar} ${included.lib.file.reference.log4j-1.2.11.jar} ${included.lib.file.reference.roller-business.jar} ${included.lib.file.reference.rome-0.8.jar} ${included.lib.file.reference.rome-fetcher-0.8.jar} ${included.lib.file.reference.saxpath.jar} ${included.lib.file.reference.velocity-1.4.jar} ${included.lib.file.reference.velocity-dep-1.4.jar} "/>
         </manifest>
         <delete dir="${dist.ear.dir}/temp"/>
     </target>
     <target name="library-inclusion-in-archive" depends="init" unless="dist.ear.dir">
+        <copy file="${file.reference.asm-attrs.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
+        <copy file="${file.reference.asm.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
+        <copy file="${file.reference.cglib-2.1.3.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.commons-lang-2.0.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.commons-logging.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.dom4j-1.6.1.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
+        <copy file="${file.reference.ehcache-1.1.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
+        <copy file="${file.reference.hibernate3.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.jaxen-full.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
+        <copy file="${file.reference.jdbc2_0-stdext.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.jdom.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
+        <copy file="${file.reference.jta.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
+        <copy file="${file.reference.log4j-1.2.11.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.roller-business.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.rome-0.8.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.rome-fetcher-0.8.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
+        <copy file="${file.reference.saxpath.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.velocity-1.4.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
         <copy file="${file.reference.velocity-dep-1.4.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
     </target>
@@ -541,6 +589,9 @@
             <sourcepath>
                 <path path="${web.docbase.dir}:${ws.web.docbase.dirs}"/>
             </sourcepath>
+            <bootclasspath>
+                <path path="${platform.bootcp}"/>
+            </bootclasspath>
         </nbjpdaconnect>
     </target>
     <target name="debug-display-browser" if="do.display.browser">
@@ -570,15 +621,11 @@
             -->
     <target name="javadoc-build" depends="init">
         <mkdir dir="${dist.javadoc.dir}"/>
-        <javadoc destdir="${dist.javadoc.dir}" source="${javac.source}" notree="${javadoc.notree}" use="${javadoc.use}" nonavbar="${javadoc.nonavbar}" noindex="${javadoc.noindex}" splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}" private="${javadoc.private}" additionalparam="${javadoc.additionalparam}" failonerror="true" useexternalfile="true">
+        <javadoc destdir="${dist.javadoc.dir}" source="${javac.source}" notree="${javadoc.notree}" use="${javadoc.use}" nonavbar="${javadoc.nonavbar}" noindex="${javadoc.noindex}" splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}" private="${javadoc.private}" additionalparam="${javadoc.additionalparam}" failonerror="true" useexternalfile="true" executable="${platform.javadoc}">
             <classpath>
                 <path path="${javac.classpath}:${j2ee.platform.classpath}"/>
             </classpath>
-            <sourcepath>
-                <pathelement location="${src.dir}"/>
-            </sourcepath>
-            <packageset dir="${src.dir}" includes="*/**"/>
-            <fileset dir="${src.dir}" includes="*.java"/>
+            <sourcepath/>
         </javadoc>
     </target>
     <target name="javadoc-browse" if="netbeans.home" unless="no.javadoc.preview" depends="init,javadoc-build">

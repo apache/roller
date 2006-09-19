@@ -1,5 +1,8 @@
 <%@page contentType="text/html"%>
 <%@page pageEncoding="UTF-8"%>
+<%@ page import="org.apache.roller.model.*" %>
+<%@ page import="org.apache.roller.pojos.*" %>
+<%@ page import="java.io.*" %>
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
@@ -30,9 +33,13 @@
         <title>Coming soon...</title>
     </head>
     <body>
-
     <h1>Planet Roller webapp</h1>
-    
-    
+    <p>Roller = <%= RollerFactory.getRoller() %></p>
     </body>
 </html>
+
+
+
+
+
+
