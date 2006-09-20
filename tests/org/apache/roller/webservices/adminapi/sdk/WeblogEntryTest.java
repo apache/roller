@@ -40,8 +40,6 @@ public class WeblogEntryTest extends AappTest {
             WeblogEntrySet wes2 = new WeblogEntrySet(d, getEndpointUrl());
             
             assertEquals(wes1, wes2);
-        } catch (MissingElementException mee) {
-            fail(mee.getMessage());
         } catch (UnexpectedRootElementException uree) {
             fail(uree.getMessage());
         }
@@ -56,8 +54,6 @@ public class WeblogEntryTest extends AappTest {
             WeblogEntrySet wes2 = new WeblogEntrySet(stream, getEndpointUrl());
             
             assertEquals(wes1, wes2);
-        } catch (MissingElementException mee) {
-            fail(mee.getMessage());
         } catch (UnexpectedRootElementException uree) {
             fail(uree.getMessage());
         } catch (IOException ioe) {

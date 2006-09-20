@@ -50,18 +50,18 @@ public class UserEntrySet extends EntrySet {
     }
     
     /** Construct based on a JDOM Document object. */
-    public UserEntrySet(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
+    public UserEntrySet(Document d, String urlPrefix) throws UnexpectedRootElementException {
         populate(d, urlPrefix);
     }
     
-    public UserEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException, UnexpectedRootElementException {               
+    public UserEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {               
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
 
         populate(d, urlPrefix);        
     }        
     
-    private void populate(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
+    private void populate(Document d, String urlPrefix) throws UnexpectedRootElementException {
         Element root = d.getRootElement();
         String rootName = root.getName();
         if (!rootName.equals(Tags.USERS)) {

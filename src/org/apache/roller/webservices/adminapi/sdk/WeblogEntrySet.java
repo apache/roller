@@ -47,18 +47,18 @@ public class WeblogEntrySet extends EntrySet {
         setHref(urlPrefix + "/" + Types.WEBLOGS);
     }
     
-    public WeblogEntrySet(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
+    public WeblogEntrySet(Document d, String urlPrefix) throws UnexpectedRootElementException {
         populate(d, urlPrefix);
     }
     
-    public WeblogEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException, UnexpectedRootElementException {               
+    public WeblogEntrySet(InputStream stream, String urlPrefix) throws JDOMException, IOException, UnexpectedRootElementException {               
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
 
         populate(d, urlPrefix);        
     }    
     
-    private void populate(Document d, String urlPrefix) throws MissingElementException, UnexpectedRootElementException {
+    private void populate(Document d, String urlPrefix) throws UnexpectedRootElementException {
         Element root = d.getRootElement();
         String rootName = root.getName();
         if (!rootName.equals(Tags.WEBLOGS)) {

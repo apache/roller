@@ -22,6 +22,7 @@ public class UnexpectedRootElementException extends Exception {
     private String actual;
     
     public UnexpectedRootElementException(String msg, String expected, String actual) {
+        super(msg);
         this.expected = expected;
         this.actual = actual;
     }

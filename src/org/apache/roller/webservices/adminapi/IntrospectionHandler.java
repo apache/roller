@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.roller.webservices.adminapi.sdk.Entry;
 import org.apache.roller.webservices.adminapi.sdk.EntrySet;
-import org.apache.roller.webservices.adminapi.sdk.MissingElementException;
 import org.apache.roller.webservices.adminapi.sdk.Service;
 import org.apache.roller.webservices.adminapi.sdk.UnexpectedRootElementException;
 import org.jdom.Document;
@@ -40,7 +39,7 @@ class IntrospectionHandler extends Handler {
         super(request);
     }
     
-    protected EntrySet getEntrySet(Document d) throws MissingElementException, UnexpectedRootElementException {
+    protected EntrySet getEntrySet(Document d) throws UnexpectedRootElementException {
         throw new UnsupportedOperationException();
     }
     
