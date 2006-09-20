@@ -1,92 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://www.netbeans.org/ns/project/1">
-    <type>org.netbeans.modules.web.project</type>
+    <type>org.netbeans.modules.ant.freeform</type>
     <configuration>
-        <data xmlns="http://www.netbeans.org/ns/web-project/3">
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <!-- Do not use Project Properties customizer when editing this file manually. -->
             <name>planetroller</name>
-            <minimum-ant-version>1.6</minimum-ant-version>
-            <explicit-platform explicit-source-supported="true"/>
-            <web-module-libraries>
-                <library files="1">
-                    <file>${file.reference.asm-attrs.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.asm.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.cglib-2.1.3.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.commons-lang-2.0.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.commons-logging.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.dom4j-1.6.1.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.ehcache-1.1.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.hibernate3.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.jaxen-full.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.jdbc2_0-stdext.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.jdom.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.jta.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.log4j-1.2.11.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.roller-business.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.rome-0.8.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.rome-fetcher-0.8.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.saxpath.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.velocity-1.4.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library files="1">
-                    <file>${file.reference.velocity-dep-1.4.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-            </web-module-libraries>
-            <web-module-additional-libraries/>
-            <source-roots/>
-            <test-roots/>
-        </data>
+            <properties/>
+            <folders>
+                <source-folder>
+                    <label>src</label>
+                    <type>java</type>
+                    <location>src</location>
+                </source-folder>
+                <source-folder>
+                    <label>web</label>
+                    <type>doc_root</type>
+                    <location>web</location>
+                </source-folder>
+            </folders>
+            <ide-actions>
+                <action name="build">
+                    <target>stage-webapp</target>
+                </action>
+                <action name="clean">
+                    <target>clean</target>
+                </action>
+                <action name="rebuild">
+                    <target>clean</target>
+                    <target>stage-webapp</target>
+                </action>
+            </ide-actions>
+            <view>
+                <items>
+                    <source-folder style="tree">
+                        <label>Web Pages</label>
+                        <location>web</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>src</label>
+                        <location>src</location>
+                    </source-folder>
+                    <source-file>
+                        <location>build.xml</location>
+                    </source-file>
+                </items>
+                <context-menu>
+                    <ide-action name="build"/>
+                    <ide-action name="clean"/>
+                    <ide-action name="rebuild"/>
+                </context-menu>
+            </view>
+        </general-data>
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
+            <compilation-unit>
+                <package-root>src</package-root>
+                <classpath mode="compile">../src/roller-svn/roller/trunk/sandbox/planetroller/lib/asm-attrs.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/asm.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/cglib-2.1.3.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/commons-lang-2.0.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/commons-logging.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/dom4j-1.6.1.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/ehcache-1.1.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/hibernate3.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jaxen-full.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jdbc2_0-stdext.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jdom.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jta.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/log4j-1.2.11.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/roller-business.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/rome-0.8.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/rome-fetcher-0.8.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/saxpath.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/velocity-1.4.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/velocity-dep-1.4.jar</classpath>
+                <source-level>1.4</source-level>
+            </compilation-unit>
+        </java-data>
+        <web-data xmlns="http://www.netbeans.org/ns/freeform-project-web/1">
+            <web-module>
+                <doc-root>web</doc-root>
+                <classpath/>
+                <context-path>/planet</context-path>
+                <j2ee-spec-level>1.4</j2ee-spec-level>
+            </web-module>
+        </web-data>
     </configuration>
 </project>

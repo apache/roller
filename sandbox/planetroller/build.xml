@@ -16,16 +16,10 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<!DOCTYPE project [
-    <!ENTITY properties SYSTEM "properties.xmlf">
-]>
 <project name="planetroller" default="stage-webapp" basedir=".">
-    <description>Builds, tests, and runs the project planetroller.</description>
-    
-    <import file="nbproject/build-impl.xml"/>
-    
-    <!-- Bring in properties.xml -->    
-    &properties;
+    <description>Builds, tests, and runs the project planetroller.</description>   
+
+    <property file="./ant.properties" />
     
     <fileset id="roller-jars" dir="${rollerjars.dir}">
         
@@ -63,23 +57,22 @@
     <target name="stage-webapp" description="Build Planet webapp">
         
         <mkdir dir="./build/classes" />
-        <javac debug="on" destdir="./build/classes" 
-                excludes="**/hibernate/**,**/presentation/**" >
+        <mkdir dir="./build/webapp/WEB-INF/lib" />
+
+        <javac debug="on" destdir="./build/classes">
             <src path="./src" />
             <classpath>
-                <path location="../../build/compile_beans" />
                 <path refid="planet.path"/>
             </classpath>
         </javac>
 
-        <mkdir dir="./build/web/WEB-INF/lib" />
-        <jar basedir="./build/classes" destfile="./build/web/WEB-INF/lib/roller-planet.jar" />
+        <jar basedir="./build/classes" destfile="./build/webapp/WEB-INF/lib/roller-planet.jar" />
         
-        <copy todir="./build/web/WEB-INF/lib">
+        <copy todir="./build/webapp/WEB-INF/lib">
             <fileset refid="roller-jars" />
         </copy> 
         
-        <copy todir="./build/web">
+        <copy todir="./build/webapp">
             <fileset dir="./web" includes="**/**" />
         </copy> 
         
@@ -114,7 +107,7 @@
         
     </target>
    
-    <!-- so my Netbeans project doesn't have to reference Roller -->
+    <!-- Copy files locally for convenience in IDE -->
     <target name="copy-roller-jars-for-ide">
         <mkdir dir="./lib" />
         <copy todir="./lib">
