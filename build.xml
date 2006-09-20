@@ -1030,7 +1030,7 @@ ro.buildUser=${user.name}
 
     <target name="test-aapp" depends="test-aapp-sdk, test-aapp-handler"/>
    
-    <target name="test-aapp-sdk" depends="build-tests">
+    <target name="test-aapp-sdk">
         <mkdir dir="${build.reports}/webservices/adminapi/sdk/xml"/>
         <mkdir dir="${build.reports}/webservices/adminapi/sdk/html"/>
 
@@ -1056,7 +1056,7 @@ ro.buildUser=${user.name}
         </junitreport>
     </target>
     
-    <target name="test-aapp-handler" depends="build-tests">
+    <target name="test-aapp-handler">
         <mkdir dir="${build.reports}/webservices/adminapi/xml"/>
         <mkdir dir="${build.reports}/webservices/adminapi/html"/>
 

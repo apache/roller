@@ -40,8 +40,6 @@ public class MemberEntryTest extends AappTest {
             MemberEntrySet wes2 = new MemberEntrySet(d, getEndpointUrl());
             
             assertEquals(wes1, wes2);
-        } catch (MissingElementException mee) {
-            fail(mee.getMessage());
         } catch (UnexpectedRootElementException uree) {
             fail(uree.getMessage());
         }
@@ -56,8 +54,6 @@ public class MemberEntryTest extends AappTest {
             MemberEntrySet wes2 = new MemberEntrySet(stream, getEndpointUrl());
             
             assertEquals(wes1, wes2);
-        } catch (MissingElementException mee) {
-            fail(mee.getMessage());
         } catch (UnexpectedRootElementException uree) {
             fail(uree.getMessage());
         } catch (IOException ioe) {

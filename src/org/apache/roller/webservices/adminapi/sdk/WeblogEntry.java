@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 package org.apache.roller.webservices.adminapi.sdk;
 /*
  * WeblogEntry.java
@@ -36,7 +36,7 @@ import org.apache.roller.webservices.adminapi.sdk.Entry.Attributes;
 import org.apache.roller.webservices.adminapi.sdk.Entry.Types;
 
 /**
- * This class describes a weblog entry. 
+ * This class describes a weblog entry.
  */
 public class WeblogEntry extends Entry {
     static interface Tags {
@@ -49,8 +49,9 @@ public class WeblogEntry extends Entry {
         public static final String DATE_CREATED = "date-created";
         public static final String CREATING_USER = "creating-user";
         public static final String EMAIL_ADDRESS = "email-address";
-        public static final String APP_ENTRIES_URL = "app-entries-url";        
-        public static final String APP_RESOURCES_URL = "app-resources-url";                
+        public static final String APP_ENTRIES_URL = "app-entries-url";
+        public static final String APP_RESOURCES_URL = "app-resources-url";
+        public static final String ENABLED = "enabled";
     }
     
     private String handle;
@@ -63,95 +64,95 @@ public class WeblogEntry extends Entry {
     private String emailAddress;
     private String appEntriesUrl;
     private String appResourcesUrl;
+    private Boolean enabled;
     
-    public WeblogEntry(Element e, String urlPrefix) throws MissingElementException {
+    public WeblogEntry(Element e, String urlPrefix) {
         populate(e, urlPrefix);
     }
     
-    public WeblogEntry(InputStream stream, String urlPrefix) throws JDOMException, IOException, MissingElementException {               
+    public WeblogEntry(InputStream stream, String urlPrefix) throws JDOMException, IOException {
         SAXBuilder sb = new SAXBuilder();
         Document d = sb.build(stream);
         Element e = d.detachRootElement();
         
-        populate(e, urlPrefix);        
+        populate(e, urlPrefix);
     }
     
-    private void populate(Element e, String urlPrefix) throws MissingElementException {
-        // handle
+    private void populate(Element e, String urlPrefix) {
+        // handle (required)
         Element handleElement = e.getChild(Tags.HANDLE, Service.NAMESPACE);
-        if (handleElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.HANDLE);
+        if (handleElement != null) {
+            setHandle(handleElement.getText());
         }
-        setHandle(handleElement.getText());
         
         // href
-        String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + getHandle();        
-        setHref(href);        
+        String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + getHandle();
+        setHref(href);
         
         // name
         Element nameElement = e.getChild(Tags.NAME, Service.NAMESPACE);
-        if (nameElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.NAME);
+        if (nameElement != null) {
+            setName(nameElement.getText());
         }
-        setName(nameElement.getText());
         
         // description
         Element descElement = e.getChild(Tags.DESCRIPTION, Service.NAMESPACE);
-        if (descElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.DESCRIPTION);
+        if (descElement != null) {
+            setDescription(descElement.getText());
         }
-        setDescription(descElement.getText());
         
         // locale
         Element localeElement = e.getChild(Tags.LOCALE, Service.NAMESPACE);
-        if (localeElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.LOCALE);
+        if (localeElement != null) {
+            setLocale(localeElement.getText());
         }
-        setLocale(localeElement.getText());
         
         // timezone
         Element tzElement = e.getChild(Tags.TIMEZONE, Service.NAMESPACE);
-        if (tzElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.TIMEZONE);
+        if (tzElement != null) {
+            setTimezone(tzElement.getText());
         }
-        setTimezone(tzElement.getText());
         
         // creator
         Element creatorElement = e.getChild(Tags.CREATING_USER, Service.NAMESPACE);
-        if (creatorElement == null) {
-            throw new MissingElementException("ERROR: Missing element", e.getName(), Tags.CREATING_USER);
+        if (creatorElement != null) {
+            setCreatingUser(creatorElement.getText());
         }
-        setCreatingUser(creatorElement.getText());
         
         // email address
         Element emailElement = e.getChild(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
-        if (emailElement == null) {
-            throw new MissingElementException("ERROR: Missing element: ", e.getName(), Tags.EMAIL_ADDRESS);
+        if (emailElement != null) {
+            setEmailAddress(emailElement.getText());
         }
-        setEmailAddress(emailElement.getText());        
         
-        // created (optional)
+        // created
         Element createdElement = e.getChild(Tags.DATE_CREATED, Service.NAMESPACE);
         if (createdElement != null) {
             setDateCreated(new Date(Long.valueOf(createdElement.getText()).longValue()));
-        }              
+        }
         
-        // APP entries URL (optional)
+        // APP entries URL
         Element appEntriesUrlElement = e.getChild(Tags.APP_ENTRIES_URL, Service.NAMESPACE);
         if (appEntriesUrlElement != null) {
             setAppEntriesUrl(appEntriesUrlElement.getText());
-        }                      
+        }
         
-        // APP resources URL (optional)
+        // APP resources URL
         Element appResourcesUrlElement = e.getChild(Tags.APP_RESOURCES_URL, Service.NAMESPACE);
         if (appResourcesUrlElement != null) {
             setAppResourcesUrl(appResourcesUrlElement.getText());
-        }                              
+        }
+        
+        // enabled
+        Element enabledElement = e.getChild(Tags.ENABLED, Service.NAMESPACE);
+        if (enabledElement != null) {
+            setEnabled(Boolean.valueOf(enabledElement.getText()));
+        }
     }
     
     
     public WeblogEntry(String handle, String urlPrefix) {
-        String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + handle;        
+        String href = urlPrefix + "/" + EntrySet.Types.WEBLOGS + "/" + handle;
         setHref(href);
         setHandle(handle);
     }
@@ -160,65 +161,86 @@ public class WeblogEntry extends Entry {
         return Types.WEBLOG;
     }
     
-    public Document toDocument() {        
+    public Document toDocument() {
         Element weblog = new Element(Tags.WEBLOG, Service.NAMESPACE);
         Document doc = new Document(weblog);
         
         // link
         weblog.setAttribute(Attributes.HREF, getHref());
         
-        // handle
-        Element handle = new Element(Tags.HANDLE, Service.NAMESPACE);
-        Text handleText = new Text(getHandle());
-        handle.addContent(handleText);
-        weblog.addContent(handle);
+        // handle (required)
+        String handle = getHandle();
+        if (handle != null && handle.length() > 0) {
+            Element handleElement = new Element(Tags.HANDLE, Service.NAMESPACE);
+            Text handleText = new Text(handle);
+            handleElement.addContent(handleText);
+            weblog.addContent(handleElement);
+        }
         
         // name
-        Element name = new Element(Tags.NAME, Service.NAMESPACE);
-        Text nameText = new Text(getName());
-        name.addContent(nameText);
-        weblog.addContent(name);
+        String name = getName();
+        if (name != null) {
+            Element nameElement = new Element(Tags.NAME, Service.NAMESPACE);
+            Text nameText = new Text(name);
+            nameElement.addContent(nameText);
+            weblog.addContent(nameElement);
+        }
         
         // description
-        Element desc = new Element(Tags.DESCRIPTION, Service.NAMESPACE);
-        Text descText = new Text(getDescription());
-        desc.addContent(descText);
-        weblog.addContent(desc);
+        String desc = getDescription();
+        if (desc != null) {
+            Element descElement = new Element(Tags.DESCRIPTION, Service.NAMESPACE);
+            Text descText = new Text(desc);
+            descElement.addContent(descText);
+            weblog.addContent(descElement);
+        }
         
         // locale
-        Element locale = new Element(Tags.LOCALE, Service.NAMESPACE);
-        Text localeText = new Text(getLocale().toString());
-        locale.addContent(localeText);
-        weblog.addContent(locale);
+        Locale locale = getLocale();
+        if (locale != null) {
+            Element localeElement = new Element(Tags.LOCALE, Service.NAMESPACE);
+            Text localeText = new Text(locale.toString());
+            localeElement.addContent(localeText);
+            weblog.addContent(localeElement);
+        }
         
         // timezone
-        Element tz = new Element(Tags.TIMEZONE, Service.NAMESPACE);
-        Text tzText = new Text(getTimezone().getID());
-        tz.addContent(tzText);
-        weblog.addContent(tz);
+        TimeZone tz = getTimezone();
+        if (tz != null) {
+            Element tzElement = new Element(Tags.TIMEZONE, Service.NAMESPACE);
+            Text tzText = new Text(tz.getID());
+            tzElement.addContent(tzText);
+            weblog.addContent(tzElement);
+        }
         
         // creating user
-        Element creator = new Element(Tags.CREATING_USER, Service.NAMESPACE);
-        Text creatorText = new Text(String.valueOf(getCreatingUser()));
-        creator.addContent(creatorText);
-        weblog.addContent(creator);
+        String creator = getCreatingUser();
+        if (creator != null) {
+            Element creatorElement = new Element(Tags.CREATING_USER, Service.NAMESPACE);
+            Text creatorText = new Text(creator);
+            creatorElement.addContent(creatorText);
+            weblog.addContent(creatorElement);
+        }
         
         // email address
-        Element email = new Element(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
-        Text emailText = new Text(String.valueOf(getEmailAddress()));
-        email.addContent(emailText);
-        weblog.addContent(email);        
+        String email = getEmailAddress();
+        if (email != null) {
+            Element emailElement = new Element(Tags.EMAIL_ADDRESS, Service.NAMESPACE);
+            Text emailText = new Text(email);
+            emailElement.addContent(emailText);
+            weblog.addContent(emailElement);
+        }
         
-        // creation date (optional)
-        Element created = new Element(Tags.DATE_CREATED, Service.NAMESPACE);
+        // creation date
+        Element dateCreatedElement = new Element(Tags.DATE_CREATED, Service.NAMESPACE);
         Date datedCreated = getDateCreated();
         if (dateCreated != null) {
             Text createdText = new Text(String.valueOf(dateCreated.getTime()));
-            created.addContent(createdText);
-            weblog.addContent(created);
+            dateCreatedElement.addContent(createdText);
+            weblog.addContent(dateCreatedElement);
         }
-
-        // APP entries URL (optional)
+        
+        // APP entries URL
         Element appEntriesUrlElement = new Element(Tags.APP_ENTRIES_URL, Service.NAMESPACE);
         String appEntriesUrl = getAppEntriesUrl();
         if (appEntriesUrl != null) {
@@ -226,8 +248,8 @@ public class WeblogEntry extends Entry {
             appEntriesUrlElement.addContent(appEntriesUrlText);
             weblog.addContent(appEntriesUrlElement);
         }
-
-        // APP entries URL (optional)
+        
+        // APP entries URL
         Element appResourcesUrlElement = new Element(Tags.APP_RESOURCES_URL, Service.NAMESPACE);
         String appResourcesUrl = getAppResourcesUrl();
         if (appResourcesUrl != null) {
@@ -236,13 +258,22 @@ public class WeblogEntry extends Entry {
             weblog.addContent(appResourcesUrlElement);
         }
         
+        // enabled
+        Element enabledElement = new Element(Tags.ENABLED, Service.NAMESPACE);
+        Boolean enabled = getEnabled();
+        if (enabled != null) {
+            Text enabledText = new Text(getEnabled().toString());
+            enabledElement.addContent(enabledText);
+            weblog.addContent(enabledElement);
+        }
+        
         return doc;
-    }    
-
+    }
+    
     /** Test if a user entry is equal to this user entry. */
     public boolean equals(Object o) {
-        if ( o == null || o.getClass() != this.getClass()) { 
-            return false;        
+        if ( o == null || o.getClass() != this.getClass()) {
+            return false;
         }
         
         WeblogEntry other = (WeblogEntry)o;
@@ -263,6 +294,9 @@ public class WeblogEntry extends Entry {
             return false;
         }
         if (!areEqual(getTimezone(), other.getTimezone())) {
+            return false;
+        }
+        if (!areEqual(getEnabled(), other.getEnabled())) {
             return false;
         }
         
@@ -295,7 +329,7 @@ public class WeblogEntry extends Entry {
     
     public void setLocale(String localeString) {
         this.locale = new LocaleString(localeString).getLocale();
-    }    
+    }
     
     
     public TimeZone getTimezone() {
@@ -305,7 +339,7 @@ public class WeblogEntry extends Entry {
     public void setTimezone(TimeZone timezone) {
         this.timezone = timezone;
     }
-
+    
     public void setTimezone(String timezoneString) {
         this.timezone = TimeZone.getTimeZone(timezoneString);
     }
@@ -333,28 +367,36 @@ public class WeblogEntry extends Entry {
     public void setCreatingUser(String creatingUser) {
         this.creatingUser = creatingUser;
     }
-
+    
     public String getEmailAddress() {
         return emailAddress;
     }
-
+    
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
-
+    
     public String getAppEntriesUrl() {
         return appEntriesUrl;
     }
-
+    
     public void setAppEntriesUrl(String appEntriesUrl) {
         this.appEntriesUrl = appEntriesUrl;
     }
-
+    
     public String getAppResourcesUrl() {
         return appResourcesUrl;
     }
-
+    
     public void setAppResourcesUrl(String appResourcesUrl) {
         this.appResourcesUrl = appResourcesUrl;
+    }
+    
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

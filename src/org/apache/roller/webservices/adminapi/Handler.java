@@ -27,11 +27,13 @@ import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.webservices.adminapi.sdk.EntrySet;
-
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.webservices.adminapi.sdk.MissingElementException;
+import org.apache.roller.model.UserManager;
+import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.webservices.adminapi.sdk.UnexpectedRootElementException;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -184,7 +186,7 @@ abstract class Handler {
         return urlPrefix;
     }
     
-    protected abstract EntrySet getEntrySet(Document d) throws MissingElementException, UnexpectedRootElementException;
+    protected abstract EntrySet getEntrySet(Document d) throws UnexpectedRootElementException;
     
     protected EntrySet getEntrySet(Reader r) throws HandlerException {
         try {
@@ -195,13 +197,45 @@ abstract class Handler {
             return c;
         } catch (UnexpectedRootElementException ure) {
             throw new BadRequestException("ERROR: Failed to parse content", ure);            
-        } catch (MissingElementException mee) {
-            throw new BadRequestException("ERROR: Failed to parse content", mee);            
         } catch (JDOMException jde) {
             throw new BadRequestException("ERROR: Failed to parse content", jde);
         } catch (IOException ioe) {
             throw new InternalException("ERROR: Failed to parse content", ioe);
         }
-    }    
+    }
+    
+    protected WebsiteData getWebsiteData(String handle) throws NotFoundException, InternalException {
+        try {
+            WebsiteData wd = getRoller().getUserManager().getWebsiteByHandle(handle, Boolean.TRUE);
+            if (wd == null) {
+                wd = getRoller().getUserManager().getWebsiteByHandle(handle, Boolean.FALSE);
+            }
+            if (wd == null) {
+                throw new NotFoundException("ERROR: Unknown weblog handle: " + handle);
+            }
+            
+            return wd;
+        } catch (RollerException re) {
+            throw new InternalException("ERROR: Could not get weblog: " + handle, re);
+        }
+    }
+
+    protected UserData getUserData(String name) throws NotFoundException, InternalException {
+        try {
+            UserManager mgr = getRoller().getUserManager();
+            UserData ud = mgr.getUserByUserName(name, Boolean.TRUE);
+            if (ud == null) {
+                ud = mgr.getUserByUserName(name, Boolean.FALSE);
+            }
+            if (ud == null) {
+                throw new NotFoundException("ERROR: Unknown user: " + name);
+            }
+            
+            return ud;
+        } catch (RollerException re) {
+            throw new InternalException("ERROR: Could not get user: " + name, re);
+        }
+    }
+    
 }
 
