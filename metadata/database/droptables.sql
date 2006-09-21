@@ -25,6 +25,8 @@ drop table bookmark;
 drop table roller_comment;
 drop table entryattribute;
 drop table weblogentry;
+drop table weblogentrytag;
+drop table weblogentrytagagg;
 drop table weblogcategory;
 drop table folder;
 drop table folderassoc;

@@ -57,6 +57,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     String entryAnchor = null;
     String dateString = null;
     String catPath = null;
+    List tags = new ArrayList();
     int offset = 0;
     int page = 0;
     int length = 0;
@@ -69,6 +70,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catPath,
+            List               tags,
             int                page) {
         
         this.weblog = weblog;
@@ -77,6 +79,9 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         this.entryAnchor = entryAnchor;
         this.dateString = dateString;
         this.catPath = catPath;
+        
+        if(tags != null)
+          this.tags = tags;
         
         // make sure offset, length, and page are valid
         length = weblog.getEntryDisplayCount();
@@ -93,7 +98,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return createURL(0, 0, weblog, locale, pageLink, entryAnchor, dateString, catPath);
+        return createURL(0, 0, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags);
     }
     
     
@@ -104,7 +109,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     public String getNextLink() {
         if (hasMoreEntries()) {
-            return createURL(page, 1, weblog, locale, pageLink, entryAnchor, dateString, catPath);
+            return createURL(page, 1, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags);
         }
         return null;
     }
@@ -120,7 +125,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     public String getPrevLink() {
         if (page > 0) {
-            return createURL(page, -1, weblog, locale, pageLink, entryAnchor, dateString, catPath);
+            return createURL(page, -1, weblog, locale, pageLink, entryAnchor, dateString, catPath, tags);
         }
         return null;
     }
@@ -209,17 +214,18 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             String             pageLink,
             String             entryAnchor,
             String             dateString,
-            String             catPath) {
+            String             catPath,
+            List               tags) {
         
         int pageNum = page + pageAdd;
         
         if (pageLink != null) {
-            return URLUtilities.getWeblogPageURL(website, locale, pageLink, entryAnchor, catPath, dateString, pageNum, false);
+            return URLUtilities.getWeblogPageURL(website, locale, pageLink, entryAnchor, catPath, dateString, tags, pageNum, false);
         } else if (entryAnchor != null) {
             return URLUtilities.getWeblogEntryURL(website, locale, entryAnchor, true);
         }
         
-        return URLUtilities.getWeblogCollectionURL(website, locale, catPath, dateString, pageNum, false);
+        return URLUtilities.getWeblogCollectionURL(website, locale, catPath, dateString, tags, pageNum, false);
     }
     
 }

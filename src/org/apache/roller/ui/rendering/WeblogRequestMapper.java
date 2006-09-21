@@ -258,7 +258,8 @@ public class WeblogRequestMapper implements RequestMapper {
                 
                 // requests handled by PageServlet
             } else if(context.equals("page") || context.equals("entry") ||
-                    context.equals("date") || context.equals("category")) {
+                    context.equals("date") || context.equals("category")
+                    || context.equals("tags")) {
                 
                 forwardUrl.append(PAGE_SERVLET);
                 forwardUrl.append("/");

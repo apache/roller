@@ -19,6 +19,8 @@
 package org.apache.roller.ui.rendering.model; 
 
 import java.util.Map;
+import javax.servlet.jsp.tagext.TagSupport;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -196,6 +198,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
                     cat,
+                    pageRequest.getTags(),
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 8) {
             return new WeblogEntriesDayPager(
@@ -205,6 +208,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
                     cat,
+                    pageRequest.getTags(),
                     pageRequest.getPageNum());
         } else if (dateString != null && dateString.length() == 6) {
             return new WeblogEntriesMonthPager(
@@ -214,7 +218,9 @@ public class PageModel implements Model {
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
                     cat,
+                    pageRequest.getTags(),
                     pageRequest.getPageNum());
+          
         } else {
             return new WeblogEntriesLatestPager(
                     weblog,
@@ -223,6 +229,7 @@ public class PageModel implements Model {
                     pageRequest.getWeblogAnchor(),
                     pageRequest.getWeblogDate(),
                     cat,
+                    pageRequest.getTags(),
                     pageRequest.getPageNum());
         }
     }

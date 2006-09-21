@@ -21,6 +21,7 @@ package org.apache.roller.business.hibernate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
@@ -29,8 +30,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.apache.commons.collections.comparators.ReverseComparator;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -41,18 +43,19 @@ import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
+import org.apache.roller.pojos.TagCloudEntry;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryAssoc;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.DateUtil;
-import org.apache.commons.lang.StringUtils;
 import org.apache.roller.util.Utilities;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
@@ -787,6 +790,80 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
+    }
+        
+    public List getWeblogEntriesByTags(WebsiteData website, List tags) throws RollerException {
+      try {
+               
+        if(tags == null || tags.size() == 0)
+          return Collections.EMPTY_LIST;
+        
+        Session session = ((HibernatePersistenceStrategy) strategy).getSession();
+        
+        StringBuffer queryString = new StringBuffer();
+        queryString.append("select distinct e ");
+        queryString.append("from WeblogEntryData e ");
+        queryString.append("where ");
+        queryString.append(" e.tagSet.name = ?");
+        for(int i = 1; tags.size() > 1 && i < tags.size(); i++)
+          queryString.append(" and e.tagSet.name = ?");
+        if(website != null)
+          queryString.append("and t.website.id = '" + website.getId() + "' ");
+        queryString.append("order by e.tagSet.time desc");
+
+        Query query = session.createQuery(queryString.toString());
+        for(int i = 0; i < tags.size(); i++)
+          query.setString(i, (String) tags.get(i));
+              
+        return query.list();
+        
+      } catch (HibernateException e) {
+        throw new RollerException(e);
+      }
+    }
+    
+    public List getTags(Date startDate,
+        Date endDate,
+        WebsiteData website,
+        UserData user,
+        boolean sortByCount,
+        int limit) throws RollerException {
+      try {
+        List results = new ArrayList();
+        
+        Session session = ((HibernatePersistenceStrategy) strategy).getSession();
+        
+        StringBuffer queryString = new StringBuffer();
+        queryString.append("select t.name, count(t.name) ");
+        queryString.append("from WeblogEntryTagData t ");
+        queryString.append("where t.time between ? and ? ");
+        if(website != null)
+          queryString.append("and t.website.id = '" + website.getId() + "' ");
+        if(user != null)
+          queryString.append("and t.user.id = '" + user.getId() + "' ");
+        queryString.append("group by t.name ");
+        queryString.append(sortByCount ? "order by count(t.name) desc " : "order by t.name ");
+
+        Query query = session.createQuery(queryString.toString());
+        query.setTimestamp(0, DateUtil.getStartOfDay(startDate));
+        query.setTimestamp(1, DateUtil.getEndOfDay(endDate));
+        if(limit > 0)
+          query.setMaxResults(limit);
+        
+        for (Iterator iter = query.list().iterator(); iter.hasNext();) {
+          Object[] row = (Object[]) iter.next();
+          TagCloudEntry ce = new TagCloudEntry();
+          ce.setName((String) row[0]);
+          ce.setCount(((Integer)row[1]).intValue());
+          results.add(ce);
+        }
+        
+        return results;
+        
+      } catch (HibernateException e) {
+        throw new RollerException(e);
+      }
+
     }
     
     public List getComments(

@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WebsiteData;
@@ -152,6 +153,7 @@ public final class URLUtilities {
                                                       String locale,
                                                       String category,
                                                       String dateString,
+                                                      List tags,
                                                       int pageNum,
                                                       boolean absolute) {
         
@@ -178,7 +180,9 @@ public final class URLUtilities {
             
         } else if(dateString != null && cat == null) {
             pathinfo.append("date/").append(dateString);  
-            
+        
+        } else if(tags != null && tags.size() > 0) {
+            pathinfo.append("tags/").append(Utilities.stringArrayToString((String[])tags.toArray(), ","));
         } else {
             if(dateString != null) params.put("date", dateString);
             if(cat != null) params.put("cat", encode(cat));
@@ -201,6 +205,7 @@ public final class URLUtilities {
                                                 String entryAnchor,
                                                 String category,
                                                 String dateString,
+                                                List tags,
                                                 int pageNum,
                                                 boolean absolute) {
         
@@ -223,12 +228,15 @@ public final class URLUtilities {
             if(category != null) {
                 params.put("cat", encode(category));
             }
+            if(tags != null && tags.size() > 0) {
+                params.put("tags",encode(Utilities.stringArrayToString((String[])tags.toArray(), "+")));
+            }
             if(pageNum > 0) {
                 params.put("page", Integer.toString(pageNum));
             }
         } else {
             // if there is no page link then this is just a typical collection url
-            return getWeblogCollectionURL(weblog, locale, category, dateString, pageNum, absolute);
+            return getWeblogCollectionURL(weblog, locale, category, dateString, tags, pageNum, absolute);
         }
         
         return pathinfo.toString() + getQueryString(params);

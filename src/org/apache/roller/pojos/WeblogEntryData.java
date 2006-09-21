@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +97,8 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     // Collection of name/value entry attributes
     private Map attMap = new HashMap();
     private Set attSet = new TreeSet();
+    
+    private Set tagSet = new HashSet();
     
     //----------------------------------------------------------- Construction
     
@@ -597,7 +600,119 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         this.locale = locale;
     }
     
+    /** 
+     * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogEntryTagData"
+     *
+     * @ejb:persistent-field
+     * 
+     * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan" 
+     * @hibernate.collection-key column="entryid" 
+     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogEntryTagData"
+     */
+     public Set getTagSet()
+     {
+         return tagSet;
+     }
+     
+     private void setTagSet(Set tagSet) throws RollerException
+     {
+         this.tagSet = tagSet;
+     }    
+     
+     public void addTag(String name) {
+       WeblogEntryTagData tag = new WeblogEntryTagData();
+       tag.setName(stripInvalidTagChars(name));
+       tag.setUser(getCreator());
+       tag.setWebsite(getWebsite());
+       tag.setWeblogEntry(this);
+       tag.setTime(getUpdateTime());       
+       tagSet.add(tag);
+     }
+     
+     public void removeTag(String name) {
+       Iterator it = tagSet.iterator();
+       while(it.hasNext()) {
+         WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+         if(tag.getName().equals(name)) {
+           it.remove();
+         }
+       }
+     }
+   
+     public void updateTags(List tags) {
+       HashSet newTags = new HashSet(tags);
+              
+       // remove old ones no longer passed.
+       Iterator it = tagSet.iterator();
+       while(it.hasNext()) {
+         WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+         if(!newTags.contains(tag.getName())) {
+           it.remove();
+         } else {
+           newTags.remove(tag.getName());
+         }
+       }
+       
+       // add new ones, duplicates are taken care of by the db.
+       it = newTags.iterator();
+       while(it.hasNext()) {
+         addTag((String) it.next());
+       }
+    }
+   
+     public boolean checkValidTagChar(char c) {
+       return  c == 45 || c == 46 || c == 95 || 
+         (48 <= c && c <= 57) ||
+         (65 <= c && c <= 90) ||
+         (97 <= c && c <= 122) ||
+         Character.isUnicodeIdentifierPart(c) ||
+         Character.isUnicodeIdentifierStart(c);
+     }
+     
+     public String stripInvalidTagChars(String s) 
+     {
+       StringBuffer sb = new StringBuffer();
+       char [] charArray = s.toCharArray();
+       for(int i = 0; i < charArray.length; i++) 
+       {
+         if(checkValidTagChar(charArray[i]))
+           sb.append(charArray[i]);
+       }
+       return sb.toString();
+     }
+     
+     /**
+      *
+      * @roller.wrapPojoMethod type="simple"
+      */     
+    public String getTags() 
+    {
+       StringBuffer sb = new StringBuffer();
+       for(Iterator it = getTagSet().iterator(); it.hasNext();)
+       {
+           sb.append(((WeblogEntryTagData)it.next()).getName()).append(" ");
+       }
+       if(sb.length() > 0)
+       {
+           sb.deleteCharAt(sb.length()-1);
+       }
+
+       return sb.toString();
+     }  
     
+     public void setTags(String tags)
+     {
+       if (tags == null)
+         return;
+       
+       String[] tagsarr = StringUtils.split(tags, ' ');
+       
+       if (tagsarr == null || tagsarr.length == 0)
+         return;
+       
+       updateTags(Arrays.asList(tagsarr));       
+     }
+
     //------------------------------------------------------------------------
     
     /**

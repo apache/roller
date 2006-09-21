@@ -92,6 +92,7 @@
         <mapping resource="org/apache/roller/pojos/WeblogCategoryData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogCategoryAssoc.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogEntryData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/WeblogEntryTagData.hbm.xml" />        
         <mapping resource="org/apache/roller/pojos/WebsiteData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/RollerPropertyData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/PermissionsData.hbm.xml" />

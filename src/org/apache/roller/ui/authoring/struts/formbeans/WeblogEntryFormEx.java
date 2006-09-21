@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.Date;
@@ -39,6 +40,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.EntryAttributeData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
@@ -59,6 +61,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     private String mCategoryId = null;
     private String mCreatorId = null;
     private String mWebsiteId = null;
+    private String mTags = null;
     private Date mDate = new Date();    
     private String mDateString = null;        
     private Integer mHours = new Integer(0);
@@ -182,6 +185,11 @@ public class WeblogEntryFormEx extends WeblogEntryForm
                 }
             }
         }
+        
+        if(getTags() != null) 
+        {
+          entry.setTags(getTags());
+        }
     }
     
     /**
@@ -204,6 +212,12 @@ public class WeblogEntryFormEx extends WeblogEntryForm
             pluginsArray = StringUtils.split(entry.getPlugins(), ",");
         }
         
+        String tags = entry.getTags();
+        if (tags != null && tags.length() > 0)
+        {
+          setTags(tags);
+        }
+                
         attributes = new HashMap();
         Iterator atts = entry.getEntryAttributes().iterator();
         while (atts.hasNext())
@@ -458,7 +472,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     {
         mWebsiteId = websiteId;
     }
-
+    
     /** Convenience method for checking status */
     public boolean isDraft() 
     {

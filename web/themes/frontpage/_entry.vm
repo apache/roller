@@ -4,9 +4,10 @@
     </a><br /> 
     <p class="entryDetails">
         <a href="$utils.escapeHTML($entry.website.URL)">$entry.website.name</a>
-        #if($entry.category.name)| $entry.category.name #end
-        #if($entry.pubTime) | $utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat")) #end
-        #if($entry.creator.userName)| By $entry.creator.userName #end
+        #if($entry.tagSet.size() > 0) $entry.getTags() |#end
+        #if($entry.category.name)$entry.category.name |#end
+        #if($entry.pubTime) $utils.formatDate($entry.pubTime, $text.get("macro.weblog.date.toStringFormat")) |#end
+        #if($entry.creator.userName) By $entry.creator.userName #end
         <br/> 
     </p>
     <p class="entryDescription">                    

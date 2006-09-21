@@ -20,7 +20,15 @@
                <td class="menuTabUnselected">
                   <div class="menu-tr">
                      <div class="menu-tl">
-                        &nbsp;&nbsp;<a href="$url.home/page/directory">Weblog Directory</a>&nbsp;&nbsp; 
+                        &nbsp;&nbsp;<a href="$url.page("tags")">Site Tags</a>&nbsp;&nbsp; 
+                     </div>
+                  </div>
+               </td>	                   
+               <td class="menuTabSeparator"></td>
+               <td class="menuTabUnselected">
+                  <div class="menu-tr">
+                     <div class="menu-tl">
+                        &nbsp;&nbsp;<a href="$url.page("directory")">Weblog Directory</a>&nbsp;&nbsp; 
                      </div>
                   </div>
                </td>	    
@@ -109,7 +117,7 @@
 
                 </div>
             </div>
-            
+                                    
             <br />
             <a href='$url.feed.entries.rss' title='Combined RSS feed for site.'>
             <img src='$url.absoluteSite/images/rssbadge.gif' border="0" alt='Combined RSS feed for site.' />
@@ -154,6 +162,48 @@
                 </ul>   
                 <br />		
             </div>
+            
+            <br />
+            <div class="sidebarBodyHead">
+                <div class="menu-tr">
+                    <div class="menu-tl">
+                       <h3>Hot Tags (past week)</h3>		
+                    </div>
+                </div>
+            </div>	
+
+            <div class="sidebarBody">  
+                
+				  <style>
+				  span.tag a { color: #ad3537;; text-decoration: none; padding: 3px; }
+				  </style>
+				
+				  <center>
+					  #set($tags = $site.getHotTags(7, $maxResults))
+					  
+					  #set ( $minSize = 12 )
+					  #set ( $maxSize = 28 )
+					
+					  #set ( $max = 0 )
+					  #foreach ( $tag in $tags )
+					    #if ( $tag.count > $max )
+					      #set ( $max = $tag.count )
+					    #end
+					  #end
+					
+					  #set ( $step = $max / ($maxSize - $minSize) )
+					  
+					  #set ( $step = $max / ($maxSize - $minSize) )
+                      #if ( $step < 1 )
+                        #set ( $step = 1 )
+                      #end
+					  #foreach ($tag in $tags)
+					    #set( $size = $minSize + ($tag.count / $step)  )
+					    <span class="tag" style="font-size:${size}px"><a href="#">$tag.name</span></a>
+					  #end
+				  </center>
+            </div>
+            
 
         </div>
     </div>

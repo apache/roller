@@ -150,6 +150,12 @@ function publish() {
        </html:select>
     </td></tr>
     
+    <tr><td class="entryEditFormLabel">
+      <label style="width:10%; float:left;" for="title"><fmt:message key="weblogEdit.tags" /></label>
+    </td><td>
+        <html:text property="tags" size="70" maxlength="255" tabindex="2" /><br/>
+    </td></tr>    
+    
     <c:choose>
         <c:when test="${model.weblog.enableMultiLang}">
             <tr><td class="entryEditFormLabel">
