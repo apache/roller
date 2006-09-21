@@ -67,9 +67,10 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catPath,
+            List               tags,
             int                page) {
         
-        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, page);
+        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
         
         getEntries();
         
@@ -154,7 +155,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return createURL(0, 0, weblog, locale, pageLink, null, null, catPath);
+        return createURL(0, 0, weblog, locale, pageLink, null, null, catPath, tags);
     }
     
     
@@ -165,7 +166,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getNextLink() {
         if (more) {
-            return createURL(page, 1, weblog, locale, pageLink, null, dateString, catPath);
+            return createURL(page, 1, weblog, locale, pageLink, null, dateString, catPath, tags);
         }
         return null;
     }
@@ -181,7 +182,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     public String getPrevLink() {
         if (page > 0) {
-            return createURL(page, -1, weblog, locale, pageLink, null, dateString, catPath);
+            return createURL(page, -1, weblog, locale, pageLink, null, dateString, catPath, tags);
         }
         return null;
     }
@@ -198,7 +199,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     public String getNextCollectionLink() {
         if (nextDay != null) {
             String next = DateUtil.format8chars(nextDay);
-            return createURL(0, 0, weblog, locale, pageLink, null, next, catPath);
+            return createURL(0, 0, weblog, locale, pageLink, null, next, catPath, tags);
         }
         return null;
     }
@@ -215,7 +216,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     public String getPrevCollectionLink() {
         if (prevDay != null) {
             String prev = DateUtil.format8chars(prevDay);
-            return createURL(0, 0, weblog, locale, pageLink, null, prev, catPath);
+            return createURL(0, 0, weblog, locale, pageLink, null, prev, catPath, tags);
         }
         return null;
     }

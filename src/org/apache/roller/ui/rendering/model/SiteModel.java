@@ -20,6 +20,7 @@ package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,6 +47,7 @@ import org.apache.roller.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.ui.rendering.pagers.Pager;
 import org.apache.roller.ui.rendering.pagers.UsersPager;
 import org.apache.roller.ui.rendering.pagers.WeblogEntriesListPager;
+import org.apache.roller.ui.rendering.pagers.WeblogEntriesTagsPager;
 import org.apache.roller.ui.rendering.pagers.WeblogsPager;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
@@ -61,6 +63,7 @@ public class SiteModel implements Model {
     
     private WebsiteData weblog = null;
     private WeblogRequest weblogRequest = null;
+    private List tags = new ArrayList();
     private String pageLink = null;
     private int pageNum = 0;
     
@@ -81,6 +84,7 @@ public class SiteModel implements Model {
             Template weblogPage = ((WeblogPageRequest)weblogRequest).getWeblogPage();
             pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
+            tags = ((WeblogPageRequest)weblogRequest).getTags();
         }
         
         // extract weblog object
@@ -98,7 +102,16 @@ public class SiteModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, 0, false);
+                null, null, null, null, 0, false);
+        
+        if(tags.size() > 0) {
+          return new WeblogEntriesTagsPager(
+              pagerUrl, null, null, tags,
+              weblogRequest.getLocale(),
+              sinceDays,
+              pageNum, 
+              length);        
+        }        
         
         return new WeblogEntriesListPager(
             pagerUrl, null, null, null,
@@ -145,8 +158,16 @@ public class SiteModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, 0, false);
+                null, null, null, null, 0, false);
         
+        if(tags.size() > 0) {
+          return new WeblogEntriesTagsPager(
+              pagerUrl, queryWeblog, user, tags,
+              weblogRequest.getLocale(),
+              sinceDays,
+              pageNum, 
+              length);        
+        }
         return new WeblogEntriesListPager(
             pagerUrl, queryWeblog, user, cat,
             weblogRequest.getLocale(),
@@ -166,7 +187,7 @@ public class SiteModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, 0, false);
+                null, null, null, null, 0, false);
         
         return new CommentsPager(
             pagerUrl,
@@ -182,7 +203,7 @@ public class SiteModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, 0, false);
+                null, null, null, null, 0, false);
         
         if(letter != null && StringUtils.isEmpty(letter)) {
             letter = null;
@@ -203,7 +224,7 @@ public class SiteModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, 0, false);
+                null, null, null, null, 0, false);
         
         if(letter != null && StringUtils.isEmpty(letter)) {
             letter = null;
@@ -469,4 +490,49 @@ public class SiteModel implements Model {
         }
         return results;
     }
+    
+    /**
+     * @param sinceDay
+     * @return
+     */
+    public List getTags(
+            int sinceDays) {
+        List results = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
+        try {            
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            results = wmgr.getTags(
+                    startDate, new Date(), null, null, false, -1);
+        } catch (Exception e) {
+            log.error("ERROR: fetching site tags list", e);
+        }
+        return results;
+    }
+    
+    /**
+     * @param sinceDay
+     * @return
+     */
+    public List getHotTags(
+            int sinceDays, int length) {
+        List results = new ArrayList();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
+        try {            
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            results = wmgr.getTags(
+                    startDate, new Date(), null, null, true, length);
+        } catch (Exception e) {
+            log.error("ERROR: fetching site tags list", e);
+        }
+        return results;
+    }    
+    
 }

@@ -86,7 +86,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                         ((WeblogEntryData)entries.get(0)).getPubTime());
                 
                 // append 8 char date string on end of selfurl
-                String dayUrl = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, -1, false);
+                String dayUrl = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
                               
                 sb.append("<div class=\"hCalendarDayTitleBig\">");
                 sb.append("<a href=\"");
@@ -152,10 +152,10 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         try {
             if (nextPrevMonthURL && pageLink != null) { 
                 // next/prev month URLs point to current page
-                url = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, -1, false);
+                url = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
             } else { 
                 // all other URLs point back to main weblog page
-                url = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, -1, false);
+                url = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
             }
         } catch (Exception e) {
             mLogger.error("ERROR: creating URL",e);

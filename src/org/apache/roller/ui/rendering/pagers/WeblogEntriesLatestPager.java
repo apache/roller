@@ -58,9 +58,10 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catPath,
+            List               tags,
             int                page) {
         
-        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, page);
+        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
         
         // initialize the pager collection
         getEntries();

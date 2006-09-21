@@ -21,6 +21,7 @@ package org.apache.roller.ui.rendering.pagers;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.logging.Log;
@@ -58,9 +59,10 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catPath,
+            List               tags,
             int                page) {
         
-        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, page);
+        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
         
         getEntries();
     }
@@ -85,7 +87,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return createURL(0, 0, weblog, locale, pageLink, null, dateString, catPath);
+        return createURL(0, 0, weblog, locale, pageLink, null, dateString, catPath, tags);
     }
     
     
@@ -96,7 +98,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public String getNextLink() {
         if (getNextEntry() != null) {
-            return createURL(0, 0, weblog, locale, pageLink, nextEntry.getAnchor(), dateString, catPath);
+            return createURL(0, 0, weblog, locale, pageLink, nextEntry.getAnchor(), dateString, catPath, tags);
         }
         return null;
     }
@@ -113,7 +115,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     public String getPrevLink() {
         if (getPrevEntry() != null) {
-            return createURL(0, 0, weblog, locale, pageLink, prevEntry.getAnchor(), dateString, catPath);
+            return createURL(0, 0, weblog, locale, pageLink, prevEntry.getAnchor(), dateString, catPath, tags);
         }
         return null;
     }

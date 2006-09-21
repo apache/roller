@@ -18,7 +18,10 @@
 
 package org.apache.roller.ui.rendering.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +36,7 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.util.URLUtilities;
+import org.apache.roller.util.Utilities;
 
 
 /**
@@ -55,6 +59,7 @@ public class WeblogPageRequest extends WeblogRequest {
     private String weblogPageName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
+    private List tags = new ArrayList();
     private int pageNum = 0;
     private Map customParams = new HashMap();
     
@@ -100,6 +105,7 @@ public class WeblogPageRequest extends WeblogRequest {
          * /entry/<anchor> - permalink
          * /date/<YYYYMMDD> - date collection view
          * /category/<category> - category collection view
+         * /tags/spring+framework - tags
          * /page/<pagelink> - custom page
          *
          * path info may be null, which indicates the weblog homepage
@@ -136,7 +142,10 @@ public class WeblogPageRequest extends WeblogRequest {
                     
                 } else if("page".equals(this.context)) {
                     this.weblogPageName = pathElements[1];
-                    
+
+                } else if("tags".equals(this.context)) {
+                  this.tags = Arrays.asList(StringUtils.split(pathElements[1],"+"));
+                                      
                 } else {
                     throw new InvalidRequestException("context "+this.context+
                             "not supported, "+request.getRequestURL());
@@ -201,6 +210,10 @@ public class WeblogPageRequest extends WeblogRequest {
                         this.weblogCategoryName = "/"+this.weblogCategoryName;
                     }
                 }
+                
+                if(request.getParameter("tags") != null) {
+                  this.tags = Arrays.asList(StringUtils.split(URLUtilities.decode(request.getParameter("tags")),"+"));
+                }
             }
         }
         
@@ -222,12 +235,14 @@ public class WeblogPageRequest extends WeblogRequest {
         customParams.remove("date");
         customParams.remove("cat");
         customParams.remove("page");
+        customParams.remove("tags");
             
         if(log.isDebugEnabled()) {
             log.debug("context = "+this.context);
             log.debug("weblogAnchor = "+this.weblogAnchor);
             log.debug("weblogDate = "+this.weblogDate);
             log.debug("weblogCategory = "+this.weblogCategoryName);
+            log.debug("tags = "+ Utilities.stringArrayToString((String[])this.tags.toArray(), ","));
             log.debug("weblogPage = "+this.weblogPageName);
             log.debug("pageNum = "+this.pageNum);
         }
@@ -299,6 +314,14 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public void setCustomParams(Map customParams) {
         this.customParams = customParams;
+    }
+    
+    public List getTags() {
+      return tags;
+    }
+    
+    public void setTags(List tags) {
+      this.tags = tags;
     }
     
     public WeblogEntryData getWeblogEntry() {

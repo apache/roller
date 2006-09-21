@@ -23,6 +23,10 @@
 
 package org.apache.roller.business;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import junit.framework.Test;
@@ -35,6 +39,7 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -318,6 +323,309 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
     }
     
+
+    public void testCreateAnEntryWithTags() throws Exception {
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogEntryData entry = null;
+        
+        WeblogEntryData testEntry = new WeblogEntryData();
+        testEntry.setTitle("entryTestEntry");
+        testEntry.setLink("testEntryLink");
+        testEntry.setText("blah blah entry");
+        testEntry.setAnchor("testEntryAnchor");
+        testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        testEntry.setWebsite(testWeblog);
+        testEntry.setCreator(testUser);
+        testEntry.setCategory(testWeblog.getDefaultCategory());
+                
+        WeblogEntryTagData tag = new WeblogEntryTagData();
+        tag.setName("testTag");
+        tag.setWebsite(testWeblog);
+        tag.setWeblogEntry(testEntry);
+        tag.setUser(testUser);
+        tag.setTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        
+        testEntry.getTagSet().add(tag);
+        
+        // create a weblog entry
+        mgr.saveWeblogEntry(testEntry);
+        String id = testEntry.getId();
+        TestUtils.endSession(true);
+        
+        // make sure entry was created
+        entry = mgr.getWeblogEntry(id);
+        assertNotNull(entry);
+        assertEquals(testEntry, entry);
+        assertNotNull(entry.getTagSet());
+        assertEquals(1, entry.getTagSet().size());
+        assertEquals("testTag",((WeblogEntryTagData) entry.getTagSet().iterator().next()).getName());
+        
+        // teardown our test entries
+        TestUtils.teardownWeblogEntry(id);
+        TestUtils.endSession(true);
+    }
+
+    public void testCreateAnEntryWithTagsShortcut() throws Exception {
+      
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        WeblogEntryData entry = null;
+        
+        WeblogEntryData testEntry = new WeblogEntryData();
+        testEntry.setTitle("entryTestEntry");
+        testEntry.setLink("testEntryLink");
+        testEntry.setText("blah blah entry");
+        testEntry.setAnchor("testEntryAnchor");
+        testEntry.setPubTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        testEntry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+        testEntry.setWebsite(testWeblog);
+        testEntry.setCreator(testUser);
+        testEntry.setCategory(testWeblog.getDefaultCategory());
+
+        // shortcut
+        testEntry.addTag("testTag");
+        
+        // create a weblog entry
+        mgr.saveWeblogEntry(testEntry);
+        String id = testEntry.getId();
+        TestUtils.endSession(true);
+        
+        // make sure entry was created
+        entry = mgr.getWeblogEntry(id);
+        assertNotNull(entry);
+        assertEquals(testEntry, entry);
+        assertNotNull(entry.getTagSet());
+        assertEquals(1, entry.getTagSet().size());
+        assertEquals("testTag",((WeblogEntryTagData) entry.getTagSet().iterator().next()).getName());
+        
+        // teardown our test entry
+        TestUtils.teardownWeblogEntry(id);
+        TestUtils.endSession(true);
+    }
+    
+    public void testTagUpdate() throws Exception {
+    
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        // setup some test entries to use
+        WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
+        entry.addTag("testTag");
+        String id = entry.getId();
+        TestUtils.endSession(true);
+
+        entry = mgr.getWeblogEntry(id);
+        assertNotNull(entry);
+        assertNotNull(entry.getTagSet());
+        assertEquals(1, entry.getTagSet().size());
+        assertEquals("testTag",((WeblogEntryTagData) entry.getTagSet().iterator().next()).getName());
+
+        // update a weblog entry tag
+        WeblogEntryTagData tag = ((WeblogEntryTagData) entry.getTagSet().iterator().next());
+        tag.setName("updatedTestTag");
+        TestUtils.endSession(true);
+
+        entry = mgr.getWeblogEntry(id);
+        assertNotNull(entry);
+        assertEquals(1, entry.getTagSet().size());
+        assertEquals("updatedTestTag",((WeblogEntryTagData) entry.getTagSet().iterator().next()).getName());
+      
+        // teardown our test entry
+        TestUtils.teardownWeblogEntry(id);
+        TestUtils.endSession(true);
+        
+    }
+    
+    public void testAddMultipleTags() throws Exception {    
+    
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        // setup some test entries to use
+        WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
+        entry.addTag("testTag");
+        entry.addTag("whateverTag");
+        String id = entry.getId();
+        TestUtils.endSession(true);
+        
+        entry = mgr.getWeblogEntry(id);
+        entry.addTag("testTag2");
+        TestUtils.endSession(true);
+        
+        entry = mgr.getWeblogEntry(id);
+        assertEquals(3, entry.getTagSet().size());
+        
+        // teardown our test entry
+        TestUtils.teardownWeblogEntry(id);
+        TestUtils.endSession(true);      
+    }
+    
+    public void testAddMultipleIdenticalTags() throws Exception {    
+      
+      WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+      
+      // setup some test entries to use
+      WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
+      entry.addTag("testTag");
+      String id = entry.getId();
+      TestUtils.endSession(true);
+      
+      entry = mgr.getWeblogEntry(id);
+      entry.addTag("testTag");
+      TestUtils.endSession(true);
+      
+      entry = mgr.getWeblogEntry(id);
+      assertEquals(1, entry.getTagSet().size());
+      
+      // teardown our test entry
+      TestUtils.teardownWeblogEntry(id);
+      TestUtils.endSession(true);      
+  }    
+    
+    public void testRemoveTags() throws Exception {
+
+      WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+      
+      UserData testUser = TestUtils.setupUser("entryTestUser3");
+      WebsiteData testWeblog = TestUtils.setupWeblog("entryTestWeblog3", testUser);
+      TestUtils.endSession(true);
+         
+      // setup some test entries to use
+      WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
+      entry.addTag("testTag");
+      entry.addTag("testTag2");      
+      String id = entry.getId();
+      TestUtils.endSession(true);
+      
+      entry = mgr.getWeblogEntry(id);
+      assertEquals(2, entry.getTagSet().size());
+      TestUtils.endSession(true);
+      
+      entry = mgr.getWeblogEntry(id);
+      entry.getTagSet().clear();
+      TestUtils.endSession(true);
+
+      entry = mgr.getWeblogEntry(id);
+      assertEquals(0, entry.getTagSet().size());
+      TestUtils.endSession(true);
+      
+      // teardown our test entry
+      //TestUtils.teardownWeblogEntry(id);
+      //TestUtils.endSession(true);      
+    }
+    
+    public void testRemoveTagsViaShortcut() throws Exception {
+
+      WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+      
+      // setup some test entries to use
+      WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
+      entry.addTag("testTag");
+      entry.addTag("testTag2");      
+      String id = entry.getId();
+      TestUtils.endSession(true);
+      
+      entry = mgr.getWeblogEntry(id);
+      assertEquals(2, entry.getTagSet().size());
+      TestUtils.endSession(true);
+      
+      entry = mgr.getWeblogEntry(id);
+      entry.removeTag("testTag");
+      entry.removeTag("testTag2");
+      TestUtils.endSession(true);
+
+      entry = mgr.getWeblogEntry(id);
+      assertEquals(0, entry.getTagSet().size());
+      TestUtils.endSession(true);
+      
+      // teardown our test entry
+      TestUtils.teardownWeblogEntry(id);
+      TestUtils.endSession(true);      
+    }
+    
+    public void testGetEntriesByTag() throws Exception {
+
+      WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+      
+      // setup some test entries to use
+      WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
+      entry.addTag("testTag"); 
+      String id = entry.getId();
+      TestUtils.endSession(true);
+      
+      List results = mgr.getWeblogEntriesByTags(testWeblog, Arrays.asList(new String[] {"testTag"}));
+      assertEquals(1,results.size());
+      WeblogEntryData testEntry = (WeblogEntryData) results.iterator().next();
+      assertEquals(entry, testEntry);
+      
+      // teardown our test entry
+      TestUtils.teardownWeblogEntry(id);
+      TestUtils.endSession(true);      
+    }  
+    
+    public void testRemoveEntryTagCascading() throws Exception {
+      
+      WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+      
+      // setup some test entries to use
+      WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
+      entry.addTag("testTag"); 
+      String id = entry.getId();
+      TestUtils.endSession(true);
+      
+      List results = mgr.getWeblogEntriesByTags(testWeblog, Arrays.asList(new String[] {"testTag"}));
+      assertEquals(1,results.size());
+      WeblogEntryData testEntry = (WeblogEntryData) results.iterator().next();
+      assertEquals(entry, testEntry);
+      
+      // teardown our test entry
+      TestUtils.teardownWeblogEntry(id);
+      TestUtils.endSession(true);      
+
+      results = mgr.getWeblogEntriesByTags(testWeblog, Arrays.asList(new String[] {"testTag"}));
+      assertEquals(0,results.size());  
+      
+      // terminate
+      TestUtils.endSession(true);  
+    }
+    
+    public void testUpdateTags() throws Exception {
+
+      WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+      
+      // setup some test entries to use
+      WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog.getDefaultCategory(), testWeblog, testUser);
+      entry.addTag("testWillStayTag"); 
+      entry.addTag("testTagWillBeRemoved");
+      String id = entry.getId();
+      TestUtils.endSession(true);
+     
+      entry = mgr.getWeblogEntry(id);
+      assertEquals(2, entry.getTagSet().size());
+      
+      List updateTags = new ArrayList();
+      updateTags.add("testWillStayTag");
+      updateTags.add("testNewTag");
+      updateTags.add("testNewTag3");
+      entry.updateTags(updateTags);
+      TestUtils.endSession(true);
+      
+      entry = mgr.getWeblogEntry(id);
+      HashSet tagNames = new HashSet();
+      for(Iterator it = entry.getTagSet().iterator(); it.hasNext();) {
+        WeblogEntryTagData tagData = (WeblogEntryTagData) it.next();
+        tagNames.add(tagData.getName());
+      }
+      
+      assertEquals(3, entry.getTagSet().size());      
+      assertEquals(3, tagNames.size());
+      assertEquals(true, tagNames.contains("testWillStayTag"));
+      assertEquals(true, tagNames.contains("testNewTag"));
+      assertEquals(true, tagNames.contains("testNewTag3"));
+      
+      // teardown our test entry
+      TestUtils.teardownWeblogEntry(id);
+      TestUtils.endSession(true);    
+    }
+  
     
     /**
      * Test that we can add and remove entry attributes for an entry.

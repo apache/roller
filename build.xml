@@ -155,6 +155,7 @@ Key Targets:
             <include name="org/apache/roller/pojos/Template.java"/>
             <include name="org/apache/roller/pojos/UserData.java"/>
             <include name="org/apache/roller/pojos/WeblogEntryData.java"/>
+            <include name="org/apache/roller/pojos/WeblogEntryTagData.java"/>        	
             <include name="org/apache/roller/pojos/WeblogCategoryData.java"/>
             <include name="org/apache/roller/pojos/WebsiteData.java"/>
             <include name="org/apache/roller/pojos/PlanetEntryData.java"/>

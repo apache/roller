@@ -19,6 +19,7 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class PlanetModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, 0, false);
+                null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
             null,
@@ -108,7 +109,7 @@ public class PlanetModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, 0, false);
+                null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
             null,
@@ -131,7 +132,7 @@ public class PlanetModel implements Model {
         
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
-                null, null, null, 0, false);
+                null, null, null, null, 0, false);
         
         return new PlanetEntriesPager(
             feedURL,

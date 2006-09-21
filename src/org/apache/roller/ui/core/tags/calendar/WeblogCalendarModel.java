@@ -163,9 +163,9 @@ public class WeblogCalendarModel implements CalendarModel {
         }
         try {
             if (pageLink == null) { // create date URL
-                url = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, -1, false);
+                url = URLUtilities.getWeblogCollectionURL(weblog, locale, cat, dateString, null, -1, false);
             } else { // create page URL
-                url = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, -1, false);
+                url = URLUtilities.getWeblogPageURL(weblog, locale, pageLink, null, cat, dateString, null, -1, false);
             }
         } catch (Exception e) {
             log.error("ERROR: creating URL",e);
@@ -224,7 +224,7 @@ public class WeblogCalendarModel implements CalendarModel {
     }
     
     public String computeTodayMonthUrl() {
-        return URLUtilities.getWeblogCollectionURL(weblog, locale, cat, null, -1, false);
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, cat, null, null, -1, false);
     }
     
 }

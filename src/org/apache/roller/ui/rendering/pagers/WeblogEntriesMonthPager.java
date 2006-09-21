@@ -67,9 +67,10 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catPath,
+            List               tags,
             int                page) {
         
-        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, page);
+        super(weblog, locale, pageLink, entryAnchor, dateString, catPath, tags, page);
         
         getEntries();
         
@@ -147,7 +148,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     
     public String getHomeLink() {
-        return createURL(0, 0, weblog, locale, pageLink, null, null, catPath);
+        return createURL(0, 0, weblog, locale, pageLink, null, null, catPath, tags);
     }
     
     
@@ -158,7 +159,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getNextLink() {
         if (more) {
-            return createURL(page, 1, weblog, locale, pageLink, null, dateString, catPath);
+            return createURL(page, 1, weblog, locale, pageLink, null, dateString, catPath, tags);
         }
         return null;
     }
@@ -174,7 +175,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
     public String getPrevLink() {
         if (offset > 0) {
-            return createURL(page, -1, weblog, locale, pageLink, null, dateString, catPath);
+            return createURL(page, -1, weblog, locale, pageLink, null, dateString, catPath, tags);
         }
         return null;
     }
@@ -191,7 +192,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     public String getNextCollectionLink() {
         if (nextMonth != null) {
             String next = DateUtil.format6chars(nextMonth);
-            return createURL(0, 0, weblog, locale, pageLink, null, next, catPath);
+            return createURL(0, 0, weblog, locale, pageLink, null, next, catPath, tags);
         }
         return null;
     }
@@ -208,7 +209,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     public String getPrevCollectionLink() {
         if (prevMonth != null) {
             String prev = DateUtil.format6chars(prevMonth);
-            return createURL(0, 0, weblog, locale, pageLink, null, prev, catPath);
+            return createURL(0, 0, weblog, locale, pageLink, null, prev, catPath, tags);
         }
         return null;
     }
