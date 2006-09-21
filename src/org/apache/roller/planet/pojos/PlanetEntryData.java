@@ -15,7 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.pojos;
+package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.pojos.*;
 import org.apache.roller.util.rome.ContentModule;
 
 import org.apache.roller.util.Utilities;

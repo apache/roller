@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core.tasks;
+package org.apache.roller.planet.tasks;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,13 +26,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PlanetManager;
+import org.apache.roller.planet.model.PlanetManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ScheduledTask;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.PlanetGroupData;
-import org.apache.roller.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.URLUtilities;
 

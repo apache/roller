@@ -17,7 +17,7 @@
 */
 package org.apache.roller.ui.admin.struts.formbeans;
 
-import org.apache.roller.ui.authoring.struts.forms.PlanetSubscriptionForm;
+import org.apache.roller.planet.ui.authoring.struts.forms.PlanetSubscriptionForm;
 
 /**
  * @struts.form name="planetSubscriptionFormEx"

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.roller.business.hibernate;
+package org.apache.roller.planet.business.hibernate;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.apache.roller.business.hibernate.*;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -44,16 +45,15 @@ import org.hibernate.criterion.Order;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.config.RollerConfig;
-import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PlanetManager;
+import org.apache.roller.planet.model.PlanetManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.PlanetConfigData;
-import org.apache.roller.pojos.PlanetEntryData;
-import org.apache.roller.pojos.PlanetGroupData;
-import org.apache.roller.pojos.PlanetGroupSubscriptionAssoc;
-import org.apache.roller.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.config.PlanetConfig;
+import org.apache.roller.planet.pojos.PlanetConfigData;
+import org.apache.roller.planet.pojos.PlanetEntryData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetGroupSubscriptionAssoc;
+import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.util.rome.DiskFeedInfoCache;
 
 /**
@@ -66,15 +66,10 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
     protected static final String NO_GROUP = "zzz_nogroup_zzz";
     
     private HibernatePersistenceStrategy strategy = null;
-    private String localURL = null;
     private Map lastUpdatedByGroup = new HashMap();
        
-    public HibernatePlanetManagerImpl(HibernatePersistenceStrategy strat) {
-        
+    public HibernatePlanetManagerImpl(HibernatePersistenceStrategy strat) {        
         this.strategy = strat;
-        
-        // TODO: this is bad.  this property should be in the planet config.
-        localURL = RollerRuntimeConfig.getProperty("site.absoluteurl");
     }
         
     public void saveConfiguration(PlanetConfigData config) 
@@ -138,7 +133,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             // compatibility with the standaline version of the aggregator.
             if (config != null) {
                 config.setCacheDir(
-                        RollerConfig.getProperty("planet.aggregator.cache.dir"));
+                    PlanetConfig.getProperty("planet.aggregator.cache.dir"));
             }
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -184,7 +179,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         try {
             Session session = ((HibernatePersistenceStrategy)strategy).getSession();
             Integer count = (Integer)session.createQuery(
-                    "select count(*) from org.apache.roller.pojos.PlanetSubscriptionData").uniqueResult();
+                    "select count(*) from org.apache.roller.planet.pojos.PlanetSubscriptionData").uniqueResult();
             return count.intValue();
         } catch (Throwable e) {
             throw new RuntimeException(
@@ -206,7 +201,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             Query query = null;
             if (groupHandle != null) {
                 query = session.createQuery(
-                    "select sub from org.apache.roller.pojos.PlanetSubscriptionData sub "
+                    "select sub from org.apache.roller.planet.pojos.PlanetSubscriptionData sub "
                     +"join sub.groupSubscriptionAssocs assoc "
                     +"where "
                     +"assoc.group.handle=:groupHandle "
@@ -214,7 +209,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 query.setString("groupHandle", groupHandle);
             } else {
                 query = session.createQuery(
-                    "select sub from org.apache.roller.pojos.PlanetSubscriptionData sub "
+                    "select sub from org.apache.roller.planet.pojos.PlanetSubscriptionData sub "
                     +"order by sub.inboundblogs desc");
             }
             if (offset != 0) {
@@ -311,7 +306,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             
             if (group != null) {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select entry from org.apache.roller.pojos.PlanetEntryData entry ");
+                sb.append("select entry from org.apache.roller.planet.pojos.PlanetEntryData entry ");
                 sb.append("join entry.subscription.groupSubscriptionAssocs assoc ");
                 sb.append("where assoc.group=:group and entry.pubTime < :endDate ");
                 if (startDate != null) {
@@ -329,7 +324,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 ret = query.list();
             } else {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select entry from org.apache.roller.pojos.PlanetEntryData entry ");
+                sb.append("select entry from org.apache.roller.planet.pojos.PlanetEntryData entry ");
                 sb.append("join entry.subscription.groupSubscriptionAssocs assoc ");
                 sb.append("where (assoc.group.handle='external' or assoc.group.handle='all') ");
                 sb.append("and entry.pubTime < :endDate ");
@@ -447,14 +442,6 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             // reattach sub.  sub gets detached as we iterate
             sub = this.getSubscriptionById(sub.getId());
             
-            // Fetch latest entries for each subscription
-//            Set newEntries = null;
-//            int count = 0;
-//            if (!StringUtils.isEmpty(localURL) && sub.getFeedURL().startsWith(localURL)) {
-//                newEntries = getNewEntriesLocal(sub, feedFetcher, feedInfoCache);
-//            } else {
-//                newEntries = getNewEntriesRemote(sub, feedFetcher, feedInfoCache);
-//            }
             Set newEntries = this.getNewEntries(sub, feedFetcher, feedInfoCache);
             int count = newEntries.size();
             
@@ -564,10 +551,6 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             }
         }
         return newEntries;
-    }
-
-    protected String getLocalURL() {
-        return localURL;
     }
 
 }

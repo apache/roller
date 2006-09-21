@@ -113,9 +113,12 @@ Key Targets:
         addedtags="@xdoclet-generated at ${TODAY}"
         force="true">
         
-	<fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
+	    <fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
         <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
         <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Assoc.java" />
+        
+        <fileset dir="${ro.src}" includes="org/apache/roller/planet/pojos/*Assoc.java" />
+        <fileset dir="${ro.src}" includes="org/apache/roller/planet/pojos/*Data.java" />
         
         <hibernate validatexml="true" version="3.0"/>
         
@@ -158,8 +161,8 @@ Key Targets:
             <include name="org/apache/roller/pojos/WeblogEntryTagData.java"/>        	
             <include name="org/apache/roller/pojos/WeblogCategoryData.java"/>
             <include name="org/apache/roller/pojos/WebsiteData.java"/>
-            <include name="org/apache/roller/pojos/PlanetEntryData.java"/>
-            <include name="org/apache/roller/pojos/PlanetSubscriptionData.java"/>
+            <include name="org/apache/roller/planet/pojos/PlanetEntryData.java"/>
+            <include name="org/apache/roller/planet/pojos/PlanetSubscriptionData.java"/>
         </fileset>
 
         <template 
@@ -183,8 +186,9 @@ Key Targets:
 
     <!-- Use EJBDoclet to generate Struts forms -->
     <ejbdoclet destdir="${build.generated}/unused" excludedtags="@version,@author">
-	<fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
+        <fileset dir="${ro.src}" includes="org/apache/roller/pojos/WeblogTemplate.java" />
         <fileset dir="${ro.src}" includes="org/apache/roller/pojos/*Data.java" />
+        <fileset dir="${ro.src}" includes="org/apache/roller/planet/pojos/*Data.java" />
 
         &custom-gen-web;
      
@@ -208,8 +212,18 @@ Key Targets:
     <!-- Change Struts form names from *DataForm.java to *Form.java  -->
     <replace dir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms"
         token="DataForm" value="Form"/>
-    <move todir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms">
+    <move      todir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms">
         <fileset dir="${build.generated.web}/org/apache/roller/ui/authoring/struts/forms" >
+            <include name="*DataForm.java"/>
+            <include name="*ConfigForm.java" />
+        </fileset>
+        <mapper type="glob" from="*DataForm.java" to="*Form.java"/>
+    </move>
+
+    <replace dir="${build.generated.web}/org/apache/roller/planet/ui/authoring/struts/forms"
+        token="DataForm" value="Form"/>
+    <move      todir="${build.generated.web}/org/apache/roller/planet/ui/authoring/struts/forms">
+        <fileset dir="${build.generated.web}/org/apache/roller/planet/ui/authoring/struts/forms" >
             <include name="*DataForm.java"/>
             <include name="*ConfigForm.java" />
         </fileset>
