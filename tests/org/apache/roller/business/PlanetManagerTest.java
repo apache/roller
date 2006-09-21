@@ -269,7 +269,7 @@ public class PlanetManagerTest extends TestCase {
         
         PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
         
-        String feed_url1 = "http://rollerweblogger.org/rss/roller";
+        String feed_url1 = "http://rollerweblogger.org/roller/feed/entries/rss";
         
         {
             PlanetGroupData group = new PlanetGroupData();
@@ -313,8 +313,8 @@ public class PlanetManagerTest extends TestCase {
         try {
             PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
             
-            String feed_url1 = "http://rollerweblogger.org/rss/roller";
-            String feed_url2 = "http://linuxintegrators.com/acoliver/?flavor=rss2";
+            String feed_url1 = "http://rollerweblogger.org/roller/feed/entries/rss";
+            String feed_url2 = "http://blogs.sun.com/main/feed/entries/atom";
             
             {
                 PlanetGroupData group = new PlanetGroupData();
@@ -378,8 +378,8 @@ public class PlanetManagerTest extends TestCase {
         try {
             PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
             
-            String feed_url1 = "http://rollerweblogger.org/rss/roller";
-            String feed_url2 = "http://linuxintegrators.com/acoliver/?flavor=rss2";
+            String feed_url1 = "http://rollerweblogger.org/roller/feed/entries/rss";
+            String feed_url2 = "http://blogs.sun.com/main/feed/entries/atom";
             
             {
                 PlanetSubscriptionData sub1 = new PlanetSubscriptionData();
