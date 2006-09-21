@@ -15,7 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.tools;
+package org.apache.roller.planet.utils;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -60,10 +60,10 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.pojos.PlanetConfigData;
-import org.apache.roller.pojos.PlanetEntryData;
-import org.apache.roller.pojos.PlanetGroupData;
-import org.apache.roller.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.PlanetConfigData;
+import org.apache.roller.planet.pojos.PlanetEntryData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.rome.DiskFeedInfoCache;
 import org.apache.velocity.VelocityContext;
