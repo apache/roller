@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PlanetManager;
+import org.apache.roller.planet.model.PlanetManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.StaticTemplate;
 import org.apache.roller.pojos.Template;

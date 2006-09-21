@@ -35,14 +35,14 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.PlanetManager;
+import org.apache.roller.planet.model.PlanetManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.ui.authoring.struts.forms.PlanetGroupForm;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.authoring.struts.forms.PlanetGroupForm;
 
 
 /////////////////////////////////////////////////////////////////////////////

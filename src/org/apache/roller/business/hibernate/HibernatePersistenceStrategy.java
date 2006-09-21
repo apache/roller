@@ -73,7 +73,7 @@ public class HibernatePersistenceStrategy {
      * This will open a new Session if one is not already open, otherwise
      * it will return the already open Session.
      */
-    protected Session getSession() {
+    public Session getSession() {
         
         log.debug("Opening Hibernate Session");
         
@@ -86,7 +86,7 @@ public class HibernatePersistenceStrategy {
     }
     
     
-    protected void flush() throws RollerException {
+    public void flush() throws RollerException {
         
         Session session = getSession();
         try {
@@ -111,7 +111,7 @@ public class HibernatePersistenceStrategy {
      * If not then we can close the Session without ever getting a jdbc
      * connection, which is important for scalability.
      */
-    protected void release() {
+    public void release() {
         
         try {
             Session session = sessionFactory.getCurrentSession();
@@ -144,7 +144,7 @@ public class HibernatePersistenceStrategy {
     /**
      * Retrieve object.  We return null if the object is not found.
      */
-    protected PersistentObject load(String id, Class clazz) throws RollerException {
+    public PersistentObject load(String id, Class clazz) throws RollerException {
         
         if(id == null || clazz == null) {
             throw new RollerException("Cannot load objects when value is null");
@@ -157,7 +157,7 @@ public class HibernatePersistenceStrategy {
     /**
      * Store object.
      */
-    protected void store(PersistentObject obj) throws HibernateException {
+    public void store(PersistentObject obj) throws HibernateException {
         
         if(obj == null) {
             throw new HibernateException("Cannot save null object");
@@ -207,7 +207,7 @@ public class HibernatePersistenceStrategy {
      *
      * TODO BACKEND: force the use of remove(Object) moving forward.
      */
-    protected void remove(String id, Class clazz) throws HibernateException {
+    public void remove(String id, Class clazz) throws HibernateException {
         
         if(id == null || clazz == null) {
             throw new HibernateException("Cannot remove object when values are null");
@@ -223,7 +223,7 @@ public class HibernatePersistenceStrategy {
     /**
      * Remove object.
      */
-    protected void remove(PersistentObject obj) throws HibernateException {
+    public void remove(PersistentObject obj) throws HibernateException {
         
         if(obj == null) {
             throw new HibernateException("Cannot remove null object");
@@ -244,7 +244,7 @@ public class HibernatePersistenceStrategy {
      *
      * NOTE: if the object has proper cascade setting then is all this necessary?
      */
-    protected void store(HierarchicalPersistentObject obj) 
+    public void store(HierarchicalPersistentObject obj) 
             throws HibernateException, RollerException {
         
         if(obj == null) {
@@ -330,7 +330,7 @@ public class HibernatePersistenceStrategy {
     /**
      * Store assoc.
      */
-    protected void store(Assoc assoc) throws HibernateException {
+    public void store(Assoc assoc) throws HibernateException {
         
         if(assoc == null) {
             throw new HibernateException("Cannot save null object");
@@ -345,7 +345,7 @@ public class HibernatePersistenceStrategy {
      *
      * NOTE: if the object has proper cascade setting then is all this necessary?
      */
-    protected void remove(HierarchicalPersistentObject obj) throws RollerException {
+    public void remove(HierarchicalPersistentObject obj) throws RollerException {
         
         if(obj == null) {
             throw new RollerException("Cannot remove null object");
@@ -391,7 +391,7 @@ public class HibernatePersistenceStrategy {
     /**
      * Remove assoc.
      */
-    protected void remove(Assoc assoc) throws HibernateException {
+    public void remove(Assoc assoc) throws HibernateException {
         
         if(assoc == null) {
             throw new HibernateException("Cannot save null object");

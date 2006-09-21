@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.pojos;
+package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
+import org.apache.roller.pojos.*;
 
 import org.apache.roller.pojos.PersistentObject;
 

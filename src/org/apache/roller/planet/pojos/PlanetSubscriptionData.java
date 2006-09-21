@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.pojos;
+package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import org.apache.roller.pojos.*;
 
 /**
  * @struts.form include-all="true"
@@ -64,7 +65,7 @@ public class PlanetSubscriptionData extends PersistentObject
      * @hibernate.bag lazy="true" inverse="true" cascade="delete" 
      * @hibernate.collection-key column="subscription_id"
      * @hibernate.collection-one-to-many 
-     *    class="org.apache.roller.pojos.PlanetGroupSubscriptionAssoc"
+     *    class="org.apache.roller.planet.pojos.PlanetGroupSubscriptionAssoc"
      */
     public List getGroupSubscriptionAssocs()
     {
@@ -91,7 +92,7 @@ public class PlanetSubscriptionData extends PersistentObject
     /** 
      * @hibernate.bag lazy="true" inverse="true" cascade="all-delete-orphan" 
      * @hibernate.collection-key column="subscription_id"
-     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.PlanetEntryData"
+     * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetEntryData"
      */
     public List getEntries()
     {

@@ -15,7 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.model;
+package org.apache.roller.planet.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -23,10 +23,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.PlanetConfigData;
-import org.apache.roller.pojos.PlanetEntryData;
-import org.apache.roller.pojos.PlanetGroupData;
-import org.apache.roller.pojos.PlanetSubscriptionData;
+import org.apache.roller.planet.pojos.PlanetConfigData;
+import org.apache.roller.planet.pojos.PlanetEntryData;
+import org.apache.roller.planet.pojos.PlanetGroupData;
+import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 
 /**
  * Manages groups and subscriptions, can return aggregation for any group.

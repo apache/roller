@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.pojos;
+package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import org.apache.roller.pojos.*;
 
 
 /**
@@ -77,7 +78,7 @@ public class PlanetGroupData extends PersistentObject implements Serializable
      * @hibernate.bag lazy="false" inverse="true" cascade="delete" 
      * @hibernate.collection-key column="group_id"
      * @hibernate.collection-one-to-many 
-     *    class="org.apache.roller.pojos.PlanetGroupSubscriptionAssoc"
+     *    class="org.apache.roller.planet.pojos.PlanetGroupSubscriptionAssoc"
      */
     public List getGroupSubscriptionAssocs()
     {
