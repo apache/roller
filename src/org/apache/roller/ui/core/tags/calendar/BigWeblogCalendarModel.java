@@ -61,6 +61,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                     startDate,                 // startDate
                     endDate,                   // endDate
                     catName,                   // cat
+                    null,                      // tags
                     WeblogEntryData.PUBLISHED, // status
                     locale,
                     0, -1);

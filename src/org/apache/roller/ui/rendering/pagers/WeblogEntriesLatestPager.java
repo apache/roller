@@ -80,6 +80,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                         null,
                         new Date(),
                         catPath,
+                        tags,
                         WeblogEntryData.PUBLISHED,
                         locale,
                         offset,

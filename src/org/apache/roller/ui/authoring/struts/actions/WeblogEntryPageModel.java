@@ -137,6 +137,7 @@ public class WeblogEntryPageModel extends BasePageModel
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
+                null,              // tags
                 WeblogEntryData.PUBLISHED, // status
                 null,              // sortby (null for pubTime)
 null,                 0, 20);   
@@ -158,6 +159,7 @@ null,                 0, 20);
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
+                null,              // tags
                 WeblogEntryData.DRAFT, // status
                 "updateTime",      // sortby 
 null,                 0, 20);  // maxEntries
@@ -179,6 +181,7 @@ null,                 0, 20);  // maxEntries
                 null,              // startDate
                 null,              // endDate
                 null,              // catName
+                null,              // tags
                 WeblogEntryData.PENDING, // status
                 "updateTime",      // sortby
 null,                 0, 20);  

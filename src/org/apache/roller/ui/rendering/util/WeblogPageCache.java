@@ -24,6 +24,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
@@ -197,6 +199,11 @@ public class WeblogPageCache {
                 
                 key.append("/").append(cat);
             }
+            
+            if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
+              String[] tags = (String[])new TreeSet(pageRequest.getTags()).toArray();
+              key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
+            }            
         }
         
         if(pageRequest.getLocale() != null) {

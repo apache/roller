@@ -110,6 +110,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
                         startDate,
                         endDate,
                         catPath,
+                        tags,
                         WeblogEntryData.PUBLISHED, 
                         locale,
                         offset,  

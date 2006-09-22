@@ -79,6 +79,7 @@ public interface WeblogManager {
             Date        startDate,
             Date        endDate,
             String      catName,
+            List        tags,
             String      status,
             String      sortBy,
             String      locale,             
@@ -105,6 +106,7 @@ public interface WeblogManager {
             Date        startDate,
             Date        endDate,
             String      catName,
+            List        tags,            
             String      status,
             String      locale,
             int         offset,
@@ -130,6 +132,7 @@ public interface WeblogManager {
             Date        startDate,
             Date        endDate,
             String      catName,
+            List        tags,            
             String      status,
             String      locale,
             int         offset,
@@ -301,17 +304,7 @@ public interface WeblogManager {
      * Get all ancestor associates for a category.
      */
     public List getWeblogCategoryAncestorAssocs(WeblogCategoryData data) throws RollerException;
-    
-    /**
-     * Get all entries in a website that contain a specific tag
-     * @param website
-     * @param tag
-     * @return
-     * @throws RollerException
-     */
-    public List getWeblogEntriesByTags(WebsiteData website, List tags) throws RollerException;
-    
-    
+        
     /**
      * Get all tag (name, count) pairs for a specific date range, optionally only for a given site or user.
      * @param startDate

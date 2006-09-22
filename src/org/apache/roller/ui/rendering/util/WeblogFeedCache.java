@@ -23,6 +23,8 @@ import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
@@ -173,6 +175,11 @@ public class WeblogFeedCache {
             
             key.append("/").append(cat);
         }
+        
+        if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
+          String[] tags = (String[])new TreeSet(feedRequest.getTags()).toArray();
+          key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
+        }        
         
         if(feedRequest.getLocale() != null) {
             key.append("/").append(feedRequest.getLocale());

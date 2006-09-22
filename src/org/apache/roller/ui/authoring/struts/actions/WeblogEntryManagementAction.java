@@ -153,6 +153,7 @@ public final class WeblogEntryManagementAction extends DispatchAction
                     startDate,
                     endDate,
                     category,
+                    null,
                     status,
                     queryForm.getSortby(),
 null,                     queryForm.getOffset(),

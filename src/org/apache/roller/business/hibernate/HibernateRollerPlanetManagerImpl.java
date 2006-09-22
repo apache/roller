@@ -117,6 +117,7 @@ public class HibernateRollerPlanetManagerImpl extends HibernatePlanetManagerImpl
                             null,                        // startDate
                             new Date(),                  // endDate
                             null,                        // catName
+                            null,                        // tags
                             WeblogEntryData.PUBLISHED,   // status
                             null,                        // sortby (null means pubTime)
                             null,                        // locale

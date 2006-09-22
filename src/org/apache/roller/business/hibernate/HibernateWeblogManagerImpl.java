@@ -402,6 +402,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date        startDate,
             Date        endDate,
             String      catName,
+            List        tags,
             String      status,
             String      sortby,
             String      locale,
@@ -416,57 +417,79 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         if (catName != null && catName.trim().equals("/")) {
             catName = null;
         }
-        
+                
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogEntryData.class);
             
+            ArrayList params = new ArrayList();
+            StringBuffer queryString = new StringBuffer();
+            queryString.append("select distinct e from WeblogEntryData e where ");
+
             if (website != null) {
-                criteria.add(Expression.eq("website", website));
+                queryString.append("website.id = ? ");                
+                params.add(website.getId());
             } else {
-                criteria.createAlias("website","w");
-                criteria.add(Expression.eq("w.enabled", Boolean.TRUE));
+                queryString.append("website.enabled = ? ");                
+                params.add(Boolean.TRUE);                
             }
             
             if (user != null) {
-                criteria.add(Expression.eq("creator", user));
+                queryString.append("and creator.id = ? ");
+                params.add(user.getId());
             }
 
             if (startDate != null) {
-                criteria.add(
-                        Expression.ge("pubTime", startDate));
+                queryString.append("and pubTime >= ? ");
+                params.add(startDate);
             }
             
             if (endDate != null) {
-                criteria.add(
-                        Expression.le("pubTime", endDate));
+                queryString.append("and pubTime <= ? ");
+                params.add(endDate);                
             }
             
             if (cat != null && website != null) {
-                criteria.add(Expression.eq("category", cat));
+                queryString.append("and category.id = ? ");
+                params.add(cat.getId());                
+            }
+            
+            if (tags != null && tags.size() > 0) {
+              for(int i = 0; i < tags.size(); i++) {
+                queryString.append(" and tagSet.name = ?");
+                params.add(tags.get(i));
+              }
             }
             
             if (status != null) {
-                criteria.add(Expression.eq("status", status));
+                queryString.append("and status = ? ");
+                params.add(status);
             }
             
             if (locale != null) {
-                criteria.add(Expression.ilike("locale", locale, MatchMode.START));
+                queryString.append("lower(locale) like ? ");
+                params.add("%" + locale.toLowerCase());
             }
             
             if (sortby != null && sortby.equals("updateTime")) {
-                criteria.addOrder(Order.desc("updateTime"));
+                queryString.append("order by updateTime desc ");
             } else {
-                criteria.addOrder(Order.desc("pubTime"));
+                queryString.append("order by pubTime desc ");
             }
             
+            Query query = session.createQuery(queryString.toString());
+            
+            // set params
+            for(int i = 0; i < params.size(); i++) {
+              query.setParameter(i, params.get(i));
+            }
+                        
             if (offset != 0) {
-                criteria.setFirstResult(offset);
+                query.setFirstResult(offset);
             }
             if (length != -1) {
-                criteria.setMaxResults(length);
+                query.setMaxResults(length);
             }
-            return criteria.list();
+            return query.list();
             
         } catch (HibernateException e) {
             log.error(e);
@@ -791,37 +814,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throw new RollerException(e);
         }
     }
-        
-    public List getWeblogEntriesByTags(WebsiteData website, List tags) throws RollerException {
-      try {
-               
-        if(tags == null || tags.size() == 0)
-          return Collections.EMPTY_LIST;
-        
-        Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-        
-        StringBuffer queryString = new StringBuffer();
-        queryString.append("select distinct e ");
-        queryString.append("from WeblogEntryData e ");
-        queryString.append("where ");
-        queryString.append(" e.tagSet.name = ?");
-        for(int i = 1; tags.size() > 1 && i < tags.size(); i++)
-          queryString.append(" and e.tagSet.name = ?");
-        if(website != null)
-          queryString.append("and t.website.id = '" + website.getId() + "' ");
-        queryString.append("order by e.tagSet.time desc");
-
-        Query query = session.createQuery(queryString.toString());
-        for(int i = 0; i < tags.size(); i++)
-          query.setString(i, (String) tags.get(i));
-              
-        return query.list();
-        
-      } catch (HibernateException e) {
-        throw new RollerException(e);
-      }
-    }
-    
+            
     public List getTags(Date startDate,
         Date endDate,
         WebsiteData website,
@@ -1029,6 +1022,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    startDate,
             Date    endDate,
             String  catName,
+            List    tags,            
             String  status,
             String  locale,
             int     offset,
@@ -1038,6 +1032,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             startDate,
             endDate,
             catName,
+            tags,
             status,
             false,
             locale,
@@ -1050,6 +1045,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    startDate,
             Date    endDate,
             String  catName,
+            List    tags,            
             String  status,
             String  locale,
             int     offset,
@@ -1060,6 +1056,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             startDate,
             endDate,
             catName,
+            tags,
             status,
             true,
             locale,
@@ -1073,6 +1070,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Date    startDate,
             Date    endDate,
             String  catName,
+            List    tags,
             String  status,
             boolean stringsOnly,
             String  locale,
@@ -1088,6 +1086,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             startDate,
             endDate,
             catName,
+            tags,
             status,
             null,
 locale,             offset,
