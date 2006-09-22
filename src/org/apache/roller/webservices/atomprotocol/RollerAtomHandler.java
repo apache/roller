@@ -286,6 +286,7 @@ public class RollerAtomHandler implements AtomHandler {
                         null,              // startDate
                         null,              // endDate
                         null,              // catName
+                        null,              // tags
                         null,              // status
                         "updateTime",      // sortby
                         null,              // locale

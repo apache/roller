@@ -114,7 +114,7 @@ public class FuturePostingsInvalidationJob implements Job {
             
             // get all published entries between start and end date
             List expiringEntries = wMgr.getWeblogEntries(null, null, now, end, null, 
-                    null, WeblogEntryData.PUBLISHED, null, 0, -1);
+                    null, null, WeblogEntryData.PUBLISHED, null, 0, -1);
             
             // we only really want the weblog ids
             Set expiringWeblogs = new HashSet();

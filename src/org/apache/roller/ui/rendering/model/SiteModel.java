@@ -47,8 +47,8 @@ import org.apache.roller.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.ui.rendering.pagers.Pager;
 import org.apache.roller.ui.rendering.pagers.UsersPager;
 import org.apache.roller.ui.rendering.pagers.WeblogEntriesListPager;
-import org.apache.roller.ui.rendering.pagers.WeblogEntriesTagsPager;
 import org.apache.roller.ui.rendering.pagers.WeblogsPager;
+import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.URLUtilities;
@@ -85,6 +85,8 @@ public class SiteModel implements Model {
             pageLink = (weblogPage != null) ? weblogPage.getLink() : null;
             pageNum = ((WeblogPageRequest)weblogRequest).getPageNum();
             tags = ((WeblogPageRequest)weblogRequest).getTags();
+        } else if (weblogRequest instanceof WeblogFeedRequest) {
+            tags = ((WeblogFeedRequest)weblogRequest).getTags();
         }
         
         // extract weblog object
@@ -104,17 +106,9 @@ public class SiteModel implements Model {
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
         
-        if(tags.size() > 0) {
-          return new WeblogEntriesTagsPager(
-              pagerUrl, null, null, tags,
-              weblogRequest.getLocale(),
-              sinceDays,
-              pageNum, 
-              length);        
-        }        
-        
         return new WeblogEntriesListPager(
             pagerUrl, null, null, null,
+            tags,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 
@@ -159,17 +153,10 @@ public class SiteModel implements Model {
         String pagerUrl = URLUtilities.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
                 null, null, null, null, 0, false);
-        
-        if(tags.size() > 0) {
-          return new WeblogEntriesTagsPager(
-              pagerUrl, queryWeblog, user, tags,
-              weblogRequest.getLocale(),
-              sinceDays,
-              pageNum, 
-              length);        
-        }
+       
         return new WeblogEntriesListPager(
             pagerUrl, queryWeblog, user, cat,
+            tags,
             weblogRequest.getLocale(),
             sinceDays,
             pageNum, 

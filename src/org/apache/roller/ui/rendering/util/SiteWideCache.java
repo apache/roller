@@ -25,6 +25,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
@@ -174,7 +176,7 @@ public class SiteWideCache implements CacheHandler {
      *
      * <handle>/<ctx>[/anchor][/language][/user]
      *   or
-     * <handle>/<ctx>[/weblogPage][/date][/category][/language][/user]
+     * <handle>/<ctx>[/weblogPage][/date][/category][/tags][/language][/user]
      *
      *
      * examples ...
@@ -223,6 +225,12 @@ public class SiteWideCache implements CacheHandler {
                 }
                 
                 key.append("/").append(cat);
+            }
+            
+            if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
+              String[] tags = new String[pageRequest.getTags().size()];
+              new TreeSet(pageRequest.getTags()).toArray(tags);
+              key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
             }
         }
         
@@ -293,6 +301,12 @@ public class SiteWideCache implements CacheHandler {
         if(feedRequest.isExcerpts()) {
             key.append("/excerpts");
         }
+        
+        if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
+          String[] tags = new String[feedRequest.getTags().size()];
+          new TreeSet(feedRequest.getTags()).toArray(tags);
+          key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
+        }       
         
         return key.toString();
     }

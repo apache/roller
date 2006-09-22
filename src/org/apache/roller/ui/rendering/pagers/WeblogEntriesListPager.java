@@ -50,6 +50,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     private WebsiteData queryWeblog = null;
     private UserData queryUser = null;
     private String queryCat = null;
+    private List queryTags = null;
     
     // entries for the pager
     private List entries;
@@ -63,6 +64,7 @@ public class WeblogEntriesListPager extends AbstractPager {
             WebsiteData    queryWeblog,
             UserData       queryUser,
             String         queryCat,
+            List           queryTags,
             String         locale,
             int            sinceDays,
             int            pageNum,
@@ -74,6 +76,7 @@ public class WeblogEntriesListPager extends AbstractPager {
         this.queryWeblog = queryWeblog;
         this.queryUser = queryUser;
         this.queryCat = queryCat;
+        this.queryTags = queryTags;
         this.locale = locale;
         this.sinceDays = sinceDays;
         this.length = length;
@@ -104,6 +107,7 @@ public class WeblogEntriesListPager extends AbstractPager {
                         startDate,
                         new Date(),
                         queryCat,
+                        queryTags,
                         WeblogEntryData.PUBLISHED,
                         "pubTime",
                         locale,

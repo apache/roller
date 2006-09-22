@@ -379,6 +379,7 @@ public class OldWeblogPageModel {
                     startDate,                    // startDate
                     endDate,                      // endDate
                     catParam,                     // catName
+                    null,                         // tags
                     WeblogEntryData.PUBLISHED,    // status
                     mLocale, 0, limit);  
             
@@ -481,6 +482,7 @@ public class OldWeblogPageModel {
                     null,                        // startDate
                     day,                         // endDate
                     catParam,                    // catName
+                    null,                        // tags
                     WeblogEntryData.PUBLISHED,   // status
                     null,                        // sortby (null for pubTime)
                     mLocale, 0, mWebsite.getEntryDisplayCount());    

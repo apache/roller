@@ -18,7 +18,12 @@
 
 package org.apache.roller.ui.rendering.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -46,6 +51,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     private String type = null;
     private String format = null;
     private String weblogCategoryName = null;
+    private List   tags = null;
     private boolean excerpts = false;
     
     // heavyweight attributes
@@ -122,6 +128,10 @@ public class WeblogFeedRequest extends WeblogRequest {
             }
         }
         
+        if(request.getParameter("tags") != null) {
+          this.tags = Arrays.asList(StringUtils.split(URLUtilities.decode(request.getParameter("tags")),"+"));
+        }        
+        
         if(request.getParameter("excerpts") != null) {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
         }
@@ -156,6 +166,14 @@ public class WeblogFeedRequest extends WeblogRequest {
 
     public void setWeblogCategoryName(String weblogCategory) {
         this.weblogCategoryName = weblogCategory;
+    }
+    
+    public List getTags() {
+      return tags;
+    }
+
+    public void setTags(List tags) {
+      this.tags = tags;
     }
 
     public boolean isExcerpts() {

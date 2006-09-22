@@ -115,6 +115,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
                         startDate,
                         endDate,
                         catPath,
+                        tags,
                         WeblogEntryData.PUBLISHED, 
                         locale,
                         offset,  

@@ -108,6 +108,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                         null,                      // startDate
                         new Date(),                // endDate (don't index 'future' entries)
                         null,                      // catName
+                        null,
                         WeblogEntryData.PUBLISHED, // status
                         null,                      // sortby (null means pubTime)
 null,                         0, -1);     // offset, length, locale
