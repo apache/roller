@@ -19,6 +19,8 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.jsp.PageContext;
@@ -191,6 +193,15 @@ public class URLModel implements Model {
         return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, null, null, pageNum, true);
     }
     
+    public String tag(String tag) {
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, Arrays.asList(new String[]{tag}) , -1, true);
+    }
+  
+  
+    public String tag(String tag, int pageNum) {
+        return URLUtilities.getWeblogCollectionURL(weblog, locale, null, null, Arrays.asList(new String[]{tag}), pageNum, true);
+    }    
+    
     
     public String collection(String dateString, String catPath) {
         return URLUtilities.getWeblogCollectionURL(weblog, locale, catPath, dateString, null, -1, true);
@@ -304,38 +315,38 @@ public class URLModel implements Model {
     public class EntryFeedURLS {
         
         public String getRss() {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", null, false, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", null, null, false, true);
         }
         
         public String rss(String catPath, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", catPath, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "rss", catPath, null, excerpts, true);
         }
         
         public String getAtom() {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, false, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", null, null, false, true);
         }
         
         public String atom(String catPath, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "entries", "atom", catPath, null, excerpts, true);
         }
     }
     
     public class CommentFeedURLS {
         
         public String getRss() {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", null, false, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", null, null, false, true);
         }
         
         public String rss(String catPath, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", catPath, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "rss", catPath, null, excerpts, true);
         }
         
         public String getAtom() {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", null, false, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", null, null, false, true);
         }
         
         public String atom(String catPath, boolean excerpts) {
-            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", catPath, excerpts, true);
+            return URLUtilities.getWeblogFeedURL(weblog, locale, "comments", "atom", catPath, null, excerpts, true);
         }
         
     }
