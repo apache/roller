@@ -251,6 +251,7 @@ public final class URLUtilities {
                                                 String type,
                                                 String format,
                                                 String category,
+                                                List tags,
                                                 boolean excerpts,
                                                 boolean absolute) {
         
@@ -266,6 +267,9 @@ public final class URLUtilities {
         Map params = new HashMap();
         if(category != null && category.trim().length() > 0) {
             params.put("cat", encode(category));
+        }
+        if(tags != null && tags.size() > 0) {
+          params.put("tags",encode(Utilities.stringArrayToString((String[])tags.toArray(), "+")));
         }
         if(excerpts) {
             params.put("excerpts", "true");

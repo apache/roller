@@ -199,7 +199,7 @@
                       #end
 					  #foreach ($tag in $tags)
 					    #set( $size = $minSize + ($tag.count / $step)  )
-					    <span class="tag" style="font-size:${size}px"><a href="#">$tag.name</span></a>
+					    <span class="tag" style="font-size:${size}px"><a href="$url.tag($tag.name)">$tag.name</span></a>
 					  #end
 				  </center>
             </div>
