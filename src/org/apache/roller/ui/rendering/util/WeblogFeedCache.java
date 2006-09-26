@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
@@ -177,7 +178,8 @@ public class WeblogFeedCache {
         }
         
         if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
-          String[] tags = (String[])new TreeSet(feedRequest.getTags()).toArray();
+          Set ordered = new TreeSet(feedRequest.getTags());
+          String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);  
           key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
         }        
         
