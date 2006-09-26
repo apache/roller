@@ -835,7 +835,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         if(user != null)
           queryString.append("and t.user.id = '" + user.getId() + "' ");
         queryString.append("group by t.name ");
-        queryString.append(sortByCount ? "order by count(t.name) desc " : "order by t.name ");
+        queryString.append(sortByCount ? "order by col_1_0_ desc " : "order by t.name ");
 
         Query query = session.createQuery(queryString.toString());
         query.setTimestamp(0, DateUtil.getStartOfDay(startDate));
