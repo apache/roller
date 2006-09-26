@@ -24,6 +24,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
@@ -201,7 +202,8 @@ public class WeblogPageCache {
             }
             
             if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
-              String[] tags = (String[])new TreeSet(pageRequest.getTags()).toArray();
+              Set ordered = new TreeSet(pageRequest.getTags());
+              String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);  
               key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
             }            
         }
