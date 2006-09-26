@@ -107,7 +107,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                 WebsiteData weblog = (WebsiteData) websites.next();
                 
                 String siteUrl = URLUtilities.getWeblogURL(weblog, null, true);
-                String feedUrl = URLUtilities.getWeblogFeedURL(weblog, null, "entries", "rss", null, false, true);
+                String feedUrl = URLUtilities.getWeblogFeedURL(weblog, null, "entries", "rss", null, null, false, true);
                 
                 // add feed url to the "live" list
                 liveUserFeeds.add(feedUrl);
