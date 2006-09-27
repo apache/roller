@@ -1,7 +1,3 @@
-<%@page contentType="text/html"%>
-<%@page pageEncoding="UTF-8"%>
-<%@ page import="org.apache.roller.planet.model.*" %>
-<%@ page import="java.io.*" %>
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
@@ -18,27 +14,4 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
---%>
-<%--
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
---%>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
-
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Coming soon...</title>
-    </head>
-    <body>
-    <h1>Planet Roller webapp</h1>
-    <p>Planet = <%= PlanetFactory.getPlanet() %></p>
-    </body>
-</html>
-
-
-
-
-
-
+--%><jsp:forward page="/main.faces" />

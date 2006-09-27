@@ -8,14 +8,14 @@
             <properties/>
             <folders>
                 <source-folder>
-                    <label>src</label>
-                    <type>java</type>
-                    <location>src</location>
-                </source-folder>
-                <source-folder>
                     <label>web</label>
                     <type>doc_root</type>
                     <location>web</location>
+                </source-folder>
+                <source-folder>
+                    <label>src</label>
+                    <type>java</type>
+                    <location>src</location>
                 </source-folder>
             </folders>
             <ide-actions>
@@ -50,18 +50,18 @@
                     <ide-action name="rebuild"/>
                 </context-menu>
             </view>
+            <subprojects/>
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">../src/roller-svn/roller/trunk/sandbox/planetroller/lib/asm-attrs.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/asm.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/cglib-2.1.3.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/commons-lang-2.0.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/commons-logging.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/dom4j-1.6.1.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/ehcache-1.1.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/hibernate3.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jaxen-full.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jdbc2_0-stdext.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jdom.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jta.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/log4j-1.2.11.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/roller-business.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/rome-0.8.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/rome-fetcher-0.8.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/saxpath.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/velocity-1.4.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/velocity-dep-1.4.jar</classpath>
+                <classpath mode="compile">../src/roller-svn/roller/trunk/sandbox/planetroller/lib/asm-attrs.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/asm.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/cglib-2.1.3.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/dom4j-1.6.1.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/ehcache-1.1.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/hibernate3.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jaxen-full.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jdbc2_0-stdext.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jdom.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/jta.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/log4j-1.2.11.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/roller-business.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/rome-0.8.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/rome-fetcher-0.8.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/saxpath.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/velocity-1.4.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/velocity-dep-1.4.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/commons-beanutils-1.7.0.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/commons-codec-1.3.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/commons-collections-3.1.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/commons-digester-1.6.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/commons-el-1.0.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/commons-lang-2.1.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/commons-logging-1.0.4.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/jstl-1.1.0.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/myfaces-api-1.1.4.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/myfaces-impl-1.1.4.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/lib/servlet-api.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/myfaces-api-1.1.4.jar:../src/roller-svn/roller/trunk/sandbox/planetroller/web/WEB-INF/lib/tomahawk-1.1.3.jar</classpath>
                 <source-level>1.4</source-level>
             </compilation-unit>
         </java-data>
         <web-data xmlns="http://www.netbeans.org/ns/freeform-project-web/1">
             <web-module>
                 <doc-root>web</doc-root>
-                <classpath/>
                 <context-path>/planet</context-path>
                 <j2ee-spec-level>1.4</j2ee-spec-level>
             </web-module>
