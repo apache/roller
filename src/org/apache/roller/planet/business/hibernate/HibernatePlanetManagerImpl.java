@@ -81,12 +81,12 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         throws RollerException {
         
         // save each sub assoc first, then the group
-        Iterator assocs = group.getGroupSubscriptionAssocs().iterator();
+        /*Iterator assocs = group.getSubscriptions().iterator();
         while (assocs.hasNext()) {
             PlanetGroupSubscriptionAssoc assoc =
                     (PlanetGroupSubscriptionAssoc)assocs.next();
             strategy.store(assoc);
-        }
+        }*/
         strategy.store(group);
     }
         

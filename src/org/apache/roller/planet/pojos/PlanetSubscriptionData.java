@@ -19,7 +19,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.apache.roller.pojos.*;
 
 /**
@@ -57,23 +59,22 @@ public class PlanetSubscriptionData extends PersistentObject
     /** Inbound blogs according to Technorati */
     protected int inboundblogs = 0;
     
-    protected List groupAssocs = new ArrayList();
+    protected Set groups = new HashSet();
     
     //----------------------------------------------------------- persistent fields
 
     /** 
-     * @hibernate.bag lazy="true" inverse="true" cascade="delete" 
+     * @hibernate.set table="rag_group_subscription" lazy="true" cascade="save-update"
      * @hibernate.collection-key column="subscription_id"
-     * @hibernate.collection-one-to-many 
-     *    class="org.apache.roller.planet.pojos.PlanetGroupSubscriptionAssoc"
+     * @hibernate.collection-many-to-many column="group_id" class="org.apache.roller.planet.pojos.PlanetGroupData"
      */
-    public List getGroupSubscriptionAssocs()
+    public Set getGroups()
     {
-        return groupAssocs;
+        return groups;
     }
-    public void setGroupSubscriptionAssocs(List groupAssocs)
+    public void setGroups(Set groups)
     {
-        this.groupAssocs = groupAssocs;
+        this.groups = groups;
     }
 
     /** 

@@ -16,10 +16,9 @@
 package org.apache.roller.planet.pojos;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -57,7 +56,7 @@ public class PlanetGroupData extends PersistentObject implements Serializable
     private int maxFeedEntries = 45;
     
     /** Subscriptions in this group */
-    private List subscriptionAssocs = new ArrayList();
+    private Set subscriptions = new HashSet();
 
     //------------------------------------------------------- persistent fields
 
@@ -74,19 +73,19 @@ public class PlanetGroupData extends PersistentObject implements Serializable
     {
         this.id = id;
     }
+    
     /** 
-     * @hibernate.bag lazy="false" inverse="true" cascade="delete" 
+     * @hibernate.set table="rag_group_subscription" lazy="true" invert="true" cascade="save-update"
      * @hibernate.collection-key column="group_id"
-     * @hibernate.collection-one-to-many 
-     *    class="org.apache.roller.planet.pojos.PlanetGroupSubscriptionAssoc"
+     * @hibernate.collection-many-to-many column="subscription_id" class="org.apache.roller.planet.pojos.PlanetSubscriptionData"
      */
-    public List getGroupSubscriptionAssocs()
+    public Set getSubscriptions()
     {
-        return subscriptionAssocs;
+        return subscriptions;
     }
-    public void setGroupSubscriptionAssocs(List subscriptionAssocs)
+    public void setSubscriptions(Set subscriptions)
     {
-        this.subscriptionAssocs = subscriptionAssocs;
+        this.subscriptions = subscriptions;
     }
     /** 
      * @hibernate.property column="cat_restriction" non-null="false" unique="false"
@@ -163,7 +162,7 @@ public class PlanetGroupData extends PersistentObject implements Serializable
      */
     public boolean qualified(PlanetEntryData entry)
     {
-        String[] cats = getCategoryRestructionAsArray();
+        String[] cats = getCategoryRestrictionAsArray();
         if (cats == null || cats.length == 0) return true;
         for (int i=0; i<cats.length; i++) 
         {
@@ -174,7 +173,7 @@ public class PlanetGroupData extends PersistentObject implements Serializable
     
     //------------------------------------------------------------- convenience
 
-    private String[] getCategoryRestructionAsArray()
+    private String[] getCategoryRestrictionAsArray()
     {
         if (catArray == null && categoryRestriction != null)
         {
@@ -190,58 +189,12 @@ public class PlanetGroupData extends PersistentObject implements Serializable
         return catArray;
     }
     /** no-op to please XDoclet generated form */
-    private void setCategoryRestructionAsArray(String[] ignored)
+    private void setCategoryRestrictionAsArray(String[] ignored)
     {
     }
     
     //---------------------------------------------------------- implementation
 
-    public void removeSubscription(PlanetSubscriptionData sub)
-    {
-        Set set = new TreeSet();
-        Iterator assocs = getGroupSubscriptionAssocs().iterator();
-        PlanetGroupSubscriptionAssoc target = null;
-        while (assocs.hasNext())
-        {
-            PlanetGroupSubscriptionAssoc assoc = 
-                    (PlanetGroupSubscriptionAssoc)assocs.next();
-            if (assoc.getSubscription().getFeedURL().equals(sub.getFeedURL()))
-            {
-                target = assoc;
-                break;
-            }
-        }
-        subscriptionAssocs.remove(target);
-    }
-    public void addSubscription(PlanetSubscriptionData sub)
-    {
-        PlanetGroupSubscriptionAssoc assoc = 
-                new PlanetGroupSubscriptionAssoc();
-        assoc.setGroup(this);
-        assoc.setSubscription(sub);
-        subscriptionAssocs.add(assoc);
-    }
-    public void addSubscriptions(Collection subsList)
-    {
-        Iterator subs = subsList.iterator();
-        while (subs.hasNext())
-        {
-            PlanetSubscriptionData sub = (PlanetSubscriptionData)subs.next();
-            addSubscription(sub);
-        }
-    }
-    public Set getSubscriptions() 
-    {
-        Set set = new TreeSet();
-        Iterator assocs = getGroupSubscriptionAssocs().iterator();
-        while (assocs.hasNext())
-        {
-            PlanetGroupSubscriptionAssoc assoc = 
-                    (PlanetGroupSubscriptionAssoc)assocs.next();
-            set.add(assoc.getSubscription());
-        }
-        return set;
-    }
     public void setData(PersistentObject vo)
     {
         // TODO Auto-generated method stub    
