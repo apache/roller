@@ -154,7 +154,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                     
                     PlanetGroupData targetGroup = planet.getGroup(groupHandle);
                     
-                    targetGroup.removeSubscription(sub);
+                    targetGroup.getSubscriptions().remove(sub);
                     planet.deleteSubscription(sub);
                     roller.flush();
                     // TODO: why release here?
@@ -220,7 +220,7 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                             sub = new PlanetSubscriptionData(); 
                             form.copyTo(sub, request.getLocale());
                         }                        
-                        targetGroup.addSubscription(sub);
+                        targetGroup.getSubscriptions().add(sub);
                         
                     } else {
                         // User editing an existing subscription within a group

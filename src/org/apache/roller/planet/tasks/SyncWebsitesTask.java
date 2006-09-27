@@ -124,7 +124,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                     sub.setAuthor(weblog.getHandle());
                     
                     planet.saveSubscription(sub);
-                    group.addSubscription(sub);
+                    group.getSubscriptions().add(sub);
                 } else {
                     sub.setTitle(weblog.getName());
                     sub.setAuthor(weblog.getHandle());
@@ -141,7 +141,7 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
                 if (!liveUserFeeds.contains(sub.getFeedURL())) {
                     log.info("DELETING feed: "+sub.getFeedURL());
                     planet.deleteSubscription(sub);
-                    group.removeSubscription(sub);
+                    group.getSubscriptions().remove(sub);
                 }
             }
             
