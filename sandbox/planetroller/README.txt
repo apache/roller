@@ -2,7 +2,11 @@ README.txt for planetroller
 
 This sandbox directory is where Roller's planet aggregator was created.
 Most of the planet code has moved into Roller, but a command-line tool
-called PlanetTool remains here.
+called PlanetTool remains here and a new Planet webapp is under construction.
+
+Planet Roller webapp
+
+TDB
 
 Planet Tool
 

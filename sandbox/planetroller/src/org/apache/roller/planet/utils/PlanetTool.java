@@ -361,16 +361,14 @@ public class PlanetTool {
                 Element refElem = (Element)refs.next();
                 String includeAll = refElem.getAttributeValue("include-all");
                 if (includeAll != null && includeAll.equals("true")) {
-                    //group.getSubscriptions().addAll(subsByID.values());
-                    group.addSubscriptions(subsByID.values());
+                    group.getSubscriptions().addAll(subsByID.values());
                 } else {
                     String refid = refElem.getAttributeValue("refid");
                     PlanetSubscriptionData sub = (PlanetSubscriptionData)subsByID.get(refid);
                     if (sub == null) {
                         throw new Exception("No such subscription ["+refid+"]");
                     }
-                    //group.getSubscriptions().add(sub);
-                    group.addSubscription(sub);
+                    group.getSubscriptions().add(sub);
                 }
             }
             groupsByHandle.put(group.getHandle(), group);
