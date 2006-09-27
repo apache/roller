@@ -52,7 +52,6 @@ import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
-import org.apache.roller.planet.pojos.PlanetGroupSubscriptionAssoc;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.util.rome.DiskFeedInfoCache;
 
