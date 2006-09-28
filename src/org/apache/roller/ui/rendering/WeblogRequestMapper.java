@@ -89,6 +89,10 @@ public class WeblogRequestMapper implements RequestMapper {
     public boolean handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        // kinda silly, but we need to keep track of whether or not the url had
+        // a trailing slash so that we can act accordingly
+        boolean trailingSlash = false;
+        
         String weblogHandle = null;
         String weblogLocale = null;
         String weblogRequestContext = null;
@@ -107,6 +111,7 @@ public class WeblogRequestMapper implements RequestMapper {
             // strip off trailing slash if needed
             if(servlet.endsWith("/")) {
                 servlet = servlet.substring(0, servlet.length() - 1);
+                trailingSlash = true;
             }
             
             if(servlet.indexOf("/") != -1) {
@@ -165,6 +170,29 @@ public class WeblogRequestMapper implements RequestMapper {
                 }
             }
             
+        }
+        
+        // special handling for trailing slash issue
+        // we need this because by http standards the urls /foo and /foo/ are
+        // supposed to be considered different, so we must enforce that
+        if(weblogRequestContext == null && !trailingSlash) {
+            // this means someone referred to a weblog index page with the 
+            // shortest form of url /<weblog> or /<weblog>/<locale> and we need
+            // to do a redirect to /<weblog>/ or /<weblog>/<locale>/
+            String redirectUrl = request.getRequestURI() + "/";
+            if(request.getQueryString() != null) {
+                redirectUrl += "?"+request.getQueryString();
+            }
+            
+            response.sendRedirect(redirectUrl);
+            return true;
+            
+        } else if(weblogRequestContext != null && trailingSlash) {
+            // this means that someone has accessed a weblog url and included
+            // a trailing slash, like /<weblog>/entry/<anchor>/ which is not
+            // supported, so we need to offer up a 404 Not Found
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return true;
         }
         
         // calculate forward url
