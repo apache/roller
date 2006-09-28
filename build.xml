@@ -160,6 +160,7 @@ Key Targets:
             <include name="org/apache/roller/pojos/WeblogEntryData.java"/>
             <include name="org/apache/roller/pojos/WeblogEntryTagData.java"/>        	
             <include name="org/apache/roller/pojos/WeblogCategoryData.java"/>
+            <include name="org/apache/roller/pojos/SiteTagAggregateData.java"/>          	
             <include name="org/apache/roller/pojos/WebsiteData.java"/>
             <include name="org/apache/roller/planet/pojos/PlanetEntryData.java"/>
             <include name="org/apache/roller/planet/pojos/PlanetSubscriptionData.java"/>
