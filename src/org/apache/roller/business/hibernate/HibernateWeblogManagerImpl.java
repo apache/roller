@@ -814,51 +814,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throw new RollerException(e);
         }
     }
-            
-    public List getTags(Date startDate,
-        Date endDate,
-        WebsiteData website,
-        UserData user,
-        boolean sortByCount,
-        int limit) throws RollerException {
-      try {
-        List results = new ArrayList();
-        
-        Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-        
-        StringBuffer queryString = new StringBuffer();
-        queryString.append("select t.name, count(t.name) ");
-        queryString.append("from WeblogEntryTagData t ");
-        queryString.append("where t.time between ? and ? ");
-        if(website != null)
-          queryString.append("and t.website.id = '" + website.getId() + "' ");
-        if(user != null)
-          queryString.append("and t.user.id = '" + user.getId() + "' ");
-        queryString.append("group by t.name ");
-        queryString.append(sortByCount ? "order by col_1_0_ desc " : "order by t.name ");
-
-        Query query = session.createQuery(queryString.toString());
-        query.setTimestamp(0, DateUtil.getStartOfDay(startDate));
-        query.setTimestamp(1, DateUtil.getEndOfDay(endDate));
-        if(limit > 0)
-          query.setMaxResults(limit);
-        
-        for (Iterator iter = query.list().iterator(); iter.hasNext();) {
-          Object[] row = (Object[]) iter.next();
-          TagCloudEntry ce = new TagCloudEntry();
-          ce.setName((String) row[0]);
-          ce.setCount(((Integer)row[1]).intValue());
-          results.add(ce);
-        }
-        
-        return results;
-        
-      } catch (HibernateException e) {
-        throw new RollerException(e);
-      }
-
-    }
-    
+                
     public List getComments(
             WebsiteData     website,
             WeblogEntryData entry,

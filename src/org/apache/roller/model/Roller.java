@@ -128,6 +128,13 @@ public interface Roller {
     
     
     /**
+     * Get TagManager associated with this Roller instance.
+     */
+    public TagManager getTagManager() throws RollerException;
+        
+    
+    
+    /**
      * Flush object states.
      */
     public void flush() throws RollerException;

@@ -29,6 +29,7 @@ import org.apache.roller.model.ConfigManager;
 import org.apache.roller.model.AutoPingManager;
 import org.apache.roller.model.PingQueueManager;
 import org.apache.roller.model.PingTargetManager;
+import org.apache.roller.model.TagManager;
 import org.apache.roller.planet.model.PlanetManager;
 import org.apache.roller.model.PropertiesManager;
 import org.apache.roller.model.RefererManager;
@@ -63,6 +64,7 @@ public class HibernateRollerImpl extends RollerImpl {
     private PingQueueManager pingQueueManager = null;
     private AutoPingManager autoPingManager = null;
     private PingTargetManager pingTargetManager = null;
+    private TagManager tagManager = null;
     
     
     protected HibernateRollerImpl() throws RollerException {
@@ -225,5 +227,15 @@ public class HibernateRollerImpl extends RollerImpl {
         }
         return pingTargetManager;
     }
+    
+    /**
+     * @see org.apache.roller.model.Roller#getTagManager()
+     */
+    public TagManager getTagManager() throws RollerException {
+        if (tagManager == null) {
+            tagManager = new HibernateTagManagerImpl(strategy);
+        }
+        return tagManager;
+    }    
     
 }
