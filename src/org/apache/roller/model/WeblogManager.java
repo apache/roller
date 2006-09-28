@@ -304,25 +304,7 @@ public interface WeblogManager {
      * Get all ancestor associates for a category.
      */
     public List getWeblogCategoryAncestorAssocs(WeblogCategoryData data) throws RollerException;
-        
-    /**
-     * Get all tag (name, count) pairs for a specific date range, optionally only for a given site or user.
-     * @param startDate
-     * @param endDate
-     * @param website
-     * @param user
-     * @param sortByCount
-     * @param limit
-     * @return
-     * @throws RollerException
-     */
-    public List getTags(Date startDate,
-        Date endDate,
-        WebsiteData website,
-        UserData user,
-        boolean sortByCount,
-        int limit) throws RollerException;
-        
+               
     /**
      * Save comment.
      */
