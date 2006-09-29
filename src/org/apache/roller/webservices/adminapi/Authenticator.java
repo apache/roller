@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.UserData;
 
 /**
@@ -39,20 +40,26 @@ abstract class Authenticator {
     
     public abstract void authenticate() throws HandlerException;
     
-    /** 
+    /**
      * This method should be called by extensions of this class within their
      * implementation of authenticate().
      */
-    protected void verifyUser() throws HandlerException {
-        try {
-            UserData user = getRoller().getUserManager().getUserByUserName(getUserName());
-            if (user != null && user.hasRole("admin") && user.getEnabled().booleanValue()) {
-                // success! no exception
-            } else {
-                throw new UnauthorizedException("ERROR: User must have the admin role to use the AAPP endpoint: " + getUserName());
-            }
-        } catch (RollerException re) {
-            throw new InternalException("ERROR: Could not verify user: " + getUserName(), re);
+    protected void verifyUser(String userName, String password) throws HandlerException {
+        UserData ud = getUserData(userName);
+        String realpassword = ud.getPassword();
+
+        if (!userName.trim().equals(ud.getUserName())) {
+            throw new UnauthorizedException("ERROR: User is not authorized: " + userName);
+        }
+        if (!password.trim().equals(realpassword)) {
+            throw new UnauthorizedException("ERROR: User is not authorized: " + userName);
+        }
+        
+        if (!ud.hasRole("admin")) {
+            throw new UnauthorizedException("ERROR: User must have the admin role to use the AAPP endpoint: " + userName);
+        }
+        if (!ud.getEnabled().booleanValue()) {
+            throw new UnauthorizedException("ERROR: User is disabled: " + userName);
         }
     }
     
@@ -79,4 +86,22 @@ abstract class Authenticator {
     protected void setRoller(Roller roller) {
         this.roller = roller;
     }
+    
+    protected UserData getUserData(String name) throws NotFoundException, InternalException {
+        try {
+            UserManager mgr = getRoller().getUserManager();
+            UserData ud = mgr.getUserByUserName(name, Boolean.TRUE);
+            if (ud == null) {
+                ud = mgr.getUserByUserName(name, Boolean.FALSE);
+            }
+            if (ud == null) {
+                throw new NotFoundException("ERROR: Unknown user: " + name);
+            }
+            
+            return ud;
+        } catch (RollerException re) {
+            throw new InternalException("ERROR: Could not get user: " + name, re);
+        }
+    }
+    
 }
