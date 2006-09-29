@@ -17,7 +17,7 @@ package org.apache.roller.webservices.adminapi;
 
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
-import com.sun.syndication.io.impl.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -50,13 +50,16 @@ class BasicAuthenticator extends Authenticator {
                 String basic = st.nextToken();
                 if (basic.equalsIgnoreCase("Basic")) {
                     String credentials = st.nextToken();
-                    String userPass = new String(Base64.decode(credentials));
+                    String userPass = new String(Base64.decodeBase64(credentials.getBytes()));
                     int p = userPass.indexOf(":");
                     if (p != -1) {
                         userName = userPass.substring(0, p);
                         UserData user = getRoller().getUserManager().getUserByUserName(userName);
                         if (user == null) {
                             throw new UnauthorizedException("ERROR: User does not exist: " + userName);
+                        }
+                        if (!user.getEnabled().booleanValue()) {
+                            throw new UnauthorizedException("ERROR: User is disabled: " + userName);                            
                         }
                         String realpassword = user.getPassword();
                         password = userPass.substring(p+1);
