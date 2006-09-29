@@ -466,8 +466,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             }
             
             if (locale != null) {
-                queryString.append("lower(locale) like ? ");
-                params.add("%" + locale.toLowerCase());
+                queryString.append("locale like ? ");
+                params.add(locale + '%');
             }
             
             if (sortby != null && sortby.equals("updateTime")) {
