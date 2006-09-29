@@ -37,46 +37,27 @@ class BasicAuthenticator extends Authenticator {
     public void authenticate() throws HandlerException {
         setUserName(null);
         
-        String userName = null;
-        String password = null;
         String authHeader = getRequest().getHeader("Authorization");
         if (authHeader == null) {
             throw new UnauthorizedException("ERROR: Authorization header was not set");
         }
         
-        try {
-            StringTokenizer st = new StringTokenizer(authHeader);
-            if (st.hasMoreTokens()) {
-                String basic = st.nextToken();
-                if (basic.equalsIgnoreCase("Basic")) {
-                    String credentials = st.nextToken();
-                    String userPass = new String(Base64.decodeBase64(credentials.getBytes()));
-                    int p = userPass.indexOf(":");
-                    if (p != -1) {
-                        userName = userPass.substring(0, p);
-                        UserData user = getRoller().getUserManager().getUserByUserName(userName);
-                        if (user == null) {
-                            throw new UnauthorizedException("ERROR: User does not exist: " + userName);
-                        }
-                        if (!user.getEnabled().booleanValue()) {
-                            throw new UnauthorizedException("ERROR: User is disabled: " + userName);                            
-                        }
-                        String realpassword = user.getPassword();
-                        password = userPass.substring(p+1);
-                        if ((userName.trim().equals(user.getUserName())) && (password.trim().equals(realpassword))) {
-                            setUserName(userName);
-                        }
-                    }
+        StringTokenizer st = new StringTokenizer(authHeader);
+        if (st.hasMoreTokens()) {
+            String basic = st.nextToken();
+            if (basic.equalsIgnoreCase("Basic")) {
+                String credentials = st.nextToken();
+                String userPass = new String(Base64.decodeBase64(credentials.getBytes()));
+                int p = userPass.indexOf(":");
+                if (p != -1) {
+                    String userName = userPass.substring(0, p);
+                    String password = userPass.substring(p+1);
+                    verifyUser(userName, password);
+                    
+                    //success
+                    setUserName(userName);
                 }
             }
-        } catch (RollerException re) {
-            throw new InternalException("ERROR: Could not authorize user: " + userName, re);
         }
-        if (getUserName() == null) {
-            throw new UnauthorizedException("ERROR: User is not authorized to use the AAPP endpoint: " + userName);
-        }
-        
-        // make sure the user has the admin role
-        verifyUser();
     }
 }
