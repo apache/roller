@@ -9,7 +9,13 @@
      required for Servlet API 2.4 containers, such as Tomcat 5+ and Resin 3+, but should be
      commented out for Servlet API 2.3 containers, like Tomcat 4.x and Resin 2.x.
 -->
-
+<!--
+<filter-mapping>
+    <filter-name>DebugFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+</filter-mapping>
+-->
 <!-- Ensures character encoding set to UTF-8 and JSTL and Struts locales are in sync.
 Note: Any filters preceding this one MUST not cause request parsing. -->
 <filter-mapping>
