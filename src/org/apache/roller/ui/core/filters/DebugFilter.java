@@ -15,11 +15,6 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * DebugFilter.java
- *
- * Created on April 17, 2006, 10:30 AM
- */
 
 package org.apache.roller.ui.core.filters;
 
@@ -57,9 +52,21 @@ public class DebugFilter implements Filter {
         
         log.info("ENTERING "+request.getRequestURL());
         
+        // some info about the request and response
+        log.info("Response Object:");
+        log.info("   isCommited = "+response.isCommitted());
+        log.info("   bufferSize = "+response.getBufferSize());
+        log.info("");
+        
         chain.doFilter(request, response);
         
         log.info("EXITING "+request.getRequestURL());
+        
+        // some info about the request and response
+        log.info("Response Object:");
+        log.info("   isCommited = "+response.isCommitted());
+        log.info("   bufferSize = "+response.getBufferSize());
+        log.info("");
     }
     
     
