@@ -219,6 +219,21 @@ public class RollerConfig {
         if("${webapp.context}".equals(mConfig.getProperty("uploads.dir")))
             mConfig.setProperty("uploads.dir", path);
     }
+    
+    /**
+     * Set the "themes.dir" property at runtime.
+     * <p />
+     * Properties are meant to be read-only, but we make this exception because  
+     * we know that some people are still using their themes in the webapp  
+     * context and we can only get that path at runtime (and for unit testing).
+     * <p />
+     * This property is *not* persisted in any way.
+     */
+    public static void setThemesDir(String path) {
+        // only do this if the user wants to use the webapp context
+        if("${webapp.context}".equals(mConfig.getProperty("themes.dir")))
+            mConfig.setProperty("themes.dir", path);
+    }
 
     /**
      * Set the "context.realPath" property at runtime.

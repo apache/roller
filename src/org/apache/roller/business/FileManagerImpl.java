@@ -20,33 +20,32 @@ package org.apache.roller.business;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.model.FileIOException;
+import org.apache.roller.model.FilePathException;
 import org.apache.roller.model.FileManager;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.model.FileNotFoundException;
 import org.apache.roller.util.RollerMessages;
 
 
 /**
- * Responsible for managing website resources.  This base implementation
- * writes resources to a filesystem.
+ * Manages files uploaded to Roller.  
+ * 
+ * This base implementation writes resources to a filesystem.
  */
 public class FileManagerImpl implements FileManager {
     
-    private String upload_dir = null;
-    private String upload_url = null;
+    private static Log log = LogFactory.getLog(FileManagerImpl.class);
     
-    private static Log mLogger = LogFactory.getLog(FileManagerImpl.class);
+    private String upload_dir = null;
     
     
     /**
@@ -54,7 +53,6 @@ public class FileManagerImpl implements FileManager {
      */
     public FileManagerImpl() {
         String uploaddir = RollerConfig.getProperty("uploads.dir");
-        String uploadurl = RollerConfig.getProperty("uploads.url");
         
         // Note: System property expansion is now handled by RollerConfig.
         
@@ -64,201 +62,263 @@ public class FileManagerImpl implements FileManager {
         if( ! uploaddir.endsWith(File.separator))
             uploaddir += File.separator;
         
-        if(uploadurl == null || uploadurl.trim().length() < 1)
-            uploadurl = File.separator+"resources";
-        
         this.upload_dir = uploaddir.replace('/',File.separatorChar);
-        this.upload_url = uploadurl;
     }
     
     
     /**
-     * Get the upload directory being used by this file manager
-     **/
-    public String getUploadDir() {
-        return this.upload_dir;
-    }
-    
-    
-    /**
-     * Get the upload path being used by this file manager
-     **/
-    public String getUploadUrl() {
-        return this.upload_url;
-    }
-    
-    
-    /**
-     * Determine if file can be saved given current RollerConfig settings.
+     * @see org.apache.roller.model.FileManager#getFile(java.lang.String, java.lang.String)
      */
-    public boolean canSave(String weblogHandle, String name, String contentType,
-                           long size, RollerMessages messages)
-            throws RollerException {
+    public File getFile(String weblogHandle, String path) 
+            throws FileNotFoundException, FilePathException {
         
-        Roller mRoller = RollerFactory.getRoller();
-        Map config = mRoller.getPropertiesManager().getProperties();
+        // get a reference to the file, checks that file exists & is readable
+        File resourceFile = this.getRealFile(weblogHandle, path);
         
-        if (!((RollerPropertyData)config.get("uploads.enabled")).getValue().equalsIgnoreCase("true")) {
-            messages.addError("error.upload.disabled");
-            return false;
+        // make sure file is not a directory
+        if(resourceFile.isDirectory()) {
+            throw new FilePathException("Invalid path ["+path+"], "+
+                    "path is a directory.");
         }
         
-        String allows = ((RollerPropertyData)config.get("uploads.types.allowed")).getValue();
-        String forbids = ((RollerPropertyData)config.get("uploads.types.forbid")).getValue();
-        String[] allowFiles = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
-        String[] forbidFiles = StringUtils.split(StringUtils.deleteWhitespace(forbids), ",");
-        if (!checkFileType(allowFiles, forbidFiles, name, contentType)) {
-            messages.addError("error.upload.forbiddenFile", allows);
-            return false;
-        }
-        
-        BigDecimal maxDirMB = new BigDecimal(
-                ((RollerPropertyData)config.get("uploads.dir.maxsize")).getValue());
-        int maxDirBytes = (int)(1024000 * maxDirMB.doubleValue());
-        int userDirSize = getWebsiteDirSize(weblogHandle, this.upload_dir);
-        if (userDirSize + size > maxDirBytes) {
-            messages.addError("error.upload.dirmax", maxDirMB.toString());
-            return false;
-        }
-        
-        BigDecimal maxFileMB = new BigDecimal(
-                ((RollerPropertyData)config.get("uploads.file.maxsize")).getValue());
-        int maxFileBytes = (int)(1024000 * maxFileMB.doubleValue());
-        mLogger.debug(""+maxFileBytes);
-        mLogger.debug(""+size);
-        if (size > maxFileBytes) {
-            messages.addError("error.upload.filemax", maxFileMB.toString());
-            return false;
-        }
-        
-        return true;
-    }
-    
-    
-    public boolean overQuota(String weblogHandle) throws RollerException {
-        
-        String maxDir = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
-        String maxFile = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
-        BigDecimal maxDirSize = new BigDecimal(maxDir); // in megabytes
-        BigDecimal maxFileSize = new BigDecimal(maxFile); // in megabytes
-        
-        // determine the number of bytes in website's directory
-        int maxDirBytes = (int)(1024000 * maxDirSize.doubleValue());
-        int userDirSize = 0;
-        String dir = getUploadDir();
-        File d = new File(dir + weblogHandle);
-        if (d.mkdirs() || d.exists()) {
-            File[] files = d.listFiles();
-            long dirSize = 0l;
-            for (int i=0; i<files.length; i++) {
-                if (!files[i].isDirectory()) {
-                    dirSize = dirSize + files[i].length();
-                }
-            }
-            userDirSize = new Long(dirSize).intValue();
-        }
-        return userDirSize > maxDirBytes;
+        // everything looks good, return file
+        return resourceFile;
     }
     
     
     /**
-     * Get collection files in website's resource directory.
-     * @param site Website
-     * @return Collection of files in website's resource directory
+     * @see org.apache.roller.model.FileManager#getFiles(java.lang.String, java.lang.String)
      */
-    public File[] getFiles(String weblogHandle) throws RollerException {
-        String dir = this.upload_dir + weblogHandle;
-        File uploadDir = new File(dir);
-        return uploadDir.listFiles();
-    }
-    
-    
-    /**
-     * Delete named file from website's resource area.
-     */
-    public void deleteFile(String weblogHandle, String name) 
-            throws RollerException {
-        String dir = this.upload_dir + weblogHandle;
-        File f = new File(dir + File.separator + name);
-        f.delete();
-    }
-    
-    
-    /**
-     * Save file to website's resource directory.
-     * @param site Website to save to
-     * @param name Name of file to save
-     * @param size Size of file to be saved
-     * @param is Read file from input stream
-     */
-    public void saveFile(String weblogHandle, String name, String contentType, 
-                         long size, InputStream is)
-            throws RollerException {
+    public File[] getFiles(String weblogHandle, String path) 
+            throws FileNotFoundException, FilePathException {
         
-        if (!canSave(weblogHandle, name, contentType, size, new RollerMessages())) {
-            throw new RollerException("ERROR: upload denied");
+        // get a reference to the dir, checks that dir exists & is readable
+        File dirFile = this.getRealFile(weblogHandle, path);
+        
+        // make sure path is a directory
+        if(!dirFile.isDirectory()) {
+            throw new FilePathException("Invalid path ["+path+"], "+
+                    "path is not a directory.");
         }
+        
+        // everything looks good, list contents
+        return dirFile.listFiles();
+    }
+    
+    
+    /**
+     * @see org.apache.roller.model.FileManager#saveFile(java.lang.String, java.lang.String, java.lang.String, long, java.io.InputStream)
+     */
+    public void saveFile(String weblogHandle, 
+                         String path, 
+                         String contentType, 
+                         long size, 
+                         InputStream is)
+            throws FileNotFoundException, FilePathException, FileIOException {
+        
+        // make sure we are allowed to save this file
+        RollerMessages msgs = new RollerMessages();
+        if (!canSave(weblogHandle, path, contentType, size, msgs)) {
+            throw new FileIOException(msgs.toString());
+        }
+        
+        // make sure uploads area exists for this weblog
+        File dirPath = this.getRealFile(weblogHandle, null);
+        File saveFile = new File(dirPath.getAbsolutePath() + File.separator + path);
         
         byte[] buffer = new byte[8192];
         int bytesRead = 0;
-        String dir = this.upload_dir;
-        
-        File dirPath = new File(dir + File.separator + weblogHandle);
-        if (!dirPath.exists()) {
-            dirPath.mkdirs();
-        }
         OutputStream bos = null;
         try {
-            bos = new FileOutputStream(
-                    dirPath.getAbsolutePath() + File.separator + name);
+            bos = new FileOutputStream(saveFile);
             while ((bytesRead = is.read(buffer, 0, 8192)) != -1) {
                 bos.write(buffer, 0, bytesRead);
             }
+            
+            log.debug("The file has been written to ["+saveFile.getAbsolutePath()+"]");
         } catch (Exception e) {
-            throw new RollerException("ERROR uploading file", e);
+            throw new FileIOException("ERROR uploading file", e);
         } finally {
             try {
                 bos.flush();
                 bos.close();
             } catch (Exception ignored) {}
         }
-        if (mLogger.isDebugEnabled()) {
-            mLogger.debug("The file has been written to \"" + dir + weblogHandle + "\"");
+        
+        
+    }
+    
+    
+    /**
+     * @see org.apache.roller.model.FileManager#createDirectory(java.lang.String, java.lang.String)
+     */
+    public void createDirectory(String weblogHandle, String path)
+            throws FileNotFoundException, FilePathException, FileIOException {
+        
+        // get path to weblog's uploads area
+        File uploadDir = this.getRealFile(weblogHandle, null);
+        
+        // now construct path to new directory
+        File dir = new File(uploadDir.getAbsolutePath() + File.separator + path);
+        
+        // create it
+        if(!dir.mkdir()) {
+            // failed for some reason
+            throw new FileIOException("Failed to create directory ["+path+"], "+
+                    "probably doesn't have needed parent directories.");
         }
     }
     
     
     /**
-     * Returns current size of file uploads owned by specified weblog handle.
-     * @param username User
-     * @param dir      Upload directory
-     * @return Size of user's uploaded files in bytes.
+     * @see org.apache.roller.model.FileManager#deleteFile(java.lang.String, java.lang.String)
      */
-    private int getWebsiteDirSize(String weblogHandle, String dir) {
+    public void deleteFile(String weblogHandle, String path) 
+            throws FileNotFoundException, FilePathException, FileIOException {
         
-        int userDirSize = 0;
-        File d = new File(dir + File.separator + weblogHandle);
-        if (d.mkdirs() || d.exists()) {
-            File[] files = d.listFiles();
+        // get path to delete file, checks that path exists and is readable
+        File delFile = this.getRealFile(weblogHandle, path);
+        
+        if(!delFile.delete()) {
+            throw new FileIOException("Delete failed for ["+path+"], "+
+                    "possibly a non-empty directory?");
+        }
+    }
+    
+    
+    /**
+     * @see org.apache.roller.model.FileManager#overQuota(java.lang.String)
+     */
+    public boolean overQuota(String weblogHandle) {
+        
+        String maxDir = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
+        String maxFile = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
+        BigDecimal maxDirSize = new BigDecimal(maxDir); // in megabytes
+        BigDecimal maxFileSize = new BigDecimal(maxFile); // in megabytes
+        
+        long maxDirBytes = (long)(1024000 * maxDirSize.doubleValue());
+        
+        try {
+            File uploadsDir = this.getRealFile(weblogHandle, null);
+            long weblogDirSize = this.getDirSize(uploadsDir, true);
+            
+            return weblogDirSize > maxDirBytes;
+        } catch (Exception ex) {
+            // shouldn't ever happen, this means user's uploads dir is bad
+            // rethrow as a runtime exception
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    
+    public void release() {
+    }
+    
+    
+    /**
+     * Determine if file can be saved given current RollerConfig settings.
+     */
+    private boolean canSave(String weblogHandle, 
+                           String path, 
+                           String contentType,
+                           long size, 
+                           RollerMessages messages) {
+        
+        // first check, is uploading enabled?
+        if(!RollerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
+            messages.addError("error.upload.disabled");
+            return false;
+        }
+        
+        // second check, does upload exceed max size for file?
+        BigDecimal maxFileMB = new BigDecimal(
+                RollerRuntimeConfig.getProperty("uploads.file.maxsize"));
+        int maxFileBytes = (int)(1024000 * maxFileMB.doubleValue());
+        log.debug("max allowed file size = "+maxFileBytes);
+        log.debug("attempted save file size = "+size);
+        if (size > maxFileBytes) {
+            messages.addError("error.upload.filemax", maxFileMB.toString());
+            return false;
+        }
+        
+        // third check, does file cause weblog to exceed quota?
+        BigDecimal maxDirMB = new BigDecimal(
+                RollerRuntimeConfig.getProperty("uploads.dir.maxsize"));
+        long maxDirBytes = (long)(1024000 * maxDirMB.doubleValue());
+        try {
+            File uploadsDir = this.getRealFile(weblogHandle, null);
+            long userDirSize = getDirSize(uploadsDir, true);
+            if (userDirSize + size > maxDirBytes) {
+                messages.addError("error.upload.dirmax", maxDirMB.toString());
+                return false;
+            }
+        } catch (Exception ex) {
+            // shouldn't ever happen, means the weblogs uploads dir is bad somehow
+            // rethrow as a runtime exception
+            throw new RuntimeException(ex);
+        }
+        
+        // fourth check, is upload type allowed?
+        String allows = RollerRuntimeConfig.getProperty("uploads.types.allowed");
+        String forbids = RollerRuntimeConfig.getProperty("uploads.types.forbid");
+        String[] allowFiles = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
+        String[] forbidFiles = StringUtils.split(StringUtils.deleteWhitespace(forbids), ",");
+        if (!checkFileType(allowFiles, forbidFiles, path, contentType)) {
+            messages.addError("error.upload.forbiddenFile", allows);
+            return false;
+        }
+        
+        // fifth check, is save path viable?
+        if(path.indexOf("/") != -1) {
+            // see if directory path exists already
+            String dirPath = path.substring(0, path.lastIndexOf("/"));
+            
+            try {
+                File parent = this.getRealFile(weblogHandle, dirPath);
+                if(parent == null || !parent.exists()) {
+                    messages.addError("error.upload.badPath");
+                }
+            } catch (Exception ex) {
+                // this is okay, just means that parent dir doesn't exist
+                messages.addError("blah");
+                return false;
+            }
+            
+        }
+        
+        return true;
+    }
+    
+    
+    /**
+     * Get the size in bytes of given directory.
+     *
+     * Optionally works recursively counting subdirectories if they exist.
+     */
+    private long getDirSize(File dir, boolean recurse) {
+        
+        long size = 0;
+        if(dir.exists() && dir.isDirectory() && dir.canRead()) {
+            File[] files = dir.listFiles();
             long dirSize = 0l;
-            for (int i=0; i<files.length; i++) {
+            for (int i=0; i < files.length; i++) {
                 if (!files[i].isDirectory()) {
-                    dirSize = dirSize + files[i].length();
+                    dirSize += files[i].length();
+                } else if(recurse) {
+                    // count a subdirectory
+                    dirSize += getDirSize(files[i], recurse);
                 }
             }
-            userDirSize = new Long(dirSize).intValue();
+            size += dirSize;
         }
-        return userDirSize;
+        
+        return size;
     }
     
     
     /**
      * Return true if file is allowed to be uplaoded given specified allowed and
      * forbidden file types.
-     * @param allowFiles  File types (i.e. extensions) that are allowed
-     * @param forbidFiles File types that are forbidden
-     * @param fileName    Name of file to be uploaded
-     * @return True if file is allowed to be uploaded
      */
     private boolean checkFileType(String[] allowFiles, String[] forbidFiles,
                                   String fileName, String contentType) {
@@ -358,7 +418,58 @@ public class FileManagerImpl implements FileManager {
     }
     
     
-    public void release() {
+    /**
+     * Construct the full real path to a resource in a weblog's uploads area.
+     */
+    private File getRealFile(String weblogHandle, String path) 
+            throws FileNotFoundException, FilePathException {
+        
+        // make sure uploads area exists for this weblog
+        File weblogDir = new File(this.upload_dir + weblogHandle);
+        if(!weblogDir.exists()) {
+            weblogDir.mkdirs();
+        }
+        
+        // crop leading slash if it exists
+        String relPath = path;
+        if(path != null && path.startsWith("/")) {
+            relPath = path.substring(1);
+        }
+        
+        // convert "/" to filesystem specific file separator
+        if(relPath != null) {
+            relPath.replaceAll("/", File.separator);
+        }
+        
+        // now form the absolute path
+        String filePath = weblogDir.getAbsolutePath();
+        if(relPath != null) {
+            filePath += File.separator + relPath;
+        }
+        
+        // make sure path exists and is readable
+        File file = new File(filePath);
+        if(!file.exists()) {
+            throw new FileNotFoundException("Invalid path ["+path+"], "+
+                    "directory doesn't exist.");
+        } else if(!file.canRead()) {
+            throw new FilePathException("Invalid path ["+path+"], "+
+                    "cannot read from path.");
+        }
+        
+        try {
+            // make sure someone isn't trying to sneek outside the uploads dir
+            File uploadDir = new File(this.upload_dir);
+            if(!file.getCanonicalPath().startsWith(uploadDir.getCanonicalPath())) {
+                throw new FilePathException("Invalid path ["+path+"], "+
+                        "trying to get outside uploads dir.");
+            }
+        } catch (IOException ex) {
+            // rethrow as FilePathException
+            throw new FilePathException(ex);
+        }
+        
+        return file;
     }
     
 }

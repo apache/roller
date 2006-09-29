@@ -357,22 +357,15 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             FileManager fmgr = roller.getFileManager();
             RollerMessages msgs = new RollerMessages();
             
-            // If save is allowed by Roller system-wide policies
-            if (fmgr.canSave(website.getHandle(), name, type, bits.length, msgs)) {
-                // Then save the file
-                fmgr.saveFile(website.getHandle(), name, type, bits.length, new ByteArrayInputStream(bits));
-                
-                // TODO: build URL to uploaded file should be done in FileManager
-                String uploadPath = RollerFactory.getRoller().getFileManager().getUploadUrl();
-                uploadPath += "/" + website.getHandle() + "/" + name;
-                String fileLink = URLUtilities.getWeblogResourceURL(website, name, true);
-                
-                Hashtable returnStruct = new Hashtable(1);
-                returnStruct.put("url", fileLink);
-                return returnStruct;
-            }
-            throw new XmlRpcException(UPLOAD_DENIED_EXCEPTION,
-                    "File upload denied because:" + msgs.toString());
+            // Try to save file
+            fmgr.saveFile(website.getHandle(), name, type, bits.length, new ByteArrayInputStream(bits));
+            
+            String fileLink = URLUtilities.getWeblogResourceURL(website, name, true);
+            
+            Hashtable returnStruct = new Hashtable(1);
+            returnStruct.put("url", fileLink);
+            return returnStruct;
+            
         } catch (RollerException e) {
             String msg = "ERROR in MetaWeblogAPIHandler.newMediaObject";
             mLogger.error(msg,e);
