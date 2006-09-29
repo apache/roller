@@ -57,17 +57,41 @@ public class ThemeManagerImpl implements ThemeManager {
     
     private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
     
+    // directory where themes are kept
+    private String themeDir = null;
+    
+    // the Map contains ... (theme name, Theme)
     private Map themes = null;
     
     
     protected ThemeManagerImpl() {
         
-        // rather than be lazy we are going to load all themes from
-        // the disk preemptively during initialization and cache them
         log.debug("Initializing ThemeManagerImpl");
         
-        this.themes = this.loadAllThemesFromDisk();
-        log.info("Loaded "+this.themes.size()+" themes from disk.");
+        // get theme directory from config and verify it
+        this.themeDir = RollerConfig.getProperty("themes.dir");
+        if(themeDir == null || themeDir.trim().length() < 1) {
+            throw new RuntimeException("couldn't get themes directory from config");
+        } else {
+            // chop off trailing slash if it exists
+            if(themeDir.endsWith("/")) {
+                themeDir = themeDir.substring(0, themeDir.length()-1);
+            }
+            
+            // make sure it exists and is readable
+            File themeDirFile = new File(themeDir);
+            if(!themeDirFile.exists() || 
+                    !themeDirFile.isDirectory() || 
+                    !themeDirFile.canRead()) {
+                throw new RuntimeException("couldn't access theme dir ["+themeDir+"]");
+            }
+            
+            // rather than be lazy we are going to load all themes from
+            // the disk preemptively during initialization and cache them
+            this.themes = loadAllThemesFromDisk();
+            
+            log.info("Loaded "+this.themes.size()+" themes from disk.");
+        }
     }
     
     
@@ -82,32 +106,6 @@ public class ThemeManagerImpl implements ThemeManager {
             throw new ThemeNotFoundException("Couldn't find theme ["+name+"]");
         
         return theme;
-    }
-    
-    
-    /**
-     * @see org.apache.roller.model.ThemeManager#getThemeById(java.lang.String)
-     */
-    public Theme getThemeById(String id) 
-        throws ThemeNotFoundException, RollerException {
-        
-        // In this implementation where themes come from the filesystem we
-        // know that the name and id for a theme are the same
-        return this.getTheme(id);
-    }
-    
-    
-    /**
-     * @see org.apache.roller.model.ThemeManager#getThemesList()
-     */
-    public List getThemesList() {
-        
-        List themes = new ArrayList(this.themes.keySet());
-        
-        // sort 'em ... the natural sorting order for Strings is alphabetical
-        Collections.sort(themes);
-        
-        return themes;
     }
     
     
@@ -132,51 +130,6 @@ public class ThemeManagerImpl implements ThemeManager {
         Collections.sort(enabled_themes);
         
         return enabled_themes;
-    }
-    
-    
-    /**
-     * @see org.apache.roller.model.ThemeManager#getTemplate(String, String)
-     */
-    public ThemeTemplate getTemplate(String theme_name, String template_name)
-        throws ThemeNotFoundException, RollerException {
-        
-        // basically we just try and lookup the theme first, then template
-        Theme theme = this.getTheme(theme_name);
-        
-        return theme.getTemplate(template_name);
-    }
-    
-    
-    /**
-     * @see org.apache.roller.model.ThemeManager#getTemplateById(java.lang.String)
-     */
-    public ThemeTemplate getTemplateById(String id)
-        throws ThemeNotFoundException, RollerException {
-        
-        if(id == null)
-            throw new ThemeNotFoundException("Theme id was null");
-        
-        // in our case we expect a template id to be <theme>:<template>
-        // so extract each piece and do the lookup
-        String[] split = id.split(":",  2);
-        if(split.length != 2)
-            throw new ThemeNotFoundException("Invalid theme id ["+id+"]");
-        
-        return this.getTemplate(split[0], split[1]);
-    }
-    
-    
-    /**
-     * @see org.apache.roller.model.ThemeManager#getTemplateByLink(java.lang.String)
-     */
-    public ThemeTemplate getTemplateByLink(String theme_name, String template_link)
-        throws ThemeNotFoundException, RollerException {
-        
-        // basically we just try and lookup the theme first, then template
-        Theme theme = this.getTheme(theme_name);
-        
-        return theme.getTemplateByLink(template_link);
     }
     
     
@@ -224,7 +177,8 @@ public class ThemeManagerImpl implements ThemeManager {
         
         return themes;
     }
-        
+    
+    
     /**
      * Another convenience method which knows how to load a single theme
      * off the filesystem and return a Theme object
@@ -314,13 +268,59 @@ public class ThemeManagerImpl implements ThemeManager {
             theme.setTemplate(template_name, theme_template);
         }
         
-        // use the last mod date of the last template file
-        // as the last mod date of the theme
-        theme.setLastModified(theme_template.getLastModified());
+        // use the last mod date of the theme dir
+        theme.setLastModified(new Date(themedir.lastModified()));
+        
+        // load up resources as well
+        loadThemeResources(theme, themedir, themedir.getAbsolutePath());
         
         return theme;
     }
-
+    
+    
+    /**
+     * Convenience method for loading a theme's resource files.
+     * This method works recursively to load from subdirectories.
+     */
+    private void loadThemeResources(Theme theme, File workPath, String basePath) {
+        
+        // now go through all static resources for this theme
+        FilenameFilter resourceFilter = new FilenameFilter()
+        {
+            public boolean accept(File dir, String name)
+            {
+                return !name.endsWith(".vm");
+            }
+        };
+        File[] resources = workPath.listFiles(resourceFilter);
+        
+        // go through each resource file and add it to the theme
+        String resourcePath = null;
+        File resourceFile = null;
+        for (int i=0; i < resources.length; i++) {
+            resourceFile = resources[i];
+            resourcePath = resourceFile.getAbsolutePath().substring(basePath.length()+1);
+            
+            log.debug("handling resource ["+resourcePath+"]");
+            
+            // Continue reading theme even if problem encountered with one file
+            if(!resourceFile.exists() || !resourceFile.canRead()) {
+                log.warn("Couldn't read theme resource file ["+resourcePath+"]");
+                continue;
+            }
+            
+            // if its a directory, recurse
+            if(resourceFile.isDirectory()) {
+                log.debug("resource is a directory, recursing");
+                loadThemeResources(theme, resourceFile, basePath);
+            }
+            
+            // otherwise just add the File to the theme
+            theme.setResource(resourcePath, resourceFile);
+        }
+    }
+    
+    
     /**
      * Helper method that copies down the pages from a given theme into a
      * users weblog templates.

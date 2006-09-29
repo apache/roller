@@ -18,6 +18,7 @@
 
 package org.apache.roller.pojos;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -48,6 +49,10 @@ public class Theme implements Serializable {
     // the Map contains ... (template name, ThemeTemplate)
     private Map templates;
     
+    // we keep resources in a Map for faster lookups by path
+    // the Map contains ... (resource path, File)
+    private Map resources;
+    
     
     public Theme() {
         this.id = null;
@@ -58,6 +63,7 @@ public class Theme implements Serializable {
         this.lastModified = null;
         this.enabled = false;
         this.templates = new HashMap();
+        this.resources = new HashMap();
     }
 
     
@@ -106,6 +112,40 @@ public class Theme implements Serializable {
      */
     public boolean hasTemplate(String name) {
         return this.templates.containsKey(name);
+    }
+    
+    
+    /**
+     * Get the collection of all resources associated with this Theme.
+     */
+    public Collection getResources() {
+        return this.resources.values();
+    }
+    
+    
+    /**
+     * Lookup the specified resource by path.
+     * Returns null if the resource cannot be found.
+     */
+    public File getResource(String path) {
+        return (File) this.resources.get(path);
+    }
+    
+    
+    /**
+     * Set the value for a given resource path.
+     */
+    public void setResource(String path, File resource) {
+        this.resources.put(path, resource);
+    }
+    
+    
+    /**
+     * Check if this Theme contains the named resource.
+     * Returns true if the resource exists, false otherwise.
+     */
+    public boolean hasResource(String path) {
+        return this.resources.containsKey(path);
     }
     
     

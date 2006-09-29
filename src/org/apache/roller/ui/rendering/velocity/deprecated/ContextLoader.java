@@ -441,12 +441,8 @@ public class ContextLoader {
      */
     private static String figureResourcePath() {
         
-        String uploadurl = null;
-        try {
-            uploadurl = RollerFactory.getRoller().getFileManager().getUploadUrl();
-        } catch(Exception e) {}
-        
-        return uploadurl;
+        // legacy junk.  this no longer makes any sense as of 3.0, but oh well
+        return "/resources";
     }
     
     

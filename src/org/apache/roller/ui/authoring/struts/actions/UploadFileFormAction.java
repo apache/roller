@@ -19,6 +19,7 @@
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -151,15 +152,11 @@ public final class UploadFileFormAction extends DispatchAction {
                         
                         fileSize = files[i].getFileSize();
                         
-                        //retrieve the file data
-                        if (fmgr.canSave(website.getHandle(), fileName,
-                                files[i].getContentType(), fileSize, rollerMessages)) {
-                            InputStream stream = files[i].getInputStream();
-                            fmgr.saveFile(website.getHandle(), fileName,
-                                    files[i].getContentType(), fileSize, stream);
-                            lastUploads.add(fileName);
-                        }
-                        
+                        InputStream stream = files[i].getInputStream();
+                        fmgr.saveFile(website.getHandle(), fileName,
+                                files[i].getContentType(), fileSize, stream);
+                        lastUploads.add(fileName);
+
                         //destroy the temporary file created
                         files[i].destroy();
                     }
@@ -176,8 +173,7 @@ public final class UploadFileFormAction extends DispatchAction {
             pageModel.setWebsite(website);
             
             RollerContext rctx = RollerContext.getRollerContext();
-            String baseURL = RollerRuntimeConfig.getAbsoluteContextURL();
-            String resourcesBaseURL = baseURL + fmgr.getUploadUrl() + "/" + website.getHandle();
+            String resourcesBaseURL = URLUtilities.getWeblogResourceURL(website, "", true);
             Iterator uploads = lastUploads.iterator();
             if (uploads.hasNext()) {
                 messages.add(ActionMessages.GLOBAL_MESSAGE,
@@ -306,7 +302,6 @@ public final class UploadFileFormAction extends DispatchAction {
             PropertiesManager pmgr = roller.getPropertiesManager();
             FileManager fmgr = roller.getFileManager();
             
-            String dir = fmgr.getUploadDir();
             resourcesBaseURL = URLUtilities.getWeblogResourceURL(weblog, "", false);
             
             RollerRequest rreq = RollerRequest.getRollerRequest(req);
@@ -318,13 +313,14 @@ public final class UploadFileFormAction extends DispatchAction {
             uploadEnabled = RollerRuntimeConfig.getBooleanProperty("uploads.enabled");
             
             files = new ArrayList();
-            File[] rawFiles = fmgr.getFiles(weblog.getHandle());
+            File[] rawFiles = fmgr.getFiles(weblog.getHandle(), null);
             for (int i=0; i<rawFiles.length; i++) {
                 files.add(new FileBean(rawFiles[i]));
                 totalSize += rawFiles[i].length();
             }
             Collections.sort(files, new FileBeanNameComparator());
         }
+        
         public boolean isUploadEnabled() {
             return uploadEnabled;
         }

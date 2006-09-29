@@ -25,8 +25,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
+import org.apache.roller.model.FilePathException;
 import org.apache.roller.model.FileManager;
+import org.apache.roller.model.FileNotFoundException;
 import org.apache.roller.model.PropertiesManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
@@ -81,25 +84,7 @@ public class FileManagerTest extends TestCase {
     }
     
     
-    public void testCanSave() throws Exception {
-        
-        // update roller properties to prepare for test
-        PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
-        Map config = pmgr.getProperties();
-        ((RollerPropertyData)config.get("uploads.enabled")).setValue("false");
-        ((RollerPropertyData)config.get("uploads.types.forbid")).setValue("gif");
-        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
-        pmgr.saveProperties(config);
-        TestUtils.endSession(true);
-        
-        // test quota functionality
-        FileManager fmgr = RollerFactory.getRoller().getFileManager();
-        RollerMessages msgs = new RollerMessages();
-        assertFalse(fmgr.canSave(testWeblog.getHandle(), "test.gif", "text/plain", 2500000, msgs));
-    }
-    
-    
-    public void testSave() throws Exception {
+    public void testFileCRUD() throws Exception {
         
         // update roller properties to prepare for test
         PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
@@ -113,21 +98,117 @@ public class FileManagerTest extends TestCase {
         /* NOTE: upload dir for unit tests is set in
                roller/personal/testing/roller-custom.properties */
         FileManager fmgr = RollerFactory.getRoller().getFileManager();
-        RollerMessages msgs = new RollerMessages();
+        
+        // we should be starting with 0 files
+        assertEquals(0, fmgr.getFiles(testWeblog.getHandle(), null).length);
+        
+        // create a directory
+        fmgr.createDirectory(testWeblog.getHandle(), "subdir");
+        
+        // make sure directory was created
+        assertEquals(1, fmgr.getFiles(testWeblog.getHandle(), null).length);
         
         // store a file
         InputStream is = getClass().getResourceAsStream("/bookmarks.opml");
         fmgr.saveFile(testWeblog.getHandle(), "bookmarks.opml", "text/plain", 1545, is);
         
         // make sure file was stored successfully
-        assertEquals(1, fmgr.getFiles(testWeblog.getHandle()).length);
+        assertEquals(2, fmgr.getFiles(testWeblog.getHandle(), null).length);
         
-        // delete a file
+        // store a file into a subdirectory
+        is = getClass().getResourceAsStream("/bookmarks.opml");
+        fmgr.saveFile(testWeblog.getHandle(), "subdir/bookmarks.opml", "text/plain", 1545, is);
+        
+        // make sure file was stored successfully
+        assertEquals(1, fmgr.getFiles(testWeblog.getHandle(), "subdir").length);
+        
+        // delete files and dirs
         fmgr.deleteFile(testWeblog.getHandle(), "bookmarks.opml");
+        fmgr.deleteFile(testWeblog.getHandle(), "subdir/bookmarks.opml");
+        fmgr.deleteFile(testWeblog.getHandle(), "subdir");
         
         // make sure delete was successful
         Thread.sleep(2000);
-        assertEquals(0, fmgr.getFiles(testWeblog.getHandle()).length);
+        assertEquals(0, fmgr.getFiles(testWeblog.getHandle(), null).length);
+    }
+    
+    
+    /**
+     * Test FileManager.saveFile() checks.
+     *
+     * This should test all conditions where a save should fail.
+     */
+    public void testCanSave() throws Exception {
+        
+        FileManager fmgr = RollerFactory.getRoller().getFileManager();
+        PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+        Map config = config = pmgr.getProperties();
+        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
+        ((RollerPropertyData)config.get("uploads.types.forbid")).setValue("");
+        ((RollerPropertyData)config.get("uploads.types.allowed")).setValue("");
+        ((RollerPropertyData)config.get("uploads.enabled")).setValue("true");
+        pmgr.saveProperties(config);
+        TestUtils.endSession(true);
+        
+        Exception exception = null;
+        InputStream is = null;
+        
+        try {
+            // path check should fail
+            fmgr.saveFile(testWeblog.getHandle(), "some/path/foo.gif", "text/plain", 10, is);
+        } catch (Exception ex) {
+            log.error(ex);
+            exception = ex;
+        }
+        assertNotNull(exception);
+        exception = null;
+        
+        config = pmgr.getProperties();
+        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
+        pmgr.saveProperties(config);
+        TestUtils.endSession(true);
+        
+        try {
+            // quota check should fail
+            fmgr.saveFile(testWeblog.getHandle(), "test.gif", "text/plain", 2500000, is);
+        } catch (Exception ex) {
+            log.error(ex);
+            exception = ex;
+        }
+        assertNotNull(exception);
+        exception = null;
+        
+        
+        config = pmgr.getProperties();
+        ((RollerPropertyData)config.get("uploads.types.forbid")).setValue("gif");
+        pmgr.saveProperties(config);
+        TestUtils.endSession(true);
+        
+        try {
+            // forbidden types check should fail
+            fmgr.saveFile(testWeblog.getHandle(), "test.gif", "text/plain", 10, is);
+        } catch (Exception ex) {
+            log.error(ex);
+            exception = ex;
+        }
+        assertNotNull(exception);
+        exception = null;
+        
+        
+        config = pmgr.getProperties();
+        ((RollerPropertyData)config.get("uploads.enabled")).setValue("false");
+        pmgr.saveProperties(config);
+        TestUtils.endSession(true);
+        
+        try {
+            // uploads disabled should fail
+            fmgr.saveFile(testWeblog.getHandle(), "test.gif", "text/plain", 10, is);
+        } catch (Exception ex) {
+            log.error(ex);
+            exception = ex;
+        }
+        assertNotNull(exception);
+        exception = null;
     }
     
 }

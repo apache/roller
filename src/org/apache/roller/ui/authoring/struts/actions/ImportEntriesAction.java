@@ -43,6 +43,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.ImportEntriesForm;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.model.FileManager;
 
 /**
  * TODO: revisit this class once Atom 1.0 support comes to Rome
@@ -82,9 +83,8 @@ public class ImportEntriesAction extends DispatchAction
                     WebsiteData website = rreq.getWebsite();
 
                     // load selected file
-                    String dir = RollerFactory.getRoller().getFileManager().getUploadDir();
-                    File f = new File(dir + website.getHandle() +
-                                      "/" + form.getImportFileName());
+                    FileManager fMgr = RollerFactory.getRoller().getFileManager();
+                    File f = fMgr.getFile(website.getHandle(), form.getImportFileName());
 
                     //ArchiveParser archiveParser =
                         //new ArchiveParser(RollerFactory.getRoller(), rreq.getWebsite(), f);
@@ -164,11 +164,6 @@ public class ImportEntriesAction extends DispatchAction
     private void getXmlFiles(ActionForm actionForm, RollerRequest rreq)
     {
 		String dir = null;
-                try {
-                    RollerFactory.getRoller().getFileManager().getUploadDir();
-                } catch(RollerException re) {
-                    // shouldn't happen
-                }
                 
 		File d = new File(dir + rreq.getWebsite().getHandle());
 		ArrayList xmlFiles = new ArrayList();

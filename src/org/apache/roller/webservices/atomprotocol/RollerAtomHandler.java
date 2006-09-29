@@ -360,7 +360,7 @@ public class RollerAtomHandler implements AtomHandler {
                     "ERROR: cannot find specified weblog");
             }
             FileManager fmgr = mRoller.getFileManager();
-            File[] files = fmgr.getFiles(website.getHandle());
+            File[] files = fmgr.getFiles(website.getHandle(), null);
                         
             if (canView(website)) {
                 Feed feed = new Feed();
@@ -502,10 +502,13 @@ public class RollerAtomHandler implements AtomHandler {
                     String handle = pathInfo[0];
                     WebsiteData website = 
                         mRoller.getUserManager().getWebsiteByHandle(handle);
-                    String uploadPath = 
-                        RollerFactory.getRoller().getFileManager().getUploadUrl();
+                    
+                    // TODO: this may have broken with 3.0, but i don't know
+                    // how it's supposed to work so i can't really fix it
+                    // it's unlikely this was working properly before because
+                    // it probably should have been using FileManager.getUploadsDir()
                     File resource = 
-                        new File(uploadPath + File.separator + fileName);
+                        new File("/resources" + File.separator + fileName);
                     return createAtomResourceEntry(website, resource);
                 }
             }
@@ -637,16 +640,13 @@ public class RollerAtomHandler implements AtomHandler {
                     Utilities.copyInputToOutput(is, fos);
                     fos.close();
 
-                    // If save is allowed by Roller system-wide policies
-                    if (fmgr.canSave(website.getHandle(), fileName, contentType, tempFile.length(), msgs)) {
-                        // Then save the file
-                        FileInputStream fis = new FileInputStream(tempFile);
-                        fmgr.saveFile(website.getHandle(), fileName, contentType, tempFile.length(), fis);
-                        fis.close();
-
-                        File resource = new File(fmgr.getUploadDir() + File.separator + fileName);
-                        return createAtomResourceEntry(website, resource);
-                    }
+                    // Try saving file
+                    FileInputStream fis = new FileInputStream(tempFile);
+                    fmgr.saveFile(website.getHandle(), fileName, contentType, tempFile.length(), fis);
+                    fis.close();
+                    
+                    File resource = fmgr.getFile(website.getHandle(), fileName);
+                    return createAtomResourceEntry(website, resource);
 
                 } catch (IOException e) {
                     String msg = "ERROR reading posted file";

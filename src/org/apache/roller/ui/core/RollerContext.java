@@ -155,6 +155,16 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         // is set to ${webapp.context}
         RollerConfig.setUploadsDir(ctxPath);
         
+        // try setting the themes path to <context>/themes
+        // NOTE: this should go away at some point
+        // we leave it here for now to allow users to keep using
+        // themes in their webapp context, but this is a bad idea
+        //
+        // also, the RollerConfig.setThemesDir() method is smart
+        // enough to disregard this call unless the themes.dir
+        // is set to ${webapp.context}
+        RollerConfig.setThemesDir(mContext.getRealPath("/")+File.separator+"themes");
+        
         // set the roller context real path in RollerConfig
         // NOTE: it seems that a few backend classes do actually need
         //       to know what the real path to the roller context is,
