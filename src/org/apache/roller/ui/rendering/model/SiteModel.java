@@ -20,7 +20,6 @@ package org.apache.roller.ui.rendering.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,7 +32,6 @@ import org.apache.roller.RollerException;
 import org.apache.roller.model.RefererManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.TagManager;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.PermissionsData;
@@ -492,9 +490,9 @@ public class SiteModel implements Model {
         Date startDate = cal.getTime();
         try {            
             Roller roller = RollerFactory.getRoller();
-            TagManager tmgr = roller.getTagManager();
-            results = tmgr.getTags(
-                    startDate, new Date(), null, null, false, -1);
+            WeblogManager wmgr = roller.getWeblogManager();
+            results = wmgr.getTags(
+                    startDate, new Date(), null, null, null, -1);
         } catch (Exception e) {
             log.error("ERROR: fetching site tags list", e);
         }
@@ -514,9 +512,9 @@ public class SiteModel implements Model {
         Date startDate = cal.getTime();
         try {            
             Roller roller = RollerFactory.getRoller();
-            TagManager tmgr = roller.getTagManager();
-            results = tmgr.getTags(
-                    startDate, new Date(), null, null, true, length);
+            WeblogManager wmgr = roller.getWeblogManager();
+            results = wmgr.getTags(
+                    startDate, new Date(), null, null, "count", length);
         } catch (Exception e) {
             log.error("ERROR: fetching site tags list", e);
         }

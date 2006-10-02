@@ -61,7 +61,6 @@ public class WeblogEntryFormEx extends WeblogEntryForm
     private String mCategoryId = null;
     private String mCreatorId = null;
     private String mWebsiteId = null;
-    private String mTags = null;
     private Date mDate = new Date();    
     private String mDateString = null;        
     private Integer mHours = new Integer(0);
@@ -185,11 +184,6 @@ public class WeblogEntryFormEx extends WeblogEntryForm
                 }
             }
         }
-        
-        if(getTags() != null) 
-        {
-          entry.setTags(getTags());
-        }
     }
     
     /**
@@ -211,13 +205,7 @@ public class WeblogEntryFormEx extends WeblogEntryForm
         {
             pluginsArray = StringUtils.split(entry.getPlugins(), ",");
         }
-        
-        String tags = entry.getTags();
-        if (tags != null && tags.length() > 0)
-        {
-          setTags(tags);
-        }
-                
+                        
         attributes = new HashMap();
         Iterator atts = entry.getEntryAttributes().iterator();
         while (atts.hasNext())

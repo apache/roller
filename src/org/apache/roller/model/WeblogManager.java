@@ -380,4 +380,19 @@ public interface WeblogManager {
      * Release all resources held by manager.
      */
     public void release();    
+    
+    /**
+     * Get list of TagStat. There's no offset/length params just a limit.
+     * @param startDate     Start date or null for not start date.
+     * @param endDate       End date or null for no end date.
+     * @param website       Weblog or null to get for all weblogs.
+     * @param user          User or null to get for all users.
+     * @param sortBy        Sort by either 'name' or 'count' (null for name)  
+     * @param limit         Max TagStats to return (or -1 for no limit)
+     * @return
+     * @throws RollerException
+     */
+    public List getTags(Date startDate, Date endDate, WebsiteData website,
+            UserData user, String sortBy, int limit)
+            throws RollerException;    
 }

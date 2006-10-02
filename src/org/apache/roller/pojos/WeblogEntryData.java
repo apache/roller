@@ -620,44 +620,52 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      }    
      
      public void addTag(String name) {
-       WeblogEntryTagData tag = new WeblogEntryTagData();
-       tag.setName(stripInvalidTagChars(name));
-       tag.setUser(getCreator());
-       tag.setWebsite(getWebsite());
-       tag.setWeblogEntry(this);
-       tag.setTime(getUpdateTime());       
-       tagSet.add(tag);
-     }
-     
-     public void removeTag(String name) {
-       Iterator it = tagSet.iterator();
-       while(it.hasNext()) {
-         WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
-         if(tag.getName().equals(name)) {
-           it.remove();
-         }
-       }
-     }
-   
-     public void updateTags(List tags) {
-       HashSet newTags = new HashSet(tags);
-              
-       // remove old ones no longer passed.
-       Iterator it = tagSet.iterator();
-       while(it.hasNext()) {
-         WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
-         if(!newTags.contains(tag.getName())) {
-           it.remove();
-         } else {
-           newTags.remove(tag.getName());
-         }
-       }
-       
-       // add new ones, duplicates are taken care of by the db.
-       it = newTags.iterator();
-       while(it.hasNext()) {
-         addTag((String) it.next());
-       }
+        for (Iterator it = tagSet.iterator(); it.hasNext();) {
+            WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+            if(tag.getName().equals(name))
+                return;
+        }
+        
+        WeblogEntryTagData tag = new WeblogEntryTagData();
+        tag.setName(stripInvalidTagChars(name));
+        tag.setUser(getCreator());
+        tag.setWebsite(getWebsite());
+        tag.setWeblogEntry(this);
+        tag.setTime(getUpdateTime());
+        tagSet.add(tag);
+    }
+
+    public void removeTag(String name) {  
+        name = stripInvalidTagChars(name);
+        for (Iterator it = tagSet.iterator(); it.hasNext();) {
+            WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+            if(tag.getName().equals(name))
+                it.remove();
+        }
+    }
+
+    public void updateTags(List tags) {
+        HashSet newTags = new HashSet(tags);
+        
+        HashSet removeTags = new HashSet();
+
+        // remove old ones no longer passed.
+        for (Iterator it = tagSet.iterator(); it.hasNext();) {
+            WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+            if (!newTags.contains(tag.getName())) {
+                removeTags.add(tag.getName());
+            } else {
+                newTags.remove(tag.getName());
+            }
+        }
+        
+        for (Iterator it = removeTags.iterator(); it.hasNext();) {
+            removeTag((String) it.next());
+        }
+        
+        for (Iterator it = newTags.iterator(); it.hasNext();) {
+            addTag((String) it.next());
+        }
     }
    
      public boolean checkValidTagChar(char c) {
@@ -680,40 +688,39 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
        }
        return sb.toString();
      }
-     
-     /**
-      *
-      * @roller.wrapPojoMethod type="simple"
-      */     
-    public String getTags() 
-    {
-       StringBuffer sb = new StringBuffer();
-       for(Iterator it = getTagSet().iterator(); it.hasNext();)
-       {
-           sb.append(((WeblogEntryTagData)it.next()).getName()).append(" ");
-       }
-       if(sb.length() > 0)
-       {
-           sb.deleteCharAt(sb.length()-1);
-       }
 
-       return sb.toString();
-     }  
-    
-     public void setTags(String tags)
-     {
-       if (tags == null)
-         return;
-       
-       String[] tagsarr = StringUtils.split(tags, ' ');
-       
-       if (tagsarr == null || tagsarr.length == 0)
-         return;
-       
-       updateTags(Arrays.asList(tagsarr));       
-     }
+    /**
+     * @roller.wrapPojoMethod type="simple"
+     */
+    public String getTags() {
+        StringBuffer sb = new StringBuffer();
+        for (Iterator it = getTagSet().iterator(); it.hasNext();) {
+            sb.append(((WeblogEntryTagData) it.next()).getName()).append(" ");
+        }
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
 
-    //------------------------------------------------------------------------
+        return sb.toString();
+    }
+
+    public void setTags(String tags) {
+        if (tags == null) {
+            tagSet.clear();
+            return;
+        }
+
+        String[] tagsarr = StringUtils.split(tags, ' ');
+
+        if (tagsarr == null || tagsarr.length == 0) {
+            tagSet.clear();
+            return;
+        }
+
+        updateTags(Arrays.asList(tagsarr));
+    }
+
+    // ------------------------------------------------------------------------
     
     /**
      * True if comments are still allowed on this entry considering the
