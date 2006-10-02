@@ -21,7 +21,6 @@ package org.apache.roller.business.hibernate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
@@ -36,14 +35,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
-import org.apache.roller.pojos.TagCloudEntry;
+import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryAssoc;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -55,7 +53,6 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
@@ -572,7 +569,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     public Date getWeblogLastPublishTime(WebsiteData website, String catName)
     throws RollerException {
         WeblogCategoryData cat = null;
-        Roller mRoller = RollerFactory.getRoller();
+
         if (catName != null && website != null) {
             cat = getWeblogCategoryByPath(website, null, catName);
             if (cat == null) catName = null;
@@ -1202,6 +1199,56 @@ locale,             offset,
         } catch (Exception e) {
             log.error("EXCEPTION applying comment defaults",e);
         }
-    }     
+    }   
+    
+    public List getTags(Date startDate, Date endDate, WebsiteData website,
+            UserData user, String sortBy, int limit)
+            throws RollerException {
+        try {
+            List results = new ArrayList();
+
+            Session session = ((HibernatePersistenceStrategy) strategy)
+                    .getSession();
+            
+            if (sortBy != null && sortBy.equals("count")) {
+                sortBy = "col_1_0_ desc"; 
+            } else {
+                sortBy = "t.name";
+            }
+
+            StringBuffer queryString = new StringBuffer();
+            queryString.append("select t.name, count(t.name) ");
+            queryString.append("from WeblogEntryTagData t ");
+            queryString.append("where t.time between ? and ? ");
+            if (website != null)
+                queryString.append("and t.website.id = '" + website.getId()
+                        + "' ");
+            if (user != null)
+                queryString.append("and t.user.id = '" + user.getId() + "' ");
+            queryString.append("group by t.name ");
+            queryString.append("order by " + sortBy);
+
+            Query query = session.createQuery(queryString.toString());
+            query.setTimestamp(0, DateUtil.getStartOfDay(startDate));
+            query.setTimestamp(1, DateUtil.getEndOfDay(endDate));
+            if (limit > 0)
+                query.setMaxResults(limit);
+
+            for (Iterator iter = query.list().iterator(); iter.hasNext();) {
+                Object[] row = (Object[]) iter.next();
+                TagStat ce = new TagStat();
+                ce.setName((String) row[0]);
+                ce.setCount(((Integer) row[1]).intValue());
+                results.add(ce);
+            }
+
+            return results;
+
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+
+    }
+    
 
 }

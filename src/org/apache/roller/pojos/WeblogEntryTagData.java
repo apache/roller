@@ -195,14 +195,15 @@ public class WeblogEntryTagData extends PersistentObject
    }
  
    public int hashCode() {
+       
        int result = 17;
        result = PojoUtil.addHashCode(result, this.id);
-       result = PojoUtil.addHashCode(result, this.website);
-       result = PojoUtil.addHashCode(result, this.weblogEntry);
-       result = PojoUtil.addHashCode(result, this.user);
+       result = PojoUtil.addHashCode(result, this.website != null ? this.website.getId() : null);
+       result = PojoUtil.addHashCode(result, this.weblogEntry != null ? this.weblogEntry.getId() : null);
+       result = PojoUtil.addHashCode(result, this.user != null ? this.user.getId() : null);
        result = PojoUtil.addHashCode(result, this.name);
        result = PojoUtil.addHashCode(result, this.time);
-       
+
        return result;
    }
  

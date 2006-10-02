@@ -224,32 +224,13 @@ create index wet_name_idx on weblogentrytag( name );
 
 create table weblogtagagg (
     id              varchar(48)   not null primary key,
-    websiteid       varchar(48)   not null,    
+    websiteid       varchar(48) ,    
     name            varchar(255)  not null,
     count           integer		  not null
 );
 
 create index weta_websiteid_idx on weblogtagagg( websiteid );
 create index weta_name_idx on weblogtagagg( name );
-
-create table usertagagg (
-    id              varchar(48)   not null primary key,
-    userid				          varchar(48)   not null,        
-    name            varchar(255)  not null,
-    count           integer		  not null
-);
-
-create index userta_userid_idx on usertagagg( userid );
-create index userta_name_idx on usertagagg( name );
-
-create table sitetagagg (
-    id              varchar(48)   not null primary key,
-    name            varchar(255)  not null,
-    count           integer		  not null
-);
-
-create index siteta_name_idx on sitetagagg( name );
-
 
 create table newsfeed (
     id              varchar(48) not null primary key,

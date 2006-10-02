@@ -67,7 +67,6 @@
         <mapping resource="org/apache/roller/pojos/WeblogEntryData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogEntryTagData.hbm.xml" />  
         <mapping resource="org/apache/roller/pojos/WeblogTagAggregateData.hbm.xml" />    
-        <mapping resource="org/apache/roller/pojos/SiteTagAggregateData.hbm.xml" />                                
         <mapping resource="org/apache/roller/pojos/EntryAttributeData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogCategoryData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogCategoryAssoc.hbm.xml" />

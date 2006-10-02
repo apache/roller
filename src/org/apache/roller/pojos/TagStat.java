@@ -27,7 +27,7 @@ package org.apache.roller.pojos;
  * @author Elias Torres
  * 
  */
-public class TagCloudEntry implements java.io.Serializable {
+public class TagStat implements java.io.Serializable {
 
   private static final long serialVersionUID = 1142064841813545198L;
 
@@ -35,7 +35,7 @@ public class TagCloudEntry implements java.io.Serializable {
 
   private int count = 0;
 
-  public TagCloudEntry() {
+  public TagStat() {
   }
 
   public String getName() {

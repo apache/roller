@@ -126,7 +126,7 @@ public class WeblogTagAggregateData extends PersistentObject
      StringBuffer str = new StringBuffer("{");
      
      str.append("id=" + id + " " +
-             "websiteid=" + website.getId() +
+             "website=" + website +
              "name=" + name + " " +
              "count=" + count);
      str.append('}');

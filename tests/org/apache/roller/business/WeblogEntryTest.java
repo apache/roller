@@ -23,6 +23,7 @@
 
 package org.apache.roller.business;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -626,6 +627,63 @@ public class WeblogEntryTest extends TestCase {
       TestUtils.teardownWeblogEntry(id);
       TestUtils.endSession(true);    
     }
+    
+    /**
+     * We want to make sure that the first time placed on the tag remains
+     * through consequent updates.
+     * 
+     * @throws Exception
+     */
+    public void testUpdateTagTime() throws Exception {
+
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+
+        // setup some test entries to use
+        WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog
+                .getDefaultCategory(), testWeblog, testUser);
+        entry.addTag("testWillStayTag");
+        entry.addTag("testTagWillBeRemoved");
+        String id = entry.getId();
+        TestUtils.endSession(true);
+
+        entry = mgr.getWeblogEntry(id);
+        assertEquals(2, entry.getTagSet().size());
+
+        Timestamp original = null;
+
+        for (Iterator it = entry.getTagSet().iterator(); it.hasNext();) {
+            WeblogEntryTagData tagData = (WeblogEntryTagData) it.next();
+            if (tagData.getName().equals("testWillStayTag"))
+                original = tagData.getTime();
+        }
+
+        List updateTags = new ArrayList();
+        updateTags.add("testWillStayTag");
+        updateTags.add("testNewTag");
+        updateTags.add("testNewTag3");
+        entry.updateTags(updateTags);
+        TestUtils.endSession(true);
+
+        entry = mgr.getWeblogEntry(id);
+        HashSet tagNames = new HashSet();
+        for (Iterator it = entry.getTagSet().iterator(); it.hasNext();) {
+            WeblogEntryTagData tagData = (WeblogEntryTagData) it.next();
+            tagNames.add(tagData.getName());
+            if (tagData.getName().equals("testWillStayTag"))
+                assertEquals(original, tagData.getTime());
+        }
+
+        assertEquals(3, entry.getTagSet().size());
+        assertEquals(3, tagNames.size());
+        assertEquals(true, tagNames.contains("testWillStayTag"));
+        assertEquals(true, tagNames.contains("testNewTag"));
+        assertEquals(true, tagNames.contains("testNewTag3"));
+
+        // teardown our test entry
+        TestUtils.teardownWeblogEntry(id);
+        TestUtils.endSession(true);
+    }    
+           
   
     
     /**
