@@ -161,6 +161,12 @@ public class FileManagerImpl implements FileManager {
         // now construct path to new directory
         File dir = new File(uploadDir.getAbsolutePath() + File.separator + path);
         
+        // check if it already exists
+        if(dir.exists() && dir.isDirectory() && dir.canRead()) {
+            // already exists, we don't need to do anything
+            return;
+        }
+        
         // create it
         if(!dir.mkdir()) {
             // failed for some reason
