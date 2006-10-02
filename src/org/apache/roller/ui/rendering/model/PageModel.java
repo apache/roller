@@ -19,8 +19,6 @@
 package org.apache.roller.ui.rendering.model; 
 
 import java.util.Map;
-import javax.servlet.jsp.tagext.TagSupport;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
