@@ -22,12 +22,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.RefererManager;
@@ -43,8 +43,6 @@ import org.apache.roller.model.Roller;
 import org.apache.roller.model.ThemeManager;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.wrapper.RefererDataWrapper;
-
 
 /**
  * Website has many-to-many association with users. Website has one-to-many and
@@ -322,7 +320,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
      */
     public List getPages() {
         
-        Map pages = new HashMap();
+        Map pages = new TreeMap();
         
         // first get the pages from the db
         try {
