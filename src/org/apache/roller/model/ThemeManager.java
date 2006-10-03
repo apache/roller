@@ -52,11 +52,14 @@ public interface ThemeManager {
     
     
     /**
-     * Save all the templates for a Theme into the given weblog.
+     * Import all the contents for a Theme into a weblog.
+     *
+     * @param weblog The weblog to import the theme into.
+     * @param theme The theme that should be imported.
      *
      * @throws RollerException If there is some kind of error in saving.
      */
-    public void saveThemePages(WebsiteData website, Theme theme) 
+    public void importTheme(WebsiteData website, Theme theme) 
         throws RollerException;
     
 }
