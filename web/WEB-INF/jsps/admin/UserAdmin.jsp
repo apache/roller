@@ -183,7 +183,7 @@ function cancel() {
                                <c:param name="method" value="create" />
                                <c:param name="weblog" value="${perms.website.handle}" />
                            </c:url>
-                           <img src='<c:url value="/images/page_white_edit.gif"/>' />
+                           <img src='<c:url value="/images/page_white_edit.png"/>' />
                            <a href='<c:out value="${newEntry}" />'>
                                <fmt:message key="userAdmin.newEntry" /></a>
                        </td>
