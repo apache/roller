@@ -19,6 +19,7 @@
 package org.apache.roller.ui.rendering.model;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -166,6 +167,7 @@ public class SearchResultsModel extends PageModel {
             WeblogEntryData entry = null;
             Document doc = null;
             String handle = null;
+            Timestamp now = new Timestamp(new Date().getTime());
             for(int i = offset; i < offset+limit; i++) {
                 
                 entry = null; // reset for each iteration
@@ -191,7 +193,8 @@ public class SearchResultsModel extends PageModel {
                 
                 // maybe null if search result returned inactive user
                 // or entry's user is not the requested user.
-                if (entry != null) {
+                // but don't return future posts
+                if (entry != null && entry.getPubTime().before(now)) {
                     addEntryToResults(WeblogEntryDataWrapper.wrap(entry));
                 }
             }
