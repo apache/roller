@@ -369,7 +369,7 @@ public class ThemeEditorAction extends DispatchAction {
                     // only if custom themes are allowed
                     if(RollerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
                         try {
-                            themeMgr.saveThemePages(website, usersTheme);
+                            themeMgr.importTheme(website, usersTheme);
                             RollerFactory.getRoller().flush();
                         } catch(RollerException re) {
                             mLogger.error(re);
