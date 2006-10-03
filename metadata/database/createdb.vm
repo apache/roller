@@ -113,7 +113,7 @@ create table website (
     commentmod           $BOOLEAN_SQL_TYPE_FALSE not null,
     displaycnt           integer default 15 not null,
     lastmodified         $TIMESTAMP_SQL_TYPE,
-    pagemodels           varchar(512) default null,
+    pagemodels           varchar(255) default null,
     enablemultilang   $BOOLEAN_SQL_TYPE_FALSE not null,
     showalllangs      $BOOLEAN_SQL_TYPE_TRUE not null
 );
@@ -197,7 +197,7 @@ create table weblogentry (
     status          varchar(20) not null,
     summary         $TEXT_SQL_TYPE default null, 
     content_type    varchar(48) default null, 
-    content_src     varchar(512) default null
+    content_src     varchar(255) default null
 );
 create index we_websiteid_idx on weblogentry( websiteid );
 create index we_categoryid_idx on weblogentry( categoryid );
