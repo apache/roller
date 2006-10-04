@@ -53,6 +53,17 @@ WeblogEntryManagementAction.PageModel model =
     </div>
     <br />
     <br />
+    
+  <%-- ========================================================= --%>
+  <%-- filter by tag --%>
+  
+    <div class="sideformrow">
+        <label for="tags" class="sideformrow">
+            <fmt:message key="weblogEntryQuery.label.tags" /></label>          
+        <html:text property="tags" />
+    </div>
+    <br />
+    <br />    
 
   <%-- ========================================================= --%>
   <%-- filter by date --%>
