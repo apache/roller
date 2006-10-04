@@ -271,45 +271,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         // remove entry from cache mapping
         this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
     }
-    
-    
-    private void removeWeblogEntryContents(WeblogEntryData entry) throws RollerException {
         
-        if(entry == null) {
-            throw new RollerException("cannot remove null entry");
-        }
-        
-        Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-        
-        // remove referers
-        Criteria refererQuery = session.createCriteria(RefererData.class);
-        refererQuery.add(Expression.eq("weblogEntry", entry));
-        List referers = refererQuery.list();
-        for (Iterator iter = referers.iterator(); iter.hasNext();) {
-            RefererData referer = (RefererData) iter.next();
-            this.strategy.remove(referer);
-        }
-        
-        // remove comments
-        List comments = getComments(
-                null,  // website
-                entry,
-                null,  // search String
-                null,  // startDate
-                null,  // endDate
-                null,  // pending
-                null,  // approved
-                null,  // spam
-                true,  // reverse chrono order (not that it matters)
-                0,     // offset
-                -1);   // no limit
-        Iterator commentsIT = comments.iterator();
-        while (commentsIT.hasNext()) {
-            this.strategy.remove((CommentData) commentsIT.next());
-        }
-    }
-    
-    
     public List getNextPrevEntries(WeblogEntryData current, String catName, 
                                    String locale, int maxEntries, boolean next)
             throws RollerException {
