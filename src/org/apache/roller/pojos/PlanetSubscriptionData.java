@@ -193,7 +193,7 @@ public class PlanetSubscriptionData extends PersistentObject
         return title;
     }
     public void setName(String name) {
-        title = name;
+        // no op to please XDoclet
     }
     /** 
      * @roller.wrapPojoMethod type="simple"
@@ -202,7 +202,7 @@ public class PlanetSubscriptionData extends PersistentObject
         return siteUrl;
     }
     public void setURL(String url) {
-        siteUrl = url;
+        // no op to please XDoclet
     }
     
     //-------------------------------------------------------------- implementation
