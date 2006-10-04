@@ -636,7 +636,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         }
 
         WeblogEntryTagData tag = new WeblogEntryTagData();
-        tag.setName(stripInvalidTagChars(name));
+        tag.setName(name);
         tag.setUser(getCreator());
         tag.setWebsite(getWebsite());
         tag.setWeblogEntry(this);
