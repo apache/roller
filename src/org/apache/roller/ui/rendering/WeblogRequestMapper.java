@@ -25,6 +25,8 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
@@ -103,6 +105,12 @@ public class WeblogRequestMapper implements RequestMapper {
         // figure out potential weblog handle
         String servlet = request.getServletPath();
         String pathInfo = null;
+        
+        // WAS6.1 returns "" for servletPath use pathInfo instead
+        if(StringUtils.isEmpty(request.getServletPath())) {
+            servlet = request.getPathInfo();
+        }
+        
         if(servlet != null && servlet.trim().length() > 1) {
             
             // strip off the leading slash
