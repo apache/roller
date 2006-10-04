@@ -21,6 +21,7 @@ package org.apache.roller.ui.authoring.struts.actions;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.commons.lang.StringUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
@@ -146,6 +148,11 @@ public final class WeblogEntryManagementAction extends DispatchAction
 
             this.status = "ALL".equals(queryForm.getStatus()) ? null: queryForm.getStatus();    
             this.maxEntries = maxEntries;
+            
+           String[] tagsarr = new String[0];
+           
+           if(queryForm.getTags() != null)
+               tagsarr = StringUtils.split(queryForm.getTags().toLowerCase(), ' ');
 
             entries = RollerFactory.getRoller().getWeblogManager().getWeblogEntries(
                     website,
@@ -153,10 +160,11 @@ public final class WeblogEntryManagementAction extends DispatchAction
                     startDate,
                     endDate,
                     category,
-                    null,
+                    Arrays.asList(tagsarr),
                     status,
                     queryForm.getSortby(),
-null,                     queryForm.getOffset(),
+                    null,
+                    queryForm.getOffset(),
                     queryForm.getCount() + 1);
            if (entries.size() > queryForm.getCount()) {
                more = true;

@@ -37,39 +37,11 @@
             <table class="menuItemTable" cellspacing="0"><tbody><tr>
             <td class="padleft"></td></tr></tbody></table>
 
-            <div id="tabContent">
-
-				<div id='cloud' style="overflow: hidden; padding: 30px" >
-				  <style>
-				  span.tag a { color: #ad3537;; text-decoration: none; padding: 3px; }
-				  </style>
-				
-				  <center>
-					  #set ($tags = $site.getTags(90))
-					  
-					  #set ( $minSize = 14 )
-					  #set ( $maxSize = 50 )
-					
-					  #set ( $max = 0 )
-					  #foreach ( $tag in $tags )
-					    #if ( $tag.count > $max )
-					      #set ( $max = $tag.count )
-					    #end
-					  #end
-					
-					  #set ( $step = $max / ($maxSize - $minSize) )
-                      #if ( $step < 1 )
-                        #set ( $step = 1 )
-                      #end
-					  					
-					  #foreach ($tag in $tags)
-					    #set( $size = $minSize + ($tag.count / $step)  )
-					    <span class="tag" style="font-size:${size}px"><a href="$url.tag($tag.name)">$tag.name</span></a>
-					  #end
-				  </center>
-				  <br/>
-				</div>
-
+            <div id="tabContent">              
+              <div id='cloud' style="overflow: hidden; padding: 30px" >
+              	#showTagCloud($site.getTags())
+                <br/>
+              </div>
             </div>                        
         </div> 
     </div> 

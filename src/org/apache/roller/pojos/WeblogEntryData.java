@@ -99,6 +99,8 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     private Set attSet = new TreeSet();
     
     private Set tagSet = new HashSet();
+    private Set removedTags = new HashSet();
+    private Set addedTags = new HashSet();
     
     //----------------------------------------------------------- Construction
     
@@ -617,15 +619,22 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      private void setTagSet(Set tagSet) throws RollerException
      {
          this.tagSet = tagSet;
+         this.removedTags = new HashSet();
+         this.addedTags = new HashSet();
      }    
      
-     public void addTag(String name) {
+     public void addTag(String name) throws RollerException {
+        name = stripInvalidTagChars(name);
+        name = name.toLowerCase().trim();
+        if(name.length() == 0)
+            return;
+        
         for (Iterator it = tagSet.iterator(); it.hasNext();) {
             WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
-            if(tag.getName().equals(name))
+            if (tag.getName().equals(name))
                 return;
         }
-        
+
         WeblogEntryTagData tag = new WeblogEntryTagData();
         tag.setName(stripInvalidTagChars(name));
         tag.setUser(getCreator());
@@ -633,18 +642,30 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         tag.setWeblogEntry(this);
         tag.setTime(getUpdateTime());
         tagSet.add(tag);
+        
+        addedTags.add(name);
     }
 
-    public void removeTag(String name) {  
+    public void removeTag(String name) throws RollerException {
         name = stripInvalidTagChars(name);
         for (Iterator it = tagSet.iterator(); it.hasNext();) {
             WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
-            if(tag.getName().equals(name))
+            if (tag.getName().equals(name)) {
+                removedTags.add(name);
                 it.remove();
+            }
         }
     }
+    
+    public Set getAddedTags() {
+        return addedTags;
+    }
+    
+    public Set getRemovedTags() {
+        return removedTags;
+    }
 
-    public void updateTags(List tags) {
+    public void updateTags(List tags) throws RollerException {
         HashSet newTags = new HashSet(tags);
         
         HashSet removeTags = new HashSet();
@@ -704,7 +725,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         return sb.toString();
     }
 
-    public void setTags(String tags) {
+    public void setTags(String tags) throws RollerException {
         if (tags == null) {
             tagSet.clear();
             return;
