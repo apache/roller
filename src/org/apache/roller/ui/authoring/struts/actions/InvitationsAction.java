@@ -113,8 +113,8 @@ public class InvitationsAction extends DispatchAction {
         Roller roller = RollerFactory.getRoller();
         UserManager umgr = roller.getUserManager();
         PermissionsData perms = umgr.getPermissions(invitationForm.getPermissionId());
+        ActionErrors errors = new ActionErrors();
         if (perms == null) {
-            ActionErrors errors = new ActionErrors();
             errors.add(null, new ActionError("invitations.error.notFound"));
             saveErrors(request, errors);
             return view(mapping, actionForm, request, response);
@@ -123,7 +123,12 @@ public class InvitationsAction extends DispatchAction {
         if (rses.isUserAuthorizedToAdmin(perms.getWebsite())) {
             umgr.removePermissions(perms);
             roller.flush();
-            notifyInvitee(request, perms.getWebsite(), perms.getUser());
+            try {
+                notifyInvitee(request, perms.getWebsite(), perms.getUser());
+            } catch (RollerException e) {
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                        new ActionError("error.untranslated", e.getMessage()));
+            }
             ActionMessages msgs = new ActionMessages();
             msgs.add(ActionMessages.GLOBAL_MESSAGE, 
                 new ActionMessage("invitations.revoked"));

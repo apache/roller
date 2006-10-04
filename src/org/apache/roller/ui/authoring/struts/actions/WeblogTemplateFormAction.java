@@ -21,6 +21,7 @@ package org.apache.roller.ui.authoring.struts.actions;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,6 @@ import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
@@ -64,6 +64,8 @@ import org.apache.struts.actions.DispatchAction;
  * @struts.action-forward name="editPages.page" path=".edit-pages"
  */
 public final class WeblogTemplateFormAction extends DispatchAction {
+    protected static ResourceBundle bundle = 
+        ResourceBundle.getBundle("ApplicationResources"); 
     private static Log mLogger =
             LogFactory.getFactory().getInstance(WeblogTemplateFormAction.class);
     
@@ -86,8 +88,8 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 form.copyTo(data, request.getLocale());
                 data.setWebsite(website);
                 data.setLastModified( new Date() );
-                data.setDescription("");
-                data.setContents("");
+                data.setDescription(data.getName());
+                data.setContents(bundle.getString("pageForm.newTemplateContent"));
                 validateLink( data );
                 
                 // all templates start out as velocity templates

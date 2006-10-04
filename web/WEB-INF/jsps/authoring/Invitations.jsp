@@ -20,7 +20,7 @@
 <script type="text/javascript">
 // <!--
 function revokeInvite(id) {
-    if (confirm("Revoke selected invitation?")) {
+    if (confirm('<fmt:message key="invitations.confirm.revoke" />')) {
         document.invitationsForm.method.value="revoke"; 
         document.invitationsForm.permissionId.value=id; 
         document.invitationsForm.submit();
@@ -40,14 +40,14 @@ function done() {
 </p>
 <p><fmt:message key="invitations.prompt" /></p>
 
-<html:form action="/roller-ui/authoring/invitations" method="post" focus="userName">
+<html:form action="/roller-ui/authoring/invitations" method="post">
     <html:hidden property="weblog" />
     <html:hidden property="permissionId" />
     <input type="hidden" name="method" value="view" />
         
     <c:choose>
         <c:when test="${empty model.pendings}"> 
-            No invitations
+            <fmt:message key="invitations.noInvitations" />
         </c:when>  
         <c:when test="${!empty model.pendings}">  
             <table class="rollertable">
@@ -79,7 +79,9 @@ function done() {
                             <c:if test="${invite.permissionMask == 3}" >ADMIN</c:if>
                         </td> 
                         <td class="rollertable">
-                            <a hrerf="#" onclick="revokeInvite('<c:out value="${invite.id}" />')">Revoke</a>
+                            <a hrerf="#" onclick="revokeInvite('<c:out value="${invite.id}" />')">
+                                <fmt:message key="invitations.revoke" />
+                            </a>
                         </td> 
                     </roller:row>
                 </c:forEach>

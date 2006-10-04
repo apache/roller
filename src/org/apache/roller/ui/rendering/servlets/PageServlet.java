@@ -168,13 +168,18 @@ public class PageServlet extends HttpServlet {
             lastModified = weblog.getLastModified().getTime();
         }
 
-        // Respond with 304 Not Modified if it is not modified.
-        if (ModDateHeaderUtil.respondIfNotModified(request,response,lastModified)) {
-            return;
+        // 304 Not Modified handling.
+        // We skip this for logged in users to avoid the scenerio where a user
+        // views their weblog, logs in, then gets a 304 without the 'edit' links
+        if(!pageRequest.isLoggedIn()) {
+            if (ModDateHeaderUtil.respondIfNotModified(request,response,lastModified)) {
+                return;
+            } else {
+                // set last-modified date
+                ModDateHeaderUtil.setLastModifiedHeader(response,lastModified);
+            }
         }
 
-        // set last-modified date
-        ModDateHeaderUtil.setLastModifiedHeader(response,lastModified);
                 
         // generate cache key
         String cacheKey = null;
