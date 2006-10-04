@@ -18,11 +18,16 @@
 
 package org.apache.roller.ui.rendering.model; 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.model.Roller;
+import org.apache.roller.model.RollerFactory;
+import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.TemplateWrapper;
 import org.apache.roller.pojos.wrapper.WeblogCategoryDataWrapper;
@@ -266,4 +271,36 @@ public class PageModel implements Model {
         }
         return null;
     }
+    
+    /**
+     * @param sinceDay
+     * @return
+     */
+    public List getTags() {
+        List results = new ArrayList();
+        try {            
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            results = wmgr.getTags(weblog, null, null, -1);
+        } catch (Exception e) {
+            log.error("ERROR: fetching site tags list", e);
+        }
+        return results;
+    }
+    
+    /**
+     * @param sinceDay
+     * @return
+     */
+    public List getHotTags(int length) {
+        List results = new ArrayList();
+        try {            
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            results = wmgr.getTags(weblog, "count", null, length);
+        } catch (Exception e) {
+            log.error("ERROR: fetching site tags list", e);
+        }
+        return results;
+    }      
 }

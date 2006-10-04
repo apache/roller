@@ -481,18 +481,12 @@ public class SiteModel implements Model {
      * @param sinceDay
      * @return
      */
-    public List getTags(
-            int sinceDays) {
+    public List getTags() {
         List results = new ArrayList();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
         try {            
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
-            results = wmgr.getTags(
-                    startDate, new Date(), null, null, null, -1);
+            results = wmgr.getTags(null, null, null, -1);
         } catch (Exception e) {
             log.error("ERROR: fetching site tags list", e);
         }
@@ -503,18 +497,12 @@ public class SiteModel implements Model {
      * @param sinceDay
      * @return
      */
-    public List getHotTags(
-            int sinceDays, int length) {
+    public List getHotTags(int length) {
         List results = new ArrayList();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
         try {            
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();
-            results = wmgr.getTags(
-                    startDate, new Date(), null, null, "count", length);
+            results = wmgr.getTags(null, "count", null, length);
         } catch (Exception e) {
             log.error("ERROR: fetching site tags list", e);
         }

@@ -15,6 +15,9 @@
                 $entry.displayContent($url.entry($entry.anchor))
             #end
         </p>
+        <p class="entryTags">
+           #showEntryTags($entry)
+        </p>
         <p class="entryInfo">
             Posted at <a href="$url.entry($entry.anchor)">$utils.formatDate($entry.pubTime, "hh:mma MMM dd, yyyy")</a>
             by $entry.creator.fullName in <span class="category">$entry.category.name</span> &nbsp;|&nbsp;

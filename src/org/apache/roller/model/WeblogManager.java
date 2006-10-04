@@ -27,6 +27,7 @@ import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -383,16 +384,28 @@ public interface WeblogManager {
     
     /**
      * Get list of TagStat. There's no offset/length params just a limit.
-     * @param startDate     Start date or null for not start date.
-     * @param endDate       End date or null for no end date.
      * @param website       Weblog or null to get for all weblogs.
-     * @param user          User or null to get for all users.
-     * @param sortBy        Sort by either 'name' or 'count' (null for name)  
+     * @param sortBy        Sort by either 'name' or 'count' (null for name)
+     * @param startsWith    Prefix for tags to be returned (null or a string of length > 0)
      * @param limit         Max TagStats to return (or -1 for no limit)
      * @return
      * @throws RollerException
      */
-    public List getTags(Date startDate, Date endDate, WebsiteData website,
-            UserData user, String sortBy, int limit)
-            throws RollerException;    
+    public List getTags(WebsiteData website, String sortBy, 
+            String startsWith, int limit)
+            throws RollerException;
+    
+    /**
+     * This method maintains the tag aggregate table up-to-date with total counts. More
+     * specifically every time this method is called it will act upon exactly two rows
+     * in the database (tag,website,count), one with website matching the argument passed
+     * and one where website is null. If the count ever reaches zero, the row must be deleted.
+     * 
+     * @param name      The tag name
+     * @param website   The website to used when updating the stats.
+     * @param amount    The amount to increment the tag count (it can be positive or negative).
+     * @throws RollerException
+     */
+    public void updateTagCount(String name, WebsiteData website, int amount)
+        throws RollerException;
 }

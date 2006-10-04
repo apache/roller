@@ -79,7 +79,7 @@ public class WeblogTagAggregateData extends PersistentObject
     /**
      * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
-     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
+     * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
     public WebsiteData getWebsite() {
         return this.website;

@@ -46,6 +46,8 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryAssoc;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.pojos.WeblogEntryTagData;
+import org.apache.roller.pojos.WeblogTagAggregateData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.Utilities;
@@ -57,6 +59,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 
 /**
@@ -193,8 +196,18 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         if (entry.getAnchor() == null || entry.getAnchor().trim().equals("")) {
             entry.setAnchor(this.createAnchor(entry));
         }
+                
+        for(Iterator it = entry.getAddedTags().iterator(); it.hasNext();) {
+            String name = (String) it.next();
+            updateTagCount(name, entry.getWebsite(), 1);
+        }
         
-        this.strategy.store(entry);
+        for(Iterator it = entry.getRemovedTags().iterator(); it.hasNext();) {
+            String name = (String) it.next();
+            updateTagCount(name, entry.getWebsite(), -1);
+        }  
+        
+        this.strategy.store(entry);        
         
         // update weblog last modified date.  date updated by saveWebsite()
         if(entry.isPublished()) {
@@ -237,6 +250,14 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         Iterator commentsIT = comments.iterator();
         while (commentsIT.hasNext()) {
             this.strategy.remove((CommentData) commentsIT.next());
+        }
+        
+        // remove tags aggregates
+        if(entry.getTagSet() != null) {
+            for(Iterator it = entry.getTagSet().iterator(); it.hasNext(); ) {
+                WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
+                updateTagCount(tag.getName(), entry.getWebsite(), -1);
+            }
         }
         
         // remove entry
@@ -1201,8 +1222,7 @@ locale,             offset,
         }
     }   
     
-    public List getTags(Date startDate, Date endDate, WebsiteData website,
-            UserData user, String sortBy, int limit)
+    public List getTags(WebsiteData website, String sortBy, String startsWith, int limit)
             throws RollerException {
         try {
             List results = new ArrayList();
@@ -1211,26 +1231,24 @@ locale,             offset,
                     .getSession();
             
             if (sortBy != null && sortBy.equals("count")) {
-                sortBy = "col_1_0_ desc"; 
+                sortBy = "a.count desc"; 
             } else {
-                sortBy = "t.name";
+                sortBy = "a.name";
             }
-
+            
             StringBuffer queryString = new StringBuffer();
-            queryString.append("select t.name, count(t.name) ");
-            queryString.append("from WeblogEntryTagData t ");
-            queryString.append("where t.time between ? and ? ");
+            queryString.append("select a.name, a.count ");
+            queryString.append("from WeblogTagAggregateData a where ");
             if (website != null)
-                queryString.append("and t.website.id = '" + website.getId()
-                        + "' ");
-            if (user != null)
-                queryString.append("and t.user.id = '" + user.getId() + "' ");
-            queryString.append("group by t.name ");
+                queryString.append("a.website.id = '" + website.getId() + "' ");
+            else
+                queryString.append("a.website = NULL ");
+            if (startsWith != null && startsWith.length() > 0)
+                queryString.append("and a.name like '" + startsWith + "%' ");
+            
             queryString.append("order by " + sortBy);
 
             Query query = session.createQuery(queryString.toString());
-            query.setTimestamp(0, DateUtil.getStartOfDay(startDate));
-            query.setTimestamp(1, DateUtil.getEndOfDay(endDate));
             if (limit > 0)
                 query.setMaxResults(limit);
 
@@ -1251,4 +1269,66 @@ locale,             offset,
     }
     
 
+    public void updateTagCount(String name, WebsiteData website, int amount) throws RollerException {
+        
+        Session session = ((HibernatePersistenceStrategy) strategy)
+        .getSession();
+        
+        if(amount == 0) {
+            throw new RollerException("Tag increment amount cannot be zero.");
+        }
+        
+        if(website == null) {
+            throw new RollerException("Website cannot be NULL.");
+        }
+                        
+        Junction conjunction = Expression.conjunction();
+        conjunction.add(Expression.eq("name", name));
+        conjunction.add(Expression.eq("website", website));
+
+        Criteria criteria = session.createCriteria(WeblogTagAggregateData.class)
+            .add(conjunction);
+        
+        WeblogTagAggregateData weblogTagData = (WeblogTagAggregateData) criteria.uniqueResult();
+
+        conjunction = Expression.conjunction();
+        conjunction.add(Restrictions.eq("name", name));
+        conjunction.add(Restrictions.isNull("website"));
+        
+        criteria = session.createCriteria(WeblogTagAggregateData.class)
+            .add(conjunction);
+    
+        WeblogTagAggregateData siteTagData = (WeblogTagAggregateData) criteria.uniqueResult();
+        
+        // create it only if we are going to need it.
+        if(weblogTagData == null && amount > 0) {
+            weblogTagData = new WeblogTagAggregateData(null, website, name, 0);
+        }
+        
+        // create it only if we are going to need it.        
+        if(siteTagData == null && amount > 0) {
+            siteTagData = new WeblogTagAggregateData(null, null, name, 0);
+        }
+        
+        // 
+        if(weblogTagData != null) {
+            if ((amount + weblogTagData.getCount()) <= 0) {
+                if(weblogTagData.getId() != null)
+                    session.delete(weblogTagData);
+            } else {
+                weblogTagData.setCount(weblogTagData.getCount() + amount);
+                session.save(weblogTagData);
+            }
+        }        
+        
+        if(siteTagData != null) {
+            if ((amount + siteTagData.getCount()) <= 0) {
+                if(siteTagData.getId() != null)
+                    session.delete(siteTagData);
+            } else {
+                siteTagData.setCount(siteTagData.getCount() + amount);
+                session.save(siteTagData);
+            }
+        }   
+    }
 }
