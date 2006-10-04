@@ -42,9 +42,8 @@ ${ROLLER_HOME}/WEB-INF/lib/jython.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/log4j-1.2.11.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/lucene-1.4.3.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/oscache.jar:\
-${ROLLER_HOME}/WEB-INF/lib/rollerbeans.jar:\
-${ROLLER_HOME}/WEB-INF/lib/rollercontrib.jar:\
-${ROLLER_HOME}/WEB-INF/lib/rollerweb.jar:\
+${ROLLER_HOME}/WEB-INF/lib/roller-business.jar:\
+${ROLLER_HOME}/WEB-INF/lib/roller-web.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/rome-0.8.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/rome-fetcher-0.8.jar:\
 ${ROLLER_HOME}/WEB-INF/lib/saxpath.jar:\
