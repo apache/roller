@@ -309,7 +309,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             } else {
                 StringBuffer sb = new StringBuffer();
                 sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
-                sb.append("join e.subscription.groups g");
+                sb.append("join e.subscription.groups g ");
                 sb.append("where (g.handle='external' or g.handle='all') ");
                 sb.append("and e.pubTime < :endDate ");
                 if (startDate != null) {
