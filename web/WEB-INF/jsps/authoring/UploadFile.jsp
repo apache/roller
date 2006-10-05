@@ -100,6 +100,7 @@ File upload form, but only if it's enabled and weblog is under quota
                 value='<%= bundle.getString("uploadFiles.upload") %>' /> 
             <input type="hidden" name="method" value="upload" />
             <input type="hidden" name="weblog" value='<%= model.getWebsite().getHandle() %>'>
+            <input type="hidden" name="path" value='<c:out value="${model.path}"/>'>
             <br />
             <br />
             
@@ -113,7 +114,8 @@ Table of files, each with link, size and checkbox
 
 <h1><fmt:message key="uploadFiles.manageFiles" /></h1>    
 <html:form action="/roller-ui/authoring/uploadFiles" method="post">
-
+    <html:hidden property="path"/>
+    
     <table class="rollertable">
 
         <tr class="rHeaderTr">
@@ -122,19 +124,49 @@ Table of files, each with link, size and checkbox
             <th class="rollertable">Delete</td>
         </tr>
 
+        <c:if test="${!model.showingRoot}">
+            <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">
+                <td class="rollertable">
+                    <c:url var="dirUrl" value="/roller-ui/authoring/uploadFiles.do">
+                        <c:param name="path" value="${model.parentPath}" />
+                    </c:url>
+                    <img src='<c:url value="/images/folder.png"/>' style="padding:0px" />
+                    <a href='<c:out value="${dirUrl}" />'>..</a>
+                </td>
+                <td class="rollertable" align="right">
+                    &nbsp;
+                </td>
+                <td class="rollertable" align="center">
+                    &nbsp;
+                </td>
+           </roller:row>
+        </c:if>
         <c:forEach var="loopfile" items="${model.files}" >
            <roller:row oddStyleClass="rollertable_odd" evenStyleClass="rollertable_even">
                 <td class="rollertable">
-                    <img src='<c:url value="/images/image.png"/>' style="padding:0px" />
-                    <a href='<c:out value="${model.resourcesBaseURL}" /><c:out value="${loopfile.name}" />'>
-                        <c:out value="${loopfile.name}" />
-                    </a>
+                    <c:choose>
+                        <c:when test="${loopfile.directory}">
+                            <c:url var="dirUrl" value="/roller-ui/authoring/uploadFiles.do">
+                                <c:param name="path" value="${loopfile.path}" />
+                            </c:url>
+                            <img src='<c:url value="/images/folder.png"/>' style="padding:0px" />
+                            <a href='<c:out value="${dirUrl}" />'>
+                                <c:out value="${loopfile.name}" />
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <img src='<c:url value="/images/image.png"/>' style="padding:0px" />
+                            <a href='<c:out value="${model.resourcesBaseURL}" /><c:out value="${loopfile.path}" />'>
+                                <c:out value="${loopfile.name}" />
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
                 </td>
                 <td class="rollertable" align="right">
                     <fmt:formatNumber value="${loopfile.length / 1024}" type="number" maxFractionDigits="2" />&nbsp;KB
                 </td>
                 <td class="rollertable" align="center">
-                   <input type="checkbox" name="deleteFiles" value='<c:out value="${loopfile.name}" />' />
+                   <input type="checkbox" name="deleteFiles" value='<c:out value="${loopfile.path}" />' />
                 </td>
            </roller:row>
 

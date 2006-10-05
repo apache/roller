@@ -19,6 +19,7 @@
 package org.apache.roller.business;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,11 +34,14 @@ import org.apache.roller.model.FileIOException;
 import org.apache.roller.model.FilePathException;
 import org.apache.roller.model.FileManager;
 import org.apache.roller.model.FileNotFoundException;
+import org.apache.roller.pojos.WeblogResource;
+import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.RollerMessages;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
- * Manages files uploaded to Roller.  
+ * Manages files uploaded to Roller weblogs.  
  * 
  * This base implementation writes resources to a filesystem.
  */
@@ -69,11 +73,11 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#getFile(java.lang.String, java.lang.String)
      */
-    public File getFile(String weblogHandle, String path) 
+    public WeblogResource getFile(WebsiteData weblog, String path) 
             throws FileNotFoundException, FilePathException {
         
         // get a reference to the file, checks that file exists & is readable
-        File resourceFile = this.getRealFile(weblogHandle, path);
+        File resourceFile = this.getRealFile(weblog, path);
         
         // make sure file is not a directory
         if(resourceFile.isDirectory()) {
@@ -81,19 +85,19 @@ public class FileManagerImpl implements FileManager {
                     "path is a directory.");
         }
         
-        // everything looks good, return file
-        return resourceFile;
+        // everything looks good, return resource
+        return new WeblogResourceFile(weblog, path, resourceFile);
     }
     
     
     /**
      * @see org.apache.roller.model.FileManager#getFiles(java.lang.String, java.lang.String)
      */
-    public File[] getFiles(String weblogHandle, String path) 
+    public WeblogResource[] getFiles(WebsiteData weblog, String path) 
             throws FileNotFoundException, FilePathException {
         
         // get a reference to the dir, checks that dir exists & is readable
-        File dirFile = this.getRealFile(weblogHandle, path);
+        File dirFile = this.getRealFile(weblog, path);
         
         // make sure path is a directory
         if(!dirFile.isDirectory()) {
@@ -102,14 +106,16 @@ public class FileManagerImpl implements FileManager {
         }
         
         // everything looks good, list contents
-        return dirFile.listFiles();
+        WeblogResource dir = new WeblogResourceFile(weblog, path, dirFile);
+        
+        return dir.getChildren();
     }
     
     
     /**
      * @see org.apache.roller.model.FileManager#saveFile(java.lang.String, java.lang.String, java.lang.String, long, java.io.InputStream)
      */
-    public void saveFile(String weblogHandle, 
+    public void saveFile(WebsiteData weblog, 
                          String path, 
                          String contentType, 
                          long size, 
@@ -118,12 +124,12 @@ public class FileManagerImpl implements FileManager {
         
         // make sure we are allowed to save this file
         RollerMessages msgs = new RollerMessages();
-        if (!canSave(weblogHandle, path, contentType, size, msgs)) {
+        if (!canSave(weblog, path, contentType, size, msgs)) {
             throw new FileIOException(msgs.toString());
         }
         
         // make sure uploads area exists for this weblog
-        File dirPath = this.getRealFile(weblogHandle, null);
+        File dirPath = this.getRealFile(weblog, null);
         File saveFile = new File(dirPath.getAbsolutePath() + File.separator + path);
         
         byte[] buffer = new byte[8192];
@@ -152,11 +158,11 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#createDirectory(java.lang.String, java.lang.String)
      */
-    public void createDirectory(String weblogHandle, String path)
+    public void createDirectory(WebsiteData weblog, String path)
             throws FileNotFoundException, FilePathException, FileIOException {
         
         // get path to weblog's uploads area
-        File uploadDir = this.getRealFile(weblogHandle, null);
+        File uploadDir = this.getRealFile(weblog, null);
         
         // now construct path to new directory
         File dir = new File(uploadDir.getAbsolutePath() + File.separator + path);
@@ -179,11 +185,11 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#deleteFile(java.lang.String, java.lang.String)
      */
-    public void deleteFile(String weblogHandle, String path) 
+    public void deleteFile(WebsiteData weblog, String path) 
             throws FileNotFoundException, FilePathException, FileIOException {
         
         // get path to delete file, checks that path exists and is readable
-        File delFile = this.getRealFile(weblogHandle, path);
+        File delFile = this.getRealFile(weblog, path);
         
         if(!delFile.delete()) {
             throw new FileIOException("Delete failed for ["+path+"], "+
@@ -195,7 +201,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * @see org.apache.roller.model.FileManager#overQuota(java.lang.String)
      */
-    public boolean overQuota(String weblogHandle) {
+    public boolean overQuota(WebsiteData weblog) {
         
         String maxDir = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
         String maxFile = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
@@ -205,7 +211,7 @@ public class FileManagerImpl implements FileManager {
         long maxDirBytes = (long)(1024000 * maxDirSize.doubleValue());
         
         try {
-            File uploadsDir = this.getRealFile(weblogHandle, null);
+            File uploadsDir = this.getRealFile(weblog, null);
             long weblogDirSize = this.getDirSize(uploadsDir, true);
             
             return weblogDirSize > maxDirBytes;
@@ -224,7 +230,7 @@ public class FileManagerImpl implements FileManager {
     /**
      * Determine if file can be saved given current RollerConfig settings.
      */
-    private boolean canSave(String weblogHandle, 
+    private boolean canSave(WebsiteData weblog, 
                            String path, 
                            String contentType,
                            long size, 
@@ -252,7 +258,7 @@ public class FileManagerImpl implements FileManager {
                 RollerRuntimeConfig.getProperty("uploads.dir.maxsize"));
         long maxDirBytes = (long)(1024000 * maxDirMB.doubleValue());
         try {
-            File uploadsDir = this.getRealFile(weblogHandle, null);
+            File uploadsDir = this.getRealFile(weblog, null);
             long userDirSize = getDirSize(uploadsDir, true);
             if (userDirSize + size > maxDirBytes) {
                 messages.addError("error.upload.dirmax", maxDirMB.toString());
@@ -280,7 +286,7 @@ public class FileManagerImpl implements FileManager {
             String dirPath = path.substring(0, path.lastIndexOf("/"));
             
             try {
-                File parent = this.getRealFile(weblogHandle, dirPath);
+                File parent = this.getRealFile(weblog, dirPath);
                 if(parent == null || !parent.exists()) {
                     messages.addError("error.upload.badPath");
                 }
@@ -427,11 +433,11 @@ public class FileManagerImpl implements FileManager {
     /**
      * Construct the full real path to a resource in a weblog's uploads area.
      */
-    private File getRealFile(String weblogHandle, String path) 
+    private File getRealFile(WebsiteData weblog, String path) 
             throws FileNotFoundException, FilePathException {
         
         // make sure uploads area exists for this weblog
-        File weblogDir = new File(this.upload_dir + weblogHandle);
+        File weblogDir = new File(this.upload_dir + weblog.getHandle());
         if(!weblogDir.exists()) {
             weblogDir.mkdirs();
         }
@@ -476,6 +482,97 @@ public class FileManagerImpl implements FileManager {
         }
         
         return file;
+    }
+    
+    
+    /**
+     * A FileManagerImpl specific implementation of a WeblogResource.
+     *
+     * WeblogResources from the FileManagerImpl are backed by a java.io.File
+     * object which represents the resource on a filesystem.
+     *
+     * This class is internal to the FileManagerImpl class because there should 
+     * not be any external classes which need to construct their own instances
+     * of this class.
+     */
+    class WeblogResourceFile implements WeblogResource {
+        
+        // the physical java.io.File backing this resource
+        private File resourceFile = null;
+        
+        // the relative path of the resource within the weblog's uploads area
+        private String relativePath = null;
+        
+        // the weblog the resource is attached to
+        private WebsiteData weblog = null;
+        
+        
+        public WeblogResourceFile(WebsiteData weblog, String path, File file) {
+            this.weblog = weblog;
+            relativePath = path;
+            resourceFile = file;
+        }
+        
+        public WebsiteData getWeblog() {
+            return weblog;
+        }
+        
+        public String getURL(boolean absolute) {
+            return URLUtilities.getWeblogResourceURL(weblog, relativePath, absolute);
+        }
+        
+        public WeblogResource[] getChildren() {
+            
+            if(!resourceFile.isDirectory()) {
+                return null;
+            }
+            
+            File[] dirFiles = resourceFile.listFiles();
+            WeblogResource[] resources = new WeblogResource[dirFiles.length];
+            for(int i=0; i < dirFiles.length; i++) {
+                String filePath = dirFiles[i].getName();
+                if(relativePath != null && !relativePath.trim().equals("")) {
+                    filePath = relativePath + "/" + filePath;
+                }
+                
+                resources[i] = new WeblogResourceFile(weblog, filePath, dirFiles[i]);
+            }
+            
+            return resources;
+        }
+        
+        public String getName() {
+            return resourceFile.getName();
+        }
+        
+        public String getPath() {
+            return relativePath;
+        }
+        
+        public long getLastModified() {
+            return resourceFile.lastModified();
+        }
+        
+        public long getLength() {
+            return resourceFile.length();
+        }
+        
+        public boolean isDirectory() {
+            return resourceFile.isDirectory();
+        }
+        
+        public boolean isFile() {
+            return resourceFile.isFile();
+        }
+        
+        public InputStream getInputStream() {
+            try {
+                return new FileInputStream(resourceFile);
+            } catch (java.io.FileNotFoundException ex) {
+                // should never happen, rethrow as runtime exception
+                throw new RuntimeException("Error constructing input stream", ex);
+            }
+        }
     }
     
 }

@@ -45,7 +45,7 @@ import org.apache.roller.util.RollerMessages;
  */
 public class FileManagerTest extends TestCase {
     
-    public static Log log = LogFactory.getLog(FileManagerTest.class);
+    private static Log log = LogFactory.getLog(FileManagerTest.class);
     
     UserData testUser = null;
     WebsiteData testWeblog = null;
@@ -100,36 +100,38 @@ public class FileManagerTest extends TestCase {
         FileManager fmgr = RollerFactory.getRoller().getFileManager();
         
         // we should be starting with 0 files
-        assertEquals(0, fmgr.getFiles(testWeblog.getHandle(), null).length);
+        assertEquals(0, fmgr.getFiles(testWeblog, null).length);
         
         // create a directory
-        fmgr.createDirectory(testWeblog.getHandle(), "subdir");
+        fmgr.createDirectory(testWeblog, "subdir");
         
         // make sure directory was created
-        assertEquals(1, fmgr.getFiles(testWeblog.getHandle(), null).length);
+        assertEquals(1, fmgr.getFiles(testWeblog, null).length);
         
         // store a file
         InputStream is = getClass().getResourceAsStream("/bookmarks.opml");
-        fmgr.saveFile(testWeblog.getHandle(), "bookmarks.opml", "text/plain", 1545, is);
+        fmgr.saveFile(testWeblog, "bookmarks.opml", "text/plain", 1545, is);
         
         // make sure file was stored successfully
-        assertEquals(2, fmgr.getFiles(testWeblog.getHandle(), null).length);
+        assertEquals("bookmarks.opml", fmgr.getFile(testWeblog, "bookmarks.opml").getName());
+        assertEquals(2, fmgr.getFiles(testWeblog, null).length);
         
         // store a file into a subdirectory
         is = getClass().getResourceAsStream("/bookmarks.opml");
-        fmgr.saveFile(testWeblog.getHandle(), "subdir/bookmarks.opml", "text/plain", 1545, is);
+        fmgr.saveFile(testWeblog, "subdir/bookmarks.opml", "text/plain", 1545, is);
         
         // make sure file was stored successfully
-        assertEquals(1, fmgr.getFiles(testWeblog.getHandle(), "subdir").length);
+        assertEquals("subdir/bookmarks.opml", 
+                fmgr.getFile(testWeblog, "subdir/bookmarks.opml").getPath());
+        assertEquals(1, fmgr.getFiles(testWeblog, "subdir").length);
         
         // delete files and dirs
-        fmgr.deleteFile(testWeblog.getHandle(), "bookmarks.opml");
-        fmgr.deleteFile(testWeblog.getHandle(), "subdir/bookmarks.opml");
-        fmgr.deleteFile(testWeblog.getHandle(), "subdir");
+        fmgr.deleteFile(testWeblog, "bookmarks.opml");
+        fmgr.deleteFile(testWeblog, "subdir/bookmarks.opml");
+        fmgr.deleteFile(testWeblog, "subdir");
         
         // make sure delete was successful
-        Thread.sleep(2000);
-        assertEquals(0, fmgr.getFiles(testWeblog.getHandle(), null).length);
+        assertEquals(0, fmgr.getFiles(testWeblog, null).length);
     }
     
     
@@ -155,7 +157,7 @@ public class FileManagerTest extends TestCase {
         
         try {
             // path check should fail
-            fmgr.saveFile(testWeblog.getHandle(), "some/path/foo.gif", "text/plain", 10, is);
+            fmgr.saveFile(testWeblog, "some/path/foo.gif", "text/plain", 10, is);
         } catch (Exception ex) {
             log.error(ex);
             exception = ex;
@@ -170,7 +172,7 @@ public class FileManagerTest extends TestCase {
         
         try {
             // quota check should fail
-            fmgr.saveFile(testWeblog.getHandle(), "test.gif", "text/plain", 2500000, is);
+            fmgr.saveFile(testWeblog, "test.gif", "text/plain", 2500000, is);
         } catch (Exception ex) {
             log.error(ex);
             exception = ex;
@@ -186,7 +188,7 @@ public class FileManagerTest extends TestCase {
         
         try {
             // forbidden types check should fail
-            fmgr.saveFile(testWeblog.getHandle(), "test.gif", "text/plain", 10, is);
+            fmgr.saveFile(testWeblog, "test.gif", "text/plain", 10, is);
         } catch (Exception ex) {
             log.error(ex);
             exception = ex;
@@ -202,7 +204,7 @@ public class FileManagerTest extends TestCase {
         
         try {
             // uploads disabled should fail
-            fmgr.saveFile(testWeblog.getHandle(), "test.gif", "text/plain", 10, is);
+            fmgr.saveFile(testWeblog, "test.gif", "text/plain", 10, is);
         } catch (Exception ex) {
             log.error(ex);
             exception = ex;

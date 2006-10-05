@@ -18,9 +18,9 @@
 
 package org.apache.roller.model;
 
-import java.io.File;
 import java.io.InputStream;
-import org.apache.roller.RollerException;
+import org.apache.roller.pojos.WeblogResource;
+import org.apache.roller.pojos.WebsiteData;
 
 
 /**
@@ -34,16 +34,16 @@ public interface FileManager {
      * This method always returns a valid file or will throw an exception
      * if the specificed path doesn't exist, is a directory, or can't be read.
      * 
-     * @param weblogHandle The handle of the weblog.
+     * @param weblog The weblog we are working on.
      * @param path The relative path to the desired resource within 
      * the weblog's uploads area.
      *
      * @throws FileNotFoundException If path does not exist.
      * @throws FilePathException If path is invalid, is a directory, or can't be read.
      *
-     * @return File representing the real file resource.
+     * @return WeblogResource representing the real file resource.
      */
-    public File getFile(String weblogHandle, String path) 
+    public WeblogResource getFile(WebsiteData weblog, String path) 
         throws FileNotFoundException, FilePathException;
     
     
@@ -57,23 +57,23 @@ public interface FileManager {
      * This method should return the files at the root of the weblog's uploads
      * area given a path value of null, "" (empty string), or "/"
      * 
-     * @param weblogHandle The handle of the weblog.
+     * @param weblog The weblog we are working on.
      * @param path The relative path to the desired resource within 
      * the weblog's uploads area.
      * 
      * @throws FileNotFoundException If path does not exist.
      * @throws FilePathException If path is invalid, is not a directory, or can't be read.
      *
-     * @return File[] of files in website's uploads area at given path.
+     * @return WeblogResource[] of files in website's uploads area at given path.
      */
-    public File[] getFiles(String weblogHandle, String path) 
+    public WeblogResource[] getFiles(WebsiteData weblog, String path) 
         throws FileNotFoundException, FilePathException;
     
     
     /**
      * Save a file to weblog's uploads area.
      * 
-     * @param weblogHandle The handle of the weblog.
+     * @param weblog The weblog we are working on.
      * @param path The relative path to the desired location within 
      * the weblog's uploads area where the file should be saved.
      * @param contentType Content type of the file.
@@ -84,7 +84,7 @@ public interface FileManager {
      * @throws FilePathException If path is invalid, is not a directory, or can't be read.
      * @throws FileIOException If there is an unexpected error during the save.
      */
-    public void saveFile(String weblogHandle, 
+    public void saveFile(WebsiteData weblog, 
                          String path, 
                          String contentType, 
                          long size,
@@ -95,7 +95,7 @@ public interface FileManager {
     /**
      * Create an empty subdirectory in the weblog's uploads area.
      *
-     * @param weblogHandle The handle of the weblog.
+     * @param weblog The weblog we are working on.
      * @param path The relative path to the desired location within 
      * the weblog's uploads area where the directory should be created.
      *
@@ -103,14 +103,14 @@ public interface FileManager {
      * @throws FilePathException If path is invalid, is not a directory, or can't be read.
      * @throws FileIOException If there is an unexpected error during the create.
      */
-    public void createDirectory(String weblogHandle, String path) 
+    public void createDirectory(WebsiteData weblog, String path) 
         throws FileNotFoundException, FilePathException, FileIOException;
     
     
     /**
      * Delete file or directory from weblog's uploads area.
      * 
-     * @param weblogHandle The handle of the weblog.
+     * @param weblog The weblog we are working on.
      * @param path The relative path to the file within the weblog's uploads 
      * area that should be deleted.
      *
@@ -118,18 +118,18 @@ public interface FileManager {
      * @throws FilePathException If path is invalid, or can't be read.
      * @throws FileIOException If there is an unexpected error during the delete.
      */
-    public void deleteFile(String weblogHandle, String path) 
+    public void deleteFile(WebsiteData weblog, String path) 
         throws FileNotFoundException, FilePathException, FileIOException;
     
     
     /** 
      * Is the given weblog over the file-upload quota limit?
      *
-     * @param weblogHandle The handle of the weblog.
+     * @param weblog The weblog we are working on.
      *
      * @return True if weblog is over set quota, False otherwise.
      */
-    public boolean overQuota(String weblogHandle);
+    public boolean overQuota(WebsiteData weblog);
     
     
     /**
