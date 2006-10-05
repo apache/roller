@@ -356,6 +356,79 @@ public final class URLUtilities {
     
     
     /**
+     * Get root url for a given *preview* weblog.  
+     * Optionally for a certain locale.
+     */
+    public static final String getPreviewWeblogURL(String previewTheme,
+                                                   WebsiteData weblog,
+                                                   String locale,
+                                                   boolean absolute) {
+        
+        if(weblog == null) {
+            return null;
+        }
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
+        
+        if(locale != null) {
+            url.append(locale).append("/");
+        }
+        
+        Map params = new HashMap();
+        if(previewTheme != null) {
+            params.put("theme", encode(previewTheme));
+        }
+        
+        return url.toString() + getQueryString(params);
+    }
+    
+    
+    /**
+     * Get a url to a *preview* resource on a given weblog.
+     */
+    public static final String getPreviewWeblogResourceURL(String previewTheme,
+                                                           WebsiteData weblog,
+                                                           String filePath,
+                                                           boolean absolute) {
+        
+        if(weblog == null) {
+            return null;
+        }
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-ui/authoring/previewresource/").append(weblog.getHandle()).append("/");
+        
+        if(filePath.startsWith("/")) {
+            url.append(filePath.substring(1));
+        } else {
+            url.append(filePath);
+        }
+        
+        Map params = new HashMap();
+        if(previewTheme != null) {
+            params.put("theme", encode(previewTheme));
+        }
+        
+        return url.toString() + getQueryString(params);
+    }
+    
+    
+    /**
      * Compose a map of key=value params into a query string.
      */
     public static final String getQueryString(Map params) {
