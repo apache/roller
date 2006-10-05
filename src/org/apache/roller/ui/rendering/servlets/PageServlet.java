@@ -48,9 +48,9 @@ import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.ModelLoader;
-import org.apache.roller.ui.rendering.util.SiteWideCache;
+import org.apache.roller.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.ui.rendering.util.WeblogEntryCommentForm;
-import org.apache.roller.ui.rendering.util.WeblogPageCache;
+import org.apache.roller.ui.rendering.util.cache.WeblogPageCache;
 import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.util.SpamChecker;
 
