@@ -48,9 +48,9 @@
 <target name="usage" description="Print usage for key targets">
 <echo>
 Key Targets:
-                all - Build all: gen code, compile code, stage webapp directory
-              build - Same as 'all' but no code gen
-       stage-webapp - Build all Java code, stage webapp
+                all - Build all: gen wrappers/forms, compile, gen web, gen O/R mappings, stage webapp
+              build - Same as 'all' but NO code gen
+       stage-webapp - Build almost all: compile, gen web, gen O/R mappings, stage webapp
      apache-release - Build binary and source release files
               clean - Blow away all generated code and all byte code
             rebuild - Clean and build all
@@ -79,7 +79,7 @@ Key Targets:
 <target name="all" depends="generate,stage-webapp" description="Build all">
 </target>
 
-<target name="build" depends="stage-webapp" description="Compile only, no code generation">
+<target name="build" depends="build-web" description="Compile only, no code generation">
 </target>
 
 <target name="rebuild" depends="clean,all" description="Clean and build all">
@@ -298,7 +298,10 @@ Key Targets:
 <!-- Compile and jar Business Tier classes -->
 <!-- ********************************************************************* -->
 
-<target name="build-business" depends="gen-business">
+<target name="build-business-all" depends="gen-business, build-business">
+</target>
+    
+<target name="build-business">
     
     <mkdir dir="${build.generated.business}"/>
     <mkdir dir="${build.compile.business}"/>
@@ -351,6 +354,9 @@ ro.buildUser=${user.name}
 <!-- Compile and jar Presentation Tier classes -->
 <!-- ********************************************************************* -->
 
+<target name="build-web-all" depends="build-business-all, gen-web, build-web">
+</target>
+
 <target name="build-web" depends="build-business" >
 
     <mkdir dir="${build.compile.web}" />
@@ -391,7 +397,7 @@ ro.buildUser=${user.name}
 <!-- Stage web application -->
 <!-- ********************************************************************* -->
 	
-<target name="stage-webapp" depends="build-web,gen-web" description="Stage webapp, including jars">
+<target name="stage-webapp" depends="build-web-all" description="Stage webapp, including jars">
 
     <mkdir dir="${build.webapp}/WEB-INF/lib"/>
     <mkdir dir="${build.webapp}/WEB-INF/tlds"/>
