@@ -78,14 +78,6 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         
     public void saveGroup(PlanetGroupData group) 
         throws RollerException {
-        
-        // save each sub assoc first, then the group
-        /*Iterator assocs = group.getSubscriptions().iterator();
-        while (assocs.hasNext()) {
-            PlanetGroupSubscriptionAssoc assoc =
-                    (PlanetGroupSubscriptionAssoc)assocs.next();
-            strategy.store(assoc);
-        }*/
         strategy.store(group);
     }
         
@@ -127,13 +119,6 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             criteria.setMaxResults(1);
             List list = criteria.list();
             config = list.size()!=0 ? (PlanetConfigData)list.get(0) : null;
-            
-            // We inject the cache dir into the config object here to maintain
-            // compatibility with the standaline version of the aggregator.
-            if (config != null) {
-                config.setCacheDir(
-                    PlanetConfig.getProperty("planet.aggregator.cache.dir"));
-            }
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
@@ -201,9 +186,9 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             if (groupHandle != null) {
                 query = session.createQuery(
                     "select sub from org.apache.roller.planet.pojos.PlanetSubscriptionData sub "
-                    +"join sub.groupSubscriptionAssocs assoc "
+                    +"join sub.groups group "
                     +"where "
-                    +"assoc.group.handle=:groupHandle "
+                    +"group.handle=:groupHandle "
                     +"order by sub.inboundblogs desc");
                 query.setString("groupHandle", groupHandle);
             } else {
@@ -305,13 +290,13 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             
             if (group != null) {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select entry from org.apache.roller.planet.pojos.PlanetEntryData entry ");
-                sb.append("join entry.subscription.groupSubscriptionAssocs assoc ");
-                sb.append("where assoc.group=:group and entry.pubTime < :endDate ");
+                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
+                sb.append("join e.subscription.groups g ");
+                sb.append("where g=:group and e.pubTime < :endDate ");
                 if (startDate != null) {
-                    sb.append("and entry.pubTime > :startDate ");
+                    sb.append("and e.pubTime > :startDate ");
                 }
-                sb.append("order by entry.pubTime desc");
+                sb.append("order by e.pubTime desc");
                 Query query = session.createQuery(sb.toString());
                 query.setEntity("group", group);
                 query.setFirstResult(offset);
@@ -323,14 +308,14 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 ret = query.list();
             } else {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select entry from org.apache.roller.planet.pojos.PlanetEntryData entry ");
-                sb.append("join entry.subscription.groupSubscriptionAssocs assoc ");
-                sb.append("where (assoc.group.handle='external' or assoc.group.handle='all') ");
-                sb.append("and entry.pubTime < :endDate ");
+                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
+                sb.append("join e.subscription.groups g");
+                sb.append("where (g.handle='external' or g.handle='all') ");
+                sb.append("and e.pubTime < :endDate ");
                 if (startDate != null) {
-                    sb.append("and entry.pubTime > :startDate ");
+                    sb.append("and e.pubTime > :startDate ");
                 }
-                sb.append("order by entry.pubTime desc");
+                sb.append("order by e.pubTime desc");
                 Query query = session.createQuery(sb.toString());
                 query.setFirstResult(offset);
                 if (length != -1) query.setMaxResults(length);

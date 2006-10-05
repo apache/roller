@@ -229,9 +229,6 @@ public class PlanetConfigData extends PersistentObject implements Serializable
     }
 
     /** 
-     * Not longer stored in database, but we keep this field for compatibility 
-     * with standalone version of planet (which persists config in XML).
-     *
      * @hibernate.property column="cache_dir" non-null="true" unique="false"
      */
     public String getCacheDir()
@@ -240,7 +237,7 @@ public class PlanetConfigData extends PersistentObject implements Serializable
     }
     public void setCacheDir(String dir)
     {
-        if (dir != null) cacheDir = dir;
+        cacheDir = dir;
     }
 
     //-------------------------------------------------------------- implementation
