@@ -7,7 +7,7 @@
     <title>$model.weblog.name : $model.weblogPage.name</title>
     #showAutodiscoveryLinks($model.weblog)
     <style type="text/css">#includeTemplate($model.weblog "_css")</style>
-    <link rel="stylesheet" type="text/css" href='$url.themeResource("sotto", "theme.css")' />
+    <link rel="stylesheet" type="text/css" href='$url.resource("styles/default.css")' />
     </head>
 <body>
 
@@ -87,7 +87,7 @@
             <a title="This is a Roller site."
                 href="http://rollerweblogger.org"><img class="noBorder"
                 width="80" height="15" alt="[This is a Roller site]"
-                src="$url.themeResource("sotto", "images/roller-logo.gif")" /></a>
+                src="$url.resource("images/roller-logo.gif")" /></a>
         </div>
         <div class="sidebarBox">
             Theme by <a href="http://sotto.org">Rowell Sotto</a>.
