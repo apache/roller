@@ -37,7 +37,6 @@ public abstract class ParsedRequest {
     
     HttpServletRequest request = null;
     
-    private String language = null;
     private String authenticUser = null;
     
     
@@ -66,6 +65,11 @@ public abstract class ParsedRequest {
     
     public String getAuthenticUser() {
         return this.authenticUser;
+    }
+    
+    
+    public void setAuthenticUser(String authenticUser) {
+        this.authenticUser = authenticUser;
     }
     
     
