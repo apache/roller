@@ -112,7 +112,7 @@ public class PlanetEntryData extends PersistentObject
         // Play some games to get the date too
         if (romeEntry.getPublishedDate() != null) {
             setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime())); // use <pubDate>
-        } else if (entrydc != null) {
+        } else if (entrydc != null && entrydc.getDate() != null) {
             setPubTime(new Timestamp(entrydc.getDate().getTime())); // use <dc:date>
         }
         
