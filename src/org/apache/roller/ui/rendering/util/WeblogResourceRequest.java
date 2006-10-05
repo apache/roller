@@ -61,8 +61,8 @@ public class WeblogResourceRequest extends WeblogRequest {
         log.debug("parsing path "+pathInfo);
         
         // was this request bound for the resource servlet?
-        if(servlet == null || !RESOURCE_SERVLET.equals(servlet)) {
-            throw new InvalidRequestException("not a weblog resource request, "+
+        if(!isValidDestination(servlet)) {
+            throw new InvalidRequestException("invalid destination for request, "+
                     request.getRequestURL());
         }
         
@@ -97,7 +97,11 @@ public class WeblogResourceRequest extends WeblogRequest {
             log.debug("resourcePath = "+this.resourcePath);
         }
     }
-
+    
+    boolean isValidDestination(String servlet) {
+        return (servlet != null && RESOURCE_SERVLET.equals(servlet));
+    }
+    
     public String getResourcePath() {
         return resourcePath;
     }

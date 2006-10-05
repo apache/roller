@@ -157,12 +157,11 @@ public class PreviewServlet extends HttpServlet {
             // populate the rendering model
             Map initData = new HashMap();
             initData.put("request", request);
-            initData.put("pageRequest", previewRequest);
             initData.put("weblogRequest", previewRequest);
             initData.put("pageContext", pageContext);
             
-            // Load models for pages
-            String pageModels = RollerConfig.getProperty("rendering.pageModels");
+            // Load models for page previewing
+            String pageModels = RollerConfig.getProperty("rendering.previewModels");
             ModelLoader.loadModels(pageModels, model, initData, true);
             
             // Load special models for site-wide blog
