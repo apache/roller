@@ -125,13 +125,14 @@ public class URLModel implements Model {
     
     
     public String themeResource(String theme, String filePath) {
-        // starting in Roller 3.1 even theme resources go through ResourceServlet
-        return resource(filePath);
+        return getSite()+"/themes/"+theme+"/"+filePath;
     }
         
     public String themeResource(String theme, String filePath, boolean absolute) {
-        // starting in Roller 3.1 even theme resources go through ResourceServlet
-        return resource(filePath);
+        if (absolute) {
+            return getAbsoluteSite()+"/themes/"+theme+"/"+filePath;
+        }
+        return themeResource(theme, filePath);
     }
         
     public String getHome() {
