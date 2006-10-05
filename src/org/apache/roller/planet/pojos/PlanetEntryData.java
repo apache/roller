@@ -200,7 +200,7 @@ public class PlanetEntryData extends PersistentObject
         this.categoriesString = categoriesString;
     }
     /**
-     * @hibernate.many-to-one column="subscription_id" cascade="none" not-null="true"
+     * @hibernate.many-to-one column="subscription_id" cascade="save-update" not-null="true"
      */
     public PlanetSubscriptionData getSubscription() {
         return subscription;

@@ -69,10 +69,10 @@ public class PlanetManagerTest extends TestCase {
     
     protected void setUp() throws Exception {
         super.setUp();
-        RollerConfig.setPlanetCachePath("." + File.separator + "planet-cache");
+        //RollerConfig.setPlanetCachePath("." + File.separator + "planet-cache");
     }
     
-    public void _testConfigurationStorage() throws Exception {
+    public void testConfigurationStorage() throws Exception {
         
         PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
         
@@ -98,7 +98,7 @@ public class PlanetManagerTest extends TestCase {
     }
     
     
-    public void _testGroupStorage() throws Exception {
+    public void testGroupStorage() throws Exception {
         
         PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
         
@@ -200,7 +200,7 @@ public class PlanetManagerTest extends TestCase {
     }
     
     
-    public void _testSubscriptionEntryStorage() throws Exception {
+    public void testSubscriptionEntryStorage() throws Exception {
         
         PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
         
@@ -217,15 +217,17 @@ public class PlanetManagerTest extends TestCase {
             PlanetEntryData entry1 = new PlanetEntryData();
             entry1.setPermalink("test_entry1");
             entry1.setCategoriesString("test,test2");
-            entry1.setSubscription(sub);
             entry1.setPubTime(new Timestamp(System.currentTimeMillis()));
+            entry1.setSubscription(sub);
+            planet.saveEntry(entry1);
             sub.addEntry(entry1);
             
             PlanetEntryData entry2 = new PlanetEntryData();
             entry2.setPermalink("test_entry2");
             entry2.setCategoriesString("test_cat1,test_cat2,test_cat3");
-            entry2.setSubscription(sub);
             entry2.setPubTime(new Timestamp(System.currentTimeMillis()));
+            entry2.setSubscription(sub);
+            planet.saveEntry(entry2);
             sub.addEntry(entry2);
             
             // save entries
@@ -277,13 +279,17 @@ public class PlanetManagerTest extends TestCase {
     }
     
     
-    public void _testRefreshEntries() throws Exception {
+    public void testRefreshEntries() throws Exception {
         
         PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
         
         String feed_url1 = "http://rollerweblogger.org/roller/feed/entries/rss";
         
         {
+            PlanetConfigData config = planet.getConfiguration();
+            config.setCacheDir("." + File.separator + "planet-cache");
+            planet.saveConfiguration(config);
+            
             PlanetGroupData group = new PlanetGroupData();
             group.setDescription("test_group_desc");
             group.setHandle("test_handle");
@@ -320,7 +326,7 @@ public class PlanetManagerTest extends TestCase {
     }
     
     
-    public void _testAggregations() throws Exception {
+    public void testAggregations() throws Exception {
         
         try {
             PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
@@ -385,7 +391,7 @@ public class PlanetManagerTest extends TestCase {
     }
     
     
-    public void _testSubscriptionCount() throws Exception {
+    public void testSubscriptionCount() throws Exception {
         
         try {
             PlanetManager planet = RollerFactory.getRoller().getPlanetManager();

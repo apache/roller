@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.apache.roller.pojos.*;
@@ -89,19 +90,6 @@ public class PlanetSubscriptionData extends PersistentObject
     public void setId(String id)
     {
         this.id = id;
-    }
-    /** 
-     * @hibernate.bag lazy="true" inverse="true" cascade="all-delete-orphan" 
-     * @hibernate.collection-key column="subscription_id"
-     * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetEntryData"
-     */
-    public List getEntries()
-    {
-        return entries;
-    }
-    private void setEntries(List entries)
-    {
-        this.entries = entries;
     }
     /** 
      * @hibernate.property column="feed_url" non-null="true" unique="false"
@@ -236,13 +224,34 @@ public class PlanetSubscriptionData extends PersistentObject
         return this.feedUrl.hashCode();
     }
     
+    /** 
+     * @hibernate.bag lazy="true" inverse="true" cascade="all-delete-orphan" 
+     * @hibernate.collection-key column="subscription_id"
+     * @hibernate.collection-one-to-many class="org.apache.roller.planet.pojos.PlanetEntryData"
+     */
+    public List getEntries()
+    {
+        return entries;
+    }
+
+    private void setEntries(List entries)
+    {
+        this.entries = entries;
+    }
     public void addEntry(PlanetEntryData entry)
     {
+        // bi-directional one-to-many 
+        entry.setSubscription(this);
         this.getEntries().add(entry);
     }
     
     public void addEntries(Collection newEntries)
     {
+        // bi-directional one-to-many
+        for (Iterator it = newEntries.iterator(); it.hasNext();) {
+            PlanetEntryData entry = (PlanetEntryData) it.next();
+            entry.setSubscription(this);
+        }
         this.getEntries().addAll(newEntries);
     }
     
