@@ -33,7 +33,7 @@ import org.apache.roller.pojos.WebsiteData;
  * 
  * This is a fairly generic parsed request which is only trying to figure out
  * the elements of a weblog request which apply to all weblogs.  We try to 
- * determine the weblog weblogHandle, if a locale was specified, and then what extra 
+ * determine the weblogHandle, if a locale was specified, and then what extra 
  * path info remains.  The basic format is like this ...
  * 
  * /<weblogHandle>[/locale][/extra/path/info]
@@ -41,6 +41,11 @@ import org.apache.roller.pojos.WebsiteData;
  * All weblog urls require a weblogHandle, so we ensure that part of the url is
  * properly specified.  locale is always optional, so we do our best to see
  * if a locale is specified.  and path info is always optional.
+ *
+ * NOTE: this class purposely exposes a getPathInfo() method which provides the
+ * path info specified by the request that has not been parsed by this
+ * particular class.  this makes it relatively easy for subclasses to extend
+ * this class and simply pick up where it left off in the parsing process.
  */
 public class WeblogRequest extends ParsedRequest {
     
