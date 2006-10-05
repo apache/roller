@@ -39,8 +39,8 @@ import org.apache.roller.util.cache.CachedContent;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.ModelLoader;
-import org.apache.roller.ui.rendering.util.SiteWideCache;
-import org.apache.roller.ui.rendering.util.WeblogFeedCache;
+import org.apache.roller.ui.rendering.util.cache.SiteWideCache;
+import org.apache.roller.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
 
 

@@ -37,7 +37,7 @@ import org.apache.roller.pojos.Template;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
-import org.apache.roller.ui.rendering.util.PlanetCache;
+import org.apache.roller.ui.rendering.util.cache.PlanetCache;
 import org.apache.roller.ui.rendering.util.PlanetRequest;
 import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.util.cache.CachedContent;

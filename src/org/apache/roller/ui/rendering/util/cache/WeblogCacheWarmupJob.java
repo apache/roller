@@ -35,7 +35,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.Renderer;
 import org.apache.roller.ui.rendering.RendererManager;
 import org.apache.roller.ui.rendering.model.ModelLoader;
-import org.apache.roller.ui.rendering.util.WeblogFeedCache;
+import org.apache.roller.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.util.cache.CachedContent;
 

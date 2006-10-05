@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.util;
+package org.apache.roller.ui.rendering.util.cache;
 
 import java.util.Date;
 import java.util.Enumeration;
@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.ui.rendering.util.PlanetRequest;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.util.cache.ExpiringCacheEntry;

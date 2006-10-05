@@ -16,20 +16,19 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.rendering.util;
+package org.apache.roller.ui.rendering.util.cache;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
+import org.apache.roller.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.util.Utilities;
 import org.apache.roller.util.cache.Cache;
 import org.apache.roller.util.cache.CacheManager;
@@ -37,25 +36,25 @@ import org.apache.roller.util.cache.LazyExpiringCacheEntry;
 
 
 /**
- * Cache for weblog page content.
+ * Cache for weblog feed content.
  */
-public class WeblogPageCache {
+public class WeblogFeedCache {
     
-    private static Log log = LogFactory.getLog(WeblogPageCache.class);
+    private static Log log = LogFactory.getLog(WeblogFeedCache.class);
     
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
-    public static final String CACHE_ID = "cache.weblogpage";
+    public static final String CACHE_ID = "cache.weblogfeed";
     
     // keep cached content
     private boolean cacheEnabled = true;
     private Cache contentCache = null;
     
     // reference to our singleton instance
-    private static WeblogPageCache singletonInstance = new WeblogPageCache();
+    private static WeblogFeedCache singletonInstance = new WeblogFeedCache();
     
     
-    private WeblogPageCache() {
+    private WeblogFeedCache() {
         
         cacheEnabled = RollerConfig.getBooleanProperty(CACHE_ID+".enabled");
         
@@ -83,7 +82,7 @@ public class WeblogPageCache {
     }
     
     
-    public static WeblogPageCache getInstance() {
+    public static WeblogFeedCache getInstance() {
         return singletonInstance;
     }
     
@@ -145,116 +144,54 @@ public class WeblogPageCache {
     
     
     /**
-     * Generate a cache key from a parsed weblog page request.
+     * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
      *
-     * <handle>/<ctx>[/anchor][/language][/user]
-     *   or
-     * <handle>/<ctx>[/weblogPage][/date][/category][/language][/user]
-     *
+     * <handle>/<type>/<format>/[/category][/language][/excerpts]
      *
      * examples ...
      *
-     * foo/en
-     * foo/entry_anchor
-     * foo/20051110/en
-     * foo/MyCategory/en/user=myname
+     * foo/entries/rss/en
+     * foo/comments/rss/MyCategory/en
+     * foo/entries/atom/en/excerpts
      *
      */
-    public String generateKey(WeblogPageRequest pageRequest) {
+    public String generateKey(WeblogFeedRequest feedRequest) {
         
         StringBuffer key = new StringBuffer();
         
         key.append(this.CACHE_ID).append(":");
-        key.append(pageRequest.getWeblogHandle());
+        key.append(feedRequest.getWeblogHandle());
         
-        if(pageRequest.getWeblogAnchor() != null) {
-            
-            String anchor = null;
+        key.append("/").append(feedRequest.getType());
+        key.append("/").append(feedRequest.getFormat());
+        
+        if(feedRequest.getWeblogCategoryName() != null) {
+            String cat = feedRequest.getWeblogCategoryName();
             try {
-                // may contain spaces or other bad chars
-                anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), "UTF-8");
-            } catch(UnsupportedEncodingException ex) {
-                // ignored
+                cat = URLEncoder.encode(cat, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                // should never happen, utf-8 is always supported
             }
             
-            key.append("/entry/").append(anchor);
-        } else {
-            
-            if(pageRequest.getWeblogPageName() != null) {
-                key.append("/page/").append(pageRequest.getWeblogPageName());
-            }
-            
-            if(pageRequest.getWeblogDate() != null) {
-                key.append("/").append(pageRequest.getWeblogDate());
-            }
-            
-            if(pageRequest.getWeblogCategoryName() != null) {
-                String cat = null;
-                try {
-                    // may contain spaces or other bad chars
-                    cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), "UTF-8");
-                } catch(UnsupportedEncodingException ex) {
-                    // ignored
-                }
-                
-                key.append("/").append(cat);
-            }
-            
-            if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
-              Set ordered = new TreeSet(pageRequest.getTags());
-              String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);  
-              key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
-            }            
+            key.append("/").append(cat);
         }
         
-        if(pageRequest.getLocale() != null) {
-            key.append("/").append(pageRequest.getLocale());
+        if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
+          Set ordered = new TreeSet(feedRequest.getTags());
+          String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);  
+          key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
+        }        
+        
+        if(feedRequest.getLocale() != null) {
+            key.append("/").append(feedRequest.getLocale());
         }
         
-        // add page number when applicable
-        if(pageRequest.getWeblogAnchor() == null) {
-            key.append("/page=").append(pageRequest.getPageNum());
-        }
-        
-        // add login state
-        if(pageRequest.getAuthenticUser() != null) {
-            key.append("/user=").append(pageRequest.getAuthenticUser());
-        }
-        
-        // we allow for arbitrary query params for custom pages
-        if(pageRequest.getWeblogPageName() != null &&
-                pageRequest.getCustomParams().size() > 0) {
-            String queryString = paramsToString(pageRequest.getCustomParams());
-            
-            key.append("/qp=").append(queryString);
+        if(feedRequest.isExcerpts()) {
+            key.append("/excerpts");
         }
         
         return key.toString();
-    }
-    
-    
-    private String paramsToString(Map map) {
-        
-        if(map == null) {
-            return null;
-        }
-        
-        StringBuffer string = new StringBuffer();
-        
-        String key = null;
-        String[] value = null;
-        Iterator keys = map.keySet().iterator();
-        while(keys.hasNext()) {
-            key = (String) keys.next();
-            value = (String[]) map.get(key);
-            
-            if(value != null) {
-                string.append(",").append(key).append("=").append(value[0]);
-            }
-        }
-        
-        return Utilities.toBase64(string.toString().substring(1).getBytes());
     }
     
 }
