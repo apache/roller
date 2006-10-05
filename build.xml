@@ -79,7 +79,7 @@ Key Targets:
 <target name="all" depends="generate,stage-webapp" description="Build all">
 </target>
 
-<target name="build" depends="build-web" description="Compile only, no code generation">
+<target name="build" depends="copy-webapp" description="Compile code and copy files, no code generation">
 </target>
 
 <target name="rebuild" depends="clean,all" description="Clean and build all">
@@ -123,6 +123,9 @@ Key Targets:
         <hibernate validatexml="true" version="3.0"/>
         
     </hibernatedoclet>
+    
+    <!-- copy database related files -->
+    <antcall target="stage-dbscripts" />
     
     <!-- allow for custom generation work -->
     &custom-gen-business;
@@ -354,9 +357,6 @@ ro.buildUser=${user.name}
 <!-- Compile and jar Presentation Tier classes -->
 <!-- ********************************************************************* -->
 
-<target name="build-web-all" depends="build-business-all, gen-web, build-web">
-</target>
-
 <target name="build-web" depends="build-business" >
 
     <mkdir dir="${build.compile.web}" />
@@ -397,7 +397,10 @@ ro.buildUser=${user.name}
 <!-- Stage web application -->
 <!-- ********************************************************************* -->
 	
-<target name="stage-webapp" depends="build-web-all" description="Stage webapp, including jars">
+<target name="stage-webapp" depends="build-business-all, gen-web, build-web, copy-webapp" description="Stage webapp, including jars">
+</target>
+    
+<target name="copy-webapp" depends="build-web" description="Stage webapp, including jars">
 
     <mkdir dir="${build.webapp}/WEB-INF/lib"/>
     <mkdir dir="${build.webapp}/WEB-INF/tlds"/>
@@ -443,9 +446,6 @@ ro.buildUser=${user.name}
             <exclude name="**/*~"/>
         </fileset>
     </copy>
-    
-    <!-- copy database related files -->
-    <antcall target="stage-dbscripts" />
     
     <!-- Copy docs to staging -->
     <copy todir="${build.webapp}/roller-ui/docs">
