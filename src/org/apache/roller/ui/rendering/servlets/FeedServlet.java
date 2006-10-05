@@ -195,9 +195,8 @@ public class FeedServlet extends HttpServlet {
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
 
-            // TODO: re-enable custom models once feeds are customizable
             // Load weblog custom models
-            //ModelLoader.loadCustomModels(weblog, model, initData);
+            ModelLoader.loadCustomModels(weblog, model, initData);
 
         } catch (RollerException ex) {
             log.error("ERROR loading model for page", ex);
