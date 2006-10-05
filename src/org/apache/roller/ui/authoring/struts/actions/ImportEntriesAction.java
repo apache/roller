@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
-import org.apache.roller.RollerException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerRequest;
@@ -44,6 +43,7 @@ import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.ImportEntriesForm;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.model.FileManager;
+import org.apache.roller.pojos.WeblogResource;
 
 /**
  * TODO: revisit this class once Atom 1.0 support comes to Rome
@@ -84,7 +84,7 @@ public class ImportEntriesAction extends DispatchAction
 
                     // load selected file
                     FileManager fMgr = RollerFactory.getRoller().getFileManager();
-                    File f = fMgr.getFile(website.getHandle(), form.getImportFileName());
+                    WeblogResource f = fMgr.getFile(website, form.getImportFileName());
 
                     //ArchiveParser archiveParser =
                         //new ArchiveParser(RollerFactory.getRoller(), rreq.getWebsite(), f);

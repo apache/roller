@@ -44,6 +44,9 @@ public class UploadFileForm
     
     protected String[] deleted;
     
+    protected String path = null;
+    
+    
     public UploadFileForm() {
         super();
     }
@@ -100,5 +103,13 @@ public class UploadFileForm
     }
     
     public String[] getDeleteFiles() { return deleted; }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 }
 

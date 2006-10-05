@@ -358,7 +358,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             RollerMessages msgs = new RollerMessages();
             
             // Try to save file
-            fmgr.saveFile(website.getHandle(), name, type, bits.length, new ByteArrayInputStream(bits));
+            fmgr.saveFile(website, name, type, bits.length, new ByteArrayInputStream(bits));
             
             String fileLink = URLUtilities.getWeblogResourceURL(website, name, true);
             

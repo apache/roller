@@ -241,9 +241,9 @@ public class ThemeManagerImpl implements ThemeManager {
                 
                 try {
                     if(resourceFile.isDirectory()) {
-                        fileMgr.createDirectory(website.getHandle(), path);
+                        fileMgr.createDirectory(website, path);
                     } else {
-                        fileMgr.saveFile(website.getHandle(), path, "text/plain", 
+                        fileMgr.saveFile(website, path, "text/plain", 
                                 resourceFile.length(), new FileInputStream(resourceFile));
                     }
                 } catch (Exception ex) {

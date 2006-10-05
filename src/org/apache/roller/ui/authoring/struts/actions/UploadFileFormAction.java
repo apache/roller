@@ -18,10 +18,9 @@
 
 package org.apache.roller.ui.authoring.struts.actions;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -43,9 +42,9 @@ import org.apache.struts.upload.FormFile;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.FileManager;
-import org.apache.roller.model.PropertiesManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
+import org.apache.roller.pojos.WeblogResource;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RollerContext;
@@ -82,12 +81,17 @@ public final class UploadFileFormAction extends DispatchAction {
         WebsiteData website = getWebsite(request);
         
         if (rses.isUserAuthorizedToAuthor(website)) {
+            // this is the path in the uploads area that is being used
+            UploadFileForm uploadForm = (UploadFileForm) actionForm;
+            String path = uploadForm.getPath();
+            
             UploadFilePageModel pageModel = new UploadFilePageModel(
-                    request, response, mapping, website);
+                    request, response, mapping, website, path);
             pageModel.setWebsite(website);
             request.setAttribute("model", pageModel);
             fwd = mapping.findForward("uploadFiles.page");
         }
+        
         return fwd;
     }
     
@@ -115,6 +119,7 @@ public final class UploadFileFormAction extends DispatchAction {
             ActionMessages messages = new ActionMessages();
             ActionErrors errors = new ActionErrors();
             UploadFileForm theForm = (UploadFileForm)actionForm;
+            String path = theForm.getPath();
             if (theForm.getUploadedFiles().length > 0) {
                 ServletContext app = servlet.getServletConfig().getServletContext();
                 
@@ -149,11 +154,14 @@ public final class UploadFileFormAction extends DispatchAction {
                             // disallow sneaky null terminated strings
                             fileName = fileName.substring(0, terminated).trim();
                         }
+                        if(path != null) {
+                            fileName = path + "/" + fileName;
+                        }
                         
                         fileSize = files[i].getFileSize();
                         
                         InputStream stream = files[i].getInputStream();
-                        fmgr.saveFile(website.getHandle(), fileName,
+                        fmgr.saveFile(website, fileName,
                                 files[i].getContentType(), fileSize, stream);
                         lastUploads.add(fileName);
 
@@ -168,12 +176,10 @@ public final class UploadFileFormAction extends DispatchAction {
             }
             
             UploadFilePageModel pageModel = new UploadFilePageModel(
-                    request, response, mapping, website, lastUploads);
+                    request, response, mapping, website, path, lastUploads);
             request.setAttribute("model", pageModel);
             pageModel.setWebsite(website);
             
-            RollerContext rctx = RollerContext.getRollerContext();
-            String resourcesBaseURL = URLUtilities.getWeblogResourceURL(website, "", true);
             Iterator uploads = lastUploads.iterator();
             if (uploads.hasNext()) {
                 messages.add(ActionMessages.GLOBAL_MESSAGE,
@@ -228,7 +234,7 @@ public final class UploadFileFormAction extends DispatchAction {
                     || deleteFiles[i].indexOf("..") != -1) {
                         // ignore absolute paths, or paths that contiain '..'
                     } else {
-                        fmgr.deleteFile(website.getHandle(), deleteFiles[i]);
+                        fmgr.deleteFile(website, deleteFiles[i]);
                         count++;
                     }
                 }
@@ -242,8 +248,9 @@ public final class UploadFileFormAction extends DispatchAction {
                     new ActionMessage("uploadFiles.deletedFiles", new Integer(count)));
             saveMessages(request, messages);
             
+            String path = theForm.getPath();
             UploadFilePageModel pageModel = new UploadFilePageModel(
-                    request, response, mapping, website);
+                    request, response, mapping, website, path);
             pageModel.setWebsite(website);
             request.setAttribute("model", pageModel);
         }
@@ -256,7 +263,7 @@ public final class UploadFileFormAction extends DispatchAction {
      * request params don't come accross in a file-upload post so we have to
      * stash the website handle in the session.
      */
-    public static WebsiteData getWebsite(HttpServletRequest request) throws RollerException {
+    private WebsiteData getWebsite(HttpServletRequest request) throws RollerException {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         WebsiteData website = rreq.getWebsite();
         if (website != null) {
@@ -275,6 +282,9 @@ public final class UploadFileFormAction extends DispatchAction {
         private String resourcesBaseURL = null;
         private boolean uploadEnabled = true;
         private boolean overQuota = false;
+        private boolean showingRoot = true;
+        private String path = null;
+        private String parentPath = null;
         private String maxDirMB = null; // in megabytes
         private String maxFileMB = null; // in megabytes
         private List files = null;
@@ -285,8 +295,9 @@ public final class UploadFileFormAction extends DispatchAction {
                 HttpServletRequest req,
                 HttpServletResponse res,
                 ActionMapping mapping,
-                WebsiteData weblog) throws RollerException {
-            this(req, res, mapping, weblog, null);
+                WebsiteData weblog,
+                String uploadsPath) throws RollerException {
+            this(req, res, mapping, weblog, uploadsPath, null);
         }
         
         public UploadFilePageModel(
@@ -294,31 +305,39 @@ public final class UploadFileFormAction extends DispatchAction {
                 HttpServletResponse res,
                 ActionMapping mapping,
                 WebsiteData weblog,
+                String uploadsPath,
                 List lastUploads) throws RollerException {
             
             super("uploadFiles.title", req, res, mapping);
             
-            Roller roller = RollerFactory.getRoller();
-            PropertiesManager pmgr = roller.getPropertiesManager();
-            FileManager fmgr = roller.getFileManager();
+            FileManager fmgr = RollerFactory.getRoller().getFileManager();
+            
+            path = uploadsPath;
+            
+            // are we showing the root of the weblog's upload area?
+            // are we in a subdirectory which has a parent path?
+            if(uploadsPath != null && !uploadsPath.trim().equals("")) {
+                showingRoot = false;
+                if(uploadsPath.indexOf("/") != -1) {
+                    parentPath = uploadsPath.substring(0, uploadsPath.lastIndexOf("/"));
+                }
+            }
             
             resourcesBaseURL = URLUtilities.getWeblogResourceURL(weblog, "", false);
             
-            RollerRequest rreq = RollerRequest.getRollerRequest(req);
-            WebsiteData website = UploadFileFormAction.getWebsite(req);
             maxDirMB = RollerRuntimeConfig.getProperty("uploads.dir.maxsize");
             maxFileMB = RollerRuntimeConfig.getProperty("uploads.file.maxsize");
             
-            overQuota = fmgr.overQuota(weblog.getHandle());
+            overQuota = fmgr.overQuota(weblog);
             uploadEnabled = RollerRuntimeConfig.getBooleanProperty("uploads.enabled");
             
-            files = new ArrayList();
-            File[] rawFiles = fmgr.getFiles(weblog.getHandle(), null);
-            for (int i=0; i<rawFiles.length; i++) {
-                files.add(new FileBean(rawFiles[i]));
-                totalSize += rawFiles[i].length();
+            WeblogResource[] resources = fmgr.getFiles(weblog, uploadsPath);
+            for (int i=0; i<resources.length; i++) {
+                totalSize += resources[i].getLength();
             }
-            Collections.sort(files, new FileBeanNameComparator());
+            
+            files = Arrays.asList(resources);
+            Collections.sort(files, new WeblogResourceComparator());
         }
         
         public boolean isUploadEnabled() {
@@ -345,33 +364,51 @@ public final class UploadFileFormAction extends DispatchAction {
         public List getLastUploads() {
             return lastUploads;
         }
-    }
-    
-    
-    /**
-     * If java.io.File followed bean conventions we wouldn't need this. (perhaps
-     * we shouldn't be using files directly here in the presentation layer)
-     */
-    public class FileBean {
-        private File file;
-        public FileBean(File file) {
-            this.file = file;
+        public String getParentPath() {
+            return parentPath;
         }
-        public String getName() { return file.getName(); }
-        public long getLength() { return file.length(); }
+        public boolean isShowingRoot() {
+            return showingRoot;
+        }
+
+        public String getPath() {
+            return path;
+        }
     }
     
     
-    public class FileBeanNameComparator implements Comparator {
+    public class WeblogResourceComparator implements Comparator {
         public int compare(Object o1, Object o2) {
-            FileBean fb1 = (FileBean)o1;
-            FileBean fb2 = (FileBean)o2;
-            return fb1.getName().compareTo(fb2.getName());
+            WeblogResource r1 = (WeblogResource)o1;
+            WeblogResource r2 = (WeblogResource)o2;
+            
+            // consider directories so they go to the top of the list
+            if(r1.isDirectory() && r2.isDirectory()) {
+                // if we have 2 directories then just go by name
+                return r1.getPath().compareTo(r2.getPath());
+            } else if(r1.isDirectory()) {
+                // directories go before files
+                return -1;
+            } else if(r2.isDirectory()) {
+                // directories go before files
+                return 1;
+            } else {
+                // if we have 2 files then just go by name
+                return r1.getPath().compareTo(r2.getPath());
+            }
         }
         public boolean equals(Object o1, Object o2) {
-            FileBean fb1 = (FileBean)o1;
-            FileBean fb2 = (FileBean)o2;
-            return fb1.getName().equals(fb2.getName());
+            WeblogResource r1 = (WeblogResource)o1;
+            WeblogResource r2 = (WeblogResource)o2;
+            
+            // need to be same type to be equals, i.e both files or directories
+            if((r1.isDirectory() && !r2.isDirectory()) ||
+                    (r1.isFile() && !r2.isFile())) {
+                return false;
+            }
+            
+            // after that it's just a matter of comparing paths
+            return r1.getPath().equals(r2.getPath());
         }
     }
     

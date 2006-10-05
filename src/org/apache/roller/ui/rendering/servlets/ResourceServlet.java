@@ -20,7 +20,6 @@ package org.apache.roller.ui.rendering.servlets;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,11 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.ThemeNotFoundException;
 import org.apache.roller.model.FileManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ThemeManager;
 import org.apache.roller.pojos.Theme;
+import org.apache.roller.pojos.WeblogResource;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.rendering.util.ModDateHeaderUtil;
 import org.apache.roller.ui.rendering.util.WeblogResourceRequest;
@@ -101,14 +100,17 @@ public class ResourceServlet extends HttpServlet {
         
         log.debug("Resource requested ["+resourceRequest.getResourcePath()+"]");
         
-        File resource = null;
+        long resourceLastMod = 0;
+        InputStream resourceStream = null;
         
         // first see if resource comes from weblog's shared theme
         if(!Theme.CUSTOM.equals(weblog.getEditorTheme())) {
             try {
                 ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
                 Theme weblogTheme = themeMgr.getTheme(weblog.getEditorTheme());
-                resource = weblogTheme.getResource(resourceRequest.getResourcePath());
+                File resource = weblogTheme.getResource(resourceRequest.getResourcePath());
+                resourceLastMod = resource.lastModified();
+                resourceStream = new FileInputStream(resource);
             } catch (Exception ex) {
                 // hmmm, some kind of error getting theme.  that's an error.
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -117,10 +119,13 @@ public class ResourceServlet extends HttpServlet {
         }
         
         // if not from theme then see if resource is in weblog's upload dir
-        if(resource == null) {
+        if(resourceStream == null) {
             try {
                 FileManager fileMgr = RollerFactory.getRoller().getFileManager();
-                resource = fileMgr.getFile(weblog.getHandle(), resourceRequest.getResourcePath());
+                WeblogResource resource = fileMgr.getFile(weblog, 
+                        resourceRequest.getResourcePath());
+                resourceLastMod = resource.getLastModified();
+                resourceStream = resource.getInputStream();
             } catch (Exception ex) {
                 // still not found? then we don't have it, 404.
                 log.debug("Unable to get resource", ex);
@@ -129,35 +134,31 @@ public class ResourceServlet extends HttpServlet {
             }
         }
         
-        log.debug("Real path is ["+resource.getAbsolutePath()+"]");
-        
         // Respond with 304 Not Modified if it is not modified.
-        if (ModDateHeaderUtil.respondIfNotModified(request, response, resource.lastModified())) {
+        if (ModDateHeaderUtil.respondIfNotModified(request, response, resourceLastMod)) {
             return;
         } else {
             // set last-modified date
-            ModDateHeaderUtil.setLastModifiedHeader(response, resource.lastModified());
+            ModDateHeaderUtil.setLastModifiedHeader(response, resourceLastMod);
         }
         
 
         // set the content type based on whatever is in our web.xml mime defs
-        response.setContentType(this.context.getMimeType(resource.getAbsolutePath()));
+        response.setContentType(this.context.getMimeType(resourceRequest.getResourcePath()));
         
         OutputStream out = null;
-        InputStream resource_file = null;
         try {
             // ok, lets serve up the file
             byte[] buf = new byte[8192];
             int length = 0;
             out = response.getOutputStream();
-            resource_file = new FileInputStream(resource);
-            while((length = resource_file.read(buf)) > 0) {
+            while((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
             
             // cleanup
             out.close();
-            resource_file.close();
+            resourceStream.close();
             
         } catch (Exception ex) {
             log.error("Error writing resource file", ex);

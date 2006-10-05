@@ -66,6 +66,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.RollerPropertyData;
+import org.apache.roller.pojos.WeblogResource;
 import org.apache.roller.util.URLUtilities;
 import org.apache.roller.util.cache.CacheManager;
 
@@ -360,7 +361,7 @@ public class RollerAtomHandler implements AtomHandler {
                     "ERROR: cannot find specified weblog");
             }
             FileManager fmgr = mRoller.getFileManager();
-            File[] files = fmgr.getFiles(website.getHandle(), null);
+            WeblogResource[] files = fmgr.getFiles(website, null);
                         
             if (canView(website)) {
                 Feed feed = new Feed();
@@ -376,10 +377,10 @@ public class RollerAtomHandler implements AtomHandler {
                 
                 SortedSet sortedSet = new TreeSet(new Comparator() {
                     public int compare(Object o1, Object o2) {
-                        File f1 = (File)o1;
-                        File f2 = (File)o2;
-                        if (f1.lastModified() < f2.lastModified()) return 1;
-                        else if (f1.lastModified() == f2.lastModified()) return 0;
+                        WeblogResource f1 = (WeblogResource)o1;
+                        WeblogResource f2 = (WeblogResource)o2;
+                        if (f1.getLastModified() < f2.getLastModified()) return 1;
+                        else if (f1.getLastModified() == f2.getLastModified()) return 0;
                         else return -1;
                     }
                     public boolean equals(Object obj) {
@@ -393,7 +394,7 @@ public class RollerAtomHandler implements AtomHandler {
                     }
                 }
                 int count = 0;
-                File[] sortedArray = (File[])sortedSet.toArray(new File[sortedSet.size()]);
+                WeblogResource[] sortedArray = (WeblogResource[])sortedSet.toArray(new WeblogResource[sortedSet.size()]);
                 for (int i=start; i<(start + max) && i<(sortedArray.length); i++) {
                     Entry entry = createAtomResourceEntry(website, sortedArray[i]);
                     atomEntries.add(entry);
@@ -503,13 +504,14 @@ public class RollerAtomHandler implements AtomHandler {
                     WebsiteData website = 
                         mRoller.getUserManager().getWebsiteByHandle(handle);
                     
-                    // TODO: this may have broken with 3.0, but i don't know
+                    // TODO: this must have broken with 3.0, but i don't know
                     // how it's supposed to work so i can't really fix it
                     // it's unlikely this was working properly before because
-                    // it probably should have been using FileManager.getUploadsDir()
-                    File resource = 
-                        new File("/resources" + File.separator + fileName);
-                    return createAtomResourceEntry(website, resource);
+                    // it was using an invalid path
+//                    File resource = 
+//                        new File("/resources" + File.separator + fileName);
+//                    return createAtomResourceEntry(website, resource);
+                    return null;
                 }
             }
             throw new AtomNotFoundException(
@@ -594,7 +596,7 @@ public class RollerAtomHandler implements AtomHandler {
                                 fileName = fileName.substring(0, pathInfo[2].length() - ".media-link".length());
                             }
                             FileManager fmgr = mRoller.getFileManager();
-                            fmgr.deleteFile(website.getHandle(), fileName);
+                            fmgr.deleteFile(website, fileName);
                         } catch (Exception e) {
                             String msg = "ERROR in atom.deleteResource";
                             mLogger.error(msg,e);
@@ -642,10 +644,10 @@ public class RollerAtomHandler implements AtomHandler {
 
                     // Try saving file
                     FileInputStream fis = new FileInputStream(tempFile);
-                    fmgr.saveFile(website.getHandle(), fileName, contentType, tempFile.length(), fis);
+                    fmgr.saveFile(website, fileName, contentType, tempFile.length(), fis);
                     fis.close();
                     
-                    File resource = fmgr.getFile(website.getHandle(), fileName);
+                    WeblogResource resource = fmgr.getFile(website, fileName);
                     return createAtomResourceEntry(website, resource);
 
                 } catch (IOException e) {
@@ -985,17 +987,17 @@ public class RollerAtomHandler implements AtomHandler {
         return atomEntry;
     }
     
-    private Entry createAtomResourceEntry(WebsiteData website, File file) {
+    private Entry createAtomResourceEntry(WebsiteData website, WeblogResource file) {
         String absUrl = RollerRuntimeConfig.getAbsoluteContextURL();
         String editURI = 
                 URLUtilities.getAtomProtocolURL(true)+"/"+website.getHandle()
-                + "/resource/" + file.getName() + ".media-link";
+                + "/resource/" + file.getPath() + ".media-link";
         String editMediaURI = 
                 URLUtilities.getAtomProtocolURL(true)+"/"+ website.getHandle()
-                + "/resource/" + file.getName();
+                + "/resource/" + file.getPath();
         String viewURI = absUrl
                 + "/resources/" + website.getHandle()
-                + "/" + file.getName();
+                + "/" + file.getPath();
         
         FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
         // TODO: figure out why PNG is missing from Java MIME types
@@ -1004,12 +1006,12 @@ public class RollerAtomHandler implements AtomHandler {
                 ((MimetypesFileTypeMap)map).addMimeTypes("image/png png PNG");
             } catch (Exception ignored) {}
         }
-        String contentType = map.getContentType(file);
+        String contentType = map.getContentType(file.getName());
         
         Entry entry = new Entry();
         entry.setId(editMediaURI);
         entry.setTitle(file.getName());
-        entry.setUpdated(new Date(file.lastModified()));
+        entry.setUpdated(new Date(file.getLastModified()));
         
         List otherlinks = new ArrayList();        
         entry.setOtherLinks(otherlinks);
