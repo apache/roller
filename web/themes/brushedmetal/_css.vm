@@ -210,7 +210,7 @@ Brushedmetal theme styles
 			w\idth: 240px;
 			margin: 0;
 			margin-right: 5px;
-			background: url($url.themeResource("brushedmetal", "images/metalLine.gif")) top right repeat-y;
+			background: url($url.resource("images/metalLine.gif")) top right repeat-y;
 			padding: 0px 25px 0px 0px;
 			}
 		#content {
@@ -224,10 +224,10 @@ Brushedmetal theme styles
 			font-family:Geneva, Arial, Helvetica, san-serif;
 			line-height:140%;
 			color:#FFF;
-			background:#848484 url($url.themeResource("brushedmetal", "images/metalBGBG.jpg")) top left repeat-x;
+			background:#848484 url($url.resource("images/metalBGBG.jpg")) top left repeat-x;
 			}
 		#block {
-			background: url($url.themeResource("brushedmetal", "images/metalBG.jpg")) top left no-repeat;
+			background: url($url.resource("images/metalBG.jpg")) top left no-repeat;
 			}
 		A {
 			text-decoration: underline;
