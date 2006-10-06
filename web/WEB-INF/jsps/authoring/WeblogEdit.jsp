@@ -211,7 +211,7 @@ function publish() {
     <div style="width: 100%;"> <%-- need this div to control text-area size in IE 6 --%>
        <%-- include edit page --%>
        <div >
-            <jsp:include page="<%= "/roller-ui/authoring/editors/"+model.getEditorPage() %>" />
+            <jsp:include page='<%= "/roller-ui/authoring/editors/"+model.getEditorPage() %>' />
        </div>
      </div>
     </c:if>
