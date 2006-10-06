@@ -17,14 +17,6 @@
                   </div>
                </td>	
                <td class="menuTabSeparator"></td>
-               <td class="menuTabUnselected">
-                  <div class="menu-tr">
-                     <div class="menu-tl">
-                        &nbsp;&nbsp;<a href="$url.page("tags")">Site Tags</a>&nbsp;&nbsp; 
-                     </div>
-                  </div>
-               </td>	                                  
-               <td class="menuTabSeparator"></td>
                <td class="menuTabSelected">
                   <div class="menu-tr">
                      <div class="menu-tl">

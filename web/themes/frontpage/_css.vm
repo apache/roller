@@ -452,4 +452,18 @@ td.menuTabUnselected {
     padding: 0px 1px 0px 1px; /* TRBL */
 }
 
+#tagbin a {
+    	line-height: 100% ! important; 
+}
+
+#tagbin a:hover { 
+    color: #e62c00 ! important; 
+}
+
+a.s5, a.s5:visited { font-size: 135%; color: #ad3537 ! important; }
+a.s4, a.s4:visited { font-size: 125%; color: #777777 ! important; }
+a.s3, a.s3:visited { font-size: 120%; color: #777777 ! important; }
+a.s2, a.s2:visited { font-size: 115%; color: #777777 ! important; }
+a.s1, a.s1:visited { font-size: 110%; color: #777777 ! important; }
+
 /* end css */

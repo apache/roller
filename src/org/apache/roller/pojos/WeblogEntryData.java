@@ -43,6 +43,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
+import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogEntryPlugin;
@@ -611,12 +612,12 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @hibernate.collection-key column="entryid" 
      * @hibernate.collection-one-to-many class="org.apache.roller.pojos.WeblogEntryTagData"
      */
-     public Set getTagSet()
+     public Set getTags()
      {
          return tagSet;
      }
      
-     private void setTagSet(Set tagSet) throws RollerException
+     private void setTags(Set tagSet) throws RollerException
      {
          this.tagSet = tagSet;
          this.removedTags = new HashSet();
@@ -713,9 +714,9 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     /**
      * @roller.wrapPojoMethod type="simple"
      */
-    public String getTags() {
+    public String getTagsAsString() {
         StringBuffer sb = new StringBuffer();
-        for (Iterator it = getTagSet().iterator(); it.hasNext();) {
+        for (Iterator it = getTags().iterator(); it.hasNext();) {
             sb.append(((WeblogEntryTagData) it.next()).getName()).append(" ");
         }
         if (sb.length() > 0) {
@@ -725,7 +726,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         return sb.toString();
     }
 
-    public void setTags(String tags) throws RollerException {
+    public void setTagsAsString(String tags) throws RollerException {
         if (tags == null) {
             tagSet.clear();
             return;
@@ -739,7 +740,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         }
 
         updateTags(Arrays.asList(tagsarr));
-    }
+    }  
 
     // ------------------------------------------------------------------------
     

@@ -20,31 +20,34 @@
  */
 package org.apache.roller.pojos;
 
+import java.sql.Timestamp;
+
 import org.apache.roller.util.PojoUtil;
 
 
 /**
  * @author Elias Torres
  *
- * @ejb:bean name="WeblogTagAggregateData"
+ * @ejb:bean name="WeblogEntryTagAggregateData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="weblogtagagg"
+ * @hibernate.class lazy="false" table="weblogentrytagagg"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogTagAggregateData extends PersistentObject
+public class WeblogEntryTagAggregateData extends PersistentObject
     implements java.io.Serializable
 {
     private static final long serialVersionUID = -4343500268898106982L;
     private java.lang.String id = null;
     private java.lang.String name = null;    
     private WebsiteData website = null;
+    private Timestamp lastUsed = null;
     private int count = 0;
 
-    public WeblogTagAggregateData()
+    public WeblogEntryTagAggregateData()
     {
     }
 
-    public WeblogTagAggregateData(java.lang.String id,
+    public WeblogEntryTagAggregateData(java.lang.String id,
                        WebsiteData website,
                        java.lang.String name, int count)
     {
@@ -54,7 +57,7 @@ public class WeblogTagAggregateData extends PersistentObject
         this.count = count;
     }
 
-    public WeblogTagAggregateData(WeblogTagAggregateData otherData)
+    public WeblogEntryTagAggregateData(WeblogEntryTagAggregateData otherData)
     {
         setData(otherData);
     }
@@ -115,6 +118,21 @@ public class WeblogTagAggregateData extends PersistentObject
    {
        return this.count;
    }
+   
+   /**
+   *
+   * @roller.wrapPojoMethod type="simple"
+   * @ejb:persistent-field
+   * @hibernate.property column="lastused" non-null="true" unique="false"
+   */   
+   public Timestamp getLastUsed() {
+       return this.lastUsed;
+   }
+   
+   /** @ejb:persistent-field */
+   public void setLastUsed(Timestamp lastUsed) {
+       this.lastUsed = lastUsed;
+   }   
 
    /** @ejb:persistent-field */
    public void setCount(int count)
@@ -128,15 +146,16 @@ public class WeblogTagAggregateData extends PersistentObject
      str.append("id=" + id + " " +
              "website=" + website +
              "name=" + name + " " +
-             "count=" + count);
+             "count=" + count + " " +
+             "lastUsed=" + lastUsed);
      str.append('}');
      
      return (str.toString());
  }
  
    public boolean equals(Object pOther) {
-       if (pOther instanceof WeblogTagAggregateData) {
-           WeblogTagAggregateData lTest = (WeblogTagAggregateData) pOther;
+       if (pOther instanceof WeblogEntryTagAggregateData) {
+           WeblogEntryTagAggregateData lTest = (WeblogEntryTagAggregateData) pOther;
            boolean lEquals = true;
            
            lEquals = PojoUtil.equals(lEquals, this.id, lTest.getId());
@@ -164,11 +183,12 @@ public class WeblogTagAggregateData extends PersistentObject
      */
     public void setData(org.apache.roller.pojos.PersistentObject otherData)
     {
-        WeblogTagAggregateData data = (WeblogTagAggregateData) otherData;
+        WeblogEntryTagAggregateData data = (WeblogEntryTagAggregateData) otherData;
         this.id = data.getId();
         this.website = data.getWebsite();
         this.name = data.getName();
         this.count = data.getCount();
+        this.lastUsed = data.getLastUsed();
     }
 
 }

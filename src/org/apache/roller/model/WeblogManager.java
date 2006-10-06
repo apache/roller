@@ -385,15 +385,25 @@ public interface WeblogManager {
     /**
      * Get list of TagStat. There's no offset/length params just a limit.
      * @param website       Weblog or null to get for all weblogs.
-     * @param sortBy        Sort by either 'name' or 'count' (null for name)
+     * @param startDate     Date or null of the most recent time a tag was used.
+     * @param limit         Max TagStats to return (or -1 for no limit)
+     * @return
+     * @throws RollerException
+     */
+    public List getPopularTags(WebsiteData website, Date startDate, int limit)
+            throws RollerException;
+    
+    /**
+     * Get list of TagStat. There's no offset/length params just a limit.
+     * @param website       Weblog or null to get for all weblogs.
+     * @param sortBy        Sort by either 'name' or 'count' (null for name) 
      * @param startsWith    Prefix for tags to be returned (null or a string of length > 0)
      * @param limit         Max TagStats to return (or -1 for no limit)
      * @return
      * @throws RollerException
      */
-    public List getTags(WebsiteData website, String sortBy, 
-            String startsWith, int limit)
-            throws RollerException;
+    public List getTags(WebsiteData website, String sortBy, String startsWith, int limit)
+            throws RollerException;    
     
     /**
      * This method maintains the tag aggregate table up-to-date with total counts. More

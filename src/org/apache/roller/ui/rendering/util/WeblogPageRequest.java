@@ -145,6 +145,8 @@ public class WeblogPageRequest extends WeblogRequest {
 
                 } else if("tags".equals(this.context)) {
                   this.tags = Arrays.asList(StringUtils.split(pathElements[1],"+"));
+                  if(this.tags.size() > 3)
+                      throw new InvalidRequestException("max number of tags allowed is 3, " + request.getRequestURL());
                                       
                 } else {
                     throw new InvalidRequestException("context "+this.context+
@@ -210,10 +212,6 @@ public class WeblogPageRequest extends WeblogRequest {
                         this.weblogCategoryName = "/"+this.weblogCategoryName;
                     }
                 }
-                
-                if(request.getParameter("tags") != null) {
-                  this.tags = Arrays.asList(StringUtils.split(URLUtilities.decode(request.getParameter("tags")),"+"));
-                }
             }
         }
         
@@ -236,6 +234,10 @@ public class WeblogPageRequest extends WeblogRequest {
         customParams.remove("cat");
         customParams.remove("page");
         customParams.remove("tags");
+        
+        if(this.tags.size() > 0 && this.weblogCategoryName != null) {
+            throw new InvalidRequestException("please specify either category or tags but not both, " + request.getRequestURL());            
+        }        
             
         if(log.isDebugEnabled()) {
             log.debug("context = "+this.context);

@@ -794,39 +794,19 @@ Shows a Tag cloud for a given set of tags
 *#
 #macro(showTagCloud $tags)
 
-  <center>
-					  #set ( $minSize = 12 )
-					  #set ( $maxSize = 28 )
-					
-					  #set ( $max = 0 )
-					  #foreach ( $tag in $tags )
-					    #if ( $tag.count > $max )
-					      #set ( $max = $tag.count )
-					    #end
-					  #end
-					
-					  #set ( $step = $max / ($maxSize - $minSize) )
-					  
-					  #set ( $step = $max / ($maxSize - $minSize) )
-  #if ( $step < 1 )
-  	  #set ( $step = 1 )
+  #foreach ($tag in $tags)
+	<a class="tag s${tag.intensity}" href="$url.tag($tag.name)" title="$tag.count">$tag.name</a> 
   #end
-					  #foreach ($tag in $tags)
-					    #set( $size = $minSize + ($tag.count / $step)  )
-					    <span class="tag" style="font-size:${size}px"><a href="$url.tag($tag.name)" title="$tag.count">$tag.name</a></span>
-					  #end
-				  </center>
-
+			
 #end
 
 #macro(showEntryTags $entry)
   
-  #set ( $tags = $entry.tagSet )
-  Tags:&nbsp;
+  #set ( $tags = $entry.tags )
   #foreach($tag in $tags)
 	    <a href="$url.tag($tag.name)" title="$tag.count" rel="tag">$tag.name</a>&nbsp;
   #end
-
+  
 #end
 
 
