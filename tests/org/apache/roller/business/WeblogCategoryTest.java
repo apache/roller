@@ -292,5 +292,71 @@ public class WeblogCategoryTest extends TestCase {
         List entries = c1.retrieveWeblogEntries(true);
         assertEquals(3, entries.size());
     }
+    
+    public void testMoveWeblogCategoryContents() throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        // add some categories and entries to test with
+        WeblogCategoryData dest = new WeblogCategoryData();
+        dest.setName("c0");
+        dest.setParent(mgr.getRootWeblogCategory(testWeblog));
+        dest.setWebsite(testWeblog);
+        mgr.saveWeblogCategory(dest);
+        
+        WeblogCategoryData c1 = new WeblogCategoryData();
+        c1.setName("c1");
+        c1.setParent(mgr.getRootWeblogCategory(testWeblog));
+        c1.setWebsite(testWeblog);
+        mgr.saveWeblogCategory(c1);
+        
+        WeblogCategoryData c2 = new WeblogCategoryData();
+        c2.setName("c2");
+        c2.setParent(c1);
+        c2.setWebsite(testWeblog);
+        mgr.saveWeblogCategory(c2);
+        
+        WeblogCategoryData c3 = new WeblogCategoryData();
+        c3.setName("c3");
+        c3.setParent(c2);
+        c3.setWebsite(testWeblog);
+        mgr.saveWeblogCategory(c3);
+        
+        TestUtils.endSession(true);
+        
+        c1 = mgr.getWeblogCategory(c1.getId());
+        c2 = mgr.getWeblogCategory(c2.getId());
+        c3 = mgr.getWeblogCategory(c3.getId());
+        dest = mgr.getWeblogCategory(dest.getId());
+        
+        WeblogEntryData e1 = TestUtils.setupWeblogEntry("e1", c1, testWeblog, testUser);
+        WeblogEntryData e2 = TestUtils.setupWeblogEntry("e2", c2, testWeblog, testUser);
+        WeblogEntryData e3 = TestUtils.setupWeblogEntry("e3", c3, testWeblog, testUser);
+        
+        TestUtils.endSession(true);
+        
+        // verify number of entries in each category
+        assertEquals(0, dest.retrieveWeblogEntries(true).size());
+        assertEquals(0, dest.retrieveWeblogEntries(false).size());
+        assertEquals(1, c1.retrieveWeblogEntries(false).size());
+        assertEquals(3, c1.retrieveWeblogEntries(true).size());
+        
+        // move contents of source category c1 to destination category dest
+        mgr.moveWeblogCategoryContents(c1, dest);
+        mgr.saveWeblogCategory(c1);
+        TestUtils.endSession(true);
+        
+        // after move, verify number of entries in each category
+        dest = mgr.getWeblogCategory(dest.getId());
+        c1 = mgr.getWeblogCategory(c1.getId());
+        
+        // Hierarchy is flattened under dest      
+        assertEquals(3, dest.retrieveWeblogEntries(true).size());
+        assertEquals(3, dest.retrieveWeblogEntries(false).size());
+        
+        // c1 category should be empty now
+        assertEquals(0, c1.retrieveWeblogEntries(false).size());
+               
 
+    }
 }
