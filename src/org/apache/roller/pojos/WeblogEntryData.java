@@ -1098,13 +1098,20 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     
     /** Create anchor for weblog entry, based on title or text */
     public String createAnchorBase() {
+        
         // Use title or text for base anchor
         String base = getTitle();
-        if (base == null || base.trim().equals("")) {
-            base = getText();
-        }
-        if (base != null && !base.trim().equals("")) {
+        if (base != null) {
             base = Utilities.replaceNonAlphanumeric(base, ' ');
+            if (StringUtils.isEmpty(base.trim())) {
+                base = getText();
+                if (base != null) {
+                    base = Utilities.replaceNonAlphanumeric(base, ' ');
+                }
+            }
+        }
+
+        if (StringUtils.isEmpty(base.trim())) {
             
             // Use only the first 4 words
             StringTokenizer toker = new StringTokenizer(base);
