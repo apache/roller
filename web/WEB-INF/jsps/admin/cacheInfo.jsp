@@ -17,8 +17,8 @@
 -->
 <%@ include file="/taglibs.jsp" %>
 
-<p class="subtitle"><fmt:message key="cacheInfo.subtitle" /></a>
-<p><fmt:message key="cacheInfo.prompt" /></a>
+<p class="subtitle"><fmt:message key="cacheInfo.subtitle" />
+<p><fmt:message key="cacheInfo.prompt" />
 
 <c:forEach var="cache" items="${cacheStats}">
     <c:if test="${!empty cache.value}">
@@ -37,8 +37,9 @@
             <tr>
                 <td colspan="2">
                     <form action="cacheInfo.do" method="POST">
-                        <input type="hidden" name="cache" value="<c:out value='${cache.key}'/>">
-                        <input type="submit" name="method" value="clear">
+                        <input type="hidden" name="cache" value="<c:out value='${cache.key}'/>" />
+                        <input type="hidden" name="method" value="clear" />
+                        <input type="submit" value="<fmt:message key='cacheInfo.clear' />" />
                     </form>
                 </td>
             </tr>

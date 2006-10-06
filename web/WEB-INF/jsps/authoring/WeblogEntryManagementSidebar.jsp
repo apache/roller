@@ -34,7 +34,7 @@ WeblogEntryManagementAction.PageModel model =
 
 <p><fmt:message key="weblogEntryQuery.sidebarDescription" /></p>
 
-<html:form action="/roller-ui/authoring/weblogEntryManagement" method="post" focus="title">
+<html:form action="/roller-ui/authoring/weblogEntryManagement" method="post" focus="categoryId">
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}" />' />
     <html:hidden name="method" property="method" value="query"/>
     <html:hidden property="count" />
@@ -53,7 +53,7 @@ WeblogEntryManagementAction.PageModel model =
     </div>
     <br />
     <br />
-    
+
   <%-- ========================================================= --%>
   <%-- filter by tag --%>
   

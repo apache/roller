@@ -233,7 +233,7 @@ WebsiteFormAction.WebsitePageModel model =
 <c:choose>
     <c:when test="${model.hasPagePlugins}">
         <tr>
-            <td class="label">Default Entry Formatters <br />(applied in the listed order)</td>
+            <td class="label"><fmt:message key="websiteSettings.label1" /> <br /><fmt:message key="websiteSettings.label2" /></td>
             <td class="field">
             <logic:iterate id="plugin" type="org.apache.roller.model.WeblogEntryPlugin"
                 collection="<%= model.getPagePlugins() %>">
