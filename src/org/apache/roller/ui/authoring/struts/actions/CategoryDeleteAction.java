@@ -85,8 +85,7 @@ public class CategoryDeleteAction extends Action
                     // root and the sub-cats of the category being deleted.
                     if (!cat.getId().equals(catid) 
                         && cat.getParent()!=null
-                        && !cat.descendentOf(catToDelete)
-                        && cat.retrieveWeblogEntries(true).size() < 1)
+                        && !cat.descendentOf(catToDelete))
                     {
                         destCats.add(cat);
                     }                    
@@ -113,15 +112,32 @@ public class CategoryDeleteAction extends Action
                 
                 // User clicked YES to delete
                 // remove cat to delete
+                if (form.getMoveToWeblogCategoryId() != null) 
+                {
+                    WeblogCategoryData destCat = 
+                        wmgr.getWeblogCategory(form.getMoveToWeblogCategoryId());
+                    if (rses.isUserAuthorizedToAuthor(destCat.getWebsite())) 
+                    {
+                        wmgr.moveWeblogCategoryContents(catToDelete, destCat);                
+                        RollerFactory.getRoller().flush();
+                    } 
+                    else 
+                    {
+                        return mapping.findForward("access-denied");
+                    }
+                }
+                                
+                catToDelete = wmgr.getWeblogCategory(catToDelete.getId());
                 wmgr.removeWeblogCategory(catToDelete);
                 RollerFactory.getRoller().flush();
-                
+
                 // notify caches of invalidated object
                 CacheManager.invalidate(catToDelete);
-                
-                if (null != returnId) {
+
+                if (null != returnId) 
+                {
                     request.setAttribute(RequestConstants.WEBLOGCATEGORY_ID, returnId);
-                }               
+                }  
             }
             else 
             {
