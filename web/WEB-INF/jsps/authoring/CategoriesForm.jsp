@@ -31,7 +31,7 @@ function setChecked(val)
 }
 function onMove() 
 {
-    if ( confirm("Move selected categories?") ) 
+    if ( confirm("<fmt:message key='categoriesForm.move.confirm' />") ) 
     {
         document.categoriesForm.method.value = "moveSelected";
         document.categoriesForm.submit();

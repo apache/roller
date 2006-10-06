@@ -33,10 +33,10 @@
 
 <p>
 <b><fmt:message key="categoriesForm.path" /></b>:
-<c:if test="${!empty parentCategory.parent.path}">
-    <c:out value="${parentCategory.parent.path}" />
+<c:if test="${!empty parentCategory.path}">
+    <c:out value="${parentCategory.path}" />
 </c:if>
-<c:if test="${empty parentCategory.parent.path}">
+<c:if test="${empty parentCategory.path}">
     /
 </c:if>
 </p>
@@ -71,7 +71,7 @@
     <c:url var="categoriesUrl" value="/roller-ui/authoring/categories.do">
        <c:param name="method" value="selectCategory" />
        <c:param name="weblog" value="${model.website.handle}" />
-       <c:param name="categoryid" value="${requestScope.parentId}" />
+       <c:param name="categoryId" value="${requestScope.parentCategory.id}" />
     </c:url>
     <input type="button" value="<fmt:message key='categoryForm.cancel' />" 
         onclick="window.location = '<c:out value="${categoriesUrl}" />'" />
