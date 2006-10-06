@@ -66,8 +66,8 @@ function deleteNo()
 	<strong><fmt:message key="categoryDeleteOK.areYouSure" /></strong>
 	</p>
 
-	<input type="button" value="Yes" onclick="deleteYes()" />
-	<input type="button" value="No" onclick="deleteNo()" />
+	<input type="button" value="<fmt:message key='application.yes' />" onclick="deleteYes()" />
+	<input type="button" value="<fmt:message key='application.no' />" onclick="deleteNo()" />
 
 </html:form>
 

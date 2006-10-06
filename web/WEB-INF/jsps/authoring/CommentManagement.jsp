@@ -209,23 +209,29 @@ function setChecked(val, name) {
                     <c:if test="${!empty model.website}">
                         <td align="center">
                             <fmt:message key="commentManagement.select" /><br/>
+
                             <a href="#" onclick='setChecked(1,"approvedComments")'>
                                 <fmt:message key="commentManagement.all" /></a><br /> 
+
                             <a href="#" onclick='setChecked(0,"approvedComments")'>
                                 <fmt:message key="commentManagement.none" /></a>
                         </td>
                     </c:if>
                     <td align="center">
                         <fmt:message key="commentManagement.select" /><br/>
+
                         <a href="#" onclick='setChecked(1,"spamComments")'>
                             <fmt:message key="commentManagement.all" /></a><br />  
+
                         <a href="#" onclick='setChecked(0,"spamComments")'>
                             <fmt:message key="commentManagement.none" /></a>
                     </td>
                     <td align="center">
                         <fmt:message key="commentManagement.select" /><br/>
+
                         <a href="#" onclick='setChecked(1,"deleteComments")'>
                             <fmt:message key="commentManagement.all" /></a><br /> 
+
                         <a href="#" onclick='setChecked(0,"deleteComments")'>
                             <fmt:message key="commentManagement.none" /></a>
                     </td>
@@ -362,11 +368,11 @@ function setChecked(val, name) {
         
         <c:choose>
             <c:when test="${!empty model.weblogEntry}">
-                <input type="button" name="Cancel" value='Cancel' 
+                <input type="button" name="Cancel" value='<fmt:message key="application.cancel" />' 
                     onclick="window.location.href='<c:out value="${entryLink}" />'" />
             </c:when>
             <c:otherwise>
-                <input type="button" name="Cancel" value='Cancel' 
+                <input type="button" name="Cancel" value='<fmt:message key="application.cancel" />' 
                     onclick="window.location.href='<c:out value="${model.link}" />'" />
             </c:otherwise>
         </c:choose>  
