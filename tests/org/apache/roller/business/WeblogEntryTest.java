@@ -347,7 +347,7 @@ public class WeblogEntryTest extends TestCase {
         tag.setUser(testUser);
         tag.setTime(new java.sql.Timestamp(new java.util.Date().getTime()));
         
-        testEntry.getTagSet().add(tag);
+        testEntry.getTags().add(tag);
         
         // create a weblog entry
         mgr.saveWeblogEntry(testEntry);
@@ -358,9 +358,9 @@ public class WeblogEntryTest extends TestCase {
         entry = mgr.getWeblogEntry(id);
         assertNotNull(entry);
         assertEquals(testEntry, entry);
-        assertNotNull(entry.getTagSet());
-        assertEquals(1, entry.getTagSet().size());
-        assertEquals("testTag",((WeblogEntryTagData) entry.getTagSet().iterator().next()).getName());
+        assertNotNull(entry.getTags());
+        assertEquals(1, entry.getTags().size());
+        assertEquals("testTag",((WeblogEntryTagData) entry.getTags().iterator().next()).getName());
         
         // teardown our test entries
         TestUtils.teardownWeblogEntry(id);
@@ -395,9 +395,9 @@ public class WeblogEntryTest extends TestCase {
         entry = mgr.getWeblogEntry(id);
         assertNotNull(entry);
         assertEquals(testEntry, entry);
-        assertNotNull(entry.getTagSet());
-        assertEquals(1, entry.getTagSet().size());
-        assertEquals("testTag",((WeblogEntryTagData) entry.getTagSet().iterator().next()).getName());
+        assertNotNull(entry.getTags());
+        assertEquals(1, entry.getTags().size());
+        assertEquals("testTag",((WeblogEntryTagData) entry.getTags().iterator().next()).getName());
         
         // teardown our test entry
         TestUtils.teardownWeblogEntry(id);
@@ -416,19 +416,19 @@ public class WeblogEntryTest extends TestCase {
 
         entry = mgr.getWeblogEntry(id);
         assertNotNull(entry);
-        assertNotNull(entry.getTagSet());
-        assertEquals(1, entry.getTagSet().size());
-        assertEquals("testTag",((WeblogEntryTagData) entry.getTagSet().iterator().next()).getName());
+        assertNotNull(entry.getTags());
+        assertEquals(1, entry.getTags().size());
+        assertEquals("testTag",((WeblogEntryTagData) entry.getTags().iterator().next()).getName());
 
         // update a weblog entry tag
-        WeblogEntryTagData tag = ((WeblogEntryTagData) entry.getTagSet().iterator().next());
+        WeblogEntryTagData tag = ((WeblogEntryTagData) entry.getTags().iterator().next());
         tag.setName("updatedTestTag");
         TestUtils.endSession(true);
 
         entry = mgr.getWeblogEntry(id);
         assertNotNull(entry);
-        assertEquals(1, entry.getTagSet().size());
-        assertEquals("updatedTestTag",((WeblogEntryTagData) entry.getTagSet().iterator().next()).getName());
+        assertEquals(1, entry.getTags().size());
+        assertEquals("updatedTestTag",((WeblogEntryTagData) entry.getTags().iterator().next()).getName());
       
         // teardown our test entry
         TestUtils.teardownWeblogEntry(id);
@@ -452,7 +452,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
         
         entry = mgr.getWeblogEntry(id);
-        assertEquals(3, entry.getTagSet().size());
+        assertEquals(3, entry.getTags().size());
         
         // teardown our test entry
         TestUtils.teardownWeblogEntry(id);
@@ -474,7 +474,7 @@ public class WeblogEntryTest extends TestCase {
       TestUtils.endSession(true);
       
       entry = mgr.getWeblogEntry(id);
-      assertEquals(1, entry.getTagSet().size());
+      assertEquals(1, entry.getTags().size());
       
       // teardown our test entry
       TestUtils.teardownWeblogEntry(id);
@@ -497,15 +497,15 @@ public class WeblogEntryTest extends TestCase {
       TestUtils.endSession(true);
       
       entry = mgr.getWeblogEntry(id);
-      assertEquals(2, entry.getTagSet().size());
+      assertEquals(2, entry.getTags().size());
       TestUtils.endSession(true);
       
       entry = mgr.getWeblogEntry(id);
-      entry.getTagSet().clear();
+      entry.getTags().clear();
       TestUtils.endSession(true);
 
       entry = mgr.getWeblogEntry(id);
-      assertEquals(0, entry.getTagSet().size());
+      assertEquals(0, entry.getTags().size());
       TestUtils.endSession(true);
       
       // teardown our test entry
@@ -525,7 +525,7 @@ public class WeblogEntryTest extends TestCase {
       TestUtils.endSession(true);
       
       entry = mgr.getWeblogEntry(id);
-      assertEquals(2, entry.getTagSet().size());
+      assertEquals(2, entry.getTags().size());
       TestUtils.endSession(true);
       
       entry = mgr.getWeblogEntry(id);
@@ -534,7 +534,7 @@ public class WeblogEntryTest extends TestCase {
       TestUtils.endSession(true);
 
       entry = mgr.getWeblogEntry(id);
-      assertEquals(0, entry.getTagSet().size());
+      assertEquals(0, entry.getTags().size());
       TestUtils.endSession(true);
       
       // teardown our test entry
@@ -601,7 +601,7 @@ public class WeblogEntryTest extends TestCase {
       TestUtils.endSession(true);
      
       entry = mgr.getWeblogEntry(id);
-      assertEquals(2, entry.getTagSet().size());
+      assertEquals(2, entry.getTags().size());
       
       List updateTags = new ArrayList();
       updateTags.add("testWillStayTag");
@@ -612,12 +612,12 @@ public class WeblogEntryTest extends TestCase {
       
       entry = mgr.getWeblogEntry(id);
       HashSet tagNames = new HashSet();
-      for(Iterator it = entry.getTagSet().iterator(); it.hasNext();) {
+      for(Iterator it = entry.getTags().iterator(); it.hasNext();) {
         WeblogEntryTagData tagData = (WeblogEntryTagData) it.next();
         tagNames.add(tagData.getName());
       }
       
-      assertEquals(3, entry.getTagSet().size());      
+      assertEquals(3, entry.getTags().size());      
       assertEquals(3, tagNames.size());
       assertEquals(true, tagNames.contains("testWillStayTag"));
       assertEquals(true, tagNames.contains("testNewTag"));
@@ -647,11 +647,11 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         entry = mgr.getWeblogEntry(id);
-        assertEquals(2, entry.getTagSet().size());
+        assertEquals(2, entry.getTags().size());
 
         Timestamp original = null;
 
-        for (Iterator it = entry.getTagSet().iterator(); it.hasNext();) {
+        for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
             WeblogEntryTagData tagData = (WeblogEntryTagData) it.next();
             if (tagData.getName().equals("testWillStayTag"))
                 original = tagData.getTime();
@@ -666,14 +666,14 @@ public class WeblogEntryTest extends TestCase {
 
         entry = mgr.getWeblogEntry(id);
         HashSet tagNames = new HashSet();
-        for (Iterator it = entry.getTagSet().iterator(); it.hasNext();) {
+        for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
             WeblogEntryTagData tagData = (WeblogEntryTagData) it.next();
             tagNames.add(tagData.getName());
             if (tagData.getName().equals("testWillStayTag"))
                 assertEquals(original, tagData.getTime());
         }
 
-        assertEquals(3, entry.getTagSet().size());
+        assertEquals(3, entry.getTags().size());
         assertEquals(3, tagNames.size());
         assertEquals(true, tagNames.contains("testWillStayTag"));
         assertEquals(true, tagNames.contains("testNewTag"));

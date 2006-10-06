@@ -273,34 +273,10 @@ public class PageModel implements Model {
     }
     
     /**
-     * @param sinceDay
+     * Returns the list of tags specified in the request /tags/foo+bar or /?tags=foo+bar
      * @return
      */
     public List getTags() {
-        List results = new ArrayList();
-        try {            
-            Roller roller = RollerFactory.getRoller();
-            WeblogManager wmgr = roller.getWeblogManager();
-            results = wmgr.getTags(weblog, null, null, -1);
-        } catch (Exception e) {
-            log.error("ERROR: fetching site tags list", e);
-        }
-        return results;
-    }
-    
-    /**
-     * @param sinceDay
-     * @return
-     */
-    public List getHotTags(int length) {
-        List results = new ArrayList();
-        try {            
-            Roller roller = RollerFactory.getRoller();
-            WeblogManager wmgr = roller.getWeblogManager();
-            results = wmgr.getTags(weblog, "count", null, length);
-        } catch (Exception e) {
-            log.error("ERROR: fetching site tags list", e);
-        }
-        return results;
-    }      
+        return pageRequest.getTags();
+    }    
 }

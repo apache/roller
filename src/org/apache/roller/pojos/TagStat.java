@@ -29,38 +29,47 @@ package org.apache.roller.pojos;
  */
 public class TagStat implements java.io.Serializable {
 
-  private static final long serialVersionUID = 1142064841813545198L;
+    private static final long serialVersionUID = 1142064841813545198L;
 
-  private java.lang.String name = null;
+    private java.lang.String name;
 
-  private int count = 0;
+    private int count;
+    
+    private int intensity;
 
-  public TagStat() {
-  }
+    public TagStat() {
+    }
 
-  public String getName() {
-    return this.name;
-  }
+    public String getName() {
+        return this.name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public int getCount() {
-    return this.count;
-  }
+    public int getCount() {
+        return this.count;
+    }
 
-  public void setCount(int count) {
-    this.count = count;
-  }
+    public void setCount(int count) {
+        this.count = count;
+    }
 
-  public String toString() {
-    StringBuffer str = new StringBuffer("{");
+    public String toString() {
+        StringBuffer str = new StringBuffer("{");
 
-    str.append("name=" + name + " " + "count=" + count);
-    str.append('}');
+        str.append("name=" + name + " " + "count=" + count);
+        str.append('}');
 
-    return (str.toString());
-  }
+        return (str.toString());
+    }
 
+    public int getIntensity() {
+        return intensity;
+    }
+
+    public void setIntensity(int intensity) {
+        this.intensity = intensity;
+    }
 }

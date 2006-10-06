@@ -31,6 +31,7 @@ import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.util.URLUtilities;
+import org.apache.roller.util.Utilities;
 
 
 /**
@@ -130,16 +131,23 @@ public class WeblogFeedRequest extends WeblogRequest {
         
         if(request.getParameter("tags") != null) {
           this.tags = Arrays.asList(StringUtils.split(URLUtilities.decode(request.getParameter("tags")),"+"));
+          if(this.tags.size() > 3)
+              throw new InvalidRequestException("max number of tags allowed is 3, " + request.getRequestURL());          
         }        
         
         if(request.getParameter("excerpts") != null) {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
         }
         
+        if(this.tags.size() > 0 && this.weblogCategoryName != null) {
+            throw new InvalidRequestException("please specify either category or tags but not both, " + request.getRequestURL());            
+        }
+        
         if(log.isDebugEnabled()) {
             log.debug("type = "+this.type);
             log.debug("format = "+this.format);
             log.debug("weblogCategory = "+this.weblogCategoryName);
+            log.debug("tags = "+ Utilities.stringArrayToString((String[])this.tags.toArray(), ","));            
             log.debug("excerpts = "+this.excerpts);
         }
     }

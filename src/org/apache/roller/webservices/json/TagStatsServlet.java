@@ -48,6 +48,10 @@ public class TagStatsServlet extends HttpServlet {
     
     private final int MAX_LENGTH = 100;
     
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
+    
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {    
         
@@ -62,46 +66,48 @@ public class TagStatsServlet extends HttpServlet {
         if(!StringUtils.isEmpty(pathInfo)) {
             path = StringUtils.split(pathInfo, '/');
         }
-        
-        if(path == null || path.length == 0 || path.length > 2) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing either weblog handle or tag prefix.");
-            return;
-        }      
-                                
+                                        
         Roller roller = RollerFactory.getRoller();
         try {
             response.setContentType("text/html; charset=utf-8");
             
             WeblogManager wmgr = roller.getWeblogManager();
             WebsiteData website = null;
-            String startsWith = null;
-            if(path.length == 2) {
-                startsWith = path[1];
+            String startsWith = null;            
+            
+            // website handle is always the first path segment,
+            // only throw an exception when not found if we have a tag prefix 
+            if(path.length > 0) {
                 try {
                     UserManager umgr = RollerFactory.getRoller().getUserManager();
                     website = umgr.getWebsiteByHandle(path[0], Boolean.TRUE);
-                    if (website == null)
-                        throw new RollerException();
-                    
+                    if (website == null && path.length > 1)
+                        throw new RollerException();                
                 } catch (RollerException ex) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Weblog handle not found.");
                     return;
-                }
-            } else {
-                startsWith = path[0];
+                }    
             }
             
-            if(startsWith == null || startsWith.trim().length() < 1) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing tag prefix.");
-                return;
+            if(path.length == 2) {
+                startsWith = path[1].trim();
+            } else if(path.length == 1 && website == null) {
+                startsWith = path[0].trim();
             }
+                                    
+            List tags = wmgr.getTags(website, null, startsWith, limit);
             
-            List tags = wmgr.getTags(website, null, startsWith.trim(), limit);
-            
-            response.getWriter().println("[");
+            response.getWriter().println("{");
+            response.getWriter().print("  prefix : \"");
+            response.getWriter().print(startsWith);
+            response.getWriter().println("\",");
+            response.getWriter().print("  weblog : \"");
+            response.getWriter().print(website != null ? website.getHandle() : "");
+            response.getWriter().println("\",");            
+            response.getWriter().println("  tagcounts : [");
             for(Iterator it = tags.iterator(); it.hasNext();) {
                 TagStat stat = (TagStat) it.next();
-                response.getWriter().print("\t{ name : \"");
+                response.getWriter().print("    { tag : \"");
                 response.getWriter().print(stat.getName());
                 response.getWriter().print("\", ");
                 response.getWriter().print("count : ");
@@ -110,7 +116,7 @@ public class TagStatsServlet extends HttpServlet {
                 if(it.hasNext())
                    response.getWriter().println(", ");
             }
-            response.getWriter().println("\n]");
+            response.getWriter().println("\n  ]\n}");
             
             response.flushBuffer();
         } catch (RollerException e) {

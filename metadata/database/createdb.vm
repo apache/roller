@@ -212,9 +212,9 @@ create table weblogentrytag (
     id              varchar(48)   not null primary key,
     entryid         varchar(48)   not null,
     websiteid       varchar(48)   not null,    
-    userid		    varchar(48)  not null,
+    userid		    varchar(48)   not null,
     name            varchar(255)  not null,
-    time         $TIMESTAMP_SQL_TYPE	not null
+    time            $TIMESTAMP_SQL_TYPE 	not null
 );
 
 create index wet_entryid_idx on weblogentrytag( entryid );
@@ -222,15 +222,17 @@ create index wet_websiteid_idx on weblogentrytag( websiteid );
 create index wet_userid_idx on weblogentrytag( userid );
 create index wet_name_idx on weblogentrytag( name );
 
-create table weblogtagagg (
+create table weblogentrytagagg (
     id              varchar(48)   not null primary key,
     websiteid       varchar(48) ,    
     name            varchar(255)  not null,
-    count           integer		  not null
+    count           integer		  not null,
+    lastused        $TIMESTAMP_SQL_TYPE 	not null
 );
 
-create index weta_websiteid_idx on weblogtagagg( websiteid );
-create index weta_name_idx on weblogtagagg( name );
+create index weta_websiteid_idx on weblogentrytagagg( websiteid );
+create index weta_name_idx on weblogentrytagagg( name );
+create index weta_lastused_idx on weblogentrytagagg( lastused );
 
 create table newsfeed (
     id              varchar(48) not null primary key,

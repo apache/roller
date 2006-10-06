@@ -20,14 +20,6 @@
                <td class="menuTabUnselected">
                   <div class="menu-tr">
                      <div class="menu-tl">
-                        &nbsp;&nbsp;<a href="$url.page("tags")">Site Tags</a>&nbsp;&nbsp; 
-                     </div>
-                  </div>
-               </td>	                   
-               <td class="menuTabSeparator"></td>
-               <td class="menuTabUnselected">
-                  <div class="menu-tr">
-                     <div class="menu-tl">
                         &nbsp;&nbsp;<a href="$url.page("directory")">Weblog Directory</a>&nbsp;&nbsp; 
                      </div>
                   </div>
@@ -172,9 +164,9 @@
                 </div>
             </div>	
 
-            <div class="sidebarBody">  
-		      #showTagCloud($site.getHotTags($maxResults))
-		    </div>
+            <div id="tagbin" class="sidebarBody">  
+		              #showTagCloud($site.getPopularTags($since, 100))
+            </div>
             
 
         </div>

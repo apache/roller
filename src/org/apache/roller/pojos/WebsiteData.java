@@ -20,6 +20,7 @@ package org.apache.roller.pojos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -1307,6 +1308,34 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
         }
         return 0;
     }
+    
+    
+    
+    /**
+     * Get a list of TagStats objects for the most popular tags
+     * 
+     * @param sinceDays
+     * @param length
+     * @return
+     */
+    public List getPopularTags(int sinceDays, int length) {
+        List results = new ArrayList();
+        Date startDate = null;
+        if(sinceDays > 0) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DATE, -1 * sinceDays);        
+            startDate = cal.getTime();     
+        }        
+        try {            
+            Roller roller = RollerFactory.getRoller();
+            WeblogManager wmgr = roller.getWeblogManager();
+            results = wmgr.getPopularTags(this, startDate, length);
+        } catch (Exception e) {
+            log.error("ERROR: fetching weblog tags list", e);
+        }
+        return results;
+    }      
     
     /** No-op method to please XDoclet */
     public void setTodaysHits(int ignored) {}

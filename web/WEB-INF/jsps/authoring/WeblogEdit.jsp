@@ -23,6 +23,9 @@
 WeblogEntryPageModel model = (WeblogEntryPageModel)request.getAttribute("model");
 try {
 %>
+<script type="text/javascript" src="<%= request.getContextPath() %>/roller-ui/scripts/scriptaculous/prototype.js" ></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/roller-ui/scripts/scriptaculous/scriptaculous.js" ></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/roller-ui/scripts/roller-autocomplete.js" ></script>
 <script type="text/javascript">
 <!--
 function postWeblogEntry() {
@@ -153,9 +156,14 @@ function publish() {
     <tr><td class="entryEditFormLabel">
       <label style="width:10%; float:left;" for="title"><fmt:message key="weblogEdit.tags" /></label>
     </td><td>
-        <html:text property="tags" size="70" maxlength="255" tabindex="2" /><br/>
-    </td></tr>    
-    
+        <html:text styleId="entryEditTags" property="tagsAsString" size="70" maxlength="255" tabindex="2" />
+        <div id="entryEditTagsChoices" style="display:none" class="autocomplete"></div>
+		<br/>
+        <script type="text/javascript">
+        <!--
+		new RollerTagsAutoCompleter("entryEditTags", "entryEditTagsChoices", "<%= request.getContextPath() %>/roller-services/json/tags/<%= model.getWeblogEntry().getWebsite().getHandle() %>", { tokens : [' ',','], minChars: 2 });
+        // --></script>
+    </td></tr>       
     <c:choose>
         <c:when test="${model.weblog.enableMultiLang}">
             <tr><td class="entryEditFormLabel">
