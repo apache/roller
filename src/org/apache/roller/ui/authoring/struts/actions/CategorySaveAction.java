@@ -38,6 +38,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogCategoryFormEx;
 import org.apache.roller.ui.core.RequestConstants;
+import org.apache.roller.RollerException;
 
 /**
  * @struts.action path="/roller-ui/authoring/categorySave" name="weblogCategoryFormEx"
@@ -78,11 +79,18 @@ public class CategorySaveAction extends Action
             rses.getAuthenticatedUser(), PermissionsData.AUTHOR))
         {
             form.copyTo(cd, request.getLocale());
-            wmgr.saveWeblogCategory(cd);
-            RollerFactory.getRoller().flush();
-            
-            // notify caches of object invalidation
-            CacheManager.invalidate(cd);
+            try {
+                wmgr.saveWeblogCategory(cd);
+                RollerFactory.getRoller().flush();
+                
+                // notify caches of object invalidation
+                CacheManager.invalidate(cd);
+            } catch (RollerException re) {
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR,
+                    new ActionError("error.untranslated", re.getMessage())); 
+                saveErrors(request, errors);
+            }            
         }
         else
         {
