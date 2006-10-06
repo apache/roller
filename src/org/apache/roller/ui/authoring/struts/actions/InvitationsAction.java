@@ -125,14 +125,15 @@ public class InvitationsAction extends DispatchAction {
             roller.flush();
             try {
                 notifyInvitee(request, perms.getWebsite(), perms.getUser());
+                ActionMessages msgs = new ActionMessages();
+                msgs.add(ActionMessages.GLOBAL_MESSAGE, 
+                    new ActionMessage("invitations.revoked"));
+                saveMessages(request, msgs);                
             } catch (RollerException e) {
                 errors.add(ActionErrors.GLOBAL_ERROR,
                         new ActionError("error.untranslated", e.getMessage()));
+                saveErrors(request, errors);
             }
-            ActionMessages msgs = new ActionMessages();
-            msgs.add(ActionMessages.GLOBAL_MESSAGE, 
-                new ActionMessage("invitations.revoked"));
-            saveMessages(request, msgs);
             return view(mapping, actionForm, request, response);
         }      
         return mapping.findForward("access-denied"); 
