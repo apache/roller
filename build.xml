@@ -300,9 +300,6 @@ Key Targets:
 <!-- ********************************************************************* -->
 <!-- Compile and jar Business Tier classes -->
 <!-- ********************************************************************* -->
-
-<target name="build-business-all" depends="gen-business, build-business">
-</target>
     
 <target name="build-business">
     
@@ -397,10 +394,10 @@ ro.buildUser=${user.name}
 <!-- Stage web application -->
 <!-- ********************************************************************* -->
 	
-<target name="stage-webapp" depends="build-business-all, gen-web, build-web, copy-webapp" description="Stage webapp, including jars">
+<target name="stage-webapp" depends="gen-business, build-business, gen-web, build-web, copy-webapp" description="Stage webapp, including jars">
 </target>
     
-<target name="copy-webapp" depends="build-web" description="Stage webapp, including jars">
+<target name="copy-webapp" depends="build-web" description="Stage webapp without code generation">
 
     <mkdir dir="${build.webapp}/WEB-INF/lib"/>
     <mkdir dir="${build.webapp}/WEB-INF/tlds"/>
