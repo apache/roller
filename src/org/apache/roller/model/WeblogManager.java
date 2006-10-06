@@ -240,7 +240,7 @@ public interface WeblogManager {
     /**
      * Recategorize all entries with one category to another.
      */
-    public void moveWeblogCategoryContents(String srcId, String destId) 
+    public void moveWeblogCategoryContents(WeblogCategoryData srcCat, WeblogCategoryData destCat) 
             throws RollerException;
     
     /**

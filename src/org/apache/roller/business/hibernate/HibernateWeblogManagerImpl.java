@@ -90,7 +90,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     public void saveWeblogCategory(WeblogCategoryData cat) throws RollerException {
         
         if(this.isDuplicateWeblogCategoryName(cat)) {
-            throw new RollerException("Duplicate category name");
+            throw new RollerException("Duplicate category name, cannot save new category");
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
@@ -127,32 +127,24 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public void moveWeblogCategoryContents(String srcId, String destId)
+    public void moveWeblogCategoryContents(WeblogCategoryData srcCat, WeblogCategoryData destCat)
             throws RollerException {
-        
-        WeblogCategoryData srcCd =
-                (WeblogCategoryData) this.strategy.load(
-                srcId, WeblogCategoryData.class);
-        
-        WeblogCategoryData destCd =
-                (WeblogCategoryData) this.strategy.load(
-                destId, WeblogCategoryData.class);
-        
+                
         // TODO: this check should be made before calling this method?
-        if (destCd.descendentOf(srcCd)) {
+        if (destCat.descendentOf(srcCat)) {
             throw new RollerException(
                     "ERROR cannot move parent category into it's own child");
         }
         
         // get all entries in category and subcats
-        List results = getWeblogEntries(srcCd, true);
+        List results = srcCat.retrieveWeblogEntries(true);
         
         // Loop through entries in src cat, assign them to dest cat
         Iterator iter = results.iterator();
-        WebsiteData website = destCd.getWebsite();
+        WebsiteData website = destCat.getWebsite();
         while (iter.hasNext()) {
             WeblogEntryData entry = (WeblogEntryData) iter.next();
-            entry.setCategory(destCd);
+            entry.setCategory(destCat);
             entry.setWebsite(website);
             this.strategy.store(entry);
         }
@@ -160,16 +152,16 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         // Make sure website's default and bloggerapi categories
         // are valid after the move
         
-        if (srcCd.getWebsite().getDefaultCategory().getId().equals(srcId)
-        || srcCd.getWebsite().getDefaultCategory().descendentOf(srcCd)) {
-            srcCd.getWebsite().setDefaultCategory(destCd);
-            this.strategy.store(srcCd.getWebsite());
+        if (srcCat.getWebsite().getDefaultCategory().getId().equals(srcCat.getId())
+        || srcCat.getWebsite().getDefaultCategory().descendentOf(srcCat)) {
+            srcCat.getWebsite().setDefaultCategory(destCat);
+            this.strategy.store(srcCat.getWebsite());
         }
         
-        if (srcCd.getWebsite().getBloggerCategory().getId().equals(srcId)
-        || srcCd.getWebsite().getBloggerCategory().descendentOf(srcCd)) {
-            srcCd.getWebsite().setBloggerCategory(destCd);
-            this.strategy.store(srcCd.getWebsite());
+        if (srcCat.getWebsite().getBloggerCategory().getId().equals(srcCat.getId())
+        || srcCat.getWebsite().getBloggerCategory().descendentOf(srcCat)) {
+            srcCat.getWebsite().setBloggerCategory(destCat);
+            this.strategy.store(srcCat.getWebsite());
         }
     }
     
@@ -680,7 +672,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             } catch (HibernateException e) {
                 throw new RollerException(e);
             }
-            if (sameNames.size() > 1) {
+            if (sameNames.size() > 0) {
                 return true;
             }
         }
