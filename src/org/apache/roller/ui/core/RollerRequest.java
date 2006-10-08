@@ -319,6 +319,7 @@ public class RollerRequest
             
             String handle = mRequest.getParameter(RequestConstants.WEBLOG);
             String websiteid = mRequest.getParameter(RequestConstants.WEBLOG_ID);
+            FolderData folder = getFolder();
             if (handle != null && mWebsite == null) 
             {
                 mWebsite = userMgr.getWebsiteByHandle(handle); 
@@ -326,6 +327,10 @@ public class RollerRequest
             else if (websiteid != null && mWebsite == null )
             {
                 mWebsite = userMgr.getWebsite(websiteid); 
+            }
+            else if (folder != null && mWebsite == null )
+            {
+            	mWebsite = folder.getWebsite();
             }
             
             // Look for page ID in request params

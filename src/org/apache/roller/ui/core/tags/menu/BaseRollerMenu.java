@@ -31,6 +31,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -243,6 +244,13 @@ public abstract class BaseRollerMenu {
         } else if (request.getParameter(RequestConstants.FOLDER_ID) != null) {
             String folderId = request.getParameter(RequestConstants.FOLDER_ID);
             FolderData folder = roller.getBookmarkManager().getFolder(folderId);
+            if(folder != null) {
+                weblog = folder.getWebsite();
+            }
+        } else if (request.getParameter(RequestConstants.BOOKMARK_ID) != null) {
+            String bookmarkId = request.getParameter(RequestConstants.BOOKMARK_ID);
+            BookmarkData bookmark = roller.getBookmarkManager().getBookmark(bookmarkId);
+            FolderData folder = bookmark.getFolder();
             if(folder != null) {
                 weblog = folder.getWebsite();
             }

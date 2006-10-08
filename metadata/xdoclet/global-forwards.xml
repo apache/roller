@@ -32,6 +32,7 @@
 <forward name="categoryDelete"         path="/roller-ui/authoring/categoryDelete.do"/>
 <forward name="bookmarks"              path="/roller-ui/authoring/bookmarks.do?method=selectFolder"/>
 <forward name="folderEdit"             path="/roller-ui/authoring/folderEdit.do"/>
+<forward name="bookmarkEdit"           path="/roller-ui/authoring/bookmarkEdit"/>
 <forward name="importBookmarks"        path="/roller-ui/authoring/importBookmarks.do"/>
 <forward name="uploadFiles"            path="/roller-ui/authoring/uploadFiles.do"/>
 <forward name="referers"               path="/roller-ui/authoring/referers.do"/>

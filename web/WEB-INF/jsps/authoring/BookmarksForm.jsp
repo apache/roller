@@ -32,7 +32,7 @@ function setChecked(val)
 }
 function onDelete() 
 {
-    if ( confirm("Delete selected bookmarks?") ) 
+    if ( confirm("<fmt:message key='bookmarksForm.delete.confirm' />") ) 
     {
         document.bookmarksForm.method.value = "deleteSelected";
         document.bookmarksForm.submit();
@@ -40,7 +40,7 @@ function onDelete()
  }
 function onMove() 
 {
-    if ( confirm("Move selected bookmarks?") ) 
+    if ( confirm("<fmt:message key='bookmarksForm.move.confirm' />") ) 
     {
         document.bookmarksForm.method.value = "moveSelected";
         document.bookmarksForm.submit();

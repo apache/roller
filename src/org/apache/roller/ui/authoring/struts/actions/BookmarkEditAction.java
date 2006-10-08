@@ -70,9 +70,10 @@ public class BookmarkEditAction extends Action
                 
             // Pass bookmark's Folder on as attribute.                 
             parentFolder = bd.getFolder();
-
-            request.setAttribute("model", new BasePageModel(
-                "bookmarkForm.edit.title", request, response, mapping));
+            BasePageModel pageModel = new BasePageModel(
+                    "bookmarkForm.edit.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         else if (null != request.getParameter("correct"))
         {
@@ -80,10 +81,11 @@ public class BookmarkEditAction extends Action
             request.setAttribute("state","correcting"); 
                 
             // Folder is specified by request param, pass it on as attribute.                 
-            parentFolder = bmgr.getFolder(rreq.getFolder().getId());        
-            
-            request.setAttribute("model", new BasePageModel(
-                "bookmarkForm.correct.title", request, response, mapping));
+            parentFolder = rreq.getFolder();        
+            BasePageModel pageModel = new BasePageModel(
+                    "bookmarkForm.correct.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         else
         {
@@ -91,10 +93,11 @@ public class BookmarkEditAction extends Action
             request.setAttribute("state","add");
             
             // Folder is specified by request param, pass it on as attribute.                 
-            parentFolder = bmgr.getFolder(rreq.getFolder().getId()); 
-            
-            request.setAttribute("model", new BasePageModel(
-                "bookmarkForm.add.title", request, response, mapping));
+            parentFolder = rreq.getFolder(); 
+            BasePageModel pageModel = new BasePageModel(
+                    "bookmarkForm.add.title", request, response, mapping);
+            pageModel.setWebsite(parentFolder.getWebsite());
+            request.setAttribute("model", pageModel);
         }
         
         // Build folder path for display on page
