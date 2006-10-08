@@ -91,7 +91,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     public void saveWeblogCategory(WeblogCategoryData cat) throws RollerException {
         
         if(this.isDuplicateWeblogCategoryName(cat)) {
-            throw new RollerException("Duplicate category name, cannot save new category");
+            throw new RollerException("Duplicate category name, cannot save category");
         }
         
         // update weblog last modified date.  date updated by saveWebsite()
@@ -666,6 +666,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
                 Criteria criteria = session.createCriteria(WeblogCategoryAssoc.class);
                 criteria.createAlias("category", "c");
+                criteria.add(Expression.ne("c.id", cat.getId()));
                 criteria.add(Expression.eq("c.name", cat.getName()));
                 criteria.add(Expression.eq("ancestorCategory", parent));
                 criteria.add(Expression.eq("relation", Assoc.PARENT));
