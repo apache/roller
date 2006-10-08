@@ -180,4 +180,18 @@ td.mm_table_actions {
 
 
 
+.htmlarea .toolbar {
+  background: #f1ebdf;
+}
 
+.htmlarea .toolbar .button {
+  background: #f1ebdf;
+}
+
+.htmlarea .toolbar a.buttonDisabled:hover {
+  background: #f1ebdf;
+}
+
+.htmlarea .statusBar {
+  background: #f1ebdf;
+}

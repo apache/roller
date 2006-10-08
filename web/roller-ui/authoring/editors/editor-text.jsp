@@ -26,10 +26,18 @@ function postWeblogEntry(publish) {
     document.weblogEntryFormEx.submit();
 }
 function changeSize(e, num) {
-    e.rows = e.rows + num;
+    a = e.rows + num;
+    if (a > 0) e.rows = a;
     var expires = new Date();
     expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
     setCookie("editorSize",e.rows,expires);
+}
+function changeSize1(e, num) {
+    a = e.rows + num;
+    if (a > 0) e.rows = a;
+    var expires = new Date();
+    expires.setTime(expires.getTime() + 24 * 90 * 60 * 60 * 1000); // sets it for approx 90 days.
+    setCookie("editorSize1",e.rows,expires);
 }
 // -->
 </script>
@@ -41,7 +49,7 @@ function changeSize(e, num) {
 <script type="text/javascript">
     <!--
     if (getCookie("editorSize") != null) {
-        document.weblogEntryFormEx.text.rows = getCookie("editorSize");
+        document.weblogEntryFormEx.summary.rows = getCookie("editorSize");
     }
     -->
 </script>
@@ -57,14 +65,14 @@ function changeSize(e, num) {
 <html:textarea property="text" cols="75" rows="25" style="width: 100%" tabindex="3"/>
 <script type="text/javascript">
     <!--
-    if (getCookie("editorSize") != null) {
-        document.weblogEntryFormEx.text.rows = getCookie("editorSize");
+    if (getCookie("editorSize1") != null) {
+        document.weblogEntryFormEx.text.rows = getCookie("editorSize1");
     }
     -->
 </script>
 <table style="width:100%"><tr><td align="right">
   <!-- Add buttons to make this textarea taller or shorter -->
-  <input type="button" name="taller" value=" &darr; " onclick="changeSize(document.weblogEntryFormEx.text, 5)" />
-  <input type="button" name="shorter" value=" &uarr; " onclick="changeSize(document.weblogEntryFormEx.text, -5)" />
+  <input type="button" name="taller" value=" &darr; " onclick="changeSize1(document.weblogEntryFormEx.text, 5)" />
+  <input type="button" name="shorter" value=" &uarr; " onclick="changeSize1(document.weblogEntryFormEx.text, -5)" />
 </td></tr></table>
 

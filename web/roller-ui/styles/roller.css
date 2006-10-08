@@ -671,6 +671,9 @@ pre {
     font-weight: bold;
     margin: 10px 0px 0px 0px;
 }
+.miscControl {
+    margin-bottom: 5px;
+}
 
 /* tag autocomplete */
 
