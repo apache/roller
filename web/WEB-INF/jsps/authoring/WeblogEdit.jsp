@@ -28,9 +28,6 @@ try {
 <script type="text/javascript" src="<%= request.getContextPath() %>/roller-ui/scripts/roller-autocomplete.js" ></script>
 <script type="text/javascript">
 <!--
-function postWeblogEntry() {
-    document.weblogEntryFormEx.submit();
-}
 function previewMode() {
     document.weblogEntryFormEx.method.value = "preview";
     postWeblogEntry();
@@ -144,7 +141,19 @@ function publish() {
            <span style="color:red; font-weight:bold"><fmt:message key="weblogEdit.unsaved" /></span>
         </c:if>
     </td></tr>
-        
+    
+    <c:if test="${!empty weblogEntryFormEx.id}">
+        <tr><td class="entryEditFormLabel">
+            <label for="categoryId">
+               <fmt:message key="weblogEdit.permaLink" />
+            </label>
+            </td><td>
+            <a href='<c:out value="${model.permaLink}" />'>
+               <c:out value="${model.permaLink}" />
+            </a>
+        </td></tr>
+    </c:if>
+            
     <tr><td class="entryEditFormLabel">
        <label for="categoryId"><fmt:message key="weblogEdit.category" /></label>
     </td><td>
@@ -163,7 +172,8 @@ function publish() {
         <!--
 		new RollerTagsAutoCompleter("entryEditTags", "entryEditTagsChoices", "<%= request.getContextPath() %>/roller-services/json/tags/<%= model.getWeblogEntry().getWebsite().getHandle() %>", { tokens : [' ',','], minChars: 2 });
         // --></script>
-    </td></tr>       
+    </td></tr> 
+    
     <c:choose>
         <c:when test="${model.weblog.enableMultiLang}">
             <tr><td class="entryEditFormLabel">
@@ -178,41 +188,6 @@ function publish() {
             <html:hidden property="locale"/>
         </c:otherwise>
     </c:choose>
-    
-    <tr>
-        <td class="entryEditFormLabel">
-            <label for="link"><fmt:message key="weblogEdit.pubTime" /></label>
-        </td>
-        <td>
-        <div>
-           <html:select property="hours">
-               <html:options name="model" property="hoursList" />
-            </html:select>
-           :
-           <html:select property="minutes" >
-               <html:options name="model" property="minutesList" />
-           </html:select>
-           :
-           <html:select property="seconds">
-               <html:options name="model" property="secondsList" />
-           </html:select>
-           &nbsp;&nbsp;
-           <roller:Date property="dateString" dateFormat='<%= model.getShortDateFormat() %>' />
-           <c:out value="${model.weblogEntry.website.timeZone}" />
-        </div>
-    </td></tr>
-    
-    <c:if test="${!empty weblogEntryFormEx.id}">
-        <tr><td class="entryEditFormLabel">
-            <label for="categoryId">
-               <fmt:message key="weblogEdit.permaLink" />
-            </label>
-            </td><td>
-            <a href='<c:out value="${model.permaLink}" />'>
-               <c:out value="${model.permaLink}" />
-            </a>
-        </td></tr>
-    </c:if>
     
    </table>
     
@@ -249,12 +224,117 @@ function publish() {
            <roller:ShowEntryContent name="model" property="weblogEntry" />
         </div>
     </c:if>
-
+    <br />
         
-   <%-- ================================================================== --%>
+  <%-- ================================================================== --%>
+  <%-- plugin chooser --%>
+
+  <c:if test="${model.hasPagePlugins}">
+      <div id="pluginControlToggle" class="controlToggle">
+      <span id="ipluginControl">+</span>
+      <a class="controlToggle" onclick="javascript:toggleControl('pluginControlToggle','pluginControl')">
+         <fmt:message key="weblogEdit.pluginsToApply" /></a>
+      </div>
+      <div id="pluginControl" class="miscControl" style="display:none">
+        <logic:iterate id="plugin" type="org.apache.roller.model.WeblogEntryPlugin"
+            collection="<%= model.getPagePlugins() %>">
+            <html:multibox property="pluginsArray"
+                 title="<%= plugin.getName() %>" value="<%= plugin.getName() %>"
+                 styleId="<%= plugin.getName() %>"/></input>
+            <label for="<%= plugin.getName() %>"><%= plugin.getName() %></label>
+            <a href="javascript:void(0);" onmouseout="return nd();"
+            onmouseover="return overlib('<%= plugin.getDescription() %>', STICKY, MOUSEOFF, TIMEOUT, 3000);">?</a>
+            <br />
+        </logic:iterate>
+      </div>
+  </c:if>
+
+  <%-- ================================================================== --%>
+  <%-- advanced settings  --%>
+
+  <div id="miscControlToggle" class="controlToggle">
+  <span id="imiscControl">+</span>
+  <a class="controlToggle" onclick="javascript:toggleControl('miscControlToggle','miscControl')">
+     <fmt:message key="weblogEdit.miscSettings" /></a>
+  </div>
+  <div id="miscControl" class="miscControl" style="display:none">
+
+        <label for="link"><fmt:message key="weblogEdit.pubTime" /></label>
+        <div>
+           <html:select property="hours">
+               <html:options name="model" property="hoursList" />
+            </html:select>
+           :
+           <html:select property="minutes" >
+               <html:options name="model" property="minutesList" />
+           </html:select>
+           :
+           <html:select property="seconds">
+               <html:options name="model" property="secondsList" />
+           </html:select>
+           &nbsp;&nbsp;
+           <roller:Date property="dateString" dateFormat='<%= model.getShortDateFormat() %>' />
+           <c:out value="${model.weblogEntry.website.timeZone}" />
+        </div>   
+        <br />
+        
+         <html:checkbox property="allowComments" onchange="onAllowCommentsChange()" />
+         <fmt:message key="weblogEdit.allowComments" />
+         <fmt:message key="weblogEdit.commentDays" />
+         <html:select property="commentDays">
+             <html:option key="weblogEdit.unlimitedCommentDays" value="0"  />
+             <html:option key="weblogEdit.days1" value="1"  />
+             <html:option key="weblogEdit.days2" value="2"  />
+             <html:option key="weblogEdit.days3" value="3"  />
+             <html:option key="weblogEdit.days4" value="4"  />
+             <html:option key="weblogEdit.days5" value="5"  />
+             <html:option key="weblogEdit.days7" value="7"  />
+             <html:option key="weblogEdit.days10" value="10"  />
+             <html:option key="weblogEdit.days20" value="20"  />
+             <html:option key="weblogEdit.days30" value="30"  />
+             <html:option key="weblogEdit.days60" value="60"  />
+             <html:option key="weblogEdit.days90" value="90"  />
+         </html:select>
+         <br />
+     
+     <html:checkbox property="rightToLeft" />
+     <fmt:message key="weblogEdit.rightToLeft" />
+     <br />
+
+     <c:if test="${model.rollerSession.globalAdminUser}">
+         <html:checkbox property="pinnedToMain" />
+         <fmt:message key="weblogEdit.pinnedToMain" />
+         <br />
+     </c:if>
+     <c:if test="${!model.rollerSession.globalAdminUser}">
+         <html:hidden property="pinnedToMain" />
+     </c:if>
+     <br />
+     
+    <%
+    WeblogEntryFormEx form = model.getWeblogEntryForm();
+    String att_url = (String)form.getAttributes().get("att_mediacast_url");
+    att_url = (att_url == null) ? "" : att_url;
+    %>
+    <fmt:message key="weblogEdit.enclosureURL" />: <input name="att_mediacast_url" type="text" size="40" maxlength="255" value='<%= att_url %>' />
+    <%
+    String att_type = (String)form.getAttributes().get("att_mediacast_type");
+    String att_length = (String)form.getAttributes().get("att_mediacast_length");
+    %>
+    <% if (att_url != null && att_type != null && att_length != null) { %>
+        <fmt:message key="weblogEdit.enclosureType" />: <%= att_type %>
+        <fmt:message key="weblogEdit.enclosureLength" />: <%= att_length %>
+    <% } else if (att_url != null && att_url.trim().length()!=0) { %>
+        <span style="color:red"><fmt:message key="weblogEdit.enclosureInvalid" /></span>
+    <% } %>
+
+  </div>
+  
+  
+  <%-- ================================================================== --%>
    <%-- the button box --%>
 
-   <br></br>
+   <br>
    <div class="control">
 
         <%-- save draft and post buttons: only in edit and preview mode --%>
@@ -313,118 +393,7 @@ function publish() {
         </c:if>
 
     </div>
-
-    
-    <%-- ================================================================== --%>
-    <%-- Other settings --%>
-
-    <h2><fmt:message key="weblogEdit.otherSettings" /></h2>
-     
-  <%-- ================================================================== --%>
-  <%-- comment settings --%>
    
-  <div id="commentControlToggle" class="controlToggle">
-  <span id="icommentControl">+</span>
-  <a class="controlToggle" onclick="javascript:toggleControl('commentControlToggle','commentControl')">
-     <fmt:message key="weblogEdit.commentSettings" />
-  </a>
-  </div>
-  <div id="commentControl" class="miscControl" style="display:none">
-     <html:checkbox property="allowComments" onchange="onAllowCommentsChange()" />
-     <fmt:message key="weblogEdit.allowComments" />
-     <fmt:message key="weblogEdit.commentDays" />
-     <html:select property="commentDays">
-         <html:option key="weblogEdit.unlimitedCommentDays" value="0"  />
-         <html:option key="weblogEdit.days1" value="1"  />
-         <html:option key="weblogEdit.days2" value="2"  />
-         <html:option key="weblogEdit.days3" value="3"  />
-         <html:option key="weblogEdit.days4" value="4"  />
-         <html:option key="weblogEdit.days5" value="5"  />
-         <html:option key="weblogEdit.days7" value="7"  />
-         <html:option key="weblogEdit.days10" value="10"  />
-         <html:option key="weblogEdit.days20" value="20"  />
-         <html:option key="weblogEdit.days30" value="30"  />
-         <html:option key="weblogEdit.days60" value="60"  />
-         <html:option key="weblogEdit.days90" value="90"  />
-     </html:select>
-     <br />
-  </div>
-
-  <%-- ================================================================== --%>
-  <%-- plugin chooser --%>
-
-  <c:if test="${model.hasPagePlugins}">
-      <div id="pluginControlToggle" class="controlToggle">
-      <span id="ipluginControl">+</span>
-      <a class="controlToggle" onclick="javascript:toggleControl('pluginControlToggle','pluginControl')">
-         <fmt:message key="weblogEdit.pluginsToApply" /></a>
-      </div>
-      <div id="pluginControl" class="miscControl" style="display:none">
-        <logic:iterate id="plugin" type="org.apache.roller.model.WeblogEntryPlugin"
-            collection="<%= model.getPagePlugins() %>">
-            <html:multibox property="pluginsArray"
-                 title="<%= plugin.getName() %>" value="<%= plugin.getName() %>"
-                 styleId="<%= plugin.getName() %>"/></input>
-            <label for="<%= plugin.getName() %>"><%= plugin.getName() %></label>
-            <a href="javascript:void(0);" onmouseout="return nd();"
-            onmouseover="return overlib('<%= plugin.getDescription() %>', STICKY, MOUSEOFF, TIMEOUT, 3000);">?</a>
-            <br />
-        </logic:iterate>
-      </div>
-  </c:if>
-
-  <%-- ================================================================== --%>
-  <%-- misc settings  --%>
-
-  <div id="miscControlToggle" class="controlToggle">
-  <span id="imiscControl">+</span>
-  <a class="controlToggle" onclick="javascript:toggleControl('miscControlToggle','miscControl')">
-     <fmt:message key="weblogEdit.miscSettings" /></a>
-  </div>
-  <div id="miscControl" class="miscControl" style="display:none">
-
-     <html:checkbox property="rightToLeft" />
-     <fmt:message key="weblogEdit.rightToLeft" />
-     <br />
-
-     <c:if test="${model.rollerSession.globalAdminUser}">
-         <html:checkbox property="pinnedToMain" />
-         <fmt:message key="weblogEdit.pinnedToMain" />
-         <br />
-     </c:if>
-     <c:if test="${!model.rollerSession.globalAdminUser}">
-         <html:hidden property="pinnedToMain" />
-     </c:if>
-
-  </div>
-
-  <%-- ================================================================== --%>
-  <%-- MediaCast settings  --%>
-
-  <div id="mediaCastControlToggle" class="controlToggle">
-  <span id="imediaCastControl">+</span>
-  <a class="controlToggle" onclick="javascript:toggleControl('mediaCastControlToggle','mediaCastControl')">
-     MediaCast Settings</a>
-  </div>
-  <div id="mediaCastControl" class="miscControl" style="display:none">
-  <%
-  WeblogEntryFormEx form = model.getWeblogEntryForm();
-  String att_url = (String)form.getAttributes().get("att_mediacast_url");
-  att_url = (att_url == null) ? "" : att_url;
-  %>
-     <b>URL:</b> <input name="att_mediacast_url" type="text" size="80" maxlength="255" value='<%= att_url %>' />
-<%
-  String att_type = (String)form.getAttributes().get("att_mediacast_type");
-  String att_length = (String)form.getAttributes().get("att_mediacast_length");
-%>
-<% if (att_url != null && att_type != null && att_length != null) { %>
-     <b>Type:</b> <%= att_type %>
-     <b>Length:</b> <%= att_length %>
-<% } else if (att_url != null && att_url.trim().length()!=0) { %>
-     <span style="color:red">MediaCast URL is invalid</span>
-<% } %>
-  </div>
-
 
     <%-- ================================================================== --%>
     <%-- Trackback control --%>
