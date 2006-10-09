@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +44,7 @@ import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.TagStat;
+import org.apache.roller.pojos.TagStatComparator;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryAssoc;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -80,6 +82,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     /* inline creation of reverse comparator, anonymous inner class */
     private Comparator reverseComparator = new ReverseComparator();
     
+    private Comparator tagStatComparator = new TagStatComparator();
     
     public HibernateWeblogManagerImpl(HibernatePersistenceStrategy strat) {
         log.debug("Instantiating Hibernate Weblog Manager");
@@ -439,7 +442,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             }
             
             if (locale != null) {
-                queryString.append("locale like ? ");
+                queryString.append("and locale like ? ");
                 params.add(locale + '%');
             }
             
@@ -1184,27 +1187,25 @@ locale,             offset,
     public List getPopularTags(WebsiteData website, Date startDate, int limit)
             throws RollerException {
         try {
-            List results = new ArrayList();
-
             Session session = ((HibernatePersistenceStrategy) strategy)
                     .getSession();
 
             ArrayList params = new ArrayList();
             StringBuffer queryString = new StringBuffer();
-            queryString.append("select a.name, a.count ");
-            queryString.append("from WeblogEntryTagAggregateData a where ");
+            queryString.append("select name, total ");
+            queryString.append("from WeblogEntryTagAggregateData where ");
             if (website != null) {
-                queryString.append("a.website.id = ? ");
+                queryString.append("website.id = ? ");
                 params.add(website.getId());
             } else {
-                queryString.append("a.website = NULL ");
+                queryString.append("website = NULL ");
             }
             if (startDate != null) {
-                queryString.append("and a.lastUsed >= ? ");
+                queryString.append("and lastUsed >= ? ");
                 params.add(startDate);
             }
 
-            queryString.append("order by a.count desc");
+            queryString.append("order by total desc");
 
             Query query = session.createQuery(queryString.toString());
             if (limit > 0)
@@ -1218,29 +1219,31 @@ locale,             offset,
             double min = Integer.MAX_VALUE;
             double max = Integer.MIN_VALUE;
 
+            TreeSet set = new TreeSet(tagStatComparator);
+            
             for (Iterator iter = query.list().iterator(); iter.hasNext();) {
                 Object[] row = (Object[]) iter.next();
                 TagStat t = new TagStat();
                 t.setName((String) row[0]);
-                t.setCount(((Integer) row[1]).intValue());
+                t.setCount(((Integer) row[1]).intValue());                
                 
                 min = Math.min(min, t.getCount());
                 max = Math.max(max, t.getCount());                
-                results.add(t);
+                set.add(t);
             }
             
             min = Math.log(1+min);
             max = Math.log(1+max);
 
             double range = Math.max(.01, max - min) * 1.0001;
-
-            for (Iterator iter = results.iterator(); iter.hasNext(); )
+            
+            for (Iterator iter = set.iterator(); iter.hasNext(); )
             {
                 TagStat t = (TagStat) iter.next();
                 t.setIntensity((int) (1 + Math.floor(5 * (Math.log(1+t.getCount()) - min) / range)));
             }            
 
-            return results;
+            return new ArrayList(set);
 
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -1261,20 +1264,20 @@ locale,             offset,
                     .getSession();
 
             if (sortBy != null && sortBy.equals("count")) {
-                sortBy = "a.count desc";
+                sortBy = "total desc";
             } else {
-                sortBy = "a.name";
+                sortBy = "name";
             }
 
             StringBuffer queryString = new StringBuffer();
-            queryString.append("select a.name, a.count ");
-            queryString.append("from WeblogEntryTagAggregateData a where ");
+            queryString.append("select name, total ");
+            queryString.append("from WeblogEntryTagAggregateData where ");
             if (website != null)
-                queryString.append("a.website.id = '" + website.getId() + "' ");
+                queryString.append("website.id = '" + website.getId() + "' ");
             else
-                queryString.append("a.website = NULL ");
+                queryString.append("website = NULL ");
             if (startsWith != null && startsWith.length() > 0)
-                queryString.append("and a.name like '" + startsWith + "%' ");
+                queryString.append("and name like '" + startsWith + "%' ");
 
             queryString.append("order by " + sortBy);
 
@@ -1298,8 +1301,6 @@ locale,             offset,
 
     }
     
-    
-
     public void updateTagCount(String name, WebsiteData website, int amount) throws RollerException {
         
         Session session = ((HibernatePersistenceStrategy) strategy)
@@ -1317,8 +1318,13 @@ locale,             offset,
         conjunction.add(Expression.eq("name", name));
         conjunction.add(Expression.eq("website", website));
 
+        // The reason why add order lastUsed desc is to make sure we keep picking the most recent
+        // one in the case where we have multiple rows (clustered environment)
+        // eventually that second entry will have a very low total (most likely 1) and
+        // won't matter
+        
         Criteria criteria = session.createCriteria(WeblogEntryTagAggregateData.class)
-            .add(conjunction);
+            .add(conjunction).addOrder(Order.desc("lastUsed"));
         
         WeblogEntryTagAggregateData weblogTagData = (WeblogEntryTagAggregateData) criteria.uniqueResult();
 
@@ -1327,7 +1333,7 @@ locale,             offset,
         conjunction.add(Restrictions.isNull("website"));
         
         criteria = session.createCriteria(WeblogEntryTagAggregateData.class)
-            .add(conjunction);
+            .add(conjunction).addOrder(Order.desc("lastUsed"));
     
         WeblogEntryTagAggregateData siteTagData = (WeblogEntryTagAggregateData) criteria.uniqueResult();
         
@@ -1338,8 +1344,8 @@ locale,             offset,
             weblogTagData = new WeblogEntryTagAggregateData(null, website, name, amount);
             weblogTagData.setLastUsed(lastUsed);
             session.save(weblogTagData);
-        } else {
-            session.createQuery("update WeblogEntryTagAggregateData a set a.count = a.count + ?, a.lastUsed = current_time() where a.name = ? and a.website = ?")
+        } else if(weblogTagData != null) {
+            session.createQuery("update WeblogEntryTagAggregateData set total = total + ?, lastUsed = current_timestamp() where name = ? and website = ?")
             .setInteger(0, amount)
             .setString(1, weblogTagData.getName())
             .setParameter(2, website)
@@ -1351,14 +1357,14 @@ locale,             offset,
             siteTagData = new WeblogEntryTagAggregateData(null, null, name, amount);
             siteTagData.setLastUsed(lastUsed);
             session.save(siteTagData);
-        } else {
-            session.createQuery("update WeblogEntryTagAggregateData a set a.count = a.count + ?, a.lastUsed = current_time() where a.name = ? and a.website is null")
+        } else if(siteTagData != null) {
+            session.createQuery("update WeblogEntryTagAggregateData set total = total + ?, lastUsed = current_timestamp() where name = ? and website is null")
             .setInteger(0, amount)
-            .setString(1, weblogTagData.getName())
+            .setString(1, siteTagData.getName())
             .executeUpdate();            
         }       
         
         // delete all bad counts
-        session.createQuery("delete from WeblogEntryTagAggregateData a where a.count <= 0").executeUpdate();
+        session.createQuery("delete from WeblogEntryTagAggregateData where total <= 0").executeUpdate();
     }
 }

@@ -626,7 +626,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      
      public void addTag(String name) throws RollerException {
         name = stripInvalidTagChars(name);
-        name = name.toLowerCase().trim();
+        name = name.trim();
         if(name.length() == 0)
             return;
         

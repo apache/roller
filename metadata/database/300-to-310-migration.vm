@@ -24,7 +24,7 @@ create table weblogentrytagagg (
     id              varchar(48)   not null primary key,
     websiteid       varchar(48) ,    
     name            varchar(255)  not null,
-    count           integer		  not null,
+    total           integer		  not null,
     lastused        $TIMESTAMP_SQL_TYPE 	not null
 );
 

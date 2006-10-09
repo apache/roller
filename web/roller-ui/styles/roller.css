@@ -691,12 +691,12 @@ div.autocomplete ul {
   padding:0px;
 }
 div.autocomplete ul li.selected { background-color: #ffb;}
+
 div.autocomplete ul li {
   list-style-type:none;
   display:block;
   margin:0;
-  padding:4px;
-  height:32px;
+  padding:2px;
   cursor:pointer;
 }
 
