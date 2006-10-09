@@ -18,6 +18,7 @@
 
 package org.apache.roller.ui.rendering.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     private String type = null;
     private String format = null;
     private String weblogCategoryName = null;
-    private List   tags = null;
+    private List   tags = new ArrayList();
     private boolean excerpts = false;
     
     // heavyweight attributes
@@ -139,7 +140,7 @@ public class WeblogFeedRequest extends WeblogRequest {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts")).booleanValue();
         }
         
-        if(this.tags.size() > 0 && this.weblogCategoryName != null) {
+        if((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
             throw new InvalidRequestException("please specify either category or tags but not both, " + request.getRequestURL());            
         }
         

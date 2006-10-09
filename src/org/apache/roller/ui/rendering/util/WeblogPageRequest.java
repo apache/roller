@@ -191,8 +191,8 @@ public class WeblogPageRequest extends WeblogRequest {
                 }
             }
             
-            // only check for other params if we didn't find an anchor above
-            if(this.weblogAnchor == null) {
+            // only check for other params if we didn't find an anchor above or tags
+            if(this.weblogAnchor == null && tags.size() == 0) {
                 if(request.getParameter("date") != null) {
                     String date = request.getParameter("date");
                     if(this.isValidDateString(date)) {
@@ -234,10 +234,7 @@ public class WeblogPageRequest extends WeblogRequest {
         customParams.remove("cat");
         customParams.remove("page");
         customParams.remove("tags");
-        
-        if(this.tags.size() > 0 && this.weblogCategoryName != null) {
-            throw new InvalidRequestException("please specify either category or tags but not both, " + request.getRequestURL());            
-        }        
+            
             
         if(log.isDebugEnabled()) {
             log.debug("context = "+this.context);

@@ -41,7 +41,7 @@ public class WeblogEntryTagAggregateData extends PersistentObject
     private java.lang.String name = null;    
     private WebsiteData website = null;
     private Timestamp lastUsed = null;
-    private int count = 0;
+    private int total = 0;
 
     public WeblogEntryTagAggregateData()
     {
@@ -49,12 +49,12 @@ public class WeblogEntryTagAggregateData extends PersistentObject
 
     public WeblogEntryTagAggregateData(java.lang.String id,
                        WebsiteData website,
-                       java.lang.String name, int count)
+                       java.lang.String name, int total)
     {
         this.id = id;
         this.website = website;
         this.name = name;
-        this.count = count;
+        this.total = total;
     }
 
     public WeblogEntryTagAggregateData(WeblogEntryTagAggregateData otherData)
@@ -112,11 +112,11 @@ public class WeblogEntryTagAggregateData extends PersistentObject
     *
     * @roller.wrapPojoMethod type="simple"
     * @ejb:persistent-field
-    * @hibernate.property column="count" non-null="true" unique="false"
+    * @hibernate.property column="total" non-null="true" unique="false"
     */
-   public int getCount()
+   public int getTotal()
    {
-       return this.count;
+       return this.total;
    }
    
    /**
@@ -135,9 +135,9 @@ public class WeblogEntryTagAggregateData extends PersistentObject
    }   
 
    /** @ejb:persistent-field */
-   public void setCount(int count)
+   public void setTotal(int total)
    {
-       this.count = count;
+       this.total = total;
    }    
 
    public String toString() {
@@ -146,7 +146,7 @@ public class WeblogEntryTagAggregateData extends PersistentObject
      str.append("id=" + id + " " +
              "website=" + website +
              "name=" + name + " " +
-             "count=" + count + " " +
+             "total=" + total + " " +
              "lastUsed=" + lastUsed);
      str.append('}');
      
@@ -161,7 +161,7 @@ public class WeblogEntryTagAggregateData extends PersistentObject
            lEquals = PojoUtil.equals(lEquals, this.id, lTest.getId());
            lEquals = PojoUtil.equals(lEquals, this.website, lTest.getWebsite());
            lEquals = PojoUtil.equals(lEquals, this.name, lTest.getName());
-           lEquals = this.count == lTest.getCount();
+           lEquals = this.total == lTest.getTotal();
            return lEquals;
        } else {
            return false;
@@ -173,7 +173,7 @@ public class WeblogEntryTagAggregateData extends PersistentObject
        result = PojoUtil.addHashCode(result, this.id);
        result = PojoUtil.addHashCode(result, this.website);
        result = PojoUtil.addHashCode(result, this.name);
-       result = PojoUtil.addHashCode(result, new Integer(this.count));
+       result = PojoUtil.addHashCode(result, new Integer(this.total));
        
        return result;
    }
@@ -187,7 +187,7 @@ public class WeblogEntryTagAggregateData extends PersistentObject
         this.id = data.getId();
         this.website = data.getWebsite();
         this.name = data.getName();
-        this.count = data.getCount();
+        this.total = data.getTotal();
         this.lastUsed = data.getLastUsed();
     }
 

@@ -15,9 +15,6 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-/*
- * Generated file - Do not edit!
- */
 package org.apache.roller.pojos;
 
 
