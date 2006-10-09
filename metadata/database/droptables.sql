@@ -27,7 +27,6 @@ drop table entryattribute;
 drop table weblogentry;
 drop table weblogentrytag;
 drop table weblogentrytagagg;
-drop table weblogtagagg;
 drop table weblogcategory;
 drop table folder;
 drop table folderassoc;
