@@ -1192,7 +1192,7 @@ locale,             offset,
 
             ArrayList params = new ArrayList();
             StringBuffer queryString = new StringBuffer();
-            queryString.append("select name, total ");
+            queryString.append("select name, sum(total) ");
             queryString.append("from WeblogEntryTagAggregateData where ");
             if (website != null) {
                 queryString.append("website.id = ? ");
@@ -1205,7 +1205,7 @@ locale,             offset,
                 params.add(startDate);
             }
 
-            queryString.append("order by total desc");
+            queryString.append("group by name order by total desc");
 
             Query query = session.createQuery(queryString.toString());
             if (limit > 0)
@@ -1270,7 +1270,7 @@ locale,             offset,
             }
 
             StringBuffer queryString = new StringBuffer();
-            queryString.append("select name, total ");
+            queryString.append("select distinct name, sum(total) ");
             queryString.append("from WeblogEntryTagAggregateData where ");
             if (website != null)
                 queryString.append("website.id = '" + website.getId() + "' ");
@@ -1279,7 +1279,7 @@ locale,             offset,
             if (startsWith != null && startsWith.length() > 0)
                 queryString.append("and name like '" + startsWith + "%' ");
 
-            queryString.append("order by " + sortBy);
+            queryString.append("group by name order by " + sortBy);
 
             Query query = session.createQuery(queryString.toString());
             if (limit > 0)
@@ -1324,7 +1324,7 @@ locale,             offset,
         // won't matter
         
         Criteria criteria = session.createCriteria(WeblogEntryTagAggregateData.class)
-            .add(conjunction).addOrder(Order.desc("lastUsed"));
+            .add(conjunction).addOrder(Order.desc("lastUsed")).setMaxResults(1);
         
         WeblogEntryTagAggregateData weblogTagData = (WeblogEntryTagAggregateData) criteria.uniqueResult();
 
@@ -1333,7 +1333,7 @@ locale,             offset,
         conjunction.add(Restrictions.isNull("website"));
         
         criteria = session.createCriteria(WeblogEntryTagAggregateData.class)
-            .add(conjunction).addOrder(Order.desc("lastUsed"));
+            .add(conjunction).addOrder(Order.desc("lastUsed")).setMaxResults(1);
     
         WeblogEntryTagAggregateData siteTagData = (WeblogEntryTagAggregateData) criteria.uniqueResult();
         
@@ -1367,4 +1367,5 @@ locale,             offset,
         // delete all bad counts
         session.createQuery("delete from WeblogEntryTagAggregateData where total <= 0").executeUpdate();
     }
+    
 }
