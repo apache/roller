@@ -20,42 +20,40 @@ package org.apache.roller.util;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import junit.framework.TestCase;
+
 
 /**
  * Unit test for org.apache.roller.util.PropertyExpander.
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PropertyExpanderTest extends TestCase
-{
+public class PropertyExpanderTest extends TestCase {
+    
     private static final Map props = new HashMap();
-
+    
     static
     {
         props.put("defined.property.one", "value one");
         props.put("defined.property.two", "value two");
         props.put("defined.property.with.dollar.sign.in.value", "$2");
     }
-
-    public void testExpansion() throws Exception
-    {
+    
+    public void testExpansion() throws Exception {
         String expanded =
-            PropertyExpander.expandProperties("String with ${defined.property.one} and ${defined.property.two} and ${defined.property.with.dollar.sign.in.value} and ${undefined.property} and some stuff.", props);
-
+                PropertyExpander.expandProperties("String with ${defined.property.one} and ${defined.property.two} and ${defined.property.with.dollar.sign.in.value} and ${undefined.property} and some stuff.", props);
+        
         assertEquals("Expanded string doesn't match expected",
-            "String with value one and value two and $2 and ${undefined.property} and some stuff.",
-            expanded);
+                "String with value one and value two and $2 and ${undefined.property} and some stuff.",
+                expanded);
     }
-
-    public void testSystemProperty() throws Exception
-    {
+    
+    public void testSystemProperty() throws Exception {
         String expanded =
-            PropertyExpander.expandSystemProperties("${java.home}");
+                PropertyExpander.expandSystemProperties("${java.home}");
         assertEquals("Expanded string doesn't match expected",
-            System.getProperty("java.home"),
-            expanded);
+                System.getProperty("java.home"),
+                expanded);
     }
-
+    
 }
