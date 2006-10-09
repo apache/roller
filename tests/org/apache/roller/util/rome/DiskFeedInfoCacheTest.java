@@ -18,26 +18,22 @@ package org.apache.roller.util.rome;
 
 import java.io.File;
 import java.net.URL;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.apache.roller.business.FileManagerTest;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
+
 
 /**
  * @author David M Johnson
  */
-public class DiskFeedInfoCacheTest extends TestCase
-{
-    public static void main(String[] args)
-    {
+public class DiskFeedInfoCacheTest extends TestCase {
+    
+    public static void main(String[] args) {
         junit.textui.TestRunner.run(DiskFeedInfoCacheTest.class);
     }
-
-    public void testCache() throws Exception  
-    {
+    
+    public void testCache() throws Exception {
         URL url = new URL("http://cnn.com");
         SyndFeedInfo info = new SyndFeedInfo();
         info.setUrl(url);
@@ -49,20 +45,20 @@ public class DiskFeedInfoCacheTest extends TestCase
         File file = new File(buildDir);
         
         assertTrue("buildDir exists", file.exists());
-        assertTrue("buildDir is directory", file.isDirectory());        
+        assertTrue("buildDir is directory", file.isDirectory());
         
-        DiskFeedInfoCache cache = 
-            new DiskFeedInfoCache(buildDir + "/tests/planet-cache");
+        DiskFeedInfoCache cache =
+                new DiskFeedInfoCache(buildDir + "/tests/planet-cache");
         cache.setFeedInfo(info.getUrl(), info);
         
         SyndFeedInfo info2 = cache.getFeedInfo(url);
         assertNotNull(info2);
         assertEquals(url, info2.getUrl());
     }
-
-    public static Test suite()
-    {
+    
+    public static Test suite() {
         return new TestSuite(DiskFeedInfoCacheTest.class);
-
+        
     }
+    
 }
