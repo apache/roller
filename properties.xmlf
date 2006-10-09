@@ -29,13 +29,14 @@
 <property name="ro.tests"            value="${basedir}/tests" />
 
 <!-- build properties -->
-<property name="build.generated"     value="${ro.build}/generated"/>
+<property name="build.generated"                value="${ro.build}/generated"/>
 <property name="build.generated.business"       value="${build.generated}/business"/>
 <property name="build.generated.web"            value="${build.generated}/web"/>
-<property name="build.compile"       value="${ro.build}/compile"/>
+<property name="build.compile"                  value="${ro.build}/compile"/>
 <property name="build.compile.business"         value="${build.compile}/business"/>
 <property name="build.compile.web"              value="${build.compile}/web"/>
 <property name="build.compile.contrib"          value="${build.compile}/contrib"/>
+<property name="build.compile.tests"            value="${build.compile}/tests"/>
 <property name="build.lib"           value="${ro.build}/lib"/>
 <property name="build.webapp"        value="${ro.build}/webapp"/>
 <property name="build.dist"          value="${ro.build}/release"/>
@@ -43,11 +44,12 @@
 <property name="build.dist.binary"   value="${build.dist}/apache-roller-${ro.version}"/>
 <property name="build.dist.sources"  value="${build.dist}/apache-roller-src-${ro.version}"/>
 <property name="build.tests"         value="${ro.build}/tests"/>
+<property name="build.reports"       value="${build.tests}/reports"/>
 <property name="build.docs"          value="${ro.build}/docs"/>
 <property name="build.javadoc"       value="${build.docs}/javadoc"/>
 <property name="build.velocidoc"     value="${build.docs}/velocidoc"/>
 <property name="build.jspc"          value="${ro.build}/jspc"/>
-<property name="build.reports"       value="${ro.build}/reports"/>
+
 
 <!-- various libraries used by Roller -->
 <property name="tools.struts"        value="${ro.tools}/struts-1.2.4" />
@@ -151,6 +153,12 @@ in the "base.path" definition.
     <fileset refid="commons.jars"/>
 </path>
 
+<path id="business.path">
+    <path refid="base.path"/>
+    <fileset refid="hibernate.jar" />
+    <fileset refid="hibernate.jars" />
+</path>
+
 <path id="presentation.path">
     <path refid="base.path"/>
     <fileset refid="presentation.jars"/>
@@ -159,14 +167,6 @@ in the "base.path" definition.
     <fileset refid="mail.jars"/>
     <fileset refid="jstl.jars"/>
     <fileset refid="spring.jars"/>
-    <!--fileset refid="resin.jars" /-->
-</path>
-
-<path id="business.path">
-    <path refid="base.path"/>
-    <fileset refid="hibernate.jar" />
-    <fileset refid="hibernate.jars" />
-    <path location="${build.compile.business}"/>
 </path>
 
 <path id="javadoc.path">
@@ -189,25 +189,36 @@ in the "base.path" definition.
     <path location="${build.compile.web}"/>
 </path>
 
-<path id="junit.path">
-    <fileset dir="${ro.tools}/buildtime/" includes="junit-3.8.1.jar"/>
-    <path location="${build.tests}" />
-    <path location="${build.tests}/WEB-INF/classes" />
-    <path>
-       <fileset dir="${ro.tools}/buildtime/mockrunner-0.35/lib">
-          <include name="*.jar"/>
-       </fileset>
-    </path>
-    <path>
-       <fileset dir="${build.webapp}/WEB-INF/lib">
-          <include name="*.jar"/>
-       </fileset>
-    </path>
-    <fileset refid="servlet.jars"/>
+<path id="tests.path">
+    <!-- testing jars -->
+    <fileset dir="${ro.tools}/buildtime/mockrunner-0.35/lib">
+       <include name="*.jar"/>
+    </fileset>
     <fileset refid="commons-httpclient.jar"/>
-    <path location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
-    <path location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
-    <path location="${ro.tools}/buildtime/hsqldb.jar"/>
+    <pathelement location="${ro.tools}/buildtime/ant-1.6.2/ant.jar"/>
+    <pathelement location="${ro.tools}/buildtime/strutstest-2.0.0.jar"/>
+    <pathelement location="${ro.tools}/buildtime/junit-3.8.1.jar"/>
+    <pathelement location="${ro.tools}/buildtime/hsqldb.jar"/>
+
+    <!-- plus normal jars -->
+    <path refid="business.path"/>
+    <path refid="presentation.path"/>
+
+    <!-- plus already built Roller jars -->
+    <fileset dir="${build.lib}">
+         <include name="*.jar" />
+    </fileset>
+</path>
+
+<path id="tests.run.path">
+    <!-- all jars used for testing -->
+    <path refid="tests.path"/>
+
+    <!-- plus our compiled test classes -->
+    <pathelement location="${build.compile.tests}"/>
+
+    <!-- plus our config location, like the webapp would have -->
+    <pathelement location="${build.tests}/WEB-INF/classes" />
 </path>
 
 <path id="jasper.path">
@@ -222,6 +233,7 @@ in the "base.path" definition.
         <include name="*.jar"/> 
     </fileset> 
 </path>
+
 <path id="jsp.compile.path">
     <pathelement location="${java.home}/../lib/tools.jar"/> 
     <fileset dir="${build.webapp}/WEB-INF/lib"> 
@@ -241,7 +253,7 @@ in the "base.path" definition.
 <path id="findbugs.path">
     <path refid="presentation.path"/>
     <path refid="business.path"/>
-    <path refid="junit.path"/>
+    <path refid="tests.path"/>
     <fileset dir="${basedir}/contrib/lib" includes="*.jar"/>
     <fileset dir="${ro.tools}/buildtime/findbugs/lib" includes="*.jar"/>
 </path>

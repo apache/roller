@@ -854,72 +854,68 @@ ro.buildUser=${user.name}
 <target name="tests" depends="build-tests,test-business,test-presentation,test-utils" description="All unit tests" >
 </target>
 
-<target name="build-tests" depends="build" description="Build unit tests" >
-    
-    <delete dir="${build.tests}" failonerror="false" />
 
+<target name="clean-tests" description="Removes test build and result artifacts and reports">
+  <delete dir="${build.tests}"/>
+  <delete dir="${ro.build}/build/reports"/>
+</target>
+
+
+<target name="build-tests" depends="build-web" description="Build unit tests">
+    
     <mkdir dir="${build.tests}" />
     <mkdir dir="${build.tests}/logs" />
-    <mkdir dir="${build.tests}/search-index" />
-    <mkdir dir="${build.tests}/planet-cache" />
-    <mkdir dir="${build.tests}/WEB-INF/classes" />
-    <mkdir dir="${build.tests}/WEB-INF/classes/themes" />
+    <mkdir dir="${build.compile.tests}" />
     
-    <javac srcdir="${ro.tests}"
-        source="${build.sourcelevel}"
-        destdir="${build.tests}/WEB-INF/classes"
+    <!-- compile all test classes -->
+    <javac destdir="${build.compile.tests}"
         includeantruntime="false"
-        debug="true" optimize="false" verbose="false" deprecation="false">
+        debug="${build.debug}" 
+        source="${build.sourcelevel}"
+        deprecation="${build.deprecation}">
+        
+        <src path="${ro.tests}" />
+        
         &custom-src-tests;
+        
         <classpath>
-            <path refid="junit.path"/>
+            <path refid="tests.path"/>
+            &custom-jars;
         </classpath>
     </javac>
     
+    <!-- Copy test resources -->
+    <copy todir="${build.compile.tests}">
+        <fileset dir="${ro.tests}" 
+            excludes="**/*.java, **/*.html, **/*.png" />
+    </copy>
+    
     <!-- register Ant tasks that were just built -->
     <taskdef name="startdb" classname="org.apache.roller.ant.StartHsqldbTask" 
-        classpath="${ro.tools}/buildtime/hsqldb.jar;${build.tests}/WEB-INF/classes" />
+        classpath="${ro.tools}/buildtime/hsqldb.jar;${build.compile.tests}" />
     <taskdef name="stopdb" classname="org.apache.roller.ant.StopHsqldbTask" 
-        classpath="${ro.tools}/buildtime/hsqldb.jar;${build.tests}/WEB-INF/classes" />
+        classpath="${ro.tools}/buildtime/hsqldb.jar;${build.compile.tests}" />
     
-    <!-- Copy custom testing files -->
-    <copy todir="${build.tests}">
-        <fileset dir="${basedir}/testdata">
-            <include name="**/**"/>
-        </fileset>
-    </copy>
-
     <!-- 
-    Copy required files to ${build.tests} to make them available for 
-    testing without interfering with the "real" build in ${build.webapp}
+    Copy web config files to ${build.tests} to make them available for testing.
+    This includes the WEB-INF directory, minus jsps
     -->
-    <copy todir="${build.tests}/WEB-INF/classes">
-        <fileset dir="${basedir}/web/WEB-INF/classes">
-            <include name="App*.properties"/>
-            <include name="**/*.vm"/>
-	    <exclude name="hibernate.cfg.xml"/>
+    <mkdir dir="${build.tests}/WEB-INF" />
+    <copy todir="${build.tests}/WEB-INF">
+        <fileset dir="${basedir}/web/WEB-INF">
+	    <exclude name="jsps/**" />
         </fileset>
     </copy>
-    <copy file="${basedir}/web/WEB-INF/classes/roller.properties"
-        todir="${build.tests}/WEB-INF/classes/"/>
-    <copy file="${basedir}/web/WEB-INF/classes/planet.properties"
-        todir="${build.tests}/WEB-INF/classes/"/>
-    <copy file="${build.webapp}/WEB-INF/web.xml"
-        todir="${build.tests}/WEB-INF/"/>
-    <copy file="${basedir}/web/WEB-INF/classes/rollerRuntimeConfigDefs.xml"
-        todir="${build.tests}/WEB-INF/classes/"/>
-    <copy file="${basedir}/web/WEB-INF/velocity.properties"
-        tofile="${build.tests}/WEB-INF/velocity.properties" />
-    <copy file="${basedir}/web/WEB-INF/classes/rome.properties"
-        tofile="${build.tests}/WEB-INF/classes/rome.properties" />
-    <copy file="${basedir}/web/WEB-INF/classes/blacklist.txt"
-        tofile="${build.tests}/WEB-INF/classes/blacklist.txt" />
-        	
-</target>
-
-<target name="clean-tests" description="Removes test build and result artifacts and reports">
-  <delete dir="${ro.build}/tests"/>
-  <delete dir="${ro.build}/build/reports"/>
+    
+    <!-- 
+    Copy custom testing files which will overwrite some config files 
+    -->
+    <copy todir="${build.tests}">
+        <fileset dir="${basedir}/testdata" />
+    </copy>
+    
+    <!-- allow for custom build work -->
+    
 </target>
 
 <!-- ===================================== -->
@@ -935,17 +931,18 @@ ro.buildUser=${user.name}
 	
     &custom-pre-dbtest;
 
-    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="true">
+    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="false">
         <classpath>
-            <path refid="junit.path"/>
+            <path refid="tests.run.path"/>
         </classpath>
+        
         <!-- needed to satisfy ref in log4j.properties -->
         <jvmarg value="-Dcatalina.base=${build.tests}"/> 
         <jvmarg value="-Dro.build=${ro.build}"/>
         <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
         <formatter type="xml"/>
         <batchtest toDir="${build.reports}/business/xml">
-            <fileset dir="${build.tests}/WEB-INF/classes">
+            <fileset dir="${build.compile.tests}">
 		<include name="org/apache/roller/business/BookmarkTest.class"/>
 		<include name="org/apache/roller/business/UserTest.class"/> 
 	        <include name="org/apache/roller/business/WeblogTest.class"/>
@@ -987,25 +984,24 @@ ro.buildUser=${user.name}
     <antcall target="start-db" /> 
     <antcall target="init-db" /> 
 
-    <junit fork="true" dir="${build.tests}" showOutput="true">
+    <junit fork="true" dir="${build.tests}" printsummary="on" showOutput="false">
+        <classpath>
+            <path refid="tests.run.path"/>
+        </classpath>
+        
+        <!-- needed to satisfy ref in log4j.properties -->
+        <jvmarg value="-Dcatalina.base=${build.tests}"/>
+        <jvmarg value="-Dro.build=${ro.build}"/>
+        <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
+        <formatter type="xml"/>
         <batchtest toDir="${build.reports}/presentation/xml">
-            <fileset dir="${build.tests}/WEB-INF/classes">
+            <fileset dir="${build.compile.tests}">
                 <include name="org/apache/roller/ui/authoring/struts/actions/BookmarksActionTest.class"/>           
                 <include name="org/apache/roller/ui/authoring/struts/actions/WeblogEntryActionTest.class"/>           
                 <include name="org/apache/roller/webservices/xmlrpc/RollerXmlRpcServerTest.class"/>  
-                <include name="org/apache/roller/ui/rendering/velocity/plugins/smileys/SmileysTest.class"/>           
-                <!--
-                <include name="org/apache/roller/ui/rendering/velocity/plugins/textile/TextileTest.class" /> 
-                -->
+                <include name="org/apache/roller/ui/rendering/velocity/plugins/smileys/SmileysTest.class"/>
             </fileset>
         </batchtest>
-        <jvmarg value="-Dro.build=${ro.build}"/>
-        <jvmarg value="-Dcatalina.base=${build.tests}"/> <!-- needed to satisfy ref in log4j.properties -->
-        <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
-        <formatter type="xml"/>
-        <classpath>
-            <path refid="junit.path"/>
-        </classpath>
     </junit>
     
     <junitreport todir="${build.reports}/presentation/xml">
@@ -1036,7 +1032,7 @@ ro.buildUser=${user.name}
         <jvmarg value="-Dcatalina.base=."/> 
         <formatter type="xml"/>
         <classpath>
-            <path refid="junit.path"/>
+            <path refid="tests.run.path"/>
         </classpath>
     </junit>
 
@@ -1060,7 +1056,7 @@ ro.buildUser=${user.name}
                 <propertyref builtin="commandline"/>
             </syspropertyset>
             <classpath>
-                <path refid="junit.path"/>
+                <path refid="tests.run.path"/>
             </classpath>
             <formatter type="xml"/>
             <batchtest toDir="${build.reports}/webservices/adminapi/sdk/xml">
@@ -1086,7 +1082,7 @@ ro.buildUser=${user.name}
                 <propertyref builtin="commandline"/>
             </syspropertyset>
             <classpath>
-                <path refid="junit.path"/>
+                <path refid="tests.run.path"/>
             </classpath>
             <formatter type="xml"/>
             <batchtest toDir="${build.reports}/webservices/adminapi/xml">
@@ -1109,7 +1105,7 @@ ro.buildUser=${user.name}
     <java classname="junit.textui.TestRunner" fork="yes" failonerror="false">
         <arg value="${testClass}"/>
         <classpath>
-            <path refid="junit.path"/>
+            <path refid="tests.run.path"/>
         </classpath>
     </java>
 </target>
