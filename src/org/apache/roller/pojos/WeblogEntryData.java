@@ -1102,7 +1102,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         
         // Use title or text for base anchor
         String base = getTitle();
-        if (base != null) {
+        if (StringUtils.isEmpty(base.trim())) {
             base = Utilities.replaceNonAlphanumeric(base, ' ');
             if (StringUtils.isEmpty(base.trim())) {
                 base = getText();
@@ -1112,7 +1112,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
             }
         }
 
-        if (StringUtils.isEmpty(base.trim())) {
+        if (!StringUtils.isEmpty(base.trim())) {
             
             // Use only the first 4 words
             StringTokenizer toker = new StringTokenizer(base);
