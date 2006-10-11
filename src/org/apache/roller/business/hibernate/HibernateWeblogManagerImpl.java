@@ -21,7 +21,9 @@ package org.apache.roller.business.hibernate;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
@@ -399,7 +401,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             
             ArrayList params = new ArrayList();
             StringBuffer queryString = new StringBuffer();
-            queryString.append("select distinct e from WeblogEntryData e where ");
+            queryString.append("from WeblogEntryData e where ");
 
             if (website != null) {
                 queryString.append("website.id = ? ");                
@@ -1205,7 +1207,7 @@ locale,             offset,
                 params.add(startDate);
             }
 
-            queryString.append("group by name order by total desc");
+            queryString.append("group by name, total order by total desc");
 
             Query query = session.createQuery(queryString.toString());
             if (limit > 0)
@@ -1219,7 +1221,7 @@ locale,             offset,
             double min = Integer.MAX_VALUE;
             double max = Integer.MIN_VALUE;
 
-            TreeSet set = new TreeSet(tagStatComparator);
+            List results = new ArrayList(limit);
             
             for (Iterator iter = query.list().iterator(); iter.hasNext();) {
                 Object[] row = (Object[]) iter.next();
@@ -1229,7 +1231,7 @@ locale,             offset,
                 
                 min = Math.min(min, t.getCount());
                 max = Math.max(max, t.getCount());                
-                set.add(t);
+                results.add(t);
             }
             
             min = Math.log(1+min);
@@ -1237,13 +1239,16 @@ locale,             offset,
 
             double range = Math.max(.01, max - min) * 1.0001;
             
-            for (Iterator iter = set.iterator(); iter.hasNext(); )
+            for (Iterator iter = results.iterator(); iter.hasNext(); )
             {
                 TagStat t = (TagStat) iter.next();
                 t.setIntensity((int) (1 + Math.floor(5 * (Math.log(1+t.getCount()) - min) / range)));
             }            
 
-            return new ArrayList(set);
+            // sort results by name, because query had to sort by total
+            Collections.sort(results, tagStatComparator);
+            
+            return results;
 
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -1270,7 +1275,7 @@ locale,             offset,
             }
 
             StringBuffer queryString = new StringBuffer();
-            queryString.append("select distinct name, sum(total) ");
+            queryString.append("select name, sum(total) ");
             queryString.append("from WeblogEntryTagAggregateData where ");
             if (website != null)
                 queryString.append("website.id = '" + website.getId() + "' ");
@@ -1279,7 +1284,7 @@ locale,             offset,
             if (startsWith != null && startsWith.length() > 0)
                 queryString.append("and name like '" + startsWith + "%' ");
 
-            queryString.append("group by name order by " + sortBy);
+            queryString.append("group by name, total order by " + sortBy);
 
             Query query = session.createQuery(queryString.toString());
             if (limit > 0)
