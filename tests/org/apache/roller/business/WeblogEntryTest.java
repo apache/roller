@@ -26,6 +26,7 @@ package org.apache.roller.business;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagData;
@@ -683,6 +685,227 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.teardownWeblogEntry(id);
         TestUtils.endSession(true);
     }    
+    
+    public void testTagAggregates() throws Exception {
+        
+        WebsiteData testWeblog2 = TestUtils.setupWeblog("entryTestWeblog2", testUser);
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        // let's make sure we are starting from scratch
+        
+        // site-wide
+        List tags = mgr.getTags(null, null, null, -1);
+        assertEquals(0, tags.size());
+
+        // first weblog
+        tags = mgr.getTags(testWeblog, null, null, -1);
+        assertEquals(0, tags.size());
+
+        // second weblog
+        tags = mgr.getTags(testWeblog2, null, null, -1);
+        assertEquals(0, tags.size());
+        
+        // setup some test entries to use
+        WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog
+                .getDefaultCategory(), testWeblog, testUser);
+        entry.addTag("one");
+        entry.addTag("two");
+        mgr.saveWeblogEntry(entry);
+        
+        entry = TestUtils.setupWeblogEntry("entry2", testWeblog
+                .getDefaultCategory(), testWeblog, testUser);
+        entry.addTag("one");
+        entry.addTag("two");
+        entry.addTag("three");
+        mgr.saveWeblogEntry(entry);
+        
+        TestUtils.endSession(true);
+        
+        tags = mgr.getTags(testWeblog, null, null, -1);
+        assertEquals(3, tags.size());        
+        
+        HashMap expectedWeblogTags = new HashMap();
+        expectedWeblogTags.put("one",new Integer(2));
+        expectedWeblogTags.put("two",new Integer(2));
+        expectedWeblogTags.put("three",new Integer(1));
+        
+        for(Iterator it = tags.iterator(); it.hasNext(); ) 
+        {
+            TagStat stat = (TagStat) it.next();
+            if(!expectedWeblogTags.containsKey(stat.getName()))
+                fail("Unexpected tagName.");
+            
+            Integer expectedCount = (Integer) expectedWeblogTags.get(stat.getName());
+            assertEquals(expectedCount.intValue(), stat.getCount());
+        }
+        
+        // now add another entry in another blog
+        entry = TestUtils.setupWeblogEntry("entry3", testWeblog2
+                .getDefaultCategory(), testWeblog2, testUser);
+        entry.addTag("one");
+        entry.addTag("three");
+        entry.addTag("four");
+        mgr.saveWeblogEntry(entry);
+        
+        
+        // let's fetch "site" tags now
+        tags = mgr.getTags(null, null, null, -1);
+        assertEquals(4, tags.size());        
+        
+        HashMap expectedSiteTags = new HashMap();
+        expectedSiteTags.put("one",new Integer(3));
+        expectedSiteTags.put("two",new Integer(2));
+        expectedSiteTags.put("three",new Integer(2));
+        expectedSiteTags.put("four",new Integer(1));
+        
+        for(Iterator it = tags.iterator(); it.hasNext(); ) 
+        {
+            TagStat stat = (TagStat) it.next();
+            if(!expectedSiteTags.containsKey(stat.getName()))
+                fail("Unexpected tagName.");
+            
+            Integer expectedCount = (Integer) expectedSiteTags.get(stat.getName());
+            assertEquals(expectedCount.intValue(), stat.getCount());
+        }
+       
+        TestUtils.endSession(true);
+        
+        entry = mgr.getWeblogEntryByAnchor(testWeblog, "entry2");
+        List updateTags = new ArrayList();
+        updateTags.add("one");
+        updateTags.add("three");
+        updateTags.add("five");
+        entry.updateTags(updateTags);
+        mgr.saveWeblogEntry(entry);
+        
+        TestUtils.endSession(true);
+        
+        tags = mgr.getTags(testWeblog, null, null, -1);
+        assertEquals(4, tags.size());        
+        
+        expectedWeblogTags = new HashMap();
+        expectedWeblogTags.put("one",new Integer(2));
+        expectedWeblogTags.put("two",new Integer(1));
+        expectedWeblogTags.put("three",new Integer(1));
+        expectedWeblogTags.put("five",new Integer(1));
+        
+        for(Iterator it = tags.iterator(); it.hasNext(); ) 
+        {
+            TagStat stat = (TagStat) it.next();
+            if(!expectedWeblogTags.containsKey(stat.getName()))
+                fail("Unexpected tagName.");
+            
+            Integer expectedCount = (Integer) expectedWeblogTags.get(stat.getName());
+            assertEquals(stat.getName(), expectedCount.intValue(), stat.getCount());
+        }
+        
+        tags = mgr.getTags(null, null, null, -1);
+        assertEquals(5, tags.size());        
+        
+        expectedSiteTags = new HashMap();
+        expectedSiteTags.put("one",new Integer(3));
+        expectedSiteTags.put("two",new Integer(1));
+        expectedSiteTags.put("three",new Integer(2));
+        expectedSiteTags.put("four",new Integer(1));
+        expectedSiteTags.put("five",new Integer(1));
+        
+        for(Iterator it = tags.iterator(); it.hasNext(); ) 
+        {
+            TagStat stat = (TagStat) it.next();
+            if(!expectedSiteTags.containsKey(stat.getName()))
+                fail("Unexpected tagName.");
+            
+            Integer expectedCount = (Integer) expectedSiteTags.get(stat.getName());
+            assertEquals(stat.getName(), expectedCount.intValue(), stat.getCount());
+        }        
+                
+        // teardown our test blog 2
+        TestUtils.teardownWeblog(testWeblog2.getId());
+        TestUtils.endSession(true);
+    }
+    
+    public void testTagAggregatesCaseSensitivity() throws Exception {
+        
+        WebsiteData testWeblog2 = TestUtils.setupWeblog("entryTestWeblog2", testUser);
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        // let's make sure we are starting from scratch
+        
+        // site-wide
+        List tags = mgr.getTags(null, null, null, -1);
+        assertEquals(0, tags.size());
+
+        // first weblog
+        tags = mgr.getTags(testWeblog, null, null, -1);
+        assertEquals(0, tags.size());
+
+        // second weblog
+        tags = mgr.getTags(testWeblog2, null, null, -1);
+        assertEquals(0, tags.size());
+        
+        // setup some test entries to use
+        WeblogEntryData entry = TestUtils.setupWeblogEntry("entry1", testWeblog
+                .getDefaultCategory(), testWeblog, testUser);
+        entry.addTag("one");
+        entry.addTag("two");
+        entry.addTag("ONE");
+        mgr.saveWeblogEntry(entry);
+                
+        TestUtils.endSession(true);
+        
+        tags = mgr.getTags(testWeblog, null, null, -1);
+        assertEquals(3, tags.size());        
+        
+        HashMap expectedWeblogTags = new HashMap();
+        expectedWeblogTags.put("one",new Integer(1));
+        expectedWeblogTags.put("two",new Integer(1));
+        expectedWeblogTags.put("ONE",new Integer(1));
+        
+        for(Iterator it = tags.iterator(); it.hasNext(); ) 
+        {
+            TagStat stat = (TagStat) it.next();
+            if(!expectedWeblogTags.containsKey(stat.getName()))
+                fail("Unexpected tagName.");
+            
+            Integer expectedCount = (Integer) expectedWeblogTags.get(stat.getName());
+            assertEquals(expectedCount.intValue(), stat.getCount());
+        }
+        
+        // now add another entry in another blog
+        entry = TestUtils.setupWeblogEntry("entry3", testWeblog2
+                .getDefaultCategory(), testWeblog2, testUser);
+        entry.addTag("ONE");
+        entry.addTag("three");
+        mgr.saveWeblogEntry(entry);
+        
+        // let's fetch "site" tags now
+        tags = mgr.getTags(null, null, null, -1);
+        assertEquals(4, tags.size());        
+        
+        HashMap expectedSiteTags = new HashMap();
+        expectedSiteTags.put("one",new Integer(1));
+        expectedSiteTags.put("two",new Integer(1));
+        expectedSiteTags.put("three",new Integer(1));
+        expectedSiteTags.put("ONE",new Integer(2));
+        
+        for(Iterator it = tags.iterator(); it.hasNext(); ) 
+        {
+            TagStat stat = (TagStat) it.next();
+            if(!expectedSiteTags.containsKey(stat.getName()))
+                fail("Unexpected tagName.");
+            
+            Integer expectedCount = (Integer) expectedSiteTags.get(stat.getName());
+            assertEquals(expectedCount.intValue(), stat.getCount());
+        }
+       
+        TestUtils.endSession(true);
+                        
+        // teardown our test blog 2
+        TestUtils.teardownWeblog(testWeblog2.getId());
+        TestUtils.endSession(true);
+    }
            
   
     
