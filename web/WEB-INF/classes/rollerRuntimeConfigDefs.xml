@@ -86,6 +86,7 @@
       </property-def>
    </display-group >
 
+   
    <!-- User Settings Group -->
    <display-group name="userSettings" key="configForm.userSettings" >
    
@@ -106,7 +107,27 @@
 
    </display-group >
    
-   <!-- Comment Settings Group -->
+   
+   <!-- Weblog Rendering Settings Group -->
+   <display-group name="weblogSettings" key="configForm.weblogSettings" >
+       
+      <property-def  name="site.pages.maxEntries"  key="configForm.pageMaxEntries">
+         <type>string</type>
+         <default-value>30</default-value>
+      </property-def>
+      <property-def  name="site.newsfeeds.defaultEntries"  key="configForm.newsfeedMaxEntries">
+         <type>string</type>
+         <default-value>30</default-value>
+      </property-def>
+      <property-def  name="site.newsfeeds.styledFeeds"  key="configForm.styledFeeds">
+         <type>boolean</type>
+         <default-value>true</default-value>
+      </property-def>
+      
+   </display-group>
+   
+   
+   <!-- Comment & Trackback Settings Group -->
    <display-group name="commentSettings" key="configForm.commentSettings" >
    
       <property-def  name="users.comments.enabled"  key="configForm.enableComments">
@@ -145,22 +166,6 @@
 
    </display-group >
    
-   <!-- Newsfeed Settings Group -->
-   <display-group name="newsfeedSettings" key="configForm.newsfeedSettings" >
-      <property-def  name="site.newsfeeds.defaultEntries"  key="configForm.defaultEntries">
-         <type>string</type>
-         <default-value>50</default-value>
-      </property-def>      
-      <property-def  name="site.newsfeeds.maxEntries"  key="configForm.newsfeedMaxEntries">
-         <type>string</type>
-         <default-value>50</default-value>
-      </property-def>
-      <property-def  name="site.newsfeeds.styledFeeds"  key="configForm.styledFeeds">
-         <type>boolean</type>
-         <default-value>true</default-value>
-      </property-def>
-   </display-group>
-   
    <!-- File Upload Settings Group -->
    <display-group name="uploadSettings" key="configForm.fileUploadSettings" >
    
@@ -187,6 +192,8 @@
 
    </display-group >
    
+   
+    <!-- Theme Settings Group -->
    <display-group name="themeSettings" key="configForm.themeSettings">
    
       <property-def  name="users.themes.path"  key="configForm.newUserThemes">
@@ -199,7 +206,8 @@
       </property-def>
       
    </display-group>
-      
+   
+   
    <!-- Spam Prevention Settings Group -->
    <display-group name="spamSettings" key="websiteSettings.spamPrevention" >
    

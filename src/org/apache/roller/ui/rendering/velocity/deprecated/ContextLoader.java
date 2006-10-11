@@ -343,12 +343,10 @@ public class ContextLoader {
         int entryCount = website.getEntryDisplayCount();
         
         // But don't exceed installation-wide maxEntries settings
-        int maxEntries =
-                RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
         int defaultEntries =
                 RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
         if (entryCount < 1) entryCount = defaultEntries;
-        if (entryCount > maxEntries) entryCount = maxEntries;
+        if (entryCount > defaultEntries) entryCount = defaultEntries;
         ctx.put("entryCount",  new Integer(entryCount));
         
         String catname = null;

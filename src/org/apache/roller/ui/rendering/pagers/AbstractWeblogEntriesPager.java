@@ -23,29 +23,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
-import org.apache.roller.pojos.WeblogCategoryData;
-import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogTemplate;
+import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.MessageUtilities;
 import org.apache.roller.util.URLUtilities;
 
 
 /**
+ * An abstract implementation of a WeblogEntriesPager.
  *
+ * This implementation lays out the basic functionality of an entries pager so
+ * that subclasses can easily tweak only the few things necessary to handle
+ * paging their own way.
  */
 public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
@@ -84,7 +78,12 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
           this.tags = tags;
         
         // make sure offset, length, and page are valid
+        int maxLength = RollerRuntimeConfig.getIntProperty("site.pages.maxEntries");
         length = weblog.getEntryDisplayCount();
+        if(length > maxLength) {
+            length = maxLength;
+        }
+        
         if(page > 0) {
             this.page = page;
         }

@@ -161,6 +161,15 @@ public final class WebsiteFormAction extends DispatchAction {
             RollerSession rollerSession = RollerSession.getRollerSession(request);
             if ( rollerSession.isUserAuthorizedToAdmin(wd)) {
                 checkBlacklist(errors, messages, form.getBlacklist());
+                
+                // make sure user didn't enter an invalid entry display count
+                if(errors.isEmpty()) {
+                    int maxEntries = RollerRuntimeConfig.getIntProperty("site.pages.maxEntries");
+                    if(form.getEntryDisplayCount() > maxEntries) {
+                        errors.add(null, new ActionMessage("websiteSettings.error.entryDisplayCount"));
+                    }
+                }
+                
                 if (errors.isEmpty()) {
                     // ensure getEnabled can't be changed
                     form.setEnabled(wd.getEnabled());

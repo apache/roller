@@ -84,7 +84,7 @@ public class ConfigModel implements Model {
     }
     
     public int getFeedMaxSize() {
-        return getIntProperty("site.newsfeeds.maxEntries");
+        return getIntProperty("site.newsfeeds.defaultEntries");
     }
     
     public boolean getFeedStyle() {
