@@ -47,6 +47,8 @@ import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
+import org.apache.roller.pojos.TagStat;
+import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.PermissionsData;
 import org.apache.roller.pojos.PingQueueEntryData;
@@ -110,6 +112,31 @@ public class HibernateUserManagerImpl implements UserManager {
         BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         
+        // remove tags
+        Criteria tagQuery = session.createCriteria(WeblogEntryTagData.class)
+            .add(Expression.eq("website.id", website.getId()));
+        for(Iterator iter = tagQuery.list().iterator(); iter.hasNext();) {
+            WeblogEntryTagData tagData = (WeblogEntryTagData) iter.next();
+            this.strategy.remove(tagData);
+        }
+        
+        // remove site tag aggregates
+        List tags = wmgr.getTags(website, null, null, -1);
+        for(Iterator iter = tags.iterator(); iter.hasNext();) {
+            TagStat stat = (TagStat) iter.next();
+            Query query = session.createQuery("update WeblogEntryTagAggregateData set total = total - ? where name = ? and website is null");
+            query.setParameter(0, new Integer(stat.getCount()));
+            query.setParameter(1, stat.getName());
+            query.executeUpdate();
+        }
+        
+        // delete all weblog tag aggregates
+        session.createQuery("delete from WeblogEntryTagAggregateData where website = ?")
+            .setParameter(0, website).executeUpdate();
+        
+        // delete all bad counts
+        session.createQuery("delete from WeblogEntryTagAggregateData where total <= 0").executeUpdate();       
+                
         // Remove the website's ping queue entries
         Criteria criteria = session.createCriteria(PingQueueEntryData.class);
         criteria.add(Expression.eq("website", website));
