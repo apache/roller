@@ -145,10 +145,9 @@ public class PlanetFeedServlet extends HttpServlet {
             model.put("absoluteSite", RollerRuntimeConfig.getAbsoluteContextURL());
             model.put("feedStyle", new Boolean(RollerRuntimeConfig.getBooleanProperty("site.newsfeeds.styledFeeds")));
 
-            int entryCount =
+            int numEntries =
                     RollerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
-            int maxEntries =
-                    RollerRuntimeConfig.getIntProperty("site.newsfeeds.maxEntries");
+            int entryCount = numEntries;
             String sCount = request.getParameter("count");
             if (sCount!=null) {
                 try {
@@ -156,7 +155,7 @@ public class PlanetFeedServlet extends HttpServlet {
                 } catch (NumberFormatException e) {
                     log.warn("Improperly formatted count parameter");
                 }
-                if ( entryCount > maxEntries ) entryCount = maxEntries;
+                if ( entryCount > numEntries ) entryCount = numEntries;
                 if ( entryCount < 0 ) entryCount = 0;
             }
             model.put("entryCount", new Integer(entryCount));
