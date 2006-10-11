@@ -49,7 +49,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     WeblogEntryData prevEntry = null;
     
     // collection for the pager
-    private Map entries = null;
+    Map entries = null;
     
     
     public WeblogEntriesPermalinkPager(
