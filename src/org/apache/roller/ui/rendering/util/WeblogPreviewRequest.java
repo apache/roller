@@ -25,7 +25,10 @@ import org.apache.roller.RollerException;
 import org.apache.roller.ThemeNotFoundException;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ThemeManager;
+import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.Theme;
+import org.apache.roller.pojos.WeblogEntryData;
+import org.apache.roller.util.URLUtilities;
 
 
 /**
@@ -39,10 +42,11 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     
     // lightweight attributes
     private String themeName = null;
+    private String previewEntry = null;
     
     // heavyweight attributes
     private Theme theme = null;
-    
+    private WeblogEntryData weblogEntry = null;
     
     public WeblogPreviewRequest(HttpServletRequest request) 
             throws InvalidRequestException {
@@ -50,10 +54,14 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         // let parent go first
         super(request);
         
-        // all we need to worry about is the query params
-        // the only param we expect is "theme"
+        // we may have a specific theme to preview
         if(request.getParameter("theme") != null) {
             this.themeName = request.getParameter("theme");
+        }
+        
+        // we may also have a specific entry to preview
+        if(request.getParameter("previewEntry") != null) {
+            this.previewEntry = URLUtilities.decode(request.getParameter("previewEntry"));
         }
         
         if(log.isDebugEnabled()) {
@@ -103,6 +111,40 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
 
     public void setTheme(Theme theme) {
         this.theme = theme;
+    }
+
+    public String getPreviewEntry() {
+        return previewEntry;
+    }
+
+    public void setPreviewEntry(String previewEntry) {
+        this.previewEntry = previewEntry;
+    }
+    
+    // if we have a preview entry we would prefer to return that
+    public WeblogEntryData getWeblogEntry() {
+        
+        if(weblogEntry == null && 
+                (previewEntry != null || super.getWeblogAnchor() != null)) {
+            
+            String anchor = previewEntry;
+            if(previewEntry == null) {
+                anchor = super.getWeblogAnchor();
+            }
+            
+            try {
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                weblogEntry = wmgr.getWeblogEntryByAnchor(getWeblog(), anchor);
+            } catch (RollerException ex) {
+                log.error("Error getting weblog entry "+anchor, ex);
+            }
+        }
+        
+        return weblogEntry;
+    }
+    
+    public void setWeblogEntry(WeblogEntryData weblogEntry) {
+        this.weblogEntry = weblogEntry;
     }
     
 }
