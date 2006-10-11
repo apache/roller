@@ -99,7 +99,7 @@ public class TagStatsServlet extends HttpServlet {
             
             response.getWriter().println("{");
             response.getWriter().print("  prefix : \"");
-            response.getWriter().print(startsWith);
+            response.getWriter().print(startsWith == null ? "" : startsWith);
             response.getWriter().println("\",");
             response.getWriter().print("  weblog : \"");
             response.getWriter().print(website != null ? website.getHandle() : "");
