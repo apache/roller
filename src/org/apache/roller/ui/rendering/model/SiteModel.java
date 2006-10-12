@@ -476,15 +476,7 @@ public class SiteModel implements Model {
         }
         return results;
     }
-    
-    /**
-     * Returns the list of tags specified in the request /tags/foo+bar or /?tags=foo+bar
-     * @return
-     */
-    public List getTags() {
-        return tags;
-    }
-    
+        
     /**
      * 
      * @param sinceDays
