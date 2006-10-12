@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -132,8 +133,9 @@ public class WeblogFeedRequest extends WeblogRequest {
         
         if(request.getParameter("tags") != null) {
           this.tags = Arrays.asList(StringUtils.split(URLUtilities.decode(request.getParameter("tags")),"+"));
-          if(this.tags.size() > 3)
-              throw new InvalidRequestException("max number of tags allowed is 3, " + request.getRequestURL());          
+          int maxSize = RollerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);                  
+          if(this.tags.size() > maxSize)
+              throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
         }        
         
         if(request.getParameter("excerpts") != null) {
