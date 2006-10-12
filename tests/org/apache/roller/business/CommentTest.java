@@ -245,7 +245,7 @@ public class CommentTest extends TestCase {
         assertNotNull(comments);
         assertEquals(3, comments.size());
        
-        int countDeleted = mgr.deleteMatchingComments(
+        int countDeleted = mgr.removeMatchingComments(
             null,         // website
             null,         // entry
             "deleteme",  // searchString
@@ -272,7 +272,7 @@ public class CommentTest extends TestCase {
         assertEquals(3, comments.size());
         
         // remove test comments
-        countDeleted = mgr.deleteMatchingComments(
+        countDeleted = mgr.removeMatchingComments(
             null,         // website
             null,         // entry
             "saveme",    // searchString
