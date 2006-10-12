@@ -199,6 +199,92 @@ public class CommentTest extends TestCase {
         TestUtils.endSession(true);
     }
     
+    public void testBulkCommentDelete() throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        List comments = null;
+        
+        // we need some comments to play with
+        CommentData comment1 = TestUtils.setupComment("deletemeXXX", testEntry);
+        CommentData comment2 = TestUtils.setupComment("XXXdeleteme", testEntry);
+        CommentData comment3 = TestUtils.setupComment("deleteme", testEntry);
+        CommentData comment4 = TestUtils.setupComment("saveme", testEntry);
+        CommentData comment5 = TestUtils.setupComment("saveme", testEntry);
+        CommentData comment6 = TestUtils.setupComment("saveme", testEntry);
+        TestUtils.endSession(true);
+        
+        // get all comments
+        comments = null;
+        comments = mgr.getComments(
+            null, // website
+            null, // entry
+            null, // searchString
+            null, // startDate
+            null, // endDate
+            null, // pending
+            null, // approved
+            null, // spam
+            true, // reverseChrono
+             0,   // offset
+            -1);  // length
+        assertNotNull(comments);
+        assertEquals(6, comments.size());
+        
+        comments = mgr.getComments(
+            null, // website
+            null, // entry
+            "deleteme", // searchString
+            null, // startDate
+            null, // endDate
+            null, // pending
+            null, // approved
+            null, // spam
+            true, // reverseChrono
+             0,   // offset
+            -1);  // length
+        assertNotNull(comments);
+        assertEquals(3, comments.size());
+       
+        int countDeleted = mgr.deleteMatchingComments(
+            null,         // website
+            null,         // entry
+            "deleteme",  // searchString
+            null,         // startDate
+            null,         // endDate
+            null,         // pending
+            null,         // approved
+            null);        // spam        
+        assertEquals(3, countDeleted);
+        
+        comments = mgr.getComments(
+            null, // website
+            null, // entry
+            null, // searchString
+            null, // startDate
+            null, // endDate
+            null, // pending
+            null, // approved
+            null, // spam
+            true, // reverseChrono
+             0,   // offset
+            -1);  // length
+        assertNotNull(comments);
+        assertEquals(3, comments.size());
+        
+        // remove test comments
+        countDeleted = mgr.deleteMatchingComments(
+            null,         // website
+            null,         // entry
+            "saveme",    // searchString
+            null,         // startDate
+            null,         // endDate
+            null,         // pending
+            null,         // approved
+            null);        // spam        
+        assertEquals(3, countDeleted);
+        TestUtils.endSession(true);
+    }
+    
     
     /**
      * Test extra CRUD methods ... removeComments(ids), removeCommentsForEntry

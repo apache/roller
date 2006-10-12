@@ -32,6 +32,12 @@ function setChecked(val, name) {
         }
     }
 }
+function bulkDelete() {
+    if (window.confirm('<fmt:message key="commentManagement.confirmBulkDelete"><fmt:param value="${model.totalMatchingCommentCount}" /></fmt:message>')) {
+        document.commentQueryForm.method.value = "bulkDelete";
+        document.commentQueryForm.submit();
+    }
+}
 -->
 </script>
 
@@ -153,6 +159,21 @@ function setChecked(val, name) {
         
         </div> <%-- class="tablenav" --%>
 
+        
+        <%-- ============================================================= --%>
+        <%-- Bulk comment delete link --%>
+        <%-- ============================================================= --%>
+        
+        <c:if test="${model.showBulkDeleteLink}">
+            <p>
+            <fmt:message key="commentManagement.bulkDeletePrompt1">
+                <fmt:param value="${model.totalMatchingCommentCount}" />
+            </fmt:message>
+            <a href="#" onclick="bulkDelete()">
+                <fmt:message key="commentManagement.bulkDeletePrompt2" />
+            </a>
+            </p>
+        </c:if>
         
         <%-- ============================================================= --%>
         <%-- Comment table / form with checkboxes --%>
@@ -362,7 +383,7 @@ function setChecked(val, name) {
         <%-- Save changes and  cancel buttons --%>
         <%-- ========================================================= --%>
             
-        <input type="submit" name="submit" 
+        <input type="submit" name="submitButton" 
             value='<fmt:message key="commentManagement.update" />' />
         &nbsp;
         
