@@ -186,4 +186,12 @@ public class FeedModel implements Model {
         return recentComments;
     }
     
+    /**
+     * Returns the list of tags specified in the request /?tags=foo+bar
+     * @return
+     */
+    public List getTags() {
+        return feedRequest.getTags();
+    }    
+    
 }

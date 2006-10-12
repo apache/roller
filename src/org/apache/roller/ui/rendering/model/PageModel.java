@@ -273,7 +273,7 @@ public class PageModel implements Model {
     }
     
     /**
-     * Returns the list of tags specified in the request /tags/foo+bar or /?tags=foo+bar
+     * Returns the list of tags specified in the request /tags/foo+bar
      * @return
      */
     public List getTags() {
