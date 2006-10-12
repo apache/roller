@@ -18,8 +18,9 @@
 
 package org.apache.roller.model;
 
+import java.util.Date;
 import java.util.TimerTask;
-import java.sql.Date;
+import org.apache.roller.business.runnable.RollerTask;
 
 
 /**
@@ -49,19 +50,64 @@ public interface ThreadManager {
     /**
      * Schedule task to run once a day.
      */
-    public void scheduleDailyTimerTask(TimerTask task);
+    public void scheduleDailyTimerTask(RollerTask task);
     
     
     /**
      * Schedule task to run once per hour.
      */
-    public void scheduleHourlyTimerTask(TimerTask task);
+    public void scheduleHourlyTimerTask(RollerTask task);
     
     
     /**
      * Schedule task to run at fixed rate.
      */
-    public void scheduleFixedRateTimerTask(TimerTask task, long delayMins, long periodMins);
+    public void scheduleFixedRateTimerTask(RollerTask task, long delayMins, long periodMins);
+    
+    
+    /**
+     * Try to aquire a lock for a given RollerTask.
+     *
+     * @param task The RollerTask to aquire the lock for.
+     * @return boolean True if lock was acquired, False otherwise.
+     */
+    public boolean acquireLock(RollerTask task);
+    
+    
+    /**
+     * Try to release the lock for a given RollerTask.
+     *
+     * @param task The RollerTask to release the lock for.
+     * @return boolean True if lock was released (or was not locked), False otherwise.
+     */
+    public boolean releaseLock(RollerTask task);
+    
+    
+    /**
+     * Is a task currently locked?
+     * 
+     * @param task The RollerTask to check the lock state for.
+     * @return boolean True if task is locked, False otherwise.
+     */
+    public boolean isLocked(RollerTask task);
+    
+    
+    /**
+     * What was the last time a task was run?
+     * 
+     * @param task The RollerTask to check the last run time for.
+     * @return Date The last time the task was run, or null if task has never been run.
+     */
+    public Date getLastRun(RollerTask task);
+    
+    
+    /**
+     * What was the next time a task is allowed to run?
+     * 
+     * @param task The RollerTask to calculate the next run time for.
+     * @return Date The next time the task is allowed to run, or null if task has never been run.
+     */
+    public Date getNextRun(RollerTask task);
     
     
     /**

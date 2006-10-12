@@ -380,6 +380,16 @@ create table roller_properties (
     value    $TEXT_SQL_TYPE
 );
 
+create table roller_tasklock (
+    id              varchar(48)   not null primary key,
+    name            varchar(255)  not null,
+    islocked        $BOOLEAN_SQL_TYPE_FALSE,
+    timeacquired    $TIMESTAMP_SQL_TYPE_NULL,
+    timeleased	    integer,
+    lastrun         $TIMESTAMP_SQL_TYPE_NULL
+);
+create index rtl_taskname_idx on roller_tasklock( name );
+
 -- Entry attribute: metadata for weblog entries
 create table entryattribute (
     id       varchar(48) not null primary key,

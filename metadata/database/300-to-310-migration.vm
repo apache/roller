@@ -31,3 +31,13 @@ create table weblogentrytagagg (
 create index weta_websiteid_idx on weblogentrytagagg( websiteid );
 create index weta_name_idx on weblogentrytagagg( name );
 create index weta_lastused_idx on weblogentrytagagg( lastused );
+
+create table roller_tasklock (
+    id              varchar(48)   not null primary key,
+    name            varchar(255)  not null,
+    islocked        $BOOLEAN_SQL_TYPE_FALSE,
+    timeacquired    $TIMESTAMP_SQL_TYPE_NULL,
+    timeleased	    integer,
+    lastrun         $TIMESTAMP_SQL_TYPE_NULL
+);
+create index rtl_taskname_idx on roller_tasklock( name );
