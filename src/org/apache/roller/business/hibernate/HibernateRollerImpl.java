@@ -1,29 +1,28 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * Created on Feb 23, 2003
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
+
 package org.apache.roller.business.hibernate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerImpl;
+import org.apache.roller.business.ThreadManagerImpl;
 import org.apache.roller.model.BookmarkManager;
 import org.apache.roller.model.ConfigManager;
 import org.apache.roller.model.AutoPingManager;
@@ -35,6 +34,7 @@ import org.apache.roller.model.RefererManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.model.WeblogManager;
+import org.apache.roller.model.ThreadManager;
 
 
 /**
@@ -63,6 +63,8 @@ public class HibernateRollerImpl extends RollerImpl {
     private PingQueueManager pingQueueManager = null;
     private AutoPingManager autoPingManager = null;
     private PingTargetManager pingTargetManager = null;
+    private ThreadManager threadManager = null;
+    
     
     protected HibernateRollerImpl() throws RollerException {
         try {
@@ -104,6 +106,7 @@ public class HibernateRollerImpl extends RollerImpl {
         if (pingTargetManager != null) pingTargetManager.release();
         if (pingQueueManager != null) pingQueueManager.release();
         if (autoPingManager != null) autoPingManager.release();
+        if( threadManager != null) threadManager.release();
         
         // tell Hibernate to close down
         this.strategy.release();
@@ -223,6 +226,17 @@ public class HibernateRollerImpl extends RollerImpl {
             pingTargetManager = new HibernatePingTargetManagerImpl(strategy);
         }
         return pingTargetManager;
-    } 
+    }
+    
+    
+    /**
+     * @see org.apache.roller.model.Roller#getThreadManager()
+     */
+    public ThreadManager getThreadManager() throws RollerException {
+        if (threadManager == null) {
+            threadManager = new HibernateThreadManagerImpl(strategy);
+        }
+        return threadManager;
+    }
     
 }

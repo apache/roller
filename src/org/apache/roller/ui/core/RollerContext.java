@@ -31,7 +31,6 @@ import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSessionEvent;
 import javax.sql.DataSource;
 import org.acegisecurity.providers.ProviderManager;
@@ -40,19 +39,16 @@ import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
 import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.acegisecurity.providers.encoding.ShaPasswordEncoder;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.utils.UpgradeDatabase;
 import org.apache.roller.config.PingConfig;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.ScheduledTask;
-import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.pings.PingQueueTask;
 import org.apache.roller.ui.core.security.AutoProvision;
 import org.apache.roller.util.cache.CacheManager;
@@ -260,10 +256,10 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
                     StringUtils.split(hourlyString, ",") );
             for (int i=0; i<hourlyTasks.length; i++) {
                 mLogger.info("Setting hourly task: "+hourlyTasks[i]);
-                ScheduledTask task =
-                        (ScheduledTask)Class.forName(hourlyTasks[i]).newInstance();
-                task.init(roller, mContext.getRealPath("/"));
-                roller.getThreadManager().scheduleHourlyTimerTask((TimerTask)task);
+                RollerTask task =
+                        (RollerTask) Class.forName(hourlyTasks[i]).newInstance();
+                task.init();
+                roller.getThreadManager().scheduleHourlyTimerTask((RollerTask)task);
             }
         }
         
@@ -274,10 +270,10 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
                     StringUtils.split(dailyString, ",") );
             for (int j=0; j<dailyTasks.length; j++) {
                 mLogger.info("Setting daily task: "+dailyTasks[j]);
-                ScheduledTask task =
-                        (ScheduledTask)Class.forName(dailyTasks[j]).newInstance();
-                task.init(roller, mContext.getRealPath("/"));
-                roller.getThreadManager().scheduleDailyTimerTask((TimerTask)task);
+                RollerTask task =
+                        (RollerTask) Class.forName(dailyTasks[j]).newInstance();
+                task.init();
+                roller.getThreadManager().scheduleDailyTimerTask((RollerTask)task);
             }
         }
     }
@@ -318,7 +314,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         
         // Set up the task
         PingQueueTask pingQueueTask = new PingQueueTask();
-        pingQueueTask.init(intervalMins);
+        pingQueueTask.init();
         
         // Schedule it at the appropriate interval, delay start for one interval.
         mLogger.info("Scheduling ping queue task to run at " + intervalMins + " minute intervals.");

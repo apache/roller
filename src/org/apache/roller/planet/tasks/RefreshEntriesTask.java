@@ -18,22 +18,50 @@
 
 package org.apache.roller.planet.tasks;
 
-import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.ScheduledTask;
-import org.apache.roller.pojos.UserData;
 
 
 /**
  * Run the Planet Roller refresh-entries method to fetch and parse newsfeeds.
  */
-public class RefreshEntriesTask extends TimerTask implements ScheduledTask {
+public class RefreshEntriesTask extends RollerTask {
     
-    private static Log logger = LogFactory.getLog(RefreshEntriesTask.class);
+    private static Log log = LogFactory.getLog(RefreshEntriesTask.class);
+    
+    
+    public String getName() {
+        return "RefreshEntriesTask";
+    }
+    
+    public int getLeaseTime() {
+        return 10;
+    }
+    
+    public int getInterval() {
+        return 60;
+    }
+    
+    public void init() throws RollerException {
+        // no-op
+    }
+    
+    
+    public void runTask() {
+        try {
+            Roller roller = RollerFactory.getRoller();
+            roller.getPlanetManager().refreshEntries();
+            roller.flush();
+        } catch (RollerException e) {
+            log.error("ERROR refreshing entries", e);
+        } finally {
+            RollerFactory.getRoller().release();
+        }
+    }
     
     
     /** 
@@ -44,29 +72,12 @@ public class RefreshEntriesTask extends TimerTask implements ScheduledTask {
             RollerFactory.setRoller(
                     "org.apache.roller.business.hibernate.HibernateRollerImpl");
             RefreshEntriesTask task = new RefreshEntriesTask();
-            task.init(RollerFactory.getRoller(), "dummy");
+            task.init();
             task.run();
             System.exit(0);
         } catch (Throwable t) {
             t.printStackTrace();
             System.exit(-1);
-        }
-    }
-    
-    
-    public void init(Roller roller, String realPath) throws RollerException {
-        // no-op
-    }
-    
-    
-    public void run() {
-        try {
-            Roller roller = RollerFactory.getRoller();
-            roller.getPlanetManager().refreshEntries();
-            roller.flush();
-            roller.release();
-        } catch (RollerException e) {
-            logger.error("ERROR refreshing entries", e);
         }
     }
     

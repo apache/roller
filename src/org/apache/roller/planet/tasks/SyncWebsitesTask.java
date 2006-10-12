@@ -21,15 +21,13 @@ package org.apache.roller.planet.tasks;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.planet.model.PlanetManager;
-import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.ScheduledTask;
 import org.apache.roller.model.UserManager;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
@@ -40,43 +38,32 @@ import org.apache.roller.util.URLUtilities;
 /**
  * Ensure that every weblog has a subscription in Planet Roller database.
  */
-public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
+public class SyncWebsitesTask extends RollerTask {
     
     private static Log log = LogFactory.getLog(SyncWebsitesTask.class);
     
     
-    /** 
-     * Task may be run from the command line 
-     */
-    public static void main(String[] args) {
-        try {
-            RollerFactory.setRoller(
-                    "org.apache.roller.business.hibernate.HibernateRollerImpl");
-            SyncWebsitesTask task = new SyncWebsitesTask();
-            task.init(RollerFactory.getRoller(), "dummy");
-            task.run();
-            System.exit(0);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(-1);
-        }
+    public String getName() {
+        return "SyncWebsitesTask";
     }
     
+    public int getLeaseTime() {
+        return 30;
+    }
     
-    public void init(Roller roller, String realPath) throws RollerException {
+    public int getInterval() {
+        return 24 * 60;
+    }
+    
+    public void init() throws RollerException {
         // no-op
-    }
-    
-    
-    public void run() {
-        syncWebsites();
     }
     
     
     /**
      * Ensure there's a subscription in the "all" group for every Roller weblog.
      */
-    private void syncWebsites() {
+    public void runTask() {
         
         // make sure we have an absolute url value
         String absUrl = RollerRuntimeConfig.getProperty("site.absoluteurl");
@@ -154,6 +141,24 @@ public class SyncWebsitesTask extends TimerTask implements ScheduledTask {
         } finally {
             // don't forget to release
             RollerFactory.getRoller().release();
+        }
+    }
+    
+    
+    /** 
+     * Task may be run from the command line 
+     */
+    public static void main(String[] args) {
+        try {
+            RollerFactory.setRoller(
+                    "org.apache.roller.business.hibernate.HibernateRollerImpl");
+            SyncWebsitesTask task = new SyncWebsitesTask();
+            task.init();
+            task.run();
+            System.exit(0);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            System.exit(-1);
         }
     }
     

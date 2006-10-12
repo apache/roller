@@ -25,20 +25,19 @@ import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.model.ThreadManager;
 import org.apache.roller.util.DateUtil;
 
 
 /**
- * Manage Roller's background thread use. Currently, Roller starts background
- * threads for two purposes: 1) the nightly purge of referer counts and 2)
- * following linkbacks (only occurs if linkbacks are enabled).
+ * Manage Roller's thread use.
  */
 public class ThreadManagerImpl implements ThreadManager {
     
-    private PooledExecutor backgroundExecutor;
-    private DirectExecutor nodelayExecutor;
-    private Timer scheduler;
+    private PooledExecutor backgroundExecutor = null;
+    private DirectExecutor nodelayExecutor = null;
+    private Timer scheduler = null;
     
     
     public ThreadManagerImpl() {
@@ -76,18 +75,18 @@ public class ThreadManagerImpl implements ThreadManager {
     }
     
     
-    public void scheduleDailyTimerTask(TimerTask task) {
+    public void scheduleDailyTimerTask(RollerTask task) {
         scheduler.scheduleAtFixedRate(task,
                 DateUtil.getEndOfDay(new Date()), DateUtil.millisInDay);
     }
     
     
-    public void scheduleHourlyTimerTask(TimerTask task) {
+    public void scheduleHourlyTimerTask(RollerTask task) {
         scheduler.scheduleAtFixedRate(task, new Date(), 60*60*1000);
     }
     
     
-    public void scheduleFixedRateTimerTask(TimerTask task, long delayMins, long periodMins) {
+    public void scheduleFixedRateTimerTask(RollerTask task, long delayMins, long periodMins) {
         if (periodMins < MIN_RATE_INTERVAL_MINS) {
             throw new IllegalArgumentException("Period (" + periodMins +
                     ") shorter than minimum allowed (" + MIN_RATE_INTERVAL_MINS + ")");
@@ -103,6 +102,27 @@ public class ThreadManagerImpl implements ThreadManager {
     
     
     public void release() {
+    }
+    
+    
+    public boolean acquireLock(RollerTask task) {
+        return true;
+    }
+    
+    public boolean releaseLock(RollerTask task) {
+        return true;
+    }
+    
+    public boolean isLocked(RollerTask task) {
+        return false;
+    }
+    
+    public Date getLastRun(RollerTask task) {
+        return null;
+    }
+    
+    public Date getNextRun(RollerTask task) {
+        return null;
     }
     
 }

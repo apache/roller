@@ -21,10 +21,11 @@ package org.apache.roller.ui.core.pings;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.runnable.RollerTask;
+import org.apache.roller.config.PingConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 
-import java.util.TimerTask;
 
 /**
  * Task for processing the ping queue at fixed intervals.   This is set up during context initialization by {@link
@@ -33,35 +34,35 @@ import java.util.TimerTask;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PingQueueTask extends TimerTask {
+public class PingQueueTask extends RollerTask {
+    
     private static final Log logger = LogFactory.getLog(PingQueueTask.class);
+    
 
-    //  The periodic interval (in minutes) at which we are configured to run
-    long intervalMins;
-
+    public String getName() {
+        return "PingQueueTask";
+    }
+    
+    public int getLeaseTime() {
+        return 3;
+    }
+    
+    public int getInterval() {
+        return PingConfig.getQueueProcessingIntervalMins();
+    }
+    
     /**
      * Initialize the task.
-     *
-     * @throws RollerException
      */
-    public void init(long intervalMins) throws RollerException {
+    public void init() throws RollerException {
         PingQueueProcessor.init();
-        this.intervalMins = intervalMins;
     }
-
-    /**
-     * Get the task's configured interval (in minutes).
-     *
-     * @return the tasks configured interval (in minutes).
-     */
-    public long getIntervalMins() {
-        return intervalMins;
-    }
+    
 
     /**
      * Run the task once.
      */
-    public void run() {
+    public void runTask() {
         // Call the ping queue processor to process the queue
         Roller roller = null;
         try {
@@ -70,9 +71,10 @@ public class PingQueueTask extends TimerTask {
             roller.flush();
         } catch (RollerException e) {
             // This is probably duplicate logging. May want to eliminate it, but should be rare.
-            logger.error("Error while processing ping queuer", e);
+            logger.error("Error while processing ping queue", e);
         } finally {
             if (roller != null) roller.release();
         }
     }
+    
 }

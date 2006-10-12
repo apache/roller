@@ -16,52 +16,65 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.ui.core.tasks;
+package org.apache.roller.business.runnable;
 
-import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RefererManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.ScheduledTask;
 
 
 /**
  * Reset referer counts.
  */
-public class TurnoverReferersTask extends TimerTask implements ScheduledTask {
+public class TurnoverReferersTask extends RollerTask {
     
-    private static Log mLogger = LogFactory.getLog(TurnoverReferersTask.class);
+    Log log = LogFactory.getLog(TurnoverReferersTask.class);
+    
+    
+    public String getName() {
+        return "TurnoverReferersTask";
+    }
+    
+    public int getLeaseTime() {
+        return 5;
+    }
+    
+    public int getInterval() {
+        return 60;
+    }
     
     
     /**
      * Task init.
      */
-    public void init(Roller roller, String realPath) throws RollerException {
-        mLogger.debug("initing");
+    public void init() throws RollerException {
+        log.debug("initing");
     }
     
     
     /**
      * Execute the task.
      */
-    public void run() {
-        
-        mLogger.info("task started");
+    public void runTask() {
         
         try {
+            log.info("task started");
+            
             Roller roller = RollerFactory.getRoller();
             roller.getRefererManager().clearReferrers();
             roller.flush();
-            roller.release();
-            mLogger.info("task completed");
+            
+            log.info("task completed");
             
         } catch (RollerException e) {
-            mLogger.error("Error while checking for referer turnover", e);
+            log.error("Error while checking for referer turnover", e);
         } catch (Exception ee) {
-            mLogger.error("unexpected exception", ee);
+            log.error("unexpected exception", ee);
+        } finally {
+            // always release
+            RollerFactory.getRoller().release();
         }
         
         
@@ -74,7 +87,7 @@ public class TurnoverReferersTask extends TimerTask implements ScheduledTask {
     public static void main(String[] args) throws Exception {
         try {
             TurnoverReferersTask task = new TurnoverReferersTask();
-            task.init(null, null);
+            task.init();
             task.run();
             System.exit(0);
         } catch (RollerException ex) {

@@ -175,7 +175,7 @@ public final class PlanetConfigAction extends DispatchAction
                 request.setAttribute("model",pageModel);                
                 Roller roller = RollerFactory.getRoller();
                 RefreshEntriesTask task = new RefreshEntriesTask();
-                task.init(roller, "dummy");
+                task.init();
                 roller.getThreadManager().executeInBackground(task);
                 
                 ActionMessages messages = new ActionMessages();
@@ -212,7 +212,7 @@ public final class PlanetConfigAction extends DispatchAction
                 request.setAttribute("model",pageModel);                
                 Roller roller = (Roller)RollerFactory.getRoller();
                 SyncWebsitesTask task = new SyncWebsitesTask();
-                task.init(roller, "dummy");
+                task.init();
                 roller.getThreadManager().executeInBackground(task);
                 ActionMessages messages = new ActionMessages();
                 messages.add(null, 
