@@ -120,11 +120,11 @@ public class PlanetManagerLocalTest extends TestCase {
             
             // run sync task to fill aggregator with websites created by super
             SyncWebsitesTask syncTask = new SyncWebsitesTask();
-            syncTask.init(RollerFactory.getRoller(), "dummy");
+            syncTask.init();
             syncTask.run();           
             
             RefreshEntriesTask refreshTask = new RefreshEntriesTask();
-            refreshTask.init(RollerFactory.getRoller(), "dummy");
+            refreshTask.init();
             refreshTask.run();
             
             List agg = planet.getAggregation(null, null, 0, -1);
