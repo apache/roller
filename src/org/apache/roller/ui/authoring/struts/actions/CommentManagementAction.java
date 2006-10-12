@@ -129,7 +129,7 @@ public final class CommentManagementAction extends DispatchAction {
                 || rses.isGlobalAdminUser()) {
                 WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
                 CommentManagementForm queryForm = (CommentManagementForm)actionForm;
-                wmgr.deleteMatchingComments(
+                wmgr.removeMatchingComments(
                     rreq.getWebsite(),
                     rreq.getWeblogEntry(), 
                     queryForm.getSearchString(),

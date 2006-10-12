@@ -358,7 +358,7 @@ public interface WeblogManager {
      * @param pending    Approved flag value or null for no restriction
      * @return Number of comments deleted
      */
-    public int deleteMatchingComments(
+    public int removeMatchingComments(
             WebsiteData     website,
             WeblogEntryData entry,
             String          searchString,

@@ -871,7 +871,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    public int deleteMatchingComments(
+    public int removeMatchingComments(
             WebsiteData     website, 
             WeblogEntryData entry, 
             String  searchString, 
