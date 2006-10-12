@@ -880,12 +880,33 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             Boolean pending, 
             Boolean approved, 
             Boolean spam) throws RollerException {
-       
+
         try {
+            List comments = getComments( 
+                website, entry, searchString, startDate, endDate, 
+                pending, approved, spam, true, 0, -1);
+            int count = 0;
+            for (Iterator it = comments.iterator(); it.hasNext();) {
+                CommentData comment = (CommentData) it.next();
+                removeComment(comment);
+                count++;
+            }
+            return count;
+        
+        /* I'd MUCH rather use a bulk delete, but MySQL says "General error,  
+           message from server: "You can't specify target table 'roller_comment' 
+           for update in FROM clause"
+
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+         
+            // Can't use Criteria API to do bulk delete, so we build string     
             StringBuffer queryString = new StringBuffer();
             ArrayList params = new ArrayList();
-            queryString.append("delete CommentData c where ");
+         
+            // Can't use join in a bulk delete query, but can use a sub-query      
+            queryString.append(
+                "delete CommentData cmt where cmt.id in "
+              + "(select c.id from CommentData as c where ");
                 
             if (entry != null) {
                 queryString.append("c.weblogEntry.anchor = ? and c.weblogEntry.website.handle = ? ");
@@ -945,12 +966,14 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                 queryString.append("c.spam = ? ");
                 params.add(spam);
             }
+            queryString.append(")");
             
             Query query = session.createQuery(queryString.toString());
             for(int i = 0; i < params.size(); i++) {
               query.setParameter(i, params.get(i));
             }
-            return query.executeUpdate();
+            return query.executeUpdate(); 
+         */
                         
         } catch (HibernateException e) {
             log.error(e);
