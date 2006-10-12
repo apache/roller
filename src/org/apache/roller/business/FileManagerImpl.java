@@ -162,15 +162,26 @@ public class FileManagerImpl implements FileManager {
             throws FileNotFoundException, FilePathException, FileIOException {
         
         // get path to weblog's uploads area
-        File uploadDir = this.getRealFile(weblog, null);
+        File weblogDir = this.getRealFile(weblog, null);
         
         // now construct path to new directory
-        File dir = new File(uploadDir.getAbsolutePath() + File.separator + path);
+        File dir = new File(weblogDir.getAbsolutePath() + File.separator + path);
         
         // check if it already exists
         if(dir.exists() && dir.isDirectory() && dir.canRead()) {
             // already exists, we don't need to do anything
             return;
+        }
+        
+        try {
+            // make sure someone isn't trying to sneek outside the uploads dir
+            if(!dir.getCanonicalPath().startsWith(weblogDir.getCanonicalPath())) {
+                throw new FilePathException("Invalid path ["+path+"], "+
+                        "trying to get outside uploads dir.");
+            }
+        } catch (IOException ex) {
+            // rethrow as FilePathException
+            throw new FilePathException(ex);
         }
         
         // create it
@@ -292,7 +303,7 @@ public class FileManagerImpl implements FileManager {
                 }
             } catch (Exception ex) {
                 // this is okay, just means that parent dir doesn't exist
-                messages.addError("blah");
+                messages.addError("error.upload.badPath");
                 return false;
             }
             
@@ -471,8 +482,7 @@ public class FileManagerImpl implements FileManager {
         
         try {
             // make sure someone isn't trying to sneek outside the uploads dir
-            File uploadDir = new File(this.upload_dir);
-            if(!file.getCanonicalPath().startsWith(uploadDir.getCanonicalPath())) {
+            if(!file.getCanonicalPath().startsWith(weblogDir.getCanonicalPath())) {
                 throw new FilePathException("Invalid path ["+path+"], "+
                         "trying to get outside uploads dir.");
             }

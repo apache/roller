@@ -94,7 +94,6 @@ File upload form, but only if it's enabled and weblog is under quota
             </div>      
 
             <br />
-            <br />
             
             <input name="submitButton" type="button" onclick="validate()"
                 value='<%= bundle.getString("uploadFiles.upload") %>' /> 
@@ -107,12 +106,29 @@ File upload form, but only if it's enabled and weblog is under quota
         </form>
     </c:otherwise>
 </c:choose>
+        
+
+<h1><fmt:message key="uploadFiles.manageFiles" /></h1>
+
+<%-- --------------------------
+Create directory form
+--%>
+<form name="createSubdir" method="post" action="/roller-ui/authoring/uploadFiles.do">
+    <input type="hidden" name="method" value="createSubdir" />
+    <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}"/>'>
+    <input type="hidden" name="path" value='<c:out value="${model.path}"/>'>
+    
+    <b><fmt:message key="uploadFiles.createDir" /></b> <input type="text" name="newDir" size="20" />&nbsp;
+    <input type="submit" value='<fmt:message key="uploadFiles.createDirButton" />' /> 
+    
+    <br />
+    <br />
+
+</form>
 
 <%-- --------------------------
 Table of files, each with link, size and checkbox
 --%>
-
-<h1><fmt:message key="uploadFiles.manageFiles" /></h1>    
 <html:form action="/roller-ui/authoring/uploadFiles" method="post">
     <html:hidden property="path"/>
     
