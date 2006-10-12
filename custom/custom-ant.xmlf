@@ -10,7 +10,7 @@
    <antcall target="init-db" />
    <nbjpdastart name="${classname}" addressproperty="jpda.address" transport="dt_socket">
       <classpath>
-        <path refid="junit.path"/>
+        <path refid="tests.run.path"/>
       </classpath>
    </nbjpdastart>
    <java classname="${classname}" fork="true" dir="${build.tests}">
@@ -19,7 +19,7 @@
       <jvmarg value="-Djava.compiler=none"/>
       <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
       <classpath>
-          <path refid="junit.path"/>
+          <path refid="tests.run.path"/>
       </classpath>
    </java>
    <antcall target="stop-db" />
@@ -34,7 +34,7 @@
    <antcall target="init-db" />   
    <nbjpdastart name="junit.textui.TestRunner" addressproperty="jpda.address" transport="dt_socket">
       <classpath>
-        <path refid="junit.path"/>
+        <path refid="tests.run.path"/>
       </classpath>
    </nbjpdastart>
    <java classname="junit.textui.TestRunner" fork="true" dir="${build.tests}">
@@ -44,7 +44,7 @@
       <jvmarg value="-Djava.compiler=none"/>
       <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
       <classpath>
-          <path refid="junit.path"/>
+          <path refid="tests.run.path"/>
       </classpath>
    </java>
    <antcall target="stop-db" />

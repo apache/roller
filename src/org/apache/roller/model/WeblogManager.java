@@ -328,7 +328,7 @@ public interface WeblogManager {
      * @param startDate  Start date or null for no restriction
      * @param endDate    End date or null for no restriction
      * @param pending    Pending flag value or null for no restriction
-     * @param pending    Approved flag value or null for no restriction
+     * @param approved   Approved flag value or null for no restriction
      * @param reverseChrono True for results in reverse chrono order
      * @param spam       Spam flag value or null for no restriction
      * @param offset     Offset into results for paging
@@ -346,6 +346,27 @@ public interface WeblogManager {
             boolean         reverseChrono,
             int             offset,
             int             length
+            ) throws RollerException;
+
+    /**
+     * Deletes comments that match paramters.
+     * @param website    Website or null for all comments on site
+     * @param entry      Entry or null to include all comments
+     * @param startDate  Start date or null for no restriction
+     * @param endDate    End date or null for no restriction
+     * @param approved   Pending flag value or null for no restriction
+     * @param pending    Approved flag value or null for no restriction
+     * @return Number of comments deleted
+     */
+    public int deleteMatchingComments(
+            WebsiteData     website,
+            WeblogEntryData entry,
+            String          searchString,
+            Date            startDate,
+            Date            endDate,
+            Boolean         pending,
+            Boolean         approved,
+            Boolean         spam
             ) throws RollerException;
         
     /**

@@ -87,6 +87,20 @@ public final class CommentManagementAction extends DispatchAction {
         RollerRequest rreq = RollerRequest.getRollerRequest(request);
         RollerSession rses = RollerSession.getRollerSession(request);
         
+        ActionForward fwd = null;
+        // Ensure user is authorized to view comments in weblog
+        if (rreq.getWebsite() != null && rses.isUserAuthorized(rreq.getWebsite())) {
+            fwd =  mapping.findForward("commentManagement.page");
+        }
+        // Ensure only global admins can see all comments
+        else if (rses.isGlobalAdminUser()) {
+            fwd =  mapping.findForward("commentManagementGlobal.page");
+        } 
+        else {
+            // And everybody else gets...
+            return mapping.findForward("access-denied");
+        }        
+        
         if (rreq.getWeblogEntry() != null) {
             queryForm.setEntryid(rreq.getWeblogEntry().getId());
             queryForm.setWeblog(rreq.getWeblogEntry().getWebsite().getHandle());
@@ -99,20 +113,37 @@ public final class CommentManagementAction extends DispatchAction {
         if (request.getAttribute("commentManagementForm") == null) {
             request.setAttribute("commentManagementForm", actionForm);
         }
-        
-        // Ensure user is authorized to view comments in weblog
-        if (rreq.getWebsite() != null && rses.isUserAuthorized(rreq.getWebsite())) {
-            return mapping.findForward("commentManagement.page");
-        }
-        // And ensure only global admins can see all comments
-        else if (rses.isGlobalAdminUser()) {
-            return mapping.findForward("commentManagementGlobal.page");
-        } 
-        else {
-            return mapping.findForward("access-denied");
-        }
+        return fwd;
     }
 
+    public ActionForward bulkDelete(
+            ActionMapping       mapping,
+            ActionForm          actionForm,
+            HttpServletRequest  request,
+            HttpServletResponse response) 
+            throws Exception {
+        if ("POST".equals(request.getMethod())) {
+            RollerRequest rreq = RollerRequest.getRollerRequest(request);
+            RollerSession rses = RollerSession.getRollerSession(request);
+            if (rreq.getWebsite() != null && rses.isUserAuthorized(rreq.getWebsite())
+                || rses.isGlobalAdminUser()) {
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                CommentManagementForm queryForm = (CommentManagementForm)actionForm;
+                wmgr.deleteMatchingComments(
+                    rreq.getWebsite(),
+                    rreq.getWeblogEntry(), 
+                    queryForm.getSearchString(),
+                    queryForm.getStartDate(request.getLocale()),  
+                    queryForm.getEndDate(request.getLocale()), 
+                    queryForm.getPending(),
+                    queryForm.getApproved(),
+                    queryForm.getSpam());
+            }  
+            CommentManagementForm queryForm = (CommentManagementForm)actionForm;
+        }
+        return query(mapping, actionForm, request, response);
+    }
+        
     public ActionForward update(
             ActionMapping       mapping,
             ActionForm          actionForm,
@@ -258,10 +289,12 @@ public final class CommentManagementAction extends DispatchAction {
     }
     
     public class CommentManagementPageModel extends BasePageModel {
-        private List comments = new ArrayList();
-        private WeblogEntryData weblogEntry = null;
+        private List                  comments = new ArrayList();
+        private WeblogEntryData       weblogEntry = null;
         private CommentManagementForm queryForm = null;
-        private boolean more = false;
+        private boolean               more = false;
+        private int                   totalMatchingCommentCount = 0;
+        private boolean               showBulkDeleteLink = false;
         
         public CommentManagementPageModel(
                 String titleKey,
@@ -283,7 +316,7 @@ public final class CommentManagementAction extends DispatchAction {
                 website = rreq.getWebsite();
             }
             WeblogManager blogmgr = roller.getWeblogManager();
-
+         
             int offset = queryForm.getOffset();
             comments = blogmgr.getComments(
                 website,
@@ -302,6 +335,30 @@ public final class CommentManagementAction extends DispatchAction {
                 comments.remove(comments.size()-1);
             }
             this.queryForm.loadCheckboxes(comments);
+            
+            // If we have a query POST, then we know we're responding to a query so 
+            // we need to decide whether or not to show the bulk comment prompt.
+            if ("POST".equals(request.getMethod()) 
+                && "query".equals(request.getParameter("method"))) {
+                
+                // So we run the query again, except this time with no limit.
+                List allMatchingComments = blogmgr.getComments( 
+                    website,
+                    weblogEntry, 
+                    queryForm.getSearchString(),
+                    queryForm.getStartDate(request.getLocale()), 
+                    queryForm.getEndDate(request.getLocale()), 
+                    queryForm.getPending(),
+                    queryForm.getApproved(),
+                    queryForm.getSpam(),
+                    true, 
+                    0, -1);                
+                totalMatchingCommentCount = allMatchingComments.size();
+                
+                // If there are more comments than can be shown on one 
+                // page, then present the bulk-comment delete prompt.
+                showBulkDeleteLink = totalMatchingCommentCount > queryForm.getCount();
+            }
         }    
         
         public List getComments() {
@@ -390,6 +447,14 @@ public final class CommentManagementAction extends DispatchAction {
             sb.append("&count=");
             sb.append(queryForm.getCount());
             return sb.toString();
+        }
+
+        public int getTotalMatchingCommentCount() {
+            return totalMatchingCommentCount;
+        }
+
+        public boolean isShowBulkDeleteLink() {
+            return showBulkDeleteLink;
         }
     }
 }

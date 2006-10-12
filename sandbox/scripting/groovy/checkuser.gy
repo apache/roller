@@ -15,10 +15,17 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-username =    "zebulon";
+username = "admin";
 
 roller = org.apache.roller.model.RollerFactory.getRoller();
-user = roller.getUserManager().getUser(username);
-println "User ${user.userName} with id ${user.id} has roles:";
-user.getRoles().each({ item -> println "   ${item.getRole()}" });
+user = roller.getUserManager().getUserByUserName(username);
+
+println roller.getUserManager().getUsers(0,-1);
+
+if (user == null) {
+    println "User ${username} not found";
+} else {
+    println "User ${user.userName} with id ${user.id} has roles:";
+    user.getRoles().each({ item -> println "   ${item.getRole()}" });
+}
 

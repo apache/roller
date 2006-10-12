@@ -821,8 +821,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             
             if (searchString != null) {
                 criteria.add(Expression.disjunction()
-                .add(Expression.like("url", searchString, MatchMode.ANYWHERE))
-                .add(Expression.like("content", searchString, MatchMode.ANYWHERE)));
+                   .add(Expression.like("url", searchString, MatchMode.ANYWHERE))
+                   .add(Expression.like("content", searchString, MatchMode.ANYWHERE)));
             }
             
             if (startDate != null) {
@@ -865,6 +865,93 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             }
             return range;
             
+        } catch (HibernateException e) {
+            log.error(e);
+            throw new RollerException(e);
+        }
+    }
+    
+    public int deleteMatchingComments(
+            WebsiteData     website, 
+            WeblogEntryData entry, 
+            String  searchString, 
+            Date    startDate, 
+            Date    endDate, 
+            Boolean pending, 
+            Boolean approved, 
+            Boolean spam) throws RollerException {
+       
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            StringBuffer queryString = new StringBuffer();
+            ArrayList params = new ArrayList();
+            queryString.append("delete CommentData c where ");
+                
+            if (entry != null) {
+                queryString.append("c.weblogEntry.anchor = ? and c.weblogEntry.website.handle = ? ");
+                params.add(entry.getAnchor());
+                params.add(entry.getWebsite().getHandle());
+            } else if (website != null) {
+                queryString.append("c.weblogEntry.website.handle = ? ");
+                params.add(website.getHandle());
+            } 
+            
+            if (searchString != null) {
+                if (!queryString.toString().trim().endsWith("where")) {
+                    queryString.append("and ");
+                }
+                queryString.append("(c.url like ? or c.content like ?) ");
+                searchString = '%' + searchString + '%';
+                params.add(searchString);
+                params.add(searchString);
+            }
+            
+            if (startDate != null) {
+                if (!queryString.toString().trim().endsWith("where")) {
+                    queryString.append("and ");
+                }
+                queryString.append("c.postTime > ? ");
+                params.add(startDate);
+            }
+            
+            if (endDate != null) {
+                if (!queryString.toString().trim().endsWith("where")) {
+                    queryString.append("and ");
+                }
+                queryString.append("c.postTime < ? ");
+                params.add(endDate);
+            }
+            
+            if (pending != null) {
+                if (!queryString.toString().trim().endsWith("where")) {
+                    queryString.append("and ");
+                }
+                queryString.append("c.pending = ? ");
+                params.add(pending);
+            }
+            
+            if (approved != null) {
+                if (!queryString.toString().trim().endsWith("where")) {
+                    queryString.append("and ");
+                }
+                queryString.append("c.approved = ? ");
+                params.add(approved);
+            }
+            
+            if (spam != null) {
+                if (!queryString.toString().trim().endsWith("where")) {
+                    queryString.append("and ");
+                }
+                queryString.append("c.spam = ? ");
+                params.add(spam);
+            }
+            
+            Query query = session.createQuery(queryString.toString());
+            for(int i = 0; i < params.size(); i++) {
+              query.setParameter(i, params.get(i));
+            }
+            return query.executeUpdate();
+                        
         } catch (HibernateException e) {
             log.error(e);
             throw new RollerException(e);
@@ -1024,7 +1111,8 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             tags,
             status,
             null,
-locale,             offset,
+            locale,             
+            offset,
             length);
         
         Calendar cal = Calendar.getInstance();
@@ -1371,6 +1459,5 @@ locale,             offset,
         
         // delete all bad counts
         session.createQuery("delete from WeblogEntryTagAggregateData where total <= 0").executeUpdate();
-    }
-    
+    }    
 }
