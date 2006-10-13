@@ -69,8 +69,6 @@ public class RefreshEntriesTask extends RollerTask {
      */
     public static void main(String[] args) {
         try {
-            RollerFactory.setRoller(
-                    "org.apache.roller.business.hibernate.HibernateRollerImpl");
             RefreshEntriesTask task = new RefreshEntriesTask();
             task.init();
             task.run();
