@@ -17,7 +17,7 @@
  */
 
 
-package org.apache.roller.ui.core.pings;
+package org.apache.roller.business.pings;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -32,7 +32,7 @@ import org.apache.roller.ui.core.BasePageModel;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.core.RollerSession;
-import org.apache.roller.ui.core.pings.WeblogUpdatePinger;
+import org.apache.roller.business.pings.WeblogUpdatePinger;
 import org.apache.struts.action.*;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.xmlrpc.XmlRpcException;
