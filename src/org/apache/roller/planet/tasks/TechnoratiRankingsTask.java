@@ -161,8 +161,6 @@ public class TechnoratiRankingsTask extends RollerTask {
      */
     public static void main(String[] args) {
         try {
-            RollerFactory.setRoller(
-                    "org.apache.roller.business.hibernate.HibernateRollerImpl");
             TechnoratiRankingsTask task = new TechnoratiRankingsTask();
             task.init();
             task.run();

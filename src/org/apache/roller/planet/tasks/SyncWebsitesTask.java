@@ -150,8 +150,6 @@ public class SyncWebsitesTask extends RollerTask {
      */
     public static void main(String[] args) {
         try {
-            RollerFactory.setRoller(
-                    "org.apache.roller.business.hibernate.HibernateRollerImpl");
             SyncWebsitesTask task = new SyncWebsitesTask();
             task.init();
             task.run();
