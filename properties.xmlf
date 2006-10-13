@@ -94,11 +94,11 @@ in the "base.path" definition.
     <include name="velocity-1.4.jar"/>
     <include name="velocity-dep-1.4.jar"/>
     <include name="mail.jar"/>
-    <include name="activation.jar"/>   
+    <include name="activation.jar"/>
+    <include name="xmlrpc-1.2-b1.jar"/>
 </fileset>
 
 <fileset id="presentation.jars" dir="${ro.tools}/lib">
-    <include name="xmlrpc-1.2-b1.jar"/>
     <include name="taglibs-string.jar"/>
 </fileset>
 
