@@ -109,8 +109,10 @@ public class ResourceServlet extends HttpServlet {
                 ThemeManager themeMgr = RollerFactory.getRoller().getThemeManager();
                 Theme weblogTheme = themeMgr.getTheme(weblog.getEditorTheme());
                 File resource = weblogTheme.getResource(resourceRequest.getResourcePath());
-                resourceLastMod = resource.lastModified();
-                resourceStream = new FileInputStream(resource);
+                if(resource != null) {
+                    resourceLastMod = resource.lastModified();
+                    resourceStream = new FileInputStream(resource);
+                }
             } catch (Exception ex) {
                 // hmmm, some kind of error getting theme.  that's an error.
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
