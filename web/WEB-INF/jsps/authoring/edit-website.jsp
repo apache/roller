@@ -68,7 +68,7 @@ WebsiteFormAction.WebsitePageModel model =
         <td class="label"><fmt:message key="websiteSettings.editor" /></td>
         <td class="field">
             <html:select property="editorPage" size="1">
-                <html:options name="editorPagesList" />
+                <html:options collection="editorPagesList" property="id" labelProperty="name" />
             </html:select></p>
        </td>
         <td class="description"><%-- <fmt:message key="websiteSettings.tip." /> --%></td>

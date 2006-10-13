@@ -19,7 +19,6 @@
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +46,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;
+import org.apache.roller.model.WeblogEntryEditor;
 import org.apache.roller.pojos.WebsiteData;
 
 /**
@@ -257,6 +257,15 @@ null,                 0, 20);
         return editorPage;
     }
 
+    public WeblogEntryEditor getEditor() {
+        try {
+            PluginManager pmgr = RollerFactory.getRoller().getPagePluginManager();
+            return pmgr.getWeblogEntryEditor(this.website.getEditorPage());
+        } catch (RollerException ex) {
+            throw new RuntimeException("Couldn't access plugin manager");
+        }
+    }
+    
     public UserData getUser()
     {
         RollerSession rollerSession = RollerSession.getRollerSession(getRequest());
