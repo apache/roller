@@ -21,6 +21,7 @@ package org.apache.roller.ui.rendering.model;
 import java.util.Map;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
+import org.apache.roller.ui.rendering.pagers.WeblogEntriesLatestPager;
 import org.apache.roller.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.ui.rendering.pagers.WeblogEntriesPreviewPager;
 import org.apache.roller.ui.rendering.util.WeblogPreviewRequest;
@@ -87,15 +88,28 @@ public class PreviewPageModel extends PageModel {
             anchor = previewRequest.getWeblogAnchor();
         }
         
-        return new WeblogEntriesPreviewPager(
-                previewRequest.getWeblog(),
-                previewRequest.getLocale(),
-                previewRequest.getWeblogPageName(),
-                anchor,
-                previewRequest.getWeblogDate(),
-                null,
-                previewRequest.getTags(),
-                previewRequest.getPageNum());
+        if (anchor != null) {
+            return new WeblogEntriesPreviewPager(
+                    previewRequest.getWeblog(),
+                    previewRequest.getLocale(),
+                    previewRequest.getWeblogPageName(),
+                    anchor,
+                    previewRequest.getWeblogDate(),
+                    null,
+                    previewRequest.getTags(),
+                    previewRequest.getPageNum());
+        } else {
+            return new WeblogEntriesLatestPager(
+                    previewRequest.getWeblog(),
+                    previewRequest.getLocale(),
+                    previewRequest.getWeblogPageName(),
+                    previewRequest.getWeblogAnchor(),
+                    previewRequest.getWeblogDate(),
+                    null,
+                    previewRequest.getTags(),
+                    previewRequest.getPageNum());
+        }
+        
     }
 
 }
