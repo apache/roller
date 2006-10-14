@@ -48,21 +48,13 @@ public interface ThreadManager {
     
     
     /**
-     * Schedule task to run once a day.
-     */
-    public void scheduleDailyTimerTask(RollerTask task);
-    
-    
-    /**
-     * Schedule task to run once per hour.
-     */
-    public void scheduleHourlyTimerTask(RollerTask task);
-    
-    
-    /**
      * Schedule task to run at fixed rate.
+     *
+     * @param task The RollerTask to schedule.
+     * @param startTime The Date at which to start the task.
+     * @param long The interval (in minutes) at which the task should run.
      */
-    public void scheduleFixedRateTimerTask(RollerTask task, long delayMins, long periodMins);
+    public void scheduleFixedRateTimerTask(RollerTask task, Date startTime, long intervalMins);
     
     
     /**
@@ -102,7 +94,7 @@ public interface ThreadManager {
     
     
     /**
-     * What was the next time a task is allowed to run?
+     * What is the next time a task is allowed to run?
      * 
      * @param task The RollerTask to calculate the next run time for.
      * @return Date The next time the task is allowed to run, or null if task has never been run.

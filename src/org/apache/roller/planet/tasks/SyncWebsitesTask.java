@@ -19,8 +19,10 @@
 package org.apache.roller.planet.tasks;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -42,21 +44,63 @@ public class SyncWebsitesTask extends RollerTask {
     
     private static Log log = LogFactory.getLog(SyncWebsitesTask.class);
     
+    // a String description of when to start this task
+    private String startTimeDesc = "startOfDay";
+    
+    // interval at which the task is run, default is 1 day
+    private int interval = 1440;
+    
+    // lease time given to ping task lock, default is 30 minutes
+    private int leaseTime = 30;
+    
     
     public String getName() {
         return "SyncWebsitesTask";
     }
     
-    public int getLeaseTime() {
-        return 30;
+    public Date getStartTime(Date currentTime) {
+        return getAdjustedTime(currentTime, startTimeDesc);
     }
     
     public int getInterval() {
-        return 24 * 60;
+        return this.interval;
     }
     
+    public int getLeaseTime() {
+        return this.leaseTime;
+    }
+    
+    
     public void init() throws RollerException {
-        // no-op
+        
+        // get relevant props
+        Properties props = this.getTaskProperties();
+        
+        // extract start time
+        String startTimeStr = props.getProperty("startTime");
+        if(startTimeStr != null) {
+            this.startTimeDesc = startTimeStr;
+        }
+        
+        // extract interval
+        String intervalStr = props.getProperty("interval");
+        if(intervalStr != null) {
+            try {
+                this.interval = Integer.parseInt(intervalStr);
+            } catch (NumberFormatException ex) {
+                log.warn("Invalid interval: "+intervalStr);
+            }
+        }
+        
+        // extract lease time
+        String leaseTimeStr = props.getProperty("leaseTime");
+        if(leaseTimeStr != null) {
+            try {
+                this.leaseTime = Integer.parseInt(leaseTimeStr);
+            } catch (NumberFormatException ex) {
+                log.warn("Invalid leaseTime: "+leaseTimeStr);
+            }
+        }
     }
     
     

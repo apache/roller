@@ -75,23 +75,14 @@ public class ThreadManagerImpl implements ThreadManager {
     }
     
     
-    public void scheduleDailyTimerTask(RollerTask task) {
-        scheduler.scheduleAtFixedRate(task,
-                DateUtil.getEndOfDay(new Date()), DateUtil.millisInDay);
-    }
-    
-    
-    public void scheduleHourlyTimerTask(RollerTask task) {
-        scheduler.scheduleAtFixedRate(task, new Date(), 60*60*1000);
-    }
-    
-    
-    public void scheduleFixedRateTimerTask(RollerTask task, long delayMins, long periodMins) {
-        if (periodMins < MIN_RATE_INTERVAL_MINS) {
-            throw new IllegalArgumentException("Period (" + periodMins +
+    public void scheduleFixedRateTimerTask(RollerTask task, Date startTime, long intervalMins) {
+        
+        if (intervalMins < MIN_RATE_INTERVAL_MINS) {
+            throw new IllegalArgumentException("Interval (" + intervalMins +
                     ") shorter than minimum allowed (" + MIN_RATE_INTERVAL_MINS + ")");
         }
-        scheduler.scheduleAtFixedRate(task, delayMins * 60 * 1000, periodMins * 60 * 1000);
+        
+        scheduler.scheduleAtFixedRate(task, startTime, intervalMins * 60 * 1000);
     }
     
     

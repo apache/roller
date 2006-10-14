@@ -18,6 +18,9 @@
 
 package org.apache.roller.business.pings;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -38,23 +41,65 @@ public class PingQueueTask extends RollerTask {
     
     private static final Log logger = LogFactory.getLog(PingQueueTask.class);
     
-
+    // a String description of when to start this task
+    private String startTimeDesc = "immediate";
+    
+    // interval at which the task is run, default is 5 minutes
+    private int interval = 5;
+    
+    // lease time given to task lock, default is 30 minutes
+    private int leaseTime = 30;
+    
+    
     public String getName() {
         return "PingQueueTask";
     }
     
-    public int getLeaseTime() {
-        return 3;
+    public Date getStartTime(Date currentTime) {
+        return getAdjustedTime(currentTime, startTimeDesc);
     }
     
     public int getInterval() {
-        return PingConfig.getQueueProcessingIntervalMins();
+        return this.interval;
     }
     
-    /**
-     * Initialize the task.
-     */
+    public int getLeaseTime() {
+        return this.leaseTime;
+    }
+    
+    
     public void init() throws RollerException {
+        
+        // get relevant props
+        Properties props = this.getTaskProperties();
+        
+        // extract start time
+        String startTimeStr = props.getProperty("startTime");
+        if(startTimeStr != null) {
+            this.startTimeDesc = startTimeStr;
+        }
+        
+        // extract interval
+        String intervalStr = props.getProperty("interval");
+        if(intervalStr != null) {
+            try {
+                this.interval = Integer.parseInt(intervalStr);
+            } catch (NumberFormatException ex) {
+                logger.warn("Invalid interval: "+intervalStr);
+            }
+        }
+        
+        // extract lease time
+        String leaseTimeStr = props.getProperty("leaseTime");
+        if(leaseTimeStr != null) {
+            try {
+                this.leaseTime = Integer.parseInt(leaseTimeStr);
+            } catch (NumberFormatException ex) {
+                logger.warn("Invalid leaseTime: "+leaseTimeStr);
+            }
+        }
+        
+        // initialize queue processor
         PingQueueProcessor.init();
     }
     
