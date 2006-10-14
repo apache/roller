@@ -234,29 +234,5 @@ public class RollerConfig {
         if("${webapp.context}".equals(mConfig.getProperty("themes.dir")))
             mConfig.setProperty("themes.dir", path);
     }
-
-    /**
-     * Set the "context.realPath" property at runtime.
-     * <p />
-     * Properties are meant to be read-only, but we make this exception because 
-     * there are some classes which rely on having filesystem access to files
-     * in theRoller webapp context (and for unit testing).
-     * <p />
-     * This property is *not* persisted in any way.
-     */
-    public static void setContextRealPath(String path) {
-        mConfig.setProperty("context.realPath", path);
-    }
     
-    /**
-     * Set the "context.realpath" property at runtime.
-     * <p />
-     * Properties are meant to be read-only, but we make this exception to make 
-     * it possible for unit tests to control the cache directory.
-     * <p />
-     * This property is *not* persisted in any way.
-     */
-    public static void setPlanetCachePath(String path) {
-        mConfig.setProperty("planet.aggregator.cache.dir", path);
-    }
 }

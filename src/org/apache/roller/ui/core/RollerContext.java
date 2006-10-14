@@ -161,15 +161,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
         // is set to ${webapp.context}
         RollerConfig.setThemesDir(mContext.getRealPath("/")+File.separator+"themes");
         
-        // set the roller context real path in RollerConfig
-        // NOTE: it seems that a few backend classes do actually need
-        //       to know what the real path to the roller context is,
-        //       so we set this property to give them the info they need.
-        //
-        //       this is really not a best practice and we should try to
-        //       remove these dependencies on the webapp context if possible
-        RollerConfig.setContextRealPath(mContext.getRealPath("/"));
-        
         try {
             // always upgrade database first
             upgradeDatabaseIfNeeded();
