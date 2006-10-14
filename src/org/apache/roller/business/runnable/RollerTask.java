@@ -19,12 +19,16 @@
 package org.apache.roller.business.runnable;
 
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Properties;
 import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.ThreadManager;
+import org.apache.roller.util.DateUtil;
 
 
 /**
@@ -50,24 +54,45 @@ public abstract class RollerTask extends TimerTask {
     
     /**
      * Get the unique name for this task.
+     *
+     * @return The unique name for this task.
      */
     public abstract String getName();
     
     
     /**
-     * Get the time, in seconds, this task wants to be leased for.
+     * When should this task be started?  The task is given the current time
+     * so that it may determine a start time relative to the current time, 
+     * such as the end of the day or hour.
      *
-     * example: 300 means the task is allowed 5 minutes to run.
+     * It is acceptable to return the currentTime object passed in or any other
+     * time after it.  If the return value is before currentTime then it will
+     * be ignored and the task will be started at currentTime.
+     *
+     * @param currentTime The current time.
+     * @return The Date when this task should be started.
      */
-    public abstract int getLeaseTime();
+    public abstract Date getStartTime(Date currentTime);
     
     
     /**
      * How often should the task run, in seconds.
      *
      * example: 3600 means this task runs once every hour.
+     *
+     * @return The interval the task should be run at, in minutes.
      */
     public abstract int getInterval();
+    
+    
+    /**
+     * Get the time, in seconds, this task wants to be leased for.
+     *
+     * example: 300 means the task is allowed 5 minutes to run.
+     *
+     * @return The time this task should lease its lock for, in minutes.
+     */
+    public abstract int getLeaseTime();
     
     
     /**
@@ -148,4 +173,60 @@ public abstract class RollerTask extends TimerTask {
         
     }
 
+    
+    /**
+     * Get the properties from RollerConfig which pertain to this task.
+     *
+     * This extracts all properties from the RollerConfig of the type
+     * task.<taskname>.<prop>=value and returns them in a properties object
+     * where each item is keyed by <prop>.
+     */
+    protected Properties getTaskProperties() {
+        
+        String prefix = "tasks."+this.getName()+".";
+        
+        Properties taskProps = new Properties();
+        
+        String key = null;
+        Enumeration keys = RollerConfig.keys();
+        while(keys.hasMoreElements()) {
+            key = (String) keys.nextElement();
+            
+            if(key.startsWith(prefix)) {
+                taskProps.setProperty(key.substring(prefix.length()), 
+                        RollerConfig.getProperty(key));
+            }
+        }
+        
+        return taskProps;
+    }
+    
+    
+    /**
+     * A convenience method for calculating an adjusted time given an initial
+     * Date to work from and a "changeFactor" which describes how the time 
+     * should be adjusted.
+     *
+     * Allowed change factors are ...
+     *   'immediate' - no change
+     *   'startOfHour' - top of the hour, beginning with next hour
+     *   'startOfDay' - midnight, beginning on the next day
+     */
+    protected Date getAdjustedTime(Date startTime, String changeFactor) {
+        
+        if(startTime == null || changeFactor == null) {
+            return startTime;
+        }
+        
+        Date adjustedTime = startTime;
+        
+        if("startOfDay".equals(changeFactor)) {
+            adjustedTime = DateUtil.getEndOfDay(startTime);
+        } else if("startOfHour".equals(changeFactor)) {
+            adjustedTime = DateUtil.getEndOfHour(startTime);
+        }
+        
+        return adjustedTime;
+    }
+    
 }

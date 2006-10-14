@@ -73,6 +73,29 @@ public abstract class DateUtil {
     
     
     /**
+     * Returns a Date set to the last possible millisecond of the day, just
+     * before midnight. If a null day is passed in, a new Date is created.
+     * midnight (00m 00h 00s)
+     */
+    public static Date getEndOfHour(Date day) {
+        return getEndOfHour(day, Calendar.getInstance());
+    }
+    
+    
+    public static Date getEndOfHour(Date day, Calendar cal) {
+        if (day == null || cal == null) {
+            return day;
+        }
+        
+        cal.setTime(day);
+        cal.set(Calendar.MINUTE,      cal.getMaximum(Calendar.MINUTE));
+        cal.set(Calendar.SECOND,      cal.getMaximum(Calendar.SECOND));
+        cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
+        return cal.getTime();
+    }
+    
+    
+    /**
      * Returns a Date set to the first possible millisecond of the month, just
      * after midnight. If a null day is passed in, a new Date is created.
      * midnight (00m 00h 00s)

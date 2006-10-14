@@ -18,6 +18,7 @@
 
 package org.apache.roller.business;
 
+import java.util.Date;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -89,6 +90,7 @@ public class TaskLockTest extends TestCase {
     class TestTask extends RollerTask {
         
         public String getName() { return "TestTask"; }
+        public Date getStartTime(Date current) { return current; }
         public int getLeaseTime() { return 300; }
         public int getInterval() { return 1800; }
         public void runTask() { }

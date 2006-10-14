@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Properties;
-import java.util.TimerTask;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContext;
@@ -49,7 +49,7 @@ import org.apache.roller.config.PingConfig;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.business.pings.PingQueueTask;
+import org.apache.roller.model.ThreadManager;
 import org.apache.roller.ui.core.security.AutoProvision;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
@@ -190,8 +190,7 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             roller.getThemeManager();
             setupIndexManager(roller);
             initializePingFeatures(roller);
-            setupPingQueueTask(roller);
-            setupScheduledTasks(mContext, roller);
+            setupTasks();
             
             roller.flush();
             roller.release();
@@ -244,36 +243,41 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
     }
     
     
-    /** Setup daily and hourly tasks specified in web.xml */
-    private void setupScheduledTasks(ServletContext context, Roller roller)
-            throws RollerException, InstantiationException,
-            IllegalAccessException, ClassNotFoundException {
+    private void setupTasks() throws RollerException {
         
-        // setup the hourly tasks
-        String hourlyString = RollerConfig.getProperty("tasks.hourly");
-        if (hourlyString != null && hourlyString.trim().length() > 0) {
-            String[] hourlyTasks = StringUtils.stripAll(
-                    StringUtils.split(hourlyString, ",") );
-            for (int i=0; i<hourlyTasks.length; i++) {
-                mLogger.info("Setting hourly task: "+hourlyTasks[i]);
-                RollerTask task =
-                        (RollerTask) Class.forName(hourlyTasks[i]).newInstance();
-                task.init();
-                roller.getThreadManager().scheduleHourlyTimerTask((RollerTask)task);
-            }
-        }
+        ThreadManager tmgr = RollerFactory.getRoller().getThreadManager();
         
-        // setup the daily tasks
-        String dailyString = RollerConfig.getProperty("tasks.daily");
-        if (dailyString != null && dailyString.trim().length() > 0) {
-            String[] dailyTasks = StringUtils.stripAll(
-                    StringUtils.split(dailyString, ",") );
-            for (int j=0; j<dailyTasks.length; j++) {
-                mLogger.info("Setting daily task: "+dailyTasks[j]);
-                RollerTask task =
-                        (RollerTask) Class.forName(dailyTasks[j]).newInstance();
-                task.init();
-                roller.getThreadManager().scheduleDailyTimerTask((RollerTask)task);
+        Date now = new Date();
+        
+        // okay, first we look for what tasks have been enabled
+        String tasksStr = RollerConfig.getProperty("tasks.enabled");
+        String[] tasks = StringUtils.stripAll(StringUtils.split(tasksStr, ","));
+        for (int i=0; i < tasks.length; i++) {
+            
+            String taskClassName = RollerConfig.getProperty("tasks."+tasks[i]+".class");
+            if(taskClassName != null) {
+                mLogger.info("Initializing task: "+tasks[i]);
+                
+                try {
+                    Class taskClass = Class.forName(taskClassName);
+                    RollerTask task = (RollerTask) taskClass.newInstance();
+                    task.init();
+                    
+                    Date startTime = task.getStartTime(now);
+                    if(startTime == null || now.after(startTime)) {
+                        startTime = now;
+                    }
+                    
+                    // schedule it
+                    tmgr.scheduleFixedRateTimerTask(task, startTime, task.getInterval());
+                    
+                } catch (ClassCastException ex) {
+                    mLogger.warn("Task does not extend RollerTask class", ex);
+                } catch (RollerException ex) {
+                    mLogger.error("Error scheduling task", ex);
+                } catch (Exception ex) {
+                    mLogger.error("Error instantiating task", ex);
+                }
             }
         }
     }
@@ -296,29 +300,6 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
             mLogger.info("Ping usage has been disabled.  Removing any existing auto ping configurations.");
             roller.getAutopingManager().removeAllAutoPings();
         }
-    }
-    
-    
-    // Set up the ping queue processing task
-    private void setupPingQueueTask(Roller roller) throws RollerException {
-        
-        long intervalMins = PingConfig.getQueueProcessingIntervalMins();
-        if (intervalMins == 0) {
-            // Ping queue processing interval of 0 indicates that ping queue processing is disabled on this host.
-            // This provides a crude  way to disable running the ping queue task on some servers if there are
-            // multiple servers in a cluster sharing a db.  Exclusion should really be handled dynamically but isn't.
-            mLogger.warn("Ping queue processing interval is zero; processing from the ping queue will be disabled on this server.");
-            mLogger.warn("Please make sure that ping queue processing is configured to run on one server in the cluster.");
-            return;
-        }
-        
-        // Set up the task
-        PingQueueTask pingQueueTask = new PingQueueTask();
-        pingQueueTask.init();
-        
-        // Schedule it at the appropriate interval, delay start for one interval.
-        mLogger.info("Scheduling ping queue task to run at " + intervalMins + " minute intervals.");
-        roller.getThreadManager().scheduleFixedRateTimerTask(pingQueueTask, intervalMins, intervalMins);
     }
     
     
