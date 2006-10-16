@@ -94,6 +94,9 @@ public class HibernatePersistenceStrategy {
         } catch(Throwable t) {
             // uh oh ... failed persisting, gotta release
             release();
+            
+            // wrap and rethrow so caller knows something bad happened
+            throw new RollerException(t);
         }
     }
     
