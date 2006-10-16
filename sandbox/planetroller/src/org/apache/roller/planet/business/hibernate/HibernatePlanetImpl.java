@@ -17,13 +17,15 @@
 */
 package org.apache.roller.planet.business.hibernate;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
-import org.apache.roller.planet.business.hibernate.HibernatePlanetManagerImpl;
+import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.model.PlanetManager;
 import org.apache.roller.planet.model.Planet;
+import org.hibernate.cfg.Configuration;
 
 
 /**
@@ -31,7 +33,7 @@ import org.apache.roller.planet.model.Planet;
  */
 public class HibernatePlanetImpl implements Planet {   
     
-    private static Log mLogger = LogFactory.getLog(HibernatePlanetImpl.class);
+    private static Log log = LogFactory.getLog(HibernatePlanetImpl.class);
     
     // our singleton instance
     private static HibernatePlanetImpl me = null;
@@ -42,13 +44,29 @@ public class HibernatePlanetImpl implements Planet {
     // references to the managers we maintain
     private PlanetManager planetManager = null;
     
-    
+        
+    /**
+     * Create HibernatePlanetImpl using Hibernate XML config file or config
+     * file plus JDBC overrides from planet-custom.properties.
+     */
     protected HibernatePlanetImpl() throws RollerException {
         try {
-            strategy = new HibernatePersistenceStrategy();
+            if (StringUtils.isNotEmpty(PlanetConfig.getProperty("jdbc.driverClass"))) {
+                // create and configure for JDBC access
+                strategy = new PlanetHibernatePersistenceStrategy(
+                    PlanetConfig.getProperty("hibernate.configResource"),
+                    PlanetConfig.getProperty("hibernate.dialect"),
+                    PlanetConfig.getProperty("jdbc.driverClass"),
+                    PlanetConfig.getProperty("jdbc.connectionURL"),
+                    PlanetConfig.getProperty("jdbc.username"),
+                    PlanetConfig.getProperty("jdbc.password"));
+            } else {
+                // create an configure via config resource only
+                strategy = new HibernatePersistenceStrategy(true); 
+            }
         } catch(Throwable t) {
             // if this happens then we are screwed
-            mLogger.fatal("Error initializing Hibernate", t);
+            log.fatal("Error initializing Hibernate", t);
             throw new RollerException(t);
         }
     }
@@ -59,7 +77,7 @@ public class HibernatePlanetImpl implements Planet {
      */
     public static Planet instantiate() throws RollerException {
         if (me == null) {
-            mLogger.debug("Instantiating HibernatePlanetImpl");
+            log.debug("Instantiating HibernatePlanetImpl");
             me = new HibernatePlanetImpl();
         }
         

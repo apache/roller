@@ -28,10 +28,11 @@
         
         <!-- use thread local Session context -->
         <property name="hibernate.current_session_context_class">thread</property>
-        
-        
-        <!-- select SQL dialect, MySQL 3.X or 4.X by default -->
+                
+        <!-- Dialect is now set via planet.properties
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        -->
+        
         <!--
         If you want to use HSQLDB, PostgreSQL, DB2 or Derby, Oracle, SQLServer then use the right dialect   
         <property name="dialect">org.hibernate.dialect.HQLDBDialect</property> 
@@ -79,7 +80,6 @@
         <mapping resource="org/apache/roller/planet/pojos/PlanetGroupData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetEntryData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetSubscriptionData.hbm.xml" />
-        <mapping resource="org/apache/roller/planet/pojos/PlanetGroupSubscriptionAssoc.hbm.xml" />
                 
     </session-factory>
 </hibernate-configuration>

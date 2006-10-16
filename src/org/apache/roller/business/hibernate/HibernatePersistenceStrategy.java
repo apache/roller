@@ -48,22 +48,23 @@ public class HibernatePersistenceStrategy {
     
     static final long serialVersionUID = 2561090040518169098L;
     
-    private static SessionFactory sessionFactory = null;
+    protected static SessionFactory sessionFactory = null;
     
     private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
+    public HibernatePersistenceStrategy() {  
+    }
     
     /**
      * Construct using Hibernate Session Factory.
      */
-    public HibernatePersistenceStrategy() throws Exception {
-        
-        log.debug("Initializing Hibernate SessionFactory");
-        
-        Configuration config = new Configuration();
-        config.configure("/hibernate.cfg.xml");
-        this.sessionFactory = config.buildSessionFactory();
-        
+    public HibernatePersistenceStrategy(boolean configure) throws Exception {
+        if (configure) {
+            log.debug("Initializing Hibernate SessionFactory");        
+            Configuration config = new Configuration();
+            config.configure("/hibernate.cfg.xml");
+            this.sessionFactory = config.buildSessionFactory();
+        }
     }
 
     

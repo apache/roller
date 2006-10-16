@@ -53,7 +53,8 @@ public class PlanetConfig {
 
         try {
             // we'll need this to get at our properties files in the classpath
-            Class config_class = Class.forName("org.apache.roller.planet.config.PlanetConfig");
+            Class config_class = Class.forName(
+                    "org.apache.roller.planet.config.PlanetConfig");
 
             // first, lets load our default properties
             InputStream is = config_class.getResourceAsStream(default_config);

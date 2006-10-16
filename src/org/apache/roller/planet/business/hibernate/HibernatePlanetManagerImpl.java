@@ -46,9 +46,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.model.PlanetManager;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetEntryData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -359,8 +356,6 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         
     public void refreshEntries() throws RollerException {
         
-        Roller roller = RollerFactory.getRoller();
-        
         Date now = new Date();
         long startTime = System.currentTimeMillis();
         PlanetConfigData config = getConfiguration();
@@ -378,7 +373,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         // allow ${catalina.home} in cache dir property
         if (System.getProperty("catalina.home") != null) {
             cacheDirName = cacheDirName.replaceFirst(
-                    "\\$\\{catalina.home}",System.getProperty("catalina.home"));
+                "\\$\\{catalina.home}",System.getProperty("catalina.home"));
         }
         
         // create cache  dir if it does not exist
@@ -434,7 +429,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 sub.purgeEntries();
                 sub.addEntries(newEntries);
                 this.saveSubscription(sub);
-                if(roller != null) roller.flush();
+                this.strategy.flush();
             }
             long subEndTime = System.currentTimeMillis();
             log.info("   " + count + " - "

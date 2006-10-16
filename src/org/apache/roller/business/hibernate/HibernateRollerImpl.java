@@ -68,7 +68,7 @@ public class HibernateRollerImpl extends RollerImpl {
     
     protected HibernateRollerImpl() throws RollerException {
         try {
-            strategy = new HibernatePersistenceStrategy();
+            strategy = new HibernatePersistenceStrategy(true);
         } catch(Throwable t) {
             // if this happens then we are screwed
             mLogger.fatal("Error initializing Hibernate", t);
