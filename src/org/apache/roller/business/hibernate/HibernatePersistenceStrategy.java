@@ -1,23 +1,21 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * Created on Mar 7, 2003
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
+
 package org.apache.roller.business.hibernate;
 
 import java.util.Iterator;
@@ -52,7 +50,8 @@ public class HibernatePersistenceStrategy {
     
     private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
-    public HibernatePersistenceStrategy() {  
+    
+    public HibernatePersistenceStrategy() {
     }
     
     /**
@@ -60,13 +59,13 @@ public class HibernatePersistenceStrategy {
      */
     public HibernatePersistenceStrategy(boolean configure) throws Exception {
         if (configure) {
-            log.debug("Initializing Hibernate SessionFactory");        
+            log.debug("Initializing Hibernate SessionFactory");
             Configuration config = new Configuration();
             config.configure("/hibernate.cfg.xml");
             this.sessionFactory = config.buildSessionFactory();
         }
     }
-
+    
     
     /**
      * Get persistence session on current thread.
@@ -140,7 +139,7 @@ public class HibernatePersistenceStrategy {
             log.error("ERROR closing Hibernate Session", t);
         }
     }
-
+    
     
     /**
      * Retrieve object.  We return null if the object is not found.
@@ -175,7 +174,7 @@ public class HibernatePersistenceStrategy {
             session.save(obj);
         }
         
-        /* 
+        /*
          * technically we shouldn't have any reason to support the saving
          * of detached objects, so at some point we should re-evaluate this.
          *
@@ -245,7 +244,7 @@ public class HibernatePersistenceStrategy {
      *
      * NOTE: if the object has proper cascade setting then is all this necessary?
      */
-    public void store(HierarchicalPersistentObject obj) 
+    public void store(HierarchicalPersistentObject obj)
             throws HibernateException, RollerException {
         
         if(obj == null) {
@@ -264,7 +263,7 @@ public class HibernatePersistenceStrategy {
             // This makes obj into a persistent instance.
             session.save(obj);
         }
- 
+        
         if(!session.contains(obj)) {
             
             // Object has been written to database, but instance passed in
