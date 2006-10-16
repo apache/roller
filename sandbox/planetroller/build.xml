@@ -45,6 +45,8 @@
         <include name="velocity-1.4.jar"/>
         <include name="velocity-dep-1.4.jar"/>   
         
+        <include name="commons-lang-2.0.jar"/>   
+        <include name="commons-logging.jar"/>   
         <include name="commons-fileupload.jar"/>   
         <include name="commons-validator.jar"/>   
         
@@ -52,7 +54,7 @@
     
     <path id="planet.path">
         <fileset refid="roller-jars" />
-        <fileset dir="./lib">
+        <fileset dir="../../tools/buildtime/tomcat-5.0.28">
             <include name="servlet-api.jar"/>
         </fileset>                      
         <fileset dir="./web/WEB-INF/lib">
