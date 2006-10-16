@@ -461,7 +461,7 @@ public class FileManagerImpl implements FileManager {
         
         // convert "/" to filesystem specific file separator
         if(relPath != null) {
-            relPath.replaceAll("/", File.separator);
+            relPath = relPath.replace('/', File.separatorChar);
         }
         
         // now form the absolute path
