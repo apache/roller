@@ -30,7 +30,7 @@ import org.apache.roller.util.PojoUtil;
  *
  * @ejb:bean name="WeblogEntryTagAggregateData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="weblogentrytagagg"
+ * @hibernate.class lazy="false" table="roller_weblogentrytagagg"
  * @hibernate.cache usage="read-write"
  */
 public class WeblogEntryTagAggregateData extends PersistentObject
