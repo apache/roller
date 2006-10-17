@@ -219,8 +219,10 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                             // No, add new subscription
                             sub = new PlanetSubscriptionData(); 
                             form.copyTo(sub, request.getLocale());
+                            planet.saveSubscription(sub);
                         }                        
                         targetGroup.getSubscriptions().add(sub);
+                        sub.getGroups().add(targetGroup);
                         
                     } else {
                         // User editing an existing subscription within a group
@@ -228,7 +230,6 @@ public final class PlanetSubscriptionsAction extends DispatchAction {
                         form.copyTo(sub, request.getLocale());                        
                     }                    
                     form.setGroupHandle(groupHandle);
-                    planet.saveSubscription(sub);
                     planet.saveGroup(targetGroup);
                     roller.flush();
                     
