@@ -829,7 +829,7 @@ public class HibernateUserManagerImpl implements UserManager {
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(UserData.class);
-            criteria.add(Expression.like("userName", new String(new char[]{letter}) + "%", MatchMode.START));
+            criteria.add(Expression.ilike("userName", new String(new char[]{letter}) + "%", MatchMode.START));
             criteria.addOrder(Order.asc("userName"));
             if (offset != 0) {
                 criteria.setFirstResult(offset);
@@ -871,7 +871,7 @@ public class HibernateUserManagerImpl implements UserManager {
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(WebsiteData.class);
-            criteria.add(Expression.like("handle", new String(new char[]{letter}) + "%", MatchMode.START));
+            criteria.add(Expression.ilike("handle", new String(new char[]{letter}) + "%", MatchMode.START)); 
             criteria.addOrder(Order.asc("handle"));
             if (offset != 0) {
                 criteria.setFirstResult(offset);
