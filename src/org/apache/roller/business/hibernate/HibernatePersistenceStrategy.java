@@ -18,6 +18,7 @@
 
 package org.apache.roller.business.hibernate;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,11 @@ import org.apache.roller.RollerException;
 import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.HierarchicalPersistentObject;
 import org.apache.roller.pojos.PersistentObject;
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.DOMOutputter;
 
 
 /**
@@ -52,18 +58,120 @@ public class HibernatePersistenceStrategy {
     
     
     public HibernatePersistenceStrategy() {
+    }   
+
+    /** 
+     * Construct self using Hibernate config resource and optional dialect.
+     * @param configResouce Classpath-based path to Hibernate config file (e.g. "/hibernate.cgf.xml")
+     * @parma dialect Classname of Hibernate dialect to be used (overriding any specified in the configResource)
+     */
+    public HibernatePersistenceStrategy(
+            String configResource,
+            String dialect) throws Exception {
+        
+        // read configResource into DOM form
+        SAXBuilder builder = new SAXBuilder();
+        Document configDoc = builder.build(
+            getClass().getResourceAsStream(configResource));
+        Element root = configDoc.getRootElement();
+        Element sessionFactoryElem = root.getChild("session-factory");
+        
+        // remove any existing connection.datasource and dialect properties
+        List propertyElems = sessionFactoryElem.getChildren("property");
+        List removeList = new ArrayList();
+        for (Iterator it = propertyElems.iterator(); it.hasNext();) {
+            Element elem = (Element) it.next();
+            if (elem.getAttribute("name") != null 
+                && elem.getAttribute("name").getValue().equals("dialect")) {
+                removeList.add(elem);           
+            }
+        }
+        for (Iterator it = removeList.iterator(); it.hasNext();) {
+            Element elem = (Element) it.next();
+            sessionFactoryElem.removeContent(elem); 
+        }
+        
+        // add Roller dialect property      
+        Element prop = new Element("property").setAttribute(
+            new Attribute("name","dialect"));
+        prop.addContent(dialect);
+        sessionFactoryElem.addContent(prop);
+        
+        Configuration config = new Configuration();
+        DOMOutputter outputter = new DOMOutputter();
+        config.configure(outputter.output(configDoc));
+        this.sessionFactory = config.buildSessionFactory(); 
     }
     
-    /**
-     * Construct using Hibernate Session Factory.
+    /** 
+     * Construct self using Hibernate config resource and optional dialect.
+     * @param configResouce Classpath-based path to Hibernate config file (e.g. "/hibernate.cgf.xml")
+     * @parma dialect Classname of Hibernate dialect to be used (or null to use one specified in configResource)
      */
-    public HibernatePersistenceStrategy(boolean configure) throws Exception {
-        if (configure) {
-            log.debug("Initializing Hibernate SessionFactory");
-            Configuration config = new Configuration();
-            config.configure("/hibernate.cfg.xml");
-            this.sessionFactory = config.buildSessionFactory();
+    public HibernatePersistenceStrategy(
+            String configResource,
+            String dialect,
+            String driverClass,
+            String connectionURL,
+            String username,
+            String password) throws Exception {
+        
+        // read configResource into DOM form
+        SAXBuilder builder = new SAXBuilder();
+        Document configDoc = builder.build(
+            getClass().getResourceAsStream(configResource));
+        Element root = configDoc.getRootElement();
+        Element sessionFactoryElem = root.getChild("session-factory");
+        
+        // remove any existing connection.datasource and dialect properties
+        List propertyElems = sessionFactoryElem.getChildren("property");
+        List removeList = new ArrayList();
+        for (Iterator it = propertyElems.iterator(); it.hasNext();) {
+            Element elem = (Element) it.next();
+            if (elem.getAttribute("name") != null 
+                && elem.getAttribute("name").getValue().equals("connection.datasource")) {
+                removeList.add(elem);
+            }
+            if (elem.getAttribute("name") != null 
+                && elem.getAttribute("name").getValue().equals("dialect")) {
+                removeList.add(elem);
+            }
         }
+        for (Iterator it = removeList.iterator(); it.hasNext();) {
+            Element elem = (Element) it.next();
+            sessionFactoryElem.removeContent(elem); 
+        }
+                                       
+        // add JDBC connection params instead
+        Element prop = new Element("property").setAttribute(
+            new Attribute("name","hibernate.connection.driver_class"));
+        prop.addContent(driverClass);
+        sessionFactoryElem.addContent(prop);
+
+        prop = new Element("property").setAttribute(
+            new Attribute("name","hibernate.connection.url"));
+        prop.addContent(connectionURL);
+        sessionFactoryElem.addContent(prop);
+        
+        prop = new Element("property").setAttribute(
+            new Attribute("name","hibernate.connection.username"));
+        prop.addContent(username);
+        sessionFactoryElem.addContent(prop);
+        
+        prop = new Element("property").setAttribute(
+            new Attribute("name","hibernate.connection.password"));
+        prop.addContent(password);
+        sessionFactoryElem.addContent(prop);
+        
+        prop = new Element("property").setAttribute(
+            new Attribute("name","dialect"));
+        prop.addContent(dialect);
+        sessionFactoryElem.addContent(prop);
+        
+        Configuration config = new Configuration();
+        DOMOutputter outputter = new DOMOutputter();
+        config.configure(outputter.output(configDoc));
+        this.sessionFactory = config.buildSessionFactory();
     }
     
     

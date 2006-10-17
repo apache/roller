@@ -21,7 +21,7 @@
 
     <property file="./ant.properties" />
     
-    <fileset id="roller-jars" dir="${rollerjars.dir}">        
+    <fileset id="roller-jars" dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">        
         <include name="roller-business.jar"/>        
         
         <include name="hibernate3.jar"/>
