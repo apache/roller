@@ -25,8 +25,6 @@ import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.model.PlanetManager;
 import org.apache.roller.planet.model.Planet;
-import org.hibernate.cfg.Configuration;
-
 
 /**
  * A Hibernate specific implementation of the Roller business layer.
@@ -53,7 +51,7 @@ public class HibernatePlanetImpl implements Planet {
         try {
             if (StringUtils.isNotEmpty(PlanetConfig.getProperty("jdbc.driverClass"))) {
                 // create and configure for JDBC access
-                strategy = new PlanetHibernatePersistenceStrategy(
+                strategy = new HibernatePersistenceStrategy(
                     PlanetConfig.getProperty("hibernate.configResource"),
                     PlanetConfig.getProperty("hibernate.dialect"),
                     PlanetConfig.getProperty("jdbc.driverClass"),
@@ -62,7 +60,9 @@ public class HibernatePlanetImpl implements Planet {
                     PlanetConfig.getProperty("jdbc.password"));
             } else {
                 // create an configure via config resource only
-                strategy = new HibernatePersistenceStrategy(true); 
+                strategy = new HibernatePersistenceStrategy(
+                    PlanetConfig.getProperty("hibernate.configResource"),
+                    PlanetConfig.getProperty("hibernate.dialect")); 
             }
         } catch(Throwable t) {
             // if this happens then we are screwed

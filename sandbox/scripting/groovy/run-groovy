@@ -1,8 +1,9 @@
 #!/bin/bash
 
-export GROOVY_HOME=/Applications/Java/groovy
+export GROOVY_HOME=~/java/groovy
 export ROLLER_HOME=~/roller_trunk/build/webapp
-export JDBCJAR=$CATALINA_HOME/common/lib/derbyclient.jar
+export JDBCJAR=$CATALINA_HOME/common/lib/mysql-connector-java-3.1.13-bin.jar
+#export JDBCJAR=$CATALINA_HOME/common/lib/derbyclient.jar
 
 #export GROOVY_HOME=~/java/groovy
 #export ROLLER_HOME=../../standalone/build/roller-demo/webapps/roller

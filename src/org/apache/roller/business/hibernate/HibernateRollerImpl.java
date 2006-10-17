@@ -18,11 +18,12 @@
 
 package org.apache.roller.business.hibernate;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerImpl;
-import org.apache.roller.business.ThreadManagerImpl;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.BookmarkManager;
 import org.apache.roller.model.ConfigManager;
 import org.apache.roller.model.AutoPingManager;
@@ -68,7 +69,21 @@ public class HibernateRollerImpl extends RollerImpl {
     
     protected HibernateRollerImpl() throws RollerException {
         try {
-            strategy = new HibernatePersistenceStrategy(true);
+            if (StringUtils.isNotEmpty(RollerConfig.getProperty("jdbc.driverClass"))) {
+                // create and configure for JDBC access
+                strategy = new HibernatePersistenceStrategy(
+                    RollerConfig.getProperty("hibernate.configResource"),
+                    RollerConfig.getProperty("hibernate.dialect"),
+                    RollerConfig.getProperty("jdbc.driverClass"),
+                    RollerConfig.getProperty("jdbc.connectionURL"),
+                    RollerConfig.getProperty("jdbc.username"),
+                    RollerConfig.getProperty("jdbc.password"));
+            } else {
+                // create an configure via config resource only
+                strategy = new HibernatePersistenceStrategy(
+                    RollerConfig.getProperty("hibernate.configResource"),
+                    RollerConfig.getProperty("hibernate.dialect"));
+            }
         } catch(Throwable t) {
             // if this happens then we are screwed
             mLogger.fatal("Error initializing Hibernate", t);
