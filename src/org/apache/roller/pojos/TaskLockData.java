@@ -25,7 +25,7 @@ import java.util.Date;
 /**
  * Represents locking information about a specific RollerTask.
  *
- * @ejb:bean name="CommentData"
+ * @ejb:bean name="TaskLockData"
  * @hibernate.class lazy="false" table="roller_tasklock"
  * @hibernate.cache usage="read-write"
  */
