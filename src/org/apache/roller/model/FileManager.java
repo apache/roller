@@ -48,15 +48,16 @@ public interface FileManager {
     
     
     /**
-     * 
      * Get list of files from a specific path of the weblog's uploads area.
      * 
-     * This method will return a File[] array of all files at the given path if
-     * it exists, otherwise it will throw an exception.
+     * This method will return a WeblogResource[] array of all files at the 
+     * given path if it exists, otherwise it will throw an exception.
      * 
      * This method should return the files at the root of the weblog's uploads
      * area given a path value of null, "" (empty string), or "/"
      * 
+     * This method should NOT return any resources which represent directories.
+     *
      * @param weblog The weblog we are working on.
      * @param path The relative path to the desired resource within 
      * the weblog's uploads area.
@@ -68,6 +69,23 @@ public interface FileManager {
      */
     public WeblogResource[] getFiles(WebsiteData weblog, String path) 
         throws FileNotFoundException, FilePathException;
+    
+    
+    /**
+     * Get list of directories from a weblog's uploads area.
+     * 
+     * This method will return an array of all dirs in the weblogs' uploads 
+     * area, otherwise it will throw an exception.
+     * 
+     * @param weblog The weblog we are working on.
+     * 
+     * @throws FileNotFoundException If path does not exist.
+     * @throws FilePathException If path is invalid, or can't be read.
+     *
+     * @return WeblogResource[] of directories in website's uploads area.
+     */
+    public WeblogResource[] getDirectories(WebsiteData weblog)
+            throws FileNotFoundException, FilePathException;
     
     
     /**

@@ -25,20 +25,14 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
-import org.apache.roller.model.FilePathException;
 import org.apache.roller.model.FileManager;
-import org.apache.roller.model.FileNotFoundException;
 import org.apache.roller.model.PropertiesManager;
-import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.UserData;
+import org.apache.roller.pojos.WeblogResource;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.util.RollerMessages;
-
 
 /**
  * Test File Management business layer operations.
@@ -84,6 +78,9 @@ public class FileManagerTest extends TestCase {
     }
     
     
+    /**
+     * Test simple file save/delete.
+     */
     public void testFileCRUD() throws Exception {
         
         // update roller properties to prepare for test
@@ -96,17 +93,11 @@ public class FileManagerTest extends TestCase {
         TestUtils.endSession(true);
         
         /* NOTE: upload dir for unit tests is set in
-               roller/personal/testing/roller-custom.properties */
+               roller/testdata/roller-custom.properties */
         FileManager fmgr = RollerFactory.getRoller().getFileManager();
         
         // we should be starting with 0 files
         assertEquals(0, fmgr.getFiles(testWeblog, null).length);
-        
-        // create a directory
-        fmgr.createDirectory(testWeblog, "subdir");
-        
-        // make sure directory was created
-        assertEquals(1, fmgr.getFiles(testWeblog, null).length);
         
         // store a file
         InputStream is = getClass().getResourceAsStream("/bookmarks.opml");
@@ -114,24 +105,97 @@ public class FileManagerTest extends TestCase {
         
         // make sure file was stored successfully
         assertEquals("bookmarks.opml", fmgr.getFile(testWeblog, "bookmarks.opml").getName());
-        assertEquals(2, fmgr.getFiles(testWeblog, null).length);
+        assertEquals(1, fmgr.getFiles(testWeblog, null).length);
         
-        // store a file into a subdirectory
-        is = getClass().getResourceAsStream("/bookmarks.opml");
-        fmgr.saveFile(testWeblog, "subdir/bookmarks.opml", "text/plain", 1545, is);
-        
-        // make sure file was stored successfully
-        assertEquals("subdir/bookmarks.opml", 
-                fmgr.getFile(testWeblog, "subdir/bookmarks.opml").getPath());
-        assertEquals(1, fmgr.getFiles(testWeblog, "subdir").length);
-        
-        // delete files and dirs
+        // delete file
         fmgr.deleteFile(testWeblog, "bookmarks.opml");
-        fmgr.deleteFile(testWeblog, "subdir/bookmarks.opml");
-        fmgr.deleteFile(testWeblog, "subdir");
         
         // make sure delete was successful
         assertEquals(0, fmgr.getFiles(testWeblog, null).length);
+    }
+    
+    
+    /**
+     * Test simple directory create/delete.
+     */
+    public void testDirectoryCRUD() throws Exception {
+        
+        // update roller properties to prepare for test
+        PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+        Map config = pmgr.getProperties();
+        ((RollerPropertyData)config.get("uploads.enabled")).setValue("true");
+        ((RollerPropertyData)config.get("uploads.types.allowed")).setValue("opml");
+        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
+        pmgr.saveProperties(config);
+        TestUtils.endSession(true);
+        
+        FileManager fmgr = RollerFactory.getRoller().getFileManager();
+        
+        // we should be starting with 0 directories
+        assertEquals(0, fmgr.getDirectories(testWeblog).length);
+        
+        // create a directory
+        fmgr.createDirectory(testWeblog, "bucket0");
+        
+        // make sure directory was created
+        WeblogResource[] dirs = fmgr.getDirectories(testWeblog);
+        assertNotNull(dirs);
+        assertEquals(1, dirs.length);
+        assertEquals("bucket0", dirs[0].getName());
+        
+        // cleanup
+        fmgr.deleteFile(testWeblog, "bucket0");
+        
+        // make sure delete was successful
+        assertEquals(0, fmgr.getDirectories(testWeblog).length);
+    }
+    
+    
+    /**
+     * Test save/delete of files in a directory.
+     */
+    public void testFilesInDirectoriesCRUD() throws Exception {
+        
+        // update roller properties to prepare for test
+        PropertiesManager pmgr = RollerFactory.getRoller().getPropertiesManager();
+        Map config = pmgr.getProperties();
+        ((RollerPropertyData)config.get("uploads.enabled")).setValue("true");
+        ((RollerPropertyData)config.get("uploads.types.allowed")).setValue("opml");
+        ((RollerPropertyData)config.get("uploads.dir.maxsize")).setValue("1.00");
+        pmgr.saveProperties(config);
+        TestUtils.endSession(true);
+        
+        FileManager fmgr = RollerFactory.getRoller().getFileManager();
+        
+        // we should be starting with 0 files and 0 directories
+        assertEquals(0, fmgr.getFiles(testWeblog, null).length);
+        assertEquals(0, fmgr.getDirectories(testWeblog).length);
+        
+        // create a directory
+        fmgr.createDirectory(testWeblog, "bucket1");
+        
+        // make sure directory was created
+        WeblogResource[] dirs = fmgr.getDirectories(testWeblog);
+        assertNotNull(dirs);
+        assertEquals(1, dirs.length);
+        assertEquals("bucket1", dirs[0].getName());
+        
+        // store a file into a subdirectory
+        InputStream is = getClass().getResourceAsStream("/bookmarks.opml");
+        fmgr.saveFile(testWeblog, "bucket1/bookmarks.opml", "text/plain", 1545, is);
+        
+        // make sure file was stored successfully
+        assertEquals("bucket1/bookmarks.opml", 
+                fmgr.getFile(testWeblog, "bucket1/bookmarks.opml").getPath());
+        assertEquals(1, fmgr.getFiles(testWeblog, "bucket1").length);
+        
+        // cleanup
+        fmgr.deleteFile(testWeblog, "bucket1/bookmarks.opml");
+        fmgr.deleteFile(testWeblog, "bucket1");
+        
+        // we should be back to 0 files and 0 directories
+        assertEquals(0, fmgr.getFiles(testWeblog, null).length);
+        assertEquals(0, fmgr.getDirectories(testWeblog).length);
     }
     
     
