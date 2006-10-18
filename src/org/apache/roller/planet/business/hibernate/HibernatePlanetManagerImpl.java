@@ -289,13 +289,13 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 StringBuffer sb = new StringBuffer();
                 sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
                 sb.append("join e.subscription.groups g ");
-                sb.append("where g=:group and e.pubTime < :endDate ");
+                sb.append("where g.handle=:groupHandle and e.pubTime < :endDate ");
                 if (startDate != null) {
                     sb.append("and e.pubTime > :startDate ");
                 }
                 sb.append("order by e.pubTime desc");
                 Query query = session.createQuery(sb.toString());
-                query.setEntity("group", group);
+                query.setEntity("groupHandle", group.getHandle());
                 query.setFirstResult(offset);
                 if (length != -1) query.setMaxResults(length);
                 query.setParameter("endDate", endDate);

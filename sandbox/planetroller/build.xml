@@ -67,8 +67,6 @@
     <target name="stage-webapp" description="Build Planet webapp">
         
         <mkdir dir="./build/classes" />
-        <mkdir dir="./build/webapp/WEB-INF/lib" />
-
         <javac debug="on" destdir="./build/classes">
             <src path="./src" />
             <classpath>
@@ -76,46 +74,23 @@
             </classpath>
         </javac>
 
+        <mkdir dir="./build/webapp/WEB-INF/lib" />
         <jar basedir="./build/classes" destfile="./build/webapp/WEB-INF/lib/roller-planet.jar" />
-        
         <copy todir="./build/webapp/WEB-INF/lib">
             <fileset refid="roller-jars" />
-        </copy> 
-        
+        </copy>         
+
         <copy todir="./build/webapp">
             <fileset dir="./web" includes="**/**" />
         </copy> 
-        
+
+        <mkdir dir="./build/webapp/WEB-INF/templates" />
+        <copy todir="./build/webapp/WEB-INF/templates">
+            <fileset dir="./templates" includes="**/**" />
+        </copy> 
+
     </target>
     
-    <target name="release" depends="stage-webapp" description="Package for release">
-        
-        <!-- Include jars needed to run -->
-        <mkdir dir="./build/planetroller/lib" />
-        <jar basedir="./build/classes" 
-            destfile="./build/planetroller/lib/roller-planet.jar" />
-        <copy todir="./build/planetroller/lib">
-            <fileset refid="roller-jars" />
-        </copy>
-        
-        <!-- Include sample theme, template, and config files -->
-        <mkdir dir="./build/planetroller/templates" />
-        <copy todir="./build/planetroller/templates">
-            <fileset dir="./templates" includes="*.vm" />
-        </copy>
-
-        <copy todir="./build/planetroller" >
-            <fileset dir="./etc" includes="**/**" />
-        </copy>
-        <chmod file="./build/planetroller/setenv.sh" perm="+x" />
-        <chmod file="./build/planetroller/planet-tool.sh" perm="+x" />
-              
-        <!-- Package it up -->
-        <mkdir dir="./dist" />
-        <tar destfile="./dist/roller-planet.tar" 
-            basedir="./build" includes="planetroller/**" />
-        
-    </target>
    
     <!-- Copy files locally for convenience in IDE -->
     <target name="copy-roller-jars-for-ide">

@@ -18,6 +18,7 @@
 
 package org.apache.roller.business.hibernate;
 
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,6 +39,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.DOMOutputter;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 
 
 /**
@@ -56,6 +59,13 @@ public class HibernatePersistenceStrategy {
     
     private static Log log = LogFactory.getLog(HibernatePersistenceStrategy.class);
     
+    /** No-op so XML parser doesn't hit the network looking for Hibernate DTDs */
+    private EntityResolver noOpEntityResolver = new EntityResolver() {
+        public InputSource resolveEntity(String publicId, String systemId) {
+            return new InputSource(new StringBufferInputStream(""));
+        }
+    };
+    
     
     public HibernatePersistenceStrategy() {
     }   
@@ -71,6 +81,7 @@ public class HibernatePersistenceStrategy {
         
         // read configResource into DOM form
         SAXBuilder builder = new SAXBuilder();
+        builder.setEntityResolver(noOpEntityResolver); 
         Document configDoc = builder.build(
             getClass().getResourceAsStream(configResource));
         Element root = configDoc.getRootElement();
@@ -118,6 +129,7 @@ public class HibernatePersistenceStrategy {
         
         // read configResource into DOM form
         SAXBuilder builder = new SAXBuilder();
+        builder.setEntityResolver(noOpEntityResolver); 
         Document configDoc = builder.build(
             getClass().getResourceAsStream(configResource));
         Element root = configDoc.getRootElement();
@@ -512,3 +524,8 @@ public class HibernatePersistenceStrategy {
     }
     
 }
+
+
+
+
+
