@@ -25,6 +25,7 @@
         <include name="roller-business.jar"/>        
         
         <include name="hibernate3.jar"/>
+        <include name="antlr.jar"/>
         <include name="asm.jar"/>
         <include name="asm-attrs.jar"/>
         <include name="cglib-2.1.3.jar"/>
