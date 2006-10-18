@@ -62,8 +62,7 @@ public class PlanetGroupData extends PersistentObject implements Serializable
 
     /** 
      * @ejb:persistent-field 
-     * @hibernate.id column="id" 
-     *     generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()
     {

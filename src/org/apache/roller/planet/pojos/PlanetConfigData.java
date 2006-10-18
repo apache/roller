@@ -72,8 +72,7 @@ public class PlanetConfigData extends PersistentObject implements Serializable
     
     //----------------------------------------------------------- persistent fields
     /** 
-     * @hibernate.id column="id" 
-     *     generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      */
     public String getId()
     {
