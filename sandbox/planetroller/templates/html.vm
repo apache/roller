@@ -1,6 +1,6 @@
 <html>
 #set($group = $planet.getGroup($groupHandle))
-#set($entries = $planet.getAggregation($group, $group.maxPageEntries))
+#set($entries = $planet.getAggregation($group, 0, $group.maxPageEntries))
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
 <title>$group.title</title>

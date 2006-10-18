@@ -30,6 +30,7 @@ import java.util.List;
  * webapp.dir must specify Roller webapp directory
  * jars.dir must specify additional jars directory (e.g. Tomcat commons/lib)
  */
+
 public class TaskRunner {
     
     public static String WEBAPP_DIR = "webapp.dir"; 
@@ -106,3 +107,14 @@ public class TaskRunner {
         }
     }
 }
+
+/* for example:
+ java \
+    -Dwebapp.dir=/export/home/dave/roller_trunk/sandbox/planetroller/build/webapp \
+    -Djars.dir=/export/home/dave/tomcat/common/lib \
+    -Dplanet.custom.config=planet-custom.properties \
+    -Dcatalina.base=. \
+    -cp ./build/webapp/WEB-INF/lib/roller-business.jar \
+    org.apache.roller.business.runnable.TaskRunner \
+    org.apache.roller.planet.tasks.GeneratePlanetTask
+ */

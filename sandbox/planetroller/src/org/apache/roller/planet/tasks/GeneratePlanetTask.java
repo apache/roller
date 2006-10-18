@@ -23,6 +23,7 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.model.Planet;
 import org.apache.roller.planet.model.PlanetFactory;
 import org.apache.roller.planet.model.PlanetManager;
@@ -33,24 +34,32 @@ import org.apache.velocity.texen.Generator;
 
 
 /**
- * Fetch feeds as needed and regenerate Planet pages based.
+ * Updates Planet aggregator's database of feed entries and generates Planet
+ * files based on those entries and the Planet configuration. 
+ *
+ * - Calls Roller business layer to refresh entries
+ * - Uses Velocity Texen to generate the static files
+ * - Designed to be run outside of Roller via the TaskRunner class
  */
 public class GeneratePlanetTask implements Runnable {
-    private static Log logger = LogFactory.getLog(GeneratePlanetTask.class);
+    private static Log log = LogFactory.getLog(GeneratePlanetTask.class);
+    
     
     public void run() {
         try {            
             // Update all feeds in planet
+            log.info("Refreshing Planet entries");
             Planet planet = PlanetFactory.getPlanet();
             planet.getPlanetManager().refreshEntries();
             planet.flush();
             planet.release();
             
             // Run the planet generation templates
+            log.info("Generating Planet files");
             generatePlanet(); 
             
         } catch (RollerException e) {
-            logger.error("ERROR refreshing entries", e);
+            log.error("ERROR refreshing entries", e);
         }
     }
     
@@ -59,14 +68,31 @@ public class GeneratePlanetTask implements Runnable {
         try {
             Planet planet = PlanetFactory.getPlanet();
             PlanetManager planetManager = planet.getPlanetManager();
+                        
+            // Ignore values from database
+            //String mainPage = planetManager.getConfiguration().getMainPage();
+            //String templateDir = planetManager.getConfiguration().getTemplateDir();
+            //String outputDir = planetManager.getConfiguration().getMainPage();
             
+            // Use values from PlanetConfig instead
+            String mainPage =    
+                PlanetConfig.getProperty("planet.aggregator.mainPage");
+            String templateDir = 
+                PlanetConfig.getProperty("planet.aggregator.template.dir"); 
+            String outputDir =   
+                PlanetConfig.getProperty("planet.aggregator.output.dir");
+            
+            log.info("Calling Velocity Texen to generate Planet files");
+            log.info("   Control file       ["+mainPage+"]");
+            log.info("   Template directory ["+templateDir+"]"); 
+            log.info("   Output directory   ["+outputDir+"]");
+
             // Fire up Velocity engine, point it at templates and init
             VelocityEngine engine = new VelocityEngine();
             engine.setProperty("resource.loader","file");
             engine.setProperty("file.resource.loader.class",
-                    "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
-            engine.setProperty("file.resource.loader.path",
-                    planetManager.getConfiguration().getTemplateDir());
+              "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
+            engine.setProperty("file.resource.loader.path", templateDir);
             engine.init();
             
             // Build context with current date 
@@ -75,20 +101,21 @@ public class GeneratePlanetTask implements Runnable {
             context.put("utilities", new Utilities());
             context.put("planet", new StaticPlanetModel());
             
-            File outputDir = new File(planetManager.getConfiguration().getOutputDir());
-            if (!outputDir.exists()) outputDir.mkdirs();
+            // Ensure that output directory exists
+            File outputDirObj = new File(outputDir);
+            if (!outputDirObj.exists()) outputDirObj.mkdirs();
             
+            // Execute mainPage Texen control template
             Generator generator = Generator.getInstance();
             generator.setVelocityEngine(engine);
             generator.setOutputEncoding("utf-8");
             generator.setInputEncoding("utf-8");
-            generator.setOutputPath(planetManager.getConfiguration().getOutputDir());
-            generator.setTemplatePath(planetManager.getConfiguration().getTemplateDir());
-            generator.parse(planetManager.getConfiguration().getMainPage(), context);
+            generator.setOutputPath(outputDir);
+            generator.setTemplatePath(templateDir);
+            generator.parse(mainPage, context);
             generator.shutdown();
             
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RollerException("Writing planet files",e);
         }
     }    
