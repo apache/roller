@@ -336,7 +336,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                     +((endTime-startTime)/1000.0)+" seconds");
             
         } catch (Throwable e) {
-            log.error("ERROR: building aggregation for: "+group, e);
+            log.error("ERROR: building aggregation for: "+group.getHandle(), e);
             throw new RollerException(e);
         }
         return ret;
