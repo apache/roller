@@ -79,15 +79,15 @@ public class TaskRunner {
         addURLs(jarsDir, urlList);
         
         // Create classloader and make it load the task class to be run
-        URLClassLoader cl = URLClassLoader.newInstance(
+        URLClassLoader cl = new URLClassLoader(
             (URL[])urlList.toArray(new URL[urlList.size()]), null);
-        Class taskClass = cl.loadClass(taskClassName);
-        Runnable task = (Runnable)taskClass.newInstance();
-        
+       
         // We're using the new classloader from here on out
         Thread.currentThread().setContextClassLoader(cl);
-        
+
         // Go!
+        Class taskClass = cl.loadClass(taskClassName);
+        Runnable task = (Runnable)taskClass.newInstance();
         task.run();
     }
     
