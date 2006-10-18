@@ -32,8 +32,11 @@ function syncWebsites()
 </script>
 
 <html:form action="/roller-ui/admin/planetConfig" method="post">
-    <html:hidden property="method" value="saveConfig" />
     <html:hidden property="id" />
+    <html:hidden property="cacheDir" />
+    <html:hidden property="templateDir" />
+    <html:hidden property="outputDir" />
+    <html:hidden property="method" value="saveConfig" />
     
     <p class="subtitle"><fmt:message key="planetConfig.subtitle" /></p>
     <p><fmt:message key="planetConfig.prompt" /></p>

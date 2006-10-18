@@ -36,7 +36,7 @@ public class TaskRunner {
     public static String JARS_DIR = "jars.dir"; 
     public static String FS = File.separator;
     
-    public TaskRunner() {}
+    public TaskRunner() {} 
     
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
@@ -50,7 +50,7 @@ public class TaskRunner {
         }
         String taskClassName = args[0];
         String webappDir = System.getProperties().getProperty(WEBAPP_DIR);
-        String jarsDir = System.getProperties().getProperty(WEBAPP_DIR);
+        String jarsDir = System.getProperties().getProperty(JARS_DIR);
         if (webappDir == null || jarsDir == null) {
             System.err.println("ERROR: system properties webapp.dir and jars.dir not found");
             System.exit(-1);
@@ -71,13 +71,11 @@ public class TaskRunner {
         addURLs(libPath, urlList);
         
         // Added WEB-INF/classes
-        String classesPath = System.getProperties().getProperty(WEBAPP_DIR) 
-                + FS + "WEB-INF" + FS + "classes" + FS;
+        String classesPath = webappDir + FS + "WEB-INF" + FS + "classes" + FS;
         urlList.add(new URL("file://" + classesPath));
         
         // Add additional jars
-        String jarsPath = System.getProperties().getProperty(JARS_DIR);
-        addURLs(jarsPath, urlList);
+        addURLs(jarsDir, urlList);
         
         // Create classloader and make it load the task class to be run
         URLClassLoader cl = URLClassLoader.newInstance(

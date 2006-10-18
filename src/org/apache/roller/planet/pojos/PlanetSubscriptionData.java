@@ -79,8 +79,7 @@ public class PlanetSubscriptionData extends PersistentObject
     }
 
     /** 
-     * @hibernate.id column="id" 
-     *     generator-class="uuid.hex" unsaved-value="null"
+     * @hibernate.id column="id" generator-class="uuid.hex" unsaved-value="null"
      * @roller.wrapPojoMethod type="simple"
      */
     public String getId()
