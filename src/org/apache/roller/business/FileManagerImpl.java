@@ -19,6 +19,7 @@
 package org.apache.roller.business;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -113,6 +114,39 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
+     * @see org.apache.roller.model.FileManager#getDirectories(java.lang.String)
+     */
+    public WeblogResource[] getDirectories(WebsiteData weblog)
+            throws FileNotFoundException, FilePathException {
+        
+        // get a reference to the root dir, checks that dir exists & is readable
+        File dirFile = this.getRealFile(weblog, null);
+        
+        // make sure path is a directory
+        if(!dirFile.isDirectory()) {
+            throw new FilePathException("Invalid path [], "+
+                    "path is not a directory.");
+        }
+        
+        // we only want a list of directories
+        File[] dirFiles = dirFile.listFiles(new FileFilter() {
+            public boolean accept(File f) {
+                return (f != null) ? f.isDirectory() : false;
+            }
+        });
+        
+        // convert 'em to WeblogResource objects
+        WeblogResource[] resources = new WeblogResource[dirFiles.length];
+        for(int i=0; i < dirFiles.length; i++) {
+            String filePath = dirFiles[i].getName();
+            resources[i] = new WeblogResourceFile(weblog, filePath, dirFiles[i]);
+        }
+            
+        return resources;
+    }
+    
+    
+    /**
      * @see org.apache.roller.model.FileManager#saveFile(java.lang.String, java.lang.String, java.lang.String, long, java.io.InputStream)
      */
     public void saveFile(WebsiteData weblog, 
@@ -163,6 +197,11 @@ public class FileManagerImpl implements FileManager {
         
         // get path to weblog's uploads area
         File weblogDir = this.getRealFile(weblog, null);
+        
+        if(path != null && path.indexOf('/') != -1) {
+            throw new FilePathException("Invalid path ["+path+"], "+
+                        "trying to use nested directories.");
+        }
         
         // now construct path to new directory
         File dir = new File(weblogDir.getAbsolutePath() + File.separator + path);
@@ -459,6 +498,13 @@ public class FileManagerImpl implements FileManager {
             relPath = path.substring(1);
         }
         
+        // we only allow a single level of directories right now, so make
+        // sure that the path doesn't try to go multiple levels
+        if(relPath != null && (relPath.lastIndexOf('/') > relPath.indexOf('/'))) {
+            throw new FilePathException("Invalid path ["+path+"], "+
+                    "trying to use nested directories.");
+        }
+        
         // convert "/" to filesystem specific file separator
         if(relPath != null) {
             relPath = relPath.replace('/', File.separatorChar);
@@ -537,7 +583,14 @@ public class FileManagerImpl implements FileManager {
                 return null;
             }
             
-            File[] dirFiles = resourceFile.listFiles();
+            // we only want files, no directories
+            File[] dirFiles = resourceFile.listFiles(new FileFilter() {
+                public boolean accept(File f) {
+                    return (f != null) ? f.isFile() : false;
+                }
+            });
+            
+            // convert Files into WeblogResources
             WeblogResource[] resources = new WeblogResource[dirFiles.length];
             for(int i=0; i < dirFiles.length; i++) {
                 String filePath = dirFiles[i].getName();

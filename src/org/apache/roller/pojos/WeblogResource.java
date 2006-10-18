@@ -91,6 +91,9 @@ public interface WeblogResource {
     /**
      * List child resources if this resource represents a directory.
      *
+     * The children returned by this method should only be actual files.  No
+     * directories should be returned by this method.
+     *
      * @returns null if resource is not a directory, otherwise a WeblogResource[].
      */
     public WeblogResource[] getChildren();
