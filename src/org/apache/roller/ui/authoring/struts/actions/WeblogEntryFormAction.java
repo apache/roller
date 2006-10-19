@@ -60,7 +60,7 @@ import org.apache.struts.util.RequestUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.IndexManager;
+import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;

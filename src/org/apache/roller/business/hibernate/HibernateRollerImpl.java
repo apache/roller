@@ -26,16 +26,16 @@ import org.apache.roller.business.RollerImpl;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.ConfigManager;
-import org.apache.roller.model.AutoPingManager;
-import org.apache.roller.model.PingQueueManager;
-import org.apache.roller.model.PingTargetManager;
+import org.apache.roller.business.pings.AutoPingManager;
+import org.apache.roller.business.pings.PingQueueManager;
+import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.planet.model.PlanetManager;
 import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.model.ThreadManager;
+import org.apache.roller.business.runnable.ThreadManager;
 
 
 /**

@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.PingConfig;
-import org.apache.roller.model.PingTargetManager;
+import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WebsiteData;

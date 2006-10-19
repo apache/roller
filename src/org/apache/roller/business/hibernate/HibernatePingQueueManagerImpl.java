@@ -31,7 +31,7 @@ import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.PingQueueEntryData;
 import java.sql.Timestamp;
 import java.util.List;
-import org.apache.roller.model.PingQueueManager;
+import org.apache.roller.business.pings.PingQueueManager;
 
 
 /**

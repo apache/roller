@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.TestUtils;
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.model.ThreadManager;
+import org.apache.roller.business.runnable.ThreadManager;
 
 
 /**

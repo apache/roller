@@ -23,8 +23,8 @@
 
 package org.apache.roller;
 
-import org.apache.roller.model.AutoPingManager;
-import org.apache.roller.model.PingTargetManager;
+import org.apache.roller.business.pings.AutoPingManager;
+import org.apache.roller.business.pings.PingTargetManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;

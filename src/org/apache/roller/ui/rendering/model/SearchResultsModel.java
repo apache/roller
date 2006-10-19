@@ -34,7 +34,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.business.search.operations.SearchOperation;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.IndexManager;
+import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;

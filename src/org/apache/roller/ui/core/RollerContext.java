@@ -49,7 +49,7 @@ import org.apache.roller.config.PingConfig;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.model.ThreadManager;
+import org.apache.roller.business.runnable.ThreadManager;
 import org.apache.roller.ui.core.security.AutoProvision;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;

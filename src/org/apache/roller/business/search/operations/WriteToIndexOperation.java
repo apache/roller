@@ -20,7 +20,7 @@ package org.apache.roller.business.search.operations;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.IndexManagerImpl;
+import org.apache.roller.business.search.IndexManagerImpl;
 
 /**
  * An operation that writes to index.

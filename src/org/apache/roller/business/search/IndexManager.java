@@ -15,7 +15,7 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.model;
+package org.apache.roller.business.search;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.business.search.operations.IndexOperation;

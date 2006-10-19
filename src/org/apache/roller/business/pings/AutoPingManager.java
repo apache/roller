@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.model;
+package org.apache.roller.business.pings;
 
 import java.util.Collection;
 import java.util.List;
