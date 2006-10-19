@@ -16,9 +16,10 @@
 * directory of this distribution.
 */
 
-package org.apache.roller.planet.model;
+package org.apache.roller.planet.business;
 
 import org.apache.roller.RollerException;
+import org.apache.roller.planet.model.*;
 import org.apache.roller.planet.model.PlanetManager;
 
 

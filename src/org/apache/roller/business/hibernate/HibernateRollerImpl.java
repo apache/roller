@@ -29,7 +29,7 @@ import org.apache.roller.business.ConfigManager;
 import org.apache.roller.business.pings.AutoPingManager;
 import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.business.pings.PingTargetManager;
-import org.apache.roller.planet.model.PlanetManager;
+import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.Roller;

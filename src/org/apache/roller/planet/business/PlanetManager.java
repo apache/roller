@@ -15,7 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.planet.model;
+package org.apache.roller.planet.business;
 
 import java.io.Serializable;
 import java.util.Date;

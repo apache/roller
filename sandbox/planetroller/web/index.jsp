@@ -14,4 +14,10 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
---%><jsp:forward page="/main.faces" />
+--%>
+<%@ page import="org.apache.roller.planet.model.PlanetManager" %>
+<%@ page import="org.apache.roller.model.PlanetFactory" %>
+<%
+    PlanetManager pmgr= PlanetFactory.getPlanet().getPlanetManager();
+%>
+<jsp:forward page="/main.faces" />

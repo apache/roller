@@ -24,7 +24,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.hibernate.HibernatePersistenceStrategy;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.model.PlanetManager;
-import org.apache.roller.planet.model.Planet;
+import org.apache.roller.planet.business.Planet;
 
 /**
  * A Hibernate specific implementation of the Roller business layer.
