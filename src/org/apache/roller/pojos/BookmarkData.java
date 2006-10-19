@@ -18,7 +18,7 @@
 package org.apache.roller.pojos;
 
 import org.apache.roller.RollerException;
-import org.apache.roller.model.BookmarkManager;
+import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 

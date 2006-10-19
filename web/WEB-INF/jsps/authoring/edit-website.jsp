@@ -235,7 +235,7 @@ WebsiteFormAction.WebsitePageModel model =
         <tr>
             <td class="label"><fmt:message key="websiteSettings.label1" /> <br /><fmt:message key="websiteSettings.label2" /></td>
             <td class="field">
-            <logic:iterate id="plugin" type="org.apache.roller.model.WeblogEntryPlugin"
+            <logic:iterate id="plugin" type="org.apache.roller.business.WeblogEntryPlugin"
                 collection="<%= model.getPagePlugins() %>">
                 <html:multibox property="defaultPluginsArray"
                     title="<%= plugin.getName() %>" value="<%= plugin.getName() %>" /></input>

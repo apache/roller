@@ -16,19 +16,38 @@
 * directory of this distribution.
 */
 /*
- * Created on Feb 4, 2004 */package org.apache.roller.model;import org.apache.roller.RollerException;import org.apache.roller.pojos.RollerConfigData;import java.io.Serializable;/**
+ * Created on Feb 4, 2004
+ */
+package org.apache.roller.business;
+
+import org.apache.roller.RollerException;
+import org.apache.roller.pojos.RollerConfigData;
+import java.io.Serializable;
+
+/**
  * Manages Roller configuration
  * @deprecated Replaced by {@link RollerProperties}.
- */public interface ConfigManager extends Serializable {    /**
+ */
+public interface ConfigManager extends Serializable 
+{
+    /**
      * Release all resources associated with Roller session.
-     */    public void release();    /**
+     */
+    public void release();    /**
      * Store
      */
-    public void storeRollerConfig( RollerConfigData data ) throws RollerException;        /**
+
+
+    public void storeRollerConfig( RollerConfigData data ) throws RollerException;
+        /**
      * Get single RollerConfig object in system.
      * @deprecated 
      */
-    public RollerConfigData getRollerConfig() throws RollerException;        /**
+
+    public RollerConfigData getRollerConfig() throws RollerException;
+        /**
      * Read RollerConfig from XML file.
      */
-    public RollerConfigData readFromFile(String filePath) throws RollerException;}
+
+    public RollerConfigData readFromFile(String filePath) throws RollerException;
+}

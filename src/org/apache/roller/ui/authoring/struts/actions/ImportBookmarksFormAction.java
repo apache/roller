@@ -32,7 +32,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
-import org.apache.roller.model.BookmarkManager;
+import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.authoring.struts.formbeans.FolderFormEx;

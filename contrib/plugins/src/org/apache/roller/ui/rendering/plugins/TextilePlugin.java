@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.model.WeblogEntryPlugin;
+import org.apache.roller.business.WeblogEntryPlugin;
 
 
 /**

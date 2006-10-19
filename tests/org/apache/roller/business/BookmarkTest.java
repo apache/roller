@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.TestUtils;
-import org.apache.roller.model.BookmarkManager;
+import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.BookmarkData;

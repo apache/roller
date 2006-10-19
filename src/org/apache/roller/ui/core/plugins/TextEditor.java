@@ -18,7 +18,7 @@
 
 package org.apache.roller.ui.core.plugins;
 
-import org.apache.roller.model.WeblogEntryEditor;
+import org.apache.roller.business.WeblogEntryEditor;
 import org.apache.roller.util.MessageUtilities;
 
 

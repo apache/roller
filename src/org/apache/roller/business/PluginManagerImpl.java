@@ -26,12 +26,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.WeblogEntryPlugin;
-import org.apache.roller.model.PluginManager;
+import org.apache.roller.business.WeblogEntryPlugin;
+import org.apache.roller.business.PluginManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.model.WeblogEntryEditor;
+import org.apache.roller.business.WeblogEntryEditor;
 
 
 /**

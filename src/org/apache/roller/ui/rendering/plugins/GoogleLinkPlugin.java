@@ -20,7 +20,7 @@ package org.apache.roller.ui.rendering.plugins;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.model.WeblogEntryPlugin;
+import org.apache.roller.business.WeblogEntryPlugin;
 
 import java.text.MessageFormat;
 import java.util.regex.Pattern;

@@ -39,7 +39,7 @@ import org.hibernate.criterion.SimpleExpression;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.AutoPingManager;
-import org.apache.roller.model.BookmarkManager;
+import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.model.PingTargetManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;

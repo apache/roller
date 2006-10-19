@@ -29,7 +29,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.roller.model.BookmarkManager;
+import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;

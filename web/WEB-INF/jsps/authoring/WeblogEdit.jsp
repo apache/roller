@@ -236,7 +236,7 @@ function publish() {
          <fmt:message key="weblogEdit.pluginsToApply" /></a>
       </div>
       <div id="pluginControl" class="miscControl" style="display:none">
-        <logic:iterate id="plugin" type="org.apache.roller.model.WeblogEntryPlugin"
+        <logic:iterate id="plugin" type="org.apache.roller.business.WeblogEntryPlugin"
             collection="<%= model.getPagePlugins() %>">
             <html:multibox property="pluginsArray"
                  title="<%= plugin.getName() %>" value="<%= plugin.getName() %>"

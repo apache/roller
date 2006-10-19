@@ -38,7 +38,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.PluginManager;
+import org.apache.roller.business.PluginManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 

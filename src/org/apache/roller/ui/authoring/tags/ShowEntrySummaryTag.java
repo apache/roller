@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.util.RequestUtils;
 
 import org.apache.roller.model.Roller;
-import org.apache.roller.model.PluginManager;
+import org.apache.roller.business.PluginManager;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.ui.core.RollerContext;
