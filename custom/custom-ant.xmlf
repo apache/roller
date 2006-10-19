@@ -18,6 +18,9 @@
       <jvmarg value="-Xnoagent"/>
       <jvmarg value="-Djava.compiler=none"/>
       <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+      <jvmarg value="-Dcatalina.base=${build.tests}"/> 
+      <jvmarg value="-Dro.build=${ro.build}"/>
+      <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
       <classpath>
           <path refid="tests.run.path"/>
       </classpath>
@@ -43,6 +46,9 @@
       <jvmarg value="-Xnoagent"/>
       <jvmarg value="-Djava.compiler=none"/>
       <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+      <jvmarg value="-Dcatalina.base=${build.tests}"/> 
+      <jvmarg value="-Dro.build=${ro.build}"/>
+      <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
       <classpath>
           <path refid="tests.run.path"/>
       </classpath>
