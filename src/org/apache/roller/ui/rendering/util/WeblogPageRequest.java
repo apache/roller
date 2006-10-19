@@ -147,11 +147,11 @@ public class WeblogPageRequest extends WeblogRequest {
                     this.weblogPageName = pathElements[1];
 
                 } else if("tags".equals(this.context)) {
-                  this.tags = Arrays.asList(StringUtils.split(pathElements[1],"+"));
-                  
-                  int maxSize = RollerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);                  
-                  if(this.tags.size() > maxSize)
-                      throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
+                    String tagsString = pathElements[1].replace('+', ' ');
+                    this.tags = Utilities.splitStringAsTags(URLUtilities.decode(tagsString));                  
+                    int maxSize = RollerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);                  
+                    if(this.tags.size() > maxSize)
+                        throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
                                       
                 } else {
                     throw new InvalidRequestException("context "+this.context+

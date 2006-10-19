@@ -132,10 +132,11 @@ public class WeblogFeedRequest extends WeblogRequest {
         }
         
         if(request.getParameter("tags") != null) {
-          this.tags = Arrays.asList(StringUtils.split(URLUtilities.decode(request.getParameter("tags")),"+"));
-          int maxSize = RollerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);                  
-          if(this.tags.size() > maxSize)
-              throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", " + request.getRequestURL());
+            this.tags = Utilities.splitStringAsTags(request.getParameter("tags"));                  
+            int maxSize = RollerConfig.getIntProperty("tags.queries.maxIntersectionSize", 3);
+            if (this.tags.size() > maxSize)
+                throw new InvalidRequestException("max number of tags allowed is " + maxSize + ", "
+                                + request.getRequestURL());
         }        
         
         if(request.getParameter("excerpts") != null) {

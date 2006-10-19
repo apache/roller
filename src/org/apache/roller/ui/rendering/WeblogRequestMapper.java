@@ -100,18 +100,16 @@ public class WeblogRequestMapper implements RequestMapper {
         String weblogRequestContext = null;
         String weblogRequestData = null;
         
-        log.debug("evaluating ["+request.getServletPath()+"]");
+        log.debug("evaluating ["+request.getRequestURI()+"]");
         
         // figure out potential weblog handle
-        String servlet = request.getServletPath();
+        String servlet = request.getRequestURI();
         String pathInfo = null;
-        
-        // WAS6.1 returns "" for servletPath use pathInfo instead
-        if(StringUtils.isEmpty(request.getServletPath())) {
-            servlet = request.getPathInfo();
-        }
-        
+                
         if(servlet != null && servlet.trim().length() > 1) {
+            
+            if(request.getContextPath() != null)
+                servlet = servlet.substring(request.getContextPath().length());
             
             // strip off the leading slash
             servlet = servlet.substring(1);
