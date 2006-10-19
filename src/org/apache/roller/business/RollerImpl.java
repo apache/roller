@@ -25,7 +25,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.business.referrers.ReferrerQueueManagerImpl;
 import org.apache.roller.business.utils.UpgradeDatabase;
-import org.apache.roller.model.FileManager;
+import org.apache.roller.business.FileManager;
 import org.apache.roller.model.IndexManager;
 import org.apache.roller.model.PluginManager;
 import org.apache.roller.model.Roller;

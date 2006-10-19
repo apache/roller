@@ -16,26 +16,26 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.model;
+package org.apache.roller.business;
 
 import org.apache.roller.RollerException;
 
 
 /**
- * Thrown from the FileManager if there is some kind of IO exception while
- * working on a file, such as during a save or delete.
+ * Thrown from the FileManager if a file path is considered invalid for some
+ * reason, like it represents a directory instead of a file.
  */
-public class FileIOException extends RollerException {
+public class FilePathException extends RollerException {
     
-    public FileIOException(String s) {
+    public FilePathException(String s) {
         super(s);
     }
     
-    public FileIOException(String s, Throwable t) {
+    public FilePathException(String s, Throwable t) {
         super(s, t);
     }
     
-    public FileIOException(Throwable t) {
+    public FilePathException(Throwable t) {
         super(t);
     }
     
