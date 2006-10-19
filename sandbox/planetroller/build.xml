@@ -21,9 +21,15 @@
 
     <property file="./ant.properties" />
     
-    <fileset id="roller-jars" dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">        
-        <include name="roller-business.jar"/>        
+    <fileset id="roller-jars" dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">
         
+        <!-- needed for business layer model and pojos -->
+        <include name="roller-business.jar"/>   
+        
+        <!-- needed for OldUtilities and UtilitiesModel -->
+        <include name="roller-web.jar"/>           
+        
+        <!-- needed for Hibernate -->
         <include name="hibernate3.jar"/>
         <include name="antlr.jar"/>
         <include name="asm.jar"/>
@@ -33,23 +39,24 @@
         <include name="dom4j-1.6.1.jar"/>       
         <include name="jta.jar"/>
         <include name="jdbc2_0-stdext.jar"/>
-        
-        <include name="log4j-1.2.11.jar"/>
-        
+                
+        <!-- needed for ROME -->
         <include name="rome-0.8.jar"/>
         <include name="rome-fetcher-0.8.jar"/>        
         <include name="jdom.jar"/> 
         
-        <include name="jaxen-full.jar"/>
-        <include name="saxpath.jar"/>        
-
+        <!-- Needed for Velocity -->
         <include name="velocity-1.4.jar"/>
         <include name="velocity-dep-1.4.jar"/>   
         
+        <!-- General dependencies -->
         <include name="commons-lang-2.0.jar"/>   
         <include name="commons-logging.jar"/>   
         <include name="commons-fileupload.jar"/>   
         <include name="commons-validator.jar"/>   
+        <include name="log4j-1.2.11.jar"/>
+        <include name="jaxen-full.jar"/>
+        <include name="saxpath.jar"/>   
         
     </fileset>
     

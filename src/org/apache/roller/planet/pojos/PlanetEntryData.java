@@ -408,6 +408,37 @@ public class PlanetEntryData extends PersistentObject
     public void setWebsite() {
         // noop
     }
+
+    /**
+     * Return text as content, to maintain compatibility with PlanetTool templates.
+     */
+    public String getContent() {
+        return text;
+    }
+    public void setContent(String ignored) {
+        // no-op
+    }
+
+    /**
+     * Return updateTime as updated, to maintain compatibility with PlanetTool templates.
+     */
+    public Timestamp getUpdated() {
+        return updated;
+    }
+    public void setUpdated(Timestamp ignored) {
+        // no-op
+    }
+
+    /**
+     * Return pubTime as published, to maintain compatibility with PlanetTool templates.
+     */
+    public Timestamp getPublished() {
+        return published;
+    }
+    public void setPublished(Timestamp ignored) {
+        // no-op
+    }
+
 }
 
 

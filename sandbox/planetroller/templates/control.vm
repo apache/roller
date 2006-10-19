@@ -1,10 +1,13 @@
 #set ($groupHandles = $planet.groupHandles)
+#set ($outputPath = $generator.getOutputPath())
 #foreach ($groupHandle in $groupHandles)
-    #set ($outputFile = $strings.concat([$groupHandle, ".html"]))
+    #set ($groupPath = $strings.concat([$outputPath, "/", $groupHandle]))
+    $generator.setOutputPath($groupPath);
+    #set ($outputFile = $strings.concat(["index", ".html"]))
     $generator.parse("html.vm", $outputFile, "groupHandle", $groupHandle)
-    #set ($outputFile = $strings.concat([$groupHandle, ".rss"]))
+    #set ($outputFile = $strings.concat(["index", ".rss"]))
     $generator.parse("rss.vm",  $outputFile, "groupHandle", $groupHandle)
-    #set ($outputFile = $strings.concat([$groupHandle, ".opml"]))
+    #set ($outputFile = $strings.concat(["index", ".opml"]))
     $generator.parse("opml.vm", $outputFile, "groupHandle", $groupHandle)
 #end
-ê
+?

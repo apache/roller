@@ -2,26 +2,26 @@
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>
   #set($group = $planet.getGroup($groupHandle))
-  <title>$utilities.textToHTML($group.title,true)</title>
-  <link>$utilities.textToHTML(${planet.configuration.siteUrl})/${group.handle}.html</link>
-  <description>$utilities.textToHTML($group.description,true)</description>
-  <lastBuildDate>$utilities.formatRfc822Date($date)</lastBuildDate>
-  <generator>Roller Planet 1.1-dev</generator>
+  <title>$utils.escapeXML($group.title)</title>
+  <link>$utils.escapeXML(${planet.configuration.siteURL})/${group.handle}.html</link>
+  <description>$utils.escapeXML($group.description)</description>
+  <lastBuildDate>$utils.formatRfc822Date($date)</lastBuildDate>
+  <generator>Planet Roller</generator>
   #set($entries = $planet.getAggregation($group, $group.maxFeedEntries))
   #foreach( $entry in $entries )
   <item>
-    #if($entry.title)<title>$utilities.textToHTML($entry.title,true)</title> #end
+    #if($entry.title)<title>$utils.escapeXML($entry.title)</title> #end
     #if($entry.content)
-       <description>$utilities.textToHTML($entry.content,true)</description> #end
+       <description>$utils.escapeXML($entry.content)</description> #end
     #if($entry.categories)
         #foreach($cat in $entry.categories)
-     	   <category>$utilities.textToHTML($cat,true)</category>
+     	   <category>$utils.escapeXML($cat)</category>
      	#end
     #end
-    #if($entry.permalink)<link>$utilities.textToHTML($entry.permalink)</link> #end
-    <pubDate>$utilities.formatRfc822Date($entry.published)</pubDate>
+    #if($entry.permalink)<link>$utils.escapeXML($entry.permalink)</link> #end
+    <pubDate>$utils.formatRfc822Date($entry.published)</pubDate>
     #if($entry.author)
-       <dc:creator>$utilities.textToHTML($entry.author,true)</dc:creator>
+       <dc:creator>$utils.escapeXML($entry.author)</dc:creator>
     #end
   </item>
   #end

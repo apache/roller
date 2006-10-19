@@ -1,6 +1,6 @@
 <html>
 #set($group = $planet.getGroup($groupHandle))
-#set($entries = $planet.getAggregation($group, 0, $group.maxPageEntries))
+#set($entries = $planet.getAggregation($group, $group.maxPageEntries))
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" >
 <title>$group.title</title>
@@ -11,7 +11,7 @@
       <td width="80%" valign="top">
          <h1>$group.title</h1>
          <p><i>$group.description<i/></p>
-         <p>Last updated: $utilities.formatRfc822Date($date)</p>
+         <p>Last updated: $utils.formatRfc822Date($date)</p>
          #foreach($entry in $entries)
             <h2>$entry.title</h2>
             Blog: $entry.subscription.title <br/>
@@ -22,9 +22,9 @@
       </td>
       <td width="20%" valign="top">
          <h3>Other formats</h3>
-         <a href="$planet.configuration.siteUrl/${groupHandle}.rss">
+         <a href="$planet.configuration.siteURL/${groupHandle}/index.rss">
             <img src="rss20.png" alt="RSS 2.0 Feed" border="0"></a><p />
-         <a href="$planet.configuration.siteUrl/${groupHandle}.opml">
+         <a href="$planet.configuration.siteURL/${groupHandle}/index.opml">
             <img src="opml.png" alt="OPML Subscriptions" border="0"></a>
          <h3>Subscriptions</h3>
          #foreach ($sub in $group.subscriptions)

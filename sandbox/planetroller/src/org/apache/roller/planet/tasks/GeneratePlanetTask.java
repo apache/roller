@@ -20,6 +20,8 @@ package org.apache.roller.planet.tasks;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -27,7 +29,8 @@ import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.model.Planet;
 import org.apache.roller.planet.model.PlanetFactory;
 import org.apache.roller.planet.model.PlanetManager;
-import org.apache.roller.util.Utilities;
+import org.apache.roller.ui.rendering.model.UtilitiesModel;
+import org.apache.roller.ui.rendering.velocity.deprecated.OldUtilities;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.texen.Generator;
@@ -37,13 +40,14 @@ import org.apache.velocity.texen.Generator;
  * Updates Planet aggregator's database of feed entries and generates Planet
  * files based on those entries and the Planet configuration. 
  *
- * - Calls Roller business layer to refresh entries
- * - Uses Velocity Texen to generate the static files
  * - Designed to be run outside of Roller via the TaskRunner class
+ * - Calls Planet business layer to refresh entries
+ * - Uses PlanetConfig properties for templateDir, outputDir and template name
+ * - Creates outputdir and a subdirectory for each group
+ * - Uses Velocity Texen to generate the static files
  */
 public class GeneratePlanetTask implements Runnable {
     private static Log log = LogFactory.getLog(GeneratePlanetTask.class);
-    
     
     public void run() {
         try {            
@@ -98,14 +102,22 @@ public class GeneratePlanetTask implements Runnable {
             // Build context with current date 
             VelocityContext context = new VelocityContext();
             context.put("date", new Date());
-            context.put("utilities", new Utilities());
+            context.put("utils", new UtilitiesModel());
+            context.put("utilities", new OldUtilities());
             context.put("planet", new StaticPlanetModel());
             
-            // Ensure that output directory exists
+            // Ensure that output directories exists, one for each group
             File outputDirObj = new File(outputDir);
             if (!outputDirObj.exists()) outputDirObj.mkdirs();
+            List groups = planetManager.getGroupHandles();
+            for (Iterator it = groups.iterator(); it.hasNext();) {
+                String groupHandle = (String) it.next();
+                String groupDirName = outputDirObj + File.separator + groupHandle;
+                File groupDir = new File(groupDirName);
+                if (!groupDir.exists()) groupDir.mkdirs();
+            }
             
-            // Execute mainPage Texen control template
+            // Generate files: execute control template
             Generator generator = Generator.getInstance();
             generator.setVelocityEngine(engine);
             generator.setOutputEncoding("utf-8");
@@ -116,7 +128,7 @@ public class GeneratePlanetTask implements Runnable {
             generator.shutdown();
             
         } catch (Exception e) {
-            throw new RollerException("Writing planet files",e);
+            throw new RollerException("ERROR: writing planet files",e);
         }
     }    
 }
