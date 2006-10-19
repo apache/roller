@@ -46,8 +46,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
-import org.apache.roller.business.WeblogEntryEditor;
+import org.apache.roller.ui.core.plugins.WeblogEntryEditor;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.ui.core.plugins.UIPluginManager;
 
 /**
  * All data needed to render the edit-weblog page.
@@ -258,12 +260,9 @@ null,                 0, 20);
     }
 
     public WeblogEntryEditor getEditor() {
-        try {
-            PluginManager pmgr = RollerFactory.getRoller().getPagePluginManager();
-            return pmgr.getWeblogEntryEditor(this.website.getEditorPage());
-        } catch (RollerException ex) {
-            throw new RuntimeException("Couldn't access plugin manager");
-        }
+        
+        UIPluginManager pmgr = RollerContext.getUIPluginManager();
+        return pmgr.getWeblogEntryEditor(this.website.getEditorPage());
     }
     
     public UserData getUser()

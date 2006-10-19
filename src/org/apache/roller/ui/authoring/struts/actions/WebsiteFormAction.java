@@ -20,17 +20,12 @@ package org.apache.roller.ui.authoring.struts.actions;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionError;
@@ -49,7 +44,6 @@ import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
-import org.apache.roller.business.WeblogEntryEditor;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
@@ -59,6 +53,8 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WebsiteFormEx;
 import org.apache.roller.ui.core.RequestConstants;
+import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.ui.core.plugins.UIPluginManager;
 import org.apache.roller.util.Blacklist;
 
 
@@ -312,13 +308,12 @@ public final class WebsiteFormAction extends DispatchAction {
     
     private List getEditorsList() {
         
-        List editorsList = new ArrayList();
+        List editorsList = null;
         
-        try {
-            PluginManager pmgr = RollerFactory.getRoller().getPagePluginManager();
-            editorsList = pmgr.getWeblogEntryEditors();
-        } catch (RollerException ex) {
-            mLogger.error(ex);
+        UIPluginManager pmgr = RollerContext.getUIPluginManager();
+        editorsList = pmgr.getWeblogEntryEditors();
+        if(editorsList == null) {
+            editorsList = new ArrayList();
         }
         
         return editorsList;
