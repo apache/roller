@@ -39,6 +39,8 @@ public class GroupForm implements LoadableForm {
     private static Log log = LogFactory.getLog(GroupsListForm.class);
     private PlanetGroupData group = new PlanetGroupData();
     
+    public GroupForm() {}
+    
     public String load(HttpServletRequest request) throws Exception {
         log.info("Loading Group...");
         String groupid = request.getParameter("groupid");
@@ -67,7 +69,7 @@ public class GroupForm implements LoadableForm {
             planet.getPlanetManager().saveGroup(group); 
         }
         planet.flush();
-        return "editGroups";
+        return "editGroup";
     }   
     
     public String removeSubscription() throws Exception {
@@ -88,13 +90,9 @@ public class GroupForm implements LoadableForm {
         } 
         return "editGroup";
     }
-    
-    public PlanetGroupData getGroup() {
+        
+    public PlanetGroupData getGroup() throws Exception {
         return group;
-    }
-
-    public void setGroup(PlanetGroupData group) {
-        this.group = group;
     }
     
     public List getSubscriptions() throws Exception {

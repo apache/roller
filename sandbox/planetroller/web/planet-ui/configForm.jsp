@@ -49,11 +49,20 @@
           
         <h:outputText value="#{msgs.configDescription}" />
         <h:panelGroup>
-            <h:inputText id="description" value="#{configForm.planetConfig.description}" required="false" size="60">
+            <h:inputText id="description" value="#{configForm.planetConfig.description}" 
+                required="false" size="60">
             </h:inputText>
             <h:message for="description" styleClass="fieldError" />
         </h:panelGroup>
     
+        <h:outputText value="#{msgs.configSiteURL}" />
+        <h:panelGroup>
+             <h:inputText id="siteURL" value="#{configForm.planetConfig.siteURL}" 
+                required="true" size="60" validator="#{subscriptionForm.checkURL}">
+             </h:inputText>
+            <h:message for="siteURL" styleClass="fieldError" />
+        </h:panelGroup>
+        
         <h:outputText value="#{msgs.configAdminName}" />
         <h:panelGroup>
              <h:inputText id="adminName" value="#{configForm.planetConfig.adminName}" required="true" size="20">

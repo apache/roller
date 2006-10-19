@@ -90,7 +90,7 @@ public class LoadableFormFilter implements Filter {
             if (form != null) try { // to call form class load() method 
                 log.debug("Loading form: " + formName);  
                 form.load(request);                       
-                request.setAttribute(formName, form);
+                request.getSession().setAttribute(formName, form);
             } catch (Exception e) {
                 // error during form load indicates real problem
                 throw new ServletException("ERROR loading form " + formName, e);

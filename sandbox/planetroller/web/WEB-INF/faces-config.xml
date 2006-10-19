@@ -4,27 +4,27 @@
   <managed-bean>
     <managed-bean-name>configForm</managed-bean-name>
     <managed-bean-class>org.apache.roller.planet.ui.forms.ConfigForm</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
+    <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
   <managed-bean>
     <managed-bean-name>groupsList</managed-bean-name>
     <managed-bean-class>org.apache.roller.planet.ui.forms.GroupsListForm</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
+    <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
   <managed-bean>
     <managed-bean-name>groupForm</managed-bean-name>
     <managed-bean-class>org.apache.roller.planet.ui.forms.GroupForm</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
+    <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
   <managed-bean>
     <managed-bean-name>subscriptionForm</managed-bean-name>
     <managed-bean-class>org.apache.roller.planet.ui.forms.SubscriptionForm</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
+    <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
   <managed-bean>
     <managed-bean-name>error</managed-bean-name>
     <managed-bean-class>org.apache.roller.planet.ui.utils.ErrorBean</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
+    <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
   <navigation-rule>
     <from-view-id>/*</from-view-id>

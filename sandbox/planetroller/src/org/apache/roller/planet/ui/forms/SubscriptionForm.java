@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -43,6 +44,7 @@ public class SubscriptionForm implements LoadableForm {
     private static Log log = LogFactory.getLog(GroupsListForm.class);
     private PlanetSubscriptionData subscription = new PlanetSubscriptionData();
     private String groupid = null;
+    private String subid = null;
     
     public SubscriptionForm() {}
     
@@ -85,14 +87,18 @@ public class SubscriptionForm implements LoadableForm {
         return "editSubscription";
     }    
 
-    public PlanetSubscriptionData getSubscription() {
+    public PlanetSubscriptionData getSubscription() throws Exception {
+        if (subscription == null && subid != null) {
+            PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
+            subscription = pmgr.getSubscriptionById(groupid);
+        }
         return subscription;
     }
 
     public void setSubscription(PlanetSubscriptionData subscription) {
         this.subscription = subscription;
     }
-
+    
     public String getGroupid() {
         return groupid;
     }
