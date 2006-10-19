@@ -18,28 +18,30 @@
 
 package org.apache.roller.ui.core.plugins;
 
-import org.apache.roller.util.MessageUtilities;
+import java.util.List;
 
 
 /**
- * A rich text wysiwyg editor using Xinha.
+ * Plugin management for UI layer plugins.
  */
-public class XinhaEditor implements WeblogEntryEditor {
+public interface UIPluginManager {
+    
+    /**
+     * Get the list of all configured WeblogEntryEditors.
+     *
+     * @return List of all configure WeblogEntryEditor objects.
+     */
+    public List getWeblogEntryEditors();
     
     
-    public XinhaEditor() {}
-    
-    
-    public String getId() {
-        return "XinhaEditor";
-    }
-    
-    public String getName() {
-        return MessageUtilities.getString("editor.xinha.name");
-    }
-    
-    public String getJspPage() {
-        return "/roller-ui/authoring/editors/editor-xinha.jsp";
-    }
+    /**
+     * Get a WeblogEntryEditor by name.  If the specified editor cannot be found
+     * or the id is null, then the default editor should be returned.
+     *
+     * @param id The id of the desired WeblogEntryEditor.
+     * @return The WeblogEntry editor desired, or the default editor if the
+     *      desired editor could not be found.
+     */
+    public WeblogEntryEditor getWeblogEntryEditor(String id);
     
 }

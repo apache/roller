@@ -50,6 +50,8 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.runnable.ThreadManager;
+import org.apache.roller.ui.core.plugins.UIPluginManager;
+import org.apache.roller.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.ui.core.security.AutoProvision;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
@@ -495,6 +497,18 @@ public class RollerContext extends ContextLoaderListener implements ServletConte
       
       return null;
       
+    }
+
+    
+    /**
+     * Access to the plugin manager for the UI layer.
+     *
+     * TODO: we may want something similar to the Roller interface for the
+     *  ui layer if we dont' want methods like this here in RollerContext.
+     */
+    public static UIPluginManager getUIPluginManager() {
+        // TODO: we may want to do this another way
+        return UIPluginManagerImpl.getInstance();
     }
 
 }

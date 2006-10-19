@@ -18,7 +18,6 @@
 
 package org.apache.roller.business;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,16 +25,13 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.business.WeblogEntryPlugin;
-import org.apache.roller.business.PluginManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.business.WeblogEntryEditor;
 
 
 /**
- * Centralized plugin management.
+ * Plugin management for business layer and more generally applied plugins.
  */
 public class PluginManagerImpl implements PluginManager {
     
@@ -44,19 +40,12 @@ public class PluginManagerImpl implements PluginManager {
     // Plugin classes keyed by plugin name
     static Map mPagePlugins = new LinkedHashMap();
     
-    // list of configured WeblogEntryEditor classes
-    Map editors = new LinkedHashMap();
-    
-    // the default WeblogEntryEditor
-    WeblogEntryEditor defaultEditor = null;
-    
     
     /**
      * Creates a new instance of PluginManagerImpl
      */
     public PluginManagerImpl() {
         loadPagePluginClasses();
-        loadEntryEditorClasses();
     }
     
     
@@ -106,25 +95,6 @@ public class PluginManagerImpl implements PluginManager {
     }
     
     
-    public List getWeblogEntryEditors() {
-        return new ArrayList(this.editors.values());
-    }
-    
-    
-    public WeblogEntryEditor getWeblogEntryEditor(String id) {
-        
-        WeblogEntryEditor editor = null;
-        
-        // see if this editor is configured
-        editor = (id == null) ? null : (WeblogEntryEditor) this.editors.get(id);
-        if(editor == null) {
-            editor = this.defaultEditor;
-        }
-        
-        return editor;
-    }
-    
-    
     /**
      * Initialize PagePlugins declared in roller.properties.
      * By using the full class name we also allow for the implementation of
@@ -157,60 +127,6 @@ public class PluginManagerImpl implements PluginManager {
                     log.error("IllegalAccessException for " + plugins[i]);
                 }
             }
-        }
-    }
-    
-    
-    /**
-     * Initialize the set of configured editors and define the default editor.
-     */
-    private void loadEntryEditorClasses() {
-        
-        log.debug("Initializing entry editor plugins");
-        
-        String editorStr = RollerConfig.getProperty("plugins.weblogEntryEditors");
-        if (editorStr != null) {
-            
-            String[] editorList = StringUtils.stripAll(StringUtils.split(editorStr, ","));
-            for (int i=0; i < editorList.length; i++) {
-                
-                log.debug("trying editor " + editorList[i]);
-                
-                try {
-                    Class editorClass = Class.forName(editorList[i]);
-                    WeblogEntryEditor editor = (WeblogEntryEditor) editorClass.newInstance();
-                    
-                    // looks okay, add it to the map
-                    this.editors.put(editor.getId(), editor);
-                    
-                } catch(ClassCastException cce) {
-                    log.error("It appears that your editor does not implement "+
-                            "the WeblogEntryEditor interface", cce);
-                } catch(Exception e) {
-                    log.error("Unable to instantiate editor ["+editorList[i]+"]", e);
-                }
-            }
-        }
-        
-        if(this.editors.size() < 1) {
-            log.warn("No entry editors configured, this means that publishing "+
-                    "entries will be impossible.");
-            return;
-        }
-        
-        // make sure the default editor is defined
-        String defaultEditorId = RollerConfig.getProperty("plugins.defaultEditor");
-        if(defaultEditorId != null) {
-            this.defaultEditor = (WeblogEntryEditor) this.editors.get(defaultEditorId);
-        }
-        
-        if(this.defaultEditor == null) {
-            // someone didn't configure the default editor properly
-            // guess we'll just have to pick one for them
-            log.warn("Default editor was not properly configured, picking one at random instead.");
-            
-            Object editor = this.editors.values().iterator().next();
-            this.defaultEditor = (WeblogEntryEditor) editor;
         }
     }
     

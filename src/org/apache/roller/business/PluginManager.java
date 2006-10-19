@@ -22,10 +22,11 @@ import java.util.List;
 import java.util.Map;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
+import org.apache.roller.ui.core.plugins.WeblogEntryEditor;
 
 
 /**
- * Manages Roller plugins.
+ * Plugin management for business layer and more generally applied plugins.
  */
 public interface PluginManager {
     
@@ -55,25 +56,6 @@ public interface PluginManager {
      * @return        the transformed text
      */
     public String applyWeblogEntryPlugins(Map pagePlugins, WeblogEntryData entry, String str);
-    
-    
-    /**
-     * Get the list of all configured WeblogEntryEditors.
-     *
-     * @return List of all configure WeblogEntryEditor objects.
-     */
-    public List getWeblogEntryEditors();
-    
-    
-    /**
-     * Get a WeblogEntryEditor by name.  If the specified editor cannot be found
-     * or the id is null, then the default editor should be returned.
-     *
-     * @param id The id of the desired WeblogEntryEditor.
-     * @return The WeblogEntry editor desired, or the default editor if the
-     *      desired editor could not be found.
-     */
-    public WeblogEntryEditor getWeblogEntryEditor(String id);
     
     
     /**

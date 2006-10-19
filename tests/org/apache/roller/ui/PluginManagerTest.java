@@ -16,16 +16,15 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business;
+package org.apache.roller.ui;
 
-import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.business.PluginManager;
-import org.apache.roller.business.RollerFactory;
+import org.apache.roller.ui.core.RollerContext;
+import org.apache.roller.ui.core.plugins.UIPluginManager;
 
 
 /**
@@ -52,7 +51,7 @@ public class PluginManagerTest extends TestCase {
     
     public void testEntryEditors() throws Exception {
         
-        PluginManager pmgr = RollerFactory.getRoller().getPagePluginManager();
+        UIPluginManager pmgr = RollerContext.getUIPluginManager();
         
         // test getEditors() lis
         assertEquals(2, pmgr.getWeblogEntryEditors().size());
