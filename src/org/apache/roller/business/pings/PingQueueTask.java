@@ -39,7 +39,7 @@ import org.apache.roller.business.RollerFactory;
  */
 public class PingQueueTask extends RollerTask {
     
-    private static final Log logger = LogFactory.getLog(PingQueueTask.class);
+    private static Log log = LogFactory.getLog(PingQueueTask.class);
     
     // a String description of when to start this task
     private String startTimeDesc = "immediate";
@@ -85,7 +85,7 @@ public class PingQueueTask extends RollerTask {
             try {
                 this.interval = Integer.parseInt(intervalStr);
             } catch (NumberFormatException ex) {
-                logger.warn("Invalid interval: "+intervalStr);
+                log.warn("Invalid interval: "+intervalStr);
             }
         }
         
@@ -95,7 +95,7 @@ public class PingQueueTask extends RollerTask {
             try {
                 this.leaseTime = Integer.parseInt(leaseTimeStr);
             } catch (NumberFormatException ex) {
-                logger.warn("Invalid leaseTime: "+leaseTimeStr);
+                log.warn("Invalid leaseTime: "+leaseTimeStr);
             }
         }
         
@@ -108,18 +108,24 @@ public class PingQueueTask extends RollerTask {
      * Run the task once.
      */
     public void runTask() {
-        // Call the ping queue processor to process the queue
-        Roller roller = null;
+        
         try {
-            roller = RollerFactory.getRoller();
+            log.info("task started");
+            
             PingQueueProcessor.getInstance().processQueue();
-            roller.flush();
+            RollerFactory.getRoller().flush();
+            
+            log.info("task completed");
+            
         } catch (RollerException e) {
-            // This is probably duplicate logging. May want to eliminate it, but should be rare.
-            logger.error("Error while processing ping queue", e);
+            log.error("Error while processing ping queue", e);
+        } catch (Exception ee) {
+            log.error("unexpected exception", ee);
         } finally {
-            if (roller != null) roller.release();
+            // always release
+            RollerFactory.getRoller().release();
         }
+        
     }
     
 }

@@ -34,14 +34,13 @@ import org.apache.roller.util.DateUtil;
 /**
  * An abstract class representing a scheduled task in Roller.
  *
- * This class extends the java.util.TimerTask class an builds in some Roller
+ * This class extends the java.util.TimerTask class and builds in some Roller
  * specifics, such as handling of locks for synchronization in clustered
  * environments.
  */
 public abstract class RollerTask extends TimerTask {
     
-    // this is meant to be overridden by subclasses
-    Log log = LogFactory.getLog(RollerTask.class);
+    private static Log log = LogFactory.getLog(RollerTask.class);
     
     
     /**
@@ -117,7 +116,7 @@ public abstract class RollerTask extends TimerTask {
         try {
             mgr = RollerFactory.getRoller().getThreadManager();
         } catch (Exception ex) {
-            log.fatal("Unable to obtain TaskLockManager", ex);
+            log.fatal("Unable to obtain ThreadManager", ex);
             return;
         }
         
@@ -145,7 +144,7 @@ public abstract class RollerTask extends TimerTask {
                     log.debug("Interval time hasn't elapsed since last run, nothing to do");
                 }
             } else {
-                log.info("Task already locked, nothing to do");
+                log.debug("Task already locked, nothing to do");
             }
 
             // now if we have a lock then run the task
@@ -156,7 +155,6 @@ public abstract class RollerTask extends TimerTask {
         } catch (Exception ex) {
             log.error("Unexpected exception running task", ex);
         } finally {
-            log.debug("in the finally block");
             if(lockAcquired) {
                 log.debug("Attempting to release lock");
                 
@@ -172,7 +170,7 @@ public abstract class RollerTask extends TimerTask {
         }
         
     }
-
+    
     
     /**
      * Get the properties from RollerConfig which pertain to this task.
