@@ -42,7 +42,7 @@ import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.ImportEntriesForm;
 import org.apache.commons.lang.StringUtils;
-import org.apache.roller.model.FileManager;
+import org.apache.roller.business.FileManager;
 import org.apache.roller.pojos.WeblogResource;
 
 /**
