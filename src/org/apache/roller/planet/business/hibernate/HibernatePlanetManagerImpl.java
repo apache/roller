@@ -295,7 +295,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 }
                 sb.append("order by e.pubTime desc");
                 Query query = session.createQuery(sb.toString());
-                query.setEntity("groupHandle", group.getHandle());
+                query.setParameter("groupHandle", group.getHandle());
                 query.setFirstResult(offset);
                 if (length != -1) query.setMaxResults(length);
                 query.setParameter("endDate", endDate);
