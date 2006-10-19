@@ -16,11 +16,10 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.model;
+package org.apache.roller.business.runnable;
 
 import java.util.Date;
 import java.util.TimerTask;
-import org.apache.roller.business.runnable.RollerTask;
 
 
 /**

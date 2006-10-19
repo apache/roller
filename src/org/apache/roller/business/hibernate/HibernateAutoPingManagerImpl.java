@@ -34,8 +34,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.PingConfig;
-import org.apache.roller.model.AutoPingManager;
-import org.apache.roller.model.PingQueueManager;
+import org.apache.roller.business.pings.AutoPingManager;
+import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.business.RollerFactory;
 
 

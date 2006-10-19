@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.business;
+package org.apache.roller.business.runnable;
 
 import EDU.oswego.cs.dl.util.concurrent.BoundedBuffer;
 import EDU.oswego.cs.dl.util.concurrent.DirectExecutor;
@@ -25,8 +25,6 @@ import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.apache.roller.business.runnable.RollerTask;
-import org.apache.roller.model.ThreadManager;
 import org.apache.roller.util.DateUtil;
 
 

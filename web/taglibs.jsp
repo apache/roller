@@ -28,8 +28,8 @@
 
 <%@ page import="javax.servlet.jsp.jstl.core.Config" %>
 
-<%@ page import="org.apache.roller.model.Roller" %>
-<%@ page import="org.apache.roller.model.RollerFactory" %>
+<%@ page import="org.apache.roller.business.Roller" %>
+<%@ page import="org.apache.roller.business.RollerFactory" %>
 
 <%@ page import="org.apache.roller.pojos.UserData" %>
 <%@ page import="org.apache.roller.pojos.WebsiteData" %>

@@ -24,13 +24,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.business.referrers.ReferrerQueueManagerImpl;
+import org.apache.roller.business.runnable.ThreadManagerImpl;
+import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.utils.UpgradeDatabase;
 import org.apache.roller.business.FileManager;
-import org.apache.roller.model.IndexManager;
+import org.apache.roller.business.search.IndexManager;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.ThemeManager;
-import org.apache.roller.model.ThreadManager;
+import org.apache.roller.business.runnable.ThreadManager;
 
 
 /**

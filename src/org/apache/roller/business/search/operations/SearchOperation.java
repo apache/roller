@@ -34,10 +34,10 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
-import org.apache.roller.business.IndexManagerImpl;
+import org.apache.roller.business.search.IndexManagerImpl;
 import org.apache.roller.business.search.FieldConstants;
 import org.apache.roller.business.search.IndexUtil;
-import org.apache.roller.model.IndexManager;
+import org.apache.roller.business.search.IndexManager;
 
 
 /**

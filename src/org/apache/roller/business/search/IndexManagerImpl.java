@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 /* Created on Jul 18, 2003 */
-package org.apache.roller.business;
+package org.apache.roller.business.search;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +31,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.*;
 import org.apache.roller.business.search.operations.AddEntryOperation;
 import org.apache.roller.business.search.operations.IndexOperation;
 import org.apache.roller.business.search.operations.ReIndexEntryOperation;
@@ -38,7 +39,6 @@ import org.apache.roller.business.search.operations.RebuildWebsiteIndexOperation
 import org.apache.roller.business.search.operations.RemoveEntryOperation;
 import org.apache.roller.business.search.operations.RemoveWebsiteIndexOperation;
 import org.apache.roller.business.search.operations.WriteToIndexOperation;
-import org.apache.roller.model.IndexManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 

@@ -22,7 +22,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.Term;
-import org.apache.roller.business.IndexManagerImpl;
+import org.apache.roller.business.search.IndexManagerImpl;
 
 import java.io.IOException;
 import java.io.StringReader;

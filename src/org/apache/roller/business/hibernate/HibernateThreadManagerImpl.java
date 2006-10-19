@@ -23,7 +23,7 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.ThreadManagerImpl;
+import org.apache.roller.business.runnable.ThreadManagerImpl;
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.TaskLockData;

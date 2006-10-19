@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.PingConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PingQueueManager;
+import org.apache.roller.business.pings.PingQueueManager;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.PingQueueEntryData;
 import org.apache.roller.pojos.PingTargetData;
