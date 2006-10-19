@@ -34,7 +34,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.ThemeNotFoundException;
+import org.apache.roller.business.ThemeNotFoundException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.FileIOException;
 import org.apache.roller.business.FileManager;
