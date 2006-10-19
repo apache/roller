@@ -33,21 +33,20 @@
 <div id="wrapper">    
 <%@include file="/planet-ui/menu.jsp" %> 
 
-<h:form>
+<h:form id="subscriptionForm">
 
 <h2><h:outputText value="#{msgs.subscriptionPageTitle}" /></h2>
 <p><h:outputText value="#{msgs.subscriptionHelp}" /></p>
 
-<%--
 <c:if test="${subscriptionForm.groupid != null}">
 <p><h:outputLink value="./groupForm.faces?groupid=#{subscriptionForm.groupid}">
-    <h:outputText value="Return to group" />
+    <h:outputText value="#{msgs.subscriptionReturnToGroup}" />
 </h:outputLink></p>
 </c:if>
---%>
 
 <h:inputHidden value="#{subscriptionForm.subscription.id}" />
 <h:inputHidden value="#{subscriptionForm.groupid}" />
+
 <h:panelGrid columns="2" columnClasses="labelColumn,valueColumn">
 
     <h:outputText value="#{msgs.subscriptionTitle}" />

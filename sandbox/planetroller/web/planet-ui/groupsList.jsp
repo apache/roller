@@ -37,9 +37,9 @@
 <h2><h:outputText value="#{msgs.groupsListTitle}" /></h2>
 <p><h:outputText value="#{msgs.groupsHelp}" /></p>
 
-<h:form>
+<h:form id="groupsForm">
 <h:dataTable value="#{groupsList.groups}" var="group"
-    styleClass="data" rowClasses="oddRow,evenRow" columnClasses="narrowColumn,,narrowColumn">
+    styleClass="data" rowClasses="oddRow,evenRow" columnClasses="narrowColumn,,narrowColumn,narrowColumn">
     
     <h:column>
         <f:facet name="header">
@@ -59,6 +59,16 @@
     
     <h:column>
         <f:facet name="header">
+            <h:outputText value="#{msgs.groupsGroupURL}" />
+        </f:facet>       
+        <h:outputLink value="#{groupsList.siteURL}/#{group.handle}" target="_blank"> 
+            <h:graphicImage style="" value="../images/page_white_world.png"  />
+            <h:outputText value="link" />
+        </h:outputLink> 
+    </h:column> 
+    
+    <h:column>
+        <f:facet name="header">
             <h:outputText value="#{msgs.appAction}" />
         </f:facet>       
         <h:outputLink value="javascript:deleteGroup('#{group.id}','#{group.handle}')">
@@ -75,8 +85,8 @@
     <h:outputText value="#{msgs.groupsAddGroup}" />
 </h:commandLink> 
 
-<%-- Kludgey way to get a confirm delete popup --%>
-<t:commandLink id="deleteGroupLink" forceId="true" action="#{groupsForm.deleteGroup}" >
+<%-- Kludgey way to get a confirm delete popup --%> 
+<t:commandLink id="deleteGroupLink" forceId="true" action="#{groupsList.deleteGroup}" >
     <f:param name="groupid" value="" />
 </t:commandLink> 
 <script type="text/javascript">

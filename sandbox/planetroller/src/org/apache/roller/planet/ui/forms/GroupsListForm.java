@@ -19,7 +19,7 @@ package org.apache.roller.planet.ui.forms;
 
 import java.util.List;
 import java.util.Map;
-import javax.faces.context.FacesContext;
+import javax.faces.context.FacesContext; 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -36,7 +36,7 @@ public class GroupsListForm {
     public String deleteGroup() {
         log.info("Delete Group...");
         Planet planet = PlanetFactory.getPlanet();
-        FacesContext fctx = FacesContext.getCurrentInstance();
+        FacesContext fctx = FacesContext.getCurrentInstance(); 
         Map params = fctx.getExternalContext().getRequestParameterMap();
         String groupid = (String)params.get("groupid");
         try {
@@ -51,5 +51,9 @@ public class GroupsListForm {
 
     public List getGroups() throws Exception {
         return PlanetFactory.getPlanet().getPlanetManager().getGroups();
+    }
+    
+    public String getSiteURL() throws Exception {
+        return PlanetFactory.getPlanet().getPlanetManager().getConfiguration().getSiteURL();
     }
 }

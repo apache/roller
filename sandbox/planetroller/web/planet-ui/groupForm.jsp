@@ -94,7 +94,7 @@
         </f:facet>  
         <h:outputLink value="#{sub.siteURL}" target="_blank"
             title="#{sub.siteURL}" >
-            <h:graphicImage style="" value="../images/feed_link.png"  />
+            <h:graphicImage style="" value="../images/world_link.png"  />
             <h:outputText value="link" />
         </h:outputLink>
     </h:column> 
