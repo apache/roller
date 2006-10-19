@@ -961,7 +961,6 @@ ro.buildUser=${user.name}
                 <include name="org/apache/roller/business/IndexManagerTest.class"/>
                 <include name="org/apache/roller/business/PlanetManagerTest.class"/>
                 <include name="org/apache/roller/business/RefererTest.class"/>
-                <include name="org/apache/roller/business/PluginManagerTest.class"/>
             </fileset>
         </batchtest>
     </junit>
@@ -1001,6 +1000,7 @@ ro.buildUser=${user.name}
         <formatter type="xml"/>
         <batchtest toDir="${build.reports}/presentation/xml">
             <fileset dir="${build.compile.tests}">
+		<include name="org/apache/roller/ui/UIPluginManagerTest.class"/>
                 <include name="org/apache/roller/ui/authoring/struts/actions/BookmarksActionTest.class"/>           
                 <include name="org/apache/roller/ui/authoring/struts/actions/WeblogEntryActionTest.class"/>           
                 <include name="org/apache/roller/webservices/xmlrpc/RollerXmlRpcServerTest.class"/>  

@@ -30,18 +30,18 @@ import org.apache.roller.ui.core.plugins.UIPluginManager;
 /**
  * Test Plugin Management business layer operations.
  */
-public class PluginManagerTest extends TestCase {
+public class UIPluginManagerTest extends TestCase {
     
-    private static Log log = LogFactory.getLog(PluginManagerTest.class);
+    private static Log log = LogFactory.getLog(UIPluginManagerTest.class);
     
     
-    public PluginManagerTest(String name) {
+    public UIPluginManagerTest(String name) {
         super(name);
     }
     
     
     public static Test suite() {
-        return new TestSuite(PluginManagerTest.class);
+        return new TestSuite(UIPluginManagerTest.class);
     }
     
     
