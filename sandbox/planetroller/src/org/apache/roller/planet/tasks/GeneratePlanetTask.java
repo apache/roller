@@ -28,7 +28,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
-import org.apache.roller.planet.model.PlanetManager;
+import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.ui.rendering.velocity.deprecated.OldUtilities;
 import org.apache.velocity.VelocityContext;
