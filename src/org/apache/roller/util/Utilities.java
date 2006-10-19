@@ -12,6 +12,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -29,6 +33,8 @@ import sun.misc.BASE64Encoder;
 public class Utilities {
     /** The <code>Log</code> instance for this class. */
     private static Log mLogger = LogFactory.getLog(Utilities.class);
+    
+    public final static String TAG_SPLIT_CHARS = " ,\n\r\f\t";
       
     //------------------------------------------------------------------------
     /** Strip jsessionid off of a URL */
@@ -800,5 +806,49 @@ public class Utilities {
         }
         
         return tt.toString();
+    }
+    
+    /**
+     * @param tag
+     * @return
+     */
+    public static String stripInvalidTagCharacters(String tag) {
+        if (tag == null)
+            throw new NullPointerException();
+
+        StringBuffer sb = new StringBuffer();
+        char[] charArray = tag.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+
+            // fast-path exclusions quotes and commas are obvious
+            switch (c) {
+            case 34: // "
+            case 44: // ,
+                continue;
+            }
+
+            if ((33 <= c && c <= 126) || Character.isUnicodeIdentifierPart(c)
+                    || Character.isUnicodeIdentifierStart(c)) {
+                sb.append(charArray[i]);
+            }
+        }
+        return sb.toString();
+    }
+        
+    public static String normalizeTag(String tag, Locale locale) {
+        tag = Utilities.stripInvalidTagCharacters(tag);
+        return locale == null ? tag.toLowerCase() : tag.toLowerCase(locale);        
+    }
+    
+    /**
+     * @param tags
+     * @return
+     */
+    public static List splitStringAsTags(String tags)  {
+        String[] tagsarr = StringUtils.split(tags, TAG_SPLIT_CHARS);
+        if(tagsarr == null)
+            return Collections.EMPTY_LIST;
+        return Arrays.asList(tagsarr);
     }
 }

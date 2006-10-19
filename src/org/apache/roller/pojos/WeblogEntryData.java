@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -624,9 +625,15 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
          this.addedTags = new HashSet();
      }    
      
-     public void addTag(String name) throws RollerException {
-        name = stripInvalidTagChars(name);
-        name = name.trim();
+    /**
+     * Roller lowercases all tags based on locale because there's not a 1:1 mapping
+     * between uppercase/lowercase characters across all languages.  
+     * @param name
+     * @throws RollerException
+     */
+    public void addTag(String name) throws RollerException {
+        Locale locale = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
+        name = Utilities.normalizeTag(name, locale);
         if(name.length() == 0)
             return;
         
@@ -648,7 +655,6 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     }
 
     public void removeTag(String name) throws RollerException {
-        name = stripInvalidTagChars(name);
         for (Iterator it = tagSet.iterator(); it.hasNext();) {
             WeblogEntryTagData tag = (WeblogEntryTagData) it.next();
             if (tag.getName().equals(name)) {
@@ -690,27 +696,6 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         }
     }
    
-     public boolean checkValidTagChar(char c) {
-       return  c == 45 || c == 46 || c == 95 || 
-         (48 <= c && c <= 57) ||
-         (65 <= c && c <= 90) ||
-         (97 <= c && c <= 122) ||
-         Character.isUnicodeIdentifierPart(c) ||
-         Character.isUnicodeIdentifierStart(c);
-     }
-     
-     public String stripInvalidTagChars(String s) 
-     {
-       StringBuffer sb = new StringBuffer();
-       char [] charArray = s.toCharArray();
-       for(int i = 0; i < charArray.length; i++) 
-       {
-         if(checkValidTagChar(charArray[i]))
-           sb.append(charArray[i]);
-       }
-       return sb.toString();
-     }
-
     /**
      * @roller.wrapPojoMethod type="simple"
      */
@@ -732,14 +717,7 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
             return;
         }
 
-        String[] tagsarr = StringUtils.split(tags, ' ');
-
-        if (tagsarr == null || tagsarr.length == 0) {
-            tagSet.clear();
-            return;
-        }
-
-        updateTags(Arrays.asList(tagsarr));
+        updateTags(Utilities.splitStringAsTags(tags));
     }  
 
     // ------------------------------------------------------------------------

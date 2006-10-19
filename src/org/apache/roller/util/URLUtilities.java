@@ -182,7 +182,7 @@ public final class URLUtilities {
             pathinfo.append("date/").append(dateString);  
         
         } else if(tags != null && tags.size() > 0) {
-            pathinfo.append("tags/").append(Utilities.stringArrayToString((String[])tags.toArray(), ","));
+            pathinfo.append("tags/").append(encode(Utilities.stringArrayToString((String[])tags.toArray(), "+")));
         } else {
             if(dateString != null) params.put("date", dateString);
             if(cat != null) params.put("cat", encode(cat));
