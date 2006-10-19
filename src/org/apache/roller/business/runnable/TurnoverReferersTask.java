@@ -32,7 +32,7 @@ import org.apache.roller.business.RollerFactory;
  */
 public class TurnoverReferersTask extends RollerTask {
     
-    Log log = LogFactory.getLog(TurnoverReferersTask.class);
+    private static Log log = LogFactory.getLog(TurnoverReferersTask.class);
     
     // a String description of when to start this task
     private String startTimeDesc = "startOfDay";
@@ -116,7 +116,6 @@ public class TurnoverReferersTask extends RollerTask {
             // always release
             RollerFactory.getRoller().release();
         }
-        
         
     }
     
