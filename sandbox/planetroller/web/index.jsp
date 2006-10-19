@@ -25,7 +25,7 @@
     PlanetConfigData pconfig = pmgr.getConfiguration();
     if (pconfig != null && pconfig.getDefaultGroup() != null) {
         PlanetGroupData group = pconfig.getDefaultGroup();
-        fwd = "/" + group.getHandle();
+        fwd = "/" + group.getHandle() + "/";
     }
 %>
 <jsp:forward page="<%= fwd %>" />
