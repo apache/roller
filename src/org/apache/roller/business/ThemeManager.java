@@ -21,7 +21,7 @@ package org.apache.roller.business;
 import java.io.File;
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.ThemeNotFoundException;
+import org.apache.roller.business.ThemeNotFoundException;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.ThemeTemplate;
 import org.apache.roller.pojos.WebsiteData;

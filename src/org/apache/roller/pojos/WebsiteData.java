@@ -36,7 +36,7 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.util.PojoUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.ThemeNotFoundException;
+import org.apache.roller.business.ThemeNotFoundException;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.PluginManager;
