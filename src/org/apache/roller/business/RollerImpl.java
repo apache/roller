@@ -29,7 +29,7 @@ import org.apache.roller.business.FileManager;
 import org.apache.roller.model.IndexManager;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.model.Roller;
-import org.apache.roller.model.ThemeManager;
+import org.apache.roller.business.ThemeManager;
 import org.apache.roller.model.ThreadManager;
 
 

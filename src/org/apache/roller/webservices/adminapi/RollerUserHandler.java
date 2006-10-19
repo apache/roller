@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.webservices.adminapi.sdk.Entry;

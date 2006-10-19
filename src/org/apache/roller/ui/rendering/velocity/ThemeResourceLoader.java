@@ -35,7 +35,7 @@ import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.roller.RollerException;
 import org.apache.roller.ThemeNotFoundException;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.ThemeManager;
+import org.apache.roller.business.ThemeManager;
 import org.apache.roller.pojos.Theme;
 import org.apache.roller.pojos.ThemeTemplate;
 

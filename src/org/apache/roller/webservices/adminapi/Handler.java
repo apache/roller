@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.webservices.adminapi.sdk.UnexpectedRootElementException;

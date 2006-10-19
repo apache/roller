@@ -30,7 +30,7 @@ import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.planet.model.PlanetManager;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.util.Technorati;

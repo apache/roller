@@ -30,11 +30,11 @@ import org.apache.roller.model.AutoPingManager;
 import org.apache.roller.model.PingQueueManager;
 import org.apache.roller.model.PingTargetManager;
 import org.apache.roller.planet.model.PlanetManager;
-import org.apache.roller.model.PropertiesManager;
+import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.model.RefererManager;
 import org.apache.roller.model.Roller;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.model.ThreadManager;
 
 

@@ -64,7 +64,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.RollerPropertyData;
 import org.apache.roller.pojos.WeblogResource;
 import org.apache.roller.util.URLUtilities;
