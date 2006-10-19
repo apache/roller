@@ -30,7 +30,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.business.runnable.Job;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.CommentData;

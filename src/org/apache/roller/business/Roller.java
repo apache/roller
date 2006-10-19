@@ -16,20 +16,14 @@
 * directory of this distribution.
 */
 
-package org.apache.roller.model;
+package org.apache.roller.business;
 
 import java.io.Serializable;
 import java.sql.Connection;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.BookmarkManager;
-import org.apache.roller.business.ConfigManager;
-import org.apache.roller.business.FileManager;
-import org.apache.roller.business.PluginManager;
-import org.apache.roller.business.PropertiesManager;
-import org.apache.roller.business.ThemeManager;
-import org.apache.roller.business.UserManager;
-import org.apache.roller.business.WeblogManager;
+import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
+import org.apache.roller.model.*;
 import org.apache.roller.planet.model.PlanetManager;
 
 

@@ -19,7 +19,7 @@ package org.apache.roller.ui.authoring.struts.actions;
 import org.apache.commons.logging.Log;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.PingTargetManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.authoring.struts.forms.PingTargetForm;

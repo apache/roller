@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.config.runtime.RuntimeConfigDefsParser;
 import org.apache.roller.business.PropertiesManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 
 
 /**

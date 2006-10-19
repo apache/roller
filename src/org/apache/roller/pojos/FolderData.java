@@ -26,7 +26,7 @@ import java.util.TreeSet;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.business.BookmarkManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 
 /**
  * <p>Folder that holds Bookmarks and other Folders. A Roller Website has a 

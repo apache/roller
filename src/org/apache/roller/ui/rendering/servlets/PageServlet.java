@@ -37,7 +37,7 @@ import org.apache.roller.business.referrers.IncomingReferrer;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;

@@ -27,8 +27,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.roller.business.IndexManagerImpl;
 import org.apache.roller.business.search.FieldConstants;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
 
 /**

@@ -24,7 +24,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WebsiteData;

@@ -41,7 +41,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.AutoPingManager;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.model.PingTargetManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.AutoPingData;

@@ -39,8 +39,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.PluginManager;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
 
 /**
  * Represents a planet entry, i.e. an entry that was parsed out of an RSS or 

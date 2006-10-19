@@ -39,8 +39,8 @@ import org.apache.roller.config.runtime.DisplayGroup;
 import org.apache.roller.config.runtime.PropertyDef;
 import org.apache.roller.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.business.PropertiesManager;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.RollerConfigData;
 import org.apache.roller.pojos.RollerPropertyData;
 

@@ -33,7 +33,7 @@ import javax.servlet.http.HttpSession;
 import junit.framework.TestCase;
 
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.MockPrincipal;

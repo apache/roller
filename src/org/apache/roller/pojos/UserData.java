@@ -28,7 +28,7 @@ import java.util.Set;
 
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.Roller;
+import org.apache.roller.business.Roller;
 import org.apache.roller.util.PojoUtil;
 import org.apache.roller.util.Utilities;
 
