@@ -28,7 +28,7 @@ import org.apache.roller.pojos.RollerConfigData;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.model.ConfigManager;
+import org.apache.roller.business.ConfigManager;
 
 
 /**

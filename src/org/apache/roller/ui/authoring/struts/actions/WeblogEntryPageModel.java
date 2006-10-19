@@ -44,9 +44,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.PluginManager;
+import org.apache.roller.business.PluginManager;
 import org.apache.roller.model.Roller;
-import org.apache.roller.model.WeblogEntryEditor;
+import org.apache.roller.business.WeblogEntryEditor;
 import org.apache.roller.pojos.WebsiteData;
 
 /**

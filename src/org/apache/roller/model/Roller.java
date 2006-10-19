@@ -21,7 +21,10 @@ package org.apache.roller.model;
 import java.io.Serializable;
 import java.sql.Connection;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.BookmarkManager;
+import org.apache.roller.business.ConfigManager;
 import org.apache.roller.business.FileManager;
+import org.apache.roller.business.PluginManager;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.planet.model.PlanetManager;
 

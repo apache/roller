@@ -46,7 +46,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogEntryPlugin;
+import org.apache.roller.business.WeblogEntryPlugin;
 import org.apache.roller.model.WeblogManager;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.MessageUtilities;

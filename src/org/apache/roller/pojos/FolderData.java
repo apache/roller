@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.roller.RollerException;
-import org.apache.roller.model.BookmarkManager;
+import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.model.RollerFactory;
 
 /**

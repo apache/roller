@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.model.PluginManager;
+import org.apache.roller.business.PluginManager;
 
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
