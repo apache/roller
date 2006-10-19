@@ -15,9 +15,17 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ page import="org.apache.roller.planet.model.PlanetManager" %>
-<%@ page import="org.apache.roller.model.PlanetFactory" %>
+<%@ page import="org.apache.roller.planet.business.PlanetManager" %>
+<%@ page import="org.apache.roller.planet.business.PlanetFactory" %>
+<%@ page import="org.apache.roller.planet.pojos.PlanetConfigData" %>
+<%@ page import="org.apache.roller.planet.pojos.PlanetGroupData" %>
 <%
+    String fwd = "/main.faces";
     PlanetManager pmgr= PlanetFactory.getPlanet().getPlanetManager();
+    PlanetConfigData pconfig = pmgr.getConfiguration();
+    if (pconfig != null && pconfig.getDefaultGroup() != null) {
+        PlanetGroupData group = pconfig.getDefaultGroup();
+        fwd = "/" + group.getHandle();
+    }
 %>
-<jsp:forward page="/main.faces" />
+<jsp:forward page="<%= fwd %>" />
