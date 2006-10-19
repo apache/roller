@@ -28,7 +28,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.Job;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.StaticTemplate;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WebsiteData;

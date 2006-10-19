@@ -41,9 +41,9 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.PluginManager;
 import org.apache.roller.model.Roller;
-import org.apache.roller.model.ThemeManager;
-import org.apache.roller.model.UserManager;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.ThemeManager;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
 
 /**
  * Website has many-to-many association with users. Website has one-to-many and

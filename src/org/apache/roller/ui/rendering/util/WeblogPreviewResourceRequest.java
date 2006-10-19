@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.ThemeNotFoundException;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.ThemeManager;
+import org.apache.roller.business.ThemeManager;
 import org.apache.roller.pojos.Theme;
 
 

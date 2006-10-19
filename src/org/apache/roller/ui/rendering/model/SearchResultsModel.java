@@ -37,7 +37,7 @@ import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.model.IndexManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.WeblogManager;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryWrapperComparator;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;

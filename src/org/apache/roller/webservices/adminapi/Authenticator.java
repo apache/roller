@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.roller.RollerException;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
-import org.apache.roller.model.UserManager;
+import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 
 /**

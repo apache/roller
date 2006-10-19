@@ -25,6 +25,10 @@ import org.apache.roller.business.BookmarkManager;
 import org.apache.roller.business.ConfigManager;
 import org.apache.roller.business.FileManager;
 import org.apache.roller.business.PluginManager;
+import org.apache.roller.business.PropertiesManager;
+import org.apache.roller.business.ThemeManager;
+import org.apache.roller.business.UserManager;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.planet.model.PlanetManager;
 

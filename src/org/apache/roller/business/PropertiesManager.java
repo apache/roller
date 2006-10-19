@@ -21,7 +21,7 @@
  * Created on April 21, 2005, 10:34 AM
  */
 
-package org.apache.roller.model;
+package org.apache.roller.business;
 
 import java.util.Map;
 import org.apache.roller.RollerException;

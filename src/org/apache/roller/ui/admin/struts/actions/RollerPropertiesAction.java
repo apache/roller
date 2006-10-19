@@ -43,7 +43,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.roller.RollerException;
 import org.apache.roller.RollerPermissionsException;
-import org.apache.roller.model.PropertiesManager;
+import org.apache.roller.business.PropertiesManager;
 import org.apache.roller.model.Roller;
 import org.apache.roller.model.RollerFactory;
 import org.apache.roller.pojos.RollerPropertyData;
