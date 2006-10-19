@@ -23,7 +23,7 @@
 
 package org.apache.roller.business.referrers;
 
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 
 
 /**

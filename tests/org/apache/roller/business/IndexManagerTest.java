@@ -25,7 +25,7 @@ import org.apache.roller.business.search.operations.AddEntryOperation;
 import org.apache.roller.business.search.operations.RemoveEntryOperation;
 import org.apache.roller.business.search.operations.SearchOperation;
 import org.apache.roller.model.IndexManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;

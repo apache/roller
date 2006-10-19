@@ -40,7 +40,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.roller.RollerException;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.ui.core.BasePageModel;

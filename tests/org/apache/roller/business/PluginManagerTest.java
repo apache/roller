@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.PluginManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 
 
 /**

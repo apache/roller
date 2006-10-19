@@ -18,7 +18,7 @@
 package org.apache.roller.pojos;
 
 import org.apache.roller.RollerException;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 
 /**
  * <p>WeblogCategoryAssoc represents association between weblog categories 

@@ -33,7 +33,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 import org.apache.roller.business.BookmarkManager;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.ui.core.RollerRequest;
 import org.apache.roller.ui.authoring.struts.formbeans.FolderFormEx;
 
@@ -42,7 +42,7 @@ import java.util.Date;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.roller.RollerException;
-import org.apache.roller.model.Roller;
+import org.apache.roller.business.Roller;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.BasePageModel;

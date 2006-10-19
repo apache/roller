@@ -45,7 +45,7 @@ import org.apache.roller.pojos.WebsiteData;
 import EDU.oswego.cs.dl.util.concurrent.ReadWriteLock;
 import EDU.oswego.cs.dl.util.concurrent.WriterPreferenceReadWriteLock;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.commons.lang.StringUtils;
 
 /**

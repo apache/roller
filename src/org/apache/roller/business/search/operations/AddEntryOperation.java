@@ -24,8 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.roller.business.IndexManagerImpl;
-import org.apache.roller.model.Roller;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.Roller;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.WeblogEntryData;
 
 /**

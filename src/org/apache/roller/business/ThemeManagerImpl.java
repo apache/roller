@@ -39,7 +39,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.business.FileIOException;
 import org.apache.roller.business.FileManager;
 import org.apache.roller.business.FilePathException;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.ThemeManager;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.pojos.Theme;

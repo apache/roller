@@ -34,7 +34,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.ContinuousWorkerThread;
 import org.apache.roller.business.runnable.WorkerThread;
 import org.apache.roller.config.RollerConfig;
-import org.apache.roller.model.RollerFactory;
+import org.apache.roller.business.RollerFactory;
 
 
 /**
