@@ -28,7 +28,7 @@ import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.business.runnable.ThreadManager;
 import org.apache.roller.business.search.IndexManager;
-import org.apache.roller.planet.model.PlanetManager;
+import org.apache.roller.planet.business.PlanetManager;
 
 
 /** 

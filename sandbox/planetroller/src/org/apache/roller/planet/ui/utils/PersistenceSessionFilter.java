@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.planet.model.Planet;
-import org.apache.roller.planet.model.PlanetFactory;
+import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetFactory;
 
 
 /**
