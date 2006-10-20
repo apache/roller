@@ -151,7 +151,7 @@ public class WeblogFeedRequest extends WeblogRequest {
             log.debug("type = "+this.type);
             log.debug("format = "+this.format);
             log.debug("weblogCategory = "+this.weblogCategoryName);
-            log.debug("tags = "+ Utilities.stringArrayToString((String[])this.tags.toArray(), ","));            
+            log.debug("tags = "+ Utilities.stringArrayToString((String[])this.tags.toArray(new String[this.tags.size()]), ","));            
             log.debug("excerpts = "+this.excerpts);
         }
     }
