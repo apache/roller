@@ -961,6 +961,7 @@ ro.buildUser=${user.name}
                 <include name="org/apache/roller/business/IndexManagerTest.class"/>
                 <include name="org/apache/roller/business/PlanetManagerTest.class"/>
                 <include name="org/apache/roller/business/RefererTest.class"/>
+		<include name="org/apache/roller/business/HitCountTest.class"/>
             </fileset>
         </batchtest>
     </junit>
