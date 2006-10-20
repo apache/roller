@@ -21,8 +21,8 @@
 <script type="text/javascript">
 <!--
 function postWeblogEntry() {
-    document.weblogEntryFormEx.summary.value = xinha_editors.textarea1.getHTML();
-    document.weblogEntryFormEx.text.value =    xinha_editors.textarea2.getHTML();
+    document.weblogEntryFormEx.summary.value = xinha_editors.textarea1.getHTML().trim();
+    document.weblogEntryFormEx.text.value =    xinha_editors.textarea2.getHTML().trim();
     document.weblogEntryFormEx.submit();
 }
 
