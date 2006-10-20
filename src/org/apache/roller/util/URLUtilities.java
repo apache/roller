@@ -392,6 +392,42 @@ public final class URLUtilities {
     
     
     /**
+     * Get url for a given *preview* weblog entry.  
+     * Optionally for a certain locale.
+     */
+    public static final String getPreviewWeblogEntryURL(String previewAnchor,
+                                                        WebsiteData weblog,
+                                                        String locale,
+                                                        boolean absolute) {
+        
+        if(weblog == null) {
+            return null;
+        }
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        url.append("/roller-ui/authoring/preview/").append(weblog.getHandle()).append("/");
+        
+        if(locale != null) {
+            url.append(locale).append("/");
+        }
+        
+        Map params = new HashMap();
+        if(previewAnchor != null) {
+            params.put("previewEntry", encode(previewAnchor));
+        }
+        
+        return url.toString() + getQueryString(params);
+    }
+    
+    
+    /**
      * Get a url to a *preview* resource on a given weblog.
      */
     public static final String getPreviewWeblogResourceURL(String previewTheme,

@@ -50,6 +50,7 @@ import org.apache.roller.ui.core.plugins.WeblogEntryEditor;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.plugins.UIPluginManager;
+import org.apache.roller.util.URLUtilities;
 
 /**
  * All data needed to render the edit-weblog page.
@@ -388,6 +389,13 @@ null,                 0, 20);
         if (weblogEntry.getId() == null) return 0;
         List comments = comments = weblogEntry.getComments(false, false);
         return comments != null ? comments.size() : 0;
+    }
+    
+    public String getFullPreviewURL() {
+        if (weblogEntry.getId() != null) {
+            return URLUtilities.getPreviewWeblogEntryURL(weblogEntry.getAnchor(), website, null, false);
+        }
+        return null;
     }
 }
 
