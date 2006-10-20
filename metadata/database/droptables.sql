@@ -45,3 +45,4 @@ drop table roller_properties;
 drop table roller_audit_log;
 drop table roller_user_permissions;
 drop table roller_tasklock;
+drop table roller_hitcounts;

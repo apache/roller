@@ -1301,8 +1301,11 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     public int getTodaysHits() {
         try {
             Roller roller = RollerFactory.getRoller();
-            RefererManager rmgr = roller.getRefererManager();
-            return rmgr.getDayHits(this);
+            WeblogManager mgr = roller.getWeblogManager();
+            HitCountData hitCount = mgr.getHitCountByWeblog(this);
+            
+            return (hitCount != null) ? hitCount.getDailyHits() : 0;
+            
         } catch (RollerException e) {
             log.error("PageModel getTotalHits()", e);
         }

@@ -30,6 +30,7 @@ import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.AutoPingData;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.PingTargetData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -316,6 +317,44 @@ public final class TestUtils {
         
         // remove the auto ping
         mgr.removeAutoPing(autoPing);
+    }
+    
+    
+    /**
+     * Convenience method for creating a hit count.
+     */
+    public static HitCountData setupHitCount(WebsiteData weblog, int amount)
+            throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        
+        // store
+        HitCountData testCount = new HitCountData();
+        testCount.setWeblog(weblog);
+        testCount.setDailyHits(amount);
+        mgr.saveHitCount(testCount);
+        
+        // query for it
+        testCount = mgr.getHitCount(testCount.getId());
+        
+        if(testCount == null)
+            throw new RollerException("error setting up hit count");
+        
+        return testCount;
+    }
+    
+    
+    /**
+     * Convenience method for removing a hit count.
+     */
+    public static void teardownHitCount(String id) throws Exception {
+        
+        // query for it
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+        HitCountData testCount = mgr.getHitCount(id);
+        
+        // remove
+        mgr.removeHitCount(testCount);
     }
     
 }

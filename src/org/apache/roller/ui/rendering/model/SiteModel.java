@@ -29,12 +29,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
-import org.apache.roller.business.referrers.RefererManager;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.PermissionsData;
+import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogEntryData;
@@ -394,14 +395,28 @@ public class SiteModel implements Model {
      * @param len      Max number of results to return
      */
     public List getHotWeblogs(int sinceDays, int length) {
+        
         List results = new ArrayList();
-        try {            
-            Roller roller = RollerFactory.getRoller();
-            RefererManager rmgr = roller.getRefererManager();
-            results = rmgr.getHotWeblogs(sinceDays, 0, length);
+        try {
+            WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+            List hotBlogs = mgr.getHotWeblogs(sinceDays, 0, length);
+            
+            Iterator hitCounts = hotBlogs.iterator();
+            while (hitCounts.hasNext()) {
+                HitCountData hitCount = (HitCountData) hitCounts.next();
+                
+                results.add(new StatCount(
+                    hitCount.getWeblog().getId(),
+                    hitCount.getWeblog().getHandle(),
+                    hitCount.getWeblog().getName(),
+                    "statCount.weblogDayHits",
+                    hitCount.getDailyHits()));              
+            }
+            
         } catch (Exception e) {
             log.error("ERROR: fetching hot weblog list", e);
         }
+        
         return results;
     }
     

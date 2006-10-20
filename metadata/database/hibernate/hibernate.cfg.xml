@@ -58,6 +58,7 @@
         <mapping resource="org/apache/roller/pojos/PingTargetData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/RefererData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/TaskLockData.hbm.xml" />
+        <mapping resource="org/apache/roller/pojos/HitCountData.hbm.xml" />
 
         <mapping resource="org/apache/roller/pojos/WeblogEntryData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogEntryTagData.hbm.xml" />        

@@ -24,10 +24,10 @@ import java.util.Map;
 import org.apache.roller.RollerException;
 import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
-import org.apache.roller.pojos.WeblogEntryTagData;
 import org.apache.roller.pojos.WebsiteData;
 
 
@@ -439,4 +439,94 @@ public interface WeblogManager {
      */
     public void updateTagCount(String name, WebsiteData website, int amount)
         throws RollerException;
+    
+    
+    /**
+     * Get a HitCountData by id.
+     *
+     * @param id The HitCountData id.
+     * @return The HitCountData object, or null if it wasn't found.
+     * @throws RollerException If there was a problem with the backend.
+     */
+    public HitCountData getHitCount(String id) throws RollerException;
+    
+    
+    /**
+     * Get a HitCountData by weblog.
+     *
+     * @param weblog The WebsiteData that you want the hit count for.
+     * @return The HitCountData object, or null if it wasn't found.
+     * @throws RollerException If there was a problem with the backend.
+     */
+    public HitCountData getHitCountByWeblog(WebsiteData weblog)
+        throws RollerException;
+    
+    
+    /**
+     * Get HitCountData objects for the hotest weblogs.
+     *
+     * The results may be constrained to a certain number of days back from the
+     * current time, as well as pagable via the offset and length params.
+     *
+     * The results are ordered by highest counts in descending order, and any
+     * weblogs which are not active or enabled are not included.
+     *
+     * @param sinceDays Number of days in the past to consider.
+     * @param offset What index in the results to begin from.
+     * @param length The number of results to return.
+     * @return The list of HitCountData objects ranked by hit count, descending.
+     * @throws RollerException If there was a problem with the backend.
+     */
+    public List getHotWeblogs(int sinceDays, int offset, int length)
+        throws RollerException;
+    
+    
+    /**
+     * Save a HitCountData object.
+     *
+     * @param hitCount The HitCountData object to save.
+     * @throws RollerException If there was a problem with the backend.
+     */
+    public void saveHitCount(HitCountData hitCount) throws RollerException;
+    
+    
+    /**
+     * Remove a HitCountData object.
+     *
+     * @param hitCount The HitCountData object to remove.
+     * @throws RollerException If there was a problem with the backend.
+     */
+    public void removeHitCount(HitCountData hitCount) throws RollerException;
+    
+    
+    /**
+     * Increment the hit count for a weblog by a certain amount.
+     *
+     * This is basically a convenience method for doing a lookup, modify, save
+     * of a HitCountData object.
+     *
+     * @param weblog The WebsiteData object to increment the count for.
+     * @param amount How much to increment by.
+     * @throws RollerException If there was a problem with the backend.
+     */
+    public void incrementHitCount(WebsiteData weblog, int amount)
+        throws RollerException;
+    
+    
+    /**
+     * Reset the hit counts for all weblogs.  This sets the counts back to 0.
+     *
+     * @throws RollerException If there was a problem with the backend.
+     */
+    public void resetAllHitCounts() throws RollerException;
+    
+    
+    /**
+     * Reset the hit counts for a single weblog.  This sets the count to 0.
+     *
+     * @param weblog The WebsiteData object to reset the count for.
+     * @throws RollerException If there was a problem with the backend.
+     */
+    public void resetHitCount(WebsiteData weblog) throws RollerException;
+    
 }

@@ -133,6 +133,7 @@ public abstract class RollerImpl implements Roller {
     
     public void shutdown() {
         try {
+            HitCountQueue.getInstance().shutdown();
             if (getReferrerQueueManager() != null) getReferrerQueueManager().shutdown();
             if (indexManager != null) indexManager.shutdown();
             if (threadManager != null) threadManager.shutdown();

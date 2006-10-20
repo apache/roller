@@ -21,7 +21,6 @@ package org.apache.roller.ui.rendering.velocity.deprecated;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,6 +54,7 @@ import org.apache.roller.pojos.wrapper.WebsiteDataWrapper;
 import org.apache.roller.ui.core.RollerSession;
 import org.apache.roller.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.roller.pojos.HitCountData;
 
 
 /**
@@ -227,7 +227,10 @@ public class OldWeblogPageModel {
     /** Encapsulates RefererManager */
     public int getDayHits() {
         try {
-            return mRefererMgr.getDayHits(mWebsite);
+            HitCountData hitCount = mWeblogMgr.getHitCountByWeblog(mWebsite);
+            
+            return (hitCount != null) ? hitCount.getDailyHits() : 0;
+            
         } catch (RollerException e) {
             mLogger.error("PageModel getDayHits()", e);
         }
