@@ -1313,10 +1313,12 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     
     /**
      * Get a list of TagStats objects for the most popular tags
-     * 
-     * @param sinceDays
-     * @param length
-     * @return
+     *
+     * @param sinceDays Number of days into past (or -1 for all days)
+     * @param length    Max number of tags to return.
+     * @return          Collection of WeblogEntryTag objects
+     *
+     * @roller.wrapPojoMethod type="simple"
      */
     public List getPopularTags(int sinceDays, int length) {
         List results = new ArrayList();
