@@ -246,7 +246,7 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("weblogAnchor = "+this.weblogAnchor);
             log.debug("weblogDate = "+this.weblogDate);
             log.debug("weblogCategory = "+this.weblogCategoryName);
-            log.debug("tags = "+ Utilities.stringArrayToString((String[])this.tags.toArray(), ","));
+            log.debug("tags = "+ Utilities.stringArrayToString((String[])this.tags.toArray(new String[this.tags.size()]), ","));
             log.debug("weblogPage = "+this.weblogPageName);
             log.debug("pageNum = "+this.pageNum);
         }
