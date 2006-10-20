@@ -673,7 +673,17 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     }
 
     public void updateTags(List tags) throws RollerException {
-        HashSet newTags = new HashSet(tags);
+        
+        if(tags == null)
+            return;
+        
+        HashSet newTags = new HashSet(tags.size());
+        Locale locale = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
+        
+        for(Iterator it = tags.iterator(); it.hasNext();) {
+            String name = (String) it.next();
+            newTags.add(Utilities.normalizeTag(name, locale));
+        }
         
         HashSet removeTags = new HashSet();
 
