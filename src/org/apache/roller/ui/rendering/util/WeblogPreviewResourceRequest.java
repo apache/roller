@@ -34,9 +34,7 @@ import org.apache.roller.pojos.Theme;
 public class WeblogPreviewResourceRequest extends WeblogResourceRequest {
     
     private static Log log = LogFactory.getLog(WeblogPreviewResourceRequest.class);
-    
-    private static final String PREVIEWRESOURCE_SERVLET = "/roller-ui/authoring/previewresource";
-    
+        
     // lightweight attributes
     private String themeName = null;
     
@@ -62,11 +60,6 @@ public class WeblogPreviewResourceRequest extends WeblogResourceRequest {
         if(log.isDebugEnabled()) {
             log.debug("theme = "+this.themeName);
         }
-    }
-    
-    
-    boolean isValidDestination(String servlet) {
-        return (servlet != null && PREVIEWRESOURCE_SERVLET.equals(servlet));
     }
     
     public String getThemeName() {

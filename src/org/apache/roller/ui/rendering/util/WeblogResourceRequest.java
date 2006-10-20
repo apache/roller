@@ -32,9 +32,7 @@ import org.apache.roller.util.URLUtilities;
 public class WeblogResourceRequest extends WeblogRequest {
     
     private static Log log = LogFactory.getLog(WeblogResourceRequest.class);
-    
-    private static final String RESOURCE_SERVLET = "/roller-ui/rendering/resources";
-    
+        
     // lightweight attributes
     private String resourcePath = null;
     
@@ -59,13 +57,7 @@ public class WeblogResourceRequest extends WeblogRequest {
         
         // parse the request object and figure out what we've got
         log.debug("parsing path "+pathInfo);
-        
-        // was this request bound for the resource servlet?
-        if(!isValidDestination(servlet)) {
-            throw new InvalidRequestException("invalid destination for request, "+
-                    request.getRequestURL());
-        }
-        
+                
         
         /* 
          * any path is okay ...
@@ -96,10 +88,6 @@ public class WeblogResourceRequest extends WeblogRequest {
         if(log.isDebugEnabled()) {
             log.debug("resourcePath = "+this.resourcePath);
         }
-    }
-    
-    boolean isValidDestination(String servlet) {
-        return (servlet != null && RESOURCE_SERVLET.equals(servlet));
     }
     
     public String getResourcePath() {
