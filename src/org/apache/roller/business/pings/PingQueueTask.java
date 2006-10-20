@@ -110,12 +110,12 @@ public class PingQueueTask extends RollerTask {
     public void runTask() {
         
         try {
-            log.info("task started");
+            log.debug("task started");
             
             PingQueueProcessor.getInstance().processQueue();
             RollerFactory.getRoller().flush();
             
-            log.info("task completed");
+            log.debug("task completed");
             
         } catch (RollerException e) {
             log.error("Error while processing ping queue", e);
