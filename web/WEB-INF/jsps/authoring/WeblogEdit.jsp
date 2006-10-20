@@ -61,6 +61,9 @@ function publish() {
     document.weblogEntryFormEx.method.value = "save";
     postWeblogEntry();
 }
+function fullPreviewMode() {
+    window.open('<%= model.getFullPreviewURL() %>', '_preview', '');
+}
 -->
 </script>
 
@@ -379,10 +382,19 @@ function publish() {
 
         <%-- edit mode buttons --%>
         <c:if test="${model.editMode}" >
-
-            <input type="button" name="preview"
-                   value='<fmt:message key="weblogEdit.previewMode" />'
-                   onclick="previewMode()" />
+            
+            <c:choose>
+                <c:when test="${!empty weblogEntryFormEx.id}">
+                    <input type="button" name="fullPreview"
+                            value='<fmt:message key="weblogEdit.fullPreviewMode" />'
+                            onclick="fullPreviewMode()" />
+                </c:when>
+                <c:otherwise>
+                    <input type="button" name="preview"
+                            value='<fmt:message key="weblogEdit.previewMode" />'
+                            onclick="previewMode()" />
+                </c:otherwise>
+            </c:choose>
 
         </c:if>
 
