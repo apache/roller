@@ -428,12 +428,20 @@ public final class UploadFileFormAction extends DispatchAction {
             overQuota = fmgr.overQuota(weblog);
             uploadEnabled = RollerRuntimeConfig.getBooleanProperty("uploads.enabled");
             
+            // get files, add them to the list
             WeblogResource[] resources = fmgr.getFiles(weblog, uploadsPath);
             for (int i=0; i<resources.length; i++) {
                 totalSize += resources[i].getLength();
             }
+            files = new ArrayList(Arrays.asList(resources));
             
-            files = Arrays.asList(resources);
+            // get directories, only if we are at the default/root view
+            if(showingRoot) {
+                WeblogResource[] dirs = fmgr.getDirectories(weblog);
+                files.addAll(Arrays.asList(dirs));
+            }
+            
+            // sort them
             Collections.sort(files, new WeblogResourceComparator());
         }
         

@@ -113,6 +113,7 @@ File upload form, but only if it's enabled and weblog is under quota
 <%-- --------------------------
 Create directory form
 --%>
+<c:if test="${model.showingRoot}">
 <form name="createSubdir" method="post" action="/roller-ui/authoring/uploadFiles.do">
     <input type="hidden" name="method" value="createSubdir" />
     <input type="hidden" name="weblog" value='<c:out value="${model.website.handle}"/>'>
@@ -125,6 +126,7 @@ Create directory form
     <br />
 
 </form>
+</c:if>
 
 <%-- --------------------------
 Table of files, each with link, size and checkbox
