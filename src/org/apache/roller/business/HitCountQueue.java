@@ -51,7 +51,7 @@ public class HitCountQueue {
     
     private int numWorkers = 1;
     private int sleepTime = 180000;
-    private List workers = null;
+    private WorkerThread worker = null;
     private Map queue = null;
     
     
@@ -77,8 +77,7 @@ public class HitCountQueue {
         
         // start up a worker to process the hits at intervals
         HitCountProcessingJob job = new HitCountProcessingJob();
-        ContinuousWorkerThread worker = 
-                new ContinuousWorkerThread("HitCountQueueProcessor", job, this.sleepTime);
+        worker = new ContinuousWorkerThread("HitCountQueueProcessor", job, this.sleepTime);
         worker.start();
     }
     
@@ -119,16 +118,9 @@ public class HitCountQueue {
      */
     public void shutdown() {
         
-        if(this.workers != null && this.workers.size() > 0) {
-            log.info("stopping all HitCountQueue worker threads");
-            
-            // kill all of our threads
-            WorkerThread worker = null;
-            Iterator it = this.workers.iterator();
-            while(it.hasNext()) {
-                worker = (WorkerThread) it.next();
-                worker.interrupt();
-            }
+        if(this.worker != null) {
+            log.info("stopping worker "+this.worker.getName());
+            worker.interrupt();
         }
         
     }
