@@ -186,7 +186,7 @@ a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
             newsfeed, an XML data representation of the latest entries
             from a Roller weblog. If you have a newsfeed reader or aggregator, you can 
             subscribe to this newsfeed. To subscribe, copy the URL from your browser's 
-            address bar above and copy it into your newsfeed reader. 
+            address bar above and paste it into your newsfeed reader. 
             
 
             <h1>Latest items in newsfeed [<xsl:value-of select="atom:feed/atom:title"/>]</h1>
