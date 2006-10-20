@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/taglibs.jsp" %>
 
-Powered by <a href="http://www.rollerweblogger.org">Roller Weblogger</a> 
+Powered by <a href="http://www.rollerweblogger.org">Apache Roller (incubating)</a> 
 <%= RollerContext.getRollerContext().getRollerVersion() %> |
 
 <a href="http://opensource2.atlassian.com/projects/roller/">
