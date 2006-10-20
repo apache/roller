@@ -16,7 +16,7 @@
   directory of this distribution.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
-<%@ page import="org.apache.roller.model.*" %>
+<%@ page import="org.apache.roller.business.*" %>
 <%@ page import="org.apache.roller.pojos.*" %>
 <%@ page import="org.apache.roller.ui.core.RollerSession" %>
 <%@ page import="java.util.List" %>
