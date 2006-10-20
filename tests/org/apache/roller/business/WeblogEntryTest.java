@@ -358,7 +358,7 @@ public class WeblogEntryTest extends TestCase {
         assertEquals(testEntry, entry);
         assertNotNull(entry.getTags());
         assertEquals(1, entry.getTags().size());
-        assertEquals("testTag", ((WeblogEntryTagData) entry.getTags()
+        assertEquals("testtag", ((WeblogEntryTagData) entry.getTags()
                 .iterator().next()).getName());
 
         // teardown our test entry
@@ -435,8 +435,8 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         entry = mgr.getWeblogEntry(id);
-        entry.removeTag("testTag");
-        entry.removeTag("testTag2");
+        entry.removeTag("testtag");
+        entry.removeTag("testtag2");
         mgr.saveWeblogEntry(entry);
         TestUtils.endSession(true);
 
@@ -462,7 +462,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         List results = mgr.getWeblogEntries(testWeblog, null, null, null, null,
-                Arrays.asList(new String[] { "testTag" }), null, null, null, 0,
+                Arrays.asList(new String[] { "testtag" }), null, null, null, 0,
                 -1);
         assertEquals(1, results.size());
         WeblogEntryData testEntry = (WeblogEntryData) results.iterator().next();
@@ -486,7 +486,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         List results = mgr.getWeblogEntries(testWeblog, null, null, null, null,
-                Arrays.asList(new String[] { "testTag" }), null, null, null, 0,
+                Arrays.asList(new String[] { "testtag" }), null, null, null, 0,
                 -1);
         assertEquals(1, results.size());
         WeblogEntryData testEntry = (WeblogEntryData) results.iterator().next();
@@ -497,7 +497,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         results = mgr.getWeblogEntries(testWeblog, null, null, null, null,
-                Arrays.asList(new String[] { "testTag" }), null, null, null, 0,
+                Arrays.asList(new String[] { "testtag" }), null, null, null, 0,
                 -1);
         assertEquals(0, results.size());
 
@@ -522,9 +522,9 @@ public class WeblogEntryTest extends TestCase {
         assertEquals(2, entry.getTags().size());
 
         List updateTags = new ArrayList();
-        updateTags.add("testWillStayTag");
-        updateTags.add("testNewTag");
-        updateTags.add("testNewTag3");
+        updateTags.add("testwillstaytag");
+        updateTags.add("testnewtag");
+        updateTags.add("testnewtag3");
         entry.updateTags(updateTags);
         mgr.saveWeblogEntry(entry);
         TestUtils.endSession(true);
@@ -538,9 +538,9 @@ public class WeblogEntryTest extends TestCase {
 
         assertEquals(3, entry.getTags().size());
         assertEquals(3, tagNames.size());
-        assertEquals(true, tagNames.contains("testWillStayTag"));
-        assertEquals(true, tagNames.contains("testNewTag"));
-        assertEquals(true, tagNames.contains("testNewTag3"));
+        assertEquals(true, tagNames.contains("testwillstaytag"));
+        assertEquals(true, tagNames.contains("testnewtag"));
+        assertEquals(true, tagNames.contains("testnewtag3"));
 
         // teardown our test entry
         TestUtils.teardownWeblogEntry(id);
@@ -574,14 +574,14 @@ public class WeblogEntryTest extends TestCase {
 
         for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
             WeblogEntryTagData tagData = (WeblogEntryTagData) it.next();
-            if (tagData.getName().equals("testWillStayTag"))
+            if (tagData.getName().equals("testwillstaytag"))
                 original = tagData.getTime();
         }
 
         List updateTags = new ArrayList();
-        updateTags.add("testWillStayTag");
-        updateTags.add("testNewTag");
-        updateTags.add("testNewTag3");
+        updateTags.add("testwillstaytag");
+        updateTags.add("testnewtag");
+        updateTags.add("testnewtag3");
         entry.updateTags(updateTags);
         mgr.saveWeblogEntry(entry);
         TestUtils.endSession(true);
@@ -591,15 +591,15 @@ public class WeblogEntryTest extends TestCase {
         for (Iterator it = entry.getTags().iterator(); it.hasNext();) {
             WeblogEntryTagData tagData = (WeblogEntryTagData) it.next();
             tagNames.add(tagData.getName());
-            if (tagData.getName().equals("testWillStayTag"))
+            if (tagData.getName().equals("testwillstaytag"))
                 assertEquals(original, tagData.getTime());
         }
 
         assertEquals(3, entry.getTags().size());
         assertEquals(3, tagNames.size());
-        assertEquals(true, tagNames.contains("testWillStayTag"));
-        assertEquals(true, tagNames.contains("testNewTag"));
-        assertEquals(true, tagNames.contains("testNewTag3"));
+        assertEquals(true, tagNames.contains("testwillstaytag"));
+        assertEquals(true, tagNames.contains("testnewtag"));
+        assertEquals(true, tagNames.contains("testnewtag3"));
 
         // teardown our test entry
         TestUtils.teardownWeblogEntry(id);
@@ -779,20 +779,18 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
 
         tags = mgr.getTags(testWeblog, null, null, -1);
-        assertEquals(3, tags.size());
+        assertEquals(2, tags.size());
 
         HashMap expectedWeblogTags = new HashMap();
         expectedWeblogTags.put("one", new Integer(1));
         expectedWeblogTags.put("two", new Integer(1));
-        expectedWeblogTags.put("ONE", new Integer(1));
 
         for (Iterator it = tags.iterator(); it.hasNext();) {
             TagStat stat = (TagStat) it.next();
             if (!expectedWeblogTags.containsKey(stat.getName()))
                 fail("Unexpected tagName.");
 
-            Integer expectedCount = (Integer) expectedWeblogTags.get(stat
-                    .getName());
+            Integer expectedCount = (Integer) expectedWeblogTags.get(stat.getName());
             assertEquals(expectedCount.intValue(), stat.getCount());
         }
 
@@ -805,21 +803,19 @@ public class WeblogEntryTest extends TestCase {
 
         // let's fetch "site" tags now
         tags = mgr.getTags(null, null, null, -1);
-        assertEquals(4, tags.size());
+        assertEquals(3, tags.size());
 
         HashMap expectedSiteTags = new HashMap();
-        expectedSiteTags.put("one", new Integer(1));
+        expectedSiteTags.put("one", new Integer(2));
         expectedSiteTags.put("two", new Integer(1));
         expectedSiteTags.put("three", new Integer(1));
-        expectedSiteTags.put("ONE", new Integer(2));
 
         for (Iterator it = tags.iterator(); it.hasNext();) {
             TagStat stat = (TagStat) it.next();
             if (!expectedSiteTags.containsKey(stat.getName()))
                 fail("Unexpected tagName.");
 
-            Integer expectedCount = (Integer) expectedSiteTags.get(stat
-                    .getName());
+            Integer expectedCount = (Integer) expectedSiteTags.get(stat.getName());
             assertEquals(expectedCount.intValue(), stat.getCount());
         }
 
