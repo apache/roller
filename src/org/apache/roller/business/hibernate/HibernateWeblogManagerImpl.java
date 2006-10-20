@@ -21,7 +21,6 @@ package org.apache.roller.business.hibernate;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,7 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.lang.StringUtils;
@@ -43,10 +41,12 @@ import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.CommentData;
+import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.TagStatComparator;
+import org.apache.roller.pojos.TaskLockData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryAssoc;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -1482,5 +1482,140 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         // delete all bad counts
         session.createQuery("delete from WeblogEntryTagAggregateData where total <= 0").executeUpdate();
-    }    
+    }
+    
+    
+    public HitCountData getHitCount(String id) throws RollerException {
+        
+        // do lookup
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            Criteria criteria = session.createCriteria(HitCountData.class);
+            
+            criteria.add(Expression.eq("id", id));
+            HitCountData hitCount = (HitCountData) criteria.uniqueResult();
+            
+            return hitCount;
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
+    
+    public HitCountData getHitCountByWeblog(WebsiteData weblog) 
+        throws RollerException {
+        
+        // do lookup
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            Criteria criteria = session.createCriteria(HitCountData.class);
+            
+            criteria.add(Expression.eq("weblog", weblog));
+            HitCountData hitCount = (HitCountData) criteria.uniqueResult();
+            
+            return hitCount;
+        } catch (HibernateException e) {
+            throw new RollerException(e);
+        }
+    }
+    
+    
+    public List getHotWeblogs(int sinceDays, int offset, int length) 
+        throws RollerException {
+        
+        // figure out start date
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        Date startDate = cal.getTime();
+        
+        try {      
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();            
+            Query query = session.createQuery(
+                    "from HitCountData hcd " +
+                    "where hcd.weblog.enabled=true " +
+                    "and hcd.weblog.active=true " +
+                    "and hcd.weblog.lastModified > :startDate " +
+                    "and hcd.dailyHits > 0 " +
+                    "order by hcd.dailyHits desc");
+            query.setParameter("startDate", startDate);
+            
+            if (offset != 0) {
+                query.setFirstResult(offset);
+            }
+            if (length != -1) {
+                query.setMaxResults(length);
+            }
+            
+            return query.list();
+            
+        } catch (Throwable pe) {
+            throw new RollerException(pe);
+        }
+    }
+    
+    
+    public void saveHitCount(HitCountData hitCount) throws RollerException {
+        this.strategy.store(hitCount);
+    }
+    
+    
+    public void removeHitCount(HitCountData hitCount) throws RollerException {
+        this.strategy.remove(hitCount);
+    }
+    
+    
+    public void incrementHitCount(WebsiteData weblog, int amount)
+        throws RollerException {
+        
+        Session session = ((HibernatePersistenceStrategy) strategy).getSession();
+        
+        if(amount == 0) {
+            throw new RollerException("Tag increment amount cannot be zero.");
+        }
+        
+        if(weblog == null) {
+            throw new RollerException("Website cannot be NULL.");
+        }
+        
+        Criteria criteria = session.createCriteria(HitCountData.class);
+        criteria.add(Expression.eq("weblog", weblog));
+        criteria.setMaxResults(1);
+        
+        HitCountData hitCount = (HitCountData) criteria.uniqueResult();
+        
+        // create it if it doesn't exist
+        if(hitCount == null && amount > 0) {
+            hitCount = new HitCountData();
+            hitCount.setWeblog(weblog);
+            hitCount.setDailyHits(amount);
+            strategy.store(hitCount);
+        } else if(hitCount != null) {
+            hitCount.setDailyHits(hitCount.getDailyHits() + amount);
+            strategy.store(hitCount);
+        }
+    }
+    
+    
+    public void resetAllHitCounts() throws RollerException {
+        
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            session.createQuery("update HitCountData set dailyHits = 0").executeUpdate();
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+    }
+    
+    
+    public void resetHitCount(WebsiteData weblog) throws RollerException {
+        
+        try {
+            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
+            String query = "update HitCountData set dailyHits = 0 where weblog = ?";
+            session.createQuery(query).setParameter(0, weblog).executeUpdate();
+        } catch (Exception e) {
+            throw new RollerException(e);
+        }
+    }
+    
 }

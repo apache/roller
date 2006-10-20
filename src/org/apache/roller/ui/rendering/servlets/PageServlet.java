@@ -33,6 +33,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.HitCountQueue;
 import org.apache.roller.business.referrers.IncomingReferrer;
 import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.config.RollerConfig;
@@ -203,6 +204,11 @@ public class PageServlet extends HttpServlet {
             if(cachedContent != null) {
                 log.debug("HIT "+cacheKey);
                 
+                // allow for hit counting
+                if(!isSiteWide) {
+                    this.processHit(weblog, request.getRequestURL().toString(), request.getHeader("referer"));
+                }
+        
                 response.setContentLength(cachedContent.getContent().length);
                 response.setContentType(cachedContent.getContentType());
                 response.getOutputStream().write(cachedContent.getContent());
@@ -295,6 +301,12 @@ public class PageServlet extends HttpServlet {
         }
         
         
+        // allow for hit counting
+        if(!isSiteWide) {
+            this.processHit(weblog, request.getRequestURL().toString(), request.getHeader("referer"));
+        }
+        
+
         // looks like we need to render content
         
         // set the content type
@@ -428,6 +440,16 @@ public class PageServlet extends HttpServlet {
         
         // handle just like a GET request
         this.doGet(request, response);
+    }
+    
+    
+    /**
+     * Notify the hit tracker that it has an incoming page hit.
+     */
+    private void processHit(WebsiteData weblog, String url, String referrer) {
+        
+        HitCountQueue counter = HitCountQueue.getInstance();
+        counter.processHit(weblog, url, referrer);
     }
     
     
