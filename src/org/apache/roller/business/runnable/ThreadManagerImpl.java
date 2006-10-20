@@ -24,8 +24,8 @@ import EDU.oswego.cs.dl.util.concurrent.PooledExecutor;
 import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
 import java.util.Date;
 import java.util.Timer;
-import java.util.TimerTask;
-import org.apache.roller.util.DateUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -33,12 +33,17 @@ import org.apache.roller.util.DateUtil;
  */
 public class ThreadManagerImpl implements ThreadManager {
     
+    private static Log log = LogFactory.getLog(ThreadManagerImpl.class);
+    
     private PooledExecutor backgroundExecutor = null;
     private DirectExecutor nodelayExecutor = null;
     private Timer scheduler = null;
     
     
     public ThreadManagerImpl() {
+        
+        log.info("Intializing Thread Manager");
+        
         backgroundExecutor = new PooledExecutor(new BoundedBuffer(10), 25);
         backgroundExecutor.setMinimumPoolSize(4);
         backgroundExecutor.setKeepAliveTime(1000 * 60 * 5);
@@ -85,7 +90,15 @@ public class ThreadManagerImpl implements ThreadManager {
     
     
     public void shutdown() {
-        backgroundExecutor.shutdownAfterProcessingCurrentlyQueuedTasks();
+        
+        log.debug("starting shutdown sequence");
+        
+        // trigger an immediate shutdown of any backgrounded tasks
+        backgroundExecutor.shutdownNow();
+        
+        // TODO: it appears that this doesn't affect tasks which may be running
+        //   when this is called and that may not be what we want.  It would be
+        //   nice if shutdown() meant shutdown immediately.
         scheduler.cancel();
     }
     

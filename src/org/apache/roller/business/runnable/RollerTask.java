@@ -167,6 +167,9 @@ public abstract class RollerTask extends TimerTask {
                     log.error("Lock NOT released, something went wrong");
                 }
             }
+            
+            // always release Roller session
+            RollerFactory.getRoller().release();
         }
         
     }
