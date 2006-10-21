@@ -72,7 +72,7 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
-     * @see org.apache.roller.model.FileManager#getFile(java.lang.String, java.lang.String)
+     * @see org.apache.roller.model.FileManager#getFile(weblog, java.lang.String)
      */
     public WeblogResource getFile(WebsiteData weblog, String path) 
             throws FileNotFoundException, FilePathException {
@@ -92,7 +92,7 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
-     * @see org.apache.roller.model.FileManager#getFiles(java.lang.String, java.lang.String)
+     * @see org.apache.roller.model.FileManager#getFiles(weblog, java.lang.String)
      */
     public WeblogResource[] getFiles(WebsiteData weblog, String path) 
             throws FileNotFoundException, FilePathException {
@@ -114,19 +114,13 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
-     * @see org.apache.roller.model.FileManager#getDirectories(java.lang.String)
+     * @see org.apache.roller.model.FileManager#getDirectories(weblog)
      */
     public WeblogResource[] getDirectories(WebsiteData weblog)
             throws FileNotFoundException, FilePathException {
         
         // get a reference to the root dir, checks that dir exists & is readable
         File dirFile = this.getRealFile(weblog, null);
-        
-        // make sure path is a directory
-        if(!dirFile.isDirectory()) {
-            throw new FilePathException("Invalid path [], "+
-                    "path is not a directory.");
-        }
         
         // we only want a list of directories
         File[] dirFiles = dirFile.listFiles(new FileFilter() {
@@ -147,7 +141,7 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
-     * @see org.apache.roller.model.FileManager#saveFile(java.lang.String, java.lang.String, java.lang.String, long, java.io.InputStream)
+ * @see org.apache.roller.model.FileManager#saveFile(weblog, java.lang.String, java.lang.String, long, java.io.InputStream)
      */
     public void saveFile(WebsiteData weblog, 
                          String path, 
@@ -190,7 +184,7 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
-     * @see org.apache.roller.model.FileManager#createDirectory(java.lang.String, java.lang.String)
+     * @see org.apache.roller.model.FileManager#createDirectory(weblog, java.lang.String)
      */
     public void createDirectory(WebsiteData weblog, String path)
             throws FileNotFoundException, FilePathException, FileIOException {
@@ -233,7 +227,7 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
-     * @see org.apache.roller.model.FileManager#deleteFile(java.lang.String, java.lang.String)
+     * @see org.apache.roller.model.FileManager#deleteFile(weblog, java.lang.String)
      */
     public void deleteFile(WebsiteData weblog, String path) 
             throws FileNotFoundException, FilePathException, FileIOException {
@@ -249,7 +243,7 @@ public class FileManagerImpl implements FileManager {
     
     
     /**
-     * @see org.apache.roller.model.FileManager#overQuota(java.lang.String)
+     * @see org.apache.roller.model.FileManager#overQuota(weblog)
      */
     public boolean overQuota(WebsiteData weblog) {
         
