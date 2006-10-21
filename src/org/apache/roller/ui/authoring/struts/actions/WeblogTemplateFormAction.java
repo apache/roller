@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -53,9 +52,10 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.DispatchAction;
 
-/////////////////////////////////////////////////////////////////////////////
+
 /**
- * Page form action.
+ * Handles actions for weblog template management.
+ *
  * @struts.action name="weblogTemplateForm" path="/roller-ui/authoring/page"
  *  	scope="session" parameter="method"
  *
@@ -64,10 +64,12 @@ import org.apache.struts.actions.DispatchAction;
  * @struts.action-forward name="editPages.page" path=".edit-pages"
  */
 public final class WeblogTemplateFormAction extends DispatchAction {
-    protected static ResourceBundle bundle = 
-        ResourceBundle.getBundle("ApplicationResources"); 
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(WeblogTemplateFormAction.class);
+    
+    private static Log log = LogFactory.getLog(WeblogTemplateFormAction.class);
+    
+    protected static ResourceBundle bundle =
+            ResourceBundle.getBundle("ApplicationResources");
+    
     
     public ActionForward add(
             ActionMapping       mapping,
@@ -75,6 +77,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             HttpServletRequest  request,
             HttpServletResponse response)
             throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("editPages.page");
         try {
             request.setAttribute("model", new BasePageModel(
@@ -117,19 +120,21 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 forward = mapping.findForward("access-denied");
             }
         } catch (Exception e) {
-            mLogger.error("ERROR in action",e);
+            log.error("ERROR in action",e);
             throw new ServletException(e);
         }
+        
         return forward;
     }
     
-    //-----------------------------------------------------------------------
+    
     public ActionForward edit(
             ActionMapping       mapping,
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
             throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("editPage.page");
         try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
@@ -150,19 +155,20 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 forward = mapping.findForward("access-denied");
             }
         } catch (Exception e) {
-            mLogger.error("ERROR in action",e);
+            log.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
     
-    //-----------------------------------------------------------------------
+    
     public ActionForward editPages(
             ActionMapping       mapping,
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
             throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("editPages.page");
         try {
             WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
@@ -184,19 +190,20 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 forward = mapping.findForward("access-denied");
             }
         } catch (Exception e) {
-            mLogger.error("ERROR in action",e);
+            log.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
     
-    //-----------------------------------------------------------------------
+    
     public ActionForward remove(
             ActionMapping       mapping,
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
             throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("editPages");
         request.setAttribute("model", new BasePageModel(
                 "pagesForm.title", request, response, mapping));
@@ -222,7 +229,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 }
                 
                 addModelObjects(
-                   request, response, mapping, template.getWebsite(), template);
+                        request, response, mapping, template.getWebsite(), template);
                 actionForm.reset(mapping, request);
             } else {
                 forward = mapping.findForward("access-denied");
@@ -233,13 +240,13 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                     "error.internationalized",e.getRootCauseMessage()));
             saveErrors(request, errors);
         } catch (Exception e) {
-            mLogger.error("ERROR in action",e);
+            log.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
     
-    //-----------------------------------------------------------------------
+    
     /** Send user to remove confirmation page */
     public ActionForward removeOk(
             ActionMapping       mapping,
@@ -247,6 +254,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             HttpServletRequest  request,
             HttpServletResponse response)
             throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("removePage.page");
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
@@ -270,19 +278,20 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 forward = mapping.findForward("access-denied");
             }
         } catch (Exception e) {
-            mLogger.error("ERROR in action",e);
+            log.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
     
-    //-----------------------------------------------------------------------
+    
     public ActionForward update(
             ActionMapping       mapping,
             ActionForm          actionForm,
             HttpServletRequest  request,
             HttpServletResponse response)
             throws IOException, ServletException {
+        
         ActionForward forward = mapping.findForward("editPage.page");
         try {
             RollerRequest rreq = RollerRequest.getRollerRequest(request);
@@ -313,7 +322,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                 CacheManager.invalidate(data);
                 
                 addModelObjects(request, response, mapping, data.getWebsite(), data);
-
+                
                 BasePageModel pageModel = new BasePageModel(
                         "pageForm.title", request, response, mapping);
                 pageModel.setWebsite(website);
@@ -331,13 +340,13 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             saveErrors(request, errors);
             forward = mapping.findForward("access-denied");
         } catch (Exception e) {
-            mLogger.error("ERROR in action",e);
+            log.error("ERROR in action",e);
             throw new ServletException(e);
         }
         return forward;
     }
     
-    //-----------------------------------------------------------------------
+    
     /**
      * Ensures that the page has a safe value for the link
      * field.  "Safe" is defined as containing no html
@@ -364,7 +373,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
         }
     }
     
-    //-----------------------------------------------------------------------
+    
     public ActionForward cancel(
             ActionMapping       mapping,
             ActionForm          actionForm,
@@ -376,7 +385,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
         return (mapping.findForward("editPages"));
     }
     
-    //-----------------------------------------------------------------------
+    
     private void addModelObjects(
             HttpServletRequest  request,
             HttpServletResponse response,
@@ -399,5 +408,5 @@ public final class WeblogTemplateFormAction extends DispatchAction {
         
         if (page != null) request.setAttribute("page", page);
     }
+    
 }
-
