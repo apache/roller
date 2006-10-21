@@ -140,7 +140,7 @@ public class ThemeManagerImpl implements ThemeManager {
     public void importTheme(WebsiteData website, Theme theme)
         throws RollerException {
         
-        log.debug("Setting custom templates for website: "+website.getName());
+        log.debug("Importing theme "+theme.getName()+" to weblog "+website.getName());
         
         try {
             UserManager userMgr = RollerFactory.getRoller().getUserManager();
@@ -219,23 +219,14 @@ public class ThemeManagerImpl implements ThemeManager {
             // now lets import all the theme resources
             FileManager fileMgr = RollerFactory.getRoller().getFileManager();
             
-            /* NOTE: we make the assumption that the Collection returned by
-             * theme.getResources() will include both the Files for directories
-             * as well as files, and in the correct order so that we can simply
-             * save them all one after the other.  If that were not to be the
-             * case then we can expect errors.
-             *
-             * TODO: we should probably make this more robust so that it wouldn't
-             * fail if the resources were not returned as described above.
-             */
-            Collection resources = theme.getResources();
+            List resources = theme.getResources();
             Iterator iterat = resources.iterator();
             File resourceFile = null;
             while ( iterat.hasNext() ) {
                 resourceFile = (File) iterat.next();
                 
                 String path = resourceFile.getAbsolutePath().substring(
-                        this.themeDir.length()+theme.getName().length()+1);
+                        this.themeDir.length()+1+theme.getName().length()+1);
                 
                 log.debug("Importing resource "+resourceFile.getAbsolutePath()+" to "+path);
                 

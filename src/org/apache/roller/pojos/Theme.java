@@ -20,10 +20,13 @@ package org.apache.roller.pojos;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 
@@ -117,9 +120,16 @@ public class Theme implements Serializable {
     
     /**
      * Get the collection of all resources associated with this Theme.
+     *
+     * It is assured that the resources are returned sorted by pathname.
      */
-    public Collection getResources() {
-        return this.resources.values();
+    public List getResources() {
+        
+        // make sure resources are sorted.
+        List myResources = new ArrayList(this.resources.values());
+        Collections.sort(myResources);
+        
+        return myResources;
     }
     
     
