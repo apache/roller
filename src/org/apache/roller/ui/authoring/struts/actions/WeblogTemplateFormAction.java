@@ -79,6 +79,7 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             throws IOException, ServletException {
         
         ActionForward forward = mapping.findForward("editPages.page");
+        WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
         try {
             request.setAttribute("model", new BasePageModel(
                     "pagesForm.title", request, response, mapping));
@@ -86,7 +87,19 @@ public final class WeblogTemplateFormAction extends DispatchAction {
             RollerSession rses = RollerSession.getRollerSession(request);
             WebsiteData website = rreq.getWebsite();
             if ( rses.isUserAuthorizedToAdmin(website) ) {
-                WeblogTemplateForm form = (WeblogTemplateForm)actionForm;
+                
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                
+                // first off, check if template already exists
+                WeblogTemplate existingPage = mgr.getPageByName(website, form.getName());
+                if(existingPage != null) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add(null, new ActionError("pagesForm.error.alreadyExists", form.getName()));
+                    saveErrors(request, errors);
+                    addModelObjects(request, response, mapping, website, null);
+                    return forward;
+                }
+                
                 WeblogTemplate data = new WeblogTemplate();
                 form.copyTo(data, request.getLocale());
                 data.setWebsite(website);
@@ -103,8 +116,17 @@ public final class WeblogTemplateFormAction extends DispatchAction {
                     data.setDecoratorName("_decorator");
                 }
                 
-                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                // save the page
                 mgr.savePage( data );
+                
+                // if this person happened to create a Weblog template from
+                // scratch then make sure and set the defaultPageId
+                if(WeblogTemplate.DEFAULT_PAGE.equals(data.getName())) {
+                    website.setDefaultPageId(data.getId());
+                    mgr.saveWebsite(website);
+                }
+                
+                // flush results to db
                 RollerFactory.getRoller().flush();
                 
                 ActionMessages uiMessages = new ActionMessages();
