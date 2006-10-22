@@ -78,6 +78,9 @@ public class HibernatePersistenceStrategy {
     public HibernatePersistenceStrategy(
             String configResource,
             String dialect) throws Exception {
+
+        log.info("configResource: " + configResource);
+        log.info("dialect:        " + dialect);
         
         // read configResource into DOM form
         SAXBuilder builder = new SAXBuilder();
@@ -127,6 +130,12 @@ public class HibernatePersistenceStrategy {
             String username,
             String password) throws Exception {
         
+        log.info("configResource: " + configResource);
+        log.info("dialect:        " + dialect);
+        log.info("driverClass:    " + driverClass);
+        log.info("connectionURL:  " + connectionURL);
+        log.info("username:       " + username);
+
         // read configResource into DOM form
         SAXBuilder builder = new SAXBuilder();
         builder.setEntityResolver(noOpEntityResolver); 
