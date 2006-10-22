@@ -15,9 +15,10 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
+
 username = "admin";
 
-roller = org.apache.roller.model.RollerFactory.getRoller();
+roller = org.apache.roller.business.RollerFactory.getRoller();
 user = roller.getUserManager().getUserByUserName(username);
 
 println roller.getUserManager().getUsers(0,-1);
@@ -28,4 +29,3 @@ if (user == null) {
     println "User ${user.userName} with id ${user.id} has roles:";
     user.getRoles().each({ item -> println "   ${item.getRole()}" });
 }
-

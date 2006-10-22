@@ -21,8 +21,8 @@ title =    "Test post";
 text =     "Testing 1 2 3 <em>Hello World!</em>";
 catpath =  "/General";
  
-roller = org.apache.roller.model.RollerFactory.getRoller();
-roller.begin(org.apache.roller.pojos.UserData.SYSTEM_USER);
+roller = org.apache.roller.business.RollerFactory.getRoller();
+
 user = roller.getUserManager().getUser(username);
 blog = roller.getUserManager().getWebsiteByHandle(handle);
 category = roller.getWeblogManager().getWeblogCategoryByPath(blog, null, catpath);
@@ -36,7 +36,7 @@ entry.setUpdateTime(new java.sql.Timestamp(new java.util.Date().getTime()));
 entry.setTitle(title);
 entry.setText(text);
 entry.setStatus(org.apache.roller.pojos.WeblogEntryData.PUBLISHED);
-entry.save();
 
-roller.commit();
+roller.getWeblogManager().save(entry);
+roller.flush();
 

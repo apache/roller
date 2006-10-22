@@ -15,14 +15,8 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-import org.apache.roller.model.RollerFactory;
-import org.apache.roller.pojos.UserData;
 
-print "\nCreating Roller instance... "
-t0 = System.currentTimeMillis();
-roller = RollerFactory.getRoller();
-t1 = System.currentTimeMillis();
-println "DONE (${t1-t0} milliseconds)"
+roller = org.apache.roller.business.RollerFactory.getRoller();
 
 println "\nFirst 10 users in the system:"
 users = roller.getUserManager().getUsers(0, 10);
@@ -34,5 +28,3 @@ for (u in users) {
    }
 } 
 println "\nDONE\n"
-
-
