@@ -15,12 +15,13 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-username =    "zebulon";
 
-roller = org.apache.roller.model.RollerFactory.getRoller();
-roller.begin(org.apache.roller.pojos.UserData.SYSTEM_USER);
-user = roller.getUserManager().getUser(username);
-user.remove();
-roller.commit();
+username = "scratch";
+
+roller = org.apache.roller.business.RollerFactory.getRoller();
+user = roller.getUserManager().getUserByUserName(username);
+roller.getUserManager().removeUser(user);
+roller.flush();
+
 println "Removed user ${user.userName} with id ${user.id}";
 

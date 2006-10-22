@@ -15,26 +15,31 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
+
+// assumes user 'scratch' already exists
+
 username =    "scratch";
 blogname =    "Technomajikal";
 description = "Who put the voodoo pon reggae";
 handle =      "scratchblog";
 theme =       "basic";
 
-roller = org.apache.roller.model.RollerFactory.getRoller();
-roller.begin(org.apache.roller.pojos.UserData.SYSTEM_USER);
-user = roller.getUserManager().getUser(username);
-roller.getUserManager().createWebsite(
-   user, 
-   null, // hmm... this argument needs to go away 
+roller = org.apache.roller.business.RollerFactory.getRoller();
+
+user = roller.getUserManager().getUserByUserName(username);
+website = new org.apache.roller.pojos.WebsiteData(
    handle, 
+   user,
    blogname,
    description,
+   user.getEmailAddress(),
    user.getEmailAddress(),
    theme,
    user.getLocale(),
    user.getTimeZone());
-roller.commit();
+
+roller.getUserManager().addWebsite(website);
+roller.flush();
 
 blog = roller.getUserManager().getWebsiteByHandle(handle);
 println "Created blog ${blog.name} with id ${blog.id}";

@@ -15,10 +15,12 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
+
 println "\nCreating Roller instance... "
 t0 = System.currentTimeMillis();
-roller = org.apache.roller.model.RollerFactory.getRoller();
+roller = org.apache.roller.business.RollerFactory.getRoller();
 t1 = System.currentTimeMillis();
 println "   Created Roller implementation in " + (t1-t0)/1000 + " seconds";
+
 println "Number of users in system: " + roller.getUserManager().getUsers().size();
 

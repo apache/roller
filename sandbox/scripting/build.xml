@@ -1,0 +1,30 @@
+
+<project name="scripting" default="build" basedir=".">
+    <description>Build scripting tools for Roller</description>   
+
+    <property file="./ant.properties" />
+        
+    <path id="scripting.path">
+        <fileset dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">
+            <include name="roller-business.jar"/>   
+        </fileset>
+        <fileset dir="${groovy.home}/lib">
+            <include name="groovy-1.0-JSR-06.jar"/>
+        </fileset>                      
+    </path>
+    
+    <target name="build">        
+        <mkdir dir="./build/classes" />
+        <javac debug="on" destdir="./build/classes">
+            <src path="./src" />
+            <classpath>
+                <path refid="scripting.path"/>
+            </classpath>
+        </javac>
+    </target>
+    
+    <target name="clean">
+        <delete dir="./build" />
+    </target>
+    
+</project>
