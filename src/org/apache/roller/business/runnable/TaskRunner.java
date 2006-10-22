@@ -18,11 +18,7 @@
 package org.apache.roller.business.runnable;
         
 import java.io.File;
-import java.io.FilenameFilter;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.roller.util.StandaloneWebappClassLoader;
 
 /**
  * Sets up classpath for Roller and runs a task. 
@@ -30,18 +26,13 @@ import java.util.List;
  * webapp.dir must specify Roller webapp directory
  * jars.dir must specify additional jars directory (e.g. Tomcat commons/lib)
  */
-
-public class TaskRunner {
-    
-    public static String WEBAPP_DIR = "webapp.dir"; 
-    public static String JARS_DIR = "jars.dir"; 
-    public static String FS = File.separator;
+public class TaskRunner {   
     
     public TaskRunner() {} 
     
     public static void main(String[] args) throws Exception {
-        if (args.length < 1) {
-            System.err.println("USAGE: java -Dwebapp.dir=WEBAPPDIR -Djars.dir=JARSDIR -cp roller-planet.jar TaskRunner CLASSNAME");
+        if (args.length < 3) {
+            System.err.println("USAGE: java -cp roller-planet.jar TaskRunner WEBAPPDIR JARSDIR CLASSNAME");
             System.err.println("WEBAPPDIR: The directory path to the web application ");
             System.err.println("           (e.g. $CATALINA_HOME/webapps/roller)");
             System.err.println("JARSDIR:   The directory path to the additional jars ");
@@ -49,13 +40,12 @@ public class TaskRunner {
             System.err.println("CLASSNAME: The name of the class to be executed by TaskRunner ");
             System.exit(-1);
         }
-        String taskClassName = args[0];
-        String webappDir = System.getProperties().getProperty(WEBAPP_DIR);
-        String jarsDir = System.getProperties().getProperty(JARS_DIR);
-        if (webappDir == null || jarsDir == null) {
-            System.err.println("ERROR: system properties webapp.dir and jars.dir not found");
-            System.exit(-1);
-        }
+        String webappDir     = args[0];
+        String jarsDir       = args[1];
+        String taskClassName = args[2];
+        System.out.println("WEBAPPDIR = " + webappDir); 
+        System.out.println("JARSDIR   = " + jarsDir);
+        System.out.println("CLASSNAME = " + taskClassName);
         
         File webappDirFile = new File(webappDir);
         File jarsDirFile = new File(jarsDir);
@@ -64,23 +54,7 @@ public class TaskRunner {
             System.exit(-1);
         }        
         
-        // Create collection of URLs needed for classloader
-        List urlList = new ArrayList();
-
-        // Add WEB-INF/lib jars
-        String libPath = webappDir + FS + "WEB-INF" + FS + "lib";
-        addURLs(libPath, urlList);
-        
-        // Added WEB-INF/classes
-        String classesPath = webappDir + FS + "WEB-INF" + FS + "classes" + FS;
-        urlList.add(new URL("file://" + classesPath));
-        
-        // Add additional jars
-        addURLs(jarsDir, urlList);
-        
-        // Create classloader and make it load the task class to be run
-        URLClassLoader cl = new URLClassLoader(
-            (URL[])urlList.toArray(new URL[urlList.size()]), null);
+        ClassLoader cl = new StandaloneWebappClassLoader(webappDir, jarsDir, null);
        
         // We're using the new classloader from here on out
         Thread.currentThread().setContextClassLoader(cl);
@@ -90,31 +64,18 @@ public class TaskRunner {
         Runnable task = (Runnable)taskClass.newInstance();
         task.run();
     }
-    
-    private static void addURLs(String dirPath, List urlList) throws Exception {
-        File libDir = new File(dirPath);
-        String[] libJarNames = libDir.list(new FilenameFilter() {
-            public boolean accept(File dir, String pathname) {
-                if (pathname.endsWith(".jar")) {
-                    return true;
-                }
-                return false;
-            }
-        });       
-        for (int i=0; i<libJarNames.length; i++) {
-            String url = "file://" + dirPath + FS + libJarNames[i];
-            urlList.add(new URL(url));
-        }
-    }
 }
 
+
 /* for example:
- java \
-    -Dwebapp.dir=/export/home/dave/roller_trunk/sandbox/planetroller/build/webapp \
-    -Djars.dir=/export/home/dave/tomcat/common/lib \
+ 
+java \
     -Dplanet.custom.config=planet-custom.properties \
     -Dcatalina.base=. \
     -cp ./build/webapp/WEB-INF/lib/roller-business.jar \
     org.apache.roller.business.runnable.TaskRunner \
+    ~/roller_trunk/sandbox/planetroller/build/webapp \
+    /Applications/Java/jakarta-tomcat-5.5.9/common/lib \
     org.apache.roller.planet.tasks.GeneratePlanetTask
+ 
  */
