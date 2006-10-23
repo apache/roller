@@ -226,7 +226,7 @@ public class ThemeManagerImpl implements ThemeManager {
                 resourceFile = (File) iterat.next();
                 
                 String path = resourceFile.getAbsolutePath().substring(
-                        this.themeDir.length()+1+theme.getName().length()+1);
+                        this.themeDir.length()+theme.getName().length()+1);
                 
                 log.debug("Importing resource "+resourceFile.getAbsolutePath()+" to "+path);
                 
