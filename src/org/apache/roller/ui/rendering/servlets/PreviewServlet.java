@@ -149,7 +149,7 @@ public class PreviewServlet extends HttpServlet {
         Map model = new HashMap();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", true, 8192, true);
+                    this, request, response,"", false, 8192, true);
             
             // special hack for menu tag
             request.setAttribute("pageRequest", previewRequest);
