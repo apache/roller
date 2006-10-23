@@ -245,7 +245,7 @@ Show comments form for weblog entry.
             </li>
             <li>
                 <label class="desc">$text.get( "macro.weblog.yourcomment" )</label>
-                <textarea name="content" class="textarea large" cols="" rows="">$cform.content</textarea>
+                <textarea name="content" class="textarea large" cols="" rows="">$utils.escapeHTML($cform.content)</textarea>
             </li>
             <li class="info">
                 <span class="comments-syntax-indicator">
