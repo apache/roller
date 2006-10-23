@@ -84,23 +84,6 @@ public class CharEncodingFilter implements Filter
             throw new ServletException("Can't set incoming encoding to UTF-8");
         }
 
-        // Keep JSTL and Struts Locale's in sync
-        // NOTE: The session here will get created if it is not present.  This code was taken from its
-        // earlier incarnation in RequestFilter, which also caused the session to be created.
-        HttpSession session = ((HttpServletRequest) req).getSession();
-        if (mLogger.isDebugEnabled()) mLogger.debug("Synchronizing JSTL and Struts locales");
-        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
-        if (locale == null)
-        {
-            locale = req.getLocale();
-        }
-        if (req.getParameter("locale") != null)
-        {
-            locale = new Locale(req.getParameter("locale"));
-        }
-        session.setAttribute(Globals.LOCALE_KEY, locale);
-        Config.set(session, Config.FMT_LOCALE, locale);
-
         chain.doFilter(req, res);
     }
 

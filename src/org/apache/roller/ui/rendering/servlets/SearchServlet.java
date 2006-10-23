@@ -114,7 +114,7 @@ public class SearchServlet extends HttpServlet {
         Map model = new HashMap();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
-                    this, request, response,"", true, 8192, true);
+                    this, request, response,"", false, 8192, true);
             
             // populate the rendering model
             Map initData = new HashMap();
