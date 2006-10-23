@@ -1,0 +1,8 @@
+#** 
+3xx-to-400-migration.vm: Velocity template that generates vendor-specific database scripts 
+
+DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+**#
+
+## remove old id column of group subscription table
+alter table rag_group_subscription drop column id;

@@ -4,8 +4,6 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
-alter table rag_group_subscription drop column id;
-
 create table roller_weblogentrytag (
     id              varchar(48)   not null primary key,
     entryid         varchar(48)   not null,
