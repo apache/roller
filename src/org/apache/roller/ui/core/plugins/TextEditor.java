@@ -31,7 +31,7 @@ public class TextEditor implements WeblogEntryEditor {
     
     
     public String getId() {
-        return "TextEditor";
+        return "editor-text.jsp";
     }
     
     public String getName() {
