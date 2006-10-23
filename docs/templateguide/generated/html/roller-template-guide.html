@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20051209;11500200">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060918;15194300">
+	<META NAME="CHANGED" CONTENT="20061023;14412000">
 	<META NAME="SDFOOTNOTE" CONTENT=";;;;P">
 	<META NAME="SDENDNOTE" CONTENT="ARABIC">
 	<STYLE>
@@ -62,11 +62,13 @@
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
 		<BR>
 		</P>
-		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
+		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent"><A NAME="DDE_LINK"></A>
 		<FONT SIZE=7 STYLE="font-size: 32pt"><B>Apache Roller</B></FONT></P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
-		<FONT SIZE=5 STYLE="font-size: 20pt"><B>Version 3.0 (incubating) </B></FONT>
+		 <FONT SIZE=5 STYLE="font-size: 20pt"><B>(incubating) </B></FONT>
 		</P>
+		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
+		<FONT SIZE=7 STYLE="font-size: 32pt"><B>Version 3.1</B></FONT></P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent; font-weight: medium">
 		<BR>
 		</P>
@@ -223,26 +225,31 @@
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
 			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.1 - Bookmark	19</FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
-			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.2 - Bookmark
-			Folder	19</FONT></P>
+			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.2 -
+			BookmarkFolder	19</FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
 			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.3 - Comment	20</FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
-			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.4 - Page Template	20</FONT></P>
+			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.4 - PageTemplate	20</FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
 			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.5 - Referrer	20</FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
-			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.6 - User	21</FONT></P>
+			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.6 - TagStat	21</FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
-			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.7 - Weblog	21</FONT></P>
+			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.7 - User	21</FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
-			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.8 - Weblog
-			Category	22</FONT></P>
+			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.8 - Weblog	21</FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
-			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.9 - Weblog Entry	22</FONT></P>
+			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.9 -
+			WeblogCategory	22</FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
-			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.10 - Weblog Entry
-			Attribute	23</FONT></P>
+			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.10 - WeblogEntry	22</FONT></P>
+			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
+			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.11 -
+			WeblogEntryTag	23</FONT></P>
+			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
+			</SPAN><FONT SIZE=2 STYLE="font-size: 11pt">6.12 -
+			WeblogEntryAttribute	23</FONT></P>
 			<P STYLE="margin-bottom: 0in; background: transparent"><FONT SIZE=4 STYLE="font-size: 16pt"><B>7
 			- Macro Reference	24</B></FONT></P>
 			<P STYLE="margin-left: 0.2in; margin-bottom: 0in; background: transparent; font-weight: medium">
@@ -1338,6 +1345,19 @@
 						results.</FONT></P>
 					</TD>
 				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=181>
+						<P CLASS="western"><FONT SIZE=2>$model.tags</FONT></P>
+					</TD>
+					<TH WIDTH=116>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>List
+						of strings</FONT></P>
+					</TH>
+					<TD WIDTH=395>
+						<P CLASS="western"><FONT SIZE=2>List of tags specified by
+						request.</FONT></P>
+					</TD>
+				</TR>
 			</TBODY>
 		</TABLE>
 		<H3 CLASS="western">5.2.2 - $model Search Properties</H3>
@@ -2189,8 +2209,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>content</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>content</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>String</FONT></P>
@@ -2202,8 +2221,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>email</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>email</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>String</FONT></P>
@@ -2215,8 +2233,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>name</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>name</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>String</FONT></P>
@@ -2228,8 +2245,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>notify</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>notify</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>Boolean</FONT></P>
@@ -2241,8 +2257,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>pending</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>pending</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>Boolean</FONT></P>
@@ -2254,8 +2269,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>postTime</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>postTime</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>Date</FONT></P>
@@ -2267,8 +2281,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>remoteHost</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>remoteHost</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>String</FONT></P>
@@ -2280,8 +2293,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>spam</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>spam</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>Boolean</FONT></P>
@@ -2293,8 +2305,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>url</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>url</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>String</FONT></P>
@@ -2306,8 +2317,7 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=157>
-						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment
-						.</FONT>weblogEntry</FONT></P>
+						<P CLASS="western"><FONT SIZE=2><FONT SIZE=2 STYLE="font-size: 10pt">$comment.</FONT>weblogEntry</FONT></P>
 					</TD>
 					<TH WIDTH=93>
 						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>WeblogEntry</FONT></P>
@@ -2577,7 +2587,64 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H2 CLASS="western">6.6 - User</H2>
+		<H2 CLASS="western">6.6 - TagStat</H2>
+		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+			<COL WIDTH=164>
+			<COL WIDTH=85>
+			<COL WIDTH=446>
+			<THEAD>
+				<TR VALIGN=TOP>
+					<TD WIDTH=164 BGCOLOR="#e6e6e6">
+						<P CLASS="western"><B>Name</B></P>
+					</TD>
+					<TH WIDTH=85 BGCOLOR="#e6e6e6">
+						<P CLASS="western" ALIGN=LEFT>Type</P>
+					</TH>
+					<TH WIDTH=446 BGCOLOR="#e6e6e6">
+						<P CLASS="western">Description</P>
+					</TH>
+				</TR>
+			</THEAD>
+			<TBODY>
+				<TR VALIGN=TOP>
+					<TD WIDTH=164>
+						<P CLASS="western"><FONT SIZE=2>$tagStat.name</FONT></P>
+					</TD>
+					<TH WIDTH=85>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>String</FONT></P>
+					</TH>
+					<TH WIDTH=446>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>Name
+						of tag</FONT></P>
+					</TH>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=164>
+						<P CLASS="western"><FONT SIZE=2>$tagStat.count</FONT></P>
+					</TD>
+					<TH WIDTH=85>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>Integer</FONT></P>
+					</TH>
+					<TH WIDTH=446>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>Number
+						of usages of tag within weblog  or site (depending on context)</FONT></P>
+					</TH>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=164>
+						<P CLASS="western"><FONT SIZE=2>$tagStat.intensity</FONT></P>
+					</TD>
+					<TH WIDTH=85>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>Integer</FONT></P>
+					</TH>
+					<TH WIDTH=446>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2>Relative
+						intensity rating of tag (values 1 through 5)</FONT></P>
+					</TH>
+				</TR>
+			</TBODY>
+		</TABLE>
+		<H2 CLASS="western">6.7 - User</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=188>
 			<COL WIDTH=172>
@@ -2671,7 +2738,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H2 CLASS="western">6.7 - Weblog</H2>
+		<H2 CLASS="western">6.8 - Weblog</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=190>
 			<COL WIDTH=172>
@@ -2902,6 +2969,21 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=190>
+						<P CLASS="western" STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">$weblog.popularTags(<BR>
+						   int sinceDays, int length)</FONT></P>
+					</TD>
+					<TH WIDTH=172>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">List
+						of TagStat objects</FONT></P>
+					</TH>
+					<TD WIDTH=333>
+						<P CLASS="western"><FONT SIZE=2 STYLE="font-size: 10pt">Popular
+						tags in past <I>sinceDays</I> number of days. Returns up to
+						<I>length</I> number of objects.</FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=190>
 						<P CLASS="western" STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">$weblog.timeZone</FONT></P>
 					</TD>
 					<TH WIDTH=172>
@@ -2980,7 +3062,7 @@
 				link.</P>
 			</UL>
 		</UL>
-		<H2 CLASS="western">6.8 - WeblogCategory</H2>
+		<H2 CLASS="western">6.9 - WeblogCategory</H2>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=195>
 			<COL WIDTH=168>
@@ -3100,7 +3182,7 @@
 				</TR>
 			</TBODY>
 		</TABLE>
-		<H2 CLASS="western">6.9 - WeblogEntry</H2>
+		<H2 CLASS="western">6.10 - WeblogEntry</H2>
 		<TABLE WIDTH=719 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=193>
 			<COL WIDTH=167>
@@ -3305,6 +3387,19 @@
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=193>
+						<P CLASS="western" STYLE="font-weight: medium"><FONT SIZE=2>$entry.tags</FONT></P>
+					</TD>
+					<TH WIDTH=167>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">List
+						of WeblogEntryTags</FONT></P>
+					</TH>
+					<TD WIDTH=333>
+						<P CLASS="western"><FONT SIZE=2 STYLE="font-size: 10pt">Tags
+						associated with entry</FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=193>
 						<P CLASS="western" STYLE="font-weight: medium"><FONT SIZE=2>$entry.text</FONT></P>
 					</TD>
 					<TH WIDTH=167>
@@ -3384,12 +3479,83 @@
 				or null if no such attribute</P>
 			</UL>
 		</UL>
-		<H2 CLASS="western">6.10 - WeblogEntryAttribute</H2>
+		<H2 CLASS="western">6.11 - WeblogEntryTag</H2>
+		<P CLASS="western">A user can assign as many tags as they wish to
+		each weblog entry.</P>
+		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+			<COL WIDTH=149>
+			<COL WIDTH=96>
+			<COL WIDTH=450>
+			<THEAD>
+				<TR VALIGN=TOP>
+					<TD WIDTH=149 BGCOLOR="#e6e6e6">
+						<P CLASS="western"><B>Name</B></P>
+					</TD>
+					<TH WIDTH=96 BGCOLOR="#e6e6e6">
+						<P CLASS="western" ALIGN=LEFT>Type</P>
+					</TH>
+					<TH WIDTH=450 BGCOLOR="#e6e6e6">
+						<P CLASS="western">Description</P>
+					</TH>
+				</TR>
+			</THEAD>
+			<TBODY>
+				<TR VALIGN=TOP>
+					<TD WIDTH=149>
+						<P CLASS="western"><FONT SIZE=2 STYLE="font-size: 10pt">$tag.name</FONT></P>
+					</TD>
+					<TH WIDTH=96>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">String</FONT></P>
+					</TH>
+					<TH WIDTH=450>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">Weblog
+						entry associated with this attribute</FONT></P>
+					</TH>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=149>
+						<P CLASS="western"><FONT SIZE=2 STYLE="font-size: 10pt">$tag.user</FONT></P>
+					</TD>
+					<TH WIDTH=96>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">User
+						</FONT>
+						</P>
+					</TH>
+					<TD WIDTH=450>
+						<P CLASS="western" STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">User
+						who added the tag</FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=149>
+						<P CLASS="western"><FONT SIZE=2 STYLE="font-size: 10pt">$tag.weblogEntry</FONT></P>
+					</TD>
+					<TH WIDTH=96>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">WeblogEntry</FONT></P>
+					</TH>
+					<TD WIDTH=450>
+						<P CLASS="western" STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">Weblog
+						entry associated with tag</FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=149>
+						<P CLASS="western"><FONT SIZE=2 STYLE="font-size: 10pt">$tag.weblog</FONT></P>
+					</TD>
+					<TH WIDTH=96>
+						<P CLASS="western" ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">Weblog</FONT></P>
+					</TH>
+					<TD WIDTH=450>
+						<P CLASS="western" STYLE="font-weight: medium"><FONT SIZE=2 STYLE="font-size: 10pt">Weblog
+						associated with tag</FONT></P>
+					</TD>
+				</TR>
+			</TBODY>
+		</TABLE>
+		<H2 CLASS="western">6.12 - WeblogEntryAttribute</H2>
 		<P CLASS="western">Weblog entry attributes are name/value pairs
 		that can be assigned to weblog entries. Currently, they're only
 		used to add podcasts to blog entries.</P>
-		<P CLASS="western"><BR><BR>
-		</P>
 		<TABLE WIDTH=721 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
 			<COL WIDTH=149>
 			<COL WIDTH=96>
@@ -3449,8 +3615,6 @@
 			</TBODY>
 		</TABLE>
 		<H3 CLASS="western"></H3>
-		<P CLASS="western"><BR><BR>
-		</P>
 		<H1 CLASS="western" STYLE="page-break-before: always">7 - Macro
 		Reference</H1>
 		<P CLASS="western">This section lists the macros that are available
@@ -3462,6 +3626,9 @@
 			the weblog entries contained in the specified $pager object.</P>
 			<LI><P CLASS="western"><B>#showNextPrevEntriesControl($pager)</B><BR>Display
 			the next/prev links of the specified $pager object.</P>
+			<LI><P CLASS="western"><B>#showEntryTags($entry)</B><BR>Display
+			tags associated with one weblog entry as list of links to tag
+			specific views of weblog.</P>
 		</UL>
 		<H2 CLASS="western">7.2 - Comment macros</H2>
 		<UL>
@@ -3519,6 +3686,10 @@
 			<LI><P CLASS="western"><B>#showTrackbackAutodiscovery($entry)</B><BR>Show
 			trackback autodiscovery code for a specified weblog entry,
 			suitable for use within a day template.</P>
+			<LI><P CLASS="western"><B>#showTagCloud($tags)</B><BR>Displays a
+			tag cloud based on a list of TagStat objects obtained from a
+			Weblog or Site model object. Title of each tag will be the tag
+			count and CSS class will indicate intensity of tag.</P>
 		</UL>
 		<P CLASS="western"><BR><BR>
 		</P>
