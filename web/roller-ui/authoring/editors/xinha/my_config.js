@@ -89,8 +89,8 @@
        *
        ************************************************************************/
        
-       xinha_editors['textarea1'].config.height = '100px';
-       xinha_editors['textarea2'].config.height = '200px';
+       xinha_editors.textarea1.config.height = '300px';
+       xinha_editors.textarea2.config.height = '50px';
 
       /** STEP 6 ***************************************************************
        * Finally we "start" the editors, this turns the textareas into
