@@ -408,6 +408,7 @@ create index ea_entryid_idx on entryattribute( entryid );
 alter table entryattribute add constraint ea_name_uq unique ( entryid, name$!INDEXSIZE );
 
 create table rag_group_subscription (
+    id               varchar(48) not null primary key,
     group_id         varchar(48) not null,
     subscription_id  varchar(48) not null
 );
