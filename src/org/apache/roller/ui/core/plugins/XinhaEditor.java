@@ -31,7 +31,7 @@ public class XinhaEditor implements WeblogEntryEditor {
     
     
     public String getId() {
-        return "XinhaEditor";
+        return "editor-rte.jsp";
     }
     
     public String getName() {
