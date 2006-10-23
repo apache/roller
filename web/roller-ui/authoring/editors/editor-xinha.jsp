@@ -37,13 +37,13 @@ _editor_lang = "en";
 <script type="text/javascript" src='<c:url value="/roller-ui/authoring/editors/xinha/my_config.js" />'></script> 
 <noscript><p><b>Javascript must be enabled to use this form.</b></p></noscript>
 
-
-<b><fmt:message key="weblogEdit.summary" /></b><br />
-<html:textarea styleId="textarea1" property="summary" rows="5" cols="50" style="width: 100%"></html:textarea>
-
+<%-- ===================================================================== --%>
 <b><fmt:message key="weblogEdit.content" /></b><br />
-<html:textarea styleId="textarea2" property="text" rows="10" cols="50" style="width: 100%"></html:textarea>
+<html:textarea styleId="textarea1" property="text" rows="25" cols="50" style="width: 100%"></html:textarea>
 
+<%-- ===================================================================== --%>
+<b><fmt:message key="weblogEdit.summary" /></b><br />
+<html:textarea styleId="textarea2" property="summary" rows="10" cols="50" style="width: 100%"></html:textarea>
 
 
  

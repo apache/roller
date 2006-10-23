@@ -43,23 +43,6 @@ function changeSize1(e, num) {
 </script>
 
 <%-- ===================================================================== --%>
-<p class="toplabel"><fmt:message key="weblogEdit.summary" /></p>
-
-<html:textarea property="summary" cols="75" rows="5" style="width: 100%" tabindex="2"/>
-<script type="text/javascript">
-    <!--
-    if (getCookie("editorSize") != null) {
-        document.weblogEntryFormEx.summary.rows = getCookie("editorSize");
-    }
-    -->
-</script>
-<table style="width:100%"><tr><td align="right">
-  <!-- Add buttons to make this textarea taller or shorter -->
-  <input type="button" name="taller" value=" &darr; " onclick="changeSize(document.weblogEntryFormEx.summary, 5)" />
-  <input type="button" name="shorter" value=" &uarr; " onclick="changeSize(document.weblogEntryFormEx.summary, -5)" />
-</td></tr></table>
-
-<%-- ===================================================================== --%>
 <p class="toplabel"><fmt:message key="weblogEdit.content" /></p>
 
 <html:textarea property="text" cols="75" rows="25" style="width: 100%" tabindex="3"/>
@@ -76,3 +59,19 @@ function changeSize1(e, num) {
   <input type="button" name="shorter" value=" &uarr; " onclick="changeSize1(document.weblogEntryFormEx.text, -5)" />
 </td></tr></table>
 
+<%-- ===================================================================== --%>
+<p class="toplabel"><fmt:message key="weblogEdit.summary" /></p>
+
+<html:textarea property="summary" cols="75" rows="5" style="width: 100%" tabindex="2"/>
+<script type="text/javascript">
+    <!--
+    if (getCookie("editorSize") != null) {
+        document.weblogEntryFormEx.summary.rows = getCookie("editorSize");
+    }
+    -->
+</script>
+<table style="width:100%"><tr><td align="right">
+  <!-- Add buttons to make this textarea taller or shorter -->
+  <input type="button" name="taller" value=" &darr; " onclick="changeSize(document.weblogEntryFormEx.summary, 5)" />
+  <input type="button" name="shorter" value=" &uarr; " onclick="changeSize(document.weblogEntryFormEx.summary, -5)" />
+</td></tr></table>
