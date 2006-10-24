@@ -45,4 +45,16 @@ create table roller_hitcounts (
     websiteid       varchar(48) not null,
     dailyhits	    integer
 );
-create index rhc_websiteid_idx on roller_hitcounts( websiteid );
+create index rhc_websiteid_idx on roller_hitcounts(websiteid);
+
+-- The rag_group_subscription table has been simplified and no longer needs a 
+-- primary key but we don't want to drop the field just yet because that would 
+-- make it impossible to abort a 3.1 upgrade and return to 3.0. 
+#dropNotNullFromTableId("rag_group_subscription")
+
+
+
+
+
+
+

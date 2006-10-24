@@ -21,20 +21,41 @@ Special macro to add table column with not-null restriction and default value
 **#
 #macro(addColumnNotNull $table $column $type $default)
 #if($DBTYPE == "MYSQL" || $DBTYPE=="HSQDB")
-alter table $table add column $column $type default $default not null;  
+    alter table $table add column $column $type default $default not null;  
 #elseif ($DBTYPE == "POSTGRESQL")
-alter table $table add column $column $type;
-alter table $table alter $column set default $default;
-update $table set $column=$default;
-alter table $table alter $column set not null;
+    alter table $table add column $column $type;
+    alter table $table alter $column set default $default;
+    update $table set $column=$default;
+    alter table $table alter $column set not null;
 #elseif ($DBTYPE == "HSQLDB")
-alter table $table add column $column $type default $default not null; 
+    alter table $table add column $column $type default $default not null; 
 #elseif ($DBTYPE == "DERBY" || $DBTYPE == "DB2")
-alter table $table add column $column $type with default $default not null;
+    alter table $table add column $column $type with default $default not null;
 #elseif ($DBTYPE == "ORACLE")
-alter table $table add $column $type default $default not null;  
+    alter table $table add $column $type default $default not null;  
 #end
 #end
+
+
+#**
+Special macro to drop NOT NULL requirement from an 'id' column.
+**#
+#macro(dropNotNullFromTableId $table)
+#if($DBTYPE == "MYSQL")
+    alter table $table drop primary key;
+    alter table $table modify id varchar(48) null;
+#elseif ($DBTYPE == "POSTGRESQL")
+    alter table $table alter column drop not null;
+#elseif ($DBTYPE == "HSQLDB")
+    alter table $table alter column id varchar(48) null;
+#elseif ($DBTYPE == "DERBY" || $DBTYPE == "DB2")
+    alter table $table drop primary key;
+    alter table $table alter column id null;
+#elseif ($DBTYPE == "ORACLE")
+    alter table $table drop id not null;
+#end
+#end
+
 
 #** Loop through templates, generate database scripts **#
 #foreach ($template in $templates) 
