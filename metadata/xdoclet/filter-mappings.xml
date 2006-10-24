@@ -16,11 +16,20 @@
     <dispatcher>REQUEST</dispatcher>
 </filter-mapping>
 -->
-<!-- Ensures character encoding set to UTF-8 and JSTL and Struts locales are in sync.
-Note: Any filters preceding this one MUST not cause request parsing. -->
+<!-- This filter ensures that the request encoding is set to UTF-8 before any 
+     other processing forces request parsing using a default encoding.
+     Note: Any filters preceding this one MUST not cause request parsing. -->
 <filter-mapping>
     <filter-name>CharEncodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+
+<!-- Ensures character encoding set to UTF-8 and JSTL and Struts locales are in sync.  -->
+<filter-mapping>
+    <filter-name>StrutsCharEncodingFilter</filter-name>
+    <url-pattern>/roller-ui/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
 </filter-mapping>

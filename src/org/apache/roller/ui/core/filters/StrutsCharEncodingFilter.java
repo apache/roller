@@ -29,24 +29,20 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.jstl.core.Config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
 
 /**
- * Entry point filter for all requests. This filter ensures that the request 
- * encoding is set to UTF-8 before any other processing forces request parsing 
- * using a default encoding.  It also syncs up the Struts and JSTL locales.  
- * This filter should normally be first and last in the chain.
- *
- * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
- * @web.filter name="CharEncodingFilter"
+ * This filter syncs up the Struts and JSTL locales. 
+ * @web.filter name="StrutsCharEncodingFilter"
  */
-public class CharEncodingFilter implements Filter {
+public class StrutsCharEncodingFilter implements Filter {
     private FilterConfig mFilterConfig = null;
     private static Log mLogger =
-            LogFactory.getFactory().getInstance(CharEncodingFilter.class);
+            LogFactory.getFactory().getInstance(StrutsCharEncodingFilter.class);
     
     /**
      * init
@@ -70,12 +66,25 @@ public class CharEncodingFilter implements Filter {
         if (mLogger.isDebugEnabled()) mLogger.debug("Processing CharEncodingFilter");
         try {
             
-            req.setCharacterEncoding("UTF-8");            
+            // Keep JSTL and Struts Locale's in sync
+            // NOTE: The session here will get created if it is not present.  This code was taken from its
+            // earlier incarnation in RequestFilter, which also caused the session to be created.
+            HttpSession session = ((HttpServletRequest) req).getSession();
+            if (mLogger.isDebugEnabled()) mLogger.debug("Synchronizing JSTL and Struts locales");
+            Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+            if (locale == null) {
+                locale = req.getLocale();
+            }
+            if (req.getParameter("locale") != null) {
+                locale = new Locale(req.getParameter("locale"));
+            }
+            session.setAttribute(Globals.LOCALE_KEY, locale);
+            Config.set(session, Config.FMT_LOCALE, locale);            
             if (mLogger.isDebugEnabled()) mLogger.debug("Set request character encoding to UTF-8");
             
-        } catch (UnsupportedEncodingException e) {
-            // This should never happen since UTF-8 is a Java-specified required encoding.
-            throw new ServletException("Can't set incoming encoding to UTF-8");
+        } catch (Exception e) {
+            // This should never happen
+            throw new ServletException("Can't set JSTL Config.FMT_LOCALE");
         }
         
         chain.doFilter(req, res);
