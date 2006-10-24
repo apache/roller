@@ -15,7 +15,7 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%><%@ 
-page import="org.apache.roller.config.RollerRuntimeConfig" %><%
+page import="org.apache.roller.config.RollerRuntimeConfig" session="false" %><%
 // lets see if we have a frontpage blog
 String frontpageBlog =
         RollerRuntimeConfig.getProperty("site.frontpage.weblog.handle");
