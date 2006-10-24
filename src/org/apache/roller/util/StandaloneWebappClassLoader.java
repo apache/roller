@@ -77,7 +77,6 @@ public class StandaloneWebappClassLoader extends URLClassLoader {
         for (int i=0; i<libJarNames.length; i++) {
             String url = "file://" + dirPath + FS + libJarNames[i];
             urlList.add(new URL(url));
-            System.out.println("URL: " + url);
         }
     }
 }
