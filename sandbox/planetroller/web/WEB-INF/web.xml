@@ -53,14 +53,14 @@
     
     <error-page>
         <error-code>500</error-code>
-        <location>/error.faces</location>
+        <location>/planet-ui/error.faces</location>
     </error-page>
     
     <security-constraint>
         <display-name>planet-ui</display-name>
         <web-resource-collection>
             <web-resource-name>planet-ui</web-resource-name>
-            <url-pattern>/planet-ui/*</url-pattern>
+            <url-pattern>/planet-ui/admin/*</url-pattern>
             <http-method>GET</http-method>
             <http-method>POST</http-method>
         </web-resource-collection>
@@ -72,8 +72,8 @@
     <login-config>
         <auth-method>FORM</auth-method>
         <form-login-config>
-            <form-login-page>/login.jsp</form-login-page>
-            <form-error-page>/login.jsp?error=true</form-error-page>
+            <form-login-page>/planet-ui/login.jsp</form-login-page>
+            <form-error-page>/planet-ui/login.jsp?error=true</form-error-page>
         </form-login-config>
     </login-config>
     <security-role>

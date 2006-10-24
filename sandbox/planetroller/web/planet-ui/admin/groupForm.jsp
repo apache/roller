@@ -27,11 +27,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title><h:outputText value="#{msgs.groupPageTitle}" /></title>
-    <link rel="stylesheet" type="text/css" href='<c:url value="/planet.css" />' />
+    <link rel="stylesheet" type="text/css" href='<c:url value="/planet-ui/planet.css" />' />
 </head>
 <body>
 <div id="wrapper">    
-<%@include file="/planet-ui/menu.jsp" %> 
+<%@include file="/planet-ui/admin/menu.jsp" %> 
 
 <h2><h:outputText value="#{msgs.groupPageTitle}" /></h2>
 <p><h:outputText value="#{msgs.groupHelp}" /></p>
@@ -123,7 +123,7 @@
 </h:dataTable>
 
 <p />
-<t:commandLink id="addSubscriptionLink" forceId="true" action="#{subscriptionForm.edit}" >
+<t:commandLink id="addSubscriptionLink" forceId="true" action="#{subscriptionForm.add}" >
     <h:graphicImage style="" value="../images/feed_add.png"  />
     <h:outputText value="#{msgs.groupAddSubscription}" />
     <f:param name="groupid" value="#{groupForm.group.id}" />

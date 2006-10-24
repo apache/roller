@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroupData;
@@ -50,10 +49,13 @@ public class SubscriptionForm implements LoadableForm {
     
     public String load(HttpServletRequest request) throws Exception {
         log.info("Loading Subscription...");
-        String subid = request.getParameter("subid");
-        if (subid != null) {
+        subid = request.getParameter("subid");
+        groupid = request.getParameter("groupid");
+        if (StringUtils.isNotEmpty(subid)) {
             PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
-            setSubscription(pmgr.getSubscriptionById(subid));
+            subscription = pmgr.getSubscriptionById(subid);
+        } else {
+            subscription = new PlanetSubscriptionData();            
         }
         groupid = request.getParameter("groupid");        
         return "editSubscription";
@@ -63,6 +65,11 @@ public class SubscriptionForm implements LoadableForm {
         FacesContext fctx = FacesContext.getCurrentInstance();
         return load((HttpServletRequest)fctx.getExternalContext().getRequest());
     }
+    
+    public String add() throws Exception {
+        FacesContext fctx = FacesContext.getCurrentInstance();
+        return load((HttpServletRequest)fctx.getExternalContext().getRequest());
+    } 
     
     public String save() throws Exception {
         log.info("Saving Subscription...");                
@@ -75,13 +82,16 @@ public class SubscriptionForm implements LoadableForm {
             dbsub.setSiteURL(subscription.getSiteURL());
             pmgr.saveSubscription(dbsub); 
         } else {
-            pmgr.saveSubscription(subscription);
-            // if we've got a group, add subscription to it
-            if (groupid != null) {
-                PlanetGroupData group = pmgr.getGroupById(groupid);
-                group.getSubscriptions().add(subscription);
-                pmgr.saveGroup(group);
+            PlanetSubscriptionData existingSub = pmgr.getSubscription(subscription.getFeedURL());
+            if (existingSub != null) {
+                subscription = existingSub;
             }
+            else { 
+                pmgr.saveSubscription(subscription);
+            }
+            PlanetGroupData group = pmgr.getGroupById(groupid);
+            group.getSubscriptions().add(subscription);
+            pmgr.saveGroup(group);
         }
         PlanetFactory.getPlanet().flush();
         return "editSubscription";
@@ -95,10 +105,6 @@ public class SubscriptionForm implements LoadableForm {
         return subscription;
     }
 
-    public void setSubscription(PlanetSubscriptionData subscription) {
-        this.subscription = subscription;
-    }
-    
     public String getGroupid() {
         return groupid;
     }

@@ -28,11 +28,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title><h:outputText value="#{msgs.groupsPageTitle}" /></title>
-    <link rel="stylesheet" type="text/css" href='<c:url value="/planet.css" />' />
+    <link rel="stylesheet" type="text/css" href='<c:url value="/planet-ui/planet.css" />' />
 </head>
 <body>
 <div id="wrapper">    
-<%@include file="/planet-ui/menu.jsp" %> 
+<%@include file="/planet-ui/admin/menu.jsp" %> 
 
 <h2><h:outputText value="#{msgs.groupsListTitle}" /></h2>
 <p><h:outputText value="#{msgs.groupsHelp}" /></p>
@@ -80,7 +80,7 @@
 </h:dataTable>
 
 <p />
-<h:commandLink action="#{groupForm.edit}">
+<h:commandLink action="#{groupForm.add}">
     <h:graphicImage value="../images/folder_add.png"  />
     <h:outputText value="#{msgs.groupsAddGroup}" />
 </h:commandLink> 

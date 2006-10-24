@@ -24,7 +24,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><fmt:message key="loginPageTitle" /></title>
-        <link rel="stylesheet" type="text/css" href='<c:url value="/planet.css" />' />
+        <link rel="stylesheet" type="text/css" href='<c:url value="/planet-ui/planet.css" />' />
     </head>
     <body>
         <div id="wrapper">
