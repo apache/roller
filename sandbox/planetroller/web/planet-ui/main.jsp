@@ -26,12 +26,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title><h:outputText value="#{msgs.mainTitle}" /></title>
-    <link rel="stylesheet" type="text/css" href='<c:url value="/planet.css" />' />
+    <link rel="stylesheet" type="text/css" href='<c:url value="/planet-ui/planet.css" />' />
 </head>
 <body>
 <div id="wrapper">
 <h1><h:outputText value="#{msgs.mainTitle}" /></h1>
-<p><a href='<c:url value="/planet-ui/configForm.faces" />'>
+<p><a href='<c:url value="/planet-ui/admin/configForm.faces" />'>
     <h:outputText value="#{msgs.mainConsoleLink}" /></a></p>
 </div>
 </body>

@@ -39,12 +39,13 @@ import org.apache.velocity.texen.Generator;
 /**
  * Updates Planet aggregator's database of feed entries and generates Planet
  * files based on those entries and the Planet configuration. 
- *
+ * <pre>
  * - Designed to be run outside of Roller via the TaskRunner class
  * - Calls Planet business layer to refresh entries
  * - Uses PlanetConfig properties for templateDir, outputDir and template name
  * - Creates outputdir and a subdirectory for each group
  * - Uses Velocity Texen to generate the static files
+ * </pre>
  */
 public class GeneratePlanetTask implements Runnable {
     private static Log log = LogFactory.getLog(GeneratePlanetTask.class);

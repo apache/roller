@@ -26,15 +26,15 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title><h:outputText value="#{msgs.errorPageTitle}" /></title>
-    <link rel="stylesheet" type="text/css" href='<c:url value="/planet.css" />' />
+    <link rel="stylesheet" type="text/css" href='<c:url value="/planet-ui/planet.css" />' />
 </head>
 <body>
 <div id="wrapper">
     <h:form>
     <h1><h:outputText value="#{msgs.errorPageTitle}" /></h1>
     <p>
-        <a href='<c:url value="/main.faces" />'><h:outputText value="#{msgs.appHome}" /></a> | 
-        <a href='<c:url value="/logout.jsp" />'><h:outputText value="#{msgs.appLogout}" /></a>
+        <a href='<c:url value="/planet-ui/main.faces" />'><h:outputText value="#{msgs.appHome}" /></a> | 
+        <a href='<c:url value="/planet-ui/logout.jsp" />'><h:outputText value="#{msgs.appLogout}" /></a>
     </p>  
     <p><h:outputText value="#{msgs.errorPageMessage}" /></p>
     <h2><h:outputText value="#{msgs.errorStackTraceTitle}" /></h2>

@@ -30,28 +30,28 @@
     <from-view-id>/*</from-view-id>
     <navigation-case>
       <from-outcome>editConfig</from-outcome>
-      <to-view-id>/planet-ui/configForm.faces</to-view-id>
+      <to-view-id>/planet-ui/admin/configForm.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   <navigation-rule>
     <from-view-id>/*</from-view-id>
     <navigation-case>
       <from-outcome>editGroups</from-outcome>
-      <to-view-id>/planet-ui/groupsList.faces</to-view-id>
+      <to-view-id>/planet-ui/admin/groupsList.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   <navigation-rule>
     <from-view-id>/*</from-view-id>
     <navigation-case>
       <from-outcome>editGroup</from-outcome>
-      <to-view-id>/planet-ui/groupForm.faces</to-view-id>
+      <to-view-id>/planet-ui/admin/groupForm.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   <navigation-rule>
     <from-view-id>/*</from-view-id>
     <navigation-case>
       <from-outcome>editSubscription</from-outcome>
-      <to-view-id>/planet-ui/subscriptionForm.faces</to-view-id>
+      <to-view-id>/planet-ui/admin/subscriptionForm.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   <navigation-rule>

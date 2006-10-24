@@ -6,9 +6,10 @@
     padding: 15px 20px 15px 20px;
 }
 
+/* TODO: fix hardcoded context reference */
 body {
     color: #666;
-    background-image: url(/planet/images/body-bg-grey.png);
+    background-image: url(/planet/planet-ui/images/body-bg-grey.png);
     background-repeat: no-repeat;
     background-position: center;
     text-align: center;
@@ -65,7 +66,8 @@ td.valueColumn {
 tr.evenRow {
     background: #f5f5f5;
 }
+/* TODO: fix hardcoded context reference */
 table.data th {
-    background-image: url(/planet/images/th-bg-grey.png);
+    background-image: url(/planet/planet-ui/images/th-bg-grey.png);
 }
 

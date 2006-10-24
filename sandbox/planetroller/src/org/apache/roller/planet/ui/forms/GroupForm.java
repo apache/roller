@@ -56,6 +56,11 @@ public class GroupForm implements LoadableForm {
         return load((HttpServletRequest)fctx.getExternalContext().getRequest());
     }
     
+    public String add() throws Exception {
+        group = new PlanetGroupData();
+        return "editGroup";
+    }
+    
     public String save() throws Exception {
         log.info("Saving Group...");
         Planet planet = PlanetFactory.getPlanet();
