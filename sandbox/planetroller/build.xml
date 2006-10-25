@@ -57,6 +57,8 @@
         <include name="log4j-1.2.11.jar"/>
         <include name="jaxen-full.jar"/>
         <include name="saxpath.jar"/>   
+        <include name="activation.jar"/>   
+        <include name="mail.jar"/>   
         
     </fileset>
     

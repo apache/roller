@@ -22,6 +22,11 @@
     <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
   <managed-bean>
+    <managed-bean-name>registrationForm</managed-bean-name>
+    <managed-bean-class>org.apache.roller.planet.ui.forms.RegistrationForm</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+  <managed-bean>
     <managed-bean-name>error</managed-bean-name>
     <managed-bean-class>org.apache.roller.planet.ui.utils.ErrorBean</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
@@ -52,6 +57,13 @@
     <navigation-case>
       <from-outcome>editSubscription</from-outcome>
       <to-view-id>/planet-ui/admin/subscriptionForm.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  <navigation-rule>
+    <from-view-id>/*</from-view-id>
+    <navigation-case>
+      <from-outcome>thanksForRegistering</from-outcome>
+      <to-view-id>/planet-ui/thanksForRegistering.jsp</to-view-id>
     </navigation-case>
   </navigation-rule>
   <navigation-rule>
