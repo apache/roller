@@ -160,7 +160,7 @@ function fullPreviewMode() {
     <tr><td class="entryEditFormLabel">
        <label for="categoryId"><fmt:message key="weblogEdit.category" /></label>
     </td><td>
-       <html:select property="categoryId" size="1" tabindex="4">
+       <html:select property="categoryId" size="1" tabindex="2">
        <html:optionsCollection name="model" property="categories" value="id" label="path"  />
        </html:select>
     </td></tr>
@@ -168,7 +168,7 @@ function fullPreviewMode() {
     <tr><td class="entryEditFormLabel">
       <label style="width:10%; float:left;" for="title"><fmt:message key="weblogEdit.tags" /></label>
     </td><td>
-        <html:text styleId="entryEditTags" property="tagsAsString" size="70" maxlength="255" tabindex="2" />
+        <html:text styleId="entryEditTags" property="tagsAsString" size="70" maxlength="255" tabindex="3" />
         <div id="entryEditTagsChoices" style="display:none" class="autocomplete"></div>
 		<br/>
         <script type="text/javascript">
@@ -182,7 +182,7 @@ function fullPreviewMode() {
             <tr><td class="entryEditFormLabel">
                 <label for="locale"><fmt:message key="weblogEdit.locale" /></label>
             </td><td>
-                <html:select property="locale" size="1" tabindex="5">
+                <html:select property="locale" size="1" tabindex="4">
                     <html:options collection="locales" property="value" labelProperty="label"/>
                 </html:select>
             </td></tr>

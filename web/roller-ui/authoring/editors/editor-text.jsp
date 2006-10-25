@@ -45,7 +45,7 @@ function changeSize1(e, num) {
 <%-- ===================================================================== --%>
 <p class="toplabel"><fmt:message key="weblogEdit.content" /></p>
 
-<html:textarea property="text" cols="75" rows="25" style="width: 100%" tabindex="3"/>
+<html:textarea property="text" cols="75" rows="25" style="width: 100%" tabindex="5"/>
 <script type="text/javascript">
     <!--
     if (getCookie("editorSize1") != null) {
@@ -62,7 +62,7 @@ function changeSize1(e, num) {
 <%-- ===================================================================== --%>
 <p class="toplabel"><fmt:message key="weblogEdit.summary" /></p>
 
-<html:textarea property="summary" cols="75" rows="5" style="width: 100%" tabindex="2"/>
+<html:textarea property="summary" cols="75" rows="5" style="width: 100%" tabindex="6"/>
 <script type="text/javascript">
     <!--
     if (getCookie("editorSize") != null) {
