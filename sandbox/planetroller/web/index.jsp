@@ -20,12 +20,23 @@
 <%@ page import="org.apache.roller.planet.pojos.PlanetConfigData" %>
 <%@ page import="org.apache.roller.planet.pojos.PlanetGroupData" %>
 <%
-    String fwd = "/main.faces";
+    // if no default aggregation exists, then we'll go to main page
+    String fwd = "/planet-ui/main.faces";
     PlanetManager pmgr= PlanetFactory.getPlanet().getPlanetManager();
     PlanetConfigData pconfig = pmgr.getConfiguration();
+    
+    // if we have a config and a default group, then check for aggregation
     if (pconfig != null && pconfig.getDefaultGroup() != null) {
         PlanetGroupData group = pconfig.getDefaultGroup();
-        fwd = "/" + group.getHandle() + "/";
+        
+        // and check to see if group aggregation exists yet
+        String groupPath = application.getRealPath(fwd);
+        java.io.File groupDir = new java.io.File(groupPath);
+        if (groupDir.exists() && groupDir.isDirectory()) {
+            
+            // aggregation exists, so forward to it
+            fwd = "/" + group.getHandle() + "/";           
+        } 
     }
 %>
 <jsp:forward page="<%= fwd %>" />
