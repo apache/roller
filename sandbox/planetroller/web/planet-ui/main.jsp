@@ -30,9 +30,18 @@
 </head>
 <body>
 <div id="wrapper">
+    
 <h1><h:outputText value="#{msgs.mainTitle}" /></h1>
+
+<p><a href='<c:url value="/index.jsp" />'>
+    <h:outputText value="#{msgs.mainPlanetLink}" /></a></p>
+        
+<p><a href='<c:url value="/planet-ui/registrationForm.faces" />'>
+    <h:outputText value="#{msgs.mainRegistrationLink}" /></a></p>
+    
 <p><a href='<c:url value="/planet-ui/admin/configForm.faces" />'>
     <h:outputText value="#{msgs.mainConsoleLink}" /></a></p>
+
 </div>
 </body>
 </f:view>

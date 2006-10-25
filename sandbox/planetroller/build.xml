@@ -16,6 +16,9 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
+<!DOCTYPE project [
+    <!ENTITY custom-web SYSTEM "custom/custom-web.xmlf">
+]>
 <project name="planetroller" default="stage-webapp" basedir=".">
     <description>Builds, tests, and runs the project planetroller.</description>   
 
@@ -98,6 +101,8 @@
         <copy todir="./build/webapp/WEB-INF/templates">
             <fileset dir="./templates" includes="**/**" />
         </copy> 
+        
+        &custom-web;
 
     </target>
     

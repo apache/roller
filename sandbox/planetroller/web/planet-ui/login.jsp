@@ -29,6 +29,9 @@
     <body>
         <div id="wrapper">
         <h1><fmt:message key="loginPageTitle" /></h1>
+       
+        <a href='<c:url value="/index.jsp" />'><fmt:message key="appReturnToSite" /></a>
+
         <c:if test="${requestScope['error'] == 'true'}">
             <fmt:message key="loginTryAgain" />
         </c:if>

@@ -34,6 +34,10 @@
 
 <h2><h:outputText value="#{msgs.regFormTitle}" /></h2>
 
+<p><h:outputLink value="../index.jsp">
+    <h:outputText value="#{msgs.appReturnToSite}" />
+</h:outputLink></p>
+
 <p><h:outputText value="#{msgs.regHelp}" /></p>
 
 <h:form>
