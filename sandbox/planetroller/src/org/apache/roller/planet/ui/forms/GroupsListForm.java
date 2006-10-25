@@ -24,7 +24,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.Planet;
+import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PlanetFactory;
+import org.apache.roller.planet.pojos.PlanetConfigData;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 
 /**
@@ -41,7 +43,15 @@ public class GroupsListForm {
         String groupid = (String)params.get("groupid");
         try {
             PlanetGroupData group = planet.getPlanetManager().getGroupById(groupid);
-            planet.getPlanetManager().deleteGroup(group);
+            PlanetManager pmgr = planet.getPlanetManager();
+            PlanetConfigData config = pmgr.getConfiguration();
+            if (config != null && config.getDefaultGroup() != null) {
+                if (group.getHandle().equals(config.getDefaultGroup().getHandle())) {
+                    config.setDefaultGroup(null);
+                    pmgr.saveConfiguration(config);
+                }
+            }
+            pmgr.deleteGroup(group);
             planet.flush();
         } catch (RollerException ex) {
             return "error";
