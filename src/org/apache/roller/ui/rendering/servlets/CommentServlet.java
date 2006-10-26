@@ -204,9 +204,7 @@ public class CommentServlet extends HttpServlet {
             }
             
             // lookup entry specified by comment request
-            WeblogManager weblogMgr = RollerFactory.getRoller().getWeblogManager();
-            entry = weblogMgr.getWeblogEntryByAnchor(weblog, commentRequest.getWeblogAnchor());
-            
+            entry = commentRequest.getWeblogEntry();
             if(entry == null) {
                 throw new RollerException("unable to lookup entry: "+
                         commentRequest.getWeblogAnchor());
@@ -245,16 +243,10 @@ public class CommentServlet extends HttpServlet {
         WeblogEntryCommentForm cf = new WeblogEntryCommentForm();
         cf.setData(comment);
         
-        // check if site is allowing comments
-        if(!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled")) {
-            // TODO: i18n
-            error = "Comments are disabled for this site.";
-        
-        // check if weblog and entry are allowing comments
-        } else if(!weblog.getAllowComments().booleanValue() ||
-                !entry.getCommentsStillAllowed()) {
-            // TODO: i18n
-            error = "Comments not allowed on this entry";
+        // check if comments are allowed for this entry
+        // this checks site-wide settings, weblog settings, and entry settings
+        if(!entry.getCommentsStillAllowed() || !entry.isPublished()) {
+            error = bundle.getString("comments.disabled");
         
         // make sure comment authentication passed
         } else if(!this.authenticator.authenticate(request)) {

@@ -740,9 +740,6 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
      * @roller.wrapPojoMethod type="simple"
      */
     public boolean getCommentsStillAllowed() {
-        if(DRAFT.equals(this.status) || PENDING.equals(this.status)) {
-            return false;
-        }
         if (!RollerRuntimeConfig.getBooleanProperty("users.comments.enabled")) {
             return false;
         }

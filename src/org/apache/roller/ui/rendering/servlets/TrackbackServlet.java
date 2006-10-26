@@ -133,10 +133,11 @@ public class TrackbackServlet extends HttpServlet {
         }
         
         try {
-            boolean siteAllows = weblog.getAllowComments().booleanValue();
             boolean verified = true;
             
-            if (entry!=null && siteAllows && entry.getCommentsStillAllowed()) {
+            // check if trackbacks are allowed for this entry
+            // this checks site-wide settings, weblog settings, and entry settings
+            if (entry != null && entry.getCommentsStillAllowed() && entry.isPublished()) {
                 
                 // Track trackbacks as comments
                 CommentData comment = new CommentData();
@@ -204,8 +205,10 @@ public class TrackbackServlet extends HttpServlet {
                 }
                 
             } else if (entry!=null) {
+                // TODO: i18n
                 error = "Comments and Trackbacks are disabled for the entry you specified.";
             } else {
+                // TODO: i18n
                 error = "Entry not specified.";
             }
             
