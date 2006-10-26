@@ -129,8 +129,11 @@ public final class UploadFileFormAction extends DispatchAction {
             
             String path = theForm.getPath();
             String newDir = theForm.getNewDir();
-            if(newDir != null && newDir.trim().length() > 0 &&
-                    newDir.indexOf("/") == -1 && newDir.indexOf("\\") == -1) {
+            if(newDir != null && 
+                    newDir.trim().length() > 0 &&
+                    newDir.indexOf("/") == -1 && 
+                    newDir.indexOf("\\") == -1 &&
+                    newDir.indexOf("..") == -1) {
                 
                 // figure the new directory path
                 String newDirPath = newDir;
@@ -199,7 +202,8 @@ public final class UploadFileFormAction extends DispatchAction {
             FileManager fmgr = RollerFactory.getRoller().getFileManager();
             
             List uploaded = new ArrayList();
-            if (theForm.getUploadedFiles().length > 0) {
+            if (theForm.getUploadedFiles() != null &&
+                    theForm.getUploadedFiles().length > 0) {
                 
                 // make sure uploads are enabled
                 if(!RollerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
@@ -236,10 +240,19 @@ public final class UploadFileFormAction extends DispatchAction {
                         fileName = theForm.getPath() + "/" + fileName;
                     }
                     
+                    // make sure fileName is valid
+                    if (fileName.indexOf("/") != -1 || 
+                            fileName.indexOf("\\") != -1 ||
+                            fileName.indexOf("..") != -1) {
+                        errors.add(ActionErrors.GLOBAL_ERROR,
+                                new ActionError("uploadFiles.error.badPath", fileName));
+                        continue;
+                    }
+                    
                     try {
                         fmgr.saveFile(website, fileName,
-                                files[i].getContentType(), 
-                                files[i].getFileSize(), 
+                                files[i].getContentType(),
+                                files[i].getFileSize(),
                                 files[i].getInputStream());
                         
                         uploaded.add(fileName);
@@ -311,26 +324,28 @@ public final class UploadFileFormAction extends DispatchAction {
             
             int numDeleted = 0;
             String[] deleteFiles = theForm.getDeleteFiles();
-            for (int i=0; i < deleteFiles.length; i++) {
-                if (deleteFiles[i].trim().startsWith("/") || 
-                        deleteFiles[i].trim().startsWith("\\") || 
-                        deleteFiles[i].indexOf("..") != -1) {
-                    // ignore absolute paths, or paths that contiain '..'
-                } else {
-                    try {
-                        fmgr.deleteFile(website, deleteFiles[i]);
-                        numDeleted++;
-                    } catch (FileNotFoundException ex) {
-                        errors.add(ActionErrors.GLOBAL_ERROR,
-                                new ActionError("uploadFiles.error.badPath"));
-                    } catch (FilePathException ex) {
-                        errors.add(ActionErrors.GLOBAL_ERROR,
-                                new ActionError("uploadFiles.error.badPath"));
-                    } catch (FileIOException ex) {
-                        errors.add(ActionErrors.GLOBAL_ERROR,
-                                new ActionError("uploadFiles.error.delete", deleteFiles[i]));
+            if(deleteFiles != null) {
+                for (int i=0; i < deleteFiles.length; i++) {
+                    if (deleteFiles[i].trim().startsWith("/") ||
+                            deleteFiles[i].trim().startsWith("\\") ||
+                            deleteFiles[i].indexOf("..") != -1) {
+                        // ignore absolute paths, or paths that contiain '..'
+                    } else {
+                        try {
+                            fmgr.deleteFile(website, deleteFiles[i]);
+                            numDeleted++;
+                        } catch (FileNotFoundException ex) {
+                            errors.add(ActionErrors.GLOBAL_ERROR,
+                                    new ActionError("uploadFiles.error.badPath"));
+                        } catch (FilePathException ex) {
+                            errors.add(ActionErrors.GLOBAL_ERROR,
+                                    new ActionError("uploadFiles.error.badPath"));
+                        } catch (FileIOException ex) {
+                            errors.add(ActionErrors.GLOBAL_ERROR,
+                                    new ActionError("uploadFiles.error.delete", deleteFiles[i]));
+                        }
+                        
                     }
-                    
                 }
             }
             
