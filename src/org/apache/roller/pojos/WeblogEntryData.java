@@ -753,9 +753,16 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
         if (getCommentDays() == null || getCommentDays().intValue() == 0) {
             ret = true;
         } else {
+            // we want to use pubtime for calculating when comments expire, but
+            // if pubtime isn't set (like for drafts) then just use updatetime
+            Date pubTime = getPubTime();
+            if(pubTime == null) {
+                pubTime = getUpdateTime();
+            }
+            
             Calendar expireCal = Calendar.getInstance(
                     getWebsite().getLocaleInstance());
-            expireCal.setTime(getPubTime());
+            expireCal.setTime(pubTime);
             expireCal.add(Calendar.DATE, getCommentDays().intValue());
             Date expireDay = expireCal.getTime();
             Date today = new Date();
