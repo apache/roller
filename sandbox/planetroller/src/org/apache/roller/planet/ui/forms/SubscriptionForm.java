@@ -19,6 +19,7 @@ package org.apache.roller.planet.ui.forms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -44,6 +45,7 @@ public class SubscriptionForm implements LoadableForm {
     private PlanetSubscriptionData subscription = new PlanetSubscriptionData();
     private String groupid = null;
     private String subid = null;
+    private Date lastSave = null;
     
     public SubscriptionForm() {}
     
@@ -61,11 +63,13 @@ public class SubscriptionForm implements LoadableForm {
     }
     
     public String edit() throws Exception {
+        lastSave = null;
         FacesContext fctx = FacesContext.getCurrentInstance();
         return load((HttpServletRequest)fctx.getExternalContext().getRequest());
     }
     
     public String add() throws Exception {
+        lastSave = null;
         FacesContext fctx = FacesContext.getCurrentInstance();
         return load((HttpServletRequest)fctx.getExternalContext().getRequest());
     } 
@@ -93,6 +97,7 @@ public class SubscriptionForm implements LoadableForm {
             pmgr.saveGroup(group);
         }
         PlanetFactory.getPlanet().flush();
+        setLastSave(new Date());
         return "editSubscription";
     }    
 
@@ -123,5 +128,13 @@ public class SubscriptionForm implements LoadableForm {
             throw new ValidatorException(msg);
         }
         return;
+    }
+
+    public Date getLastSave() {
+        return lastSave;
+    }
+
+    public void setLastSave(Date lastSave) {
+        this.lastSave = lastSave;
     }
 }

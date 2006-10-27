@@ -18,6 +18,7 @@
 package org.apache.roller.planet.ui.forms;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.faces.context.FacesContext; 
@@ -38,6 +39,7 @@ import org.apache.roller.planet.ui.utils.LoadableForm;
 public class GroupForm implements LoadableForm {
     private static Log log = LogFactory.getLog(GroupsListForm.class);
     private PlanetGroupData group = new PlanetGroupData();
+    private Date lastSave = null;
     
     public GroupForm() {}
     
@@ -52,11 +54,13 @@ public class GroupForm implements LoadableForm {
     }
     
     public String edit() throws Exception {
+        lastSave = null;
         FacesContext fctx = FacesContext.getCurrentInstance();
         return load((HttpServletRequest)fctx.getExternalContext().getRequest());
     }
     
     public String add() throws Exception {
+        lastSave = null;
         group = new PlanetGroupData();
         return "editGroup";
     }
@@ -69,11 +73,12 @@ public class GroupForm implements LoadableForm {
             dbgroup.setTitle(group.getTitle());
             dbgroup.setHandle(group.getHandle());
             dbgroup.setDescription(group.getDescription());
-            planet.getPlanetManager().saveGroup(dbgroup); 
+            planet.getPlanetManager().saveGroup(dbgroup);
         } else {
             planet.getPlanetManager().saveGroup(group); 
         }
         planet.flush();
+        setLastSave(new Date());
         return "editGroup";
     }   
     
@@ -106,5 +111,13 @@ public class GroupForm implements LoadableForm {
             group = planet.getPlanetManager().getGroupById(group.getId());
         }
         return new ArrayList(group.getSubscriptions());
+    }
+
+    public Date getLastSave() {
+        return lastSave;
+    }
+
+    public void setLastSave(Date lastSave) {
+        this.lastSave = lastSave;
     }
 }

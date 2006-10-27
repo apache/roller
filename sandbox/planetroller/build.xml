@@ -109,7 +109,7 @@
     
    
     <!-- Copy files locally for convenience in IDE -->
-    <target name="copy-roller-jars-for-ide">
+    <target name="copy-jars-for-ide">
         <mkdir dir="./lib" />
         <copy todir="./lib">
             <fileset refid="roller-jars" />

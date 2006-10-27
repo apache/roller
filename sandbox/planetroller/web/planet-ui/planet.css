@@ -36,6 +36,10 @@ img {
    color: red;
 }
 
+.error    { border: 1px red    solid; background: #FFAAAA; }
+.success  { border: 1px green  solid; background: #AAFFAA; }
+.warning  { border: 1px yellow solid; background: #FFFFAA; }
+
 table.form {
     width: 80%
 }
@@ -68,4 +72,5 @@ tr.evenRow {
 table.data th {
     background-image: url(images/th-bg-grey.png);
 }
+
 

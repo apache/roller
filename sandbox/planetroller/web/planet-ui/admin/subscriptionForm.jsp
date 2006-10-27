@@ -38,10 +38,10 @@
 <h2><h:outputText value="#{msgs.subscriptionPageTitle}" /></h2>
 <p><h:outputText value="#{msgs.subscriptionHelp}" /></p>
 
-<c:if test="${subscriptionForm.groupid != null}">
+<c:if test="${!empty subscriptionForm.groupid}">
 <p><h:outputLink value="./groupForm.faces?groupid=#{subscriptionForm.groupid}">
     <h:outputText value="#{msgs.subscriptionReturnToGroup}" />
-</h:outputLink></p>
+</h:outputLink></p> 
 </c:if>
 
 <h:inputHidden value="#{subscriptionForm.subscription.id}" />
@@ -51,7 +51,8 @@
 
     <h:outputText value="#{msgs.subscriptionTitle}" />
     <h:panelGroup>        
-        <h:inputText id="title" value="#{subscriptionForm.subscription.title}" required="true" size="60">
+        <h:inputText id="title" required="true" size="60" onchange="dirty()"
+            value="#{subscriptionForm.subscription.title}" >
             <f:validateLength minimum="1" />
         </h:inputText>
         <h:message for="title" styleClass="fieldError" />
@@ -59,7 +60,7 @@
    
     <h:outputText value="#{msgs.subscriptionFeedURL}" />
     <h:panelGroup>        
-        <h:inputText id="feedURL" required="true" size="60"
+        <h:inputText id="feedURL" required="true" size="60" onchange="dirty()"
             value="#{subscriptionForm.subscription.feedURL}"
             validator="#{subscriptionForm.checkURL}" />
         <h:message for="feedURL" styleClass="fieldError" />
@@ -67,7 +68,7 @@
 
     <h:outputText value="#{msgs.subscriptionSiteURL}" />
     <h:panelGroup>        
-        <h:inputText id="siteURL" required="false" size="60"
+        <h:inputText id="siteURL" required="false" size="60" onchange="dirty()"
             value="#{subscriptionForm.subscription.siteURL}"  
             validator="#{subscriptionForm.checkURL}"/>
         <h:message for="siteURL" styleClass="fieldError" />
@@ -77,6 +78,38 @@
 
 <p />
 <h:commandButton value="#{msgs.appSave}" action="#{subscriptionForm.save}" />  
+<script type="text/javascript">
+function dirty() {
+    messages = document.getElementById("messages");
+    messages.className = "warning";
+    var n1 = messages.childNodes[0];
+    var n2 = document.createTextNode("<h:outputText value="#{msgs.appUnsavedChanges} " />");
+    messages.replaceChild(n2, n1);
+}
+</script>
+<c:choose>
+    <c:when test="${subscriptionForm.lastSave != null}">
+        <span id="messages" class="success"><h:outputText value="#{msgs.appSavedAt}" />
+        <h:outputText value="#{subscriptionForm.lastSave}">
+            <f:convertDateTime pattern="h:mm:ss a" />
+        </h:outputText>
+        </span>
+    </c:when>
+    <c:otherwise>
+        <span id="messages"><h:outputText value="#{msgs.appUnchanged}" /></span>
+    </c:otherwise>
+</c:choose>
+
+<c:if test="${!empty subscriptionForm.subscription.id}">
+    <br />
+    <br />
+    <t:commandLink id="addSubscriptionLink" action="#{subscriptionForm.add}" >
+        <h:graphicImage style="" value="../images/feed_add.png"  />
+        <h:outputText value="#{msgs.subscriptionAddSubscription}" />
+        <f:param name="groupid" value="#{subscriptionForm.groupid}" />
+    </t:commandLink> 
+</c:if>
+
 </h:form>    
 
 </div>
