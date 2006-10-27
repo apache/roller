@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.planet.config.PlanetConfig;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
@@ -55,7 +56,8 @@ public class GeneratePlanetTask implements Runnable {
             // Update all feeds in planet
             log.info("Refreshing Planet entries");
             Planet planet = PlanetFactory.getPlanet();
-            planet.getPlanetManager().refreshEntries();
+            planet.getPlanetManager().refreshEntries(
+                RollerConfig.getProperty("planet.aggregator.cache.dir"));                        
             planet.flush();
             planet.release();
             

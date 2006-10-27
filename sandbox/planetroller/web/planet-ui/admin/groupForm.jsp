@@ -46,7 +46,7 @@
     
     <h:outputText value="#{msgs.groupTitle}" />
     <h:panelGroup>        
-        <h:inputText id="title" value="#{groupForm.group.title}" required="true" size="60">
+        <h:inputText id="title" value="#{groupForm.group.title}" required="true" size="60" onchange="dirty()" >
             <f:validateLength minimum="1" />
         </h:inputText>
         <h:message for="title" styleClass="fieldError" />
@@ -54,7 +54,7 @@
 
     <h:outputText value="#{msgs.groupHandle}" />
     <h:panelGroup>        
-        <h:inputText id="handle" value="#{groupForm.group.handle}" required="true" size="60">
+        <h:inputText id="handle" value="#{groupForm.group.handle}" required="true" size="60" onchange="dirty()">
             <f:validateLength minimum="1" />
         </h:inputText>
         <h:message for="handle" styleClass="fieldError" />
@@ -62,15 +62,53 @@
     
     <h:outputText value="#{msgs.groupDescription}" />
     <h:panelGroup>        
-        <h:inputText id="description" value="#{groupForm.group.description}" required="false" size="60">
+        <h:inputText id="description" value="#{groupForm.group.description}" required="false" size="60" onchange="dirty()">
         </h:inputText>
         <h:message for="description" styleClass="fieldError" />
+    </h:panelGroup>
+    
+    <h:outputText value="#{msgs.groupMaxPageEntries}" />
+    <h:panelGroup>        
+        <h:inputText id="maxPageEntries" value="#{groupForm.group.maxPageEntries}" required="false" size="5" onchange="dirty()">
+            <f:validateLongRange minimum="1" maximum="200" />
+        </h:inputText>
+        <h:message for="maxPageEntries" styleClass="fieldError" />
+    </h:panelGroup>
+    
+    <h:outputText value="#{msgs.groupMaxFeedEntries}" />
+    <h:panelGroup>        
+        <h:inputText id="maxFeedEntries" value="#{groupForm.group.maxFeedEntries}" required="false" size="5" onchange="dirty()">
+            <f:validateLongRange minimum="1" maximum="200" />
+        </h:inputText>
+        <h:message for="maxFeedEntries" styleClass="fieldError" />
     </h:panelGroup>
     
 </h:panelGrid>
 
 <p />
-<h:commandButton value="#{msgs.appSave}" action="#{groupForm.save}" />    
+<h:commandButton value="#{msgs.appSave}" action="#{groupForm.save}" />
+<script type="text/javascript">
+function dirty() {
+    messages = document.getElementById("messages");
+    messages.className = "warning";
+    var n1 = messages.childNodes[0];
+    var n2 = document.createTextNode("<h:outputText value="#{msgs.appUnsavedChanges} " />");
+    messages.replaceChild(n2, n1);
+}
+</script>  
+<c:choose>
+    <c:when test="${groupForm.lastSave != null}">
+        <span id="messages" class="success"><h:outputText value="#{msgs.appSavedAt}" /> 
+        <h:outputText value="#{groupForm.lastSave}">
+            <f:convertDateTime pattern="h:mm:ss a" />
+        </h:outputText>
+        </span>
+    </c:when>
+    <c:otherwise>
+        <span id="messages"><h:outputText value="#{msgs.appUnchanged}" /></span>
+    </c:otherwise>
+</c:choose>
+
 
 <c:if test="${groupForm.group.id != null}">
 <h2><h:outputText value="#{msgs.groupSubscriptions}" /></h2>
