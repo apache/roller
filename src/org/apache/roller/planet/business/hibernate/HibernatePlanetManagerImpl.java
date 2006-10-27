@@ -287,7 +287,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             
             if (group != null) {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
+                sb.append("select distinct e from org.apache.roller.planet.pojos.PlanetEntryData e ");
                 sb.append("join e.subscription.groups g ");
                 sb.append("where g.handle=:groupHandle and e.pubTime < :endDate ");
                 if (startDate != null) {
@@ -305,7 +305,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 ret = query.list();
             } else {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
+                sb.append("select distinct e from org.apache.roller.planet.pojos.PlanetEntryData e ");
                 sb.append("join e.subscription.groups g ");
                 sb.append("where (g.handle='external' or g.handle='all') ");
                 sb.append("and e.pubTime < :endDate ");
@@ -354,20 +354,20 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
         return (Date)lastUpdatedByGroup.get(group);
     }
         
-    public void refreshEntries() throws RollerException {
+    public void refreshEntries(String cacheDirPath) throws RollerException {
         
         Date now = new Date();
         long startTime = System.currentTimeMillis();
         PlanetConfigData config = getConfiguration();
         
         // can't continue without cache dir
-        if (config == null || config.getCacheDir() == null) {
+        if (cacheDirPath == null) {
             log.warn("Planet cache directory not set, aborting refresh");
             return;
         }
         
         // allow ${user.home} in cache dir property
-        String cacheDirName = config.getCacheDir().replaceFirst(
+        String cacheDirName = cacheDirPath.replaceFirst(
                 "\\$\\{user.home}",System.getProperty("user.home"));
         
         // allow ${catalina.home} in cache dir property
@@ -514,9 +514,9 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 SyndEntry romeEntry = (SyndEntry) entries.next();
                 PlanetEntryData entry =
                         new PlanetEntryData(feed, romeEntry, sub);
+                log.debug("Entry title=" + entry.getTitle() + " content size=" + entry.getContent().length());
                 if (entry.getPubTime() == null) {
-                    log.debug(
-                            "No published date, assigning fake date for "+feedURL);
+                    log.debug("No published date, assigning fake date for "+feedURL);
                     entry.setPubTime(new Timestamp(cal.getTimeInMillis()));
                 }
                 if (entry.getPermalink() == null) {

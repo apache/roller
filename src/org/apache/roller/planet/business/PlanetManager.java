@@ -154,7 +154,7 @@ public interface PlanetManager extends Serializable {
     //------------------------------------------------------------------ update
     
     /** Refresh entry data by fetching and parsing feeds. */
-    public void refreshEntries() throws RollerException;
+    public void refreshEntries(String cacheDirPath) throws RollerException;
     
     //------------------------------------------------------------------ delete
     
