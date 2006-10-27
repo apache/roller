@@ -789,22 +789,15 @@ Include Javascript code needed for expanding folder macros (undocumented).
 #end
 #end
 
-#** 
-Shows a Tag cloud for a given set of tags
+
+#**
+ Display a list of tag urls for the tags on a given entry.
 *#
-#macro(showTagCloud $tags)
-
-  #foreach ($tag in $tags)
-	<a class="tag s${tag.intensity}" href="$url.tag($tag.name)" title="$tag.count">$tag.name</a> 
-  #end
-			
-#end
-
 #macro(showEntryTags $entry)
   
   #set ( $tags = $entry.tags )
   #foreach($tag in $tags)
-	    <a href="$url.tag($tag.name)" rel="tag">$tag.name</a>&nbsp;
+	    <a href="$url.tag($tag.name)" rel="tag">$tag.name</a> 
   #end
   
 #end
