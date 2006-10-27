@@ -301,10 +301,13 @@ public class CommentServlet extends HttpServlet {
                 mgr.saveComment(comment);
                 RollerFactory.getRoller().flush();
                 
-                reindexEntry(entry);
-                
-                // Clear all caches associated with comment
-                CacheManager.invalidate(comment);
+                // only re-index/invalidate the cache if comment isn't moderated
+                if(!weblog.getCommentModerationRequired()) {
+                    reindexEntry(entry);
+                    
+                    // Clear all caches associated with comment
+                    CacheManager.invalidate(comment);
+                }
                 
                 // Send email notifications
                 String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
