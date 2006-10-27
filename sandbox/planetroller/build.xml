@@ -74,6 +74,7 @@
             <include name="commons-logging-1.0.4.jar"/>
             <include name="commons-lang-2.1.jar"/>  
             <include name="myfaces-api-1.1.4.jar"/>  
+            <include name="tomahawk-1.1.3.jar"/>  
         </fileset>                      
     </path>
     

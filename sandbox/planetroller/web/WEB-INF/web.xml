@@ -21,6 +21,15 @@
     <filter-mapping>
         <filter-name>MyFacesExtensionsFilter</filter-name>
         <url-pattern>*.faces</url-pattern>
+        <init-param>
+            <!-- Uploaded OPML files should be fairly small -->
+            <param-name>uploadMaxFileSize</param-name>
+            <param-value>500k</param-value>
+        </init-param>
+        <init-param>
+            <param-name>uploadThresholdSize</param-name>
+            <param-value>100k</param-value>
+        </init-param>
     </filter-mapping>
 
     <filter-mapping>

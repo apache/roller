@@ -41,7 +41,7 @@
 
         <h:outputText value="#{msgs.configTitle}" />
         <h:panelGroup>
-            <h:inputText id="title" value="#{configForm.planetConfig.title}" required="true" size="20">
+            <h:inputText id="title" value="#{configForm.planetConfig.title}" required="true" size="60">
                 <f:validateLength minimum="1" />
             </h:inputText>
             <h:message for="title" styleClass="fieldError" />
@@ -65,7 +65,7 @@
         
         <h:outputText value="#{msgs.configAdminName}" />
         <h:panelGroup>
-             <h:inputText id="adminName" value="#{configForm.planetConfig.adminName}" required="true" size="20">
+             <h:inputText id="adminName" value="#{configForm.planetConfig.adminName}" required="true" size="60">
                 <f:validateLength minimum="3" />
              </h:inputText>
             <h:message for="adminName" styleClass="fieldError" />
@@ -73,7 +73,7 @@
         
         <h:outputText value="#{msgs.configAdminEmail}" />
         <h:panelGroup>
-            <h:inputText id="adminEmail" value="#{configForm.planetConfig.adminEmail}" required="false" size="20">
+            <h:inputText id="adminEmail" value="#{configForm.planetConfig.adminEmail}" required="false" size="60">
                 <t:validateEmail />
             </h:inputText>
             <h:message for="adminEmail" styleClass="fieldError" />

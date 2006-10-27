@@ -51,7 +51,7 @@
 
     <h:outputText value="#{msgs.subscriptionTitle}" />
     <h:panelGroup>        
-        <h:inputText id="title" value="#{subscriptionForm.subscription.title}" required="true" size="20">
+        <h:inputText id="title" value="#{subscriptionForm.subscription.title}" required="true" size="60">
             <f:validateLength minimum="1" />
         </h:inputText>
         <h:message for="title" styleClass="fieldError" />
@@ -59,7 +59,7 @@
    
     <h:outputText value="#{msgs.subscriptionFeedURL}" />
     <h:panelGroup>        
-        <h:inputText id="feedURL" required="true" size="50"
+        <h:inputText id="feedURL" required="true" size="60"
             value="#{subscriptionForm.subscription.feedURL}"
             validator="#{subscriptionForm.checkURL}" />
         <h:message for="feedURL" styleClass="fieldError" />
@@ -67,7 +67,7 @@
 
     <h:outputText value="#{msgs.subscriptionSiteURL}" />
     <h:panelGroup>        
-        <h:inputText id="siteURL" required="false" size="50"
+        <h:inputText id="siteURL" required="false" size="60"
             value="#{subscriptionForm.subscription.siteURL}"  
             validator="#{subscriptionForm.checkURL}"/>
         <h:message for="siteURL" styleClass="fieldError" />
