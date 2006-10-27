@@ -85,6 +85,7 @@ public class TrackbackServlet extends HttpServlet {
         
         WeblogTrackbackRequest trackbackRequest = null;
         if(!RollerRuntimeConfig.getBooleanProperty("users.trackbacks.enabled")) {
+            // TODO: i18n
             error = "Trackbacks are disabled for this site";
         } else {
             
@@ -122,7 +123,7 @@ public class TrackbackServlet extends HttpServlet {
                 
             } catch (Exception e) {
                 // some kind of error parsing the request or looking up weblog
-                logger.debug("error creating page request", e);
+                logger.debug("error creating trackback request", e);
                 error = e.getMessage();
             }
         }
@@ -187,8 +188,11 @@ public class TrackbackServlet extends HttpServlet {
                     mgr.saveComment(comment);
                     RollerFactory.getRoller().flush();
                     
-                    // Clear all caches associated with comment
-                    CacheManager.invalidate(comment);
+                    // only invalidate the cache if comment isn't moderated
+                    if(!weblog.getCommentModerationRequired()) {
+                        // Clear all caches associated with comment
+                        CacheManager.invalidate(comment);
+                    }
                     
                     // Send email notifications
                     String rootURL = RollerRuntimeConfig.getAbsoluteContextURL();
