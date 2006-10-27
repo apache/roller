@@ -40,7 +40,7 @@ import org.apache.roller.planet.ui.utils.LoadableForm;
 public class SubscriptionForm implements LoadableForm {
     private ResourceBundle bundle = 
         ResourceBundle.getBundle("ApplicationResources");
-    private static Log log = LogFactory.getLog(GroupsListForm.class);
+    private static Log log = LogFactory.getLog(SubscriptionForm.class);
     private PlanetSubscriptionData subscription = new PlanetSubscriptionData();
     private String groupid = null;
     private String subid = null;
@@ -56,8 +56,7 @@ public class SubscriptionForm implements LoadableForm {
             subscription = pmgr.getSubscriptionById(subid);
         } else {
             subscription = new PlanetSubscriptionData();            
-        }
-        groupid = request.getParameter("groupid");        
+        }    
         return "editSubscription";
     }
     

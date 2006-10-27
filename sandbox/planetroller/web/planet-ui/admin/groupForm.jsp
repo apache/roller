@@ -46,7 +46,7 @@
     
     <h:outputText value="#{msgs.groupTitle}" />
     <h:panelGroup>        
-        <h:inputText id="title" value="#{groupForm.group.title}" required="true" size="20">
+        <h:inputText id="title" value="#{groupForm.group.title}" required="true" size="60">
             <f:validateLength minimum="1" />
         </h:inputText>
         <h:message for="title" styleClass="fieldError" />
@@ -54,7 +54,7 @@
 
     <h:outputText value="#{msgs.groupHandle}" />
     <h:panelGroup>        
-        <h:inputText id="handle" value="#{groupForm.group.handle}" required="true" size="20">
+        <h:inputText id="handle" value="#{groupForm.group.handle}" required="true" size="60">
             <f:validateLength minimum="1" />
         </h:inputText>
         <h:message for="handle" styleClass="fieldError" />
@@ -114,7 +114,7 @@
         <f:facet name="header">
             <h:outputText value="#{msgs.appAction}" />
         </f:facet>
-        <h:outputLink value="javascript:removeSubscription('#{sub.id}','#{sub.title}')">
+        <h:outputLink value='javascript:removeSubscription("#{sub.id}","#{sub.title}")'>
             <h:graphicImage value="../images/delete.png"  />
             <h:outputText value="#{msgs.appRemove}" />
         </h:outputLink> 
@@ -126,6 +126,13 @@
 <t:commandLink id="addSubscriptionLink" forceId="true" action="#{subscriptionForm.add}" >
     <h:graphicImage style="" value="../images/feed_add.png"  />
     <h:outputText value="#{msgs.groupAddSubscription}" />
+    <f:param name="groupid" value="#{groupForm.group.id}" />
+</t:commandLink> 
+
+<p />
+<t:commandLink id="uploadOpmlLink" forceId="true" action="#{uploadOpmlForm.presentUploadForm}" >
+    <h:graphicImage style="" value="../images/feed_add.png"  />
+    <h:outputText value="#{msgs.groupUploadOpml}" />
     <f:param name="groupid" value="#{groupForm.group.id}" />
 </t:commandLink> 
 
