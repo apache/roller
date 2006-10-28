@@ -30,7 +30,7 @@
         PlanetGroupData group = pconfig.getDefaultGroup();
         
         // and check to see if group aggregation exists yet
-        String groupPath = application.getRealPath(fwd);
+        String groupPath = application.getRealPath("/" + group.getHandle());
         java.io.File groupDir = new java.io.File(groupPath);
         if (groupDir.exists() && groupDir.isDirectory()) {
             
