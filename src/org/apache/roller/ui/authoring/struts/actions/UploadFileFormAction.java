@@ -235,10 +235,6 @@ public final class UploadFileFormAction extends DispatchAction {
                         // disallow sneaky null terminated strings
                         fileName = fileName.substring(0, terminated).trim();
                     }
-                    if(theForm.getPath() != null && 
-                            theForm.getPath().trim().length() > 0) {
-                        fileName = theForm.getPath() + "/" + fileName;
-                    }
                     
                     // make sure fileName is valid
                     if (fileName.indexOf("/") != -1 || 
@@ -248,6 +244,13 @@ public final class UploadFileFormAction extends DispatchAction {
                                 new ActionError("uploadFiles.error.badPath", fileName));
                         continue;
                     }
+                    
+                    // add on the path element if needed
+                    if(theForm.getPath() != null && 
+                            theForm.getPath().trim().length() > 0) {
+                        fileName = theForm.getPath() + "/" + fileName;
+                    }
+                    
                     
                     try {
                         fmgr.saveFile(website, fileName,
