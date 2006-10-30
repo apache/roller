@@ -21,8 +21,8 @@
 <script type="text/javascript">
 <!--
 function postWeblogEntry() {
-    document.weblogEntryFormEx.summary.value = xinha_editors.textarea1.getHTML().trim();
-    document.weblogEntryFormEx.text.value =    xinha_editors.textarea2.getHTML().trim();
+    document.weblogEntryFormEx.text.value =    xinha_editors.xe_content.getHTML().trim();
+    document.weblogEntryFormEx.summary.value = xinha_editors.xe_summary.getHTML().trim();
     document.weblogEntryFormEx.submit();
 }
 
@@ -39,11 +39,11 @@ _editor_lang = "en";
 
 <%-- ===================================================================== --%>
 <b><fmt:message key="weblogEdit.content" /></b><br />
-<html:textarea styleId="textarea1" property="text" rows="25" cols="50" style="width: 100%"></html:textarea>
+<html:textarea styleId="xe_content" property="text" rows="25" cols="50" style="width: 100%"></html:textarea>
 
 <%-- ===================================================================== --%>
 <b><fmt:message key="weblogEdit.summary" /></b><br />
-<html:textarea styleId="textarea2" property="summary" rows="10" cols="50" style="width: 100%"></html:textarea>
+<html:textarea styleId="xe_summary" property="summary" rows="10" cols="50" style="width: 100%"></html:textarea>
 
 
  
