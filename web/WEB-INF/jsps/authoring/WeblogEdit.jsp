@@ -381,8 +381,13 @@ function fullPreviewMode() {
         </c:if>
 
         <%-- edit mode buttons --%>
-        <c:if test="${model.editMode}" >
+        <c:if test="${model.editMode && !empty weblogEntryFormEx.id}" >
             
+            <input type="button" name="fullPreview"
+                            value='<fmt:message key="weblogEdit.fullPreviewMode" />'
+                            onclick="fullPreviewMode()" />
+                            
+            <%-- // just commenting out old preview feature until we are sure we want to delete it
             <c:choose>
                 <c:when test="${!empty weblogEntryFormEx.id}">
                     <input type="button" name="fullPreview"
@@ -395,15 +400,16 @@ function fullPreviewMode() {
                             onclick="previewMode()" />
                 </c:otherwise>
             </c:choose>
-
+            --%>
         </c:if>
 
         <%-- preview mode buttons --%>
+        <%-- // just commenting out old preview feature until we are sure we want to delete it
         <c:if test="${model.previewMode}" >
             <input type="button" name="edit" value='<fmt:message key="weblogEdit.returnToEditMode" />'
                    onclick="returnToEditMode()" />
         </c:if>
-
+        --%>
     </div>
    
 
