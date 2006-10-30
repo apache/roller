@@ -38,8 +38,8 @@
 
       xinha_editors = xinha_editors ? xinha_editors :
       [
-        'textarea1',
-        'textarea2'
+        'xe_content',
+        'xe_summary'
       ];
 
       /** STEP 3 ***************************************************************
@@ -75,8 +75,8 @@
        ************************************************************************/
 
        xinha_editors = HTMLArea.makeEditors(xinha_editors, xinha_config);
-       xinha_editors['textarea1'].registerPlugins(['FullScreen','CharacterMap']);
-       xinha_editors['textarea2'].registerPlugins(['FullScreen','CharacterMap']);
+       xinha_editors['xe_content'].registerPlugins(['FullScreen','CharacterMap']);
+       xinha_editors['xe_summary'].registerPlugins(['FullScreen','CharacterMap']);
 
 
       /** STEP 5 ***************************************************************
@@ -89,8 +89,8 @@
        *
        ************************************************************************/
        
-       xinha_editors.textarea1.config.height = '300px';
-       xinha_editors.textarea2.config.height = '50px';
+       xinha_editors.xe_content.config.height = '300px';
+       xinha_editors.xe_summary.config.height = '50px';
 
       /** STEP 6 ***************************************************************
        * Finally we "start" the editors, this turns the textareas into
