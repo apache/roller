@@ -40,6 +40,7 @@ import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.pojos.Template;
+import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
@@ -277,11 +278,17 @@ public class PageServlet extends HttpServlet {
         }
         if(pageRequest.getWeblogAnchor() != null) {
             
-            // permalink specified.  entry must exist and locale must match
-            if(pageRequest.getWeblogEntry() == null) {
+            // permalink specified.
+            // entry must exist, be published before current time, and locale must match
+            WeblogEntryData entry = pageRequest.getWeblogEntry();
+            if(entry == null) {
                 invalid = true;
             } else if (pageRequest.getLocale() != null && 
-                    !pageRequest.getWeblogEntry().getLocale().startsWith(pageRequest.getLocale())) {
+                    !entry.getLocale().startsWith(pageRequest.getLocale())) {
+                invalid = true;
+            } else if (!entry.isPublished()) {
+                invalid = true;
+            } else if (new Date().before(entry.getPubTime())) {
                 invalid = true;
             }
             
