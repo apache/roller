@@ -95,7 +95,10 @@ public class RSDServlet extends HttpServlet {
         
 
         // Respond with 304 Not Modified if it is not modified.
-        long lastModified = weblog.getLastModified().getTime();
+        long lastModified = System.currentTimeMillis();
+        if (weblog.getLastModified() != null) {
+            lastModified = weblog.getLastModified().getTime();
+        }
         if (ModDateHeaderUtil.respondIfNotModified(request,response,lastModified)) {
             return;
         }
