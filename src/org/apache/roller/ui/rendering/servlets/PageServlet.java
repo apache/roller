@@ -39,6 +39,7 @@ import org.apache.roller.business.referrers.ReferrerQueueManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogTemplate;
@@ -263,7 +264,8 @@ public class PageServlet extends HttpServlet {
         
         log.debug("page found, dealing with it");
         
-        // validation
+        
+        // validation.  make sure that request input makes sense.
         boolean invalid = false;
         if(pageRequest.getWeblogPageName() != null && page.isHidden()) {
             invalid = true;
@@ -298,8 +300,18 @@ public class PageServlet extends HttpServlet {
             if(pageRequest.getWeblogCategory() == null) {
                 invalid = true;
             }
+            
+        } else if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
+            
+            try {
+                // tags specified.  make sure they exist.
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                invalid = !wmgr.getTagComboExists(pageRequest.getTags(), (isSiteWide) ? null : weblog);
+            } catch (RollerException ex) {
+                invalid = true;
+            }
         }
-       
+
         
         if(invalid) {
             if(!response.isCommitted()) response.reset();

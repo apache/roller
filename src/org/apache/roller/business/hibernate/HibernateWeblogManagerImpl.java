@@ -1417,6 +1417,51 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
 
     }
     
+    
+    /**
+     * Remember, this checks that the exact tag intersection specified by the
+     * list of tags exists either site-wide or for a given weblog.  So if the
+     * list of tags is "foo", "bar" and we only find "foo" then that's a
+     * miss and we return false.
+     */
+    public boolean getTagComboExists(List tags, WebsiteData weblog) 
+            throws RollerException {
+        
+        boolean comboExists = false;
+        
+        if(tags == null) {
+            return false;
+        }
+        
+        try {
+            Session session = ((HibernatePersistenceStrategy) strategy)
+                        .getSession();
+            
+            StringBuffer queryString = new StringBuffer();
+            queryString.append("select distinct name ");
+            queryString.append("from WeblogEntryTagAggregateData ");
+            queryString.append("where name in ( :tags ) ");
+            
+            // are we checking a specific weblog, or site-wide?
+            if (weblog != null)
+                queryString.append("and website.id = '" + weblog.getId() + "' ");
+            else
+                queryString.append("and website is null ");
+            
+            Query query = session.createQuery(queryString.toString());
+            query.setParameterList("tags", tags);
+            
+            List results = query.list();
+            comboExists = (results != null && results.size() == tags.size());
+            
+        } catch (HibernateException ex) {
+            throw new RollerException(ex);
+        }
+            
+        return comboExists;
+    }
+    
+    
     public void updateTagCount(String name, WebsiteData website, int amount) throws RollerException {
         
         Session session = ((HibernatePersistenceStrategy) strategy)

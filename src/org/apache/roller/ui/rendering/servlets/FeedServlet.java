@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
+import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.WeblogManager;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.config.RollerRuntimeConfig;
 import org.apache.roller.pojos.StaticTemplate;
@@ -168,6 +170,41 @@ public class FeedServlet extends HttpServlet {
         }
 
 
+        // validation.  make sure that request input makes sense.
+        boolean invalid = false;
+        if(feedRequest.getLocale() != null) {
+            
+            // locale view only allowed if weblog has enabled it
+            if(!feedRequest.getWeblog().isEnableMultiLang()) {
+                invalid = true;
+            }
+            
+        }
+        if(feedRequest.getWeblogCategoryName() != null) {
+            
+            // category specified.  category must exist.
+            if(feedRequest.getWeblogCategory() == null) {
+                invalid = true;
+            }
+            
+        } else if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
+            
+            try {
+                // tags specified.  make sure they exist.
+                WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
+                invalid = !wmgr.getTagComboExists(feedRequest.getTags(), (isSiteWide) ? null : weblog);
+            } catch (RollerException ex) {
+                invalid = true;
+            }
+        }
+        
+        if(invalid) {
+            if(!response.isCommitted()) response.reset();
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        
+        
         // looks like we need to render content
         HashMap model = new HashMap();
         String pageId = null;
