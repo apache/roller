@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * WeblogEntryTest.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on April 9, 2006, 4:38 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.business;
@@ -446,6 +441,52 @@ public class WeblogEntryTest extends TestCase {
 
         // teardown our test entry
         TestUtils.teardownWeblogEntry(id);
+        TestUtils.endSession(true);
+    }
+    
+    public void testTagsExist() throws Exception {
+        
+        WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
+
+        WebsiteData weblog = TestUtils.setupWeblog("tagsExistWeblog1", testUser);
+        String wid = weblog.getId();
+        
+        // setup some test entries to use
+        WeblogEntryData entry = TestUtils.setupWeblogEntry("tagsExistEntry1", testWeblog
+                .getDefaultCategory(), testWeblog, testUser);
+        String id1 = entry.getId();
+        entry.addTag("blahTag");
+        entry.addTag("fooTag");
+        mgr.saveWeblogEntry(entry);
+
+        WeblogEntryData entry2 = TestUtils.setupWeblogEntry("tagsExistEntry2", weblog
+                .getDefaultCategory(), weblog, testUser);
+        String id2 = entry2.getId();
+        entry2.addTag("aaaTag");
+        entry2.addTag("bbbTag");
+        mgr.saveWeblogEntry(entry2);
+        TestUtils.endSession(true);
+        
+        // we'll need these
+        List tags1 = new ArrayList();
+        tags1.add("nonExistTag");
+        
+        List tags2 = new ArrayList();
+        tags2.add("blahtag");
+        
+        // test site-wide
+        this.assertTrue(mgr.getTagComboExists(tags2, null));
+        this.assertFalse(mgr.getTagComboExists(tags1, null));
+        
+        // test weblog specific
+        this.assertTrue(mgr.getTagComboExists(tags2, testWeblog));
+        this.assertFalse(mgr.getTagComboExists(tags1, testWeblog));
+        this.assertFalse(mgr.getTagComboExists(tags2, weblog));
+        
+        // teardown our test data
+        TestUtils.teardownWeblogEntry(id1);
+        TestUtils.teardownWeblogEntry(id2);
+        TestUtils.teardownWeblog(wid);
         TestUtils.endSession(true);
     }
     
