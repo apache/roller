@@ -1,21 +1,20 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
- * under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.  For additional information regarding
- * copyright in this work, please see the NOTICE file in the top level
- * directory of this distribution.
- */
-
+* Licensed to the Apache Software Foundation (ASF) under one or more
+*  contributor license agreements.  The ASF licenses this file to You
+* under the Apache License, Version 2.0 (the "License"); you may not
+* use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.  For additional information regarding
+* copyright in this work, please see the NOTICE file in the top level
+* directory of this distribution.
+*/
 package org.apache.roller.webservices.json;
 
 import java.io.IOException;
@@ -38,19 +37,20 @@ import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.util.Utilities;
 
-
 /**
  * Return list of tags matching a startsWith strings. <br />
  * 
  * @web.servlet name="TagStatsServlet" 
  * @web.servlet-mapping url-pattern="/roller-services/json/tags/*"
- *
  * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
  */
 public class TagStatsServlet extends HttpServlet {
     
     private final int MAX_LENGTH = 100;
     
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {    
@@ -58,9 +58,6 @@ public class TagStatsServlet extends HttpServlet {
         int limit = MAX_LENGTH;       
         try { 
             limit = Integer.parseInt(request.getParameter("limit"));
-            if(limit > MAX_LENGTH) {
-                limit = MAX_LENGTH;
-            }
         } catch (Throwable ignored) {}
         
         String pathInfo = request.getPathInfo();
@@ -78,32 +75,24 @@ public class TagStatsServlet extends HttpServlet {
             WebsiteData website = null;
             String startsWith = null;            
             
-            // request context is always the first path segment,
-            // we expect the value to be either 'all' or 'weblog'
-            // if the context is 'weblog' then the next part is a weblog handle
+            // website handle is always the first path segment,
+            // only throw an exception when not found if we have a tag prefix 
             if(path.length > 0) {
-                String context = path[0];
-                if(context != null && "weblog".equals(context)) {
-                    try {
-                        UserManager umgr = RollerFactory.getRoller().getUserManager();
-                        website = umgr.getWebsiteByHandle(path[1], Boolean.TRUE);
-                        if (website == null)
-                            throw new RollerException();
-                    } catch (RollerException ex) {
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Weblog not found.");
-                        return;
-                    }
-                } else if(context == null || !"all".equals(context) || path.length > 3) {
-                    // bad url for this servlet
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Bad url.");
+                try {
+                    UserManager umgr = RollerFactory.getRoller().getUserManager();
+                    website = umgr.getWebsiteByHandle(path[0], Boolean.TRUE);
+                    if (website == null && path.length > 1)
+                        throw new RollerException();                
+                } catch (RollerException ex) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Weblog handle not found.");
                     return;
-                }
+                }    
             }
             
-            if(path.length == 3) {
-                startsWith = path[2].trim();
-            } else if(path.length == 2 && website == null) {
+            if(path.length == 2) {
                 startsWith = path[1].trim();
+            } else if(path.length == 1 && website == null) {
+                startsWith = path[0].trim();
             }
                                     
             List tags = wmgr.getTags(website, null, startsWith, limit);
@@ -130,10 +119,8 @@ public class TagStatsServlet extends HttpServlet {
             response.getWriter().println("\n  ]\n}");
             
             response.flushBuffer();
-            
         } catch (RollerException e) {
             throw new ServletException(e.getMessage());
         }
     }
-    
 }
