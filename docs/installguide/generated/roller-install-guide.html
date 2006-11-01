@@ -3,19 +3,27 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
 	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="StarOffice 8  (Solaris x86)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Solaris x86)">
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20060912;13352900">
+	<META NAME="CHANGED" CONTENT="20061101;8311400">
 	<STYLE>
 	<!--
 		@page { size: 8.5in 11in; margin: 0.5in }
-		P { margin-bottom: 0.08in }
+		P { margin-bottom: 0.05in }
 		P.western { font-family: "Times New Roman" }
 		H2.western { font-family: "Times New Roman" }
+		H2.cjk { font-family: "Andale Sans UI" }
+		H2.ctl { font-family: "Lucidasans" }
 		H3.western { font-family: "Times New Roman" }
+		H3.cjk { font-family: "Andale Sans UI" }
+		H3.ctl { font-family: "Lucidasans" }
 		H4.western { font-family: "Times New Roman"; font-size: 13pt }
+		H4.cjk { font-family: "Andale Sans UI" }
+		H4.ctl { font-family: "Lucidasans" }
+		PRE { font-family: "Cumberland", monospace }
+		TT { font-family: "Cumberland", monospace }
 	-->
 	</STYLE>
 </HEAD>
@@ -30,8 +38,8 @@
 </P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 40pt"><B>Installation
 Guide</B></FONT></P>
-<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT COLOR="#ff0000"><FONT SIZE=7 STYLE="font-size: 40pt"><B>DRAFT
-#20060912</B></FONT></FONT></P>
+<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
+</P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><BR>
 </P>
 <P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT SIZE=7 STYLE="font-size: 32pt"><B>Apache
@@ -660,7 +668,7 @@ file.</P>
 <H3 CLASS="western">STEP 7.2: Create <TT>search-index</TT> directory</H3>
 <P CLASS="western">By default, Roller creates and maintains its text
 search index data in files under the directory</P>
-<P CLASS="western"><TT><FONT FACE="Courier New">	${user.home}/roller_data/roller-index</FONT></TT>
+<P CLASS="western"><TT><FONT FACE="Courier New">	${user.home}/roller_data/search-index</FONT></TT>
 </P>
 <P CLASS="western">Again, <TT><FONT FACE="Courier New">${user.home}</FONT>
 </TT>is the Java system property that normally evaluates to the home
@@ -726,7 +734,7 @@ properties. For example:</P>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><B>2) </B>Specify a
 custom properties file via JVM option. This is another good option
-but is more dependant on what servlet container you use. For example:</P>
+but is more dependent on what servlet container you use. For example:</P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 </P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><FONT FACE="Courier New"><FONT SIZE=3>	#
@@ -1012,7 +1020,7 @@ to somewhere safe, for example:
 <PRE>   <FONT FACE="Courier New"><FONT SIZE=3>% cd $CATALINA_HOME/webapps</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mkdir /somewhere/safe/roller-old</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mv roller /somewhere/safe/roller-old</FONT></FONT></PRE><H3 CLASS="western">
-<A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller11"></A><A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
+<A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller11"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
 UPGRADE STEP 2: Install the new Roller 
 </H3>
 <P CLASS="western">Follow the normal installation instructions to
@@ -1027,7 +1035,7 @@ install Roller, except:
 	the installation, we'll do that later 
 	</P>
 </UL>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller12"></A><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller12"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
 UPGRADE STEP 3: Copy resources and update configs 
 </H3>
 <H4 CLASS="western"><A NAME="section-UpgradeGuide_2.1-3.1CopyYourOldResourcesAndOtherFilesYouveAdded"></A>
@@ -1067,14 +1075,14 @@ installation guide.</P>
 <P CLASS="western" STYLE="margin-bottom: 0in"><BR>
 </P>
 <UL>
-	<LI><P CLASS="western" STYLE="margin-bottom: 0in"><B>WARNING: The
-	files required for Roller's JSPWiki plugin, Ekit editor and
+	<LI VALUE=1><P CLASS="western" STYLE="margin-bottom: 0in"><B>WARNING:
+	The files required for Roller's JSPWiki plugin, Ekit editor and
 	Javascript enhanced editor have been removed from the Roller
 	distribution. If you'd like to continue to use these plugins, please
 	visit the Roller Support project on Java.Net
 	(http://roller.dev.java.net).</B></P>
 </UL>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller13"></A><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller13"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
 UPGRADE STEP 4: Upgrade the database 
 </H3>
 <P CLASS="western">Use the appropriate database upgrade script to
@@ -1102,7 +1110,7 @@ PostgreSQL, HSQLDB and more.
 <P CLASS="western">There is an upgrade script for each release of
 Roller. If you're upgrading from Roller 2.3, which was the last
 release before 3.0 you'll only need to run two scripts:
-<TT><FONT FACE="Courier New">210-to-230-migration.sql</FONT></TT> and
+<TT><FONT FACE="Courier New">230-to-240-migration.sql</FONT></TT> and
 <FONT FACE="Courier New">240-to-300-migration.sql</FONT> (Roller 2.4
 was never officially released). For example, here's how you'd do that
 for a MySQL database running on UNIX: 
@@ -1119,7 +1127,7 @@ for a MySQL database running on UNIX:
 <P CLASS="western">If you're upgrading from an earlier release you'll
 have to run each of the older scripts in order to upgrade your
 database.</P>
-<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller14"></A><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller14"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
 UPGRADE STEP 5: Startup your app server 
 </H3>
 <P CLASS="western">Use the standard Tomcat <FONT FACE="Courier New">startup.sh</FONT>
@@ -1138,9 +1146,6 @@ can't diagnose and fix your startup program, then subscribe to the
 Roller user mailing list for help. If there are any interesting
 messages in the log files, send those along too. 
 </P>
-<P CLASS="western"><BR><BR>
-</P>
-<H2 CLASS="western"></H2>
 <H2 CLASS="western" STYLE="page-break-before: always">Appendix B: The
 <FONT FACE="Courier New">WEB-INF/roller.properties</FONT> file</H2>
 <P CLASS="western">This file defines the default start-up properties
