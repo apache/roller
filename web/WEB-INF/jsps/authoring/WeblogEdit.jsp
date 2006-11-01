@@ -17,7 +17,6 @@
 -->
 <%@ include file="/taglibs.jsp" %>
 <%@ page import="org.apache.roller.pojos.*" %>
-<%@ page import="org.apache.roller.util.URLUtilities" %>
 <%@ page import="org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx" %>
 <%@ page import="org.apache.roller.ui.authoring.struts.actions.WeblogEntryPageModel" %>
 <%
@@ -174,7 +173,7 @@ function fullPreviewMode() {
 		<br/>
         <script type="text/javascript">
         <!--
-		new RollerTagsAutoCompleter("entryEditTags", "entryEditTagsChoices", "<%= URLUtilities.getWeblogTagsJsonURL(model.getWeblogEntry().getWebsite(), false) %>", { tokens : [' ',','], minChars: 2 });
+		new RollerTagsAutoCompleter("entryEditTags", "entryEditTagsChoices", "<%= request.getContextPath() %>/roller-services/json/tags/<%= model.getWeblogEntry().getWebsite().getHandle() %>", { tokens : [' ',','], minChars: 2 });
         // --></script>
     </td></tr> 
     
