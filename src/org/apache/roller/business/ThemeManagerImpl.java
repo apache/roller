@@ -228,6 +228,11 @@ public class ThemeManagerImpl implements ThemeManager {
                 String path = resourceFile.getAbsolutePath().substring(
                         this.themeDir.length()+theme.getName().length()+1);
                 
+                // make sure path isn't prefixed with a /
+                if(path.startsWith("/")) {
+                    path = path.substring(1);
+                }
+                
                 log.debug("Importing resource "+resourceFile.getAbsolutePath()+" to "+path);
                 
                 try {
