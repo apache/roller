@@ -8,11 +8,28 @@ README.txt
    reflection of the completeness or stability of the code, it does indicate 
    that the project has yet to be fully endorsed by the ASF.
 
-   To install Roller, follow the instructions in the Installation Guide:
-   http://rollerweblogger.org/wiki/Wiki.jsp?page=InstallationGuide
+   To install Roller, follow the instructions in the Installation Guide,
+   which is available in three formats:
 
-   To use Roller, follow the instructions in the Users Guide:
-   http://rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide
+       HTML       - docs/intallguide/generated/roller-install-guide.html
+       PDF        - docs/intallguide/generated/roller-install-guide.pdf
+       OpenOffice - docs/intallguide/roller-install-guide.odt
+
+
+   To use Roller, follow the instructions in the Users Guide, which is also 
+   available in a variety of formats.
+
+       HTML       - docs/userguide/generated/roller-user-guide.html
+       PDF        - docs/userguide/generated/roller-user-guide.pdf
+       OpenOffice - docs/userguide/roller-user-guide.odt
+
+   There is also a Template Author Guide, which explains how to customize 
+   Roller blog page templates, available in multiple formats.
+
+       HTML       - docs/template/generated/roller-template-guide.html
+       PDF        - docs/template/generated/roller-template-guide.pdf
+       OpenOffice - docs/template/roller-template-guide.odt
+
           
 See also
 
