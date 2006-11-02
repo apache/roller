@@ -61,10 +61,33 @@ public class TagStatsServlet extends HttpServlet {
         } catch (Throwable ignored) {}
         
         String pathInfo = request.getPathInfo();
-        String[] path = new String[0];
+        String handle = null;
+        String prefix = null;
         
-        if(!StringUtils.isEmpty(pathInfo)) {
-            path = StringUtils.split(pathInfo, '/');
+        if(pathInfo != null) {
+          
+          // remove first slash
+          if(pathInfo.startsWith("/"))
+            pathInfo = pathInfo.substring(1);
+          
+          // find a slash
+          int slash = pathInfo.indexOf("/");
+          
+          // if .../tags/handle/
+          if(slash > -1) {
+            handle = pathInfo.substring(0,slash);
+            pathInfo = pathInfo.substring(slash+1);
+          }
+          
+          // double-slash .../tags// or .../tags/handle/adfa/
+          if(pathInfo.indexOf("/") > -1) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL: unncessary slash.");
+            return;
+          }
+          
+          // keep prefix null unless we have one.
+          if(pathInfo.length() > 0)
+            prefix = pathInfo;
         }
                                         
         Roller roller = RollerFactory.getRoller();
@@ -72,34 +95,27 @@ public class TagStatsServlet extends HttpServlet {
             response.setContentType("text/html; charset=utf-8");
             
             WeblogManager wmgr = roller.getWeblogManager();
-            WebsiteData website = null;
-            String startsWith = null;            
+            WebsiteData website = null;           
             
             // website handle is always the first path segment,
             // only throw an exception when not found if we have a tag prefix 
-            if(path.length > 0) {
+            if(handle != null) {
                 try {
                     UserManager umgr = RollerFactory.getRoller().getUserManager();
-                    website = umgr.getWebsiteByHandle(path[0], Boolean.TRUE);
-                    if (website == null && path.length > 1)
+                    website = umgr.getWebsiteByHandle(handle, Boolean.TRUE);
+                    if (website == null)
                         throw new RollerException();                
                 } catch (RollerException ex) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Weblog handle not found.");
                     return;
                 }    
             }
-            
-            if(path.length == 2) {
-                startsWith = path[1].trim();
-            } else if(path.length == 1 && website == null) {
-                startsWith = path[0].trim();
-            }
                                     
-            List tags = wmgr.getTags(website, null, startsWith, limit);
+            List tags = wmgr.getTags(website, null, prefix, limit);
             
             response.getWriter().println("{");
             response.getWriter().print("  prefix : \"");
-            response.getWriter().print(startsWith == null ? "" : startsWith);
+            response.getWriter().print(prefix == null ? "" : prefix);
             response.getWriter().println("\",");
             response.getWriter().print("  weblog : \"");
             response.getWriter().print(website != null ? website.getHandle() : "");
