@@ -114,7 +114,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         // remove tags
         Criteria tagQuery = session.createCriteria(WeblogEntryTagData.class)
-            .add(Expression.eq("website.id", website.getId()));
+            .add(Expression.eq("weblog.id", website.getId()));
         for(Iterator iter = tagQuery.list().iterator(); iter.hasNext();) {
             WeblogEntryTagData tagData = (WeblogEntryTagData) iter.next();
             this.strategy.remove(tagData);
@@ -124,14 +124,14 @@ public class HibernateUserManagerImpl implements UserManager {
         List tags = wmgr.getTags(website, null, null, -1);
         for(Iterator iter = tags.iterator(); iter.hasNext();) {
             TagStat stat = (TagStat) iter.next();
-            Query query = session.createQuery("update WeblogEntryTagAggregateData set total = total - ? where name = ? and website is null");
+            Query query = session.createQuery("update WeblogEntryTagAggregateData set total = total - ? where name = ? and weblog is null");
             query.setParameter(0, new Integer(stat.getCount()));
             query.setParameter(1, stat.getName());
             query.executeUpdate();
         }
         
         // delete all weblog tag aggregates
-        session.createQuery("delete from WeblogEntryTagAggregateData where website = ?")
+        session.createQuery("delete from WeblogEntryTagAggregateData where weblog = ?")
             .setParameter(0, website).executeUpdate();
         
         // delete all bad counts
