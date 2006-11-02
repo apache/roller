@@ -97,7 +97,7 @@ public class WeblogEntryTagData extends PersistentObject
         return this.website;
     }
 
-    public void setWebsite(org.apache.roller.pojos.WebsiteData website)
+    public void setWeblog(org.apache.roller.pojos.WebsiteData website)
     {
         this.website = website;
     }

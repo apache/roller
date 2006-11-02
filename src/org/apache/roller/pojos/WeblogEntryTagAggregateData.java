@@ -89,7 +89,7 @@ public class WeblogEntryTagAggregateData extends PersistentObject
     }
     
     /** @ejb:persistent-field */
-    public void setWebsite(WebsiteData website) {
+    public void setWeblog(WebsiteData website) {
         this.website = website;
     }    
 
