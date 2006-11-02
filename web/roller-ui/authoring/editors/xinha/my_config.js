@@ -90,7 +90,7 @@
        ************************************************************************/
        
        xinha_editors.xe_content.config.height = '300px';
-       xinha_editors.xe_summary.config.height = '50px';
+       xinha_editors.xe_summary.config.height = '200px';
 
       /** STEP 6 ***************************************************************
        * Finally we "start" the editors, this turns the textareas into
