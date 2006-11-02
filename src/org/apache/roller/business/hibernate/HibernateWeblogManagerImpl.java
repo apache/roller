@@ -46,7 +46,6 @@ import org.apache.roller.pojos.RefererData;
 import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.TagStatComparator;
-import org.apache.roller.pojos.TaskLockData;
 import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WeblogCategoryAssoc;
 import org.apache.roller.pojos.WeblogCategoryData;
@@ -1308,10 +1307,10 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             queryString.append("select name, sum(total) ");
             queryString.append("from WeblogEntryTagAggregateData where ");
             if (website != null) {
-                queryString.append("website.id = ? ");
+                queryString.append("weblog.id = ? ");
                 params.add(website.getId());
             } else {
-                queryString.append("website = NULL ");
+                queryString.append("weblog = NULL ");
             }
             if (startDate != null) {
                 queryString.append("and lastUsed >= ? ");
@@ -1389,9 +1388,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             queryString.append("select name, sum(total) ");
             queryString.append("from WeblogEntryTagAggregateData where ");
             if (website != null)
-                queryString.append("website.id = '" + website.getId() + "' ");
+                queryString.append("weblog.id = '" + website.getId() + "' ");
             else
-                queryString.append("website = NULL ");
+                queryString.append("weblog = NULL ");
             if (startsWith != null && startsWith.length() > 0)
                 queryString.append("and name like '" + startsWith + "%' ");
 
@@ -1417,6 +1416,51 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
 
     }
     
+    
+    /**
+     * Remember, this checks that the exact tag intersection specified by the
+     * list of tags exists either site-wide or for a given weblog.  So if the
+     * list of tags is "foo", "bar" and we only find "foo" then that's a
+     * miss and we return false.
+     */
+    public boolean getTagComboExists(List tags, WebsiteData weblog) 
+            throws RollerException {
+        
+        boolean comboExists = false;
+        
+        if(tags == null) {
+            return false;
+        }
+        
+        try {
+            Session session = ((HibernatePersistenceStrategy) strategy)
+                        .getSession();
+            
+            StringBuffer queryString = new StringBuffer();
+            queryString.append("select distinct name ");
+            queryString.append("from WeblogEntryTagAggregateData ");
+            queryString.append("where name in ( :tags ) ");
+            
+            // are we checking a specific weblog, or site-wide?
+            if (weblog != null)
+                queryString.append("and weblog.id = '" + weblog.getId() + "' ");
+            else
+                queryString.append("and weblog is null ");
+            
+            Query query = session.createQuery(queryString.toString());
+            query.setParameterList("tags", tags);
+            
+            List results = query.list();
+            comboExists = (results != null && results.size() == tags.size());
+            
+        } catch (HibernateException ex) {
+            throw new RollerException(ex);
+        }
+            
+        return comboExists;
+    }
+    
+    
     public void updateTagCount(String name, WebsiteData website, int amount) throws RollerException {
         
         Session session = ((HibernatePersistenceStrategy) strategy)
@@ -1432,7 +1476,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
                         
         Junction conjunction = Expression.conjunction();
         conjunction.add(Expression.eq("name", name));
-        conjunction.add(Expression.eq("website", website));
+        conjunction.add(Expression.eq("weblog", website));
 
         // The reason why add order lastUsed desc is to make sure we keep picking the most recent
         // one in the case where we have multiple rows (clustered environment)
@@ -1446,7 +1490,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
 
         conjunction = Expression.conjunction();
         conjunction.add(Restrictions.eq("name", name));
-        conjunction.add(Restrictions.isNull("website"));
+        conjunction.add(Restrictions.isNull("weblog"));
         
         criteria = session.createCriteria(WeblogEntryTagAggregateData.class)
             .add(conjunction).addOrder(Order.desc("lastUsed")).setMaxResults(1);
@@ -1461,7 +1505,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             weblogTagData.setLastUsed(lastUsed);
             session.save(weblogTagData);
         } else if(weblogTagData != null) {
-            session.createQuery("update WeblogEntryTagAggregateData set total = total + ?, lastUsed = current_timestamp() where name = ? and website = ?")
+            session.createQuery("update WeblogEntryTagAggregateData set total = total + ?, lastUsed = current_timestamp() where name = ? and weblog = ?")
             .setInteger(0, amount)
             .setString(1, weblogTagData.getName())
             .setParameter(2, website)
@@ -1474,7 +1518,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             siteTagData.setLastUsed(lastUsed);
             session.save(siteTagData);
         } else if(siteTagData != null) {
-            session.createQuery("update WeblogEntryTagAggregateData set total = total + ?, lastUsed = current_timestamp() where name = ? and website is null")
+            session.createQuery("update WeblogEntryTagAggregateData set total = total + ?, lastUsed = current_timestamp() where name = ? and weblog is null")
             .setInteger(0, amount)
             .setString(1, siteTagData.getName())
             .executeUpdate();            

@@ -150,15 +150,20 @@ public class FileManagerImpl implements FileManager {
                          InputStream is)
             throws FileNotFoundException, FilePathException, FileIOException {
         
+        String savePath = path;
+        if(path.startsWith("/")) {
+            savePath = path.substring(1);
+        }
+        
         // make sure we are allowed to save this file
         RollerMessages msgs = new RollerMessages();
-        if (!canSave(weblog, path, contentType, size, msgs)) {
+        if (!canSave(weblog, savePath, contentType, size, msgs)) {
             throw new FileIOException(msgs.toString());
         }
         
         // make sure uploads area exists for this weblog
         File dirPath = this.getRealFile(weblog, null);
-        File saveFile = new File(dirPath.getAbsolutePath() + File.separator + path);
+        File saveFile = new File(dirPath.getAbsolutePath() + File.separator + savePath);
         
         byte[] buffer = new byte[8192];
         int bytesRead = 0;
@@ -192,13 +197,18 @@ public class FileManagerImpl implements FileManager {
         // get path to weblog's uploads area
         File weblogDir = this.getRealFile(weblog, null);
         
-        if(path != null && path.indexOf('/') != -1) {
+        String savePath = path;
+        if(path.startsWith("/")) {
+            savePath = path.substring(1);
+        }
+        
+        if(savePath != null && savePath.indexOf('/') != -1) {
             throw new FilePathException("Invalid path ["+path+"], "+
                         "trying to use nested directories.");
         }
         
         // now construct path to new directory
-        File dir = new File(weblogDir.getAbsolutePath() + File.separator + path);
+        File dir = new File(weblogDir.getAbsolutePath() + File.separator + savePath);
         
         // check if it already exists
         if(dir.exists() && dir.isDirectory() && dir.canRead()) {
