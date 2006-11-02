@@ -54,7 +54,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     private String type = null;
     private String format = null;
     private String weblogCategoryName = null;
-    private List   tags = new ArrayList();
+    private List   tags = null;
     private boolean excerpts = false;
     
     // heavyweight attributes
@@ -151,7 +151,7 @@ public class WeblogFeedRequest extends WeblogRequest {
             log.debug("type = "+this.type);
             log.debug("format = "+this.format);
             log.debug("weblogCategory = "+this.weblogCategoryName);
-            log.debug("tags = "+ Utilities.stringArrayToString((String[])this.tags.toArray(new String[this.tags.size()]), ","));            
+            log.debug("tags = "+this.tags);
             log.debug("excerpts = "+this.excerpts);
         }
     }

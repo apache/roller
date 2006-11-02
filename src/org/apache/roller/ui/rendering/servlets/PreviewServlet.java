@@ -135,7 +135,7 @@ public class PreviewServlet extends HttpServlet {
         
         // set the content type
         String pageLink = previewRequest.getWeblogPageName();
-        String mimeType = RollerContext.getServletContext().getMimeType(pageLink);
+        String mimeType = pageLink !=  null ? RollerContext.getServletContext().getMimeType(pageLink) : null;        
         String contentType = "text/html; charset=utf-8";
         if(mimeType != null) {
             // we found a match ... set the content type

@@ -427,6 +427,22 @@ public interface WeblogManager {
             throws RollerException;    
     
     /**
+     * Does the specified tag combination exist?  Optionally confined to a specific weblog.
+     *
+     * This tests if the intersection of the tags listed will yield any results
+     * and returns a true/false value if so.  This means that if the tags list
+     * is "foo", "bar" and only the tag "foo" has been used then this method
+     * should return false.
+     *
+     * @param tags The List of tags to check for.
+     * @param weblog The weblog to confine the check to.
+     * @return True if tags exist, false otherwise.
+     * @throws RollerException If there is any problem doing the operation.
+     */
+    public boolean getTagComboExists(List tags, WebsiteData weblog) 
+        throws RollerException;
+    
+    /**
      * This method maintains the tag aggregate table up-to-date with total counts. More
      * specifically every time this method is called it will act upon exactly two rows
      * in the database (tag,website,count), one with website matching the argument passed

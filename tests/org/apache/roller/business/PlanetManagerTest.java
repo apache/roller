@@ -305,7 +305,7 @@ public class PlanetManagerTest extends TestCase {
             TestUtils.endSession(true);
         }
         {
-            planet.refreshEntries();
+            planet.refreshEntries(null);
             TestUtils.endSession(true);
             
             PlanetSubscriptionData sub = planet.getSubscription(feed_url1);
@@ -355,7 +355,7 @@ public class PlanetManagerTest extends TestCase {
                 TestUtils.endSession(true);
             }
             {
-                planet.refreshEntries();
+                planet.refreshEntries(null);
                 TestUtils.endSession(true);
                 
                 int count = 0;

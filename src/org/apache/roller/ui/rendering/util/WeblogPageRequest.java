@@ -62,7 +62,7 @@ public class WeblogPageRequest extends WeblogRequest {
     private String weblogPageName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
-    private List tags = new ArrayList();
+    private List tags = null;
     private int pageNum = 0;
     private Map customParams = new HashMap();
     
@@ -197,7 +197,7 @@ public class WeblogPageRequest extends WeblogRequest {
             }
             
             // only check for other params if we didn't find an anchor above or tags
-            if(this.weblogAnchor == null && tags.size() == 0) {
+            if(this.weblogAnchor == null && this.tags == null) {
                 if(request.getParameter("date") != null) {
                     String date = request.getParameter("date");
                     if(this.isValidDateString(date)) {
@@ -246,7 +246,7 @@ public class WeblogPageRequest extends WeblogRequest {
             log.debug("weblogAnchor = "+this.weblogAnchor);
             log.debug("weblogDate = "+this.weblogDate);
             log.debug("weblogCategory = "+this.weblogCategoryName);
-            log.debug("tags = "+ Utilities.stringArrayToString((String[])this.tags.toArray(new String[this.tags.size()]), ","));
+            log.debug("tags = "+this.tags);
             log.debug("weblogPage = "+this.weblogPageName);
             log.debug("pageNum = "+this.pageNum);
         }
