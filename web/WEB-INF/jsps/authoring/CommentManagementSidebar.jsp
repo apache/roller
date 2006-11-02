@@ -80,7 +80,6 @@ CommentManagementAction.CommentManagementPageModel model =
             <br />
         </label> 
         <div>
-        <div>
             <html:radio property="pendingString" value="ALL">
                 <fmt:message key="commentManagement.all" /></html:radio><br />
             <html:radio property="pendingString" value="ONLY_PENDING">
