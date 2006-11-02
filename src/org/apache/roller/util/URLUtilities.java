@@ -357,6 +357,32 @@ public final class URLUtilities {
     
     
     /**
+     * Get url to JSON tags service url, optionally for a given weblog.
+     */
+    public static final String getWeblogTagsJsonURL(WebsiteData weblog,
+                                                    boolean absolute) {
+        
+        StringBuffer url = new StringBuffer();
+        
+        if(absolute) {
+            url.append(RollerRuntimeConfig.getAbsoluteContextURL());
+        } else {
+            url.append(RollerRuntimeConfig.getRelativeContextURL());
+        }
+        
+        // json tags service base
+        url.append("/roller-services/json/tags/");
+        
+        // is this for a specific weblog or site-wide?
+        if(weblog != null) {
+            url.append(weblog.getHandle()).append("/");
+        }
+        
+        return url.toString();
+    }
+    
+    
+    /**
      * Get root url for a given *preview* weblog.  
      * Optionally for a certain locale.
      */
