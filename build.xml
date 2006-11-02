@@ -22,6 +22,7 @@
     <!ENTITY custom-jars           SYSTEM "custom/custom-jars.xmlf">
     <!ENTITY custom-gen-business   SYSTEM "custom/custom-gen-business.xmlf">
     <!ENTITY custom-build-business SYSTEM "custom/custom-build-business.xmlf">
+    <!ENTITY custom-build-web      SYSTEM "custom/custom-build-web.xmlf">
     <!ENTITY custom-gen-web        SYSTEM "custom/custom-gen-web.xmlf">
     <!ENTITY custom-src-web        SYSTEM "custom/custom-src-web.xmlf">
     <!ENTITY custom-web            SYSTEM "custom/custom-web.xmlf">
@@ -381,6 +382,8 @@ ro.buildUser=${user.name}
             <include name="**/*.vm"/>
         </fileset>
     </copy>
+	
+	&custom-build-web;
     
     <!-- Jar up web classes -->
     <jar jarfile="${build.lib}/roller-web.jar">
