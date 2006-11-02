@@ -84,7 +84,7 @@ public class WeblogEntryTagAggregateData extends PersistentObject
      * @ejb:persistent-field
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="false"
      */
-    public WebsiteData getWebsite() {
+    public WebsiteData getWeblog() {
         return this.website;
     }
     
@@ -159,7 +159,7 @@ public class WeblogEntryTagAggregateData extends PersistentObject
            boolean lEquals = true;
            
            lEquals = PojoUtil.equals(lEquals, this.id, lTest.getId());
-           lEquals = PojoUtil.equals(lEquals, this.website, lTest.getWebsite());
+           lEquals = PojoUtil.equals(lEquals, this.website, lTest.getWeblog());
            lEquals = PojoUtil.equals(lEquals, this.name, lTest.getName());
            lEquals = this.total == lTest.getTotal();
            return lEquals;
@@ -185,7 +185,7 @@ public class WeblogEntryTagAggregateData extends PersistentObject
     {
         WeblogEntryTagAggregateData data = (WeblogEntryTagAggregateData) otherData;
         this.id = data.getId();
-        this.website = data.getWebsite();
+        this.website = data.getWeblog();
         this.name = data.getName();
         this.total = data.getTotal();
         this.lastUsed = data.getLastUsed();

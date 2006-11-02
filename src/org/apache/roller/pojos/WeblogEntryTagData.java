@@ -92,7 +92,7 @@ public class WeblogEntryTagData extends PersistentObject
      * @roller.wrapPojoMethod type="pojo"
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
      */
-    public org.apache.roller.pojos.WebsiteData getWebsite()
+    public org.apache.roller.pojos.WebsiteData getWeblog()
     {
         return this.website;
     }
@@ -183,7 +183,7 @@ public class WeblogEntryTagData extends PersistentObject
            boolean lEquals = true;
            
            lEquals = PojoUtil.equals(lEquals, this.id, lTest.getId());
-           lEquals = PojoUtil.equals(lEquals, this.website, lTest.getWebsite());
+           lEquals = PojoUtil.equals(lEquals, this.website, lTest.getWeblog());
            lEquals = PojoUtil.equals(lEquals, this.weblogEntry, lTest.getWeblogEntry());
            lEquals = PojoUtil.equals(lEquals, this.user, lTest.getUser());
            lEquals = PojoUtil.equals(lEquals, this.name, lTest.getName());
@@ -214,7 +214,7 @@ public class WeblogEntryTagData extends PersistentObject
     {
         WeblogEntryTagData data = (WeblogEntryTagData) otherData;
         this.id = data.getId();
-        this.website = data.getWebsite();
+        this.website = data.getWeblog();
         this.weblogEntry = data.getWeblogEntry();
         this.user = data.getUser();
         this.name = data.getName();
