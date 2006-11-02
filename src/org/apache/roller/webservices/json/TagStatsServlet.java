@@ -26,27 +26,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.UserManager;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.TagStat;
-import org.apache.roller.pojos.UserData;
 import org.apache.roller.pojos.WebsiteData;
-import org.apache.roller.util.Utilities;
 
 /**
  * Return list of tags matching a startsWith strings. <br />
  * 
  * @web.servlet name="TagStatsServlet" 
  * @web.servlet-mapping url-pattern="/roller-services/json/tags/*"
+ * 
  * @author Elias Torres (<a href="mailto:eliast@us.ibm.com">eliast@us.ibm.com</a>)
  */
 public class TagStatsServlet extends HttpServlet {
     
-    private final int MAX_LENGTH = 100;
+    // this allows for -1 for no limits.
+    private final int MAX_LENGTH = RollerConfig.getIntProperty("services.json.tags.max", 100);
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
@@ -56,9 +56,17 @@ public class TagStatsServlet extends HttpServlet {
             throws ServletException, IOException {    
         
         int limit = MAX_LENGTH;       
-        try { 
-            limit = Integer.parseInt(request.getParameter("limit"));
+        try {
+            // only change limit, if specified.
+            if(request.getParameter("limit") != null) {
+              limit = Integer.parseInt(request.getParameter("limit"));
+            }
         } catch (Throwable ignored) {}
+        
+        // if we didn't specify no limit and user is abusing, kill it.
+        if(MAX_LENGTH > -1 && limit > MAX_LENGTH) {
+          limit = MAX_LENGTH;
+        }
         
         String pathInfo = request.getPathInfo();
         String handle = null;
