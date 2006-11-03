@@ -158,16 +158,17 @@ public class ResourceServlet extends HttpServlet {
                 out.write(buf, 0, length);
             }
             
-            // cleanup
+            // close output stream
             out.close();
-            resourceStream.close();
             
         } catch (Exception ex) {
-            log.error("Error writing resource file", ex);
             if(!response.isCommitted()) {
                 response.reset();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+        } finally {
+            // make sure stream to resource file is closed
+            resourceStream.close();
         }
 
     }
