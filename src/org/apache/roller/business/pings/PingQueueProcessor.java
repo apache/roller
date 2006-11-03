@@ -154,20 +154,19 @@ public class PingQueueProcessor {
      * @param ex             the exception that occurred on the ping attempt
      * @throws RollerException
      */
-    private void handlePingError(PingQueueEntryData pingQueueEntry,
-            Exception ex)
+    private void handlePingError(PingQueueEntryData pingQueueEntry, Exception ex)
             throws RollerException {
         
         if ((pingQueueEntry.incrementAttempts() < PingConfig.getMaxPingAttempts()) && WeblogUpdatePinger.shouldRetry(ex)) {
             // We have attempts remaining, and it looks like we should retry,
             // so requeue the entry for processing on subsequent rounds
-            logger.warn("Error on ping attempt (" + pingQueueEntry.getAttempts() + ") for " + pingQueueEntry + ": [" + ex.getMessage() + "]. Will re-queue for later attempts.");
-            if (logger.isDebugEnabled()) logger.debug("Error on last ping attempt was: ", ex);
+            logger.debug("Error on ping attempt (" + pingQueueEntry.getAttempts() + ") for " + pingQueueEntry + ": [" + ex.getMessage() + "]. Will re-queue for later attempts.");
+            logger.debug("Error on last ping attempt was: ", ex);
             pingQueueMgr.saveQueueEntry(pingQueueEntry);
         } else {
             // Remove the entry
             logger.warn("Error on ping attempt (" + pingQueueEntry.getAttempts() + ") for " + pingQueueEntry + ": [" + ex.getMessage() + "].  Entry will be REMOVED from ping queue.");
-            if (logger.isDebugEnabled()) logger.debug("Error on last ping attempt was: ", ex);
+            logger.debug("Error on last ping attempt was: ", ex);
             pingQueueMgr.removeQueueEntry(pingQueueEntry);
             // TODO: mark ping target invalid?
         }
