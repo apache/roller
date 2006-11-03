@@ -639,6 +639,8 @@ ro.buildUser=${user.name}
         <!-- don't include unshippables in apache release -->
         <tarfileset dir="${build.dist.binary}"
                     prefix="apache-roller-${ro.version}">
+            <exclude name="webapp/roller/WEB-INF/lib/mail.jar" />
+            <exclude name="webapp/roller/WEB-INF/lib/activation.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/asm.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
@@ -654,6 +656,8 @@ ro.buildUser=${user.name}
         <!-- don't include unshippables in apache release -->
         <zipfileset dir="${build.dist.binary}"
                     prefix="apache-roller-${ro.version}">
+            <exclude name="webapp/roller/WEB-INF/lib/mail.jar" />
+            <exclude name="webapp/roller/WEB-INF/lib/activation.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/asm.jar" />
             <exclude name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
@@ -673,6 +677,8 @@ ro.buildUser=${user.name}
         <!-- only include unshippables -->
         <tarfileset dir="${build.dist.binary}"
                     prefix="apache-roller-${ro.version}">
+            <include name="webapp/roller/WEB-INF/lib/mail.jar" />
+            <include name="webapp/roller/WEB-INF/lib/activation.jar" />
             <include name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
             <include name="webapp/roller/WEB-INF/lib/asm.jar" />
             <include name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
@@ -687,6 +693,8 @@ ro.buildUser=${user.name}
     <zip destfile="${ro.dist}/required-jars-roller-${ro.version}.zip" >
         <zipfileset dir="${build.dist.binary}"
                     prefix="apache-roller-${ro.version}">
+            <include name="webapp/roller/WEB-INF/lib/mail.jar" />
+            <include name="webapp/roller/WEB-INF/lib/activation.jar" />
             <include name="webapp/roller/WEB-INF/lib/hibernate3.jar" />
             <include name="webapp/roller/WEB-INF/lib/asm.jar" />
             <include name="webapp/roller/WEB-INF/lib/asm-attrs.jar" />
