@@ -18,7 +18,9 @@
 
 package org.apache.roller.business.runnable;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,34 +63,48 @@ public class HitCountProcessingJob implements Job {
             return;
         }
         
-        HitCountQueue counter = HitCountQueue.getInstance();
-        HitCountQueue hitCounter = (HitCountQueue) counter;
+        HitCountQueue hitCounter = HitCountQueue.getInstance();
         
         // first get the current set of hits
-        Map currentHits = hitCounter.getHits();
+        List currentHits = hitCounter.getHits();
         
         // now reset the queued hits
         hitCounter.resetHits();
         
-        // iterate over the hits and store them in the db
+        // tally the counts, grouped by weblog handle
+        Map hitsTally = new HashMap();
+        String weblogHandle = null;
+        for(int i=0; i < currentHits.size(); i++) {
+            weblogHandle = (String) currentHits.get(i);
+            
+            Long count = (Long) hitsTally.get(weblogHandle);
+            if(count == null) {
+                count = new Long(1);
+            } else {
+                count = new Long(count.longValue()+1);
+            }
+            hitsTally.put(weblogHandle, count);
+        }
+        
+        // iterate over the tallied hits and store them in the db
         try {
             long startTime = System.currentTimeMillis();
             
             WebsiteData weblog = null;
             String key = null;
-            Iterator it = currentHits.keySet().iterator();
+            Iterator it = hitsTally.keySet().iterator();
             while(it.hasNext()) {
                 key = (String) it.next();
                 
                 try {
                     weblog = umgr.getWebsiteByHandle(key);
-                    wmgr.incrementHitCount(weblog, ((Long)currentHits.get(key)).intValue());
+                    wmgr.incrementHitCount(weblog, ((Long)hitsTally.get(key)).intValue());
                 } catch (RollerException ex) {
                     log.error(ex);
                 }
             }
             
-            // make sure and flush the results
+            // flush the results to the db
             RollerFactory.getRoller().flush();
             
             long endTime = System.currentTimeMillis();
