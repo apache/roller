@@ -20,10 +20,7 @@ package org.apache.roller.business;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.runnable.ContinuousWorkerThread;
@@ -38,10 +35,10 @@ import org.apache.roller.pojos.WebsiteData;
  * an asynchronous manner at give intervals.
  *
  * We also start up a single thread which runs continously to take the queued
- * hit counts and record them into the db.
+ * hit counts, tally them, and record them into the db.
  *
  * TODO: we may want to make this an interface that is pluggable if there is
- *   some indication that users may want to override this implementation.
+ *   some indication that users want to override this implementation.
  */
 public class HitCountQueue {
     
@@ -52,7 +49,7 @@ public class HitCountQueue {
     private int numWorkers = 1;
     private int sleepTime = 180000;
     private WorkerThread worker = null;
-    private Map queue = null;
+    private List queue = null;
     
     
     static {
@@ -73,7 +70,7 @@ public class HitCountQueue {
         }
         
         // create the hits queue
-        this.queue = Collections.synchronizedMap(new HashMap());
+        this.queue = Collections.synchronizedList(new ArrayList());
         
         // start up a worker to process the hits at intervals
         HitCountProcessingJob job = new HitCountProcessingJob();
@@ -89,19 +86,16 @@ public class HitCountQueue {
     
     public void processHit(WebsiteData weblog, String url, String referrer) {
         
-        // just update the count for the weblog
-        Long count = (Long) this.queue.get(weblog.getHandle());
-        if(count == null) {
-            count = new Long(1);
-        } else {
-            count = new Long(count.longValue()+1);
+        // if the weblog isn't null then just drop it's handle in the queue
+        // each entry in the queue is a weblog handle and indicates a single hit
+        if(weblog != null) {
+            this.queue.add(weblog.getHandle());
         }
-        this.queue.put(weblog.getHandle(), count);
     }
     
     
-    public Map getHits() {
-        return new HashMap(this.queue);
+    public List getHits() {
+        return new ArrayList(this.queue);
     }
     
     
@@ -109,7 +103,7 @@ public class HitCountQueue {
      * Reset the queued hits.
      */
     public synchronized void resetHits() {
-        this.queue = Collections.synchronizedMap(new HashMap());
+        this.queue = Collections.synchronizedList(new ArrayList());
     }
     
     
