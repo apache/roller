@@ -175,9 +175,7 @@ public final class URLUtilities {
         }
         
         if(cat != null && dateString == null) {
-            // yes, for the path based versions we double encode the category
-            // because otherwise some characters cause problems, like "?"
-            pathinfo.append("category/").append(encode(encode(cat)));   
+            pathinfo.append("category/").append(encode(cat));
             
         } else if(dateString != null && cat == null) {
             pathinfo.append("date/").append(dateString);  
