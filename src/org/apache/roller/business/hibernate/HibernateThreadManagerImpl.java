@@ -190,7 +190,7 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
         // calculate next run time
         Calendar cal = Calendar.getInstance();
         cal.setTime(lastRun);
-        cal.add(Calendar.SECOND, task.getInterval());
+        cal.add(Calendar.MINUTE, task.getInterval());
         
         return cal.getTime();
     }
