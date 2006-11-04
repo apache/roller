@@ -432,7 +432,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 this.strategy.flush();
             }
             long subEndTime = System.currentTimeMillis();
-            log.info("   " + count + " - "
+            log.debug("   " + count + " - "
                     + ((subEndTime-subStartTime)/1000.0)
                     + " seconds to process (" + count + ") entries of "
                     + sub.getFeedURL());
