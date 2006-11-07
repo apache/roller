@@ -26,7 +26,6 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.ThreadManagerImpl;
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.RollerFactory;
-import org.apache.roller.business.runnable.LockException;
 import org.apache.roller.pojos.TaskLockData;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
