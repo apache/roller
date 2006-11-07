@@ -19,6 +19,7 @@
 package org.apache.roller.pojos;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -40,6 +41,45 @@ public class TaskLockData extends PersistentObject implements Serializable {
     
     
     public TaskLockData() {}
+    
+    
+    /**
+     * Calculate the next allowed time the task managed by this lock would
+     * be allowed to run.  i.e. lastRun + interval
+     */
+    public Date getNextRun(int interval) {
+        
+        Date lastRun = this.getLastRun();
+        if(lastRun == null) {
+            return null;
+        }
+        
+        // calculate next run time
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(lastRun);
+        cal.add(Calendar.MINUTE, interval);
+        
+        return cal.getTime();
+    }
+    
+    
+    /**
+     * Get the time the lease for this lock will expire, or null if this task
+     * lock is not currently locked.
+     */
+    public Date getLeaseExpires() {
+        
+        if(!locked || timeAquired == null) {
+            return null;
+        }
+        
+        // calculate lease expiration time
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(timeAquired);
+        cal.add(Calendar.MINUTE, timeLeased);
+        
+        return cal.getTime();
+    }
     
     
     public void setData(PersistentObject otherData) {
@@ -120,7 +160,17 @@ public class TaskLockData extends PersistentObject implements Serializable {
      * @hibernate.property column="islocked" non-null="false" unique="false"
      */
     public boolean isLocked() {
-        return locked;
+        
+        // this method requires a little extra logic because we return false
+        // even if a task is locked when it's lease has expired
+        if(!locked) {
+            return false;
+        }
+        
+        Date now = new Date();
+        Date leaseExpiration = this.getLeaseExpires();
+        
+        return now.before(leaseExpiration);
     }
 
     public void setLocked(boolean locked) {

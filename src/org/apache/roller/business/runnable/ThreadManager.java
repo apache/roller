@@ -84,24 +84,6 @@ public interface ThreadManager {
     
     
     /**
-     * What was the last time a task was run?
-     * 
-     * @param task The RollerTask to check the last run time for.
-     * @return Date The last time the task was run, or null if task has never been run.
-     */
-    public Date getLastRun(RollerTask task);
-    
-    
-    /**
-     * What is the next time a task is allowed to run?
-     * 
-     * @param task The RollerTask to calculate the next run time for.
-     * @return Date The next time the task is allowed to run, or null if task has never been run.
-     */
-    public Date getNextRun(RollerTask task);
-    
-    
-    /**
      * Shutdown.
      */
     public void shutdown();
