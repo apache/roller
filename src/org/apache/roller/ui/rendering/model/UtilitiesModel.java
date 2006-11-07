@@ -120,7 +120,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAuthor(WebsiteDataWrapper weblog) {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses.getAuthenticatedUser() != null) {
+            if (rses != null && rses.getAuthenticatedUser() != null) {
                 return rses.isUserAuthorizedToAuthor(weblog.getPojo());
             }
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAdmin(WebsiteDataWrapper weblog) {
         try {
             RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses.getAuthenticatedUser() != null) {
+            if (rses != null && rses.getAuthenticatedUser() != null) {
                 return rses.isUserAuthorizedToAdmin(weblog.getPojo());
             }
         } catch (Exception e) {
