@@ -119,12 +119,4 @@ public class ThreadManagerImpl implements ThreadManager {
         return false;
     }
     
-    public Date getLastRun(RollerTask task) {
-        return null;
-    }
-    
-    public Date getNextRun(RollerTask task) {
-        return null;
-    }
-    
 }

@@ -122,49 +122,42 @@ public abstract class RollerTask extends TimerTask {
         
         boolean lockAcquired = false;
         try {
-            // is task already locked
+            
             if(!mgr.isLocked(this)) {
-                // have we waited enough time since the last run?
-                Date nextRun = mgr.getNextRun(this);
-                Date now = new Date();
-                if(nextRun == null || now.after(nextRun)) {
-                    
-                    log.debug("Attempting to acquire lock");
-                    
-                    // acquire lock
-                    lockAcquired = mgr.acquireLock(this);
-                    
-                    if(lockAcquired) {
-                        log.debug("Lock acquired, about to begin real work");
-                    } else {
-                        log.debug("Lock not acquired, assuming race condition");
-                        return;
-                    }
+                
+                log.debug("Attempting to acquire lock");
+                
+                lockAcquired = mgr.acquireLock(this);
+                
+                // now if we have a lock then run the task
+                if(lockAcquired) {
+                    log.debug("Lock acquired, running task");
+                    this.runTask();
                 } else {
-                    log.debug("Interval time hasn't elapsed since last run, nothing to do");
+                    log.debug("Lock NOT acquired, cannot continue");
+                    
+                    // when we don't have a lock we can't continue, so bail
+                    return;
                 }
+                
             } else {
                 log.debug("Task already locked, nothing to do");
-            }
-
-            // now if we have a lock then run the task
-            if(lockAcquired) {
-                this.runTask();
             }
             
         } catch (Exception ex) {
             log.error("Unexpected exception running task", ex);
         } finally {
+            
             if(lockAcquired) {
+                
                 log.debug("Attempting to release lock");
                 
-                // release lock
                 boolean lockReleased = mgr.releaseLock(this);
                 
                 if(lockReleased) {
                     log.debug("Lock released, time to sleep");
                 } else {
-                    log.error("Lock NOT released, something went wrong");
+                    log.debug("Lock NOT released, some kind of problem");
                 }
             }
             

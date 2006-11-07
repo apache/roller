@@ -26,6 +26,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.business.runnable.ThreadManagerImpl;
 import org.apache.roller.business.runnable.RollerTask;
 import org.apache.roller.business.RollerFactory;
+import org.apache.roller.business.runnable.LockException;
 import org.apache.roller.pojos.TaskLockData;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -57,6 +58,11 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
     
     /**
      * Try to aquire a lock for a given RollerTask.
+     *
+     * Remember, locks are only given if ...
+     *   1. the task is not currently locked and it's past the next scheduled
+     *      run time for the particular task
+     *   2. the task *is* locked, but its lease has expired
      */
     public boolean acquireLock(RollerTask task) {
         
@@ -77,9 +83,11 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
             return false;
         }
         
-        if(taskLock != null && !taskLock.isLocked()) {
+        Date now = new Date();
+        Date nextRun = taskLock.getNextRun(task.getInterval());
+        if( !taskLock.isLocked() && (nextRun == null || now.after(nextRun))) {
+            
             // set appropriate values for TaskLock and save it
-            Date now = new Date();
             taskLock.setLocked(true);
             taskLock.setTimeAquired(now);
             taskLock.setTimeLeased(task.getLeaseTime());
@@ -160,39 +168,6 @@ public class HibernateThreadManagerImpl extends ThreadManagerImpl {
         }
         
         return locked;
-    }
-    
-    
-    public Date getLastRun(RollerTask task) {
-        
-        Date lastRun = null;
-        
-        try {
-            TaskLockData taskLock = this.getTaskLockByName(task.getName());
-            if(taskLock != null) {
-                lastRun = taskLock.getLastRun();
-            }
-        } catch (RollerException ex) {
-            log.warn("Error getting TaskLockData", ex);
-        }
-        
-        return lastRun;
-    }
-    
-    
-    public Date getNextRun(RollerTask task) {
-        
-        Date lastRun = this.getLastRun(task);
-        if(lastRun == null) {
-            return null;
-        }
-        
-        // calculate next run time
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(lastRun);
-        cal.add(Calendar.MINUTE, task.getInterval());
-        
-        return cal.getTime();
     }
     
     
