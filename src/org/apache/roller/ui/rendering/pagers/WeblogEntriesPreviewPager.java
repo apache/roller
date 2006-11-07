@@ -18,6 +18,7 @@
 
 package org.apache.roller.ui.rendering.pagers;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.business.Roller;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
+import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.pojos.wrapper.WeblogEntryDataWrapper;
 
@@ -64,16 +66,20 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
             WeblogManager wmgr = roller.getWeblogManager();
             currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
             if (currEntry != null) {
-                entries = new TreeMap();
                 
-                // if entry is not published then pubtime may be null
-                Date pubtime = currEntry.getPubTime();
-                if(pubtime == null) {
-                    pubtime = new Date();
+                // clone the entry since we don't want to work with the real pojo
+                WeblogEntryData tmpEntry = new WeblogEntryData();
+                tmpEntry.setData(currEntry);
+                
+                // set the pubtime to the current time if it is unset
+                if(tmpEntry.getPubTime() == null) {
+                    tmpEntry.setPubTime(new Timestamp(System.currentTimeMillis()));
                 }
                 
-                entries.put(pubtime,
-                        Collections.singletonList(WeblogEntryDataWrapper.wrap(currEntry)));
+                // store the entry in the collection
+                entries = new TreeMap();
+                entries.put(tmpEntry.getPubTime(),
+                        Collections.singletonList(WeblogEntryDataWrapper.wrap(tmpEntry)));
             }
         } catch (Exception e) {
             log.error("ERROR: fetching entry", e);
