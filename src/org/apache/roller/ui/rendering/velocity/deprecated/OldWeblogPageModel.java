@@ -722,7 +722,7 @@ public class OldWeblogPageModel {
         try {
             RollerSession rses =
                     RollerSession.getRollerSession(mRequest);
-            if (rses.getAuthenticatedUser() != null && mWebsite != null) {
+            if (rses != null && rses.getAuthenticatedUser() != null && mWebsite != null) {
                 return rses.isUserAuthorizedToAuthor(mWebsite);
             }
         } catch (Exception e) {
@@ -737,7 +737,7 @@ public class OldWeblogPageModel {
         try {
             RollerSession rses =
                     RollerSession.getRollerSession(mRequest);
-            if (rses.getAuthenticatedUser() != null && mWebsite != null) {
+            if (rses != null && rses.getAuthenticatedUser() != null && mWebsite != null) {
                 return rses.isUserAuthorizedToAdmin(mWebsite);
             }
         } catch (Exception e) {
