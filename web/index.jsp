@@ -20,12 +20,15 @@ page import="org.apache.roller.config.RollerRuntimeConfig" session="false" %><%
 String frontpageBlog =
         RollerRuntimeConfig.getProperty("site.frontpage.weblog.handle");
 
-if(frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
+if (frontpageBlog != null && !"".equals(frontpageBlog.trim())) {
     // dispatch to frontpage blog
     RequestDispatcher homepage =
             request.getRequestDispatcher("/roller-ui/rendering/page/"+frontpageBlog);
     homepage.forward(request, response);
     return;
+} else {
+    // need to create a session before response is committed
+    request.getSession(true);
 }
 
 // otherwise, show the "Here's how to finish your Roller install page"
