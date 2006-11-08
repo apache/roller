@@ -7,7 +7,7 @@
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20051209;11500200">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
-	<META NAME="CHANGED" CONTENT="20061101;9091800">
+	<META NAME="CHANGED" CONTENT="20061108;15394100">
 	<META NAME="SDFOOTNOTE" CONTENT=";;;;P">
 	<META NAME="SDENDNOTE" CONTENT="ARABIC">
 	<STYLE>
@@ -54,8 +54,7 @@
 		<BR>
 		</P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
-		<FONT SIZE=7 STYLE="font-size: 40pt"><B>Template Guide </B></FONT>
-		</P>
+		<FONT SIZE=7 STYLE="font-size: 40pt"><B>Template Guide</B></FONT></P>
 		<P CLASS="western" ALIGN=CENTER STYLE="margin-bottom: 0in; background: transparent">
 		<BR>
 		</P>
@@ -3696,15 +3695,15 @@
 		because it's so easy to create one yourself. Here's what you do to
 		display a tag cloud for your weblog. First, if you have not already
 		done so, customize your theme. Next, you've got to get the tags you
-		want to display from your weblog object. For example, to display
-		your most 100 most often used tags for all time you'd do this:</P>
+		want to display from your weblog object. For example, to get your
+		most 100 most often used tags for all time you'd do this:</P>
 		<P STYLE="margin-bottom: 0in; background: transparent">         
 		<FONT FACE="Courier New"><FONT SIZE=2>#set($mytags =
 		$model.weblog.getPopularTags(-1, 30))</FONT></FONT></P>
 		<P CLASS="western"><BR><BR>
 		</P>
-		<P CLASS="western">Or if you want to only consider tags used in the
-		last 90 days you'd do this:</P>
+		<P CLASS="western">Or if you want to only get tags used in the last
+		90 days you'd do this:</P>
 		<P STYLE="margin-bottom: 0in; background: transparent">         
 		<FONT FACE="Courier New"><FONT SIZE=2>#set($mytags =
 		$model.weblog.getPopularTags(90, 30))</FONT></FONT></P>
