@@ -3,10 +3,11 @@
 
 
 Installation Guide
-DRAFT #20060831
+
 
 Apache Roller
-Version 3.0 (incubating)
+ (incubating) 
+Version 3.1
 
 
 
@@ -38,36 +39,56 @@ Licensed to the Apache Software Foundation (ASF) under one or more contributor l
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.  For additional information regarding copyright in this work, please see the NOTICE file in the top level directory of this distribution.
 
 Table of Contents
-Introduction	3
-STEP 1: Before you install Roller	4
-STEP 2: Unpack the Roller distribution	5
-STEP 3: Install required third party jars	6
-STEP 3.1: Download and install Hibernate	6
-STEP 3.2: Install JDBC driver jar(s)	6
-STEP 3.3: Install JavaMail and Activation jars	7
-STEP 4: Create Roller tables in your database	8
-STEP 5: Deploy Roller to your application server	9
-STEP 6: Check your internationalization settings	11
-STEP 7: Setup Roller data directories 	12
-STEP 7.1: Create uploads directory	12
-STEP 7.2: Create search-index directory	12
-STEP 7.3: Create planet-cache directory (optional)	12
-STEP 7.4: Make sure that the logs subdirectory exists	13
-STEP 8: Review Roller configuration	14
-STEP 8.1: Review the WEB-INF/classes/roller.properties file	14
-Where to define custom properties	14
-STEP 8.2: Change keys in the WEB-INF/security.xml file	15
-STEP 9: Start Tomcat and start using Roller	16
-Appendix A: Upgrading an existing Roller installation	17
-STEP 1: Shutdown and backup your old Roller 	17
-STEP 2: Install the new Roller 	17
-STEP 3: Copy resources and update configs 	18
-3.1 Copy your old resources and other files you've added	18
-3.2 Remove JavaMail jars if duplicated	18
-3.3 Review configuration properties	18
-STEP 4: Upgrade the database 	18
-STEP 5: Startup your app server 	19
-Appendix B: The WEB-INF/roller.properties file	20
+Introduction	4
+STEP 1: Before you install Roller	5
+STEP 2: Unpack the Roller distribution	6
+UNIX example	6
+Windows example	6
+Roller distribution layout	6
+The ROLLER environment variable	6
+STEP 3: Install required third party jars	7
+STEP 3.1: Download and install Hibernate	7
+STEP 3.2: Install JDBC driver jar(s)	7
+UNIX example	7
+Windows example	7
+NOTES	7
+STEP 3.3: Install JavaMail and Activation jars	9
+UNIX example	9
+Windows example	9
+NOTES	9
+STEP 4: Create Roller tables in your database	10
+UNIX example	10
+Windows example	10
+STEP 5: Deploy Roller to your application server	12
+STEP 6: Check your internationalization settings	14
+Check your application server's URI encoding setting!	14
+STEP 7: Setup Roller data directories 	15
+STEP 7.1: Create uploads directory	15
+STEP 7.2: Create search-index directory	15
+STEP 7.3: Create planet-cache directory (optional)	15
+STEP 7.4: Make sure that the logs subdirectory exists	15
+STEP 8: Review Roller configuration	16
+STEP 8.1: Review the WEB-INF/classes/roller.properties file	16
+Where to define custom properties	16
+What properties you should set	16
+STEP 8.2: Change keys in the WEB-INF/security.xml file	17
+STEP 8.3: Verify the database dialet setting in the Hibernate configuration file	17
+STEP 9: Start Tomcat and start using Roller	18
+UNIX example	18
+Windows example	18
+You're done! 	18
+Appendix A: Upgrading an existing Roller installation	19
+Important notes about Roller 3.0	19
+UPGRADE STEP 1: Shutdown and backup your old Roller 	20
+UPGRADE STEP 2: Install the new Roller 	20
+UPGRADE STEP 3: Copy resources and update configs 	20
+3.1 Copy your old resources and other files you've added	20
+3.2 Remove JavaMail jars if duplicated	20
+3.3 Review configuration properties	21
+UPGRADE STEP 4: Upgrade the database 	21
+UPGRADE STEP 5: Startup your app server 	21
+And you're done! 	21
+Appendix B: The WEB-INF/roller.properties file	23
 
 Introduction
 This document describes how to install Roller in the following environment: 
@@ -304,7 +325,7 @@ Where ${user.home}is the Java system property that normally evaluates to the hom
 In most cases, this default will probably work fine for you. However, for security reasons some application servers are set up to run as a server user identity whose home directory does not exist or is not writable by the server user itself. If this is the case for your server, override the property uploads.dir in the roller.properties file. See step 8 for more information on the roller.properties file.
 STEP 7.2: Create search-index directory
 By default, Roller creates and maintains its text search index data in files under the directory
-	${user.home}/roller_data/roller-index 
+	${user.home}/roller_data/search-index 
 Again, ${user.home} is the Java system property that normally evaluates to the home directory of the user identity executing the server's JVM process. You can specify a different directory by overriding the property search.index.dir in roller.properties. See step 8 for more information on the Roller configuration override file.
 STEP 7.3: Create planet-cache directory (optional)
 You only need to do this if you are planning on using Roller's integrated planet aggregator: create a directory for the planet cache (e.g. /var/roller/planet-cache).  See the Roller User Guide for more information on configuring Roller's built-in aggregator.
@@ -390,15 +411,14 @@ You're done!
 Roller should be working perfectly now. If not, then please consult the Installation FAQ page on the Roller wiki and then check with the experts on the Roller mailing lists. Somebody has probably encountered the very same problems that you are encountering. 
 
 Appendix A: Upgrading an existing Roller installation
-This document describes how to upgrade an existing installation to the latest release of Roller by upgrading the Roller database and replacing the old Roller files (which are typically found in tomcat/webapps/roller) with the new release. 
-The steps are:
+This document describes how to upgrade an existing installation to the latest release of Roller by upgrading the Roller database and replacing the old Roller files (which are typically found in tomcat/webapps/roller) with the new release. The steps are:
 STEP 1: Shutdown and backup your old Roller
 STEP 2: Install the new Roller
 STEP 3: Copy old configuration
 STEP 4: Upgrade the database
 STEP 5: Startup Tomcat 
-An important note about Roller 3.0
-Roller 3.0 is a major release and makes some big changes to the way that Roller works. If you're upgrading you need to be aware of the new URL structure and the new template system.
+Important notes about Roller 3.0
+WARNING! Roller 3.0 is a major release and makes some big changes to the way that Roller works. If you're upgrading you need to be aware of the new URL structure and the new template system.
 The new URL structure
 The most significant change is the new URL structure - we've completely change all of the Roller weblog URLs. We continue to support old Roller URLs, but they are redirected (using HTTP 301) redirects to the new system. That ensures that nobody will get a 404 when accessing your weblog using an old URL, but you'll still want to encourage people to change links that point to your weblog's old URL, which was of the format:
 	http://<hostname>/roller/page/<weblog-handle>
@@ -410,6 +430,11 @@ We've developed a completely new and greatly improved template system for Roller
 So, if you are upgrading and you want your weblogs to work, you MUST override this Roller property to enable the old "legacy" template system to work:
 	rendering.legacyModels.enabled=true
 See section 8 for information on overriding Roller startup properties.
+Non-core themes removed
+The Roller project is establishing a community site for sharing and maintaining of themes and plugins. 
+From now only, Roller will ship with only a core set of four themes (Basic, BrushedMetal, Sotto and a new Frontpage themes, which is just for site-wide front-page weblogs) . All other themes have been removed from Roller and moved to the Roller Support project at Java.net (http://roller.dev.java.net). If you or your users use any other themes, then you'll need to download and install them according to the instructions on that site.
+Non-core plugins removed
+The same applies to plugins. The JSPWiki, Textile and Read More plugins have also been moved to the Roller Support project at Java.net (http://roller.dev.java.net) to become part of a community maintained repository. If you or your users use any other themes, then you'll need to download and install them according to the instructions on that site.
 UPGRADE STEP 1: Shutdown and backup your old Roller 
 Before you get started with your upgrade, you should shutdown your existing Roller install, make a backup of your data, and move the old Roller files out of the way. Here is an example of how you'd do this with a Tomcat/MySQL setup: 
 Run shutdown.sh to stop Tomcat, for example: 
@@ -441,8 +466,7 @@ For example, on UNIX you can use cp -r to copy the whole directory:
    % cd %CATALINA_HOME/webapps/roller
    % cp -r /somewhere/safe/roller-old/roller/resources .
 NOTE: If you have any new themes under roller/themes, make sure to copy those as well. 
-3.2 Remove JavaMail jars if duplicated
-In an upgrade installation, you may already have the JavaMail jars mail.jar and activation.jar in your Tomcat common/lib. If so, you should remove them from the WEB-INF/lib directory within the web app. (Keep them only in the common/lib directory.) 
+
 3.3 Review configuration properties
 Review properties as described in STEP #8 of the installation guide.
 WARNING: In Roller 2.3 we changed the Roller package names from org.roller to org.apache.roller. Because of this you MUST review your roller-custom.properties file, search for the string "org.roller"and replace all occurances of it with "org.apache.roller".
@@ -455,13 +479,14 @@ WEB-INF/dbscripts/mysql
 WEB-INF/dbscripts/postgresql 
 WEB-INF/dbscripts/hsql 
 and more... 
-There is an upgrade script for each release of Roller. If you're upgrading from Roller 2.3, which was the last release before 3.0 you'll only need to run two scripts: 210-to-230-migration.sql and 240-to-300-migration.sql (Roller 2.4 was never officially released). For example, here's how you'd do that for a MySQL database running on UNIX: 
+There is an upgrade script for each release of Roller. If you're upgrading from Roller 2.3, which was the last release before 3.0 you'll need to run three scripts: 230-to-240-migration.sql, 240-to-300-migration.sql (Roller 2.4 was never officially released) and finally 300-to-310-migration.sql. For example, here's how you'd do that for a MySQL database running on UNIX: 
     % cd $CATALINA_HOME/webapps/roller/WEB-INF/dbscripts/mysql
     % mysql -u root -p
     password: *****
     mysql> use roller;
     mysql> source 230-to-240-migration.sql
     mysql> source 240-to-300-migration.sql
+    mysql> source 300-to-310-migration.sql
     mysql> quit
 
 If you're upgrading from an earlier release you'll have to run each of the older scripts in order to upgrade your database.
@@ -469,11 +494,8 @@ UPGRADE STEP 5: Startup your app server
 Use the standard Tomcat startup.sh (or startup.bat on Windows) script to start Tomcat. As Roller starts up, it will perform some final steps to upgrade your database, this may take few seconds longer than your average Roller startup. 
 And you're done! 
 If Roller doesn't come up, check the logs for exceptions and error messages. You should see these messages in the tomcat/logs/catalina.out file and in tomcat/logs/roller.log. If you still can't diagnose and fix your startup program, then subscribe to the Roller user mailing list for help. If there are any interesting messages in the log files, send those along too. 
-
-
 Appendix B: The WEB-INF/roller.properties file
 This file defines the default start-up properties for Roller. See step 8 for instructions on how to override the properties in this file.
-
 # Licensed to the Apache Software Foundation (ASF) under one or more
 #  contributor license agreements.  The ASF licenses this file to You
 # under the Apache License, Version 2.0 (the "License"); you may not
@@ -692,17 +714,17 @@ passwds.encryption.algorithm=SHA
 #----------------------------------
 # Enabled plugins ... remember, order does matter!!
 
-# Weblog entry editor plugins
+# Weblog entry plugins
 plugins.page=\
-org.apache.roller.presentation.velocity.plugins.convertbreaks.ConvertLineBreaksPlugin \
-,org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin \
-,org.apache.roller.presentation.velocity.plugins.search.WikipediaLinkPlugin \
-,org.apache.roller.presentation.velocity.plugins.search.GoogleLinkPlugin \
-,org.apache.roller.presentation.velocity.plugins.textile.TextilePlugin \
-,org.apache.roller.presentation.velocity.plugins.acronyms.AcronymsPlugin \
-,org.apache.roller.presentation.velocity.plugins.bookmarks.BookmarkPlugin \
-,org.apache.roller.presentation.velocity.plugins.email.ObfuscateEmailPlugin \
-,org.apache.roller.presentation.velocity.plugins.smileys.SmileysPlugin
+org.apache.roller.ui.rendering.plugins.ConvertLineBreaksPlugin \
+,org.apache.roller.ui.rendering.plugins.TopicTagPlugin \
+,org.apache.roller.ui.rendering.plugins.ObfuscateEmailPlugin \
+,org.apache.roller.ui.rendering.plugins.SmileysPlugin 
+#,org.apache.roller.ui.rendering.plugins.WikipediaLinkPlugin \
+#,org.apache.roller.ui.rendering.plugins.GoogleLinkPlugin \
+#,org.apache.roller.ui.rendering.plugins.AcronymsPlugin \
+#,org.apache.roller.ui.rendering.plugins.BookmarkPlugin
+
 
 #----------------------------------
 # scheduled tasks, each is comma separated list of classes
@@ -867,8 +889,10 @@ Dave Johnson|http://rollerweblogger.org/page/roller,\
 Matt Raible|http://raibledesigns.com/page/rd,\
 Lance Lavandowska|http://brainopolis.dnsalias.com/roller/page/lance,\
 Henri Yandell|http://blog.generationjava.com/roller/page/bayard,\
+Elias Torres|http://torrez.us/,\
+Jeff Blattman|http://blogs.sun.com/jtb,\
 blogs.sun.com|http://blogs.sun.com,\
-jroller.com|http://jroller.com
+jroller.com|http://jroller.com,\
 
 # comma-separated list of top-level categories to be created in each new weblog
 newuser.categories=\
@@ -877,6 +901,31 @@ General,Status,Java,Music,Politics
 # Default weblog editor
 # The list of available editors is in rollerRuntimeConfigDefs.xml
 newweblog.editor=editor-text.jsp
+
+
+#----------------------------------
+# Single-Sign-On
+
+# Enables Roller to behave differently when registering new users
+# in an SSO-enabled environment. You must configure security.xml appropriately.
+users.sso.enabled=false
+
+# Set these properties for a custom LDAP schema (optional)
+#users.sso.registry.ldap.attributes.name=cn
+#users.sso.registry.ldap.attributes.email=mail
+#users.sso.registry.ldap.attributes.locale=locale
+#users.sso.registry.ldap.attributes.timezone=timezone
+
+# If you don't want user credentials from LDAP/etc to be stored in Roller
+# (possibly in clear-text) leave this alone, otherwise set to true.
+# i.e. you would like a backup auth mechanism in case LDAP is down.
+users.sso.passwords.save=false
+
+# if you don't want passwords stored in DB, set this to the default value.
+users.sso.passwords.defaultValue=<unknown>
+
+users.sso.autoProvision.enabled=false
+users.sso.autoProvision.className=org.apache.roller.ui.core.security.BasicUserAutoProvision
 
 #----------------------------------
 # misc settings
@@ -894,14 +943,14 @@ editor.theme=tan
 # Optional site-wide customization settings for the TopicTag plugin.
 # n.b. these default settings match the coded default values that would be 
 # applied if these were omitted.
-org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicBookmarkName=Default Topic Site
-org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.defaultTopicSite=http://www.technorati.com/tag
-org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]
-org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.tagRegexWithoutBookmark=topic:\\[(.*?)\\]
-org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.linkFormatString=<a rel=\"tag\" href=\"{0}{1}\">{2}</a>
+plugins.topictag.defaultTopicBookmarkName=Default Topic Site
+plugins.topictag.defaultTopicSite=http://www.technorati.com/tag
+plugins.topictag.tagRegexWithBookmark=topic:\\{(.*?)\\}\\[(.*?)\\]
+plugins.topictag.tagRegexWithoutBookmark=topic:\\[(.*?)\\]
+plugins.topictag.linkFormatString=<a rel=\"tag\" href=\"{0}{1}\">{2}</a>
 
 # Set to true to allow only default topic tag site (and avoid costly bookmark queries)
-org.apache.roller.presentation.velocity.plugins.topictag.TopicTagPlugin.ignoreBookmarks=true
+plugins.topictag.ignoreBookmarks=true
 
 #---------------------------------
 # Experimental settings
