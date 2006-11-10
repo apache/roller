@@ -183,19 +183,6 @@ public class WeblogCategoryTest extends TestCase {
         
         TestUtils.endSession(true);
         
-        // check count of descendents and ancestors
-        f1 = mgr.getWeblogCategory(f1.getId());
-        assertEquals(2, f1.getAllDescendentAssocs().size());
-        assertEquals(1, f1.getAncestorAssocs().size());
-        
-        f2 = mgr.getWeblogCategory(f2.getId());
-        assertEquals(1, f2.getAllDescendentAssocs().size());
-        assertEquals(2, f2.getAncestorAssocs().size());
-        
-        f3 = mgr.getWeblogCategory(f3.getId());
-        assertEquals(0, f3.getAllDescendentAssocs().size());
-        assertEquals(3, f3.getAncestorAssocs().size());
-        
         // test get by path
         assertEquals("f1",
                 mgr.getWeblogCategoryByPath(testWeblog, null, "f1").getName());
@@ -211,7 +198,7 @@ public class WeblogCategoryTest extends TestCase {
         
         // test path creation
         f3 = mgr.getWeblogCategoryByPath(testWeblog, null, "/f1/f2/f3");
-        String pathString = mgr.getPath(f3);
+        String pathString = f3.getPath();
         String[] pathArray = Utilities.stringToStringArray(pathString,"/");
         assertEquals("f1", pathArray[0]);
         assertEquals("f2", pathArray[1]);
@@ -260,6 +247,12 @@ public class WeblogCategoryTest extends TestCase {
         WeblogEntryData e3 = TestUtils.setupWeblogEntry("e3", c3, testWeblog, testUser);
         
         TestUtils.endSession(true);
+        
+        // need to query for cats again because we closed the session
+        c1 = mgr.getWeblogCategory(c1.getId());
+        c2 = mgr.getWeblogCategory(c2.getId());
+        c3 = mgr.getWeblogCategory(c3.getId());
+        dest = mgr.getWeblogCategory(dest.getId());
         
         // verify number of entries in each category
         assertEquals(0, dest.retrieveWeblogEntries(true).size());
@@ -335,6 +328,12 @@ public class WeblogCategoryTest extends TestCase {
         
         TestUtils.endSession(true);
         
+        // need to query for cats again since session was closed
+        c1 = mgr.getWeblogCategory(c1.getId());
+        c2 = mgr.getWeblogCategory(c2.getId());
+        c3 = mgr.getWeblogCategory(c3.getId());
+        dest = mgr.getWeblogCategory(dest.getId());
+        
         // verify number of entries in each category
         assertEquals(0, dest.retrieveWeblogEntries(true).size());
         assertEquals(0, dest.retrieveWeblogEntries(false).size());
@@ -356,7 +355,6 @@ public class WeblogCategoryTest extends TestCase {
         
         // c1 category should be empty now
         assertEquals(0, c1.retrieveWeblogEntries(false).size());
-               
 
     }
 }
