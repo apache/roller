@@ -709,7 +709,9 @@ public class WeblogEntryTest extends TestCase {
         entry.addTag("three");
         entry.addTag("four");
         mgr.saveWeblogEntry(entry);
-
+        
+        TestUtils.endSession(true);
+        
         // let's fetch "site" tags now
         tags = mgr.getTags(null, null, null, -1);
         assertEquals(4, tags.size());
@@ -841,7 +843,9 @@ public class WeblogEntryTest extends TestCase {
         entry.addTag("ONE");
         entry.addTag("three");
         mgr.saveWeblogEntry(entry);
-
+        
+        TestUtils.endSession(true);
+        
         // let's fetch "site" tags now
         tags = mgr.getTags(null, null, null, -1);
         assertEquals(3, tags.size());

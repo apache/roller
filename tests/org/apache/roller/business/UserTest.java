@@ -155,6 +155,7 @@ public class UserTest extends TestCase {
         // make sure disable users are not returned
         user.setEnabled(Boolean.FALSE);
         mgr.saveUser(user);
+        TestUtils.endSession(true);
         user = null;
         user = mgr.getUserByUserName(testUser.getUserName());
         assertNull(user);
