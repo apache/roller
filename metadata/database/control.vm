@@ -12,7 +12,11 @@ Follow the installation guide for instructions on setting up your database.
 Special macro to add table column with default null
 **#
 #macro(addColumnNull $table $column $type)
-alter table $table add column $column $type default null;
+#if ($DBTYPE == "ORACLE")
+    alter table $table add $column $type default null;
+#else
+    alter table $table add column $column $type default null;
+#end
 #end
 
 
