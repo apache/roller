@@ -156,6 +156,7 @@ public class PermissionTest extends TestCase {
         perm.setPending(true);
         perm.setPermissionMask(PermissionsData.AUTHOR);
         mgr.savePermissions(perm);
+        TestUtils.endSession(true);
         
         // get pending permissions for a user
         perms = mgr.getPendingPermissions(testUser);

@@ -84,6 +84,8 @@ public class WeblogTest extends TestCase {
      */
     public void testWeblogCRUD() throws Exception {
         
+        log.info("BEGIN");
+        
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         WebsiteData weblog = null;
         
@@ -135,6 +137,8 @@ public class WeblogTest extends TestCase {
         weblog = null;
         weblog = mgr.getWebsite(id);
         assertNull(weblog);
+        
+        log.info("END");
     }
     
     
@@ -165,6 +169,7 @@ public class WeblogTest extends TestCase {
         // make sure disable weblogs are not returned
         weblog.setEnabled(Boolean.FALSE);
         mgr.saveWebsite(weblog);
+        TestUtils.endSession(true);
         weblog = null;
         weblog = mgr.getWebsiteByHandle(testWeblog1.getHandle());
         assertNull(weblog);
