@@ -1092,19 +1092,17 @@ public class WeblogEntryData extends PersistentObject implements Serializable {
     /** Create anchor for weblog entry, based on title or text */
     public String createAnchorBase() {
         
-        // Use title or text for base anchor
-        String base = getTitle();
-        if (StringUtils.isEmpty(base.trim())) {
-            base = Utilities.replaceNonAlphanumeric(base, ' ');
-            if (StringUtils.isEmpty(base.trim())) {
-                base = getText();
-                if (base != null) {
-                    base = Utilities.replaceNonAlphanumeric(base, ' ');
-                }
-            }
+        // Use title (minus non-alphanumeric characters)
+        String base = null;
+        if (!StringUtils.isEmpty(getTitle())) {
+            base = Utilities.replaceNonAlphanumeric(getTitle(), ' ').trim();    
         }
-
-        if (!StringUtils.isEmpty(base.trim())) {
+        // If we still have no base, then try text (minus non-alphanumerics)
+        if (StringUtils.isEmpty(base) && !StringUtils.isEmpty(getText())) {
+            base = Utilities.replaceNonAlphanumeric(getText(), ' ').trim();  
+        }
+        
+        if (!StringUtils.isEmpty(base)) {
             
             // Use only the first 4 words
             StringTokenizer toker = new StringTokenizer(base);
