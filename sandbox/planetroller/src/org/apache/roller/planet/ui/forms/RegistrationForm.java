@@ -98,7 +98,7 @@ public class RegistrationForm {
                       
         PlanetManager pmgr = PlanetFactory.getPlanet().getPlanetManager();
         PlanetConfigData config = pmgr.getConfiguration();
-        String subject = MessageFormat.format(bundle.getString("regSubject"), config.getSiteURL());
+        String subject = MessageFormat.format(bundle.getString("regSubject"), new Object[] {config.getSiteURL()});
         String content = sb.toString();
         String adminEmail = config.getAdminEmail();            
         Context ctx = (Context)new InitialContext().lookup("java:comp/env");
