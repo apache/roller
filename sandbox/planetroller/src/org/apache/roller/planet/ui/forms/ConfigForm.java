@@ -57,6 +57,7 @@ public class ConfigForm implements LoadableForm {
             PlanetConfigData dbconfig = pmgr.getConfiguration();
             dbconfig.setTitle(planetConfig.getTitle());
             dbconfig.setDescription(planetConfig.getDescription());
+            dbconfig.setSiteURL(planetConfig.getSiteURL());
             dbconfig.setAdminName(  planetConfig.getAdminName());
             dbconfig.setAdminEmail( planetConfig.getAdminEmail());
             dbconfig.setProxyHost(  planetConfig.getProxyHost());
