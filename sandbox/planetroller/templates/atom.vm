@@ -34,7 +34,7 @@
            <content type="html">$utils.escapeXML($entry.content)</content> #end
         #if($entry.categories)
             #foreach($cat in $entry.categories)
-               <category>$utils.escapeXML($cat)</category>
+               <category>$utils.escapeXML($cat.name)</category>
             #end
         #end
         <link rel="alternate" type="text/html" href="$entry.permalink"/>
