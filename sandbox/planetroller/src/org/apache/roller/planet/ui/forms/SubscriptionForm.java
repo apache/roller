@@ -123,7 +123,7 @@ public class SubscriptionForm implements LoadableForm {
             URL url = new URL((String)value);
         } catch (MalformedURLException ex) {
             FacesMessage msg = new FacesMessage();
-            msg.setDetail(bundle.getString("errorBadURL"));
+            msg.setDetail(bundle.getString("subscriptionErrorBadURL"));
             msg.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ValidatorException(msg);
         }
