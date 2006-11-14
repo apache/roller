@@ -21,11 +21,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext; 
+import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpServletRequest; 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
@@ -37,6 +42,8 @@ import org.apache.roller.planet.ui.utils.LoadableForm;
  * UI bean for editing group data, designed for request scope.
  */
 public class GroupForm implements LoadableForm {
+    private ResourceBundle bundle = 
+        ResourceBundle.getBundle("ApplicationResources");
     private static Log log = LogFactory.getLog(GroupsListForm.class);
     private PlanetGroupData group = new PlanetGroupData();
     private Date lastSave = null;
@@ -119,5 +126,18 @@ public class GroupForm implements LoadableForm {
 
     public void setLastSave(Date lastSave) {
         this.lastSave = lastSave;
+    }
+
+    public void checkHandle(FacesContext context, UIComponent component, Object value) throws Exception {
+        if (value == null || !(value instanceof String)) return;
+        if (group != null && StringUtils.isNotEmpty(group.getId())) return;
+        Planet planet = PlanetFactory.getPlanet();
+        PlanetGroupData dbgroup = planet.getPlanetManager().getGroup((String) value);
+        if (dbgroup != null) {
+            FacesMessage msg = new FacesMessage();
+            msg.setDetail(bundle.getString("groupErrorDuplicateHandle"));
+            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(msg);
+        }
     }
 }

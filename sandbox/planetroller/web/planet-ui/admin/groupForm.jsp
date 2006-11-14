@@ -54,7 +54,9 @@
 
     <h:outputText value="#{msgs.groupHandle}" />
     <h:panelGroup>        
-        <h:inputText id="handle" value="#{groupForm.group.handle}" required="true" size="60" onchange="dirty()">
+        <h:inputText id="handle" value="#{groupForm.group.handle}" 
+            validator="#{groupForm.checkHandle}"
+            required="true" size="60" onchange="dirty()" >
             <f:validateLength minimum="1" />
         </h:inputText>
         <h:message for="handle" styleClass="fieldError" />
