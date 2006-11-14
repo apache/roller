@@ -15,7 +15,7 @@
        <description>$utils.escapeXML($entry.content)</description> #end
     #if($entry.categories)
         #foreach($cat in $entry.categories)
-     	   <category>$utils.escapeXML($cat)</category>
+     	   <category>$utils.escapeXML($cat.name)</category>
      	#end
     #end
     #if($entry.permalink)<link>$utils.escapeXML($entry.permalink)</link> #end
