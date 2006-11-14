@@ -57,7 +57,7 @@ public class GeneratePlanetTask implements Runnable {
             log.info("Refreshing Planet entries");
             Planet planet = PlanetFactory.getPlanet();
             planet.getPlanetManager().refreshEntries(
-                RollerConfig.getProperty("planet.aggregator.cache.dir"));                        
+                PlanetConfig.getProperty("planet.aggregator.cache.dir"));                        
             planet.flush();
             planet.release();
             
@@ -123,8 +123,8 @@ public class GeneratePlanetTask implements Runnable {
             // Generate files: execute control template
             Generator generator = Generator.getInstance();
             generator.setVelocityEngine(engine);
-            generator.setOutputEncoding("utf-8");
-            generator.setInputEncoding("utf-8");
+            generator.setOutputEncoding("UTF-8");
+            generator.setInputEncoding("UTF-8");
             generator.setOutputPath(outputDir);
             generator.setTemplatePath(templateDir);
             generator.parse(mainPage, context);
