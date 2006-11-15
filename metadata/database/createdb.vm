@@ -161,7 +161,8 @@ create table weblogcategory (
     name             varchar(255) not null,
     description      varchar(255),
     websiteid        varchar(48)  not null,
-    image            varchar(255)
+    image            varchar(255),
+    parentid         varchar(48)
 );
 create index wc_websiteid_idx on weblogcategory( websiteid );
 -- alter table weblogcategory add unique category_nameparentid_uq (parentid, name(20));

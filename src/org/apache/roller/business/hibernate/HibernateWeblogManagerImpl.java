@@ -39,7 +39,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.business.RollerFactory;
 import org.apache.roller.business.WeblogManager;
-import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.RefererData;
@@ -47,7 +46,6 @@ import org.apache.roller.pojos.StatCount;
 import org.apache.roller.pojos.TagStat;
 import org.apache.roller.pojos.TagStatComparator;
 import org.apache.roller.pojos.UserData;
-import org.apache.roller.pojos.WeblogCategoryAssoc;
 import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WeblogEntryTagData;
@@ -94,7 +92,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     
     public void saveWeblogCategory(WeblogCategoryData cat) throws RollerException {
         
-        if(this.isDuplicateWeblogCategoryName(cat)) {
+        if(cat.getId() == null && this.isDuplicateWeblogCategoryName(cat)) {
             throw new RollerException("Duplicate category name, cannot save category");
         }
         
@@ -317,24 +315,23 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogCategoryAssoc.class);
-            criteria.createAlias("category","c");
+            Criteria criteria = session.createCriteria(WeblogCategoryData.class);
             
-            criteria.add(Expression.eq("c.website", website));
-            criteria.add(Expression.isNull("ancestorCategory"));
-            criteria.add(Expression.eq("relation", WeblogCategoryAssoc.PARENT));
-            
+            criteria.add(Expression.eq("website", website));
+            criteria.add(Expression.isNull("parent"));
             criteria.setMaxResults(1);
             
-            List list = criteria.list();
-            return ((WeblogCategoryAssoc)list.get(0)).getCategory();
+            return (WeblogCategoryData) criteria.uniqueResult();
+            
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
     }
     
+    // TODO: need unit tests for this function
     public List getWeblogCategories(WebsiteData website, boolean includeRoot)
     throws RollerException {
+        
         if (website == null)
             throw new RollerException("website is null");
         
@@ -342,24 +339,19 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogCategoryAssoc.class);
-            criteria.createAlias("category", "c");
-            criteria.add(Expression.eq("c.website", website));
-            criteria.add(Expression.isNotNull("ancestorCategory"));
-            criteria.add(Expression.eq("relation", "PARENT"));
-            Iterator assocs = criteria.list().iterator();
-            List cats = new ArrayList();
-            while (assocs.hasNext()) {
-                WeblogCategoryAssoc assoc = (WeblogCategoryAssoc) assocs.next();
-                cats.add(assoc.getCategory());
-            }
-            return cats;
+            Criteria criteria = session.createCriteria(WeblogCategoryData.class);
+            criteria.add(Expression.eq("website", website));
+            criteria.add(Expression.isNotNull("parent"));
+            return criteria.list();
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
     }
     
+    
+    // TODO: need unit tests for this function
     public List getWeblogCategories(WebsiteData website) throws RollerException {
+        
         if (website == null)
             throw new RollerException("website is null");
         
@@ -372,6 +364,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throw new RollerException(e);
         }
     }
+    
     
     public List getWeblogEntries(
             WebsiteData website,
@@ -587,43 +580,37 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         
     public List getWeblogEntries(WeblogCategoryData cat, boolean subcats)
     throws RollerException {
+        
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             List entries = new LinkedList();
             
-            if (subcats) {
-                // Get entries in subcategories
-                Criteria assocsQuery =
-                        session.createCriteria(WeblogCategoryAssoc.class);
-                assocsQuery.add(Expression.eq("ancestorCategory", cat));
-                Iterator assocs = assocsQuery.list().iterator();
-                while (assocs.hasNext()) {
-                    WeblogCategoryAssoc assoc = (WeblogCategoryAssoc)assocs.next();
-                    Criteria entriesQuery =
-                            session.createCriteria(WeblogEntryData.class);
-                    entriesQuery.add(
-                            Expression.eq("category", assoc.getCategory()));
-                    Iterator entryIter = entriesQuery.list().iterator();
-                    while (entryIter.hasNext()) {
-                        WeblogEntryData entry = (WeblogEntryData)entryIter.next();
-                        entries.add(entry);
-                    }
-                }
-            }
-            
             // Get entries in category
-            Criteria entriesQuery =
-                    session.createCriteria(WeblogEntryData.class);
+            Criteria entriesQuery = session.createCriteria(WeblogEntryData.class);
             entriesQuery.add(Expression.eq("category", cat));
             Iterator entryIter = entriesQuery.list().iterator();
             while (entryIter.hasNext()) {
                 WeblogEntryData entry = (WeblogEntryData)entryIter.next();
                 entries.add(entry);
             }
+            
+            if (subcats) {
+                // recursive call for child categories
+                WeblogCategoryData childCat = null;
+                Iterator childCats = cat.getWeblogCategories().iterator();
+                while(childCats.hasNext()) {
+                    childCat = (WeblogCategoryData) childCats.next();
+                    
+                    entries.addAll(childCat.retrieveWeblogEntries(subcats));
+                }
+            }
+            
             return entries;
+            
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
+        
     }
         
     public String createAnchor(WeblogEntryData entry) throws RollerException {
@@ -657,33 +644,31 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
+    
+    // TODO: need to fix this method and provide unit test case
     public boolean isDuplicateWeblogCategoryName(WeblogCategoryData cat)
-    throws RollerException {
-        // ensure that no sibling categories share the same name
-        WeblogCategoryData parent =
-                null == cat.getId() ? (WeblogCategoryData)cat.getNewParent() : cat.getParent();
+            throws RollerException {
         
-        if (null != parent) // don't worry about root
-        {
-            List sameNames;
-            try {
-                Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-                Criteria criteria = session.createCriteria(WeblogCategoryAssoc.class);
-                criteria.createAlias("category", "c");
-                criteria.add(Expression.ne("c.id", cat.getId()));
-                criteria.add(Expression.eq("c.name", cat.getName()));
-                criteria.add(Expression.eq("ancestorCategory", parent));
-                criteria.add(Expression.eq("relation", Assoc.PARENT));
-                sameNames = criteria.list();
-            } catch (HibernateException e) {
-                throw new RollerException(e);
-            }
-            if (sameNames.size() > 0) {
-                return true;
+        // ensure that no sibling categories share the same name
+        WeblogCategoryData parent = cat.getParent();
+        if (null != parent) {
+            // TODO: if cat.equals() worked right then we should be able
+            // to use parent.getWeblogCategories().contains(cat) instead of this loop
+            
+            WeblogCategoryData sibling = null;
+            Iterator siblings = parent.getWeblogCategories().iterator();
+            while(siblings.hasNext()) {
+                sibling = (WeblogCategoryData) siblings.next();
+                
+                if(cat.getName().equals(sibling.getName())) {
+                    return true;
+                }
             }
         }
+        
         return false;
     }
+    
     
     public boolean isWeblogCategoryInUse(WeblogCategoryData cat)
     throws RollerException {
@@ -720,78 +705,6 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    public boolean isDescendentOf(
-            WeblogCategoryData child, WeblogCategoryData ancestor)
-            throws RollerException {
-        boolean ret = false;
-        try {
-            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogCategoryAssoc.class);
-            criteria.add(Expression.eq("category", child));
-            criteria.add(Expression.eq("ancestorCategory", ancestor));
-            ret = criteria.list().size() > 0;
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-        return ret;
-    }
-    
-    public Assoc getWeblogCategoryParentAssoc(WeblogCategoryData cat)
-    throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogCategoryAssoc.class);
-            criteria.add(Expression.eq("category", cat));
-            criteria.add(Expression.eq("relation", Assoc.PARENT));
-            List parents = criteria.list();
-            if (parents.size() > 1) {
-                throw new RollerException("ERROR: more than one parent");
-            } else if (parents.size() == 1) {
-                return (Assoc) parents.get(0);
-            } else {
-                return null;
-            }
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-    
-    public List getWeblogCategoryChildAssocs(WeblogCategoryData cat)
-    throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogCategoryAssoc.class);
-            criteria.add(Expression.eq("ancestorCategory", cat));
-            criteria.add(Expression.eq("relation", Assoc.PARENT));
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-    
-    public List getAllWeblogCategoryDecscendentAssocs(WeblogCategoryData cat)
-    throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogCategoryAssoc.class);
-            criteria.add(Expression.eq("ancestorCategory", cat));
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-    
-    public List getWeblogCategoryAncestorAssocs(WeblogCategoryData cat)
-    throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogCategoryAssoc.class);
-            criteria.add(Expression.eq("category", cat));
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
                 
     public List getComments(
             WebsiteData     website,
@@ -993,16 +906,6 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     public WeblogCategoryData getWeblogCategoryByPath(
             WebsiteData website, String categoryPath) throws RollerException {
         return getWeblogCategoryByPath(website, null, categoryPath);
-    }
-    
-    public String getPath(WeblogCategoryData category) throws RollerException {
-        if (null == category.getParent()) {
-            return "/";
-        } else {
-            String parentPath = getPath(category.getParent());
-            parentPath = "/".equals(parentPath) ? "" : parentPath;
-            return parentPath + "/" + category.getName();
-        }
     }
     
     public WeblogCategoryData getWeblogCategoryByPath(

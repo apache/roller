@@ -30,7 +30,7 @@ import java.sql.Timestamp;
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @ejb:bean name="PingTargetData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="pingtarget"
+ * @hibernate.class lazy="true" table="pingtarget"
  * @hibernate.cache usage="read-write"
  */
 public class PingTargetData extends PersistentObject implements Serializable {

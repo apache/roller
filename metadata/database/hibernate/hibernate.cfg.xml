@@ -30,8 +30,9 @@
                        
         <property name="show_sql">false</property>
 
-        <!-- use thread local Session context -->
-        <property name="hibernate.current_session_context_class">thread</property>
+        <!-- use custom thread local Session context -->
+        <!--<property name="hibernate.current_session_context_class">thread</property>-->
+        <property name="hibernate.current_session_context_class">org.apache.roller.business.hibernate.ThreadLocalSessionContextNoAutoClose</property>
 
         <!-- Hibernate L2 Caching -->
         <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
@@ -49,7 +50,6 @@
         <mapping resource="org/apache/roller/pojos/PermissionsData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/BookmarkData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/CommentData.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/FolderAssoc.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/FolderData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogTemplate.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/PingCategoryRestrictionData.hbm.xml" />
@@ -65,7 +65,6 @@
         <mapping resource="org/apache/roller/pojos/WeblogEntryTagAggregateData.hbm.xml" />                       
         <mapping resource="org/apache/roller/pojos/EntryAttributeData.hbm.xml" />
         <mapping resource="org/apache/roller/pojos/WeblogCategoryData.hbm.xml" />
-        <mapping resource="org/apache/roller/pojos/WeblogCategoryAssoc.hbm.xml" />
         
         <mapping resource="org/apache/roller/planet/pojos/PlanetConfigData.hbm.xml" />
         <mapping resource="org/apache/roller/planet/pojos/PlanetGroupData.hbm.xml" />

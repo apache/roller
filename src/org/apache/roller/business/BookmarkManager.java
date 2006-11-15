@@ -20,7 +20,6 @@ package org.apache.roller.business;
 
 import java.util.List;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.BookmarkData;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
@@ -129,29 +128,6 @@ public interface BookmarkManager {
      * Check duplicate folder name.
      */
     public boolean isDuplicateFolderName(FolderData data) throws RollerException;
-    
-    
-    /**
-     * Determines if folder is descendent of folder.
-     */
-    public boolean isDescendentOf(FolderData data, FolderData ancestor) throws RollerException;
-    
-    
-    /**
-     */
-    public Assoc getFolderParentAssoc(FolderData data) throws RollerException;
-    
-    /**
-     */
-    public List getFolderChildAssocs(FolderData data) throws RollerException;
-    
-    /**
-     */
-    public List getAllFolderDecscendentAssocs(FolderData data) throws RollerException;
-    
-    /**
-     */
-    public List getFolderAncestorAssocs(FolderData data) throws RollerException;
     
     
     /** 

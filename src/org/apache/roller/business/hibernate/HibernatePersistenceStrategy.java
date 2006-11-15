@@ -21,7 +21,6 @@ package org.apache.roller.business.hibernate;
 import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,8 +30,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.Assoc;
-import org.apache.roller.pojos.HierarchicalPersistentObject;
 import org.apache.roller.pojos.PersistentObject;
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -219,7 +216,14 @@ public class HibernatePersistenceStrategy {
         
         Session session = getSession();
         try {
+            // first lets flush the current state to the db
+            log.info("Flushing Hibernate Session");
+            session.flush();
+            
+            // then commit the current transaction to finish it
+            log.info("Committing Hibernate Transaction");
             session.getTransaction().commit();
+            
         } catch(Throwable t) {
             // uh oh ... failed persisting, gotta release
             release();
@@ -370,171 +374,4 @@ public class HibernatePersistenceStrategy {
         }
     }
     
-    
-    /**
-     * Store hierarchical object.
-     *
-     * NOTE: if the object has proper cascade setting then is all this necessary?
-     */
-    public void store(HierarchicalPersistentObject obj)
-            throws HibernateException, RollerException {
-        
-        if(obj == null) {
-            throw new HibernateException("Cannot save null object");
-        }
-        
-        log.debug("Storing hierarchical object "+obj);
-        
-        Session session = getSession();
-        
-        HierarchicalPersistentObject mNewParent = obj.getNewParent();
-        boolean fresh = (obj.getId() == null || "".equals(obj.getId()));
-        
-        if (fresh) {
-            // Object has never been written to database, so save it.
-            // This makes obj into a persistent instance.
-            session.save(obj);
-        }
-        
-        if(!session.contains(obj)) {
-            
-            // Object has been written to database, but instance passed in
-            // is not a persistent instance, so must be loaded into session.
-            HierarchicalPersistentObject vo =
-                    (HierarchicalPersistentObject)session.load(obj.getClass(),obj.getId());
-            vo.setData(obj);
-            obj = vo;
-        }
-        
-        if (fresh) {
-            // Every fresh cat needs a parent assoc
-            Assoc parentAssoc = obj.createAssoc(
-                    obj, mNewParent, Assoc.PARENT);
-            this.store(parentAssoc);
-        } else if (null != mNewParent) {
-            // New parent must be added to parentAssoc
-            Assoc parentAssoc = obj.getParentAssoc();
-            if(parentAssoc == null)
-                log.error("parent assoc is null");
-            parentAssoc.setAncestor(mNewParent);
-            this.store(parentAssoc);
-        }
-        
-        // Clear out existing grandparent associations
-        Iterator ancestors = obj.getAncestorAssocs().iterator();
-        while (ancestors.hasNext()) {
-            Assoc assoc = (Assoc)ancestors.next();
-            if (assoc.getRelation().equals(Assoc.GRANDPARENT)) {
-                this.remove(assoc);
-            }
-        }
-        
-        // Walk parent assocations, creating new grandparent associations
-        int count = 0;
-        Assoc currentAssoc = obj.getParentAssoc();
-        while (null != currentAssoc.getAncestor()) {
-            if (count > 0) {
-                Assoc assoc = obj.createAssoc(obj,
-                        currentAssoc.getAncestor(),
-                        Assoc.GRANDPARENT);
-                this.store(assoc);
-            }
-            currentAssoc = currentAssoc.getAncestor().getParentAssoc();
-            count++;
-        }
-        
-        Iterator children = obj.getChildAssocs().iterator();
-        while (children.hasNext()) {
-            Assoc assoc = (Assoc) children.next();
-            
-            // resetting parent will cause reset of ancestors links
-            assoc.getObject().setParent(obj);
-            
-            // recursively...
-            this.store(assoc.getObject());
-        }
-        
-        // Clear new parent now that new parent has been saved
-        mNewParent = null;
-    }
-    
-    
-    /**
-     * Store assoc.
-     */
-    public void store(Assoc assoc) throws HibernateException {
-        
-        if(assoc == null) {
-            throw new HibernateException("Cannot save null object");
-        }
-        
-        getSession().saveOrUpdate(assoc);
-    }
-    
-    
-    /**
-     * Remove hierarchical object.
-     *
-     * NOTE: if the object has proper cascade setting then is all this necessary?
-     */
-    public void remove(HierarchicalPersistentObject obj) throws RollerException {
-        
-        if(obj == null) {
-            throw new RollerException("Cannot remove null object");
-        }
-        
-        log.debug("Removing hierarchical object "+obj.getId());
-        
-        // loop to remove all descendents and associations
-        List toRemove = new LinkedList();
-        List assocs = obj.getAllDescendentAssocs();
-        for (int i=assocs.size()-1; i>=0; i--) {
-            Assoc assoc = (Assoc)assocs.get(i);
-            HierarchicalPersistentObject hpo = assoc.getObject();
-            
-            // remove my descendent's parent and grandparent associations
-            Iterator ancestors = hpo.getAncestorAssocs().iterator();
-            while (ancestors.hasNext()) {
-                Assoc dassoc = (Assoc)ancestors.next();
-                this.remove(dassoc);
-            }
-            
-            // remove decendent association and descendents
-            //assoc.remove();
-            toRemove.add(hpo);
-        }
-        Iterator removeIterator = toRemove.iterator();
-        while (removeIterator.hasNext()) {
-            PersistentObject po = (PersistentObject) removeIterator.next();
-            getSession().delete(po);
-        }
-        
-        // loop to remove my own parent and grandparent associations
-        Iterator ancestors = obj.getAncestorAssocs().iterator();
-        while (ancestors.hasNext()) {
-            Assoc assoc = (Assoc)ancestors.next();
-            this.remove(assoc);
-        }
-        
-        getSession().delete(obj);
-    }
-    
-    
-    /**
-     * Remove assoc.
-     */
-    public void remove(Assoc assoc) throws HibernateException {
-        
-        if(assoc == null) {
-            throw new HibernateException("Cannot save null object");
-        }
-        
-        getSession().delete(assoc);
-    }
-    
 }
-
-
-
-
-

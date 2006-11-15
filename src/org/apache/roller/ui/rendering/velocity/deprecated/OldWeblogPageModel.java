@@ -23,9 +23,11 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
@@ -604,15 +606,15 @@ public class OldWeblogPageModel {
     //------------------------------------------------------------------------
     
     /** Encapsulates WeblogManager.getWeblogCategories() */
-    public List getWeblogCategories(String categoryName) {
-        List ret = null;
+    public Set getWeblogCategories(String categoryName) {
+        Set ret = null;
         if (VELOCITY_NULL.equals(categoryName)) categoryName = null;
         
         // Make sure we have not already fetched this category.
         if (categoryName != null) {
-            ret = (List)mCategories.get(categoryName);
+            ret = (Set)mCategories.get(categoryName);
         } else {
-            ret = (List)mCategories.get("zzz_null_zzz");
+            ret = (Set)mCategories.get("zzz_null_zzz");
         }
         
         if (null == ret) {
@@ -625,14 +627,14 @@ public class OldWeblogPageModel {
                     category = mWebsite.getDefaultCategory();
                 }
                 
-                List mRet = category.getWeblogCategories();
+                Set mRet = category.getWeblogCategories();
                 
                 // wrap pojos
-                ret = new ArrayList(mRet.size());
+                ret = new HashSet(mRet.size());
                 Iterator it = mRet.iterator();
                 int i=0;
                 while(it.hasNext()) {
-                    ret.add(i, WeblogCategoryDataWrapper.wrap((WeblogCategoryData)it.next()));
+                    ret.add(WeblogCategoryDataWrapper.wrap((WeblogCategoryData)it.next()));
                     i++;
                 }
                 if (categoryName != null) {

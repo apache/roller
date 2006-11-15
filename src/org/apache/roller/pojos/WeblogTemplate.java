@@ -34,7 +34,7 @@ import org.apache.roller.RollerException;
  *
  * @ejb:bean name="WeblogTemplate"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="webpage"
+ * @hibernate.class lazy="true" table="webpage"
  * @hibernate.cache usage="read-write"
  */
 public class WeblogTemplate extends PersistentObject

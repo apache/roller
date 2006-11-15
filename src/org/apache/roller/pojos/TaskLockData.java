@@ -27,7 +27,7 @@ import java.util.Date;
  * Represents locking information about a specific RollerTask.
  *
  * @ejb:bean name="TaskLockData"
- * @hibernate.class lazy="false" table="roller_tasklock"
+ * @hibernate.class lazy="true" table="roller_tasklock"
  * @hibernate.cache usage="read-write"
  */
 public class TaskLockData extends PersistentObject implements Serializable {

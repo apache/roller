@@ -25,7 +25,7 @@ package org.apache.roller.pojos;
  *
  * @ejb:bean name="RoleData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="userrole"
+ * @hibernate.class lazy="true" table="userrole"
  * @hibernate.cache usage="read-write"
  */
 public class RoleData

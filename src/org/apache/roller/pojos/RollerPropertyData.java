@@ -30,7 +30,7 @@ package org.apache.roller.pojos;
  * @author Allen Gilliland
  *
  * @ejb:bean name="RollerPropertyData"
- * @hibernate.class lazy="false" table="roller_properties"
+ * @hibernate.class lazy="true" table="roller_properties"
  * @hibernate.cache usage="read-write"
  */
 public class RollerPropertyData 

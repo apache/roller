@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.CommentData;
 import org.apache.roller.pojos.HitCountData;
 import org.apache.roller.pojos.UserData;
@@ -35,8 +34,6 @@ import org.apache.roller.pojos.WebsiteData;
  * Interface to weblog entry, category and comment management.
  */
 public interface WeblogManager {
-    
-    public static final String CATEGORY_ATT = "category.att";
        
     /**
      * Save weblog entry.
@@ -278,33 +275,7 @@ public interface WeblogManager {
      */
     public List getWeblogCategories(WebsiteData website, boolean includeRoot)
             throws RollerException;
-        
-    /**
-     * Get absolute path to category, appropriate for use by getWeblogCategoryByPath().
-     * @param category WeblogCategoryData.
-     * @return         Forward slash separated path string.
-     */
-    public String getPath(WeblogCategoryData category) throws RollerException;
     
-    /**
-     * Get parent association for a category.
-     */
-    public Assoc getWeblogCategoryParentAssoc(WeblogCategoryData data) throws RollerException;
-    
-    /**
-     * Get child associations for a category.
-     */
-    public List getWeblogCategoryChildAssocs(WeblogCategoryData data) throws RollerException;
-    
-    /** 
-     * Get all descendent associations for a category.
-     */
-    public List getAllWeblogCategoryDecscendentAssocs(WeblogCategoryData data) throws RollerException;
-    
-    /**
-     * Get all ancestor associates for a category.
-     */
-    public List getWeblogCategoryAncestorAssocs(WeblogCategoryData data) throws RollerException;
                
     /**
      * Save comment.
@@ -386,11 +357,6 @@ public interface WeblogManager {
     public boolean isWeblogCategoryInUse(WeblogCategoryData data)
             throws RollerException;    
     
-    /**
-     * Returns true if ancestor is truly an ancestor of child.
-     */
-    public boolean isDescendentOf(WeblogCategoryData child, 
-            WeblogCategoryData ancestor) throws RollerException;
     
     /**
      * Apply comment default settings from website to all of website's entries.

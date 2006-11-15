@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +56,7 @@ import org.apache.roller.business.WeblogManager;
  *
  * @ejb:bean name="WebsiteData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false"  table="website"
+ * @hibernate.class lazy="true"  table="website"
  * @hibernate.cache usage="read-write"
  */
 public class WebsiteData extends org.apache.roller.pojos.PersistentObject
@@ -493,7 +495,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     /**
      * @roller.wrapPojoMethod type="simple"
      * @ejb:persistent-field
-     * @hibernate.many-to-one column="bloggercatid" non-null="false"
+     * @hibernate.many-to-one column="bloggercatid" non-null="false" cascade="none"
      */
     public WeblogCategoryData getBloggerCategory() {
         return bloggerCategory;
@@ -511,7 +513,7 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
      *
      * @roller.wrapPojoMethod type="pojo"
      * @ejb:persistent-field
-     * @hibernate.many-to-one column="defaultcatid" non-null="false"
+     * @hibernate.many-to-one column="defaultcatid" non-null="false" cascade="none"
      */
     public WeblogCategoryData getDefaultCategory() {
         return defaultCategory;
@@ -1130,14 +1132,14 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
      * Returns categories under the default category of the weblog.
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
      */
-    public List getWeblogCategories() {
-        List ret = new ArrayList();
-        try {           
+    public Set getWeblogCategories() {
+        Set ret = new HashSet();
+//        try {           
             WeblogCategoryData category = this.getDefaultCategory();
             ret = category.getWeblogCategories();
-        } catch (RollerException e) {
-            log.error("ERROR: fetching categories", e);
-        }
+//        } catch (RollerException e) {
+//            log.error("ERROR: fetching categories", e);
+//        }
         return ret;
     }
     
@@ -1145,8 +1147,8 @@ public class WebsiteData extends org.apache.roller.pojos.PersistentObject
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
      */
-    public List getWeblogCategories(String categoryPath) {
-        List ret = new ArrayList();
+    public Set getWeblogCategories(String categoryPath) {
+        Set ret = new HashSet();
         try {
             Roller roller = RollerFactory.getRoller();
             WeblogManager wmgr = roller.getWeblogManager();            
