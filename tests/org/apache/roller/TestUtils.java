@@ -81,6 +81,9 @@ public final class TestUtils {
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         mgr.addUser(testUser);
         
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
         // query for the user to make sure we return the persisted object
         UserData user = mgr.getUserByUserName(username);
         
@@ -102,6 +105,9 @@ public final class TestUtils {
         
         // remove the user
         mgr.removeUser(user);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
     
@@ -128,6 +134,9 @@ public final class TestUtils {
         UserManager mgr = RollerFactory.getRoller().getUserManager();
         mgr.addWebsite(testWeblog);
         
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
         // query for the new weblog and return it
         WebsiteData weblog = mgr.getWebsiteByHandle(handle);
         
@@ -149,6 +158,9 @@ public final class TestUtils {
         
         // remove the weblog
         mgr.removeWebsite(weblog);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
  
     
@@ -177,6 +189,9 @@ public final class TestUtils {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         mgr.saveWeblogEntry(testEntry);
         
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
         // query for object
         WeblogEntryData entry = mgr.getWeblogEntry(testEntry.getId());
         
@@ -198,6 +213,9 @@ public final class TestUtils {
         
         // remove the entry
         mgr.removeWeblogEntry(entry);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
     
@@ -222,6 +240,9 @@ public final class TestUtils {
         WeblogManager mgr = RollerFactory.getRoller().getWeblogManager();
         mgr.saveComment(testComment);
         
+        // flush to db
+        RollerFactory.getRoller().flush();
+        
         // query for object
         CommentData comment = mgr.getComment(testComment.getId());
         
@@ -243,6 +264,9 @@ public final class TestUtils {
         
         // remove the comment
         mgr.removeComment(comment);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
     
@@ -259,6 +283,9 @@ public final class TestUtils {
         // store ping
         PingTargetManager pingMgr = RollerFactory.getRoller().getPingTargetManager();
         pingMgr.savePingTarget(testPing);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
         
         // query for it
         PingTargetData ping = pingMgr.getPingTarget(testPing.getId());
@@ -281,6 +308,9 @@ public final class TestUtils {
         
         // remove the ping
         pingMgr.removePingTarget(ping);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
     
@@ -295,6 +325,9 @@ public final class TestUtils {
         // store auto ping
         AutoPingData autoPing = new AutoPingData(null, ping, weblog);
         mgr.saveAutoPing(autoPing);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
         
         // query for it
         autoPing = mgr.getAutoPing(autoPing.getId());
@@ -317,6 +350,9 @@ public final class TestUtils {
         
         // remove the auto ping
         mgr.removeAutoPing(autoPing);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
     
@@ -333,6 +369,9 @@ public final class TestUtils {
         testCount.setWeblog(weblog);
         testCount.setDailyHits(amount);
         mgr.saveHitCount(testCount);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
         
         // query for it
         testCount = mgr.getHitCount(testCount.getId());
@@ -355,6 +394,9 @@ public final class TestUtils {
         
         // remove
         mgr.removeHitCount(testCount);
+        
+        // flush to db
+        RollerFactory.getRoller().flush();
     }
     
 }

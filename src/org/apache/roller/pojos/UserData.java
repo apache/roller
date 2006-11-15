@@ -39,7 +39,7 @@ import org.apache.roller.util.Utilities;
  *
  * @ejb:bean name="UserData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="rolleruser"
+ * @hibernate.class lazy="true" table="rolleruser"
  * @hibernate.cache usage="read-write"
  */
 public class UserData
@@ -404,7 +404,7 @@ public class UserData
     
     
     /**
-     * @hibernate.set lazy="false" inverse="true" cascade="all-delete-orphan"
+     * @hibernate.set lazy="true" inverse="true" cascade="all-delete-orphan"
      * @hibernate.collection-key column="userid"
      * @hibernate.collection-one-to-many class="org.apache.roller.pojos.RoleData"
      */

@@ -42,6 +42,7 @@ import org.apache.roller.ui.core.security.AutoProvision;
 
 /**
  * Roller session handles session startup and shutdown.
+ *
  * @web.listener
  */
 public class RollerSession 
@@ -49,7 +50,8 @@ public class RollerSession
     
     static final long serialVersionUID = 5890132909166913727L;
     
-    private UserData authenticatedUser = null;
+    // the id of the user represented by this session
+    private String userId = null;
     
     private static Log log = LogFactory.getLog(RollerSession.class);
     
@@ -141,7 +143,18 @@ public class RollerSession
      * Authenticated user associated with this session.
      */
     public UserData getAuthenticatedUser() {
-        return authenticatedUser;
+        
+        UserData authenticUser = null;
+        if(userId != null) {
+            try {
+                UserManager mgr = RollerFactory.getRoller().getUserManager();
+                authenticUser = mgr.getUser(userId);
+            } catch (RollerException ex) {
+                log.warn("Error looking up authenticated user "+userId, ex);
+            }
+        }
+        
+        return authenticUser;
     }
     
     
@@ -149,7 +162,7 @@ public class RollerSession
      * Authenticated user associated with this session.
      */
     public void setAuthenticatedUser(UserData authenticatedUser) {
-        this.authenticatedUser = authenticatedUser;
+        this.userId = authenticatedUser.getId();
     }
     
     

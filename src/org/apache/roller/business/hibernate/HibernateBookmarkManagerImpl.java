@@ -1,23 +1,21 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * Created on Jun 18, 2004
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
+
 package org.apache.roller.business.hibernate;
 
 import java.io.StringReader;
@@ -26,9 +24,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.apache.roller.RollerException;
-import org.apache.roller.pojos.Assoc;
 import org.apache.roller.pojos.BookmarkData;
-import org.apache.roller.pojos.FolderAssoc;
 import org.apache.roller.pojos.FolderData;
 import org.apache.roller.pojos.WebsiteData;
 import java.util.Iterator;
@@ -91,12 +87,10 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         RollerFactory.getRoller().getUserManager().saveWebsite(bookmark.getWebsite());
     }
     
-    //------------------------------------------------------------ Folder CRUD
-    
     
     public void saveFolder(FolderData folder) throws RollerException {
         
-        if(isDuplicateFolderName(folder)) {
+        if(folder.getId() == null && isDuplicateFolderName(folder)) {
             throw new RollerException("Duplicate folder name");
         }
         
@@ -210,7 +204,7 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         }
     }
     
-    //----------------------------------------------------------------
+    
     public void moveFolderContents(FolderData src, FolderData dest)
             throws RollerException {
         
@@ -219,37 +213,21 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
                     "ERROR cannot move parent folder into it's own child");
         }
         
-        try {
-            // Add to destination folder
-            LinkedList deleteList = new LinkedList();
-            Iterator srcBookmarks = src.getBookmarks().iterator();
-            while (srcBookmarks.hasNext()) {
-                BookmarkData bd = (BookmarkData)srcBookmarks.next();
-                deleteList.add(bd);
-                
-                BookmarkData movedBd = new BookmarkData();
-                movedBd.setData(bd);
-                movedBd.setId(null);
-                
-                dest.addBookmark(movedBd);
-                this.strategy.store(movedBd);
-            }
+        // iterator over src bookmarks and add them to dest
+        BookmarkData bookmark = null;
+        Iterator srcBookmarks = src.getBookmarks().iterator();
+        while(srcBookmarks.hasNext()) {
+            bookmark = (BookmarkData) srcBookmarks.next();
             
-            // Remove from source folder
-            Iterator deleteIter = deleteList.iterator();
-            while (deleteIter.hasNext()) {
-                BookmarkData bd = (BookmarkData)deleteIter.next();
-                src.removeBookmark(bd);
-                // TODO: this won't conflict with the bookmark we store above right?
-                this.strategy.remove(bd);
-            }
-            
-        } catch (Exception ex) {
-            throw new RollerException(ex);
+            // add to dest
+            dest.addBookmark(bookmark);
         }
+        
+        // now just save the dest folder
+        this.saveFolder(dest);
     }
     
-    //----------------------------------------------------------------
+    
     public void removeFolderContents(FolderData src) throws RollerException {
         
         // just go through the folder and remove each bookmark
@@ -260,7 +238,6 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         }
     }
     
-    //---------------------------------------------------------------- Queries
     
     public FolderData getFolder(WebsiteData website, String folderPath)
     throws RollerException {
@@ -314,12 +291,6 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         return null;
     }
     
-    //----------------------------------------------- FolderAssoc CRUD
-    
-    
-    public FolderAssoc retrieveFolderAssoc(String id) throws RollerException {
-        return (FolderAssoc)strategy.load(id, FolderAssoc.class);
-    }
     
     public void release() {}
     
@@ -328,66 +299,42 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
      *      org.apache.roller.pojos.FolderData, boolean)
      */
     public List getBookmarks(FolderData folder, boolean subfolders)
-    throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            List bookmarks = new LinkedList();
-            if (subfolders) {
-                // get bookmarks in subfolders
-                Criteria assocsQuery = session
-                        .createCriteria(FolderAssoc.class);
-                assocsQuery.add(Expression.eq("ancestorFolder", folder));
-                Iterator assocs = assocsQuery.list().iterator();
-                while (assocs.hasNext()) {
-                    FolderAssoc assoc = (FolderAssoc) assocs.next();
-                    Criteria bookmarksQuery = session
-                            .createCriteria(BookmarkData.class);
-                    bookmarksQuery.add(Expression.eq("folder", assoc
-                            .getFolder()));
-                    Iterator bookmarkIter = bookmarksQuery.list().iterator();
-                    while (bookmarkIter.hasNext()) {
-                        BookmarkData entry = (BookmarkData) bookmarkIter.next();
-                        bookmarks.add(entry);
-                    }
-                }
+            throws RollerException {
+        
+        List bkmrks = new LinkedList();
+        
+        // Get bookmarks in current folder
+        bkmrks.addAll(folder.getBookmarks());
+        
+        if (subfolders) {
+            // recursive call for child folders
+            FolderData childFolder = null;
+            Iterator childFolders = folder.getFolders().iterator();
+            while(childFolders.hasNext()) {
+                childFolder = (FolderData) childFolders.next();
+                
+                bkmrks.addAll(this.getBookmarks(childFolder, subfolders));
             }
-            
-            // get bookmarks in folder
-            Criteria bookmarksQuery = session
-                    .createCriteria(BookmarkData.class);
-            bookmarksQuery.add(Expression.eq("folder", folder));
-            Iterator bookmarkIter = bookmarksQuery.list().iterator();
-            while (bookmarkIter.hasNext()) {
-                BookmarkData bookmark = (BookmarkData) bookmarkIter.next();
-                bookmarks.add(bookmark);
-            }
-            return bookmarks;
-        } catch (HibernateException e) {
-            throw new RollerException(e);
         }
+        
+        return bkmrks;
     }
     
     public FolderData getRootFolder(WebsiteData website) throws RollerException {
+        
         if (website == null)
             throw new RollerException("website is null");
+        
         try {
-            Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-            Criteria criteria = session.createCriteria(FolderAssoc.class);
-            criteria.createAlias("folder", "f");
-            criteria.add(Expression.eq("f.website", website));
-            criteria.add(Expression.isNull("ancestorFolder"));
-            criteria.add(Expression.eq("relation", FolderAssoc.PARENT));
-            List results = criteria.list();
-            if (results.size() > 1) {
-                // Should not have more than one root
-                throw new RollerException(
-                        "More than one root folder found for website "
-                        + website.getId());
-            } else if (results.size() == 1) {
-                // Return root
-                return ((FolderAssoc) results.get(0)).getFolder();
-            }
-            return null;
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            Criteria criteria = session.createCriteria(FolderData.class);
+            
+            criteria.add(Expression.eq("website", website));
+            criteria.add(Expression.isNull("parent"));
+            criteria.setMaxResults(1);
+            
+            return (FolderData) criteria.uniqueResult();
+            
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
@@ -408,108 +355,32 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         
     }
     
+    
     /**
      * @see org.apache.roller.model.BookmarkManager#isDuplicateFolderName(org.apache.roller.pojos.FolderData)
      */
     public boolean isDuplicateFolderName(FolderData folder) throws RollerException {
-        // ensure that no sibling folders share the same name
-        boolean isNewFolder = (folder.getId() == null);
-        FolderData parent =
-                isNewFolder ? (FolderData)folder.getNewParent() : folder.getParent();
         
+        // ensure that no sibling folders share the same name
+        FolderData parent = folder.getParent();
         if (null != parent) {
-            List sameNames;
-            try {
-                Session session = ((HibernatePersistenceStrategy) strategy).getSession();
-                Criteria criteria = session.createCriteria(FolderAssoc.class);
-                criteria.createAlias("folder", "f");
-                criteria.add(Expression.eq("f.name", folder.getName()));
-                criteria.add(Expression.eq("ancestorFolder", parent));
-                criteria.add(Expression.eq("relation", Assoc.PARENT));
-                sameNames = criteria.list();
-            } catch (HibernateException e) {
-                throw new RollerException(e);
-            }
-            // If we got some matches
-            if (sameNames.size() > 0) {
-                // if we're saving a new folder, any matches are dups
-                if (isNewFolder) return true;
-                // otherwise it's a dup it isn't the same one (one match with the same id).
-                if (!(sameNames.size() == 1 && folder.getId().equals(((FolderAssoc)sameNames.get(0)).getFolder().getId())))
+            // TODO: if folder.equals() worked right then we should be able
+            // to use parent.getFolders().contains(folder) instead of this loop
+            
+            FolderData sibling = null;
+            Iterator siblings = parent.getFolders().iterator();
+            while(siblings.hasNext()) {
+                sibling = (FolderData) siblings.next();
+                
+                if(folder.getName().equals(sibling.getName())) {
                     return true;
+                }
             }
         }
+        
         return false;
     }
     
-    /**
-     * @see org.apache.roller.model.BookmarkManager#getFolderParentAssoc(
-     * org.apache.roller.pojos.FolderData)
-     */
-    public Assoc getFolderParentAssoc(FolderData folder) throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(FolderAssoc.class);
-            criteria.add(Expression.eq("folder", folder));
-            criteria.add(Expression.eq("relation", Assoc.PARENT));
-            List parents = criteria.list();
-            if (parents.size() > 1) {
-                throw new RollerException("ERROR: more than one parent");
-            } else if (parents.size() == 1) {
-                return (Assoc) parents.get(0);
-            } else {
-                return null;
-            }
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-    
-    /**
-     * @see org.apache.roller.model.BookmarkManager#getFolderChildAssocs(
-     * org.apache.roller.pojos.FolderData)
-     */
-    public List getFolderChildAssocs(FolderData folder) throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(FolderAssoc.class);
-            criteria.add(Expression.eq("ancestorFolder", folder));
-            criteria.add(Expression.eq("relation", Assoc.PARENT));
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-    
-    /**
-     * @see org.apache.roller.model.BookmarkManager#getAllFolderDecscendentAssocs(
-     * org.apache.roller.pojos.FolderData)
-     */
-    public List getAllFolderDecscendentAssocs(FolderData folder) throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(FolderAssoc.class);
-            criteria.add(Expression.eq("ancestorFolder", folder));
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-    
-    /**
-     * @see org.apache.roller.model.BookmarkManager#getFolderAncestorAssocs(
-     * org.apache.roller.pojos.FolderData)
-     */
-    public List getFolderAncestorAssocs(FolderData folder) throws RollerException {
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(FolderAssoc.class);
-            criteria.add(Expression.eq("folder", folder));
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
     
     /**
      * @see org.apache.roller.model.BookmarkManager#isFolderInUse(org.apache.roller.pojos.FolderData)
@@ -538,18 +409,4 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         }
     }
     
-    public boolean isDescendentOf(FolderData child, FolderData ancestor)
-    throws RollerException {
-        boolean ret = false;
-        try {
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(FolderAssoc.class);
-            criteria.add(Expression.eq("folder", child));
-            criteria.add(Expression.eq("ancestorFolder", ancestor));
-            ret = criteria.list().size() > 0;
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-        return ret;
-    }
 }

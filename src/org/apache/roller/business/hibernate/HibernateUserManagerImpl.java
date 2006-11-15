@@ -15,7 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-/* Created on Jun 16, 2004 */
+
 package org.apache.roller.business.hibernate;
 
 import java.util.ArrayList;
@@ -59,6 +59,7 @@ import org.apache.roller.pojos.WeblogCategoryData;
 import org.apache.roller.pojos.WeblogEntryData;
 import org.apache.roller.pojos.WebsiteData;
 import org.hibernate.Query;
+
 
 /**
  * Hibernate implementation of the UserManager.
@@ -193,16 +194,16 @@ public class HibernateUserManagerImpl implements UserManager {
             this.strategy.remove(rootFolder);
             
             // Still cannot get all Bookmarks cleared!
-            Iterator allFolders = bmgr.getAllFolders(website).iterator();
-            while (allFolders.hasNext()) {
-                FolderData aFolder = (FolderData)allFolders.next();
-                bmgr.removeFolderContents(aFolder);
-                this.strategy.remove(aFolder);
-            }
+//            Iterator allFolders = bmgr.getAllFolders(website).iterator();
+//            while (allFolders.hasNext()) {
+//                FolderData aFolder = (FolderData)allFolders.next();
+//                bmgr.removeFolderContents(aFolder);
+//                this.strategy.remove(aFolder);
+//            }
         }
         
         // remove categories
-        WeblogCategoryData rootCat = wmgr.getRootWeblogCategory(website);
+        WeblogCategoryData rootCat = website.getDefaultCategory();
         if (null != rootCat) {
             this.strategy.remove(rootCat);
         }
@@ -287,7 +288,7 @@ public class HibernateUserManagerImpl implements UserManager {
         perms.setPermissionMask(PermissionsData.ADMIN);
         this.strategy.store(perms);
         
-        // add default categories
+        // add default category
         WeblogCategoryData rootCat = new WeblogCategoryData(
                 null,      // id
                 newWeblog, // newWeblog
@@ -299,7 +300,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         String cats = RollerConfig.getProperty("newuser.categories");
         WeblogCategoryData firstCat = rootCat;
-        if (cats != null) {
+        if (cats != null && cats.trim().length() > 0) {
             String[] splitcats = cats.split(",");
             for (int i=0; i<splitcats.length; i++) {
                 WeblogCategoryData c = new WeblogCategoryData(
@@ -313,6 +314,7 @@ public class HibernateUserManagerImpl implements UserManager {
                 this.strategy.store(c);
             }
         }
+        
         // Use first category as default for Blogger API
         newWeblog.setBloggerCategory(firstCat);
         

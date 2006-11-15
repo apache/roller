@@ -29,7 +29,7 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @ejb:bean name="AutoPingData"
- * @hibernate.class lazy="false" table="pingcategory"
+ * @hibernate.class lazy="true" table="pingcategory"
  * @hibernate.cache usage="read-write"
  */
 public class PingCategoryRestrictionData extends PersistentObject implements Serializable {

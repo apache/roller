@@ -28,7 +28,7 @@ import java.sql.Timestamp;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @ejb:bean name="PingQueueEntryData"
- * @hibernate.class lazy="false" table="pingqueueentry"
+ * @hibernate.class lazy="true" table="pingqueueentry"
  * @hibernate.cache usage="read-write"
  */
 public class PingQueueEntryData extends PersistentObject implements Serializable {

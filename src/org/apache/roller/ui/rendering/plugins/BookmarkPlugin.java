@@ -93,19 +93,17 @@ public class BookmarkPlugin implements WeblogEntryPlugin {
      * @return
      */
     private String lookInFolders(String text, Collection folders) {
+        
         Iterator it = folders.iterator();
         while (it.hasNext()) {
             FolderData folder = (FolderData)it.next();
             text = matchBookmarks(text, folder);
             
-            try {
-                if (!folder.getFolders().isEmpty()) {
-                    lookInFolders(text, folder.getFolders());
-                }
-            } catch (RollerException e) {
-                mLogger.error("Error getting child Folders");
+            if (!folder.getFolders().isEmpty()) {
+                lookInFolders(text, folder.getFolders());
             }
         }
+        
         return text;
     }
     

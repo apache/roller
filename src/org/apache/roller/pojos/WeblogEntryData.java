@@ -59,7 +59,7 @@ import org.apache.roller.util.Utilities;
  *
  * @ejb:bean name="WeblogEntryData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="weblogentry"
+ * @hibernate.class lazy="true" table="weblogentry"
  * @hibernate.cache usage="read-write"
  */
 public class WeblogEntryData extends PersistentObject implements Serializable {

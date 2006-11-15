@@ -1,24 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/*
- * WeblogCategoryTest.java
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Created on April 13, 2006, 10:07 PM
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
  */
 
 package org.apache.roller.business;
@@ -100,27 +95,28 @@ public class WeblogCategoryTest extends TestCase {
         WeblogCategoryData cat = null;
         List cats = null;
         
-        // we need to know how many categories we start the test with
-        int numCats = mgr.getRootWeblogCategory(testWeblog).getWeblogCategories().size();
+        WeblogCategoryData root = mgr.getRootWeblogCategory(testWeblog);
+        
+        // make sure we are starting with 0 categories (beneath root)
+        assertEquals(0, root.getWeblogCategories().size());
         
         // add a new category
         WeblogCategoryData newCat = new WeblogCategoryData();
         newCat.setName("catTestCategory");
-        newCat.setParent(testWeblog.getDefaultCategory());
+        newCat.setParent(root);
         newCat.setWebsite(testWeblog);
         mgr.saveWeblogCategory(newCat);
-        String id = newCat.getId();
         TestUtils.endSession(true);
         
         // make sure category was added
         cat = null;
-        cat = mgr.getWeblogCategory(id);
+        cat = mgr.getWeblogCategory(newCat.getId());
         assertNotNull(cat);
         assertEquals(newCat, cat);
         
         // make sure category count increased
-        testWeblog = RollerFactory.getRoller().getUserManager().getWebsite(testWeblog.getId());
-        assertEquals(numCats+1, mgr.getRootWeblogCategory(testWeblog).getWeblogCategories().size());
+        root = mgr.getRootWeblogCategory(testWeblog);
+        assertEquals(1, root.getWeblogCategories().size());
         
         // update category
         cat.setName("testtest");
@@ -129,22 +125,41 @@ public class WeblogCategoryTest extends TestCase {
         
         // verify category was updated
         cat = null;
-        cat = mgr.getWeblogCategory(id);
+        cat = mgr.getWeblogCategory(newCat.getId());
         assertNotNull(cat);
         assertEquals("testtest", cat.getName());
         
-        // remove category
+        // add a subcat
+        WeblogCategoryData subcat = new WeblogCategoryData();
+        subcat.setName("subcatTest1");
+        subcat.setWebsite(testWeblog);
+        subcat.setParent(cat);
+        mgr.saveWeblogCategory(subcat);
+        TestUtils.endSession(true);
+        
+        // check that subcat was saved and we can navigate to it
+        root = mgr.getRootWeblogCategory(testWeblog);
+        assertEquals(1, root.getWeblogCategories().size());
+        cat = (WeblogCategoryData) root.getWeblogCategories().iterator().next();
+        assertEquals("testtest", cat.getName());
+        assertEquals(1, cat.getWeblogCategories().size());
+        subcat = (WeblogCategoryData) cat.getWeblogCategories().iterator().next();
+        assertEquals("subcatTest1", subcat.getName());
+        
+        // remove category, should cascade to subcat
         mgr.removeWeblogCategory(cat);
         TestUtils.endSession(true);
         
-        // make sure category was removed
+        // make sure category and subcat was removed
         cat = null;
-        mgr.getWeblogCategory(id);
+        cat = mgr.getWeblogCategory(newCat.getId());
+        assertNull(cat);
+        cat = mgr.getWeblogCategory(subcat.getId());
         assertNull(cat);
         
         // make sure category count decreased
-        testWeblog = RollerFactory.getRoller().getUserManager().getWebsite(testWeblog.getId());
-        assertEquals(numCats, mgr.getRootWeblogCategory(testWeblog).getWeblogCategories().size());
+        root = mgr.getRootWeblogCategory(testWeblog);
+        assertEquals(0, root.getWeblogCategories().size());
     }
     
     

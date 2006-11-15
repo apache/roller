@@ -19,8 +19,8 @@
 package org.apache.roller.pojos;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -40,22 +40,23 @@ import org.apache.roller.business.RollerFactory;
  *    extends="org.apache.struts.validator.ValidatorForm"
  * @ejb:bean name="FolderData"
  *
- * @hibernate.class lazy="false" table="folder"
+ * @hibernate.class lazy="true" table="folder"
  * @hibernate.cache usage="read-write"
  */
-public class FolderData extends HierarchicalPersistentObject
+public class FolderData extends PersistentObject
         implements Serializable, Comparable {
     
     static final long serialVersionUID = -6272468884763861944L;
     
-    private Set bookmarks = new TreeSet();
-    private List folders = null;
-    private WebsiteData website;
+    private String id = null;
+    private String name = null;
+    private String description = null;
+    private String path = null;
     
-    private String id;
-    private String name;
-    private String description;
-    private String path;
+    private WebsiteData website = null;
+    private FolderData parentFolder = null;
+    private Set childFolders = new TreeSet();
+    private Set bookmarks = new TreeSet();
     
     
     /** For use by BookmarkManager implementations only. */
@@ -67,19 +68,22 @@ public class FolderData extends HierarchicalPersistentObject
             String name,
             String desc,
             WebsiteData website) {
-        mNewParent = parent;
         this.name = name;
         this.description = desc;
         this.website = website;
+        this.parentFolder = parent;
     }
     
-    public void setData(org.apache.roller.pojos.PersistentObject otherData) {
-        mNewParent =       ((FolderData) otherData).mNewParent;
-        this.id =          ((FolderData) otherData).getId();
-        this.name =        ((FolderData) otherData).getName();
-        this.description = ((FolderData) otherData).getDescription();
-        this.website =     ((FolderData) otherData).getWebsite();
-        this.setBookmarks(((FolderData) otherData).getBookmarks());
+    public void setData(PersistentObject other) {
+        FolderData otherData = (FolderData) other;
+        
+        this.id = otherData.getId();
+        this.name = otherData.getName();
+        this.description = otherData.getDescription();
+        this.website = otherData.getWebsite();
+        this.parentFolder = otherData.getParent();
+        this.childFolders = otherData.getFolders();
+        this.setBookmarks(otherData.getBookmarks());
     }
     
     
@@ -166,8 +170,6 @@ public class FolderData extends HierarchicalPersistentObject
     /**
      * @roller.wrapPojoMethod type="simple"
      *
-     * @ejb:persistent-field
-     *
      * @hibernate.id column="id"
      *     generator-class="uuid.hex" unsaved-value="null"
      */
@@ -175,10 +177,10 @@ public class FolderData extends HierarchicalPersistentObject
         return this.id;
     }
     
-    /** @ejb:persistent-field */
     public void setId(String id) {
         this.id = id;
     }
+    
     
     /**
      * @roller.wrapPojoMethod type="simple"
@@ -188,25 +190,21 @@ public class FolderData extends HierarchicalPersistentObject
      * @struts.validator-var name="mask" value="${noslashes}"
      * @struts.validator-args arg0resource="folderForm.name"
      *
-     * @ejb:persistent-field
-     *
      * @hibernate.property column="name" non-null="true" unique="false"
      */
     public String getName() {
         return this.name;
     }
     
-    /** @ejb:persistent-field */
     public void setName(String name) {
         this.name = name;
     }
+    
     
     /**
      * Description
      *
      * @roller.wrapPojoMethod type="simple"
-     *
-     * @ejb:persistent-field
      *
      * @hibernate.property column="description" non-null="true" unique="false"
      */
@@ -219,7 +217,6 @@ public class FolderData extends HierarchicalPersistentObject
         this.description = description;
     }
     
-    //---------------------------------------------------------- Relationships
     
     /**
      * Get path to this bookmark folder.
@@ -227,16 +224,22 @@ public class FolderData extends HierarchicalPersistentObject
      * @roller.wrapPojoMethod type="simple"
      */
     public String getPath() throws RollerException {
-        if (mNewParent != null) {
-            throw new RollerException(
-                    "Folder has a new parent and must be saved before getPath() will work");
-        }
         
         if (null == path) {
-            path = RollerFactory.getRoller().getBookmarkManager().getPath(this);
+            if (getParent() == null) {
+                return "/";
+            } else {
+                String parentPath = getParent().getPath();
+                parentPath = "/".equals(parentPath) ? "" : parentPath;
+                return parentPath + "/" + this.name;
+            }
         }
+        
         return path;
     }
+    /** TODO: fix formbean generation so this is not needed. */
+    public void setPath(String string) {}
+    
     
     /**
      * @roller.wrapPojoMethod type="pojo"
@@ -254,53 +257,45 @@ public class FolderData extends HierarchicalPersistentObject
         this.website = website;
     }
     
+    
     /**
      * Return parent category, or null if category is root of hierarchy.
      *
      * @roller.wrapPojoMethod type="pojo"
+     *
+     * @hibernate.many-to-one column="parentid" cascade="none" not-null="false"
      */
-    public FolderData getParent() throws RollerException {
-        if (mNewParent != null) {
-            // Category has new parent, so return that
-            return (FolderData)mNewParent;
-        } else if (getParentAssoc() != null) {
-            // Return parent found in database
-            return ((FolderAssoc)getParentAssoc()).getAncestorFolder();
-        } else {
-            return null;
-        }
+    public FolderData getParent() {
+        return this.parentFolder;
     }
     
     /** Set parent category, database will be updated when object is saved. */
-    public void setParent(HierarchicalPersistentObject parent) {
-        mNewParent = parent;
+    public void setParent(FolderData parent) {
+        this.parentFolder = parent;
     }
+    
     
     /**
      * Query to get child categories of this category.
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.FolderData"
+     *
+     * @hibernate.set lazy="true" inverse="true" cascade="delete"
+     * @hibernate.collection-key column="parentid"
+     * @hibernate.collection-one-to-many class="org.apache.roller.pojos.FolderData"
      */
-    public List getFolders() throws RollerException {
-        if (folders == null) {
-            folders = new LinkedList();
-            List childAssocs = getChildAssocs();
-            Iterator childIter = childAssocs.iterator();
-            while (childIter.hasNext()) {
-                FolderAssoc assoc =
-                        (FolderAssoc) childIter.next();
-                folders.add(assoc.getFolder());
-            }
-        }
-        return folders;
+    public Set getFolders() {
+        return this.childFolders;
     }
     
-    //------------------------------------------------------ Bookmark children
+    /** Set parent category, database will be updated when object is saved. */
+    private void setFolders(Set folders) {
+        this.childFolders = folders;
+    }
+    
     
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.BookmarkData"
-     *
-     * @ejb:persistent-field
      *
      * @hibernate.set lazy="true" order-by="name" inverse="true" cascade="all-delete-orphan"
      * @hibernate.collection-key column="folderid"
@@ -315,6 +310,7 @@ public class FolderData extends HierarchicalPersistentObject
         this.bookmarks = bookmarks;
     }
     
+    
     /** Store bookmark and add to folder */
     public void addBookmark(BookmarkData bookmark) throws RollerException {
         bookmark.setFolder(this);
@@ -325,6 +321,7 @@ public class FolderData extends HierarchicalPersistentObject
     public void removeBookmark(BookmarkData bookmark) {
         getBookmarks().remove(bookmark);
     }
+    
     
     /**
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.BookmarkData"
@@ -341,25 +338,29 @@ public class FolderData extends HierarchicalPersistentObject
      * subfolders of this folder to a single new folder.
      */
     public void moveContents(FolderData dest) throws RollerException {
-        Iterator entries = retrieveBookmarks(true).iterator();
-        while (entries.hasNext()) {
-            BookmarkData bookmark = (BookmarkData) entries.next();
-            
-            // just add bookmarks to new folder
-            // this breaks the old folder/bkmrk relationship
-            // so it's not necessary to explicitly remove
-            dest.addBookmark(bookmark);
-        }
+        
+        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
+        bmgr.moveFolderContents(this, dest);
     }
     
-    //------------------------------------------------------------------------
     
     /**
      * @roller.wrapPojoMethod type="simple"
      */
-    public boolean descendentOf(FolderData ancestor)
-    throws RollerException {
-        return RollerFactory.getRoller().getBookmarkManager().isDescendentOf(this, ancestor);
+    public boolean descendentOf(FolderData ancestor) {
+        
+        // if this is root then we can't be a descendent
+        if(getParent() == null) {
+            return false;
+        } else {
+            // if ancestor is our parent then we are a descendent
+            if(getParent().equals(ancestor)) {
+                return true;
+            } else {
+                // see if our parent is a descendent
+                return getParent().descendentOf(ancestor);
+            }
+        }
     }
     
     
@@ -373,88 +374,7 @@ public class FolderData extends HierarchicalPersistentObject
             throw new RuntimeException(e);
         }
     }
-    
-    
-    /**
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getAssocClass()
-     */
-    public Class getAssocClass() {
-        return FolderAssoc.class;
-    }
-    
-    /**
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getObjectPropertyName()
-     *
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getObjectPropertyName() {
-        return "folder";
-    }
-    
-    /**
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getAncestorPropertyName()
-     *
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public String getAncestorPropertyName() {
-        return "ancestorFolder";
-    }
-    
-    
-    /**
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#createAssoc(
-     *    org.apache.roller.pojos.HierarchicalPersistentObject,
-     *    org.apache.roller.pojos.HierarchicalPersistentObject, java.lang.String)
-     */
-    public Assoc createAssoc(
-            HierarchicalPersistentObject object,
-            HierarchicalPersistentObject associatedObject,
-            String relation) throws RollerException {
-        return new FolderAssoc(
-                null,
-                (FolderData)object,
-                (FolderData)associatedObject,
-                relation);
-    }
-    
-    
-    /** TODO: fix Struts form generation template so this is not needed. */
-    public void setAssocClassName(String dummy) {};
-    /** TODO: fix Struts form generation template so this is not needed. */
-    public void setObjectPropertyName(String dummy) {};
-    /** TODO: fix Struts form generation template so this is not needed. */
-    public void setAncestorPropertyName(String dummy) {};
-    /** TODO: fix formbean generation so this is not needed. */
-    public void setPath(String string) {}
     /** TODO: fix formbean generation so this is not needed. */
     public void setInUse(boolean flag) {}
-    
-    /**
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getParentAssoc()
-     */
-    public Assoc getParentAssoc() throws RollerException {
-        return RollerFactory.getRoller().getBookmarkManager().getFolderParentAssoc(this);
-    }
-    
-    /**
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getChildAssocs()
-     */
-    public List getChildAssocs() throws RollerException {
-        return RollerFactory.getRoller().getBookmarkManager().getFolderChildAssocs(this);
-    }
-    
-    /**
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getAllDescendentAssocs()
-     */
-    public List getAllDescendentAssocs() throws RollerException {
-        return RollerFactory.getRoller().getBookmarkManager().getAllFolderDecscendentAssocs(this);
-    }
-    
-    /**
-     * @see org.apache.roller.pojos.HierarchicalPersistentObject#getAncestorAssocs()
-     */
-    public List getAncestorAssocs() throws RollerException {
-        return RollerFactory.getRoller().getBookmarkManager().getFolderAncestorAssocs(this);
-    }
     
 }

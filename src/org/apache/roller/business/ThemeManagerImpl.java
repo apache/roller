@@ -187,34 +187,21 @@ public class ThemeManagerImpl implements ThemeManager {
                             theme_template.getDecoratorName()   // decorator
                             );
                     userMgr.savePage( template );
+                    
+                    // we just created and saved the default page for the first
+                    // time then we need to set website.defaultpageid
+                    if(theme_template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
+                        website.setDefaultPageId(template.getId());
+                        
+                        // update this website's theme to custom
+                        website.setEditorTheme(Theme.CUSTOM);
+                        
+                        // save our updated website
+                        userMgr.saveWebsite(website);
+                    }
                 }
             }
             
-            // now update this website's theme to custom
-            website.setEditorTheme(Theme.CUSTOM);
-            
-            // if this is the first time someone is customizing a theme then
-            // we need to set a default page
-            if(website.getDefaultPageId() == null ||
-                    website.getDefaultPageId().trim().equals("") ||
-                    website.getDefaultPageId().equals("dummy")) {
-                // we have to go back to the db to figure out the id
-                WeblogTemplate template = userMgr.getPageByName(website, "Weblog");
-                if(template != null) {
-                    log.debug("Setting default page to "+template.getId());
-                    website.setDefaultPageId(template.getId());
-                }
-            }
-            
-            // we also want to set the weblogdayid
-            WeblogTemplate dayTemplate = userMgr.getPageByName(website, "_day");
-            if(dayTemplate != null) {
-                log.debug("Setting default day page to "+dayTemplate.getId());
-                website.setWeblogDayPageId(dayTemplate.getId());
-            }
-            
-            // save our updated website
-            userMgr.saveWebsite(website);
             
             // now lets import all the theme resources
             FileManager fileMgr = RollerFactory.getRoller().getFileManager();

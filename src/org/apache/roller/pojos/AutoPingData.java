@@ -28,7 +28,7 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  * @ejb:bean name="AutoPingData"
- * @hibernate.class lazy="false" table="autoping"
+ * @hibernate.class lazy="true" table="autoping"
  * @hibernate.cache usage="read-write"
  */
 public class AutoPingData extends PersistentObject implements Serializable {

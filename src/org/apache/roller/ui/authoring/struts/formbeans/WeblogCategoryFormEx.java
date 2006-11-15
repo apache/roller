@@ -81,14 +81,7 @@ public class WeblogCategoryFormEx extends WeblogCategoryForm
     public void copyFrom(WeblogCategoryData dataHolder, java.util.Locale locale) throws RollerException
     {
         super.copyFrom(dataHolder, locale);
-        try
-        {
             mParentId = dataHolder.getParent().getId();
-        }
-        catch (RollerException e)
-        {
-            throw new RuntimeException("ERROR fetching parent category.");
-        }
     }
 
 }

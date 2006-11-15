@@ -39,7 +39,7 @@ import org.apache.roller.util.PojoUtil;
  *
  * @ejb:bean name="RollerConfigData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="rollerconfig"
+ * @hibernate.class lazy="true" table="rollerconfig"
  */
 public class RollerConfigData
     extends org.apache.roller.pojos.PersistentObject

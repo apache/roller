@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  *
  * @ejb:bean name="RefererData"
  * @struts.form include-all="true"
- * @hibernate.class lazy="false" table="referer"
+ * @hibernate.class lazy="true" table="referer"
  * @hibernate.cache usage="read-write"
  */
 public class RefererData extends PersistentObject
