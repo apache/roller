@@ -948,24 +948,21 @@ ro.buildUser=${user.name}
         <jvmarg value="-Dro.build=${ro.build}"/>
         <jvmarg value="-Droller.custom.config=${build.tests}/roller-custom.properties"/>
         <formatter type="xml"/>
-        <batchtest toDir="${build.reports}/business/xml">
+        <batchtest toDir="${build.reports}/business/xml" haltonerror="true">
             <fileset dir="${build.compile.tests}">
-                <include name="org/apache/roller/business/BookmarkTest.class"/>
-                <include name="org/apache/roller/business/UserTest.class"/> 
-                <include name="org/apache/roller/business/WeblogTest.class"/>
-                <include name="org/apache/roller/business/PermissionTest.class"/>
-                <include name="org/apache/roller/business/WeblogPageTest.class"/>
-                <include name="org/apache/roller/business/PingsTest.class"/>
-                <include name="org/apache/roller/business/PropertiesTest.class"/>
-                <include name="org/apache/roller/business/WeblogEntryTest.class"/>
-                <include name="org/apache/roller/business/WeblogCategoryTest.class"/>
-                <include name="org/apache/roller/business/CommentTest.class"/>
-                <include name="org/apache/roller/business/FileManagerTest.class"/>
-                <include name="org/apache/roller/business/IndexManagerTest.class"/>
-                <include name="org/apache/roller/business/PlanetManagerTest.class"/>
-                <include name="org/apache/roller/business/RefererTest.class"/>
-		<include name="org/apache/roller/business/HitCountTest.class"/>
-		<include name="org/apache/roller/business/TaskLockTest.class"/>
+                
+                <!-- core services.  no reliance on users or weblogs -->
+                <include name="org/apache/roller/business/CoreBusinessServicesTestSuite.class"/>
+                
+                <!-- core platform services.  users & weblogs -->
+                <include name="org/apache/roller/business/CoreWeblogPlatformTestSuite.class"/>
+                
+                <!-- core weblog services.  entries, templates, categories, etc -->
+                <include name="org/apache/roller/business/CoreWeblogServicesTestSuite.class"/>
+                
+                <!-- supplemental weblog services.  files, bookmarks, pings, etc -->
+                <include name="org/apache/roller/business/SupplementalWeblogServicesTestSuite.class"/>
+                
             </fileset>
         </batchtest>
     </junit>
