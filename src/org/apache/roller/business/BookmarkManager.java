@@ -1,20 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
 
 package org.apache.roller.business;
 
@@ -32,130 +32,120 @@ import org.apache.roller.pojos.WebsiteData;
 public interface BookmarkManager {
     
     
+    /**
+     * Save a Folder.  
+     * 
+     * Also saves any bookmarks in the folder.  This method should enforce the 
+     * fact that a weblog cannot have 2 folders with the same path.
+     *
+     * @param folder The folder to be saved.
+     * @throws RollerException If there is a problem.
+     */
     public void saveFolder(FolderData folder) throws RollerException;
     
     
+    /**
+     * Remove a Folder.  
+     * 
+     * Also removes any subfolders and bookmarks.
+     *
+     * @param folder The folder to be removed.
+     * @throws RollerException If there is a problem.
+     */
     public void removeFolder(FolderData folder) throws RollerException;
     
     
-    /** 
-     * Move contents of folder to another folder.
-     *
-     * @param src Source folder.
-     * @param dest Destination folder.
-     */
-    public void moveFolderContents(FolderData src, FolderData dest)
-            throws RollerException;
-    
-    
     /**
-     * Delete contents of specified folder.
-     */
-    public void removeFolderContents(FolderData src) throws RollerException;
-    
-    
-    /** 
-     * Retrieve folder by ID, a persistent instance. 
+     * Lookup a folder by ID.
+     *
+     * @param id The id of the folder to lookup.
+     * @returns FolderData The folder, or null if not found.
+     * @throws RollerException If there is a problem.
      */
     public FolderData getFolder(String id) throws RollerException;
     
     
     /** 
-     * Get all folders for a website.
+     * Get all folders for a weblog.
      *
-     * @param website Website.
+     * @param weblog The weblog we want the folders from.
+     * @returns List The list of FolderData objects from the weblog.
+     * @throws RollerException If there is a problem.
      */
-    public List getAllFolders(WebsiteData wd) throws RollerException;
+    public List getAllFolders(WebsiteData weblog) throws RollerException;
     
     
     /** 
-     * Get top level folders for a website.
+     * Get root folder for a weblog.  
+     * All weblogs should have only 1 root folder.
      *
-     * @param website Website.
+     * @param weblog The weblog we want the root folder from.
+     * @returns FolderData The root folder, or null if not found.
+     * @throws RollerException If there is a problem.
      */
-    public FolderData getRootFolder(WebsiteData website) throws RollerException;
+    public FolderData getRootFolder(WebsiteData weblog) throws RollerException;
     
     
     /** 
-     * Get folder specified by website and folderPath.
+     * Get a folder from a weblog based on its path.
      *
-     * @param website Website of folder.
-     * @param folderPath Path of folder, relative to folder root.
+     * @param weblog The weblog we want the folder from.
+     * @param path The full path of the folder.
+     * @returns FolderData The folder from the given path, or null if not found.
+     * @throws RollerException If there is a problem.
      */
-    public FolderData getFolder(WebsiteData website, String folderPath)
+    public FolderData getFolder(WebsiteData weblog, String path)
             throws RollerException;
     
     
     /**
-     * Get absolute path to folder, appropriate for use by getFolderByPath().
+     * Save a Bookmark.
      *
-     * @param folder Folder.
-     * @return Forward slash separated path string.
+     * @param bookmark The bookmark to be saved.
+     * @throws RollerException If there is a problem.
      */
-    public String getPath(FolderData folder) throws RollerException;
-    
-    
-    /**
-     * Get subfolder by path relative to specified folder.
-     *
-     * @param folder  Root of path or null to start at top of folder tree.
-     * @param path    Path of folder to be located.
-     * @param website Website of folders.
-     * @return FolderData specified by path or null if not found.
-     */
-    public FolderData getFolderByPath(WebsiteData wd, FolderData folder, String string)
-            throws RollerException;
-    
-    
-    /**
-     * Determine if folder is in use.  A folder is <em>in use</em> if it contains any bookmarks
-     * or has any children.
-     *
-     * @param folder
-     * @return true if the folder contains bookmarks or has children, false otherwise.
-     * @throws RollerException
-     */
-    public boolean isFolderInUse(FolderData folder) throws RollerException;
-    
-    
-    /**
-     * Check duplicate folder name.
-     */
-    public boolean isDuplicateFolderName(FolderData data) throws RollerException;
-    
-    
     public void saveBookmark(BookmarkData bookmark) throws RollerException;
     
     
-    /** 
-     * Delete bookmark. 
+    /**
+     * Remove a Bookmark.
+     *
+     * @param bookmark The bookmark to be removed.
+     * @throws RollerException If there is a problem.
      */
     public void removeBookmark(BookmarkData bookmark) throws RollerException;
     
     
     /** 
-     * Retrieve bookmark by ID, a persistent instance. 
+     * Lookup a Bookmark by ID.
+     *
+     * @param id The id of the bookmark to lookup.
+     * @returns BookmarkData The bookmark, or null if not found.
+     * @throws RollerException If there is a problem.
      */
     public BookmarkData getBookmark(String id) throws RollerException;
     
     
-    /**
-     * @param data
-     * @param subfolders
-     * @return
+    /** 
+     * Lookup all Bookmarks in a folder, optionally search recursively.
+     *
+     * @param folder The folder to get the bookmarks from.
+     * @param recurse True if bookmarks should be included.
+     * @returns List The list of bookmarks found.
+     * @throws RollerException If there is a problem.
      */
-    public List getBookmarks(FolderData data, boolean subfolders)
+    public List getBookmarks(FolderData folder, boolean recurse)
             throws RollerException;
     
     
     /** 
-     * Import bookmarks from OPML string into specified folder.
+     * Import bookmarks and folders from OPML string into the specified folder.
      *
-     * @param site Website.
-     * @param folder Name of folder to hold bookmarks.
+     * @param weblog The weblog to import the OPML into.
+     * @param folder The NEW folder name to import the OPML into.
      * @param opml OPML data to be imported.
      */
-    public void importBookmarks(WebsiteData site, String folder, String opml)
+    public void importBookmarks(WebsiteData weblog, String folder, String opml)
             throws RollerException;
     
     
@@ -165,4 +155,3 @@ public interface BookmarkManager {
     public void release();
     
 }
-

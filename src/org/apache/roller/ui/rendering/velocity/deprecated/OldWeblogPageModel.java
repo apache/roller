@@ -763,8 +763,7 @@ public class OldWeblogPageModel {
     
     public FolderDataWrapper getFolderByPath(String path) {
         try {
-            FolderData folder = mBookmarkMgr.getFolderByPath(
-                    mWebsite, null, path);
+            FolderData folder = mBookmarkMgr.getFolder(mWebsite, path);
             
             if(folder != null)
                 return FolderDataWrapper.wrap(folder);

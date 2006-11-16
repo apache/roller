@@ -117,7 +117,6 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         return (FolderData)strategy.load(id, FolderData.class);
     }
     
-    //------------------------------------------------------------ Operations
     
     public void importBookmarks(WebsiteData website, String folderName, String opml)
             throws RollerException {
@@ -205,56 +204,13 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    public void moveFolderContents(FolderData src, FolderData dest)
-            throws RollerException {
-        
-        if (dest.descendentOf(src)) {
-            throw new RollerException(
-                    "ERROR cannot move parent folder into it's own child");
-        }
-        
-        // iterator over src bookmarks and add them to dest
-        BookmarkData bookmark = null;
-        Iterator srcBookmarks = src.getBookmarks().iterator();
-        while(srcBookmarks.hasNext()) {
-            bookmark = (BookmarkData) srcBookmarks.next();
-            
-            // add to dest
-            dest.addBookmark(bookmark);
-        }
-        
-        // now just save the dest folder
-        this.saveFolder(dest);
-    }
-    
-    
-    public void removeFolderContents(FolderData src) throws RollerException {
-        
-        // just go through the folder and remove each bookmark
-        Iterator srcBookmarks = src.getBookmarks().iterator();
-        while (srcBookmarks.hasNext()) {
-            BookmarkData bd = (BookmarkData)srcBookmarks.next();
-            this.strategy.remove(bd);
-        }
-    }
-    
-    
     public FolderData getFolder(WebsiteData website, String folderPath)
-    throws RollerException {
+            throws RollerException {
         return getFolderByPath(website, null, folderPath);
     }
     
-    public String getPath(FolderData folder) throws RollerException {
-        if (null == folder.getParent()) {
-            return "/";
-        } else {
-            String parentPath = getPath(folder.getParent());
-            parentPath = "/".equals(parentPath) ? "" : parentPath;
-            return parentPath + "/" + folder.getName();
-        }
-    }
     
-    public FolderData getFolderByPath(
+    private FolderData getFolderByPath(
             WebsiteData website, FolderData folder, String path)
             throws RollerException {
         final Iterator folders;
@@ -291,8 +247,6 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
         return null;
     }
     
-    
-    public void release() {}
     
     /**
      * @see org.apache.roller.model.BookmarkManager#retrieveBookmarks(
@@ -357,9 +311,9 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     
     
     /**
-     * @see org.apache.roller.model.BookmarkManager#isDuplicateFolderName(org.apache.roller.pojos.FolderData)
+     * make sure the given folder doesn't already exist.
      */
-    public boolean isDuplicateFolderName(FolderData folder) throws RollerException {
+    private boolean isDuplicateFolderName(FolderData folder) throws RollerException {
         
         // ensure that no sibling folders share the same name
         FolderData parent = folder.getParent();
@@ -382,31 +336,6 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    /**
-     * @see org.apache.roller.model.BookmarkManager#isFolderInUse(org.apache.roller.pojos.FolderData)
-     */
-    public boolean isFolderInUse(FolderData folder) throws RollerException {
-        try {
-            // We consider a folder to be "in use" if it contains any bookmarks or has
-            // any children.
-            
-            // We first determine the number of bookmark entries.
-            // NOTE: This seems to be an attempt to optimize, rather than just use getBookmarks(),
-            // but I'm not sure that this optimization is really worthwhile, and it ignores
-            // caching in the case that the (lazy) getBookmarks has been done already. --agangolli
-            // TODO: condider changing to just use getBookmarks().size()
-            
-            Session session = ((HibernatePersistenceStrategy)strategy).getSession();
-            Criteria criteria = session.createCriteria(BookmarkData.class);
-            criteria.add(Expression.eq("folder", folder));
-            criteria.setMaxResults(1);
-            int entryCount = criteria.list().size();
-            
-            // Return true if we have bookmarks or (, failing that, then checking) if we have children
-            return (entryCount > 0 || folder.getFolders().size() > 0);
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
+    public void release() {}
     
 }
