@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
+import org.apache.roller.util.Utilities;
 
 /**
  * @author David M. Johnson
@@ -46,7 +47,8 @@ public class DiskFeedInfoCache implements FeedFetcherCache
     public SyndFeedInfo getFeedInfo(URL url)
     {
         SyndFeedInfo info = null;
-        String fileName = cachePath + File.separator + "feed_" + url.hashCode();
+        String fileName = cachePath + File.separator + "feed_" 
+                + Utilities.replaceNonAlphanumeric(url.toString(),'_').trim();        
         FileInputStream fis;
         try
         {
@@ -75,7 +77,8 @@ public class DiskFeedInfoCache implements FeedFetcherCache
 
     public void setFeedInfo(URL url, SyndFeedInfo feedInfo)
     {
-        String fileName = cachePath + File.separator + "feed_" + url.hashCode();
+        String fileName = cachePath + File.separator + "feed_" 
+                + Utilities.replaceNonAlphanumeric(url.toString(),'_').trim();  
         FileOutputStream fos;
         try
         {
