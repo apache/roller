@@ -22,18 +22,16 @@
 
 #foreach ($groupHandle in $groupHandles)
 
-    $generator.setOutputPath($strings.concat([$outputPath, "/", $groupHandle]));
-
-    #set ($outputFile = $strings.concat(["index", ".html"]))
+    #set ($outputFile = $strings.concat([$groupHandle, "/", "index.html"]))
     $generator.parse("html.vm", $outputFile, "groupHandle", $groupHandle)
 
-    #set ($outputFile = $strings.concat(["index", ".rss"]))
+    #set ($outputFile = $strings.concat([$groupHandle, "/", "index.rss"]))
     $generator.parse("rss.vm",  $outputFile, "groupHandle", $groupHandle)
 
-    #set ($outputFile = $strings.concat(["index", ".atom"]))
+    #set ($outputFile = $strings.concat([$groupHandle, "/", "index.atom"]))
     $generator.parse("atom.vm",  $outputFile, "groupHandle", $groupHandle)
 
-    #set ($outputFile = $strings.concat(["index", ".opml"]))
+    #set ($outputFile = $strings.concat([$groupHandle, "/", "index.opml"]))
     $generator.parse("opml.vm", $outputFile, "groupHandle", $groupHandle)
 
 #end
