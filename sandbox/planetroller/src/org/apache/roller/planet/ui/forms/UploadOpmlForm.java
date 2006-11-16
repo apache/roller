@@ -103,7 +103,6 @@ public class UploadOpmlForm {
                 try {
                     // Save sub and add it to group
                     sub.getGroups().add(group);
-                    group.getSubscriptions().add(sub); 
                     pmgr.saveSubscription(sub);
                     pmgr.saveGroup(group);
                     
