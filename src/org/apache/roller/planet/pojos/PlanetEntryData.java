@@ -109,11 +109,16 @@ public class PlanetEntryData extends PersistentObject
             setAuthor(entrydc.getCreator()); // use <dc:creator>
         }
         
-        // Play some games to get the date too
+        // Play some games to get the published date too
+        if (romeEntry.getUpdatedDate() != null) {
+            setUpdateTime(new Timestamp(romeEntry.getUpdatedDate().getTime()));
+        }          
         if (romeEntry.getPublishedDate() != null) {
             setPubTime(new Timestamp(romeEntry.getPublishedDate().getTime())); // use <pubDate>
         } else if (entrydc != null && entrydc.getDate() != null) {
             setPubTime(new Timestamp(entrydc.getDate().getTime())); // use <dc:date>
+        } else {
+            setPubTime(getUpdateTime());
         }
         
         // get content and unescape if it is 'text/plain'
@@ -126,11 +131,10 @@ public class PlanetEntryData extends PersistentObject
             }
         }
         
-        // no content, then try <content:encoded>
+        // no content, try summary
         if (getText() == null || getText().trim().length() == 0) {
-            ContentModule cm = (ContentModule)romeEntry.getModule(ContentModule.URI);
-            if (cm != null) {
-                setText(StringEscapeUtils.unescapeHtml(cm.getEncoded()));
+            if (romeEntry.getDescription() != null) {
+                setText(romeEntry.getDescription().getValue());
             }
         }
         
