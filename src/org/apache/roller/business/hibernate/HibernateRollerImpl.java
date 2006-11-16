@@ -144,77 +144,84 @@ public class HibernateRollerImpl extends RollerImpl {
     /**
      * @see org.apache.roller.model.Roller#getUserManager()
      */
-    public UserManager getUserManager() throws RollerException {
+    public UserManager getUserManager() {
         if ( userManager == null ) {
             userManager = new HibernateUserManagerImpl(strategy);
         }
         return userManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getBookmarkManager()
      */
-    public BookmarkManager getBookmarkManager() throws RollerException {
+    public BookmarkManager getBookmarkManager() {
         if ( bookmarkManager == null ) {
             bookmarkManager = new HibernateBookmarkManagerImpl(strategy);
         }
         return bookmarkManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getWeblogManager()
      */
-    public WeblogManager getWeblogManager() throws RollerException {
+    public WeblogManager getWeblogManager() {
         if ( weblogManager == null ) {
             weblogManager = new HibernateWeblogManagerImpl(strategy);
         }
         return weblogManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getRefererManager()
      */
-    public RefererManager getRefererManager() throws RollerException {
+    public RefererManager getRefererManager() {
         if ( refererManager == null ) {
             refererManager = new HibernateRefererManagerImpl(strategy);
         }
         return refererManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getConfigManager()
      */
-    public ConfigManager getConfigManager() throws RollerException {
+    public ConfigManager getConfigManager() {
         if (configManager == null) {
             configManager = new HibernateConfigManagerImpl(strategy);
         }
         return configManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getPropertiesManager()
      */
-    public PropertiesManager getPropertiesManager() throws RollerException {
+    public PropertiesManager getPropertiesManager() {
         if (propertiesManager == null) {
             propertiesManager = new HibernatePropertiesManagerImpl(strategy);
         }
         return propertiesManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getPingTargetManager()
      */
-    public PingQueueManager getPingQueueManager() throws RollerException {
+    public PingQueueManager getPingQueueManager() {
         if (pingQueueManager == null) {
             pingQueueManager = new HibernatePingQueueManagerImpl(strategy);
         }
         return pingQueueManager;
     }
     
+    
     /**
      * @see org.apache.roller.model.Roller#getPlanetManager()
      */
-    public PlanetManager getPlanetManager() throws RollerException {
+    public PlanetManager getPlanetManager() {
         if ( planetManager == null ) {
             planetManager = new HibernateRollerPlanetManagerImpl(strategy);
         }
@@ -225,7 +232,7 @@ public class HibernateRollerImpl extends RollerImpl {
     /**
      * @see org.apache.roller.model.Roller#getPingTargetManager()
      */
-    public AutoPingManager getAutopingManager() throws RollerException {
+    public AutoPingManager getAutopingManager() {
         if (autoPingManager == null) {
             autoPingManager = new HibernateAutoPingManagerImpl(strategy);
         }
@@ -236,7 +243,7 @@ public class HibernateRollerImpl extends RollerImpl {
     /**
      * @see org.apache.roller.model.Roller#getPingTargetManager()
      */
-    public PingTargetManager getPingTargetManager() throws RollerException {
+    public PingTargetManager getPingTargetManager() {
         if (pingTargetManager == null) {
             pingTargetManager = new HibernatePingTargetManagerImpl(strategy);
         }
@@ -247,7 +254,7 @@ public class HibernateRollerImpl extends RollerImpl {
     /**
      * @see org.apache.roller.model.Roller#getThreadManager()
      */
-    public ThreadManager getThreadManager() throws RollerException {
+    public ThreadManager getThreadManager() {
         if (threadManager == null) {
             threadManager = new HibernateThreadManagerImpl(strategy);
         }

@@ -52,16 +52,8 @@ public class HitCountProcessingJob implements Job {
      */
     public void execute() {
         
-        UserManager umgr = null;
-        WeblogManager wmgr = null;
-        try {
-            umgr = RollerFactory.getRoller().getUserManager();
-            wmgr = RollerFactory.getRoller().getWeblogManager();
-        } catch (RollerException ex) {
-            // if we can't even get the manager instances then bail now
-            log.error("Error getting managers", ex);
-            return;
-        }
+        UserManager umgr = RollerFactory.getRoller().getUserManager();
+        WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         
         HitCountQueue hitCounter = HitCountQueue.getInstance();
         

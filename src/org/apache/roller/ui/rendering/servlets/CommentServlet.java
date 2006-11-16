@@ -395,15 +395,7 @@ public class CommentServlet extends HttpServlet {
             //------------------------------------------
             // --- Build list of email addresses to send notification to
             
-            List comments = null;
-            try {
-                WeblogManager wMgr = RollerFactory.getRoller().getWeblogManager();
-                // get only approved, non spam comments
-                comments = entry.getComments(true, true); 
-            } catch(RollerException re) {
-                // should never happen
-                comments = new ArrayList();
-            }
+            List comments = entry.getComments(true, true);
             
             // Get all the subscribers to this comment thread
             Set subscribers = new TreeSet();

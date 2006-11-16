@@ -158,11 +158,7 @@ public class PlanetCache {
         // still null, we need to get a fresh value
         if(lastModified == null) {
             
-            try {
-                lastModified = RollerFactory.getRoller().getPlanetManager().getLastUpdated();
-            } catch (RollerException ex) {
-                log.error("Error getting planet manager", ex);
-            }
+            lastModified = RollerFactory.getRoller().getPlanetManager().getLastUpdated();
             
             if (lastModified == null) {
                 lastModified = new Date();
