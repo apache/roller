@@ -38,11 +38,8 @@ import org.apache.velocity.texen.Generator;
 
 
 /**
- * Updates Planet aggregator's database of feed entries and generates Planet
- * files based on those entries and the Planet configuration. 
+ * Generates Planet files based on those entries and the Planet configuration. 
  * <pre>
- * - Designed to be run outside of Roller via the TaskRunner class
- * - Calls Planet business layer to refresh entries
  * - Uses PlanetConfig properties for templateDir, outputDir and template name
  * - Creates outputdir and a subdirectory for each group
  * - Uses Velocity Texen to generate the static files
@@ -53,26 +50,6 @@ public class GeneratePlanetTask implements Runnable {
     
     public void run() {
         try {            
-            // Update all feeds in planet
-            log.info("Refreshing Planet entries");
-            Planet planet = PlanetFactory.getPlanet();
-            planet.getPlanetManager().refreshEntries(
-                PlanetConfig.getProperty("planet.aggregator.cache.dir"));                        
-            planet.flush();
-            planet.release();
-            
-            // Run the planet generation templates
-            log.info("Generating Planet files");
-            generatePlanet(); 
-            
-        } catch (RollerException e) {
-            log.error("ERROR refreshing entries", e);
-        }
-    }
-    
-    
-    public void generatePlanet() throws RollerException {
-        try {
             Planet planet = PlanetFactory.getPlanet();
             PlanetManager planetManager = planet.getPlanetManager();
                         
@@ -131,7 +108,7 @@ public class GeneratePlanetTask implements Runnable {
             generator.shutdown();
             
         } catch (Exception e) {
-            throw new RollerException("ERROR: writing planet files",e);
+            log.error("ERROR generating planet", e);
         }
-    }    
+    }   
 }
