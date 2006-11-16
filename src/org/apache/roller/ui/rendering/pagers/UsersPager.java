@@ -135,7 +135,7 @@ public class UsersPager extends AbstractPager {
                 UserManager umgr = roller.getUserManager();
                 List rawUsers = null;
                 if (letter == null) {
-                    rawUsers = umgr.getUsers(offset, length + 1);
+                    rawUsers = umgr.getUsers(null, Boolean.TRUE, null, null, offset, length + 1);
                 } else {
                     rawUsers = umgr.getUsersByLetter(letter.charAt(0), offset, length + 1);
                 }

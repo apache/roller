@@ -82,7 +82,7 @@ public class WeblogEntryActionTest extends StrutsActionTestBase {
         UserData user = null;
         try {
             umgr = RollerFactory.getRoller().getUserManager();
-            user = (UserData)umgr.getUsers(testWeblog, null, 0, -1).get(0);
+            user = (UserData)umgr.getUsers(testWeblog, null, null, null, 0, -1).get(0);
             authenticateUser(user.getUserName(), "editor");
         } catch (RollerException e) {
             e.printStackTrace();

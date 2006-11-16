@@ -231,7 +231,7 @@ public class PermissionTest extends TestCase {
         assertEquals(testWeblog.getId(), ((WebsiteData)weblogs.get(0)).getId());
         
         // assert that website has user
-        List users = mgr.getUsers(testWeblog, null, 0, -1); 
+        List users = mgr.getUsers(testWeblog, null, null, null, 0, -1); 
         assertEquals(2, users.size());
         
         // test user can be retired from website

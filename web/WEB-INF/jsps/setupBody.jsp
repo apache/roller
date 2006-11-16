@@ -20,7 +20,7 @@
 try {
     Roller roller = RollerFactory.getRoller();
     pageContext.setAttribute("userCount", 
-        new Integer(roller.getUserManager().getUsers(0,-1).size())); 
+        new Integer(roller.getUserManager().getUsers(null, null, null, null, 0,-1).size())); 
     pageContext.setAttribute("blogCount", 
         new Integer(roller.getUserManager().getWebsites(null, null, null, null, null, 0, -1).size()));
     pageContext.setAttribute("setupError", Boolean.FALSE);

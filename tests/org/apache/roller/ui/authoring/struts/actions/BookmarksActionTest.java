@@ -92,7 +92,7 @@ public class BookmarksActionTest extends StrutsActionTestBase {
         UserData user = null;
         try {
             umgr = RollerFactory.getRoller().getUserManager();
-            user = (UserData)umgr.getUsers(testWeblog, null, 0, Integer.MAX_VALUE).get(0);
+            user = (UserData)umgr.getUsers(testWeblog, null, null, null, 0, Integer.MAX_VALUE).get(0);
             doFilters();
             authenticateUser(user.getUserName(), "editor");
         } catch (RollerException e) {

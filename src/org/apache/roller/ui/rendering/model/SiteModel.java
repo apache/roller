@@ -377,7 +377,7 @@ public class SiteModel implements Model {
         try {            
             Roller roller = RollerFactory.getRoller();
             UserManager umgr = roller.getUserManager();
-            List users = umgr.getUsers(0, length);
+            List users = umgr.getUsers(null, Boolean.TRUE, null, null, 0, length);
             for (Iterator it = users.iterator(); it.hasNext();) {
                 UserData user = (UserData) it.next();
                 results.add(UserDataWrapper.wrap(user));
