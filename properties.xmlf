@@ -89,8 +89,8 @@ in the "base.path" definition.
     <include name="jdom.jar"/>
     <include name="lucene-1.4.3.jar"/>
     <include name="log4j-1.2.11.jar"/>
-    <include name="rome-0.8.jar"/>
-    <include name="rome-fetcher-0.8.jar"/>
+    <include name="rome-0.9-dev.jar"/>
+    <include name="rome-fetcher-0.9-dev.jar"/>
     <include name="velocity-1.4.jar"/>
     <include name="velocity-dep-1.4.jar"/>
     <include name="mail.jar"/>
