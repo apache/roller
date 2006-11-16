@@ -265,12 +265,13 @@ public class BookmarkTest extends TestCase {
      *          f2/
      *             f3/
      *
-     * TODO: it is unclear exactly what the expected behavior of this test is
-     * supposed to be.  i.e. how the moveContents() methods are supposed to
-     * work.  they could move only bookmarks, only bookmarks and folders from
-     * the specified src folder, all bookmarks (recursively), or all bookmarks
-     * and folder recursively.
+     * TODO: this test is commented out because the way this functionality is
+     * really done is simply by changing the parent of a folder or bookmark
+     * and then saving it, so there really is no need for a full moveFolder()
+     * method.  i am leaving this test here for a while just in case we change
+     * our minds.
      */
+    /*
     public void testMoveFolderContents() throws Exception {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
@@ -364,6 +365,7 @@ public class BookmarkTest extends TestCase {
         bmgr.removeFolder(dest);
         TestUtils.endSession(true);
     }
+    */
     
     
     /** 
@@ -402,12 +404,12 @@ public class BookmarkTest extends TestCase {
         
         try {
             
-            assertEquals("f1",bmgr.getFolderByPath(testWeblog, null, "/f1").getName());
-            assertEquals("f2",bmgr.getFolderByPath(testWeblog, null, "/f1/f2").getName());
-            assertEquals("f3",bmgr.getFolderByPath(testWeblog, null, "/f1/f2/f3").getName());
+            assertEquals("f1",bmgr.getFolder(testWeblog, "/f1").getName());
+            assertEquals("f2",bmgr.getFolder(testWeblog, "/f1/f2").getName());
+            assertEquals("f3",bmgr.getFolder(testWeblog, "/f1/f2/f3").getName());
             
-            FolderData f3 = bmgr.getFolderByPath(testWeblog, null, "/f1/f2/f3");
-            String pathString = bmgr.getPath(f3);
+            FolderData f3 = bmgr.getFolder(testWeblog, "/f1/f2/f3");
+            String pathString = f3.getPath();
             String[] pathArray = Utilities.stringToStringArray(pathString,"/");
             assertEquals("f1", pathArray[0]);
             assertEquals("f2", pathArray[1]);

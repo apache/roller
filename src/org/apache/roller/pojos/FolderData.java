@@ -333,16 +333,6 @@ public class FolderData extends PersistentObject
         return bmgr.getBookmarks(this, subfolders);
     }
     
-    /**
-     * Move all bookmarks that exist in this folder and all
-     * subfolders of this folder to a single new folder.
-     */
-    public void moveContents(FolderData dest) throws RollerException {
-        
-        BookmarkManager bmgr = RollerFactory.getRoller().getBookmarkManager();
-        bmgr.moveFolderContents(this, dest);
-    }
-    
     
     /**
      * @roller.wrapPojoMethod type="simple"
@@ -362,19 +352,5 @@ public class FolderData extends PersistentObject
             }
         }
     }
-    
-    
-    /**
-     * @roller.wrapPojoMethod type="simple"
-     */
-    public boolean isInUse() {
-        try {
-            return RollerFactory.getRoller().getBookmarkManager().isFolderInUse(this);
-        } catch (RollerException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    /** TODO: fix formbean generation so this is not needed. */
-    public void setInUse(boolean flag) {}
     
 }
