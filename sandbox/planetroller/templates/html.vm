@@ -45,7 +45,7 @@
             <img src="opml.png" alt="OPML Subscriptions" border="0"></a>
          <h3>Subscriptions</h3>
          #foreach ($sub in $group.subscriptions)
-         <a href="$sub.siteUrl">$sub.title</a> <a href="$sub.feedUrl">(feed)</a>
+         <a href="$sub.siteURL">$sub.title</a> <a href="$sub.feedURL">(feed)</a>
          <br/>
          #end
       </td>
