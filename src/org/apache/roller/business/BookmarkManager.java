@@ -32,33 +32,26 @@ import org.apache.roller.pojos.WebsiteData;
 public interface BookmarkManager {
     
     
-    public void saveBookmark(BookmarkData bookmark) throws RollerException;
-    
-    
-    /** 
-     * Delete bookmark. 
-     */
-    public void removeBookmark(BookmarkData bookmark) throws RollerException;
-    
-    /** 
-     * Retrieve bookmark by ID, a persistent instance. 
-     */
-    public BookmarkData getBookmark(String id) throws RollerException;
-    
-    
-    /**
-     * @param data
-     * @param subfolders
-     * @return
-     */
-    public List getBookmarks(FolderData data, boolean subfolders)
-            throws RollerException;
-    
-    
     public void saveFolder(FolderData folder) throws RollerException;
     
     
     public void removeFolder(FolderData folder) throws RollerException;
+    
+    
+    /** 
+     * Move contents of folder to another folder.
+     *
+     * @param src Source folder.
+     * @param dest Destination folder.
+     */
+    public void moveFolderContents(FolderData src, FolderData dest)
+            throws RollerException;
+    
+    
+    /**
+     * Delete contents of specified folder.
+     */
+    public void removeFolderContents(FolderData src) throws RollerException;
     
     
     /** 
@@ -91,6 +84,7 @@ public interface BookmarkManager {
      */
     public FolderData getFolder(WebsiteData website, String folderPath)
             throws RollerException;
+    
     
     /**
      * Get absolute path to folder, appropriate for use by getFolderByPath().
@@ -130,6 +124,30 @@ public interface BookmarkManager {
     public boolean isDuplicateFolderName(FolderData data) throws RollerException;
     
     
+    public void saveBookmark(BookmarkData bookmark) throws RollerException;
+    
+    
+    /** 
+     * Delete bookmark. 
+     */
+    public void removeBookmark(BookmarkData bookmark) throws RollerException;
+    
+    
+    /** 
+     * Retrieve bookmark by ID, a persistent instance. 
+     */
+    public BookmarkData getBookmark(String id) throws RollerException;
+    
+    
+    /**
+     * @param data
+     * @param subfolders
+     * @return
+     */
+    public List getBookmarks(FolderData data, boolean subfolders)
+            throws RollerException;
+    
+    
     /** 
      * Import bookmarks from OPML string into specified folder.
      *
@@ -139,22 +157,6 @@ public interface BookmarkManager {
      */
     public void importBookmarks(WebsiteData site, String folder, String opml)
             throws RollerException;
-    
-    
-    /** 
-     * Move contents of folder to another folder.
-     *
-     * @param src Source folder.
-     * @param dest Destination folder.
-     */
-    public void moveFolderContents(FolderData src, FolderData dest)
-            throws RollerException;
-    
-    
-    /**
-     * Delete contents of specified folder.
-     */
-    public void removeFolderContents(FolderData src) throws RollerException;
     
     
     /**
