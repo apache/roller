@@ -250,7 +250,7 @@ public class HibernateUserManagerImpl implements UserManager {
         
         // TODO BACKEND: we must do this in a better fashion, like getUserCnt()?
         boolean adminUser = false;
-        List existingUsers = this.getUsers(0, 1);
+        List existingUsers = this.getUsers(null, Boolean.TRUE, null, null, 0, 1);
         if(existingUsers.size() == 0) {
             // Make first user an admin
             adminUser = true;
@@ -573,61 +573,50 @@ public class HibernateUserManagerImpl implements UserManager {
         }
     }
     
-    public List getUsers(int offset, int length) throws RollerException {
-        return getUsers(Boolean.TRUE, null, null, offset, length);
-    }
     
-    public List getUsers(Boolean enabled, Date startDate, Date endDate, int offset, int length) throws RollerException {
-        if (endDate == null) endDate = new Date();
-        try {
-            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(UserData.class);
-            criteria.add(Expression.lt("dateCreated", endDate));
-            if (startDate != null) {
-                criteria.add(Expression.gt("dateCreated", startDate));
-            }
-            if (enabled != null) {
-                criteria.add(Expression.eq("enabled", enabled));
-            }
-            if (offset != 0) {
-                criteria.setFirstResult(offset);
-            }
-            if (length != -1) {
-                criteria.setMaxResults(length);
-            }
-            criteria.addOrder(Order.desc("dateCreated"));
-            return criteria.list();
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
-    
-    /**
-     * Get users of a website
-     */
-    public List getUsers(WebsiteData website, Boolean enabled, int offset, int length) throws RollerException {
+    public List getUsers(WebsiteData weblog, Boolean enabled, Date startDate, 
+                         Date endDate, int offset, int length) 
+            throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
             Criteria criteria = session.createCriteria(UserData.class);
-            if (website != null) {
-                criteria.createAlias("permissions","permissions");
-                criteria.add(Expression.eq("permissions.website", website));
+            
+            if (weblog != null) {
+                criteria.createAlias("permissions", "permissions");
+                criteria.add(Expression.eq("permissions.website", weblog));
             }
+            
             if (enabled != null) {
                 criteria.add(Expression.eq("enabled", enabled));
             }
+            
+            if (startDate != null) {
+                // if we are doing date range then we must have an end date
+                if(endDate == null) {
+                    endDate = new Date();
+                }
+                
+                criteria.add(Expression.lt("dateCreated", endDate));
+                criteria.add(Expression.gt("dateCreated", startDate));
+            }
+            
             if (offset != 0) {
                 criteria.setFirstResult(offset);
             }
             if (length != -1) {
                 criteria.setMaxResults(length);
             }
+            
+            criteria.addOrder(Order.desc("dateCreated"));
+            
             return criteria.list();
+            
         } catch (HibernateException e) {
             throw new RollerException(e);
         }
     }
+    
         
     public List getUsersStartingWith(String startsWith, Boolean enabled,
             int offset, int length) throws RollerException {

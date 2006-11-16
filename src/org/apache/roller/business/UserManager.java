@@ -100,19 +100,14 @@ public interface UserManager {
     
     
     /**
-     * Get all enabled users
-     */
-    public List getUsers(int offset, int length) throws RollerException;
-    
-    
-    /**
      * Lookup a group of users.
      *
      * The lookup may be constrained to users with a certain enabled status,
      * to users created within a certain date range, and the results can be
      * confined to a certain offset & length for paging abilities.
      *
-     * @param enabled True for enabled only, False for disabled only, null for all
+     * @param weblog Confine results to users with permission to a certain weblog.
+     * @param enabled True for enabled only, False for disabled only (or null for all)
      * @param startDate Restrict to those created after startDate (or null for all)
      * @param endDate Restrict to those created before startDate (or null for all)
      * @param offset The index of the first result to return.
@@ -121,24 +116,12 @@ public interface UserManager {
      * @throws RollerException If there is a problem.
      */
     public List getUsers(
+            WebsiteData weblog,
             Boolean enabled,
             Date    startDate,
             Date    endDate,
             int     offset,
             int     length) throws RollerException;
-    
-    
-    /**
-     * Get all users or a website.
-     *
-     * @param website Get all users of this website (or null for all)
-     * @returns List of UserData objects.
-     */
-    public List getUsers(
-            WebsiteData website,
-            Boolean enabled,
-            int offset,
-            int length) throws RollerException;
     
     
     /**

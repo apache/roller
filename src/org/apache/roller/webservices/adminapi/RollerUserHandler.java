@@ -87,7 +87,7 @@ class RollerUserHandler extends Handler {
     
     private EntrySet getCollection() throws HandlerException {
         try {
-            List users = getRoller().getUserManager().getUsers(null, null, null, 0, -1);
+            List users = getRoller().getUserManager().getUsers(null, null, null, null, 0, -1);
             if (users == null) {
                 users = java.util.Collections.EMPTY_LIST;
             }
