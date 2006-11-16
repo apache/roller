@@ -287,7 +287,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
             
             if (group != null) {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select distinct e from org.apache.roller.planet.pojos.PlanetEntryData e ");
+                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
                 sb.append("join e.subscription.groups g ");
                 sb.append("where g.handle=:groupHandle and e.pubTime < :endDate ");
                 if (startDate != null) {
@@ -305,7 +305,7 @@ public class HibernatePlanetManagerImpl implements PlanetManager {
                 ret = query.list();
             } else {
                 StringBuffer sb = new StringBuffer();
-                sb.append("select distinct e from org.apache.roller.planet.pojos.PlanetEntryData e ");
+                sb.append("select e from org.apache.roller.planet.pojos.PlanetEntryData e ");
                 sb.append("join e.subscription.groups g ");
                 sb.append("where (g.handle='external' or g.handle='all') ");
                 sb.append("and e.pubTime < :endDate ");
