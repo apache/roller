@@ -30,13 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroupData;
 import org.apache.roller.planet.pojos.PlanetSubscriptionData;
 import org.apache.roller.planet.ui.utils.LoadableForm;
+import org.apache.roller.util.Utilities;
 
 /**
  * UI bean for editing group data, designed for request scope.
@@ -78,7 +78,7 @@ public class GroupForm implements LoadableForm {
         if (StringUtils.isNotEmpty(group.getId())) {
             PlanetGroupData dbgroup = planet.getPlanetManager().getGroupById(group.getId());
             dbgroup.setTitle(group.getTitle());
-            dbgroup.setHandle(group.getHandle());
+            dbgroup.setHandle(Utilities.replaceNonAlphanumeric(group.getHandle()));
             dbgroup.setDescription(group.getDescription());
             planet.getPlanetManager().saveGroup(dbgroup);
         } else {
