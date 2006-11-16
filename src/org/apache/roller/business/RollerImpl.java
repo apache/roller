@@ -60,7 +60,7 @@ public abstract class RollerImpl implements Roller {
     /**
      * @see org.apache.roller.model.Roller#getFileManager()
      */
-    public FileManager getFileManager() throws RollerException {
+    public FileManager getFileManager() {
         if (fileManager == null) {
             fileManager = new FileManagerImpl();
         }
@@ -71,7 +71,7 @@ public abstract class RollerImpl implements Roller {
     /**
      * @see org.apache.roller.model.Roller#getThreadManager()
      */
-    public ThreadManager getThreadManager() throws RollerException {
+    public ThreadManager getThreadManager() {
         if (threadManager == null) {
             threadManager = new ThreadManagerImpl();
         }
@@ -82,7 +82,7 @@ public abstract class RollerImpl implements Roller {
     /**
      * @see org.apache.roller.model.Roller#getIndexManager()
      */
-    public IndexManager getIndexManager() throws RollerException {
+    public IndexManager getIndexManager() {
         if (indexManager == null) {
             indexManager = new IndexManagerImpl();
         }
@@ -93,7 +93,7 @@ public abstract class RollerImpl implements Roller {
     /**
      * @see org.apache.roller.model.Roller#getThemeManager()
      */
-    public ThemeManager getThemeManager() throws RollerException {
+    public ThemeManager getThemeManager() {
         if (themeManager == null) {
             themeManager = new ThemeManagerImpl();
         }
@@ -112,7 +112,7 @@ public abstract class RollerImpl implements Roller {
     /**
      * @see org.apache.roller.model.Roller#getPluginManager()
      */
-    public PluginManager getPagePluginManager() throws RollerException {
+    public PluginManager getPagePluginManager() {
         if (pluginManager == null) {
             pluginManager = new PluginManagerImpl();
         }

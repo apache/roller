@@ -15,7 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-/* Created on Jul 18, 2003 */
+
 package org.apache.roller.business.search;
 
 import java.io.File;
@@ -223,8 +223,6 @@ public class IndexManagerImpl implements IndexManager {
                 mLogger.debug("Starting scheduled index operation: "+op.getClass().getName());
                 RollerFactory.getRoller().getThreadManager().executeInBackground(op);
             }
-        } catch (RollerException re) {
-            mLogger.error("Error getting thread manager", re);
         } catch (InterruptedException e) {
             mLogger.error("Error executing operation", e);
         }
@@ -240,8 +238,6 @@ public class IndexManagerImpl implements IndexManager {
                 mLogger.debug("Executing index operation now: "+op.getClass().getName());
                 RollerFactory.getRoller().getThreadManager().executeInForeground(op);
             }
-        } catch (RollerException re) {
-            mLogger.error("Error getting thread manager", re);
         } catch (InterruptedException e) {
             mLogger.error("Error executing operation", e);
         }

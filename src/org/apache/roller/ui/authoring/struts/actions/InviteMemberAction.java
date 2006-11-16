@@ -15,6 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.net.MalformedURLException;
@@ -249,11 +250,7 @@ public class InviteMemberAction extends DispatchAction {
         } catch (MalformedURLException e) {
             throw new RollerException("ERROR: Notification email(s) not sent, "
                     + "Roller site URL is malformed?", e);
-        } catch (RollerException e) {
-            throw new RuntimeException(
-                    "FATAL ERROR: unable to find Roller object", e);
         }
     }
-    
     
 }

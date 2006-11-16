@@ -77,15 +77,7 @@ public class PlanetFeedServlet extends HttpServlet {
         
         log.debug("Entering");
         
-        PlanetManager planet = null;
-        try {
-            planet = RollerFactory.getRoller().getPlanetManager();
-        } catch (RollerException ex) {
-            // error getting planet manager :(
-            log.error("Unable to get planet manager", ex);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
-        }
+        PlanetManager planet = RollerFactory.getRoller().getPlanetManager();
         
         PlanetRequest planetRequest = null;
         try {

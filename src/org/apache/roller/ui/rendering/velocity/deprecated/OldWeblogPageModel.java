@@ -120,29 +120,24 @@ public class OldWeblogPageModel {
         mIsMonthSpecified = isMonth;
         mLocale = locale;
         
-        try {
-            mBookmarkMgr = RollerFactory.getRoller().getBookmarkManager();
-            mRefererMgr  = RollerFactory.getRoller().getRefererManager();
-            mUserMgr     = RollerFactory.getRoller().getUserManager();
-            mWeblogMgr   = RollerFactory.getRoller().getWeblogManager();
-            
-            // Preload what we can for encapsulation.  What we cannot preload we
-            // will use the Managers later to fetch.
+        mBookmarkMgr = RollerFactory.getRoller().getBookmarkManager();
+        mRefererMgr  = RollerFactory.getRoller().getRefererManager();
+        mUserMgr     = RollerFactory.getRoller().getUserManager();
+        mWeblogMgr   = RollerFactory.getRoller().getWeblogManager();
+        
+        // Preload what we can for encapsulation.  What we cannot preload we
+        // will use the Managers later to fetch.
+        
+        // Get the pages, put into context & load map
+        if (mWebsite != null) {
             
             // Get the pages, put into context & load map
-            if (mWebsite != null) {
-                
-                // Get the pages, put into context & load map
-                List pages = mWebsite.getPages();
-                Iterator pageIter = pages.iterator();
-                while (pageIter.hasNext()) {
-                    Template page = (Template) pageIter.next();
-                    mPageMap.put(page.getName(), TemplateWrapper.wrap(page));
-                }
+            List pages = mWebsite.getPages();
+            Iterator pageIter = pages.iterator();
+            while (pageIter.hasNext()) {
+                Template page = (Template) pageIter.next();
+                mPageMap.put(page.getName(), TemplateWrapper.wrap(page));
             }
-            
-        } catch (RollerException e) {
-            mLogger.error("PageModel Roller get*Manager Exception", e);
         }
     }
     

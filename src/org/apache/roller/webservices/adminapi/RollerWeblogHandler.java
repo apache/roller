@@ -15,6 +15,7 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 package org.apache.roller.webservices.adminapi;
 
 import java.io.Reader;
@@ -211,24 +212,20 @@ class RollerWeblogHandler extends Handler {
     }
     
     private WeblogEntrySet updateWeblogs(WeblogEntrySet c) throws HandlerException {
-        try {
-            UserManager mgr = getRoller().getUserManager();
-            
-            //TODO: group blogging check?
-            
-            HashMap pages = null;
-            
-            List websiteDatas = new ArrayList();
-            for (int i = 0; i < c.getEntries().length; i++) {
-                WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
-                WebsiteData wd = getWebsiteData(entry.getHandle());
-                updateWebsiteData(wd, entry);
-                websiteDatas.add(wd);
-            }
-            return toWeblogEntrySet((WebsiteData[])websiteDatas.toArray(new WebsiteData[0]));
-        } catch (RollerException re) {
-            throw new InternalException("ERROR: Could not update weblogs: " + c, re);
+        UserManager mgr = getRoller().getUserManager();
+        
+        //TODO: group blogging check?
+        
+        HashMap pages = null;
+        
+        List websiteDatas = new ArrayList();
+        for (int i = 0; i < c.getEntries().length; i++) {
+            WeblogEntry entry = (WeblogEntry)c.getEntries()[i];
+            WebsiteData wd = getWebsiteData(entry.getHandle());
+            updateWebsiteData(wd, entry);
+            websiteDatas.add(wd);
         }
+        return toWeblogEntrySet((WebsiteData[])websiteDatas.toArray(new WebsiteData[0]));
     }
     
     private void updateWebsiteData(WebsiteData wd, WeblogEntry entry) throws HandlerException {

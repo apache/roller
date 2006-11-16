@@ -354,15 +354,8 @@ public final class WebsiteFormAction extends DispatchAction {
             return moderationRequired;
         }
         public boolean getHasPagePlugins() {
-            boolean ret = false;
-            try {
-                Roller roller = RollerFactory.getRoller();
-                PluginManager ppmgr = roller.getPagePluginManager();
-                ret = ppmgr.hasPagePlugins();
-            } catch (RollerException e) {
-                mLogger.error(e);
-            }
-            return ret;
+            PluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
+            return ppmgr.hasPagePlugins();
         }
         
         public List getPagePlugins() {

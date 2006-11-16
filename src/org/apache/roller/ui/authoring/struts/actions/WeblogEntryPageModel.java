@@ -1,21 +1,21 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
-* under the Apache License, Version 2.0 (the "License"); you may not
-* use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.  For additional information regarding
-* copyright in this work, please see the NOTICE file in the top level
-* directory of this distribution.
-*/
-/* Created on Mar 10, 2004 */
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.ui.authoring.struts.actions;
 
 import java.util.ArrayList;
@@ -39,7 +39,6 @@ import org.apache.roller.ui.authoring.struts.actions.WeblogEntryPageModel.PageMo
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogEntryFormEx;
 import org.apache.commons.lang.StringUtils;
 
-//import com.swabunga.spell.event.SpellCheckEvent;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,6 +50,7 @@ import org.apache.roller.pojos.WebsiteData;
 import org.apache.roller.ui.core.RollerContext;
 import org.apache.roller.ui.core.plugins.UIPluginManager;
 import org.apache.roller.util.URLUtilities;
+
 
 /**
  * All data needed to render the edit-weblog page.
@@ -217,15 +217,8 @@ null,                 0, 20);
 
     public boolean getHasPagePlugins()
     {
-        boolean ret = false;
-        try {
-            Roller roller = RollerFactory.getRoller();
-            PluginManager ppmgr = roller.getPagePluginManager();
-            ret = ppmgr.hasPagePlugins();
-        } catch (RollerException e) {
-            logger.error(e);
-        }
-        return ret;
+        PluginManager ppmgr = RollerFactory.getRoller().getPagePluginManager();
+        return ppmgr.hasPagePlugins();
     }
     
     public List getPagePlugins() 
