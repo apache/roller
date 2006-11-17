@@ -131,6 +131,10 @@ public class UpgradeDatabase {
             UpgradeDatabase.upgradeTo300(con);
             dbversion = 300;
         }
+        if(dbversion < 320) {
+            UpgradeDatabase.upgradeTo320(con);
+            dbversion = 320;
+        }
         
         // make sure the database version is the exact version
         // we are upgrading too.
@@ -428,6 +432,70 @@ public class UpgradeDatabase {
         }
         
         UpgradeDatabase.updateDatabaseVersion(con, 300);
+    }
+    
+    /**
+     * Upgrade database for Roller 3.2.0
+     */
+    private static void upgradeTo320(Connection con) throws RollerException {
+        try {            
+            mLogger.info("Doing upgrade to 320 ...");
+                        
+            // Populate parentid in weblogcategory and folder tables.
+            //
+            // We'd like to do something like the below, but few databases 
+            // support multiple table udpates, which are part of SQL-99
+            //
+            // update weblogcategory, weblogcategoryassoc 
+            //   set weblogcategory.parentid = weblogcategoryassoc.ancestorid 
+            //   where 
+            //      weblogcategory.id = weblogcategoryassoc.categoryid 
+            //      and weblogcategoryassoc.relation = 'PARENT';
+            //
+            // update folder,folderassoc 
+            //   set folder.parentid = folderassoc.ancestorid 
+            //   where 
+            //      folder.id = folderassoc.folderid 
+            //      and folderassoc.relation = 'PARENT';
+            
+            PreparedStatement selectParents = con.prepareStatement(
+                "select categoryid, ancestorid from weblogcategoryassoc where relation='PARENT'");
+            PreparedStatement updateParent = con.prepareStatement(
+                "update weblogcategory set parentid=? where id=?");            
+            ResultSet parentSet = selectParents.executeQuery();
+            while (parentSet.next()) {
+                String categoryid = parentSet.getString(1);
+                String parentid = parentSet.getString(2);                
+                updateParent.clearParameters();
+                updateParent.setString( 1, parentid);
+                updateParent.setString( 2, categoryid);
+                updateParent.executeUpdate();
+            }
+            
+            selectParents = con.prepareStatement(
+                "select folderid, ancestorid from folderassoc where relation='PARENT'");
+            updateParent = con.prepareStatement(
+                "update folder set parentid=? where id=?");            
+            parentSet = selectParents.executeQuery();
+            while (parentSet.next()) {
+                String folderid = parentSet.getString(1);
+                String parentid = parentSet.getString(2);                
+                updateParent.clearParameters();
+                updateParent.setString( 1, parentid);
+                updateParent.setString( 2, folderid);
+                updateParent.executeUpdate();
+            }
+            
+            if (!con.getAutoCommit()) con.commit();
+           
+            mLogger.info("Upgrade to 320 complete.");
+            
+        } catch (SQLException e) {
+            mLogger.error("Problem upgrading database to version 320", e);
+            throw new RollerException("Problem upgrading database to version 320", e);
+        }
+        
+        UpgradeDatabase.updateDatabaseVersion(con, 320);
     }
     
     
