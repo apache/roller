@@ -539,47 +539,9 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
-    public Date getWeblogLastPublishTime(WebsiteData website, String catName)
-    throws RollerException {
-        WeblogCategoryData cat = null;
-
-        if (catName != null && website != null) {
-            cat = getWeblogCategoryByPath(website, null, catName);
-            if (cat == null) catName = null;
-        }
-        if (catName != null && catName.trim().equals("/")) {
-            catName = null;
-        }
-        
-        try {
-            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            Criteria criteria = session.createCriteria(WeblogEntryData.class);
-            criteria.add(Expression.eq("status", WeblogEntryData.PUBLISHED));
-            criteria.add(Expression.le("pubTime", new Date()));
-            
-            if (website != null) {
-                criteria.add(Expression.eq("website", website));
-            }
-            
-            if ( cat != null ) {
-                criteria.add(Expression.eq("category", cat));
-            }
-            
-            criteria.addOrder(Order.desc("pubTime"));
-            criteria.setMaxResults(1);
-            List list = criteria.list();
-            if (list.size() > 0) {
-                return ((WeblogEntryData)list.get(0)).getPubTime();
-            } else {
-                return null;
-            }
-        } catch (HibernateException e) {
-            throw new RollerException(e);
-        }
-    }
         
     public List getWeblogEntries(WeblogCategoryData cat, boolean subcats)
-    throws RollerException {
+        throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
@@ -954,15 +916,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         return (WeblogEntryData) this.strategy.load(
                 id, WeblogEntryData.class);
     }
-            
-    /**
-     * Gets the Date of the latest Entry publish time, before the end of today,
-     * for all WeblogEntries
-     */
-    public Date getWeblogLastPublishTime(WebsiteData website)
-    throws RollerException {
-        return getWeblogLastPublishTime(website, null);
-    }
+    
     
     public Map getWeblogEntryObjectMap(
             WebsiteData website,
@@ -1127,28 +1081,12 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    public List getNextEntries(WeblogEntryData current, String catName, 
-                               String locale, int maxEntries)
-            throws RollerException {
-        
-        return getNextPrevEntries(current, catName, locale, maxEntries, true);
-    }
-    
-    
-    public List getPreviousEntries(WeblogEntryData current, String catName, 
-                                   String locale, int maxEntries)
-            throws RollerException {
-        
-        return getNextPrevEntries(current, catName, locale, maxEntries, false);
-    }
-    
-    
     public WeblogEntryData getNextEntry(WeblogEntryData current, String catName,
                                         String locale)
             throws RollerException {
         
         WeblogEntryData entry = null;
-        List entryList = getNextEntries(current, catName, locale, 1);
+        List entryList = getNextPrevEntries(current, catName, locale, 1, true);
         if (entryList != null && entryList.size() > 0) {
             entry = (WeblogEntryData)entryList.get(0);
         }
@@ -1161,7 +1099,7 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
             throws RollerException {
         
         WeblogEntryData entry = null;
-        List entryList = getPreviousEntries(current, catName, locale, 1);
+        List entryList = getNextPrevEntries(current, catName, locale, 1, false);
         if (entryList != null && entryList.size() > 0) {
             entry = (WeblogEntryData)entryList.get(0);
         }
