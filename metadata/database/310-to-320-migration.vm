@@ -6,16 +6,3 @@ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 
 # add new parentid column to weblogcategory table
 #addColumnNull("weblogcategory" "parentid" "varchar(48)")
-
-
-# this needs to be done in a database independent manner before releasing
-update weblogcategory,weblogcategoryassoc 
-set weblogcategory.parentid = weblogcategoryassoc.ancestorid 
-where weblogcategory.id = weblogcategoryassoc.categoryid 
-and weblogcategoryassoc.relation = 'PARENT';
-
-# also need to set proper parentid for folders
-update folder,folderassoc 
-set folder.parentid = folderassoc.ancestorid 
-where folder.id = folderassoc.folderid 
-and folderassoc.relation = 'PARENT';
