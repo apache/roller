@@ -181,43 +181,15 @@ public interface WeblogManager {
      */
     public WeblogEntryData getPreviousEntry(WeblogEntryData current, 
             String catName, String locale) throws RollerException;
-        
-    /**
-     * Get entries next after current entry.
-     * @param entry Current entry.
-     * @param catName Only return entries in this category (if not null).
-     * @param maxEntries Maximum number of entries to return.
-     */
-    public List getNextEntries(WeblogEntryData entry, 
-            String catName, String locale, int maxEntries) throws RollerException;
-        
-    /**
-     * Get entries previous to current entry.
-     * @param entry Current entry.
-     * @param catName Only return entries in this category (if not null).
-     * @param maxEntries Maximum number of entries to return.
-     */
-    public List getPreviousEntries(WeblogEntryData entry, 
-            String catName, String locale, int maxEntries) throws RollerException;    
+      
     
     /**
      * Get specified number of most recent pinned and published Weblog Entries.
      * @param max Maximum number to return.
      * @return Collection of WeblogEntryData objects.
      */
-    public List getWeblogEntriesPinnedToMain(Integer max) throws RollerException;    
+    public List getWeblogEntriesPinnedToMain(Integer max) throws RollerException;
     
-    /** Get time of last update for a weblog specified by username */
-    public Date getWeblogLastPublishTime(WebsiteData website) throws RollerException;   
-    
-    /**
-     * Gets returns most recent pubTime, optionally restricted by category.
-     * @param handle   Handle of website or null for all users
-     * @param catName  Category name of posts or null for all categories
-     * @return         Date Of last publish time
-     */
-    public Date getWeblogLastPublishTime(WebsiteData website, String catName )
-            throws RollerException;
     
     /**
      * Save weblog category.
