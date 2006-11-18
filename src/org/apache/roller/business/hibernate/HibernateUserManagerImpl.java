@@ -290,7 +290,6 @@ public class HibernateUserManagerImpl implements UserManager {
         
         // add default category
         WeblogCategoryData rootCat = new WeblogCategoryData(
-                null,      // id
                 newWeblog, // newWeblog
                 null,      // parent
                 "root",    // name
@@ -304,7 +303,6 @@ public class HibernateUserManagerImpl implements UserManager {
             String[] splitcats = cats.split(",");
             for (int i=0; i<splitcats.length; i++) {
                 WeblogCategoryData c = new WeblogCategoryData(
-                        null,            // id
                         newWeblog,       // newWeblog
                         rootCat,         // parent
                         splitcats[i],    // name
