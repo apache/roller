@@ -57,13 +57,13 @@ public class WeblogCategoryData extends PersistentObject {
     }
     
     public WeblogCategoryData(
-            java.lang.String id,
             WebsiteData website,
             WeblogCategoryData parent,
             java.lang.String name,
             java.lang.String description,
             java.lang.String image) {
-        this.id = id;
+        
+        this.id = null;
         this.website = website;
         this.name = name;
         this.description = description;
