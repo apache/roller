@@ -5,7 +5,7 @@ Database scripts for $DBTYPE.
 Follow the installation guide for instructions on setting up your database.
 
 #** Define templates to be generated **#
-#set( $templates = ["createdb", "200-to-210-migration", "210-to-230-migration", "230-to-240-migration", "240-to-300-migration", "300-to-310-migration"]) 
+#set( $templates = ["createdb", "200-to-210-migration", "210-to-230-migration", "230-to-240-migration", "240-to-300-migration", "300-to-310-migration", "310-to-320-migration"]) 
 
 
 #**

@@ -4,5 +4,17 @@
 DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
 **#
 
-# add new parentid column to weblogcategory table
+-- add new parentid column to weblogcategory table
 #addColumnNull("weblogcategory" "parentid" "varchar(48)")
+create index ws_parentid_idx on weblogcategory( parentid );
+
+-- add new path column to weblogcategory table
+#addColumnNull("weblogcategory" "path" "varchar(255)")
+create index ws_path_idx on weblogcategory( path );
+
+-- need to add this index for existing folder.parentid
+create index fo_parentid_idx on folder( parentid );
+
+-- add new path column to folder table
+#addColumnNull("folder" "path" "varchar(255)")
+create index fo_path_idx on folder( path );

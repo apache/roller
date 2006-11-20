@@ -434,13 +434,17 @@ public class UpgradeDatabase {
         UpgradeDatabase.updateDatabaseVersion(con, 300);
     }
     
+    
     /**
      * Upgrade database for Roller 3.2.0
      */
     private static void upgradeTo320(Connection con) throws RollerException {
-        try {            
-            mLogger.info("Doing upgrade to 320 ...");
-                        
+        
+        mLogger.info("Doing upgrade to 320 ...");
+        
+        try {    
+            mLogger.info("Populating parentid columns for weblogcategory and folder tables");
+            
             // Populate parentid in weblogcategory and folder tables.
             //
             // We'd like to do something like the below, but few databases 
@@ -488,13 +492,163 @@ public class UpgradeDatabase {
             
             if (!con.getAutoCommit()) con.commit();
            
-            mLogger.info("Upgrade to 320 complete.");
+            mLogger.info("Done populating parentid columns.");
             
         } catch (SQLException e) {
             mLogger.error("Problem upgrading database to version 320", e);
             throw new RollerException("Problem upgrading database to version 320", e);
         }
         
+        
+        try {
+            mLogger.info("Populating path columns for weblogcategory and folder tables.");
+                        
+            // Populate path in weblogcategory and folder tables.
+            //
+            // It would be nice if there was a simple sql solution for doing
+            // this, but sadly the only real way to do it is through brute
+            // force walking the hierarchical trees.  Luckily, it seems that
+            // most people don't create multi-level hierarchies, so hopefully
+            // this won't be too bad
+            
+            // set path to '/' for nodes with no parents (aka root nodes)
+            PreparedStatement setRootPaths = con.prepareStatement(
+                "update weblogcategory set path = '/' where parentid is NULL");
+            setRootPaths.clearParameters();
+            setRootPaths.executeUpdate();
+            
+            // select all nodes whose parent has no parent (aka 1st level nodes)
+            PreparedStatement selectL1Children = con.prepareStatement(
+                "select f.id, f.name from weblogcategory f, weblogcategory p "+
+                    "where f.parentid = p.id and p.parentid is NULL");
+            // update L1 nodes with their path (/<name>)
+            PreparedStatement updateL1Children = con.prepareStatement(
+                "update weblogcategory set path=? where id=?");
+            ResultSet L1Set = selectL1Children.executeQuery();
+            while (L1Set.next()) {
+                String id = L1Set.getString(1);
+                String name = L1Set.getString(2);                
+                updateL1Children.clearParameters();
+                updateL1Children.setString( 1, "/"+name);
+                updateL1Children.setString( 2, id);
+                updateL1Children.executeUpdate();
+            }
+            
+            // now for the complicated part =(
+            // we need to keep iterating over L2, L3, etc nodes and setting
+            // their path until all nodes have been updated.
+            
+            // select all nodes whose parent path has been set, excluding L1 nodes
+            PreparedStatement selectLxChildren = con.prepareStatement(
+                "select f.id, f.name, p.path from weblogcategory f, weblogcategory p "+
+                    "where f.parentid = p.id and p.path <> '/' "+
+                    "and p.path is not NULL and f.path is NULL");
+            // update Lx nodes with their path (<parentPath>/<name>)
+            PreparedStatement updateLxChildren = con.prepareStatement(
+                "update weblogcategory set path=? where id=?");
+            
+            // this loop allows us to run this part of the upgrade process as
+            // long as is necessary based on the depth of the hierarchy, and
+            // we use the do/while construct to ensure it's run at least once
+            int catNumCounted = 0;
+            do {
+                mLogger.debug("Doing pass over Lx children for categories");
+                
+                // reset count for each iteration of outer loop
+                catNumCounted = 0;
+                
+                ResultSet LxSet = selectLxChildren.executeQuery();
+                while (LxSet.next()) {
+                    String id = LxSet.getString(1);
+                    String name = LxSet.getString(2);
+                    String parentPath = LxSet.getString(3);
+                    updateLxChildren.clearParameters();
+                    updateLxChildren.setString( 1, parentPath+"/"+name);
+                    updateLxChildren.setString( 2, id);
+                    updateLxChildren.executeUpdate();
+                    
+                    // count the updated rows
+                    catNumCounted++;
+                }
+                
+                mLogger.debug("Updated "+catNumCounted+" Lx category paths");
+            } while(catNumCounted > 0);
+            
+            
+            
+            // set path to '/' for nodes with no parents (aka root nodes)
+            setRootPaths = con.prepareStatement(
+                "update folder set path = '/' where parentid is NULL");
+            setRootPaths.clearParameters();
+            setRootPaths.executeUpdate();
+            
+            // select all nodes whose parent has no parent (aka 1st level nodes)
+            selectL1Children = con.prepareStatement(
+                "select f.id, f.name from folder f, folder p "+
+                    "where f.parentid = p.id and p.parentid is NULL");
+            // update L1 nodes with their path (/<name>)
+            updateL1Children = con.prepareStatement(
+                "update folder set path=? where id=?");
+            L1Set = selectL1Children.executeQuery();
+            while (L1Set.next()) {
+                String id = L1Set.getString(1);
+                String name = L1Set.getString(2);                
+                updateL1Children.clearParameters();
+                updateL1Children.setString( 1, "/"+name);
+                updateL1Children.setString( 2, id);
+                updateL1Children.executeUpdate();
+            }
+            
+            // now for the complicated part =(
+            // we need to keep iterating over L2, L3, etc nodes and setting
+            // their path until all nodes have been updated.
+            
+            // select all nodes whose parent path has been set, excluding L1 nodes
+            selectLxChildren = con.prepareStatement(
+                "select f.id, f.name, p.path from folder f, folder p "+
+                    "where f.parentid = p.id and p.path <> '/' "+
+                    "and p.path is not NULL and f.path is NULL");
+            // update Lx nodes with their path (/<name>)
+            updateLxChildren = con.prepareStatement(
+                "update folder set path=? where id=?");
+            
+            // this loop allows us to run this part of the upgrade process as
+            // long as is necessary based on the depth of the hierarchy, and
+            // we use the do/while construct to ensure it's run at least once
+            int folderNumUpdated = 0;
+            do {
+                mLogger.debug("Doing pass over Lx children for folders");
+                
+                // reset count for each iteration of outer loop
+                folderNumUpdated = 0;
+                
+                ResultSet LxSet = selectLxChildren.executeQuery();
+                while (LxSet.next()) {
+                    String id = LxSet.getString(1);
+                    String name = LxSet.getString(2);
+                    String parentPath = LxSet.getString(3);
+                    updateLxChildren.clearParameters();
+                    updateLxChildren.setString( 1, parentPath+"/"+name);
+                    updateLxChildren.setString( 2, id);
+                    updateLxChildren.executeUpdate();
+                    
+                    // count the updated rows
+                    folderNumUpdated++;
+                }
+                
+                mLogger.debug("Updated "+folderNumUpdated+" Lx folder paths");
+            } while(folderNumUpdated > 0);
+            
+            if (!con.getAutoCommit()) con.commit();
+           
+            mLogger.info("Done populating path columns.");
+            
+        } catch (SQLException e) {
+            mLogger.error("Problem upgrading database to version 320", e);
+            throw new RollerException("Problem upgrading database to version 320", e);
+        }
+        
+        // finally, upgrade db version string to 320
         UpgradeDatabase.updateDatabaseVersion(con, 320);
     }
     

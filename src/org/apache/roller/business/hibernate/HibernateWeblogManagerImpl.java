@@ -130,6 +130,59 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
+    public void moveWeblogCategory(WeblogCategoryData srcCat, WeblogCategoryData destCat)
+            throws RollerException {
+        
+        // TODO: this check should be made before calling this method?
+        if (destCat.descendentOf(srcCat)) {
+            throw new RollerException(
+                    "ERROR cannot move parent category into it's own child");
+        }
+        
+        log.debug("Moving category "+srcCat.getPath()+" under "+destCat.getPath());
+        
+        srcCat.setParent(destCat);
+        if("/".equals(destCat.getPath())) {
+            srcCat.setPath("/"+srcCat.getName());
+        } else {
+            srcCat.setPath(destCat.getPath() + "/" + srcCat.getName());
+        }
+        saveWeblogCategory(srcCat);
+        
+        // the main work to be done for a category move is to update the 
+        // path attribute of the category and all descendent categories
+        updatePathTree(srcCat);
+    }
+    
+    
+    // updates the paths of all descendents of the given category
+    private void updatePathTree(WeblogCategoryData cat) throws RollerException {
+        
+        log.debug("Updating path tree for category "+cat.getPath());
+        
+        WeblogCategoryData childCat = null;
+        Iterator childCats = cat.getWeblogCategories().iterator();
+        while(childCats.hasNext()) {
+            childCat = (WeblogCategoryData) childCats.next();
+            
+            log.debug("OLD child category path was "+childCat.getPath());
+            
+            // update path and save
+            if("/".equals(cat.getPath())) {
+                childCat.setPath("/" + childCat.getName());
+            } else {
+                childCat.setPath(cat.getPath() + "/" + childCat.getName());
+            }
+            saveWeblogCategory(childCat);
+            
+            log.debug("NEW child category path is "+ childCat.getPath());
+            
+            // then make recursive call to update this cats children
+            updatePathTree(childCat);
+        }
+    }
+    
+    
     public void moveWeblogCategoryContents(WeblogCategoryData srcCat, WeblogCategoryData destCat)
             throws RollerException {
                 
@@ -539,35 +592,26 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         }
     }
     
-        
+    
+    // TODO: this method should be removed and it's functionality moved to getWeblogEntries()
     public List getWeblogEntries(WeblogCategoryData cat, boolean subcats)
         throws RollerException {
         
         try {
             Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
-            List entries = new LinkedList();
+            Criteria criteria = session.createCriteria(WeblogEntryData.class);
             
-            // Get entries in category
-            Criteria entriesQuery = session.createCriteria(WeblogEntryData.class);
-            entriesQuery.add(Expression.eq("category", cat));
-            Iterator entryIter = entriesQuery.list().iterator();
-            while (entryIter.hasNext()) {
-                WeblogEntryData entry = (WeblogEntryData)entryIter.next();
-                entries.add(entry);
+            if(!subcats) {
+                // if no subcats then this is an equals query
+                criteria.add(Expression.eq("category", cat));
+            } else {
+                // if we are doing subcats then do a case sensitive
+                // query using category path
+                criteria.createAlias("category", "cat");
+                criteria.add(Expression.like("cat.path", cat.getPath()+"%"));
             }
             
-            if (subcats) {
-                // recursive call for child categories
-                WeblogCategoryData childCat = null;
-                Iterator childCats = cat.getWeblogCategories().iterator();
-                while(childCats.hasNext()) {
-                    childCat = (WeblogCategoryData) childCats.next();
-                    
-                    entries.addAll(childCat.retrieveWeblogEntries(subcats));
-                }
-            }
-            
-            return entries;
+            return criteria.list();
             
         } catch (HibernateException e) {
             throw new RollerException(e);
@@ -607,25 +651,14 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
     }
     
     
-    // TODO: need to fix this method and provide unit test case
+    // TODO: provide unit test case
     public boolean isDuplicateWeblogCategoryName(WeblogCategoryData cat)
             throws RollerException {
         
         // ensure that no sibling categories share the same name
         WeblogCategoryData parent = cat.getParent();
         if (null != parent) {
-            // TODO: if cat.equals() worked right then we should be able
-            // to use parent.getWeblogCategories().contains(cat) instead of this loop
-            
-            WeblogCategoryData sibling = null;
-            Iterator siblings = parent.getWeblogCategories().iterator();
-            while(siblings.hasNext()) {
-                sibling = (WeblogCategoryData) siblings.next();
-                
-                if(cat.getName().equals(sibling.getName())) {
-                    return true;
-                }
-            }
+            return (getWeblogCategoryByPath(cat.getWebsite(), cat.getPath()) != null);
         }
         
         return false;
@@ -870,41 +903,29 @@ public class HibernateWeblogManagerImpl implements WeblogManager {
         return getWeblogCategoryByPath(website, null, categoryPath);
     }
     
+    // TODO: ditch this method in favor of getWeblogCategoryByPath(weblog, path)
     public WeblogCategoryData getWeblogCategoryByPath(
             WebsiteData website, WeblogCategoryData category, String path)
             throws RollerException {
-        final Iterator cats;
-        final String[] pathArray = Utilities.stringToStringArray(path, "/");
         
-        if (category == null && (null == path || "".equals(path.trim()))) {
-            throw new RollerException("Bad arguments.");
-        }
-        
-        if (path.trim().equals("/")) {
+        if (path == null || path.trim().equals("/")) {
             return getRootWeblogCategory(website);
-        } else if (category == null || path.trim().startsWith("/")) {
-            cats = getRootWeblogCategory(website).getWeblogCategories().iterator();
         } else {
-            cats = category.getWeblogCategories().iterator();
-        }
-        
-        while (cats.hasNext()) {
-            WeblogCategoryData possibleMatch = (WeblogCategoryData)cats.next();
-            if (possibleMatch.getName().equals(pathArray[0])) {
-                if (pathArray.length == 1) {
-                    return possibleMatch;
-                } else {
-                    String[] subpath = new String[pathArray.length - 1];
-                    System.arraycopy(pathArray, 1, subpath, 0, subpath.length);
-                    
-                    String pathString= Utilities.stringArrayToString(subpath,"/");
-                    return getWeblogCategoryByPath(website, possibleMatch, pathString);
-                }
+            String catPath = path;
+            
+            // all cat paths must begin with a '/'
+            if(!catPath.startsWith("/")) {
+                catPath = "/"+catPath;
             }
+            
+            // now just do simple lookup by path
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            
+            Criteria criteria = session.createCriteria(WeblogCategoryData.class);
+            criteria.add(Expression.eq("path", catPath));
+            
+            return (WeblogCategoryData) criteria.uniqueResult();
         }
-        
-        // The category did not match and neither did any sub-categories
-        return null;
     }
         
     public CommentData getComment(String id) throws RollerException {

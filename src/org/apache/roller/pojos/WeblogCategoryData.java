@@ -18,6 +18,7 @@
 
 package org.apache.roller.pojos;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,20 +38,22 @@ import org.apache.roller.util.PojoUtil;
  * @hibernate.class lazy="true" table="weblogcategory"
  * @hibernate.cache usage="read-write"
  */
-public class WeblogCategoryData extends PersistentObject {
+public class WeblogCategoryData extends PersistentObject 
+        implements Serializable {
     
     public static final long serialVersionUID = 1435782148712018954L;
     
+    // attributes
     private String id = null;
     private String name = null;
     private String description = null;
     private String image = null;
+    private String path = null;
     
+    // associations
     private WebsiteData website = null;
     private WeblogCategoryData parentCategory = null;
     private Set childCategories = new HashSet();
-    
-    private String cachedPath = null;
     
     
     public WeblogCategoryData() {
@@ -63,19 +66,28 @@ public class WeblogCategoryData extends PersistentObject {
             java.lang.String description,
             java.lang.String image) {
         
-        this.id = null;
-        this.website = website;
         this.name = name;
         this.description = description;
         this.image = image;
+        
+        this.website = website;
         this.parentCategory = parent;
+        
+        // calculate path
+        if(parent == null) {
+            this.path = "/";
+        } else if("/".equals(parent.getPath())) {
+            this.path = "/"+name;
+        } else {
+            this.path = parent.getPath() + "/" + name;
+        }
     }
     
     public WeblogCategoryData(WeblogCategoryData otherData) {
         this.setData(otherData);
     }
     
-    /** Setter is needed in RollerImpl.storePersistentObject(). */
+    
     public void setData(org.apache.roller.pojos.PersistentObject otherData) {
         WeblogCategoryData other = (WeblogCategoryData) otherData;
         
@@ -84,6 +96,7 @@ public class WeblogCategoryData extends PersistentObject {
         this.name = other.getName();
         this.description = other.getDescription();
         this.image = other.getImage();
+        this.path = other.getPath();
         
         this.parentCategory = other.getParent();
         this.childCategories = other.getWeblogCategories();
@@ -110,6 +123,7 @@ public class WeblogCategoryData extends PersistentObject {
         return (str.toString());
     }
     
+    
     public boolean equals(Object pOther) {
         if (pOther == null) return false;
         if (pOther instanceof WeblogCategoryData) {
@@ -124,6 +138,7 @@ public class WeblogCategoryData extends PersistentObject {
             return false;
         }
     }
+    
     
     public int hashCode() {
         int result = 17;
@@ -142,90 +157,89 @@ public class WeblogCategoryData extends PersistentObject {
     
     
     /**
+     * Database surrogate key.
+     *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
+     *
      * @hibernate.id column="id"
      *  generator-class="uuid.hex" unsaved-value="null"
      */
     public java.lang.String getId() {
         return this.id;
     }
-    /** @ejb:persistent-field */
+    
     public void setId(java.lang.String id) {
         this.id = id;
     }
     
     
     /**
+     * The display name for this category.
+     *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
+     *
      * @hibernate.property column="name" non-null="true" unique="false"
      */
     public java.lang.String getName() {
         return this.name;
     }
-    /** @ejb:persistent-field */
+    
     public void setName(java.lang.String name) {
         this.name = name;
     }
     
     
     /**
-     * Description
+     * A full description for this category.
      *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
+     *
      * @hibernate.property column="description" non-null="true" unique="false"
      */
     public java.lang.String getDescription() {
         return this.description;
     }
-    /** @ejb:persistent-field */
+    
     public void setDescription(java.lang.String description) {
         this.description = description;
     }
     
     
     /**
+     * An image icon to represent this category.
+     *
      * @roller.wrapPojoMethod type="simple"
-     * @ejb:persistent-field
+     *
      * @hibernate.property column="image" non-null="true" unique="false"
      */
     public java.lang.String getImage() {
         return this.image;
     }
-    /** @ejb:persistent-field */
+    
     public void setImage(java.lang.String image) {
         this.image = image;
     }
     
     
     /**
-     * Get path in category hierarchy.
-     *
-     * TODO: category path should be persisted.
+     * The full path to this category in the hierarchy.
      *
      * @roller.wrapPojoMethod type="simple"
+     *
+     * @hibernate.property column="path" non-null="true" unique="false"
      */
     public String getPath() {
-        
-        if (null == cachedPath) {
-            if (getParent() == null) {
-                return "/";
-            } else {
-                String parentPath = getParent().getPath();
-                parentPath = "/".equals(parentPath) ? "" : parentPath;
-                return parentPath + "/" + this.name;
-            }
-        }
-        
-        return cachedPath;
+        return this.path;
     }
-    /** TODO: fix formbean generation so this is not needed. */
-    public void setPath(String string) {}
+    
+    public void setPath(String path) {
+        this.path = path;
+    }
     
     
     /**
+     * Get the weblog which owns this category.
+     *
      * @roller.wrapPojoMethod type="pojo"
      *
      * @hibernate.many-to-one column="websiteid" cascade="none" not-null="true"
@@ -240,7 +254,7 @@ public class WeblogCategoryData extends PersistentObject {
     
     
     /**
-     * Return parent category, or null if category is root of hierarchy.
+     * Get parent category, or null if category is root of hierarchy.
      *
      * @roller.wrapPojoMethod type="pojo"
      *
@@ -256,7 +270,7 @@ public class WeblogCategoryData extends PersistentObject {
     
     
     /**
-     * Query to get child categories of this category.
+     * Get child categories of this category.
      *
      * @roller.wrapPojoMethod type="pojo-collection" class="org.apache.roller.pojos.WeblogCategoryData"
      *
@@ -283,29 +297,25 @@ public class WeblogCategoryData extends PersistentObject {
      * @return List of WeblogEntryData objects.
      * @throws RollerException
      */
-    public List retrieveWeblogEntries(boolean subcats)
-    throws RollerException {
+    public List retrieveWeblogEntries(boolean subcats) throws RollerException {
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
         return wmgr.getWeblogEntries(this, subcats);
     }
     
     
     /**
+     * Is this category a descendent of the other category?
+     *
      * @roller.wrapPojoMethod type="simple"
      */
     public boolean descendentOf(WeblogCategoryData ancestor) {
         
-        // if this is root then we can't be a descendent
+        // if this is a root node then we can't be a descendent
         if(getParent() == null) {
             return false;
         } else {
-            // if ancestor is our parent then we are a descendent
-            if(getParent().equals(ancestor)) {
-                return true;
-            } else {
-                // see if our parent is a descendent
-                return getParent().descendentOf(ancestor);
-            }
+            // if our path starts with our parents path then we are a descendent
+            return this.path.startsWith(ancestor.getPath());
         }
     }
     

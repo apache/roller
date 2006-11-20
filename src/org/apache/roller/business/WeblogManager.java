@@ -206,6 +206,16 @@ public interface WeblogManager {
      */
     public WeblogCategoryData getWeblogCategory(String id) throws RollerException;
     
+    
+    /**
+     * Move a category under another category.
+     *
+     * This moves the src category itself and all children and associated entries.
+     */
+    public void moveWeblogCategory(WeblogCategoryData src, WeblogCategoryData dest)
+            throws RollerException;
+    
+    
     /**
      * Recategorize all entries with one category to another.
      */

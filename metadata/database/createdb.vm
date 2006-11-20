@@ -129,9 +129,12 @@ create table folder (
     name             varchar(255) not null,
     description      varchar(255),
     websiteid        varchar(48) not null,
-    parentid        varchar(48)
+    parentid         varchar(48),
+    path             varchar(255)
 );
 create index fo_websiteid_idx on folder( websiteid );
+create index fo_parentid_idx on folder( parentid );
+create index fo_path_idx on folder( path );
 
 create table folderassoc (
     id               varchar(48) not null primary key,
@@ -162,9 +165,12 @@ create table weblogcategory (
     description      varchar(255),
     websiteid        varchar(48)  not null,
     image            varchar(255),
-    parentid         varchar(48)
+    parentid         varchar(48),
+    path             varchar(255)
 );
 create index wc_websiteid_idx on weblogcategory( websiteid );
+create index ws_parentid_idx on weblogcategory( parentid );
+create index ws_path_idx on weblogcategory( path );
 -- alter table weblogcategory add unique category_nameparentid_uq (parentid, name(20));
 
 create table weblogcategoryassoc (
