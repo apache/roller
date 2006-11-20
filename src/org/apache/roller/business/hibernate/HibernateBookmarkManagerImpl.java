@@ -204,47 +204,27 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     }
     
     
-    public FolderData getFolder(WebsiteData website, String folderPath)
+    public FolderData getFolder(WebsiteData website, String path)
             throws RollerException {
-        return getFolderByPath(website, null, folderPath);
-    }
-    
-    
-    private FolderData getFolderByPath(
-            WebsiteData website, FolderData folder, String path)
-            throws RollerException {
-        final Iterator folders;
-        final String[] pathArray = Utilities.stringToStringArray(path, "/");
         
-        if (folder == null && (null == path || "".equals(path.trim()))) {
-            throw new RollerException("Bad arguments.");
-        }
-        
-        if (path.trim().equals("/")) {
+        if (path == null || path.trim().equals("/")) {
             return getRootFolder(website);
-        } else if (folder == null || path.trim().startsWith("/")) {
-            folders = getRootFolder(website).getFolders().iterator();
         } else {
-            folders = folder.getFolders().iterator();
-        }
-        
-        while (folders.hasNext()) {
-            FolderData possibleMatch = (FolderData)folders.next();
-            if (possibleMatch.getName().equals(pathArray[0])) {
-                if (pathArray.length == 1) {
-                    return possibleMatch;
-                } else {
-                    String[] subpath = new String[pathArray.length - 1];
-                    System.arraycopy(pathArray, 1, subpath, 0, subpath.length);
-                    
-                    String pathString= Utilities.stringArrayToString(subpath,"/");
-                    return getFolderByPath(website, possibleMatch, pathString);
-                }
+            String folderPath = path;
+            
+            // all folder paths must begin with a '/'
+            if(!folderPath.startsWith("/")) {
+                folderPath = "/"+folderPath;
             }
+            
+            // now just do simple lookup by path
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            
+            Criteria criteria = session.createCriteria(FolderData.class);
+            criteria.add(Expression.eq("path", folderPath));
+            
+            return (FolderData) criteria.uniqueResult();
         }
-        
-        // The folder did not match and neither did any subfolders
-        return null;
     }
     
     
@@ -255,24 +235,27 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
     public List getBookmarks(FolderData folder, boolean subfolders)
             throws RollerException {
         
-        List bkmrks = new LinkedList();
-        
-        // Get bookmarks in current folder
-        bkmrks.addAll(folder.getBookmarks());
-        
-        if (subfolders) {
-            // recursive call for child folders
-            FolderData childFolder = null;
-            Iterator childFolders = folder.getFolders().iterator();
-            while(childFolders.hasNext()) {
-                childFolder = (FolderData) childFolders.next();
-                
-                bkmrks.addAll(this.getBookmarks(childFolder, subfolders));
+        try {
+            Session session = ((HibernatePersistenceStrategy)this.strategy).getSession();
+            Criteria criteria = session.createCriteria(BookmarkData.class);
+            
+            if(!subfolders) {
+                // if no subfolders then this is an equals query
+                criteria.add(Expression.eq("folder", folder));
+            } else {
+                // if we are doing subfolders then do a case sensitive
+                // query using folder path
+                criteria.createAlias("folder", "fd");
+                criteria.add(Expression.like("fd.path", folder.getPath()+"%"));
             }
+            
+            return criteria.list();
+            
+        } catch (HibernateException e) {
+            throw new RollerException(e);
         }
-        
-        return bkmrks;
     }
+    
     
     public FolderData getRootFolder(WebsiteData website) throws RollerException {
         
@@ -315,21 +298,10 @@ public class HibernateBookmarkManagerImpl implements BookmarkManager {
      */
     private boolean isDuplicateFolderName(FolderData folder) throws RollerException {
         
-        // ensure that no sibling folders share the same name
+        // ensure that no sibling categories share the same name
         FolderData parent = folder.getParent();
         if (null != parent) {
-            // TODO: if folder.equals() worked right then we should be able
-            // to use parent.getFolders().contains(folder) instead of this loop
-            
-            FolderData sibling = null;
-            Iterator siblings = parent.getFolders().iterator();
-            while(siblings.hasNext()) {
-                sibling = (FolderData) siblings.next();
-                
-                if(folder.getName().equals(sibling.getName())) {
-                    return true;
-                }
-            }
+            return (getFolder(folder.getWebsite(), folder.getPath()) != null);
         }
         
         return false;

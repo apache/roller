@@ -39,6 +39,7 @@ import org.apache.roller.util.cache.CacheManager;
 import org.apache.roller.ui.authoring.struts.formbeans.WeblogCategoryFormEx;
 import org.apache.roller.ui.core.RequestConstants;
 import org.apache.roller.RollerException;
+import org.apache.roller.pojos.WebsiteData;
 
 /**
  * @struts.action path="/roller-ui/authoring/categorySave" name="weblogCategoryFormEx"
@@ -57,28 +58,26 @@ public class CategorySaveAction extends Action
     {
         ActionForward forward = mapping.findForward("categories");
         WeblogCategoryFormEx form = (WeblogCategoryFormEx)actionForm;
-        RollerRequest rreq = RollerRequest.getRollerRequest(request);
+        
         WeblogManager wmgr = RollerFactory.getRoller().getWeblogManager();
-
+        
         WeblogCategoryData cd = null;
-        if (null != form.getId() && !form.getId().trim().equals("")) 
-        {
+        if (null != form.getId() && !form.getId().trim().equals("")) {
             cd = wmgr.getWeblogCategory(form.getId());
+        } else {
+            WeblogCategoryData parentCat = wmgr.getWeblogCategory(form.getParentId());
+            cd = new WeblogCategoryData(
+                    parentCat.getWebsite(),
+                    parentCat,
+                    form.getName(),
+                    form.getDescription(),
+                    form.getImage());
         }
-        else 
-        {
-            cd = new WeblogCategoryData();
-            String pid = form.getParentId();
-            WeblogCategoryData parentCat = wmgr.getWeblogCategory(pid);
-            cd.setWebsite(parentCat.getWebsite());
-            cd.setParent(parentCat);
-        }
-
+        
         RollerSession rses = RollerSession.getRollerSession(request);
         if (cd.getWebsite().hasUserPermissions(
             rses.getAuthenticatedUser(), PermissionsData.AUTHOR))
         {
-            form.copyTo(cd, request.getLocale());
             try {
                 wmgr.saveWeblogCategory(cd);
                 RollerFactory.getRoller().flush();
@@ -90,7 +89,10 @@ public class CategorySaveAction extends Action
                 errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.untranslated", re.getMessage())); 
                 saveErrors(request, errors);
-            }            
+            }
+            
+            request.setAttribute(
+                RequestConstants.WEBLOGCATEGORY_ID, cd.getParent().getId());
         }
         else
         {
@@ -99,8 +101,7 @@ public class CategorySaveAction extends Action
             saveErrors(request, errors);
             forward = mapping.findForward("access-denied");
         }
-        request.setAttribute(
-            RequestConstants.WEBLOGCATEGORY_ID, cd.getParent().getId());         
+        
         return forward;
     }
 }

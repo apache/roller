@@ -261,16 +261,7 @@ public class BookmarksAction extends DispatchAction
         public int compare(Object o1, Object o2) {
             FolderData f1 = (FolderData)o1;
             FolderData f2 = (FolderData)o2;
-            int res = 0;
-            try
-            {
-                res = f1.getPath().compareTo(f2.getPath());
-            }
-            catch (RollerException e)
-            {
-                mLogger.error("ERROR: sorting folders");
-            }
-            return res;
+            return f1.getPath().compareTo(f2.getPath());
         }
     }
     

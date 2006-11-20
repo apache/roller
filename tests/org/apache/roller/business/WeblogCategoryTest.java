@@ -251,8 +251,7 @@ public class WeblogCategoryTest extends TestCase {
         assertEquals(3, c1.retrieveWeblogEntries(true).size());
         
         // move contents of source category c1 to destination catetory dest
-        c1.setParent(dest);
-        mgr.saveWeblogCategory(c1);
+        mgr.moveWeblogCategory(c1, dest);
         TestUtils.endSession(true);
         
         // after move, verify number of entries in each category

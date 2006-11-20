@@ -143,8 +143,7 @@ public class CategoriesAction extends DispatchAction
                         if (    !cd.getId().equals(parent.getId()) 
                              && !parent.descendentOf(cd))
                         {
-                            cd.setParent(parent);
-                            wmgr.saveWeblogCategory(cd);
+                            wmgr.moveWeblogCategory(cd, parent);
                         }
                         else 
                         {
@@ -152,8 +151,8 @@ public class CategoriesAction extends DispatchAction
                                 "categoriesForm.warn.notMoving",cd.getName()));
                         }
                     }
-                }    
-                // TODO: new manager method, moveCategory(cat, newPath)
+                }
+                
                 RollerFactory.getRoller().flush();
                 saveMessages(request, messages);
             }

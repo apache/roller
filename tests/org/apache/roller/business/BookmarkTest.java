@@ -106,11 +106,7 @@ public class BookmarkTest extends TestCase {
         assertEquals(0, root.getBookmarks().size());
         
         // add a folder
-        FolderData folder = new FolderData();
-        folder.setName("TestFolder1");
-        folder.setDescription("created by testFolderCRUD()");
-        folder.setWebsite(testWeblog);
-        folder.setParent(root);
+        FolderData folder = new FolderData(root, "TestFolder1", null, testWeblog);
         bmgr.saveFolder(folder);
         TestUtils.endSession(true);
         
@@ -130,11 +126,7 @@ public class BookmarkTest extends TestCase {
         assertEquals("folderTest1", folder.getName());
         
         // add a subfolder
-        FolderData subfolder = new FolderData();
-        subfolder.setName("subfolderTest1");
-        subfolder.setDescription("created by testFolderCRUD()");
-        subfolder.setWebsite(testWeblog);
-        subfolder.setParent(folder);
+        FolderData subfolder = new FolderData(folder, "subfolderTest1", null, testWeblog);
         bmgr.saveFolder(subfolder);
         TestUtils.endSession(true);
         
@@ -163,11 +155,7 @@ public class BookmarkTest extends TestCase {
         
         FolderData root = bmgr.getRootFolder(testWeblog);
         
-        FolderData folder = new FolderData();
-        folder.setName("TestFolder2");
-        folder.setDescription("created by testBookmarkCRUD()");
-        folder.setWebsite(testWeblog);
-        folder.setParent(root);
+        FolderData folder = new FolderData(root, "TestFolder2", null, testWeblog);
         bmgr.saveFolder(folder);
         TestUtils.endSession(true);
         
@@ -378,22 +366,13 @@ public class BookmarkTest extends TestCase {
         try {
             FolderData root = bmgr.getRootFolder(testWeblog);
             
-            FolderData f1 = new FolderData();
-            f1.setName("f1");
-            f1.setParent(root);
-            f1.setWebsite(testWeblog);
+            FolderData f1 = new FolderData(root, "f1", null, testWeblog);
             bmgr.saveFolder(f1);
             
-            FolderData f2 = new FolderData();
-            f2.setName("f2");
-            f2.setParent(f1);
-            f2.setWebsite(testWeblog);
+            FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
             bmgr.saveFolder(f2);
             
-            FolderData f3 = new FolderData();
-            f3.setName("f3");
-            f3.setParent(f2);
-            f3.setWebsite(testWeblog);
+            FolderData f3 = new FolderData(f2, "f3", null, testWeblog);
             bmgr.saveFolder(f3);
             
             TestUtils.endSession(true);
@@ -431,17 +410,11 @@ public class BookmarkTest extends TestCase {
         
         FolderData root = bmgr.getRootFolder(testWeblog);
         
-        FolderData f1 = new FolderData();
-        f1.setName("f1");
-        f1.setParent(root);
-        f1.setWebsite(testWeblog);
+        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
         bmgr.saveFolder(f1);
         
         // first child folder
-        FolderData f2 = new FolderData();
-        f2.setName("f2");
-        f2.setParent(f1);
-        f2.setWebsite(testWeblog);
+        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
         bmgr.saveFolder(f2);
         
         TestUtils.endSession(true);
@@ -452,10 +425,7 @@ public class BookmarkTest extends TestCase {
         boolean exception = false;
         try {
             // child folder with same name as first
-            FolderData f3 = new FolderData();
-            f3.setName("f2");
-            f3.setParent(f1);
-            f3.setWebsite(testWeblog);
+            FolderData f3 = new FolderData(f1, "f2", null, testWeblog);
             bmgr.saveFolder(f3);
             TestUtils.endSession(true);
         } catch (RollerException e) {
