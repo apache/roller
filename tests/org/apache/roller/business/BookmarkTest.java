@@ -149,6 +149,117 @@ public class BookmarkTest extends TestCase {
     }
     
     
+    /** 
+     * Ensure that duplicate folder name will throw RollerException 
+     */
+    public void testUniquenessOfFolderNames() throws Exception {
+        
+        BookmarkManager bmgr = getRoller().getBookmarkManager();
+        
+        FolderData root = bmgr.getRootFolder(testWeblog);
+        
+        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+        bmgr.saveFolder(f1);
+        
+        // first child folder
+        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+        bmgr.saveFolder(f2);
+        
+        TestUtils.endSession(true);
+        
+        // need to requery for folder since session was closed
+        f1 = bmgr.getFolder(f1.getId());
+        
+        boolean exception = false;
+        try {
+            // child folder with same name as first
+            FolderData f3 = new FolderData(f1, "f2", null, testWeblog);
+            bmgr.saveFolder(f3);
+            TestUtils.endSession(true);
+        } catch (RollerException e) {
+            exception = true;
+        }
+        
+        assertTrue(exception);
+    }
+    
+    
+    /**
+     * Test all folder lookup methods.
+     */
+    public void testFolderLookups() throws Exception {
+        
+        BookmarkManager bmgr = getRoller().getBookmarkManager();
+        
+        FolderData root = bmgr.getRootFolder(testWeblog);
+        
+        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+        bmgr.saveFolder(f1);
+        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+        bmgr.saveFolder(f2);
+        FolderData f3 = new FolderData(root, "f3", null, testWeblog);
+        bmgr.saveFolder(f3);
+        
+        TestUtils.endSession(true);
+        
+        // test lookup by id
+        FolderData testFolder = bmgr.getFolder(f1.getId());
+        assertNotNull(testFolder);
+        assertEquals("/f1", testFolder.getPath());
+        
+        // test lookup root folder
+        testFolder = null;
+        testFolder = bmgr.getRootFolder(testWeblog);
+        assertNotNull(testFolder);
+        assertEquals("/", testFolder.getPath());
+        assertNull(testFolder.getParent());
+        
+        // test lookup by path
+        testFolder = null;
+        testFolder = bmgr.getFolder(testWeblog, "/f1/f2");
+        assertNotNull(testFolder);
+        assertEquals("/f1/f2", testFolder.getPath());
+        assertEquals("f2", testFolder.getName());
+        assertEquals("f1", testFolder.getParent().getName());
+        
+        // test lookup of all folders for weblog
+        List allFolders = bmgr.getAllFolders(testWeblog);
+        assertNotNull(allFolders);
+        assertEquals(4, allFolders.size());
+    }
+    
+    
+    /** 
+     * Test bookmark folder paths. 
+     */
+    public void testFolderPaths() throws Exception {
+        
+        BookmarkManager bmgr = getRoller().getBookmarkManager();
+        
+        FolderData root = bmgr.getRootFolder(testWeblog);
+        
+        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+        bmgr.saveFolder(f1);
+        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+        bmgr.saveFolder(f2);
+        FolderData f3 = new FolderData(f2, "f3", null, testWeblog);
+        bmgr.saveFolder(f3);
+        
+        TestUtils.endSession(true);
+        
+        assertEquals("f1",bmgr.getFolder(testWeblog, "/f1").getName());
+        assertEquals("f2",bmgr.getFolder(testWeblog, "/f1/f2").getName());
+        assertEquals("f3",bmgr.getFolder(testWeblog, "/f1/f2/f3").getName());
+        
+        f3 = bmgr.getFolder(testWeblog, "/f1/f2/f3");
+        String pathString = f3.getPath();
+        String[] pathArray = Utilities.stringToStringArray(pathString,"/");
+        assertEquals("f1", pathArray[0]);
+        assertEquals("f2", pathArray[1]);
+        assertEquals("f3", pathArray[2]);
+    }
+    
+    
     public void testBookmarkCRUD() throws Exception {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
@@ -217,6 +328,64 @@ public class BookmarkTest extends TestCase {
     }
     
     
+    /**
+     * Test all bookmark lookup methods.
+     */
+    public void testBookmarkLookups() throws Exception {
+        
+        BookmarkManager bmgr = getRoller().getBookmarkManager();
+        
+        FolderData root = bmgr.getRootFolder(testWeblog);
+        
+        // add some folders
+        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
+        bmgr.saveFolder(f1);
+        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
+        bmgr.saveFolder(f2);
+        FolderData f3 = new FolderData(root, "f3", null, testWeblog);
+        bmgr.saveFolder(f3);
+        
+        // add some bookmarks
+        BookmarkData b1 = new BookmarkData(
+                f1, "b1", "testbookmark",
+                "http://example.com", "http://example.com/rss",
+                new Integer(1), new Integer(1), "image.gif");
+        bmgr.saveBookmark(b1);
+        BookmarkData b2 = new BookmarkData(
+                f1, "b2", "testbookmark",
+                "http://example.com", "http://example.com/rss",
+                new Integer(1), new Integer(1), "image.gif");
+        bmgr.saveBookmark(b2);
+        BookmarkData b3 = new BookmarkData(
+                f2, "b3", "testbookmark",
+                "http://example.com", "http://example.com/rss",
+                new Integer(1), new Integer(1), "image.gif");
+        bmgr.saveBookmark(b3);
+        
+        TestUtils.endSession(true);
+        
+        // test lookup by id
+        BookmarkData testBookmark = bmgr.getBookmark(b1.getId());
+        assertNotNull(testBookmark);
+        assertEquals("b1", testBookmark.getName());
+        
+        // test lookup of all bookmarks in single folder
+        FolderData testFolder = bmgr.getFolder(f1.getId());
+        List allBookmarks = bmgr.getBookmarks(testFolder, false);
+        assertNotNull(allBookmarks);
+        assertEquals(2, allBookmarks.size());
+        
+        // getBookmarks(folder, false) should also match folder.getBookmarks()
+        assertEquals(allBookmarks.size(), testFolder.getBookmarks().size());
+        
+        // test lookup of all bookmarks in folder branch (including subfolders)
+        testFolder = bmgr.getFolder(f1.getId());
+        allBookmarks = bmgr.getBookmarks(testFolder, true);
+        assertNotNull(allBookmarks);
+        assertEquals(3, allBookmarks.size());
+    }
+    
+    
     public void testBookmarkImport() throws Exception {
         
         InputStream fis = this.getClass().getResourceAsStream("/bookmarks.opml");
@@ -233,7 +402,7 @@ public class BookmarkTest extends TestCase {
     }
     
     
-    public String fileToString( InputStream is ) throws java.io.IOException {
+    private String fileToString( InputStream is ) throws java.io.IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         String s = null;
         StringBuffer sb = new StringBuffer();
@@ -354,85 +523,5 @@ public class BookmarkTest extends TestCase {
         TestUtils.endSession(true);
     }
     */
-    
-    
-    /** 
-     * Test bookmark folder paths. 
-     */
-    public void testPaths() throws Exception {
-        
-        BookmarkManager bmgr = getRoller().getBookmarkManager();
-        
-        try {
-            FolderData root = bmgr.getRootFolder(testWeblog);
-            
-            FolderData f1 = new FolderData(root, "f1", null, testWeblog);
-            bmgr.saveFolder(f1);
-            
-            FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
-            bmgr.saveFolder(f2);
-            
-            FolderData f3 = new FolderData(f2, "f3", null, testWeblog);
-            bmgr.saveFolder(f3);
-            
-            TestUtils.endSession(true);
-        } catch (RollerException e) {
-            TestUtils.endSession(true);
-            log.error(e);
-        }
-        
-        try {
-            
-            assertEquals("f1",bmgr.getFolder(testWeblog, "/f1").getName());
-            assertEquals("f2",bmgr.getFolder(testWeblog, "/f1/f2").getName());
-            assertEquals("f3",bmgr.getFolder(testWeblog, "/f1/f2/f3").getName());
-            
-            FolderData f3 = bmgr.getFolder(testWeblog, "/f1/f2/f3");
-            String pathString = f3.getPath();
-            String[] pathArray = Utilities.stringToStringArray(pathString,"/");
-            assertEquals("f1", pathArray[0]);
-            assertEquals("f2", pathArray[1]);
-            assertEquals("f3", pathArray[2]);
-            
-        } catch (RollerException e) {
-            TestUtils.endSession(true);
-            log.error(e);
-        }
-    }
-    
-    
-    /** 
-     * Ensure that duplicate folder name will throw RollerException 
-     */
-    public void testUniquenessOfFolderNames() throws Exception {
-        
-        BookmarkManager bmgr = getRoller().getBookmarkManager();
-        
-        FolderData root = bmgr.getRootFolder(testWeblog);
-        
-        FolderData f1 = new FolderData(root, "f1", null, testWeblog);
-        bmgr.saveFolder(f1);
-        
-        // first child folder
-        FolderData f2 = new FolderData(f1, "f2", null, testWeblog);
-        bmgr.saveFolder(f2);
-        
-        TestUtils.endSession(true);
-        
-        // need to requery for folder since session was closed
-        f1 = bmgr.getFolder(f1.getId());
-        
-        boolean exception = false;
-        try {
-            // child folder with same name as first
-            FolderData f3 = new FolderData(f1, "f2", null, testWeblog);
-            bmgr.saveFolder(f3);
-            TestUtils.endSession(true);
-        } catch (RollerException e) {
-            exception = true;
-        }
-        
-        assertTrue(exception);
-    }
     
 }
