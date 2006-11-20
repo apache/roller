@@ -3,7 +3,7 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
 	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="StarOffice 8  (Solaris x86)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Solaris x86)">
 	<META NAME="AUTHOR" CONTENT="Dave Johnson">
 	<META NAME="CREATED" CONTENT="20060123;11164600">
 	<META NAME="CHANGEDBY" CONTENT="Dave Johnson">
@@ -12,6 +12,17 @@
 	<!--
 		@page { size: 8.5in 11in; margin: 0.79in }
 		P { margin-bottom: 0.08in }
+		H2.western { font-family: "Thorndale", serif }
+		H2.cjk { font-family: "Andale Sans UI" }
+		H2.ctl { font-family: "Lucidasans" }
+		H3.western { font-family: "Thorndale", serif }
+		H3.cjk { font-family: "Andale Sans UI" }
+		H3.ctl { font-family: "Lucidasans" }
+		H4.western { font-family: "Thorndale", serif }
+		H4.cjk { font-family: "Andale Sans UI" }
+		H4.ctl { font-family: "Lucidasans" }
+		PRE { font-family: "Cumberland", monospace }
+		TT { font-family: "Cumberland", monospace }
 	-->
 	</STYLE>
 </HEAD>
@@ -149,7 +160,7 @@ file in the top level directory of this distribution.</I></FONT></FONT></P>
 </DIV>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-Introduction"></A>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-Introduction"></A>
 Introduction</H2>
 <P><B>This document describes how to install Roller in the following
 environment: </B>
@@ -194,7 +205,7 @@ Roller wiki.</P>
 </P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP1Prerequisites1"></A><A NAME="ref-InstallationGuide_2.x-1"></A>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP1Prerequisites1"></A><A NAME="ref-InstallationGuide_2.x-1"></A>
 STEP 1: Before you install Roller</H2>
 <P STYLE="font-weight: medium">Before you install Roller software you
 should install and configure the Java development kit, your
@@ -232,7 +243,7 @@ set CATALINA_HOME d:\jakarta-tomcat-5.5.9</FONT></FONT></P>
 </UL>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP2UnpackTheDownloadedZIPOrTARFile2"></A>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP2UnpackTheDownloadedZIPOrTARFile2"></A>
 STEP 2: Unpack the Roller distribution</H2>
 <P>Pick a directory on your computer and unpack the Roller
 distribution using either GNU tar on UNIX or WinZip on Windows.
@@ -257,14 +268,15 @@ That would create the Roller installation directory
 <P><B>Windows example</B></P>
 <P>Use WinZip to extract the Roller distribution file into the
 directory of your choice for example, no example necessary.</P>
-<H3><A NAME="DDE_LINK3"></A></H3>
-<H2></H2>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP4DownloadAndInstallRequiredJars4"></A>
+<H3 CLASS="western"><A NAME="DDE_LINK3"></A></H3>
+<H2 CLASS="western"></H2>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP4DownloadAndInstallRequiredJars4"></A>
 STEP 3: Install required third party jars</H2>
 <P>You also need to download and install some third-party jars, jars
 that we can't include in Roller due to licensing restrictions. These
 are the JDBC driver, JavaMail and Activation jars.</P>
-<H3><A NAME="DDE_LINK4"></A>STEP 3.1: Download and install Hibernate</H3>
+<H3 CLASS="western"><A NAME="DDE_LINK4"></A>STEP 3.1: Download and
+install Hibernate</H3>
 <P>Roller <I>requires</I> the Hibernate persistence library, which
 you must download separately from Roller. 
 </P>
@@ -288,7 +300,7 @@ WEB-INF/lib directory:</P>
 might make this part  of the installation easier. Visit
 <A HREF="http://roller.dev.java.net/">http://roller.dev.java.net</A>
 for more information.</P>
-<H3>STEP 3.2: Install JDBC driver jar(s)</H3>
+<H3 CLASS="western">STEP 3.2: Install JDBC driver jar(s)</H3>
 <P>Download the JDBC driver jar for your database and put it in the
 classpath of your application server. For example, assuming Tomcat
 and MySQL, you'd download the J/Connector JDBC driver from mysql.com
@@ -314,7 +326,7 @@ copy mysql-connector.jar %CATALINA_HOME%\common\lib</FONT></FONT></P>
 </UL>
 <P><BR><BR>
 </P>
-<H3>STEP 3.3: Install JavaMail and Activation jars</H3>
+<H3 CLASS="western">STEP 3.3: Install JavaMail and Activation jars</H3>
 <P>If you like to use Roller's e-mail notification features, you'll
 need to add the JavaMail and Activation jars to your application
 server's classpath. Currently, we ship these jars with Roller, but
@@ -338,7 +350,7 @@ $ROLLER/WEB-INF/lib/activation.jar $CATALINA_HOME/common/lib</FONT>	</FONT></P>
 	server configuration file (see the next section) and you'll need to
 	configure e-mail notification in the Roller UI.</P>
 </UL>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP3CreateRollerTablesInYourDatabase3"></A><A NAME="ref-InstallationGuide_2.x-3"></A>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP3CreateRollerTablesInYourDatabase3"></A><A NAME="ref-InstallationGuide_2.x-3"></A>
 STEP 4: Create Roller tables in your database</H2>
 <P>Create a new database within your MySQL installation, create a
 user with all privileges within that database and run the Roller
@@ -394,7 +406,7 @@ tables in MySQL:</P>
 <P><BR><BR>
 </P>
 <P>	</P>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP5DeployRollerToYourApplicationServer5"></A><A NAME="ref-InstallationGuide_2.x-5"></A>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP5DeployRollerToYourApplicationServer5"></A><A NAME="ref-InstallationGuide_2.x-5"></A>
 STEP 5: Deploy Roller to your application server</H2>
 <P>To deploy Roller to your application server you need to inform
 your application server:</P>
@@ -509,7 +521,7 @@ connections</FONT></FONT></P>
 </P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP6ConfigureYourApplicationServerForUTF86"></A>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP6ConfigureYourApplicationServerForUTF86"></A>
 STEP 6: Check your internationalization settings</H2>
 <P STYLE="margin-bottom: 0in">Roller's approach to
 internationalization (I18N) is to do everything in UTF-8. So, if you
@@ -569,7 +581,7 @@ attribute to those connectors as well.</SPAN></P>
 </P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP7SetupRollerDataDirectories7"></A><A NAME="ref-InstallationGuide_2.x-7"></A>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP7SetupRollerDataDirectories7"></A><A NAME="ref-InstallationGuide_2.x-7"></A>
 STEP 7: Setup Roller data directories 
 </H2>
 <P>Roller stores file uploads, search index files, cache files and
@@ -577,7 +589,7 @@ log files on disk. So before you start, check to make sure the
 directories that Roller expects exist and are writable by the Tomcat
 process. 
 </P>
-<H3>STEP 7.1: Create <TT>uploads</TT> directory</H3>
+<H3 CLASS="western">STEP 7.1: Create <TT>uploads</TT> directory</H3>
 <P STYLE="margin-bottom: 0in">By default, Roller saves uploaded files
 under the directory:</P>
 <P STYLE="margin-bottom: 0in"><BR>
@@ -600,7 +612,7 @@ itself. If this is the case for your server, override the property
 <FONT FACE="Courier New">roller.properties</FONT> file. See step 8
 for more information on the <FONT FACE="Courier New">roller.properties</FONT>
 file.</P>
-<H3>STEP 7.2: Create <TT>search-index</TT> directory</H3>
+<H3 CLASS="western">STEP 7.2: Create <TT>search-index</TT> directory</H3>
 <P>By default, Roller creates and maintains its text search index
 data in files under the directory</P>
 <P><TT><FONT FACE="Courier New">	${user.home}/roller_data/roller-index</FONT></TT>
@@ -613,7 +625,8 @@ You can specify a different directory by overriding the property
 <FONT FACE="Courier New">roller.properties</FONT><FONT FACE="Thorndale">.
 See step 8 for more information on the </FONT><FONT FACE="Courier New">roller.properties</FONT><FONT FACE="Thorndale">
 file.</FONT></P>
-<H3>STEP 7.3: Create <TT>planet-cache</TT> directory (optional)</H3>
+<H3 CLASS="western">STEP 7.3: Create <TT>planet-cache</TT> directory
+(optional)</H3>
 <P>You only need to do this if you are planning on using Roller's
 integrated planet aggregator: create a directory for the planet cache
 (e.g. /var/roller/planet-cache). 
@@ -629,9 +642,9 @@ you choose for the planet-cache.
 directory through the Roller web UI (but we planning to move it to
 roller.properties because it is really a startup property). 
 </P>
-<H3></H3>
-<H3 STYLE="page-break-before: always">STEP 7.4: Make sure that the
-<TT>logs</TT> subdirectory exists</H3>
+<H3 CLASS="western"></H3>
+<H3 CLASS="western" STYLE="page-break-before: always">STEP 7.4: Make
+sure that the <TT>logs</TT> subdirectory exists</H3>
 <P STYLE="margin-bottom: 0in">The <TT><FONT FACE="Courier New">roller.log</FONT>
 </TT>file is written to the location:</P>
 <P STYLE="margin-bottom: 0in"><BR>
@@ -648,11 +661,12 @@ under their base directory.
 </P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP8ReviewRollerConfiguration8"></A>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP8ReviewRollerConfiguration8"></A>
 STEP 8: Review Roller configuration</H2>
 <P>Before you start Roller for the first time, review your
 configuration.</P>
-<H3>STEP 8.1: Review the <FONT FACE="Courier New">WEB-INF/classes/roller.properties</FONT>
+<H3 CLASS="western">STEP 8.1: Review the
+<FONT FACE="Courier New">WEB-INF/classes/roller.properties</FONT>
 file</H3>
 <P>Roller tries to pick a good set of configuration defaults which
 should let anyone start up the application without much work, but
@@ -662,7 +676,7 @@ there are for defining your custom Roller configuration, then show
 which properties we think you should set.  <B>NOTE</B>: the default
 <FONT FACE="Courier New">roller.properties</FONT> file is shown in
 Appendix B.</P>
-<H4><A NAME="section-ConfigurationGuide_2.x-WhereToDefineCustomProperties"></A>
+<H4 CLASS="western"><A NAME="section-ConfigurationGuide_2.x-WhereToDefineCustomProperties"></A>
 Where to define custom properties</H4>
 <P STYLE="margin-bottom: 0in">There are three ways you can alter the
 default configuration for Roller. 
@@ -726,8 +740,9 @@ properties that should be overridden</P>
 etc, etc, etc ... any other properties you want to override</FONT></FONT></P>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>
-<H3 STYLE="page-break-before: always">STEP 8.2: Change keys in the
-<FONT FACE="Courier New">WEB-INF/security.xml</FONT> file</H3>
+<H3 CLASS="western" STYLE="page-break-before: always">STEP 8.2:
+Change keys in the <FONT FACE="Courier New">WEB-INF/security.xml</FONT>
+file</H3>
 <P>Starting with version 2.1, Roller uses the Acegi security
 infrastructure. Several of the security features rely on keys that
 are intended to be site-specific. These keys are used to compute HMAC
@@ -773,7 +788,7 @@ specific to your own site.
 		embedded within the anonymous authentication token.</P>
 	</UL>
 </UL>
-<H2 STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP9StartTomcatAndRoller9"></A>
+<H2 CLASS="western" STYLE="page-break-before: always"><A NAME="section-InstallationGuide_2.x-STEP9StartTomcatAndRoller9"></A>
 STEP 9: Start Tomcat and start using Roller</H2>
 <P STYLE="margin-bottom: 0in">Start your Servlet Container, open your
 web browser, browse to the Roller start page and start using Roller.
@@ -821,8 +836,8 @@ encountered the very same problems that you are encountering.
 </P>
 <P><BR><BR>
 </P>
-<H2 STYLE="page-break-before: always">Appendix A: Upgrading an
-existing Roller installation</H2>
+<H2 CLASS="western" STYLE="page-break-before: always">Appendix A:
+Upgrading an existing Roller installation</H2>
 <P>This document describes how to upgrade an existing installation to
 the latest release of Roller by upgrading the Roller database and
 replacing the old Roller files (which are typically found in
@@ -839,7 +854,7 @@ release.
 	<LI><P STYLE="margin-bottom: 0in">STEP 5: Startup Tomcat 
 	</P>
 </UL>
-<H3><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller1"></A><A NAME="ref-UpgradeGuide_2.1-1"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP1ShutdownAndBackupYourOldRoller1"></A><A NAME="ref-UpgradeGuide_2.1-1"></A>
 STEP 1: Shutdown and backup your old Roller 
 </H3>
 <P>Before you get started with your upgrade, you should shutdown your
@@ -881,7 +896,7 @@ safe, for example:
 </P>
 <PRE>   <FONT FACE="Courier New"><FONT SIZE=3>% cd $CATALINA_HOME/webapps</FONT></FONT>
    <FONT FACE="Courier New"><FONT SIZE=3>% mkdir /somewhere/safe/roller-old</FONT></FONT>
-   <FONT FACE="Courier New"><FONT SIZE=3>% mv roller /somewhere/safe/roller-old</FONT></FONT></PRE><H3>
+   <FONT FACE="Courier New"><FONT SIZE=3>% mv roller /somewhere/safe/roller-old</FONT></FONT></PRE><H3 CLASS="western">
 <A NAME="section-UpgradeGuide_2.1-STEP2InstallTheNewRoller2"></A><A NAME="ref-UpgradeGuide_2.1-2"></A>
 STEP 2: Install the new Roller 
 </H3>
@@ -898,10 +913,10 @@ except:
 </UL>
 <P><BR><BR>
 </P>
-<H3><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP3CopyResourcesAndUpdateConfigs3"></A><A NAME="ref-UpgradeGuide_2.1-3"></A>
 STEP 3: Copy resources and update configs 
 </H3>
-<H4><A NAME="section-UpgradeGuide_2.1-3.1CopyYourOldResourcesAndOtherFilesYouveAdded"></A>
+<H4 CLASS="western"><A NAME="section-UpgradeGuide_2.1-3.1CopyYourOldResourcesAndOtherFilesYouveAdded"></A>
 3.1 Copy your old resources and other files you've added</H4>
 <P>User uploaded files are, by default, stored in the <TT><FONT FACE="Courier New">/resources</FONT></TT>
 sub-directory of the Roller context directory. You should copy your
@@ -915,7 +930,7 @@ old resources directory into your new Roller installation.
 NOTE: If you have any new themes under roller/themes, make sure to
 copy those as well. 
 </P>
-<H4><A NAME="section-UpgradeGuide_2.1-3.2RemoveJavaMailJarsIfDuplicated"></A>
+<H4 CLASS="western"><A NAME="section-UpgradeGuide_2.1-3.2RemoveJavaMailJarsIfDuplicated"></A>
 3.2 Remove JavaMail jars if duplicated</H4>
 <P>In an upgrade installation, you may already have the JavaMail jars
 <TT>mail.jar</TT> and <TT>activation.jar</TT> in your Tomcat
@@ -923,7 +938,7 @@ copy those as well.
 <TT>WEB-INF/lib</TT> directory within the web app. (Keep them only in
 the <TT>common/lib</TT> directory.) 
 </P>
-<H4><A NAME="section-UpgradeGuide_2.1-3.3ReviewConfigurationProperties"></A>
+<H4 CLASS="western"><A NAME="section-UpgradeGuide_2.1-3.3ReviewConfigurationProperties"></A>
 3.3 Review configuration properties</H4>
 <P>Review properties as described in STEP #8 of the installation
 guide.</P>
@@ -940,7 +955,7 @@ guide.</P>
 	visit the Roller Support project on Java.Net
 	(http://roller.dev.java.net).</B></FONT></FONT></P>
 </UL>
-<H3><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP4UpgradeTheDatabase4"></A><A NAME="ref-UpgradeGuide_2.1-4"></A>
 STEP 4: Upgrade the database 
 </H3>
 <P>Use the appropriate database upgrade script to upgrade your
@@ -978,7 +993,7 @@ UNIX:
     <FONT FACE="Courier New"><FONT SIZE=3>mysql&gt; quit</FONT></FONT></PRE><P>
 If you're upgrading from an earlier release you'll have to run each
 of the older scripts in order to upgrade your database.</P>
-<H3><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
+<H3 CLASS="western"><A NAME="section-UpgradeGuide_2.1-STEP5StartupTomcat5"></A><A NAME="ref-UpgradeGuide_2.1-5"></A>
 STEP 5: Startup your app server 
 </H3>
 <P>Use the standard Tomcat <FONT FACE="Courier New">startup.sh</FONT>
@@ -999,8 +1014,8 @@ messages in the log files, send those along too.
 </P>
 <P><BR><BR>
 </P>
-<H2></H2>
-<H2 STYLE="page-break-before: always">Appendix B: The
+<H2 CLASS="western"></H2>
+<H2 CLASS="western" STYLE="page-break-before: always">Appendix B: The
 <FONT FACE="Courier New">WEB-INF/roller.properties</FONT> file</H2>
 <P>This file defines the default start-up properties for Roller. See
 step 8 for instructions on how to override the properties in this

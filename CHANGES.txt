@@ -2,6 +2,19 @@
 ROLLER CHANGE LOG
 -----------------
 
+Roller 2.3.1: minor release to fix security risk form and licensing issue
+
+*** Security risk in comment form
+
+Allowing commenters to leave HTML in comments is a potential security risk because it allows commenters can add malicious Javascipt code. You can disable HTML in comments via the Roller admin interface, but in Roller 2.3 and earlier versions of Roller, attackers could still add malicious HTML to the name, email and URL fields. 
+
+We fixed the problem in Roller 2.3.1 and all subsequent versions of Roller by stripping all HTML from name, email and comment fields at comment post time. 
+
+*** Licensing issue with JavaMail and Activation jars  
+
+The JavaMail and Activation jars (mail.jar and activation.jar) included in Roller 2.3 were licensed under Sun's Binary Code License, which is incompatible with Apache licensing policy. So these jars have been removed from the release and instructions have been added to the Installation Guide that explain how to get them and add them to Roller.
+
+
 Roller 2.3: improvements and bug fixes, no major new features
 
 Apache policy compliance 
