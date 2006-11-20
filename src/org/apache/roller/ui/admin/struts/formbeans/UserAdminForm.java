@@ -109,6 +109,9 @@ public class UserAdminForm extends UserFormEx
             throws RollerException
     {
         super.copyTo(user, locale);
+        
+        if (user.getEnabled() == null) user.setEnabled(Boolean.FALSE);
+        
         if (mUserAdmin.booleanValue()) 
         {
             user.grantRole("admin");
